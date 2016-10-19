@@ -3,6 +3,8 @@ php/config.php
 js/config.js
 
 # ignore swap files
+*.swp
+*.swo
 ./**/*.swp
 ./**/*.swo
 
@@ -13,3 +15,6 @@ php/lib/*
 
 # ignore font directory
 fonts/*
+
+# ignore version control script
+bumpversion.sh
