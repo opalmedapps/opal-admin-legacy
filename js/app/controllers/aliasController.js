@@ -516,7 +516,7 @@ angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui
                         }
                         else {
                             $scope.setBannerClass('danger');
-                            $scope.bannerMessage = response.message;
+                            $scope.$parent.bannerMessage = response.message;
                         }
                         $scope.showBanner();
 						$uibModalInstance.close();
