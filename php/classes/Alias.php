@@ -365,15 +365,15 @@ class Alias {
 				$sql = "
                     INSERT INTO 
                         AliasExpression (
-                            AliasExpressionSerNum,
                             AliasSerNum,
                             ExpressionName
                         )
                     VALUE (
-                        NULL,
                         '$aliasSer',
                         \"$aliasTerm\"
                     )
+                    ON DUPLICATE KEY UPDATE
+                        AliasSerNum = '$aliasSer'
 				";
 				$query = $connect->prepare( $sql );
 				$query->execute();
@@ -525,6 +525,8 @@ class Alias {
                             '$aliasSer',
                             \"$term\"
                         )
+                        ON DUPLICATE KEY UPDATE
+                            AliasSerNum = '$aliasSer'
 					";
 					$query = $connect->prepare( $sql );
 					$query->execute();
