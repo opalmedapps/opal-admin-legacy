@@ -1,5 +1,4 @@
 # ignore configurations 
-php/config.php
 js/config.js
 
 # ignore swap files
