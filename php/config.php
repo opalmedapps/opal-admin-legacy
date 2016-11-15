@@ -25,7 +25,7 @@
 	define( "WRM_PORT", "22" );
 
 	// environment-specific variables (DEV)
-    define( "DB_DSN", "mysql:host=localhost;dbname=OpalDB_AJ_Sandbox" ); 
+    define( "DB_DSN", "mysql:host=localhost;dbname=OpalDB_AJ_Sandbox;charset=utf8" ); 
 	define( "DB_NAME", "OpalDB_AJ_Sandbox" ); 
 	define( "ABS_PATH", "/var/www/devDocuments/ATO/" );
 	define( "ABS_URL", "/devDocuments/ATO/" );
