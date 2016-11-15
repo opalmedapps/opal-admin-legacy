@@ -16,5 +16,8 @@ php/lib/*
 # ignore font directory
 fonts/*
 
+# ignore image directory
+images/*
+
 # ignore version control script
 bumpversion.sh
