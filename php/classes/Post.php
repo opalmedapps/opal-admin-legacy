@@ -173,10 +173,10 @@ class Post {
 			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
 
 			$postType	        = $data[0];
-			$postName_FR	    = $data[1];
-			$postName_EN	    = $data[2];
-			$postBody_FR	    = $data[3];
-            $postBody_EN	    = $data[4];
+			$postName_EN	    = $data[1];
+			$postName_FR	    = $data[2];
+			$postBody_EN	    = $data[3];
+            $postBody_FR	    = $data[4];
             $postPublish       = $data[5];
             $postPublishDate    = $data[6];
 			$postFilters	    = array();
