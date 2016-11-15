@@ -18,12 +18,12 @@ class HospitalMap {
     public function generateQRCode($qrid, $oldqrid) {
 
         if($oldqrid) {
-            $oldQRPath = DAVID_PATH.'hospital-maps/qrCodes/'.$oldqrid.'.png';
+            $oldQRPath = ABS_PATH.'images/hospital-maps/qrCodes/'.$oldqrid.'.png';
             if(file_exists($oldQRPath)) {
                 unlink($oldQRPath);
             }
         }
-        $qrPath = DAVID_PATH.'hospital-maps/qrCodes/'.$qrid.'.png';
+        $qrPath = ABS_PATH.'images/hospital-maps/qrCodes/'.$qrid.'.png';
         $qrCode = '';
 
         if(!file_exists($qrPath)) {
