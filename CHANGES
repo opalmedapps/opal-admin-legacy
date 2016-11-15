@@ -1,3 +1,6 @@
+Version 0.1.1:
+ - Merge branch 'release-0.1'
+
 Version 0.1.0
  -     -- Github issue #100..  Updated Alias logic to:         - Reassign alias serial if a new alias is using an existing expression         - Deny deletion of alias or expression if expression exists in dependent tables
  -     -- New commit
