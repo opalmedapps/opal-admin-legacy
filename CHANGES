@@ -1,3 +1,7 @@
+Version 0.1.2:
+ - Merge branch 'hotfix-0.1.1'
+ -     --- Fixed an issue that caused the alternation of EN and FR names and descriptions in Posts         Variables were set in opposite order.
+
 Version 0.1.1:
  - Merge branch 'release-0.1'
 
