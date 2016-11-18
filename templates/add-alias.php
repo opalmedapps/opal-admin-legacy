@@ -147,19 +147,66 @@
                 </uib-accordion-group>  
                 <uib-accordion-group ng-class="newAlias.type ? 'panel-success': 'panel-danger'" is-open="statusC.open">
                   <uib-accordion-heading>
-                    <h2 class="panel-title"><strong>Assign a type</strong>
+                    <h2 class="panel-title"><strong>Assign a type and icon color</strong>
                       <span ng-hide="newAlias.type" style="float:right"><em>Incomplete</em></span>
                       <span ng-show="newAlias.type" style="float:right"><em>Complete</em></span>
                     </h2>
                   </uib-accordion-heading>
                   <div class="panel-input">  
-                    <ul class="no-list">
-                      <li ng-repeat="type in aliasTypes">
-                        <label>
-                          <input type="radio" ng-model="newAlias.type" ng-change="typeUpdate()" ng-value="type.name" /> {{type.name}}
-                        </label>
-                      </li>
-                    </ul>
+                    <div class="row" style="margin-bottom: 10px;">
+                      <div ng-repeat="type in aliasTypes" class="col-md-4">
+                        <a href="" ng-model="newAlias.type" ng-click="typeUpdate(type.name)" class="btn btn-lg btn-block btn-outline" ng-class="{'active-purple-full': newAlias.type == type.name}">{{type.name}}</a>
+                        <div class="color-data" ng-show="newAlias.type == type.name">
+                          <div class="color-picked" title="Selected color">
+                            <div class="color-palette" ng-style="{'background-color': newAlias.color}"></div>
+                          </div>
+                          <div class="color-label hex">
+                            <h4>HEX</h4>
+                          </div>   
+                          <div class="color-code">
+                            <h4>{{newAlias.color}}</h4>
+                          </div>
+                        </div> 
+                      </div>
+                    </div>  
+                    <div class="row" style="padding-top: 15px; border-top: solid 1px #ddd;" ng-show="newAlias.type">
+                      <div class="col-md-4">
+                        <div class="panel panel-default">
+                          <div class="panel-heading">Existing Colors</div>
+                          <table class="table table-condensed fixed-header">
+                            <tbody>
+                              <tr ng-repeat="existingColor in existingColorTags" class="color"> 
+                                <td class="color-picked">
+                                  <div class="color-palette" ng-style="{'background-color': existingColor.color}" ng-click="newAlias.color = existingColor.color"></div>
+                                </td>
+                                <td class="color-assignee">
+                                  <h5>{{existingColor.name_EN}}</h5>
+                                </td>
+                                <td class="color-code">
+                                  <h5>{{existingColor.color}}</h5>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      <div class="col-md-8">
+                        <div class="color-picker">
+                          <div class="cp-description">
+                            <p class="cp-header">
+                              Choose an icon color.
+                            </p>
+                            <p class="cp-sub-header">
+                              Or select an existing color on the left.
+                            </p>
+                          </div>  
+                          <div class="cp-main">
+                            <material-picker ng-model="newAlias.color" format="'hex'" size="20" hover-model="hoverColor"></material-picker>
+                          </div> 
+                        </div>
+                      </div>   
+                    </div>               
+  
                   </div>
                 </uib-accordion-group>     
                 <uib-accordion-group ng-class="checkTermsAdded(termList) ? 'panel-success': 'panel-danger'" is-open="statusE.open">

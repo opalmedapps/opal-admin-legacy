@@ -126,6 +126,57 @@ class Alias {
 
     /**
      *
+     * Gets a list of existing color tags
+     *
+     * @return array
+     */
+    public function getExistingColorTags($type) {
+        $colorTags = array();
+		try {
+			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
+            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            $sql = "
+                SELECT DISTINCT 
+                    Alias.AliasName_EN,
+                    Alias.AliasName_FR,
+                    Alias.ColorTag
+                FROM
+                    Alias
+                WHERE
+                    Alias.AliasType = '$type'
+                ORDER BY
+                    Alias.AliasName_EN
+            ";
+
+			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query->execute();
+
+			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $aliasName_EN       = $data[0];
+                $aliasName_FR       = $data[1];
+                $colorTag           = $data[2];
+
+                $colorArray = array(
+                    'name_EN'   => $aliasName_EN,
+                    'name_FR'   => $aliasName_FR,
+                    'color'     => $colorTag
+                );
+
+                array_push($colorTags, $colorArray);
+            }
+
+            return $colorTags;
+
+		} catch (PDOException $e) {
+			echo $e->getMessage();
+			return $colorTags;
+		}
+    }
+
+    /**
+     *
      * Gets a list of existing aliases
      *
      * @return array
@@ -145,7 +196,8 @@ class Alias {
 					Alias.AliasDescription_FR,
                     Alias.AliasDescription_EN,
                     Alias.AliasUpdate,
-                    Alias.EducationalMaterialControlSerNum
+                    Alias.EducationalMaterialControlSerNum,
+                    Alias.ColorTag
 				FROM 
 					Alias
 			";
@@ -163,6 +215,7 @@ class Alias {
                 $aliasDesc_EN	= $data[5];
                 $aliasUpdate    = $data[6];
                 $aliasEduMatSer = $data[7];
+                $aliasColorTag  = $data[8];
                 $aliasTerms	    = array();
                 $aliasEduMat    = "";
 
@@ -200,6 +253,7 @@ class Alias {
 					'name_EN' 		    => $aliasName_EN, 
 					'serial' 		    => $aliasSer, 
                     'type'			    => $aliasType, 
+                    'color'             => $aliasColorTag,
                     'update'            => $aliasUpdate,
                     'eduMat'            => $aliasEduMat,
 					'description_EN' 	=> $aliasDesc_EN, 
@@ -240,7 +294,8 @@ class Alias {
 					Alias.AliasDescription_FR,
                     Alias.AliasDescription_EN,
                     Alias.AliasUpdate,
-                    Alias.EducationalMaterialControlSerNum 
+                    Alias.EducationalMaterialControlSerNum,
+                    Alias.ColorTag
 				FROM 
 					Alias 
 				WHERE 
@@ -259,6 +314,7 @@ class Alias {
             $aliasDesc_EN	= $data[4];
             $aliasUpdate    = $data[5];
             $aliasEduMatSer = $data[6];
+            $aliasColorTag  = $data[7];
             $aliasEduMat    = "";
 			$aliasTerms	    = array();
 
@@ -294,6 +350,7 @@ class Alias {
 				'name_EN' 		    => $aliasName_EN, 
 				'serial' 		    => $ser, 
                 'type'			    => $aliasType, 
+                'color'             => $aliasColorTag,
                 'update'            => $aliasUpdate,
                 'eduMat'            => $aliasEduMat,
 				'description_EN' 	=> $aliasDesc_EN, 
@@ -323,7 +380,8 @@ class Alias {
 		$aliasName_FR 	= $aliasArray['name_FR'];
 		$aliasDesc_EN	= $aliasArray['description_EN'];
 		$aliasDesc_FR	= $aliasArray['description_FR'];
-		$aliasType	    = $aliasArray['type'];
+        $aliasType	    = $aliasArray['type'];
+        $aliasColorTag  = $aliasArray['color'];
 		$aliasTerms	    = $aliasArray['terms'];
         $aliasEduMatSer = $aliasArray['edumat']['serial'];
 
@@ -340,6 +398,7 @@ class Alias {
                         AliasDescription_EN, 
                         EducationalMaterialControlSerNum,
                         AliasType, 
+                        ColorTag,
                         AliasUpdate,
 						LastUpdated
 					) 
@@ -351,6 +410,7 @@ class Alias {
                     \"$aliasDesc_EN\", 
                     '$aliasEduMatSer',
                     '$aliasType', 
+                    '$aliasColorTag',
                     '0',
 					NULL
 				)
@@ -449,6 +509,7 @@ class Alias {
 		$aliasSer	    = $aliasArray['serial'];
         $aliasTerms	    = $aliasArray['terms'];
         $aliasEduMatSer = $aliasArray['edumat']['serial'];
+        $aliasColorTag  = $aliasArray['color'];
 
         $existingTerms	= array();
 
@@ -468,7 +529,8 @@ class Alias {
 					Alias.AliasName_FR 		                = \"$aliasName_FR\", 
 					Alias.AliasDescription_EN	            = \"$aliasDesc_EN\",
                     Alias.AliasDescription_FR	            = \"$aliasDesc_FR\",
-                    Alias.EducationalMaterialControlSerNum  = '$aliasEduMatSer'
+                    Alias.EducationalMaterialControlSerNum  = '$aliasEduMatSer',
+                    Alias.ColorTag                          = '$aliasColorTag'
 				WHERE 
 					Alias.AliasSerNum = $aliasSer
 			";
