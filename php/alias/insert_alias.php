@@ -16,6 +16,7 @@
 	$aliasDesc_EN	= $_POST['description_EN'];
 	$aliasSer 	    = $_POST['serial'];
 	$aliasType 	    = $_POST['type'];
+    $aliasColorTag  = $_POST['color'];
     $aliasEduMat    = $_POST['eduMat'];
 	$aliasTerms	    = $_POST['terms'];
 
@@ -27,6 +28,7 @@
 		'description_FR'    => $aliasDesc_FR,
  		'serial' 	        => $aliasSer,
         'type' 		        => $aliasType,
+        'color'             => $aliasColorTag,
         'edumat'            => $aliasEduMat,
 		'terms' 	        => $aliasTerms
 	);

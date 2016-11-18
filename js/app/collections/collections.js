@@ -37,6 +37,14 @@ angular.module('ATO_InterfaceApp.collections', []).
 			});
 		}
 
+        // Function to get existing color tags
+        aliasAPI.getExistingColorTags = function (type) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH+"api/alias/color_tags.php?callback=JSON_CALLBACK&type="+type
+			});
+		}
+
 		return aliasAPI;
 	}).
 
