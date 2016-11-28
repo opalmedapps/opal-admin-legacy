@@ -12,6 +12,9 @@ js/lib/*
 css/lib/*
 php/lib/*
 
+# ignore images directory
+images/*
+
 # ignore font directory
 fonts/*
 
