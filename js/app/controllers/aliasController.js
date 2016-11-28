@@ -77,9 +77,10 @@ angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui
 			data: 'aliasList',
 			columnDefs: [
 				{field:'name_EN', displayName:'Alias (EN / FR)', cellTemplate:cellTemplateName, width:'405'},
-				{field:'type', displayName:'Type', width:'175'},
+				{field:'type', displayName:'Type', width:'145'},
                 {field:'update', displayName:'Update', width:'80', cellTemplate:checkboxCellTemplate},
 				{field:'count', displayName:'# of terms', width:'90'},
+				{field:'source_db.name', displayName:'Source DB', width:'120'},
 				{name:'Operations', cellTemplate:cellTemplateOperations, sortable:false}
 			],
             useExternalFiltering: true,
@@ -265,7 +266,7 @@ angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui
 
 
 				// Call our API service to get the list of alias expressions
-				aliasAPIservice.getExpressions($scope.alias.type).success(function (response) {
+				aliasAPIservice.getExpressions($scope.alias.source_db.serial, $scope.alias.type).success(function (response) {
 					$scope.termList = response; // Assign value
 
                     processingModal.close(); // hide modal
