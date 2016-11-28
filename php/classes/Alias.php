@@ -8,69 +8,100 @@ class Alias {
 
     /**
      *
-     * Gets a list of expressions from ARIA
+     * Gets a list of expressions from a source database
      *
-     * @param string $type : the type of expressions to look out for
+     * @param int $sourceDBSer : the serial number of the source database
+     * @param string $expressionType : the type of expressions to look out for
      * @return array
      */
-	public function getExpressions ($type) {
+	public function getExpressions ($sourceDBSer, $expressionType) {
         $expressionList = array();
         try {
-            $aria_link = mssql_connect(ARIA_DB, ARIA_USERNAME, ARIA_PASSWORD);
+            // ARIA 
+            if ($sourceDBSer == 1) {
 
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+                $aria_link = mssql_connect(ARIA_DB, ARIA_USERNAME, ARIA_PASSWORD);
 
-            if ($type != "Document") {
-                $sql = "
-                    SELECT DISTINCT
-				        vv_ActivityLng.Expression1
+                if ($expressionType != "Document") {
+                    $sql = "
+                        SELECT DISTINCT
+			    	        vv_ActivityLng.Expression1
+    			        FROM  
+	    			        variansystem.dbo.vv_ActivityLng vv_ActivityLng 
+                        ORDER BY 
+                        vv_ActivityLng.Expression1
+                    ";
+    
+                    $query = mssql_query($sql);
+                    while ($data = mssql_fetch_array($query)) {
 
-			        FROM  
-				        variansystem.dbo.vv_ActivityLng vv_ActivityLng 
+                        $termName = $data[0];
+                        $termArray = array(
+				           	'name' => $termName,
+			        	    'added'=> 'false'
+		    	        );
 
-                    ORDER BY 
-                    vv_ActivityLng.Expression1
-                ";
+                        array_push($expressionList, $termArray);
 
-                $query = mssql_query($sql);
-                while ($data = mssql_fetch_array($query)) {
+                    }
 
-                    $termName = $data[0];
-                    $termArray = array(
-				       	'name' => $termName,
-			        	'added'=> 'false'
-			        );
+                } else {
 
-                    array_push($expressionList, $termArray);
-
+                    $sql = "
+                        SELECT DISTINCT
+                            note_typ.note_typ_desc
+                        FROM 
+                            varianenm.dbo.note_typ note_typ
+                        ORDER BY
+                            note_typ.note_typ_desc
+                    ";
+    
+                    $query = mssql_query($sql);
+                    while ($data = mssql_fetch_array($query)) {
+    
+                        $termName = $data[0];
+                            
+                        $termArray = array(
+				           	'name' => $termName,
+			            	'added'=> 'false'
+    			        );
+    
+                        array_push($expressionList, $termArray);
+                    }
                 }
 
-            } else {
-
-                $sql = "
-                    SELECT DISTINCT
-                        note_typ.note_typ_desc
-                    FROM 
-                        varianenm.dbo.note_typ note_typ
-
-                    ORDER BY
-                        note_typ.note_typ_desc
-                ";
-
-                $query = mssql_query($sql);
-                while ($data = mssql_fetch_array($query)) {
-
-                    $termName = $data[0];
-                        
-                    $termArray = array(
-				       	'name' => $termName,
-			        	'added'=> 'false'
-			        );
-
-                    array_push($expressionList, $termArray);
-                }
             }
+
+            // WaitRoomManagement
+            if ($sourceDBSer == 2) {
+                
+	    		$wrm_connect = new PDO( WRM_DSN, WRM_USERNAME, WRM_PASSWORD );
+                $wrm_connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+                $sql = "
+                    SELECT DISTINCT 
+                        mval.AppointmentCode
+                    FROM
+                        MediVisitAppointmentList mval
+                    ORDER BY
+                        mval.AppointmentCode
+                ";
+
+                $query = $wrm_connect->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                
+                    $termName   = $data[0];
+
+                    $termArray = array(
+				       	'name' => $termName,
+			        	'added'=> 'false'
+			        );
+
+                    array_push($expressionList, $termArray);
+                }
+            }           
 
 			return $expressionList;
 		} catch (PDOException $e) {
@@ -145,9 +176,14 @@ class Alias {
 					Alias.AliasDescription_FR,
                     Alias.AliasDescription_EN,
                     Alias.AliasUpdate,
-                    Alias.EducationalMaterialControlSerNum
+                    Alias.EducationalMaterialControlSerNum,
+                    Alias.SourceDatabaseSerNum,
+                    SourceDatabase.SourceDatabaseName
 				FROM 
-					Alias
+                    Alias,
+                    SourceDatabase
+                WHERE   
+                    Alias.SourceDatabaseSerNum = SourceDatabase.SourceDatabaseSerNum
 			";
 
 			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -163,6 +199,10 @@ class Alias {
                 $aliasDesc_EN	= $data[5];
                 $aliasUpdate    = $data[6];
                 $aliasEduMatSer = $data[7];
+                $sourceDatabase = array(
+                    'serial'    => $data[8],
+                    'name'      => $data[9]
+                );
                 $aliasTerms	    = array();
                 $aliasEduMat    = "";
 
@@ -203,7 +243,8 @@ class Alias {
                     'update'            => $aliasUpdate,
                     'eduMat'            => $aliasEduMat,
 					'description_EN' 	=> $aliasDesc_EN, 
-					'description_FR' 	=> $aliasDesc_FR, 
+                    'description_FR' 	=> $aliasDesc_FR,
+                    'source_db'         => $sourceDatabase, 
 					'count' 		    => count($aliasTerms), 
 					'terms' 		    => $aliasTerms
 				);
@@ -240,11 +281,16 @@ class Alias {
 					Alias.AliasDescription_FR,
                     Alias.AliasDescription_EN,
                     Alias.AliasUpdate,
-                    Alias.EducationalMaterialControlSerNum 
+                    Alias.EducationalMaterialControlSerNum,
+                    Alias.SourceDatabaseSerNum,
+                    SourceDatabase.SourceDatabaseName 
 				FROM 
-					Alias 
+                    Alias, 
+                    SourceDatabase
 				WHERE 
-					Alias.AliasSerNum = $ser
+                    Alias.AliasSerNum                       = $ser
+                AND SourceDatabase.SourceDatabaseSerNum     = Alias.SourceDatabaseSerNum
+
 			";
 
 			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -259,6 +305,10 @@ class Alias {
             $aliasDesc_EN	= $data[4];
             $aliasUpdate    = $data[5];
             $aliasEduMatSer = $data[6];
+            $sourceDatabase = array(
+                'serial'    => $data[7],
+                'name'      => $data[8]
+            );
             $aliasEduMat    = "";
 			$aliasTerms	    = array();
 
@@ -297,7 +347,8 @@ class Alias {
                 'update'            => $aliasUpdate,
                 'eduMat'            => $aliasEduMat,
 				'description_EN' 	=> $aliasDesc_EN, 
-				'description_FR' 	=> $aliasDesc_FR, 
+                'description_FR' 	=> $aliasDesc_FR, 
+                'source_db'         => $sourceDatabase,
 				'count' 		    => count($aliasTerms), 
 				'terms' 		    => $aliasTerms
 			);
@@ -326,6 +377,7 @@ class Alias {
 		$aliasType	    = $aliasArray['type'];
 		$aliasTerms	    = $aliasArray['terms'];
         $aliasEduMatSer = $aliasArray['edumat']['serial'];
+        $sourceDBSer    = $aliasArray['source_db']['serial'];
 
 		try {
 			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
@@ -339,6 +391,7 @@ class Alias {
 						AliasDescription_FR,
                         AliasDescription_EN, 
                         EducationalMaterialControlSerNum,
+                        SourceDatabaseSerNum,
                         AliasType, 
                         AliasUpdate,
 						LastUpdated
@@ -350,6 +403,7 @@ class Alias {
 					\"$aliasDesc_FR\", 
                     \"$aliasDesc_EN\", 
                     '$aliasEduMatSer',
+                    '$sourceDBSer',
                     '$aliasType', 
                     '0',
 					NULL
@@ -541,6 +595,54 @@ class Alias {
 			return $response; // Fail
 		}
 	}
+
+    /**
+     *
+     * Gets a list of source databases 
+     *
+     * @return array
+     */
+	public function getSourceDatabases () {
+        $sourceDBList = array();
+        try {
+ 	        $connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
+            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            $sql = "
+                SELECT DISTINCT
+                    sd.SourceDatabaseSerNum,
+                    sd.SourceDatabaseName
+                FROM
+                    SourceDatabase sd
+                ORDER BY 
+                    sd.SourceDatabaseSerNum
+            ";
+
+            $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $sourceDBArray = array(
+                    'serial'    => $data[0],
+                    'name'      => $data[1]
+                );
+
+                array_push($sourceDBList, $sourceDBArray);
+
+            }
+
+            return $sourceDBList;
+        
+        } catch (PDOException $e) {
+			echo $e->getMessage();
+			return $sourceDBList;
+		}
+	}
+
+
+                    
+                
 
 }
 ?>

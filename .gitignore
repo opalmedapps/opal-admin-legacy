@@ -1,5 +1,4 @@
 # ignore configurations 
-php/config.php
 js/config.js
 
 # ignore swap files
@@ -12,6 +11,9 @@ js/config.js
 js/lib/*
 css/lib/*
 php/lib/*
+
+# ignore images directory
+images/*
 
 # ignore font directory
 fonts/*

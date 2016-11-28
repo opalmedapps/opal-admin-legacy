@@ -1,3 +1,15 @@
+Version 0.3.0:
+ - Merge branch 'mediVisit' into develop
+ -     --- Ignored images directory
+ -     --- Removed dependency of a remote directory for hospital maps.         Set images to show up locally.
+ -     --- Updated config file to use utf-8 charset in MySQL
+ - Merge branch 'hotfix-0.1.1' into develop
+ -     --- Fixed an issue that caused the alternation of EN and FR names and descriptions in Posts         Variables were set in opposite order.
+ -     --- Updated gitignore to include config.php file.         Now each branch will have a respective config.php file to use the proper MySQL database.
+ -     --- Updated gitignore to include config.php file.         Now each branch will have a respective config.php file to use the proper MySQL database.
+ -     --- Added WaitRoomManagement source database functionality. Updated scripts accordingly.
+ - Merge branch 'release-0.1' into develop
+
 Version 0.1.2:
  - Merge branch 'hotfix-0.1.1'
  -     --- Fixed an issue that caused the alternation of EN and FR names and descriptions in Posts         Variables were set in opposite order.
