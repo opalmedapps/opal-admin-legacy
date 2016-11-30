@@ -1,3 +1,11 @@
+Version 0.3.1:
+ -     -- Ignored php configs
+ - Merge branch 'release-0.2'
+ - Merge branch 'hotfix-0.1.2'
+ -     --- Removed remote directory dependency.         Now hospital maps are generated locally.
+ - Version bump to 0.1.2
+ - Merge branch 'hotfix-0.1.1'
+
 Version 0.3.0:
  - Merge branch 'mediVisit' into develop
  -     --- Ignored images directory
