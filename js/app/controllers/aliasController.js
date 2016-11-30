@@ -37,7 +37,7 @@ angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui
         $scope.changesMade = false;
 
 		// Templates for alias table
-		var cellTemplateName = '<div style="cursor:pointer; padding-top: 5px;" ' + 
+		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents"' + 
             'ng-click="grid.appScope.editAlias(row.entity)">' + 
             '<a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></div>';
       	var checkboxCellTemplate = '<div style="text-align: center; cursor: pointer;" ' +
