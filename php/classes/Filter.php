@@ -20,7 +20,8 @@ class Filter {
             'resources'     => array()
         );
         try {
-            $aria_link = mssql_connect(ARIA_DB, ARIA_USERNAME, ARIA_PASSWORD);
+	        $aria_link = new PDO( ARIA_DB , ARIA_USERNAME, ARIA_PASSWORD );
+            $aria_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
             $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -34,8 +35,10 @@ class Filter {
                 ORDER BY
                     vva.Expression1
             ";
-            $query = mssql_query($sql);
-            while ($data = mssql_fetch_array($query)) {
+            $query = $aria_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+            $query->execute();
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+         
                 $expressionArray = array(
                     'name'  => $data[0],
                     'id'    => $data[0],
@@ -83,8 +86,9 @@ class Filter {
                 ORDER BY
                     Doctor.LastName
             ";
-            $query = mssql_query($sql);
-            while ($data = mssql_fetch_array($query)) {
+            $query = $aria_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+            $query->execute();
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
                 $doctorArray = array(
                     'name'  => $data[1],
                     'id'    => $data[0],
@@ -108,8 +112,9 @@ class Filter {
                 ORDER BY 
                     vr.ResourceName
             ";
-            $query = mssql_query($sql);
-            while ($data = mssql_fetch_array($query)) {
+            $query = $aria_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+            $query->execute();
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
                 $resourceArray = array(
                     'name'  => $data[1],
                     'id'    => $data[0],

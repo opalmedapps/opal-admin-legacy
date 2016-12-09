@@ -123,7 +123,7 @@ class HospitalMap {
                 $description_EN     = $data[4];
                 $name_FR            = $data[5];
                 $description_FR     = $data[6];
-                $qr = HospitalMap::generateQRCode($qrid, null);
+                $qr = $this->generateQRCode($qrid, null);
                 $qrcode = $qr['qrcode'];
                 $qrpath = $qr['qrpath'];
                 
@@ -188,7 +188,7 @@ class HospitalMap {
             $description_EN     = $data[3];
             $name_FR            = $data[4];
             $description_FR     = $data[5];
-            $qr = HospitalMap::generateQRCode($qrid, null);
+            $qr = $this->generateQRCode($qrid, null);
             $qrcode = $qr['qrcode'];
             $qrpath = $qr['qrpath'];
 
