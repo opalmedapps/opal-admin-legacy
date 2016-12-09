@@ -20,7 +20,8 @@ class Alias {
             // ARIA 
             if ($sourceDBSer == 1) {
 
-                $aria_link = mssql_connect(ARIA_DB, ARIA_USERNAME, ARIA_PASSWORD);
+	            $aria_link = new PDO( ARIA_DB , ARIA_USERNAME, ARIA_PASSWORD );
+            	$aria_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
                 if ($expressionType != "Document") {
                     $sql = "
@@ -32,8 +33,10 @@ class Alias {
                         vv_ActivityLng.Expression1
                     ";
     
-                    $query = mssql_query($sql);
-                    while ($data = mssql_fetch_array($query)) {
+                    $query = $aria_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                   	$query->execute();
+                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
 
                         $termName = $data[0];
                         $termArray = array(
@@ -56,9 +59,11 @@ class Alias {
                             note_typ.note_typ_desc
                     ";
     
-                    $query = mssql_query($sql);
-                    while ($data = mssql_fetch_array($query)) {
-    
+                    $query = $aria_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                   	$query->execute();
+                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+
                         $termName = $data[0];
                             
                         $termArray = array(
@@ -232,7 +237,8 @@ class Alias {
 				}
 
                 if ($aliasEduMatSer != 0) {
-                    $aliasEduMat = EduMaterial::getEducationalMaterialDetails($aliasEduMatSer);
+                    $eduMatObj = new EduMaterial();
+                    $aliasEduMat = $eduMatObj->getEducationalMaterialDetails($aliasEduMatSer);
                 }
                             
 				$aliasArray = array(
@@ -336,7 +342,8 @@ class Alias {
 			}
 
             if ($aliasEduMatSer != 0) {
-                $aliasEduMat = EduMaterial::getEducationalMaterialDetails($aliasEduMatSer);
+                $eduMatObj = new EduMaterial();
+                $aliasEduMat = $eduMatObj->getEducationalMaterialDetails($aliasEduMatSer);
             }
                          
 			$aliasDetails = array(
@@ -376,7 +383,10 @@ class Alias {
 		$aliasDesc_FR	= $aliasArray['description_FR'];
 		$aliasType	    = $aliasArray['type'];
 		$aliasTerms	    = $aliasArray['terms'];
-        $aliasEduMatSer = $aliasArray['edumat']['serial'];
+        $aliasEduMatSer = 0;
+        if ( is_array($aliasArray['edumat']) && isset($aliasArray['edumat']['serial']) ) {
+            $aliasEduMatSer = $aliasArray['edumat']['serial'];
+        }
         $sourceDBSer    = $aliasArray['source_db']['serial'];
 
 		try {
@@ -502,7 +512,10 @@ class Alias {
 		$aliasDesc_FR	= $aliasArray['description_FR'];
 		$aliasSer	    = $aliasArray['serial'];
         $aliasTerms	    = $aliasArray['terms'];
-        $aliasEduMatSer = $aliasArray['edumat']['serial'];
+        $aliasEduMatSer = 0;
+        if ( is_array($aliasArray['edumat']) && isset($aliasArray['edumat']['serial']) ) {
+            $aliasEduMatSer = $aliasArray['edumat']['serial'];
+        }
 
         $existingTerms	= array();
 
