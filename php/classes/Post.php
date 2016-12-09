@@ -431,7 +431,7 @@ class Post {
 	    		foreach ($existingFilters as $existingFilter) {
                     $id     = $existingFilter['id'];
                     $type   = $existingFilter['type'];
-                    if (!Post::nestedSearch($id, $type, $postFilters)) {
+                    if (!$this->nestedSearch($id, $type, $postFilters)) {
 					    $sql = "
                             DELETE FROM 
 	    						Filters
@@ -452,7 +452,7 @@ class Post {
     			foreach ($postFilters as $filter) {
                     $id     = $filter['id'];
                     $type   = $filter['type'];
-                    if (!Post::nestedSearch($id, $type, $existingFilters)) {
+                    if (!$this->nestedSearch($id, $type, $existingFilters)) {
                         $sql = "
                             INSERT INTO 
                                 Filters (
