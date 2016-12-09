@@ -27,11 +27,10 @@ class Filter {
             $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
         
             $sql = "
-                use variansystem;
                 SELECT DISTINCT
                     vva.Expression1
                 FROM   
-                    vv_ActivityLng vva
+                    variansystem.dbo.vv_ActivityLng vva
                 ORDER BY
                     vva.Expression1
             ";
@@ -70,13 +69,12 @@ class Filter {
             }
 
             $sql = "
-                use variansystem;
                 SELECT DISTINCT
                     Doctor.ResourceSer,
                     Doctor.LastName
                 FROM
-                    Doctor,
-                    PatientDoctor
+                    variansystem.dbo.Doctor Doctor,
+                    variansystem.dbo.PatientDoctor PatientDoctor
                 WHERE 
                     PatientDoctor.PrimaryFlag       = 1
                 AND PatientDoctor.OncologistFlag    = 1
@@ -99,12 +97,11 @@ class Filter {
             }
 
             $sql = "
-                use variansystem;
                 SELECT DISTINCT
                     vr.ResourceSer,
                     vr.ResourceName
                 FROM    
-                    vv_ResourceName vr
+                    variansystem.dbo.vv_ResourceName vr
                 WHERE
                     vr.ResourceName     LIKE 'STX%'
                 OR  vr.ResourceName     LIKE 'TB%'
