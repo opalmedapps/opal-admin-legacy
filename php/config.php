@@ -14,7 +14,7 @@
 	define( "HOST_USERNAME", "webdb" );
 	define( "HOST_PASSWORD", "service" );
     // ARIA
-	define( "ARIA_DB", "172.16.220.56:1433\\database" );
+	define( "ARIA_DB", "dblib:host=172.16.220.56:1433\\database" );
 	define( "ARIA_USERNAME", "reports" );
 	define( "ARIA_PASSWORD", "reports" );
     // WaitRoomManagement
