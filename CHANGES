@@ -1,3 +1,8 @@
+Version 0.3.2:
+ -     -- Removed file from tracking. SHOULD NOT BE THERE!
+ - Merge branch 'hotfix-0.3.1'
+ -     --- Replaced overflow of text with ellipses on eahc Name column         -- Better readability.
+
 Version 0.3.1:
  -     -- Ignored php configs
  - Merge branch 'release-0.2'
