@@ -238,6 +238,21 @@ angular.module('ATO_InterfaceApp.controllers.eduMatController', ['ngAnimate', 'n
 
 			$scope.eduMat = {}; // initialize edumat object
 
+            // Initialize a list of sexes
+            $scope.sexes = [
+                {name: 'Male'},
+                {name: 'Female'}
+            ];
+
+            // Initialize to hold demographic filters
+            $scope.demoFilter = {
+                sex: null,
+                age: {
+                    min: 0,
+                    max: 100
+                }
+            };
+
             // Initialize lists to hold filters
             $scope.termList = [];
             $scope.dxFilterList = [];
@@ -312,6 +327,9 @@ angular.module('ATO_InterfaceApp.controllers.eduMatController', ['ngAnimate', 'n
 				// Assign value
 				$scope.eduMat = response;
 
+                // Assign demographic filters
+                checkDemographicFilters();
+
           		// Call our API service to get each filter
 				filterAPIservice.getFilters().success(function (response) {
 
@@ -371,6 +389,27 @@ angular.module('ATO_InterfaceApp.controllers.eduMatController', ['ngAnimate', 'n
 
                 return filterList;
             }
+            
+            // Function to check demographic filters
+            function checkDemographicFilters() {
+                var demoFilter = {
+                    sex: null,
+                    age: {
+                        min: 0,
+                        max: 100
+                    }
+                };
+                angular.forEach($scope.eduMat.filters, function(selectedFilter) {
+                    if (selectedFilter.type == 'Sex')
+                        $scope.demoFilter.sex = selectedFilter.id
+                    if (selectedFilter.type == 'Age') {
+                        $scope.demoFilter.age.min = parseInt(selectedFilter.id.split(',')[0]);
+                        $scope.demoFilter.age.max = parseInt(selectedFilter.id.split(',')[1]);
+                    }
+                });
+
+                return demoFilter;
+            }
 
             // Function to check necessary form fields are complete
             $scope.checkForm = function() {
@@ -406,6 +445,19 @@ angular.module('ATO_InterfaceApp.controllers.eduMatController', ['ngAnimate', 'n
 
                     // Intialize filter
                     $scope.eduMat.filters = [];
+
+                    // Add demographic filters, if defined
+                    if ($scope.demoFilter.sex)
+                        $scope.eduMat.filters.push({id:$scope.demoFilter.sex, type:'Sex'})
+                    if ($scope.demoFilter.age.min >= 0 && $scope.demoFilter.age.max <= 100) { // i.e. not empty
+                        if ($scope.demoFilter.age.min != 0 || $scope.demoFilter.age.max != 100) { // Filters were changed
+                            $scope.eduMat.filters.push({
+                                id: String($scope.demoFilter.age.min).concat(',', String($scope.demoFilter.age.max)),
+                                type:'Age'
+                            });
+                        }
+                    }
+                   
 		            // Add filters to edu material
                     addFilters($scope.termList);
                     addFilters($scope.dxFilterList);
