@@ -32,7 +32,6 @@
 	define( "PERL_PATH", "/usr/lib/cgi-bin/dev/ATO/"); 
 	define( "PERL_REGEX", "/\/usr\/lib\/cgi-bin\/dev\/ATO\/");
 	define( "ABS_REGEX", "/\/var\/www\/devDocuments\/ATO\/php\/cron\/update_crontab.php "); 
-
     define( "SESSION_KEY_NAME", "ATO_DEV_username");
     define( "SESSION_KEY_LOGIN", "ATO_DEV_loginAttempt");
     define( "SESSION_KEY_REGISTER", "ATO_DEV_registerAttempt");

@@ -1,4 +1,4 @@
-angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
+angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.bootstrap.materialPicker']).
 
 
 	/******************************************************************************
@@ -47,6 +47,8 @@ angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
             '<strong><a href="" ng-click="grid.appScope.editAlias(row.entity)">Edit</a></strong> ' + 
             '- <strong><a href="" ng-click="grid.appScope.deleteAlias(row.entity)">Delete</a></strong></div>';
+        var cellTemplateColor = '<div class="color-palette-sm" style="margin-top: 7px; margin-left: auto; margin-right: auto" '+
+            'ng-style="{\'background-color\': row.entity.color}"></div>';
 
 		// Alias table search textbox param
 		$scope.filterOptions = function(renderableRows) {
@@ -81,6 +83,7 @@ angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui
                 {field:'update', displayName:'Update', width:'80', cellTemplate:checkboxCellTemplate},
 				{field:'count', displayName:'# of terms', width:'90'},
 				{field:'source_db.name', displayName:'Source DB', width:'120'},
+                {field:'color', displayName:'Color Tag', width:'90', cellTemplate:cellTemplateColor},
 				{name:'Operations', cellTemplate:cellTemplateOperations, sortable:false}
 			],
             useExternalFiltering: true,
@@ -213,6 +216,7 @@ angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui
 			$scope.aliasModal = {}; // for deep copy
 			$scope.termList = []; // initialize list for unassigned expressions in our DB
             $scope.eduMatList = [];
+            $scope.existingColorTags = [];
 
 			$scope.termFilter;
             $scope.eduMatFilter;
@@ -306,6 +310,13 @@ angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui
 
 
 				});
+
+                // Call our API service to get the list of existing color tags
+                aliasAPIservice.getExistingColorTags($scope.alias.type).success(function (response) {
+                    $scope.existingColorTags = response; // Assign response
+    
+                });
+
 			});
 
 			// Function to add / remove a term to alias
@@ -383,6 +394,16 @@ angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui
                 // Toggle boolean
                 $scope.changesMade = true;
             }
+
+            $scope.colorUpdate = function(color) {
+
+                // Toggle boolean
+                $scope.changesMade = true;
+
+                if (color)
+                    $scope.alias.color = color;
+            }
+                
 
 			$scope.toggleAlertText = function() {
 				if ($scope.emptyTitle || $scope.emptyDescription || $scope.emptyTerms) {

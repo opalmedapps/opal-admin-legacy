@@ -176,7 +176,67 @@
           <uib-accordion-group is-open="statusD.open">
             <uib-accordion-heading>
               <div>
-                Assigned Terms <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusD.open, 'glyphicon-chevron-right': !statusD.open}"></i>
+                Color Tag <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusD.open, 'glyphicon-chevron-right': !statusD.open}"></i>
+              </div>
+            </uib-accordion-heading>
+            <div class="bs-callout bs-callout-info">
+              <h4 style="text-align: center">Current Color Tag</h4>
+              <div class="color-data">
+                <div class="color-picked">
+                  <div class="color-palette" ng-style="{'background-color': alias.color}"></div>
+                </div>
+                <div class="color-label hex">
+                  <h4>HEX</h4>
+                </div>
+                <div class="color-code">
+                  <h4>{{alias.color}}</h4>
+                </div>
+              </div>           
+            </div>
+
+            <div class="row" style="padding-top: 15px; border-top: solid 1px #ddd;">
+              <div class="col-md-4">
+                <div class="panel panel-default">
+                  <div class="panel-heading">Existing Colors</div>
+                  <table class="table table-condensed fixed-header">
+                    <tbody>
+                      <tr ng-repeat="existingColor in existingColorTags" class="color"> 
+                        <td class="color-picked">
+                          <div class="color-palette" ng-style="{'background-color': existingColor.color}" ng-click="colorUpdate(existingColor.color)"></div>
+                        </td>
+                        <td class="color-assignee">
+                          <h5>{{existingColor.name_EN}}</h5>
+                        </td>
+                        <td class="color-code">
+                          <h5>{{existingColor.color}}</h5>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="col-md-8">
+                <div class="color-picker">
+                  <div class="cp-description">
+                    <p class="cp-header">
+                      Choose an icon color.
+                    </p>
+                    <p class="cp-sub-header">
+                      Or select an existing color on the left.
+                    </p>
+                  </div>  
+                  <div class="cp-main">
+                    <material-picker ng-model="alias.color" ng-click="colorUpdate()" format="'hex'" size="20" hover-model="hoverColor"></material-picker>
+                  </div> 
+                </div>
+              </div>   
+            </div>      
+            
+          </uib-accordion-group>
+          <uib-accordion-group is-open="statusE.open">
+            <uib-accordion-heading>
+              <div>
+                Assigned Terms <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusE.open, 'glyphicon-chevron-right': !statusE.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">

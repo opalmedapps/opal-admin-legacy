@@ -11,6 +11,16 @@
 }
 
 @font-face {
+    font-family: 'Proxima-Nova-Soft';
+    src: url('../fonts/ProximaNovaSoft-Regular.eot');
+    src: url('../fonts/ProximaNovaSoft-Regular.eot?#ie-fix') format('embedded-opentype'),
+         url('../fonts/ProximaNovaSoft-Regular.woff') format('woff'),
+         url('../fonts/ProximaNovaSoft-Regular.ttf') format('truetype'),
+         url('../fonts/ProximaNovaSoft-Regular.svg#Proxima-Nova-Soft') format('svg'),
+         url('../fonts/ProximaNovaSoft-Regular.otf') format('opentype');
+}
+
+@font-face {
   font-family: 'Glyphicons Halflings';
 
   src: url('../fonts/glyphicons-halflings-regular.eot');
@@ -404,7 +414,7 @@ table {
 /* Full browser */
 body {
   /*position: relative;*/
-  /*font-family: 'Helvetica-Neue-Light', Georgia, serif;*/
+  font-family: 'Proxima-Nova-Soft', Georgia, serif;
   background-color: #e6edfa;
   height: 100%;
   font-weight: 200;
@@ -922,6 +932,11 @@ ul.no-list {
   background-color: #6f5499;
 }
 
+.active-purple-full {
+  color: #fff;
+  background-color: #563d7c;
+  border-color: #563d7c;
+}
 
 .panel-info {
   padding: 10px;
@@ -1216,6 +1231,109 @@ ol, ul {
 .log-list:hover {
   background-color: beige;
 }
+
+table.fixed-header > tbody,
+table.fixed-header tr,
+table.fixed-header td,
+table.fixed-header th {
+  display: block;
+}
+
+table.fixed-header tr:after {
+  content: ' ';
+  display: block;
+  visibility: hidden;
+  clear: both;
+}
+
+table.fixed-header > tbody {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+table.fixed-header td {
+  float: left;
+}
+
+.color-data {
+  margin-top: 10px;
+  text-align: center;
+}
+.color-data div {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.color-palette {
+  width: 50px;
+  height: 27px;
+  border-radius: 3px;
+}
+
+.color-palette-sm {
+  width: 35px;
+  height: 16px;
+  border-radius: 3px;
+}
+
+td .color-palette {
+  cursor: pointer;
+}
+
+.color-label {
+  margin-left: 9px;
+}
+
+.color-label h4 { 
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.color-code {
+  margin-left: 9px;
+}
+
+.color-code h4 {
+  font-size: 20px;
+}
+
+table tr.color {
+  width: 100%;
+}
+
+table tr.color td {
+  vertical-align: middle;
+}
+
+td.color-assignee {
+  width: 156px;
+  padding-left:8px;
+}
+
+td.color-assignee h5 {
+  font-size: 14px;
+}
+
+td.color-code {
+  margin-left: 0;
+  width: 90px;
+}
+
+td.color-code h5 {
+  font-size: 14px;
+}
+
+.cp-description p {
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.cp-header {
+  font-size: 31px;
+}
+  
+
+
 
 /* 
  * FOOTER 

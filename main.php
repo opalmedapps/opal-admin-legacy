@@ -35,6 +35,7 @@
 	<script src="js/lib/bootstrap/bootstrap.min.js"></script>
 	<script src="js/lib/bootstrap/ui-bootstrap-tpls-1.2.1.custom.min.js"></script>
 	<script src="js/lib/bootstrap/bootstrap-datetimepicker.min.js"></script>
+	<script src="js/lib/bootstrap/ui.bootstrap.materialPicker.js"></script>
 	<script src="js/lib/livicon/raphael-min.js"></script>
 	<script src="js/lib/livicon/livicons-1.4-custom.min.js"></script>
 	<script src="js/lib/ui-grid/ui-grid.min.js"></script>
@@ -81,6 +82,7 @@
 	<link media="all" type="text/css" rel="stylesheet" href="css/lib/docs.min.css">
 	<link media="all" type="text/css" rel="stylesheet" href="css/lib/font-awesome.min.css">
 	<link media="all" type="text/css" rel="stylesheet" href="css/lib/textAngular.css">
+	<link media="all" type="text/css" rel="stylesheet" href="css/lib/ui.bootstrap.materialPicker.css">
 
 	<link media="all" type="text/css" rel="stylesheet" href="css/style.css">
 
