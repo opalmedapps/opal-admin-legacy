@@ -1,4 +1,4 @@
-angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','ui.bootstrap', 'ui.grid']).
+angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','ui.bootstrap', 'ui.grid', 'ui.bootstrap.materialPicker']).
 
 	/******************************************************************************
 	* Add Alias Page controller 
@@ -49,6 +49,7 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
 			type: null,
             eduMat: null,
             source_db: null,
+            color: '#777777',
 			terms: []
 		};
 
@@ -56,8 +57,12 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
 		$scope.termList = [];
         // Initialize list that will hold educational materials
         $scope.eduMatList = [];
+
         // Initialize list that will hold source databases
         $scope.sourceDBList
+
+        // Initialize list that will hold existing color tags
+        $scope.existingColorTags = [];
 				
 		$scope.termFilter = null;
         $scope.eduMatFilter = null;
@@ -169,7 +174,10 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
 		}
 
 		// Function to toggle necessary changes when updating alias type
-		$scope.typeUpdate = function () {
+		$scope.typeUpdate = function (typeName) {
+
+            // Set the name
+            $scope.newAlias.type = typeName;
 
 			// Toggle boolean
 			steps.type.completed = true;
@@ -214,6 +222,12 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
 	    		    });
     	    	});
             }
+
+            // Call our API service to get the list of existing color tags
+            aliasAPIservice.getExistingColorTags($scope.newAlias.type).success(function (response) {
+                $scope.existingColorTags = response; // Assign response
+
+            });
 
 			// Count the number of completed steps
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
