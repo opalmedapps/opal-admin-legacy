@@ -227,6 +227,50 @@
               </div>
             </div>
           </uib-accordion-group>
+          <uib-accordion-group is-open="statusI.open"> 
+            <uib-accordion-heading>
+              <div>
+                Filter Demographics <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusD.open, 'glyphicon-chevron-right': !statusD.open}"></i>
+              </div>
+            </uib-accordion-heading>
+            <div class="bs-callout bs-callout-info">
+              <h4>Current Sex Filter: <span ng-hide="demoFilter.sex">None</span><span ng-show="demoFilter.sex">{{demoFilter.sex}}</span> </h4>
+              <h4>Current Age Group Filter: <span ng-hide="demoFilter.age">None</span><span ng-show="demoFilter.age">{{demoFilter.age.min}} to {{demoFilter.age.max}}</span> </h4>
+              <p>To change the current filter(s), use the fields below.</p>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <h2 style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Sex</h2>
+                <ul class="list-items">
+                  <li ng-repeat="sex in sexes">
+                    <label>
+                      <input type="radio" ng-model="demoFilter.sex" ng-change="setChangesMade()" ng-value="sex.name" /> {{sex.name}}
+                    </label>
+                  </li>
+                </ul>
+                <div style="padding: 10px;">
+                  <button class="btn btn-primary" ng-click="demoFilter.sex=''">Remove Filter</button>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <h2 style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Age Group</h2>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="input-group">
+                      <span class="input-group-addon">MIN</span>
+                      <input class="form-control" ng-model="demoFilter.age.min" ng-change="setChangesMade()" type="number" ng-max="demoFilter.age.max" min="0">
+                    </div> 
+                  </div>
+                  <div class="col-md-6">
+                    <div class="input-group">
+                      <span class="input-group-addon">MAX</span>
+                      <input class="form-control" ng-model="demoFilter.age.max" ng-change="setChangesMade()" type="number" max="100" ng-min="demoFilter.age.min">
+                    </div> 
+                  </div>
+                </div>
+              </div>
+            </div>
+          </uib-accordion-group>     
           <uib-accordion-group is-open="statusD.open">
             <uib-accordion-heading>
               <div>
