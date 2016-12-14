@@ -1,3 +1,17 @@
+Version 0.4.0:
+ - Merge branch 'demographics' into develop
+ -     --- Added demographic logic         -- Now users can filter by age group and sex
+ - Merge branch 'hotfix-0.3.3' into develop
+ -     --- Fixed issue where ARIA filters were not populated         -- Removed "use variansystem" and defined explicitly in FROM clause
+ -     --- Changed ARIA setting
+ -     --- For some reason this file got deleted. Added back in
+ - Merge branch 'hotfix-0.3.2' into develop
+ -     -- removed config.php from gitignore
+ - Merge branch 'hotfix-0.3.2'
+ -     --- Changed all static function calls to non-static function calls         -- All functions are non-static so calling a class function using "::" would throw an error         since that is a static function call. This was fixed by initializing a new object and         calling the object function using "->". This is a non-static function call.
+ - Merge branch 'hotfix-0.3.1' into develop
+ - Merge branch 'release-0.2' into develop
+
 Version 0.3.2:
  -     -- Removed file from tracking. SHOULD NOT BE THERE!
  - Merge branch 'hotfix-0.3.1'
