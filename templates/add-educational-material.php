@@ -55,7 +55,17 @@
                         </ul> 
                       </p>
                     </li>
-                    <li class="list-group-item" ng-show="newPost.type"> 
+                    <li class="list-group-item"> 
+                      <strong>Demographic Filter(s):</strong>
+                      <p style="margin-top: 5px;">
+                        <span ng-show="demoFilter.sex">Sex: {{demoFilter.sex}}</span>
+                        <span ng-hide="demoFilter.sex">Sex: All</span>
+                        <br>
+                        <span ng-show="demoFilter.age">Age Group: {{demoFilter.age.min}} to {{demoFilter.age.max}}</span> 
+                        <span ng-hide="demoFilter.age">Age Group: All</span>
+                      </p>
+                    </li>
+                    <li class="list-group-item"> 
                       <strong>Term Filter(s):</strong>
                       <p style="margin-top: 5px;">
                         <ul style="max-height: 100px; overflow-y: auto;">
@@ -68,7 +78,7 @@
                         </ul>
                       </p>
                     </li>
-                    <li class="list-group-item" ng-show="newPost.type">
+                    <li class="list-group-item">
                       <strong>Diagnosis Filter(s):</strong>
                       <p style="margin-top: 5px;">
                         <ul style="max-height: 100px; overflow-y: auto;">
@@ -81,7 +91,7 @@
                         </ul>
                       </p>
                     </li>
-                    <li class="list-group-item" ng-show="newPost.type">
+                    <li class="list-group-item">
                       <strong>Doctor Filter(s):</strong>
                       <p style="margin-top: 5px;">
                         <ul style="max-height: 100px; overflow-y: auto;">
@@ -94,7 +104,7 @@
                         </ul>
                       </p>
                     </li>
-                    <li class="list-group-item" ng-show="newPost.type">
+                    <li class="list-group-item">
                       <strong>Resource Filter(s):</strong>
                       <p style="margin-top: 5px;">
                         <ul style="max-height: 100px; overflow-y: auto;">
@@ -292,6 +302,47 @@
                     </div>
                   </div>  
                 </uib-accordion-group>  
+                <uib-accordion-group ng-class="panel-warning" is-open="statusM">
+                  <uib-accordion-heading>
+                    <h2 class="panel-title"><strong>Filter Demographics</strong>
+                      <span style="float:right"><em>Optional</em></span>
+                    </h2>
+                  </uib-accordion-heading>
+                  <div class="panel-input">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <h2 style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Sex</h2>
+                        <ul class="list-items">
+                          <li ng-repeat="sex in sexes">
+                            <label>
+                              <input type="radio" ng-model="demoFilter.sex" ng-value="sex.name" /> {{sex.name}}
+                            </label>
+                          </li>
+                        </ul>
+                        <div style="padding: 10px;">
+                            <button class="btn btn-primary" ng-click="demoFilter.sex=''">Remove Filter</button>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <h2 style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Age Group</h2>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="input-group">
+                              <span class="input-group-addon">MIN</span>
+                              <input class="form-control" ng-model="demoFilter.age.min" type="number" ng-max="demoFilter.age.max" min="0">
+                            </div> 
+                          </div>
+                          <div class="col-md-6">
+                            <div class="input-group">
+                              <span class="input-group-addon">MAX</span>
+                              <input class="form-control" ng-model="demoFilter.age.max" type="number" max="100" ng-min="demoFilter.age.min">
+                            </div> 
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>         
+                </uib-accordion-group>
                 <uib-accordion-group ng-class="panel-warning" is-open="statusH">
                   <uib-accordion-heading>
                     <h2 class="panel-title"><strong>Filter terms</strong>

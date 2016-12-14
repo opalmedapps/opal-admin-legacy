@@ -72,7 +72,20 @@ angular.module('ATO_InterfaceApp.controllers.newEduMatController', ['ngAnimate',
             filters: []
         }
 
+        // Initialize a list of sexes
+        $scope.sexes = [
+            {name: 'Male'},
+            {name: 'Female'}
+        ];
+
         // Initialize lists to hold filters
+        $scope.demoFilter = {
+            sex: null,
+            age: {
+                min: 0,
+                max: 100
+            }
+        };
         $scope.termList = [];
         $scope.dxFilterList = [];
         $scope.doctorFilterList = [];
@@ -265,7 +278,19 @@ angular.module('ATO_InterfaceApp.controllers.newEduMatController', ['ngAnimate',
         // Function to submit the new edu material
         $scope.submitEduMat = function() {
             if ($scope.checkForm()) {
-                // Add filters to new post object
+
+                // Add demographic filters, if defined
+                if ($scope.demoFilter.sex)
+                    $scope.newEduMat.filters.push({id:$scope.demoFilter.sex, type:'Sex'})
+                if ($scope.demoFilter.age.min >= 0 && $scope.demoFilter.age.max <= 100) { // i.e. not empty
+                    if ($scope.demoFilter.age.min != 0 || $scope.demoFilter.age.max != 100) { // Filters were changed
+                        $scope.newEduMat.filters.push({
+                            id: String($scope.demoFilter.age.min).concat(',', String($scope.demoFilter.age.max)),
+                            type:'Age'
+                        });
+                    }
+                }
+                // Add other filters to new edu material object
                 addFilters($scope.termList);
                 addFilters($scope.dxFilterList);
                 addFilters($scope.doctorFilterList);
