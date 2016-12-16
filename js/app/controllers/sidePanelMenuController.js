@@ -41,6 +41,10 @@ angular.module('ATO_InterfaceApp.controllers.sidePanelMenuController', ['ui.boot
         $scope.goToTestResult= function () {
             window.location.href = URLPATH+"main.php#/test-result";
         }
+		// Function to logout
+        $scope.goToLogout= function () {
+            window.location.href = URLPATH+"php/user/logout.php";
+        }
 			
 	});
 

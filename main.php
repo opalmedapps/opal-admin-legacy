@@ -42,6 +42,7 @@
 	<script src="js/lib/textAngular/textAngular-rangy.min.js"></script>
 	<script src="js/lib/textAngular/textAngular-sanitize.min.js"></script>
 	<script src="js/lib/textAngular/textAngular.min.js"></script>
+	<script src="js/lib/itemSlide/itemslide.min.js"></script>
 
 	<!-- Start Up -->
  	<script type="text/javascript" src="js/app/app.js"></script>
@@ -89,66 +90,26 @@
 </head>
 <body ng-app="ATO_InterfaceApp">
   <div id="page">
+    <!-- PHP if user is logged in -->
+    <? if($loginAttempt == "1") : ?>
     <div ng-controller="headerController">
-    <div class="topbar">
-      <div class="global-nav">
-        <div class="global-nav-inner">
-          <div class="container">
-            <span class="title-topbar"> 
-              ATO
-            </span>
-            <!-- PHP if user is logged in -->
-            <? if($loginAttempt == "1") : ?>
-            <span class="logout-topbar">
-              <a href="php/user/logout.php">Logout</a>
-            </span>
-            <? endif; ?>
-            <!--<div role="navigation">
-              <ul id="global-actions" class="nav">
-                <li class="nav-home">
-                  <a href="#/">
-                    <span class="text">Home</span>
-                  </a>
-                </li>
-                <li class="nav-alias">
-                  <a href="#/alias">
-                    <span class="text">Aliases 
-                    </span>
-                  </a>
-                </li>
-                <li class="nav-post">
-                  <a href="#/post">
-                    <span class="text">Posts
-                    </span>
-                  </a>
-                </li>
-                <li class="nav-edu-mat">
-                  <a href="#/educational-material">
-                    <span class="text">Educational Material
-                    </span>
-                  </a>
-                </li>
-                <li class="nav-hospital-map">
-                  <a href="#/hospital-map">
-                    <span class="text">Hospital Maps
-                    </span>
-                  </a>
-                </li>
-                <li class="nav-notification">
-                  <a href="#/notification">
-                    <span class="text">Notifications
-                    </span>
-                  </a>
-                </li>
-              </ul>
-            </div>-->
+      <!--<div class="topbar">
+        <div class="global-nav">
+          <div class="global-nav-inner">
+            <div class="container">
+              <span class="title-topbar"> 
+                ATO
+              </span>
+              <span class="logout-topbar">
+                <a href="php/user/logout.php">Logout</a>
+              </span>  
+            </div>
           </div>
         </div>
-      </div>
+      </div>-->
     </div>
-    </div>
-  <ng-view></ng-view>
-
+    <? endif; ?>
+    <ng-view></ng-view>
 </div>
  <script>
 	function date_time(id)

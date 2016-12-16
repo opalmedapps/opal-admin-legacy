@@ -77,7 +77,7 @@ angular.module('ATO_InterfaceApp.controllers.homeController', ['ngAnimate', 'ui.
                 $('.form-box').removeClass('shake');
             }, 1000);
         } 
-
+      
         // Function to submit login
         $scope.submitLogin = function () {
             if($scope.loginFormComplete()) {
