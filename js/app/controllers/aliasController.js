@@ -78,7 +78,7 @@ angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui
     	$scope.gridOptions = { 
 			data: 'aliasList',
 			columnDefs: [
-				{field:'name_EN', displayName:'Alias (EN / FR)', cellTemplate:cellTemplateName, width:'405'},
+				{field:'name_EN', displayName:'Alias (EN / FR)', cellTemplate:cellTemplateName, width:'605'},
 				{field:'type', displayName:'Type', width:'145'},
                 {field:'update', displayName:'Update', width:'80', cellTemplate:checkboxCellTemplate},
 				{field:'count', displayName:'# of terms', width:'90'},
