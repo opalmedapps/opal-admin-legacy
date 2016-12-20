@@ -49,7 +49,7 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
 			type: null,
             eduMat: null,
             source_db: null,
-            color: '#777777',
+            color: '',
 			terms: []
 		};
 
@@ -89,31 +89,20 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
         });
 
         // Function to toggle necessary changes when updating the source database buttons
-        $scope.sourceDBUpdate = function () {
+        $scope.sourceDBUpdate = function (sourceDB) {
 
-            if ($scope.newAlias.source_db) { 
-		
-                // Toggle boolean
-				steps.source.completed = true;
+            // Assign value
+            $scope.newAlias.source_db = sourceDB;
 
-				// Count the number of completed steps
-				$scope.numOfCompletedSteps = stepsCompleted(steps);
+            // Toggle boolean
+			steps.source.completed = true;
 
-				// Change progress bar
-				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+			// Count the number of completed steps
+			$scope.numOfCompletedSteps = stepsCompleted(steps);
+
+			// Change progress bar
+			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
               
-			}
-			else { // at least one textbox is empty
-
-				// Toggle boolean
-				steps.source.completed = false;
-				
-				// Count the number of completed steps
-				$scope.numOfCompletedSteps = stepsCompleted(steps);
-
-				// Change progress bar
-				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-			}
 		}
   
 		// Function to toggle necessary changes when updating alias title
