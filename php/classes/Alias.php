@@ -439,7 +439,7 @@ class Alias {
 		$aliasName_FR 	= $aliasArray['name_FR'];
 		$aliasDesc_EN	= $aliasArray['description_EN'];
 		$aliasDesc_FR	= $aliasArray['description_FR'];
-        $aliasType	    = $aliasArray['type'];
+        $aliasType	    = $aliasArray['type']['name'];
         $aliasColorTag  = $aliasArray['color'];
 		$aliasTerms	    = $aliasArray['terms'];
         $aliasEduMatSer = 0;

@@ -1284,12 +1284,12 @@ ol, ul {
 
 .summary-box .title {
   font-size: 16px;
-  padding: 0 10px;
+  padding-right: 10px;
 }
 
 .summary-box .description {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 .horz-line {
   border-bottom: 1px solid #6f5499;

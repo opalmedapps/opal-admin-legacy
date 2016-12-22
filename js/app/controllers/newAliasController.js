@@ -35,9 +35,16 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
 
 		// Initialize the list of alias types
 		$scope.aliasTypes = [
-			{name: 'Task'},
-			{name: 'Appointment'},
-			{name: 'Document'}
+			{
+                name: 'Task',
+                icon: 'th-list'
+            }, {
+                name: 'Appointment',
+                icon: 'calendar'
+            }, {
+                name: 'Document',
+                icon: 'folder-open'
+            }
 		];
 
 		// Initialize the new alias object
@@ -163,10 +170,10 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
 		}
 
 		// Function to toggle necessary changes when updating alias type
-		$scope.typeUpdate = function (typeName) {
+		$scope.typeUpdate = function (type) {
 
             // Set the name
-            $scope.newAlias.type = typeName;
+            $scope.newAlias.type = type;
 
 			// Toggle boolean
 			steps.type.completed = true;
