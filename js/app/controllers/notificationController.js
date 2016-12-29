@@ -48,7 +48,7 @@ angular.module('ATO_InterfaceApp.controllers.notificationController', ['ngAnimat
         $scope.gridOptions = {
             data: 'notificationList',
             columnDefs: [
-                {field:'name_EN', displayName:'Title (EN / FR)', cellTemplate:cellTemplateName, width:'355'},
+                {field:'name_EN', displayName:'Title (EN / FR)', cellTemplate:cellTemplateName, width:'655'},
                 {field:'type', displayName:'Type'},
                 {field:'description_EN', displayName:'Message (EN)'},
                 {name:'Operations', width:'200', cellTemplate:cellTemplateOperations, sortable:false}

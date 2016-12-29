@@ -44,7 +44,7 @@
                     </div>
                     <div class="col-md-3">
                       <div class="input-group">
-                        <input type="text" class="form-control" ng-model="filterValue" ng-change="filterPost(filterValue)" placeholder="Search...">
+                        <input type="text" class="form-control" ng-model="filterValue" ng-change="filterEduMat(filterValue)" placeholder="Search...">
                         <span class="input-group-addon">
                           <span class="glyphicon glyphicon-search"></span>
                         </span>
