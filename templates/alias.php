@@ -21,14 +21,14 @@
           <div class="col-md-2">
             <div ng-include="'templates/side-panel-menu.php'"></div>
           </div>
-          <div class="col-md-10">
+          <div class="col-md-10 animated fadeIn">
             <div class="row main-title">
               <div class="col-md-6 title-content">
                 <span class="glyphicon glyphicon-cloud"></span>
                 <h1><strong>Aliases</strong></h1>
               </div>
               <div class="col-md-6 title-breadcrumbs"> 
-                <span>Home <span class="glyphicon glyphicon-menu-right"></span> <strong>Aliases</strong></span>
+                <span>Home <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Aliases</strong></span>
               </div>
             </div>    
             <div class="panel-container" style="text-align:left">

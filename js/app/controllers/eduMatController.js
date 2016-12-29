@@ -54,7 +54,7 @@ angular.module('ATO_InterfaceApp.controllers.eduMatController', ['ngAnimate', 'n
     	$scope.gridOptions = { 
 			data: 'eduMatList',
 			columnDefs: [
-				{field:'name_EN', displayName:'Name (EN / FR)', cellTemplate:cellTemplateName, width:'355'},
+				{field:'name_EN', displayName:'Name (EN / FR)', cellTemplate:cellTemplateName, width:'655'},
 				{field:'type_EN', displayName:'Type (EN)', width:'145'},
                 {field:'publish', displayName:'Publish Flag', width:'130', cellTemplate:checkboxCellTemplate},
 				{field:'phase_EN', displayName:'Phase In Tx (EN)', width:'150'},

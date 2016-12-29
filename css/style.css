@@ -1282,6 +1282,15 @@ ol, ul {
   display: inline;
 }
 
+.table-summary {
+  max-height: 700px;
+  overflow: auto;
+}
+table.summary-box {
+  width: 100%;
+  table-layout: fixed;
+}
+
 .summary-box .title {
   font-size: 16px;
   padding-right: 10px;
@@ -1291,6 +1300,11 @@ ol, ul {
   margin-top: 5px;
   margin-bottom: 5px;
 }
+
+.summary-box .description p {
+  word-wrap: break-word;
+}
+
 .horz-line {
   border-bottom: 1px solid #6f5499;
 }
