@@ -47,9 +47,9 @@ angular.module('ATO_InterfaceApp.controllers.hospitalMapController', ['ngAnimate
         $scope.gridOptions = {
             data: 'hosMapList',
             columnDefs: [
-            {field:'name_EN', displayName:'Name (EN / FR)', cellTemplate:cellTemplateName, width:'355'},
+            {field:'name_EN', displayName:'Name (EN / FR)', cellTemplate:cellTemplateName, width:'555'},
             {field:'qrid', displayName:'QR Identifier', width:'145'},
-            {field:'url', displayName:'Map URL', width:'310'},
+            {field:'url', displayName:'Map URL', width:'410'},
             {name:'Operations', cellTemplate:cellTemplateOperations, sortable:false}
         ],
         useExternalFiltering: true,
