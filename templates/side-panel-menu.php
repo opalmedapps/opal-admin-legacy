@@ -67,7 +67,7 @@
                 </div>
               </div>      
               <div class="col-md-6">
-                <div class="panel-container animated" ng-class="{pulse: hoverI, active: currentPage == 'test-result'}" ng-mouseenter="hoverI=true" ng-mouseleave="hoverI=false" style="cursor:pointer;" ng-click="goToTestResult()">
+                <div class="panel-container animated" ng-class="{pulse: hoverN, active: currentPage == 'test-result'}" ng-mouseenter="hoverN=true" ng-mouseleave="hoverN=false" style="cursor:pointer;" ng-click="goToTestResult()">
                   <div class="side-panel-info" ng-class="{active: currentPage == 'test-result'}">
                     <div class="panel-content">
                       <i style="font-size: 21px;" class="fa fa-heartbeat" aria-hidden="true"></i>
@@ -102,18 +102,8 @@
                 <div class="panel-container animated" ng-class="{pulse: hoverI, active: currentPage == 'patients'}" ng-mouseenter="hoverI=true" ng-mouseleave="hoverI=false" style="cursor:pointer;" ng-click="goToPatient()">
                   <div class="side-panel-info" ng-class="{active: currentPage == 'patients'}">
                     <div class="panel-content">
-                      <span style="font-size: 21px;" class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                      <span style="font-size: 21px;" class="fa fa-address-card" aria-hidden="true"></span>
                       <div class="side-panel-title">Patients</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="panel-container animated" ng-class="{pulse: hoverJ, active: currentPage == 'registration'}" ng-mouseenter="hoverJ=true" ng-mouseleave="hoverJ=false" style="cursor:pointer;" ng-click="goToRegistration()">
-                  <div class="side-panel-info" ng-class="{active: currentPage == 'registration'}">
-                    <div class="panel-content">
-                      <span style="font-size: 21px;" class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
-                      <div class="side-panel-title">Registration</div>
                     </div>
                   </div>
                 </div>
@@ -144,7 +134,7 @@
                 <div class="panel-container animated" ng-class="{pulse: hoverL, active: currentPage == 'users'}" ng-mouseenter="hoverL=true" ng-mouseleave="hoverL=false" style="cursor:pointer;" ng-click="goToUsers()">
                   <div class="side-panel-info" ng-class="{active: currentPage == 'users'}">
                     <div class="panel-content">
-                      <span style="font-size: 21px;" class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                      <span style="font-size: 21px;" class="fa fa-users" aria-hidden="true"></span>
                       <div class="side-panel-title">Users</div>
                     </div>
                   </div>

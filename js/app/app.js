@@ -24,8 +24,10 @@ config(['$routeProvider', function($routeProvider) { // Set routes
 	when("/notification", {templateUrl: "templates/notification.php", controller: "notificationController"}).
 	when("/notification/add", {templateUrl: "templates/add-notification.php", controller: "newNotificationController"}).
 	when("/patients", {templateUrl: "templates/patient.php", controller: "patientController"}).
+	when("/patients/register", {templateUrl: "templates/patient-registration.php", controller: "patientRegistrationController"}).
 	when("/test-result", {templateUrl: "templates/test-result.php", controller: "testResultController"}).
 	when("/test-result/add", {templateUrl: "templates/add-test-result.php", controller: "newTestResultController"}).
+	when("/cron", {templateUrl: "templates/cron.php", controller: "cronController"}).
 	otherwise({redirectTo: '/'});
 }]);
 

@@ -85,6 +85,78 @@ class Patient {
 		}
 	}
 
+    /**
+     *
+     * Determines the existence of a patient
+     *
+     * @param string $ssn : patient SSN
+     *
+     * @return array $patientResponse : patient information or response
+     */  
+    public function findPatient($ssn) {
+        $patientResponse = array(
+            'message'   => '',
+            'status'    => ''
+        );
+        try{
+            $aria_link = new PDO( ARIA_DB , ARIA_USERNAME, ARIA_PASSWORD );
+            $aria_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            $connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
+            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            // First make a lookup in our database
+            $sql = "
+                SELECT DISTINCT
+                    Patient.SSN
+                FROM
+                    Patient
+                WHERE
+                    Patient.SSN LIKE '%$ssn%'
+                LIMIT 1
+            ";
+            $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            $lookupSSN = null;
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                $lookupSSN = $data[0];
+            }
+
+            if (!is_null($lookupSSN)) { // Found an ssn
+                $patientResponse['status'] = 'PatientAlreadyRegistered';
+                return $patientResponse;
+            }
+
+            // Then lookup in source database if patient DNE in our database
+            $sql = "
+                SELECT DISTINCT TOP 1
+                    Patient.SSN
+                FROM
+                    variansystem.dbo.Patient Patient 
+                WHERE
+                    Patient.SSN LIKE '%$ssn%'
+            ";
+            $query = $aria_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+            $query->execute();
+
+            $lookupSSN = null;
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                $lookupSSN = $data[0];
+            }
+
+            if (is_null($lookupSSN)) { // Could not find the ssn
+                $patientResponse['status'] = 'PatientNotFound';
+                return $patientResponse;
+            }
+
+            return $patientResponse; // in case
+        } catch (PDOException $e) {
+            $patientResponse['status'] = 'Error';
+            $patientResponse['message'] = $e->getMessage();
+            return $patientResponse;
+        }
+    }
 }
 
 ?>

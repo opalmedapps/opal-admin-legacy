@@ -117,73 +117,133 @@
             </div>
           </div>
           <div class="col-md-10 animated fadeInRight" style="margin-left:17%;">
-            <div class="panel-container" style="text-align: left">
-              <uib-accordion close-others="true"> 
-                <uib-accordion-group ng-class="newNotification.type ? 'panel-success': 'panel-danger'" is-open="true">
-                  <uib-accordion-heading>
-                    <h2 class="panel-title"><strong>Assign a type</strong>
-                      <span ng-hide="newNotification.type" style="float:right"><em>Incomplete</em></span>
-                      <span ng-show="newNotification.type" style="float:right"><em>Complete</em></span>
-                    </h2>
-                  </uib-accordion-heading>
-                  <div class="panel-input">  
-                    <ul class="no-list">
-                      <li ng-repeat="type in notificationTypes">
-                        <label>
-                          <input type="radio" ng-model="newNotification.type" ng-change="typeUpdate()" ng-value="type.id" /> {{type.name}}
-                        </label>
-                      </li>
-                    </ul>
+            <div class="row main-title">
+              <div class="col-md-6 title-content">
+                <span class="glyphicon glyphicon-plus"></span>
+                <h1><strong>Add Notification</strong></h1>
+              </div>
+              <div class="col-md-6 title-breadcrumbs"> 
+                <span>
+                  <span>Home</span>
+                  <span class="teflon glyphicon glyphicon-menu-right"></span> 
+                  <span>Notifications</span>
+                  <span class="teflon glyphicon glyphicon-menu-right"></span> 
+                  <span><strong>Add Notification</strong></span>
+                </span>
+              </div>
+            </div>   
+
+            <div class="row">
+              <div class="col-md-10 side-menu-title">
+                <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <h2>Type</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>   
+            <div class="row">
+              <div class="col-md-10">
+                <p style="margin-bottom: 10px;">
+                  <span style="color:#d9534f"><strong>Required field:</strong></span>
+                  Please select the notification type.
+                </p>
+              </div>
+            </div>    
+            <div class="row">
+              <div ng-repeat="type in notificationTypes" class="col-md-2"> 
+                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: newNotification.type == type.id}" ng-click="typeUpdate(type.id)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                  <div class="panel-info" ng-class="{active: newNotification.type == type.id}">
+                    <div class="panel-content" style="text-align:center">
+                      <span style="font-size:30px;" class="glyphicon glyphicon-bell"></span>
+                      <div class="option-panel-title">{{type.name}}</div>
+                    </div>
                   </div>
-                </uib-accordion-group>     
-                <uib-accordion-group ng-class="(newNotification.name_EN && newNotification.name_FR) ? 'panel-success': 'panel-danger'" is-open="statusB">
-                  <uib-accordion-heading>
-                    <h2 class="panel-title"><strong>Assign EN/FR titles</strong>
-                      <span ng-hide="newNotification.name_EN && newNotification.name_FR" style="float:right"><em>Incomplete</em></span>
-                      <span ng-show="newNotification.name_EN && newNotification.name_FR" style="float:right"><em>Complete</em></span>
-                    </h2>
-                  </uib-accordion-heading>
-                  <div class="panel-input">  
+                </div>
+              </div>
+            </div> 
+
+            <div class="row">
+              <div class="col-md-10 side-menu-title">
+                <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <h2>Title & Message</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>   
+            <div class="row">
+              <div class="col-md-10">
+                <p style="margin-bottom: 10px;">
+                  <span style="color:#d9534f"><strong>Required field:</strong></span>
+                  Please assign an english and french title and message.
+                </p>
+              </div>
+            </div>  
+            <div class="row"> 
+              <div class="col-md-6">
+                <div class="panel" ng-class="(newNotification.name_EN && newNotification.description_EN) ? 'panel-success': 'panel-danger'">
+                  <div class="panel-heading"><strong>English</strong>
+                    <span ng-hide="newNotification.name_EN && newNotification.description_EN" style="float:right"><em>Incomplete</em></span>
+                    <span ng-show="newNotification.name_EN && newNotification.description_EN" style="float:right"><em>Complete</em></span>
+                  </div>
+                  <div class="panel-body">
                     <div class="row">
-                      <div class="col-md-6">
-                        <div class="input-group">
-                          <span class="input-group-addon">EN</span>
+                      <div class="col-md-2">
+                        <div style="font-size:18px; text-align:right;">Title</div>
+                      </div>
+                      <div class="col-md-10">
+                        <div class="form-group">
                           <input class="form-control" type="text" ng-model="newNotification.name_EN" ng-change="titleUpdate()" placeholder="English Title" required="required">
                         </div>
-                      </div>    
-                      <div class="col-md-6">
-                        <div class="input-group">
-                          <span class="input-group-addon">FR</span>
+                      </div>
+                    </div>    
+                    <div class="row">
+                      <div class="col-md-2">
+                        <div style="font-size:18px; text-align:right;">Message</div>
+                      </div>
+                      <div class="col-md-10">
+                        <div class="form-group">
+                          <textarea class="form-control" rows="5" ng-model="newNotification.description_EN" ng-change="descriptionUpdate()" placeholder="English Message" required="required"></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> 
+              <div class="col-md-6">
+                <div class="panel" ng-class="(newNotification.name_FR && newNotification.description_FR) ? 'panel-success': 'panel-danger'">
+                  <div class="panel-heading"><strong>Français</strong>
+                    <span ng-hide="newNotification.name_FR && newNotification.description_FR" style="float:right"><em>Incomplete</em></span>
+                    <span ng-show="newNotification.name_FR && newNotification.description_FR" style="float:right"><em>Complete</em></span>
+                  </div>
+                  <div class="panel-body">
+                    <div class="row">
+                      <div class="col-md-2">
+                        <div style="font-size:18px; text-align:right;">Titre</div>
+                      </div>
+                      <div class="col-md-10">
+                        <div class="form-group">
                           <input class="form-control" type="text" ng-model="newNotification.name_FR" ng-change="titleUpdate()" placeholder="Titre Français" required="required">
                         </div>
-                      </div> 
-                    </div>
-                  </div>  
-                </uib-accordion-group>
-                <uib-accordion-group ng-class="(newNotification.description_EN && newNotification.description_FR) ? 'panel-success': 'panel-danger'">
-                  <uib-accordion-heading>
-                    <h2 class="panel-title"><strong>Assign EN/FR messages</strong>
-                      <span ng-hide="newNotification.description_EN && newNotification.description_FR" style="float:right"><em>Incomplete</em></span>
-                      <span ng-show="newNotification.description_EN && newNotification.description_FR" style="float:right"><em>Complete</em></span>
-                    </h2>
-                  </uib-accordion-heading>
-                  <div class="panel-input">  
+                      </div>
+                    </div>    
                     <div class="row">
-                      <div class="col-md-6">
+                      <div class="col-md-2">
+                        <div style="font-size:18px; text-align:right;">Message</div>
+                      </div>
+                      <div class="col-md-10">
                         <div class="form-group">
-                          <textarea class="form-control" rows="10" ng-model="newNotification.description_EN" ng-change="descriptionUpdate()" placeholder="English Message" required="required"></textarea>
+                          <textarea class="form-control" rows="5" ng-model="newNotification.description_FR" ng-change="descriptionUpdate()" placeholder="Message Français" required="required"></textarea>
                         </div>
-                      </div>    
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <textarea class="form-control" rows="10" ng-model="newNotification.description_FR" ng-change="descriptionUpdate()" placeholder="Message Français" required="required"></textarea>
-                        </div>
-                      </div> 
+                      </div>
                     </div>
-                  </div>  
-                </uib-accordion-group>    
-              </uib-accordion> 
-            </div>       
+                  </div>
+                </div>
+              </div>          
+            </div>
           </div>
         </div>
       </div>

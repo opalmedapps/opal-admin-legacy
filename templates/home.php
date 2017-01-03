@@ -168,30 +168,13 @@
                 <div class="panel-info" style="height: 180px;">
                   <div class="panel-content">
                     <div class="icon-home clearfix">
-                      <span style="font-size: 50px;" class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                      <span style="font-size: 50px;" class="fa fa-address-card" aria-hidden="true"></span>
                     </div>
                     <div class="panel-title">  
                       <h1>Patients</h1>
                     </div>  
                     <div class="panel-description">
-                      <p>List of registered patient. Publishing options.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="panel-container animated" ng-class="{pulse: hoverJ}" ng-mouseenter="hoverJ=true" ng-mouseleave="hoverJ=false" style="cursor:pointer;" ng-click="goToRegistration()">
-                <div class="panel-info" style="height: 180px;">
-                  <div class="panel-content">
-                    <div class="icon-home clearfix">
-                      <span style="font-size: 50px;" class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
-                    </div>
-                    <div class="panel-title">  
-                      <h1>Registration</h1>
-                    </div>  
-                    <div class="panel-description">
-                      <p>Register new users to Opal.</p>
+                      <p>List of registered patient. Publishing options. Register new patients.</p>
                     </div>
                   </div>
                 </div>
@@ -229,7 +212,7 @@
                 <div class="panel-info" style="height: 180px;">
                   <div class="panel-content">
                     <div class="icon-home clearfix">
-                      <span style="font-size: 50px;" class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                      <span style="font-size: 50px;" class="fa fa-users" aria-hidden="true"></span>
                     </div>
                     <div class="panel-title">  
                       <h1>Users</h1>
@@ -261,63 +244,6 @@
 
           </div>  
         </div>    
-<!--   
-        <div class="row">
-          <div class="col-md-3 animated slideInLeft">
-            <div class="panel-container">
-              <div class="panel-info">
-                <div class="panel-title-custom" style="padding-bottom: 10px;">
-                  <span style="font-size: 20px;" class="glyphicon glyphicon-time" aria-hidden="true"></span>
-                  <span style="font-size: 26px;">Cron</span> 
-                </div>
-                <div class="panel-content">
-                  <p>
-                    <strong>Next Cron:</strong> <br>
-                      {{cronDetails.nextCronDate | date:'fullDate'}} at {{cronDetails.nextCronTime | date:'HH:mm'}} <br>
-                    <strong>Repeat:</strong> Every {{cronDetails.repeatInterval}} {{cronDetails.repeatUnits}}
-                  </p>
-                </div>
-                <div class="panel-buttons">
-                  <span style="font-size: 20px; cursor: pointer;" class="glyphicon" ng-class="editCron ? 'glyphicon-chevron-down': 'glyphicon-option-horizontal'" aria-hidden="true" ng-click="editCron = !editCron"></span>
-                </div>
-              </div>
-            </div>
-            <div class="panel-container" ng-show="editCron">
-              <div class="panel-info">
-                <div class="panel-content">
-                  <p><strong>Next Cron</strong></p>
-                  <div class="row">
-                    <div class="col-md-6" style="padding-top: 10px;">
-                      <p class="input-group">
-                        <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="cronDetailsMod.nextCronDate" is-open="opened" min="minDate" ng-change="setChangesMade()" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
-                        <span class="input-group-btn">
-                          <button class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                        </span>
-                      </p>
-                    </div>
-                    <div class="col-md-6" style="margin-top: -24px;">
-                      <div>
-                        <uib-timepicker ng-model="cronDetailsMod.nextCronTime" ng-change="setChangesMade()" minute-step="5" show-meridian="false"></uib-timepicker>
-                      </div>
-                    </div>
-                  </div>
-                  <p><strong>Repeat</strong></p>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <select ng-model="cronDetailsMod.repeatUnits" ng-change="setChangesMade()" ng-options="unit for unit in repeatUnits" class="form-control" ></select>
-                    </div>
-                    <div class="col-md-6">
-                      <input class="form-control" ng-model="cronDetailsMod.repeatInterval" ng-change="setChangesMade()" type="number" max="59" min="1" required="required">
-                    </div>
-                  </div>
-                </div>
-                <div class="panel-buttons">
-                  <input class="btn btn-primary" type="button" value="Save Changes" ng-class="{'disabled': !checkForm()}" ng-click="submitCronChange()">
-                </div>
-              </div>
-            </div>
-          </div>
-         --> 
          
       </div>
     </div>
@@ -331,8 +257,8 @@
             <img class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="140" width="140">
             <h1><b>opal</b> ADMIN</h1>
           </div>
-          </div>
-          </div>
+        </div>
+      </div>
       <div class="row">
         <div class="col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3"> 
           <div class="form-box animated" ng-class="{'pulse': !formLoaded}">
