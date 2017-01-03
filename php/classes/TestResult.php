@@ -188,11 +188,10 @@ class TestResult {
             $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             $sql = "
-                use varianenm;
                 SELECT DISTINCT
                     tr.comp_name
                 FROM
-                    test_result tr
+                    varianenm.dbo.test_result tr
             ";
             $query = $aria_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
            	$query->execute();

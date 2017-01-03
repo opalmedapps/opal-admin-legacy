@@ -54,8 +54,8 @@ angular.module('ATO_InterfaceApp.controllers.testResultController', ['ngAnimate'
         $scope.gridOptions = {
             data: 'testList', 
             columnDefs: [
-                {field: 'name_EN', displayName: 'Name (EN/FR)', cellTemplate:cellTemplateName, width:'355'},
-                {field: 'group_EN', displayName: 'Test Group (EN/FR)', cellTemplate:cellTemplateGroupName, width:'155'},
+                {field: 'name_EN', displayName: 'Name (EN/FR)', cellTemplate:cellTemplateName, width:'655'},
+                {field: 'group_EN', displayName: 'Test Group (EN/FR)', cellTemplate:cellTemplateGroupName, width:'255'},
                 {field: 'publish', displayName:'Publish Flag', width: '130', cellTemplate:checkboxCellTemplate},
                 {name:'Operations', cellTemplate:cellTemplateOperations, sortable: false}
             ],

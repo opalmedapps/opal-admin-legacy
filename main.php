@@ -62,9 +62,11 @@
  	<script type="text/javascript" src="js/app/controllers/notificationController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/newNotificationController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/patientController.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/patientRegistrationController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/testResultController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/newTestResultController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/sidePanelMenuController.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/cronController.js"></script>
 
 	<!-- Collection -->
  	<script type="text/javascript" src="js/app/collections/collections.js"></script>

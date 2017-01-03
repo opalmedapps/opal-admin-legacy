@@ -205,6 +205,14 @@ angular.module('ATO_InterfaceApp.collections', []).
 			});
 		}
 
+        // API to find patient given an SSN
+        patientAPI.findPatient = function(ssn) {
+            return $http({
+                method: 'JSONP',
+                url: URLPATH+"api/patient/find_patient.php?callback=JSON_CALLBACK&ssn="+ssn
+            });
+        }
+
         return patientAPI;
     }).
 

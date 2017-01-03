@@ -45,6 +45,11 @@ angular.module('ATO_InterfaceApp.controllers.sidePanelMenuController', ['ui.boot
         $scope.goToLogout= function () {
             window.location.href = URLPATH+"php/user/logout.php";
         }
+        // Function to go to cron page
+        $scope.goToCron= function () {
+            window.location.href = URLPATH+"main.php#/cron";
+        }
+
 			
 	});
 

@@ -51,7 +51,7 @@
                     </div>
                   </div>
                   <div id="data-table">
-                    <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:520px"></div>
+                    <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:720px"></div>
                   </div>
                   </div>
                 </div>
