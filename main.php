@@ -43,6 +43,10 @@
 	<script src="js/lib/textAngular/textAngular-sanitize.min.js"></script>
 	<script src="js/lib/textAngular/textAngular.min.js"></script>
 	<script src="js/lib/itemSlide/itemslide.min.js"></script>
+	<script src="js/lib/firebase/firebase.js"></script>
+	<script src="js/lib/cryptojs/aes.js"></script>
+	<script src="js/lib/cryptojs/mode-cfb-min.js"></script>
+	<script src="js/lib/cryptojs/sha256.js"></script>
 
 	<!-- Start Up -->
  	<script type="text/javascript" src="js/app/app.js"></script>
