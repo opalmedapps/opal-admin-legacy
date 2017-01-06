@@ -1280,6 +1280,7 @@ ol, ul {
 }
 .side-menu-title h2 {
   display: inline;
+  font-weight: 700;
 }
 
 .table-summary {

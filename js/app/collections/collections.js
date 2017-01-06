@@ -213,6 +213,22 @@ angular.module('ATO_InterfaceApp.collections', []).
             });
         }
 
+        // API to fetch sequrity questions
+        patientAPI.fetchSecurityQuestions = function () {
+            return $http({
+                method: 'JSONP',
+                url: URLPATH+"api/patient/fetch_security_questions.php?callback=JSON_CALLBACK"
+            });
+        }
+
+        // API to check email existence
+        patientAPI.emailAlreadyInUse = function(email) {
+            return $http({
+                method: 'JSONP',
+                url: URLPATH+"api/patient/email_taken.php?callback=JSON_CALLBACK&email="+email
+            });
+        }
+
         return patientAPI;
     }).
 
