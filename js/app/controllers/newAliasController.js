@@ -98,7 +98,7 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
         // Function to toggle necessary changes when updating the source database buttons
         $scope.sourceDBUpdate = function (sourceDB) {
 
-            // Assign value
+        	// Assign value
             $scope.newAlias.source_db = sourceDB;
 
             // Toggle boolean
@@ -172,6 +172,9 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
 		// Function to toggle necessary changes when updating alias type
 		$scope.typeUpdate = function (type) {
 
+			if (!$scope.newAlias.source_db)
+				return;
+
             // Set the name
             $scope.newAlias.type = type;
 
@@ -209,7 +212,7 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
 
         	        // Sort list
 	            	$scope.termList.sort(function(a,b) {
-		        	    var nameA = a.name.toLowerCase(), nameB = b.name.toLowerCase();
+		        	    var nameA = a.id.toLowerCase(), nameB = b.id.toLowerCase();
 		                if (nameA < nameB) // sort string ascending
 			                return -1;
             		    if (nameA > nameB)
@@ -234,8 +237,6 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
 
 		// Function to add / remove a term to alias
 		$scope.toggleTermSelection = function(term){
-			
-			var termName = term.name; // get the name
 
 			// If originally added, remove it
 			if (term.added) { 
@@ -284,7 +285,7 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
                 // Fill it with the added terms from termList
 				angular.forEach($scope.termList, function(term) {
 			    	if(term.added == true) 
-				    	$scope.newAlias.terms.push(term.name);
+				    	$scope.newAlias.terms.push(term.id);
 				});
 
     			// Submit form

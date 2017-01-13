@@ -189,7 +189,7 @@
                           <p>
                             <ul style="max-height: 100px; overflow-y: auto;">
                               <li ng-repeat="term in termList | filter: {added: true} : true">
-                                {{term.name}}
+                                {{term.id}}
                               </li>
                             </ul>
                           </p>
@@ -252,12 +252,14 @@
               </div>
             </div>    
             <div class="row">
-              <div ng-repeat="sourceDB in sourceDBList" class="col-md-1"> 
-                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: newAlias.source_db.name == sourceDB.name}" ng-click="sourceDBUpdate(sourceDB)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                  <div class="panel-info" ng-class="{active: newAlias.source_db.name == sourceDB.name}">
-                    <div class="panel-content" style="text-align:center">
-                      <span style="font-size:30px;" class="fa fa-database"></span>
-                      <div class="option-panel-title">{{sourceDB.name}}</div>
+              <div class="col-md-12">
+                <div ng-repeat="sourceDB in sourceDBList" class="col-md-1"> 
+                  <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: newAlias.source_db.name == sourceDB.name}" ng-click="sourceDBUpdate(sourceDB)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                    <div class="panel-info" ng-class="{active: newAlias.source_db.name == sourceDB.name}">
+                      <div class="panel-content" style="text-align:center">
+                        <span style="font-size:30px;" class="fa fa-database"></span>
+                        <div class="option-panel-title">{{sourceDB.name}}</div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -282,61 +284,53 @@
               </div>
             </div>  
             <div class="row"> 
-              <div class="col-md-6">
+              <div class="col-md-5">
                 <div class="panel" ng-class="(newAlias.name_EN && newAlias.description_EN) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>English</strong>
                     <span ng-hide="newAlias.name_EN && newAlias.description_EN" style="float:right"><em>Incomplete</em></span>
                     <span ng-show="newAlias.name_EN && newAlias.description_EN" style="float:right"><em>Complete</em></span>
                   </div>
-                  <div class="panel-body">
-                    <div class="row">
-                      <div class="col-md-2">
-                        <div style="font-size:18px; text-align:right;">Title</div>
-                      </div>
+                  <div class="panel-body form-horizontal">
+                    <div class="form-group">
+                      <label class="control-label col-md-2">
+                        Title
+                      </label>
                       <div class="col-md-10">
-                        <div class="form-group">
-                          <input class="form-control" type="text" ng-model="newAlias.name_EN" ng-change="titleUpdate()" placeholder="English Title" required="required">
-                        </div>
+                        <input class="form-control" type="text" ng-model="newAlias.name_EN" ng-change="titleUpdate()" placeholder="English Title" required="required">
                       </div>
                     </div>    
-                    <div class="row">
-                      <div class="col-md-2">
-                        <div style="font-size:18px; text-align:right;">Description</div>
-                      </div>
+                    <div class="form-group">
+                      <label class="control-label col-md-2">
+                        Description
+                      </label>
                       <div class="col-md-10">
-                        <div class="form-group">
-                          <textarea class="form-control" rows="5" ng-model="newAlias.description_EN" ng-change="descriptionUpdate()" placeholder="English Description" required="required"></textarea>
-                        </div>
+                        <textarea class="form-control" rows="5" ng-model="newAlias.description_EN" ng-change="descriptionUpdate()" placeholder="English Description" required="required"></textarea>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>          
-              <div class="col-md-6">
+              <div class="col-md-5">
                 <div class="panel" ng-class="(newAlias.name_FR && newAlias.description_FR) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>Français</strong>
                     <span ng-hide="newAlias.name_FR && newAlias.description_FR" style="float:right"><em>Incomplete</em></span>
                     <span ng-show="newAlias.name_FR && newAlias.description_FR" style="float:right"><em>Complete</em></span>
                   </div>
-                  <div class="panel-body">
-                    <div class="row">
-                      <div class="col-md-2">
-                        <div style="font-size:18px; text-align:right;">Titre</div>
-                      </div>
+                  <div class="panel-body form-horizontal">
+                    <div class="form-group">
+                      <label class="control-label col-md-2">
+                        Titre
+                      </label>
                       <div class="col-md-10">
-                        <div class="form-group">
-                          <input class="form-control" type="text" ng-model="newAlias.name_FR" ng-change="titleUpdate()" placeholder="Titre Français" required="required">
-                        </div>
+                        <input class="form-control" type="text" ng-model="newAlias.name_FR" ng-change="titleUpdate()" placeholder="Titre Français" required="required">
                       </div>
                     </div>    
-                    <div class="row">
-                      <div class="col-md-2">
-                        <div style="font-size:18px; text-align:right;">Description</div>
-                      </div>
+                    <div class="form-group">
+                      <label class="control-label col-md-2">
+                        Description
+                      </label>
                       <div class="col-md-10">
-                        <div class="form-group">
-                          <textarea class="form-control" rows="5" ng-model="newAlias.description_FR" ng-change="descriptionUpdate()" placeholder="Description Français" required="required"></textarea>
-                        </div>
+                        <textarea class="form-control" rows="5" ng-model="newAlias.description_FR" ng-change="descriptionUpdate()" placeholder="Description Français" required="required"></textarea>
                       </div>
                     </div>
                   </div>
@@ -406,7 +400,7 @@
             </div>    
             <div class="row">
               <div ng-repeat="type in aliasTypes" class="col-md-2"> 
-                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: newAlias.type.name == type.name}" ng-click="typeUpdate(type)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                <div class="panel-container animated" ng-style="{cursor: newAlias.source_db ? 'pointer' : ''}" ng-class="{pulse: hover && newAlias.source_db, active: newAlias.type.name == type.name, 'disabled': !newAlias.source_db}" ng-click="typeUpdate(type)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
                   <div class="panel-info" ng-class="{active: newAlias.type.name == type.name}">
                     <div class="panel-content" style="text-align:center">
                       <span style="font-size:30px;" class="glyphicon glyphicon-{{type.icon}}"></span>

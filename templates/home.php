@@ -7,15 +7,14 @@
 	// Include config file 
 	include_once($configFile);
 
-	$username 	    = $_SESSION[SESSION_KEY_NAME];
-	$loginAttempt 	= $_SESSION[SESSION_KEY_LOGIN];
-	$registerAttempt= $_SESSION[SESSION_KEY_REGISTER];
-	$userid		    = $_SESSION[SESSION_KEY_USERID];
- ?>
+  if (!isset($_SESSION[SESSION_KEY_LOGIN])) {
+    echo "<script>
+      window.location.href = 'php/user/logout.php';
+          </script> ";
+  }
+?>
 
   <div id="main">
-    <!-- PHP if user is logged in -->
-    <? if($loginAttempt == 1) : ?>
     <div id="top" class="home-main" ng-controller="sidePanelMenuController">
       <div class="clearfix">
         <div class="row">
@@ -45,7 +44,7 @@
                       <h1>Aliases</h1>
                     </div>  
                     <div class="panel-description">
-                      <p>Publish internal clinical codes and translating tool.</p>
+                      <p>Tool for grouping, translating, and publishing internal clinical codes.</p>
                     </div>
                   </div>
                 </div>
@@ -79,7 +78,7 @@
                       <h1>Edu Material</h1>
                     </div>  
                     <div class="panel-description">
-                      <p>Reference educational material hosted on the web.</p>
+                      <p>Tool for referencing educational material hosted on the web.</p>
                     </div>
                   </div>
                 </div>
@@ -96,7 +95,7 @@
                       <h1>Hospital Maps</h1>
                     </div>  
                     <div class="panel-description">
-                      <p>Reference hospital maps, create QR codes.</p>
+                      <p>Tool for referencing hospital maps and creating QR codes.</p>
                     </div>
                   </div>
                 </div>
@@ -113,7 +112,7 @@
                       <h1>Notifications</h1>
                     </div>  
                     <div class="panel-description">
-                      <p>Tool to control notification types.</p>
+                      <p>Tool for managing notifications.</p>
                     </div>
                   </div>
                 </div>
@@ -130,7 +129,7 @@
                       <h1>Test Results</h1>
                     </div>  
                     <div class="panel-description">
-                      <p>Publish lab test results according to test group.</p>
+                      <p>Tool for publishing lab test results categorized by test group.</p>
                     </div>
                  </div>
                 </div>
@@ -157,7 +156,7 @@
                       <h1>Cron</h1>
                     </div>  
                     <div class="panel-description">
-                      <p>Control publish event time and frequency.</p>
+                      <p>Control publishing event times and frequency.</p>
                     </div>
                   </div>
                 </div>
@@ -174,7 +173,7 @@
                       <h1>Patients</h1>
                     </div>  
                     <div class="panel-description">
-                      <p>List of registered patient. Publishing options. Register new patients.</p>
+                      <p>List of registered patient. Publishing control per patient. Register new patients.</p>
                     </div>
                   </div>
                 </div>
@@ -241,83 +240,11 @@
                 </div>
               </div>
             </div>
-
           </div>  
         </div>    
-         
       </div>
     </div>
-    <!-- PHP Else user is not logged in to use the site -->
-    <? else: ?> 
-    <div class="container login-register">
-      <div class="row">
-        <div class="col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3"> 
-
-          <div class="login-logo">
-            <img class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="140" width="140">
-            <h1><b>opal</b> ADMIN</h1>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3"> 
-          <div class="form-box animated" ng-class="{'pulse': !formLoaded}">
-            <p class="login-title">
-              <span>Log in to start your session</span>
-            </p>  
-            <div id="block-system-main" class="login-register-block-main">
-              <div class="login-content clearfix">
-                <form ng-submit="submitLogin()" method="post">
-                  <div class="row clearfix" style="margin-top:20px; margin-bottom:20px;">
-                    <div class="col-md-12">
-                      <label>Username</label>
-                      <div class="input-group">
-                        <span class="input-group-addon">U</span>
-                        <input type="text" class="form-control" required="required" ng-model="login.username">    
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row" style="margin-bottom:20px;">    
-                    <div class="col-md-12">
-                      <label>Password</label>
-                      <div class="input-group">
-                        <span class="input-group-addon">P</span>
-                        <input type="password" class="form-control" required="required" ng-model="login.password">    
-                      </div>
-                    </div>
-                  </div>  
-                  <div class="table-buttons">
-                    <div class="btn-group btn-group-justified" role="group">
-                      <div class="btn-group" role="group">
-                        <input class="btn btn-primary" ng-class="{'disabled': !loginFormComplete()}" type="submit" value="Log in">
-                      </div>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>                         
-    <? endif; ?> 
-    <div class="bannerMessage" ng-class="banner.alertClass">{{banner.message}}</div>
   </div>
-<script type="text/ng-template" id="processingModal.htm">
-  <div class="modal-header">
-    <h1> Processing...</h1>
-  </div>
-  <div class="modal-body">
-    <div class="progress progress-striped active">
-      <div class="progress-bar" style="width: 100%"></div>        
-    </div>
-  </div>
-</script>
-
-<script type="text/javascript">
-    $(".global-nav li").removeClass("active");
-    $(".global-nav li.nav-home").addClass("active");
-</script>
 
           
                       

@@ -2,7 +2,7 @@
             <div class="row side-logo" ng-click="goToHome()">
               <div class="col-md-12">
                 <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
-                <h1 class="animated fadeIn">opal <strong>ADMIN</strong> </h1>
+                <h1>opal <strong>ADMIN</strong> </h1>
               </div>
             </div>      
             <div class="row">

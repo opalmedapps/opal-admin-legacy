@@ -93,6 +93,7 @@
           <span style="float:right;"> 
             <form method="post" ng-submit="updateAlias()">
               <input class="btn btn-primary" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
+              <input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
             </form>
           </span>     
         </h2>

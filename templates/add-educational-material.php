@@ -777,7 +777,7 @@
             </div>
             <div class="row">
               <div ng-repeat="sex in sexes" class="col-md-2">
-                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: demoFilter.sex == sex.name}" ng-click="demoFilter.sex = sex.name" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: demoFilter.sex == sex.name}" ng-click="sexUpdate(sex)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
                   <div class="panel-info" ng-class="{active: demoFilter.sex == sex.name}">
                     <div class="panel-content" style="text-align:center">
                       <span style="font-size:30px;" class="fa fa-{{sex.icon}}"></span>
