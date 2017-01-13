@@ -6,6 +6,11 @@ angular.module('ATO_InterfaceApp.controllers.patientController', ['ngAnimate', '
 	*******************************************************************************/
 	controller('patientController', function($scope, $filter, $sce, $uibModal, patientAPIservice) {
 
+        // Function to go to register new patient
+        $scope.goToAddPatient = function () {
+            window.location.href = URLPATH+"main.php#/patients/register";
+        }
+        
         $scope.bannerMessage = "";
         // Function to show page banner 
         $scope.showBanner = function() {
@@ -52,10 +57,10 @@ angular.module('ATO_InterfaceApp.controllers.patientController', ['ngAnimate', '
     	$scope.gridOptions = { 
 			data: 'patientList',
 			columnDefs: [
-				{field:'patientid', displayName:'Patient ID', width:'145'},
-				{field:'name', displayName:'Name', width:'355'},
+				{field:'patientid', displayName:'Patient ID', width:'245'},
+				{field:'name', displayName:'Name', width:'555'},
                 {field:'transfer', displayName:'Publish Flag', width:'150', cellTemplate:checkboxCellTemplate},
-				{field:'lasttransferred', displayName:'Last Publish', width:'355'}
+				{field:'lasttransferred', displayName:'Last Publish'}
                 
 			],
             useExternalFiltering: true,

@@ -30,17 +30,24 @@
 	<script src="js/lib/angular/angular-route.min.js"></script>
 	<script src="js/lib/angular/angular-animate.min.js"></script>
 	<script src="js/lib/angular/angular-sanitize.min.js"></script>
+	<script src="js/lib/angular/angular-ui-router.min.js"></script>
 	<script src="js/lib/other/moment.min.js"></script>
 	<script src="js/lib/livicon/prettify.min.js"></script>
 	<script src="js/lib/bootstrap/bootstrap.min.js"></script>
 	<script src="js/lib/bootstrap/ui-bootstrap-tpls-1.2.1.custom.min.js"></script>
 	<script src="js/lib/bootstrap/bootstrap-datetimepicker.min.js"></script>
+	<script src="js/lib/bootstrap/ui.bootstrap.materialPicker.js"></script>
 	<script src="js/lib/livicon/raphael-min.js"></script>
 	<script src="js/lib/livicon/livicons-1.4-custom.min.js"></script>
 	<script src="js/lib/ui-grid/ui-grid.min.js"></script>
 	<script src="js/lib/textAngular/textAngular-rangy.min.js"></script>
 	<script src="js/lib/textAngular/textAngular-sanitize.min.js"></script>
 	<script src="js/lib/textAngular/textAngular.min.js"></script>
+	<script src="js/lib/itemSlide/itemslide.min.js"></script>
+	<script src="js/lib/firebase/firebase.js"></script>
+	<script src="js/lib/cryptojs/aes.js"></script>
+	<script src="js/lib/cryptojs/mode-cfb-min.js"></script>
+	<script src="js/lib/cryptojs/sha256.js"></script>
 
 	<!-- Start Up -->
  	<script type="text/javascript" src="js/app/app.js"></script>
@@ -60,12 +67,20 @@
  	<script type="text/javascript" src="js/app/controllers/notificationController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/newNotificationController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/patientController.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/patientRegistrationController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/testResultController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/newTestResultController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/sidePanelMenuController.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/cronController.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/loginController.js"></script>
+ 	<!-- <script type="text/javascript" src="js/app/controllers/applicationController.js"></script> -->
+
 
 	<!-- Collection -->
  	<script type="text/javascript" src="js/app/collections/collections.js"></script>
+
+ 	<!-- Service -->
+ 	<script type="text/javascript" src="js/app/services/services.js"></script>
 
 	<!-- Config -->
  	<script type="text/javascript" src="js/config.js"></script>
@@ -81,104 +96,17 @@
 	<link media="all" type="text/css" rel="stylesheet" href="css/lib/docs.min.css">
 	<link media="all" type="text/css" rel="stylesheet" href="css/lib/font-awesome.min.css">
 	<link media="all" type="text/css" rel="stylesheet" href="css/lib/textAngular.css">
+	<link media="all" type="text/css" rel="stylesheet" href="css/lib/ui.bootstrap.materialPicker.css">
 
 	<link media="all" type="text/css" rel="stylesheet" href="css/style.css">
 
 </head>
+<!--<body ng-app="ATO_InterfaceApp" ng-controller="applicationController">-->
 <body ng-app="ATO_InterfaceApp">
-  <div id="page">
-    <div ng-controller="headerController">
-    <div class="topbar">
-      <div class="global-nav">
-        <div class="global-nav-inner">
-          <div class="container">
-            <span class="title-topbar"> 
-              ATO
-            </span>
-            <!-- PHP if user is logged in -->
-            <? if($loginAttempt == "1") : ?>
-            <span class="logout-topbar">
-              <a href="php/user/logout.php">Logout</a>
-            </span>
-            <? endif; ?>
-            <!--<div role="navigation">
-              <ul id="global-actions" class="nav">
-                <li class="nav-home">
-                  <a href="#/">
-                    <span class="text">Home</span>
-                  </a>
-                </li>
-                <li class="nav-alias">
-                  <a href="#/alias">
-                    <span class="text">Aliases 
-                    </span>
-                  </a>
-                </li>
-                <li class="nav-post">
-                  <a href="#/post">
-                    <span class="text">Posts
-                    </span>
-                  </a>
-                </li>
-                <li class="nav-edu-mat">
-                  <a href="#/educational-material">
-                    <span class="text">Educational Material
-                    </span>
-                  </a>
-                </li>
-                <li class="nav-hospital-map">
-                  <a href="#/hospital-map">
-                    <span class="text">Hospital Maps
-                    </span>
-                  </a>
-                </li>
-                <li class="nav-notification">
-                  <a href="#/notification">
-                    <span class="text">Notifications
-                    </span>
-                  </a>
-                </li>
-              </ul>
-            </div>-->
-          </div>
-        </div>
-      </div>
-    </div>
-    </div>
-  <ng-view></ng-view>
-
-</div>
- <script>
-	function date_time(id)
-	{
-	        date = new Date;
-        	year = date.getFullYear();
-	        month = date.getMonth();
-        	months = new Array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
-	        d = date.getDate();
-        	day = date.getDay();
-	        days = new Array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
-        	h = date.getHours();
-	        if(h<10)
-        	{
-                	h = "0"+h;
-	        }
-        	m = date.getMinutes();
-	        if(m<10)
-        	{
-                	m = "0"+m;
-	        }
-        	s = date.getSeconds();
-	        if(s<10)
-        	{
-                	s = "0"+s;
-	        }
-        	result = ''+days[day]+' '+months[month]+' '+d+' '+year+' '+h+':'+m+':'+s;
-	        document.getElementById(id).innerHTML = result;
-        	setTimeout('date_time("'+id+'");','1000');
-	        return true;
-	}
-    </script>
-   <script type="text/javascript">//window.onload = date_time('date_time');</script>
+	<div id="page">
+		<!--<div ui-view></div>-->
+		<div ng-view></div>
+	</div>
+ 
 </body>
 </html>

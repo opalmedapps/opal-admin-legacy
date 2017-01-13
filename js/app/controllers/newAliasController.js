@@ -1,4 +1,4 @@
-angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','ui.bootstrap', 'ui.grid']).
+angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','ui.bootstrap', 'ui.grid', 'ui.bootstrap.materialPicker']).
 
 	/******************************************************************************
 	* Add Alias Page controller 
@@ -35,9 +35,16 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
 
 		// Initialize the list of alias types
 		$scope.aliasTypes = [
-			{name: 'Task'},
-			{name: 'Appointment'},
-			{name: 'Document'}
+			{
+                name: 'Task',
+                icon: 'th-list'
+            }, {
+                name: 'Appointment',
+                icon: 'calendar'
+            }, {
+                name: 'Document',
+                icon: 'folder-open'
+            }
 		];
 
 		// Initialize the new alias object
@@ -49,6 +56,7 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
 			type: null,
             eduMat: null,
             source_db: null,
+            color: '',
 			terms: []
 		};
 
@@ -56,8 +64,12 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
 		$scope.termList = [];
         // Initialize list that will hold educational materials
         $scope.eduMatList = [];
+
         // Initialize list that will hold source databases
         $scope.sourceDBList
+
+        // Initialize list that will hold existing color tags
+        $scope.existingColorTags = [];
 				
 		$scope.termFilter = null;
         $scope.eduMatFilter = null;
@@ -84,31 +96,20 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
         });
 
         // Function to toggle necessary changes when updating the source database buttons
-        $scope.sourceDBUpdate = function () {
+        $scope.sourceDBUpdate = function (sourceDB) {
 
-            if ($scope.newAlias.source_db) { 
-		
-                // Toggle boolean
-				steps.source.completed = true;
+        	// Assign value
+            $scope.newAlias.source_db = sourceDB;
 
-				// Count the number of completed steps
-				$scope.numOfCompletedSteps = stepsCompleted(steps);
+            // Toggle boolean
+			steps.source.completed = true;
 
-				// Change progress bar
-				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+			// Count the number of completed steps
+			$scope.numOfCompletedSteps = stepsCompleted(steps);
+
+			// Change progress bar
+			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
               
-			}
-			else { // at least one textbox is empty
-
-				// Toggle boolean
-				steps.source.completed = false;
-				
-				// Count the number of completed steps
-				$scope.numOfCompletedSteps = stepsCompleted(steps);
-
-				// Change progress bar
-				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-			}
 		}
   
 		// Function to toggle necessary changes when updating alias title
@@ -169,7 +170,13 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
 		}
 
 		// Function to toggle necessary changes when updating alias type
-		$scope.typeUpdate = function () {
+		$scope.typeUpdate = function (type) {
+
+			if (!$scope.newAlias.source_db)
+				return;
+
+            // Set the name
+            $scope.newAlias.type = type;
 
 			// Toggle boolean
 			steps.type.completed = true;
@@ -205,7 +212,7 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
 
         	        // Sort list
 	            	$scope.termList.sort(function(a,b) {
-		        	    var nameA = a.name.toLowerCase(), nameB = b.name.toLowerCase();
+		        	    var nameA = a.id.toLowerCase(), nameB = b.id.toLowerCase();
 		                if (nameA < nameB) // sort string ascending
 			                return -1;
             		    if (nameA > nameB)
@@ -214,6 +221,12 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
 	    		    });
     	    	});
             }
+
+            // Call our API service to get the list of existing color tags
+            aliasAPIservice.getExistingColorTags($scope.newAlias.type).success(function (response) {
+                $scope.existingColorTags = response; // Assign response
+
+            });
 
 			// Count the number of completed steps
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -224,8 +237,6 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
 
 		// Function to add / remove a term to alias
 		$scope.toggleTermSelection = function(term){
-			
-			var termName = term.name; // get the name
 
 			// If originally added, remove it
 			if (term.added) { 
@@ -274,7 +285,7 @@ angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','
                 // Fill it with the added terms from termList
 				angular.forEach($scope.termList, function(term) {
 			    	if(term.added == true) 
-				    	$scope.newAlias.terms.push(term.name);
+				    	$scope.newAlias.terms.push(term.id);
 				});
 
     			// Submit form
