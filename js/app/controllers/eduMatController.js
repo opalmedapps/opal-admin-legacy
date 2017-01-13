@@ -54,7 +54,7 @@ angular.module('ATO_InterfaceApp.controllers.eduMatController', ['ngAnimate', 'n
     	$scope.gridOptions = { 
 			data: 'eduMatList',
 			columnDefs: [
-				{field:'name_EN', displayName:'Name (EN / FR)', cellTemplate:cellTemplateName, width:'355'},
+				{field:'name_EN', displayName:'Name (EN / FR)', cellTemplate:cellTemplateName, width:'655'},
 				{field:'type_EN', displayName:'Type (EN)', width:'145'},
                 {field:'publish', displayName:'Publish Flag', width:'130', cellTemplate:checkboxCellTemplate},
 				{field:'phase_EN', displayName:'Phase In Tx (EN)', width:'150'},
@@ -201,6 +201,7 @@ angular.module('ATO_InterfaceApp.controllers.eduMatController', ['ngAnimate', 'n
 				controller: EditEduMatModalInstanceCtrl,
 				scope: $scope,
 				windowClass: 'customModal',
+                backdrop: 'static',
 			});
 	
 			// After update, refresh the edu mat list
@@ -569,6 +570,11 @@ angular.module('ATO_InterfaceApp.controllers.eduMatController', ['ngAnimate', 'n
 			    'Hours'
     		];
 
+            // Function to close modal dialog
+            $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+            };
+
 			// Function to properly render the modal 
 			// plus enable resizable functions
 			setTimeout(function () {
@@ -592,6 +598,7 @@ angular.module('ATO_InterfaceApp.controllers.eduMatController', ['ngAnimate', 'n
 				controller: DeleteEduMatModalInstanceCtrl,
 				windowClass: 'deleteModal',
 				scope: $scope,
+                backdrop: 'static',
 			});
 
 			// After delete, refresh the eduMat list

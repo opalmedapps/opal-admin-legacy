@@ -117,7 +117,7 @@ abbr[title] {
  * Addresses style set to 'bolder' in FF3+, S4/5, Chrome
 */
 b, strong {
-  font-weight: bold; }
+  font-weight: 700; }
 
 /*
  * Addresses styling not present in S5, Chrome
@@ -383,7 +383,8 @@ textarea {
   overflow: auto;
   /* 1 */
   vertical-align: top;
-  /* 2 */ }
+  /* 2 */
+  resize: none; }
 
 /* =============================================================================
    Tables
@@ -421,7 +422,7 @@ body {
   font-style: normal;
   font-variant: normal;
   line-height: 18px;
-  color: #292f33;
+  color: #6f5499;
   overflow-y: scroll;
 
   /* Stops Mobile Safari from auto-adjusting font-sizes */
@@ -430,7 +431,7 @@ body {
   text-rendering: optimizeLegibility; }
 
 #page {
-  max-width: 1500px;
+  /*max-width: 1500px;*/
   margin: 0 auto; }
 
 .blur {
@@ -490,7 +491,7 @@ blockquote::after {
 
 b,
 strong {
-  font-weight: bold; }
+  font-weight: 700; }
 
 i, em {
   font-style: italic; }
@@ -691,10 +692,10 @@ ul.no-list {
 .mainPatientModal .modal-dialog,
 .studyModal .modal-dialog,
 .customModal .modal-dialog {
-  width: 1300px !important; }
+  width: 70% !important; }
 
 .customModal .modal-content {
-    background-color: #F5F5F5;
+    background-color: #e6edfa;
 }
 
 .post {
@@ -813,18 +814,19 @@ ul.no-list {
 
 #main {
   position: relative;
-  padding: 56px 14px 15px;
+  padding: 0px 14px 15px;
 }
 #main-content {
   position: relative;
 }
 .login-register {
-  padding-top: 135px;
+  padding-top: 120px;
   padding-bottom: 35px;
   vertical-align: middle;
 }
-.login-register-title {
-  color: #6f5499;
+.login-title {
+  text-align: center;
+  font-size: 15px;
 }
 .login-register-block-main {
   margin-bottom: 20px;
@@ -836,6 +838,63 @@ ul.no-list {
   border-radius: 6px;
   border: 1px solid #e1e8ed;
   padding: 27px 30px 25px;
+}
+
+.panel-description {
+  font-size: 16px;
+}
+
+.side-logo {
+  text-align: center;
+  cursor: pointer;
+}
+
+.side-logo h1 {
+  margin-top: -25px;
+  font-size: 45px;
+}
+
+.home-side-menu {
+  text-align: right;
+  vertical-align: middle;
+}
+
+.home-side-menu h2 {
+  display: inline;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.main-title {
+  height: 60px;
+}
+
+.main-title .title-content {
+  font-size: 50px;
+}
+
+.main-title .title-content h1 {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0;
+}
+
+.main-title .title-content span {
+  vertical-align: middle;
+}
+
+.main-title .title-function {
+  text-align: center;
+}
+
+.main-title .title-breadcrumbs {
+  text-align: right;
+  font-size: 15px;
+  padding-top: 15px;
+}
+
+.title-breadcrumbs .teflon {
+  font-size: 10px;
 }
 
 .visualConfirm {
@@ -926,8 +985,9 @@ ul.no-list {
   background-color: #fffff4;
   border: 1px solid #e1e8ed;
   border-radius: 7px;
-  height: 120px;
+  height: 70px;
 }
+.panel-info.active,
 .side-panel-info.active {
   background-color: #6f5499;
 }
@@ -958,25 +1018,71 @@ ul.no-list {
   margin-right: auto;
   margin-left: auto;
   vertical-align: middle;
-  padding-top: 15px;
+  padding: 10px;
 }
+
+.side-panel-menu .panel-content {
+  padding: 3px;
+  height: 100%;
+}
+
 .panel-container {
   position: relative;
   text-align: center;
-  margin-right: auto;
-  margin-left: auto;
+  margin-right: -7px;
+  margin-left: -7px;
   vertical-align: middle;
   color: #6f5499; 
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 .panel-container.active {
   color: #fffff4; 
+}
+
+.panel-container.disabled {
+  cursor: not-allowed;
+  box-shadow: none;
+  color: #999;
 }
 
 .panel-content #form_wrapper {
   position: relative;
   margin: 15px;
   height: 125px;
+}
+
+.ui-grid-cell {
+  color: #444;
+}
+
+.ui-grid-cell a {
+  color: #6f5499;
+}
+
+.ui-grid-cell a:hover {
+  color: #433061;
+}
+
+.side-panel-menu .panel-container {
+  margin-right: -10px;
+  margin-left: -10px;
+  margin-bottom: 5px;
+}
+
+.side-panel-title {
+  font-size: 17px;
+  padding-left: 5px;
+}
+
+.option-panel-title {
+  font-size: 17px;
+}
+
+.panel-title h1 {
+  margin-top: 0px;
+  padding-left: 10px;
+  font-weight: 700;
+  font-size: 35px;
 }
 
 .panel-login,
@@ -1005,6 +1111,8 @@ ul.no-list {
 .pager li > span.active {
   border: 1px solid #6f5499;
 }
+
+
 
 input.round-input {
   border-radius: 25px;
@@ -1077,6 +1185,11 @@ input.round-input {
   border-radius: 25px;
 }
 
+.home-header-jumbo h1 {
+  font-size: 50px;
+  display: inline;
+  vertical-align: middle;
+}
 .topbar {
   border-bottom: 1px solid rgba(0,0,0,0.05);
   position: fixed;
@@ -1127,6 +1240,26 @@ ol, ul {
   word-wrap: break-word;
 }
 
+#scrolling { /* Carousel Frame */
+    overflow: hidden;
+}
+
+#scrolling ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    -webkit-transform-style: preserve-3d;
+    -ms-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+}
+
+#scrolling li {
+    float: left;
+    width: 300px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
 .container {
   position: relative; 
   margin: 0 auto;
@@ -1159,7 +1292,41 @@ ol, ul {
 }
 
 .side-panel-menu {
-    margin-top:20px;
+    margin-bottom:10px;
+}
+.side-menu-title {
+  margin-bottom: 20px;
+}
+.side-menu-title h2 {
+  display: inline;
+  font-weight: 700;
+}
+
+.table-summary {
+  max-height: 700px;
+  overflow: auto;
+}
+table.summary-box {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.summary-box .title {
+  font-size: 16px;
+  padding-right: 10px;
+}
+
+.summary-box .description {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.summary-box .description p {
+  word-wrap: break-word;
+}
+
+.horz-line {
+  border-bottom: 1px solid #6f5499;
 }
 
 #global-actions>li {
@@ -1331,8 +1498,15 @@ td.color-code h5 {
 .cp-header {
   font-size: 31px;
 }
-  
-
+ 
+.login-logo {
+  text-align:center;
+  margin-bottom: 25px;
+}
+.login-logo h1 {
+  margin-top: -20px;
+  font-size: 45px;
+}
 
 
 /* 
