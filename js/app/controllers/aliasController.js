@@ -78,7 +78,7 @@ angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui
     	$scope.gridOptions = { 
 			data: 'aliasList',
 			columnDefs: [
-				{field:'name_EN', displayName:'Alias (EN / FR)', cellTemplate:cellTemplateName, width:'405'},
+				{field:'name_EN', displayName:'Alias (EN / FR)', cellTemplate:cellTemplateName, width:'605'},
 				{field:'type', displayName:'Type', width:'145'},
                 {field:'update', displayName:'Update', width:'80', cellTemplate:checkboxCellTemplate},
 				{field:'count', displayName:'# of terms', width:'90'},
@@ -187,6 +187,7 @@ angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui
 				controller: EditAliasModalInstanceCtrl,
 				scope: $scope,
 				windowClass: 'customModal',
+				backdrop: 'static',
 			});
 	
 			// After update, refresh the alias list
@@ -287,10 +288,10 @@ angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui
 
     					// Loop within each of the existing terms
 	    				angular.forEach($scope.termList, function(term) {
-		    				var termName = term.name; // get the name
+		    				var termId = term.id; // get the id name
                             var selectedTermName = selectedTerm.name;
                             
-			    			if (selectedTermName == termName) { // If term is selected (from current alias)
+			    			if (selectedTermName == termId) { // If term is selected (from current alias)
 				    			term.added = true; // term added?
 					    	}
     					}); 
@@ -300,7 +301,7 @@ angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui
 
 					// Sort list
 					$scope.termList.sort(function(a,b) {
-						var nameA = a.name.toLowerCase(), nameB = b.name.toLowerCase();
+						var nameA = a.id.toLowerCase(), nameB = b.id.toLowerCase();
 						if (nameA < nameB) // sort string ascending
 							return -1;
 						if (nameA > nameB)
@@ -321,7 +322,6 @@ angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui
 
 			// Function to add / remove a term to alias
 			$scope.toggleTermSelection = function(term){
-				var termName = term.name; // get the name
 
 				// Toggle booleans
 				$scope.changesMade = true; 
@@ -424,7 +424,7 @@ angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui
 		    		// Fill it with the added terms from termList
 			    	angular.forEach($scope.termList, function(term) {
 				    	if(term.added == true) 
-					    	$scope.alias.terms.push(term.name);
+					    	$scope.alias.terms.push(term.id);
     				});
 	
 	    			// Submit form
@@ -473,10 +473,11 @@ angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui
 			// plus enable resizable functions
 			setTimeout(function () {
                             var resizeOpts = {
-                                handles: "all", autoHide: true
+                                handles: "all", autoHide: false
                             };
 
                             $(".aliasModal .modal-content").resizable(resizeOpts);
+
                         }, 0);
 
 		};
@@ -506,6 +507,7 @@ angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui
 				controller: DeleteAliasModalInstanceCtrl,
 				windowClass: 'deleteModal',
 				scope: $scope,
+				backdrop: 'static',	
 			});
 
 			// After delete, refresh the alias list

@@ -47,9 +47,9 @@ angular.module('ATO_InterfaceApp.controllers.hospitalMapController', ['ngAnimate
         $scope.gridOptions = {
             data: 'hosMapList',
             columnDefs: [
-            {field:'name_EN', displayName:'Name (EN / FR)', cellTemplate:cellTemplateName, width:'355'},
+            {field:'name_EN', displayName:'Name (EN / FR)', cellTemplate:cellTemplateName, width:'555'},
             {field:'qrid', displayName:'QR Identifier', width:'145'},
-            {field:'url', displayName:'Map URL', width:'310'},
+            {field:'url', displayName:'Map URL', width:'410'},
             {name:'Operations', cellTemplate:cellTemplateOperations, sortable:false}
         ],
         useExternalFiltering: true,
@@ -96,6 +96,7 @@ angular.module('ATO_InterfaceApp.controllers.hospitalMapController', ['ngAnimate
 				controller: EditHosMapModalInstanceCtrl,
 				scope: $scope,
 				windowClass: 'customModal',
+                backdrop: 'static',
 			});
 	
 			// After update, refresh the hospital map list
@@ -209,6 +210,11 @@ angular.module('ATO_InterfaceApp.controllers.hospitalMapController', ['ngAnimate
 		    	}
             }
 
+            // Function to close modal dialog
+            $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+            };
+            
 	        // Function to properly render the modal 
 			// plus enable resizable functions
 			setTimeout(function () {
@@ -232,6 +238,7 @@ angular.module('ATO_InterfaceApp.controllers.hospitalMapController', ['ngAnimate
 				controller: DeleteHosMapModalInstanceCtrl,
 				windowClass: 'deleteModal',
 				scope: $scope,
+                backdrop: 'static',
 			});
 
 			// After delete, refresh the map list

@@ -65,6 +65,8 @@ angular.module('ATO_InterfaceApp.controllers.newEduMatController', ['ngAnimate',
             name_FR: null,
             url_EN: null,
             url_FR: null,
+            share_url_EN: null,
+            share_url_FR: null,
             type_EN: "",
             type_FR: "",
             phase_in_tx: null,
@@ -74,8 +76,13 @@ angular.module('ATO_InterfaceApp.controllers.newEduMatController', ['ngAnimate',
 
         // Initialize a list of sexes
         $scope.sexes = [
-            {name: 'Male'},
-            {name: 'Female'}
+            {
+                name: 'Male',
+                icon: 'male'
+            }, {
+                name: 'Female',
+                icon: 'female'
+            }
         ];
 
         // Initialize lists to hold filters
@@ -209,7 +216,10 @@ angular.module('ATO_InterfaceApp.controllers.newEduMatController', ['ngAnimate',
         }
 
         // Function to toggle necessary changes when updating the phase in treatment
-        $scope.phaseUpdate = function() {
+        $scope.phaseUpdate = function(phase) {
+
+            $scope.newEduMat.phase_in_tx = phase;
+
             // Toggle boolean 
             steps.phase.completed = true;
             // Count the number of completed steps
@@ -217,6 +227,19 @@ angular.module('ATO_InterfaceApp.controllers.newEduMatController', ['ngAnimate',
 			// Change progress bar
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 		}
+
+        // Function to toggle necessary changes when updating the sex
+        $scope.sexUpdate = function(sex) {
+
+            if(!$scope.demoFilter.sex) {
+                $scope.demoFilter.sex = sex.name;
+            } else if ($scope.demoFilter.sex == sex.name) {
+                $scope.demoFilter.sex = null; // Toggle off
+            } else {
+                $scope.demoFilter.sex = sexname;
+            }
+
+        }
 
         $scope.tocsComplete = false;
         // Function to toggle necessary changes when updating the table of contents
@@ -373,14 +396,14 @@ angular.module('ATO_InterfaceApp.controllers.newEduMatController', ['ngAnimate',
             });
         }
 
-        // Function to check if all filters are added
-        $scope.allFilters = function(filterList) {
-            var allFiltersAdded = true;
+       // Function to check if filters are added
+        $scope.checkFilters = function(filterList) {
+            var filtersAdded = false;
             angular.forEach(filterList, function(Filter) {
                 if(Filter.added)
-                    allFiltersAdded = false;
+                    filtersAdded = true;
             });
-            return allFiltersAdded;
+            return filtersAdded;
         }
 
         // Function to return boolean for form completion

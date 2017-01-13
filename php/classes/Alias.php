@@ -41,6 +41,7 @@ class Alias {
                         $termName = $data[0];
                         $termArray = array(
 				           	'name' => $termName,
+                            'id'   => $termName, 
 			        	    'added'=> 'false'
 		    	        );
 
@@ -68,6 +69,7 @@ class Alias {
                             
                         $termArray = array(
 				           	'name' => $termName,
+                            'id'   => $termName,
 			            	'added'=> 'false'
     			        );
     
@@ -85,7 +87,8 @@ class Alias {
 
                 $sql = "
                     SELECT DISTINCT 
-                        mval.AppointmentCode
+                        mval.AppointmentCode,
+                        mval.ResourceDescription
                     FROM
                         MediVisitAppointmentList mval
                     ORDER BY
@@ -98,10 +101,12 @@ class Alias {
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
                 
                     $termName   = $data[0];
+                    $termDesc   = $data[1];
 
                     $termArray = array(
-				       	'name' => $termName,
-			        	'added'=> 'false'
+				       	'name'          => "$termName ($termDesc)",
+                        'id'            => $termName,
+			        	'added'         => 'false'
 			        );
 
                     array_push($expressionList, $termArray);
@@ -439,7 +444,7 @@ class Alias {
 		$aliasName_FR 	= $aliasArray['name_FR'];
 		$aliasDesc_EN	= $aliasArray['description_EN'];
 		$aliasDesc_FR	= $aliasArray['description_FR'];
-        $aliasType	    = $aliasArray['type'];
+        $aliasType	    = $aliasArray['type']['name'];
         $aliasColorTag  = $aliasArray['color'];
 		$aliasTerms	    = $aliasArray['terms'];
         $aliasEduMatSer = 0;
@@ -586,6 +591,7 @@ class Alias {
             'value'     => 0,
             'message'   => ''
         );
+        
 		try {
 			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
 			$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );

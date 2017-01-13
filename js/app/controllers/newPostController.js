@@ -45,8 +45,14 @@ angular.module('ATO_InterfaceApp.controllers.newPostController', ['ngAnimate', '
 
         // Initialize the list of post types
         $scope.postTypes = [
-            {name: 'Announcement'},
-            {name: 'Treatment Team Message'}
+            {
+                name: 'Announcement',
+                icon: 'bullhorn'
+            },
+            {
+                name: 'Treatment Team Message',
+                icon: 'user-md'
+            }
         ];
 
         // Initialize the new post object
@@ -143,7 +149,10 @@ angular.module('ATO_InterfaceApp.controllers.newPostController', ['ngAnimate', '
 		}
 
         // Funtion to toggle necessary changes when updating the post type
-        $scope.typeUpdate = function() {
+        $scope.typeUpdate = function(type) {
+
+            $scope.newPost.type = type; 
+
             // Toggle boolean
             steps.type.completed = true;
 
@@ -151,7 +160,7 @@ angular.module('ATO_InterfaceApp.controllers.newPostController', ['ngAnimate', '
             $scope.newPost.publish_date = null;
             $scope.newPost.publish_time = null;
             // toggle publish date logic
-            if ($scope.newPost.type == 'Announcement') {
+            if ($scope.newPost.type.name == 'Announcement') {
                 steps.publish_date.completed = false;
             }
             else {
@@ -292,14 +301,14 @@ angular.module('ATO_InterfaceApp.controllers.newPostController', ['ngAnimate', '
             });
         }
 
-        // Function to check if all filters are added
-        $scope.allFilters = function(filterList) {
-            var allFiltersAdded = true;
+        // Function to check if filters are added
+        $scope.checkFilters = function(filterList) {
+            var filtersAdded = false;
             angular.forEach(filterList, function(Filter) {
                 if(Filter.added)
-                    allFiltersAdded = false;
+                    filtersAdded = true;
             });
-            return allFiltersAdded;
+            return filtersAdded;
         }
 
         // Function to return boolean for form completion

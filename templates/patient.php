@@ -18,22 +18,30 @@
     <div id="top">
       <div class="clearfix">
         <div class="row">
-          <div class="col-md-3 animated flipInY">
+          <div class="col-md-2">
             <div ng-include="'templates/side-panel-menu.php'"></div>
           </div>
-          <div class="col-md-9 animated zoomIn">
+          <div class="col-md-10 animated fadeIn">
+            <div class="row main-title">
+              <div class="col-md-6 title-content">
+                <span class="fa fa-address-card"></span>
+                <h1><strong>Patients</strong></h1>
+              </div>
+              <div class="col-md-6 title-breadcrumbs"> 
+                <span>Home <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Patients</strong></span>
+              </div>
+            </div>
             <div class="panel-container" style="text-align:left">
               <div class="panel-info">
-                <div class="panel-title-custom" style="padding-bottom: 10px;">
-                  <div class="clearfix">
-                    <h2 style="font-size: 36px; float:left;">
-                      Patients
-                    </h2>
-                  </div>
-                </div>  
                 <div class="panel-input">
-                  <div class="clearfix">
-                    <div style="margin-bottom: 10px;">
+                  <div class="row clearfix" style="margin-bottom:10px;">
+                    <div class="col-md-9">
+                      <a style="width:200px;" href="" ng-click="goToAddPatient()" class="btn btn-md btn-outline">
+                        <span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
+                        <span style="font-size: 20px;"><strong>Register New</strong></span>
+                      </a>
+                    </div>
+                    <div class="col-md-3">
                       <div class="input-group">
                         <input type="text" class="form-control" ng-model="filterValue" ng-change="filterPatient(filterValue)" placeholder="Search...">
                         <span class="input-group-addon">
@@ -43,7 +51,7 @@
                     </div>
                   </div>
                   <div id="data-table">
-                    <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:520px"></div>
+                    <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:720px"></div>
                     <div class="table-buttons" style="text-align: center;">
                       <form method="post" ng-submit="submitTransferFlags()">
                         <input class="btn btn-primary" ng-class="{'disabled': !changesMade}" type="submit" value="Save Changes">

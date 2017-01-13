@@ -12,5 +12,5 @@
 	include_once($configFile);
 
 
-    header("Location: ".ABS_URL."main.php"); // Redirect page
+    header("Location: ".ABS_URL."main.php#/login"); // Redirect page
 ?>

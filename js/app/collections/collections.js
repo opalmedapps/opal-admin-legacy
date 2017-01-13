@@ -205,6 +205,30 @@ angular.module('ATO_InterfaceApp.collections', []).
 			});
 		}
 
+        // API to find patient given an SSN
+        patientAPI.findPatient = function(ssn) {
+            return $http({
+                method: 'JSONP',
+                url: URLPATH+"api/patient/find_patient.php?callback=JSON_CALLBACK&ssn="+ssn
+            });
+        }
+
+        // API to fetch sequrity questions
+        patientAPI.fetchSecurityQuestions = function () {
+            return $http({
+                method: 'JSONP',
+                url: URLPATH+"api/patient/fetch_security_questions.php?callback=JSON_CALLBACK"
+            });
+        }
+
+        // API to check email existence
+        patientAPI.emailAlreadyInUse = function(email) {
+            return $http({
+                method: 'JSONP',
+                url: URLPATH+"api/patient/email_taken.php?callback=JSON_CALLBACK&email="+email
+            });
+        }
+
         return patientAPI;
     }).
 
@@ -280,4 +304,45 @@ angular.module('ATO_InterfaceApp.collections', []).
 
 		return cronAPI;
 	});
+
+    
+    // // To broadcast the notAuthenticated / notAuthorized 
+    // // event based on the HTTP response status code
+    // factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
+    //   return {
+    //     responseError: function (response) { 
+    //       $rootScope.$broadcast({
+    //         401: AUTH_EVENTS.notAuthenticated,
+    //         403: AUTH_EVENTS.notAuthorized,
+    //         419: AUTH_EVENTS.sessionTimeout,
+    //         440: AUTH_EVENTS.sessionTimeout
+    //       }[response.status], response);
+    //       return $q.reject(response);
+    //     }
+    //   };
+    // }).
+
+    // Watches the value of ‘currentUser’ on $rootScope, 
+    // and will only resolve after currentUser has been set
+    // factory('AuthResolver', function ($q, $rootScope, $state) {
+    //     return {
+    //         resolve: function() {
+    //             var deferred = $q.defer();
+    //             var unwatch = $rootScope.$watch('currentUser', function (currentUser) {
+    //                 if (angular.isDefined(currentUser)) {
+    //                     if (currentUser) {
+    //                         deferred.resolve(currentUser);
+    //                     } else {
+    //                         deferred.reject();
+    //                         $state.go('login');
+    //                     }
+    //                     unwatch();
+    //                 }
+    //             });
+    //             return deferred.promise;
+    //         }
+    //     };
+    // });
+
+
 
