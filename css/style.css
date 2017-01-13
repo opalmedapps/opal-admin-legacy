@@ -383,7 +383,8 @@ textarea {
   overflow: auto;
   /* 1 */
   vertical-align: top;
-  /* 2 */ }
+  /* 2 */
+  resize: none; }
 
 /* =============================================================================
    Tables
@@ -691,10 +692,10 @@ ul.no-list {
 .mainPatientModal .modal-dialog,
 .studyModal .modal-dialog,
 .customModal .modal-dialog {
-  width: 1300px !important; }
+  width: 70% !important; }
 
 .customModal .modal-content {
-    background-color: #F5F5F5;
+    background-color: #e6edfa;
 }
 
 .post {
@@ -1038,10 +1039,28 @@ ul.no-list {
   color: #fffff4; 
 }
 
+.panel-container.disabled {
+  cursor: not-allowed;
+  box-shadow: none;
+  color: #999;
+}
+
 .panel-content #form_wrapper {
   position: relative;
   margin: 15px;
   height: 125px;
+}
+
+.ui-grid-cell {
+  color: #444;
+}
+
+.ui-grid-cell a {
+  color: #6f5499;
+}
+
+.ui-grid-cell a:hover {
+  color: #433061;
 }
 
 .side-panel-menu .panel-container {
@@ -1481,12 +1500,12 @@ td.color-code h5 {
 }
  
 .login-logo {
-  font-size: 35px;
   text-align:center;
   margin-bottom: 25px;
 }
 .login-logo h1 {
-  margin-top: 0;
+  margin-top: -20px;
+  font-size: 45px;
 }
 
 

@@ -5,7 +5,26 @@ angular.module('ATO_InterfaceApp.controllers.cronController', ['ngAnimate', 'ui.
 	*******************************************************************************/
 	controller('cronController', function($scope, cronAPIservice) {
 
- 
+  		$scope.bannerMessage = "";
+        // Function to show page banner 
+        $scope.showBanner = function() {
+            $(".bannerMessage").slideDown(function()  {
+                setTimeout(function() {             
+                    $(".bannerMessage").slideUp(); 
+                }, 3000); 
+            });
+        }
+        // Function to set banner class
+        $scope.setBannerClass = function(classname) {
+            // Remove any classes starting with "alert-" 
+            $(".bannerMessage").removeClass (function (index, css) {
+                return (css.match (/(^|\s)alert-\S+/g) || []).join(' ');
+            });
+            // Add class
+            $(".bannerMessage").addClass('alert-'+classname);
+        };
+
+
  		$scope.changesMade = false;
  		$scope.setChangesMade = function() {
             $scope.changesMade = true;
@@ -47,8 +66,6 @@ angular.module('ATO_InterfaceApp.controllers.cronController', ['ngAnimate', 'ui.
 		// Initialize object for cron details
 		$scope.cronDetails = {};
 		$scope.cronDetailsMod = {};
-
-		$scope.editCron = false;
 
 		// Call our API to get the cron details from our DB
 		cronAPIservice.getCronDetails().success(function (response) {
@@ -103,9 +120,11 @@ angular.module('ATO_InterfaceApp.controllers.cronController', ['ngAnimate', 'ui.
 					    });
 
                         $scope.bannerMessage = "Saved Cron Settings!";
+                        $scope.setBannerClass = "success";
                         $scope.showBanner();
-                        $scope.editCron = false;
+
                         $scope.changesMade = false;
+                    
     				}
 	    		});
 	        }

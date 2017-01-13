@@ -228,6 +228,19 @@ angular.module('ATO_InterfaceApp.controllers.newEduMatController', ['ngAnimate',
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 		}
 
+        // Function to toggle necessary changes when updating the sex
+        $scope.sexUpdate = function(sex) {
+
+            if(!$scope.demoFilter.sex) {
+                $scope.demoFilter.sex = sex.name;
+            } else if ($scope.demoFilter.sex == sex.name) {
+                $scope.demoFilter.sex = null; // Toggle off
+            } else {
+                $scope.demoFilter.sex = sexname;
+            }
+
+        }
+
         $scope.tocsComplete = false;
         // Function to toggle necessary changes when updating the table of contents
         $scope.tocUpdate = function() {

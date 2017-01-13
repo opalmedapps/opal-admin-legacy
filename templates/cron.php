@@ -113,4 +113,5 @@
         </div>
       </div>
     </div>
+    <div class="bannerMessage alert-success">{{bannerMessage}}</div>
   </div>

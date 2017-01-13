@@ -181,6 +181,7 @@ angular.module('ATO_InterfaceApp.controllers.testResultController', ['ngAnimate'
 				controller: EditTestResultModalInstanceCtrl,
 				scope: $scope,
 				windowClass: 'customModal',
+                backdrop: 'static',
 			});
 		    // After update, refresh the test result list
 			modalInstance.result.then(function () {
@@ -377,6 +378,11 @@ angular.module('ATO_InterfaceApp.controllers.testResultController', ['ngAnimate'
 		    	}
             }
 
+            // Function to close modal dialog
+            $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+            };
+            
 	        // Function to properly render the modal 
 			// plus enable resizable functions
 			setTimeout(function () {
@@ -400,6 +406,7 @@ angular.module('ATO_InterfaceApp.controllers.testResultController', ['ngAnimate'
 				controller: DeleteTestResultModalInstanceCtrl,
 				windowClass: 'deleteModal',
 				scope: $scope,
+                backdrop: 'static',
 			});
   			// After delete, refresh the test result list
 			modalInstance.result.then(function () {

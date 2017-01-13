@@ -103,6 +103,7 @@ angular.module('ATO_InterfaceApp.controllers.notificationController', ['ngAnimat
 				controller: EditNotificationModalInstanceCtrl,
 				scope: $scope,
 				windowClass: 'customModal',
+                backdrop: 'static',
 			});
 	
 			// After update, refresh the notification list
@@ -184,6 +185,11 @@ angular.module('ATO_InterfaceApp.controllers.notificationController', ['ngAnimat
 		    	}
             }
 
+            // Function to close modal dialog
+            $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+            };
+
 	        // Function to properly render the modal 
 			// plus enable resizable functions
 			setTimeout(function () {
@@ -207,6 +213,7 @@ angular.module('ATO_InterfaceApp.controllers.notificationController', ['ngAnimat
 				controller: DeleteNotificationModalInstanceCtrl,
 				windowClass: 'deleteModal',
 				scope: $scope,
+                backdrop: 'static',
 			});
 
 			// After delete, refresh the map list

@@ -201,6 +201,7 @@ angular.module('ATO_InterfaceApp.controllers.eduMatController', ['ngAnimate', 'n
 				controller: EditEduMatModalInstanceCtrl,
 				scope: $scope,
 				windowClass: 'customModal',
+                backdrop: 'static',
 			});
 	
 			// After update, refresh the edu mat list
@@ -569,6 +570,11 @@ angular.module('ATO_InterfaceApp.controllers.eduMatController', ['ngAnimate', 'n
 			    'Hours'
     		];
 
+            // Function to close modal dialog
+            $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+            };
+
 			// Function to properly render the modal 
 			// plus enable resizable functions
 			setTimeout(function () {
@@ -592,6 +598,7 @@ angular.module('ATO_InterfaceApp.controllers.eduMatController', ['ngAnimate', 'n
 				controller: DeleteEduMatModalInstanceCtrl,
 				windowClass: 'deleteModal',
 				scope: $scope,
+                backdrop: 'static',
 			});
 
 			// After delete, refresh the eduMat list

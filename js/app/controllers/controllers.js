@@ -16,7 +16,9 @@ angular.module('ATO_InterfaceApp.controllers', [
   'ATO_InterfaceApp.controllers.testResultController',
   'ATO_InterfaceApp.controllers.newTestResultController',
   'ATO_InterfaceApp.controllers.sidePanelMenuController',
-  'ATO_InterfaceApp.controllers.cronController'
+  //'ATO_InterfaceApp.controllers.applicationController',
+  'ATO_InterfaceApp.controllers.cronController',
+  'ATO_InterfaceApp.controllers.loginController'
 ]);
 
 	

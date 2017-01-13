@@ -189,6 +189,7 @@ angular.module('ATO_InterfaceApp.controllers.postController', ['ngAnimate', 'ngS
 				controller: EditPostModalInstanceCtrl,
 				scope: $scope,
 				windowClass: 'customModal',
+                backdrop: 'static',
 			});
 	
 			// After update, refresh the post list
@@ -464,6 +465,11 @@ angular.module('ATO_InterfaceApp.controllers.postController', ['ngAnimate', 'ngS
 			    'Hours'
     		];
 
+            // Function to close modal dialog
+            $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+            };
+
 			// Function to properly render the modal 
 			// plus enable resizable functions
 			setTimeout(function () {
@@ -488,6 +494,7 @@ angular.module('ATO_InterfaceApp.controllers.postController', ['ngAnimate', 'ngS
 				controller: DeletePostModalInstanceCtrl,
 				windowClass: 'deleteModal',
 				scope: $scope,
+                backdrop: 'static',
 			});
 
 			// After delete, refresh the post list
