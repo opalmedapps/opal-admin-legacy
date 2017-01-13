@@ -102,7 +102,9 @@ angular.module('ATO_InterfaceApp.controllers.newNotificationController', ['ngAni
         }
 
         // Function to toggle necessary changes when updating type
-        $scope.typeUpdate = function() {
+        $scope.typeUpdate = function(typeId) {
+
+            $scope.newNotification.type = typeId;
 
             if ($scope.newNotification.type) {
                 // Toggle step completion

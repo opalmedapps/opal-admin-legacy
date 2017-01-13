@@ -41,6 +41,7 @@ class Alias {
                         $termName = $data[0];
                         $termArray = array(
 				           	'name' => $termName,
+                            'id'   => $termName, 
 			        	    'added'=> 'false'
 		    	        );
 
@@ -68,6 +69,7 @@ class Alias {
                             
                         $termArray = array(
 				           	'name' => $termName,
+                            'id'   => $termName,
 			            	'added'=> 'false'
     			        );
     
@@ -85,7 +87,8 @@ class Alias {
 
                 $sql = "
                     SELECT DISTINCT 
-                        mval.AppointmentCode
+                        mval.AppointmentCode,
+                        mval.ResourceDescription
                     FROM
                         MediVisitAppointmentList mval
                     ORDER BY
@@ -98,10 +101,12 @@ class Alias {
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
                 
                     $termName   = $data[0];
+                    $termDesc   = $data[1];
 
                     $termArray = array(
-				       	'name' => $termName,
-			        	'added'=> 'false'
+				       	'name'          => "$termName ($termDesc)",
+                        'id'            => $termName,
+			        	'added'         => 'false'
 			        );
 
                     array_push($expressionList, $termArray);
@@ -162,6 +167,57 @@ class Alias {
 
     /**
      *
+     * Gets a list of existing color tags
+     *
+     * @return array
+     */
+    public function getExistingColorTags($type) {
+        $colorTags = array();
+		try {
+			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
+            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            $sql = "
+                SELECT DISTINCT 
+                    Alias.AliasName_EN,
+                    Alias.AliasName_FR,
+                    Alias.ColorTag
+                FROM
+                    Alias
+                WHERE
+                    Alias.AliasType = '$type'
+                ORDER BY
+                    Alias.AliasName_EN
+            ";
+
+			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query->execute();
+
+			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $aliasName_EN       = $data[0];
+                $aliasName_FR       = $data[1];
+                $colorTag           = $data[2];
+
+                $colorArray = array(
+                    'name_EN'   => $aliasName_EN,
+                    'name_FR'   => $aliasName_FR,
+                    'color'     => $colorTag
+                );
+
+                array_push($colorTags, $colorArray);
+            }
+
+            return $colorTags;
+
+		} catch (PDOException $e) {
+			echo $e->getMessage();
+			return $colorTags;
+		}
+    }
+
+    /**
+     *
      * Gets a list of existing aliases
      *
      * @return array
@@ -183,7 +239,8 @@ class Alias {
                     Alias.AliasUpdate,
                     Alias.EducationalMaterialControlSerNum,
                     Alias.SourceDatabaseSerNum,
-                    SourceDatabase.SourceDatabaseName
+                    SourceDatabase.SourceDatabaseName,
+                    Alias.ColorTag
 				FROM 
                     Alias,
                     SourceDatabase
@@ -208,6 +265,7 @@ class Alias {
                     'serial'    => $data[8],
                     'name'      => $data[9]
                 );
+                $aliasColorTag  = $data[10];
                 $aliasTerms	    = array();
                 $aliasEduMat    = "";
 
@@ -246,6 +304,7 @@ class Alias {
 					'name_EN' 		    => $aliasName_EN, 
 					'serial' 		    => $aliasSer, 
                     'type'			    => $aliasType, 
+                    'color'             => $aliasColorTag,
                     'update'            => $aliasUpdate,
                     'eduMat'            => $aliasEduMat,
 					'description_EN' 	=> $aliasDesc_EN, 
@@ -289,7 +348,8 @@ class Alias {
                     Alias.AliasUpdate,
                     Alias.EducationalMaterialControlSerNum,
                     Alias.SourceDatabaseSerNum,
-                    SourceDatabase.SourceDatabaseName 
+                    SourceDatabase.SourceDatabaseName, 
+                    Alias.ColorTag
 				FROM 
                     Alias, 
                     SourceDatabase
@@ -315,6 +375,8 @@ class Alias {
                 'serial'    => $data[7],
                 'name'      => $data[8]
             );
+            $aliasColorTag  = $data[9];
+
             $aliasEduMat    = "";
 			$aliasTerms	    = array();
 
@@ -351,6 +413,7 @@ class Alias {
 				'name_EN' 		    => $aliasName_EN, 
 				'serial' 		    => $ser, 
                 'type'			    => $aliasType, 
+                'color'             => $aliasColorTag,
                 'update'            => $aliasUpdate,
                 'eduMat'            => $aliasEduMat,
 				'description_EN' 	=> $aliasDesc_EN, 
@@ -381,7 +444,8 @@ class Alias {
 		$aliasName_FR 	= $aliasArray['name_FR'];
 		$aliasDesc_EN	= $aliasArray['description_EN'];
 		$aliasDesc_FR	= $aliasArray['description_FR'];
-		$aliasType	    = $aliasArray['type'];
+        $aliasType	    = $aliasArray['type']['name'];
+        $aliasColorTag  = $aliasArray['color'];
 		$aliasTerms	    = $aliasArray['terms'];
         $aliasEduMatSer = 0;
         if ( is_array($aliasArray['edumat']) && isset($aliasArray['edumat']['serial']) ) {
@@ -403,6 +467,7 @@ class Alias {
                         EducationalMaterialControlSerNum,
                         SourceDatabaseSerNum,
                         AliasType, 
+                        ColorTag,
                         AliasUpdate,
 						LastUpdated
 					) 
@@ -415,6 +480,7 @@ class Alias {
                     '$aliasEduMatSer',
                     '$sourceDBSer',
                     '$aliasType', 
+                    '$aliasColorTag',
                     '0',
 					NULL
 				)
@@ -516,6 +582,7 @@ class Alias {
         if ( is_array($aliasArray['edumat']) && isset($aliasArray['edumat']['serial']) ) {
             $aliasEduMatSer = $aliasArray['edumat']['serial'];
         }
+        $aliasColorTag  = $aliasArray['color'];
 
         $existingTerms	= array();
 
@@ -524,6 +591,7 @@ class Alias {
             'value'     => 0,
             'message'   => ''
         );
+        
 		try {
 			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
 			$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -535,7 +603,8 @@ class Alias {
 					Alias.AliasName_FR 		                = \"$aliasName_FR\", 
 					Alias.AliasDescription_EN	            = \"$aliasDesc_EN\",
                     Alias.AliasDescription_FR	            = \"$aliasDesc_FR\",
-                    Alias.EducationalMaterialControlSerNum  = '$aliasEduMatSer'
+                    Alias.EducationalMaterialControlSerNum  = '$aliasEduMatSer',
+                    Alias.ColorTag                          = '$aliasColorTag'
 				WHERE 
 					Alias.AliasSerNum = $aliasSer
 			";
