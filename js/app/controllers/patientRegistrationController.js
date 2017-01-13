@@ -88,6 +88,9 @@ angular.module('ATO_InterfaceApp.controllers.patientRegistrationController', ['n
         // Function to reset newPatient object
         $scope.flushNewPatient = function() {
 
+            if (!$scope.validSSN.SSN)
+                $scope.validSSN.status = null;
+            
             $scope.newPatient = jQuery.extend(true, {}, $scope.defaultNewPatient);
             steps = jQuery.extend(true, {}, defaultSteps);
 

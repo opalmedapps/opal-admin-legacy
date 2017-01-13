@@ -1,3 +1,21 @@
+Version 0.5.0:
+ - Merge branch 'newDesign' into develop
+ -     --- Final development in design branch     --- Prepared further development for future functionality
+ -     --- Implemented patient registration functionality
+ -     --- Further developments into the new design         -- Finished existing pages.         -- Working on new pages.
+ -     --- Further design changes
+ -     --- Redesigned educational material
+ -     --- Completed new alias page design update
+ -     --- Further implementation design change in newAlias
+ -     -- Redesigned home and Alias pages
+ -     -- Removed duplicate ignores
+ - Merge branch 'colorTag' into develop
+ - Merge branch 'release-0.4' into develop
+ -     --- Implemented color tags.         Now icon colors can be chosen for each task, appointment and document for use in Opal.
+ -     --- Updated gitignore to ignore images directory
+ -     -- Updated gitignore further to include config.php file for each branch.
+ -     --- Updated gitignore to ignore master config file.         Now each branch will have a respective config.php file to use the proper MySQL database.
+
 Version 0.4.0:
  - Merge branch 'demographics' into develop
  -     --- Added demographic logic         -- Now users can filter by age group and sex
