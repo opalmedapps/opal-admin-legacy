@@ -1,4 +1,4 @@
-angular.module('ATO_InterfaceApp.controllers.eduMatController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns']).
+angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns']).
 
 
 	/******************************************************************************

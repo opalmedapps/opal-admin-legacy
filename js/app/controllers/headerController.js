@@ -1,4 +1,4 @@
-angular.module('ATO_InterfaceApp.controllers.headerController', ['ui.bootstrap', 'ui.grid']).
+angular.module('opalAdmin.controllers.headerController', ['ui.bootstrap', 'ui.grid']).
 
 
 	/******************************************************************************

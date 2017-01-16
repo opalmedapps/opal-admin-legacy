@@ -1,4 +1,4 @@
-angular.module('ATO_InterfaceApp.controllers.newTestResultController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
+angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
 	/******************************************************************************
 	* Add Test Result Page controller 

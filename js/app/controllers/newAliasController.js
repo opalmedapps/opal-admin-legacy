@@ -1,4 +1,4 @@
-angular.module('ATO_InterfaceApp.controllers.newAliasController', ['ngAnimate','ui.bootstrap', 'ui.grid', 'ui.bootstrap.materialPicker']).
+angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate','ui.bootstrap', 'ui.grid', 'ui.bootstrap.materialPicker']).
 
 	/******************************************************************************
 	* Add Alias Page controller 
