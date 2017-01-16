@@ -350,8 +350,28 @@ class EduMaterial {
                 $parentFlag             = $data[11];
                 $shareURL_EN            = $data[12];
                 $shareURL_FR            = $data[13];
+                $rating                 = -1;
                 $filters                = array();
                 $tocs                   = array();
+
+                if ($parentFlag == 1) {
+                    $sql = "
+                        SELECT
+                            AVG(emr.RatingValue) 
+                        FROM
+                            EducationalMaterialRating emr
+                        WHERE
+                            emr.EducationalMaterialControlSerNum = $eduMatSer
+                    ";
+                    $secondQuery = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                    $secondQuery->execute();
+        
+                    while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                        if ($secondData[0]) {
+                            $rating = $secondData[0];
+                        }
+                    }
+                }
 
                 $sql = "
                     SELECT DISTINCT 
@@ -444,6 +464,7 @@ class EduMaterial {
                     'phase_FR'          => $phaseName_FR,
                     'parentFlag'        => $parentFlag,
                     'publish'           => $publish,
+                    'rating'            => $rating,
                     'filters'           => $filters,
                     'tocs'              => $tocs
                 );
