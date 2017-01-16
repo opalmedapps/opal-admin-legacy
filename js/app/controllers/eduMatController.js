@@ -31,6 +31,8 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
             '<strong><a href="" ng-click="grid.appScope.editEduMat(row.entity)">Edit</a></strong> ' + 
             '- <strong><a href="" ng-click="grid.appScope.deleteEduMat(row.entity)">Delete</a></strong></div>';
         var expandableRowTemplate = '<div ui-grid="row.entity.subGridOptions"></div>';
+        var ratingCellTemplate = '<div class="ui-grid-cell-contents" ng-show="row.entity.rating == -1">No rating</div>' +
+            '<div class="ui-grid-cell-contents" ng-hide="row.entity.rating == -1"><stars number="{{row.entity.rating}}"></stars> </div>'
       
     	// Search engine for table
 		$scope.filterOptions = function(renderableRows) {
@@ -54,7 +56,8 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
     	$scope.gridOptions = { 
 			data: 'eduMatList',
 			columnDefs: [
-				{field:'name_EN', displayName:'Name (EN / FR)', cellTemplate:cellTemplateName, width:'655'},
+				{field:'name_EN', displayName:'Name (EN / FR)', cellTemplate:cellTemplateName, width:'605'},
+                {field:'rating', name:'Avg Rating', cellTemplate:ratingCellTemplate, width:'130'},
 				{field:'type_EN', displayName:'Type (EN)', width:'145'},
                 {field:'publish', displayName:'Publish Flag', width:'130', cellTemplate:checkboxCellTemplate},
 				{field:'phase_EN', displayName:'Phase In Tx (EN)', width:'150'},
@@ -668,4 +671,31 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 
 		};
 
+    })
+
+    // Rating system
+    .directive('stars',function() {
+        return {
+            restrict:'E',
+            template: '<span style="display:inline-block;opacity:0.5;" ng-repeat="star in rate">'
+                + '<i class="glyphicon" ng-class="star.Icon" style="font-size:18px;color:#DAA520"></i>'
+                + '</span>',
+            link:function(scope,element,attrs)
+            {
+                scope.rate = [];
+                initRater();
+                function initRater()
+                {
+                    var number = Math.round(Number(attrs["number"]));
+                    for (var i = 0; i < number; i++) {
+                        scope.rate.push({'Icon':'glyphicon-star'});
+                    };
+                    for (var j = number; j < 5; j++) {
+                        scope.rate.push({'Icon':'glyphicon-star-empty'});
+                    };
+                }
+            }
+        }
     });
+
+
