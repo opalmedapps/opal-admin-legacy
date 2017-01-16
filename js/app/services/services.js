@@ -1,7 +1,7 @@
 // Angular Service
 // 
 
-angular.module('ATO_InterfaceApp.services', [])
+angular.module('opalAdmin.services', [])
 
 	.service('Session', function () {
 		this.create = function (sessionId, userId, userRole) {

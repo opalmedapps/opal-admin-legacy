@@ -11,10 +11,10 @@
  */
 
 'use strict';
-angular.module('ATO_InterfaceApp', [
-  'ATO_InterfaceApp.collections',
-  'ATO_InterfaceApp.controllers',
-  'ATO_InterfaceApp.services',
+angular.module('opalAdmin', [
+  'opalAdmin.collections',
+  'opalAdmin.controllers',
+  'opalAdmin.services',
   'ngRoute',
   'ui.router'
 ])

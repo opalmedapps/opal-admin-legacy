@@ -6,7 +6,7 @@
 // also encodes the data in JSON because the callback will not work otherwise. So in reality, we are calling a PHP script (that executes 
 // JSON_ENCODE) to get relevant data using JavaScript 
 
-angular.module('ATO_InterfaceApp.collections', []).
+angular.module('opalAdmin.collections', []).
 
 	// Alias API service
 	factory('aliasAPIservice', function ($http) { 

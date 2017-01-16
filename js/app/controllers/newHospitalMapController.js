@@ -1,4 +1,4 @@
-angular.module('ATO_InterfaceApp.controllers.newHospitalMapController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
+angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
 
 	/******************************************************************************

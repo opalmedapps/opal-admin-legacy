@@ -1,4 +1,4 @@
-angular.module('ATO_InterfaceApp.controllers.patientRegistrationController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
+angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
 
 	/******************************************************************************

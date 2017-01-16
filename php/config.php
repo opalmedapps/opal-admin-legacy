@@ -27,15 +27,15 @@
 	// environment-specific variables (DEV)
     define( "DB_DSN", "mysql:host=localhost;dbname=OpalDB_AJ_Sandbox;charset=utf8" ); 
 	define( "DB_NAME", "OpalDB_AJ_Sandbox" ); 
-	define( "ABS_PATH", "/var/www/devDocuments/ATO/" );
-	define( "ABS_URL", "/devDocuments/ATO/" );
-	define( "PERL_PATH", "/usr/lib/cgi-bin/dev/ATO/"); 
-	define( "PERL_REGEX", "/\/usr\/lib\/cgi-bin\/dev\/ATO\/");
-	define( "ABS_REGEX", "/\/var\/www\/devDocuments\/ATO\/php\/cron\/update_crontab.php "); 
-    define( "SESSION_KEY_NAME", "ATO_DEV_username");
-    define( "SESSION_KEY_LOGIN", "ATO_DEV_loginAttempt");
-    define( "SESSION_KEY_REGISTER", "ATO_DEV_registerAttempt");
-    define( "SESSION_KEY_USERID", "ATO_DEV_userid");
+	define( "ABS_PATH", "/var/www/devDocuments/opalAdmin/" );
+	define( "ABS_URL", "/devDocuments/opalAdmin/" );
+	define( "PERL_PATH", "/usr/lib/cgi-bin/dev/opalAdmin/"); 
+	define( "PERL_REGEX", "/\/usr\/lib\/cgi-bin\/dev\/opalAdmin\/");
+	define( "ABS_REGEX", "/\/var\/www\/devDocuments\/opalAdmin\/php\/cron\/update_crontab.php "); 
+    define( "SESSION_KEY_NAME", "OA_DEV_username");
+    define( "SESSION_KEY_LOGIN", "OA_DEV_loginAttempt");
+    define( "SESSION_KEY_REGISTER", "OA_DEV_registerAttempt");
+    define( "SESSION_KEY_USERID", "OA_DEV_userid");
 	
 	//include the classes
 	include_once( ABS_PATH . "php/classes/User.php" );

@@ -1,4 +1,4 @@
-angular.module('ATO_InterfaceApp.controllers.sidePanelMenuController', ['ui.bootstrap', 'ui.grid']).
+angular.module('opalAdmin.controllers.sidePanelMenuController', ['ui.bootstrap', 'ui.grid']).
 
 
 	/******************************************************************************

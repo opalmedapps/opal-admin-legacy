@@ -3,7 +3,7 @@
     $currentFile = __FILE__; // Get location of this script
 
     // Find config file based on this location 
-    $configFile = substr($currentFile, 0, strpos($currentFile, "ATO")) . "ATO/php/config.php";
+    $configFile = substr($currentFile, 0, strpos($currentFile, "opalAdmin")) . "opalAdmin/php/config.php";
 	// Include config file 
 	include_once($configFile);
 
@@ -19,7 +19,7 @@
 <!--[if IE 9]><html class="ie9" lang="en"><![endif]-->
 <!--[if gt IE 9]><!--><html lang="en"><!--<![endif]-->
 <head>
-	<title>ARIA To Opal</title>
+	<title>opal ADMIN</title>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		
@@ -101,8 +101,8 @@
 	<link media="all" type="text/css" rel="stylesheet" href="css/style.css">
 
 </head>
-<!--<body ng-app="ATO_InterfaceApp" ng-controller="applicationController">-->
-<body ng-app="ATO_InterfaceApp">
+<!--<body ng-app="opalAdmin" ng-controller="applicationController">-->
+<body ng-app="opalAdmin">
 	<div id="page">
 		<!--<div ui-view></div>-->
 		<div ng-view></div>

@@ -1,4 +1,4 @@
-angular.module('ATO_InterfaceApp.controllers.homeController', ['ngAnimate', 'ui.bootstrap']).
+angular.module('opalAdmin.controllers.homeController', ['ngAnimate', 'ui.bootstrap']).
 
 
 	/******************************************************************************

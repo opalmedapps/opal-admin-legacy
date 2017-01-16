@@ -1,4 +1,4 @@
-angular.module('ATO_InterfaceApp.controllers.postController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'textAngular']).
+angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'textAngular']).
 
 
     // Function to accept/trust html (styles, classes, etc.)

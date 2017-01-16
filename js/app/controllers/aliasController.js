@@ -1,4 +1,4 @@
-angular.module('ATO_InterfaceApp.controllers.aliasController', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.bootstrap.materialPicker']).
+angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'ui.bootstrap.materialPicker']).
 
 
 	/******************************************************************************

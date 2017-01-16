@@ -1,4 +1,4 @@
-angular.module('ATO_InterfaceApp.controllers.cronController', ['ngAnimate', 'ui.bootstrap']).
+angular.module('opalAdmin.controllers.cronController', ['ngAnimate', 'ui.bootstrap']).
 
 	/******************************************************************************
 	* Cron Page controller 
