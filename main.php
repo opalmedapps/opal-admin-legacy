@@ -7,10 +7,10 @@
 	// Include config file 
 	include_once($configFile);
 
-	$username 	= $_SESSION[SESSION_KEY_NAME];
+	$username 		= $_SESSION[SESSION_KEY_NAME];
 	$loginAttempt 	= $_SESSION[SESSION_KEY_LOGIN];
 	$registerAttempt= $_SESSION[SESSION_KEY_REGISTER];
-	$userid		= $_SESSION[SESSION_KEY_USERID];
+	$userid			= $_SESSION[SESSION_KEY_USERID];
 ?>
 <!DOCTYPE html>
 <!--[if lt IE 7 ]> <html lang="en" class="no-js ie6 lt8"> <![endif]-->
@@ -73,6 +73,7 @@
  	<script type="text/javascript" src="js/app/controllers/sidePanelMenuController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/cronController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/loginController.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/patientActivityController.js"></script>
  	<!-- <script type="text/javascript" src="js/app/controllers/applicationController.js"></script> -->
 
 

@@ -229,6 +229,14 @@ angular.module('opalAdmin.collections', []).
             });
         }
 
+        // API to get patient activity list 
+        patientAPI.getPatientActivities = function () {
+            return $http({
+                method: 'JSONP',
+                url: URLPATH+"api/patient/patient_activity.php?callback=JSON_CALLBACK"
+            });
+        }
+
         return patientAPI;
     }).
 
