@@ -108,7 +108,6 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 		aliasAPIservice.getAliases().success(function (response) {
 			// Assign value
 			$scope.aliasList = response;
-
 		});
 
         // When this function is called, we set the "update" field to checked 

@@ -145,6 +145,7 @@ angular.module('opalAdmin', [
 	when("/test-result", {templateUrl: "templates/test-result.php", controller: "testResultController"}).
 	when("/test-result/add", {templateUrl: "templates/add-test-result.php", controller: "newTestResultController"}).
 	when("/cron", {templateUrl: "templates/cron.php", controller: "cronController"}).
+	when("/patient-activity", {templateUrl: "templates/patient-activity.php", controller: "patientActivityController"}).
 	otherwise({redirectTo: '/'});
 }]);
 

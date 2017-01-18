@@ -400,6 +400,107 @@ class Patient {
 
      }
 
+     /**
+     *
+     * Gets a list of patient activities
+     *
+     * @return array $patientActivityList
+     */    
+     public function getPatientActivities() {
+        $patientActivityList = array();
+         try {
+
+            $connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
+            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
+                SELECT DISTINCT
+                    pt.PatientSerNum,
+                    pt.PatientId,
+                    pt.SSN,
+                    pt.FirstName,
+                    pt.LastName,
+                    pal.SessionId,
+                    pal.DateTime AS LoginTime,
+                    pal.Request,
+                    pal.DeviceId
+                FROM
+                    Patient pt,
+                    PatientActivityLog pal,
+                    Users
+                WHERE
+                    pt.PatientSerNum    = Users.UserTypeSerNum
+                AND Users.Username      = pal.Username
+                AND Users.UserType      = 'Patient'
+                AND pal.Request         = 'Login'
+
+                ORDER BY pal.DateTime DESC 
+            ";
+            $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            $tmpPAList = array();
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $deviceid = $data[8];
+                if ($deviceid == 'browser') {
+                    // do nothing
+                }
+                else if (strtoupper($deviceid) == $deviceid) {
+                    $deviceid = "iOS/".$deviceid;
+                }
+                else {
+                    $deviceid = "Android/".$deviceid;
+                }
+                $patientArray = array(
+                    $data[5] => array(
+                        'serial'                => $data[0],
+                        'patientid'             => $data[1],
+                        'ssn'                   => $data[2],
+                        'name'                  => "$data[3] $data[4]",
+                        'sessionid'             => $data[5],
+                        'login'                 => $data[6],
+                        'request'               => $data[7],
+                        'deviceid'              => $deviceid
+
+                    )
+                );
+
+                array_push($tmpPAList, $patientArray);
+            }
+
+            $sql = "
+                SELECT DISTINCT
+                    pal.SessionId,
+                    pal.DateTime AS LogoutTime
+                FROM
+                    PatientActivityLog pal
+                WHERE
+                    pal.Request     = 'Logout'
+            ";
+            $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                foreach ($tmpPAList as &$session) {
+                    if($data[0] == key($session)){
+                        $session[$data[0]]['logout'] = $data[1];
+                        break;
+                    }
+                }
+            }
+
+            foreach ($tmpPAList as $session) {
+                foreach ($session as $value) {
+                    array_push($patientActivityList, $value);
+                }
+            }
+
+            return $patientActivityList;
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return $patientActivityList;
+        }
+    }
 
 }
 

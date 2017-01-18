@@ -108,6 +108,16 @@
                   </div>
                 </div>
               </div>
+              <div class="col-md-6">
+                <div class="panel-container animated" ng-class="{pulse: hoverO, active: currentPage == 'patient-activity'}" ng-mouseenter="hoverO=true" ng-mouseleave="hoverO=false" style="cursor:pointer;" ng-click="goToPatientActivity()">
+                  <div class="side-panel-info" ng-class="{active: currentPage == 'patient-activity'}">
+                    <div class="panel-content">
+                      <span style="font-size: 21px;" class="fa fa-hourglass-half" aria-hidden="true"></span>
+                      <div class="side-panel-title">Patient Activity</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="row">
               <div class="side-menu-title">

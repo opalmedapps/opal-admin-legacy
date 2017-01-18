@@ -49,6 +49,10 @@ angular.module('opalAdmin.controllers.sidePanelMenuController', ['ui.bootstrap',
         $scope.goToCron= function () {
             window.location.href = URLPATH+"main.php#/cron";
         }
+        // Function to go to patient activity page
+        $scope.goToPatientActivity = function () {
+            window.location.href = URLPATH+"main.php#/patient-activity";
+        }
 
 			
 	});

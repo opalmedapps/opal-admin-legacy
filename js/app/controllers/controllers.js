@@ -18,7 +18,8 @@ angular.module('opalAdmin.controllers', [
   'opalAdmin.controllers.sidePanelMenuController',
   //'opalAdmin.controllers.applicationController',
   'opalAdmin.controllers.cronController',
-  'opalAdmin.controllers.loginController'
+  'opalAdmin.controllers.loginController',
+  'opalAdmin.controllers.patientActivityController'
 ]);
 
 	
