@@ -1,12 +1,5 @@
  <?php session_start();
 
-    $currentFile = __FILE__; // Get location of this script
-
-    // Find config file based on this location 
-    $configFile = substr($currentFile, 0, strpos($currentFile, "opalAdmin")) . "opalAdmin/php/config.php";
-	// Include config file 
-	include_once($configFile);
- 
 	if (!isset($_SESSION[SESSION_KEY_LOGIN])) {
 		echo "<script>
 			window.location.href = 'php/user/logout.php';

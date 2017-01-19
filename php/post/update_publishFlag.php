@@ -4,13 +4,6 @@
 	 * has been changed
 	 */
 
-    $currentFile = __FILE__; // Get location of this script
-
-    // Find config file based on this location 
-    $configFile = substr($currentFile, 0, strpos($currentFile, "opalAdmin")) . "opalAdmin/php/config.php";
-	// Include config file 
-	include_once($configFile);
-
 	$postObject = new Post; // Object
 
 	// Retrieve FORM params
