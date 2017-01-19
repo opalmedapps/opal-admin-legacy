@@ -20,3 +20,6 @@ fonts/*
 
 # ignore version control script
 bumpversion.sh
+
+# ignore htaccess
+.htaccess

@@ -1,12 +1,5 @@
 <?php session_start();
 
-    $currentFile = __FILE__; // Get location of this script
-
-    // Find config file based on this location 
-    $configFile = substr($currentFile, 0, strpos($currentFile, "opalAdmin")) . "opalAdmin/php/config.php";
-	// Include config file 
-	include_once($configFile);
-
 	$username 	    = $_SESSION[SESSION_KEY_NAME];
 	$loginAttempt 	= $_SESSION[SESSION_KEY_LOGIN];
 	$registerAttempt= $_SESSION[SESSION_KEY_REGISTER];
