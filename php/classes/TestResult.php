@@ -19,8 +19,8 @@ class TestResult {
             'message'   => ''
         );
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             foreach ($testResultList as $testResult) {
                 $publishFlag = $testResult['publish'];
                 $serial = $testResult['serial'];
@@ -32,7 +32,7 @@ class TestResult {
                     WHERE
                         TestResultControl.TestResultControlSerNum = $serial
                 ";
-	            $query = $connect->prepare( $sql );
+	            $query = $host_db_link->prepare( $sql );
 				$query->execute();
             }
             $response['value'] = 1; // Success
@@ -53,8 +53,8 @@ class TestResult {
     public function getTestResultDetails ($serial) {
         $testResultDetails = array();
  		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT 
                     tr.Name_EN,
@@ -68,7 +68,7 @@ class TestResult {
                 WHERE
                     tr.TestResultControlSerNum = $serial
             ";
-			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
@@ -89,7 +89,7 @@ class TestResult {
                 WHERE   
                     tre.TestResultControlSerNum = $serial
             ";
-            $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 	    	$query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -133,8 +133,8 @@ class TestResult {
             'FR'    => array()
         );
         try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
                     trc.Group_EN
@@ -143,7 +143,7 @@ class TestResult {
                 ORDER BY
                     trc.Group_EN
             ";
-			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -157,7 +157,7 @@ class TestResult {
                 ORDER BY
                     trc.Group_FR
             ";
-			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -181,11 +181,11 @@ class TestResult {
         $testNames = array();
 
         try {
-	        $aria_link = new PDO( ARIA_DB , ARIA_USERNAME, ARIA_PASSWORD );
+	        $aria_link = new PDO( SOURCE_DB_DSN , SOURCE_DB_USERNAME, SOURCE_DB_PASSWORD );
             $aria_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             $sql = "
                 SELECT DISTINCT
@@ -229,8 +229,8 @@ class TestResult {
         $tests              = $testResultArray['tests'];
 
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-			$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 INSERT INTO
                     TestResultControl (
@@ -254,10 +254,10 @@ class TestResult {
                     NOW()
                 )
             ";
-			$query = $connect->prepare( $sql );
+			$query = $host_db_link->prepare( $sql );
 			$query->execute();
 
-            $testResultSer = $connect->lastInsertId();
+            $testResultSer = $host_db_link->lastInsertId();
 
             foreach ($tests as $test) {
 
@@ -276,7 +276,7 @@ class TestResult {
                         NOW()
                     )
                 ";
-	            $query = $connect->prepare( $sql );
+	            $query = $host_db_link->prepare( $sql );
 				$query->execute();
             }
 
@@ -297,8 +297,8 @@ class TestResult {
         $testResultList = array();
 
  		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT 
                     tr.TestResultControlSerNum,
@@ -312,7 +312,7 @@ class TestResult {
                 FROM
                     TestResultControl tr
             ";
-			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -336,7 +336,7 @@ class TestResult {
                         tre.TestResultControlSerNum = $testResultSer
                 ";
 
-                $secondQuery = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 				$secondQuery->execute();
     
 				while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -396,8 +396,8 @@ class TestResult {
             'message'   => ''
         );
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-			$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 UPDATE
                     TestResultControl
@@ -412,7 +412,7 @@ class TestResult {
                     TestResultControl.TestResultControlSerNum = $serial
             ";
 
-            $query = $connect->prepare( $sql );
+            $query = $host_db_link->prepare( $sql );
 			$query->execute();
 
             $sql = "
@@ -423,7 +423,7 @@ class TestResult {
                 WHERE
                     tre.TestResultControlSerNum = $serial
             ";
-			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -441,7 +441,7 @@ class TestResult {
                         AND TestResultExpression.TestResultControlSerNum = $serial
                     ";
 
-					$query = $connect->prepare( $sql );
+					$query = $host_db_link->prepare( $sql );
 					$query->execute();
 				}
 			}
@@ -462,7 +462,7 @@ class TestResult {
                         )
                     ";
 
-	                $query = $connect->prepare( $sql );
+	                $query = $host_db_link->prepare( $sql );
 					$query->execute();
 				}
 			}
@@ -490,8 +490,8 @@ class TestResult {
         );
 
 	    try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-			$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 DELETE FROM
                     TestResultControl
@@ -499,7 +499,7 @@ class TestResult {
                     TestResultControl.TestResultControlSerNum = $testResultSer
             ";
 
-	        $query = $connect->prepare( $sql );
+	        $query = $host_db_link->prepare( $sql );
             $query->execute();
 
             $sql = "
@@ -508,7 +508,7 @@ class TestResult {
                 WHERE
                     TestResultExpression.TestResultControlSerNum = $testResultSer
             ";
-            $query = $connect->prepare( $sql );
+            $query = $host_db_link->prepare( $sql );
 			$query->execute();
 
             $response['value'] = 1;

@@ -1,5 +1,5 @@
 <?php
-include(ABS_PATH.'php/lib/phpqrcode/qrlib.php');
+include(FRONTEND_ABS_PATH.'php/lib/phpqrcode/qrlib.php');
 
 /**
  * HospitalMap class
@@ -18,12 +18,12 @@ class HospitalMap {
     public function generateQRCode($qrid, $oldqrid) {
 
         if($oldqrid) {
-            $oldQRPath = ABS_PATH.'images/hospital-maps/qrCodes/'.$oldqrid.'.png';
+            $oldQRPath = FRONTEND_ABS_PATH.'images/hospital-maps/qrCodes/'.$oldqrid.'.png';
             if(file_exists($oldQRPath)) {
                 unlink($oldQRPath);
             }
         }
-        $qrPath = ABS_PATH.'images/hospital-maps/qrCodes/'.$qrid.'.png';
+        $qrPath = FRONTEND_ABS_PATH.'images/hospital-maps/qrCodes/'.$qrid.'.png';
         $qrCode = '';
 
         if(!file_exists($qrPath)) {
@@ -56,8 +56,8 @@ class HospitalMap {
         $qrid               = $hosMapArray['qrid'];
 
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $qrPath = 'qrCodes/'.$qrid.'.png';
             $sql = "
                 INSERT INTO
@@ -80,7 +80,7 @@ class HospitalMap {
                     \"$description_FR\"
                 )
             ";
-		    $query = $connect->prepare( $sql );
+		    $query = $host_db_link->prepare( $sql );
 			$query->execute();
         } catch( PDOException $e) {
 			return $e->getMessage();
@@ -97,8 +97,8 @@ class HospitalMap {
     public function getHospitalMaps() {
         $hosMapList = array();
  		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
                     hm.HospitalMapSerNum,
@@ -111,7 +111,7 @@ class HospitalMap {
                 FROM
                     HospitalMap hm
             ";
-			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -161,8 +161,8 @@ class HospitalMap {
         $hosMapDetails = array();
 
 	    try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
                     hm.MapUrl,
@@ -177,7 +177,7 @@ class HospitalMap {
                     hm.HospitalMapSerNum = $serial
             ";
                     
-		    $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+		    $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
@@ -228,8 +228,8 @@ class HospitalMap {
         $serial             = $hosMapArray['serial'];
 
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $qrPath = 'qrCodes/'.$qrid.'.png';
             $sql = "
                 UPDATE
@@ -246,7 +246,7 @@ class HospitalMap {
                     HospitalMap.HospitalMapSerNum   = $serial
             ";
 
-	        $query = $connect->prepare( $sql );
+	        $query = $host_db_link->prepare( $sql );
             $query->execute();
 
 	    } catch( PDOException $e) {
@@ -262,8 +262,8 @@ class HospitalMap {
      */    
     public function removeHospitalMap ($serial) {
         try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-			$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 DELETE FROM
                     HospitalMap
@@ -271,7 +271,7 @@ class HospitalMap {
                     HospitalMap.HospitalMapSerNum = $serial
             ";
 
-	        $query = $connect->prepare( $sql );
+	        $query = $host_db_link->prepare( $sql );
             $query->execute();
 
         } catch( PDOException $e) {
