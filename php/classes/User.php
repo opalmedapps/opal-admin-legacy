@@ -19,7 +19,7 @@
 	 public function userLogin() {
 		 $success = false;
 		 try{
-			$con = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD ); 
+			$con = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD ); 
 			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			$sql = "SELECT * FROM ATOUser WHERE ATOUser.Username = :username AND ATOUser.Password = :password";
 			
@@ -45,7 +45,7 @@
 	 public function register() {
 		$correct = false;
 			try {
-				$con = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
+				$con = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
 				$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 				$sql = "INSERT INTO ATOUser(Username, Password, DateAdded) VALUES(:username, :password, NOW())";
 				

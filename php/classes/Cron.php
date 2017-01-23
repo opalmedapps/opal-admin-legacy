@@ -14,8 +14,8 @@ class CronControl {
 	public function getCronDetails () {
 		$cronDetails = array();
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 			$sql = "
 				SELECT DISTINCT 
@@ -28,7 +28,7 @@ class CronControl {
 					Cron 
 			";
 			
-			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
@@ -71,8 +71,8 @@ class CronControl {
 		$repeatInterval	= $cronArray['repeatInterval'];
 	
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-			$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 			$sql ="
 				UPDATE 
@@ -86,7 +86,7 @@ class CronControl {
 					Cron.CronSerNum 	= $cronSer
 			";
 
-			$query = $connect->prepare( $sql );
+			$query = $host_db_link->prepare( $sql );
 			$query->execute();
 
 			/* Build our custom cronjobs for crontab
@@ -112,21 +112,21 @@ class CronControl {
 			$min = $timePieces[1];
 
 			// Our cron jobs 
-			$cronjob_perl = "$min $hour $day $month * ".PERL_PATH."dataControl.pl >/dev/null 2>&1";
-			$cronjob_php = "$min $hour $day $month * /usr/bin/php ".ABS_PATH."php/cron/update_crontab.php $cronSer >/dev/null 2>&1";
+			$cronjob_perl = "$min $hour $day $month * ".BACKEND_ABS_PATH."dataControl.pl >/dev/null 2>&1";
+			$cronjob_php = "$min $hour $day $month * /usr/bin/php ".FRONTEND_ABS_PATH."php/cron/update_crontab.php $cronSer >/dev/null 2>&1";
 
 			$cronjobs = array($cronjob_perl,$cronjob_php);
 
 			// Construct our crontab manager
-			$crontab = new CrontabManager( HOST, PORT, HOST_USERNAME, HOST_PASSWORD );
+			$crontab = new CrontabManager();
 
 			// Remove any existing cron jobs related to the dataCrontrol.pl script
 			// and the update_crontab.php script because if we've reached this point,
 			// we've changed the cron control settings, so we need to get rid of any 
 			// existing control settings. We do this using regular expressions.
 			$cron_regex = array(
-				PERL_REGEX."dataControl.pl"."/",
-				ABS_REGEX.$cronSer."/"
+				BACKEND_ABS_PATH_REGEX."dataControl.pl"."/",
+				FRONTEND_ABS_PATH_REGEX."php\/cron\/update_crontab.php ".$cronSer."/"
 			);
 			// If crontab is not empty, remove cronjobs
 			if ($crontab->crontab_exists()) $crontab->remove_cronjob($cron_regex);
@@ -198,24 +198,24 @@ class CronControl {
 
 			// Repeat Options
 			if ($repeatUnits == "Minutes") { // Minute cron
-				$cronjob_perl = "*/$repeatInterval * * * * ".PERL_PATH."dataControl.pl >/dev/null 2>&1";
+				$cronjob_perl = "*/$repeatInterval * * * * ".BACKEND_ABS_PATH."dataControl.pl >/dev/null 2>&1";
 			}
 			if ($repeatUnits == "Hours") { // Hourly cron
-				$cronjob_perl = "$min */$repeatInterval * * * ".PERL_PATH."dataControl.pl >/dev/null 2>&1";
+				$cronjob_perl = "$min */$repeatInterval * * * ".BACKEND_ABS_PATH."dataControl.pl >/dev/null 2>&1";
 			}
 
 			$cronjobs = array($cronjob_perl);
 			
 			// Construct our crontab manager
-			$crontab = new CrontabManager( HOST, PORT, HOST_USERNAME, HOST_PASSWORD );
+			$crontab = new CrontabManager();
 
 			// Remove any existing cron jobs related to the dataCrontrol.pl script
 			// and the update_crontab.php script because if we've reached this point,
 			// the cronjob settings need to be modified, so we need to get rid of any 
 			// existing control settings. We do this using regular expressions.
 			$cron_regex = array(
-				PERL_REGEX."dataControl.pl"."/",
-				ABS_REGEX.$cronSer."/"
+				BACKEND_ABS_PATH_REGEX."dataControl.pl"."/",
+				FRONTEND_ABS_PATH_REGEX."php\/cron\/update_crontab.php ".$cronSer."/"
 			);
 			// If crontab is not empty, remove cronjobs
 			if ($crontab->crontab_exists()) $crontab->remove_cronjob($cron_regex);
