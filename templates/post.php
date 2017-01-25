@@ -21,7 +21,7 @@
                 <h1><strong>Posts</strong></h1>
               </div>
               <div class="col-md-6 title-breadcrumbs"> 
-                <span>Home <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Posts</strong></span>
+                <span><a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Posts</strong></span>
               </div>
             </div>    
 

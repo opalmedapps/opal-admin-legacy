@@ -270,9 +270,9 @@
               </div>
               <div class="col-md-6 title-breadcrumbs"> 
                 <span>
-                  <span>Home</span>
+                  <span><a href="#/">Home</a></span>
                   <span class="teflon glyphicon glyphicon-menu-right"></span> 
-                  <span>Posts</span>
+                  <span><a href="#/post">Posts</a></span>
                   <span class="teflon glyphicon glyphicon-menu-right"></span> 
                   <span><strong>Add Post</strong></span>
                 </span>
