@@ -52,6 +52,10 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
             {
                 name: 'Treatment Team Message',
                 icon: 'user-md'
+            },
+            {
+                name: 'Patients for Patients',
+                icon: 'users'
             }
         ];
 
