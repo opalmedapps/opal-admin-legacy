@@ -167,9 +167,9 @@
               </div>
               <div class="col-md-6 title-breadcrumbs"> 
                 <span>
-                  <span>Home</span> 
+                  <span><a href="#/">Home</a></span> 
                   <span class="glyphicon glyphicon-menu-right teflon"></span> 
-                  <span>Patients</span>
+                  <span><a href="#/patients">Patients</a></span>
                   <span class="glyphicon glyphicon-menu-right teflon"></span>
                   <span><strong>Registration</strong></span>
                 </span>

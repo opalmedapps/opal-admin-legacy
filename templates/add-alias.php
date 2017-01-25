@@ -218,9 +218,9 @@
               </div>
               <div class="col-md-6 title-breadcrumbs"> 
                 <span>
-                  <span>Home</span>
+                  <span><a href="#/">Home</a></span>
                   <span class="teflon glyphicon glyphicon-menu-right"></span> 
-                  <span>Aliases</span>
+                  <span><a href="#/alias">Aliases</a></span>
                   <span class="teflon glyphicon glyphicon-menu-right"></span> 
                   <span><strong>Add Alias</strong></span>
                 </span>

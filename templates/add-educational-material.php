@@ -350,9 +350,9 @@
               </div>
               <div class="col-md-6 title-breadcrumbs"> 
                 <span>
-                  <span>Home</span>
+                  <span><a href="#/">Home</a></span>
                   <span class="teflon glyphicon glyphicon-menu-right"></span> 
-                  <span>Edu Material</span>
+                  <span><a href="#/educational-material">Edu Material</a></span>
                   <span class="teflon glyphicon glyphicon-menu-right"></span> 
                   <span><strong>Add Educational Material</strong></span>
                 </span>

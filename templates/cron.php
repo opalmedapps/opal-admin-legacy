@@ -21,7 +21,7 @@
                 <h1><strong>Cron</strong></h1>
               </div>
               <div class="col-md-6 title-breadcrumbs"> 
-                <span>Home <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Cron</strong></span>
+                <span><a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Cron</strong></span>
               </div>
             </div>    
             <div class="row">
