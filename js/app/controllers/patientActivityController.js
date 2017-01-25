@@ -1,7 +1,7 @@
 angular.module('opalAdmin.controllers.patientActivityController', ['ngAnimate', 'ui.bootstrap']).
 
 
-	controller('patientActivityController', function($scope, $uibModal, patientAPIservice) {
+	controller('patientActivityController', function($scope, $uibModal, patientAPIservice, uiGridConstants) {
        
        $scope.bannerMessage = "";
         // Function to show page banner 
@@ -56,7 +56,8 @@ angular.module('opalAdmin.controllers.patientActivityController', ['ngAnimate', 
         		{field:'login', displayName:'Login Time'},
         		{field:'logout', displayName:'Logout Time'}
         	],
-        	useExternalFiltering: true,
+        	//useExternalFiltering: true,
+            enableFiltering: true,
         	enableColumnResizing: true,
         	onRegisterApi: function(gridApi) {
                 $scope.gridApi = gridApi;

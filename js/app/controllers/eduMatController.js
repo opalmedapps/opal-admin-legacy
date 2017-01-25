@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 	/******************************************************************************
 	* Educational Material Page controller 
 	*******************************************************************************/
-	controller('eduMatController', function($scope, $filter, $sce, $uibModal, edumatAPIservice, filterAPIservice) {
+	controller('eduMatController', function($scope, $filter, $sce, $uibModal, edumatAPIservice, filterAPIservice, uiGridConstants) {
 
     
         // Function to go to add educational material page
@@ -57,13 +57,17 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 			data: 'eduMatList',
 			columnDefs: [
 				{field:'name_EN', displayName:'Name (EN / FR)', cellTemplate:cellTemplateName, width:'605'},
-                {field:'rating', name:'Avg Rating', cellTemplate:ratingCellTemplate, width:'130'},
+                {field:'rating', name:'Avg Rating', cellTemplate:ratingCellTemplate, width:'130', enableFiltering:false},
 				{field:'type_EN', displayName:'Type (EN)', width:'145'},
-                {field:'publish', displayName:'Publish Flag', width:'130', cellTemplate:checkboxCellTemplate},
-				{field:'phase_EN', displayName:'Phase In Tx (EN)', width:'150'},
-				{name:'Operations', cellTemplate:cellTemplateOperations, sortable:false}
+                {field:'publish', displayName:'Publish', width:'80', cellTemplate:checkboxCellTemplate, enableFiltering:false},
+				{field:'phase_EN', displayName:'Phase In Tx (EN)', width:'150', filter: {
+                    type: uiGridConstants.filter.SELECT,
+                    selectOptions: [ {value:'Prior To Treatment', label:'Prior To Treatment'}, {value:'During Treatment', label:'During Treatment'}, {value:'After Treatment', label:'After Treatment'}]
+                }},
+				{name:'Operations', cellTemplate:cellTemplateOperations, sortable:false, enableFiltering:false}
 			],
-            useExternalFiltering: true,
+            //useExternalFiltering: true,
+            enableFiltering: true,
 			enableColumnResizing: true,	
             expandableRowTemplate: expandableRowTemplate,
             //expandableRowHeight: 200,

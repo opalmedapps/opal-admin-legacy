@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 	/******************************************************************************
 	* Alias Page controller 
 	*******************************************************************************/
-	controller('aliasController', function($scope, $uibModal, aliasAPIservice, edumatAPIservice) {
+	controller('aliasController', function($scope, $uibModal, aliasAPIservice, edumatAPIservice, uiGridConstants) {
 
 
         // Function to go to add alias page
@@ -79,15 +79,22 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 			data: 'aliasList',
 			columnDefs: [
 				{field:'name_EN', displayName:'Alias (EN / FR)', cellTemplate:cellTemplateName, width:'605'},
-				{field:'type', displayName:'Type', width:'145'},
-                {field:'update', displayName:'Update', width:'80', cellTemplate:checkboxCellTemplate},
-				{field:'count', displayName:'# of terms', width:'90'},
-				{field:'source_db.name', displayName:'Source DB', width:'120'},
-                {field:'color', displayName:'Color Tag', width:'90', cellTemplate:cellTemplateColor},
-				{name:'Operations', cellTemplate:cellTemplateOperations, sortable:false}
+				{field:'type', displayName:'Type', width:'145', filter: {
+					type: uiGridConstants.filter.SELECT,
+					selectOptions: [ {value:'Appointment', label:'Appointment'}, {value:'Document', label:'Document'}, {value:'Task', label:'Task'}]
+				}},
+                {field:'update', displayName:'Update', width:'80', cellTemplate:checkboxCellTemplate, enableFiltering: false},
+				{field:'count', type:'number', displayName:'# of terms', width:'90', enableFiltering: false},
+				{field:'source_db.name', displayName:'Source DB', width:'120', filter: {
+					type: uiGridConstants.filter.SELECT,
+					selectOptions: [ {value:'Aria', label:'Aria'}, {value:'MediVisit', label:'MediVisit'}]
+				}},
+                {field:'color', displayName:'Color Tag', width:'90', cellTemplate:cellTemplateColor, enableFiltering: false},
+				{name:'Operations', cellTemplate:cellTemplateOperations, sortable:false, enableFiltering: false}
 			],
-            useExternalFiltering: true,
+            //useExternalFiltering: true,
 			enableColumnResizing: true,	
+			enableFiltering: true,
             onRegisterApi: function(gridApi) {
                 $scope.gridApi = gridApi;
                 $scope.gridApi.grid.registerRowsProcessor($scope.filterOptions, 300);
