@@ -18,6 +18,8 @@
 	<script src="js/lib/angular/angular-animate.min.js"></script>
 	<script src="js/lib/angular/angular-sanitize.min.js"></script>
 	<script src="js/lib/angular/angular-ui-router.min.js"></script>
+	<script src="js/lib/angular/angular-cookies.min.js"></script>
+	<script src="js/lib/angular/angular-idle.min.js"></script>
 	<script src="js/lib/other/moment.min.js"></script>
 	<script src="js/lib/livicon/prettify.min.js"></script>
 	<script src="js/lib/bootstrap/bootstrap.min.js"></script>
@@ -60,7 +62,9 @@
  	<script type="text/javascript" src="js/app/controllers/sidePanelMenuController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/cronController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/loginController.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/loginModalController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/patientActivityController.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/accountController.js"></script>
  	<!-- <script type="text/javascript" src="js/app/controllers/applicationController.js"></script> -->
 
 
@@ -90,10 +94,10 @@
 
 </head>
 <!--<body ng-app="opalAdmin" ng-controller="applicationController">-->
-<body ng-app="opalAdmin">
+<body ng-app="opalAdmin" ng-controller="accountController">
 	<div id="page">
-		<!--<div ui-view></div>-->
-		<div ng-view></div>
+		<div ui-view></div>
+		<!-- <div ng-view></div> -->
 	</div>
  
 </body>

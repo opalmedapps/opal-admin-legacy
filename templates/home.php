@@ -255,6 +255,7 @@
       </div>
     </div>
   </div>
+  <div login-dialog ng-if="!isLoginPage"></div>
 
           
                       

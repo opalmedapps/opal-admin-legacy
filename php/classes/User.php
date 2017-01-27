@@ -7,8 +7,8 @@
 	 public $salt = "Zo4rU5Z1YyKJAASY0PT6EUg7BBYdlEhPaNLuxAwU8lqu1ElzHv0Ri7EM6irpx5w";
 	 
 	 public function __construct( $data = array() ) {
-		 if( isset( $data['username'] ) ) $this->username = stripslashes( strip_tags( $data['username'] ) );
-		 if( isset( $data['password'] ) ) $this->password = stripslashes( strip_tags( $data['password'] ) );
+		 if( isset( $data->username ) ) $this->username = stripslashes( strip_tags( $data->username ) );
+		 if( isset( $data->password ) ) $this->password = stripslashes( strip_tags( $data->password ) );
 	 }
 	 
 	 public function storeFormValues( $params ) {

@@ -19,7 +19,9 @@ angular.module('opalAdmin.controllers', [
   //'opalAdmin.controllers.applicationController',
   'opalAdmin.controllers.cronController',
   'opalAdmin.controllers.loginController',
-  'opalAdmin.controllers.patientActivityController'
+  'opalAdmin.controllers.loginModalController',
+  'opalAdmin.controllers.patientActivityController',
+  'opalAdmin.controllers.accountController'
 ]);
 
 	
