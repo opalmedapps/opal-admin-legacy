@@ -1,10 +1,10 @@
-angular.module('opalAdmin.controllers.loginController', ['ngAnimate', 'ui.bootstrap']).
+angular.module('opalAdmin.controllers.loginModalController', ['ngAnimate', 'ui.bootstrap']).
 
 
 	/******************************************************************************
 	* Login controller 
 	*******************************************************************************/
-	controller('loginController', function($scope, $rootScope, $state, AUTH_EVENTS, AuthService, Idle) {
+	controller('loginModalController', function($scope, $rootScope, $state, AUTH_EVENTS, AuthService, $uibModalInstance) {
 
         // Initialize login object
         $scope.credentials = {
@@ -54,8 +54,8 @@ angular.module('opalAdmin.controllers.loginController', ['ngAnimate', 'ui.bootst
                 AuthService.login(credentials).then(function (user) {
                     $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
                     $rootScope.setCurrentUser(user);
-                    $state.go('home');
-                    Idle.watch();
+                    $uibModalInstance.close();
+                    //$state.go('home');
                 }, function() {
                     $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
                     $scope.bannerMessage = "Wrong username and/or password!";

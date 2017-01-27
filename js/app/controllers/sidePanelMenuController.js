@@ -4,56 +4,63 @@ angular.module('opalAdmin.controllers.sidePanelMenuController', ['ui.bootstrap',
 	/******************************************************************************
 	* Controller for the side panel on main pages
 	*******************************************************************************/
-	controller('sidePanelMenuController', function($scope, $location) {
+	controller('sidePanelMenuController', function($scope, $location, $state, LogoutService) {
 
         // Get the current page from url
         $scope.currentPage = $location.path().replace('/',''); // and remove leading slash
 
         // Function to go to alias page
         $scope.goToAlias = function () {
-            window.location.href = URLPATH+"main.php#/alias";
+            $state.go('alias');
         }
         // Function to go to post page
         $scope.goToPost = function () {
-            window.location.href = URLPATH+"main.php#/post";
+            $state.go('post');
         }
         // Function to go to home page
         $scope.goToHome= function () {
-            window.location.href = URLPATH+"main.php#/";
+            $state.go('home');
         }
         // Function to go to educational material page
         $scope.goToEducationalMaterial = function () {
-            window.location.href = URLPATH+"main.php#/educational-material";
+            $state.go('educational-material');
         }
         // Function to go to hospital map page
         $scope.goToHospitalMap= function () {
-            window.location.href = URLPATH+"main.php#/hospital-map";
+            $state.go('hospital-map');
         }
         // Function to go to notification page
         $scope.goToNotification= function () {
-            window.location.href = URLPATH+"main.php#/notification";
+            $state.go('notification');
         }
         // Function to go to patient page
         $scope.goToPatient= function () {
-            window.location.href = URLPATH+"main.php#/patients";
+            $state.go('patients');
         }
 		// Function to go to test results page
         $scope.goToTestResult= function () {
-            window.location.href = URLPATH+"main.php#/test-result";
+            $state.go('test-result');
         }
 		// Function to logout
         $scope.goToLogout= function () {
-            window.location.href = URLPATH+"php/user/logout.php";
+            LogoutService.logout();
         }
         // Function to go to cron page
         $scope.goToCron= function () {
-            window.location.href = URLPATH+"main.php#/cron";
+            $state.go('cron');
         }
         // Function to go to patient activity page
         $scope.goToPatientActivity = function () {
-            window.location.href = URLPATH+"main.php#/patient-activity";
+            $state.go('patient-activity')
         }
-
+        // Function to go to account page
+        $scope.goToAccount = function () {
+            $state.go('account');
+        }
+        // Function to go to users page
+        $scope.goToUsers = function () {
+            $state.go('users');
+        }
 			
 	});
 
