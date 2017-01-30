@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate','ui.boot
 	/******************************************************************************
 	* Add Alias Page controller 
 	*******************************************************************************/
-	controller('newAliasController', function($scope, $filter, $uibModal, aliasAPIservice, edumatAPIservice) {
+	controller('newAliasController', function($scope, $filter, $uibModal, aliasAPIservice, $state, edumatAPIservice) {
 
         // Function to go to previous page
         $scope.goBack = function() {
@@ -294,7 +294,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate','ui.boot
 			    	url: "php/alias/insert_alias.php",
 				    data: $scope.newAlias,
     				success: function() {
-	    				window.location.href = URLPATH+"main.php#/alias";
+	    				$state.go('alias');
 		    		}
 			    });
             }

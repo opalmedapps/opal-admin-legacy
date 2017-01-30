@@ -4,12 +4,12 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 	/******************************************************************************
 	* Educational Material Page controller 
 	*******************************************************************************/
-	controller('eduMatController', function($scope, $filter, $sce, $uibModal, edumatAPIservice, filterAPIservice, uiGridConstants) {
+	controller('eduMatController', function($scope, $filter, $sce, $uibModal, $state, edumatAPIservice, filterAPIservice, uiGridConstants) {
 
     
         // Function to go to add educational material page
         $scope.goToAddEducationalMaterial = function () {
-            window.location.href = URLPATH+"main.php#/educational-material/add";
+            $state.go('educational-material-add');
         }
 
         // Function to control search engine model

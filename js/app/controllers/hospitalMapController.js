@@ -4,11 +4,11 @@ angular.module('opalAdmin.controllers.hospitalMapController', ['ngAnimate', 'ngS
 	/******************************************************************************
 	* Hospital Map Page controller 
 	*******************************************************************************/
-	controller('hospitalMapController', function($scope, $filter, $sce, $uibModal, hosmapAPIservice) {
+	controller('hospitalMapController', function($scope, $filter, $sce, $state, $uibModal, hosmapAPIservice) {
 
         // Function to go to add hospital map page
         $scope.goToAddHospitalMap = function() {
-            window.location.href = URLPATH+"main.php#/hospital-map/add";
+            $state.go('hospital-map-add');
         }
         // Function to control search engine model
         $scope.filterHosMap = function(filterValue) {

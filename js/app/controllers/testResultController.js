@@ -3,11 +3,11 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 	/******************************************************************************
 	* Test Result Page controller 
 	*******************************************************************************/
-	controller('testResultController', function($scope, $filter, $sce, $uibModal, testresAPIservice, filterAPIservice) {
+	controller('testResultController', function($scope, $filter, $sce, $state, $uibModal, testresAPIservice, filterAPIservice) {
 
         // Function to go to add test result page
         $scope.goToAddTestResult = function () {
-            window.location.href = URLPATH+"main.php#/test-result/add";
+            $state.go('test-result-add');
         }
 
         // Function to control search engine model

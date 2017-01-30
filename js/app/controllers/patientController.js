@@ -4,11 +4,11 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 	/******************************************************************************
 	* Patient Page controller 
 	*******************************************************************************/
-	controller('patientController', function($scope, $filter, $sce, $uibModal, patientAPIservice) {
+	controller('patientController', function($scope, $filter, $sce, $state, $uibModal, patientAPIservice) {
 
         // Function to go to register new patient
         $scope.goToAddPatient = function () {
-            window.location.href = URLPATH+"main.php#/patients/register";
+            $state.go('patients-register');
         }
         
         $scope.bannerMessage = "";

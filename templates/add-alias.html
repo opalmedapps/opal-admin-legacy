@@ -1,13 +1,4 @@
-<?php session_start();
-
-	if (!isset($_SESSION[SESSION_KEY_LOGIN])) {
-		echo "<script>
-			window.location.href = 'php/user/logout.php';
-		      </script> ";
-	}
-
-?> 
-<div id="main">
+  <div id="main">
     <div id="top">
       <div class="clearfix">
         <div class="row">
@@ -500,10 +491,6 @@
   </div>
 </script>
 
-    <script type="text/javascript">
-	$(".global-nav li").removeClass("active");
-	$(".global-nav li.nav-new-alias").addClass("active");
-    </script>
 
 
 

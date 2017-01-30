@@ -10,7 +10,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 	/******************************************************************************
 	* Add Post Page controller 
 	*******************************************************************************/
-	controller('newPostController', function($scope, $filter, $sce, $uibModal, aliasAPIservice, filterAPIservice) {
+	controller('newPostController', function($scope, $filter, $state, $sce, $uibModal, aliasAPIservice, filterAPIservice) {
 
         // Function to go to previous page
         $scope.goBack = function() {
@@ -215,7 +215,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
                     url: "php/post/insert_post.php",
                     data: $scope.newPost,
                     success: function() {
-                        window.location.href = URLPATH+"main.php#/post";
+                        $state.go('post');
                     }
                 });
             }
