@@ -1,4 +1,4 @@
-angular.module('ATO_InterfaceApp.controllers.notificationController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
+angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
 
 	/******************************************************************************

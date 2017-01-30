@@ -21,8 +21,8 @@ class Post {
         );
 
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-			$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			foreach ($postList as $post) {
 				$postPublish = $post['publish'];
 				$postSer = $post['serial'];
@@ -35,7 +35,7 @@ class Post {
 						PostControl.PostControlSerNum = $postSer
 				";
 
-				$query = $connect->prepare( $sql );
+				$query = $host_db_link->prepare( $sql );
 				$query->execute();
 			}
             $response['value'] = 1; // Success
@@ -55,8 +55,8 @@ class Post {
 	public function getExistingPosts() {
 		$postList = array();
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-			$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			$sql = "
                 SELECT DISTINCT
                     PostControl.PostControlSerNum,
@@ -71,7 +71,7 @@ class Post {
 					PostControl
 			";
 
-			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -101,7 +101,7 @@ class Post {
                     AND     Filters.FilterId                != ''
 				";
 
-				$secondQuery = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				$secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 				$secondQuery->execute();
 
 				while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -150,8 +150,8 @@ class Post {
 		$postDetails = array();
 
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-			$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			$sql = "
 				SELECT DISTINCT 
                     PostControl.PostType,
@@ -167,7 +167,7 @@ class Post {
 					PostControl.PostControlSerNum = $postSer
 			";
 
-			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
@@ -197,7 +197,7 @@ class Post {
 
 			";
 
-			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -251,8 +251,8 @@ class Post {
 		$postFilters	= $postArray['filters'];
 
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-			$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			$sql = "
 				INSERT INTO 
                     PostControl (
@@ -274,10 +274,10 @@ class Post {
                     NOW()
 				)
 			";
-			$query = $connect->prepare( $sql );
+			$query = $host_db_link->prepare( $sql );
 			$query->execute();
 
-			$postSer = $connect->lastInsertId();
+			$postSer = $host_db_link->lastInsertId();
 
 			foreach ($postFilters as $filter) {
 
@@ -301,7 +301,7 @@ class Post {
                         NOW()
                     )
 				";
-				$query = $connect->prepare( $sql );
+				$query = $host_db_link->prepare( $sql );
 				$query->execute();
 			}
 				
@@ -326,8 +326,8 @@ class Post {
         );
 
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-			$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			$sql = "
 				DELETE FROM 
 					PostControl 
@@ -335,7 +335,7 @@ class Post {
 					PostControl.PostControlSerNum = $postSer
 			";
 
-			$query = $connect->prepare( $sql );
+			$query = $host_db_link->prepare( $sql );
 			$query->execute();
 
 			$sql = "
@@ -346,7 +346,7 @@ class Post {
                 AND Filters.ControlTable         = 'PostControl'
 			";
 			
-			$query = $connect->prepare( $sql );
+			$query = $host_db_link->prepare( $sql );
 			$query->execute();
 		
             $response['value'] = 1;
@@ -382,8 +382,8 @@ class Post {
         );
 
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-			$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			$sql = "
 				UPDATE 
 					PostControl 
@@ -397,7 +397,7 @@ class Post {
 					PostControl.PostControlSerNum = $postSer
 			";
 
-			$query = $connect->prepare( $sql );
+			$query = $host_db_link->prepare( $sql );
 			$query->execute();
 
 			$sql = "
@@ -414,7 +414,7 @@ class Post {
 			";
 
 
-			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -442,7 +442,7 @@ class Post {
                             AND Filters.ControlTable         = 'PostControl'
     					";
     
-	    				$query = $connect->prepare( $sql );
+	    				$query = $host_db_link->prepare( $sql );
 		    			$query->execute();
 			    	}
     			}   
@@ -470,7 +470,7 @@ class Post {
                                 NOW()
                             )
 			    		";
-				    	$query = $connect->prepare( $sql );
+				    	$query = $host_db_link->prepare( $sql );
 					    $query->execute();
     				}
 	    		}

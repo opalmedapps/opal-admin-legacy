@@ -15,8 +15,8 @@ class Patient {
     public function updatePatientTransferFlags( $patientList ) {
 
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-			$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			foreach ($patientList as $patient) {
 				$patientTransfer = $patient['transfer'];
 				$patientSer = $patient['serial'];
@@ -29,7 +29,7 @@ class Patient {
 						PatientControl.PatientSerNum = $patientSer
 				";
 
-				$query = $connect->prepare( $sql );
+				$query = $host_db_link->prepare( $sql );
 				$query->execute();
 			}
 		} catch( PDOException $e) {
@@ -46,8 +46,8 @@ class Patient {
     public function getExistingPatients() {
         $patientList = array();
         try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
-			$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			$sql = "
                 SELECT DISTINCT
                     pc.PatientSerNum,
@@ -62,7 +62,7 @@ class Patient {
                 WHERE
                     pt.PatientSerNum = pc.PatientSerNum
             ";
-			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -96,8 +96,8 @@ class Patient {
      public function emailAlreadyInUse($email) {
         $Response = null;
         try {
-            $connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             $sql = "
                 SELECT DISTINCT
@@ -108,7 +108,7 @@ class Patient {
                     Patient.Email = '$email'
                 LIMIT 1
             ";
-            $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             $Response = 'FALSE';
@@ -140,11 +140,11 @@ class Patient {
             'data'      => ''
         );
         try{
-            $aria_link = new PDO( ARIA_DB , ARIA_USERNAME, ARIA_PASSWORD );
+            $aria_link = new PDO( SOURCE_DB_DSN , SOURCE_DB_USERNAME, SOURCE_DB_PASSWORD );
             $aria_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-            $connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             // First make a lookup in our database
             $sql = "
@@ -156,7 +156,7 @@ class Patient {
                     Patient.SSN LIKE '$ssn%'
                 LIMIT 1
             ";
-            $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             $lookupSSN = null;
@@ -232,8 +232,8 @@ class Patient {
     public function fetchSecurityQuestions() {
         $securityQuestions = array();
         try {
-            $connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
                     sq.SecurityQuestionSerNum,
@@ -241,7 +241,7 @@ class Patient {
                 FROM
                     SecurityQuestion sq                    
             ";
-            $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -294,8 +294,8 @@ class Patient {
 
         try {
 
-            $connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 INSERT INTO 
                     Patient (
@@ -327,10 +327,10 @@ class Patient {
                     'AdminPanel'
                 )
             ";
-            $query = $connect->prepare( $sql );
+            $query = $host_db_link->prepare( $sql );
             $query->execute();
 
-            $patientSer = $connect->lastInsertId();
+            $patientSer = $host_db_link->lastInsertId();
 
             $sql = "
                 INSERT INTO 
@@ -349,7 +349,7 @@ class Patient {
                     'AdminPanel'
                 )
             ";
-            $query = $connect->prepare( $sql );
+            $query = $host_db_link->prepare( $sql );
             $query->execute();
 
             $sql = "
@@ -361,7 +361,7 @@ class Patient {
                     '$patientSer'
                 )
             ";
-            $query = $connect->prepare( $sql );
+            $query = $host_db_link->prepare( $sql );
             $query->execute();
 
             $sql = "
@@ -390,7 +390,7 @@ class Patient {
 
                 )
             ";
-            $query = $connect->prepare( $sql );
+            $query = $host_db_link->prepare( $sql );
             $query->execute();
 
         
@@ -400,6 +400,107 @@ class Patient {
 
      }
 
+     /**
+     *
+     * Gets a list of patient activities
+     *
+     * @return array $patientActivityList
+     */    
+     public function getPatientActivities() {
+        $patientActivityList = array();
+         try {
+
+            $host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
+                SELECT DISTINCT
+                    pt.PatientSerNum,
+                    pt.PatientId,
+                    pt.SSN,
+                    pt.FirstName,
+                    pt.LastName,
+                    pal.SessionId,
+                    pal.DateTime AS LoginTime,
+                    pal.Request,
+                    pal.DeviceId
+                FROM
+                    Patient pt,
+                    PatientActivityLog pal,
+                    Users
+                WHERE
+                    pt.PatientSerNum    = Users.UserTypeSerNum
+                AND Users.Username      = pal.Username
+                AND Users.UserType      = 'Patient'
+                AND pal.Request         = 'Login'
+
+                ORDER BY pal.DateTime DESC 
+            ";
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            $tmpPAList = array();
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $deviceid = $data[8];
+                if ($deviceid == 'browser') {
+                    // do nothing
+                }
+                else if (strtoupper($deviceid) == $deviceid) {
+                    $deviceid = "iOS/".$deviceid;
+                }
+                else {
+                    $deviceid = "Android/".$deviceid;
+                }
+                $patientArray = array(
+                    $data[5] => array(
+                        'serial'                => $data[0],
+                        'patientid'             => $data[1],
+                        'ssn'                   => $data[2],
+                        'name'                  => "$data[3] $data[4]",
+                        'sessionid'             => $data[5],
+                        'login'                 => $data[6],
+                        'request'               => $data[7],
+                        'deviceid'              => $deviceid
+
+                    )
+                );
+
+                array_push($tmpPAList, $patientArray);
+            }
+
+            $sql = "
+                SELECT DISTINCT
+                    pal.SessionId,
+                    pal.DateTime AS LogoutTime
+                FROM
+                    PatientActivityLog pal
+                WHERE
+                    pal.Request     = 'Logout'
+            ";
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                foreach ($tmpPAList as &$session) {
+                    if($data[0] == key($session)){
+                        $session[$data[0]]['logout'] = $data[1];
+                        break;
+                    }
+                }
+            }
+
+            foreach ($tmpPAList as $session) {
+                foreach ($session as $value) {
+                    array_push($patientActivityList, $value);
+                }
+            }
+
+            return $patientActivityList;
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return $patientActivityList;
+        }
+    }
 
 }
 

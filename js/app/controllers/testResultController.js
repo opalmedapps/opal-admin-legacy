@@ -1,4 +1,4 @@
-angular.module('ATO_InterfaceApp.controllers.testResultController', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
+angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
 	/******************************************************************************
 	* Test Result Page controller 

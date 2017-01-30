@@ -7,8 +7,8 @@
 	 public $salt = "Zo4rU5Z1YyKJAASY0PT6EUg7BBYdlEhPaNLuxAwU8lqu1ElzHv0Ri7EM6irpx5w";
 	 
 	 public function __construct( $data = array() ) {
-		 if( isset( $data['username'] ) ) $this->username = stripslashes( strip_tags( $data['username'] ) );
-		 if( isset( $data['password'] ) ) $this->password = stripslashes( strip_tags( $data['password'] ) );
+		 if( isset( $data->username ) ) $this->username = stripslashes( strip_tags( $data->username ) );
+		 if( isset( $data->password ) ) $this->password = stripslashes( strip_tags( $data->password ) );
 	 }
 	 
 	 public function storeFormValues( $params ) {
@@ -19,7 +19,7 @@
 	 public function userLogin() {
 		 $success = false;
 		 try{
-			$con = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD ); 
+			$con = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD ); 
 			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			$sql = "SELECT * FROM ATOUser WHERE ATOUser.Username = :username AND ATOUser.Password = :password";
 			
@@ -45,7 +45,7 @@
 	 public function register() {
 		$correct = false;
 			try {
-				$con = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
+				$con = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
 				$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 				$sql = "INSERT INTO ATOUser(Username, Password, DateAdded) VALUES(:username, :password, NOW())";
 				

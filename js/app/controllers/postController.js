@@ -1,4 +1,4 @@
-angular.module('ATO_InterfaceApp.controllers.postController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'textAngular']).
+angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'textAngular']).
 
 
     // Function to accept/trust html (styles, classes, etc.)
@@ -10,7 +10,7 @@ angular.module('ATO_InterfaceApp.controllers.postController', ['ngAnimate', 'ngS
 	/******************************************************************************
 	* Post Page controller 
 	*******************************************************************************/
-	controller('postController', function($scope, $filter, $sce, $uibModal, postAPIservice, filterAPIservice) {
+	controller('postController', function($scope, $filter, $sce, $uibModal, postAPIservice, filterAPIservice, uiGridConstants) {
 
         // Function to go to add post page
         $scope.goToAddPost = function () {
@@ -82,12 +82,16 @@ angular.module('ATO_InterfaceApp.controllers.postController', ['ngAnimate', 'ngS
 			data: 'postList',
 			columnDefs: [
 				{field:'name_EN', displayName:'Name (EN / FR)', cellTemplate:cellTemplateName, width:'555'},
-				{field:'type', displayName:'Type', width:'145'},
-                {field:'publish', displayName:'Publish Flag', width:'150', cellTemplate:checkboxCellTemplate},
+				{field:'type', displayName:'Type', width:'185', filter: {
+                    type: uiGridConstants.filter.SELECT,
+                    selectOptions: [ {value:'Announcement', label:'Announcement'}, {value:'Patients for Patients', label:'Patients for Patients'}, {value:'Treatment Team Message', label:'Treatment Team Message'} ]
+                }},
+                {field:'publish', displayName:'Publish', width:'80', cellTemplate:checkboxCellTemplate, enableFiltering: false},
 				{field:'publish_date', displayName:'Publish Date', width:'160'},
-				{name:'Operations', cellTemplate:cellTemplateOperations, sortable:false}
+				{name:'Operations', cellTemplate:cellTemplateOperations, sortable:false, enableFiltering:false}
 			],
-            useExternalFiltering: true,
+            //useExternalFiltering: true,
+            enableFiltering: true,
 			enableColumnResizing: true,	
             onRegisterApi: function(gridApi) {
                 $scope.gridApi = gridApi;

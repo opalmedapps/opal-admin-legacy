@@ -1,10 +1,10 @@
-angular.module('ATO_InterfaceApp.controllers.eduMatController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns']).
+angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns']).
 
 
 	/******************************************************************************
 	* Educational Material Page controller 
 	*******************************************************************************/
-	controller('eduMatController', function($scope, $filter, $sce, $uibModal, edumatAPIservice, filterAPIservice) {
+	controller('eduMatController', function($scope, $filter, $sce, $uibModal, edumatAPIservice, filterAPIservice, uiGridConstants) {
 
     
         // Function to go to add educational material page
@@ -31,6 +31,8 @@ angular.module('ATO_InterfaceApp.controllers.eduMatController', ['ngAnimate', 'n
             '<strong><a href="" ng-click="grid.appScope.editEduMat(row.entity)">Edit</a></strong> ' + 
             '- <strong><a href="" ng-click="grid.appScope.deleteEduMat(row.entity)">Delete</a></strong></div>';
         var expandableRowTemplate = '<div ui-grid="row.entity.subGridOptions"></div>';
+        var ratingCellTemplate = '<div class="ui-grid-cell-contents" ng-show="row.entity.rating == -1">No rating</div>' +
+            '<div class="ui-grid-cell-contents" ng-hide="row.entity.rating == -1"><stars number="{{row.entity.rating}}"></stars> </div>'
       
     	// Search engine for table
 		$scope.filterOptions = function(renderableRows) {
@@ -54,13 +56,18 @@ angular.module('ATO_InterfaceApp.controllers.eduMatController', ['ngAnimate', 'n
     	$scope.gridOptions = { 
 			data: 'eduMatList',
 			columnDefs: [
-				{field:'name_EN', displayName:'Name (EN / FR)', cellTemplate:cellTemplateName, width:'655'},
+				{field:'name_EN', displayName:'Name (EN / FR)', cellTemplate:cellTemplateName, width:'605'},
+                {field:'rating', name:'Avg Rating', cellTemplate:ratingCellTemplate, width:'130', enableFiltering:false},
 				{field:'type_EN', displayName:'Type (EN)', width:'145'},
-                {field:'publish', displayName:'Publish Flag', width:'130', cellTemplate:checkboxCellTemplate},
-				{field:'phase_EN', displayName:'Phase In Tx (EN)', width:'150'},
-				{name:'Operations', cellTemplate:cellTemplateOperations, sortable:false}
+                {field:'publish', displayName:'Publish', width:'80', cellTemplate:checkboxCellTemplate, enableFiltering:false},
+				{field:'phase_EN', displayName:'Phase In Tx (EN)', width:'150', filter: {
+                    type: uiGridConstants.filter.SELECT,
+                    selectOptions: [ {value:'Prior To Treatment', label:'Prior To Treatment'}, {value:'During Treatment', label:'During Treatment'}, {value:'After Treatment', label:'After Treatment'}]
+                }},
+				{name:'Operations', cellTemplate:cellTemplateOperations, sortable:false, enableFiltering:false}
 			],
-            useExternalFiltering: true,
+            //useExternalFiltering: true,
+            enableFiltering: true,
 			enableColumnResizing: true,	
             expandableRowTemplate: expandableRowTemplate,
             //expandableRowHeight: 200,
@@ -668,4 +675,31 @@ angular.module('ATO_InterfaceApp.controllers.eduMatController', ['ngAnimate', 'n
 
 		};
 
+    })
+
+    // Rating system
+    .directive('stars',function() {
+        return {
+            restrict:'E',
+            template: '<span style="display:inline-block;opacity:0.5;" ng-repeat="star in rate">'
+                + '<i class="glyphicon" ng-class="star.Icon" style="font-size:18px;color:#DAA520"></i>'
+                + '</span>',
+            link:function(scope,element,attrs)
+            {
+                scope.rate = [];
+                initRater();
+                function initRater()
+                {
+                    var number = Math.round(Number(attrs["number"]));
+                    for (var i = 0; i < number; i++) {
+                        scope.rate.push({'Icon':'glyphicon-star'});
+                    };
+                    for (var j = number; j < 5; j++) {
+                        scope.rate.push({'Icon':'glyphicon-star-empty'});
+                    };
+                }
+            }
+        }
     });
+
+

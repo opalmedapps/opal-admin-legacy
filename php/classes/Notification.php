@@ -15,8 +15,8 @@ class Notification {
     public function getNotifications() {
         $notificationList = array();
         try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
                     nt.NotificationControlSerNum,
@@ -28,7 +28,7 @@ class Notification {
                 FROM
                     NotificationControl nt
             ";
-		    $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+		    $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -69,8 +69,8 @@ class Notification {
     public function getNotificationDetails ($serial) {
         $notificationDetails = array();
         try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
                     nt.Name_EN,
@@ -84,7 +84,7 @@ class Notification {
                     nt.NotificationControlSerNum = $serial
             ";
 
-	        $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+	        $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
@@ -120,8 +120,8 @@ class Notification {
     public function getNotificationTypes () {
         $types = array();
 	    try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
                     ntt.NotificationTypeName,
@@ -133,7 +133,7 @@ class Notification {
                 WHERE
                     nt.NotificationType IS NULL
             ";
-		    $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+		    $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -167,8 +167,8 @@ class Notification {
         $type               = $notification['type'];
 
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 INSERT INTO
                     NotificationControl (
@@ -188,7 +188,7 @@ class Notification {
                     NOW()
                 )
             ";
-            $query = $connect->prepare( $sql );
+            $query = $host_db_link->prepare( $sql );
 			$query->execute();
         } catch( PDOException $e) {
 			return $e->getMessage();
@@ -217,8 +217,8 @@ class Notification {
         );
 
         try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 UPDATE
                     NotificationControl
@@ -231,7 +231,7 @@ class Notification {
                     NotificationControl.NotificationControlSerNum = $serial
             ";
 
-	        $query = $connect->prepare( $sql );
+	        $query = $host_db_link->prepare( $sql );
             $query->execute();
 
             $response['value'] = 1;
@@ -258,15 +258,15 @@ class Notification {
         );
 
         try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-			$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 DELETE FROM 
                     NotificationControl
                 WHHERE
                     NotificationControl.NotificationControlSerNum = $serial
             ";
-            $query = $connect->prepare( $sql );
+            $query = $host_db_link->prepare( $sql );
             $query->execute();
 
             $response['value'] = 1;

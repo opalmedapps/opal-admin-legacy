@@ -897,6 +897,10 @@ ul.no-list {
   font-size: 10px;
 }
 
+.title-breadcrumbs a{
+  color: #6f5499;
+}
+
 .visualConfirm {
   position: absolute;
   top: 30%;

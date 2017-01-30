@@ -1,4 +1,4 @@
-angular.module('ATO_InterfaceApp.controllers.applicationController', ['ui.bootstrap']).
+angular.module('opalAdmin.controllers.applicationController', ['ui.bootstrap']).
 
 
 	/******************************************************************************

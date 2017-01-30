@@ -6,7 +6,7 @@
 // also encodes the data in JSON because the callback will not work otherwise. So in reality, we are calling a PHP script (that executes 
 // JSON_ENCODE) to get relevant data using JavaScript 
 
-angular.module('ATO_InterfaceApp.collections', []).
+angular.module('opalAdmin.collections', []).
 
 	// Alias API service
 	factory('aliasAPIservice', function ($http) { 
@@ -229,6 +229,14 @@ angular.module('ATO_InterfaceApp.collections', []).
             });
         }
 
+        // API to get patient activity list 
+        patientAPI.getPatientActivities = function () {
+            return $http({
+                method: 'JSONP',
+                url: URLPATH+"api/patient/patient_activity.php?callback=JSON_CALLBACK"
+            });
+        }
+
         return patientAPI;
     }).
 
@@ -305,44 +313,8 @@ angular.module('ATO_InterfaceApp.collections', []).
 		return cronAPI;
 	});
 
-    
-    // // To broadcast the notAuthenticated / notAuthorized 
-    // // event based on the HTTP response status code
-    // factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
-    //   return {
-    //     responseError: function (response) { 
-    //       $rootScope.$broadcast({
-    //         401: AUTH_EVENTS.notAuthenticated,
-    //         403: AUTH_EVENTS.notAuthorized,
-    //         419: AUTH_EVENTS.sessionTimeout,
-    //         440: AUTH_EVENTS.sessionTimeout
-    //       }[response.status], response);
-    //       return $q.reject(response);
-    //     }
-    //   };
-    // }).
 
-    // Watches the value of ‘currentUser’ on $rootScope, 
-    // and will only resolve after currentUser has been set
-    // factory('AuthResolver', function ($q, $rootScope, $state) {
-    //     return {
-    //         resolve: function() {
-    //             var deferred = $q.defer();
-    //             var unwatch = $rootScope.$watch('currentUser', function (currentUser) {
-    //                 if (angular.isDefined(currentUser)) {
-    //                     if (currentUser) {
-    //                         deferred.resolve(currentUser);
-    //                     } else {
-    //                         deferred.reject();
-    //                         $state.go('login');
-    //                     }
-    //                     unwatch();
-    //                 }
-    //             });
-    //             return deferred.promise;
-    //         }
-    //     };
-    // });
+  
 
 
 
