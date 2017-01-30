@@ -1,3 +1,19 @@
+Version 0.5.1:
+ - Merge branch 'userFeature' into develop
+ - Merge branch 'p4p' into develop
+ -     --- Implemented user session with roles in pure javascript
+ -     --- Added links to breadcrumbs
+ -     --- Added column filtering
+ -     --- Added patients for patients announcement     --- Fixed issue where post type was not inserted properly
+ -     --- Generalized constants and variable names     --- Added better support for distribution
+ -     --- Remove include once from all php scripts. Now in one htaccess!
+ -     --- Added patient activity
+ - Merge branch 'feedback' into develop
+ -     --- Added rating system view in educational material
+ -     --- Renamed all instances of ATO to opalAdmin (including directories)
+ - Merge branch 'release-0.5' into develop
+ -     --- Minor UI fix
+
 Version 0.5.0:
  - Merge branch 'newDesign' into develop
  -     --- Final development in design branch     --- Prepared further development for future functionality
