@@ -1,12 +1,5 @@
 <?php session_start();
 
-    $currentFile = __FILE__; // Get location of this script
-
-    // Find config file based on this location 
-    $configFile = substr($currentFile, 0, strpos($currentFile, "ATO")) . "ATO/php/config.php";
-	// Include config file 
-	include_once($configFile);
-
   if (!isset($_SESSION[SESSION_KEY_LOGIN])) {
     echo "<script>
       window.location.href = 'php/user/logout.php';
@@ -179,6 +172,23 @@
                 </div>
               </div>
             </div>
+            <div class="col-md-3">
+              <div class="panel-container animated" ng-class="{pulse: hoverO}" ng-mouseenter="hoverO=true" ng-mouseleave="hoverO=false" style="cursor:pointer;" ng-click="goToPatientActivity()">
+                <div class="panel-info" style="height: 180px;">
+                  <div class="panel-content">
+                    <div class="icon-home clearfix">
+                      <span style="font-size: 50px;" class="fa fa-hourglass-half" aria-hidden="true"></span>
+                    </div>
+                    <div class="panel-title">  
+                      <h1>Patient Activity</h1>
+                    </div>  
+                    <div class="panel-description">
+                      <p>List of patient sessions, login/logout time, and app activity.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>     
         <div class="row" style="margin-bottom: 20px;">
@@ -245,6 +255,7 @@
       </div>
     </div>
   </div>
+  <div login-dialog ng-if="!isLoginPage"></div>
 
           
                       

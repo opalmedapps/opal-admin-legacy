@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Alias class
+ * Alias API class
  *
  */
 class Alias {
@@ -20,8 +20,8 @@ class Alias {
             // ARIA 
             if ($sourceDBSer == 1) {
 
-	            $aria_link = new PDO( ARIA_DB , ARIA_USERNAME, ARIA_PASSWORD );
-            	$aria_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+	            $source_db_link = new PDO( SOURCE_DB_DSN , SOURCE_DB_USERNAME, SOURCE_DB_PASSWORD );
+            	$source_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
                 if ($expressionType != "Document") {
                     $sql = "
@@ -33,7 +33,7 @@ class Alias {
                         vv_ActivityLng.Expression1
                     ";
     
-                    $query = $aria_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                    $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
                    	$query->execute();
                     while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
@@ -60,7 +60,7 @@ class Alias {
                             note_typ.note_typ_desc
                     ";
     
-                    $query = $aria_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                    $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
                    	$query->execute();
                     while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
@@ -82,8 +82,8 @@ class Alias {
             // WaitRoomManagement
             if ($sourceDBSer == 2) {
                 
-	    		$wrm_connect = new PDO( WRM_DSN, WRM_USERNAME, WRM_PASSWORD );
-                $wrm_connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+	    		$wrm_host_db_link = new PDO( WRM_DSN, WRM_USERNAME, WRM_PASSWORD );
+                $wrm_host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
                 $sql = "
                     SELECT DISTINCT 
@@ -95,7 +95,7 @@ class Alias {
                         mval.AppointmentCode
                 ";
 
-                $query = $wrm_connect->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                $query = $wrm_host_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
                 $query->execute();
 
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -135,8 +135,8 @@ class Alias {
             'message'   => ''
         );
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             foreach ($aliasList as $alias) {
 
@@ -152,7 +152,7 @@ class Alias {
 						Alias.AliasSerNum = $aliasSer
 				";
 
-				$query = $connect->prepare( $sql );
+				$query = $host_db_link->prepare( $sql );
 				$query->execute();
             }
 
@@ -174,8 +174,8 @@ class Alias {
     public function getExistingColorTags($type) {
         $colorTags = array();
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             $sql = "
                 SELECT DISTINCT 
@@ -190,7 +190,7 @@ class Alias {
                     Alias.AliasName_EN
             ";
 
-			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -225,8 +225,8 @@ class Alias {
 	public function getExistingAliases() {
 		$aliasList = array();
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 			$sql = "
 				SELECT DISTINCT 
@@ -248,7 +248,7 @@ class Alias {
                     Alias.SourceDatabaseSerNum = SourceDatabase.SourceDatabaseSerNum
 			";
 
-			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -280,7 +280,7 @@ class Alias {
 					AND AliasExpression.AliasSerNum 	= Alias.AliasSerNum
 				";
 
-				$secondQuery = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				$secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 				$secondQuery->execute();
 
 				while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -335,8 +335,8 @@ class Alias {
 
 		$aliasDetails = array();
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 			$sql = "
 				SELECT DISTINCT 
@@ -359,7 +359,7 @@ class Alias {
 
 			";
 
-			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
@@ -389,7 +389,7 @@ class Alias {
 					AliasExpression.AliasSerNum = $ser
 			";
 
-			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -454,8 +454,8 @@ class Alias {
         $sourceDBSer    = $aliasArray['source_db']['serial'];
 
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-			$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			$sql = "
 				INSERT INTO 
 					Alias (
@@ -485,10 +485,10 @@ class Alias {
 					NULL
 				)
 			";
-			$query = $connect->prepare( $sql );
+			$query = $host_db_link->prepare( $sql );
 			$query->execute();
 
-			$aliasSer = $connect->lastInsertId();
+			$aliasSer = $host_db_link->lastInsertId();
 
 			foreach ($aliasTerms as $aliasTerm) {
 
@@ -505,7 +505,7 @@ class Alias {
                     ON DUPLICATE KEY UPDATE
                         AliasSerNum = '$aliasSer'
 				";
-				$query = $connect->prepare( $sql );
+				$query = $host_db_link->prepare( $sql );
 				$query->execute();
 			}
 				
@@ -530,8 +530,8 @@ class Alias {
             'message'   => ''
         );
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-			$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             $sql = "
                 DELETE FROM
@@ -540,7 +540,7 @@ class Alias {
                     AliasExpression.AliasSerNum = $aliasSer
 			";
 			
-			$query = $connect->prepare( $sql );
+			$query = $host_db_link->prepare( $sql );
             $query->execute();
 
 			$sql = "
@@ -550,7 +550,7 @@ class Alias {
 					Alias.AliasSerNum = $aliasSer
 			";
 
-			$query = $connect->prepare( $sql );
+			$query = $host_db_link->prepare( $sql );
 			$query->execute();
 
 	
@@ -593,8 +593,8 @@ class Alias {
         );
         
 		try {
-			$connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-			$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			$sql = "
 				UPDATE 
 					Alias 
@@ -609,7 +609,7 @@ class Alias {
 					Alias.AliasSerNum = $aliasSer
 			";
 
-			$query = $connect->prepare( $sql );
+			$query = $host_db_link->prepare( $sql );
 			$query->execute();
 
 			$sql = "
@@ -621,7 +621,7 @@ class Alias {
 					AliasExpression.AliasSerNum = $aliasSer
 			";
 
-			$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
@@ -641,7 +641,7 @@ class Alias {
                         AND AliasExpression.AliasSerNum = $aliasSer
 					";
 
-					$query = $connect->prepare( $sql );
+					$query = $host_db_link->prepare( $sql );
 					$query->execute();
 				}
 			}
@@ -664,7 +664,7 @@ class Alias {
                         ON DUPLICATE KEY UPDATE
                             AliasSerNum = '$aliasSer'
 					";
-					$query = $connect->prepare( $sql );
+					$query = $host_db_link->prepare( $sql );
 					$query->execute();
 				}
             }
@@ -687,8 +687,8 @@ class Alias {
 	public function getSourceDatabases () {
         $sourceDBList = array();
         try {
- 	        $connect = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+ 	        $host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             $sql = "
                 SELECT DISTINCT
@@ -700,7 +700,7 @@ class Alias {
                     sd.SourceDatabaseSerNum
             ";
 
-            $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {

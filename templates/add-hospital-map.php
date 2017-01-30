@@ -1,12 +1,5 @@
 <?php session_start();
 
-    $currentFile = __FILE__; // Get location of this script
-
-    // Find config file based on this location 
-    $configFile = substr($currentFile, 0, strpos($currentFile, "ATO")) . "ATO/php/config.php";
-	// Include config file 
-	include_once($configFile);
-
 	if (!isset($_SESSION[SESSION_KEY_LOGIN])) {
 		echo "<script>
 			window.location.href = 'php/user/logout.php';
@@ -126,9 +119,9 @@
               </div>
               <div class="col-md-6 title-breadcrumbs"> 
                 <span>
-                  <span>Home</span>
+                  <span><a href="#/">Home</a></span>
                   <span class="teflon glyphicon glyphicon-menu-right"></span> 
-                  <span>Hospital Maps</span>
+                  <span><a href="#/hospital-map">Hospital Maps</a></span>
                   <span class="teflon glyphicon glyphicon-menu-right"></span> 
                   <span><strong>Add Hospital Map</strong></span>
                 </span>

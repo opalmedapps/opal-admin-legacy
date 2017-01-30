@@ -1,4 +1,4 @@
-angular.module('ATO_InterfaceApp.controllers.newPostController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'textAngular']).
+angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'textAngular']).
 
 
     // Function to accept/trust html (styles, classes, etc.)
@@ -52,6 +52,10 @@ angular.module('ATO_InterfaceApp.controllers.newPostController', ['ngAnimate', '
             {
                 name: 'Treatment Team Message',
                 icon: 'user-md'
+            },
+            {
+                name: 'Patients for Patients',
+                icon: 'users'
             }
         ];
 

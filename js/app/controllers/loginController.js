@@ -1,11 +1,10 @@
-angular.module('ATO_InterfaceApp.controllers.loginController', ['ngAnimate', 'ui.bootstrap']).
+angular.module('opalAdmin.controllers.loginController', ['ngAnimate', 'ui.bootstrap']).
 
 
 	/******************************************************************************
 	* Login controller 
 	*******************************************************************************/
-	controller('loginController', function($scope, $rootScope/*, AUTH_EVENTS, AuthService*/) {
-
+	controller('loginController', function($scope, $rootScope, $state, AUTH_EVENTS, AuthService, Idle) {
 
         // Initialize login object
         $scope.credentials = {
@@ -50,34 +49,19 @@ angular.module('ATO_InterfaceApp.controllers.loginController', ['ngAnimate', 'ui
             }, 1000);
         } 
       
-        // Function to submit login
-        // $scope.submitLogin = function (credentials) {
-        //     AuthService.login(credentials).then(function (user) {
-        //         $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
-        //         $scope.setCurrentUser(user);
-        //     }, function() {
-        //         $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
-        //         $scope.shakeForm();
-        //     });
-        // }
         $scope.submitLogin = function (credentials) {
             if($scope.loginFormComplete()) {
-                $.ajax({
-                    type: "POST",
-                    url: "php/user/checklogin.php",
-                    data: $scope.credentials,
-                    success: function(response) {
-                        if (response == 0) {
-                            $scope.bannerMessage = "Wrong username and/or password!";
-                            $scope.setBannerClass('danger');
-                            $scope.shakeForm();
-                            $scope.$apply();
-                            $scope.showBanner();
-                        }
-                        if (response == 1) {
-                            window.location.href = URLPATH + 'main.php#/';
-                        }
-                    }
+                AuthService.login(credentials).then(function (user) {
+                    $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
+                    $rootScope.setCurrentUser(user);
+                    $state.go('home');
+                    Idle.watch();
+                }, function() {
+                    $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
+                    $scope.bannerMessage = "Wrong username and/or password!";
+                    $scope.setBannerClass('danger');
+                    $scope.shakeForm();
+                    $scope.showBanner();
                 });
             }
         }

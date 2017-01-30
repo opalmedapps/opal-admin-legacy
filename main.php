@@ -1,17 +1,4 @@
-<?php session_start();
-
-    $currentFile = __FILE__; // Get location of this script
-
-    // Find config file based on this location 
-    $configFile = substr($currentFile, 0, strpos($currentFile, "ATO")) . "ATO/php/config.php";
-	// Include config file 
-	include_once($configFile);
-
-	$username 	= $_SESSION[SESSION_KEY_NAME];
-	$loginAttempt 	= $_SESSION[SESSION_KEY_LOGIN];
-	$registerAttempt= $_SESSION[SESSION_KEY_REGISTER];
-	$userid		= $_SESSION[SESSION_KEY_USERID];
-?>
+<?php session_start(); ?>
 <!DOCTYPE html>
 <!--[if lt IE 7 ]> <html lang="en" class="no-js ie6 lt8"> <![endif]-->
 <!--[if IE 7 ]>    <html lang="en" class="no-js ie7 lt8"> <![endif]-->
@@ -19,7 +6,7 @@
 <!--[if IE 9]><html class="ie9" lang="en"><![endif]-->
 <!--[if gt IE 9]><!--><html lang="en"><!--<![endif]-->
 <head>
-	<title>ARIA To Opal</title>
+	<title>opal ADMIN</title>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		
@@ -31,6 +18,8 @@
 	<script src="js/lib/angular/angular-animate.min.js"></script>
 	<script src="js/lib/angular/angular-sanitize.min.js"></script>
 	<script src="js/lib/angular/angular-ui-router.min.js"></script>
+	<script src="js/lib/angular/angular-cookies.min.js"></script>
+	<script src="js/lib/angular/angular-idle.min.js"></script>
 	<script src="js/lib/other/moment.min.js"></script>
 	<script src="js/lib/livicon/prettify.min.js"></script>
 	<script src="js/lib/bootstrap/bootstrap.min.js"></script>
@@ -73,6 +62,9 @@
  	<script type="text/javascript" src="js/app/controllers/sidePanelMenuController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/cronController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/loginController.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/loginModalController.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/patientActivityController.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/accountController.js"></script>
  	<!-- <script type="text/javascript" src="js/app/controllers/applicationController.js"></script> -->
 
 
@@ -101,11 +93,11 @@
 	<link media="all" type="text/css" rel="stylesheet" href="css/style.css">
 
 </head>
-<!--<body ng-app="ATO_InterfaceApp" ng-controller="applicationController">-->
-<body ng-app="ATO_InterfaceApp">
+<!--<body ng-app="opalAdmin" ng-controller="applicationController">-->
+<body ng-app="opalAdmin" ng-controller="accountController">
 	<div id="page">
-		<!--<div ui-view></div>-->
-		<div ng-view></div>
+		<div ui-view></div>
+		<!-- <div ng-view></div> -->
 	</div>
  
 </body>
