@@ -1,3 +1,8 @@
+Version 0.5.2:
+ -     --- Removed client-side php     --- Improved routing by using more ui router instead of js redirects
+ - Merge branch 'release-0.5.1' into develop
+ -     --- File location needs to be specified in update_crontab.php file since     it's being called remotely.
+
 Version 0.5.1:
  - Merge branch 'userFeature' into develop
  - Merge branch 'p4p' into develop
