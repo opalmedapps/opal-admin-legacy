@@ -10,7 +10,7 @@
         'body_FR'           => str_replace(array('"', "'"), '\"', $_POST['body_FR']),
         'publish_date'      => $_POST['publish_date'],
         'filters'           => $_POST['filters'],
- 		'type' 		        => $_POST['type']
+ 		'type' 		        => $_POST['type']['name']
 	);
 
 	$postObject = new Post; // Object
