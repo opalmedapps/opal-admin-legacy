@@ -4,12 +4,12 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 	/******************************************************************************
 	* Alias Page controller 
 	*******************************************************************************/
-	controller('aliasController', function($scope, $uibModal, aliasAPIservice, edumatAPIservice, uiGridConstants) {
+	controller('aliasController', function($scope, $uibModal, aliasAPIservice, edumatAPIservice, uiGridConstants, $state) {
 
 
         // Function to go to add alias page
         $scope.goToAddAlias = function () {
-            window.location.href = URLPATH+"main.php#/alias/add";
+            $state.go('alias-add');
         }
  
         $scope.bannerMessage = "";

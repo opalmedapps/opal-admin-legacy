@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 	/******************************************************************************
 	* Add Test Result Page controller 
 	*******************************************************************************/
-	controller('newTestResultController', function($scope, $filter, $sce, $uibModal, testresAPIservice, filterAPIservice) {
+	controller('newTestResultController', function($scope, $filter, $sce, $state, $uibModal, testresAPIservice, filterAPIservice) {
 
         // Function to go to previous page
         $scope.goBack = function() {
@@ -243,7 +243,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
                     url: 'php/test-result/insert_testResult.php',
                     data: $scope.newTestResult,
                     success: function() {
-                        window.location.href = URLPATH+"main.php#/test-result";
+                        $state.go('test-result');
                     }
                 });
             }

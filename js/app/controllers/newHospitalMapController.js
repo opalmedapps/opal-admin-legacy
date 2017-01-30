@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', '
 	/******************************************************************************
 	* New Hospital Map Page controller 
 	*******************************************************************************/
-	controller('newHospitalMapController', function($scope, $filter, $sce, $uibModal, hosmapAPIservice) {
+	controller('newHospitalMapController', function($scope, $filter, $state, $sce, $uibModal, hosmapAPIservice) {
 
         // Function to go to previous page
         $scope.goBack = function() {
@@ -155,7 +155,7 @@ angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', '
                     url: "php/hospital-map/insert_hospitalMap.php",
                     data: $scope.newHosMap,
                     success: function() {
-                        window.location.href = URLPATH+"main.php#/hospital-map";
+                        $state.go('hospital-map');
                     }
                 });
             }
