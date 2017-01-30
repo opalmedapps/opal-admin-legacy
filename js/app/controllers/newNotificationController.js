@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 	/******************************************************************************
 	* Controller for the Add Notification page
 	*******************************************************************************/
-	controller('newNotificationController', function($scope, $uibModal, $filter, $sce, notifAPIservice) {
+	controller('newNotificationController', function($scope, $uibModal, $state, $filter, $sce, notifAPIservice) {
 					
         // Function to go to previous page
         $scope.goBack = function() {
@@ -132,7 +132,7 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
                     url: "php/notification/insert_notification.php",
                     data: $scope.newNotification,
                     success: function() {
-                        window.location.href = URLPATH+"main.php#/notification";
+                        $state.go('notification');
                     }
                 });
             }

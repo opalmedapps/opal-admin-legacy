@@ -1,18 +1,9 @@
-<?php session_start();
-
-	if (!isset($_SESSION[SESSION_KEY_LOGIN])) {
-		echo "<script>
-			window.location.href = 'php/user/logout.php';
-		      </script> ";
-	}
-
-?> 
   <div id="main">
     <div id="top">
       <div class="clearfix">
         <div class="row">
           <div class="col-md-2">
-            <div ng-include="'templates/side-panel-menu.php'"></div>
+            <div ng-include="'templates/side-panel-menu.html'"></div>
           </div>
           <div class="col-md-10 animated fadeIn">
             <div class="row main-title">
@@ -268,12 +259,6 @@
     </div>
   </div>
 </script>
-
-   <script type="text/javascript">
-	$(".global-nav li").removeClass("active");
-	$(".global-nav li.nav-alias").addClass("active");
-    </script>
-
        
 
           

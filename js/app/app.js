@@ -76,24 +76,24 @@ angular.module('opalAdmin', [
 .config(['$urlRouterProvider', '$stateProvider', 'USER_ROLES', function ($urlRouterProvider, $stateProvider, USER_ROLES) {
 	$urlRouterProvider.otherwise("/");
 	$stateProvider
-		.state('login', {url:'/login', templateUrl: 'templates/login.php', controller: 'loginController', data: {requireLogin: false}})
-		.state('home', {url:'/', templateUrl: 'templates/home.php', controller: 'homeController', data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
-		.state('alias', {url:'/alias', templateUrl: "templates/alias.php", controller: "aliasController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
-		.state('alias.add', {url:'/alias/add', templateUrl: "templates/add-alias.php", controller: "newAliasController"})
-		.state('post', {url:'/post', templateUrl: "templates/post.php", controller: "postController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
-		.state('post.add', {url:'/post/add', templateUrl: "templates/add-post.php", controller: "newPostController"})
-		.state('educational-material', {url:'/educational-material', templateUrl: "templates/educational-material.php", controller: "eduMatController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
-		.state('educational-material.add', {url: '/educational-material/add', templateUrl: "templates/add-educational-material.php", controller: "newEduMatController"})
-		.state('hospital-map', {url: '/hospital-map', templateUrl: "templates/hospital-map.php", controller: "hospitalMapController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
-		.state('hospital-map.add', {url: '/hospital-map/add', templateUrl: "templates/add-hospital-map.php", controller: "newHospitalMapController"})
-		.state('notification', {url:'/notification', templateUrl: "templates/notification.php", controller: "notificationController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
-		.state('notification.add', {url:'/notification/add', templateUrl: "templates/add-notification.php", controller: "newNotificationController"})
-		.state('patients', {url:'/patients', templateUrl: "templates/patient.php", controller: "patientController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
-		.state('patients.register', {url:'/patients/register', templateUrl: "templates/patient-registration.php", controller: "patientRegistrationController"})
-		.state('test-result', {url:'/test-result', templateUrl: "templates/test-result.php", controller: "testResultController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
-		.state('test-result.add', {url:'/test-result/add', templateUrl: "templates/add-test-result.php", controller: "newTestResultController"})
-		.state('cron', {url:'/cron', templateUrl: "templates/cron.php", controller: "cronController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
-		.state('patient-activity', {url:'/patient-activity', templateUrl: "templates/patient-activity.php", controller: "patientActivityController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('login', {url:'/login', templateUrl: 'templates/login.html', controller: 'loginController', data: {requireLogin: false}})
+		.state('home', {url:'/', templateUrl: 'templates/home.html', controller: 'homeController', data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('alias', {url:'/alias', templateUrl: "templates/alias.html", controller: "aliasController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('alias-add', {url:'/alias/add', templateUrl: "templates/add-alias.html", controller: "newAliasController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('post', {url:'/post', templateUrl: "templates/post.html", controller: "postController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('post-add', {url:'/post/add', templateUrl: "templates/add-post.html", controller: "newPostController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('educational-material', {url:'/educational-material', templateUrl: "templates/educational-material.html", controller: "eduMatController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('educational-material-add', {url: '/educational-material/add', templateUrl: "templates/add-educational-material.html", controller: "newEduMatController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('hospital-map', {url: '/hospital-map', templateUrl: "templates/hospital-map.html", controller: "hospitalMapController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('hospital-map-add', {url: '/hospital-map/add', templateUrl: "templates/add-hospital-map.html", controller: "newHospitalMapController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('notification', {url:'/notification', templateUrl: "templates/notification.html", controller: "notificationController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('notification-add', {url:'/notification/add', templateUrl: "templates/add-notification.html", controller: "newNotificationController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('patients', {url:'/patients', templateUrl: "templates/patient.html", controller: "patientController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('patients-register', {url:'/patients/register', templateUrl: "templates/patient-registration.html", controller: "patientRegistrationController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('test-result', {url:'/test-result', templateUrl: "templates/test-result.html", controller: "testResultController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('test-result-add', {url:'/test-result/add', templateUrl: "templates/add-test-result.html", controller: "newTestResultController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('cron', {url:'/cron', templateUrl: "templates/cron.html", controller: "cronController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('patient-activity', {url:'/patient-activity', templateUrl: "templates/patient-activity.html", controller: "patientActivityController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('protected-route', {url:'/protected', resolve: {auth: function resolveAuthentication(AuthResolver) {return AuthResolver.resolve();}}});
 }])
 
@@ -163,27 +163,3 @@ angular.module('opalAdmin', [
 .run(['Idle', function(Idle) {
   Idle.watch();
 }]);
-
-// .config(['$routeProvider', function($routeProvider) { // Set routes
-//   $routeProvider.
-// 	when("/", {templateUrl: "templates/home.php", controller: "homeController"}).
-// 	when("/alias", {templateUrl: "templates/alias.php", controller: "aliasController"}).
-// 	when("/login", {templateUrl: "templates/login.php", controller: "loginController"}).
-// 	when("/alias/add", {templateUrl: "templates/add-alias.php", controller: "newAliasController"}).
-// 	when("/post", {templateUrl: "templates/post.php", controller: "postController"}).
-// 	when("/post/add", {templateUrl: "templates/add-post.php", controller: "newPostController"}).
-// 	when("/educational-material", {templateUrl: "templates/educational-material.php", controller: "eduMatController"}).
-// 	when("/educational-material/add", {templateUrl: "templates/add-educational-material.php", controller: "newEduMatController"}).
-// 	when("/hospital-map", {templateUrl: "templates/hospital-map.php", controller: "hospitalMapController"}).
-// 	when("/hospital-map/add", {templateUrl: "templates/add-hospital-map.php", controller: "newHospitalMapController"}).
-// 	when("/notification", {templateUrl: "templates/notification.php", controller: "notificationController"}).
-// 	when("/notification/add", {templateUrl: "templates/add-notification.php", controller: "newNotificationController"}).
-// 	when("/patients", {templateUrl: "templates/patient.php", controller: "patientController"}).
-// 	when("/patients/register", {templateUrl: "templates/patient-registration.php", controller: "patientRegistrationController"}).
-// 	when("/test-result", {templateUrl: "templates/test-result.php", controller: "testResultController"}).
-// 	when("/test-result/add", {templateUrl: "templates/add-test-result.php", controller: "newTestResultController"}).
-// 	when("/cron", {templateUrl: "templates/cron.php", controller: "cronController"}).
-// 	when("/patient-activity", {templateUrl: "templates/patient-activity.php", controller: "patientActivityController"}).
-// 	otherwise({redirectTo: '/'});
-// }]);
-

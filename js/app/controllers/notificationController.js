@@ -4,11 +4,11 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
 	/******************************************************************************
 	* Controller for the notification page
 	*******************************************************************************/
-	controller('notificationController', function($scope, $uibModal, $filter, $sce, notifAPIservice) {
+	controller('notificationController', function($scope, $uibModal, $filter, $state, $sce, notifAPIservice) {
 					
         // Function to go to add notification page
         $scope.goToAddNotification = function() {
-            window.location.href = URLPATH+"main.php#/notification/add";
+            $state.go('notification-add');
         }
 
         // Function to control search engine model
