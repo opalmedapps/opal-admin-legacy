@@ -10,11 +10,11 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 	/******************************************************************************
 	* Post Page controller 
 	*******************************************************************************/
-	controller('postController', function($scope, $filter, $sce, $uibModal, postAPIservice, filterAPIservice, uiGridConstants) {
+	controller('postController', function($scope, $filter, $sce, $state, $uibModal, postAPIservice, filterAPIservice, uiGridConstants) {
 
         // Function to go to add post page
         $scope.goToAddPost = function () {
-            window.location.href = URLPATH+"main.php#/post/add";
+            $state.go('post-add');
         }
  
         $scope.bannerMessage = "";

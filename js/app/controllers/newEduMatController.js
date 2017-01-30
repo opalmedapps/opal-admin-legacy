@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 	/******************************************************************************
 	* New Educational Material Page controller 
 	*******************************************************************************/
-	controller('newEduMatController', function($scope, $filter, $sce, $uibModal, edumatAPIservice, filterAPIservice) {
+	controller('newEduMatController', function($scope, $filter, $state, $sce, $uibModal, edumatAPIservice, filterAPIservice) {
 
         // Function to go to previous page
         $scope.goBack = function() {
@@ -324,7 +324,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
                     url: "php/educational-material/insert_educational-material.php",
                     data: $scope.newEduMat,
                     success: function() {
-                        window.location.href = URLPATH+"main.php#/educational-material";
+                        $state.go('educational-material');
                     }
                 });
             }

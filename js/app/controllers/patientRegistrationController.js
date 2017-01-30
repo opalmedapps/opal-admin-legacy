@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 	/******************************************************************************
 	* Patient Registration Page controller 
 	*******************************************************************************/
-	controller('patientRegistrationController', function($scope, $filter, $sce, $uibModal, patientAPIservice) {
+	controller('patientRegistrationController', function($scope, $filter, $sce, $state, $uibModal, patientAPIservice) {
 
         // Function to go to previous page
         $scope.goBack = function() {
@@ -446,7 +446,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
                         url: "php/patient/register_patient.php",
                         data: $scope.newPatient,
                         success: function() {
-                            window.location.href = URLPATH+"main.php#/patients";
+                            $state.go('patients');
                         }
                     });
 
