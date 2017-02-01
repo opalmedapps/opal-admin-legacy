@@ -104,9 +104,9 @@ angular.module('opalAdmin.controllers.accountController', ['ui.bootstrap', 'ngId
 
 	// Configs for setting idle and keep alive (in seconds)
 	.config(function(IdleProvider, KeepaliveProvider) {
-		IdleProvider.idle(600);
+		IdleProvider.idle(360);
 		IdleProvider.timeout(15);
-		KeepaliveProvider.interval(615);
+		KeepaliveProvider.interval(375);
 	});
 	
 					
