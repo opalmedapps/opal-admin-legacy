@@ -76,8 +76,8 @@ angular.module('opalAdmin', [
 .config(['$urlRouterProvider', '$stateProvider', 'USER_ROLES', function ($urlRouterProvider, $stateProvider, USER_ROLES) {
 	$urlRouterProvider.otherwise("/");
 	$stateProvider
-		.state('login', {url:'/login', templateUrl: 'templates/login.html', controller: 'loginController', data: {requireLogin: false}})
-		.state('home', {url:'/', templateUrl: 'templates/home.html', controller: 'homeController', data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('login', {url:'/', templateUrl: 'templates/login.html', controller: 'loginController', data: {requireLogin: false}})
+		.state('home', {url:'/home', templateUrl: 'templates/home.html', controller: 'homeController', data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('alias', {url:'/alias', templateUrl: "templates/alias.html", controller: "aliasController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('alias-add', {url:'/alias/add', templateUrl: "templates/add-alias.html", controller: "newAliasController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('post', {url:'/post', templateUrl: "templates/post.html", controller: "postController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})

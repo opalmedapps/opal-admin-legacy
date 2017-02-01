@@ -68,11 +68,13 @@ angular.module('opalAdmin.controllers.patientActivityController', ['ngAnimate', 
         // Initialize list to hold patient activities
         $scope.patientActivityList = [];
 
+        $scope.loading = true;
         // Call our API to get the list of patient activities
         patientAPIservice.getPatientActivities().success(function (response) {
         	// Assign value
         	$scope.patientActivityList = response;
-        });
+        })
+        .finally(function() {$scope.loading = false;});
 
 	});
 
