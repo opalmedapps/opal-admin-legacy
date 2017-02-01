@@ -32,7 +32,13 @@
                     </div>
                   </div>
                   <div id="data-table">
-                    <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:720px"></div>
+                    <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:720px">
+                      <div class="grid-msg-overlay" ng-hide="gridOptions.data.length && !loading">
+                        <div class="msg">
+                          <span>Loading Data...</span>
+                        </div>
+                      </div>
+                    </div>
                     <!--<div class="table-buttons" style="text-align: center;">
                       <form method="post" ng-submit="submitPublishFlags()">
                         <input class="btn btn-primary" ng-class="{'disabled': !changesMade}" type="submit" value="Save Changes">
