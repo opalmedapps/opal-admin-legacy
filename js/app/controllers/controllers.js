@@ -1,5 +1,6 @@
 angular.module('opalAdmin.controllers', [
   'opalAdmin.controllers.headerController',
+  'opalAdmin.controllers.applicationController',
   'opalAdmin.controllers.homeController',
   'opalAdmin.controllers.aliasController',
   'opalAdmin.controllers.newAliasController',

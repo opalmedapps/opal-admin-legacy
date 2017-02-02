@@ -53,9 +53,7 @@ angular.module('opalAdmin.controllers.loginModalController', ['ngAnimate', 'ui.b
             if($scope.loginFormComplete()) {
                 AuthService.login(credentials).then(function (user) {
                     $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
-                    $rootScope.setCurrentUser(user);
                     $uibModalInstance.close();
-                    //$state.go('home');
                 }, function() {
                     $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
                     $scope.bannerMessage = "Wrong username and/or password!";
