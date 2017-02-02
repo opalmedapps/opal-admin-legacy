@@ -44,10 +44,6 @@
 	define( "BACKEND_ABS_PATH", "/usr/lib/cgi-bin/dev/opalAdmin/" ); 
 	define( "BACKEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", BACKEND_ABS_PATH) );
 	define( "FRONTEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", FRONTEND_ABS_PATH) ); 
-    define( "SESSION_KEY_NAME", "OA_DEV_username" );
-    define( "SESSION_KEY_LOGIN", "OA_DEV_loginAttempt" );
-    define( "SESSION_KEY_REGISTER", "OA_DEV_registerAttempt" );
-    define( "SESSION_KEY_USERID", "OA_DEV_userid" );
 	
 	// Include the classes
 	include_once( FRONTEND_ABS_PATH . "php/classes/User.php" );
