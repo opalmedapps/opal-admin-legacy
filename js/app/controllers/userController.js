@@ -1,9 +1,17 @@
-angular.module('opalAdmin.controllers.patientActivityController', ['ngAnimate', 'ui.bootstrap']).
+angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid']).
 
 
-	controller('patientActivityController', function($scope, $uibModal, patientAPIservice, uiGridConstants) {
-       
-       $scope.bannerMessage = "";
+	/******************************************************************************
+	* Controller for the users page
+	*******************************************************************************/
+	controller('userController', function($scope, $uibModal, $filter, $sce, $state, userAPIservice) {
+
+		// Function to go to register new user
+		$scope.goToAddUser = function () {
+			$state.go('user-register');
+		}
+
+		$scope.bannerMessage = "";
         // Function to show page banner 
         $scope.showBanner = function() {
             $(".bannerMessage").slideDown(function()  {
@@ -22,12 +30,17 @@ angular.module('opalAdmin.controllers.patientActivityController', ['ngAnimate', 
             $(".bannerMessage").addClass('alert-'+classname);
         };
 
-		// Table search textbox param
+        // Templates for the users table
+        var cellTemplaeOperations = '<div style="text-align:center; padding-top: 5px;">' +
+            '<strong><a href="" ng-click="grid.appScope.editUser(row.entity)">Edit</a></strong> ' + 
+            '- <strong><a href="" ng-click="grid.appScope.deleteUser(row.entity)">Delete</a></strong></div>';
+
+        // user table search textbox param
 		$scope.filterOptions = function(renderableRows) {
             var matcher = new RegExp($scope.filterValue, 'i');
             renderableRows.forEach( function( row ) {
                 var match = false;
-                [ 'patientid', 'deviceid', 'name' ].forEach(function( field ){
+                [ 'username' ].forEach(function( field ){
                     if( row.entity[field].match(matcher) ){
                         match = true;
                     }
@@ -39,42 +52,41 @@ angular.module('opalAdmin.controllers.patientActivityController', ['ngAnimate', 
 
             return renderableRows;
         };
-    
-        $scope.filterPatient = function(filterValue) {
+
+        $scope.filterUser = function(filterValue) {
             $scope.filterValue = filterValue
             $scope.gridApi.grid.refresh();
             
         };
 
-        // Table options
+        // Table options for user
         $scope.gridOptions = {
-        	data: 'patientActivityList',
+        	data: 'userList',
         	columnDefs: [
-        		{field:'patientid', displayName:'Patient Id', width:'200'},
-        		{field:'name', displayName:'Name', width:'355'},
-        		{field:'deviceid', displayName:'Device ID', width:'530'},
-        		{field:'login', displayName:'Login Time'},
-        		{field:'logout', displayName:'Logout Time'}
+        		{field:'username', displayName:'Username', width:'655'},
+        		{field:'role', displayName:'Role', width:'300'},
+        		{name:'Operations', cellTemplate:cellTemplaeOperations, sortable:false, enableFiltering:false}
         	],
-        	//useExternalFiltering: true,
-            enableFiltering: true,
         	enableColumnResizing: true,
+        	enableFiltering: true,
         	onRegisterApi: function(gridApi) {
                 $scope.gridApi = gridApi;
                 $scope.gridApi.grid.registerRowsProcessor($scope.filterOptions, 300);
             },
         }
 
-        // Initialize list to hold patient activities
-        $scope.patientActivityList = [];
+        // Initialize list of existing users
+        $scope.userList = [];
 
-        $scope.loading = true;
-        // Call our API to get the list of patient activities
-        patientAPIservice.getPatientActivities().success(function (response) {
-        	// Assign value
-        	$scope.patientActivityList = response;
-        })
-        .finally(function() {$scope.loading = false;});
+        // Call out API service to get the list of existing users
+        userAPIservice.getUsers().success(function (response) {
+        	$scope.userList = response;
+        });
 
+
+
+
+
+					
 	});
 

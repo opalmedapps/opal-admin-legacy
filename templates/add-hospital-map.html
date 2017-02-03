@@ -1,12 +1,14 @@
   <div id="main">
-    <div id="top">
+    <div id="top" ng-if="isAuthorized([userRoles.admin])">
       <div class="clearfix">
         <div class="row">
           <div class="col-md-2" style="position:fixed;">
             <div ng-controller="sidePanelMenuController">
               <div class="row side-logo" ng-click="goToHome()">
                 <div class="col-md-12">
-                  <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+                  <div class="logo">
+                    <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+                  </div>
                   <h1 class="animated fadeIn">opal <strong>ADMIN</strong> </h1>
                 </div>
               </div>   

@@ -42,6 +42,7 @@
 
 	<!-- Controller -->
  	<script type="text/javascript" src="js/app/controllers/controllers.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/applicationController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/headerController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/homeController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/aliasController.js"></script>
@@ -64,7 +65,7 @@
  	<script type="text/javascript" src="js/app/controllers/loginModalController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/patientActivityController.js"></script>
  	<script type="text/javascript" src="js/app/controllers/accountController.js"></script>
- 	<!-- <script type="text/javascript" src="js/app/controllers/applicationController.js"></script> -->
+ 	<script type="text/javascript" src="js/app/controllers/userController.js"></script>
 
 
 	<!-- Collection -->
@@ -92,11 +93,9 @@
 	<link media="all" type="text/css" rel="stylesheet" href="css/style.css">
 
 </head>
-<!--<body ng-app="opalAdmin" ng-controller="applicationController">-->
-<body ng-app="opalAdmin" ng-controller="accountController">
+<body ng-app="opalAdmin" ng-controller="applicationController">
 	<div id="page">
 		<div ui-view></div>
-		<!-- <div ng-view></div> -->
 	</div>
  
 </body>

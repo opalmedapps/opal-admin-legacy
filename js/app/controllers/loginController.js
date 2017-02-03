@@ -53,7 +53,6 @@ angular.module('opalAdmin.controllers.loginController', ['ngAnimate', 'ui.bootst
             if($scope.loginFormComplete()) {
                 AuthService.login(credentials).then(function (user) {
                     $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
-                    $rootScope.setCurrentUser(user);
                     $state.go('home');
                     Idle.watch();
                 }, function() {

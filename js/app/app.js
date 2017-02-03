@@ -46,8 +46,7 @@ angular.module('opalAdmin', [
             .post('php/user/checklogin.php', credentials)
             .then(function (response) {
             	if (response.data.user) {
-	                //Session.create(response.data.id, response.data.user.id, response.data.user.role);
-	                Session.create(null, response.data.user.id, response.data.user.role);
+	                Session.create('123abc', response.data.user);
 	                return response.data.user;
 	            }
 	            else {return $q.reject(response)}
@@ -56,7 +55,7 @@ angular.module('opalAdmin', [
     }
 
     authService.isAuthenticated = function () {
-        return !!Session.retrieve('userId');
+        return !!Session.retrieveObject('user');
     }
 
     authService.isAuthorized = function (authorizedRoles) {
@@ -66,7 +65,7 @@ angular.module('opalAdmin', [
         }
 
         return (authService.isAuthenticated() && 
-            ( authorizedRoles.indexOf(Session.retrieve('userRole')) !== -1 ||
+            ( authorizedRoles.indexOf(Session.retrieveObject('user').role) !== -1 ||
             	authorizedRoles.indexOf(USER_ROLES.all) !== -1 ) );
     }
 
@@ -76,8 +75,8 @@ angular.module('opalAdmin', [
 .config(['$urlRouterProvider', '$stateProvider', 'USER_ROLES', function ($urlRouterProvider, $stateProvider, USER_ROLES) {
 	$urlRouterProvider.otherwise("/");
 	$stateProvider
-		.state('login', {url:'/login', templateUrl: 'templates/login.html', controller: 'loginController', data: {requireLogin: false}})
-		.state('home', {url:'/', templateUrl: 'templates/home.html', controller: 'homeController', data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('login', {url:'/', templateUrl: 'templates/login.html', controller: 'loginController', data: {requireLogin: false}})
+		.state('home', {url:'/home', templateUrl: 'templates/home.html', controller: 'homeController', data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('alias', {url:'/alias', templateUrl: "templates/alias.html", controller: "aliasController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('alias-add', {url:'/alias/add', templateUrl: "templates/add-alias.html", controller: "newAliasController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('post', {url:'/post', templateUrl: "templates/post.html", controller: "postController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
@@ -94,6 +93,8 @@ angular.module('opalAdmin', [
 		.state('test-result-add', {url:'/test-result/add', templateUrl: "templates/add-test-result.html", controller: "newTestResultController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('cron', {url:'/cron', templateUrl: "templates/cron.html", controller: "cronController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('patient-activity', {url:'/patient-activity', templateUrl: "templates/patient-activity.html", controller: "patientActivityController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('account', {url:'/account', templateUrl: "templates/account.html", controller: "accountController", data: {authorizedRoles: [USER_ROLES.all], requireLogin: true}})
+		.state('users', {url:'/users', templateUrl: "templates/user.html", controller: "userController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('protected-route', {url:'/protected', resolve: {auth: function resolveAuthentication(AuthResolver) {return AuthResolver.resolve();}}});
 }])
 
@@ -119,27 +120,6 @@ angular.module('opalAdmin', [
 			return $q.reject(response);
 		}
 	};
-})
-// Watches the value of ‘currentUser’ on $rootScope, 
-// and will only resolve after currentUser has been set
-.factory('AuthResolver', function ($q, $rootScope, $state) {
-    return {
-        resolve: function() {
-            var deferred = $q.defer();
-            var unwatch = $rootScope.$watch('currentUser', function (currentUser) {
-                if (angular.isDefined(currentUser)) {
-                    if (currentUser) {
-                        deferred.resolve(currentUser);
-                    } else {
-                        deferred.reject();
-                        $state.go('login');
-                    }
-                    unwatch();
-                }
-            });
-            return deferred.promise;
-        }
-    };
 })
 .run(function ($rootScope, AUTH_EVENTS, AuthService, $state) {
 
