@@ -1,3 +1,11 @@
+Version 0.5.3:
+ -     --- Added users page
+ -     --- Started adding users page functionality
+ -     --- Removed currentUser from rootScope         -- Now all handled in Session service     --- Remove all lingering PHP Session variables     --- Added change password functionality
+ -     --- Page content now hidden during session timeout     --- Reduced session timeout to 6 minutes of inactivity
+ -     --- Added more responsiveness to the web page     --- Added loading message to long ui grid loads
+ - Merge branch 'release-0.5.2' into develop
+
 Version 0.5.2:
  -     --- Removed client-side php     --- Improved routing by using more ui router instead of js redirects
  - Merge branch 'release-0.5.1' into develop
