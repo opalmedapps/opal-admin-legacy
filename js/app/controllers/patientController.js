@@ -59,11 +59,12 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 			columnDefs: [
 				{field:'patientid', displayName:'Patient ID', width:'245'},
 				{field:'name', displayName:'Name', width:'555'},
-                {field:'transfer', displayName:'Publish Flag', width:'150', cellTemplate:checkboxCellTemplate},
+                {field:'transfer', displayName:'Publish Flag', width:'150', cellTemplate:checkboxCellTemplate, enableFiltering: false},
 				{field:'lasttransferred', displayName:'Last Publish'}
                 
 			],
-            useExternalFiltering: true,
+            enableFiltering: true,
+            //useExternalFiltering: true,
 			enableColumnResizing: true,	
             onRegisterApi: function(gridApi) {
                 $scope.gridApi = gridApi;
