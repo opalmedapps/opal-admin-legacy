@@ -94,6 +94,7 @@ angular.module('opalAdmin', [
 		.state('cron', {url:'/cron', templateUrl: "templates/cron.html", controller: "cronController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('patient-activity', {url:'/patient-activity', templateUrl: "templates/patient-activity.html", controller: "patientActivityController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('account', {url:'/account', templateUrl: "templates/account.html", controller: "accountController", data: {authorizedRoles: [USER_ROLES.all], requireLogin: true}})
+		.state('users', {url:'/users', templateUrl: "templates/user.html", controller: "userController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('protected-route', {url:'/protected', resolve: {auth: function resolveAuthentication(AuthResolver) {return AuthResolver.resolve();}}});
 }])
 
