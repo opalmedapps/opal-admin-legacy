@@ -21,7 +21,8 @@ angular.module('opalAdmin.controllers', [
   'opalAdmin.controllers.loginController',
   'opalAdmin.controllers.loginModalController',
   'opalAdmin.controllers.patientActivityController',
-  'opalAdmin.controllers.accountController'
+  'opalAdmin.controllers.accountController',
+  'opalAdmin.controllers.userController'
 ]);
 
 	

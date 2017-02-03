@@ -104,6 +104,78 @@
 				return $e->getMessage();
 			}
 	 }
+
+	 public function getUsers() {
+	 	$users = array();
+	 	try {
+	 		$connect = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+	 		$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+	 		$sql = "
+	 		SELECT DISTINCT
+	 		ATOUser.UserSerNum,
+	 		ATOUser.Username
+	 		FROM
+	 		ATOUser
+	 		";           
+	 		$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+	 		$query->execute();
+
+	 		while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+	 			$serial = $data[0];
+	 			$name   = $data[1];
+
+	 			$userArray = array(
+	 				'serial'    	=> $serial,
+	 				'username'      => $name
+	 				);
+	 			array_push($users, $userArray);
+	 		}
+	 		return $users;
+	 	} catch (PDOException $e) {
+	 		echo $e->getMessage();
+	 		return $users;
+	 	}
+	 }
+
+	 public function getUserDetails($userSer) { 
+	 	$userDetails = array();
+	 	try {
+	 		$connect = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+	 		$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+	 		$sql = "
+	 		SELECT DISTINCT
+	 		ATOUser.Username
+	 		FROM   
+	 		ATOUser
+	 		WHERE
+	 		ATOUser.UserSerNum = $userSer
+	 		";
+	 		$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+	 		$query->execute();
+
+	 		$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
+
+	 		$username   = $data[0];
+
+	 		$userDetails = array(
+	 			'serial'            => $userSer,
+	 			'username'          => $username,
+	 			'logs'              => array(),
+	 			'new_password'      => null,
+	 			'confirm_password'  => null
+	 			);
+
+	 		return $userDetails;
+	 	} catch (PDOException $e) {
+	 		echo $e->getMessage();
+	 		return $userDetails;
+	 	}
+	 }
+
+
 	 
  }
  

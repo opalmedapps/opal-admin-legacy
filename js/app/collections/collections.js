@@ -6,10 +6,10 @@
 // also encodes the data in JSON because the callback will not work otherwise. So in reality, we are calling a PHP script (that executes 
 // JSON_ENCODE) to get relevant data using JavaScript 
 
-angular.module('opalAdmin.collections', []).
+angular.module('opalAdmin.collections', [])
 
 	// Alias API service
-	factory('aliasAPIservice', function ($http) { 
+	.factory('aliasAPIservice', function ($http) { 
 
 		var aliasAPI = {};
 	
@@ -54,10 +54,10 @@ angular.module('opalAdmin.collections', []).
 		}
 
 		return aliasAPI;
-	}).
+	})
 
     // Post API service
-    factory('postAPIservice', function($http) {
+    .factory('postAPIservice', function($http) {
 
         var postAPI = {};
 
@@ -78,10 +78,10 @@ angular.module('opalAdmin.collections', []).
 		}
 
         return postAPI;
-    }).
+    })
 
     // Educational Material API service
-    factory('edumatAPIservice', function($http) {
+    .factory('edumatAPIservice', function($http) {
 
         var edumatAPI = {};
 
@@ -126,10 +126,10 @@ angular.module('opalAdmin.collections', []).
         }
 
         return edumatAPI;
-    }).
+    })
 
     // Hospital Map API service
-    factory('hosmapAPIservice', function($http) {
+    .factory('hosmapAPIservice', function($http) {
 
         var hosmapAPI = {};
 
@@ -158,10 +158,10 @@ angular.module('opalAdmin.collections', []).
         }
 
         return hosmapAPI;
-    }).
+    })
 
     // Notification API service
-    factory('notifAPIservice', function($http) {
+    .factory('notifAPIservice', function($http) {
 
         var notifAPI = {};
  
@@ -190,10 +190,10 @@ angular.module('opalAdmin.collections', []).
         }
 
         return notifAPI;
-    }).
+    })
 
     // Patient API service
-    factory('patientAPIservice', function($http) {
+    .factory('patientAPIservice', function($http) {
 
         var patientAPI = {};
 
@@ -238,10 +238,10 @@ angular.module('opalAdmin.collections', []).
         }
 
         return patientAPI;
-    }).
+    })
 
     // Fitler API service
-    factory('filterAPIservice', function($http) {
+    .factory('filterAPIservice', function($http) {
 
         var filterAPI = {};
 
@@ -254,10 +254,10 @@ angular.module('opalAdmin.collections', []).
         }
 
         return filterAPI;
-    }).
+    })
 
     // Test Result API service
-    factory('testresAPIservice', function($http) {
+    .factory('testresAPIservice', function($http) {
 
         var testresAPI = {};
  
@@ -294,11 +294,11 @@ angular.module('opalAdmin.collections', []).
         }
 
         return testresAPI;
-    }).
+    })
 
 
 	// Cron API service
-	factory('cronAPIservice', function($http) {
+	.factory('cronAPIservice', function($http) {
 	
 		var cronAPI = {};
 	
@@ -311,8 +311,35 @@ angular.module('opalAdmin.collections', []).
 		}
 
 		return cronAPI;
-	});
+	})
 
+    // user API service
+    .factory('userAPIservice', function ($http) {
+
+        var userAPI = {};
+
+        // Function to get user details given a serial
+        userAPI.getUserDetails = function (userser) {
+            return $http({
+                method: 'JSONP',
+                url: URLPATH+"api/user/user_details.php?callback=JSON_CALLBACK&userser="+userser
+            });
+        }
+
+        // Function to get the list of existing users in our DB
+        userAPI.getUsers = function () {
+            return $http({
+                method: 'JSONP',
+                url: URLPATH+"api/user/users.php?callback=JSON_CALLBACK"
+            });
+        }
+
+        return userAPI;
+
+    });
+
+
+       
 
   
 
