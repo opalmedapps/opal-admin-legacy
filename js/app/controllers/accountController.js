@@ -1,113 +1,163 @@
-angular.module('opalAdmin.controllers.accountController', ['ui.bootstrap', 'ngIdle']).
+angular.module('opalAdmin.controllers.accountController', ['ui.bootstrap']).
 
 
 	/******************************************************************************
-	* Top level account controller
+	* Controller for the account page
 	*******************************************************************************/
-	controller('accountController', function($scope, $rootScope, $state, Idle, Keepalive, 
-		$uibModal, Session, loginModal, AUTH_EVENTS, USER_ROLES, AuthService) {
+	controller('accountController', function($scope, $rootScope, Session) {
 
+		// Set current user 
+		$scope.currentUser = Session.retrieveObject('user');
 
-		// Store current user in rootScope
-		$rootScope.currentUser = null;
+ 		$scope.bannerMessage = "";
+        // Function to show page banner 
+        $scope.showBanner = function() {
+            $(".bannerMessage").slideDown(function()  {
+                setTimeout(function() {             
+                    $(".bannerMessage").slideUp(); 
+                }, 5000); 
+            });
+        }
+        // Function to set banner class
+        $scope.setBannerClass = function(classname) {
+            // Remove any classes starting with "alert-" 
+            $(".bannerMessage").removeClass (function (index, css) {
+                return (css.match (/(^|\s)alert-\S+/g) || []).join(' ');
+            });
+            // Add class
+            $(".bannerMessage").addClass('alert-'+classname);
+        };
 
-		$scope.userRoles = USER_ROLES;
-  		$scope.isAuthorized = AuthService.isAuthorized;
+		// Initialize account object
+		$scope.defaultAccount = {
+			user: $scope.currentUser,
+			oldPassword: null,
+			password: null,
+			confirmPassword: null
+		}
+		$scope.account = jQuery.extend(true, {}, $scope.defaultAccount);
 
-		// Top-level function for settign the current user
-		$rootScope.setCurrentUser = function (user) {
-			$rootScope.currentUser = user;
+		// Function to reset the account object
+		$scope.flushAccount = function () {
+			$scope.account = jQuery.extend(true, {}, $scope.defaultAccount);
+            $scope.validOldPassword.status = null;
+            $scope.validPassword.status = null;
+            $scope.validConfirmPassword.status = null;
 		}
 
-		// Top-level function for destroying the current user
-		$rootScope.destroyCurrentUser = function() {
-			$rootScope.currentUser = null;
+		$scope.validOldPassword = {status:null,message:null};
+		$scope.validateOldPassword = function (oldPassword) {
+			if (!oldPassword) {
+				$scope.validOldPassword.status = null;
+				return;
+			} else {
+				$scope.validOldPassword.status = 'valid';
+			}
 		}
 
- 		// Function to close idle modal
- 		function closeIdleModal() {
- 			if ($scope.warning) {
- 				$scope.warning.close();
- 				$scope.warning = null;
- 			}
- 		}
+		// Function to validate password 
+        $scope.validPassword = {status:null,message:null};
+        $scope.validatePassword = function (password) {
 
- 		$scope.inAuthLoginModal = false;
+            if (!password) {
+                $scope.validPassword.status = null;
+                return;
+            }
 
- 		// Trigger on idle start
- 		$scope.$on('IdleStart', function() {
+            if (password.length < 6) {
+                $scope.validPassword.status = 'invalid';
+                $scope.validPassword.message = 'Use greater than 6 characters';
+                return;
+            } else if ($scope.account.oldPassword && $scope.account.oldPassword == password) {
+                $scope.validPassword.status = 'warning';
+                $scope.validPassword.message = 'Old and new password are the same';
+            }
+            else {
+                $scope.validPassword.status = 'valid';
+                $scope.validPassword.message = null;
+            }
+        }
 
- 			if ($state.current.name != 'login' && !$scope.inAuthLoginModal) {
-	 			$scope.warning = $uibModal.open({
-	 				templateUrl: 'templates/idle-warning-modal.html',
-	 				windowClass: 'modal-danger'
-	 			});
-	 		}
- 		});
+        // Function to validate confirm password
+        $scope.validConfirmPassword = {status:null,message:null};
+        $scope.validateConfirmPassword = function (confirmPassword) {
 
- 		// Close idle modal on idle end
- 		$scope.$on('IdleEnd', function() {
- 			closeIdleModal();
- 		});
+            if (!confirmPassword) {
+                $scope.validConfirmPassword.status = null;
+                return;
+            }
 
- 		// Trigger on idle timeout
- 		$scope.$on('IdleTimeout', function() {
- 			closeIdleModal(); // close idle modal
+            if ($scope.validPassword.status != 'valid' || $scope.account.password != $scope.account.confirmPassword) {
+                $scope.validConfirmPassword.status = 'invalid';
+                $scope.validConfirmPassword.message = 'Enter same valid password';
+                return;
+            } else {
+                $scope.validConfirmPassword.status = 'valid';
+                $scope.validConfirmPassword.message = null;
+            }
+        }
 
- 			Session.destroy(); // destroy session 
+        // Function to check password reset form completion
+        $scope.checkForm = function() {
+        	if($scope.validOldPassword.status != 'valid' || $scope.validPassword.status != 'valid' ||
+        		$scope.validConfirmPassword. status != 'valid') {
+        		return false;
+        	} else {
+        		return true;
+        	}
+        }
 
- 			if ($state.current.name != 'login' && !$scope.inAuthLoginModal) {
-	 			loginModal() // open login modal
-				.then(function () {
-					$scope.startIdleWatch(); // Start idle watch again
-				})
-				.catch(function () {
-					return $state.go('login'); // Failed go to login
-				});
-			}
- 		});
+        // Function to update password
+        $scope.updatePassword = function (account) {
 
- 		// Trigger on non-authetication
- 		$scope.$on(AUTH_EVENTS.notAuthorized, function () {
- 			$scope.warning = $uibModal.open({
-	 				templateUrl: 'templates/authorization-warning-modal.html',
-	 				windowClass: 'modal-danger'
-	 		});
+        	if($scope.checkForm()) {
 
- 		});
+        		// check if user is defined in session (they should...)
+        		if(!$scope.currentUser) {
+        			$scope.bannerMessage = "Your session seems to be invalid...";
+        			$scope.setBannerClass('danger');
+        			$scope.showBanner();
+        			return;
+        		}
 
- 		// Trigger on non-authentication
- 		$scope.$on(AUTH_EVENTS.notAuthenticated, function () {
- 			var currentState = $state.current.name;
- 			if (currentState != 'login') {
- 				$scope.inAuthLoginModal = true;
-	 			loginModal() // open login modal
-				.then(function () {
-					$scope.startIdleWatch(); // Start idle watch again
-					$scope.inAuthLoginModal = false;
-					return $state.go('home'); // Go to home page
-				})
-				.catch(function () {
-					$scope.inAuthLoginModal = false;
-					return $state.go('login'); // Failed go to login
-				});
-			}
- 		});
+        		// submit form 
+        		$.ajax({
+        			type: "POST",
+        			url: "php/user/update_password.php",
+        			data: $scope.account,
+        			success: function (response) {
+        				response = JSON.parse(response);
+        				if (response.value == 1) {
+        					$scope.flushAccount();
+        					$scope.setBannerClass('success');
+        					$scope.bannerMessage = "Password successfully changed!";
+        					$scope.showBanner();
+                            $scope.$apply();
+        				} else {
+        					var errorCode = response.error.code;
+        					var errorMessage = response.error.message;
+        					if (errorCode == 'old-password-incorrect') {
+        						$scope.validOldPassword.status = 'warning';
+        						$scope.validOldPassword.message = errorMessage;
+        						$scope.setBannerClass('warning');
+        						$scope.bannerMessage = errorMessage;
+        						$scope.$apply();
+        						$scope.showBanner();
+        					} else {
+        						$scope.setBannerClass('danger');
+        						$scope.bannerMessage = errorMessage;
+        						$scope.showBanner();
+        					}
 
- 		$scope.startIdleWatch = function() {
- 			closeIdleModal();
- 			Idle.watch();
- 		};
+        				}
+
+        			}
+        		});
 
 
- 	})
+        	}
+        }
 
-	// Configs for setting idle and keep alive (in seconds)
-	.config(function(IdleProvider, KeepaliveProvider) {
-		IdleProvider.idle(600);
-		IdleProvider.timeout(15);
-		KeepaliveProvider.interval(615);
+
 	});
-	
-					
-	
+

@@ -472,9 +472,6 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 
                     }
 
-                    console.log(errorMessage);
-               
-
                 });
 
             }

@@ -4,20 +4,19 @@
 angular.module('opalAdmin.services', [])
 
 	.service('Session', function ($cookies, $rootScope) {
-		this.create = function (sessionId, userId, userRole) {
-			$cookies.put('sessionId', sessionId);
-			$cookies.put('userId', userId);
-			$cookies.put('userRole', userRole);
+		this.create = function (session_id, user) {
+			$cookies.put('session_id', session_id);
+			$cookies.putObject('user', user);
 		};
 		this.retrieve = function (data) {
 			return $cookies.get(data);
 		};
+		this.retrieveObject = function (data) {
+			return $cookies.getObject(data);
+		};
 		this.destroy = function () {
-			$cookies.remove('sessionId');
-			$cookies.remove('userId');
-			$cookies.remove('userRole');
-
-			$rootScope.destroyCurrentUser();
+			$cookies.remove('session_id');
+			$cookies.remove('user');
 		};
 	})
 
