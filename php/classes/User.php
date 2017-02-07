@@ -56,18 +56,21 @@
 	 	try {
 	 		$con = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD ); 
 			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-			$sql = "SELECT * FROM ATOUser WHERE ATOUser.UserSerNum = :ser AND ATOUser.Password = :password";
 
-			$stmt = $con->prepare( $sql );
-			$stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
-			$stmt->bindValue( "password", hash("sha256", $oldPassword . $this->salt), PDO::PARAM_STR );
-			$stmt->execute();
-			
-			$valid = $stmt->fetchColumn();
-			if( !$valid ) {
-				$response['error']['code'] = 'old-password-incorrect';
-				$response['error']['message'] = 'Your old password is incorrect.';
-				return $response;
+			if (!isset($userArray['override'])) {
+				$sql = "SELECT * FROM ATOUser WHERE ATOUser.UserSerNum = :ser AND ATOUser.Password = :password";
+
+				$stmt = $con->prepare( $sql );
+				$stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
+				$stmt->bindValue( "password", hash("sha256", $oldPassword . $this->salt), PDO::PARAM_STR );
+				$stmt->execute();
+				
+				$valid = $stmt->fetchColumn();
+				if( !$valid ) {
+					$response['error']['code'] = 'old-password-incorrect';
+					$response['error']['message'] = 'Your old password is incorrect.';
+					return $response;
+				}
 			}
 
 			$sql = "UPDATE ATOUser SET ATOUser.Password = :password WHERE ATOUser.UserSerNum = :ser";
@@ -223,6 +226,43 @@
         } catch (PDOException $e) {
             return $Response;
         }
+	}
+
+	/**
+	 *
+	 * Removes a user from the database
+	 *
+	 * @param integer $userSer : the user serial number
+	 * @return array : response
+	 */
+	public function removeUser( $userSer ) {
+
+		// Initialize a response array
+		$response = array(
+			'value'		=> 0,
+			'message'	=> ''
+		);
+		try {
+			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+			$sql = "
+				DELETE FROM
+					ATOUser
+				WHERE
+					ATOUser.UserSerNum = $userSer
+			";
+
+			$query = $host_db_link->prepare( $sql );
+            $query->execute();
+
+            $response['value'] = 1; // Success
+            return $response;
+
+        } catch( PDOException $e) {
+            $response['message'] = $e->getMessage();
+			return $response; // Fail
+		}
 	}
  }
  
