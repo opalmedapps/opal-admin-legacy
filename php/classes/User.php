@@ -87,23 +87,31 @@
 		}
 	 }
 	 
-	 public function register() {
-		$correct = false;
-			try {
-				$con = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
-				$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-				$sql = "INSERT INTO ATOUser(Username, Password, DateAdded) VALUES(:username, :password, NOW())";
-				
-				$stmt = $con->prepare( $sql );
-				$stmt->bindValue( "username", $this->username, PDO::PARAM_STR );
-				$stmt->bindValue( "password", hash("sha256", $this->password . $this->salt), PDO::PARAM_STR );
-				$stmt->execute();
-				//return "Registration Successful <br/> <a href='index.php'>Login Now</a>";
+	/**
+	 *
+	 * Registers a user into the database
+	 *
+	 * @param array $userArray : the user details
+	 * @return void
+	 */
+	public function registerUser($userArray) {
+		$username 		= $userArray['username'];
+		$password 		= $userArray['password'];
+		try {
+			$con = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$sql = "INSERT INTO ATOUser(Username, Password, DateAdded) VALUES(:username, :password, NOW())";
+			
+			$stmt = $con->prepare( $sql );
+			$stmt->bindValue( "username", $username, PDO::PARAM_STR );
+			$stmt->bindValue( "password", hash("sha256", $password . $this->salt), PDO::PARAM_STR );
+			$stmt->execute();
+			return;
 
-			}catch( PDOException $e ) {
-				return $e->getMessage();
-			}
-	 }
+		}catch( PDOException $e ) {
+			return $e->getMessage();
+		}
+	}
 
 	 public function getUsers() {
 	 	$users = array();
@@ -176,7 +184,46 @@
 	 }
 
 
-	 
+	/**
+	 *
+	 * Determines the existence of a username
+	 *
+	 * @param string $username : username to check
+	 *
+	 * @return array $Response : response
+	 */
+	public function usernameAlreadyInUse($username) {
+		$Response = null;
+		try {
+            $host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            $sql = "
+            	SELECT DISTINCT
+            		ato.Username
+            	FROM
+            		ATOUser ato
+            	WHERE
+            		ato.Username = \"$username\"
+            	LIMIT 1
+            ";
+
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            $Response = 'FALSE';
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                if ($data[0]) {
+                    $Response = 'TRUE';
+                }
+            }
+
+            return $Response;
+
+        } catch (PDOException $e) {
+            return $Response;
+        }
+	}
  }
  
 ?>
