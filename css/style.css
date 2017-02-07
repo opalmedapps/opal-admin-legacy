@@ -574,7 +574,12 @@ ul.no-list {
 .customModal .modal-dialog {
   width: 70% !important; }
 
-.customModal .modal-content {
+.editUserModal .modal-dialog {
+  width: 50% !important;
+}
+
+.customModal .modal-content,
+.editUserModal .modal-content {
     background-color: #e6edfa;
 }
 

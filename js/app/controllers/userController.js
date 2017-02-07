@@ -83,6 +83,202 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
         	$scope.userList = response;
         });
 
+        // Function for when a user has been clicked for deletion
+        // Open a modal
+        $scope.userToDelete = null;
+        $scope.deleteUser = function(currentUser) {
+
+            $scope.userToDelete = currentUser;
+            var modalInstance = $uibModal.open({
+                templateUrl: 'deleteUserModalContent.htm',
+                windowClass: 'deleteModal',
+                controller: DeleteUserModalInstanceCtrl,
+                scope: $scope,
+                backdrop: 'static'
+            });
+
+            // After delete, refresh the user list
+            modalInstance.result.then(function () {
+                // Call our API to get the list of existing users
+                userAPIservice.getUsers().success(function (response) {
+                    $scope.userList = response;
+                });
+            });
+        }
+
+        // Controller for the delete user modal
+        var DeleteUserModalInstanceCtrl = function ($scope, $uibModalInstance) {
+
+            // Submit delete
+            $scope.deleteUser = function () {
+                $.ajax({
+                    type: "POST",
+                    url: "php/user/delete_user.php",
+                    data: $scope.userToDelete,
+                    success: function (response) {
+                        response = JSON.parse(response);
+                        if (response.value) {
+                            $scope.setBannerClass('success');
+                            $scope.$parent.bannerMessage = "Successfully delete \"" + $scope.userToDelete.username + "\"";
+                        }
+                        else {
+                            $setBannerClass('danger');
+                            $scope.$parent.bannerMessage = response.message;
+                        }
+                        $scope.showBanner();
+                        $uibModalInstance.close();
+
+                    }
+                });
+            }
+
+            // Function to close modal dialog
+            $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+            };
+
+        }
+
+        // Function for when the user has been clicked for editing 
+        // We open a modal
+        $scope.editUser = function (user) {
+
+            $scope.currentUser = user;
+            var modalInstance = $uibModal.open({
+                templateUrl: 'editUserModalContent.htm',
+                controller: EditUserModalInstanceCtrl,
+                scope: $scope,
+                windowClass: 'editUserModal',
+                backdrop: 'static'
+            });
+
+            // After update, refresh the user list
+            modalInstance.result.then(function () {
+                // Call our API to get the list of existing users
+                userAPIservice.getUsers().success(function (response) {
+                    $scope.userList = response;
+                });
+            });
+        }
+
+        // Controller for the edit user modal
+        var EditUserModalInstanceCtrl = function ($scope, $uibModalInstance) {
+
+            // Default bools
+            $scope.changesMade = false;
+
+            $scope.user = {};
+
+            /* Function for the "Processing" dialog */
+            var processingModal;
+            $scope.showProcessingModal = function() {
+
+                processingModal = $uibModal.open({
+                    templateUrl: 'processingModal.htm',
+                    backdrop: 'static',
+                    keyboard: false,
+                }); 
+            }
+            // Show processing dialog
+            $scope.showProcessingModal(); 
+
+            // Call our API service to get the current user's details
+            userAPIservice.getUserDetails($scope.currentUser.serial).success(function (response) {
+
+                $scope.user = response;
+                processingModal.close(); // hide modal
+                processingModal = null; // remove reference
+            });
+
+            // Function that triggers when the password fields are updated
+            $scope.passwordUpdate = function () {
+
+                $scope.changesMade = true;
+            }
+            // Function to validate password 
+            $scope.validPassword = {status:null,message:null};
+            $scope.validatePassword = function (password) {
+
+                if (!password) {
+                    $scope.validPassword.status = null;
+                    $scope.passwordUpdate();
+                    return;
+                }
+
+                if (password.length < 6) {
+                    $scope.validPassword.status = 'invalid';
+                    $scope.validPassword.message = 'Use greater than 6 characters';
+                    $scope.passwordUpdate();
+                    return;
+                } else {
+                    $scope.validPassword.status = 'valid';
+                    $scope.validPassword.message = null;
+                    $scope.passwordUpdate();
+                }
+            }
+
+            // Function to validate confirm password
+            $scope.validConfirmPassword = {status:null,message:null};
+            $scope.validateConfirmPassword = function (confirmPassword) {
+
+                if (!confirmPassword) {
+                    $scope.validConfirmPassword.status = null;
+                    $scope.passwordUpdate();
+                    return;
+                }
+
+                if ($scope.validPassword.status != 'valid' || $scope.user.password != $scope.user.confirmPassword) {
+                    $scope.validConfirmPassword.status = 'invalid';
+                    $scope.validConfirmPassword.message = 'Enter same valid password';
+                    $scope.passwordUpdate();
+                    return;
+                } else {
+                    $scope.validConfirmPassword.status = 'valid';
+                    $scope.validConfirmPassword.message = null;
+                    $scope.passwordUpdate();
+                }
+            }
+
+            // Function to check for form completion
+            $scope.checkForm = function () {
+                if ($scope.validPassword.status == 'valid' && $scope.validConfirmPassword.status == 'valid')
+                    return true;
+                else
+                    return false;
+            }
+
+            // Submit changes
+            $scope.updateUser = function () {
+                if ($scope.checkForm()) {
+                    // submit 
+                    $.ajax({
+                        type: "POST",
+                        url: "php/user/update_user.php",
+                        data: $scope.user,
+                        success: function (response) {
+                            response = JSON.parse(response);
+                            if (response.value) {
+                                $scope.setBannerClass('success');
+                                $scope.$parent.bannerMessage = "Successfully updated \"" + $scope.user.username + "\"";
+                            }
+                            else {
+                                $scope.setBannerClass('danger');
+                                $scope.$parent.bannerMessage = response.error.message;
+                            }
+
+                            $scope.showBanner();
+                            $uibModalInstance.close();
+                        }
+                    });
+                }
+            }
+
+            // Function to close modal dialog
+            $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+            };
+
+        }
 
 
 
