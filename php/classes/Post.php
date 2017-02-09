@@ -8,12 +8,12 @@ class Post {
 
     /**
      *
-     * Updates the publish flags in the database
+     * Updates the post flags in the database
      *
      * @param array $postList : the list of posts
      * @return array : response
      */    
-    public function updatePostPublishFlags( $postList ) {
+    public function updatePostFlags( $postList ) {
 
         $response = array(
             'value'     => 0,
@@ -24,13 +24,15 @@ class Post {
 			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			foreach ($postList as $post) {
+				$postDisabled = $post['disabled'];
 				$postPublish = $post['publish'];
 				$postSer = $post['serial'];
 				$sql = "
 					UPDATE 
 						PostControl 	
 					SET 
-						PostControl.PublishFlag = $postPublish 
+						PostControl.PublishFlag = $postPublish,
+						PostControl.Disabled = $postDisabled
 					WHERE 
 						PostControl.PostControlSerNum = $postSer
 				";
@@ -66,7 +68,8 @@ class Post {
                     PostControl.Body_EN,
                     PostControl.Body_FR,
                     PostControl.PublishFlag,
-                    IF(PostControl.PublishDate = '0000-00-00 00:00:00', '--', PostControl.PublishDate)
+                    IF(PostControl.PublishDate = '0000-00-00 00:00:00', '--', PostControl.PublishDate),
+                    PostControl.Disabled
 				FROM 
 					PostControl
 			";
@@ -82,8 +85,9 @@ class Post {
 				$postName_FR	        = $data[3];
 				$postBody_EN	        = $data[4];
                 $postBody_FR            = $data[5];
-                $postPublish           = $data[6];
+                $postPublish           	= $data[6];
                 $postPublishDate        = $data[7];
+                $postDisabled 			= $data[8];
                 $postFilters            = array();
 
 				$sql = "
@@ -122,7 +126,8 @@ class Post {
 					'name_EN' 		    => $postName_EN, 
 					'serial' 		    => $postSer, 
                     'type'			    => $postType, 
-                    'publish'          => $postPublish,
+                    'publish'          	=> $postPublish,
+                    'disabled' 			=> $postDisabled,
 					'body_EN' 	        => $postBody_EN, 
                     'body_FR' 	        => $postBody_FR,
                     'publish_date'      => $postPublishDate,
@@ -160,7 +165,8 @@ class Post {
                     PostControl.Body_EN,
                     PostControl.Body_FR,
                     PostControl.PublishFlag,
-                    IF(PostControl.PublishDate = '0000-00-00 00:00:00', NULL, PostControl.PublishDate)
+                    IF(PostControl.PublishDate = '0000-00-00 00:00:00', NULL, PostControl.PublishDate),
+                    PostControl.Disabled
 				FROM 
 					PostControl 
 				WHERE 
@@ -177,8 +183,9 @@ class Post {
 			$postName_FR	    = $data[2];
 			$postBody_EN	    = $data[3];
             $postBody_FR	    = $data[4];
-            $postPublish       = $data[5];
+            $postPublish       	= $data[5];
             $postPublishDate    = $data[6];
+            $postDisabled		= $data[7];
 			$postFilters	    = array();
 
 			$sql = "
@@ -221,6 +228,7 @@ class Post {
 				'serial' 		    => $postSer, 
                 'type'			    => $postType, 
                 'publish'           => $postPublish,
+                'disabled'			=> $postDisabled,
 				'body_EN' 	        => $postBody_EN, 
                 'body_FR' 	        => $postBody_FR,
                 'publish_date'      => $postPublishDate,
