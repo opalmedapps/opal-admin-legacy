@@ -3,6 +3,7 @@
  class Users {
 	 public $username = null;
 	 public $password = null;
+	 public $role = null;
 	 public $userid = null;
 	 public $salt = "Zo4rU5Z1YyKJAASY0PT6EUg7BBYdlEhPaNLuxAwU8lqu1ElzHv0Ri7EM6irpx5w";
 	 
@@ -21,7 +22,7 @@
 		 try{
 			$con = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD ); 
 			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-			$sql = "SELECT * FROM ATOUser WHERE ATOUser.Username = :username AND ATOUser.Password = :password";
+			$sql = "SELECT * FROM OAUser WHERE OAUser.Username = :username AND OAUser.Password = :password";
 			
 			$stmt = $con->prepare( $sql );
 			$stmt->bindValue( "username", $this->username, PDO::PARAM_STR );
@@ -31,6 +32,8 @@
 			$valid = $stmt->fetchColumn();
 			if( $valid ) {
 				$this->userid = $valid;
+				$userDetails = $this->getUserDetails($valid);
+				$this->role = $userDetails['role'];
 				$success = true;
 			}
 			
@@ -58,7 +61,7 @@
 			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 			if (!isset($userArray['override'])) {
-				$sql = "SELECT * FROM ATOUser WHERE ATOUser.UserSerNum = :ser AND ATOUser.Password = :password";
+				$sql = "SELECT * FROM OAUser WHERE OAUser.OAUserSerNum = :ser AND OAUser.Password = :password";
 
 				$stmt = $con->prepare( $sql );
 				$stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
@@ -73,7 +76,7 @@
 				}
 			}
 
-			$sql = "UPDATE ATOUser SET ATOUser.Password = :password WHERE ATOUser.UserSerNum = :ser";
+			$sql = "UPDATE OAUser SET OAUser.Password = :password WHERE OAUser.OAUserSerNum = :ser";
 
 			$stmt = $con->prepare( $sql );
 			$stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
@@ -103,7 +106,7 @@
 		try {
 			$con = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
 			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-			$sql = "INSERT INTO ATOUser(Username, Password, DateAdded) VALUES(:username, :password, NOW())";
+			$sql = "INSERT INTO OAUser(Username, Password, DateAdded) VALUES(:username, :password, NOW())";
 			
 			$stmt = $con->prepare( $sql );
 			$stmt->bindValue( "username", $username, PDO::PARAM_STR );
@@ -123,11 +126,17 @@
 	 		$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 	 		$sql = "
-	 		SELECT DISTINCT
-	 		ATOUser.UserSerNum,
-	 		ATOUser.Username
-	 		FROM
-	 		ATOUser
+		 		SELECT DISTINCT
+			 		OAUser.OAUserSerNum,
+			 		OAUser.Username,
+			 		Role.RoleName
+		 		FROM
+			 		OAUser,
+			 		OAUserRole,
+			 		Role
+		 		WHERE
+		 			OAUser.OAUserSerNum 	= OAUserRole.OAUserSerNum
+		 		AND OAUserRole.RoleSerNum	= Role.RoleSerNum
 	 		";           
 	 		$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 	 		$query->execute();
@@ -136,10 +145,12 @@
 
 	 			$serial = $data[0];
 	 			$name   = $data[1];
+	 			$role 	= $data[2];
 
 	 			$userArray = array(
 	 				'serial'    	=> $serial,
-	 				'username'      => $name
+	 				'username'      => $name,
+	 				'role'			=> $role
 	 				);
 	 			array_push($users, $userArray);
 	 		}
@@ -157,12 +168,17 @@
 	 		$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 	 		$sql = "
-	 		SELECT DISTINCT
-	 		ATOUser.Username
-	 		FROM   
-	 		ATOUser
-	 		WHERE
-	 		ATOUser.UserSerNum = $userSer
+		 		SELECT DISTINCT
+			 		OAUser.Username,
+			 		Role.RoleName
+		 		FROM   
+			 		OAUser,
+			 		OAUserRole,
+			 		Role
+		 		WHERE
+			 		OAUser.OAUserSerNum 	= $userSer
+			 	AND OAUserRole.OAUserSerNum	= OAUser.OAUserSerNum
+			 	AND Role.RoleSerNum 		= OAUserRole.RoleSerNum
 	 		";
 	 		$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 	 		$query->execute();
@@ -170,10 +186,12 @@
 	 		$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
 
 	 		$username   = $data[0];
+	 		$role 		= $data[1];
 
 	 		$userDetails = array(
 	 			'serial'            => $userSer,
 	 			'username'          => $username,
+	 			'role' 				=> $role,
 	 			'logs'              => array(),
 	 			'new_password'      => null,
 	 			'confirm_password'  => null
@@ -205,7 +223,7 @@
             	SELECT DISTINCT
             		ato.Username
             	FROM
-            		ATOUser ato
+            		OAUser ato
             	WHERE
             		ato.Username = \"$username\"
             	LIMIT 1
@@ -248,9 +266,9 @@
 
 			$sql = "
 				DELETE FROM
-					ATOUser
+					OAUser
 				WHERE
-					ATOUser.UserSerNum = $userSer
+					OAUser.OAUserSerNum = $userSer
 			";
 
 			$query = $host_db_link->prepare( $sql );
