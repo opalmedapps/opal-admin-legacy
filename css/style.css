@@ -796,6 +796,9 @@ ul.no-list {
   color: #433061;
 }
 
+/*.grid-disabled-row .ui-grid-cell-contents{
+  background-color: #a5a5a5 !important;
+}*/
 .side-panel-menu .panel-container {
   margin-right: -10px;
   margin-left: -10px;

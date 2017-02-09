@@ -43,13 +43,21 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' + 
             'ng-click="grid.appScope.editPost(row.entity)">' + 
             '<a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></div>';
-      	var checkboxCellTemplate = '<div style="text-align: center; cursor: pointer;" ' +
+      	var cellTemplatePublishCheckbox = '<div style="text-align: center; cursor: pointer;" ' +
             'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
             'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
-            'ng-checked="grid.appScope.updatePublishFlag(row.entity.publish)" ng-model="row.entity.publish"></div>';  
+            'ng-checked="grid.appScope.updateFlag(row.entity.publish)" ng-model="row.entity.publish"></div>';  
+        var cellTemplateDisableCheckbox = '<div style="text-align:center; cursor:pointer;" ' +
+            'ng-click="grid.appScope.checkDisabledFlag(row.entity)" ' +
+            'class="ui-grid-cell-contents"><input style="margin:4px;" type="checkbox" ' +
+            'ng-checked="grid.appScope.updateFlag(row.entity.disabled)" ng-model="row.entity.disabled"></div>';
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
             '<strong><a href="" ng-click="grid.appScope.editPost(row.entity)">Edit</a></strong> ' + 
             '- <strong><a href="" ng-click="grid.appScope.deletePost(row.entity)">Delete</a></strong></div>';
+        var rowTemplate = '<div ng-class="{\'grid-disabled-row\':row.entity.disabled==1}"> ' +
+            '<div ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" ' +
+            'class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }" ui-grid-cell></div></div>';
+  
       
 
      	// post table search textbox param
@@ -86,8 +94,9 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
                     type: uiGridConstants.filter.SELECT,
                     selectOptions: [ {value:'Announcement', label:'Announcement'}, {value:'Patients for Patients', label:'Patients for Patients'}, {value:'Treatment Team Message', label:'Treatment Team Message'} ]
                 }},
-                {field:'publish', displayName:'Publish', width:'80', cellTemplate:checkboxCellTemplate, enableFiltering: false},
+                {field:'publish', displayName:'Publish', width:'80', cellTemplate:cellTemplatePublishCheckbox, enableFiltering: false},
 				{field:'publish_date', displayName:'Publish Date', width:'160'},
+                {field:'disabled', displayName:'Disabled', width:'80', cellTemplate:cellTemplateDisableCheckbox},
 				{name:'Operations', cellTemplate:cellTemplateOperations, sortable:false, enableFiltering:false}
 			],
             //useExternalFiltering: true,
@@ -97,13 +106,15 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
                 $scope.gridApi = gridApi;
                 $scope.gridApi.grid.registerRowsProcessor($scope.filterOptions, 300);
             },
+            rowTemplate:rowTemplate,
+
 	
 		};	
 
 		// Initialize list of existing post
 		$scope.postList = [];
-        $scope.postPublishes = {
-            publishList: []
+        $scope.postFlags = {
+            flagList: []
         };
 
 		// Initialize an object for deleting post
@@ -115,9 +126,9 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 			$scope.postList = response;
 		});
 
-        // When this function is called, we set the "trasnfer" field to checked 
+        // When this function is called, we set the post flags to checked 
 		// or unchecked based on value in the argument
-		$scope.updatePublishFlag = function (value) {
+		$scope.updateFlag = function (value) {
             value = parseInt(value);
 			if (value == 1) {
 				return 1;
@@ -143,20 +154,37 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 			}
 		};
 
-        // Function to submit changes when publish flags have been modified
-        $scope.submitPublishFlags = function() {
+        // Function for when the post checkbox has been modified
+        $scope.checkDisabledFlag = function (post) {
+
+            $scope.changesMade = true;
+            post.disabled = parseInt(post.disabled);
+            // If the "publish" column has been checked
+            if (post.disabled) {
+                post.disabled = 0; // set disabled to "false"
+            }
+
+            // Else the "Disabled" column was unchecked
+            else {
+                post.disabled = 1; // set disabled to "true"
+            }
+        };
+
+        // Function to submit changes when flags have been modified
+        $scope.submitFlags = function() {
             if($scope.changesMade) {
                 angular.forEach($scope.postList, function(post) {
-                    $scope.postPublishes.publishList.push({
+                    $scope.postFlags.flagList.push({
                         serial:post.serial,
-                        publish:post.publish
+                        publish:post.publish,
+                        disabled:post.disabled
                     });
                 });
 	            // Submit form
 		    	$.ajax({
 			    	type: "POST",
-				    url: "php/post/update_publishFlag.php",
-    				data: $scope.postPublishes,
+				    url: "php/post/update_flags.php",
+    				data: $scope.postFlags,
 	    			success: function(response) {
                         // Call our API to get the list of existing posts
                 		postAPIservice.getPosts().success(function (response) {
@@ -167,7 +195,10 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
                         // Show success or failure depending on response
                         if (response.value) {
                             $scope.setBannerClass('success');
-                            $scope.bannerMessage = "Publish Flags Saved!";
+                            $scope.bannerMessage = "Flag(s) Successfully Saved!";
+                            $scope.postFlags = {
+                                flagList: []
+                            };
                         }
                         else {
                             $scope.setBannerClass('danger');
@@ -175,6 +206,7 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
                         }
                         $scope.showBanner();
                         $scope.changesMade = false;
+
                     }
     			}); 
 	    	}
