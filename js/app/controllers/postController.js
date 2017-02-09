@@ -96,7 +96,7 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
                 }},
                 {field:'publish', displayName:'Publish', width:'80', cellTemplate:cellTemplatePublishCheckbox, enableFiltering: false},
 				{field:'publish_date', displayName:'Publish Date', width:'160'},
-                {field:'disabled', displayName:'Disabled', width:'80', cellTemplate:cellTemplateDisableCheckbox},
+                {field:'disabled', displayName:'Disabled', width:'80', cellTemplate:cellTemplateDisableCheckbox, filter:{term:0}},
 				{name:'Operations', cellTemplate:cellTemplateOperations, sortable:false, enableFiltering:false}
 			],
             //useExternalFiltering: true,
