@@ -33,7 +33,7 @@
 			if( $valid ) {
 				$this->userid = $valid;
 				$userDetails = $this->getUserDetails($valid);
-				$this->role = $userDetails['role'];
+				$this->role = $userDetails['role']['name'];
 				$success = true;
 			}
 			
@@ -45,7 +45,7 @@
 		 }
 	 }
 
-	 public function updatePassword($userArray) {
+	public function updatePassword($userArray) {
 	 	$response = array (
 	 		'value'		=> 0,
 	 		'error'		=> array(
@@ -93,6 +93,45 @@
 		}
 	 }
 	 
+	 public function updateUser($userArray) {
+	 	$response = array (
+	 		'value'		=> 0,
+	 		'error'		=> array(
+	 			'code'		=> '',
+	 			'message'	=> ''
+	 		)
+	 	);
+	 	$userSer			= $userArray['user']['id'];
+	 	$newPassword 		= $userArray['password'];
+	 	$confirmPassword 	= $userArray['confirmPassword'];
+	 	$roleSer 			= $userArray['role']['serial'];
+
+	 	try {
+
+	 		if ( ($newPassword && $confirmPassword) && ($newPassword == $confirmPassword) ) {
+	 			$response = $this->updatePassword($userArray);
+	 			if ($response['value'] == 0) {
+	 				return $response;
+	 			}
+	 		}
+
+	 		$con = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD ); 
+			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+			$sql = "UPDATE OAUserRole SET OAUserRole.RoleSerNum = $roleSer WHERE OAUserRole.OAUserSerNum = $userSer";
+
+			$stmt = $con->prepare( $sql );
+			$stmt->execute();
+
+			$response['value'] = 1; // Success
+			return $response;
+
+	 	} catch (PDOException $e) {
+			 $response['error']['code'] = 'db-catch';
+			 $response['error']['message'] = $e->getMessage();
+			 return $response;
+		}
+	 }
 	/**
 	 *
 	 * Registers a user into the database
@@ -103,6 +142,7 @@
 	public function registerUser($userArray) {
 		$username 		= $userArray['username'];
 		$password 		= $userArray['password'];
+		$roleSer 		= $userArray['role']['serial'];
 		try {
 			$con = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
 			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -112,6 +152,12 @@
 			$stmt->bindValue( "username", $username, PDO::PARAM_STR );
 			$stmt->bindValue( "password", hash("sha256", $password . $this->salt), PDO::PARAM_STR );
 			$stmt->execute();
+
+			$userSer = $con->lastInsertId();
+
+			$sql = "INSERT INTO OAUserRole(OAUserSerNum, RoleSerNum) VALUES('$userSer','$roleSer')";
+			$query = $con->prepare($sql);
+			$query->execute();
 			return;
 
 		}catch( PDOException $e ) {
@@ -119,7 +165,7 @@
 		}
 	}
 
-	 public function getUsers() {
+	public function getUsers() {
 	 	$users = array();
 	 	try {
 	 		$connect = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
@@ -170,6 +216,7 @@
 	 		$sql = "
 		 		SELECT DISTINCT
 			 		OAUser.Username,
+			 		Role.RoleSerNum,
 			 		Role.RoleName
 		 		FROM   
 			 		OAUser,
@@ -186,12 +233,13 @@
 	 		$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
 
 	 		$username   = $data[0];
-	 		$role 		= $data[1];
+	 		$roleSer 	= $data[1];
+	 		$roleName 	= $data[2];
 
 	 		$userDetails = array(
 	 			'serial'            => $userSer,
 	 			'username'          => $username,
-	 			'role' 				=> $role,
+	 			'role' 				=> array('serial'=>$roleSer,'name'=>$roleName),
 	 			'logs'              => array(),
 	 			'new_password'      => null,
 	 			'confirm_password'  => null
@@ -251,7 +299,7 @@
 	 * Removes a user from the database
 	 *
 	 * @param integer $userSer : the user serial number
-	 * @return array : response
+	 * @return array $response : response
 	 */
 	public function removeUser( $userSer ) {
 
@@ -264,13 +312,11 @@
 			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-			$sql = "
-				DELETE FROM
-					OAUser
-				WHERE
-					OAUser.OAUserSerNum = $userSer
-			";
+			$sql = "DELETE FROM OAUserRole WHERE OAUserRole.OAUserSerNum = $userSer";
+			$query = $host_db_link->prepare( $sql );
+            $query->execute();
 
+			$sql = "DELETE FROM OAUser WHERE OAUser.OAUserSerNum = $userSer";
 			$query = $host_db_link->prepare( $sql );
             $query->execute();
 
@@ -282,6 +328,49 @@
 			return $response; // Fail
 		}
 	}
+
+	/**
+	 *
+	 * Gets a list of possible roles from the database
+	 *
+	 * @return array $roles : roles
+	 */
+
+	public function getRoles() {
+	 	$roles = array();
+	 	try {
+	 		$connect = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+	 		$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+	 		$sql = "
+		 		SELECT DISTINCT
+		 			Role.RoleSerNum,
+		 			Role.RoleName
+		 		FROM
+			 		Role
+			 	ORDER BY 
+			 		Role.RoleName
+	 		";           
+	 		$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+	 		$query->execute();
+
+	 		while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+	 			$serial = $data[0];
+	 			$name   = $data[1];
+
+	 			$roleArray = array(
+	 				'serial'    	=> $serial,
+	 				'name'      	=> $name,
+	 			);
+	 			array_push($roles, $roleArray);
+	 		}
+	 		return $roles;
+	 	} catch (PDOException $e) {
+	 		echo $e->getMessage();
+	 		return $roles;
+	 	}
+	 }
  }
  
 ?>

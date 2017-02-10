@@ -341,6 +341,14 @@ angular.module('opalAdmin.collections', [])
                 url: URLPATH+"api/user/username_taken.php?callback=JSON_CALLBACK&username="+username
             });
         }
+
+        // Function to get the list of existing roles 
+        userAPI.getRoles = function () {
+            return $http({
+                method: 'JSONP',
+                url: URLPATH+"api/user/roles.php?callback=JSON_CALLBACK"
+            });
+        }
         
         return userAPI;
 

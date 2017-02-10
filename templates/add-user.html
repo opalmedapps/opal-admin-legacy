@@ -61,6 +61,29 @@
                         </div> 
                       </td>
                     </tr>
+
+                    <tr>
+                      <td>
+                        <span ng-hide="newUser.role" class="glyphicon glyphicon-minus"></span>
+                        <span ng-show="newUser.role" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </td>
+                      <td>
+                        <div class="horz-line" style="line-height: 0px;">
+                          <span class="title" style="background-color: #fff;">
+                            <strong>Role</strong>
+                          </span>
+                        </div> 
+                      </td>
+                    </tr>
+                    <tr>
+                      <td></td>
+                      <td>
+                        <div ng-show="newUser.role" class="description">
+                          <p>{{newUser.role.name}}</p>
+                        </div>
+                      </td>
+                    </tr>
+
                   </table>
                   <div class="table-buttons" style="text-align: center">
                     <form ng-submit="registerUser()" method="post">
@@ -162,6 +185,37 @@
                   </div>
                 </div>          
               </div>
+
+              <div class="row">
+                <div class="col-md-10 side-menu-title">
+                  <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="glyphicon glyphicon-menu-down"></span>
+                      <h2>Role</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row">
+                <div class="col-md-10">
+                  <p style="margin-bottom: 10px;">
+                    <span style="color:#d9534f"><strong>Required field:</strong></span>
+                    Please assign a role to the new user.
+                  </p>
+                </div>
+              </div>  
+              <div class="row" style="margin-bottom: 15px;">
+                <div class="col-md-4">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <select ng-model="newUser.role" ng-change="roleUpdate()" ng-options="role as role.name for role in roles" class="form-control">
+                        <option ng-hide="newUser.role" value="">Select Role</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>  
+              </div>
+
             </div>
           </div>
         </div>

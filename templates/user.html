@@ -92,7 +92,7 @@
                   Password <br><em><small>(min: 6 characters)</small></em>
                 </label>
                 <div class="col-md-7">
-                  <input type="password" class="form-control" ng-blur="validatePassword(user.password)" ng-change="passwordUpdate()" ng-model="user.password">
+                  <input type="password" class="form-control" ng-change="validatePassword(user.password)" ng-model="user.password">
                   <span ng-show="validPassword.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validPassword.status == 'valid', 'glyphicon-remove': validPassword.status == 'invalid', 'glyphicon-warning-sign': validPassword.status == 'warning'}" aria-hidden="true"></span>
                 </div>
                 <em class="control-label col-md-3" ng-show="validPassword.status == 'invalid' || validPassword.status == 'warning'" ng-class="{'has-success': validPassword.status == 'valid', 'has-error': validPassword.status == 'invalid', 'has-warning': validPassword.status == 'warning'}" style="text-align:left">
@@ -113,6 +113,24 @@
               </div>    
             </div>
           </uib-accordion-group>
+          <uib-accordion-group is-open="statusB.open">
+            <uib-accordion-heading>
+              <div>
+                Change Role <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusB.open, 'glyphicon-chevron-right': !statusB.open}"></i>
+              </div>
+            </uib-accordion-heading>
+            <div class="row">
+              <div class="col-md-8">
+                <div class="row">
+                  <div class="col-md-6">
+                    <select ng-model="user.role.serial" ng-change="roleUpdate()" ng-options="role.serial as role.name for role in roles" class="form-control">
+                      <option ng-hide="user.role" value="">Select Role</option>
+                    </select>
+                  </div>
+                </div>
+              </div>  
+            </div>
+          </uib-accordion-group> 
         </uib-accordion>
       </div>
     </script>
