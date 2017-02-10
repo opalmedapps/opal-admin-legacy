@@ -1,3 +1,12 @@
+Version 0.6.0:
+ -     --- Added full role functionality (limit one per user)     --- Removed session start from logout script
+ -     --- Added roles to each user on the backend
+ -     --- Set default to filter non-disabled posts
+ -     --- Added disabled flags to posts
+ -     --- Added user operations (edit/delete)
+ -     --- Added user registration
+ - Merge branch 'release-0.5.3' into develop
+
 Version 0.5.3:
  -     --- Added users page
  -     --- Started adding users page functionality
