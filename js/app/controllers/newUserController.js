@@ -15,13 +15,14 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
         var steps = {
            	username: {completed: false},
             password: {completed: false},
+            role: {completed: false}
         }
 
         // Default count of completed steps
         $scope.numOfCompletedSteps = 0;
 
         // Default total number of steps 
-        $scope.stepTotal = 2;
+        $scope.stepTotal = 3;
 
         // Progress bar based on default completed steps and total
         $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -48,8 +49,15 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
         $scope.newUser = {
         	username: null,
         	password: null,
-        	confirmPassword: null
+        	confirmPassword: null,
+            role: null
         }
+
+        // Call our API service to get the list of possible roles
+        $scope.roles = [];
+        userAPIservice.getRoles().success(function(response) {
+            $scope.roles = response;
+        });
 
         // Function to validate username 
         $scope.validUsername = {status:null,message:null};
@@ -147,6 +155,18 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
             $scope.numOfCompletedSteps = stepsCompleted(steps);
             $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
         }	
+
+        // Function to toggle steps when updating the role field
+        $scope.roleUpdate = function () {
+            if($scope.newUser.role)
+                steps.role.completed = true;
+            else 
+                steps.role.completed = false;
+
+            $scope.numOfCompletedSteps = stepsCompleted(steps);
+            $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+        
+        }
 
 		// Function to check registration form completion 
         $scope.checkRegistrationForm = function() {

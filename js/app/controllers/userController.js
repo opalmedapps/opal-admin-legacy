@@ -166,6 +166,7 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
 
             // Default bools
             $scope.changesMade = false;
+            $scope.passwordChange = false;
 
             $scope.user = {};
 
@@ -190,6 +191,12 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
                 processingModal = null; // remove reference
             });
 
+            // Call our API service to get the list of possible roles
+            $scope.roles = [];
+            userAPIservice.getRoles().success(function (response){
+                $scope.roles = response;
+            });
+
             // Function that triggers when the password fields are updated
             $scope.passwordUpdate = function () {
 
@@ -199,9 +206,14 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
             $scope.validPassword = {status:null,message:null};
             $scope.validatePassword = function (password) {
 
+                $scope.passwordChange = true;
+                $scope.validateConfirmPassword($scope.user.confirmPassword);
+                
                 if (!password) {
                     $scope.validPassword.status = null;
                     $scope.passwordUpdate();
+                    if (!$scope.validConfirmPassword)
+                        $scope.passwordChange = false;
                     return;
                 }
 
@@ -214,6 +226,8 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
                     $scope.validPassword.status = 'valid';
                     $scope.validPassword.message = null;
                     $scope.passwordUpdate();
+                    if ($scope.validConfirmPassword.status == 'valid')
+                        $scope.passwordChange = false;
                 }
             }
 
@@ -221,9 +235,12 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
             $scope.validConfirmPassword = {status:null,message:null};
             $scope.validateConfirmPassword = function (confirmPassword) {
 
+                $scope.passwordChange = true;
                 if (!confirmPassword) {
                     $scope.validConfirmPassword.status = null;
                     $scope.passwordUpdate();
+                    if (!$scope.validPassword)
+                        $scope.passwordChange = false;
                     return;
                 }
 
@@ -236,12 +253,21 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
                     $scope.validConfirmPassword.status = 'valid';
                     $scope.validConfirmPassword.message = null;
                     $scope.passwordUpdate();
+                    if ($scope.validPassword.status == 'valid')
+                        $scope.passwordChange = false;
                 }
+            }
+
+            // Function that triggers when the role field is updated
+            $scope.roleUpdate = function () {
+
+                $scope.changesMade = true;
             }
 
             // Function to check for form completion
             $scope.checkForm = function () {
-                if ($scope.validPassword.status == 'valid' && $scope.validConfirmPassword.status == 'valid')
+                if ( ($scope.changesMade && !$scope.passwordChange ) ||
+                    ($scope.validPassword.status == 'valid' && $scope.validConfirmPassword.status == 'valid') )
                     return true;
                 else
                     return false;
