@@ -18,7 +18,7 @@
 			'user'		=> array(
 				'id'		=> $usr->userid,
 				'username'	=> $usr->username,
-				'role'		=> 'admin'
+				'role'		=> $usr->role
 			)
 		);
 
