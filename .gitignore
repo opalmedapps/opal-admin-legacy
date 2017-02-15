@@ -1,6 +1,7 @@
 # ignore configurations 
 js/config.js
 php/config.php
+.htaccess
 
 # ignore swap files
 *.swp
