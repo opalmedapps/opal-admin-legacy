@@ -8,19 +8,5 @@ php/config.php
 ./**/*.swp
 ./**/*.swo
 
-# ignore libraries
-js/lib/*
-css/lib/*
-php/lib/*
-
-# ignore images directory
-images/*
-
-# ignore font directory
-fonts/*
-
 # ignore version control script
 bumpversion.sh
-
-# ignore htaccess
-.htaccess
