@@ -11,3 +11,5 @@ php/config.php
 
 # ignore version control script
 bumpversion.sh
+CHANGES
+VERSION
