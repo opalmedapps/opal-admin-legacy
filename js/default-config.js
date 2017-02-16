@@ -2,12 +2,10 @@
  * Javascript global settings:
  */
 
-// Absolute path of this package. 
-// Ex: ABSPATH = "/var/www/opalAdmin/" (include trailing slash)
-var ABSPATH = ""; 
-// URL path of this package starting at http-host. 
-// Ex: URLPATH = "/subdir/opalAdmin/" if www.example.com/subdir/opalAdmin/ (include trailing slash)
-var URLPATH = ""; 
+// Absolute path of this package (include trailing slash)
+var ABSPATH = "ABSPATH_HERE"; 
+// URL path of this package starting at http baseURL (include trailing slash)
+var URLPATH = "URLPATH_HERE"; 
 
 // Other global JS configs...
 

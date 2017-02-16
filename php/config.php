@@ -10,24 +10,24 @@
 
 	// DEFINE HOST SERVER/DATABASE CREDENTIALS HERE
 	// NOTE: This works for a MySQL setup. Change as needed but the REQUIRED constants are
-	// - HOST_DB_DSN
-	// - HOST_DB_USERNAME
-	// - HOST_DB_PASSWORD
-	define( "HOST_SERVER_IP", "172.26.66.41" );
-	define( "HOST_SERVER_PORT", "22" );
-	define( "HOST_DB_NAME", "OpalDB_AJ_Sandbox" );
-	define( "HOST_DB_DSN", "mysql:host=" . HOST_SERVER_IP . ";dbname=" . HOST_DB_NAME . ";charset=utf8" ); // Required constant
-	define( "HOST_DB_USERNAME", "readonly" ); // Required constant
-	define( "HOST_DB_PASSWORD", "readonly" ); // Required constant
+	// - OPAL_DB_DSN
+	// - OPAL_DB_USERNAME
+	// - OPAL_DB_PASSWORD
+	define( "OPAL_DB_HOST", "172.26.66.41" );
+	define( "OPAL_DB_PORT", "22" );
+	define( "OPAL_DB_NAME", "OpalDB_AJ_Sandbox" );
+	define( "OPAL_DB_DSN", "mysql:host=" . OPAL_DB_HOST . ";dbname=" . OPAL_DB_NAME . ";charset=utf8" ); // Required constant
+	define( "OPAL_DB_USERNAME", "readonly" ); // Required constant
+	define( "OPAL_DB_PASSWORD", "readonly" ); // Required constant
 
     // DEFINE SOURCE SERVER/DATABASE CREDENTIALS HERE
     // NOTE: This works for a MicrosoftSQL (MSSQL) setup. Change as needed but the REQUIRED constants are
     // - SOURCE_DB_DSN
     // - SOURCE_DB_USERNAME
     // - SOURCE_DB_PASSWORD
-    define( "SOURCE_SERVER_IP", "172.16.220.56" );
-    define( "SOURCE_SERVER_PORT", "1433");
-	define( "SOURCE_DB_DSN", "dblib:host=" . SOURCE_SERVER_IP . ":" . SOURCE_SERVER_PORT . "\\database" ); // Required constant
+    define( "SOURCE_DB_HOST", "172.16.220.56" );
+    define( "SOURCE_DB_PORT", "1433");
+	define( "SOURCE_DB_DSN", "dblib:host=" . SOURCE_DB_HOST . ":" . SOURCE_DB_PORT . "\\database" ); // Required constant
 	define( "SOURCE_DB_USERNAME", "reports" ); // Required constant
 	define( "SOURCE_DB_PASSWORD", "reports" ); // Required constant
 
