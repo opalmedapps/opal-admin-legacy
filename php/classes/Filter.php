@@ -23,7 +23,7 @@ class Filter {
 	        $aria_link = new PDO( SOURCE_DB_DSN , SOURCE_DB_USERNAME, SOURCE_DB_PASSWORD );
             $aria_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-			$host_db_link = new PDO( HOST_DB_DSN, HOST_DB_USERNAME, HOST_DB_PASSWORD );
+			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
         
             $sql = "

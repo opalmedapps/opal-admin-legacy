@@ -10,37 +10,33 @@
 
 	// DEFINE HOST SERVER/DATABASE CREDENTIALS HERE
 	// NOTE: This works for a MySQL setup. Change as needed but the REQUIRED constants are
-	// - HOST_DB_DSN
-	// - HOST_DB_USERNAME
-	// - HOST_DB_PASSWORD
-	define( "HOST_SERVER_IP", "" );
-	define( "HOST_SERVER_PORT", "" );
-	define( "HOST_DB_NAME", "" );
-	define( "HOST_DB_DSN", "mysql:host=" . HOST_SERVER_IP . ";dbname=" . HOST_DB_NAME . ";charset=utf8" ); // Required constant
-	define( "HOST_DB_USERNAME", "" ); // Required constant
-	define( "HOST_DB_PASSWORD", "" ); // Required constant
+	// - OPAL_DB_DSN
+	// - OPAL_DB_USERNAME
+	// - OPAL_DB_PASSWORD
+	define( "OPAL_DB_HOST", "OPAL_DB_HOST_HERE" );
+	define( "OPAL_DB_PORT", "OPAL_DB_PORT_HERE" );
+	define( "OPAL_DB_NAME", "OPAL_DB_NAME_HERE" );
+	define( "OPAL_DB_DSN", "mysql:host=" . OPAL_DB_HOST . ";dbname=" . OPAL_DB_NAME . ";charset=utf8" ); // Required constant
+	define( "OPAL_DB_USERNAME", "OPAL_DB_USERNAME_HERE" ); // Required constant
+	define( "OPAL_DB_PASSWORD", "OPAL_DB_PASSWORD_HERE" ); // Required constant
 
     // DEFINE SOURCE SERVER/DATABASE CREDENTIALS HERE
     // NOTE: This works for a MicrosoftSQL (MSSQL) setup. Change as needed but the REQUIRED constants are
     // - SOURCE_DB_DSN
     // - SOURCE_DB_USERNAME
     // - SOURCE_DB_PASSWORD
-    define( "SOURCE_SERVER_IP", "" );
-    define( "SOURCE_SERVER_PORT", "");
-	define( "SOURCE_DB_DSN", "dblib:host=" . SOURCE_SERVER_IP . ":" . SOURCE_SERVER_PORT . "\\database" ); // Required constant
-	define( "SOURCE_DB_USERNAME", "" ); // Required constant
-	define( "SOURCE_DB_PASSWORD", "" ); // Required constant
+    define( "SOURCE_DB_HOST", "SOURCE_DB_HOST_HERE" );
+    define( "SOURCE_DB_PORT", "SOURCE_DB_PORT_HERE");
+	define( "SOURCE_DB_DSN", "dblib:host=" . SOURCE_DB_HOST . ":" . SOURCE_DB_PORT . "\\database" ); // Required constant
+	define( "SOURCE_DB_USERNAME", "SOURCE_DB_USERNAME_HERE" ); // Required constant
+	define( "SOURCE_DB_PASSWORD", "SOURCE_DB_PASSWORD_HERE" ); // Required constant
 
 	// Environment-specific variables 
-	define( "FRONTEND_ABS_PATH", "" );
-	define( "FRONTEND_REL_URL", "" );
-	define( "BACKEND_ABS_PATH", "" ); 
+	define( "FRONTEND_ABS_PATH", "FRONTEND_ABS_PATH_HERE" );
+	define( "FRONTEND_REL_URL", "FRONTEND_REL_URL_HERE" );
+	define( "BACKEND_ABS_PATH", "BACKEND_ABS_PATH_HERE" ); 
 	define( "BACKEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", BACKEND_ABS_PATH) );
 	define( "FRONTEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", FRONTEND_ABS_PATH) ); 
-    define( "SESSION_KEY_NAME", "OA_DEV_username" );
-    define( "SESSION_KEY_LOGIN", "OA_DEV_loginAttempt" );
-    define( "SESSION_KEY_REGISTER", "OA_DEV_registerAttempt" );
-    define( "SESSION_KEY_USERID", "OA_DEV_userid" );
 	
 	// Include the classes
 	include_once( FRONTEND_ABS_PATH . "php/classes/User.php" );
