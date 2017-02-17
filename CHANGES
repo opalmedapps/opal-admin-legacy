@@ -1,0 +1,220 @@
+Version 0.6.1:
+
+
+Version 0.6.1:
+ - Merge branch 'master' into develop
+ -     --- Updated configuration files         -- Removed unused constants         -- Renamed constants into a more meaningful name
+ - Merge branch 'master' of https://gitlab.com/akimosupremo/opalAdmin-frontend
+ -     --- Removed files after submitting a new gitignore
+ - Delete .htaccess
+ -     --- Added default htaccess for master
+ -     --- Included libraries considering they are static anyway and should be in master
+ - Merge branch 'release-0.6' into develop
+ - Merge branch 'release-0.6'
+ - Version bump to 0.6.0
+ -     --- Added full role functionality (limit one per user)     --- Removed session start from logout script
+ -     --- Added roles to each user on the backend
+ -     --- Set default to filter non-disabled posts
+ -     --- Added disabled flags to posts
+ -     --- Added user operations (edit/delete)
+ -     --- Added user registration
+ - Merge branch 'release-0.5.3' into develop
+ - Merge branch 'release-0.5.3'
+ - Version bump to 0.5.3
+ -     --- Added users page
+ -     --- Started adding users page functionality
+ -     --- Removed currentUser from rootScope         -- Now all handled in Session service     --- Remove all lingering PHP Session variables     --- Added change password functionality
+ -     --- Page content now hidden during session timeout     --- Reduced session timeout to 6 minutes of inactivity
+ -     --- Added more responsiveness to the web page     --- Added loading message to long ui grid loads
+ - Merge branch 'release-0.5.2' into develop
+ - Merge branch 'release-0.5.2'
+ - Version bump to 0.5.2
+ -     --- Removed client-side php     --- Improved routing by using more ui router instead of js redirects
+ - Merge branch 'release-0.5.1' into develop
+ - Merge branch 'release-0.5.1'
+ -     --- File location needs to be specified in update_crontab.php file since     it's being called remotely.
+ - Version bump to 0.5.1
+ - Merge branch 'userFeature' into develop
+ - Merge branch 'p4p' into develop
+ -     --- Implemented user session with roles in pure javascript
+ -     --- Added links to breadcrumbs
+ -     --- Added column filtering
+ -     --- Added patients for patients announcement     --- Fixed issue where post type was not inserted properly
+ -     --- Generalized constants and variable names     --- Added better support for distribution
+ -     --- Remove include once from all php scripts. Now in one htaccess!
+ -     --- Added patient activity
+ - Merge branch 'feedback' into develop
+ -     --- Added rating system view in educational material
+ -     --- Renamed all instances of ATO to opalAdmin (including directories)
+ - Merge branch 'release-0.5' into develop
+ - Merge branch 'release-0.5'
+ -     --- Minor UI fix
+ - Version bump to 0.5.0
+ - Merge branch 'newDesign' into develop
+ -     --- Final development in design branch     --- Prepared further development for future functionality
+ -     --- Implemented patient registration functionality
+ -     --- Further developments into the new design         -- Finished existing pages.         -- Working on new pages.
+ -     --- Further design changes
+ -     --- Redesigned educational material
+ -     --- Completed new alias page design update
+ -     --- Further implementation design change in newAlias
+ -     -- Redesigned home and Alias pages
+ -     -- Removed duplicate ignores
+ - Merge branch 'colorTag' into develop
+ -     -- Remove config from tracking
+ - Merge branch 'release-0.4' into develop
+ -     -- Included php config in ignore
+ - Merge branch 'release-0.4'
+ - Version bump to 0.4.0
+ - Merge branch 'demographics' into develop
+ -     --- Added demographic logic         -- Now users can filter by age group and sex
+ - Merge branch 'hotfix-0.3.3' into develop
+ - Merge branch 'hotfix-0.3.3'
+ -     --- Fixed issue where ARIA filters were not populated         -- Removed "use variansystem" and defined explicitly in FROM clause
+ -     --- Changed ARIA setting
+ -     --- For some reason this file got deleted. Added back in
+ - Merge branch 'hotfix-0.3.2' into develop
+ -     -- removed config.php from gitignore
+ - Merge branch 'hotfix-0.3.2'
+ -     --- Changed all static function calls to non-static function calls         -- All functions are non-static so calling a class function using "::" would throw an error         since that is a static function call. This was fixed by initializing a new object and         calling the object function using "->". This is a non-static function call.
+ - Version bump to 0.3.2
+ -     -- Removed file from tracking. SHOULD NOT BE THERE!
+ - Merge branch 'hotfix-0.3.1' into develop
+ - Merge branch 'hotfix-0.3.1'
+ -     --- Replaced overflow of text with ellipses on eahc Name column         -- Better readability.
+ - Version bump to 0.3.1
+ -     -- Ignored php configs
+ - Merge branch 'release-0.2' into develop
+ - Merge branch 'release-0.2'
+ - Version bump to 0.3.0
+ - Merge branch 'mediVisit' into develop
+ -     --- Ignored images directory
+ -     --- Implemented color tags.         Now icon colors can be chosen for each task, appointment and document for use in Opal.
+ - Merge branch 'hotfix-0.1.2'
+ -     --- Removed remote directory dependency.         Now hospital maps are generated locally.
+ - Version bump to 0.1.2
+ -     --- Updated gitignore to ignore images directory
+ -     --- Removed dependency of a remote directory for hospital maps.         Set images to show up locally.
+ -     --- Updated config file to use utf-8 charset in MySQL
+ - Merge branch 'hotfix-0.1.1' into develop
+ - Merge branch 'hotfix-0.1.1'
+ -     --- Fixed an issue that caused the alternation of EN and FR names and descriptions in Posts         Variables were set in opposite order.
+ - Version bump to 0.1.1
+ -     --- Updated gitignore to include config.php file.         Now each branch will have a respective config.php file to use the proper MySQL database.
+ -     -- Updated gitignore further to include config.php file for each branch.
+ -     --- Updated gitignore to include config.php file.         Now each branch will have a respective config.php file to use the proper MySQL database.
+ -     --- Updated gitignore to ignore master config file.         Now each branch will have a respective config.php file to use the proper MySQL database.
+ -     --- Added WaitRoomManagement source database functionality. Updated scripts accordingly.
+ - Merge branch 'release-0.1' into develop
+ - Merge branch 'release-0.1'
+
+Version 0.1.0
+ - Merge branch 'master' into develop
+ -     --- Updated configuration files         -- Removed unused constants         -- Renamed constants into a more meaningful name
+ - Merge branch 'master' of https://gitlab.com/akimosupremo/opalAdmin-frontend
+ -     --- Removed files after submitting a new gitignore
+ - Delete .htaccess
+ -     --- Added default htaccess for master
+ -     --- Included libraries considering they are static anyway and should be in master
+ - Merge branch 'release-0.6' into develop
+ - Merge branch 'release-0.6'
+ - Version bump to 0.6.0
+ -     --- Added full role functionality (limit one per user)     --- Removed session start from logout script
+ -     --- Added roles to each user on the backend
+ -     --- Set default to filter non-disabled posts
+ -     --- Added disabled flags to posts
+ -     --- Added user operations (edit/delete)
+ -     --- Added user registration
+ - Merge branch 'release-0.5.3' into develop
+ - Merge branch 'release-0.5.3'
+ - Version bump to 0.5.3
+ -     --- Added users page
+ -     --- Started adding users page functionality
+ -     --- Removed currentUser from rootScope         -- Now all handled in Session service     --- Remove all lingering PHP Session variables     --- Added change password functionality
+ -     --- Page content now hidden during session timeout     --- Reduced session timeout to 6 minutes of inactivity
+ -     --- Added more responsiveness to the web page     --- Added loading message to long ui grid loads
+ - Merge branch 'release-0.5.2' into develop
+ - Merge branch 'release-0.5.2'
+ - Version bump to 0.5.2
+ -     --- Removed client-side php     --- Improved routing by using more ui router instead of js redirects
+ - Merge branch 'release-0.5.1' into develop
+ - Merge branch 'release-0.5.1'
+ -     --- File location needs to be specified in update_crontab.php file since     it's being called remotely.
+ - Version bump to 0.5.1
+ - Merge branch 'userFeature' into develop
+ - Merge branch 'p4p' into develop
+ -     --- Implemented user session with roles in pure javascript
+ -     --- Added links to breadcrumbs
+ -     --- Added column filtering
+ -     --- Added patients for patients announcement     --- Fixed issue where post type was not inserted properly
+ -     --- Generalized constants and variable names     --- Added better support for distribution
+ -     --- Remove include once from all php scripts. Now in one htaccess!
+ -     --- Added patient activity
+ - Merge branch 'feedback' into develop
+ -     --- Added rating system view in educational material
+ -     --- Renamed all instances of ATO to opalAdmin (including directories)
+ - Merge branch 'release-0.5' into develop
+ - Merge branch 'release-0.5'
+ -     --- Minor UI fix
+ - Version bump to 0.5.0
+ - Merge branch 'newDesign' into develop
+ -     --- Final development in design branch     --- Prepared further development for future functionality
+ -     --- Implemented patient registration functionality
+ -     --- Further developments into the new design         -- Finished existing pages.         -- Working on new pages.
+ -     --- Further design changes
+ -     --- Redesigned educational material
+ -     --- Completed new alias page design update
+ -     --- Further implementation design change in newAlias
+ -     -- Redesigned home and Alias pages
+ -     -- Removed duplicate ignores
+ - Merge branch 'colorTag' into develop
+ -     -- Remove config from tracking
+ - Merge branch 'release-0.4' into develop
+ -     -- Included php config in ignore
+ - Merge branch 'release-0.4'
+ - Version bump to 0.4.0
+ - Merge branch 'demographics' into develop
+ -     --- Added demographic logic         -- Now users can filter by age group and sex
+ - Merge branch 'hotfix-0.3.3' into develop
+ - Merge branch 'hotfix-0.3.3'
+ -     --- Fixed issue where ARIA filters were not populated         -- Removed "use variansystem" and defined explicitly in FROM clause
+ -     --- Changed ARIA setting
+ -     --- For some reason this file got deleted. Added back in
+ - Merge branch 'hotfix-0.3.2' into develop
+ -     -- removed config.php from gitignore
+ - Merge branch 'hotfix-0.3.2'
+ -     --- Changed all static function calls to non-static function calls         -- All functions are non-static so calling a class function using "::" would throw an error         since that is a static function call. This was fixed by initializing a new object and         calling the object function using "->". This is a non-static function call.
+ - Version bump to 0.3.2
+ -     -- Removed file from tracking. SHOULD NOT BE THERE!
+ - Merge branch 'hotfix-0.3.1' into develop
+ - Merge branch 'hotfix-0.3.1'
+ -     --- Replaced overflow of text with ellipses on eahc Name column         -- Better readability.
+ - Version bump to 0.3.1
+ -     -- Ignored php configs
+ - Merge branch 'release-0.2' into develop
+ - Merge branch 'release-0.2'
+ - Version bump to 0.3.0
+ - Merge branch 'mediVisit' into develop
+ -     --- Ignored images directory
+ -     --- Implemented color tags.         Now icon colors can be chosen for each task, appointment and document for use in Opal.
+ - Merge branch 'hotfix-0.1.2'
+ -     --- Removed remote directory dependency.         Now hospital maps are generated locally.
+ - Version bump to 0.1.2
+ -     --- Updated gitignore to ignore images directory
+ -     --- Removed dependency of a remote directory for hospital maps.         Set images to show up locally.
+ -     --- Updated config file to use utf-8 charset in MySQL
+ - Merge branch 'hotfix-0.1.1' into develop
+ - Merge branch 'hotfix-0.1.1'
+ -     --- Fixed an issue that caused the alternation of EN and FR names and descriptions in Posts         Variables were set in opposite order.
+ - Version bump to 0.1.1
+ -     --- Updated gitignore to include config.php file.         Now each branch will have a respective config.php file to use the proper MySQL database.
+ -     -- Updated gitignore further to include config.php file for each branch.
+ -     --- Updated gitignore to include config.php file.         Now each branch will have a respective config.php file to use the proper MySQL database.
+ -     --- Updated gitignore to ignore master config file.         Now each branch will have a respective config.php file to use the proper MySQL database.
+ -     --- Added WaitRoomManagement source database functionality. Updated scripts accordingly.
+ - Merge branch 'release-0.1' into develop
+ - Merge branch 'release-0.1'
+ - Added VERSION and CHANGES files, Version bump to v0.1.0
+ -     -- Github issue #100..  Updated Alias logic to:         - Reassign alias serial if a new alias is using an existing expression         - Deny deletion of alias or expression if expression exists in dependent tables
+ -     -- New commit
+
