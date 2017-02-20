@@ -1,3 +1,10 @@
+Version 0.7.0:
+ -     Removed old file
+ -     --- Integrated backend     --- Improved naming of constants
+ - Merge branch 'release-0.6.1' into develop
+ -     -- Reincluded VERSION AND CHANGES files
+ - Version bump to 0.6.1
+
 Version 0.6.1:
 
 
