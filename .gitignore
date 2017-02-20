@@ -2,6 +2,13 @@
 js/config.js
 php/config.php
 .htaccess
+backend/modules/Configs.pm
+
+# ignore clinical documents
+backend/clinical/documents
+
+# ignore certificates
+backend/php/certificates
 
 # ignore swap files
 *.swp
