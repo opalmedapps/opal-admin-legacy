@@ -33,7 +33,8 @@ angular.module('opalAdmin', [
   all: '*',
   admin: 'admin',
   editor: 'editor',
-  guest: 'guest'
+  guest: 'guest',
+  registrant: 'registrant'
 })
 
 // Authentication and authorization service
@@ -76,7 +77,7 @@ angular.module('opalAdmin', [
 	$urlRouterProvider.otherwise("/");
 	$stateProvider
 		.state('login', {url:'/', templateUrl: 'templates/login.html', controller: 'loginController', data: {requireLogin: false}})
-		.state('home', {url:'/home', templateUrl: 'templates/home.html', controller: 'homeController', data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('home', {url:'/home', templateUrl: 'templates/home.html', controller: 'homeController', data: {authorizedRoles: [USER_ROLES.all], requireLogin: true}})
 		.state('alias', {url:'/alias', templateUrl: "templates/alias.html", controller: "aliasController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('alias-add', {url:'/alias/add', templateUrl: "templates/add-alias.html", controller: "newAliasController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('post', {url:'/post', templateUrl: "templates/post.html", controller: "postController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
@@ -87,8 +88,8 @@ angular.module('opalAdmin', [
 		.state('hospital-map-add', {url: '/hospital-map/add', templateUrl: "templates/add-hospital-map.html", controller: "newHospitalMapController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('notification', {url:'/notification', templateUrl: "templates/notification.html", controller: "notificationController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('notification-add', {url:'/notification/add', templateUrl: "templates/add-notification.html", controller: "newNotificationController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
-		.state('patients', {url:'/patients', templateUrl: "templates/patient.html", controller: "patientController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
-		.state('patients-register', {url:'/patients/register', templateUrl: "templates/patient-registration.html", controller: "patientRegistrationController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('patients', {url:'/patients', templateUrl: "templates/patient.html", controller: "patientController", data: {authorizedRoles: [USER_ROLES.admin, USER_ROLES.registrant], requireLogin: true}})
+		.state('patients-register', {url:'/patients/register', templateUrl: "templates/patient-registration.html", controller: "patientRegistrationController", data: {authorizedRoles: [USER_ROLES.admin, USER_ROLES.registrant], requireLogin: true}})
 		.state('test-result', {url:'/test-result', templateUrl: "templates/test-result.html", controller: "testResultController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('test-result-add', {url:'/test-result/add', templateUrl: "templates/add-test-result.html", controller: "newTestResultController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('cron', {url:'/cron', templateUrl: "templates/cron.html", controller: "cronController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
