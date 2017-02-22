@@ -206,10 +206,10 @@ angular.module('opalAdmin.collections', [])
 		}
 
         // API to find patient given an SSN
-        patientAPI.findPatient = function(ssn) {
+        patientAPI.findPatient = function(ssn, id) {
             return $http({
                 method: 'JSONP',
-                url: URLPATH+"api/patient/find_patient.php?callback=JSON_CALLBACK&ssn="+ssn
+                url: URLPATH+"api/patient/find_patient.php?callback=JSON_CALLBACK&ssn="+ssn+"&id="+id
             });
         }
 

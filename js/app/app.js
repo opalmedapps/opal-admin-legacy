@@ -55,6 +55,17 @@ angular.module('opalAdmin', [
             });
     }
 
+    authService.confirm = function (credentials) {
+    	return $http
+    		.post('php/user/checklogin.php', credentials)
+    		.then(function (response) {
+    			if (response.data.success) {
+    				return response.success;
+    			}
+    			else {return $q.reject(response)}
+    		});
+    }
+
     authService.isAuthenticated = function () {
         return !!Session.retrieveObject('user');
     }
