@@ -9,40 +9,42 @@
 	ini_set('display_errors', 1);	
 
 	// DEFINE HOST SERVER/DATABASE CREDENTIALS HERE
-	// NOTE: This works for a MySQL setup. Change as needed but the REQUIRED constants are
-	// - OPAL_DB_DSN
-	// - OPAL_DB_USERNAME
-	// - OPAL_DB_PASSWORD
-	define( "OPAL_DB_HOST", "OPAL_DB_HOST_HERE" );
-	define( "OPAL_DB_PORT", "OPAL_DB_PORT_HERE" );
-	define( "OPAL_DB_NAME", "OPAL_DB_NAME_HERE" );
-	define( "OPAL_DB_DSN", "mysql:host=" . OPAL_DB_HOST . ";dbname=" . OPAL_DB_NAME . ";charset=utf8" ); // Required constant
-	define( "OPAL_DB_USERNAME", "OPAL_DB_USERNAME_HERE" ); // Required constant
-	define( "OPAL_DB_PASSWORD", "OPAL_DB_PASSWORD_HERE" ); // Required constant
+	// NOTE: This works for a MySQL setup. 
+	define( "OPAL_DB_HOST", "172.26.66.41" );
+	define( "OPAL_DB_PORT", "3306" );
+	define( "OPAL_DB_NAME", "BBBB_Test" );
+	define( "OPAL_DB_DSN", "mysql:host=" . OPAL_DB_HOST . ";port=" . OPAL_DB_PORT . ";dbname=" . OPAL_DB_NAME . ";charset=utf8" ); 
+	define( "OPAL_DB_USERNAME", "ackeem" ); 
+	define( "OPAL_DB_PASSWORD", "tev_2032" ); 
 
-    // DEFINE SOURCE SERVER/DATABASE CREDENTIALS HERE
-    // NOTE: This works for a MicrosoftSQL (MSSQL) setup. Change as needed but the REQUIRED constants are
-    // - SOURCE_DB_DSN
-    // - SOURCE_DB_USERNAME
-    // - SOURCE_DB_PASSWORD
-    define( "SOURCE_DB_HOST", "SOURCE_DB_HOST_HERE" );
-    define( "SOURCE_DB_PORT", "SOURCE_DB_PORT_HERE");
-	define( "SOURCE_DB_DSN", "dblib:host=" . SOURCE_DB_HOST . ":" . SOURCE_DB_PORT . "\\database" ); // Required constant
-	define( "SOURCE_DB_USERNAME", "SOURCE_DB_USERNAME_HERE" ); // Required constant
-	define( "SOURCE_DB_PASSWORD", "SOURCE_DB_PASSWORD_HERE" ); // Required constant
+    // DEFINE ARIA SERVER/DATABASE CREDENTIALS HERE
+    // NOTE: This works for a MicrosoftSQL (MSSQL) setup. 
+    define( "ARIA_DB_HOST", "172.16.220.56" );
+    define( "ARIA_DB_PORT", "1433");
+	define( "ARIA_DB_DSN", "dblib:host=" . ARIA_DB_HOST . ":" . ARIA_DB_PORT . "\\database" ); 
+	define( "ARIA_DB_USERNAME", "reports" ); 
+	define( "ARIA_DB_PASSWORD", "reports" ); 
 
-    // Waiting Room Management
-	define( "WRM_HOST", "WRM_HOST_HERE" );
-	define( "WRM_PORT", "WRM_PORT_HERE" );
-	define( "WRM_NAME", "WRM_NAME_HERE" );    
-    define( "WRM_DSN", "mysql:host=" . WRM_HOST . ";dbname=" . WRM_NAME ); 
-	define( "WRM_USERNAME", "WRM_USERNAME_HERE" );
-	define( "WRM_PASSWORD", "WRM_PASSWORD_HERE" );
+    // DEFINE Waiting Room Management SERVER/DATABASE CREDENTIALS HERE
+    // NOTE: This works for a MySQL setup. 
+	define( "WRM_DB_HOST", "172.26.66.41" );
+	define( "WRM_DB_PORT", "3306" );
+	define( "WRM_DB_NAME", "WaitRoomManagement" );    
+    define( "WRM_DB_DSN", "mysql:host=" . WRM_DB_HOST . ";port=" . WRM_DB_PORT . ";dbname=" . WRM_DB_NAME ); 
+	define( "WRM_DB_USERNAME", "readonly" );
+	define( "WRM_DB_PASSWORD", "readonly" );
 
+	// DEFINE MOSAIQ SERVER/DATABASE CREDENTIALS HERE
+    // NOTE: This works for a MicrosoftSQL (MSSQL) setup. 
+    define( "MOSAIQ_DB_HOST", "MOSAIQ_DB_HOST_HERE" );
+    define( "MOSAIQ_DB_PORT", "MOSAIQ_DB_PORT_HERE");
+	define( "MOSAIQ_DB_DSN", "dblib:host=" . MOSAIQ_DB_HOST . ":" . MOSAIQ_DB_PORT . "\\database" ); 
+	define( "MOSAIQ_DB_USERNAME", "MOSAIQ_DB_USERNAME_HERE" ); 
+	define( "MOSAIQ_DB_PASSWORD", "MOSAIQ_DB_PASSWORD_HERE" ); 
 
 	// Environment-specific variables 
-	define( "FRONTEND_ABS_PATH", "FRONTEND_ABS_PATH_HERE" );
-	define( "FRONTEND_REL_URL", "FRONTEND_REL_URL_HERE" );
+	define( "FRONTEND_ABS_PATH", "/var/www/devDocuments/opalAdmin/" );
+	define( "FRONTEND_REL_URL", "/devDocuments/opalAdmin/" );
 	define( "BACKEND_ABS_PATH", FRONTEND_ABS_PATH . "backend/" ); 
 	define( "BACKEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", BACKEND_ABS_PATH) );
 	define( "FRONTEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", FRONTEND_ABS_PATH) ); 

@@ -21,8 +21,8 @@ use DBD::Sybase;
 # Create a database object
 our $databaseObject = new Database(
         $Configs::OPAL_DB_DSN,
-        $Configs::OPAL_DB_USER,
-        $Configs::OPAL_DB_PASS
+        $Configs::OPAL_DB_USERNAME,
+        $Configs::OPAL_DB_PASSWORD
     );
 
 # Connect to our MySQL database

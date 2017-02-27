@@ -246,13 +246,13 @@ class Install {
 			file_put_contents($path_to_file, $file_contents);
 
 			// Perl
-			$path_to_file = $abspath . 'php/default-Configs-test.pm';
+			$path_to_file = $abspath . 'backend/modules/default-Configs-test.pm';
 			$file_contents = file_get_contents($path_to_file);
 			$file_contents = str_replace('OPAL_DB_HOST_HERE', $opalCreds['host'], $file_contents);
 			$file_contents = str_replace('OPAL_DB_PORT_HERE', $opalCreds['port'], $file_contents);
 			$file_contents = str_replace('OPAL_DB_NAME_HERE', $opalCreds['name'], $file_contents);
 			$file_contents = str_replace('OPAL_DB_USERNAME_HERE', $opalCreds['username'], $file_contents);
-			$file_contents = str_replace('OPAL_DB_PASSNAME_HERE', $opalCreds['password'], $file_contents);
+			$file_contents = str_replace('OPAL_DB_PASSWORD_HERE', $opalCreds['password'], $file_contents);
 			file_put_contents($path_to_file, $file_contents);
 			
 		}
@@ -274,7 +274,7 @@ class Install {
 				file_put_contents($path_to_file, $file_contents);
 
 				// Perl
-				$path_to_file = $abspath . 'php/default-Configs-test.pm';
+				$path_to_file = $abspath . 'backend/modules/default-Configs-test.pm';
 				$file_contents = file_get_contents($path_to_file);
 				$file_contents = str_replace('ARIA_DB_HOST_HERE', $ariaCreds['host'], $file_contents);
 				$file_contents = str_replace('ARIA_DB_PORT_HERE', $ariaCreds['port'], $file_contents);
@@ -297,21 +297,21 @@ class Install {
 				// PHP
 				$path_to_file = $abspath . 'php/default-config-test.php';
 				$file_contents = file_get_contents($path_to_file);
-				$file_contents = str_replace('WRM_HOST_HERE', $mediVisitCreds['host'], $file_contents);
-				$file_contents = str_replace('WRM_PORT_HERE', $mediVisitCreds['port'], $file_contents);
-				$file_contents = str_replace('WRM_NAME_HERE', $mediVisitCreds['name'], $file_contents);
-				$file_contents = str_replace('WRM_USERNAME_HERE', $mediVisitCreds['username'], $file_contents);
-				$file_contents = str_replace('WRM_PASSWORD_HERE', $mediVisitCreds['password'], $file_contents);
+				$file_contents = str_replace('WRM_DB_HOST_HERE', $mediVisitCreds['host'], $file_contents);
+				$file_contents = str_replace('WRM_DB_PORT_HERE', $mediVisitCreds['port'], $file_contents);
+				$file_contents = str_replace('WRM_DB_NAME_HERE', $mediVisitCreds['name'], $file_contents);
+				$file_contents = str_replace('WRM_DB_USERNAME_HERE', $mediVisitCreds['username'], $file_contents);
+				$file_contents = str_replace('WRM_DB_PASSWORD_HERE', $mediVisitCreds['password'], $file_contents);
 				file_put_contents($path_to_file, $file_contents);
 
 				// Perl
-				$path_to_file = $abspath . 'php/default-Configs-test.pm';
+				$path_to_file = $abspath . 'backend/modules/default-Configs-test.pm';
 				$file_contents = file_get_contents($path_to_file);
-				$file_contents = str_replace('WRM_HOST_HERE', $mediVisitCreds['host'], $file_contents);
-				$file_contents = str_replace('WRM_PORT_HERE', $mediVisitCreds['port'], $file_contents);
-				$file_contents = str_replace('WRM_NAME_HERE', $mediVisitCreds['name'], $file_contents);
-				$file_contents = str_replace('WRM_USERNAME_HERE', $mediVisitCreds['username'], $file_contents);
-				$file_contents = str_replace('WRM_PASSWORD_HERE', $mediVisitCreds['password'], $file_contents);
+				$file_contents = str_replace('WRM_DB_HOST_HERE', $mediVisitCreds['host'], $file_contents);
+				$file_contents = str_replace('WRM_DB_PORT_HERE', $mediVisitCreds['port'], $file_contents);
+				$file_contents = str_replace('WRM_DB_NAME_HERE', $mediVisitCreds['name'], $file_contents);
+				$file_contents = str_replace('WRM_DB_USERNAME_HERE', $mediVisitCreds['username'], $file_contents);
+				$file_contents = str_replace('WRM_DB_PASSWORD_HERE', $mediVisitCreds['password'], $file_contents);
 				file_put_contents($path_to_file, $file_contents);
 
 			}
@@ -336,7 +336,7 @@ class Install {
 				file_put_contents($path_to_file, $file_contents);
 
 				// Perl
-				$path_to_file = $abspath . 'php/default-Configs-test.pm';
+				$path_to_file = $abspath . 'backend/modules/default-Configs-test.pm';
 				$file_contents = file_get_contents($path_to_file);
 				$file_contents = str_replace('MOSAIQ_DB_HOST_HERE', $mosaiqCreds['host'], $file_contents);
 				$file_contents = str_replace('MOSAIQ_DB_PORT_HERE', $mosaiqCreds['port'], $file_contents);
@@ -370,7 +370,7 @@ class Install {
 		file_put_contents($path_to_file, $file_contents);		
 
 		// Perl
-		$path_to_file = $abspath . 'php/default-Configs-test.pm';
+		$path_to_file = $abspath . 'backend/modules/default-Configs-test.pm';
 		$file_contents = file_get_contents($path_to_file);
 		$file_contents = str_replace('FRONTEND_ABS_PATH_HERE', $abspath, $file_contents);
 		$file_contents = str_replace('FRONTEND_REL_URL_HERE', $urlpath, $file_contents);
