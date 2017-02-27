@@ -22,7 +22,7 @@ use Configs; # Custom Configurations
 
 # FTP object 
 our $ftpObject = new FTP(
-	    $Configs::FTP_CLINICAL_DIR,
+	    $Configs::ARIA_FTP_DIR,
 	    $Configs::FTP_LOCAL_DIR
 	);
 

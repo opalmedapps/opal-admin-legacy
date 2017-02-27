@@ -15,6 +15,10 @@
 	$installObj = new Install; 
 
 	// Call function 
-	$installObj->registerAdminUser($adminCreds);
+	$response = $installObj->registerAdminUser($adminCreds);
+	
+	// Return response
+	print json_encode($response);
+
 
 ?>
