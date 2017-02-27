@@ -352,6 +352,22 @@ angular.module('opalAdmin.collections', [])
         
         return userAPI;
 
+    })
+
+    // install API service
+    .factory('installAPIservice', function ($http) {
+
+        var installAPI = {};
+
+        // Function to verify installation requirements
+        installAPI.verifyRequirements = function (urlpath) {
+            return $http({
+                method: 'JSONP',
+                url: urlpath+"api/install/verify_requirements.php?callback=JSON_CALLBACK"
+            });
+        }
+
+        return installAPI;
     });
 
 
