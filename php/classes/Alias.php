@@ -20,7 +20,7 @@ class Alias {
             // ARIA 
             if ($sourceDBSer == 1) {
 
-	            $source_db_link = new PDO( SOURCE_DB_DSN , SOURCE_DB_USERNAME, SOURCE_DB_PASSWORD );
+	            $source_db_link = new PDO( ARIA_DB_DSN , ARIA_DB_USERNAME, ARIA_DB_PASSWORD );
             	$source_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
                 if ($expressionType != "Document") {
@@ -82,7 +82,7 @@ class Alias {
             // WaitRoomManagement
             if ($sourceDBSer == 2) {
                 
-	    		$wrm_host_db_link = new PDO( WRM_DSN, WRM_USERNAME, WRM_PASSWORD );
+	    		$wrm_host_db_link = new PDO( WRM_DBDSN, WRM_DBUSERNAME, WRM_DBPASSWORD );
                 $wrm_host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
                 $sql = "
