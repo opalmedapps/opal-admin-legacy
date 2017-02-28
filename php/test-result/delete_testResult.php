@@ -1,6 +1,8 @@
 <?php
 
-	/* To delete an educational material */
+	/* To delete a test result */
+	include_once('test-result.inc');
+
 
 	$testResult = new TestResult; // Object
 

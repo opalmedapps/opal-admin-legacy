@@ -4,7 +4,7 @@
 
 	$callback 	= $_GET['callback'];
 
-	$pathname 	= getcwd();
+	$pathname 	= __DIR__;
 	$abspath 	= str_replace('api/install', '', $pathname); 
 
 	include_once($abspath . 'php/classes/Install.php');

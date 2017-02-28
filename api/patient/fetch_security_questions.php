@@ -1,5 +1,6 @@
 <?php
 	/* To fetch the list of security questions */
+	include_once('patient.inc');
 
 	// Retrieve FORM param
 	$callback = $_GET['callback'];

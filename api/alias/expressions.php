@@ -1,5 +1,6 @@
 <?php
 	/* To get a list of ARIA expressions */
+	include_once('alias.inc');
 
 	// Retrieve FORM param
 	$callback       = $_GET['callback'];

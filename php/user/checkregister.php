@@ -1,6 +1,7 @@
 <?php 
 
 	/* To call Users Object to validate registration to application */
+	include_once('user.inc');
 
 	$usr = new Users; // Object
 

@@ -1,6 +1,7 @@
 <?php
 
 	/* To delete a notification */
+	include_once('notification.inc');
 
 	$notification = new Notification; // Object
 

@@ -1,6 +1,7 @@
 <?php
 
 	/* To delete a user */
+	include_once('user.inc');
 
 	$user = new Users; // Object
 
