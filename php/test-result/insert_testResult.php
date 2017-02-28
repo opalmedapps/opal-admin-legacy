@@ -1,6 +1,7 @@
 <?php
 
-	/* To insert a newly created educational material */
+	/* To insert a newly created test result */
+    include_once('test-result.inc');
 
 	// Construct array
     $testResultArray	= array(

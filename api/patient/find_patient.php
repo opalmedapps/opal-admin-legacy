@@ -1,6 +1,7 @@
 <?php
 
 	/* Find patient given an SSN */
+	include_once('patient.inc');
 
 	// Retrieve FORM param
 	$callback 	= $_GET['callback'];

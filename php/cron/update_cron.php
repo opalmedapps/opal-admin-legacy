@@ -1,6 +1,7 @@
 <?php 
 
 	/* To update cron with new information */
+	include_once('cron.inc');
 
 	$cron = new CronControl; // Object
 

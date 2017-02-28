@@ -1,6 +1,7 @@
 <?php
 
 	/* To insert a newly created hospital map */
+    include_once('hospital-map.inc');
 
     // Construct array
     $hosMapArray = array(

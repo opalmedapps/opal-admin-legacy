@@ -1,8 +1,7 @@
 <?php 
 
-	/* To call Edu Material Object to update when the "Publish Flag" checkbox
-	 * has been changed
-	 */
+	/* To call Edu Material Object to update when the "Publish Flag" checkbox has been changed */
+	include_once('educational-material.inc');
 
 	$eduMatObject = new EduMaterial; // Object
 
