@@ -1,5 +1,6 @@
 <?php
 	/* To get details on a particular educational material */
+	include_once('educational-material.inc');
 
 	// Retrieve FORM params
 	$callback = $_GET['callback'];

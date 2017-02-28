@@ -1,7 +1,7 @@
 <?php
 	/* To check MediVisit database connection */
 
-	$pathname 	= getcwd();
+	$pathname 	= __DIR__;
 	$abspath 	= str_replace('php/install', '', $pathname); 
 
 	include_once($abspath . 'php/classes/Install.php');

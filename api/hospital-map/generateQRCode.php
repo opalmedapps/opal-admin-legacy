@@ -1,5 +1,6 @@
 <?php
     /* To generate a QRCode and return the path length */
+    include_once('hospital-map.inc');
 
 	// Retrieve FORM param
 	$callback   = $_GET['callback'];

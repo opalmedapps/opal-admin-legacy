@@ -15,7 +15,7 @@ use Const::Fast;
 # NOTE: This works for a MicrosoftSQL (MSSQL) setup.
 const our $ARIA_DB_HOST     => 'ARIA_DB_HOST_HERE';
 const our $ARIA_DB_PORT     => 'ARIA_DB_PORT_HERE';
-const our $ARIA_DB_DSN      => 'DBI:Sybase:host=' . $ARIA_DB_HOST . ';port=' . $ARIA_DB_PORT;
+const our $ARIA_DB_DSN      => 'DBI:Sybase:server=' . $ARIA_DB_HOST . ';port=' . $ARIA_DB_PORT;
 const our $ARIA_DB_USERNAME => 'ARIA_DB_USERNAME_HERE';
 const our $ARIA_DB_PASSWORD => 'ARIA_DB_PASSWORD_HERE';
  
