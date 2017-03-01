@@ -20,7 +20,7 @@ class Filter {
             'resources'     => array()
         );
         try {
-	        $aria_link = new PDO( SOURCE_DB_DSN , SOURCE_DB_USERNAME, SOURCE_DB_PASSWORD );
+	        $aria_link = new PDO( ARIA_DB_DSN , ARIA_DB_USERNAME, ARIA_DB_PASSWORD );
             $aria_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );

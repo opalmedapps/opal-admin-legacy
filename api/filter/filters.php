@@ -1,5 +1,6 @@
 <?php
 	/* To get filters (expression, dx, doctor, resource)*/
+	include_once('filter.inc');
 
 	// Retrieve FORM param
 	$callback = $_GET['callback'];

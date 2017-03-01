@@ -1,6 +1,7 @@
 <?php 
 
 	/* To insert a newly created patient user */
+	include_once('patient.inc');
 
 	// Construct array
 	$patientArray = array(

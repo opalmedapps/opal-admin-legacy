@@ -206,10 +206,10 @@ angular.module('opalAdmin.collections', [])
 		}
 
         // API to find patient given an SSN
-        patientAPI.findPatient = function(ssn) {
+        patientAPI.findPatient = function(ssn, id) {
             return $http({
                 method: 'JSONP',
-                url: URLPATH+"api/patient/find_patient.php?callback=JSON_CALLBACK&ssn="+ssn
+                url: URLPATH+"api/patient/find_patient.php?callback=JSON_CALLBACK&ssn="+ssn+"&id="+id
             });
         }
 
@@ -352,6 +352,22 @@ angular.module('opalAdmin.collections', [])
         
         return userAPI;
 
+    })
+
+    // install API service
+    .factory('installAPIservice', function ($http) {
+
+        var installAPI = {};
+
+        // Function to verify installation requirements
+        installAPI.verifyRequirements = function (urlpath) {
+            return $http({
+                method: 'JSONP',
+                url: urlpath+"api/install/verify_requirements.php?callback=JSON_CALLBACK"
+            });
+        }
+
+        return installAPI;
     });
 
 

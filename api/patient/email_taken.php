@@ -1,6 +1,7 @@
 <?php
 
 	/* Determine if email is taken */
+	include_once('patient.inc');
 
 	// Retrieve FORM param
 	$callback = $_GET['callback'];

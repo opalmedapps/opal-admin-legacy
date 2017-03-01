@@ -20,12 +20,6 @@ package FTP; # Declare package name
 
 use Configs; # Custom Configurations
 
-# FTP object 
-our $ftpObject = new FTP(
-	    $Configs::FTP_CLINICAL_DIR,
-	    $Configs::FTP_LOCAL_DIR
-	);
-
 #====================================================================================
 # Constructor for our FTP class 
 #====================================================================================
@@ -42,6 +36,29 @@ sub new
 	# when a method is envoked on this object
 	bless $ftp, $class; 
 	return $ftp;
+}
+
+#====================================================================================
+# CSubroutine to set the FTP connection 
+#====================================================================================
+sub getFTPCredentials
+{
+	my ($sourceDBSer) = @_; # source database serial
+
+	my $ftpObject = undef;
+
+	my $ftpCredentials = Configs::fetchFTPCredentials($sourceDBSer);
+
+	# if clinical directory exists, set information
+	if (-d $ftpCredentials->{_clinicaldir}) {
+
+		$ftpObject = new FTP(
+			$ftpCredentials->{_localdir},
+			$ftpCredentials->{_clinicaldir}
+		);
+	}
+
+	return $ftpObject;
 }
 
 #======================================================================================
@@ -82,3 +99,5 @@ sub getFTPClinicalDir
 	return $ftp->{_clinicaldir};
 }
 
+# To exit/return always true (for the module itself)
+1;

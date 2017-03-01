@@ -1,8 +1,7 @@
 <?php 
 
-	/* To call Patient Object to update patient when the "Transfer Flag" checkbox
-	 * has been changed
-	 */
+	/* To call Patient Object to update patient when the "Transfer Flag" checkbox has been changed */
+	include_once('patient.inc');
 
 	$patientObject = new Patient; // Object
 

@@ -1,6 +1,7 @@
 <?php
 
 	/* To update notification */
+    include_once('notification.inc');
 
     // Construct array
     $notification = array(

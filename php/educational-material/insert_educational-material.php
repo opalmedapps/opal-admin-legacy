@@ -1,6 +1,7 @@
 <?php
 
 	/* To insert a newly created educational material */
+	include_once('educational-material.inc');
 
 	// Construct array
 	$eduMatArray	= array(
