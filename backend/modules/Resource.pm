@@ -147,7 +147,9 @@ sub getResourceInfoFromSourceDB
 	# when we retrieve query result
 	my ($name, $type);
 
-    # ARIA 
+    ######################################
+    # ARIA
+    ######################################
     if ($sourcedbser eq 1) {
 
         my $sourceDatabase = Database::connectToSourceDatabase($sourcedbser);
@@ -185,7 +187,9 @@ sub getResourceInfoFromSourceDB
         $sourceDatabase->disconnect();
     }
 
-    # WaitRoomManagement
+    ######################################
+    # MediVisit
+    ######################################
     if ($sourcedbser eq 2) {
 
         my $sourceDatabase = Database::connectToSourceDatabase($sourcedbser);
@@ -220,6 +224,31 @@ sub getResourceInfoFromSourceDB
         $sourceDatabase->disconnect();
     }
 
+    ######################################
+    # MOSAIQ
+    ######################################
+    if ($sourcedbser eq 3) {
+
+        my $sourceDatabase = Database::connectToSourceDatabase($sourcedbser);
+
+    	my $resource_sql = "SELECT 'QUERY_HERE'";
+
+    	# prepare query
+    	my $query = $sourceDatabase->prepare($resource_sql)
+	    	or die "Could not prepare query: " . $sourceDatabase->errstr;
+    
+	    # execute query
+    	$query->execute()
+	    	or die "Could not execute query: " . $query->errstr;
+
+    	while (my @data = $query->fetchrow_array()) {
+    
+    		# use setters to set appropriate resource information from query
+
+    	}
+
+    	$sourceDatabase->disconnect();
+    }
 
 	return $Resource;
 }

@@ -236,7 +236,7 @@ class Install {
 		}
 		else {
 			// PHP
-			$path_to_file = $abspath . 'php/default-config-test.php';
+			$path_to_file = $abspath . 'php/config.php';
 			$file_contents = file_get_contents($path_to_file);
 			$file_contents = str_replace('OPAL_DB_HOST_HERE', $opalCreds['host'], $file_contents);
 			$file_contents = str_replace('OPAL_DB_PORT_HERE', $opalCreds['port'], $file_contents);
@@ -246,7 +246,7 @@ class Install {
 			file_put_contents($path_to_file, $file_contents);
 
 			// Perl
-			$path_to_file = $abspath . 'backend/modules/default-Configs-test.pm';
+			$path_to_file = $abspath . 'backend/modules/Configs.pm';
 			$file_contents = file_get_contents($path_to_file);
 			$file_contents = str_replace('OPAL_DB_HOST_HERE', $opalCreds['host'], $file_contents);
 			$file_contents = str_replace('OPAL_DB_PORT_HERE', $opalCreds['port'], $file_contents);
@@ -265,7 +265,7 @@ class Install {
 			}
 			else {
 				// PHP
-				$path_to_file = $abspath . 'php/default-config-test.php';
+				$path_to_file = $abspath . 'php/config.php';
 				$file_contents = file_get_contents($path_to_file);
 				$file_contents = str_replace('ARIA_DB_HOST_HERE', $ariaCreds['host'], $file_contents);
 				$file_contents = str_replace('ARIA_DB_PORT_HERE', $ariaCreds['port'], $file_contents);
@@ -274,15 +274,23 @@ class Install {
 				file_put_contents($path_to_file, $file_contents);
 
 				// Perl
-				$path_to_file = $abspath . 'backend/modules/default-Configs-test.pm';
+				$path_to_file = $abspath . 'backend/modules/Configs.pm';
 				$file_contents = file_get_contents($path_to_file);
 				$file_contents = str_replace('ARIA_DB_HOST_HERE', $ariaCreds['host'], $file_contents);
 				$file_contents = str_replace('ARIA_DB_PORT_HERE', $ariaCreds['port'], $file_contents);
 				$file_contents = str_replace('ARIA_DB_USERNAME_HERE', $ariaCreds['username'], $file_contents);
 				$file_contents = str_replace('ARIA_DB_PASSWORD_HERE', $ariaCreds['password'], $file_contents);
 				$file_contents = str_replace('ARIA_FTP_DIR_HERE', $ariaCreds['document_path'], $file_contents);
-
 				file_put_contents($path_to_file, $file_contents);
+
+				// Enable database
+				$opal_link = new PDO( "mysql:host=".$opalCreds['host'].";port=".$opalCreds['port'].";dbname=".$opalCreds['name'], $opalCreds['username'], $opalCreds['password'], array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION) );
+			
+				$sql = "UPDATE SourceDatabase SET Enabled = 1 WHERE SourceDatabaseSerNum = 1";
+
+				$query = $opal_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				$query->execute();
+
 
 			}
 		}
@@ -295,7 +303,7 @@ class Install {
 			}
 			else {
 				// PHP
-				$path_to_file = $abspath . 'php/default-config-test.php';
+				$path_to_file = $abspath . 'php/config.php';
 				$file_contents = file_get_contents($path_to_file);
 				$file_contents = str_replace('WRM_DB_HOST_HERE', $mediVisitCreds['host'], $file_contents);
 				$file_contents = str_replace('WRM_DB_PORT_HERE', $mediVisitCreds['port'], $file_contents);
@@ -305,7 +313,7 @@ class Install {
 				file_put_contents($path_to_file, $file_contents);
 
 				// Perl
-				$path_to_file = $abspath . 'backend/modules/default-Configs-test.pm';
+				$path_to_file = $abspath . 'backend/modules/Configs.pm';
 				$file_contents = file_get_contents($path_to_file);
 				$file_contents = str_replace('WRM_DB_HOST_HERE', $mediVisitCreds['host'], $file_contents);
 				$file_contents = str_replace('WRM_DB_PORT_HERE', $mediVisitCreds['port'], $file_contents);
@@ -313,6 +321,14 @@ class Install {
 				$file_contents = str_replace('WRM_DB_USERNAME_HERE', $mediVisitCreds['username'], $file_contents);
 				$file_contents = str_replace('WRM_DB_PASSWORD_HERE', $mediVisitCreds['password'], $file_contents);
 				file_put_contents($path_to_file, $file_contents);
+
+				// Enable database
+				$opal_link = new PDO( "mysql:host=".$opalCreds['host'].";port=".$opalCreds['port'].";dbname=".$opalCreds['name'], $opalCreds['username'], $opalCreds['password'], array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION) );
+			
+				$sql = "UPDATE SourceDatabase SET Enabled = 1 WHERE SourceDatabaseSerNum = 2";
+
+				$query = $opal_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				$query->execute();
 
 			}
 		}
@@ -327,7 +343,7 @@ class Install {
 			else {
 
 				// PHP
-				$path_to_file = $abspath . 'php/default-config-test.php';
+				$path_to_file = $abspath . 'php/config.php';
 				$file_contents = file_get_contents($path_to_file);
 				$file_contents = str_replace('MOSAIQ_DB_HOST_HERE', $mosaiqCreds['host'], $file_contents);
 				$file_contents = str_replace('MOSAIQ_DB_PORT_HERE', $mosaiqCreds['port'], $file_contents);
@@ -336,7 +352,7 @@ class Install {
 				file_put_contents($path_to_file, $file_contents);
 
 				// Perl
-				$path_to_file = $abspath . 'backend/modules/default-Configs-test.pm';
+				$path_to_file = $abspath . 'backend/modules/Configs.pm';
 				$file_contents = file_get_contents($path_to_file);
 				$file_contents = str_replace('MOSAIQ_DB_HOST_HERE', $mosaiqCreds['host'], $file_contents);
 				$file_contents = str_replace('MOSAIQ_DB_PORT_HERE', $mosaiqCreds['port'], $file_contents);
@@ -346,14 +362,16 @@ class Install {
 
 				file_put_contents($path_to_file, $file_contents);
 
+				// Enable database
+				$opal_link = new PDO( "mysql:host=".$opalCreds['host'].";port=".$opalCreds['port'].";dbname=".$opalCreds['name'], $opalCreds['username'], $opalCreds['password'], array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION) );
+			
+				$sql = "UPDATE SourceDatabase SET Enabled = 1 WHERE SourceDatabaseSerNum = 3";
+
+				$query = $opal_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				$query->execute();
+
 			}
 		}
-
-		// htaccess
-		$path_to_file = $abspath . '.default-htaccess-test';
-		$file_contents = file_get_contents($path_to_file);
-		$file_contents = str_replace('AUTO_PREPEND_FILE_HERE', $abspath . 'php/config.php', $file_contents);
-		file_put_contents($path_to_file, $file_contents);
 
 		// Javascript 
 		$path_to_file = $abspath . 'js/config.js';
@@ -363,19 +381,18 @@ class Install {
 		file_put_contents($path_to_file, $file_contents);
 
 		// PHP
-		$path_to_file = $abspath . 'php/default-config-test.php';
+		$path_to_file = $abspath . 'php/config.php';
 		$file_contents = file_get_contents($path_to_file);
 		$file_contents = str_replace('FRONTEND_ABS_PATH_HERE', $abspath, $file_contents);
 		$file_contents = str_replace('FRONTEND_REL_URL_HERE', $urlpath, $file_contents);
 		file_put_contents($path_to_file, $file_contents);		
 
 		// Perl
-		$path_to_file = $abspath . 'backend/modules/default-Configs-test.pm';
+		$path_to_file = $abspath . 'backend/modules/Configs.pm';
 		$file_contents = file_get_contents($path_to_file);
 		$file_contents = str_replace('FRONTEND_ABS_PATH_HERE', $abspath, $file_contents);
 		$file_contents = str_replace('FRONTEND_REL_URL_HERE', $urlpath, $file_contents);
 		file_put_contents($path_to_file, $file_contents);		
-
 
 		return $response;
 
