@@ -106,7 +106,7 @@
                     </tr>
                   </table>      
 
-                  <div class="table-buttons" style="text-align: center">
+                  <div class="table-buttons" style="text-align: center" ng-if="checkInstallationForm()">
                     <form ng-submit="installSite()" method="post">
                       <button class="btn btn-success" ng-class="{'disabled': !checkInstallationForm()}" type="submit">Visit New Site</button>
                     </form>
@@ -181,7 +181,7 @@
               </div>
             </div>
 
-            <div class="row">
+            <div class="row" ng-if="installation.requirements">
               <div class="col-md-10 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -191,7 +191,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row">
+            <div class="row" ng-if="installation.requirements">
               <div class="col-md-10">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -199,7 +199,7 @@
                 </p>
               </div>
             </div>
-            <div class="row"> 
+            <div class="row" ng-if="installation.requirements"> 
               <div class="col-md-6">
                 <div class="panel" ng-class="installation.opal_setup ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>Opal Database</strong>
@@ -265,7 +265,7 @@
               </div>   
             </div>
 
-            <div class="row">
+            <div class="row" ng-if="installation.opal_setup">
               <div class="col-md-10 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -275,7 +275,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row">
+            <div class="row" ng-if="installation.opal_setup">
               <div class="col-md-10">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -283,7 +283,7 @@
                 </p>
               </div>
             </div>  
-            <div class="row">
+            <div class="row" ng-if="installation.opal_setup">
               <div class="col-md-12">
                 <div ng-repeat="sourceDB in sourceDBList" class="col-md-1"> 
                   <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: sourceDB.selected}" ng-click="sourceDB.selected = !sourceDB.selected" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
@@ -496,7 +496,7 @@
               </div>   
             </div>
 
-            <div class="row">
+            <div class="row" ng-if="installation.clinical_setup">
               <div class="col-md-10 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -506,14 +506,14 @@
                 </div>  
               </div>
             </div>   
-            <div class="row">
+            <div class="row" ng-if="installation.clinical_setup">
               <div class="col-md-6">
                 <p style="margin-bottom: 10px; font-size: 19px;" >
                   At this point, the above credentials will be written to the configuration files. Please make sure the credentials are correct. Incorrect credentials (i.e. failed connections) will not be written. To confirm these configurations, click "Submit Configurations" below.
                 </p>
               </div>
             </div>  
-            <div class="row" style="margin-bottom: 15px;">
+            <div class="row" style="margin-bottom: 15px;" ng-if="installation.clinical_setup">
               <div class="col-md-2">
                 <button class="btn btn-primary" ng-click="submitConfigurations()">Submit Configurations</button>
               </div>
@@ -522,7 +522,7 @@
               </em>
             </div>
 
-            <div class="row">
+            <div class="row" ng-if="installation.config_files">
               <div class="col-md-10 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -532,7 +532,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row">
+            <div class="row" ng-if="installation.config_files">
               <div class="col-md-10">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -541,7 +541,7 @@
               </div>
             </div>
 
-            <div class="row"> 
+            <div class="row" ng-if="installation.config_files"> 
               <div class="col-md-8">
                 <div class="panel" ng-class="adminUser.status ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>Admin User</strong>

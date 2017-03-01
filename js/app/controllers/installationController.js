@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 	/******************************************************************************
 	* Controller for the installation process
 	*******************************************************************************/
-	controller('installationController', function($scope, installAPIservice) {
+	controller('installationController', function($scope, installAPIservice, $state) {
 
 		var pathname = location.pathname;
 		var urlpath = pathname.replace('main.html', '');
@@ -470,7 +470,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 
         $scope.installSite = function () {
         	if ($scope.checkInstallationForm()) {
-
+        		$state.go('login');
         	}
         }
 
