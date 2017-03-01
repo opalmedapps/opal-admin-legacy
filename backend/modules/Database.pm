@@ -53,16 +53,52 @@ sub connectToSourceDatabase
 {
 	my ($sourceDBser) = @_; # source database serial
 
-    my $sourceDBCredentials = Configs::fetchSourceCredentials($sourceDBser);
+	my $db_connect = undef;
 
-    my $db_connect = DBI->connect(
-            $sourceDBCredentials->{_dsn},
-            $sourceDBCredentials->{_user},
-            $sourceDBCredentials->{_password},
-        )
-	    or die "Could not connect to the source database: " . DBI->errstr;
+	if (sourceDatabaseIsEnabled($sourceDBser)) {
+	    my $sourceDBCredentials = Configs::fetchSourceCredentials($sourceDBser);
+
+	    $db_connect = DBI->connect(
+	            $sourceDBCredentials->{_dsn},
+	            $sourceDBCredentials->{_user},
+	            $sourceDBCredentials->{_password},
+	        )
+		    or die "Could not connect to the source database: " . DBI->errstr;
+	}
 
 	return $db_connect;
+}
+
+#======================================================================================
+# Subroutine to check whether a source database is enabled for use
+#======================================================================================
+sub sourceDatabaseIsEnabled
+{
+	my ($sourceDBSer) = @_; # source database serial
+
+	my $enabled = undef;
+
+	my $enabled_sql = "
+		SELECT 
+			sdb.Enabled 
+		FROM
+			SourceDatabase sdb
+		WHERE
+			sdb.SourceDatabaseSerNum = $sourceDBSer
+	";
+	# prepare query
+	my $query = $targetDatabase->prepare($enabled_sql)
+		or die "Could not prepare query: " . $targetDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+	while (my @data = $query->fetchrow_array()) {
+		$enabled = $data[0];
+	}
+
+	return $enabled;
 }
 
 #======================================================================================

@@ -106,4 +106,50 @@ sub fetchSourceCredentials
     return $sourceCredentials; 
 }
 
+#======================================================================================
+# Subroutine to return FTP credentials
+#======================================================================================
+sub fetchFTPCredentials 
+{
+    my ($sourceDBser) = @_; # source serial number 
+
+    # initialize object
+    my $ftpCredentials = {
+        _localdir       => undef,
+        _clinicaldir    => undef,
+    };
+
+    if (!$sourceDBser) {return $ftpCredentials;} # return null object
+
+     # ARIA
+    if ($sourceDBser eq 1) { 
+
+        $ftpCredentials->{_localdir}            = $FTP_LOCAL_DIR;
+        $ftpCredentials->{_clinicaldir}         = $ARIA_FTP_DIR;
+
+    }
+
+    # WaitRoomManagement
+    elsif ($sourceDBser eq 2) {
+
+        # None yet
+    }
+
+    # Mosaiq
+    elsif ($sourceDBser eq 3) {
+
+        $ftpCredentials->{_localdir}            = $FTP_LOCAL_DIR;
+        $ftpCredentials->{_clinicaldir}         = $MOSAIQ_FTP_DIR;
+
+
+    }
+
+    # Others
+    # ...
+
+
+    return $ftpCredentials; 
+
+}
+
 1; # end module 

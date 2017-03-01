@@ -198,14 +198,14 @@ sub getDiagnosesFromSourceDB
 		my $patientSer		    = $Patient->getPatientSer(); # get patient ser
 		my $patientSSN    		= $Patient->getPatientSSN(); # get patient ssn
 		my $lastTransfer	    = $Patient->getPatientLastTransfer(); # get last transfer
-        my $sourceDBSer         = $Patient->getPatientSourceDatabaseSer();
 
-        # ARIA
-        if ($sourceDBSer eq 1) {
-            
-            my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+       	######################################
+	    # ARIA
+	    ######################################
+	    my $sourceDBSer = 1; # ARIA
+	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+        if ($sourceDatabase) {
 
-    		# query for primary diagnosis
 	    	my $diagInfo_sql = "
 		    	SELECT DISTINCT
 			    	dx.DiagnosisSer,
@@ -253,7 +253,69 @@ sub getDiagnosesFromSourceDB
 
             $sourceDatabase->disconnect();
         }
+
+        ######################################
+	    # MediVisit
+	    ######################################
+	    my $sourceDBSer = 2; # MediVisit
+	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+        if ($sourceDatabase) {
+
+        	my $diagInfo_sql = "SELECT 'QUERY_HERE'";
+
+        	# prepare query
+	    	my $query = $sourceDatabase->prepare($diagInfo_sql)
+		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
+    
+		    # execute query
+	    	$query->execute()
+			    or die "Could not execute query: " . $query->errstr;
+
+            my $data = $query->fetchall_arrayref();
+            foreach my $row (@$data) {
+
+            	#my $diagnosis = new Diagnosis(); # uncomment for use
+
+            	# use setters to set appropriate diagnosis information from query
+
+            	#push(@diagnosisList, $diagnosis);
+            }
+
+            $sourceDatabase->disconnect();
+        }
+
+        ######################################
+	    # MOSAIQ
+	    ######################################
+	    my $sourceDBSer = 3; # MOSAIQ
+	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+        if ($sourceDatabase) {
+
+        	my $diagInfo_sql = "SELECT 'QUERY_HERE'";
+
+        	# prepare query
+	    	my $query = $sourceDatabase->prepare($diagInfo_sql)
+		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
+    
+		    # execute query
+	    	$query->execute()
+			    or die "Could not execute query: " . $query->errstr;
+
+            my $data = $query->fetchall_arrayref();
+            foreach my $row (@$data) {
+
+            	#my $diagnosis = new Diagnosis(); # uncomment for use
+
+            	# use setters to set appropriate diagnosis information from query
+
+            	#push(@diagnosisList, $diagnosis);
+            }
+
+            $sourceDatabase->disconnect();
+        }
+
 	}
+	
 	return @diagnosisList;
 }
 	

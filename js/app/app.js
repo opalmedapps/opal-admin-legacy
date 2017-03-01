@@ -108,7 +108,7 @@ angular.module('opalAdmin', [
 		.state('account', {url:'/account', templateUrl: "templates/account.html", controller: "accountController", data: {authorizedRoles: [USER_ROLES.all], requireLogin: true}})
 		.state('users', {url:'/users', templateUrl: "templates/user.html", controller: "userController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('user-register', {url:'/users/add', templateUrl: "templates/add-user.html", controller: "newUserController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
-		.state('install', {url:'/install', templateUrl: "templates/install.html", controller: "installationController", data: {requireLogin: false}})
+		.state('install', {url:'/install', templateUrl: "templates/install.html", controller: "installationController", data: {requireLogin: false, installAccess: INSTALL_ACCESS}})
 		.state('protected-route', {url:'/protected', resolve: {auth: function resolveAuthentication(AuthResolver) {return AuthResolver.resolve();}}});
 }])
 
@@ -140,6 +140,8 @@ angular.module('opalAdmin', [
 	$rootScope.$on('$stateChangeStart', function (event, next, toParams) {
 		var requireLogin = next.data.requireLogin;
 		var authorizedRoles = next.data.authorizedRoles;
+		var installAccess = next.data.installAccess;
+		
 		if (!AuthService.isAuthorized(authorizedRoles) && requireLogin) {
 			event.preventDefault();
 			
@@ -150,6 +152,12 @@ angular.module('opalAdmin', [
 				// user is not logged in 
 				$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
 			}
+		}
+		if (installAccess !== undefined) {
+			if (!installAccess) {
+				event.preventDefault();
+			}
+
 		}
 	});
 })
