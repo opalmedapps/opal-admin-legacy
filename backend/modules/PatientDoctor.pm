@@ -149,18 +149,20 @@ sub getPatientDoctorsFromSourceDB
 
 	# for query results
 	my ($doctorsernum, $oncflag, $primaryflag);
-	
+
 	foreach my $Patient (@patientList) {
 
 		my $patientSer		    = $Patient->getPatientSer();
 		my $patientSSN			= $Patient->getPatientSSN(); 
-        my $sourceDBSer         = $Patient->getPatientSourceDatabaseSer();
 		my $lastTransfer	    = $Patient->getPatientLastTransfer();
 
-        # ARIA
-        if ($sourceDBSer eq 1) {
+        ######################################
+	    # ARIA
+	    ######################################
+	    my $sourceDBSer = 1; # ARIA
+	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+        if ($sourceDatabase) {
 
-            my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
     		my $pd_sql = "
 	    		SELECT DISTINCT
 		    		dr.ResourceSer,
@@ -201,7 +203,68 @@ sub getPatientDoctorsFromSourceDB
     	
 	    		push(@PDList, $patientdoctor);
 		    }
+
+		    $sourceDatabase->disconnect();
         }
+
+        ######################################
+	    # MediVisit
+	    ######################################
+	    my $sourceDBSer = 2; # MediVisit
+	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+        if ($sourceDatabase) {
+
+    		my $pd_sql = "SELECT 'QUERY_HERE'";  
+    
+	    	# prepare query
+		    my $query = $sourceDatabase->prepare($pd_sql)
+			    or die "Could not prepare query: " . $sourceDatabase->errstr;
+        
+    		# execute query
+	        $query->execute()
+		    	or die "Could not execute query: " . $query->errstr;
+
+    		while (my @data = $query->fetchrow_array()) {
+	
+	    		# my $patientdoctor = new PatientDoctor(); # uncomment for use
+	    
+		    	# use setters to set appropriate PD information from query
+    	
+	    		#push(@PDList, $patientdoctor); # uncomment for use
+		    }
+
+		    $sourceDatabase->disconnect();
+        }
+
+        ######################################
+	    # MOSAIQ
+	    ######################################
+	    my $sourceDBSer = 3; # MOSAIQ
+	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+        if ($sourceDatabase) {
+
+    		my $pd_sql = "SELECT 'QUERY_HERE'";  
+    
+	    	# prepare query
+		    my $query = $sourceDatabase->prepare($pd_sql)
+			    or die "Could not prepare query: " . $sourceDatabase->errstr;
+        
+    		# execute query
+	        $query->execute()
+		    	or die "Could not execute query: " . $query->errstr;
+
+    		while (my @data = $query->fetchrow_array()) {
+	
+	    		# my $patientdoctor = new PatientDoctor(); # uncomment for use
+	    
+		    	# use setters to set appropriate PD information from query
+    	
+	    		#push(@PDList, $patientdoctor); # uncomment for use
+		    }
+
+		    $sourceDatabase->disconnect();
+        }
+
 	}
 
 	return @PDList;

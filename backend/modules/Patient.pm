@@ -37,8 +37,6 @@ sub new
 	my $class = shift;
 	my $patient = {
 		_ser		    => undef,
-        _userser        => undef,
-        _sourcedbser    => undef,
 		_sourceuid	    => undef,
         _id             => undef,
         _id2            => undef,
@@ -66,26 +64,6 @@ sub setPatientSer
 	my ($patient, $ser) = @_; # patient object with provided serial in arguments
 	$patient->{_ser} = $ser; # set the serial
 	return $patient->{_ser};
-}
-
-#======================================================================================
-# Subroutine to set the patient user serial
-#======================================================================================
-sub setPatientUserSer
-{
-	my ($patient, $userser) = @_; # patient object with provided serial in arguments
-	$patient->{_userser} = $userser; # set the serial
-	return $patient->{_userser};
-}
-
-#======================================================================================
-# Subroutine to set the patient source db serial
-#======================================================================================
-sub setPatientSourceDatabaseSer
-{
-	my ($patient, $sourcedbser) = @_; # patient object with provided serial in arguments
-	$patient->{_sourcedbser} = $sourcedbser; # set the serial
-	return $patient->{_sourcedbser};
 }
 
 #======================================================================================
@@ -218,24 +196,6 @@ sub getPatientSer
 }
 
 #======================================================================================
-# Subroutine to get the patient user serial
-#======================================================================================
-sub getPatientUserSer
-{
-	my ($patient) = @_; # our patient object
-	return $patient->{_userser};
-}
-
-#======================================================================================
-# Subroutine to get the patient source db serial
-#======================================================================================
-sub getPatientSourceDatabaseSer
-{
-	my ($patient) = @_; # our patient object
-	return $patient->{_sourcedbser};
-}
-
-#======================================================================================
 # Subroutine to get the patient source uid
 #======================================================================================
 sub getPatientSourceUID
@@ -354,140 +314,166 @@ sub getPatientInfoFromSourceDBs
 
     my $patientSSN      = $Patient->getPatientSSN(); # retreive the ssn
     my $lastTransfer    = $Patient->getPatientLastTransfer();
-    #my $patientUserSer  = $Patient->getPatientUserSer();
-    
 
-	#=========================================================================================
-	# Retrieve all patient info 
-	#=========================================================================================
-    # ARIA, for now only...
+    ######################################
+    # ARIA
+    ######################################
     my $sourceDBSer = 1; # ARIA
     my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-    my $sourcePatient  = undef;
+    if ($sourceDatabase) {
 
-    my $patientInfo_sql = "
-        SELECT DISTINCT 
-            pt.PatientSer,
-            pt.FirstName,
-            pt.LastName,
-            pt.PatientId,
-            pt.PatientId2,
-            pt.DateOfBirth,
-            ph.Picture,
-            RTRIM(pt.Sex)
-        FROM 
-            variansystem.dbo.Patient pt
-        LEFT JOIN variansystem.dbo.Photo ph
-        ON pt.PatientSer       = ph.PatientSer
-        WHERE
-            pt.SSN              LIKE '$patientSSN%'
-        --AND pt.HstryDateTime    > '$lastTransfer' 
-    ";
+	    my $sourcePatient  = undef;
 
-	# prepare query
-	my $query = $sourceDatabase->prepare($patientInfo_sql)
-	    or die "Could not prepare query: " . $sourceDatabase->errstr;
+	    my $patientInfo_sql = "
+	        SELECT DISTINCT 
+	            pt.PatientSer,
+	            pt.FirstName,
+	            pt.LastName,
+	            pt.PatientId,
+	            pt.PatientId2,
+	            pt.DateOfBirth,
+	            ph.Picture,
+	            RTRIM(pt.Sex)
+	        FROM 
+	            variansystem.dbo.Patient pt
+	        LEFT JOIN variansystem.dbo.Photo ph
+	        ON pt.PatientSer       = ph.PatientSer
+	        WHERE
+	            pt.SSN              LIKE '$patientSSN%'
+	    ";
 
-    # execute query
-    $query->execute()
-        or die "Could not execute query: " . $query->errstr;
+		# prepare query
+		my $query = $sourceDatabase->prepare($patientInfo_sql)
+		    or die "Could not prepare query: " . $sourceDatabase->errstr;
 
-    while (my @data = $query->fetchrow_array()) {
-    
-        $sourcePatient  = new Patient();
+	    # execute query
+	    $query->execute()
+	        or die "Could not execute query: " . $query->errstr;
 
-        my $sourceuid       = $data[0];
-        my $firstname       = $data[1];
-        my $lastname        = $data[2];
-        my $id              = $data[3];
-        my $id2             = $data[4];
-        my $dob             = convertDateTime($data[5]);
-        my $age             = getAgeAtDate($dob, $today);
-        my $picture         = $data[6];
-        my $sex             = $data[7];
+	    while (my @data = $query->fetchrow_array()) {
+	    
+	        $sourcePatient  = new Patient();
 
-        # set the information
-        $sourcePatient->setPatientSSN($patientSSN);
-        $sourcePatient->setPatientLastTransfer($lastTransfer);
-        #$sourcePatient->setPatientUserSer($patientUserSer);
+	        my $sourceuid       = $data[0];
+	        my $firstname       = $data[1];
+	        my $lastname        = $data[2];
+	        my $id              = $data[3];
+	        my $id2             = $data[4];
+	        my $dob             = convertDateTime($data[5]);
+	        my $age             = getAgeAtDate($dob, $today);
+	        my $picture         = $data[6];
+	        my $sex             = $data[7];
 
-        $sourcePatient->setPatientSourceUID($sourceuid);
-        $sourcePatient->setPatientSourceDatabaseSer($sourceDBSer);
-        $sourcePatient->setPatientFirstName($firstname);
-        $sourcePatient->setPatientLastName($lastname);
-        $sourcePatient->setPatientId($id);
-        $sourcePatient->setPatientId2($id2);
-        $sourcePatient->setPatientDOB($dob);
-        $sourcePatient->setPatientAge($age);
-        $sourcePatient->setPatientPicture($picture);
-        $sourcePatient->setPatientSex($sex);
-    }
+	        # set the information
+	        $sourcePatient->setPatientSSN($patientSSN);
+	        $sourcePatient->setPatientLastTransfer($lastTransfer);
 
-    if ($sourcePatient) {push(@patientList, $sourcePatient);}
+	        $sourcePatient->setPatientSourceUID($sourceuid);
+	        $sourcePatient->setPatientFirstName($firstname);
+	        $sourcePatient->setPatientLastName($lastname);
+	        $sourcePatient->setPatientId($id);
+	        $sourcePatient->setPatientId2($id2);
+	        $sourcePatient->setPatientDOB($dob);
+	        $sourcePatient->setPatientAge($age);
+	        $sourcePatient->setPatientPicture($picture);
+	        $sourcePatient->setPatientSex($sex);
+	    }
 
-    # db disconnect
-    $sourceDatabase->disconnect();
+	    if ($sourcePatient) {push(@patientList, $sourcePatient);}
 
-    #--------------------------------------------------------------------------
-    # Uncomment if necessary. Same patient info, no need to have multiple patient entries
-    # from multiple databases. But uncomment if necessary.
+	    # db disconnect
+	    $sourceDatabase->disconnect();
+	}
 =pod
-    # WaitRoomManagement
+    ######################################
+    # MediVisit
+    ######################################
+
     my $sourceDBSer = 2; # WaitRoomManagement
     my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-    my $sourcePatient  = undef;
+    if ($sourceDatabase) {
 
-    my $patientInfo_sql = "
-        SELECT DISTINCT 
-            pt.PatientSerNum,
-            pt.FirstName,
-            pt.LastName,
-            pt.PatientId
-        FROM
-            Patient pt
-        WHERE
-            pt.SSN      LIKE '$patientSSN%'
-    ";    $currentFile = __FILE__; // Get location of this script
+	    my $sourcePatient  = undef;
 
-    // Find config file based on this location 
-    $configFile = substr($currentFile, 0, strpos($currentFile, "ATO")) . "ATO/php/config.php";
-	// Include config file 
-	include_once($configFile);
+	    my $patientInfo_sql = "
+	        SELECT DISTINCT 
+	            pt.PatientSerNum,
+	            pt.FirstName,
+	            pt.LastName,
+	            pt.PatientId
+	        FROM
+	            Patient pt
+	        WHERE
+	            pt.SSN      LIKE '$patientSSN%'
+	    ";  
 
+		# prepare query
+		my $query = $sourceDatabase->prepare($patientInfo_sql)
+		    or die "Could not prepare query: " . $sourceDatabase->errstr;
 
-	# prepare query
-	my $query = $sourceDatabase->prepare($patientInfo_sql)
-	    or die "Could not prepare query: " . $sourceDatabase->errstr;
+	    # execute query
+	    $query->execute()
+	        or die "Could not execute query: " . $query->errstr;
 
-    # execute query
-    $query->execute()
-        or die "Could not execute query: " . $query->errstr;
+	    while (my @data = $query->fetchrow_array()) {
 
-    while (my @data = $query->fetchrow_array()) {
+	        $sourcePatient  = new Patient();
 
-        $sourcePatient  = new Patient();
+	        my $sourceuid      = $data[0];
+	        my $firstname      = $data[1];
+	        my $lastname       = $data[2];
+	        my $id             = $data[3];
 
-        my $sourceuid      = $data[0];
-        my $firstname      = $data[1];
-        my $lastname       = $data[2];
-        my $id             = $data[3];
+	        $sourcePatient->setPatientSSN($patientSSN);
+	        $sourcePatient->setPatientLastTransfer($lastTransfer);
+	        $sourcePatient->setPatientUserSer($patientUserSer);
 
-        $sourcePatient->setPatientSSN($patientSSN);
-        $sourcePatient->setPatientLastTransfer($lastTransfer);
-        $sourcePatient->setPatientUserSer($patientUserSer);
+	        $sourcePatient->setPatientSourceUID($sourceuid);
+	        $sourcePatient->setPatientSourceDatabaseSer($sourceDBSer);
+	        $sourcePatient->setPatientFirstName($firstname);
+	        $sourcePatient->setPatientLastName($lastname);
+	        $sourcePatient->setPatientId($id);
+	    }
 
-        $sourcePatient->setPatientSourceUID($sourceuid);
-        $sourcePatient->setPatientSourceDatabaseSer($sourceDBSer);
-        $sourcePatient->setPatientFirstName($firstname);
-        $sourcePatient->setPatientLastName($lastname);
-        $sourcePatient->setPatientId($id);
-    }
+	    if ($sourcePatient) {push(@patientList, $sourcePatient);}
 
-    if ($sourcePatient) {push(@patientList, $sourcePatient);}
-
-    # db disconnect
-    $sourceDatabase->disconnect();
+	    # db disconnect
+	    $sourceDatabase->disconnect();
+	}
 =cut
+
+	######################################
+    # MOSAIQ
+    ######################################
+    my $sourceDBSer = 3; # MOSAIQ
+    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+    if ($sourceDatabase) {
+
+	    my $sourcePatient  = undef;
+
+	    my $patientInfo_sql = "SELECT 'QUERY_HERE'";
+
+		# prepare query
+		my $query = $sourceDatabase->prepare($patientInfo_sql)
+		    or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+	    # execute query
+	    $query->execute()
+	        or die "Could not execute query: " . $query->errstr;
+
+	    while (my @data = $query->fetchrow_array()) {
+	    
+	        #$sourcePatient  = new Patient(); # uncomment for use
+
+	        # use setters to set appropriate information from query
+	       	
+	    }
+
+	    if ($sourcePatient) {push(@patientList, $sourcePatient);}
+
+	    # db disconnect
+	    $sourceDatabase->disconnect();
+	}
 
     return @patientList;
 
@@ -609,7 +595,6 @@ sub inOurDatabase
 
     my $ssn             = $patient->getPatientSSN();
     my $lastTransfer    = $patient->getPatientLastTransfer();
-    my $sourcedbser     = $patient->getPatientSourceDatabaseSer();
 
 
     my $PatientSSNInDB = 0; # false by default. Will be true if patient exists
@@ -674,7 +659,6 @@ sub inOurDatabase
         $ExistingPatient->setPatientPicture($picture);
         $ExistingPatient->setPatientLastTransfer($lastTransfer);
         $ExistingPatient->setPatientSSN($PatientSSNInDB);
-        $ExistingPatient->setPatientSourceDatabaseSer($sourcedbser);
 
         return $ExistingPatient; # this is true (ie. patient exists, return object)
 	}

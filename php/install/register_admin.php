@@ -1,11 +1,7 @@
 <?php
 
 	/* To insert a newly created admin user */
-
-	$pathname 	= __DIR__;
-	$abspath 	= str_replace('php/install', '', $pathname); 
-
-	include_once($abspath . 'php/classes/Install.php');
+	include_once('install.inc');
 
 	$adminCreds = array(
 		'username'		=> $_POST['username'],

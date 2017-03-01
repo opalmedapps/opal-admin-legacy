@@ -2209,6 +2209,7 @@ DROP TABLE IF EXISTS `SourceDatabase`;
 CREATE TABLE `SourceDatabase` (
   `SourceDatabaseSerNum` int(11) NOT NULL AUTO_INCREMENT,
   `SourceDatabaseName` varchar(255) NOT NULL,
+  `Enabled` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`SourceDatabaseSerNum`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2219,7 +2220,7 @@ CREATE TABLE `SourceDatabase` (
 
 LOCK TABLES `SourceDatabase` WRITE;
 /*!40000 ALTER TABLE `SourceDatabase` DISABLE KEYS */;
-INSERT INTO `SourceDatabase` VALUES (1,'Aria'),(2,'MediVisit'),(3,'Mosaiq');
+INSERT INTO `SourceDatabase` VALUES (1,'Aria',0),(2,'MediVisit',0),(3,'Mosaiq',0);
 /*!40000 ALTER TABLE `SourceDatabase` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2739,4 +2740,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-02-27 17:02:06
+-- Dump completed on 2017-03-01 10:48:24
