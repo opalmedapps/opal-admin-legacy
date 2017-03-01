@@ -33,7 +33,8 @@ angular.module('opalAdmin', [
   all: '*',
   admin: 'admin',
   editor: 'editor',
-  guest: 'guest'
+  guest: 'guest',
+  registrant: 'registrant'
 })
 
 // Authentication and authorization service
@@ -52,6 +53,17 @@ angular.module('opalAdmin', [
 	            else {return $q.reject(response)}
 
             });
+    }
+
+    authService.confirm = function (credentials) {
+    	return $http
+    		.post('php/user/checklogin.php', credentials)
+    		.then(function (response) {
+    			if (response.data.success) {
+    				return response.success;
+    			}
+    			else {return $q.reject(response)}
+    		});
     }
 
     authService.isAuthenticated = function () {
@@ -76,7 +88,7 @@ angular.module('opalAdmin', [
 	$urlRouterProvider.otherwise("/");
 	$stateProvider
 		.state('login', {url:'/', templateUrl: 'templates/login.html', controller: 'loginController', data: {requireLogin: false}})
-		.state('home', {url:'/home', templateUrl: 'templates/home.html', controller: 'homeController', data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('home', {url:'/home', templateUrl: 'templates/home.html', controller: 'homeController', data: {authorizedRoles: [USER_ROLES.all], requireLogin: true}})
 		.state('alias', {url:'/alias', templateUrl: "templates/alias.html", controller: "aliasController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('alias-add', {url:'/alias/add', templateUrl: "templates/add-alias.html", controller: "newAliasController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('post', {url:'/post', templateUrl: "templates/post.html", controller: "postController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
@@ -87,8 +99,8 @@ angular.module('opalAdmin', [
 		.state('hospital-map-add', {url: '/hospital-map/add', templateUrl: "templates/add-hospital-map.html", controller: "newHospitalMapController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('notification', {url:'/notification', templateUrl: "templates/notification.html", controller: "notificationController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('notification-add', {url:'/notification/add', templateUrl: "templates/add-notification.html", controller: "newNotificationController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
-		.state('patients', {url:'/patients', templateUrl: "templates/patient.html", controller: "patientController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
-		.state('patients-register', {url:'/patients/register', templateUrl: "templates/patient-registration.html", controller: "patientRegistrationController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('patients', {url:'/patients', templateUrl: "templates/patient.html", controller: "patientController", data: {authorizedRoles: [USER_ROLES.admin, USER_ROLES.registrant], requireLogin: true}})
+		.state('patients-register', {url:'/patients/register', templateUrl: "templates/patient-registration.html", controller: "patientRegistrationController", data: {authorizedRoles: [USER_ROLES.admin, USER_ROLES.registrant], requireLogin: true}})
 		.state('test-result', {url:'/test-result', templateUrl: "templates/test-result.html", controller: "testResultController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('test-result-add', {url:'/test-result/add', templateUrl: "templates/add-test-result.html", controller: "newTestResultController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('cron', {url:'/cron', templateUrl: "templates/cron.html", controller: "cronController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
@@ -96,6 +108,7 @@ angular.module('opalAdmin', [
 		.state('account', {url:'/account', templateUrl: "templates/account.html", controller: "accountController", data: {authorizedRoles: [USER_ROLES.all], requireLogin: true}})
 		.state('users', {url:'/users', templateUrl: "templates/user.html", controller: "userController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
 		.state('user-register', {url:'/users/add', templateUrl: "templates/add-user.html", controller: "newUserController", data: {authorizedRoles: [USER_ROLES.admin], requireLogin: true}})
+		.state('install', {url:'/install', templateUrl: "templates/install.html", controller: "installationController", data: {requireLogin: false, installAccess: INSTALL_ACCESS}})
 		.state('protected-route', {url:'/protected', resolve: {auth: function resolveAuthentication(AuthResolver) {return AuthResolver.resolve();}}});
 }])
 
@@ -127,6 +140,8 @@ angular.module('opalAdmin', [
 	$rootScope.$on('$stateChangeStart', function (event, next, toParams) {
 		var requireLogin = next.data.requireLogin;
 		var authorizedRoles = next.data.authorizedRoles;
+		var installAccess = next.data.installAccess;
+		
 		if (!AuthService.isAuthorized(authorizedRoles) && requireLogin) {
 			event.preventDefault();
 			
@@ -137,6 +152,12 @@ angular.module('opalAdmin', [
 				// user is not logged in 
 				$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
 			}
+		}
+		if (installAccess !== undefined) {
+			if (!installAccess) {
+				event.preventDefault();
+			}
+
 		}
 	});
 })

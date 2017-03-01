@@ -316,7 +316,9 @@ sub getTasksFromSourceDB
             my @expressions         = $Alias->getAliasExpressions(); 
             my $sourceDBSer         = $Alias->getAliasSourceDatabaseSer();
 
-            # ARIA 
+            ######################################
+		    # ARIA
+		    ######################################
             if ($sourceDBSer eq 1) {
 
                 my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
@@ -376,7 +378,7 @@ sub getTasksFromSourceDB
 	        			$taskInfo_sql .= "UNION";
 	        		}
 	        	}
-	        	#print "$taskInfo_sql\n";
+
 	        	# prepare query
     		    my $query = $sourceDatabase->prepare($taskInfo_sql)
 	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;
@@ -414,6 +416,120 @@ sub getTasksFromSourceDB
 		    	    $task->setTaskState($state); # assign state
 
         			push(@taskList, $task);
+		    		
+                }
+	    	 				
+	    	 	$sourceDatabase->disconnect();
+	    	}
+
+	    	######################################
+		    # MediVisit
+		    ######################################
+            if ($sourceDBSer eq 2) {
+
+                my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+                my $numOfExpressions = @expressions; 
+                my $counter = 0;
+                my $taskInfo_sql = "";
+
+                foreach my $Expression (@expressions) {
+
+                	my $expressionser = $Expression->{_ser};
+                	my $expressionName = $Expression->{_name};
+                	my $expressionLastTransfer = $Expression->{_lasttransfer};
+                	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
+
+                	# compare last updates to find the earliest date 
+		            # get the diff in seconds
+		            my $date_diff = $formatted_PLU - $formatted_ELU;
+		            if ($date_diff < 0) {
+		                $lasttransfer = $patientLastTransfer;
+		            } else {
+		                $lasttransfer = $expressionLastTransfer;
+		            }
+
+		            $taskInfo_sql .= "SELECT 'QUERY_HERE' ";
+
+		            $counter++;
+	        		# concat "UNION" until we've reached the last query
+	        		if ($counter < $numOfExpressions) {
+	        			$taskInfo_sql .= "UNION";
+	        		}
+	        	}
+
+	        	# prepare query
+    		    my $query = $sourceDatabase->prepare($taskInfo_sql)
+	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+    		    # execute query
+        		$query->execute()
+	        		or die "Could not execute query: " . $query->errstr;
+
+                my $data = $query->fetchall_arrayref();
+        		foreach my $row (@$data) {
+		
+	        		#my $task = new Task(); # uncomment for use
+
+	        		# use setters to set appropriate task information from query
+
+	        		#push(@taskList, $task); # uncomment for use
+		    		
+                }
+	    	 				
+	    	 	$sourceDatabase->disconnect();
+	    	}
+
+	    	######################################
+		    # MOSAIQ
+		    ######################################
+            if ($sourceDBSer eq 3) {
+
+                my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+                my $numOfExpressions = @expressions; 
+                my $counter = 0;
+                my $taskInfo_sql = "";
+
+                foreach my $Expression (@expressions) {
+
+                	my $expressionser = $Expression->{_ser};
+                	my $expressionName = $Expression->{_name};
+                	my $expressionLastTransfer = $Expression->{_lasttransfer};
+                	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
+
+                	# compare last updates to find the earliest date 
+		            # get the diff in seconds
+		            my $date_diff = $formatted_PLU - $formatted_ELU;
+		            if ($date_diff < 0) {
+		                $lasttransfer = $patientLastTransfer;
+		            } else {
+		                $lasttransfer = $expressionLastTransfer;
+		            }
+
+		            $taskInfo_sql .= "SELECT 'QUERY_HERE' ";
+
+		            $counter++;
+	        		# concat "UNION" until we've reached the last query
+	        		if ($counter < $numOfExpressions) {
+	        			$taskInfo_sql .= "UNION";
+	        		}
+	        	}
+
+	        	# prepare query
+    		    my $query = $sourceDatabase->prepare($taskInfo_sql)
+	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+    		    # execute query
+        		$query->execute()
+	        		or die "Could not execute query: " . $query->errstr;
+
+                my $data = $query->fetchall_arrayref();
+        		foreach my $row (@$data) {
+		
+	        		#my $task = new Task(); # uncomment for use
+
+	        		# use setters to set appropriate task information from query
+
+	        		#push(@taskList, $task); # uncomment for use
 		    		
                 }
 	    	 				

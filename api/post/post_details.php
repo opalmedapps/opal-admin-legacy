@@ -1,5 +1,6 @@
 <?php
 	/* To get details on a particular post */
+	include_once('post.inc');
 
 	// Retrieve FORM params
 	$callback = $_GET['callback'];

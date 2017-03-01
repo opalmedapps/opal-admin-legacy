@@ -1,8 +1,7 @@
 <?php 
 
-	/* To call Alias Object to update alias when the "Update" checkbox
-	 * has been changed
-	 */
+	/* To call Alias Object to update alias when the "Update" checkbox has been changed */
+	include_once('alias.inc');
 
 	$aliasObject = new Alias; // Object
 

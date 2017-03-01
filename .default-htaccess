@@ -56,5 +56,3 @@ Options +FollowSymLinks
   Header always set X-Content-Type-Options nosniff
 </IfModule>
 
-# Change this path according to your server to set the absolute path of the PHP config file
-php_value auto_prepend_file "AUTO_PREPEND_FILE_HERE"

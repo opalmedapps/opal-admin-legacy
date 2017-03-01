@@ -110,42 +110,95 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
         };
 
         $scope.validateSSN = function(ssn) {
-
-            if(ssn.length < 12) {
-                $scope.validSSN.status = 'invalid' // input not long enough
-                $scope.validSSN.message = 'Must be greater than 12 characters'
+            $scope.validPatientSearch = null;
+            if (!ssn) {
+                $scope.validSSN.status = null;
                 return;
             }
 
-            // Call our API service to find patient 
-            patientAPIservice.findPatient(ssn).success(function(response) {
+            else if(ssn.length < 12) {
+                $scope.validSSN.status = 'invalid' // input not long enough
+                $scope.validSSN.message = 'SSN must be greater than 12 characters'
+                return;
+            }
 
-                if(response.status == 'PatientAlreadyRegistered') {
-                    $scope.validSSN.status = 'warning';
-                    $scope.validSSN.message = 'Patient is already registered!';
-                }
-                else if(response.status == 'PatientNotFound') {
-                    $scope.validSSN.status = 'invalid';
-                    $scope.validSSN.message = 'No patient found!';
-                }
-                else if(response.status == 'Error') {
-                    $scope.validSSN.status = 'invalid';
-                    $scope.validSSN.message = 'Something went wrong: ' + response.message;
-                }
-                else {
-                    $scope.validSSN.status = 'valid';
-                    $scope.validSSN.message = 'Patient found!'
+            else {
+                $scope.validSSN.status = 'valid'
+                $scope.validSSN.message = null;
 
-                    $scope.newPatient.data = response.data; // Assign data
+            }
+        }
 
-                    // Call our API service to get security questions 
-                    patientAPIservice.fetchSecurityQuestions().success(function (response) {
-                        $scope.securityQuestions = response;
-                    });
+        $scope.accordionOpen = true;
 
-                }
+        // Keep track of Patient ID status input
+        $scope.validPatientId = {
+            status: null,
+            id: null,
+            message: null
+        };
 
-            });
+        $scope.validatePatientId = function (id) {
+            $scope.validPatientSearch = null;
+            if (!id) {
+                $scope.validPatientId.status = null;
+                return;
+            }
+
+            else {
+                $scope.validPatientId.status = 'valid'
+                return;
+            }
+        }
+
+        $scope.validSearchForm = function () {
+            if ($scope.validSSN.status == 'valid' && $scope.validPatientId.status == 'valid') {
+                return true;
+            }
+            else 
+                return false;
+        }
+
+        $scope.validPatientSearch = null;
+        $scope.validatePatientSearch = function() {
+
+            if ($scope.validSearchForm()) {
+                // Call our API service to find patient 
+                patientAPIservice.findPatient($scope.validSSN.SSN, $scope.validPatientId.id).success(function(response) {
+
+                    if(response.status == 'PatientAlreadyRegistered') {
+                        $scope.validSSN.status = 'warning';
+                        $scope.validSSN.message = 'Patient is already registered!';
+                        $scope.validPatientSearch = 'warning';
+                    }
+                    else if(response.status == 'PatientNotFound') {
+                        $scope.validSSN.status = 'invalid';
+                        $scope.validSSN.message = 'No patient found!';
+                        $scope.validPatientSearch = 'invalid';
+                    }
+                    else if(response.status == 'Error') {
+                        $scope.validSSN.status = 'invalid';
+                        $scope.validSSN.message = 'Something went wrong: ' + response.message;
+                        $scope.validPatientSearch = 'invalid';
+                    }
+                    else {
+                        $scope.validSSN.status = 'valid';
+                        $scope.validSSN.message = 'Patient found!'
+                        $scope.validPatientSearch = 'valid';
+
+                        $scope.newPatient.data = response.data; // Assign data
+
+                        $scope.accordionOpen = false;
+
+                        // Call our API service to get security questions 
+                        patientAPIservice.fetchSecurityQuestions().success(function (response) {
+                            $scope.securityQuestions = response;
+                        });
+
+                    }
+
+                });
+            }
             
 
         }
@@ -428,53 +481,127 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
         // Function to register patient
         $scope.registerPatient = function() {
 
-            if($scope.checkRegistrationForm()){
+            if($scope.checkRegistrationForm()) {
 
-                FB.auth().createUserWithEmailAndPassword($scope.newPatient.email,$scope.newPatient.password).then(function(userData) {
+                var modalInstance = $uibModal.open({
+                    templateUrl: 'confirmRegistrationModalContent.htm',
+                    controller: ConfirmRegistrationModalInstanceCtrl,
+                    scope: $scope,
+                    backdrop: 'static'
+                });
 
-                    // on success, register to our database
-                    $scope.newPatient.uid = userData.uid;
-                    $scope.newPatient.SSN = $scope.validSSN.SSN;
-                    $scope.newPatient.password = CryptoJS.SHA256($scope.newPatient.password).toString();
-                    $scope.newPatient.securityQuestion1.answer = CryptoJS.SHA256($scope.newPatient.securityQuestion1.answer).toString();
-                    $scope.newPatient.securityQuestion2.answer = CryptoJS.SHA256($scope.newPatient.securityQuestion2.answer).toString();
-                    $scope.newPatient.securityQuestion3.answer = CryptoJS.SHA256($scope.newPatient.securityQuestion3.answer).toString();
+                // After proper credentials, proceed with registration
+                modalInstance.result.then(function() {
 
-                    // submit form
-                    $.ajax({
-                        type: "POST",
-                        url: "php/patient/register_patient.php",
-                        data: $scope.newPatient,
-                        success: function() {
-                            $state.go('patients');
+                    FB.auth().createUserWithEmailAndPassword($scope.newPatient.email,$scope.newPatient.password).then(function(userData) {
+
+                        // on success, register to our database
+                        $scope.newPatient.uid = userData.uid;
+                        $scope.newPatient.SSN = $scope.validSSN.SSN;
+                        $scope.newPatient.password = CryptoJS.SHA256($scope.newPatient.password).toString();
+                        $scope.newPatient.securityQuestion1.answer = CryptoJS.SHA256($scope.newPatient.securityQuestion1.answer).toString();
+                        $scope.newPatient.securityQuestion2.answer = CryptoJS.SHA256($scope.newPatient.securityQuestion2.answer).toString();
+                        $scope.newPatient.securityQuestion3.answer = CryptoJS.SHA256($scope.newPatient.securityQuestion3.answer).toString();
+
+                        // submit form
+                        $.ajax({
+                            type: "POST",
+                            url: "php/patient/register_patient.php",
+                            data: $scope.newPatient,
+                            success: function() {
+                                $state.go('patients');
+                            }
+                        });
+
+                    }, function(error) {
+                        // Handle errors
+                        var errorCode = error.code;
+                        var errorMessage = error.message;
+                        if (errorCode == 'auth/email-already-in-use'){
+
+                            $scope.validEmail.status = 'warning';
+                            $scope.validEmail.message = 'Email already in use';
+                            $scope.emailUpdate();
+                            $scope.$apply();
+
                         }
+                        else if (errorCode == 'auth/weak-password') {
+
+                            $scope.validPassword.status = 'invalid';
+                            $scope.validPassword.message = 'Password is too weak';
+                            $scope.passwordUpdate();
+                            $scope.$apply();
+
+                        }
+
                     });
-
-
-                }, function(error) {
-                    // Handle errors
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
-                    if (errorCode == 'auth/email-already-in-use'){
-
-                        $scope.validEmail.status = 'warning';
-                        $scope.validEmail.message = 'Email already in use';
-                        $scope.emailUpdate();
-                        $scope.$apply();
-
-                    }
-                    else if (errorCode == 'auth/weak-password') {
-
-                        $scope.validPassword.status = 'invalid';
-                        $scope.validPassword.message = 'Password is too weak';
-                        $scope.passwordUpdate();
-                        $scope.$apply();
-
-                    }
-
                 });
 
             }
+        }
+
+        var ConfirmRegistrationModalInstanceCtrl = function ($scope, $uibModalInstance, AuthService) {
+
+            // Initialize login object
+            $scope.credentials = {
+                username: "",
+                password: ""
+            }
+
+            $scope.bannerMessage = "";
+            // Function to show page banner 
+            $scope.showBanner = function() {
+                $(".bannerMessage").slideDown(function()  {
+                    setTimeout(function() {             
+                        $(".bannerMessage").slideUp(); 
+                    }, 3000); 
+                });
+            }
+            // Function to set banner class
+            $scope.setBannerClass = function(classname) {
+                // Remove any classes starting with "alert-" 
+                $(".bannerMessage").removeClass (function (index, css) {
+                    return (css.match (/(^|\s)alert-\S+/g) || []).join(' ');
+                });
+                // Add class
+                $(".bannerMessage").addClass('alert-'+classname);
+            };
+
+            // Function to return boolean on completed login form
+            $scope.loginFormComplete = function() {
+                if( ($scope.credentials.username && $scope.credentials.password) )
+                    return true;
+                else
+                    return false;
+            }
+                
+            // Function to "shake" form container if fields are incorrect
+            $scope.shakeForm = function() {
+                $scope.formLoaded = true;
+                $('.form-box').addClass('shake');
+                setTimeout(function() {
+                    $('.form-box').removeClass('shake');
+                }, 1000);
+            } 
+
+            $scope.confirmRegistration = function (credentials) {
+                if ($scope.loginFormComplete()) {
+                    AuthService.confirm(credentials).then(function (response) {
+                        $uibModalInstance.close();
+                    }, function() {
+                        $scope.bannerMessage = "Wrong username and/or password!";
+                        $scope.setBannerClass('danger');
+                        $scope.shakeForm();
+                        $scope.showBanner();
+                    })
+                }
+            }
+
+            // Function to close modal dialog
+            $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+            };
+
         }
        
     });

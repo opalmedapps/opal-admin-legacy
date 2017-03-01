@@ -1,5 +1,6 @@
 <?php 
 	/* To get details on a cron profile */
+	include_once('cron.inc');
 
 	// Retrieve FORM params
 	$callback = $_GET['callback'];

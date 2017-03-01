@@ -1,5 +1,6 @@
 <?php
 	/* To get distinct test names */
+	include_once('test-result.inc');
 
 	// Retrieve FORM param
 	$callback = $_GET['callback'];

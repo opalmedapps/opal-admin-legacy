@@ -1,6 +1,7 @@
 <?php
 
 	/* To insert a newly created alias */
+	include_once('alias.inc');
 
 	// Retrieve FORM params
 	$aliasName_EN	= $_POST['name_EN'];

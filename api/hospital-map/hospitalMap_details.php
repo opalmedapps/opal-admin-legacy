@@ -1,5 +1,6 @@
 <?php
 	/* To get details on a particular hospital map */
+	include_once('hospital-map.inc');
 
 	// Retrieve FORM params
 	$callback = $_GET['callback'];

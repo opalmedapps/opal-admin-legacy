@@ -1,8 +1,7 @@
 <?php 
 
-	/* To call Test Result Object to update when the "Publish Flag" checkbox
-	 * has been changed
-	 */
+	/* To call Test Result Object to update when the "Publish Flag" checkbox has been changed */
+	include_once('test-result.inc');
 
 	$testResultObject = new TestResult; // Object
 

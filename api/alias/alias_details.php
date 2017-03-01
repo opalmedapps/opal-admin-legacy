@@ -1,5 +1,7 @@
 <?php
+
 	/* To get details on a particular alias */
+	include_once('alias.inc');
 
 	// Retrieve FORM params
 	$callback = $_GET['callback'];

@@ -2,6 +2,8 @@
 
 	/* To get a list of existing alias */
 
+	include_once('alias.inc');
+
 	// Retrieve FORM param
 	$callback = $_GET['callback'];
 
