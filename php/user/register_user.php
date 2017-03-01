@@ -1,5 +1,6 @@
 <?php
 	/* To insert a newly created user */
+	include_once('user.inc');
 
 	$userArray = array(
 		'username'		=> $_POST['username'],

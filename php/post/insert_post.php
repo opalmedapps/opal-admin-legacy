@@ -1,6 +1,7 @@
 <?php
 
 	/* To insert a newly created post */
+	include_once('post.inc');
 
 	// Construct array
 	$postArray	= array(

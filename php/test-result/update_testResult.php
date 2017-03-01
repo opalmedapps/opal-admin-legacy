@@ -1,6 +1,7 @@
 <?php 
 
-	/* To update an edu material for any changes */
+	/* To update a test result for any changes */
+    include_once('test-result.inc');
 
     $testResult = new TestResult; // Object
 

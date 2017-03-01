@@ -363,13 +363,15 @@ sub getTestResultsFromSourceDB
 
 		my $patientSer		    = $Patient->getPatientSer(); # get patient serial
 		my $patientSSN    		= $Patient->getPatientSSN(); # get ssn
-        my $sourceDBSer         = $Patient->getPatientSourceDatabaseSer(); 
 		my $lasttransfer	    = $Patient->getPatientLastTransfer(); # get last updated
 
-        # ARIA
-        if ($sourceDBSer eq 1) {
+        ######################################
+	    # ARIA
+	    ######################################
+        my $sourceDBSer = 1; # ARIA
+	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+        if ($sourceDatabase) {
 
-            my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
             my $trInfo_sql = "
                 SELECT DISTINCT
                     tr.pt_id,
@@ -396,7 +398,6 @@ sub getTestResultsFromSourceDB
                     tr.pt_id                = pt.pt_id
                 AND pt.patient_ser          = Patient.PatientSer
                 AND Patient.SSN      		LIKE '$patientSSN%'
-                --AND Patient.PatientId     = '1092300'
                 AND tr.trans_log_mtstamp    > '$lasttransfer'
 
             ";
@@ -450,6 +451,68 @@ sub getTestResultsFromSourceDB
                 $testresult->setTestResultValidEntry($validentry);
            
                 push(@TRList, $testresult);
+            }
+
+            $sourceDatabase->disconnect();
+
+        }
+
+        ######################################
+	    # MediVisit
+	    ######################################
+	    my $sourceDBSer = 2; # MediVisit
+	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+        if ($sourceDatabase) {
+
+        	my $trInfo_sql = "SELECT 'QUERY_HERE'";
+
+        	# prepare query
+	    	my $query = $sourceDatabase->prepare($trInfo_sql)
+		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+    		# execute query
+	    	$query->execute()
+		    	or die "Could not execute query: " . $query->errstr;
+
+    		$data = $query->fetchall_arrayref(); 
+            foreach my $row (@$data) {
+
+                #my $testresult = new TestResult(); # uncomment for use
+
+                # use setters to set appropriate test result information from query
+
+                #push(@TRList, $testresult); # uncomment for use
+            }
+
+            $sourceDatabase->disconnect();
+
+        }
+
+        ######################################
+	    # MOSAIQ
+	    ######################################
+	    my $sourceDBSer = 3; # MOSAIQ
+	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+        if ($sourceDatabase) {
+
+        	my $trInfo_sql = "SELECT 'QUERY_HERE'";
+
+        	# prepare query
+	    	my $query = $sourceDatabase->prepare($trInfo_sql)
+		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+    		# execute query
+	    	$query->execute()
+		    	or die "Could not execute query: " . $query->errstr;
+
+    		$data = $query->fetchall_arrayref(); 
+            foreach my $row (@$data) {
+
+                #my $testresult = new TestResult(); # uncomment for use
+
+                # use setters to set appropriate test result information from query
+
+                #push(@TRList, $testresult); # uncomment for use
             }
 
             $sourceDatabase->disconnect();

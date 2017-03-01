@@ -1,6 +1,7 @@
 <?php
 
 	/* To update a user's password */
+	include_once('user.inc');
 
 	$userObject = new Users; 
 

@@ -1,5 +1,5 @@
   <div id="main">
-    <div id="top" ng-if="isAuthorized([userRoles.admin])">
+    <div id="top">
       <div class="clearfix">
         <div class="row">
           <div class="col-md-2" style="position:fixed;">
@@ -13,7 +13,7 @@
                 </div>
               </div>   
             </div>  
-            <div ng-show="validSSN.status=='valid'" class="row">
+            <div ng-show="validPatientSearch == 'valid'" class="row">
               <div class="side-menu-title">
                 <div class="horz-line" style="height: 10px; text-align: center">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -22,13 +22,13 @@
                 </div>  
               </div>
             </div>
-            <div ng-show="validSSN.status=='valid'" class="row">
+            <div ng-show="validPatientSearch == 'valid'" class="row">
               <div class="progress progress-striped active">
                 <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
                 </div>
               </div>
             </div>
-            <div ng-show="validSSN.status=='valid'" class="panel-container">
+            <div ng-show="validPatientSearch == 'valid'" class="panel-container">
               <div class="panel-info">
                 <div class="panel-content" style="padding-top: 0">
                   <table class="summary-box" style="width: 100%">
@@ -141,8 +141,6 @@
               </div>
             </div>
 
-
-
             <div class="panel-container animated" ng-class="{pulse: hoverA}" ng-mouseenter="hoverA=true" ng-mouseleave="hoverA=false" style="cursor:pointer;" ng-click="goBack()">
               <div class="side-panel-info">
                 <div class="panel-content" style="text-align:center">
@@ -173,7 +171,7 @@
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="glyphicon glyphicon-menu-down"></span>
-                    <h2>Registration SSN</h2>
+                    <h2>Registration Search</h2>
                   </span>  
                 </div>  
               </div>
@@ -181,33 +179,58 @@
             <div class="row">
               <div class="col-md-10">
                 <p style="margin-bottom: 10px;">
-                  Please enter a <strong>12-character</strong> Medicare card number to start the registration process.
+                  Please enter a valid <strong>12-character</strong> Medicare card number along with the <strong>patient ID</strong> to start the registration process.
                 </p>
               </div>
-            </div> 
+            </div>
             <div class="row" style="margin-bottom: 20px;">
-              <div class="col-md-8 form-horizontal">
-                <form ng-submit="validateSSN(validSSN.SSN)">
-                  <div class="form-group has-feedback" ng-class="{'has-success': validSSN.status=='valid', 'has-error': validSSN.status=='invalid', 'has-warning': validSSN.status=='warning'}">
-                    <div class="col-md-5">
-                      <input type="text" class="form-control" required="required" ng-change="flushNewPatient()" ng-model="validSSN.SSN" placeholder="Enter Medicare Card Number" maxlength="20">
-                      <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':validSSN.status=='valid', 'glyphicon-remove':validSSN.status=='invalid', 'glyphicon-warning-sign':validSSN.status=='warning'}" aria-hidden="true"></span>
-                    </div>
-                    <div class="col-md-1" style="padding-left:0px;">
-                    	<div>
-                    		<button class="btn btn-primary" type="submit">
-                    			<span class="glyphicon glyphicon-search"></span> Search
-                    		</button>
-                    	</div>
-                    </div>
-                    <em class="control-label col-md-4" ng-show="validSSN.status" ng-class="{'has-error': validSSN.status == 'invalid', 'has-success': validSSN.status == 'valid'}" style="text-align:left; padding-left:10px;">
-                      {{validSSN.message}}
-                    </em>
-                  </div>
-                </form>
+              <div class="col-md-6">
+                <uib-accordion>
+                  <uib-accordion-group is-open="accordionOpen">
+                    <uib-accordion-heading>
+                      <div>
+                        Medicare Card Number & Patient MRN <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': accordionOpen, 'glyphicon-chevron-right': !accordionOpen}"></i>
+                      </div>
+                    </uib-accordion-heading>
+                    <div class="form-horizontal">
+                      <div class="form-group has-feedback" ng-class="{'has-success': validSSN.status == 'valid', 'has-error': validSSN.status == 'invalid', 'has-warning': validSSN.status == 'warning'}">
+                        <label class="control-label col-md-2">
+                          Medicare Card Number
+                        </label>
+                        <div class="col-md-10">
+                          <input type="text" class="form-control" required="required" ng-change="validateSSN(validSSN.SSN)" ng-model="validSSN.SSN" placeholder="Enter Medicare Card Number" maxlength="20">
+                          <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':validSSN.status=='valid', 'glyphicon-remove':validSSN.status=='invalid', 'glyphicon-warning-sign':validSSN.status=='warning'}" aria-hidden="true"></span>
+                        </div>
+                      </div>
+                      <div class="form-group has-feedback" ng-class="{'has-success': validPatientId.status == 'valid', 'has-error': validPatientId.status == 'invalid' || validPatientSearch == 'invalid', 'has-warning': validPatientId.status == 'warning' || validPatientSearch == 'warning'}">
+                        <label class="control-label col-md-2">
+                          MRN
+                        </label>
+                        <div class="col-md-10">
+                          <input type="text" class="form-control" required="required" ng-change="validatePatientId(validPatientId.id)" ng-model="validPatientId.id" placeholder="Enter MRN" maxlength="20">
+                          <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':validPatientId.status=='valid', 'glyphicon-remove':validPatientId.status=='invalid' || validPatientSearch == 'invalid', 'glyphicon-warning-sign':validPatientId.status=='warning' || validPatientSearch == 'warning'}" aria-hidden="true"></span>
+                        </div>
+                      </div>
+                      <div class="form-group has-feedback" ng-class="{'has-success': validSSN.status == 'valid', 'has-error': validSSN.status == 'invalid', 'has-warning': validSSN.status == 'warning'}">
+                        <div class="col-md-10 control-label" style="padding-top:18px;">
+                          <em ng-show="validSSN.status" ng-class="{'has-error': validSSN.status == 'invalid', 'has-success': validSSN.status == 'valid', 'has-warning': validSSN.status == 'warning'}" style="text-align:left; padding-left:10px;">
+                            {{validSSN.message}}
+                          </em>
+                        </div>
+                        <div class="col-md-2">
+                          <div class="table-buttons" style="text-align: right">
+                            <button class="btn btn-primary" ng-class="{'disabled': !validSearchForm()}" ng-click="validatePatientSearch()">
+                              <span class="glyphicon glyphicon-search"></span> Search
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>  
+                  </uib-accordion-group>
+                </uib-accordion>
               </div>
             </div>
-            <div ng-show="validSSN.status=='valid'">
+            <div ng-show="validPatientSearch == 'valid'">
               <div style="margin-bottom:20px; color:#3c763d;">
                 <h1><strong>--- Patient: <em>{{newPatient.data.lastname}}, {{newPatient.data.firstname}}</em></strong></h1>
               </div>
@@ -462,6 +485,46 @@
         </div>
       </div>
     </div>
-    <div class="bannerMessage alert-success">{{bannerMessage}}</div>
   </div>
-                 
+
+  <script type="text/ng-template" id="confirmRegistrationModalContent.htm"> 
+    <div class="form-box animated" ng-class="{'pulse': !formLoaded}">
+      <p class="login-title">
+        <span>Please confirm the registration</span>
+      </p>  
+      <div id="block-system-main" class="login-register-block-main">
+        <div class="login-content clearfix">
+          <form ng-submit="confirmRegistration(credentials)" method="post">
+            <div class="row clearfix" style="margin-top:20px; margin-bottom:20px;">
+              <div class="col-md-12">
+                <label>Username</label>
+                <div class="input-group">
+                  <span class="input-group-addon">U</span>
+                  <input type="text" class="form-control" required="required" ng-model="credentials.username">    
+                </div>
+              </div>
+            </div>
+            <div class="row" style="margin-bottom:20px;">    
+              <div class="col-md-12">
+                <label>Password</label>
+                <div class="input-group">
+                  <span class="input-group-addon">P</span>
+                  <input type="password" class="form-control" required="required" ng-model="credentials.password">    
+
+                </div>
+              </div>
+            </div>  
+            <div class="table-buttons" style="text-align:right">
+              
+                  <input class="btn btn-success" ng-class="{'disabled': !loginFormComplete()}" type="submit" value="Confirm">
+                  <input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="bannerMessage alert-success">{{bannerMessage}}</div>
+
+  </script>
+
+

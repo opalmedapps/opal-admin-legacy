@@ -133,14 +133,14 @@ class Patient {
      *
      * @return array $patientResponse : patient information or response
      */  
-    public function findPatient($ssn) {
+    public function findPatient($ssn, $id) {
         $patientResponse = array(
             'message'   => '',
             'status'    => '',
             'data'      => ''
         );
         try{
-            $aria_link = new PDO( SOURCE_DB_DSN , SOURCE_DB_USERNAME, SOURCE_DB_PASSWORD );
+            $aria_link = new PDO( ARIA_DB_DSN , ARIA_DB_USERNAME, ARIA_DB_PASSWORD );
             $aria_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -153,7 +153,8 @@ class Patient {
                 FROM
                     Patient
                 WHERE
-                    Patient.SSN LIKE '$ssn%'
+                    Patient.SSN         LIKE '$ssn%'
+                AND Patient.PatientId   = '$id'
                 LIMIT 1
             ";
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -186,7 +187,8 @@ class Patient {
                 LEFT JOIN variansystem.dbo.Photo ph 
                 ON ph.PatientSer = pt.PatientSer
                 WHERE
-                    pt.SSN LIKE '$ssn%'
+                    pt.SSN          LIKE '$ssn%'
+                AND pt.PatientId    = '$id'
             ";
             $query = $aria_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
             $query->execute();

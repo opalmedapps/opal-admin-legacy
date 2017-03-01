@@ -1,6 +1,7 @@
 <?php 
 
 	/* To update an alias for any changes */
+	include_once('alias.inc');
 
 	$aliasObject = new Alias; // Object 
 

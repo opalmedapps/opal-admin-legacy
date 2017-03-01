@@ -1,5 +1,6 @@
 <?php
 	/* To get a list of existing test result groups */
+	include_once('test-result.inc');
 
 	// Retrieve FORM param
 	$callback = $_GET['callback'];

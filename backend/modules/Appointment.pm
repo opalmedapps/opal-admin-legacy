@@ -359,7 +359,9 @@ sub getApptsFromSourceDB
             my @expressions         = $Alias->getAliasExpressions(); 
             my $sourceDBSer         = $Alias->getAliasSourceDatabaseSer();
 
-            # ARIA
+            ######################################
+		    # ARIA
+		    ######################################
             if ($sourceDBSer eq 1) {
 
                 my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
@@ -464,11 +466,12 @@ sub getApptsFromSourceDB
                 $sourceDatabase->disconnect();
             }
 
-            # WaitRoomManagement
+            ######################################
+		    # MediVisit
+		    ######################################
             if ($sourceDBSer eq 2) {
 
                 my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-
                 my $numOfExpressions = @expressions; 
                 my $counter = 0;
                 my $apptInfo_sql = "";
@@ -543,7 +546,64 @@ sub getApptsFromSourceDB
 
                 $sourceDatabase->disconnect();
             }
-       
+
+            ######################################
+		    # MOSAIQ
+		    ######################################
+            if ($sourceDBSer eq 3) {
+
+                my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+                my $numOfExpressions = @expressions; 
+                my $counter = 0;
+                my $apptInfo_sql = "";
+
+                foreach my $Expression (@expressions) {
+
+                	my $expressionser = $Expression->{_ser};
+                	my $expressionName = $Expression->{_name};
+                	my $expressionLastTransfer = $Expression->{_lasttransfer};
+                	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
+
+                	# compare last updates to find the earliest date 
+		            # get the diff in seconds
+		            my $date_diff = $formatted_PLU - $formatted_ELU;
+		            if ($date_diff < 0) {
+		                $lasttransfer = $patientLastTransfer;
+		            } else {
+		                $lasttransfer = $expressionLastTransfer;
+		            }
+
+		            $apptInfo_sql .= "SELECT 'QUERY_HERE' ";
+
+		            $counter++;
+	        		# concat "UNION" until we've reached the last query
+	        		if ($counter < $numOfExpressions) {
+	        			$taskInfo_sql .= "UNION";
+	        		}
+	        	}
+
+	        	# prepare query
+    		    my $query = $sourceDatabase->prepare($apptInfo_sql)
+	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+    		    # execute query
+        		$query->execute()
+	        		or die "Could not execute query: " . $query->errstr;
+
+                my $data = $query->fetchall_arrayref();
+        		foreach my $row (@$data) {
+		
+	        		#my $appointment = new Appointment(); # uncomment for use
+
+	        		# use setters to set appropriate appointment information from query
+
+	        		#push(@apptList, $appointment); # uncomment for use
+		    		
+                }
+	    	 				
+	    	 	$sourceDatabase->disconnect();
+	    	}
+
         }
 	}
 
@@ -696,10 +756,12 @@ sub getApptInfoFromSourceDB
 	my ($priorityser, $diagnosisser);
     my ($status, $state, $actualstartdate, $actualenddate);
 
+    ######################################
     # ARIA
+    ######################################
     if ($apptSourceDBSer eq 1) {
                 
-        my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
+        my $sourceDatabase	= Database::connectToSourceDatabase($apptSourceDBSer);
     	my $apptInfo_sql = "
 	    	SELECT DISTINCT
 		    	vva.Expression1,
@@ -776,10 +838,12 @@ sub getApptInfoFromSourceDB
 
     }
 
-    # WaitRoomManagement
+    ######################################
+    # MediVisit
+    ######################################
     if ($apptSourceDBSer eq 2) {
 
-        my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+        my $sourceDatabase = Database::connectToSourceDatabase($apptSourceDBSer);
         my $apptInfo_sql = "
             SELECT DISTINCT
                 mval.AppointmentCode,
@@ -823,6 +887,31 @@ sub getApptInfoFromSourceDB
         }
 
         $sourceDatabase->disconnect();
+    }
+
+    ######################################
+    # MOSAIQ
+    ######################################
+    if ($apptSourceDBSer eq 3) {
+
+    	my $sourceDatabase = Database::connectToSourceDatabase($apptSourceDBSer);
+        my $apptInfo_sql = "SELECT 'QUERY_HERE'";
+
+        my $query = $sourceDatabase->prepare($apptInfo_sql)
+	    	or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+        # execute query
+    	$query->execute()
+	        or die "Could not execute query: " . $query->errstr;
+
+        my $data = $query->fetchall_arrayref();
+    	foreach my $row (@$data) {
+
+    		# use setters to set appropriate appointment information from query
+
+    	}
+
+    	$sourceDatabase->disconnect();
     }
 
 	return $appointment;
