@@ -1,6 +1,7 @@
 <?php
 
 	/* To delete an educational material */
+	include_once('educational-material.inc');
 
 	$eduMat = new EduMaterial; // Object
 

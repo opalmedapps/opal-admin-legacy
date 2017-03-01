@@ -196,10 +196,13 @@ sub getAliasesMarkedForUpdate
 			Alias.LastTransferred,
             Alias.SourceDatabaseSerNum
 		FROM
-			Alias
+			Alias,
+			SourceDatabase
 		WHERE
-			Alias.AliasUpdate	= 1
-		AND	Alias.AliasType		= \"$aliasType\"
+			Alias.AliasUpdate			= 1
+		AND	Alias.AliasType				= \"$aliasType\"
+		AND Alias.SourceDatabaseSerNum 	= SourceDatabase.SourceDatabaseSerNum
+		AND SourceDatabase.Enabled 		= 1
 	";
 
     

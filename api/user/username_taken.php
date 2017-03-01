@@ -1,6 +1,7 @@
 <?php
 
 	/* Determine if username is taken */
+	include_once('user.inc');
 
 	// Retrieve FORM param
 	$callback = $_GET['callback'];

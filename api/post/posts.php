@@ -1,5 +1,6 @@
 <?php
 	/* To get a list of existing posts */
+	include_once('post.inc');
 
 	// Retrieve FORM param
 	$callback = $_GET['callback'];

@@ -30,11 +30,6 @@ use PushNotification; # Custom PushNotification.pm
 #---------------------------------------------------------------------------------
 my $SQLDatabase		= $Database::targetDatabase;
 
-#-----------------------------------------------------------------------
-# FTP Object
-#-----------------------------------------------------------------------
-my $ftpObject = $FTP::ftpObject;
-
 #====================================================================================
 # Constructor for our Docs class 
 #====================================================================================
@@ -424,7 +419,9 @@ sub getDocsFromSourceDB
             my $sourceDBSer         = $Alias->getAliasSourceDatabaseSer();
             my @expressions         = $Alias->getAliasExpressions(); 
 
-            # ARIA
+            ######################################
+		    # ARIA
+		    ######################################
             if ($sourceDBSer eq 1) {
 
                 my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
@@ -537,6 +534,118 @@ sub getDocsFromSourceDB
 
                 $sourceDatabase->disconnect();
             }
+
+            ######################################
+		    # MediVisit
+		    ######################################
+            if ($sourceDBSer eq 2) {
+
+                my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+                my $numOfExpressions = @expressions; 
+                my $counter = 0;
+                my $docInfo_sql = "";
+
+                foreach my $Expression (@expressions) {
+
+                	my $expressionser = $Expression->{_ser};
+                	my $expressionName = $Expression->{_name};
+                	my $expressionLastTransfer = $Expression->{_lasttransfer};
+                	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
+
+                	# compare last updates to find the earliest date 
+		            # get the diff in seconds
+		            my $date_diff = $formatted_PLU - $formatted_ELU;
+		            if ($date_diff < 0) {
+		                $lasttransfer = $patientLastTransfer;
+		            } else {
+		                $lasttransfer = $expressionLastTransfer;
+		            }
+        		
+	        		$docInfo_sql .= "SELECT 'QUERY_HERE' ";
+
+	        		$counter++;
+	        		# concat "UNION" until we've reached the last query
+	        		if ($counter < $numOfExpressions) {
+	        			$docInfo_sql .= "UNION";
+	        		}
+	        	}
+    	    	# prepare query
+	    	    my $query = $sourceDatabase->prepare($docInfo_sql)
+		    	    or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+    		    # execute query
+    	    	$query->execute()
+	    	    	or die "Could not execute query: " . $query->errstr;
+    
+                my $data = $query->fetchall_arrayref();
+	        	foreach my $row (@$data) {
+
+		        	#my $document = new Document(); # uncomment for use
+
+		        	# use setters to set appropriate document information from query
+
+		        	#push(@docList, $document); # uncomment for use
+        		}
+
+                $sourceDatabase->disconnect();
+            }
+
+            ######################################
+		    # MOSAIQ
+		    ######################################
+            if ($sourceDBSer eq 3) {
+
+                my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+                my $numOfExpressions = @expressions; 
+                my $counter = 0;
+                my $docInfo_sql = "";
+
+                foreach my $Expression (@expressions) {
+
+                	my $expressionser = $Expression->{_ser};
+                	my $expressionName = $Expression->{_name};
+                	my $expressionLastTransfer = $Expression->{_lasttransfer};
+                	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
+
+                	# compare last updates to find the earliest date 
+		            # get the diff in seconds
+		            my $date_diff = $formatted_PLU - $formatted_ELU;
+		            if ($date_diff < 0) {
+		                $lasttransfer = $patientLastTransfer;
+		            } else {
+		                $lasttransfer = $expressionLastTransfer;
+		            }
+        		
+	        		$docInfo_sql .= "SELECT 'QUERY_HERE' ";
+
+	        		$counter++;
+	        		# concat "UNION" until we've reached the last query
+	        		if ($counter < $numOfExpressions) {
+	        			$docInfo_sql .= "UNION";
+	        		}
+	        	}
+    	    	# prepare query
+	    	    my $query = $sourceDatabase->prepare($docInfo_sql)
+		    	    or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+    		    # execute query
+    	    	$query->execute()
+	    	    	or die "Could not execute query: " . $query->errstr;
+    
+                my $data = $query->fetchall_arrayref();
+	        	foreach my $row (@$data) {
+
+		        	#my $document = new Document(); # uncomment for use
+
+		        	# use setters to set appropriate document information from query
+
+		        	#push(@docList, $document); # uncomment for use
+        		}
+
+                $sourceDatabase->disconnect();
+            }
+
+
         }
 	}
 
@@ -662,6 +771,13 @@ sub transferPatientDocuments
 
         my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
 
+        my $ftpObject = FTP::getFTPCredentials($sourceDBSer);
+
+        # Exit if ftp is not defined (no clincial directory)
+        if (!$ftpObject) {
+        	next;
+        }
+
 		# check if document log exists in our database
 		my $DocExists = $Document->inOurDatabase();
 
@@ -707,29 +823,74 @@ sub transferPatientDocuments
             		my $lastModUser;
             		my $lastModTimeStamp;
 
-            		my $last_mod_sql = "
-			            SELECT 
-            				visit_note.trans_log_mtstamp,
-			            	RTRIM(visit_note.trans_log_muserid)
-            			FROM
-			            	varianenm.dbo.visit_note visit_note
-            			WHERE
-			            	visit_note.doc_file_loc = '$finalfileloc'
-            		";
+            		######################################
+				    # ARIA
+				    ######################################
+				    if (sourceDBSer eq 1) {
+	            		my $last_mod_sql = "
+				            SELECT 
+	            				visit_note.trans_log_mtstamp,
+				            	RTRIM(visit_note.trans_log_muserid)
+	            			FROM
+				            	varianenm.dbo.visit_note visit_note
+	            			WHERE
+				            	visit_note.doc_file_loc = '$finalfileloc'
+	            		";
 
-            		# prepare query
-            		my $query = $sourceDatabase->prepare($last_mod_sql)
-            			or die "Could not prepare query: " . $sourceDatabase->errstr;
+	            		# prepare query
+	            		my $query = $sourceDatabase->prepare($last_mod_sql)
+	            			or die "Could not prepare query: " . $sourceDatabase->errstr;
 
-            		# execute query
-            		$query->execute()
-			            or die "Could not execute query: " . $query->errstr;
+	            		# execute query
+	            		$query->execute()
+				            or die "Could not execute query: " . $query->errstr;
 
-            		while (my @data = $query->fetchrow_array()) {
-			    
-            			$lastModTimeStamp	= convertDateTime($data[0]);
-            			$lastModUser		= Staff::reassignStaff($data[1], $sourceDBSer);
-            		}
+	            		while (my @data = $query->fetchrow_array()) {
+				    
+	            			$lastModTimeStamp	= convertDateTime($data[0]);
+	            			$lastModUser		= Staff::reassignStaff($data[1], $sourceDBSer);
+	            		}
+	            	}
+
+	            	######################################
+				    # MediVisit
+				    ######################################
+				    if (sourceDBSer eq 2) {
+	            		my $last_mod_sql = "SELECT 'QUERY_HERE'";
+
+	            		# prepare query
+	            		my $query = $sourceDatabase->prepare($last_mod_sql)
+	            			or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+	            		# execute query
+	            		$query->execute()
+				            or die "Could not execute query: " . $query->errstr;
+
+	            		while (my @data = $query->fetchrow_array()) {
+				    		# set appropriate last modification information from query
+
+				    	}
+				    }
+
+				    ######################################
+				    # MOSAIQ
+				    ######################################
+				    if (sourceDBSer eq 3) {
+	            		my $last_mod_sql = "SELECT 'QUERY_HERE'";
+
+	            		# prepare query
+	            		my $query = $sourceDatabase->prepare($last_mod_sql)
+	            			or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+	            		# execute query
+	            		$query->execute()
+				            or die "Could not execute query: " . $query->errstr;
+
+	            		while (my @data = $query->fetchrow_array()) {
+				    		# set appropriate last modification information from query
+
+				    	}
+				    }
 
                     # create an error file
                     my $sourceErrorFile = "$localDir/$finalfilenum.err";
@@ -814,29 +975,75 @@ END
             		my $lastModUser;
             		my $lastModTimeStamp;
 
-            		my $last_mod_sql = "
-			            SELECT 
-            				visit_note.trans_log_mtstamp,
-			            	RTRIM(visit_note.trans_log_muserid)
-            			FROM
-			            	varianenm.dbo.visit_note visit_note
-            			WHERE
-			            	visit_note.doc_file_loc = '$finalfileloc'
-            		";
+            		######################################
+				    # ARIA
+				    ######################################
+				    if (sourceDBSer eq 1) {
 
-            		# prepare query
-            		my $query = $sourceDatabase->prepare($last_mod_sql)
-            			or die "Could not prepare query: " . $sourceDatabase->errstr;
+	            		my $last_mod_sql = "
+				            SELECT 
+	            				visit_note.trans_log_mtstamp,
+				            	RTRIM(visit_note.trans_log_muserid)
+	            			FROM
+				            	varianenm.dbo.visit_note visit_note
+	            			WHERE
+				            	visit_note.doc_file_loc = '$finalfileloc'
+	            		";
 
-            		# execute query
-            		$query->execute()
-			            or die "Could not execute query: " . $query->errstr;
+	            		# prepare query
+	            		my $query = $sourceDatabase->prepare($last_mod_sql)
+	            			or die "Could not prepare query: " . $sourceDatabase->errstr;
 
-            		while (my @data = $query->fetchrow_array()) {
-			    
-            			$lastModTimeStamp	= convertDateTime($data[0]);
-            			$lastModUser		= Staff::reassignStaff($data[1], $sourceDBSer);
-            		}
+	            		# execute query
+	            		$query->execute()
+				            or die "Could not execute query: " . $query->errstr;
+
+	            		while (my @data = $query->fetchrow_array()) {
+				    
+	            			$lastModTimeStamp	= convertDateTime($data[0]);
+	            			$lastModUser		= Staff::reassignStaff($data[1], $sourceDBSer);
+	            		}
+	            	}
+
+            		######################################
+				    # MediVisit
+				    ######################################
+				    if (sourceDBSer eq 2) {
+	            		my $last_mod_sql = "SELECT 'QUERY_HERE'";
+
+	            		# prepare query
+	            		my $query = $sourceDatabase->prepare($last_mod_sql)
+	            			or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+	            		# execute query
+	            		$query->execute()
+				            or die "Could not execute query: " . $query->errstr;
+
+	            		while (my @data = $query->fetchrow_array()) {
+				    		# set appropriate last modification information from query
+
+				    	}
+				    }
+
+				    ######################################
+				    # MOSAIQ
+				    ######################################
+				    if (sourceDBSer eq 3) {
+	            		my $last_mod_sql = "SELECT 'QUERY_HERE'";
+
+	            		# prepare query
+	            		my $query = $sourceDatabase->prepare($last_mod_sql)
+	            			or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+	            		# execute query
+	            		$query->execute()
+				            or die "Could not execute query: " . $query->errstr;
+
+	            		while (my @data = $query->fetchrow_array()) {
+				    		# set appropriate last modification information from query
+
+				    	}
+				    }
 
                     # create an error file
                     my $sourceErrorFile = "$localDir/$finalfilenum.err";

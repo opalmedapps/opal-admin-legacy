@@ -176,14 +176,16 @@ sub getPrioritiesFromSourceDB
 
 		my $patientSer		    = $Patient->getPatientSer(); # get patient ser
 		my $patientSSN			= $Patient->getPatientSSN(); # get patient ssn
-        my $sourceDBSer         = $Patient->getPatientSourceDatabaseSer();
 		my $lastTransfer        = $Patient->getPatientLastTransfer(); # get last updated
 
-        # ARIA
-        if ($sourceDBSer eq 1) {
+        ######################################
+	    # ARIA
+	    ######################################
+	    my $sourceDBSer = 1; # ARIA
+	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+        if ($sourceDatabase) {
 
-            my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-    		my $priorInfo_sql = "
+        	my $priorInfo_sql = "
 	    		SELECT DISTINCT
 		    		nsa.NonScheduledActivitySer,
 			    	nsa.DueDateTime,
@@ -233,6 +235,66 @@ sub getPrioritiesFromSourceDB
 
             $sourceDatabase->disconnect();
         }
+
+        ######################################
+	    # MediVisit
+	    ######################################
+	    my $sourceDBSer = 2; # MediVisit
+	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+        if ($sourceDatabase) {
+
+        	my $priorInfo_sql = "SELECT 'QUERY_HERE'";
+
+        	# prepare query
+	    	my $query = $sourceDatabase->prepare($priorInfo_sql)
+		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+    		# execute query
+	    	$query->execute()
+		    	or die "Could not execute query: " . $query->errstr;
+    
+	    	my $data = $query->fetchall_arrayref();
+		    foreach my $row (@$data) {
+
+		    	#my $priority = new Priority(); # uncomment for use
+
+		    	# use setters to set appropriate priority information from query
+
+		    	#push(@priorityList, $priority); # uncomment for use
+		    }
+
+		    $sourceDatabase->disconnect();
+		}
+
+		######################################
+	    # MOSAIQ
+	    ######################################
+	    my $sourceDBSer = 3; # MOSAIQ
+	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+        if ($sourceDatabase) {
+
+        	my $priorInfo_sql = "SELECT 'QUERY_HERE'";
+
+        	# prepare query
+	    	my $query = $sourceDatabase->prepare($priorInfo_sql)
+		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+    		# execute query
+	    	$query->execute()
+		    	or die "Could not execute query: " . $query->errstr;
+    
+	    	my $data = $query->fetchall_arrayref();
+		    foreach my $row (@$data) {
+
+		    	#my $priority = new Priority(); # uncomment for use
+
+		    	# use setters to set appropriate priority information from query
+
+		    	#push(@priorityList, $priority); # uncomment for use
+		    }
+
+		    $sourceDatabase->disconnect();
+		}
 
     
 	}

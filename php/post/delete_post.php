@@ -1,6 +1,7 @@
 <?php
 
 	/* To delete a post */
+	include_once('post.inc');
 
 	$post = new Post; // Object
 
