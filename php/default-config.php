@@ -61,6 +61,7 @@
 	include_once( FRONTEND_ABS_PATH . "php/classes/CrontabManager.php" );
 	include_once( FRONTEND_ABS_PATH . "php/classes/Patient.php" );
 	include_once( FRONTEND_ABS_PATH . "php/classes/TestResult.php" );
+	include_once( FRONTEND_ABS_PATH . "php/classes/Install.php" );
 
 	// Push Notification FCM and APN credientials.
     define( "API_KEY" , "API_KEY_HERE" );
