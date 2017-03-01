@@ -1,5 +1,6 @@
 <?php
 	/* To get a list of *unused* notification types */
+	include_once('notification.inc');
 
 	// Retrieve FORM param
 	$callback = $_GET['callback'];

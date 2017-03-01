@@ -7,7 +7,7 @@
                 <h1>opal <strong>ADMIN</strong> </h1>
               </div>
             </div>      
-            <div class="row" ng-if="isAuthorized([userRoles.admin])">
+            <div class="row">
               <div class="side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -17,7 +17,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row side-panel-menu" ng-if="isAuthorized([userRoles.admin])">            
+            <div class="row side-panel-menu">            
               <div class="col-md-6" ng-if="isAuthorized([userRoles.admin])">   
                 <div class="panel-container animated" ng-class="{pulse: hoverC, active: currentPage == 'alias'}" ng-mouseenter="hoverC=true" ng-mouseleave="hoverC=false" style="cursor:pointer;" ng-click="goToAlias()">
                   <div class="side-panel-info" ng-class="{active: currentPage == 'alias'}">
@@ -79,7 +79,7 @@
                 </div>
               </div>
             </div>
-            <div class="row" ng-if="isAuthorized([userRoles.admin])">
+            <div class="row">
               <div class="side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -89,7 +89,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row side-panel-menu" ng-if="isAuthorized([userRoles.admin])">
+            <div class="row side-panel-menu">
               <div class="col-md-6" ng-if="isAuthorized([userRoles.admin])">
                 <div class="panel-container animated" ng-class="{pulse: hoverH, active: currentPage == 'cron'}" ng-mouseenter="hoverH=true" ng-mouseleave="hoverH=false" style="cursor:pointer;" ng-click="goToCron()">
                   <div class="side-panel-info" ng-class="{active: currentPage == 'cron'}">
@@ -100,7 +100,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-md-6" ng-if="isAuthorized([userRoles.admin])">
+              <div class="col-md-6" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
                 <div class="panel-container animated" ng-class="{pulse: hoverI, active: currentPage == 'patients'}" ng-mouseenter="hoverI=true" ng-mouseleave="hoverI=false" style="cursor:pointer;" ng-click="goToPatient()">
                   <div class="side-panel-info" ng-class="{active: currentPage == 'patients'}">
                     <div class="panel-content">
@@ -121,7 +121,7 @@
                 </div>
               </div>
             </div>
-            <div class="row" ng-if="isAuthorized([userRoles.admin])">
+            <div class="row">
               <div class="side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -131,8 +131,8 @@
                 </div>  
               </div>
             </div>   
-            <div class="row side-panel-menu" ng-if="isAuthorized([userRoles.admin])">
-              <div class="col-md-6" ng-if="isAuthorized([userRoles.admin])">
+            <div class="row side-panel-menu">
+              <div class="col-md-6" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
                 <div class="panel-container animated" ng-class="{pulse: hoverK, active: currentPage == 'account'}" ng-mouseenter="hoverK=true" ng-mouseleave="hoverK=false" style="cursor:pointer;" ng-click="goToAccount()">
                   <div class="side-panel-info" ng-class="{active: currentPage == 'account'}">
                     <div class="panel-content">

@@ -1,6 +1,7 @@
 <?php
 
 	/* To update a user details */
+	include_once('user.inc');
 
 	$userObject = new Users;
 

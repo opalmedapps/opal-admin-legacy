@@ -1,8 +1,7 @@
 <?php 
 
-	/* To call Post Object to update post when the "Publish Flag" checkbox
-	 * has been changed
-	 */
+	/* To call Post Object to update post when the "Publish Flag" checkbox has been changed */
+	include_once('post.inc');
 
 	$postObject = new Post; // Object
 

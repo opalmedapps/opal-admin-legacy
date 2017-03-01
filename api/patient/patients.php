@@ -1,5 +1,6 @@
 <?php
 	/* To get a list of existing patients */
+	include_once('patient.inc');
 
 	// Retrieve FORM param
 	$callback = $_GET['callback'];
