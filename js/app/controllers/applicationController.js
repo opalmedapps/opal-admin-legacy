@@ -20,10 +20,12 @@ angular.module('opalAdmin.controllers.applicationController', ['ui.bootstrap', '
 
  		$scope.inAuthLoginModal = false;
 
+ 		var pagesToIgnore = ['login','install'];
+
  		// Trigger on idle start
  		$scope.$on('IdleStart', function() {
 
- 			if ($state.current.name != 'login' && !$scope.inAuthLoginModal) {
+ 			if ( (pagesToIgnore.indexOf($state.current.name) === -1) && !$scope.inAuthLoginModal) {
 	 			$scope.warning = $uibModal.open({
 	 				templateUrl: 'templates/idle-warning-modal.html',
 	 				windowClass: 'modal-danger'
@@ -42,7 +44,7 @@ angular.module('opalAdmin.controllers.applicationController', ['ui.bootstrap', '
 
  			Session.destroy(); // destroy session 
 
- 			if ($state.current.name != 'login' && !$scope.inAuthLoginModal) {
+ 			if ( (pagesToIgnore.indexOf($state.current.name) === -1) && !$scope.inAuthLoginModal) {
 	 			loginModal() // open login modal
 				.then(function () {
 					$scope.startIdleWatch(); // Start idle watch again

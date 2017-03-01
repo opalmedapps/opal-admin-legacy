@@ -1,6 +1,7 @@
 <?php 
 
 	/* To update an edu material for any changes */
+    include_once('educational-material.inc');
 
     $eduMat = new EduMaterial; // Object
 

@@ -9,3 +9,4 @@ var URLPATH = "URLPATH_HERE";
 
 // Other global JS configs...
 
+var INSTALL_ACCESS = true;

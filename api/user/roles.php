@@ -1,5 +1,6 @@
 <?php
     /* To get a list of existing roles in our DB */
+    include_once('user.inc');
 
 	// Retrieve FORM params
 	$callback = $_GET['callback'];

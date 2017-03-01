@@ -192,7 +192,9 @@ sub getDoctorInfoFromSourceDB
 	# when we retrieve query results
 	my ($resourcesernum, $firstname, $lastname, $email);
 	
+    ######################################
     # ARIA
+    ######################################
     if ($doctorSourceDBSer eq 1) {
 
         my $sourceDatabase = Database::connectToSourceDatabase($doctorSourceDBSer);
@@ -235,7 +237,59 @@ sub getDoctorInfoFromSourceDB
     		$Doctor->setDoctorLastName($lastname);
             $Doctor->setDoctorEmail($email);
         }
+
+        $sourceDatabase->disconnect();
 	}
+
+	######################################
+    # MediVisit
+    ######################################
+    if ($doctorSourceDBSer eq 2) {
+
+        my $sourceDatabase = Database::connectToSourceDatabase($doctorSourceDBSer);
+    	my $doctor_sql = "SELECT 'QUERY_HERE'";
+
+    	# prepare query
+	    my $query = $sourceDatabase->prepare($doctor_sql)
+		    or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+    	# execute query
+	    $query->execute()
+		    or die "Could not execute query: " . $query->errstr;
+
+    	while (my @data = $query->fetchrow_array()) {
+
+    		# use setters to set appropriate doctor information from query
+
+    	}
+
+    	$sourceDatabase->disconnect();
+    }
+
+    ######################################
+    # MOSAIQ
+    ######################################
+    if ($doctorSourceDBSer eq 3) {
+
+        my $sourceDatabase = Database::connectToSourceDatabase($doctorSourceDBSer);
+    	my $doctor_sql = "SELECT 'QUERY_HERE'";
+
+    	# prepare query
+	    my $query = $sourceDatabase->prepare($doctor_sql)
+		    or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+    	# execute query
+	    $query->execute()
+		    or die "Could not execute query: " . $query->errstr;
+
+    	while (my @data = $query->fetchrow_array()) {
+
+    		# use setters to set appropriate doctor information from query
+
+    	}
+
+    	$sourceDatabase->disconnect();
+    }
 
 	return $Doctor;
 }

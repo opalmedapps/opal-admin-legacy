@@ -23,7 +23,8 @@ angular.module('opalAdmin.controllers', [
   'opalAdmin.controllers.patientActivityController',
   'opalAdmin.controllers.accountController',
   'opalAdmin.controllers.userController',
-  'opalAdmin.controllers.newUserController'
+  'opalAdmin.controllers.newUserController',
+  'opalAdmin.controllers.installationController'
 ]);
 
 	

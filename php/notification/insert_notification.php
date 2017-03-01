@@ -1,6 +1,7 @@
 <?php
 
 	/* To insert a newly created notification */
+    include_once('notification.inc');
 
     // Construct array
     $notification = array(

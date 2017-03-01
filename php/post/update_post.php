@@ -1,6 +1,7 @@
 <?php 
 
 	/* To update a post for any changes */
+	include_once('post.inc');
 
 	$postObject = new Post; // Object 
 

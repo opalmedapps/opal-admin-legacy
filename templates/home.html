@@ -11,7 +11,7 @@
             </div>
           </div>
         </div>    
-        <div class="row" style="margin-bottom: 20px;">
+        <div class="row" style="margin-bottom: 20px;" ng-if="isAuthorized([userRoles.admin])">
           <div class="col-md-2 animated slideInLeft">
             <div class="home-side-menu">
               <span class="glyphicon glyphicon-menu-right"></span>
@@ -123,7 +123,7 @@
             </div>
           </div> 
         </div>     
-        <div class="row" style="margin-bottom: 20px;">
+        <div class="row" style="margin-bottom: 20px;" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
           <div class="col-md-2 animated slideInLeft">
             <div class="home-side-menu">
               <span class="glyphicon glyphicon-menu-right"></span>
@@ -131,7 +131,7 @@
             </div>
           </div>
           <div class="col-md-10 animated fadeIn">
-            <div class="col-md-3">
+            <div class="col-md-3" ng-if="isAuthorized([userRoles.admin])">
               <div class="panel-container animated" ng-class="{pulse: hoverH}" ng-mouseenter="hoverH=true" ng-mouseleave="hoverH=false" style="cursor:pointer;" ng-click="goToCron()">
                 <div class="panel-info" style="height: 180px;">
                   <div class="panel-content">
@@ -148,7 +148,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
               <div class="panel-container animated" ng-class="{pulse: hoverI}" ng-mouseenter="hoverI=true" ng-mouseleave="hoverI=false" style="cursor:pointer;" ng-click="goToPatient()">
                 <div class="panel-info" style="height: 180px;">
                   <div class="panel-content">
@@ -165,7 +165,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3" ng-if="isAuthorized([userRoles.admin])">
               <div class="panel-container animated" ng-class="{pulse: hoverO}" ng-mouseenter="hoverO=true" ng-mouseleave="hoverO=false" style="cursor:pointer;" ng-click="goToPatientActivity()">
                 <div class="panel-info" style="height: 180px;">
                   <div class="panel-content">
@@ -209,7 +209,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3" ng-if="isAuthorized([userRoles.admin])">
               <div class="panel-container animated" ng-class="{pulse: hoverL}" ng-mouseenter="hoverL=true" ng-mouseleave="hoverL=false" style="cursor:pointer;" ng-click="goToUsers()">
                 <div class="panel-info" style="height: 180px;">
                   <div class="panel-content">

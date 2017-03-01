@@ -1,5 +1,6 @@
 <?php
 	/* To get a list of existing notification */
+	include_once('notification.inc');
 
 	// Retrieve FORM param
 	$callback = $_GET['callback'];

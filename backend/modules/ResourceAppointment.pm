@@ -170,7 +170,9 @@ sub getResourceAppointmentsFromSourceDB
             my $sourceDBSer         = $Alias->getAliasSourceDatabaseSer();
 	    	my @expressions		    = $Alias->getAliasExpressions(); # get expressions
 
-            # ARIA 
+            ######################################
+		    # ARIA
+		    ######################################
             if ($sourceDBSer eq 1) {
 
                 my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
@@ -255,7 +257,9 @@ sub getResourceAppointmentsFromSourceDB
                 $sourceDatabase->disconnect();
             }
 
-            # WaitRoomManagement
+            ######################################
+		    # MediVisit
+		    ######################################
             if ($sourceDBSer eq 2) {
   
                 my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
@@ -328,7 +332,65 @@ sub getResourceAppointmentsFromSourceDB
 
                 $sourceDatabase->disconnect();
             }
+
+            ######################################
+		    # MOSAIQ
+		    ######################################
+            if ($sourceDBSer eq 3) {
+  
+                my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+
+                my $numOfExpressions = @expressions; 
+                my $counter = 0;
+                my $raInfo_sql = "";
+
+                foreach my $Expression (@expressions) {
+
+                	my $expressionser = $Expression->{_ser};
+                	my $expressionName = $Expression->{_name};
+                	my $expressionLastTransfer = $Expression->{_lasttransfer};
+                	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
+
+                	# compare last updates to find the earliest date 
+		            # get the diff in seconds
+		            my $date_diff = $formatted_PLU - $formatted_ELU;
+		            if ($date_diff < 0) {
+		                $lasttransfer = $patientLastTransfer;
+		            } else {
+		                $lasttransfer = $expressionLastTransfer;
+		            }
+
+	        		$raInfo_sql .= "SELECT 'QUERY_HERE' ";
+
+	        		$counter++;
+	        		# concat "UNION" until we've reached the last query
+	        		if ($counter < $numOfExpressions) {
+	        			$raInfo_sql .= "UNION";
+	        		}
+	        	}
+
+		        # prepare query
+    		    my $query = $sourceDatabase->prepare($raInfo_sql)
+	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+        		# execute query
+	        	$query->execute()
+		        	or die "Could not execute query: " . $query->errstr;
+    
+        		# Fetched all data, instead of fetching each row
+        		my $data = $query->fetchall_arrayref();
+		        foreach my $row (@$data) {
+			    
+    			    #my $resappt = new ResourceAppointment(); # uncomment to use
                 
+                	# use setters to set appropriate RA information from query
+
+                	#push(@resapptList, $resappt);
+                }
+
+                $sourceDatabase->disconnect();
+            }
+
 		}
 	}
 

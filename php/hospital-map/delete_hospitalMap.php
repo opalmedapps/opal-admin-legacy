@@ -1,6 +1,7 @@
 <?php
 
 	/* To delete a hospital map */
+	include_once('hospital-map.inc');
 
 	$hosMap = new HospitalMap; // Object
 
