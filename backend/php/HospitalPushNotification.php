@@ -1,6 +1,7 @@
 <?php
-   require_once('PushNotifications.php');
-   include_once "db.inc.php";
+    include_once "db.inc.php";
+    require_once('PushNotifications.php');
+   
    
    class HospitalPushNotification{
 

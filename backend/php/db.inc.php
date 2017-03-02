@@ -1,4 +1,10 @@
 <?php
+
+	$pathname 	= __DIR__;
+	$abspath 	= str_replace('backend/php', '', $pathname);
+
+	include_once($abspath . 'php/config.php');
+
     try{
        $pdo = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
