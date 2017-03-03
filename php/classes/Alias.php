@@ -16,6 +16,7 @@ class Alias {
      */
 	public function getExpressions ($sourceDBSer, $expressionType) {
         $expressionList = array();
+        $databaseObj = new Database();
         try {
             // ARIA 
             if ($sourceDBSer == 1) {
