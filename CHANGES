@@ -1,3 +1,16 @@
+Version 0.7.2:
+ -  --- No default configs needed for this file
+ -     --- Added salt to register user function (was missing)
+ -     --- Fixed missing config file call in backend push notification scripts
+ - Merge branch 'release-0.7.1' into develop
+ -     --- Finalized install setup
+ -     --- Added more refined clinical database connection logic         -- Now data transfers from source database will only occur if they have been enabled for use.         -- Same for document path definitions - will only transfer clinical documents if paths are defined.         -- This allows opalAdmin backend to function independent of clinical database / FTP credentials.
+ -     --- Removed htaccess php dependency         -- Now calling PHP config file via __DIR__ in every php script
+ -     --- First test with installation. Works.
+ -     --- Pre-test completed installation site
+ -     --- Added Patient MRN to the registration process         -- Now users must enter both a medicare card number and an MRN to search in ARIA         and proceed with registration
+ -     --- Created a registrant role         -- This role can only view a list and register patients
+
 Version 0.7.1:
  - Merge branch 'release-0.7' into develop
 
