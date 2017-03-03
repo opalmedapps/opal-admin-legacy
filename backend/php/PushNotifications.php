@@ -1,5 +1,5 @@
 <?php
-include "config.php";
+
 // Server file
 
 class PushNotifications {
