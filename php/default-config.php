@@ -51,6 +51,7 @@
 	
 	// Include the classes
 	include_once( FRONTEND_ABS_PATH . "php/classes/User.php" );
+	include_once( FRONTEND_ABS_PATH . "php/classes/Database.php" );
 	include_once( FRONTEND_ABS_PATH . "php/classes/Alias.php" );
 	include_once( FRONTEND_ABS_PATH . "php/classes/Post.php" );
 	include_once( FRONTEND_ABS_PATH . "php/classes/EduMaterial.php" );
