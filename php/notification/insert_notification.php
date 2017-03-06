@@ -15,5 +15,5 @@
     $notificationObj = new Notification; // Object
 
     // Call function
-    $notificationObj->insertNotification($notification);
+    print $notificationObj->insertNotification($notification);
 ?>

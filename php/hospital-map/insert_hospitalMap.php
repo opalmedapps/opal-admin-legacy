@@ -16,6 +16,6 @@
     $hosMap = new HospitalMap; // Object
 
     // Call function
-    $hosMap->insertHospitalMap($hosMapArray);
+    print $hosMap->insertHospitalMap($hosMapArray);
 ?>
 
