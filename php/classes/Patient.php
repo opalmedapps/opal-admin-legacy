@@ -21,11 +21,11 @@ class Patient {
 				$patientTransfer = $patient['transfer'];
 				$patientSer = $patient['serial'];
 				$sql = "
-					UPDATE 
-						PatientControl 	
-					SET 
-						PatientControl.PatientUpdate = $patientTransfer 
-					WHERE 
+					UPDATE
+						PatientControl
+					SET
+						PatientControl.PatientUpdate = $patientTransfer
+					WHERE
 						PatientControl.PatientSerNum = $patientSer
 				";
 
@@ -42,7 +42,7 @@ class Patient {
      * Gets a list of existing patients in the database
      *
      * @return array
-     */    
+     */
     public function getExistingPatients() {
         $patientList = array();
         try {
@@ -56,7 +56,7 @@ class Patient {
                     pt.LastName,
                     pt.PatientId,
                     pc.LastTransferred
-                FROM 
+                FROM
                     PatientControl pc,
                     Patient pt
                 WHERE
@@ -92,7 +92,7 @@ class Patient {
      * @param string $email : email to check
      *
      * @return array $Response : response
-     */  
+     */
      public function emailAlreadyInUse($email) {
         $Response = null;
         try {
@@ -132,16 +132,16 @@ class Patient {
      * @param string $ssn : patient SSN
      *
      * @return array $patientResponse : patient information or response
-     */  
+     */
     public function findPatient($ssn, $id) {
         $patientResponse = array(
             'message'   => '',
             'status'    => '',
             'data'      => ''
         );
+        $databaseObj = new Database();
+
         try{
-            $aria_link = new PDO( ARIA_DB_DSN , ARIA_DB_USERNAME, ARIA_DB_PASSWORD );
-            $aria_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -171,50 +171,111 @@ class Patient {
             }
 
             // Then lookup in source database if patient DNE in our database
-            $sql = "
-                SELECT DISTINCT TOP 1
-                    pt.SSN,
-                    pt.PatientSer,
-                    pt.FirstName,
-                    pt.LastName,
-                    pt.PatientId,
-                    pt.PatientId2,
-                    pt.DateOfBirth,
-                    ph.Picture,
-                    RTRIM(pt.Sex)
-                FROM
-                    variansystem.dbo.Patient pt
-                LEFT JOIN variansystem.dbo.Photo ph 
-                ON ph.PatientSer = pt.PatientSer
-                WHERE
-                    pt.SSN          LIKE '$ssn%'
-                AND pt.PatientId    = '$id'
-            ";
-            $query = $aria_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-            $query->execute();
 
-            $lookupSSN = null;
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $lookupSSN = $data[0];
+            // ***********************************
+            // ARIA
+            // ***********************************
+            $sourceDBSer = 1;
+            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
+            if ($source_db_link) {
 
-                $patientArray = array(
-                    'SSN'           => $data[0],
-                    'sourceuid'     => $data[1],
-                    'firstname'     => $data[2],
-                    'lastname'      => $data[3],
-                    'id'            => $data[4],
-                    'id2'           => $data[5],
-                    'dob'           => $data[6],
-                    'picture'       => $data[7],
-                    'sex'           => $data[8]
-                );
+                $sql = "
+                    SELECT DISTINCT TOP 1
+                        pt.SSN,
+                        pt.PatientSer,
+                        pt.FirstName,
+                        pt.LastName,
+                        pt.PatientId,
+                        pt.PatientId2,
+                        pt.DateOfBirth,
+                        ph.Picture,
+                        RTRIM(pt.Sex)
+                    FROM
+                        variansystem.dbo.Patient pt
+                    LEFT JOIN variansystem.dbo.Photo ph
+                    ON ph.PatientSer = pt.PatientSer
+                    WHERE
+                        pt.SSN          LIKE '$ssn%'
+                    AND pt.PatientId    = '$id'
+                ";
+                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                $query->execute();
 
-                $patientResponse['data'] = $patientArray;
+                $lookupSSN = null;
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                    $lookupSSN = $data[0];
+
+                    $patientArray = array(
+                        'SSN'           => $data[0],
+                        'sourceuid'     => $data[1],
+                        'firstname'     => $data[2],
+                        'lastname'      => $data[3],
+                        'id'            => $data[4],
+                        'id2'           => $data[5],
+                        'dob'           => $data[6],
+                        'picture'       => $data[7],
+                        'sex'           => $data[8]
+                    );
+
+                    $patientResponse['data'] = $patientArray;
+                }
+
+                if (is_null($lookupSSN)) { // Could not find the ssn
+                    $patientResponse['status'] = 'PatientNotFound';
+                    return $patientResponse;
+                }
             }
 
-            if (is_null($lookupSSN)) { // Could not find the ssn
-                $patientResponse['status'] = 'PatientNotFound';
-                return $patientResponse;
+            // ***********************************
+            // WaitRoomManagement
+            // ***********************************
+            $sourceDBSer = 2;
+            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
+            if ($source_db_link) {
+
+                $sql = "SELECT 'QUERY_HERE'";
+                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                $query->execute();
+
+                $lookupSSN = null;
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                    //$lookupSSN = $data[0];
+
+                    // Set appropriate patient information here from query
+
+                    //$patientResponse['data'] = $patientArray; // Uncomment for use
+                }
+
+                if (is_null($lookupSSN)) { // Could not find the ssn
+                    $patientResponse['status'] = 'PatientNotFound';
+                    return $patientResponse;
+                }
+            }
+
+            // ***********************************
+            // Mosaiq
+            // ***********************************
+            $sourceDBSer = 3;
+            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
+            if ($source_db_link) {
+
+                $sql = "SELECT 'QUERY_HERE'";
+                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                $query->execute();
+
+                $lookupSSN = null;
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                    //$lookupSSN = $data[0];
+
+                    // Set appropriate patient information here from query
+
+                    //$patientResponse['data'] = $patientArray; // Uncomment for use
+                }
+
+                if (is_null($lookupSSN)) { // Could not find the ssn
+                    $patientResponse['status'] = 'PatientNotFound';
+                    return $patientResponse;
+                }
             }
 
             return $patientResponse; // return found data
@@ -229,8 +290,8 @@ class Patient {
      *
      * Gets a list of security questions in the database
      *
-     * @return array $securityQuestions 
-     */    
+     * @return array $securityQuestions
+     */
     public function fetchSecurityQuestions() {
         $securityQuestions = array();
         try {
@@ -241,7 +302,7 @@ class Patient {
                     sq.SecurityQuestionSerNum,
                     sq.QuestionText
                 FROM
-                    SecurityQuestion sq                    
+                    SecurityQuestion sq
             ";
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
@@ -299,7 +360,7 @@ class Patient {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
-                INSERT INTO 
+                INSERT INTO
                     Patient (
                         PatientAriaSer,
                         PatientId,
@@ -335,7 +396,7 @@ class Patient {
             $patientSer = $host_db_link->lastInsertId();
 
             $sql = "
-                INSERT INTO 
+                INSERT INTO
                     Users (
                         UserType,
                         UserTypeSerNum,
@@ -355,7 +416,7 @@ class Patient {
             $query->execute();
 
             $sql = "
-                INSERT INTO 
+                INSERT INTO
                     PatientControl (
                         PatientSerNum
                     )
@@ -367,11 +428,11 @@ class Patient {
             $query->execute();
 
             $sql = "
-                INSERT INTO 
+                INSERT INTO
                     SecurityAnswer (
                         SecurityQuestionSerNum,
                         PatientSerNum,
-                        AnswerText, 
+                        AnswerText,
                         CreationDate
                     )
                 VALUES (
@@ -395,7 +456,7 @@ class Patient {
             $query = $host_db_link->prepare( $sql );
             $query->execute();
 
-        
+
         } catch( PDOException $e) {
             return $e->getMessage();
         }
@@ -407,7 +468,7 @@ class Patient {
      * Gets a list of patient activities
      *
      * @return array $patientActivityList
-     */    
+     */
      public function getPatientActivities() {
         $patientActivityList = array();
          try {
@@ -435,7 +496,7 @@ class Patient {
                 AND Users.UserType      = 'Patient'
                 AND pal.Request         = 'Login'
 
-                ORDER BY pal.DateTime DESC 
+                ORDER BY pal.DateTime DESC
             ";
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();

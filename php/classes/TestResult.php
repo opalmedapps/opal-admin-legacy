@@ -27,7 +27,7 @@ class TestResult {
                 $sql = "
                     UPDATE
                         TestResultControl
-                    SET 
+                    SET
                         TestResultControl.PublishFlag = $publishFlag
                     WHERE
                         TestResultControl.TestResultControlSerNum = $serial
@@ -56,7 +56,7 @@ class TestResult {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
-                SELECT DISTINCT 
+                SELECT DISTINCT
                     tr.Name_EN,
                     tr.Name_FR,
                     tr.Description_EN,
@@ -84,9 +84,9 @@ class TestResult {
             $sql = "
                 SELECT DISTINCT
                     tre.ExpressionName
-                FROM    
+                FROM
                     TestResultExpression tre
-                WHERE   
+                WHERE
                     tre.TestResultControlSerNum = $serial
             ";
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -138,7 +138,7 @@ class TestResult {
             $sql = "
                 SELECT DISTINCT
                     trc.Group_EN
-                FROM 
+                FROM
                     TestResultControl trc
                 ORDER BY
                     trc.Group_EN
@@ -152,7 +152,7 @@ class TestResult {
             $sql = "
                 SELECT DISTINCT
                     trc.Group_FR
-                FROM 
+                FROM
                     TestResultControl trc
                 ORDER BY
                     trc.Group_FR
@@ -176,34 +176,78 @@ class TestResult {
      * Gets a list of test result names from ARIA
      *
      * @return array
-     */    
+     */
     public function getTestNames() {
         $testNames = array();
+        $databaseObj = new Database();
 
         try {
-	        $aria_link = new PDO( ARIA_DB_DSN , ARIA_DB_USERNAME, ARIA_DB_PASSWORD );
-            $aria_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            // ***********************************
+            // ARIA
+            // ***********************************
+            $sourceDBSer = 1;
+            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
+            if ($source_db_link) {
 
-            $sql = "
-                SELECT DISTINCT
-                    tr.comp_name
-                FROM
-                    varianenm.dbo.test_result tr
-            ";
-            $query = $aria_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-           	$query->execute();
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-   
-                $testArray = array(
-                    'name'      => $data[0],
-                    'id'        => $data[0],
-                    'added'     => 0
-                );
-                array_push($testNames, $testArray);
+                $sql = "
+                    SELECT DISTINCT
+                        tr.comp_name
+                    FROM
+                        varianenm.dbo.test_result tr
+                ";
+                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+               	$query->execute();
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $testArray = array(
+                        'name'      => $data[0],
+                        'id'        => $data[0],
+                        'added'     => 0
+                    );
+                    array_push($testNames, $testArray);
+                }
+
             }
+
+            // ***********************************
+            // WaitRoomManagement
+            // ***********************************
+            $sourceDBSer = 2;
+            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
+            if ($source_db_link) {
+
+                $sql = "SELECT 'QUERY_HERE'";
+                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                $query->execute();
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    // Set appropriate test result data here from query
+
+                    //array_push($testNames, $testArray); // Uncomment for use
+                }
+
+            }
+
+            // ***********************************
+            // Mosaiq
+            // ***********************************
+            $sourceDBSer = 3;
+            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
+            if ($source_db_link) {
+
+                $sql = "SELECT 'QUERY_HERE'";
+                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                $query->execute();
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    // Set appropriate test result data here from query
+
+                    //array_push($testNames, $testArray); // Uncomment for use
+                }
+
+            }
+
 
             return $testNames;
   	  	} catch (PDOException $e) {
@@ -291,8 +335,8 @@ class TestResult {
      * Gets a list of existing test results in the database
      *
      * @return array
-     */    
-    public function getExistingTestResults () { 
+     */
+    public function getExistingTestResults () {
 
         $testResultList = array();
 
@@ -300,7 +344,7 @@ class TestResult {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
-                SELECT DISTINCT 
+                SELECT DISTINCT
                     tr.TestResultControlSerNum,
                     tr.Name_EN,
                     tr.Name_FR,
@@ -330,7 +374,7 @@ class TestResult {
                 $sql = "
                     SELECT DISTINCT
                         tre.ExpressionName
-                    FROM    
+                    FROM
                         TestResultExpression tre
                     WHERE
                         tre.TestResultControlSerNum = $testResultSer
@@ -338,7 +382,7 @@ class TestResult {
 
                 $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 				$secondQuery->execute();
-    
+
 				while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                     $testNameArray = array(
@@ -375,9 +419,9 @@ class TestResult {
      *
      * Updates test result details in the database
      *
-     * @param array $testResultArray : the test result details 
+     * @param array $testResultArray : the test result details
      * @return array : response
-     */    
+     */
     public function updateTestResult ($testResultArray) {
 
         $name_EN            = $testResultArray['name_EN'];
@@ -451,7 +495,7 @@ class TestResult {
                 $testName = $test['name'];
                 if(!in_array($test, $existingTests)) {
                     $sql = "
-                        INSERT INTO 
+                        INSERT INTO
                             TestResultExpression (
                                 TestResultControlSerNum,
                                 ExpressionName
@@ -468,7 +512,7 @@ class TestResult {
 			}
             $response['value'] = 1; // Success
             return $response;
-		
+
 		} catch( PDOException $e) {
 		    $response['message'] = $e->getMessage();
 			return $response; // Fail
@@ -481,7 +525,7 @@ class TestResult {
      *
      * @param integer $testResultSer : the serial number of the test result
      * @return array : response
-     */    
+     */
     public function removeTestResult ($testResultSer) {
 
         $response = array(
@@ -525,5 +569,5 @@ class TestResult {
 
 
 
-                    
+
 

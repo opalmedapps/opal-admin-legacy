@@ -69,12 +69,13 @@ class Install {
 			$query->execute();
 
 			$pathname 	= getcwd();
-			$abspath 	= str_replace('php/install', '', $pathname); 
+			$abspath 	= str_replace('php/install', '', $pathname);
 
 			$importFilename = $abspath . 'schema.sql';
 
+			//$command='/usr/local/mysql/bin/mysql -h' .$host .' -u' .$username .' -p' .$password .' ' .$name .' < ' .$importFilename;
 			$command='mysql -h' .$host .' -u' .$username .' -p' .$password .' ' .$name .' < ' .$importFilename;
-			
+
 			exec($command,$output=array(),$worked);
 			switch($worked){
 			    case 0:
@@ -93,7 +94,7 @@ class Install {
 					$query->execute();
 			    	break;
 			 }
-			
+
 			return $response;
 
 		} catch (PDOException $e) {
@@ -104,7 +105,7 @@ class Install {
 
 	/**
 	 *
-	 * Checks ARIA database connection. 
+	 * Checks ARIA database connection.
 	 *
 	 * @param array $ariaCreds : database credentials for configuration
 	 * @return array $response : response
@@ -130,7 +131,7 @@ class Install {
 				if (!file_exists($document_path)) {
 					$response['error'] = "The document path '$document_path' does not exist.";
 					return $response;
-				}			
+				}
 			}
 			$response['value'] = 1;
 			return $response;
@@ -143,7 +144,7 @@ class Install {
 
 	/**
 	 *
-	 * Checks MediVisit database connection. 
+	 * Checks MediVisit database connection.
 	 *
 	 * @param array $mediVisitCreds : database credentials for configuration
 	 * @return array $response : response
@@ -164,7 +165,7 @@ class Install {
 		try {
 			$medivisit_link = new PDO( "mysql:host=$host;port=$port;dbname=$name", $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION) );
 			// If we're here, connection's good
-			$response['value'] = 1;			
+			$response['value'] = 1;
 			return $response;
 
 		} catch (PDOException $e) {
@@ -175,7 +176,7 @@ class Install {
 
 	/**
 	 *
-	 * Checks MOSAIQ database connection. 
+	 * Checks MOSAIQ database connection.
 	 *
 	 * @param array $mosaiqCreds : database credentials for configuration
 	 * @return array $response : response
@@ -201,7 +202,7 @@ class Install {
 				if (!file_exists($document_path)) {
 					$response['error'] = "The document path '$document_path' does not exist.";
 					return $response;
-				}			
+				}
 			}
 			$response['value'] = 1;
 			return $response;
@@ -212,7 +213,7 @@ class Install {
 		}
 	}
 
-	/** 
+	/**
 	 *
 	 * Write configurations to all config files.
 	 *
@@ -256,7 +257,7 @@ class Install {
 			$file_contents = str_replace('OPAL_DB_USERNAME_HERE', $opalCreds['username'], $file_contents);
 			$file_contents = str_replace('OPAL_DB_PASSWORD_HERE', $opalCreds['password'], $file_contents);
 			file_put_contents($path_to_file, $file_contents);
-			
+
 		}
 
 		$ariaCreds = $configs['clinical']['aria'];
@@ -287,7 +288,7 @@ class Install {
 
 				// Enable database
 				$opal_link = new PDO( "mysql:host=".$opalCreds['host'].";port=".$opalCreds['port'].";dbname=".$opalCreds['name'], $opalCreds['username'], $opalCreds['password'], array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION) );
-			
+
 				$sql = "UPDATE SourceDatabase SET Enabled = 1 WHERE SourceDatabaseSerNum = 1";
 
 				$query = $opal_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -326,7 +327,7 @@ class Install {
 
 				// Enable database
 				$opal_link = new PDO( "mysql:host=".$opalCreds['host'].";port=".$opalCreds['port'].";dbname=".$opalCreds['name'], $opalCreds['username'], $opalCreds['password'], array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION) );
-			
+
 				$sql = "UPDATE SourceDatabase SET Enabled = 1 WHERE SourceDatabaseSerNum = 2";
 
 				$query = $opal_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -366,7 +367,7 @@ class Install {
 
 				// Enable database
 				$opal_link = new PDO( "mysql:host=".$opalCreds['host'].";port=".$opalCreds['port'].";dbname=".$opalCreds['name'], $opalCreds['username'], $opalCreds['password'], array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION) );
-			
+
 				$sql = "UPDATE SourceDatabase SET Enabled = 1 WHERE SourceDatabaseSerNum = 3";
 
 				$query = $opal_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -375,7 +376,7 @@ class Install {
 			}
 		}
 
-		// Javascript 
+		// Javascript
 		$path_to_file = $abspath . 'js/config.js';
 		$file_contents = file_get_contents($path_to_file);
 		$file_contents = str_replace('ABSPATH_HERE', $abspath, $file_contents);
@@ -387,14 +388,14 @@ class Install {
 		$file_contents = file_get_contents($path_to_file);
 		$file_contents = str_replace('FRONTEND_ABS_PATH_HERE', $abspath, $file_contents);
 		$file_contents = str_replace('FRONTEND_REL_URL_HERE', $urlpath, $file_contents);
-		file_put_contents($path_to_file, $file_contents);		
+		file_put_contents($path_to_file, $file_contents);
 
 		// Perl
 		$path_to_file = $abspath . 'backend/modules/Configs.pm';
 		$file_contents = file_get_contents($path_to_file);
 		$file_contents = str_replace('FRONTEND_ABS_PATH_HERE', $abspath, $file_contents);
 		$file_contents = str_replace('FRONTEND_REL_URL_HERE', $urlpath, $file_contents);
-		file_put_contents($path_to_file, $file_contents);		
+		file_put_contents($path_to_file, $file_contents);
 
 		return $response;
 
@@ -421,7 +422,7 @@ class Install {
 			$con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			$sql = "INSERT INTO OAUser(Username, Password, DateAdded) VALUES(:username, :password, NOW())";
-			
+
 			$stmt = $con->prepare( $sql );
 			$stmt->bindValue( "username", $username, PDO::PARAM_STR );
 			$stmt->bindValue( "password", hash("sha256", $password . $this->salt), PDO::PARAM_STR );
@@ -442,12 +443,12 @@ class Install {
 		}
 	}
 
-	/** 
+	/**
 	 *
 	 * String intersection of two URLs
 	 *
 	 * @param string $str1 : First string
-	 * @param string $str2 : Second string 
+	 * @param string $str2 : Second string
 	 * @param bool $trailing_slash : Whether or not to add trailing slash
 	 * @return string $result : Intersection
 	 */

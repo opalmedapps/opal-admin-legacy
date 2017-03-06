@@ -16,104 +16,140 @@ class Alias {
      */
 	public function getExpressions ($sourceDBSer, $expressionType) {
         $expressionList = array();
+        $databaseObj = new Database();
+        
         try {
+
+            // ***********************************
             // ARIA 
+            // ***********************************
             if ($sourceDBSer == 1) {
 
-	            $source_db_link = new PDO( ARIA_DB_DSN , ARIA_DB_USERNAME, ARIA_DB_PASSWORD );
-            	$source_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+                $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
 
-                if ($expressionType != "Document") {
-                    $sql = "
-                        SELECT DISTINCT
-			    	        vv_ActivityLng.Expression1
-    			        FROM  
-	    			        variansystem.dbo.vv_ActivityLng vv_ActivityLng 
-                        ORDER BY 
-                        vv_ActivityLng.Expression1
-                    ";
-    
-                    $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                   	$query->execute();
-                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                if ($source_db_link) {
 
-
-                        $termName = $data[0];
-                        $termArray = array(
-				           	'name' => $termName,
-                            'id'   => $termName, 
-			        	    'added'=> 'false'
-		    	        );
-
-                        array_push($expressionList, $termArray);
-
-                    }
-
-                } else {
-
-                    $sql = "
-                        SELECT DISTINCT
-                            note_typ.note_typ_desc
-                        FROM 
-                            varianenm.dbo.note_typ note_typ
-                        ORDER BY
-                            note_typ.note_typ_desc
-                    ";
-    
-                    $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                   	$query->execute();
-                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                    if ($expressionType != "Document") {
+                        $sql = "
+                            SELECT DISTINCT
+    			    	        vv_ActivityLng.Expression1
+        			        FROM  
+    	    			        variansystem.dbo.vv_ActivityLng vv_ActivityLng 
+                            ORDER BY 
+                            vv_ActivityLng.Expression1
+                        ";
+        
+                        $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                       	$query->execute();
+                        while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
 
-                        $termName = $data[0];
-                            
-                        $termArray = array(
-				           	'name' => $termName,
-                            'id'   => $termName,
-			            	'added'=> 'false'
-    			        );
-    
-                        array_push($expressionList, $termArray);
+                            $termName = $data[0];
+                            $termArray = array(
+    				           	'name' => $termName,
+                                'id'   => $termName, 
+    			        	    'added'=> 'false'
+    		    	        );
+
+                            array_push($expressionList, $termArray);
+
+                        }
+
+                    } else {
+
+                        $sql = "
+                            SELECT DISTINCT
+                                note_typ.note_typ_desc
+                            FROM 
+                                varianenm.dbo.note_typ note_typ
+                            ORDER BY
+                                note_typ.note_typ_desc
+                        ";
+        
+                        $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                       	$query->execute();
+                        while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+
+                            $termName = $data[0];
+                                
+                            $termArray = array(
+    				           	'name' => $termName,
+                                'id'   => $termName,
+    			            	'added'=> 'false'
+        			        );
+        
+                            array_push($expressionList, $termArray);
+                        }
                     }
                 }
 
             }
 
-            // WaitRoomManagement
+            // ***********************************
+            // WaitRoomManagement 
+            // ***********************************
             if ($sourceDBSer == 2) {
-                
-	    		$wrm_host_db_link = new PDO( WRM_DBDSN, WRM_DBUSERNAME, WRM_DBPASSWORD );
-                $wrm_host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-                $sql = "
-                    SELECT DISTINCT 
-                        mval.AppointmentCode,
-                        mval.ResourceDescription
-                    FROM
-                        MediVisitAppointmentList mval
-                    ORDER BY
-                        mval.AppointmentCode
-                ";
+                $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
 
-                $query = $wrm_host_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                $query->execute();
+                if ($source_db_link) {
+            
+                    $sql = "
+                        SELECT DISTINCT 
+                            mval.AppointmentCode,
+                            mval.ResourceDescription
+                        FROM
+                            MediVisitAppointmentList mval
+                        ORDER BY
+                            mval.AppointmentCode
+                    ";
 
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                
-                    $termName   = $data[0];
-                    $termDesc   = $data[1];
+                    $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                    $query->execute();
 
-                    $termArray = array(
-				       	'name'          => "$termName ($termDesc)",
-                        'id'            => $termName,
-			        	'added'         => 'false'
-			        );
+                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                    
+                        $termName   = $data[0];
+                        $termDesc   = $data[1];
 
-                    array_push($expressionList, $termArray);
+                        $termArray = array(
+    				       	'name'          => "$termName ($termDesc)",
+                            'id'            => $termName,
+    			        	'added'         => 'false'
+    			        );
+
+                        array_push($expressionList, $termArray);
+                    }
                 }
-            }           
+            }
+
+            // ***********************************
+            // Mosaiq 
+            // ***********************************   
+            if ($sourceDBSer == 3) {
+
+                $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
+
+                if ($source_db_link) {
+
+                    $sql = "SELECT 'QUERY_HERE'";
+
+                    $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                    $query->execute();
+
+                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                        // Set data from query here
+
+                        //array_push($expressionList, $termArray); // Uncomment for use
+                    }
+                }
+
+            }        
 
 			return $expressionList;
+
 		} catch (PDOException $e) {
 			echo $e->getMessage();
 			return $expressionList;

@@ -16,5 +16,8 @@ backend/php/certificates
 ./**/*.swp
 ./**/*.swo
 
+# ignore QR Images
+images/hospital-maps/qrCodes
+
 # ignore version control script
 bumpversion.sh
