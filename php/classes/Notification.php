@@ -11,7 +11,7 @@ class Notification {
      * Gets a list of existing notifications
      *
      * @return array
-     */    
+     */
     public function getNotifications() {
         $notificationList = array();
         try {
@@ -32,7 +32,7 @@ class Notification {
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-            
+
                 $serial             = $data[0];
                 $name_EN            = $data[1];
                 $name_FR            = $data[2];
@@ -61,11 +61,11 @@ class Notification {
 
     /**
      *
-     * Gets details of a particular notification 
+     * Gets details of a particular notification
      *
      * @param integer $serial : the notification serial number
      * @return array
-     */        
+     */
     public function getNotificationDetails ($serial) {
         $notificationDetails = array();
         try {
@@ -116,7 +116,7 @@ class Notification {
      * Gets the types of notifications from the database
      *
      * @return array
-     */        
+     */
     public function getNotificationTypes () {
         $types = array();
 	    try {
@@ -157,7 +157,7 @@ class Notification {
      * Inserts a notification into the database
      *
      * @param array $notification : the notification details
-     */       
+     */
     public function insertNotification($notification) {
 
         $name_EN            = $notification['name_EN'];
@@ -202,7 +202,7 @@ class Notification {
      *
      * @param array $notification : the notification details
      * @return array : response
-     */        
+     */
     public function updateNotification($notification) {
 
         $name_EN            = $notification['name_EN'];
@@ -249,7 +249,7 @@ class Notification {
      *
      * @param integer $serial : the notification serial number
      * @return array : response
-     */        
+     */
     public function removeNotification($serial) {
 
         $response = array(
@@ -261,9 +261,9 @@ class Notification {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
-                DELETE FROM 
+                DELETE FROM
                     NotificationControl
-                WHHERE
+                WHERE
                     NotificationControl.NotificationControlSerNum = $serial
             ";
             $query = $host_db_link->prepare( $sql );

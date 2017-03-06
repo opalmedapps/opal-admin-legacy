@@ -14,7 +14,7 @@ class HospitalMap {
      * @param string $qrid : the string to QR-ify
      * @param string $oldqrid : the previous string that was QR'ed
      * @return array : qrcode with path
-     */    
+     */
     public function generateQRCode($qrid, $oldqrid) {
 
         if($oldqrid) {
@@ -68,7 +68,8 @@ class HospitalMap {
                         MapName_EN,
                         MapDescription_EN,
                         MapName_FR,
-                        MapDescription_FR
+                        MapDescription_FR,
+                        DateAdded
                     )
                 VALUES (
                     \"$url\",
@@ -77,7 +78,8 @@ class HospitalMap {
                     \"$name_EN\",
                     \"$description_EN\",
                     \"$name_FR\",
-                    \"$description_FR\"
+                    \"$description_FR\",
+                    NOW()
                 )
             ";
 		    $query = $host_db_link->prepare( $sql );
@@ -115,7 +117,7 @@ class HospitalMap {
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-            
+
                 $serial             = $data[0];
                 $url                = $data[1];
                 $qrid               = $data[2];
@@ -126,7 +128,7 @@ class HospitalMap {
                 $qr = $this->generateQRCode($qrid, null);
                 $qrcode = $qr['qrcode'];
                 $qrpath = $qr['qrpath'];
-                
+
                 $hosMapArray = array(
                     'name_EN'           => $name_EN,
                     'name_FR'           => $name_FR,
@@ -151,11 +153,11 @@ class HospitalMap {
 
     /**
      *
-     * Gets details on a particular hospital map 
+     * Gets details on a particular hospital map
      *
      * @param integer $serial : the hospital map serial number
      * @return array
-     */    
+     */
     public function getHospitalMapDetails ($serial) {
 
         $hosMapDetails = array();
@@ -171,17 +173,17 @@ class HospitalMap {
                     hm.MapDescription_EN,
                     hm.MapName_FR,
                     hm.MapDescription_FR
-                FROM 
+                FROM
                     HospitalMap hm
                 WHERE
                     hm.HospitalMapSerNum = $serial
             ";
-                    
+
 		    $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
-            
+
             $url                = $data[0];
             $qrid               = $data[1];
             $name_EN            = $data[2];
@@ -242,7 +244,7 @@ class HospitalMap {
                     HospitalMap.MapDescription_EN   = \"$description_EN\",
                     HospitalMap.MapName_FR          = \"$name_FR\",
                     HospitalMap.MapDescription_FR   = \"$description_FR\"
-                WHERE   
+                WHERE
                     HospitalMap.HospitalMapSerNum   = $serial
             ";
 
@@ -259,7 +261,7 @@ class HospitalMap {
      * Removes a hospital map from the database
      *
      * @param integer $serial : the hospital map serial number
-     */    
+     */
     public function removeHospitalMap ($serial) {
         try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
