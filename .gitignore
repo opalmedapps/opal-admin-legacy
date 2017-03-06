@@ -1,7 +1,6 @@
-# ignore configurations 
+# ignore configurations
 js/config.js
 php/config.php
-.htaccess
 backend/modules/Configs.pm
 
 # ignore clinical documents
