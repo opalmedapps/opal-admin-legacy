@@ -499,9 +499,9 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
                         $scope.newPatient.uid = userData.uid;
                         $scope.newPatient.SSN = $scope.validSSN.SSN;
                         $scope.newPatient.password = CryptoJS.SHA256($scope.newPatient.password).toString();
-                        $scope.newPatient.securityQuestion1.answer = CryptoJS.SHA256($scope.newPatient.securityQuestion1.answer).toString();
-                        $scope.newPatient.securityQuestion2.answer = CryptoJS.SHA256($scope.newPatient.securityQuestion2.answer).toString();
-                        $scope.newPatient.securityQuestion3.answer = CryptoJS.SHA256($scope.newPatient.securityQuestion3.answer).toString();
+                        $scope.newPatient.securityQuestion1.answer = CryptoJS.SHA256($scope.newPatient.securityQuestion1.answer.toUpperCase()).toString();
+                        $scope.newPatient.securityQuestion2.answer = CryptoJS.SHA256($scope.newPatient.securityQuestion2.answer.toUpperCase()).toString();
+                        $scope.newPatient.securityQuestion3.answer = CryptoJS.SHA256($scope.newPatient.securityQuestion3.answer.toUpperCase()).toString();
 
                         // submit form
                         $.ajax({
