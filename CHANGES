@@ -1,3 +1,9 @@
+Version 0.7.6:
+ -     --- Upper cased security answers before hash (needed for app)
+ - Merge branch 'master' of https://gitlab.com/akimosupremo/opalAdmin
+ - Merge branch 'hotfix-0.7.4'
+ - Update README.md
+
 Version 0.7.4:
  - Merge branch 'release-0.7.3'
  - Merge branch 'master' of https://gitlab.com/akimosupremo/opalAdmin
