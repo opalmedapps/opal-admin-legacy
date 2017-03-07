@@ -1,3 +1,12 @@
+Version 0.7.4:
+ - Merge branch 'release-0.7.3'
+ - Merge branch 'master' of https://gitlab.com/akimosupremo/opalAdmin
+ - Merge branch 'release-0.7.2'
+ - Add readme.md
+ - Merge branch 'release-0.7.1'
+ - Merge branch 'release-0.7'
+ - Merge branch 'release-0.6.1'
+
 Version 0.7.3:
  - 	--- Fixed incorrect educational material include filename 	--- Added DateAdded column to insert hospital maps 	--- Fixed syntax error in notification control delete function 	--- Fixed issue where registration would still continue if no database present 	--- Fixed clinical database dependenecy crash for test result
  -     --- Added Database class call in default config

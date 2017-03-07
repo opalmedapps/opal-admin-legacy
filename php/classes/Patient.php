@@ -222,8 +222,9 @@ class Patient {
 
                 if (is_null($lookupSSN)) { // Could not find the ssn
                     $patientResponse['status'] = 'PatientNotFound';
-                    return $patientResponse;
                 }
+
+                return $patientResponse;
             }
 
             // ***********************************
@@ -248,8 +249,9 @@ class Patient {
 
                 if (is_null($lookupSSN)) { // Could not find the ssn
                     $patientResponse['status'] = 'PatientNotFound';
-                    return $patientResponse;
                 }
+
+                return $patientResponse;
             }
 
             // ***********************************
@@ -274,8 +276,9 @@ class Patient {
 
                 if (is_null($lookupSSN)) { // Could not find the ssn
                     $patientResponse['status'] = 'PatientNotFound';
-                    return $patientResponse;
                 }
+
+                return $patientResponse;
             }
 
             return $patientResponse; // return found data
