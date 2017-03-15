@@ -29,98 +29,46 @@ This project consists of a JavaScript, a Perl, and a PHP configuration file loca
 * php/default-config.php
 * modules/default-Configs.pm
 
-Before manipulating the configuration files, copy each config file as a new file by removing the *default-* prefix.
+Before manipulating the configuration files, copy each config file as a new file by removing the *default-* prefix. For example:
 
 ```
 cp php/default-config php/config.php
 ```
 **Note:** Do not simply rename the file
 
-## 
+## Configuring the opalAdmin installation
+
+Navigate to the URL of your opalAdmin site and run the install page (for example http://yourdomain/main.html#/install, where *yourdomain* is the path of your opalAdmin site). Follow the instructions on the page.
+
+### Step 1 : Setting up the Opal database
+
+Complete the form and press "Test Connection" to set up an Opal database. **Note:** This must be a MySQL database. 
+
+### Step 2 : Choose the clinical database(s)
+
+This project comes with pre-defined ARIA queries. Other clinical database queries must be inputted according to your database information. Fill out the appropriate clinical database forms and press "Test Connection" to pass to the next step. 
+
+### Step 3 : Submit credentials
+
+Once the Opal database and clinical database(s) have been configured, press "Submit Configurations" to install the given credentials into the configuration files. This process takes some time. 
+
+### Step 4 : Add a site administrator
+
+Fill out the form to add a site administrator.
+
+### Step 5 : Visit the site
+
+Once everything is complete, click "Visit Site" on the left-hand site to log in to the opalAdmin site.
 
 ## Editing Modules
 
+This project comes with pre-configured ARIA database queries to fetch the necessary clinical information. MosaiQ, however, is not set up. Thus, there are several manual configurations involved to fully set up another clinical database other than ARIA. 
 
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
-
-
-
-
-## Code Example
-
-Show what the library does as concisely as possible, developers should be able to figure out **how** your project solves their problem by looking at the code example. Make sure the API you are showing off is obvious, and that your code is short and concise.
-
-## Motivation
-
-A short description of the motivation behind the creation and maintenance of the project. This should explain **why** the project exists.
-
-## Installation
-
-Provide code examples and explanations of how to get the project.
-
-## API Reference
-
-Depending on the size of the project, if it is small and simple enough the reference docs can be added to the README. For medium size to larger projects it is important to at least provide a link to where the API reference docs live.
-
-## Tests
-
-Describe and show how to run the tests with code examples.
-
-## Contributors
-
-Let people know how they can dive into the project, include important links to things like issue trackers, irc, twitter accounts if applicable.
-
-## License
-
-A short snippet describing the license (MIT, Apache, etc.)
+* [Angular](https://angularjs.org) - The JS web framework used
+* [Bootstrap](http://getbootstrap.com) - CSS
+* [PHP](http://php.net)
+* [Perl](http://perldoc.perl.org) 
+* [JavaScript](https://www.javascript.com) 
