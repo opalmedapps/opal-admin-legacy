@@ -36,7 +36,7 @@ class Alias {
         			        FROM  
     	    			        variansystem.dbo.vv_ActivityLng vv_ActivityLng 
                             ORDER BY 
-                            vv_ActivityLng.Expression1
+                                vv_ActivityLng.Expression1
                         ";
         
                         $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
@@ -59,11 +59,11 @@ class Alias {
 
                         $sql = "
                             SELECT DISTINCT
-                                note_typ.note_typ_desc
+                                RTRIM(note_typ.note_typ_desc)
                             FROM 
                                 varianenm.dbo.note_typ note_typ
                             ORDER BY
-                                note_typ.note_typ_desc
+                                RTRIM(note_typ.note_typ_desc)
                         ";
         
                         $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
