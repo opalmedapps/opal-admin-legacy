@@ -774,6 +774,14 @@ sub updateDatabase
     my $patientSSN          = $patient->getPatientSSN();
     my $patientDeathDate 	= $patient->getPatientDeathDate();
 
+    # Turn on disabled flag if patient is deceased
+    my $disabledFlag = 0;
+    my $disabledReason = "";
+    if ($patientDeathDate) { 
+    	$disabledFlag = 1;
+    	$disabledReason = "Deceased patient";
+    }
+
     my $update_sql = "
         UPDATE
             Patient
@@ -786,7 +794,9 @@ sub updateDatabase
             Sex                     = '$patientSex',
             DateOfBirth             = '$patientDOB',
             ProfileImage            = '$patientPicture',
-            DeathDate 				= '$patientDeathDate'
+            DeathDate 				= '$patientDeathDate',
+            DisabledFlag 			= '$disabledFlag',
+            DisabledReasonTxt 		= '$disabledReason'
         WHERE
             SSN                     = '$patientSSN'
     ";
