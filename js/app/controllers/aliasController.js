@@ -78,7 +78,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
     	$scope.gridOptions = { 
 			data: 'aliasList',
 			columnDefs: [
-				{field:'name_EN', displayName:'Alias (EN / FR)', cellTemplate:cellTemplateName, width:'605'},
+				{field:'name_EN', displayName:'Alias (EN / FR)', cellTemplate:cellTemplateName, width:'555'},
 				{field:'type', displayName:'Type', width:'145', filter: {
 					type: uiGridConstants.filter.SELECT,
 					selectOptions: [ {value:'Appointment', label:'Appointment'}, {value:'Document', label:'Document'}, {value:'Task', label:'Task'}]
@@ -90,6 +90,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 					selectOptions: [ {value:'Aria', label:'Aria'}, {value:'MediVisit', label:'MediVisit'}]
 				}},
                 {field:'color', displayName:'Color Tag', width:'90', cellTemplate:cellTemplateColor, enableFiltering: false},
+                {field:"lastupdated", displayName:'Updated', width:'135'},
 				{name:'Operations', cellTemplate:cellTemplateOperations, sortable:false, enableFiltering: false}
 			],
             //useExternalFiltering: true,
