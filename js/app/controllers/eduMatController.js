@@ -56,7 +56,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
     	$scope.gridOptions = { 
 			data: 'eduMatList',
 			columnDefs: [
-				{field:'name_EN', displayName:'Name (EN / FR)', cellTemplate:cellTemplateName, width:'605'},
+				{field:'name_EN', displayName:'Name (EN / FR)', cellTemplate:cellTemplateName, width:'555'},
                 {field:'rating', name:'Avg Rating', cellTemplate:ratingCellTemplate, width:'130', enableFiltering:false},
 				{field:'type_EN', displayName:'Type (EN)', width:'145'},
                 {field:'publish', displayName:'Publish', width:'80', cellTemplate:checkboxCellTemplate, enableFiltering:false},
@@ -64,6 +64,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
                     type: uiGridConstants.filter.SELECT,
                     selectOptions: [ {value:'Prior To Treatment', label:'Prior To Treatment'}, {value:'During Treatment', label:'During Treatment'}, {value:'After Treatment', label:'After Treatment'}]
                 }},
+                {field:'lastupdated', displayName:'Updated', width:'150'},
 				{name:'Operations', cellTemplate:cellTemplateOperations, sortable:false, enableFiltering:false}
 			],
             //useExternalFiltering: true,

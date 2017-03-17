@@ -49,6 +49,7 @@ sub new
         _ssn            => undef,
 		_lasttransfer	=> undef,
         _accesslevel    => undef,
+        _deathdate 		=> undef,
 	};
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is envoked on this object
@@ -186,6 +187,17 @@ sub setPatientAccessLevel
     return $patient->{_accesslevel};
 }
 
+
+#======================================================================================
+# Subroutine to set the patient death date
+#======================================================================================
+sub setPatientDeathDate
+{
+    my ($patient, $deathdate) = @_; # patient object with provided date in arguments
+    $patient->{_deathdate} = $deathdate; # set the level
+    return $patient->{_deathdate};
+}
+
 #======================================================================================
 # Subroutine to get the patient serial
 #======================================================================================
@@ -304,6 +316,15 @@ sub getPatientAccessLevel
 }
 
 #======================================================================================
+# Subroutine to get the patient death date
+#======================================================================================
+sub getPatientDeathDate
+{
+    my ($patient) = @_; # our patient object
+    return $patient->{_deathdate};
+}
+
+#======================================================================================
 # Subroutine to get all patient info from source dbs
 #======================================================================================
 sub getPatientInfoFromSourceDBs 
@@ -333,11 +354,14 @@ sub getPatientInfoFromSourceDBs
 	            pt.PatientId2,
 	            pt.DateOfBirth,
 	            ph.Picture,
-	            RTRIM(pt.Sex)
+	            RTRIM(pt.Sex),
+	            ppt.DeathDate
 	        FROM 
 	            variansystem.dbo.Patient pt
 	        LEFT JOIN variansystem.dbo.Photo ph
-	        ON pt.PatientSer       = ph.PatientSer
+	        ON pt.PatientSer       	= ph.PatientSer
+	        LEFT JOIN variansystem.dbo.PatientParticular ppt 
+	        ON ppt.PatientSer 		= pt.PatientSer
 	        WHERE
 	            pt.SSN              LIKE '$patientSSN%'
 	    ";
@@ -363,6 +387,7 @@ sub getPatientInfoFromSourceDBs
 	        my $age             = getAgeAtDate($dob, $today);
 	        my $picture         = $data[6];
 	        my $sex             = $data[7];
+	        my $deathdate 		= convertDateTime($data[8]);
 
 	        # set the information
 	        $sourcePatient->setPatientSSN($patientSSN);
@@ -377,6 +402,7 @@ sub getPatientInfoFromSourceDBs
 	        $sourcePatient->setPatientAge($age);
 	        $sourcePatient->setPatientPicture($picture);
 	        $sourcePatient->setPatientSex($sex);
+	        $sourcePatient->setPatientDeathDate($deathdate);
 	    }
 
 	    if ($sourcePatient) {push(@patientList, $sourcePatient);}
@@ -601,7 +627,7 @@ sub inOurDatabase
 	my $ExistingPatient = (); # data to be entered if patient exists
 
 	# for query results
-    my ($ser, $sourceuid, $id, $id2, $firstname, $lastname, $sex, $dob, $age, $picture);
+    my ($ser, $sourceuid, $id, $id2, $firstname, $lastname, $sex, $dob, $age, $picture, $deathdate);
  
     my $inDB_sql = "
         SELECT DISTINCT
@@ -614,7 +640,8 @@ sub inOurDatabase
             Patient.Sex,
             Patient.DateOfBirth,
             Patient.ProfileImage,
-            Patient.SSN
+            Patient.SSN,
+            Patient.DeathDate
         FROM
             Patient
         WHERE
@@ -641,6 +668,7 @@ sub inOurDatabase
         $age                    = getAgeAtDate($dob, $today);
         $picture                = $data[8];
         $PatientSSNInDB         = $data[9];
+        $deathdate 				= $data[10];
     }
 
     if ($PatientSSNInDB) {
@@ -659,6 +687,7 @@ sub inOurDatabase
         $ExistingPatient->setPatientPicture($picture);
         $ExistingPatient->setPatientLastTransfer($lastTransfer);
         $ExistingPatient->setPatientSSN($PatientSSNInDB);
+        $ExistingPatient->setPatientDeathDate($deathdate);
 
         return $ExistingPatient; # this is true (ie. patient exists, return object)
 	}
@@ -682,6 +711,7 @@ sub insertPatientIntoOurDB
     my $sex                 = $patient->getPatientSex();
     my $dob                 = $patient->getPatientDOB();
     my $picture             = $patient->getPatientPicture();
+    my $deathdate 			= $patient->getPatientDeathDate();
 
     my $insert_sql = "
         INSERT INTO
@@ -693,7 +723,8 @@ sub insertPatientIntoOurDB
                 LastName,
                 Sex,
                 DateOfBirth,
-                ProfileImage
+                ProfileImage,
+                DeathDate
             )
         VALUES (
             '$sourceuid',
@@ -703,7 +734,8 @@ sub insertPatientIntoOurDB
             \"$lastname\",
             '$sex',
             '$dob',
-            '$picture'
+            '$picture',
+            '$deathdate'
         )
     ";
 
@@ -740,6 +772,7 @@ sub updateDatabase
     my $patientPicture      = $patient->getPatientPicture();
     my $patientSex          = $patient->getPatientSex();
     my $patientSSN          = $patient->getPatientSSN();
+    my $patientDeathDate 	= $patient->getPatientDeathDate();
 
     my $update_sql = "
         UPDATE
@@ -752,7 +785,8 @@ sub updateDatabase
             LastName                = \"$patientLastName\",
             Sex                     = '$patientSex',
             DateOfBirth             = '$patientDOB',
-            ProfileImage            = '$patientPicture'
+            ProfileImage            = '$patientPicture',
+            DeathDate 				= '$patientDeathDate'
         WHERE
             SSN                     = '$patientSSN'
     ";
@@ -787,6 +821,7 @@ sub compareWith
     my $SPatientFirstName   = $SuspectPatient->getPatientFirstName();
     my $SPatientLastName    = $SuspectPatient->getPatientLastName();
     my $SPatientPicture     = $SuspectPatient->getPatientPicture();
+    my $SPatientDeathDate 	= $SuspectPatient->getPatientDeathDate();
 	
 	# Original Patient...
     my $OPatientSourceUID   = $OriginalPatient->getPatientSourceUID();
@@ -797,6 +832,7 @@ sub compareWith
     my $OPatientFirstName   = $OriginalPatient->getPatientFirstName();
     my $OPatientLastName    = $OriginalPatient->getPatientLastName();
     my $OPatientPicture     = $OriginalPatient->getPatientPicture();
+    my $OPatientDeathDate 	= $OriginalPatient->getPatientDeathDate();
 
 	# go through each parameter
     if ($SPatientSourceUID ne $OPatientSourceUID) {
@@ -847,6 +883,12 @@ sub compareWith
 		my $updatedPicture = $UpdatedPatient->setPatientPicture($SPatientPicture); # update patient picture
 		print "Will update database entry to \"$updatedPicture\".\n";
 	}
+	if ($SPatientDeathDate ne $OPatientDeathDate) {
+
+		print "Patient Death Date has changed from $OPatientDeathDate to $SPatientDeathDate!\n";
+		my $updatedDeathDate = $UpdatedPatient->setPatientDeathDate($SPatientDeathDate); # update patient death date 
+		print "Will update database entry to \"$updatedDeathDate\".\n";
+	}
 	
 	return $UpdatedPatient;
 }
@@ -873,6 +915,9 @@ sub convertDateTime
 {
 	my ($inputDate) = @_;
 
+	if (!$inputDate) {
+		return $inputDate;
+	}
 	my $dateFormat = Time::Piece->strptime($inputDate,"%b %d %Y %I:%M%p");
 
 	my $convertedDate = $dateFormat->strftime("%Y-%m-%d %H:%M:%S");

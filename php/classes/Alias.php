@@ -276,7 +276,8 @@ class Alias {
                     Alias.EducationalMaterialControlSerNum,
                     Alias.SourceDatabaseSerNum,
                     SourceDatabase.SourceDatabaseName,
-                    Alias.ColorTag
+                    Alias.ColorTag,
+                    Alias.LastUpdated
 				FROM 
                     Alias,
                     SourceDatabase
@@ -302,6 +303,7 @@ class Alias {
                     'name'      => $data[9]
                 );
                 $aliasColorTag  = $data[10];
+                $aliasLU        = $data[11];
                 $aliasTerms	    = array();
                 $aliasEduMat    = "";
 
@@ -346,6 +348,7 @@ class Alias {
 					'description_EN' 	=> $aliasDesc_EN, 
                     'description_FR' 	=> $aliasDesc_FR,
                     'source_db'         => $sourceDatabase, 
+                    'lastupdated'       => $aliasLU,
 					'count' 		    => count($aliasTerms), 
 					'terms' 		    => $aliasTerms
 				);
