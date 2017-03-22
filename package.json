@@ -1,0 +1,29 @@
+{
+  "name": "opaladmin",
+  "version": "0.7.6",
+  "description": "Administrative tool for Opal",
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/akimosupremo/opalAdmin.git"
+  },
+  "keywords": [
+    "opalAdmin"
+  ],
+  "author": "Ackeem B.",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/akimosupremo/opalAdmin/issues"
+  },
+  "homepage": "https://gitlab.com/akimosupremo/opalAdmin#README",
+  "dependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-jshint": "^1.1.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-wiredep": "^3.0.1",
+    "validate-commit-message": "^3.0.1"
+  }
+}

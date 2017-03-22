@@ -9,7 +9,7 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
 		// Function to go to register new user
 		$scope.goToAddUser = function () {
 			$state.go('user-register');
-		}
+		};
 
 		$scope.bannerMessage = "";
         // Function to show page banner 
@@ -19,7 +19,7 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
                     $(".bannerMessage").slideUp(); 
                 }, 3000); 
             });
-        }
+        };
         // Function to set banner class
         $scope.setBannerClass = function(classname) {
             // Remove any classes starting with "alert-" 
@@ -54,7 +54,7 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
         };
 
         $scope.filterUser = function(filterValue) {
-            $scope.filterValue = filterValue
+            $scope.filterValue = filterValue;
             $scope.gridApi.grid.refresh();
             
         };
@@ -73,7 +73,7 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
                 $scope.gridApi = gridApi;
                 $scope.gridApi.grid.registerRowsProcessor($scope.filterOptions, 300);
             },
-        }
+        };
 
         // Initialize list of existing users
         $scope.userList = [];
@@ -104,7 +104,7 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
                     $scope.userList = response;
                 });
             });
-        }
+        };
 
         // Controller for the delete user modal
         var DeleteUserModalInstanceCtrl = function ($scope, $uibModalInstance) {
@@ -130,14 +130,14 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
 
                     }
                 });
-            }
+            };
 
             // Function to close modal dialog
             $scope.cancel = function () {
                     $uibModalInstance.dismiss('cancel');
             };
 
-        }
+        };
 
         // Function for when the user has been clicked for editing 
         // We open a modal
@@ -159,7 +159,7 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
                     $scope.userList = response;
                 });
             });
-        }
+        };
 
         // Controller for the edit user modal
         var EditUserModalInstanceCtrl = function ($scope, $uibModalInstance) {
@@ -179,7 +179,7 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
                     backdrop: 'static',
                     keyboard: false,
                 }); 
-            }
+            };
             // Show processing dialog
             $scope.showProcessingModal(); 
 
@@ -201,7 +201,7 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
             $scope.passwordUpdate = function () {
 
                 $scope.changesMade = true;
-            }
+            };
             // Function to validate password 
             $scope.validPassword = {status:null,message:null};
             $scope.validatePassword = function (password) {
@@ -229,7 +229,7 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
                     if ($scope.validConfirmPassword.status == 'valid')
                         $scope.passwordChange = false;
                 }
-            }
+            };
 
             // Function to validate confirm password
             $scope.validConfirmPassword = {status:null,message:null};
@@ -256,13 +256,13 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
                     if ($scope.validPassword.status == 'valid')
                         $scope.passwordChange = false;
                 }
-            }
+            };
 
             // Function that triggers when the role field is updated
             $scope.roleUpdate = function () {
 
                 $scope.changesMade = true;
-            }
+            };
 
             // Function to check for form completion
             $scope.checkForm = function () {
@@ -271,7 +271,7 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
                     return true;
                 else
                     return false;
-            }
+            };
 
             // Submit changes
             $scope.updateUser = function () {
@@ -297,14 +297,14 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
                         }
                     });
                 }
-            }
+            };
 
             // Function to close modal dialog
             $scope.cancel = function () {
                     $uibModalInstance.dismiss('cancel');
             };
 
-        }
+        };
 
 
 

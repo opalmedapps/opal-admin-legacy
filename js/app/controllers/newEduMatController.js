@@ -9,7 +9,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
         // Function to go to previous page
         $scope.goBack = function() {
             window.history.back();
-        }
+        };
 
         // completed steps boolean object; used for progress bar
         var steps = {
@@ -48,7 +48,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 
 			var numberOfTrues = 0;
 			for (var step in steps) {
-				if (steps[step].completed == true) {
+				if (steps[step].completed === true) {
 					numberOfTrues++;
 				}
 			}
@@ -72,7 +72,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
             phase_in_tx: null,
             tocs: [],
             filters: []
-        }
+        };
 
         // Initialize a list of sexes
         $scope.sexes = [
@@ -112,7 +112,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 	            backdrop: 'static',
         	    keyboard: false,
 	       	});	
-        }
+        };
         $scope.showProcessingModal(); // Calling function
   
         $scope.formLoaded = false;
@@ -120,7 +120,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
         $scope.loadForm = function() {
             $('.form-box-left').addClass('fadeInDown');
             $('.form-box-right').addClass('fadeInRight');
-        }
+        };
 
         // Call our API service to get each filter
         filterAPIservice.getFilters().success(function (response) {
@@ -168,7 +168,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
-        }
+        };
 
         // Function to toggle necessary changes when updating the urls  
         $scope.urlUpdate = function () {
@@ -194,7 +194,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
-        }
+        };
 
         // Function to toggle necessary changes when updating the types
         $scope.typeUpdate = function() {
@@ -213,7 +213,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
-        }
+        };
 
         // Function to toggle necessary changes when updating the phase in treatment
         $scope.phaseUpdate = function(phase) {
@@ -226,7 +226,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			// Change progress bar
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-		}
+		};
 
         // Function to toggle necessary changes when updating the sex
         $scope.sexUpdate = function(sex) {
@@ -239,7 +239,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
                 $scope.demoFilter.sex = sexname;
             }
 
-        }
+        };
 
         $scope.tocsComplete = false;
         // Function to toggle necessary changes when updating the table of contents
@@ -271,7 +271,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			// Change progress bar
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-		}
+		};
 
         // Function to add table of contents to newEduMat object
         $scope.addTOC = function() {
@@ -286,7 +286,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
                 order:newOrder
             });
             $scope.tocUpdate();
-        }
+        };
 
         // Function to remove table of contents from newEduMat object
         $scope.removeTOC = function(order) {
@@ -296,7 +296,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
                 $scope.newEduMat.tocs[index].order -= 1;
             }
             $scope.tocUpdate();
-        }
+        };
         
         // Function to submit the new edu material
         $scope.submitEduMat = function() {
@@ -304,9 +304,9 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 
                 // Add demographic filters, if defined
                 if ($scope.demoFilter.sex)
-                    $scope.newEduMat.filters.push({id:$scope.demoFilter.sex, type:'Sex'})
+                    $scope.newEduMat.filters.push({id:$scope.demoFilter.sex, type:'Sex'});
                 if ($scope.demoFilter.age.min >= 0 && $scope.demoFilter.age.max <= 100) { // i.e. not empty
-                    if ($scope.demoFilter.age.min != 0 || $scope.demoFilter.age.max != 100) { // Filters were changed
+                    if ($scope.demoFilter.age.min !== 0 || $scope.demoFilter.age.max != 100) { // Filters were changed
                         $scope.newEduMat.filters.push({
                             id: String($scope.demoFilter.age.min).concat(',', String($scope.demoFilter.age.max)),
                             type:'Age'
@@ -328,7 +328,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
                     }
                 });
             }
-        }
+        };
 
         // Function to toggle Item in a list on/off
         $scope.selectItem = function(item) {
@@ -354,45 +354,45 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
                 });
                 selectAllTerms = !selectAllTerms;
             }
-        }
+        };
 
         // Function to assign search fields when textbox changes
         $scope.searchTerm = function(field) {
             $scope.termSearchField = field;
-        }
+        };
         $scope.searchDiagnosis = function(field) {
             $scope.dxSearchField = field;
-        }
+        };
         $scope.searchDoctor = function(field) {
             $scope.doctorSearchField = field;
-        }
+        };
         $scope.searchResource = function(field) {
             $scope.resourceSearchField = field;
-        }
+        };
 
         // Function for search through the filters
         $scope.searchTermsFilter = function (Filter) {
             var keyword = new RegExp($scope.termSearchField, 'i');
             return !$scope.termSearchField || keyword.test(Filter.name);
-        }
+        };
         $scope.searchDxFilter = function (Filter) {
             var keyword = new RegExp($scope.dxSearchField, 'i');
             return !$scope.dxSearchField || keyword.test(Filter.name);
-        }
+        };
         $scope.searchDoctorFilter = function (Filter) {
             var keyword = new RegExp($scope.doctorSearchField, 'i');
             return !$scope.doctorSearchField || keyword.test(Filter.name);
-        }
+        };
         $scope.searchResourceFilter = function (Filter) {
             var keyword = new RegExp($scope.resourceSearchField, 'i');
             return !$scope.resourceSearchField || keyword.test(Filter.name);
-        }
+        };
 
         // Function to return filters that have been checked
         function addFilters(filterList) {
             angular.forEach(filterList, function(Filter) {
                 if(Filter.added)
-                    $scope.newEduMat.filters.push({id:Filter.id, type:Filter.type})
+                    $scope.newEduMat.filters.push({id:Filter.id, type:Filter.type});
             });
         }
 
@@ -404,7 +404,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
                     filtersAdded = true;
             });
             return filtersAdded;
-        }
+        };
 
         // Function to return boolean for form completion
         $scope.checkForm = function() {
@@ -412,7 +412,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
                 return true;
             else
                 return false;
-        }
+        };
 
 
     });

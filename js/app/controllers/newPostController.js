@@ -15,7 +15,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
         // Function to go to previous page
         $scope.goBack = function() {
             window.history.back();
-        }
+        };
 
         // completed steps boolean object; used for progress bar
         var steps = {
@@ -69,7 +69,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
             publish_date: null,
             publish_time: null,
             filters: []
-        }
+        };
 
         // Initialize lists to hold filters
         $scope.termList = [];
@@ -86,7 +86,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 	            backdrop: 'static',
         	    keyboard: false,
 	       	});	
-        }
+        };
         $scope.showProcessingModal(); // Calling function
 
         $scope.formLoaded = false;
@@ -94,7 +94,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
         $scope.loadForm = function() {
             $('.form-box-left').addClass('fadeInDown');
             $('.form-box-right').addClass('fadeInRight');
-        }
+        };
 
             
         // Call our API service to get each filter
@@ -131,7 +131,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
-        }
+        };
 
         // Function to toggle necessary changes when updating the post body
         $scope.bodyUpdate = function() {
@@ -150,7 +150,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
-		}
+		};
 
         // Funtion to toggle necessary changes when updating the post type
         $scope.typeUpdate = function(type) {
@@ -175,7 +175,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			// Change progress bar
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-		}
+		};
 
         // Function to toggle necessary changes when updating the publish date
         $scope.publishDateUpdate = function() {
@@ -194,7 +194,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
-		}
+		};
 
         // Function to submit the new post
         $scope.submitPost = function() {
@@ -219,7 +219,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
                     }
                 });
             }
-        }
+        };
 
         // Function to toggle Item in a list on/off
         $scope.selectItem = function(item) {
@@ -245,39 +245,39 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
                 });
                 selectAllTerms = !selectAllTerms;
             }
-        }
+        };
 
         // Function to assign search fields when textbox changes
         $scope.searchTerm = function(field) {
             $scope.termSearchField = field;
-        }
+        };
         $scope.searchDiagnosis = function(field) {
             $scope.dxSearchField = field;
-        }
+        };
         $scope.searchDoctor = function(field) {
             $scope.doctorSearchField = field;
-        }
+        };
         $scope.searchResource = function(field) {
             $scope.resourceSearchField = field;
-        }
+        };
 
         // Function for search through the filters
         $scope.searchTermsFilter = function (Filter) {
             var keyword = new RegExp($scope.termSearchField, 'i');
             return !$scope.termSearchField || keyword.test(Filter.name);
-        }
+        };
         $scope.searchDxFilter = function (Filter) {
             var keyword = new RegExp($scope.dxSearchField, 'i');
             return !$scope.dxSearchField || keyword.test(Filter.name);
-        }
+        };
         $scope.searchDoctorFilter = function (Filter) {
             var keyword = new RegExp($scope.doctorSearchField, 'i');
             return !$scope.doctorSearchField || keyword.test(Filter.name);
-        }
+        };
         $scope.searchResourceFilter = function (Filter) {
             var keyword = new RegExp($scope.resourceSearchField, 'i');
             return !$scope.resourceSearchField || keyword.test(Filter.name);
-        }
+        };
 
         // Function to calculate / return step progress
         function trackProgress(value, total) {
@@ -289,7 +289,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 
 			var numberOfTrues = 0;
 			for (var step in steps) {
-				if (steps[step].completed == true) {
+				if (steps[step].completed === true) {
 					numberOfTrues++;
 				}
 			}
@@ -301,7 +301,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
         function addFilters(filterList) {
             angular.forEach(filterList, function(Filter) {
                 if(Filter.added)
-                    $scope.newPost.filters.push({id:Filter.id, type:Filter.type})
+                    $scope.newPost.filters.push({id:Filter.id, type:Filter.type});
             });
         }
 
@@ -313,7 +313,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
                     filtersAdded = true;
             });
             return filtersAdded;
-        }
+        };
 
         // Function to return boolean for form completion
         $scope.checkForm = function() {
@@ -321,7 +321,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
                 return true;
             else
                 return false;
-        }
+        };
 
         
         $scope.showWeeks = true; // show weeks sidebar 

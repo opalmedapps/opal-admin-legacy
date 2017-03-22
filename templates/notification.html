@@ -80,7 +80,7 @@
       </div>
       <div class="modal-body">
         <uib-accordion>
-          <uib-accordion-group is-open="statusA.open">
+          <div uib-accordion-group is-open="statusA.open">
             <uib-accordion-heading>
               <div>
                 Titles <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusA.open, 'glyphicon-chevron-right': !statusA.open}"></i>
@@ -105,8 +105,8 @@
                 </div>
               </div>
             </div>
-          </uib-accordion-group>
-          <uib-accordion-group is-open="statusB.open">
+          </div>
+          <div uib-accordion-group is-open="statusB.open">
             <uib-accordion-heading>
               <div>
                 Messages <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusB.open, 'glyphicon-chevron-right': !statusB.open}"></i>
@@ -129,7 +129,7 @@
                 </div>
               </div>
             </div>
-          </uib-accordion-group>
+          </div>
         </uib-accordion>
       </div>
     </script>

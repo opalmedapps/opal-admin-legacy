@@ -10,7 +10,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
         // Function to go to add alias page
         $scope.goToAddAlias = function () {
             $state.go('alias-add');
-        }
+        };
  
         $scope.bannerMessage = "";
         // Function to show page banner 
@@ -20,7 +20,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
                     $(".bannerMessage").slideUp(); 
                 }, 3000); 
             });
-        }
+        };
         // Function to set banner class
         $scope.setBannerClass = function(classname) {
             // Remove any classes starting with "alert-" 
@@ -69,7 +69,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
         };
     
         $scope.filterAlias = function(filterValue) {
-            $scope.filterValue = filterValue
+            $scope.filterValue = filterValue;
             $scope.gridApi.grid.refresh();
             
         };
@@ -127,7 +127,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 			} else {
 				return 0;
 			}
-		}
+		};
         // Function for when the alias "Update" checkbox has been modified
 		// for the selected alias in the table row
 		$scope.checkAliasUpdate = function (alias) {
@@ -182,7 +182,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
                     }
     			}); 
 	    	}
-        }
+        };
 
 		// Function for when the alias has been clicked for editing
 		// We open a modal
@@ -226,8 +226,8 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
             $scope.eduMatList = [];
             $scope.existingColorTags = [];
 
-			$scope.termFilter;
-            $scope.eduMatFilter;
+			$scope.termFilter = null;
+            $scope.eduMatFilter = null;
 
             // Call our API service to get the list of educational material
             edumatAPIservice.getEducationalMaterials().success(function (response) {
@@ -237,7 +237,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 			// Function to assign termFilter when textbox is changing 
 			$scope.changeTermFilter = function (termFilter) {
 				$scope.termFilter = termFilter;
-			}
+			};
 
 			// Function for searching through expression names
 			$scope.searchTermsFilter = function (term) {
@@ -248,7 +248,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
             // Function to assign eduMatFilter when textbox is changing 
 			$scope.changeEduMatFilter = function (eduMatFilter) {
 				$scope.eduMatFilter = eduMatFilter;
-			}
+			};
 
 			// Function for searching through expression names
 			$scope.searchEduMatsFilter = function (edumat) {
@@ -265,7 +265,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 	                backdrop: 'static',
         	        keyboard: false,
     	       	});	
-            }
+            };
             // Show processing dialog
             $scope.showProcessingModal(); 
 
@@ -313,7 +313,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 							return -1;
 						if (nameA > nameB)
 							return 1;
-						else return 0 // no sorting
+						else return 0; // no sorting
 					});
 
 
@@ -357,7 +357,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 
 				}
 			
-	   		}
+	   		};
 
 			// Function that triggers when the title is updated
 			$scope.titleUpdate = function () {
@@ -400,7 +400,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 
                 // Toggle boolean
                 $scope.changesMade = true;
-            }
+            };
 
             $scope.colorUpdate = function(color) {
 
@@ -409,7 +409,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 
                 if (color)
                     $scope.alias.color = color;
-            }
+            };
                 
 
 			$scope.toggleAlertText = function() {
@@ -419,7 +419,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 				else {
 					return false;	
 				}
-			}
+			};
 
 			// Submit changes
 			$scope.updateAlias = function () {
@@ -430,7 +430,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 		
 		    		// Fill it with the added terms from termList
 			    	angular.forEach($scope.termList, function(term) {
-				    	if(term.added == true) 
+				    	if(term.added === true) 
 					    	$scope.alias.terms.push(term.id);
     				});
 	
@@ -456,7 +456,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 		    			}
 			    	});
     			}
-            }
+            };
 
 			// Function to close modal dialog
   			$scope.cancel = function () {
@@ -473,19 +473,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
                 }
                 else
                     return false;
-            }
-
-
-			// Function to properly render the modal 
-			// plus enable resizable functions
-			setTimeout(function () {
-                            var resizeOpts = {
-                                handles: "all", autoHide: false
-                            };
-
-                            $(".aliasModal .modal-content").resizable(resizeOpts);
-
-                        }, 0);
+            };
 
 		};
 
@@ -494,14 +482,14 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 			
 			var addedParam = false;
 			angular.forEach(termList, function(term) {
-				if (term.added == true)
+				if (term.added === true)
 					addedParam = true;
 			});
 			if (addedParam)
 				return true;
 			else
 				return false;
-		}
+		};
 
 		// Function for when the alias has been clicked for deletion
 		// Open a modal
@@ -527,7 +515,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
     				});
 			});
 
-		}
+		};
 
 		// Controller for the delete alias modal
 		var DeleteAliasModalInstanceCtrl = function ($scope, $uibModalInstance) {
@@ -553,7 +541,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 						$uibModalInstance.close();
 					}
 				});
-			}
+			};
 	
 			// Function to close modal dialog
   			$scope.cancel = function () {

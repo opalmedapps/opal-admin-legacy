@@ -9,7 +9,7 @@ angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', '
         // Function to go to previous page
         $scope.goBack = function() {
             window.history.back();
-        }
+        };
 
         // completed steps boolean object; used for progress bar
         var steps = {
@@ -37,7 +37,7 @@ angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', '
 
 			var numberOfTrues = 0;
 			for (var step in steps) {
-				if (steps[step].completed == true) {
+				if (steps[step].completed === true) {
 					numberOfTrues++;
 				}
 			}
@@ -55,7 +55,7 @@ angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', '
             qrcode: "",
             qrpath: "",
             url: ""
-        }
+        };
 
         $scope.oldqrid = "";
 
@@ -77,7 +77,7 @@ angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', '
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
-        }
+        };
 
         // Function to toggle necessary changes when updating descriptions
         $scope.descriptionUpdate = function() {
@@ -97,7 +97,7 @@ angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', '
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
-        }
+        };
 
         // Function to toggle necessary changes when updating qrid and URL
         $scope.qridUpdate = function() {
@@ -117,7 +117,7 @@ angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', '
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
-        }
+        };
 
         // Function to call api to generate qr code
         $scope.generateQRCode = function(qrid) {
@@ -136,7 +136,7 @@ angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', '
                 $scope.hosMap.qrpath = "";
             }
 
-        }
+        };
 
         // Function to show map
         $scope.showMapDisplay = false;
@@ -159,7 +159,7 @@ angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', '
                     }
                 });
             }
-        }
+        };
 
         // Function to return boolean for form completion
         $scope.checkForm = function() {
@@ -167,7 +167,7 @@ angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', '
                 return true;
             else
                 return false;
-        }
+        };
 
 
     });

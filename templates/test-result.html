@@ -85,7 +85,7 @@
       </div>
       <div class="modal-body">
         <uib-accordion>
-          <uib-accordion-group is-open="statusA.open">
+          <div uib-accordion-group is-open="statusA.open">
             <uib-accordion-heading>
               <div>
                 Assigned Tests <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusA.open, 'glyphicon-chevron-right': !statusA.open}"></i>
@@ -113,10 +113,10 @@
                 </li>
               </ul>
             </div>
-          </uib-accordion-group>
-          <uib-accordion-group is-open="statusB.open">
+          </div>
+          <div uib-accordion-group is-open="statusB.open">
             <uib-accordion-heading>
- <div>
+              <div>
                 Titles <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusB.open, 'glyphicon-chevron-right': !statusB.open}"></i>
               </div>
             </uib-accordion-heading>
@@ -139,8 +139,8 @@
                 </div>
               </div>
             </div>
-          </uib-accordion-group>
-          <uib-accordion-group is-open="statusC.open">
+          </div>
+          <div uib-accordion-group is-open="statusC.open">
             <uib-accordion-heading>
               <div>
                 Descriptions <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusC.open, 'glyphicon-chevron-right': !statusC.open}"></i>
@@ -162,8 +162,8 @@
                 </div>
               </div>
             </div>
-          </uib-accordion-group>
-          <uib-accordion-group is-open="statusD.open">
+          </div>
+          <div uib-accordion-group is-open="statusD.open">
             <uib-accordion-heading>
               <div>
                 Test Group <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusD.open, 'glyphicon-chevron-right': !statusD.open}"></i>
@@ -188,7 +188,7 @@
                 </div>
               </div>
             </div>
-          </uib-accordion-group>
+          </div>
         </uib-accordion>
       </div>
     </script>

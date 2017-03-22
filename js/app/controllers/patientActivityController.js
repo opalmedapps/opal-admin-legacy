@@ -11,7 +11,7 @@ angular.module('opalAdmin.controllers.patientActivityController', ['ngAnimate', 
                     $(".bannerMessage").slideUp(); 
                 }, 3000); 
             });
-        }
+        };
         // Function to set banner class
         $scope.setBannerClass = function(classname) {
             // Remove any classes starting with "alert-" 
@@ -41,7 +41,7 @@ angular.module('opalAdmin.controllers.patientActivityController', ['ngAnimate', 
         };
     
         $scope.filterPatient = function(filterValue) {
-            $scope.filterValue = filterValue
+            $scope.filterValue = filterValue;
             $scope.gridApi.grid.refresh();
             
         };
@@ -63,7 +63,7 @@ angular.module('opalAdmin.controllers.patientActivityController', ['ngAnimate', 
                 $scope.gridApi = gridApi;
                 $scope.gridApi.grid.registerRowsProcessor($scope.filterOptions, 300);
             },
-        }
+        };
 
         // Initialize list to hold patient activities
         $scope.patientActivityList = [];

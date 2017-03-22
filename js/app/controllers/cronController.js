@@ -13,7 +13,7 @@ angular.module('opalAdmin.controllers.cronController', ['ngAnimate', 'ui.bootstr
                     $(".bannerMessage").slideUp(); 
                 }, 3000); 
             });
-        }
+        };
         // Function to set banner class
         $scope.setBannerClass = function(classname) {
             // Remove any classes starting with "alert-" 
@@ -28,7 +28,7 @@ angular.module('opalAdmin.controllers.cronController', ['ngAnimate', 'ui.bootstr
  		$scope.changesMade = false;
  		$scope.setChangesMade = function() {
             $scope.changesMade = true;
-        }
+        };
 
 		$scope.showWeeks = true; // show weeks sidebar 
   		$scope.toggleWeeks = function () {
@@ -128,7 +128,7 @@ angular.module('opalAdmin.controllers.cronController', ['ngAnimate', 'ui.bootstr
     				}
 	    		});
 	        }
-		}
+		};
 
         // Function to check necessary form fields are complete
         $scope.checkForm = function() {
@@ -140,6 +140,6 @@ angular.module('opalAdmin.controllers.cronController', ['ngAnimate', 'ui.bootstr
             }
             else
                 return false;
-        }
+        };
 
 	});

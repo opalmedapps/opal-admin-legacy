@@ -17,7 +17,8 @@ angular.module('opalAdmin.controllers.accountController', ['ui.bootstrap']).
                     $(".bannerMessage").slideUp(); 
                 }, 5000); 
             });
-        }
+        };
+
         // Function to set banner class
         $scope.setBannerClass = function(classname) {
             // Remove any classes starting with "alert-" 
@@ -34,7 +35,7 @@ angular.module('opalAdmin.controllers.accountController', ['ui.bootstrap']).
 			oldPassword: null,
 			password: null,
 			confirmPassword: null
-		}
+		};
 		$scope.account = jQuery.extend(true, {}, $scope.defaultAccount);
 
 		// Function to reset the account object
@@ -43,7 +44,7 @@ angular.module('opalAdmin.controllers.accountController', ['ui.bootstrap']).
             $scope.validOldPassword.status = null;
             $scope.validPassword.status = null;
             $scope.validConfirmPassword.status = null;
-		}
+		};
 
 		$scope.validOldPassword = {status:null,message:null};
 		$scope.validateOldPassword = function (oldPassword) {
@@ -53,7 +54,7 @@ angular.module('opalAdmin.controllers.accountController', ['ui.bootstrap']).
 			} else {
 				$scope.validOldPassword.status = 'valid';
 			}
-		}
+		};
 
 		// Function to validate password 
         $scope.validPassword = {status:null,message:null};
@@ -76,7 +77,7 @@ angular.module('opalAdmin.controllers.accountController', ['ui.bootstrap']).
                 $scope.validPassword.status = 'valid';
                 $scope.validPassword.message = null;
             }
-        }
+        };
 
         // Function to validate confirm password
         $scope.validConfirmPassword = {status:null,message:null};
@@ -95,7 +96,7 @@ angular.module('opalAdmin.controllers.accountController', ['ui.bootstrap']).
                 $scope.validConfirmPassword.status = 'valid';
                 $scope.validConfirmPassword.message = null;
             }
-        }
+        };
 
         // Function to check password reset form completion
         $scope.checkForm = function() {
@@ -105,7 +106,7 @@ angular.module('opalAdmin.controllers.accountController', ['ui.bootstrap']).
         	} else {
         		return true;
         	}
-        }
+        };
 
         // Function to update password
         $scope.updatePassword = function (account) {
@@ -154,9 +155,8 @@ angular.module('opalAdmin.controllers.accountController', ['ui.bootstrap']).
         			}
         		});
 
-
         	}
-        }
+        };
 
 
 	});
