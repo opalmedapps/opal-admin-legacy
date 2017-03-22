@@ -8,10 +8,10 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate','ui.boot
         // Function to go to previous page
         $scope.goBack = function() {
             window.history.back();
-        }
+        };
 
 		// Default boolean variables
-		var selectAll      = false // select All button checked?
+		var selectAll = false; // select All button checked?
 
 		// completed steps in object notation
 		var steps = {
@@ -66,7 +66,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate','ui.boot
         $scope.eduMatList = [];
 
         // Initialize list that will hold source databases
-        $scope.sourceDBList
+        $scope.sourceDBList = [];
 
         // Initialize list that will hold existing color tags
         $scope.existingColorTags = [];
@@ -83,7 +83,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate','ui.boot
 	            backdrop: 'static',
         	    keyboard: false,
 	       	});	
-        }
+        };
 
         // Call our API service to get the list of educational material
         edumatAPIservice.getEducationalMaterials().success(function (response) {
@@ -110,7 +110,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate','ui.boot
 			// Change progress bar
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
               
-		}
+		};
   
 		// Function to toggle necessary changes when updating alias title
 		$scope.titleUpdate = function () {
@@ -138,7 +138,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate','ui.boot
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
-		}
+		};
 
 		// Function to toggle necessary changes when updating alias description
 		$scope.descriptionUpdate = function () {
@@ -167,7 +167,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate','ui.boot
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
-		}
+		};
 
 		// Function to toggle necessary changes when updating alias type
 		$scope.typeUpdate = function (type) {
@@ -217,7 +217,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate','ui.boot
 			                return -1;
             		    if (nameA > nameB)
 	        			    return 1;
-                		else return 0 // no sorting
+                		else return 0; // no sorting
 	    		    });
     	    	});
             }
@@ -233,7 +233,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate','ui.boot
 
 			// Change progress bar
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-		}
+		};
 
 		// Function to add / remove a term to alias
 		$scope.toggleTermSelection = function(term){
@@ -273,7 +273,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate','ui.boot
 
 			}
 
-   		}
+   		};
 
 
      	
@@ -284,7 +284,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate','ui.boot
                 
                 // Fill it with the added terms from termList
 				angular.forEach($scope.termList, function(term) {
-			    	if(term.added == true) 
+			    	if(term.added === true) 
 				    	$scope.newAlias.terms.push(term.id);
 				});
 
@@ -298,12 +298,12 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate','ui.boot
 		    		}
 			    });
             }
-		}
+		};
 				
 		// Function to assign termFilter when textbox is changing 
 		$scope.changeTermFilter = function (termFilter) {
 			$scope.termFilter = termFilter;
-		}
+		};
 
 		// Function for searching through the expression list
 		$scope.searchTermsFilter = function (term) {
@@ -314,7 +314,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate','ui.boot
         // Function to assign eduMateFilter when textbox is changing 
 		$scope.changeEduMatFilter = function (eduMatFilter) {
 			$scope.eduMatFilter = eduMatFilter;
-		}
+		};
 
 		// Function for searching through the educational material list
 		$scope.searchEduMatsFilter = function (edumat) {
@@ -365,7 +365,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate','ui.boot
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
 			}
-		}
+		};
 	
 		// Function to calculate / return step progress
 		function trackProgress(value, total) {
@@ -377,7 +377,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate','ui.boot
 
 			var numberOfTrues = 0;
 			for (var step in steps) {
-				if (steps[step].completed == true) {
+				if (steps[step].completed === true) {
 					numberOfTrues++;
 				}
 			}
@@ -390,14 +390,14 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate','ui.boot
 			
 			var addedParam = false;
 			angular.forEach(termList, function(term) {
-				if (term.added == true)
+				if (term.added === true)
 					addedParam = true;
 			});
 			if (addedParam)
 				return true;
 			else
 				return false;
-		}
+		};
 
         // Function to return boolean for form completion
         $scope.checkForm = function() {
@@ -409,7 +409,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate','ui.boot
             }
             else
                 return false;
-        }
+        };
 
 	});
 

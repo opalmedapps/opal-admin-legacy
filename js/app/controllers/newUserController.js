@@ -9,14 +9,14 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 		// Function to go to previous page
         $scope.goBack = function() {
             window.history.back();
-        }
+        };
 
         // completed registration steps in object notation
         var steps = {
            	username: {completed: false},
             password: {completed: false},
             role: {completed: false}
-        }
+        };
 
         // Default count of completed steps
         $scope.numOfCompletedSteps = 0;
@@ -37,7 +37,7 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 
             var numberOfTrues = 0;
             for (var step in steps) {
-                if (steps[step].completed == true) {
+                if (steps[step].completed === true) {
                     numberOfTrues++;
                 }
             }
@@ -51,7 +51,7 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
         	password: null,
         	confirmPassword: null,
             role: null
-        }
+        };
 
         // Call our API service to get the list of possible roles
         $scope.roles = [];
@@ -88,7 +88,7 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
         		}
         	});
 
-        }
+        };
 
         // Function to validate password 
         $scope.validPassword = {status:null,message:null};
@@ -110,7 +110,7 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
                 $scope.validPassword.message = null;
                 $scope.passwordUpdate();
             }
-        }
+        };
 
         // Function to validate confirm password
         $scope.validConfirmPassword = {status:null,message:null};
@@ -132,7 +132,7 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
                 $scope.validConfirmPassword.message = null;
                 $scope.passwordUpdate();
             }
-        }
+        };
 			
 		// Function to toggle steps when updating the username field
 		$scope.usernameUpdate = function () {
@@ -143,7 +143,7 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
             $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-		}	
+		};	
 
 		// Function to toggle steps when updating the password field
         $scope.passwordUpdate = function() {
@@ -154,7 +154,7 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
             
             $scope.numOfCompletedSteps = stepsCompleted(steps);
             $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-        }	
+        };	
 
         // Function to toggle steps when updating the role field
         $scope.roleUpdate = function () {
@@ -166,16 +166,16 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
             $scope.numOfCompletedSteps = stepsCompleted(steps);
             $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
         
-        }
+        };
 
 		// Function to check registration form completion 
         $scope.checkRegistrationForm = function() {
 
             if($scope.stepProgress == 100) 
-                return true
+                return true;
             else
-                return false
-        }
+                return false;
+        };
 
         // Function to register user
         $scope.registerUser = function() {
@@ -192,7 +192,7 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
         			}
         		});
         	}
-        }
+        };
 
 	});
 

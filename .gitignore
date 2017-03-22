@@ -20,3 +20,7 @@ images/hospital-maps/qrCodes
 
 # ignore version control script
 bumpversion.sh
+
+# ignore bower/node components
+bower_components
+node_modules

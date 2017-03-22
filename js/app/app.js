@@ -50,10 +50,10 @@ angular.module('opalAdmin', [
 	                Session.create('123abc', response.data.user);
 	                return response.data.user;
 	            }
-	            else {return $q.reject(response)}
+	            else {return $q.reject(response);}
 
             });
-    }
+    };
 
     authService.confirm = function (credentials) {
     	return $http
@@ -62,13 +62,13 @@ angular.module('opalAdmin', [
     			if (response.data.success) {
     				return response.success;
     			}
-    			else {return $q.reject(response)}
+    			else {return $q.reject(response);}
     		});
-    }
+    };
 
     authService.isAuthenticated = function () {
         return !!Session.retrieveObject('user');
-    }
+    };
 
     authService.isAuthorized = function (authorizedRoles) {
     	
@@ -79,7 +79,7 @@ angular.module('opalAdmin', [
         return (authService.isAuthenticated() && 
             ( authorizedRoles.indexOf(Session.retrieveObject('user').role) !== -1 ||
             	authorizedRoles.indexOf(USER_ROLES.all) !== -1 ) );
-    }
+    };
 
     return authService;
 })

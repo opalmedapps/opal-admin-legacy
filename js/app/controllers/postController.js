@@ -15,7 +15,7 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
         // Function to go to add post page
         $scope.goToAddPost = function () {
             $state.go('post-add');
-        }
+        };
  
         $scope.bannerMessage = "";
         // Function to show page banner 
@@ -25,7 +25,7 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
                     $(".bannerMessage").slideUp(); 
                 }, 5000); 
             });
-        }
+        };
 
         // Function to set banner class
         $scope.setBannerClass = function(classname) {
@@ -80,7 +80,7 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
    
 
         $scope.filterPost = function(filterValue) {
-            $scope.filterValue = filterValue
+            $scope.filterValue = filterValue;
             $scope.gridApi.grid.refresh();
             
         };
@@ -135,7 +135,7 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 			} else {
 				return 0;
 			}
-		}
+		};
 
 
         // Function for when the post checkbox has been modified
@@ -210,7 +210,7 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
                     }
     			}); 
 	    	}
-        }
+        };
 
 		// Initialize a scope variable for a selected post
 		$scope.currentPost = {};
@@ -267,34 +267,34 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
             // Function to assign search fields when textbox changes
             $scope.searchTerm = function(field) {
                 $scope.termSearchField = field;
-            }
+            };
             $scope.searchDiagnosis = function(field) {
                 $scope.dxSearchField = field;
-            }
+            };
             $scope.searchDoctor = function(field) {
                 $scope.doctorSearchField = field;
-            }
+            };
             $scope.searchResource = function(field) {
                 $scope.resourceSearchField = field;
-            }
+            };
 
             // Function for search through the filters
             $scope.searchTermsFilter = function (Filter) {
                 var keyword = new RegExp($scope.termSearchField, 'i');
                 return !$scope.termSearchField || keyword.test(Filter.name);
-            }
+            };
             $scope.searchDxFilter = function (Filter) {
                 var keyword = new RegExp($scope.dxSearchField, 'i');
                 return !$scope.dxSearchField || keyword.test(Filter.name);
-            }
+            };
             $scope.searchDoctorFilter = function (Filter) {
                 var keyword = new RegExp($scope.doctorSearchField, 'i');
                 return !$scope.doctorSearchField || keyword.test(Filter.name);
-            }
+            };
             $scope.searchResourceFilter = function (Filter) {
                 var keyword = new RegExp($scope.resourceSearchField, 'i');
                 return !$scope.resourceSearchField || keyword.test(Filter.name);
-            }
+            };
 
             /* Function for the "Processing" dialog */
             var processingModal;
@@ -305,7 +305,7 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 	                backdrop: 'static',
         	        keyboard: false,
     	       	});	
-            }
+            };
             // Show processing dialog
             $scope.showProcessingModal(); 
 
@@ -376,7 +376,7 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
                     });
                     selectAllTerms = !selectAllTerms;
                 }
-            }
+            };
 
             // Function to assign 1 to existing filters
             function checkAdded(filterList) {
@@ -404,11 +404,11 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
                 }
                 else
                     return false;
-            }
+            };
 
             $scope.setChangesMade = function() {
                 $scope.changesMade = true;
-            }
+            };
 
 			// Submit changes
 			$scope.updatePost = function () {
@@ -447,13 +447,13 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
     					}
 	    			});
 		    	}
-            }
+            };
 
             // Function to return filters that have been checked
             function addFilters(filterList) {
                 angular.forEach(filterList, function(Filter) {
                     if(Filter.added)
-                        $scope.post.filters.push({id:Filter.id, type:Filter.type})
+                        $scope.post.filters.push({id:Filter.id, type:Filter.type});
                 });
             }
 
@@ -465,7 +465,7 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
                         allFiltersAdded = false;
                 });
                 return allFiltersAdded;
-            }
+            };
 
            	$scope.showWeeks = true; // show weeks sidebar 
       		$scope.toggleWeeks = function () {
@@ -506,16 +506,6 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
                     $uibModalInstance.dismiss('cancel');
             };
 
-			// Function to properly render the modal 
-			// plus enable resizable functions
-			setTimeout(function () {
-                var resizeOpts = {
-                    handles: "all", autoHide: true
-                };
-
-                $(".customModal .modal-content").resizable(resizeOpts);
-            }, 0);
-
 		};
 
 
@@ -542,7 +532,7 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
     				});
 			});
 
-		}
+		};
 
 		// Controller for the delete post modal
 		var DeletePostModalInstanceCtrl = function ($scope, $uibModalInstance) {
@@ -568,24 +558,12 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 						$uibModalInstance.close();
 					}
 				});
-			}
+			};
 	
 			// Function to close modal dialog
   			$scope.cancel = function () {
     				$uibModalInstance.dismiss('cancel');
   			};
-
-			// Function to properly render the modal 
-			// plus enable draggable and resizable functions
-			setTimeout(function () {
-                $(".deleteModal .modal-dialog").draggable();
-
-                var resizeOpts = {
-                    handles: "all", autoHide: true
-                };
-
-                $(".deleteModal .modal-content").resizable(resizeOpts);
-            }, 0);
 
 		};
     });

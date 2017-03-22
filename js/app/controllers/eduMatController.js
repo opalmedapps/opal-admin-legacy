@@ -10,11 +10,11 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
         // Function to go to add educational material page
         $scope.goToAddEducationalMaterial = function () {
             $state.go('educational-material-add');
-        }
+        };
 
         // Function to control search engine model
         $scope.filterEduMat = function(filterValue) {
-            $scope.filterValue = filterValue
+            $scope.filterValue = filterValue;
             $scope.gridApi.grid.refresh();
             
         };
@@ -32,7 +32,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
             '- <strong><a href="" ng-click="grid.appScope.deleteEduMat(row.entity)">Delete</a></strong></div>';
         var expandableRowTemplate = '<div ui-grid="row.entity.subGridOptions"></div>';
         var ratingCellTemplate = '<div class="ui-grid-cell-contents" ng-show="row.entity.rating == -1">No rating</div>' +
-            '<div class="ui-grid-cell-contents" ng-hide="row.entity.rating == -1"><stars number="{{row.entity.rating}}"></stars> </div>'
+            '<div class="ui-grid-cell-contents" ng-hide="row.entity.rating == -1"><stars number="{{row.entity.rating}}"></stars> </div>';
       
     	// Search engine for table
 		$scope.filterOptions = function(renderableRows) {
@@ -117,7 +117,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
                     $(".bannerMessage").slideUp(); 
                 }, 3000); 
             });
-        }
+        };
 
         // Function to set banner class
         $scope.setBannerClass = function(classname) {
@@ -141,7 +141,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 			} else {
 				return 0;
 			}
-		}
+		};
 
         // Function for when the publish flag checkbox has been modified
 		$scope.checkPublishFlag = function (edumat) {
@@ -194,7 +194,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
                     }
     			}); 
 	    	}
-        }
+        };
 
 		// Initialize a scope variable for a selected educational material
 		$scope.currentEduMat = {};
@@ -288,34 +288,34 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
             // Function to assign search fields when textbox changes
             $scope.searchTerm = function(field) {
                 $scope.termSearchField = field;
-            }
+            };
             $scope.searchDiagnosis = function(field) {
                 $scope.dxSearchField = field;
-            }
+            };
             $scope.searchDoctor = function(field) {
                 $scope.doctorSearchField = field;
-            }
+            };
             $scope.searchResource = function(field) {
                 $scope.resourceSearchField = field;
-            }
+            };
 
             // Function for search through the filters
             $scope.searchTermsFilter = function (Filter) {
                 var keyword = new RegExp($scope.termSearchField, 'i');
                 return !$scope.termSearchField || keyword.test(Filter.name);
-            }
+            };
             $scope.searchDxFilter = function (Filter) {
                 var keyword = new RegExp($scope.dxSearchField, 'i');
                 return !$scope.dxSearchField || keyword.test(Filter.name);
-            }
+            };
             $scope.searchDoctorFilter = function (Filter) {
                 var keyword = new RegExp($scope.doctorSearchField, 'i');
                 return !$scope.doctorSearchField || keyword.test(Filter.name);
-            }
+            };
             $scope.searchResourceFilter = function (Filter) {
                 var keyword = new RegExp($scope.resourceSearchField, 'i');
                 return !$scope.resourceSearchField || keyword.test(Filter.name);
-            }
+            };
 
             /* Function for the "Processing" dialog */
             var processingModal;
@@ -326,7 +326,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 	                backdrop: 'static',
         	        keyboard: false,
     	       	});	
-            }
+            };
             // Show processing dialog
             $scope.showProcessingModal(); 
 
@@ -380,7 +380,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
                     });
                     selectAllTerms = !selectAllTerms;
                 }
-            }
+            };
 
             // Function to assign '1' to existing filters
             function checkAdded(filterList) {
@@ -410,7 +410,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
                 };
                 angular.forEach($scope.eduMat.filters, function(selectedFilter) {
                     if (selectedFilter.type == 'Sex')
-                        $scope.demoFilter.sex = selectedFilter.id
+                        $scope.demoFilter.sex = selectedFilter.id;
                     if (selectedFilter.type == 'Age') {
                         $scope.demoFilter.age.min = parseInt(selectedFilter.id.split(',')[0]);
                         $scope.demoFilter.age.max = parseInt(selectedFilter.id.split(',')[1]);
@@ -428,7 +428,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
                 }
                 else
                     return false;
-            }
+            };
 
             $scope.setChangesMade = function() {
                 $scope.changesMade = true;
@@ -445,7 +445,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
                     });
                 }
 
-            }
+            };
 
 			// Submit changes
 			$scope.updateEduMat = function () {
@@ -457,9 +457,9 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 
                     // Add demographic filters, if defined
                     if ($scope.demoFilter.sex)
-                        $scope.eduMat.filters.push({id:$scope.demoFilter.sex, type:'Sex'})
+                        $scope.eduMat.filters.push({id:$scope.demoFilter.sex, type:'Sex'});
                     if ($scope.demoFilter.age.min >= 0 && $scope.demoFilter.age.max <= 100) { // i.e. not empty
-                        if ($scope.demoFilter.age.min != 0 || $scope.demoFilter.age.max != 100) { // Filters were changed
+                        if ($scope.demoFilter.age.min !== 0 || $scope.demoFilter.age.max != 100) { // Filters were changed
                             $scope.eduMat.filters.push({
                                 id: String($scope.demoFilter.age.min).concat(',', String($scope.demoFilter.age.max)),
                                 type:'Age'
@@ -495,7 +495,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
     					}
 	    			});
 		    	}
-            }
+            };
 
             // Function to add table of contents to eduMat object
             $scope.addTOC = function() {
@@ -509,7 +509,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
                     serial: null
                 });
                 $scope.setChangesMade();
-            }
+            };
 
             // Function to remove table of contents from eduMat object
             $scope.removeTOC = function(order) {
@@ -519,13 +519,13 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
                     $scope.eduMat.tocs[index].order -= 1;
                 }
                 $scope.setChangesMade();
-            }
+            };
 
             // Function to return filters that have been checked
             function addFilters(filterList) {
                 angular.forEach(filterList, function(Filter) {
                     if(Filter.added)
-                        $scope.eduMat.filters.push({id:Filter.id, type:Filter.type})
+                        $scope.eduMat.filters.push({id:Filter.id, type:Filter.type});
                 });
             }
 
@@ -537,7 +537,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
                         allFiltersAdded = false;
                 });
                 return allFiltersAdded;
-            }
+            };
 
             // Function to accept/trust html (styles, classes, etc.)
             $scope.deliberatelyTrustAsHtml = function(htmlSnippet) {
@@ -583,16 +583,6 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
                     $uibModalInstance.dismiss('cancel');
             };
 
-			// Function to properly render the modal 
-			// plus enable resizable functions
-			setTimeout(function () {
-                var resizeOpts = {
-                    handles: "all", autoHide: true
-                };
-
-                $(".customModal .modal-content").resizable(resizeOpts);
-            }, 0);
-
 		};
 
 		// Function for when the edu material has been clicked for deletion
@@ -629,7 +619,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 
     			});
 			});
-		}
+		};
 
 		// Controller for the delete educational material modal
 		var DeleteEduMatModalInstanceCtrl = function ($scope, $uibModalInstance) {
@@ -655,24 +645,13 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 						$uibModalInstance.close();
 					}
 				});
-			}
+			};
 	
 			// Function to close modal dialog
   			$scope.cancel = function () {
     				$uibModalInstance.dismiss('cancel');
   			};
 
-			// Function to properly render the modal 
-			// plus enable draggable and resizable functions
-			setTimeout(function () {
-                $(".deleteModal .modal-dialog").draggable();
-
-                var resizeOpts = {
-                    handles: "all", autoHide: true
-                };
-
-                $(".deleteModal .modal-content").resizable(resizeOpts);
-            }, 0);
 
 		};
 
@@ -691,16 +670,16 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
                 initRater();
                 function initRater()
                 {
-                    var number = Math.round(Number(attrs["number"]));
+                    var number = Math.round(Number(attrs.number));
                     for (var i = 0; i < number; i++) {
                         scope.rate.push({'Icon':'glyphicon-star'});
-                    };
+                    }
                     for (var j = number; j < 5; j++) {
                         scope.rate.push({'Icon':'glyphicon-star-empty'});
-                    };
+                    }
                 }
             }
-        }
+        };
     });
 
 

@@ -9,7 +9,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
         // Function to go to previous page
         $scope.goBack = function() {
             window.history.back();
-        }
+        };
 
         // completed registration steps in object notation
         var defaultSteps = {
@@ -19,7 +19,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
             security1: {completed: false},
             security2: {completed: false},
             security3: {completed: false}
-        }
+        };
         var steps = jQuery.extend(true, {}, defaultSteps);
 
         // Default count of completed steps
@@ -41,7 +41,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 
             var numberOfTrues = 0;
             for (var step in steps) {
-                if (steps[step].completed == true) {
+                if (steps[step].completed === true) {
                     numberOfTrues++;
                 }
             }
@@ -57,7 +57,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
                     $(".bannerMessage").slideUp(); 
                 }, 5000); 
             });
-        }
+        };
         // Function to set banner class
         $scope.setBannerClass = function(classname) {
             // Remove any classes starting with "alert-" 
@@ -81,7 +81,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
             securityQuestion3: {serial:null,answer:null},
             SSN: null,
             data: null
-        }
+        };
         $scope.newPatient = jQuery.extend(true, {}, $scope.defaultNewPatient);
 
 
@@ -97,7 +97,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
             $scope.numOfCompletedSteps = stepsCompleted(steps);
             $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
         
-        }
+        };
 
         // Initialize list 
         $scope.securityQuestions = [];
@@ -117,17 +117,17 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
             }
 
             else if(ssn.length < 12) {
-                $scope.validSSN.status = 'invalid' // input not long enough
-                $scope.validSSN.message = 'SSN must be greater than 12 characters'
+                $scope.validSSN.status = 'invalid'; // input not long enough
+                $scope.validSSN.message = 'SSN must be greater than 12 characters';
                 return;
             }
 
             else {
-                $scope.validSSN.status = 'valid'
+                $scope.validSSN.status = 'valid';
                 $scope.validSSN.message = null;
 
             }
-        }
+        };
 
         $scope.accordionOpen = true;
 
@@ -146,10 +146,10 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
             }
 
             else {
-                $scope.validPatientId.status = 'valid'
+                $scope.validPatientId.status = 'valid';
                 return;
             }
-        }
+        };
 
         $scope.validSearchForm = function () {
             if ($scope.validSSN.status == 'valid' && $scope.validPatientId.status == 'valid') {
@@ -157,7 +157,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
             }
             else 
                 return false;
-        }
+        };
 
         $scope.validPatientSearch = null;
         $scope.validatePatientSearch = function() {
@@ -183,7 +183,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
                     }
                     else {
                         $scope.validSSN.status = 'valid';
-                        $scope.validSSN.message = 'Patient found!'
+                        $scope.validSSN.message = 'Patient found!';
                         $scope.validPatientSearch = 'valid';
 
                         $scope.newPatient.data = response.data; // Assign data
@@ -201,7 +201,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
             }
             
 
-        }
+        };
 
         // Function to validate email address
         $scope.validEmail = {status:null,message:null};
@@ -242,7 +242,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
                 });
 
             }
-        }
+        };
 
         // Function to validate password 
         $scope.validPassword = {status:null,message:null};
@@ -264,7 +264,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
                 $scope.validPassword.message = null;
                 $scope.passwordUpdate();
             }
-        }
+        };
 
         // Function to validate confirm password
         $scope.validConfirmPassword = {status:null,message:null};
@@ -286,7 +286,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
                 $scope.validConfirmPassword.message = null;
                 $scope.passwordUpdate();
             }
-        }
+        };
 
         // Initialize a list of languages available
         $scope.languages = [{
@@ -309,20 +309,20 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
             var re = /^\d+$/;
             if (!re.test(cellNum)) {
                 $scope.validCellNum.status = 'invalid';
-                $scope.validCellNum.message = 'Invalid format'
+                $scope.validCellNum.message = 'Invalid format';
                 return;
             }
 
             if (cellNum.length != 10) {
                 $scope.validCellNum.status = 'invalid';
-                $scope.validCellNum.message = 'Must be 10 digits long'
+                $scope.validCellNum.message = 'Must be 10 digits long';
                 return;
             } else {
                 $scope.validCellNum.status = 'valid';
                 $scope.validCellNum.message = null;
             }
             
-        }
+        };
 
         // Function to validate security question answer 1
         $scope.validAnswer1 = {status: null, message:null};
@@ -345,7 +345,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
                 $scope.validAnswer1.message = null;
                 $scope.securityQuestion1Update();
             }
-        }
+        };
 
          // Function to validate security question answer 2
         $scope.validAnswer2 = {status: null, message:null};
@@ -368,7 +368,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
                 $scope.validAnswer2.message = null;
                 $scope.securityQuestion2Update();
             }
-        }
+        };
 
          // Function to validate security question answer 3
         $scope.validAnswer3 = {status: null, message:null};
@@ -391,21 +391,21 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
                 $scope.validAnswer3.message = null;
                 $scope.securityQuestion3Update();
             }
-        }
+        };
 
         // Function to filter question based on question 1 field
         $scope.filterFromQ1 = function(question) {
-            return (question.serial != $scope.newPatient.securityQuestion1.serial)
-        }
+            return (question.serial != $scope.newPatient.securityQuestion1.serial);
+        };
         // Function to filter question based on question 2 field
         $scope.filterFromQ2 = function(question) {
             //console.log($scope.newPatient.securityQuestion2)
-            return (question.serial != $scope.newPatient.securityQuestion2.serial)
-        }
+            return (question.serial != $scope.newPatient.securityQuestion2.serial);
+        };
         // Function to filter question based on question 3 field
         $scope.filterFromQ3 = function(question) {
-            return (question.serial != $scope.newPatient.securityQuestion3.serial)
-        }
+            return (question.serial != $scope.newPatient.securityQuestion3.serial);
+        };
 
         // Function to toggle steps when updating the email field
         $scope.emailUpdate = function() {
@@ -416,7 +416,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 
             $scope.numOfCompletedSteps = stepsCompleted(steps);
             $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-        }
+        };
         // Function to toggle steps when updating the password field
         $scope.passwordUpdate = function() {
             if($scope.validPassword.status == 'valid' && $scope.validConfirmPassword.status == 'valid')
@@ -426,7 +426,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
             
             $scope.numOfCompletedSteps = stepsCompleted(steps);
             $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-        }
+        };
         // Function to toggle steps when updating the language field
         $scope.languageUpdate = function() {
             if($scope.newPatient.language)
@@ -436,7 +436,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
             
             $scope.numOfCompletedSteps = stepsCompleted(steps);
             $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-        }
+        };
         // Function to toggle steps when updating the security question 1 field
         $scope.securityQuestion1Update = function() {
             if($scope.validAnswer1.status == 'valid')
@@ -446,7 +446,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
             
             $scope.numOfCompletedSteps = stepsCompleted(steps);
             $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-        }
+        };
         // Function to toggle steps when updating the security question 2 field
         $scope.securityQuestion2Update = function() {
             if($scope.validAnswer2.status == 'valid')
@@ -456,7 +456,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
             
             $scope.numOfCompletedSteps = stepsCompleted(steps);
             $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-        }
+        };
         // Function to toggle steps when updating the security question 3 field
         $scope.securityQuestion3Update = function() {
             if($scope.validAnswer3.status == 'valid')
@@ -466,16 +466,16 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
             
             $scope.numOfCompletedSteps = stepsCompleted(steps);
             $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-        }
+        };
 
         // Function to check registration form completion 
         $scope.checkRegistrationForm = function() {
 
             if($scope.stepProgress == 100) 
-                return true
+                return true;
             else
-                return false
-        }
+                return false;
+        };
 
 
         // Function to register patient
@@ -538,7 +538,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
                 });
 
             }
-        }
+        };
 
         var ConfirmRegistrationModalInstanceCtrl = function ($scope, $uibModalInstance, AuthService) {
 
@@ -546,7 +546,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
             $scope.credentials = {
                 username: "",
                 password: ""
-            }
+            };
 
             $scope.bannerMessage = "";
             // Function to show page banner 
@@ -556,7 +556,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
                         $(".bannerMessage").slideUp(); 
                     }, 3000); 
                 });
-            }
+            };
             // Function to set banner class
             $scope.setBannerClass = function(classname) {
                 // Remove any classes starting with "alert-" 
@@ -573,7 +573,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
                     return true;
                 else
                     return false;
-            }
+            };
                 
             // Function to "shake" form container if fields are incorrect
             $scope.shakeForm = function() {
@@ -582,7 +582,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
                 setTimeout(function() {
                     $('.form-box').removeClass('shake');
                 }, 1000);
-            } 
+            };
 
             $scope.confirmRegistration = function (credentials) {
                 if ($scope.loginFormComplete()) {
@@ -593,16 +593,16 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
                         $scope.setBannerClass('danger');
                         $scope.shakeForm();
                         $scope.showBanner();
-                    })
+                    });
                 }
-            }
+            };
 
             // Function to close modal dialog
             $scope.cancel = function () {
                     $uibModalInstance.dismiss('cancel');
             };
 
-        }
+        };
        
     });
 

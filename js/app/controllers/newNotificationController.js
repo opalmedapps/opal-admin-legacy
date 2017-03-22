@@ -9,7 +9,7 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
         // Function to go to previous page
         $scope.goBack = function() {
             window.history.back();
-        }
+        };
 
         // completed steps boolean object; used for progress bar
         var steps = {
@@ -37,7 +37,7 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 
 			var numberOfTrues = 0;
 			for (var step in steps) {
-				if (steps[step].completed == true) {
+				if (steps[step].completed === true) {
 					numberOfTrues++;
 				}
 			}
@@ -52,13 +52,13 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
             description_EN: "",
             description_FR: "",
             type: ""
-        }
+        };
         
         
         // Call our API to get the list of notification types
         $scope.notificationTypes = [];
         notifAPIservice.getNotificationTypes().success(function(response) {
-            $scope.notificationTypes = response
+            $scope.notificationTypes = response;
         });
 
         // Function to toggle necessary changes when updating titles
@@ -79,7 +79,7 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
-        }
+        };
 
         // Function to toggle necessary changes when updating descriptions
         $scope.descriptionUpdate = function() {
@@ -99,7 +99,7 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
-        }
+        };
 
         // Function to toggle necessary changes when updating type
         $scope.typeUpdate = function(typeId) {
@@ -121,7 +121,7 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
-        }
+        };
 
         // Function to submit the new notification
         $scope.submitNotification = function() {
@@ -136,7 +136,7 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
                     }
                 });
             }
-        }
+        };
 
         // Function to return boolean for form completion
         $scope.checkForm = function() {
@@ -144,7 +144,7 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
                 return true;
             else
                 return false;
-        }
+        };
 
 
 	});

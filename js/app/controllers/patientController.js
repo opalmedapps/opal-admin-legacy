@@ -9,7 +9,7 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
         // Function to go to register new patient
         $scope.goToAddPatient = function () {
             $state.go('patients-register');
-        }
+        };
         
         $scope.bannerMessage = "";
         // Function to show page banner 
@@ -19,7 +19,7 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
                     $(".bannerMessage").slideUp(); 
                 }, 3000); 
             });
-        }
+        };
 
         $scope.changesMade = false;
 
@@ -48,7 +48,7 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
    
 
         $scope.filterPatient = function(filterValue) {
-            $scope.filterValue = filterValue
+            $scope.filterValue = filterValue;
             $scope.gridApi.grid.refresh();
             
         };
@@ -94,7 +94,7 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 			} else {
 				return 0;
 			}
-		}
+		};
 
 
         // Function for when the patient checkbox has been modified
@@ -139,7 +139,7 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
                     }
     			}); 
 	    	}
-        }
+        };
 
     });
 

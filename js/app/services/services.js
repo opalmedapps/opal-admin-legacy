@@ -28,8 +28,8 @@ angular.module('opalAdmin.services', [])
 				backdrop: 'static',
 			});
 
-			return modalInstance.result.then(function() {})
-		}
+			return modalInstance.result.then(function() {});
+		};
 
 	})
 
@@ -37,5 +37,5 @@ angular.module('opalAdmin.services', [])
 		this.logout = function () {
 			Session.destroy();
 			$state.go('login');
-		}
+		};
 	});

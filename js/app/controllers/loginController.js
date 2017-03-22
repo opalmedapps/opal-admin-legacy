@@ -10,7 +10,7 @@ angular.module('opalAdmin.controllers.loginController', ['ngAnimate', 'ui.bootst
         $scope.credentials = {
             username: "",
             password: ""
-        }
+        };
 
         $scope.bannerMessage = "";
         // Function to show page banner 
@@ -20,7 +20,7 @@ angular.module('opalAdmin.controllers.loginController', ['ngAnimate', 'ui.bootst
                     $(".bannerMessage").slideUp(); 
                 }, 3000); 
             });
-        }
+        };
         // Function to set banner class
         $scope.setBannerClass = function(classname) {
             // Remove any classes starting with "alert-" 
@@ -38,7 +38,7 @@ angular.module('opalAdmin.controllers.loginController', ['ngAnimate', 'ui.bootst
                 return true;
             else
                 return false;
-        }
+        };
             
         // Function to "shake" form container if fields are incorrect
         $scope.shakeForm = function() {
@@ -47,7 +47,7 @@ angular.module('opalAdmin.controllers.loginController', ['ngAnimate', 'ui.bootst
             setTimeout(function() {
                 $('.form-box').removeClass('shake');
             }, 1000);
-        } 
+        }; 
       
         $scope.submitLogin = function (credentials) {
             if($scope.loginFormComplete()) {
@@ -63,7 +63,7 @@ angular.module('opalAdmin.controllers.loginController', ['ngAnimate', 'ui.bootst
                     $scope.showBanner();
                 });
             }
-        }
+        };
 
 	});
 

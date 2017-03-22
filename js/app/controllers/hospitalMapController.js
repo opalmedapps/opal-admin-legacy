@@ -9,10 +9,10 @@ angular.module('opalAdmin.controllers.hospitalMapController', ['ngAnimate', 'ngS
         // Function to go to add hospital map page
         $scope.goToAddHospitalMap = function() {
             $state.go('hospital-map-add');
-        }
+        };
         // Function to control search engine model
         $scope.filterHosMap = function(filterValue) {
-            $scope.filterValue = filterValue
+            $scope.filterValue = filterValue;
             $scope.gridApi.grid.refresh();
             
         };
@@ -82,7 +82,7 @@ angular.module('opalAdmin.controllers.hospitalMapController', ['ngAnimate', 'ngS
                     $(".bannerMessage").slideUp(); 
                 }, 3000); 
             });
-        }
+        };
 
         // Initialize a scope variable for a selected map
         $scope.currentHosMap = {};
@@ -137,7 +137,7 @@ angular.module('opalAdmin.controllers.hospitalMapController', ['ngAnimate', 'ngS
 	                backdrop: 'static',
         	        keyboard: false,
     	       	});	
-            }
+            };
             // Show processing dialog
             $scope.showProcessingModal(); 
 
@@ -170,7 +170,7 @@ angular.module('opalAdmin.controllers.hospitalMapController', ['ngAnimate', 'ngS
                     $scope.hosMap.qrpath = "";
                 }
 
-            }
+            };
             // Function to show map
             $scope.showMap = function (url) {
                 $scope.mapURL = url;
@@ -186,11 +186,11 @@ angular.module('opalAdmin.controllers.hospitalMapController', ['ngAnimate', 'ngS
                 }
                 else
                     return false;
-            }
+            };
 
             $scope.setChangesMade = function() {
                 $scope.changesMade = true;
-            }
+            };
 
             // Submit changes
             $scope.updateHosMap = function() {
@@ -208,22 +208,13 @@ angular.module('opalAdmin.controllers.hospitalMapController', ['ngAnimate', 'ngS
     					}
 	    			});
 		    	}
-            }
+            };
 
             // Function to close modal dialog
             $scope.cancel = function () {
                     $uibModalInstance.dismiss('cancel');
             };
             
-	        // Function to properly render the modal 
-			// plus enable resizable functions
-			setTimeout(function () {
-                var resizeOpts = {
-                    handles: "all", autoHide: true
-                };
-
-                $(".customModal .modal-content").resizable(resizeOpts);
-            }, 0);
 
 		};
 
@@ -249,7 +240,7 @@ angular.module('opalAdmin.controllers.hospitalMapController', ['ngAnimate', 'ngS
         			$scope.hosMapList = response;
     			});
 			});
-		}
+		};
 	
         // Controller for the delete hospital map modal
 		var DeleteHosMapModalInstanceCtrl = function ($scope, $uibModalInstance) {
@@ -266,24 +257,12 @@ angular.module('opalAdmin.controllers.hospitalMapController', ['ngAnimate', 'ngS
 						$uibModalInstance.close();
 					}
 				});
-			}
+			};
 	
 			// Function to close modal dialog
   			$scope.cancel = function () {
     				$uibModalInstance.dismiss('cancel');
   			};
-
-			// Function to properly render the modal 
-			// plus enable draggable and resizable functions
-			setTimeout(function () {
-                $(".deleteModal .modal-dialog").draggable();
-
-                var resizeOpts = {
-                    handles: "all", autoHide: true
-                };
-
-                $(".deleteModal .modal-content").resizable(resizeOpts);
-            }, 0);
 
 		};
 
