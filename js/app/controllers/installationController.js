@@ -16,7 +16,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
             clinical_setup: {completed: false},
             config_files: {completed: false},
             site_account: {completed: false}
-        }
+        };
 
         // Default count of completed steps
         $scope.numOfCompletedSteps = 0;
@@ -37,7 +37,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 
             var numberOfTrues = 0;
             for (var step in steps) {
-                if (steps[step].completed == true) {
+                if (steps[step].completed === true) {
                     numberOfTrues++;
                 }
             }
@@ -51,7 +51,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 			clinical_setup: false,
 			config_files: false,
 			site_account: false
-		}
+		};
 
 		// call our API service to verify requirements
 		$scope.verifyRequirements = null;
@@ -78,7 +78,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 			username: null,
 			password: null,
 			message: null
-		}
+		};
 
 		$scope.checkOpalForm = function () {
 			if ($scope.opal_setup.host && $scope.opal_setup.port && $scope.opal_setup.name
@@ -86,7 +86,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 				return true;
 			}
 			else return false;
-		}
+		};
 
 		$scope.testOpalConnection = function () {
 
@@ -121,7 +121,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 				
 				
 			}
-		}
+		};
 
 		$scope.sourceDBList = [
 			{serial:1,name:'Aria',selected:false},
@@ -134,7 +134,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 			aria: null,
 			medivisit: null,
 			mosaiq: null
-		}	
+		};	
 
 		$scope.clinical_setup.aria = {
 			status: null,
@@ -144,7 +144,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 			password: null,
 			document_path: null,
 			message: null
-		}
+		};
 
 		$scope.checkAriaForm = function() { 
 			if ($scope.clinical_setup.aria.host && $scope.clinical_setup.aria.username
@@ -153,7 +153,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 			}
 			else return false;
 
-		}
+		};
 
 		$scope.testAriaConnection = function () {
 			
@@ -191,7 +191,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 				});
 
 			}
-		}
+		};
 
 		$scope.clinical_setup.medivisit = {
 			status: null,
@@ -201,7 +201,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 			username: null,
 			password: null,
 			message: null
-		}
+		};
 
 		$scope.checkMediVisitForm = function () {
 			if($scope.clinical_setup.medivisit.host && $scope.clinical_setup.medivisit.name
@@ -209,7 +209,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 				return true;
 			}
 			else return false;
-		}
+		};
 
 		$scope.testMediVisitConnection = function () {
 			if ($scope.checkMediVisitForm()) {
@@ -246,7 +246,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 				});
 				
 			}
-		}
+		};
 
 		$scope.clinical_setup.mosaiq = {
 			status: null,
@@ -256,7 +256,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 			password: null,
 			document_path: null,
 			message: null
-		}
+		};
 
 		$scope.checkMosaiqForm = function () {
 			if($scope.clinical_setup.mosaiq.host && $scope.clinical_setup.mosaiq.username
@@ -264,7 +264,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 				return true;
 			}
 			else return false;
-		}
+		};
 
 		$scope.testMosaiqConnection = function () {
 			if ($scope.checkMosaiqForm()) {
@@ -300,7 +300,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 					}
 				});
 			}
-		}
+		};
 
 		$scope.checkClinicalSetup = function () {
 			if ($scope.sourceDBList[0].selected) { // Aria
@@ -317,18 +317,18 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 			}
 
 			return true;
-		}
+		};
 
 		$scope.configurations = {
 			message : null
-		}
+		};
 		$scope.submitConfigurations = function () {
 			
 			$scope.configs = {
 				opal: $scope.opal_setup,
 				clinical: $scope.clinical_setup,
 				urlpath: urlpath
-			}
+			};
 
 			// Ajax call
 			$.ajax({
@@ -357,7 +357,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 				}
 			});
 
-		}
+		};
 
 		// Initialize admin user object
         $scope.adminUser = {
@@ -366,7 +366,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
         	confirmPassword: null,
         	status: null,
         	message: null
-        }
+        };
 		 
 		// Function to validate username 
         $scope.validUsername = {status:null,message:null};
@@ -380,7 +380,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
         		$scope.validUsername.status = 'valid';
         	}
 
-        }
+        };
 
         // Function to validate password 
         $scope.validPassword = {status:null,message:null};
@@ -399,7 +399,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
                 $scope.validPassword.status = 'valid';
                 $scope.validPassword.message = null;
             }
-        }
+        };
 
         // Function to validate confirm password
         $scope.validConfirmPassword = {status:null,message:null};
@@ -418,7 +418,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
                 $scope.validConfirmPassword.status = 'valid';
                 $scope.validConfirmPassword.message = null;
             }
-        }
+        };
 			
         $scope.checkAdminForm = function () {
         	if($scope.validUsername.status == 'valid' && $scope.validPassword.status == 'valid'
@@ -426,7 +426,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
         		return true;
         	}
         	else return false;
-        }
+        };
 
         $scope.addAdminUser = function () {
         	if ($scope.checkAdminForm()) {
@@ -459,20 +459,20 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
         			}
         		});        		
         	}
-        }
+        };
 
         $scope.checkInstallationForm = function () {
         	if ($scope.stepProgress == 100)
         		return true;
         	else 
         		return false;
-        }
+        };
 
         $scope.installSite = function () {
         	if ($scope.checkInstallationForm()) {
         		$state.go('login');
         	}
-        }
+        };
 
 
 	});

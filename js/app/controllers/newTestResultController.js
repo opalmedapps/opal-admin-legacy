@@ -8,7 +8,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
         // Function to go to previous page
         $scope.goBack = function() {
             window.history.back();
-        }
+        };
 
         // completed steps boolean object; used for progress bar
         var steps = {
@@ -37,7 +37,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 
 			var numberOfTrues = 0;
 			for (var step in steps) {
-				if (steps[step].completed == true) {
+				if (steps[step].completed === true) {
 					numberOfTrues++;
 				}
 			}
@@ -63,7 +63,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
             group_EN: "",
             group_FR: "",
             tests: []
-        }
+        };
 
         // Initialize lists to hold distinct test groups 
         $scope.TestResultGroups_EN = [];
@@ -78,7 +78,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 	            backdrop: 'static',
         	    keyboard: false,
 	       	});	
-        }
+        };
         $scope.showProcessingModal(); // Calling function
   
         $scope.formLoaded = false;
@@ -86,7 +86,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
         $scope.loadForm = function() {
             $('.form-box-left').addClass('fadeInDown');
             $('.form-box-right').addClass('fadeInRight');
-        }
+        };
 
         // Call our API to get the list of test groups
         testresAPIservice.getTestResultGroups().success(function(response) {
@@ -127,7 +127,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
-        }
+        };
 
         // Function to toggle necessary changes when updating descriptions
         $scope.descriptionUpdate = function() {
@@ -148,7 +148,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
-        }
+        };
 
         // Function to toggle necessary changes when updating groups
         $scope.groupUpdate = function() {
@@ -169,7 +169,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
-        }
+        };
 
 		// Function to return boolean for # of added tests
 		$scope.checkTestsAdded = function(testList) {
@@ -183,7 +183,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 				return true;
 			else
 				return false;
-		}
+		};
 
 	    // Function to add / remove a test
 		$scope.toggleTestSelection = function(test){
@@ -225,7 +225,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 
 			}
 
-   		}
+   		};
 
         // Function to submit the new test result
         $scope.submitTestResult = function() {
@@ -247,7 +247,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
                     }
                 });
             }
-        }
+        };
 
         // Function to toggle Item in a list on/off
         $scope.selectItem = function(item) {
@@ -260,13 +260,13 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
         // Function to assign search field when textbox changes
         $scope.changeTestFilter = function (field) {
             $scope.testFilter = field;
-        }
+        };
 
         // Function for search through the test names
         $scope.searchTestsFilter = function (Filter) {
             var keyword = new RegExp($scope.testFilter, 'i');
             return !$scope.testFilter || keyword.test(Filter.name);
-        }
+        };
 
 
         // Function to return boolean for form completion
@@ -275,6 +275,6 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
                 return true;
             else
                 return false;
-        }
+        };
 
     });

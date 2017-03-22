@@ -9,11 +9,11 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
         // Function to go to add notification page
         $scope.goToAddNotification = function() {
             $state.go('notification-add');
-        }
+        };
 
         // Function to control search engine model
         $scope.filterNotification = function(filterValue) {
-            $scope.filterValue = filterValue
+            $scope.filterValue = filterValue;
             $scope.gridApi.grid.refresh();
             
         };
@@ -80,7 +80,7 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
                     $(".bannerMessage").slideUp(); 
                 }, 3000); 
             });
-        }
+        };
         // Function to set banner class
         $scope.setBannerClass = function(classname) {
             // Remove any classes starting with "alert-" 
@@ -115,7 +115,7 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
         			$scope.notificationList = response;
     			});
 			});
-        }
+        };
 
 	    // Controller for the edit notification modal
 		var EditNotificationModalInstanceCtrl = function ($scope, $uibModalInstance, $filter) {
@@ -133,7 +133,7 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
 	                backdrop: 'static',
         	        keyboard: false,
     	       	});	
-            }
+            };
             // Show processing dialog
             $scope.showProcessingModal(); 
 
@@ -153,11 +153,11 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
                 }
                 else
                     return false;
-            }
+            };
 
             $scope.setChangesMade = function() {
                 $scope.changesMade = true;
-            }
+            };
 
             // Submit changes
             $scope.updateNotification = function() {
@@ -183,22 +183,12 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
     					}
 	    			});
 		    	}
-            }
+            };
 
             // Function to close modal dialog
             $scope.cancel = function () {
                     $uibModalInstance.dismiss('cancel');
             };
-
-	        // Function to properly render the modal 
-			// plus enable resizable functions
-			setTimeout(function () {
-                var resizeOpts = {
-                    handles: "all", autoHide: true
-                };
-
-                $(".customModal .modal-content").resizable(resizeOpts);
-            }, 0);
 
 		};
 
@@ -224,7 +214,7 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
         			$scope.notificationList = response;
     			});
 			});
-		}
+		};
 
         // Controller for the delete notification modal
 		var DeleteNotificationModalInstanceCtrl = function ($scope, $uibModalInstance) {
@@ -250,24 +240,12 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
 						$uibModalInstance.close();
 					}
 				});
-			}
+			};
 	
 			// Function to close modal dialog
   			$scope.cancel = function () {
     				$uibModalInstance.dismiss('cancel');
   			};
-
-			// Function to properly render the modal 
-			// plus enable draggable and resizable functions
-			setTimeout(function () {
-                $(".deleteModal .modal-dialog").draggable();
-
-                var resizeOpts = {
-                    handles: "all", autoHide: true
-                };
-
-                $(".deleteModal .modal-content").resizable(resizeOpts);
-            }, 0);
 
 		};
 

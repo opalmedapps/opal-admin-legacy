@@ -8,13 +8,13 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
         // Function to go to add test result page
         $scope.goToAddTestResult = function () {
             $state.go('test-result-add');
-        }
+        };
 
         // Function to control search engine model
         $scope.filterTestResult = function (filter) {
             $scope.filterValue = filter;
             $scope.gridApi.grid.refresh();
-        }
+        };
 
         // Templates for the table
         var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' + 
@@ -90,7 +90,7 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
                     $(".bannerMessage").slideUp(); 
                 }, 3000); 
             });
-        }
+        };
 
         // Function to set banner class
         $scope.setBannerClass = function(classname) {
@@ -113,7 +113,7 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 			} else {
 				return 0;
 			}
-		}
+		};
 
         // Function for when the publish flag checkbox has been modified
 		$scope.checkPublishFlag = function (testResult) {
@@ -166,7 +166,7 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
                     }
     			}); 
 	    	}
-        }
+        };
 
 	    // Initialize a scope variable for a selected test result
 		$scope.currentTestResult = {};
@@ -225,14 +225,14 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
             // Function to assign search field when textbox changes
             $scope.changeTestFilter = function (field) {
                 $scope.testFilter = field;
-            }
+            };
 
 
             // Function for search through the test names
             $scope.searchTestsFilter = function (Filter) {
                 var keyword = new RegExp($scope.testFilter, 'i');
                 return !$scope.testFilter || keyword.test(Filter.name);
-            }
+            };
 
  
             /* Function for the "Processing" dialog */
@@ -244,7 +244,7 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 	                backdrop: 'static',
         	        keyboard: false,
     	       	});	
-            }
+            };
             // Show processing dialog
             $scope.showProcessingModal(); 
 
@@ -298,7 +298,7 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
                     return true;
                 }
                 else return false;
-            }
+            };
 
             // Function to add / remove a test
     		$scope.toggleTestSelection = function(test){
@@ -319,7 +319,7 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 
 
            		}
-            }
+            };
 
 
 
@@ -335,11 +335,11 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 		    		return true;
 			    else
 				    return false;
-    		}
+    		};
 
             $scope.setChangesMade = function() {
                 $scope.changesMade = true;
-            }
+            };
 
 
             // Submit changes
@@ -376,23 +376,13 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
     					}
 	    			});
 		    	}
-            }
+            };
 
             // Function to close modal dialog
             $scope.cancel = function () {
                     $uibModalInstance.dismiss('cancel');
             };
             
-	        // Function to properly render the modal 
-			// plus enable resizable functions
-			setTimeout(function () {
-                var resizeOpts = {
-                    handles: "all", autoHide: true
-                };
-
-                $(".customModal .modal-content").resizable(resizeOpts);
-            }, 0);
-
 		};
 
 		// Function for when the test result has been clicked for deletion
@@ -417,7 +407,7 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
                 });
 
             });
-        }
+        };
 
 		// Controller for the delete test result modal
 		var DeleteTestResultModalInstanceCtrl = function ($scope, $uibModalInstance) {
@@ -443,24 +433,12 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 						$uibModalInstance.close();
 					}
 				});
-			}
+			};
 
 			// Function to close modal dialog
   			$scope.cancel = function () {
     				$uibModalInstance.dismiss('cancel');
   			};
-
-			// Function to properly render the modal 
-			// plus enable draggable and resizable functions
-			setTimeout(function () {
-                $(".deleteModal .modal-dialog").draggable();
-
-                var resizeOpts = {
-                    handles: "all", autoHide: true
-                };
-
-                $(".deleteModal .modal-content").resizable(resizeOpts);
-            }, 0);
 
 		};
 
