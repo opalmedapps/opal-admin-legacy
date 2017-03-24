@@ -20,6 +20,8 @@
   },
   "homepage": "https://gitlab.com/akimosupremo/opalAdmin#README",
   "dependencies": {
+    "angular-ui-grid": "^4.0.2",
+    "eslint": "^3.18.0",
     "grunt": "^1.0.1",
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-watch": "^1.0.0",

@@ -3,7 +3,7 @@
 
 angular.module('opalAdmin.services', [])
 
-	.service('Session', function ($cookies, $rootScope) {
+	.service('Session', function ($cookies) {
 		this.create = function (session_id, user) {
 			$cookies.put('session_id', session_id);
 			$cookies.putObject('user', user);
