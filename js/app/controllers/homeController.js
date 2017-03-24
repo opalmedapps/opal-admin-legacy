@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.homeController', ['ngAnimate', 'ui.bootstr
 	/******************************************************************************
 	* Home Page controller 
 	*******************************************************************************/
-	controller('homeController', function($scope, $uibModal, cronAPIservice) {
+	controller('homeController', function() {
        
 
 	});

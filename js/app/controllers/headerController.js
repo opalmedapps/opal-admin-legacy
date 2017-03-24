@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.headerController', ['ui.bootstrap', 'ui.gr
 	/******************************************************************************
 	* Controller for the topbar
 	*******************************************************************************/
-	controller('headerController', function($scope, $uibModal, aliasAPIservice) {
+	controller('headerController', function() {
 					
 	});
 
