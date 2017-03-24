@@ -25,6 +25,11 @@ module.exports = function (grunt) {
 				],
 				options: {}
 			}
+		},
+		eslint: {
+			options: {
+				configFile: '.eslintrc.json'
+			}
 		}
 	});
 
