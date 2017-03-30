@@ -1,10 +1,12 @@
-angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
+angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'pascalprecht.translate']).
 
 
 	/******************************************************************************
 	* Patient Registration Page controller 
 	*******************************************************************************/
 	controller('patientRegistrationController', function ($scope, $filter, $sce, $state, $uibModal, patientAPIservice) {
+
+		$scope.ssnHtmlInstruction = $filter('translate')('PATIENT_REGISTRATION_SEARCH_DESCRIPTION');
 
 		// Function to go to previous page
 		$scope.goBack = function () {

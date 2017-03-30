@@ -120,6 +120,18 @@ angular.module('opalAdmin', [
 		]);
 	})
 
+	.config(function ($translateProvider) {
+		// load static translation files
+		$translateProvider.useStaticFilesLoader({
+			prefix: 'translate/locale-',
+			suffix: '.json'
+		});
+		// load 'en' table on startup
+		$translateProvider.preferredLanguage('fr');
+		// Enable escaping of HTML
+		$translateProvider.useSanitizeValueStrategy('escaped');
+	}) 
+
 	// To broadcast the notAuthenticated / notAuthorized 
 	// event based on the HTTP response status code
 	.factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
