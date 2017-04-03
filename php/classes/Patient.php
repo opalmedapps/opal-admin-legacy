@@ -293,9 +293,10 @@ class Patient {
      *
      * Gets a list of security questions in the database
      *
+     * @param string $language : site language
      * @return array $securityQuestions
      */
-    public function fetchSecurityQuestions() {
+    public function fetchSecurityQuestions($language) {
         $securityQuestions = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
@@ -303,7 +304,7 @@ class Patient {
             $sql = "
                 SELECT DISTINCT
                     sq.SecurityQuestionSerNum,
-                    sq.QuestionText
+                    sq.QuestionText_$language
                 FROM
                     SecurityQuestion sq
             ";

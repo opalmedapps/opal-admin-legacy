@@ -266,7 +266,7 @@
                           {{ 'EMAIL' | translate }} 
                         </label>
                         <div class="col-md-7">
-                          <input type="text" class="form-control" required="required" ng-blur="validateEmail(newPatient.email)" ng-change="emailUpdate()" ng-model="newPatient.email" placeholder="example@someone.com">
+                          <input type="text" class="form-control" required="required" ng-blur="validateEmail(newPatient.email)" ng-change="emailUpdate()" ng-model="newPatient.email" placeholder="example@example.com">
                           <span ng-show="validEmail.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validEmail.status == 'valid', 'glyphicon-remove': validEmail.status == 'invalid', 'glyphicon-warning-sign': validEmail.status == 'warning'}" aria-hidden="true"></span>
                         </div>
                         <em class="control-label col-md-3" ng-show="validEmail.status == 'invalid' || validEmail.status == 'warning'" ng-class="{'has-success': validEmail.status == 'valid', 'has-error': validEmail.status == 'invalid', 'has-warning': validEmail.status == 'warning'}" style="text-align:left;">

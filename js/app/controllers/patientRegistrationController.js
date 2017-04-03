@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 	/******************************************************************************
 	* Patient Registration Page controller 
 	*******************************************************************************/
-	controller('patientRegistrationController', function ($scope, $filter, $sce, $state, $uibModal, patientAPIservice) {
+	controller('patientRegistrationController', function ($scope, $filter, $sce, $state, $uibModal, patientAPIservice, $translate, $rootScope) {
 
 		$scope.ssnHtmlInstruction = $filter('translate')('PATIENT_REGISTRATION_SEARCH_DESCRIPTION');
 
@@ -120,7 +120,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 
 			else if (ssn.length < 12) {
 				$scope.validSSN.status = 'invalid'; // input not long enough
-				$scope.validSSN.message = 'SSN must be greater than 12 characters';
+				$scope.validSSN.message = $filter('translate')('STATUS_SSN_ERROR');
 				return;
 			}
 
@@ -170,22 +170,22 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 
 					if (response.status == 'PatientAlreadyRegistered') {
 						$scope.validSSN.status = 'warning';
-						$scope.validSSN.message = 'Patient is already registered!';
+						$scope.validSSN.message = $filter('translate')('STATUS_PATIENT_EXISTS');
 						$scope.validPatientSearch = 'warning';
 					}
 					else if (response.status == 'PatientNotFound') {
 						$scope.validSSN.status = 'invalid';
-						$scope.validSSN.message = 'No patient found!';
+						$scope.validSSN.message = $filter('translate')('STATUS_PATIENT_NOT_FOUND');
 						$scope.validPatientSearch = 'invalid';
 					}
 					else if (response.status == 'Error') {
 						$scope.validSSN.status = 'invalid';
-						$scope.validSSN.message = 'Something went wrong: ' + response.message;
+						$scope.validSSN.message = $filter('translate')('STATUS_MISC_ERROR') + ": " + response.message;
 						$scope.validPatientSearch = 'invalid';
 					}
 					else {
 						$scope.validSSN.status = 'valid';
-						$scope.validSSN.message = 'Patient found!';
+						$scope.validSSN.message = $filter('translate')('STATUS_PATIENT_FOUND');
 						$scope.validPatientSearch = 'valid';
 
 						$scope.newPatient.data = response.data; // Assign data
@@ -193,7 +193,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 						$scope.accordionOpen = false;
 
 						// Call our API service to get security questions 
-						patientAPIservice.fetchSecurityQuestions().success(function (response) {
+						patientAPIservice.fetchSecurityQuestions($rootScope.siteLanguage).success(function (response) {
 							$scope.securityQuestions = response;
 						});
 
@@ -218,7 +218,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			var re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 			if (!re.test(email)) {
 				$scope.validEmail.status = 'invalid';
-				$scope.validEmail.message = 'Invalid email format';
+				$scope.validEmail.message = $filter('translate')('STATUS_INVALID_EMAIL_FORMAT');
 				$scope.emailUpdate();
 				return;
 			} else {
@@ -227,7 +227,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 				patientAPIservice.emailAlreadyInUse(email).success(function (response) {
 					if (response == 'TRUE') {
 						$scope.validEmail.status = 'warning';
-						$scope.validEmail.message = 'Email already in use';
+						$scope.validEmail.message = $filter('translate')('STATUS_EMAIL_IN_USE');
 						$scope.emailUpdate();
 						return;
 					} else if (response == 'FALSE') {
@@ -237,7 +237,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 						return;
 					} else {
 						$scope.validEmail.status = 'invalid';
-						$scope.validEmail.message = 'Something went wrong';
+						$scope.validEmail.message = $filter('translate')('STATUS_MISC_ERROR');
 						$scope.emailUpdate();
 					}
 
@@ -258,7 +258,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 
 			if (password.length < 6) {
 				$scope.validPassword.status = 'invalid';
-				$scope.validPassword.message = 'Use greater than 6 characters';
+				$scope.validPassword.message = $filter('translate')('STATUS_PASSWORD_ERROR');
 				$scope.passwordUpdate();
 				return;
 			} else {
@@ -280,7 +280,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 
 			if ($scope.validPassword.status != 'valid' || $scope.newPatient.password != $scope.newPatient.confirmPassword) {
 				$scope.validConfirmPassword.status = 'invalid';
-				$scope.validConfirmPassword.message = 'Enter same valid password';
+				$scope.validConfirmPassword.message = $filter('translate')('STATUS_PASSWORD_CONFIRM_ERROR');
 				$scope.passwordUpdate();
 				return;
 			} else {
@@ -292,10 +292,10 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 
 		// Initialize a list of languages available
 		$scope.languages = [{
-			name: 'English',
+			name: $filter('translate')('ENGLISH'),
 			id: 'EN'
 		}, {
-			name: 'French',
+			name: $filter('translate')('FRENCH'),
 			id: 'FR'
 		}];
 
@@ -311,13 +311,13 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			var re = /^\d+$/;
 			if (!re.test(cellNum)) {
 				$scope.validCellNum.status = 'invalid';
-				$scope.validCellNum.message = 'Invalid format';
+				$scope.validCellNum.message = $filter('translate')('STATUS_INVALID_FORMAT');
 				return;
 			}
 
 			if (cellNum.length != 10) {
 				$scope.validCellNum.status = 'invalid';
-				$scope.validCellNum.message = 'Must be 10 digits long';
+				$scope.validCellNum.message = $filter('translate')('STATUS_CELLNUM_ERROR');
 				return;
 			} else {
 				$scope.validCellNum.status = 'valid';
@@ -339,7 +339,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			var re = /^[a-zA-Z0-9\s]*$/;
 			if (!re.test(answer)) {
 				$scope.validAnswer1.status = 'invalid';
-				$scope.validAnswer1.message = 'No special characters';
+				$scope.validAnswer1.message = $filter('translate')('STATUS_SECURITY_QUESTION_ERROR');
 				$scope.securityQuestion1Update();
 				return;
 			} else {
@@ -362,7 +362,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			var re = /^[a-zA-Z0-9\s]*$/;
 			if (!re.test(answer)) {
 				$scope.validAnswer2.status = 'invalid';
-				$scope.validAnswer2.message = 'No special characters';
+				$scope.validAnswer2.message = $filter('translate')('STATUS_SECURITY_QUESTION_ERROR');
 				$scope.securityQuestion2Update();
 				return;
 			} else {
@@ -385,7 +385,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			var re = /^[a-zA-Z0-9\s]*$/;
 			if (!re.test(answer)) {
 				$scope.validAnswer3.status = 'invalid';
-				$scope.validAnswer3.message = 'No special characters';
+				$scope.validAnswer3.message = $filter('translate')('STATUS_SECURITY_QUESTION_ERROR');
 				$scope.securityQuestion3Update();
 				return;
 			} else {
@@ -522,7 +522,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 						if (errorCode == 'auth/email-already-in-use') {
 
 							$scope.validEmail.status = 'warning';
-							$scope.validEmail.message = 'Email already in use';
+							$scope.validEmail.message = $filter('translate')('STATUS_EMAIL_IN_USE');
 							$scope.emailUpdate();
 							$scope.$apply();
 
@@ -530,7 +530,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 						else if (errorCode == 'auth/weak-password') {
 
 							$scope.validPassword.status = 'invalid';
-							$scope.validPassword.message = 'Password is too weak';
+							$scope.validPassword.message = $filter('translate')('STATUS_WEAK_PASSWORD');
 							$scope.passwordUpdate();
 							$scope.$apply();
 
@@ -591,7 +591,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 					AuthService.confirm(credentials).then(function () {
 						$uibModalInstance.close();
 					}, function () {
-						$scope.bannerMessage = "Wrong username and/or password!";
+						$scope.bannerMessage = $filter('translate')('STATUS_USERNAME_PASSWORD_INCORRECT');
 						$scope.setBannerClass('danger');
 						$scope.shakeForm();
 						$scope.showBanner();

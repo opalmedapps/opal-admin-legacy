@@ -19,7 +19,8 @@
 			'user'		=> array(
 				'id'		=> $usr->userid,
 				'username'	=> $usr->username,
-				'role'		=> $usr->role
+				'role'		=> $usr->role,
+				'language' 	=> $usr->language
 			)
 		);
 
