@@ -4,11 +4,12 @@
 
 	// Retrieve FORM param
 	$callback = $_GET['callback'];
+	$language = $_GET['lang'];
 
 	$patientObj = new Patient; // Object
 
 	// Call function
-	$securityQuestions = $patientObj->fetchSecurityQuestions();
+	$securityQuestions = $patientObj->fetchSecurityQuestions($language);
 
 	// Callback to http request
 	print $callback.'('.json_encode($securityQuestions).')';
