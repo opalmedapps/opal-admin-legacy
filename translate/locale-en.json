@@ -28,6 +28,23 @@
 	"ANSWER": "Answer",
 	"USERNAME" : "Username",
 	"PATIENT_REGISTRATION_CONFIRM_TEXT": "Please confirm the registration",
-	"CANCEL": "Cancel"
+	"CANCEL": "Cancel",
+	"STATUS_SSN_ERROR": "SSN must be greater than 12 characters",
+	"STATUS_PATIENT_EXISTS": "Patient is already registered!",
+	"STATUS_PATIENT_NOT_FOUND": "No patient found!",
+	"STATUS_MISC_ERROR": "Something went wrong",
+	"STATUS_PATIENT_FOUND": "Patient found!",
+	"STATUS_INVALID_EMAIL_FORMAT": "Invalid email format",
+	"STATUS_EMAIL_IN_USE": "Email already in use",
+	"STATUS_PASSWORD_ERROR": "Use greater than 6 characters",
+	"STATUS_PASSWORD_CONFIRM_ERROR": "Enter same valid password",
+	"ENGLISH": "English",
+	"FRENCH": "French",
+	"STATUS_INVALID_FORMAT": "Invalid format",
+	"STATUS_CELLNUM_ERROR": "Must be 10 digits long",
+	"STATUS_SECURITY_QUESTION_ERROR": "No special characters",
+	"STATUS_WEAK_PASSWORD": "Password is too weak",
+	"STATUS_USERNAME_PASSWORD_INCORRECT": "Wrong username and/or password!"
+
 
 }

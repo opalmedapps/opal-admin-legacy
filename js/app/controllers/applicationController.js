@@ -1,11 +1,22 @@
-angular.module('opalAdmin.controllers.applicationController', ['ui.bootstrap', 'ngIdle']).
+angular.module('opalAdmin.controllers.applicationController', ['ui.bootstrap', 'ngIdle', 'pascalprecht.translate']).
 
 
 	/******************************************************************************
 	* Top level application controller
 	*******************************************************************************/
 	controller('applicationController', function ($scope, $rootScope, $state, Idle, Keepalive,
-		$uibModal, Session, loginModal, AUTH_EVENTS, USER_ROLES, AuthService) {
+		$uibModal, Session, loginModal, AUTH_EVENTS, USER_ROLES, AuthService, $translate) {
+
+		// Set current user 
+		$rootScope.currentUser = null;
+
+		$rootScope.siteLanguage = null;
+		
+		// Set the site language
+		$rootScope.setSiteLanguage = function (user) {
+			$rootScope.siteLanguage = user.language;
+			$translate.use(user.language.toLowerCase());
+		};
 
 		$scope.userRoles = USER_ROLES;
 		$scope.isAuthorized = AuthService.isAuthorized;

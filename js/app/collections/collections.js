@@ -214,10 +214,10 @@ angular.module('opalAdmin.collections', [])
         };
 
         // API to fetch sequrity questions
-        patientAPI.fetchSecurityQuestions = function () {
+        patientAPI.fetchSecurityQuestions = function (lang) {
             return $http({
                 method: 'JSONP',
-                url: URLPATH+"api/patient/fetch_security_questions.php?callback=JSON_CALLBACK"
+                url: URLPATH+"api/patient/fetch_security_questions.php?callback=JSON_CALLBACK&lang="+lang
             });
         };
 

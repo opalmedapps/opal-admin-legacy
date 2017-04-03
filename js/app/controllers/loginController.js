@@ -51,8 +51,9 @@ angular.module('opalAdmin.controllers.loginController', ['ngAnimate', 'ui.bootst
 
 		$scope.submitLogin = function (credentials) {
 			if ($scope.loginFormComplete()) {
-				AuthService.login(credentials).then(function () {
+				AuthService.login(credentials).then(function (user) {
 					$rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
+					$rootScope.setSiteLanguage(user); 
 					$state.go('home');
 					Idle.watch();
 				}, function () {
