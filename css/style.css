@@ -631,11 +631,10 @@ ul.no-list {
 }
 
 .home-side-menu {
-  text-align: right;
   vertical-align: middle;
 }
 
-.home-side-menu h2 {
+.home-side-menu .title {
   display: inline;
   font-size: 25px;
   font-weight: 700;
@@ -713,6 +712,14 @@ ul.no-list {
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
 }
+.side-panel-info-sm {
+  padding: 10px;
+  background-color: #fffff4;
+  border: 1px solid #e1e8ed;
+  border-radius: 7px;
+  height: 45px;
+}
+
 .side-panel-info {
   padding: 10px;
   background-color: #fffff4;
@@ -720,7 +727,9 @@ ul.no-list {
   border-radius: 7px;
   height: 70px;
 }
+
 .panel-info.active,
+.side-panel-info-sm.active,
 .side-panel-info.active {
   background-color: #6f5499;
 }
@@ -1011,7 +1020,7 @@ td.color-code h5 {
 }
 
 .home-header .logo {
-  width: 15%;
+  width: 7%;
   display: inline-block;
 }
 

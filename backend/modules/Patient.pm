@@ -552,6 +552,65 @@ sub getPatientsMarkedForUpdate
 }
 
 #======================================================================================
+# Subroutine to block a patient
+#======================================================================================
+sub blockPatient
+{
+	my ($patient, $reason) = @_; # patient object in args
+
+	# get patient serial
+	my $patientSer = $patient->getPatientSer();
+
+	my $update_sql = "
+		UPDATE
+			Patient
+		SET
+			BlockedStatus 	= 1,
+		 	StatusReasonTxt = \"$reason\"
+		WHERE
+			PatientSerNum = $patientSer
+	";
+
+	# prepare query
+	my $query = $SQLDatabase->prepare($update_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+}
+
+#======================================================================================
+# Subroutine to unset patient control
+#======================================================================================
+sub unsetPatientControl
+{
+	my ($patient) = @_; # patient object in args
+
+	# get patient serial
+	my $patientSer = $patient->getPatientSer();
+
+	my $update_sql = "
+		UPDATE
+			PatientControl
+		SET
+			PatientUpdate = 0
+		WHERE	
+			PatientSerNum = $patientSer
+	";
+
+	# prepare query
+	my $query = $SQLDatabase->prepare($update_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+}
+
+#======================================================================================
 # Subroutine to set/update the "last transferred" field to current time 
 #======================================================================================
 sub setPatientLastTransferredIntoOurDB
@@ -639,6 +698,7 @@ sub inOurDatabase
             Patient.LastName,
             Patient.Sex,
             Patient.DateOfBirth,
+			Patient.Age,
             Patient.ProfileImage,
             Patient.SSN,
             Patient.DeathDate
@@ -665,10 +725,10 @@ sub inOurDatabase
         $lastname               = $data[5];
         $sex                    = $data[6];
         $dob                    = $data[7];
-        $age                    = getAgeAtDate($dob, $today);
-        $picture                = $data[8];
-        $PatientSSNInDB         = $data[9];
-        $deathdate 				= $data[10];
+        $age                    = $data[8];
+        $picture                = $data[9];
+        $PatientSSNInDB         = $data[10];
+        $deathdate 				= $data[11];
     }
 
     if ($PatientSSNInDB) {
@@ -710,6 +770,7 @@ sub insertPatientIntoOurDB
     my $lastname            = $patient->getPatientLastName();
     my $sex                 = $patient->getPatientSex();
     my $dob                 = $patient->getPatientDOB();
+	my $age 				= $patient->getPatientAge();
     my $picture             = $patient->getPatientPicture();
     my $deathdate 			= $patient->getPatientDeathDate();
 
@@ -723,6 +784,7 @@ sub insertPatientIntoOurDB
                 LastName,
                 Sex,
                 DateOfBirth,
+				Age,
                 ProfileImage,
                 DeathDate
             )
@@ -734,6 +796,7 @@ sub insertPatientIntoOurDB
             \"$lastname\",
             '$sex',
             '$dob',
+			'$age',
             '$picture',
             '$deathdate'
         )
@@ -769,18 +832,11 @@ sub updateDatabase
     my $patientFirstName    = $patient->getPatientFirstName();
     my $patientLastName     = $patient->getPatientLastName();
     my $patientDOB          = $patient->getPatientDOB();
+	my $patientAge 			= $patient->getPatientAge();
     my $patientPicture      = $patient->getPatientPicture();
     my $patientSex          = $patient->getPatientSex();
     my $patientSSN          = $patient->getPatientSSN();
     my $patientDeathDate 	= $patient->getPatientDeathDate();
-
-    # Turn on disabled flag if patient is deceased
-    my $disabledFlag = 0;
-    my $disabledReason = "";
-    if ($patientDeathDate) { 
-    	$disabledFlag = 1;
-    	$disabledReason = "Deceased patient";
-    }
 
     my $update_sql = "
         UPDATE
@@ -793,6 +849,7 @@ sub updateDatabase
             LastName                = \"$patientLastName\",
             Sex                     = '$patientSex',
             DateOfBirth             = '$patientDOB',
+			Age 					= '$age',
             ProfileImage            = '$patientPicture',
             DeathDate 				= '$patientDeathDate',
             DisabledFlag 			= '$disabledFlag',
@@ -827,6 +884,7 @@ sub compareWith
 	my $SPatientId			= $SuspectPatient->getPatientId();
 	my $SPatientId2			= $SuspectPatient->getPatientId2();
 	my $SPatientDOB			= $SuspectPatient->getPatientDOB();
+	my $SPatientAge 		= $SuspectPatient->getPatientAge();
 	my $SPatientSex			= $SuspectPatient->getPatientSex();
     my $SPatientFirstName   = $SuspectPatient->getPatientFirstName();
     my $SPatientLastName    = $SuspectPatient->getPatientLastName();
@@ -838,6 +896,7 @@ sub compareWith
 	my $OPatientId			= $OriginalPatient->getPatientId();
 	my $OPatientId2			= $OriginalPatient->getPatientId2();
 	my $OPatientDOB			= $OriginalPatient->getPatientDOB();
+	my $OPatientAge 		= $OriginalPatient->getPatientAge();
 	my $OPatientSex			= $OriginalPatient->getPatientSex();
     my $OPatientFirstName   = $OriginalPatient->getPatientFirstName();
     my $OPatientLastName    = $OriginalPatient->getPatientLastName();
@@ -869,6 +928,17 @@ sub compareWith
 		my $updatedDOB = $UpdatedPatient->setPatientDOB($SPatientDOB); # update patient date of birth
 		print "Will update database entry to \"$updatedDOB\".\n";
 	}
+	if ($SPatientAge ne $OPatientAge) {
+
+		print "Patient Age has changed from $OPatientAge to $SPatientAge!\n";
+		my $updatedAge = $UpdatedPatient->setPatientAge($SPatientAge); # update patient age
+		print "Will update database entry to \"$updatedAge\".\n";
+
+		# block patient if patient passed 13 years of age
+		if ($OPatientAge < 14 && $SPatientAge >= 14) {
+			blockPatient($UpdatedPatient, "Patient passed 13 years of age");
+		}
+	}
 	if ($SPatientSex ne $OPatientSex) {
 
 		print "Patient Sex has changed from $OPatientSex to $SPatientSex!\n";
@@ -897,7 +967,12 @@ sub compareWith
 
 		print "Patient Death Date has changed from $OPatientDeathDate to $SPatientDeathDate!\n";
 		my $updatedDeathDate = $UpdatedPatient->setPatientDeathDate($SPatientDeathDate); # update patient death date 
-		print "Will update database entry to \"$updatedDeathDate\".\n";
+		print "Will update database entry to \"$updatedDeathDate\" and block patient.\n";
+
+		# block deceased patient
+		blockPatient($UpdatedPatient, "Deceased patient"); 
+		# turn off patient control 
+		unsetPatientControl($UpdatedPatient);
 	}
 	
 	return $UpdatedPatient;
