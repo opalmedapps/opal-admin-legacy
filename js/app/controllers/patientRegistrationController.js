@@ -511,7 +511,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 							url: "php/patient/register_patient.php",
 							data: $scope.newPatient,
 							success: function () {
-								$state.go('patients');
+								$state.go('home');
 							}
 						});
 

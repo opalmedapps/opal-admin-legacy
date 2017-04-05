@@ -37,6 +37,10 @@ angular.module('opalAdmin.controllers.sidePanelMenuController', ['ui.bootstrap',
 		$scope.goToPatient = function () {
 			$state.go('patients');
 		};
+		// Function to go to patient registration page
+		$scope.goToPatientRegistration = function () {
+			$state.go('patients-register');
+		};
 		// Function to go to test results page
 		$scope.goToTestResult = function () {
 			$state.go('test-result');
