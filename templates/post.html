@@ -7,41 +7,37 @@
           </div>
           <div class="col-md-10 animated fadeIn">
             <div class="row main-title">
-              <div class="col-md-6 title-content">
+              <div class="col-md-9 title-content">
                 <span class="glyphicon glyphicon-comment"></span>
                 <h1><strong>Posts</strong></h1>
               </div>
-              <div class="col-md-6 title-breadcrumbs"> 
+              <div class="col-md-3 title-breadcrumbs"> 
                 <span><a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Posts</strong></span>
               </div>
-            </div>    
-
+            </div> 
+						<div class="row clearfix" style="margin-bottom: 10px; display:flex; align-items: center">
+							<div class="col-md-8">
+								<a style="width:100px;margin-right:20px;" href="" ng-click="goToAddPost()" class="btn btn-md btn-outline item-button">
+									<span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
+									<span style="font-size: 20px;"><strong>Add</strong></span>
+								</a>
+								<a href="" ng-click="submitFlags()" class="btn btn-md item-button-success animated" ng-if="changesMade" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false">
+									<span style="font-size: 17px;" class="glyphicon glyphicon-ok"></span>
+									<span style="font-size: 20px;"><strong>Save Changes</strong></span>
+								</a>
+							</div>
+							<div class="col-md-4">
+								<div class="form-group has-feedback" style="margin-bottom: 0">
+								<input type="text" class="form-control" ng-model="filterValue" ng-change="filterPost(filterValue)" placeholder="Search...">
+									<span class="glyphicon glyphicon-search form-control-feedback"></span>
+								</div>
+							</div>
+						</div>   
             <div class="panel-container" style="text-align:left">
               <div class="panel-info">
                 <div class="panel-input">
-                  <div class="row clearfix" style="margin-bottom: 10px;">
-                    <div class="col-md-9">
-                      <a style="width:100px;" href="" ng-click="goToAddPost()" class="btn btn-md btn-outline">
-                        <span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
-                        <span style="font-size: 20px;"><strong>Add</strong></span>
-                      </a>
-                    </div>
-                    <div class="col-md-3">
-                      <div class="input-group">
-                        <input type="text" class="form-control" ng-model="filterValue" ng-change="filterPost(filterValue)" placeholder="Search...">
-                        <span class="input-group-addon">
-                          <span class="glyphicon glyphicon-search"></span>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
                   <div id="data-table">
-                    <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:720px"></div>
-                    <div class="table-buttons" style="text-align: center;">
-                      <form method="post" ng-submit="submitFlags()">
-                        <input class="btn btn-primary" ng-class="{'disabled': !changesMade}" type="submit" value="Save Changes">
-                      </form>
-                    </div>
+                    <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:75vh"></div>
                   </div>
                   </div>
                 </div>

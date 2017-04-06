@@ -57,10 +57,10 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 		$scope.gridOptions = {
 			data: 'patientList',
 			columnDefs: [
-				{ field: 'patientid', displayName: 'Patient ID', width: '245' },
-				{ field: 'name', displayName: 'Name', width: '555' },
-				{ field: 'transfer', displayName: 'Publish Flag', width: '150', cellTemplate: checkboxCellTemplate, enableFiltering: false },
-				{ field: 'lasttransferred', displayName: 'Last Publish' }
+				{ field: 'patientid', displayName: 'Patient ID', width: '25%' },
+				{ field: 'name', displayName: 'Name', width: '35%' },
+				{ field: 'transfer', displayName: 'Publish Flag', width: '15%', cellTemplate: checkboxCellTemplate, enableFiltering: false },
+				{ field: 'lasttransferred', displayName: 'Last Publish', width:'25%' }
 
 			],
 			enableFiltering: true,

@@ -63,9 +63,9 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
 		$scope.gridOptions = {
 			data: 'userList',
 			columnDefs: [
-				{ field: 'username', displayName: 'Username', width: '655' },
-				{ field: 'role', displayName: 'Role', width: '300' },
-				{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false }
+				{ field: 'username', displayName: 'Username', width: '45%' },
+				{ field: 'role', displayName: 'Role', width: '25%' },
+				{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '30%' }
 			],
 			enableColumnResizing: true,
 			enableFiltering: true,

@@ -78,24 +78,24 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 		$scope.gridOptions = {
 			data: 'aliasList',
 			columnDefs: [
-				{ field: 'name_EN', displayName: 'Alias (EN / FR)', cellTemplate: cellTemplateName, width: '555' },
+				{ field: 'name_EN', displayName: 'Alias (EN / FR)', cellTemplate: cellTemplateName, width: '30%' },
 				{
-					field: 'type', displayName: 'Type', width: '145', filter: {
+					field: 'type', displayName: 'Type', width: '10%', filter: {
 						type: uiGridConstants.filter.SELECT,
 						selectOptions: [{ value: 'Appointment', label: 'Appointment' }, { value: 'Document', label: 'Document' }, { value: 'Task', label: 'Task' }]
 					}
 				},
-				{ field: 'update', displayName: 'Update', width: '80', cellTemplate: checkboxCellTemplate, enableFiltering: false },
-				{ field: 'count', type: 'number', displayName: '# of terms', width: '90', enableFiltering: false },
+				{ field: 'update', displayName: 'Update', width: '5%', cellTemplate: checkboxCellTemplate, enableFiltering: false },
+				{ field: 'count', type: 'number', displayName: '# of terms', width: '5%', enableFiltering: false },
 				{
-					field: 'source_db.name', displayName: 'Source DB', width: '120', filter: {
+					field: 'source_db.name', displayName: 'Source DB', width: '10%', filter: {
 						type: uiGridConstants.filter.SELECT,
 						selectOptions: [{ value: 'Aria', label: 'Aria' }, { value: 'MediVisit', label: 'MediVisit' }]
 					}
 				},
-				{ field: 'color', displayName: 'Color Tag', width: '90', cellTemplate: cellTemplateColor, enableFiltering: false },
-				{ field: "lastupdated", displayName: 'Updated', width: '135' },
-				{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false }
+				{ field: 'color', displayName: 'Color Tag', width: '10%', cellTemplate: cellTemplateColor, enableFiltering: false },
+				{ field: "lastupdated", displayName: 'Updated', width: '15%' },
+				{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '15%' }
 			],
 			//useExternalFiltering: true,
 			enableColumnResizing: true,
