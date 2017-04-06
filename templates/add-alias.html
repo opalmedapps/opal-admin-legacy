@@ -205,11 +205,11 @@
           </div>
           <div class="col-md-10 animated fadeInRight" style="margin-left:17%">
             <div class="row main-title">
-              <div class="col-md-6 title-content">
+              <div class="col-md-9 title-content">
                 <span class="glyphicon glyphicon-plus"></span>
                 <h1><strong>Add Task, Appointment, or Document</strong></h1>
               </div>
-              <div class="col-md-6 title-breadcrumbs"> 
+              <div class="col-md-3 title-breadcrumbs"> 
                 <span>
                   <span><a href="#/">Home</a></span>
                   <span class="teflon glyphicon glyphicon-menu-right"></span> 
@@ -220,17 +220,17 @@
               </div>
             </div>    
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Source Database</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
                   Please select a source database.
@@ -239,7 +239,7 @@
             </div>    
             <div class="row">
               <div class="col-md-12">
-                <div ng-repeat="sourceDB in sourceDBList" class="col-md-1"> 
+                <div ng-repeat="sourceDB in sourceDBList" class="col-md-2"> 
                   <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: newAlias.source_db.name == sourceDB.name}" ng-click="sourceDBUpdate(sourceDB)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
                     <div class="panel-info" ng-class="{active: newAlias.source_db.name == sourceDB.name}">
                       <div class="panel-content" style="text-align:center">
@@ -252,17 +252,17 @@
               </div>
             </div>          
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Title & Description</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
                   Please assign an english and french title and description.
@@ -270,7 +270,7 @@
               </div>
             </div>  
             <div class="row"> 
-              <div class="col-md-5">
+              <div class="col-md-6">
                 <div class="panel" ng-class="(newAlias.name_EN && newAlias.description_EN) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>English</strong>
                     <span ng-hide="newAlias.name_EN && newAlias.description_EN" style="float:right"><em>Incomplete</em></span>
@@ -296,7 +296,7 @@
                   </div>
                 </div>
               </div>          
-              <div class="col-md-5">
+              <div class="col-md-6">
                 <div class="panel" ng-class="(newAlias.name_FR && newAlias.description_FR) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>Français</strong>
                     <span ng-hide="newAlias.name_FR && newAlias.description_FR" style="float:right"><em>Incomplete</em></span>
@@ -324,17 +324,17 @@
               </div>          
             </div>
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Educational Material</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
                   Assigning an educational material will provide a rich-text description of the alias.
@@ -367,17 +367,17 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Type</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
                   Please select the alias type.
@@ -397,17 +397,17 @@
               </div>
             </div>      
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Icon Color</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
                   Please select the icon color to be displayed.
@@ -415,7 +415,7 @@
               </div>
             </div>  
             <div class="row">
-              <div class="col-md-4">
+              <div class="col-md-5">
                 <div class="panel-content">
                   <div class="panel-input">  
                     <div class="color-picker">
@@ -428,17 +428,17 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Aliased Expressions</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
                   Please add expressions to alias.
@@ -446,7 +446,7 @@
               </div>
             </div>  
             <div class="row"> 
-              <div class="col-md-8">
+              <div class="col-md-9">
                 <div class="panel" ng-class="checkTermsAdded(termList) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>Expression List</strong>
                     <span ng-hide="checkTermsAdded(termList)" style="float:right"><em>Incomplete</em></span>

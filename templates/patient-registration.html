@@ -153,39 +153,37 @@
           </div>
           <div class="col-md-10 animated fadeIn" style="margin-left:17%">
             <div class="row main-title">
-              <div class="col-md-6 title-content">
+              <div class="col-md-8 title-content">
                 <span class="glyphicon glyphicon-list-alt"></span>
                 <h1><strong>{{ 'PATIENT_REGISTRATION_TITLE' | translate }}</strong></h1>
               </div>
-              <div class="col-md-6 title-breadcrumbs"> 
+              <div class="col-md-4 title-breadcrumbs"> 
                 <span>
                   <span><a ui-sref="home">Home</a></span> 
-                  <span class="glyphicon glyphicon-menu-right teflon"></span> 
-                  <span><a ui-sref="patient">Patients</a></span>
                   <span class="glyphicon glyphicon-menu-right teflon"></span>
                   <span><strong>Patient Registration</strong></span>
                 </span>
               </div>
             </div>    
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>{{ 'PATIENT_REGISTRATION_SEARCH_HEADER' | translate }}</h2>
                   </span>  
                 </div>  
               </div>
             </div>
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;"  ng-bind-html="ssnHtmlInstruction">
                   <!--{{ 'PATIENT_REGISTRATION_SEARCH_DESCRIPTION'| translate }}-->
                 </p>
               </div>
             </div>
             <div class="row" style="margin-bottom: 20px;">
-              <div class="col-md-6">
+              <div class="col-md-9">
                 <uib-accordion>
                   <div uib-accordion-group is-open="accordionOpen">
                     <uib-accordion-heading>
@@ -236,17 +234,17 @@
                 <h1><strong>--- Patient: <em>{{newPatient.data.lastname}}, {{newPatient.data.firstname}}</em></strong></h1>
               </div>
               <div class="row">
-                <div class="col-md-10 side-menu-title">
+                <div class="col-md-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
-                      <span class="glyphicon glyphicon-menu-down"></span>
+                      <span class="glyphicon glyphicon-triangle-bottom"></span>
                       <h2>{{ 'EMAIL' | translate }} & {{ 'PASSWORD' | translate }}</h2>
                     </span>  
                   </div>  
                 </div>
               </div>   
               <div class="row">
-                <div class="col-md-10">
+                <div class="col-md-12">
                   <p style="margin-bottom: 10px;">
                     <span style="color:#d9534f"><strong>{{ 'REQUIRED_FIELD' | translate }}:</strong></span>
                     {{ 'PATIENT_REGISTRATION_EMAIL_PASSWORD_DESCRIPTION' | translate }}
@@ -254,7 +252,7 @@
                 </div>
               </div>  
               <div class="row"> 
-                <div class="col-md-8">
+                <div class="col-md-9">
                   <div class="panel" ng-class="(validEmail.status == 'valid' && validPassword.status == 'valid' && validConfirmPassword.status == 'valid') ? 'panel-success': 'panel-danger'">
                     <div class="panel-heading"><strong>{{ 'EMAIL' | translate }} & {{ 'PASSWORD' | translate }}</strong>
                       <span ng-hide="validEmail.status == 'valid' && validPassword.status == 'valid' && validConfirmPassword.status == 'valid'" style="float:right"><em>{{ 'INCOMPLETE' | translate }}</em></span>
@@ -303,17 +301,17 @@
               </div>
 
               <div class="row">
-                <div class="col-md-10 side-menu-title">
+                <div class="col-md-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
-                      <span class="glyphicon glyphicon-menu-down"></span>
+                      <span class="glyphicon glyphicon-triangle-bottom"></span>
                       <h2>{{ 'LANGUAGE' | translate }}</h2>
                     </span>  
                   </div>  
                 </div>
               </div>   
               <div class="row">
-                <div class="col-md-10">
+                <div class="col-md-12">
                   <p style="margin-bottom: 10px;">
                     <span style="color:#d9534f"><strong>{{ 'REQUIRED_FIELD' | translate }}:</strong></span>
                     {{ 'PATIENT_REGISTRATION_LANGUAGE_DESCRIPTION' | translate }}
@@ -321,7 +319,7 @@
                 </div>
               </div>  
               <div class="row" style="margin-bottom: 15px;">
-                <div class="col-md-4">
+                <div class="col-md-5">
                   <div class="row">
                     <div class="col-md-5">
                       <select ng-model="newPatient.language" ng-change="languageUpdate()" ng-options="language.id as language.name for language in languages" class="form-control">
@@ -333,17 +331,17 @@
               </div>
 
               <div class="row">
-                <div class="col-md-10 side-menu-title">
+                <div class="col-md-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
-                      <span class="glyphicon glyphicon-menu-down"></span>
+                      <span class="glyphicon glyphicon-triangle-bottom"></span>
                       <h2>{{ 'CELLPHONE_NUMBER' | translate }}</h2>
                     </span>  
                   </div>  
                 </div>
               </div>   
               <div class="row">
-                <div class="col-md-10">
+                <div class="col-md-12">
                   <p style="margin-bottom: 10px;">
                     <span><strong>{{ 'OPTIONAL_FIELD' | translate }}:</strong></span>
                     {{ 'PATIENT_REGISTRATION_CELLPHONE_DESCRIPTION' | translate }}  
@@ -365,17 +363,17 @@
               </div>
 
               <div class="row">
-                <div class="col-md-10 side-menu-title">
+                <div class="col-md-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
-                      <span class="glyphicon glyphicon-menu-down"></span>
+                      <span class="glyphicon glyphicon-triangle-bottom"></span>
                       <h2>{{ 'SECURITY_QUESTIONS' | translate }}</h2>
                     </span>  
                   </div>  
                 </div>
               </div>   
               <div class="row">
-                <div class="col-md-10">
+                <div class="col-md-12">
                   <p style="margin-bottom: 10px;">
                     <span style="color:#d9534f"><strong>{{ 'REQUIRED_FIELD' | translate }}:</strong></span>
                     {{ 'PATIENT_REGISTRATION_SECURITY_QUESTION_DESCRIPTION' | translate }} 
@@ -383,7 +381,7 @@
                 </div>
               </div>  
               <div class="row"> 
-                <div class="col-md-7">
+                <div class="col-md-8">
                   <div class="panel" ng-class="validAnswer1.status == 'valid' ? 'panel-success': 'panel-danger'">
                     <div class="panel-heading"><strong>{{ 'SECURITY_QUESTION' | translate }} 1</strong>
                       <span ng-hide="validAnswer1.status == 'valid'" style="float:right"><em>{{ 'INCOMPLETE' | translate }}</em></span>
@@ -415,7 +413,7 @@
                     </div>
                   </div>
                 </div>          
-                <div class="col-md-7">
+                <div class="col-md-8">
                   <div class="panel" ng-class="validAnswer2.status == 'valid' ? 'panel-success': 'panel-danger'">
                     <div class="panel-heading"><strong>{{ 'SECURITY_QUESTION' | translate }} 2</strong>
                       <span ng-hide="validAnswer2.status == 'valid'" style="float:right"><em>{{ 'INCOMPLETE' | translate }}</em></span>
@@ -447,7 +445,7 @@
                     </div>
                   </div>
                 </div> 
-                <div class="col-md-7">
+                <div class="col-md-8">
                   <div class="panel" ng-class="validAnswer3.status == 'valid' ? 'panel-success': 'panel-danger'">
                     <div class="panel-heading"><strong>{{ 'SECURITY_QUESTION' | translate }} 3</strong>
                       <span ng-hide="validAnswer3.status == 'valid'" style="float:right"><em>{{ 'INCOMPLETE' | translate }}</em></span>

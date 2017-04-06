@@ -50,11 +50,11 @@ angular.module('opalAdmin.controllers.patientActivityController', ['ngAnimate', 
 		$scope.gridOptions = {
 			data: 'patientActivityList',
 			columnDefs: [
-				{ field: 'patientid', displayName: 'Patient Id', width: '200' },
-				{ field: 'name', displayName: 'Name', width: '355' },
-				{ field: 'deviceid', displayName: 'Device ID', width: '530' },
-				{ field: 'login', displayName: 'Login Time' },
-				{ field: 'logout', displayName: 'Logout Time' }
+				{ field: 'patientid', displayName: 'Patient Id', width: '15%' },
+				{ field: 'name', displayName: 'Name', width: '15%' },
+				{ field: 'deviceid', displayName: 'Device ID', width: '30%' },
+				{ field: 'login', displayName: 'Login Time', width: '20%' },
+				{ field: 'logout', displayName: 'Logout Time', width: '20%' }
 			],
 			//useExternalFiltering: true,
 			enableFiltering: true,

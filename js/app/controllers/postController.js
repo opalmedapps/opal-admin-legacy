@@ -89,17 +89,17 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 		$scope.gridOptions = {
 			data: 'postList',
 			columnDefs: [
-				{ field: 'name_EN', displayName: 'Name (EN / FR)', cellTemplate: cellTemplateName, width: '555' },
+				{ field: 'name_EN', displayName: 'Name (EN / FR)', cellTemplate: cellTemplateName, width: '30%' },
 				{
-					field: 'type', displayName: 'Type', width: '185', filter: {
+					field: 'type', displayName: 'Type', width: '15%', filter: {
 						type: uiGridConstants.filter.SELECT,
 						selectOptions: [{ value: 'Announcement', label: 'Announcement' }, { value: 'Patients for Patients', label: 'Patients for Patients' }, { value: 'Treatment Team Message', label: 'Treatment Team Message' }]
 					}
 				},
-				{ field: 'publish', displayName: 'Publish', width: '80', cellTemplate: cellTemplatePublishCheckbox, enableFiltering: false },
-				{ field: 'publish_date', displayName: 'Publish Date', width: '160' },
-				{ field: 'disabled', displayName: 'Disabled', width: '80', cellTemplate: cellTemplateDisableCheckbox, filter: { term: 0 } },
-				{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false }
+				{ field: 'publish', displayName: 'Publish', width: '10%', cellTemplate: cellTemplatePublishCheckbox, enableFiltering: false },
+				{ field: 'publish_date', displayName: 'Publish Date', width: '15%' },
+				{ field: 'disabled', displayName: 'Disabled', width: '10%', cellTemplate: cellTemplateDisableCheckbox, filter: { term: 0 } },
+				{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '20%' }
 			],
 			//useExternalFiltering: true,
 			enableFiltering: true,
