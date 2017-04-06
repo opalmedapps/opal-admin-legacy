@@ -626,8 +626,8 @@ ul.no-list {
 }
 
 .side-logo h1 {
-  margin-top: -25px;
-  font-size: 45px;
+  margin-top: -15px;
+  font-size: 35px;
 }
 
 .home-side-menu {
@@ -884,6 +884,20 @@ table.summary-box {
 
 .table-buttons {
   margin-top: 10px;
+}
+
+.item-button {
+  background-color: #fffff4;
+  border-color: transparent;	
+}
+
+.item-button-success {
+  background-color: #57a07f;
+  color: #fffff4;
+}
+.item-button-success:focus,
+.item-button-success:hover{
+  color: #fffff4;	
 }
 
 .summary-box .title {

@@ -54,10 +54,10 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 		$scope.gridOptions = {
 			data: 'testList',
 			columnDefs: [
-				{ field: 'name_EN', displayName: 'Name (EN/FR)', cellTemplate: cellTemplateName, width: '655' },
-				{ field: 'group_EN', displayName: 'Test Group (EN/FR)', cellTemplate: cellTemplateGroupName, width: '255' },
-				{ field: 'publish', displayName: 'Publish Flag', width: '130', cellTemplate: checkboxCellTemplate },
-				{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false }
+				{ field: 'name_EN', displayName: 'Name (EN/FR)', cellTemplate: cellTemplateName, width: '40%' },
+				{ field: 'group_EN', displayName: 'Test Group (EN/FR)', cellTemplate: cellTemplateGroupName, width: '20%' },
+				{ field: 'publish', displayName: 'Publish Flag', width: '15%', cellTemplate: checkboxCellTemplate },
+				{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false, width: '25%' }
 			],
 			useExternalFiltering: true,
 			enableColumnResizing: true,

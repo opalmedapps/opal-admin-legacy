@@ -47,10 +47,10 @@ angular.module('opalAdmin.controllers.hospitalMapController', ['ngAnimate', 'ngS
 		$scope.gridOptions = {
 			data: 'hosMapList',
 			columnDefs: [
-				{ field: 'name_EN', displayName: 'Name (EN / FR)', cellTemplate: cellTemplateName, width: '555' },
-				{ field: 'qrid', displayName: 'QR Identifier', width: '145' },
-				{ field: 'url', displayName: 'Map URL', width: '410' },
-				{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false }
+				{ field: 'name_EN', displayName: 'Name (EN / FR)', cellTemplate: cellTemplateName, width: '35%' },
+				{ field: 'qrid', displayName: 'QR Identifier', width: '15%' },
+				{ field: 'url', displayName: 'Map URL', width: '25%' },
+				{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false, width: '25%' }
 			],
 			useExternalFiltering: true,
 			enableColumnResizing: true,

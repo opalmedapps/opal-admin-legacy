@@ -48,10 +48,10 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
 		$scope.gridOptions = {
 			data: 'notificationList',
 			columnDefs: [
-				{ field: 'name_EN', displayName: 'Title (EN / FR)', cellTemplate: cellTemplateName, width: '655' },
-				{ field: 'type', displayName: 'Type' },
-				{ field: 'description_EN', displayName: 'Message (EN)' },
-				{ name: 'Operations', width: '200', cellTemplate: cellTemplateOperations, sortable: false }
+				{ field: 'name_EN', displayName: 'Title (EN / FR)', cellTemplate: cellTemplateName, width: '40%' },
+				{ field: 'type', displayName: 'Type', width: '15%' },
+				{ field: 'description_EN', displayName: 'Message (EN)', width: '30%' },
+				{ name: 'Operations', width: '15%', cellTemplate: cellTemplateOperations, sortable: false }
 			],
 			useExternalFiltering: true,
 			enableColumnResizing: true,

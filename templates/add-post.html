@@ -257,11 +257,11 @@
           </div>
           <div class="col-md-10 animated fadeInRight" style="margin-left:17%">
             <div class="row main-title">
-              <div class="col-md-6 title-content">
+              <div class="col-md-9 title-content">
                 <span class="glyphicon glyphicon-plus"></span>
                 <h1><strong>Add Post</strong></h1>
               </div>
-              <div class="col-md-6 title-breadcrumbs"> 
+              <div class="col-md-3 title-breadcrumbs"> 
                 <span>
                   <span><a href="#/">Home</a></span>
                   <span class="teflon glyphicon glyphicon-menu-right"></span> 
@@ -273,17 +273,17 @@
             </div>    
 
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Type</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
                   Please select the type of post.
@@ -304,17 +304,17 @@
             </div>    
 
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Title</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
                   Please assign an english and french title.
@@ -322,7 +322,7 @@
               </div>
             </div>  
             <div class="row">
-              <div class="col-md-5">
+              <div class="col-md-6">
                 <div class="panel" ng-class="(newPost.name_EN) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>English</strong>
                     <span ng-hide="newPost.name_EN" style="float:right"><em>Incomplete</em></span>
@@ -342,7 +342,7 @@
                   </div>
                 </div>
               </div>          
-              <div class="col-md-5">
+              <div class="col-md-6">
                 <div class="panel" ng-class="(newPost.name_FR) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>Français</strong>
                     <span ng-hide="newPost.name_FR" style="float:right"><em>Incomplete</em></span>
@@ -365,17 +365,17 @@
             </div>
 
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Body</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 5px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
                   Please assign the message content in both english and in french.
@@ -394,7 +394,7 @@
               </div>
             </div>  
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <div class="panel" ng-class="(newPost.body_EN) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>English</strong>
                     <span ng-hide="newPost.body_EN" style="float:right"><em>Incomplete</em></span>
@@ -421,7 +421,7 @@
               </div>
             </div>           
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <div class="panel" ng-class="(newPost.body_FR) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>Français</strong>
                     <span ng-hide="newPost.body_FR" style="float:right"><em>Incomplete</em></span>
@@ -448,17 +448,17 @@
               </div>
             </div>           
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Publish Date</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span ng-hide="newPost.type.name =='Announcement'"><strong>Optional field:</strong></span>
                   <span ng-show="newPost.type.name =='Announcement'" style="color:#d9534f"><strong>Required field:</strong></span>
@@ -466,7 +466,7 @@
                 </p>
               </div>
             </div>    
-            <div class="row">
+            <div class="row" style="margin-bottom: 15px;">
               <div class="col-md-8">
                 <div class="row">
                   <div class="col-md-6" style="padding-top: 10px;">
@@ -486,17 +486,17 @@
               </div>      
             </div>      
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Expression Filters</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
                   Select one of more expression filters below. This will target patients with these specific filters. Leave blank for no filters.
@@ -535,17 +535,17 @@
             </div>
 
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Diagnosis Filters</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
                   Select one of more diagnosis filters below. This will target patients with these specific diagnoses. Leave blank for no filters.
@@ -580,17 +580,17 @@
 
 
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Doctor Filters</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
                   Select one of more doctor filters below. This will target patients with these specific doctors. Leave blank for no filters.
@@ -625,17 +625,17 @@
 
 
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Resource Filters</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
                   Select one of more resource filters below. This will target patients with these specific resources. Leave blank for no filters.
