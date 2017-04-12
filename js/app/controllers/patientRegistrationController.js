@@ -20,7 +20,8 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			language: { completed: false },
 			security1: { completed: false },
 			security2: { completed: false },
-			security3: { completed: false }
+			security3: { completed: false },
+			checks: { completed: false }
 		};
 		var steps = jQuery.extend(true, {}, defaultSteps);
 
@@ -28,7 +29,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 		$scope.numOfCompletedSteps = 0;
 
 		// Default total number of steps 
-		$scope.stepTotal = 6;
+		$scope.stepTotal = 7;
 
 		// Progress bar based on default completed steps and total
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -465,6 +466,27 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 				steps.security3.completed = true;
 			else
 				steps.security3.completed = false;
+
+			$scope.numOfCompletedSteps = stepsCompleted(steps);
+			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+		};
+
+		// Function to check if all final checks have been checked
+		$scope.idCheck = false;
+		$scope.consentCheck = false;
+		$scope.disclaimerCheck = false;
+		$scope.slaCheck = false;
+		$scope.opalDocCheck = false;
+		$scope.finalChecks = false;
+		$scope.finalCheckUpdate = function () {
+			if ($scope.idCheck && $scope.consentCheck && $scope.disclaimerCheck && $scope.slaCheck && $scope.opalDocCheck) {
+				steps.checks.completed = true;
+				$scope.finalChecks = true;
+			}
+			else {
+				steps.checks.completed = false;
+				$scope.finalChecks = false;
+			}
 
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
