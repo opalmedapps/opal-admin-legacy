@@ -132,6 +132,21 @@
                         </div> 
                       </td>
                     </tr>
+
+										<tr>
+                      <td>
+                        <span ng-hide="finalChecks" class="glyphicon glyphicon-minus"></span>
+                        <span ng-show="finalChecks" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </td>
+                      <td>
+                        <div class="horz-line" style="line-height: 0px;">
+                          <span class="title" style="background-color: #fff;">
+                            <strong>{{ 'FINAL_CHECKS_TITLE' | translate }}</strong>
+                          </span>
+                        </div> 
+                      </td>
+                    </tr>
+
                   </table>
                   <div class="table-buttons" style="text-align: center">
                     <form ng-submit="registerPatient()" method="post">
@@ -252,7 +267,7 @@
                 </div>
               </div>  
               <div class="row"> 
-                <div class="col-md-9">
+                <div class="col-md-8">
                   <div class="panel" ng-class="(validEmail.status == 'valid' && validPassword.status == 'valid' && validConfirmPassword.status == 'valid') ? 'panel-success': 'panel-danger'">
                     <div class="panel-heading"><strong>{{ 'EMAIL' | translate }} & {{ 'PASSWORD' | translate }}</strong>
                       <span ng-hide="validEmail.status == 'valid' && validPassword.status == 'valid' && validConfirmPassword.status == 'valid'" style="float:right"><em>{{ 'INCOMPLETE' | translate }}</em></span>
@@ -478,6 +493,82 @@
                   </div>
                 </div>          
               </div>
+
+							<div class="row">
+                <div class="col-md-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="glyphicon glyphicon-triangle-bottom"></span>
+                      <h2>{{ 'FINAL_CHECKS_TITLE' | translate }}</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row">
+                <div class="col-md-12">
+                  <p style="margin-bottom: 10px;">
+                    <span style="color:#d9534f"><strong>{{ 'REQUIRED_FIELD' | translate }}:</strong></span>
+                    {{ 'FINAL_CHECKS_DESCRIPTION' | translate }} 
+                  </p>
+                </div>
+              </div> 
+
+			  			<div class="row">
+                <div class="col-md-6"> 
+									<table class="table table-bordered table-condensed">
+										<col width="15%">
+										<col width="85%">
+										<tr ng-class="{'danger': !idCheck, 'success': idCheck}">
+											<td>
+												<div style="text-align: center; cursor: pointer;" ng-click="idCheck = !idCheck; finalCheckUpdate()">
+													<span class="glyphicon glyphicon-remove" style="color: #d9534f" ng-if="!idCheck"></span>
+													<span class="glyphicon glyphicon-ok" style="color: #3c763d" ng-if="idCheck"></span>
+												</div>
+											</td>
+											<th>{{ 'ID_CHECK_DESCRIPTION'  | translate }}</th>
+										</tr>
+										<tr ng-class="{'danger': !consentCheck, 'success': consentCheck}">
+											<td>
+												<div style="text-align: center; cursor: pointer;" ng-click="consentCheck = !consentCheck; finalCheckUpdate()">
+													<span class="glyphicon glyphicon-remove" style="color: #d9534f" ng-if="!consentCheck"></span>
+													<span class="glyphicon glyphicon-ok" style="color: #3c763d" ng-if="consentCheck"></span>
+												</div>
+											</td>
+											<th>{{ 'CONSENT_CHECK_DESCRIPTION'  | translate }}</th>
+										</tr>
+
+										<tr ng-class="{'danger': !disclaimerCheck, 'success': disclaimerCheck}">
+											<td>
+												<div style="text-align: center; cursor: pointer;" ng-click="disclaimerCheck = !disclaimerCheck; finalCheckUpdate()">
+													<span class="glyphicon glyphicon-remove" style="color: #d9534f" ng-if="!disclaimerCheck"></span>
+													<span class="glyphicon glyphicon-ok" style="color: #3c763d" ng-if="disclaimerCheck"></span>
+												</div>
+											</td>
+											<th>{{ 'DISCLAIMER_CHECK_DESCRIPTION'  | translate }}</th>
+										</tr>
+
+										<tr ng-class="{'danger': !slaCheck, 'success': slaCheck}">
+											<td>
+												<div style="text-align: center; cursor: pointer;" ng-click="slaCheck = !slaCheck; finalCheckUpdate()">
+													<span class="glyphicon glyphicon-remove" style="color: #d9534f" ng-if="!slaCheck"></span>
+													<span class="glyphicon glyphicon-ok" style="color: #3c763d" ng-if="slaCheck"></span>
+												</div>
+											</td>
+											<th>{{ 'SLA_CHECK_DESCRIPTION'  | translate }}</th>
+										</tr>
+
+										<tr ng-class="{'danger': !opalDocCheck, 'success': opalDocCheck}">
+											<td>
+												<div style="text-align: center; cursor: pointer;" ng-click="opalDocCheck = !opalDocCheck; finalCheckUpdate()">
+													<span class="glyphicon glyphicon-remove" style="color: #d9534f" ng-if="!opalDocCheck"></span>
+													<span class="glyphicon glyphicon-ok" style="color: #3c763d" ng-if="opalDocCheck"></span>
+												</div>
+											</td>
+											<th>{{ 'OPAL_DOCUMENTATION_CHECK_DESCRIPTION'  | translate }}</th>
+										</tr>
+									</table>
+                </div>
+			  			</div>
             </div>
 
           </div>

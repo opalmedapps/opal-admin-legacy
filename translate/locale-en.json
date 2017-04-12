@@ -44,7 +44,17 @@
 	"STATUS_CELLNUM_ERROR": "Must be 10 digits long",
 	"STATUS_SECURITY_QUESTION_ERROR": "No special characters",
 	"STATUS_WEAK_PASSWORD": "Password is too weak",
-	"STATUS_USERNAME_PASSWORD_INCORRECT": "Wrong username and/or password!"
+	"STATUS_USERNAME_PASSWORD_INCORRECT": "Wrong username and/or password!",
+	"ID_CHECK": "Identification Check",
+	"ID_CHECK_DESCRIPTION": "Patient has been identified?",
+	"CONSENT_CHECK": "Consent Check",
+	"CONSENT_CHECK_DESCRIPTION": "Patient has signed consent form?",
+	"DISCLAIMER_CHECK": "Disclaimer Check",
+	"DISCLAIMER_CHECK_DESCRIPTION": "Patient has signed the disclaimer?",
+	"SLA_CHECK_DESCRIPTION": "Patient has read the service level agreement?",
+	"OPAL_DOCUMENTATION_CHECK_DESCRIPTION": "Patient has received the Opal documentation?",
+	"FINAL_CHECKS_TITLE": "Final Checks",
+	"FINAL_CHECKS_DESCRIPTION": "Please perform these final checks before registering the patient."
 
 
 }
