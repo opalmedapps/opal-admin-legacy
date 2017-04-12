@@ -44,5 +44,15 @@
 	"STATUS_CELLNUM_ERROR": "10 chiffres seulement",
 	"STATUS_SECURITY_QUESTION_ERROR": "Pas de caractères spécial",
 	"STATUS_WEAK_PASSWORD": "Le mot de passe est trop faible",
-	"STATUS_USERNAME_PASSWORD_INCORRECT": "Nom d'utilisateur et/ou mot de passe incorrect"
+	"STATUS_USERNAME_PASSWORD_INCORRECT": "Nom d'utilisateur et/ou mot de passe incorrect",
+	"ID_CHECK": "Vérification d'Identification",
+	"ID_CHECK_DESCRIPTION": "Le patient a été identifié?",
+	"CONSENT_CHECK": "Vérification du consentement",
+	"CONSENT_CHECK_DESCRIPTION": "Formulaire de consentement signé par le patient?",
+	"DISCLAIMER_CHECK": "Vérification d'avertissement",
+	"DISCLAIMER_CHECK_DESCRIPTION": "L'avertissement signé par le patient?",
+	"SLA_CHECK_DESCRIPTION": "Le patient a-t-il lu l'accord de niveau de service?",
+	"OPAL_DOCUMENTATION_CHECK_DESCRIPTION": "Le patient a-t-il reçu la documentation Opal?",
+	"FINAL_CHECKS_TITLE": "Vérifications finales",
+	"FINAL_CHECKS_DESCRIPTION": "Veuillez effectuer ces vérifications finales avant d'enregistrer le patient."
 }
