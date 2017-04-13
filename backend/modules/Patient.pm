@@ -16,6 +16,7 @@ package Patient; # Declare package name
 
 use Exporter; # To export subroutines and variables
 use Database; # Use our custom database module Database.pm
+use Configs; # Use our custom configs module
 use Time::Piece; 
 use POSIX;
 use Storable qw(dclone); # for deep copies
@@ -50,6 +51,8 @@ sub new
 		_lasttransfer	=> undef,
         _accesslevel    => undef,
         _deathdate 		=> undef,
+		_email 			=> undef,
+		_firebaseuid	=> undef, 		
 	};
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is envoked on this object
@@ -199,6 +202,26 @@ sub setPatientDeathDate
 }
 
 #======================================================================================
+# Subroutine to set the patient email
+#======================================================================================
+sub setPatientEmail
+{
+	my ($patient, $email) = @_; # patient object with provided email in arguments 
+	$patient->{_email} = $email; # set the email
+	return $patient->{_email};
+}
+
+#======================================================================================
+# Subroutine to set the patient firebase uid
+#======================================================================================
+sub setPatientFirebaseUID
+{
+	my ($patient, $firebaseuid) = @_; # patient object with provided uid in arguments 
+	$patient->{_firebaseuid} = $firebaseuid; # set the uid
+	return $patient->{_firebaseuid};
+}
+
+#======================================================================================
 # Subroutine to get the patient serial
 #======================================================================================
 sub getPatientSer
@@ -322,6 +345,24 @@ sub getPatientDeathDate
 {
     my ($patient) = @_; # our patient object
     return $patient->{_deathdate};
+}
+
+#======================================================================================
+# Subroutine to get the patient email
+#======================================================================================
+sub getPatientEmail
+{
+    my ($patient) = @_; # our patient object
+    return $patient->{_email};
+}
+
+#======================================================================================
+# Subroutine to get the patient firebase uid
+#======================================================================================
+sub getPatientFirebaseUID
+{
+    my ($patient) = @_; # our patient object
+    return $patient->{_firebaseuid};
 }
 
 #======================================================================================
@@ -560,6 +601,8 @@ sub blockPatient
 
 	# get patient serial
 	my $patientSer = $patient->getPatientSer();
+	# get uid
+	my $firebaseUID = $patient->getPatientFirebaseUID();
 
 	my $update_sql = "
 		UPDATE
@@ -579,7 +622,26 @@ sub blockPatient
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
 
+	# call our nodejs script to block user on Firebase
+	my $response = `$Configs::BACKEND_ABS_PATH . 'js/firebaseBlockUser.js ' . $firebaseUID`;
+
+	print "BLOCK PATIENT RESPONSE: $response\n";
+
 }
+
+#======================================================================================
+# Subroutine to send an email to a patient
+#======================================================================================
+sub sendPatientEmail
+{
+	my ($patient, $message) = @_; # get patient object with message
+
+	# get patient email
+	my $patientEmail = $patient->getPatientEmail();
+
+	print "SENT PATIENT EMAIL\n";
+}
+
 
 #======================================================================================
 # Subroutine to unset patient control
@@ -686,7 +748,7 @@ sub inOurDatabase
 	my $ExistingPatient = (); # data to be entered if patient exists
 
 	# for query results
-    my ($ser, $sourceuid, $id, $id2, $firstname, $lastname, $sex, $dob, $age, $picture, $deathdate);
+    my ($ser, $sourceuid, $id, $id2, $firstname, $lastname, $sex, $dob, $age, $picture, $deathdate, $email, $firebaseuid);
  
     my $inDB_sql = "
         SELECT DISTINCT
@@ -701,11 +763,16 @@ sub inOurDatabase
 			Patient.Age,
             Patient.ProfileImage,
             Patient.SSN,
-            Patient.DeathDate
+            Patient.DeathDate,
+			Patient.Email,
+			Users.Username
         FROM
-            Patient
+            Patient,
+			Users
         WHERE
-            Patient.SSN     = '$ssn'
+            Patient.SSN     		= '$ssn'
+		AND Patient.PatientSerNum 	= Users.UserTypeSerNum
+		AND Users.UserType 			= 'Patient'
     ";
 	# prepare query
 	my $query = $SQLDatabase->prepare($inDB_sql)
@@ -729,6 +796,8 @@ sub inOurDatabase
         $picture                = $data[9];
         $PatientSSNInDB         = $data[10];
         $deathdate 				= $data[11];
+		$email 					= $data[12];
+		$firebaseuid 			= $data[13];
     }
 
     if ($PatientSSNInDB) {
@@ -748,6 +817,8 @@ sub inOurDatabase
         $ExistingPatient->setPatientLastTransfer($lastTransfer);
         $ExistingPatient->setPatientSSN($PatientSSNInDB);
         $ExistingPatient->setPatientDeathDate($deathdate);
+		$ExistingPatient->setPatientEmail($email);
+		$ExistingPatient->setPatientFirebaseUID($firebaseuid);
 
         return $ExistingPatient; # this is true (ie. patient exists, return object)
 	}
