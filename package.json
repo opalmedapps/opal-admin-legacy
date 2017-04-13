@@ -22,6 +22,8 @@
   "dependencies": {
     "angular-ui-grid": "^4.0.2",
     "eslint": "^3.18.0",
+    "firebase": "^3.7.6",
+    "firebase-admin": "^4.2.0",
     "grunt": "^1.0.1",
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-watch": "^1.0.0",

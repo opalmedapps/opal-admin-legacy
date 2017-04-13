@@ -125,7 +125,7 @@ class Install {
 
 		try {
 			$aria_link = new PDO( "dblib:host=$host:$port\\database", $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION) );
-
+			
 			// If we're here, connection's good
 			if ($document_path != '') {
 				if (!file_exists($document_path)) {

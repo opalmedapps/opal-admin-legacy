@@ -13,6 +13,9 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			window.history.back();
 		};
 
+		// firebaseConfig is a global variable from config.js
+		var FB = firebase.initializeApp(firebaseConfig);
+
 		// completed registration steps in object notation
 		var defaultSteps = {
 			email: { completed: false },
