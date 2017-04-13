@@ -38,9 +38,11 @@ class Filter {
                     ORDER BY
                         vva.Expression1
                 ";
-                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                $query->execute();
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $query = mssql_query($sql)
+					or die ('An error occurred: ' . mssql_get_last_message());
+
+                while ($data = mssql_fetch_array($query)) {
              
                     $expressionArray = array(
                         'name'  => $data[0],
@@ -67,9 +69,10 @@ class Filter {
                     ORDER BY
                         Doctor.LastName
                 ";
-                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                $query->execute();
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                $query = mssql_query($sql)
+					or die ('An error occurred: ' . mssql_get_last_message());
+
+                while ($data = mssql_fetch_array($query)) {
                     $doctorArray = array(
                         'name'  => $data[1],
                         'id'    => $data[0],
@@ -92,9 +95,10 @@ class Filter {
                     ORDER BY 
                         vr.ResourceName
                 ";
-                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                $query->execute();
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                $query = mssql_query($sql)
+					or die ('An error occurred: ' . mssql_get_last_message());
+
+                while ($data = mssql_fetch_array($query)) {
                     $resourceArray = array(
                         'name'  => $data[1],
                         'id'    => $data[0],
@@ -103,6 +107,8 @@ class Filter {
                     );
                     array_push($filters['resources'], $resourceArray);
                 }
+
+				mssql_close($source_db_link);
             }
 
             // ***********************************

@@ -38,11 +38,11 @@ class Alias {
                             ORDER BY 
                                 vv_ActivityLng.Expression1
                         ";
-        
-                        $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                       	$query->execute();
-                        while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+						
+                        $query = mssql_query($sql)
+							or die ('An error occurred: ' . mssql_get_last_message());
 
+                        while ($data = mssql_fetch_array($query)) {
 
                             $termName = $data[0];
                             $termArray = array(
@@ -55,6 +55,8 @@ class Alias {
 
                         }
 
+						mssql_close($source_db_link);
+
                     } else {
 
                         $sql = "
@@ -66,10 +68,9 @@ class Alias {
                                 RTRIM(note_typ.note_typ_desc)
                         ";
         
-                        $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                       	$query->execute();
-                        while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
+                        $query = mssql_query($sql)
+							or die ('An error occurred: ' . mssql_get_last_message());
+                        while ($data = mssql_fetch_array($query)) {
 
                             $termName = $data[0];
                                 
@@ -81,6 +82,8 @@ class Alias {
         
                             array_push($expressionList, $termArray);
                         }
+
+						mssql_close($source_db_link);
                     }
                 }
 
@@ -135,15 +138,17 @@ class Alias {
 
                     $sql = "SELECT 'QUERY_HERE'";
 
-                    $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                    $query->execute();
+                    $query = mssql_query($sql)
+						or die ('An error occurred: ' . mssql_get_last_message());
 
-                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                    while ($data = mssql_fetch_array($query)) {
 
                         // Set data from query here
 
                         //array_push($expressionList, $termArray); // Uncomment for use
                     }
+
+					mssql_close($source_db_link);
                 }
 
             }        

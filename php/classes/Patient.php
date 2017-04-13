@@ -198,11 +198,11 @@ class Patient {
                         pt.SSN          LIKE '$ssn%'
                     AND pt.PatientId    = '$id'
                 ";
-                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                $query->execute();
+                $query = mssql_query($sql)
+					or die ('An error occurred: ' . mssql_get_last_message());
 
-                $lookupSSN = null;
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+				$lookupSSN = null;
+                while ($data = mssql_fetch_array($query)) {
                     $lookupSSN = $data[0];
 
                     $patientArray = array(
@@ -223,6 +223,8 @@ class Patient {
                 if (is_null($lookupSSN)) { // Could not find the ssn
                     $patientResponse['status'] = 'PatientNotFound';
                 }
+
+				mssql_close($source_db_link);
 
                 return $patientResponse;
             }
@@ -262,11 +264,11 @@ class Patient {
             if ($source_db_link) {
 
                 $sql = "SELECT 'QUERY_HERE'";
-                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                $query->execute();
+                $query = mssql_query($sql)
+					or die ('An error occurred: ' . mssql_get_last_message());
 
                 $lookupSSN = null;
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                while ($data = mssql_fetch_array($query)) {
                     //$lookupSSN = $data[0];
 
                     // Set appropriate patient information here from query
@@ -277,6 +279,8 @@ class Patient {
                 if (is_null($lookupSSN)) { // Could not find the ssn
                     $patientResponse['status'] = 'PatientNotFound';
                 }
+
+				mssql_close($source_db_link);
 
                 return $patientResponse;
             }
