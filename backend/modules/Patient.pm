@@ -21,6 +21,7 @@ use Time::Piece;
 use POSIX;
 use Storable qw(dclone); # for deep copies
 use Data::Dumper;
+use MIME::Lite; # emailing
 
 # Get the current time
 my $today = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
@@ -623,9 +624,12 @@ sub blockPatient
 		or die "Could not execute query: " . $query->errstr;
 
 	# call our nodejs script to block user on Firebase
-	my $response = `$Configs::BACKEND_ABS_PATH . 'js/firebaseBlockUser.js ' . $firebaseUID`;
+	my $command = "/usr/bin/node " . $Configs::FRONTEND_ABS_PATH . 'js/firebaseBlockUser.js ' . $firebaseUID;
 
-	print "BLOCK PATIENT RESPONSE: $response\n";
+	my $response = system($command);
+
+	# response = 0 (success); otherwise failed
+
 
 }
 
@@ -634,12 +638,25 @@ sub blockPatient
 #======================================================================================
 sub sendPatientEmail
 {
+
 	my ($patient, $message) = @_; # get patient object with message
 
 	# get patient email
 	my $patientEmail = $patient->getPatientEmail();
 
-	print "SENT PATIENT EMAIL\n";
+	my $subject = "Your Opal account has been disabled";
+	my $sender = "opal\@muhc.mcgill.ca";
+
+	my $mime = MIME::Lite->new(
+	    'From'      => $sender,
+	    'To'        => $patientEmail,
+	    'Subject'   => $subject,
+	    'Type'      => 'text/html',
+	    'Data'      => $message,
+	);
+
+	$mime->send('smtp', '172.25.123.208') or die "Failed to send\n";
+
 }
 
 
@@ -920,11 +937,9 @@ sub updateDatabase
             LastName                = \"$patientLastName\",
             Sex                     = '$patientSex',
             DateOfBirth             = '$patientDOB',
-			Age 					= '$age',
+			Age 					= '$patientAge',
             ProfileImage            = '$patientPicture',
-            DeathDate 				= '$patientDeathDate',
-            DisabledFlag 			= '$disabledFlag',
-            DisabledReasonTxt 		= '$disabledReason'
+            DeathDate 				= '$patientDeathDate'
         WHERE
             SSN                     = '$patientSSN'
     ";
@@ -993,11 +1008,12 @@ sub compareWith
 		my $updatedId2 = $UpdatedPatient->setPatientId2($SPatientId2); # update patient id2
 		print "Will update database entry to \"$updatedId2\".\n";
 	}	
-	if ($SPatientDOB ne $OPatientDOB) {
+	if ($SPatientDOB ne $OPatientDOB and (isValidDate($SPatientDOB) or isValidDate($OPatientDOB))) {
 
 		print "Patient Date of Birth has changed from $OPatientDOB to $SPatientDOB!\n";
 		my $updatedDOB = $UpdatedPatient->setPatientDOB($SPatientDOB); # update patient date of birth
 		print "Will update database entry to \"$updatedDOB\".\n";
+
 	}
 	if ($SPatientAge ne $OPatientAge) {
 
@@ -1008,6 +1024,7 @@ sub compareWith
 		# block patient if patient passed 13 years of age
 		if ($OPatientAge < 14 && $SPatientAge >= 14) {
 			blockPatient($UpdatedPatient, "Patient passed 13 years of age");
+			#$UpdatedPatient->sendPatientEmail("<h1>Hello</h1>");
 		}
 	}
 	if ($SPatientSex ne $OPatientSex) {
@@ -1034,7 +1051,7 @@ sub compareWith
 		my $updatedPicture = $UpdatedPatient->setPatientPicture($SPatientPicture); # update patient picture
 		print "Will update database entry to \"$updatedPicture\".\n";
 	}
-	if ($SPatientDeathDate ne $OPatientDeathDate) {
+	if ($SPatientDeathDate ne $OPatientDeathDate and (isValidDate($SPatientDeathDate) or isValidDate($OPatientDeathDate))) {
 
 		print "Patient Death Date has changed from $OPatientDeathDate to $SPatientDeathDate!\n";
 		my $updatedDeathDate = $UpdatedPatient->setPatientDeathDate($SPatientDeathDate); # update patient death date 
@@ -1056,11 +1073,22 @@ sub getAgeAtDate
 {
     my ($dob, $date) = @_;
 
-    if ($dob eq '1970-01-01 00:00:00' or $dob eq '0000-00-00 00:00:00') {return -1;} # dob undef
+    if (!isValidDate($dob)) {return -1;} # dob undef
 
     my $diff = $date - $dob;
 
     return int($diff);
+}
+
+#======================================================================================
+# Subroutine to determine if date is invalid
+#======================================================================================
+sub isValidDate
+{
+	my ($date) = @_;
+
+	if (!$date or $date eq '1970-01-01 00:00:00' or $date eq '0000-00-00 00:00:00') {return undef;}
+	else {return 1;}
 }
 
 #======================================================================================
@@ -1071,8 +1099,8 @@ sub convertDateTime
 {
 	my ($inputDate) = @_;
 
-	if (!$inputDate) {
-		return $inputDate;
+	if (!$inputDate or $inputDate eq "0000-00-00 00:00:00" or $inputDate eq "1970-01-01 00:00:00") {
+		return undef;
 	}
 	my $dateFormat = Time::Piece->strptime($inputDate,"%b %d %Y %I:%M%p");
 
