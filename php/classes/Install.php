@@ -125,7 +125,7 @@ class Install {
 
 		try {
 			$aria_link = new PDO( "dblib:host=$host:$port\\database", $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION) );
-
+			
 			// If we're here, connection's good
 			if ($document_path != '') {
 				if (!file_exists($document_path)) {
@@ -257,6 +257,12 @@ class Install {
 			$file_contents = str_replace('OPAL_DB_USERNAME_HERE', $opalCreds['username'], $file_contents);
 			$file_contents = str_replace('OPAL_DB_PASSWORD_HERE', $opalCreds['password'], $file_contents);
 			file_put_contents($path_to_file, $file_contents);
+
+			// Create local clinical documents directory
+			if (!is_dir($abspath . 'backend/clinical/documents')) {
+				if(!mkdir($abspath . 'backend/clinical/documents/', 0755, true))
+					die('Failed to create folder ' . $abspath . 'backend/clinical/documents/');
+			}
 
 		}
 
@@ -396,6 +402,8 @@ class Install {
 		$file_contents = str_replace('FRONTEND_ABS_PATH_HERE', $abspath, $file_contents);
 		$file_contents = str_replace('FRONTEND_REL_URL_HERE', $urlpath, $file_contents);
 		file_put_contents($path_to_file, $file_contents);
+
+
 
 		return $response;
 

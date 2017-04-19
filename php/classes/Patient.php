@@ -200,7 +200,7 @@ class Patient {
                 ";
                 $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
                 $query->execute();
-
+                
                 $lookupSSN = null;
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
                     $lookupSSN = $data[0];
@@ -264,7 +264,7 @@ class Patient {
                 $sql = "SELECT 'QUERY_HERE'";
                 $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
                 $query->execute();
-
+                
                 $lookupSSN = null;
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
                     //$lookupSSN = $data[0];
@@ -293,9 +293,10 @@ class Patient {
      *
      * Gets a list of security questions in the database
      *
+     * @param string $language : site language
      * @return array $securityQuestions
      */
-    public function fetchSecurityQuestions() {
+    public function fetchSecurityQuestions($language) {
         $securityQuestions = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
@@ -303,7 +304,7 @@ class Patient {
             $sql = "
                 SELECT DISTINCT
                     sq.SecurityQuestionSerNum,
-                    sq.QuestionText
+                    sq.QuestionText_$language
                 FROM
                     SecurityQuestion sq
             ";

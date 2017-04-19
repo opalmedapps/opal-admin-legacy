@@ -21,7 +21,8 @@ class Database {
 			$creds = $this->fetchSourceCredentials($sourceDBSer);
 
 			$db_link = new PDO( $creds['dsn'], $creds['username'], $creds['password'] );
-			$db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+ 			$db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
 		}
 
 		return $db_link;

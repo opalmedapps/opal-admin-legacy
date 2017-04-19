@@ -1,7 +1,6 @@
-# ignore configurations 
+# ignore configurations
 js/config.js
 php/config.php
-.htaccess
 backend/modules/Configs.pm
 
 # ignore clinical documents
@@ -21,3 +20,7 @@ images/hospital-maps/qrCodes
 
 # ignore version control script
 bumpversion.sh
+
+# ignore bower/node components
+bower_components
+node_modules

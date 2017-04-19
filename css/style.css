@@ -626,16 +626,15 @@ ul.no-list {
 }
 
 .side-logo h1 {
-  margin-top: -25px;
-  font-size: 45px;
+  margin-top: -15px;
+  font-size: 35px;
 }
 
 .home-side-menu {
-  text-align: right;
   vertical-align: middle;
 }
 
-.home-side-menu h2 {
+.home-side-menu .title {
   display: inline;
   font-size: 25px;
   font-weight: 700;
@@ -713,6 +712,14 @@ ul.no-list {
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
 }
+.side-panel-info-sm {
+  padding: 10px;
+  background-color: #fffff4;
+  border: 1px solid #e1e8ed;
+  border-radius: 7px;
+  height: 45px;
+}
+
 .side-panel-info {
   padding: 10px;
   background-color: #fffff4;
@@ -720,7 +727,9 @@ ul.no-list {
   border-radius: 7px;
   height: 70px;
 }
+
 .panel-info.active,
+.side-panel-info-sm.active,
 .side-panel-info.active {
   background-color: #6f5499;
 }
@@ -877,6 +886,20 @@ table.summary-box {
   margin-top: 10px;
 }
 
+.item-button {
+  background-color: #fffff4;
+  border-color: transparent;	
+}
+
+.item-button-success {
+  background-color: #57a07f;
+  color: #fffff4;
+}
+.item-button-success:focus,
+.item-button-success:hover{
+  color: #fffff4;	
+}
+
 .summary-box .title {
   font-size: 16px;
   padding-right: 10px;
@@ -1011,7 +1034,7 @@ td.color-code h5 {
 }
 
 .home-header .logo {
-  width: 15%;
+  width: 7%;
   display: inline-block;
 }
 

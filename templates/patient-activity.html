@@ -7,44 +7,25 @@
           </div>
           <div class="col-md-10 animated fadeIn">
             <div class="row main-title">
-              <div class="col-md-6 title-content">
+              <div class="col-md-8 title-content">
                 <span class="fa fa-hourglass-half"></span>
                 <h1><strong>Patient Activity</strong></h1>
               </div>
-              <div class="col-md-6 title-breadcrumbs"> 
+              <div class="col-md-4 title-breadcrumbs"> 
                 <span><a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Patient Activity</strong></span>
               </div>
-            </div>    
-
+            </div>  
             <div class="panel-container" style="text-align:left">
               <div class="panel-info">
                 <div class="panel-input">
-                  <div class="row clearfix" style="margin-bottom: 10px;">
-                    <div class="col-md-9">
-                    </div>
-                    <div class="col-md-3">
-                      <div class="input-group">
-                        <input type="text" class="form-control" ng-model="filterValue" ng-change="filterPatient(filterValue)" placeholder="Search...">
-                        <span class="input-group-addon">
-                          <span class="glyphicon glyphicon-search"></span>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
                   <div id="data-table">
-                    <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:720px">
+                    <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:75vh">
                       <div class="grid-msg-overlay" ng-hide="gridOptions.data.length && !loading">
                         <div class="msg">
                           <span>Loading Data...</span>
                         </div>
                       </div>
                     </div>
-                    <!--<div class="table-buttons" style="text-align: center;">
-                      <form method="post" ng-submit="submitPublishFlags()">
-                        <input class="btn btn-primary" ng-class="{'disabled': !changesMade}" type="submit" value="Save Changes">
-                      </form>
-                    </div>-->
-                  </div>
                   </div>
                 </div>
               </div>
