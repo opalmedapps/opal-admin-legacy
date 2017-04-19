@@ -11,8 +11,8 @@
             </div>
           </div>
         </div>    
-        <div class="row" ng-if="isAuthorized([userRoles.admin])">
-					<div class="col-md-6">
+        <div class="row" >
+					<div class="col-md-6" ng-if="isAuthorized([userRoles.admin])">
 						<div class="row">
 							<div class="col-md-12">
 								<div class="home-side-menu" style="margin-top:20px; margin-bottom:20px">
@@ -126,8 +126,8 @@
 							</div>
 						</div>
           </div>
-					<div class="col-md-6">
-        		<div class="row" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
+					<div class="col-md-6" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
+        		<div class="row">
           		<div class="col-md-12">
 								<div class="home-side-menu" style="margin-top:20px; margin-bottom:20px">
 									<span class="glyphicon glyphicon-menu-down"></span>
