@@ -13,8 +13,7 @@
                 </div>
               </div>   
             </div>  
-            <!--<div ng-show="validPatientSearch == 'valid'" class="row">-->
-			<div class="row">
+            <div ng-if="validPatientSearch == 'valid'" class="row">
               <div class="side-menu-title">
                 <div class="horz-line" style="height: 10px; text-align: center">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -23,13 +22,13 @@
                 </div>  
               </div>
             </div>
-            <div  class="row">
+            <div ng-if="validPatientSearch == 'valid'" class="row">
               <div class="progress progress-striped active">
                 <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
                 </div>
               </div>
             </div>
-            <div  class="panel-container">
+            <div ng-if="validPatientSearch == 'valid'" class="panel-container">
               <div class="panel-info">
                 <div class="panel-content" style="padding-top: 0">
                   <table class="summary-box" style="width: 100%">
@@ -244,7 +243,7 @@
                 </uib-accordion>
               </div>
             </div>
-            <div >
+            <div ng-if="validPatientSearch == 'valid'">
               <div style="margin-bottom:20px; color:#3c763d;">
                 <h1><strong>--- Patient: <em>{{newPatient.data.lastname}}, {{newPatient.data.firstname}}</em></strong></h1>
               </div>

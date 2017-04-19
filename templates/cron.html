@@ -25,7 +25,7 @@
                 </div>  
               </div>
             </div>
-            <div class="row">
+            <div class="row" style="margin-bottom: 15px;">
               <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   Use this field to manually set the next cron date and time. To turn off cron, set a date and time in the past.
@@ -45,7 +45,7 @@
                   </div>
                   <div class="col-md-2" style="margin-top: -24px;">
                     <div>
-                      <uib-timepicker ng-model="cronDetailsMod.nextCronTime" ng-change="setChangesMade()" minute-step="5" show-meridian="false"></uib-timepicker>
+                      <div uib-timepicker ng-model="cronDetailsMod.nextCronTime" ng-change="setChangesMade()" minute-step="5" show-meridian="false"></div>
                     </div>
                   </div>
                   <div class="col-md-2">
