@@ -196,9 +196,10 @@ class TestResult {
                     FROM
                         varianenm.dbo.test_result tr
                 ";
-                $query = mssql_query($sql)
-					or die ('An error occurred: ' . mssql_get_last_message());
-				while ($data = mssql_fetch_array($query)) {
+                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                     $testArray = array(
                         'name'      => $data[0],
@@ -207,8 +208,6 @@ class TestResult {
                     );
                     array_push($testNames, $testArray);
                 }
-
-				mssql_close($source_db_link);
 
             }
 
@@ -239,16 +238,15 @@ class TestResult {
             if ($source_db_link) {
 
                 $sql = "SELECT 'QUERY_HERE'";
-                $query = mssql_query($sql)
-					or die ('An error occurred: ' . mssql_get_last_message());
-				while ($data = mssql_fetch_array($query)) {
+                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                $query->execute();
+                
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                     // Set appropriate test result data here from query
 
                     //array_push($testNames, $testArray); // Uncomment for use
                 }
-
-				mssql_close($source_db_link);
 
             }
 
