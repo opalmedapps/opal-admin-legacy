@@ -7,40 +7,37 @@
           </div>
           <div class="col-md-10 animated fadeIn">
             <div class="row main-title">
-              <div class="col-md-6 title-content">
+              <div class="col-md-9 title-content">
                 <span class="glyphicon glyphicon-cloud"></span>
-                <h1><strong>Aliases</strong></h1>
+                <h1><strong>Tasks / Appointments / Documents</strong></h1>
               </div>
-              <div class="col-md-6 title-breadcrumbs"> 
-                <span><a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Aliases</strong></span>
+              <div class="col-md-3 title-breadcrumbs"> 
+                <span><a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>TAD</strong></span>
               </div>
-            </div>    
-            <div class="panel-container" style="text-align:left">
+            </div> 
+						<div class="row clearfix" style="margin-bottom: 10px; display:flex; align-items: center">
+							<div class="col-md-8">
+								<a style="width:100px;margin-right:20px;" href="" ng-click="goToAddAlias()" class="btn btn-md btn-outline item-button">
+									<span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
+									<span style="font-size: 20px;"><strong>Add</strong></span>
+								</a>
+								<a href="" ng-click="submitUpdate()" class="btn btn-md item-button-success animated" ng-if="changesMade" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false">
+									<span style="font-size: 17px;" class="glyphicon glyphicon-ok"></span>
+									<span style="font-size: 20px;"><strong>Save Changes</strong></span>
+								</a>
+							</div>
+							<div class="col-md-4">
+								<div class="form-group has-feedback" style="margin-bottom: 0">
+								<input type="text" class="form-control" ng-model="filterValue" ng-change="filterAlias(filterValue)" placeholder="Search...">
+									<span class="glyphicon glyphicon-search form-control-feedback"></span>
+								</div>
+							</div>
+						</div>   
+            <div class="panel-container" style="text-align:left;">
               <div class="panel-info">
                 <div class="panel-input">
-                  <div class="row clearfix" style="margin-bottom: 10px;">
-                    <div class="col-md-9">
-                      <a style="width:100px;" href="" ng-click="goToAddAlias()" class="btn btn-md btn-outline">
-                        <span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
-                        <span style="font-size: 20px;"><strong>Add</strong></span>
-                      </a>
-                    </div>
-                    <div class="col-md-3">
-                      <div class="input-group">
-                        <input type="text" class="form-control" ng-model="filterValue" ng-change="filterAlias(filterValue)" placeholder="Search...">
-                        <span class="input-group-addon">
-                          <span class="glyphicon glyphicon-search"></span>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
                   <div id="data-table">
-                    <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:720px"></div>
-                    <div class="table-buttons" style="text-align: center;">
-                      <form method="post" ng-submit="submitUpdate()">
-                        <input class="btn btn-primary" ng-class="{'disabled': !changesMade}" type="submit" value="Save Changes">
-                      </form>
-                    </div>
+                    <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:75vh"></div>
                   </div>
                 </div>            
               </div>
@@ -60,7 +57,7 @@
       </div>
       <div class="modal-body">
         <div class="bs-callout bs-callout-danger">
-          <h4>Alias Delete</h4>
+          <h4>TAD Delete</h4>
           <p class="deleteText">Are you sure you want to delete the alias "{{aliasToDelete.name_EN}}" ?</p>
           <form method="post" ng-submit="deleteAlias()">			
             <input class="btn btn-primary" type="submit" value="Delete">
@@ -73,7 +70,7 @@
       <div class="modal-header">
         <h2 class="modal-title">
           <span class="glyphicon glyphicon-pencil" style="font-size: 30px;"></span> 
-          Edit Alias: {{alias.name_EN}} / {{alias.name_FR}}
+          Edit TAD: {{alias.name_EN}} / {{alias.name_FR}}
           <span style="float:right;"> 
             <form method="post" ng-submit="updateAlias()">
               <input class="btn btn-primary" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
@@ -84,7 +81,7 @@
       </div>
       <div class="modal-body">
         <uib-accordion>
-          <uib-accordion-group is-open="statusA.open">
+          <div uib-accordion-group is-open="statusA.open">
             <uib-accordion-heading>
               <div>
                 Titles <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusA.open, 'glyphicon-chevron-right': !statusA.open}"></i>
@@ -109,8 +106,8 @@
                 </div>
               </div>
             </div>
-          </uib-accordion-group>
-          <uib-accordion-group is-open="statusB.open">
+          </div>
+          <div uib-accordion-group is-open="statusB.open">
             <uib-accordion-heading>
               <div>
                 Plain-Text Descriptions <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusB.open, 'glyphicon-chevron-right': !statusB.open}"></i>
@@ -132,8 +129,8 @@
                 </div>
               </div>
             </div>
-          </uib-accordion-group>
-          <uib-accordion-group is-open="statusC.open">
+          </div>
+          <div uib-accordion-group is-open="statusC.open">
             <uib-accordion-heading>
               <div>
                 Attached Educational Material <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusC.open, 'glyphicon-chevron-right': !statusC.open}"></i>
@@ -156,8 +153,8 @@
                 </li>
               </ul>
             </div>
-          </uib-accordion-group>
-          <uib-accordion-group is-open="statusD.open">
+          </div>
+          <div uib-accordion-group is-open="statusD.open">
             <uib-accordion-heading>
               <div>
                 Color Tag <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusD.open, 'glyphicon-chevron-right': !statusD.open}"></i>
@@ -216,8 +213,8 @@
               </div>   
             </div>      
             
-          </uib-accordion-group>
-          <uib-accordion-group is-open="statusE.open">
+          </div>
+          <div uib-accordion-group is-open="statusE.open">
             <uib-accordion-heading>
               <div>
                 Assigned Terms <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusE.open, 'glyphicon-chevron-right': !statusE.open}"></i>
@@ -245,7 +242,7 @@
                 </li>
               </ul>
             </div>
-          </uib-accordion-group>
+          </div>
         </uib-accordion>
       </div>
     </script>

@@ -38,8 +38,10 @@ class Filter {
                     ORDER BY
                         vva.Expression1
                 ";
+
                 $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
                 $query->execute();
+
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
              
                     $expressionArray = array(
@@ -69,6 +71,7 @@ class Filter {
                 ";
                 $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
                 $query->execute();
+                
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
                     $doctorArray = array(
                         'name'  => $data[1],
@@ -94,6 +97,7 @@ class Filter {
                 ";
                 $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
                 $query->execute();
+                
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
                     $resourceArray = array(
                         'name'  => $data[1],
@@ -103,6 +107,7 @@ class Filter {
                     );
                     array_push($filters['resources'], $resourceArray);
                 }
+
             }
 
             // ***********************************

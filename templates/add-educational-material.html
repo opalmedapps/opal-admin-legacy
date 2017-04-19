@@ -337,11 +337,11 @@
           </div>
           <div class="col-md-10 animated fadeInRight" style="margin-left:17%;">
             <div class="row main-title">
-              <div class="col-md-6 title-content">
+              <div class="col-md-8 title-content">
                 <span class="glyphicon glyphicon-plus"></span>
                 <h1><strong>Add Educational Material</strong></h1>
               </div>
-              <div class="col-md-6 title-breadcrumbs"> 
+              <div class="col-md-4 title-breadcrumbs"> 
                 <span>
                   <span><a href="#/">Home</a></span>
                   <span class="teflon glyphicon glyphicon-menu-right"></span> 
@@ -353,17 +353,17 @@
             </div>    
 
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Title</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
                   Please assign an english and french title.
@@ -371,7 +371,7 @@
               </div>
             </div>  
             <div class="row">
-              <div class="col-md-5">
+              <div class="col-md-6">
                 <div class="panel" ng-class="(newEduMat.name_EN) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>English</strong>
                     <span ng-hide="newEduMat.name_EN" style="float:right"><em>Incomplete</em></span>
@@ -391,7 +391,7 @@
                   </div>
                 </div>
               </div>          
-              <div class="col-md-5">
+              <div class="col-md-6">
                 <div class="panel" ng-class="(newEduMat.name_FR) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>Français</strong>
                     <span ng-hide="newEduMat.name_FR" style="float:right"><em>Incomplete</em></span>
@@ -414,17 +414,17 @@
             </div>
 
             <div class="row" ng-hide="newEduMat.tocs.length">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>URL</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row" ng-hide="newEduMat.tocs.length">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
                   Please specify the location of the educational material for both English and French versions. If more than one education material, then go to <strong>Table Of Contents</strong> section.
@@ -432,7 +432,7 @@
               </div>
             </div>  
             <div class="row" ng-hide="newEduMat.tocs.length">
-              <div class="col-md-5">
+              <div class="col-md-6">
                 <div class="panel" ng-class="(newEduMat.url_EN) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>English</strong>
                     <span ng-hide="newEduMat.url_EN" style="float:right"><em>Incomplete</em></span>
@@ -452,7 +452,7 @@
                   </div>
                 </div>
               </div>          
-              <div class="col-md-5">
+              <div class="col-md-6">
                 <div class="panel" ng-class="(newEduMat.url_FR) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>Français</strong>
                     <span ng-hide="newEduMat.url_FR" style="float:right"><em>Incomplete</em></span>
@@ -475,17 +475,17 @@
             </div>
 
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Type</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
                   Please specify the type of educational material. Choose from the list of existing types (on text field focus) or specify a new type.
@@ -493,7 +493,7 @@
               </div>
             </div>  
             <div class="row">
-              <div class="col-md-5">
+              <div class="col-md-6">
                 <div class="panel" ng-class="(newEduMat.type_EN) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>English</strong>
                     <span ng-hide="newEduMat.type_EN" style="float:right"><em>Incomplete</em></span>
@@ -513,7 +513,7 @@
                   </div>
                 </div>
               </div>          
-              <div class="col-md-5">
+              <div class="col-md-6">
                 <div class="panel" ng-class="(newEduMat.type_FR) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>Français</strong>
                     <span ng-hide="newEduMat.type_FR" style="float:right"><em>Incomplete</em></span>
@@ -536,17 +536,17 @@
             </div>
 
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Phase In Treatment</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
                   Please assign the phase in treatment this educational material should be publish at.
@@ -568,17 +568,17 @@
             </div>     
 
             <div class="row" ng-hide="newEduMat.url_EN || newEduMat.url_FR">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Table Of Contents</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row" ng-hide="newEduMat.url_EN || newEduMat.url_FR">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
                   For more than one educational material in a table of contents, please assign the respective title, URL, and type for both English and French versions.
@@ -586,7 +586,7 @@
               </div>
             </div> 
             <div class="row" ng-hide="newEduMat.url_EN || newEduMat.url_FR" ng-repeat="toc in newEduMat.tocs" style="margin-bottom: 7px;">
-              <div class="col-md-5">
+              <div class="col-md-6">
                 <div class="panel" ng-class="(toc.name_EN && toc.url_EN && toc.type_EN) ? 'panel-success' : 'panel-danger'">
                   <div class="panel-heading"><strong>English -- Order {{toc.order}}</strong>
                     <span style="float:right; cursor:pointer; margin-left:10px;" ng-click="removeTOC(toc.order)" class="glyphicon glyphicon-remove"></span></span>
@@ -627,7 +627,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-md-5">
+              <div class="col-md-6">
                 <div class="panel" ng-class="(toc.name_FR && toc.url_FR && toc.type_FR) ? 'panel-success' : 'panel-danger'">
                   <div class="panel-heading"><strong>Français -- Ordre {{toc.order}}</strong>
                     <span style="float:right; cursor:pointer; margin-left:10px;" ng-click="removeTOC(toc.order)" class="glyphicon glyphicon-remove"></span></span>
@@ -683,17 +683,17 @@
             </div>
 
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Supporting PDF</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
                   Please assign the supporting PDF for when users want to share this educational material.
@@ -701,7 +701,7 @@
               </div>
             </div>  
             <div class="row">
-              <div class="col-md-5">
+              <div class="col-md-6">
                 <div class="panel">
                   <div class="panel-body">
                     <div class="row">
@@ -717,7 +717,7 @@
                   </div>
                 </div>
               </div>          
-              <div class="col-md-5">
+              <div class="col-md-6">
                 <div class="panel">
                   <div class="panel-body">
                     <div class="row">
@@ -736,17 +736,17 @@
             </div>
 
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Demographic Filters</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
                   Please assign a demographic filter. Leave unmarked for no filter.
@@ -754,7 +754,7 @@
               </div>
             </div>  
             <div class="row">
-              <div class="col-md-5">
+              <div class="col-md-6">
                 <h2 style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Sex</h2>
               </div>  
               <div class="row">
@@ -808,17 +808,17 @@
             </div>  
 
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Expression Filters</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
                   Select one of more expression filters below. This will target patients with these specific filters. Leave blank for no filters.
@@ -857,17 +857,17 @@
             </div>
 
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Diagnosis Filters</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
                   Select one of more diagnosis filters below. This will target patients with these specific diagnoses. Leave blank for no filters.
@@ -902,17 +902,17 @@
 
 
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Doctor Filters</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
                   Select one of more doctor filters below. This will target patients with these specific doctors. Leave blank for no filters.
@@ -947,17 +947,17 @@
 
 
             <div class="row">
-              <div class="col-md-10 side-menu-title">
+              <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-menu-down"></span>
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
                     <h2>Resource Filters</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
                   Select one of more resource filters below. This will target patients with these specific resources. Leave blank for no filters.

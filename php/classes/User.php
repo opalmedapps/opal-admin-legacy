@@ -4,6 +4,7 @@
 	 public $username = null;
 	 public $password = null;
 	 public $role = null;
+	 public $language = null;
 	 public $userid = null;
 	 public $salt = "Zo4rU5Z1YyKJAASY0PT6EUg7BBYdlEhPaNLuxAwU8lqu1ElzHv0Ri7EM6irpx5w";
 	 
@@ -34,6 +35,7 @@
 				$this->userid = $valid;
 				$userDetails = $this->getUserDetails($valid);
 				$this->role = $userDetails['role']['name'];
+				$this->language = $userDetails['language'];
 				$success = true;
 			}
 			
@@ -175,7 +177,8 @@
 		 		SELECT DISTINCT
 			 		OAUser.OAUserSerNum,
 			 		OAUser.Username,
-			 		Role.RoleName
+			 		Role.RoleName,
+			 		OAUser.Language
 		 		FROM
 			 		OAUser,
 			 		OAUserRole,
@@ -189,14 +192,16 @@
 
 	 		while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-	 			$serial = $data[0];
-	 			$name   = $data[1];
-	 			$role 	= $data[2];
+	 			$serial 	= $data[0];
+	 			$name   	= $data[1];
+	 			$role 		= $data[2];
+	 			$language 	= $data[3];
 
 	 			$userArray = array(
 	 				'serial'    	=> $serial,
 	 				'username'      => $name,
-	 				'role'			=> $role
+	 				'role'			=> $role,
+	 				'language' 		=> $language
 	 				);
 	 			array_push($users, $userArray);
 	 		}
@@ -217,7 +222,8 @@
 		 		SELECT DISTINCT
 			 		OAUser.Username,
 			 		Role.RoleSerNum,
-			 		Role.RoleName
+			 		Role.RoleName,
+			 		OAUser.Language
 		 		FROM   
 			 		OAUser,
 			 		OAUserRole,
@@ -235,10 +241,12 @@
 	 		$username   = $data[0];
 	 		$roleSer 	= $data[1];
 	 		$roleName 	= $data[2];
+	 		$language 	= $data[3];
 
 	 		$userDetails = array(
 	 			'serial'            => $userSer,
 	 			'username'          => $username,
+	 			'language' 			=> $language,
 	 			'role' 				=> array('serial'=>$roleSer,'name'=>$roleName),
 	 			'logs'              => array(),
 	 			'new_password'      => null,

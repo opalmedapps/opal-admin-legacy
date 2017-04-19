@@ -16,10 +16,12 @@ package Patient; # Declare package name
 
 use Exporter; # To export subroutines and variables
 use Database; # Use our custom database module Database.pm
+use Configs; # Use our custom configs module
 use Time::Piece; 
 use POSIX;
 use Storable qw(dclone); # for deep copies
 use Data::Dumper;
+use MIME::Lite; # emailing
 
 # Get the current time
 my $today = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
@@ -49,6 +51,9 @@ sub new
         _ssn            => undef,
 		_lasttransfer	=> undef,
         _accesslevel    => undef,
+        _deathdate 		=> undef,
+		_email 			=> undef,
+		_firebaseuid	=> undef, 		
 	};
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is envoked on this object
@@ -186,6 +191,37 @@ sub setPatientAccessLevel
     return $patient->{_accesslevel};
 }
 
+
+#======================================================================================
+# Subroutine to set the patient death date
+#======================================================================================
+sub setPatientDeathDate
+{
+    my ($patient, $deathdate) = @_; # patient object with provided date in arguments
+    $patient->{_deathdate} = $deathdate; # set the level
+    return $patient->{_deathdate};
+}
+
+#======================================================================================
+# Subroutine to set the patient email
+#======================================================================================
+sub setPatientEmail
+{
+	my ($patient, $email) = @_; # patient object with provided email in arguments 
+	$patient->{_email} = $email; # set the email
+	return $patient->{_email};
+}
+
+#======================================================================================
+# Subroutine to set the patient firebase uid
+#======================================================================================
+sub setPatientFirebaseUID
+{
+	my ($patient, $firebaseuid) = @_; # patient object with provided uid in arguments 
+	$patient->{_firebaseuid} = $firebaseuid; # set the uid
+	return $patient->{_firebaseuid};
+}
+
 #======================================================================================
 # Subroutine to get the patient serial
 #======================================================================================
@@ -304,6 +340,33 @@ sub getPatientAccessLevel
 }
 
 #======================================================================================
+# Subroutine to get the patient death date
+#======================================================================================
+sub getPatientDeathDate
+{
+    my ($patient) = @_; # our patient object
+    return $patient->{_deathdate};
+}
+
+#======================================================================================
+# Subroutine to get the patient email
+#======================================================================================
+sub getPatientEmail
+{
+    my ($patient) = @_; # our patient object
+    return $patient->{_email};
+}
+
+#======================================================================================
+# Subroutine to get the patient firebase uid
+#======================================================================================
+sub getPatientFirebaseUID
+{
+    my ($patient) = @_; # our patient object
+    return $patient->{_firebaseuid};
+}
+
+#======================================================================================
 # Subroutine to get all patient info from source dbs
 #======================================================================================
 sub getPatientInfoFromSourceDBs 
@@ -333,11 +396,14 @@ sub getPatientInfoFromSourceDBs
 	            pt.PatientId2,
 	            pt.DateOfBirth,
 	            ph.Picture,
-	            RTRIM(pt.Sex)
+	            RTRIM(pt.Sex),
+	            ppt.DeathDate
 	        FROM 
 	            variansystem.dbo.Patient pt
 	        LEFT JOIN variansystem.dbo.Photo ph
-	        ON pt.PatientSer       = ph.PatientSer
+	        ON pt.PatientSer       	= ph.PatientSer
+	        LEFT JOIN variansystem.dbo.PatientParticular ppt 
+	        ON ppt.PatientSer 		= pt.PatientSer
 	        WHERE
 	            pt.SSN              LIKE '$patientSSN%'
 	    ";
@@ -363,6 +429,7 @@ sub getPatientInfoFromSourceDBs
 	        my $age             = getAgeAtDate($dob, $today);
 	        my $picture         = $data[6];
 	        my $sex             = $data[7];
+	        my $deathdate 		= convertDateTime($data[8]);
 
 	        # set the information
 	        $sourcePatient->setPatientSSN($patientSSN);
@@ -377,6 +444,7 @@ sub getPatientInfoFromSourceDBs
 	        $sourcePatient->setPatientAge($age);
 	        $sourcePatient->setPatientPicture($picture);
 	        $sourcePatient->setPatientSex($sex);
+	        $sourcePatient->setPatientDeathDate($deathdate);
 	    }
 
 	    if ($sourcePatient) {push(@patientList, $sourcePatient);}
@@ -526,6 +594,102 @@ sub getPatientsMarkedForUpdate
 }
 
 #======================================================================================
+# Subroutine to block a patient
+#======================================================================================
+sub blockPatient
+{
+	my ($patient, $reason) = @_; # patient object in args
+
+	# get patient serial
+	my $patientSer = $patient->getPatientSer();
+	# get uid
+	my $firebaseUID = $patient->getPatientFirebaseUID();
+
+	my $update_sql = "
+		UPDATE
+			Patient
+		SET
+			BlockedStatus 	= 1,
+		 	StatusReasonTxt = \"$reason\"
+		WHERE
+			PatientSerNum = $patientSer
+	";
+
+	# prepare query
+	my $query = $SQLDatabase->prepare($update_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+	# call our nodejs script to block user on Firebase
+	my $command = "/usr/bin/node " . $Configs::FRONTEND_ABS_PATH . 'js/firebaseBlockUser.js ' . $firebaseUID;
+
+	my $response = system($command);
+
+	# response = 0 (success); otherwise failed
+
+
+}
+
+#======================================================================================
+# Subroutine to send an email to a patient
+#======================================================================================
+sub sendPatientEmail
+{
+
+	my ($patient, $message) = @_; # get patient object with message
+
+	# get patient email
+	my $patientEmail = $patient->getPatientEmail();
+
+	my $subject = "Your Opal account has been disabled";
+	my $sender = "opal\@muhc.mcgill.ca";
+
+	my $mime = MIME::Lite->new(
+	    'From'      => $sender,
+	    'To'        => $patientEmail,
+	    'Subject'   => $subject,
+	    'Type'      => 'text/html',
+	    'Data'      => $message,
+	);
+
+	$mime->send('smtp', '172.25.123.208') or die "Failed to send\n";
+
+}
+
+
+#======================================================================================
+# Subroutine to unset patient control
+#======================================================================================
+sub unsetPatientControl
+{
+	my ($patient) = @_; # patient object in args
+
+	# get patient serial
+	my $patientSer = $patient->getPatientSer();
+
+	my $update_sql = "
+		UPDATE
+			PatientControl
+		SET
+			PatientUpdate = 0
+		WHERE	
+			PatientSerNum = $patientSer
+	";
+
+	# prepare query
+	my $query = $SQLDatabase->prepare($update_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+}
+
+#======================================================================================
 # Subroutine to set/update the "last transferred" field to current time 
 #======================================================================================
 sub setPatientLastTransferredIntoOurDB
@@ -601,7 +765,7 @@ sub inOurDatabase
 	my $ExistingPatient = (); # data to be entered if patient exists
 
 	# for query results
-    my ($ser, $sourceuid, $id, $id2, $firstname, $lastname, $sex, $dob, $age, $picture);
+    my ($ser, $sourceuid, $id, $id2, $firstname, $lastname, $sex, $dob, $age, $picture, $deathdate, $email, $firebaseuid);
  
     my $inDB_sql = "
         SELECT DISTINCT
@@ -613,12 +777,19 @@ sub inOurDatabase
             Patient.LastName,
             Patient.Sex,
             Patient.DateOfBirth,
+			Patient.Age,
             Patient.ProfileImage,
-            Patient.SSN
+            Patient.SSN,
+            Patient.DeathDate,
+			Patient.Email,
+			Users.Username
         FROM
-            Patient
+            Patient,
+			Users
         WHERE
-            Patient.SSN     = '$ssn'
+            Patient.SSN     		= '$ssn'
+		AND Patient.PatientSerNum 	= Users.UserTypeSerNum
+		AND Users.UserType 			= 'Patient'
     ";
 	# prepare query
 	my $query = $SQLDatabase->prepare($inDB_sql)
@@ -638,9 +809,12 @@ sub inOurDatabase
         $lastname               = $data[5];
         $sex                    = $data[6];
         $dob                    = $data[7];
-        $age                    = getAgeAtDate($dob, $today);
-        $picture                = $data[8];
-        $PatientSSNInDB         = $data[9];
+        $age                    = $data[8];
+        $picture                = $data[9];
+        $PatientSSNInDB         = $data[10];
+        $deathdate 				= $data[11];
+		$email 					= $data[12];
+		$firebaseuid 			= $data[13];
     }
 
     if ($PatientSSNInDB) {
@@ -659,6 +833,9 @@ sub inOurDatabase
         $ExistingPatient->setPatientPicture($picture);
         $ExistingPatient->setPatientLastTransfer($lastTransfer);
         $ExistingPatient->setPatientSSN($PatientSSNInDB);
+        $ExistingPatient->setPatientDeathDate($deathdate);
+		$ExistingPatient->setPatientEmail($email);
+		$ExistingPatient->setPatientFirebaseUID($firebaseuid);
 
         return $ExistingPatient; # this is true (ie. patient exists, return object)
 	}
@@ -681,7 +858,9 @@ sub insertPatientIntoOurDB
     my $lastname            = $patient->getPatientLastName();
     my $sex                 = $patient->getPatientSex();
     my $dob                 = $patient->getPatientDOB();
+	my $age 				= $patient->getPatientAge();
     my $picture             = $patient->getPatientPicture();
+    my $deathdate 			= $patient->getPatientDeathDate();
 
     my $insert_sql = "
         INSERT INTO
@@ -693,7 +872,9 @@ sub insertPatientIntoOurDB
                 LastName,
                 Sex,
                 DateOfBirth,
-                ProfileImage
+				Age,
+                ProfileImage,
+                DeathDate
             )
         VALUES (
             '$sourceuid',
@@ -703,7 +884,9 @@ sub insertPatientIntoOurDB
             \"$lastname\",
             '$sex',
             '$dob',
-            '$picture'
+			'$age',
+            '$picture',
+            '$deathdate'
         )
     ";
 
@@ -737,9 +920,11 @@ sub updateDatabase
     my $patientFirstName    = $patient->getPatientFirstName();
     my $patientLastName     = $patient->getPatientLastName();
     my $patientDOB          = $patient->getPatientDOB();
+	my $patientAge 			= $patient->getPatientAge();
     my $patientPicture      = $patient->getPatientPicture();
     my $patientSex          = $patient->getPatientSex();
     my $patientSSN          = $patient->getPatientSSN();
+    my $patientDeathDate 	= $patient->getPatientDeathDate();
 
     my $update_sql = "
         UPDATE
@@ -752,7 +937,9 @@ sub updateDatabase
             LastName                = \"$patientLastName\",
             Sex                     = '$patientSex',
             DateOfBirth             = '$patientDOB',
-            ProfileImage            = '$patientPicture'
+			Age 					= '$patientAge',
+            ProfileImage            = '$patientPicture',
+            DeathDate 				= '$patientDeathDate'
         WHERE
             SSN                     = '$patientSSN'
     ";
@@ -783,20 +970,24 @@ sub compareWith
 	my $SPatientId			= $SuspectPatient->getPatientId();
 	my $SPatientId2			= $SuspectPatient->getPatientId2();
 	my $SPatientDOB			= $SuspectPatient->getPatientDOB();
+	my $SPatientAge 		= $SuspectPatient->getPatientAge();
 	my $SPatientSex			= $SuspectPatient->getPatientSex();
     my $SPatientFirstName   = $SuspectPatient->getPatientFirstName();
     my $SPatientLastName    = $SuspectPatient->getPatientLastName();
     my $SPatientPicture     = $SuspectPatient->getPatientPicture();
+    my $SPatientDeathDate 	= $SuspectPatient->getPatientDeathDate();
 	
 	# Original Patient...
     my $OPatientSourceUID   = $OriginalPatient->getPatientSourceUID();
 	my $OPatientId			= $OriginalPatient->getPatientId();
 	my $OPatientId2			= $OriginalPatient->getPatientId2();
 	my $OPatientDOB			= $OriginalPatient->getPatientDOB();
+	my $OPatientAge 		= $OriginalPatient->getPatientAge();
 	my $OPatientSex			= $OriginalPatient->getPatientSex();
     my $OPatientFirstName   = $OriginalPatient->getPatientFirstName();
     my $OPatientLastName    = $OriginalPatient->getPatientLastName();
     my $OPatientPicture     = $OriginalPatient->getPatientPicture();
+    my $OPatientDeathDate 	= $OriginalPatient->getPatientDeathDate();
 
 	# go through each parameter
     if ($SPatientSourceUID ne $OPatientSourceUID) {
@@ -817,11 +1008,24 @@ sub compareWith
 		my $updatedId2 = $UpdatedPatient->setPatientId2($SPatientId2); # update patient id2
 		print "Will update database entry to \"$updatedId2\".\n";
 	}	
-	if ($SPatientDOB ne $OPatientDOB) {
+	if ($SPatientDOB ne $OPatientDOB and (isValidDate($SPatientDOB) or isValidDate($OPatientDOB))) {
 
 		print "Patient Date of Birth has changed from $OPatientDOB to $SPatientDOB!\n";
 		my $updatedDOB = $UpdatedPatient->setPatientDOB($SPatientDOB); # update patient date of birth
 		print "Will update database entry to \"$updatedDOB\".\n";
+
+	}
+	if ($SPatientAge ne $OPatientAge) {
+
+		print "Patient Age has changed from $OPatientAge to $SPatientAge!\n";
+		my $updatedAge = $UpdatedPatient->setPatientAge($SPatientAge); # update patient age
+		print "Will update database entry to \"$updatedAge\".\n";
+
+		# block patient if patient passed 13 years of age
+		if ($OPatientAge < 14 && $SPatientAge >= 14) {
+			blockPatient($UpdatedPatient, "Patient passed 13 years of age");
+			#$UpdatedPatient->sendPatientEmail("<h1>Hello</h1>");
+		}
 	}
 	if ($SPatientSex ne $OPatientSex) {
 
@@ -847,6 +1051,17 @@ sub compareWith
 		my $updatedPicture = $UpdatedPatient->setPatientPicture($SPatientPicture); # update patient picture
 		print "Will update database entry to \"$updatedPicture\".\n";
 	}
+	if ($SPatientDeathDate ne $OPatientDeathDate and (isValidDate($SPatientDeathDate) or isValidDate($OPatientDeathDate))) {
+
+		print "Patient Death Date has changed from $OPatientDeathDate to $SPatientDeathDate!\n";
+		my $updatedDeathDate = $UpdatedPatient->setPatientDeathDate($SPatientDeathDate); # update patient death date 
+		print "Will update database entry to \"$updatedDeathDate\" and block patient.\n";
+
+		# block deceased patient
+		blockPatient($UpdatedPatient, "Deceased patient"); 
+		# turn off patient control 
+		unsetPatientControl($UpdatedPatient);
+	}
 	
 	return $UpdatedPatient;
 }
@@ -858,11 +1073,22 @@ sub getAgeAtDate
 {
     my ($dob, $date) = @_;
 
-    if ($dob eq '1970-01-01 00:00:00' or $dob eq '0000-00-00 00:00:00') {return -1;} # dob undef
+    if (!isValidDate($dob)) {return -1;} # dob undef
 
     my $diff = $date - $dob;
 
     return int($diff);
+}
+
+#======================================================================================
+# Subroutine to determine if date is invalid
+#======================================================================================
+sub isValidDate
+{
+	my ($date) = @_;
+
+	if (!$date or $date eq '1970-01-01 00:00:00' or $date eq '0000-00-00 00:00:00') {return undef;}
+	else {return 1;}
 }
 
 #======================================================================================
@@ -873,6 +1099,9 @@ sub convertDateTime
 {
 	my ($inputDate) = @_;
 
+	if (!$inputDate or $inputDate eq "0000-00-00 00:00:00" or $inputDate eq "1970-01-01 00:00:00") {
+		return undef;
+	}
 	my $dateFormat = Time::Piece->strptime($inputDate,"%b %d %Y %I:%M%p");
 
 	my $convertedDate = $dateFormat->strftime("%Y-%m-%d %H:%M:%S");
