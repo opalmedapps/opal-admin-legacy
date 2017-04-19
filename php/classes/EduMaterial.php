@@ -324,7 +324,8 @@ class EduMaterial {
                     em.PublishFlag,
                     em.ParentFlag,
                     em.ShareURL_EN,
-                    em.ShareURL_FR
+                    em.ShareURL_FR,
+                    em.LastUpdated
                 FROM
                     EducationalMaterialControl em,
                     PhaseInTreatment phase
@@ -350,6 +351,7 @@ class EduMaterial {
                 $parentFlag             = $data[11];
                 $shareURL_EN            = $data[12];
                 $shareURL_FR            = $data[13];
+                $lastUpdated            = $data[14];
                 $rating                 = -1;
                 $filters                = array();
                 $tocs                   = array();
@@ -464,6 +466,7 @@ class EduMaterial {
                     'phase_FR'          => $phaseName_FR,
                     'parentFlag'        => $parentFlag,
                     'publish'           => $publish,
+                    'lastupdated'       => $lastUpdated,
                     'rating'            => $rating,
                     'filters'           => $filters,
                     'tocs'              => $tocs

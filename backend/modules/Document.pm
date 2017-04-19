@@ -473,7 +473,7 @@ sub getDocsFromSourceDB
 	        			AND visit_note.note_typ		        = note_typ.note_typ
 		        		AND visit_note.appr_flag		    = 'A'
 			        	AND	visit_note.trans_log_mtstamp	> '$lasttransfer'
-	                	AND note_typ.note_typ_desc          = '$expressionName'
+	                	AND RTRIM(note_typ.note_typ_desc)   = '$expressionName'
 	    		    ";
 					$counter++;
 	        		# concat "UNION" until we've reached the last query

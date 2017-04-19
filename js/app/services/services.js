@@ -3,7 +3,7 @@
 
 angular.module('opalAdmin.services', [])
 
-	.service('Session', function ($cookies, $rootScope) {
+	.service('Session', function ($cookies) {
 		this.create = function (session_id, user) {
 			$cookies.put('session_id', session_id);
 			$cookies.putObject('user', user);
@@ -28,8 +28,8 @@ angular.module('opalAdmin.services', [])
 				backdrop: 'static',
 			});
 
-			return modalInstance.result.then(function() {})
-		}
+			return modalInstance.result.then(function() {});
+		};
 
 	})
 
@@ -37,5 +37,5 @@ angular.module('opalAdmin.services', [])
 		this.logout = function () {
 			Session.destroy();
 			$state.go('login');
-		}
+		};
 	});

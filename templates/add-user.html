@@ -120,17 +120,17 @@
               </div>
             </div>
             <div class="row">
-                <div class="col-md-10 side-menu-title">
+                <div class="col-md-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
-                      <span class="glyphicon glyphicon-menu-down"></span>
+                      <span class="glyphicon glyphicon-triangle-bottom"></span>
                       <h2>Username & Password</h2>
                     </span>  
                   </div>  
                 </div>
               </div>   
               <div class="row">
-                <div class="col-md-10">
+                <div class="col-md-12">
                   <p style="margin-bottom: 10px;">
                     <span style="color:#d9534f"><strong>Required fields:</strong></span>
                     Please add a valid username and password.
@@ -138,7 +138,7 @@
                 </div>
               </div>  
               <div class="row"> 
-                <div class="col-md-8">
+                <div class="col-md-9">
                   <div class="panel" ng-class="(validUsername.status == 'valid' && validPassword.status == 'valid' && validConfirmPassword.status == 'valid') ? 'panel-success': 'panel-danger'">
                     <div class="panel-heading"><strong>Username & Password</strong>
                       <span ng-hide="validUsername.status == 'valid' && validPassword.status == 'valid' && validConfirmPassword.status == 'valid'" style="float:right"><em>Incomplete</em></span>
@@ -187,17 +187,17 @@
               </div>
 
               <div class="row">
-                <div class="col-md-10 side-menu-title">
+                <div class="col-md-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
-                      <span class="glyphicon glyphicon-menu-down"></span>
+                      <span class="glyphicon glyphicon-triangle-bottom"></span>
                       <h2>Role</h2>
                     </span>  
                   </div>  
                 </div>
               </div>   
               <div class="row">
-                <div class="col-md-10">
+                <div class="col-md-12">
                   <p style="margin-bottom: 10px;">
                     <span style="color:#d9534f"><strong>Required field:</strong></span>
                     Please assign a role to the new user.
@@ -205,7 +205,7 @@
                 </div>
               </div>  
               <div class="row" style="margin-bottom: 15px;">
-                <div class="col-md-4">
+                <div class="col-md-5">
                   <div class="row">
                     <div class="col-md-6">
                       <select ng-model="newUser.role" ng-change="roleUpdate()" ng-options="role as role.name for role in roles" class="form-control">

@@ -19,7 +19,7 @@ angular.module('opalAdmin.collections', [])
 				method: 'JSONP',
 				url: URLPATH+"api/alias/alias.php?callback=JSON_CALLBACK"
 			});
-		}
+		};
 	
 		// Function to get an alias detail given an id number
 		aliasAPI.getAliasDetails = function(serial) {
@@ -27,7 +27,7 @@ angular.module('opalAdmin.collections', [])
 				method: 'JSONP',
 				url: URLPATH+"api/alias/alias_details.php?callback=JSON_CALLBACK&serial="+serial
 			});
-		}
+		};
 
 		// Function to get a list of unassigned expressions
 		aliasAPI.getExpressions = function(sourcedbser, type) { 
@@ -35,7 +35,7 @@ angular.module('opalAdmin.collections', [])
 				method: 'JSONP',
 				url: URLPATH+"api/alias/expressions.php?callback=JSON_CALLBACK&sourcedbser="+sourcedbser+"&type="+type
 			});
-		}
+		};
         
         // Function to get a list of source databases
         aliasAPI.getSourceDatabases = function() {
@@ -43,7 +43,7 @@ angular.module('opalAdmin.collections', [])
 				method: 'JSONP',
 				url: URLPATH+"api/alias/source_databases.php?callback=JSON_CALLBACK"
 			});
-		}
+		};
 
         // Function to get existing color tags
         aliasAPI.getExistingColorTags = function (type) {
@@ -51,7 +51,7 @@ angular.module('opalAdmin.collections', [])
 				method: 'JSONP',
 				url: URLPATH+"api/alias/color_tags.php?callback=JSON_CALLBACK&type="+type
 			});
-		}
+		};
 
 		return aliasAPI;
 	})
@@ -67,7 +67,7 @@ angular.module('opalAdmin.collections', [])
 				method: 'JSONP',
 				url: URLPATH+"api/post/posts.php?callback=JSON_CALLBACK"
 			});
-		}
+		};
 
         // Function to get a post detail given a serial
         postAPI.getPostDetails = function(serial) {
@@ -75,7 +75,7 @@ angular.module('opalAdmin.collections', [])
 				method: 'JSONP',
 				url: URLPATH+"api/post/post_details.php?callback=JSON_CALLBACK&serial="+serial
 			});
-		}
+		};
 
         return postAPI;
     })
@@ -91,7 +91,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/educational-material/educational-materials.php?callback=JSON_CALLBACK"
             });
-        }
+        };
 
         // Function to get an educational material detail given a serial
         edumatAPI.getEducationalMaterialDetails = function (serial) {
@@ -99,7 +99,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/educational-material/educationalMaterial_details.php?callback=JSON_CALLBACK&serial="+serial
             });
-        }
+        };
 
         // Function to get distinct educational material types 
         edumatAPI.getEducationalMaterialTypes = function() {
@@ -107,7 +107,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/educational-material/educationalMaterial_types.php?callback=JSON_CALLBACK"
             });
-        }
+        };
 
         // Function to get phases in treatment 
         edumatAPI.getPhaseInTreatments = function() {
@@ -115,7 +115,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/educational-material/phase_in_treatments.php?callback=JSON_CALLBACK"
             });
-        }
+        };
 
         // Function to get parent educational materials
         edumatAPI.getParentEducationalMaterials = function() {
@@ -123,7 +123,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/educational-material/educationalMaterial_parents.php?callback=JSON_CALLBACK"
             });
-        }
+        };
 
         return edumatAPI;
     })
@@ -139,7 +139,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/hospital-map/hospital-maps.php?callback=JSON_CALLBACK"
             });
-        }
+        };
 
         // Function to get map details given a serial
         hosmapAPI.getHospitalMapDetails = function (serial) {
@@ -147,7 +147,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/hospital-map/hospitalMap_details.php?callback=JSON_CALLBACK&serial="+serial
             });
-        }
+        };
 
         // Function to generate qrcode and return image path
         hosmapAPI.generateQRCode = function (qrid, oldqrid) {
@@ -155,7 +155,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/hospital-map/generateQRCode.php?callback=JSON_CALLBACK&qrid="+qrid+"&oldqrid="+oldqrid
             });
-        }
+        };
 
         return hosmapAPI;
     })
@@ -171,7 +171,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/notification/notifications.php?callback=JSON_CALLBACK"
             });
-        }
+        };
 
         // Function to get notification details given a serial
         notifAPI.getNotificationDetails = function (serial) {
@@ -179,7 +179,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/notification/notification_details.php?callback=JSON_CALLBACK&serial="+serial
             });
-        }
+        };
   
         // Function to get distinct notification types 
         notifAPI.getNotificationTypes = function() {
@@ -187,7 +187,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/notification/notification_types.php?callback=JSON_CALLBACK"
             });
-        }
+        };
 
         return notifAPI;
     })
@@ -203,7 +203,7 @@ angular.module('opalAdmin.collections', [])
 				method: 'JSONP',
 				url: URLPATH+"api/patient/patients.php?callback=JSON_CALLBACK"
 			});
-		}
+		};
 
         // API to find patient given an SSN
         patientAPI.findPatient = function(ssn, id) {
@@ -211,15 +211,15 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/patient/find_patient.php?callback=JSON_CALLBACK&ssn="+ssn+"&id="+id
             });
-        }
+        };
 
         // API to fetch sequrity questions
-        patientAPI.fetchSecurityQuestions = function () {
+        patientAPI.fetchSecurityQuestions = function (lang) {
             return $http({
                 method: 'JSONP',
-                url: URLPATH+"api/patient/fetch_security_questions.php?callback=JSON_CALLBACK"
+                url: URLPATH+"api/patient/fetch_security_questions.php?callback=JSON_CALLBACK&lang="+lang
             });
-        }
+        };
 
         // API to check email existence
         patientAPI.emailAlreadyInUse = function(email) {
@@ -227,7 +227,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/patient/email_taken.php?callback=JSON_CALLBACK&email="+email
             });
-        }
+        };
 
         // API to get patient activity list 
         patientAPI.getPatientActivities = function () {
@@ -235,7 +235,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/patient/patient_activity.php?callback=JSON_CALLBACK"
             });
-        }
+        };
 
         return patientAPI;
     })
@@ -251,7 +251,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/filter/filters.php?callback=JSON_CALLBACK"
             });
-        }
+        };
 
         return filterAPI;
     })
@@ -267,7 +267,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/test-result/testResult_groups.php?callback=JSON_CALLBACK"
             });
-        }
+        };
 
         // Function to get distinct tests
         testresAPI.getTestNames = function () {
@@ -275,7 +275,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/test-result/testNames.php?callback=JSON_CALLBACK"
             });
-        }
+        };
 
         // Function to get existing test results
         testresAPI.getExistingTestResults = function () {
@@ -283,7 +283,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/test-result/testResults.php?callback=JSON_CALLBACK"
             });
-        }
+        };
 
         // Function to get test result details
         testresAPI.getTestResultDetails = function (serial) {
@@ -291,7 +291,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/test-result/testResult_details.php?callback=JSON_CALLBACK&serial="+serial
             });
-        }
+        };
 
         return testresAPI;
     })
@@ -308,7 +308,7 @@ angular.module('opalAdmin.collections', [])
 				method: 'JSONP',
 				url: URLPATH+"api/cron/cron_details.php?callback=JSON_CALLBACK"
 			});
-		}
+		};
 
 		return cronAPI;
 	})
@@ -324,7 +324,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/user/user_details.php?callback=JSON_CALLBACK&userser="+userser
             });
-        }
+        };
 
         // Function to get the list of existing users in our DB
         userAPI.getUsers = function () {
@@ -332,7 +332,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/user/users.php?callback=JSON_CALLBACK"
             });
-        }
+        };
 
         // Function to check username existence
         userAPI.usernameAlreadyInUse = function(username) {
@@ -340,7 +340,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/user/username_taken.php?callback=JSON_CALLBACK&username="+username
             });
-        }
+        };
 
         // Function to get the list of existing roles 
         userAPI.getRoles = function () {
@@ -348,7 +348,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: URLPATH+"api/user/roles.php?callback=JSON_CALLBACK"
             });
-        }
+        };
         
         return userAPI;
 
@@ -365,7 +365,7 @@ angular.module('opalAdmin.collections', [])
                 method: 'JSONP',
                 url: urlpath+"api/install/verify_requirements.php?callback=JSON_CALLBACK"
             });
-        }
+        };
 
         return installAPI;
     });

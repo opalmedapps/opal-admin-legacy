@@ -36,13 +36,13 @@ class Alias {
         			        FROM  
     	    			        variansystem.dbo.vv_ActivityLng vv_ActivityLng 
                             ORDER BY 
-                            vv_ActivityLng.Expression1
+                                vv_ActivityLng.Expression1
                         ";
-        
+						
                         $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                       	$query->execute();
-                        while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                        $query->execute();
 
+                        while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                             $termName = $data[0];
                             $termArray = array(
@@ -59,17 +59,17 @@ class Alias {
 
                         $sql = "
                             SELECT DISTINCT
-                                note_typ.note_typ_desc
+                                RTRIM(note_typ.note_typ_desc)
                             FROM 
                                 varianenm.dbo.note_typ note_typ
                             ORDER BY
-                                note_typ.note_typ_desc
+                                RTRIM(note_typ.note_typ_desc)
                         ";
         
                         $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                       	$query->execute();
-                        while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                        $query->execute();
 
+                        while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                             $termName = $data[0];
                                 
@@ -276,7 +276,8 @@ class Alias {
                     Alias.EducationalMaterialControlSerNum,
                     Alias.SourceDatabaseSerNum,
                     SourceDatabase.SourceDatabaseName,
-                    Alias.ColorTag
+                    Alias.ColorTag,
+                    Alias.LastUpdated
 				FROM 
                     Alias,
                     SourceDatabase
@@ -302,6 +303,7 @@ class Alias {
                     'name'      => $data[9]
                 );
                 $aliasColorTag  = $data[10];
+                $aliasLU        = $data[11];
                 $aliasTerms	    = array();
                 $aliasEduMat    = "";
 
@@ -346,6 +348,7 @@ class Alias {
 					'description_EN' 	=> $aliasDesc_EN, 
                     'description_FR' 	=> $aliasDesc_FR,
                     'source_db'         => $sourceDatabase, 
+                    'lastupdated'       => $aliasLU,
 					'count' 		    => count($aliasTerms), 
 					'terms' 		    => $aliasTerms
 				);
