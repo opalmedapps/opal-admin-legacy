@@ -198,7 +198,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 			if ($scope.newAlias.source_db) {
 
 				// Call our API service to get the list of alias expressions
-				aliasAPIservice.getExpressions($scope.newAlias.source_db.serial, $scope.newAlias.type).success(function (response) {
+				aliasAPIservice.getExpressions($scope.newAlias.source_db.serial, $scope.newAlias.type.name).success(function (response) {
 
 					$scope.termList = response; // Assign value
 
