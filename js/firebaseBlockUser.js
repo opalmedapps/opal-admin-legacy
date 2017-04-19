@@ -10,10 +10,9 @@ admin.initializeApp({
 // Grab uid from command line 
 var uid = process.argv[2];
 
-//var uid = "05a53469-5cb5-4a82-927f-4f8b70f33ed6";
 admin.auth().updateUser(uid, {disabled: true})
 	.then(function (userRecord) {
-		process.exit(1);
+		process.exit(0);
 	})
 	.catch(function(error) {
 		process.exit(1);
