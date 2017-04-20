@@ -209,7 +209,7 @@ sub getDiagnosesFromSourceDB
 	    	my $diagInfo_sql = "
 		    	SELECT DISTINCT
 			    	dx.DiagnosisSer,
-				    dx.DateStamp,
+				    CONVERT(VARCHAR, dx.DateStamp, 120),
     				RTRIM(REPLACE(REPLACE(dx.Description,'Malignant neoplasm','malignant neoplasm'),'malignant neoplasm','Ca')),
                     dx.DiagnosisId
 		    	FROM
@@ -236,7 +236,7 @@ sub getDiagnosesFromSourceDB
     			my $diagnosis = new Diagnosis(); # new diagnosis object
 
 	    		$sourceuid		= $row->[0];
-		    	$datestamp		= convertDateTime($row->[1]);
+		    	$datestamp		= $row->[1];
 			    $description	= $row->[2];
                 $code           = $row->[3];
     
@@ -680,22 +680,6 @@ sub compareWith
 
 	return $UpdatedDiagnosis;
 }
-
-#======================================================================================
-# Subroutine to convert date format
-# 	Converts "Jul 13 2013 4:23pm" to "2013-07-13 16:23:00"
-#======================================================================================
-sub convertDateTime 
-{
-	my ($inputDate) = @_;
-
-	my $dateFormat = Time::Piece->strptime($inputDate,"%b %d %Y %I:%M%p");
-
-	my $convertedDate = $dateFormat->strftime("%Y-%m-%d %H:%M:%S");
-
-	return $convertedDate;
-}
-
 
 # To exit/return always true (for the module itself)
 1;	
