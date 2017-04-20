@@ -1,3 +1,25 @@
+Version 0.8.0:
+ - --- Fixed process exit
+ - --- Fixed issue where document list didn't show on new alias
+ -     --- Added patient blocking and email system
+ - --- Added firebase admin to block users --- Changed MSSQL connection calls (temporary for now)
+ - --- Added final checklist to patient registration
+ - --- Improved design
+ - --- Added block patient functionality --- Added paediatric check with block (not complete) --- Made patient registration on own tab --- Improved design of menus
+ -     --- Added site-wide language based on logged in user         -- Only for patient registration page for now     --- Added dynamic security question load based on site language
+ - --- Added French language to patient registration
+ - --- Updated files from lint feedback
+ -     --- Added bower, grunt, and npm support     --- Updated html to fix angular-bootstrap upgrade     --- Fixed syntax errors according to jsLint (damn semicolons...)
+ -     --- Added disable flag on decease with message
+ -     --- Added last updated column on alias and edu mat tables     --- Added death date tracking to patient
+ -     --- Changed user-readable instances of "Alias" to "Tasks/Appointments/Documents"
+ -     --- Fixed issue where added expressions did not show correctly when editing document-type aliases         -- Fixed this by RTRIM'ing the expressions         -- Original issue arose because the expression changed from Scan CT to CT Scan in ARIA
+ - Merge branch 'hotfix-0.7.6' into develop
+ - Merge branch 'hotfix-0.7.4' into develop
+ -     --- Included security answers in schema
+ - 	--- Added creation of local clinical documents folder on installation 		-- Since it is gitignored 	--- No longer ignoring htaccess
+ - Merge branch 'release-0.7.3' into develop
+
 Version 0.7.6:
  -     --- Upper cased security answers before hash (needed for app)
  - Merge branch 'master' of https://gitlab.com/akimosupremo/opalAdmin
