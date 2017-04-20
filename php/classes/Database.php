@@ -20,16 +20,8 @@ class Database {
 
 			$creds = $this->fetchSourceCredentials($sourceDBSer);
 
-			// ARIA or MOSAIQ MSSQL connect
-			if ($sourceDBSer == 1 or $sourceDBSer == 3) {
-				$db_link = mssql_connect( $creds['dsn'], $creds['username'], $creds['password'] );
-			}
-
-			// WaitRoomManagement MySQL connect
-			if ($sourceDBSer == 2) {
-				$db_link = new PDO( $creds['dsn'], $creds['username'], $creds['password'] );
-				$db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-			}
+			$db_link = new PDO( $creds['dsn'], $creds['username'], $creds['password'] );
+ 			$db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 		}
 
