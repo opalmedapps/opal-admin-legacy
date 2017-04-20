@@ -1,3 +1,11 @@
+Version 0.8.1:
+ - Merge branch 'develop' of https://gitlab.com/akimosupremo/opalAdmin-dev into develop
+ - --- Removed config include that caused JS to crash
+ - Merge branch 'release-0.8' into develop
+ -     --- Fixed issue where Firebase init was getting called more than once         -- On first visit to patient registration, an initializer is created and persists.         When visiting the page again, it would crash since the controller was trying to         initialize another FB instance.         -- Relocated instance into JS configs where it would be called once
+ -     --- Reinstated PDO connections for MSSQL databases
+ -     --- Fixed permission issue for non-admin roles
+
 Version 0.8.0:
  - --- Fixed process exit
  - --- Fixed issue where document list didn't show on new alias
