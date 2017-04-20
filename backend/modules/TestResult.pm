@@ -382,7 +382,7 @@ sub getTestResultsFromSourceDB
                     RTRIM(tr.abnormal_flag_cd),
                     RTRIM(tr.comp_name),
                     RTRIM(tr.fac_comp_name),
-                    tr.date_test_pt_test,
+                    CONVERT(VARCHAR, tr.date_test_pt_test, 120),
                     tr.max_norm,
                     tr.min_norm,
                     tr.result_appr_ind,
@@ -426,7 +426,7 @@ sub getTestResultsFromSourceDB
                 $abnormalflag       = $row->[5];
                 $name               = $row->[6];
                 $facname            = $row->[7];
-                $testdate           = convertDateTime($row->[8]);
+                $testdate           = $row->[8];
                 $maxnorm            = $row->[9];
                 $minnorm            = $row->[10];
                 $apprvflag          = $row->[11];
@@ -840,22 +840,6 @@ sub compareWith
     }
 
     return $UpdatedTR;
-}
-
-
-#======================================================================================
-# Subroutine to convert date format
-# 	Converts "Jul 13 2013 4:23pm" to "2013-07-13 16:23:00"
-#======================================================================================
-sub convertDateTime 
-{
-	my ($inputDate) = @_;
-
-	my $dateFormat = Time::Piece->strptime($inputDate,"%b %d %Y %I:%M%p");
-
-	my $convertedDate = $dateFormat->strftime("%Y-%m-%d %H:%M:%S");
-
-	return $convertedDate;
 }
 
 # To exit/return always true (for the module itself)

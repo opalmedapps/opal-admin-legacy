@@ -389,12 +389,12 @@ sub getApptsFromSourceDB
 	        		$apptInfo_sql .= "
 		        		SELECT DISTINCT
 			        		sa.ScheduledActivitySer,
-					        sa.ScheduledStartTime,
-	        				sa.ScheduledEndTime,
+					        CONVERT(VARCHAR, sa.ScheduledStartTime, 120),
+	        				CONVERT(VARCHAR, sa.ScheduledEndTime, 120),
 	                        sa.ScheduledActivityCode,
 	                        sa.ObjectStatus,
-	                        sa.ActualStartDate,
-	                        sa.ActualEndDate,
+	                        CONVERT(VARCHAR, sa.ActualStartDate, 120),
+	                        CONVERT(VARCHAR, sa.ActualEndDate, 120),
 	                        CASE WHEN 1=1 THEN '$expressionser' ELSE '$expressionser' END 
 		    	    	FROM 
 			    	    	variansystem.dbo.Patient pt, 
@@ -436,12 +436,12 @@ sub getApptsFromSourceDB
     	    		my $appointment = new Appointment(); # new appointment object 
 		    
 			        $sourceuid	    = $row->[0];
-	    		    $startdatetime	= convertDateTime($row->[1]); 
-		    	    $enddatetime	= convertDateTime($row->[2]);
+	    		    $startdatetime	= $row->[1]; 
+		    	    $enddatetime	= $row->[2];
                     $status         = $row->[3];
                     $state          = $row->[4];
-                    $actualstartdate    = convertDateTime($row->[5]);
-                    $actualenddate      = convertDateTime($row->[6]);
+                    $actualstartdate    = $row->[5];
+                    $actualenddate      = $row->[6];
                     $expressionser 	= $row->[7];
 
                     $priorityser    = Priority::getClosestPriority($patientSer, $startdatetime);
@@ -765,12 +765,12 @@ sub getApptInfoFromSourceDB
     	my $apptInfo_sql = "
 	    	SELECT DISTINCT
 		    	vva.Expression1,
-			    sa.ScheduledStartTime,
-    			sa.ScheduledEndTime,
+			    CONVERT(VARCHAR, sa.ScheduledStartTime, 120),
+    			CONVERT(VARCHAR, sa.ScheduledEndTime, 120),
                 sa.ScheduledActivityCode,
                 sa.ObjectStatus,
-                sa.ActualStartDate,
-                sa.ActualEndDate
+                CONVERT(VARCHAR, sa.ActualStartDate, 120),
+                CONVERT(VARCHAR, sa.ActualEndDate, 120),
 	    	FROM 
 		    	variansystem.dbo.Patient pt, 
 			    variansystem.dbo.ScheduledActivity sa, 
@@ -801,12 +801,12 @@ sub getApptInfoFromSourceDB
     	while (my @data = $query->fetchrow_array()) {
 
     		$expressionname	= $data[0];
-	    	$startdatetime	= convertDateTime($data[1]); 
-		    $enddatetime	= convertDateTime($data[2]);
+	    	$startdatetime	= $data[1]; 
+		    $enddatetime	= $data[2];
             $status         = $data[3];
             $state          = $data[4];
-            $actualstartdate    = convertDateTime($data[5]);
-            $actualenddate      = convertDateTime($data[6]);
+            $actualstartdate    = $data[5];
+            $actualenddate      = $data[6];
 
     		$priorityser	= Priority::getClosestPriority($patientSer, $startdatetime);
 	    	$diagnosisser	= Diagnosis::getClosestDiagnosis($patientSer, $startdatetime);
@@ -1212,21 +1212,6 @@ sub compareWith
 
 
 	return $UpdatedAppt;
-}
-
-#======================================================================================
-# Subroutine to convert date format
-# 	Converts "Jul 13 2013 4:23pm" to "2013-07-13 16:23:00"
-#======================================================================================
-sub convertDateTime 
-{
-	my ($inputDate) = @_;
-
-	my $dateFormat = Time::Piece->strptime($inputDate,"%b %d %Y %I:%M%p");
-
-	my $convertedDate = $dateFormat->strftime("%Y-%m-%d %H:%M:%S");
-
-	return $convertedDate;
 }
 
 #======================================================================================
