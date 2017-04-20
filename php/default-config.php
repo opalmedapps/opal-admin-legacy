@@ -21,7 +21,7 @@
     // NOTE: This works for a MicrosoftSQL (MSSQL) setup. 
     define( "ARIA_DB_HOST", "ARIA_DB_HOST_HERE" );
     define( "ARIA_DB_PORT", "ARIA_DB_PORT_HERE");
-	define( "ARIA_DB_DSN", ARIA_DB_HOST . ":" . ARIA_DB_PORT . "\\database" ); 
+	define( "ARIA_DB_DSN", "dblib:host=" . ARIA_DB_HOST . ":" . ARIA_DB_PORT . "\\database" ); 
 	define( "ARIA_DB_USERNAME", "ARIA_DB_USERNAME_HERE" ); 
 	define( "ARIA_DB_PASSWORD", "ARIA_DB_PASSWORD_HERE" ); 
 
@@ -38,7 +38,7 @@
     // NOTE: This works for a MicrosoftSQL (MSSQL) setup. 
     define( "MOSAIQ_DB_HOST", "MOSAIQ_DB_HOST_HERE" );
     define( "MOSAIQ_DB_PORT", "MOSAIQ_DB_PORT_HERE");
-	define( "MOSAIQ_DB_DSN", MOSAIQ_DB_HOST . ":" . MOSAIQ_DB_PORT . "\\database" ); 
+	define( "MOSAIQ_DB_DSN", "dblib:host=" . MOSAIQ_DB_HOST . ":" . MOSAIQ_DB_PORT . "\\database" ); 
 	define( "MOSAIQ_DB_USERNAME", "MOSAIQ_DB_USERNAME_HERE" ); 
 	define( "MOSAIQ_DB_PASSWORD", "MOSAIQ_DB_PASSWORD_HERE" ); 
 
