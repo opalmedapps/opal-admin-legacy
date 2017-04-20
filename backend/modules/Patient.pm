@@ -964,6 +964,8 @@ sub compareWith
 	my ($SuspectPatient, $OriginalPatient) = @_; # our two patient objects from arguments
 	my $UpdatedPatient = dclone($OriginalPatient); 
 
+	my $change = 0; # boolean to recognize an actual difference between objects
+
 	# retrieve parameters
 	# Suspect Patient...
     my $SPatientSourceUID   = $SuspectPatient->getPatientSourceUID();
@@ -992,24 +994,28 @@ sub compareWith
 	# go through each parameter
     if ($SPatientSourceUID ne $OPatientSourceUID) {
 
+		$change = 1; # change occured
 		print "Patient Source UID has changed from $OPatientSourceUID to $SPatientSourceUID!\n";
 		my $updatedUID = $UpdatedPatient->setPatientSourceUID($SPatientSourceUID); # update patient id
 		print "Will update database entry to '$updatedUID'.\n";
 	}
 	if ($SPatientId ne $OPatientId) {
 
+		$change = 1; # change occured
 		print "Patient ID has changed from $OPatientId to $SPatientId!\n";
 		my $updatedId = $UpdatedPatient->setPatientId($SPatientId); # update patient id
 		print "Will update database entry to '$updatedId'.\n";
 	}
 	if ($SPatientId2 ne $OPatientId2) {
 
+		$change = 1; # change occured
 		print "Patient ID2 has changed from $OPatientId2 to $SPatientId2!\n";
 		my $updatedId2 = $UpdatedPatient->setPatientId2($SPatientId2); # update patient id2
 		print "Will update database entry to \"$updatedId2\".\n";
 	}	
 	if ($SPatientDOB ne $OPatientDOB and (isValidDate($SPatientDOB) or isValidDate($OPatientDOB))) {
 
+		$change = 1; # change occured
 		print "Patient Date of Birth has changed from $OPatientDOB to $SPatientDOB!\n";
 		my $updatedDOB = $UpdatedPatient->setPatientDOB($SPatientDOB); # update patient date of birth
 		print "Will update database entry to \"$updatedDOB\".\n";
@@ -1017,6 +1023,7 @@ sub compareWith
 	}
 	if ($SPatientAge ne $OPatientAge) {
 
+		$change = 1; # change occured
 		print "Patient Age has changed from $OPatientAge to $SPatientAge!\n";
 		my $updatedAge = $UpdatedPatient->setPatientAge($SPatientAge); # update patient age
 		print "Will update database entry to \"$updatedAge\".\n";
@@ -1029,30 +1036,35 @@ sub compareWith
 	}
 	if ($SPatientSex ne $OPatientSex) {
 
+		$change = 1; # change occured
 		print "Patient Sex has changed from $OPatientSex to $SPatientSex!\n";
 		my $updatedSex = $UpdatedPatient->setPatientSex($SPatientSex); # update patient sex
 		print "Will update database entry to \"$updatedSex\".\n";
 	}
 	if ($SPatientFirstName ne $OPatientFirstName) {
 
+		$change = 1; # change occured
 		print "Patient First Name has changed from $OPatientFirstName to $SPatientFirstName!\n";
 		my $updatedFirstName = $UpdatedPatient->setPatientFirstName($SPatientFirstName); # update patient first name
 		print "Will update database entry to \"$updatedFirstName\".\n";
 	}
 	if ($SPatientLastName ne $OPatientLastName) {
 
+		$change = 1; # change occured
 		print "Patient Last Name has changed from $OPatientLastName to $SPatientLastName!\n";
 		my $updatedLastName = $UpdatedPatient->setPatientLastName($SPatientLastName); # update patient last name
 		print "Will update database entry to \"$updatedLastName\".\n";
 	}
 	if ($SPatientPicture ne $OPatientPicture) {
 
+		$change = 1; # change occured
 		print "Patient Picture has changed from $OPatientPicture to $SPatientPicture!\n";
 		my $updatedPicture = $UpdatedPatient->setPatientPicture($SPatientPicture); # update patient picture
 		print "Will update database entry to \"$updatedPicture\".\n";
 	}
 	if ($SPatientDeathDate ne $OPatientDeathDate and (isValidDate($SPatientDeathDate) or isValidDate($OPatientDeathDate))) {
 
+		$change = 1; # change occured
 		print "Patient Death Date has changed from $OPatientDeathDate to $SPatientDeathDate!\n";
 		my $updatedDeathDate = $UpdatedPatient->setPatientDeathDate($SPatientDeathDate); # update patient death date 
 		print "Will update database entry to \"$updatedDeathDate\" and block patient.\n";
@@ -1063,7 +1075,7 @@ sub compareWith
 		unsetPatientControl($UpdatedPatient);
 	}
 	
-	return $UpdatedPatient;
+	return ($UpdatedPatient, $change);
 }
 
 #======================================================================================
