@@ -88,10 +88,13 @@ foreach my $Patient (@registeredPatients) {
 
             # compare our source patient with the existing patient
             # update is done on the existing patient
-            my $UpdatedPatient = $SourcePatient->compareWith($ExistingPatient);
+            my ($UpdatedPatient, $change) = $SourcePatient->compareWith($ExistingPatient);
 
-	        # after updating our Patient object, update the database
-	        $UpdatedPatient->updateDatabase();
+			# if there was an actual change in comparison
+			if ($change) {
+				# update the database
+				$UpdatedPatient->updateDatabase();
+			}
 
             # push to patient list 
             push(@patientList, $UpdatedPatient);
