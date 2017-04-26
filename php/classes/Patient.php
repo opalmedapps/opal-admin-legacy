@@ -377,7 +377,8 @@ class Patient {
                         Email,
                         Language,
                         SSN,
-                        SessionId
+                        SessionId,
+						ConsentFormExpirationDate
                     )
                 VALUES (
                     '$sourceuid',
@@ -391,7 +392,8 @@ class Patient {
                     '$email',
                     '$language',
                     '$SSN',
-                    'AdminPanel'
+                    'AdminPanel',
+					NOW()
                 )
             ";
             $query = $host_db_link->prepare( $sql );
