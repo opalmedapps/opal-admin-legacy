@@ -45,7 +45,7 @@
 	// Environment-specific variables 
 	define( "FRONTEND_ABS_PATH", "FRONTEND_ABS_PATH_HERE" );
 	define( "FRONTEND_REL_URL", "FRONTEND_REL_URL_HERE" );
-	define( "BACKEND_ABS_PATH", FRONTEND_ABS_PATH . "backend/" ); 
+	define( "BACKEND_ABS_PATH", FRONTEND_ABS_PATH . "publisher/" ); 
 	define( "BACKEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", BACKEND_ABS_PATH) );
 	define( "FRONTEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", FRONTEND_ABS_PATH) ); 
 	
