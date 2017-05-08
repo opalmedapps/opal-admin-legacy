@@ -474,10 +474,30 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 
 		// Function to check if all final checks have been checked
 		$scope.idCheck = false;
+		$scope.idCheckUpdate = function () {
+			$scope.idCheck = !$scope.idCheck;
+			$scope.finalCheckUpdate();
+		}
 		$scope.consentCheck = false;
+		$scope.consentCheckUpdate = function() {
+			$scope.consentCheck = !$scope.consentCheck;
+			$scope.finalCheckUpdate();
+		}
 		$scope.disclaimerCheck = false;
+		$scope.disclaimerCheckUpdate = function () {
+			$scope.disclaimerCheck = !$scope.disclaimerCheck;
+			$scope.finalCheckUpdate();
+		}
 		$scope.slaCheck = false;
+		$scope.slaCheckUpdate = function () {
+			$scope.slaCheck = !$scope.slaCheck;
+			$scope.finalCheckUpdate();
+		}
 		$scope.opalDocCheck = false;
+		$scope.opalDocCheckUpdate = function () {
+			$scope.opalDocCheck = !$scope.opalDocCheck;
+			$scope.finalCheckUpdate();
+		}
 		$scope.finalChecks = false;
 		$scope.finalCheckUpdate = function () {
 			if ($scope.idCheck && $scope.consentCheck && $scope.disclaimerCheck && $scope.slaCheck && $scope.opalDocCheck) {
