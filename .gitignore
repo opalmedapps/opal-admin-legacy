@@ -1,13 +1,14 @@
 # ignore configurations
 js/config.js
 php/config.php
-backend/modules/Configs.pm
+publisher/modules/Configs.pm
 
 # ignore clinical documents
-backend/clinical/documents
+publisher/clinical/documents
 
 # ignore certificates
-backend/php/certificates
+publisher/php/certificates
+js/firebaseServiceAccountKey.json
 
 # ignore swap files
 *.swp

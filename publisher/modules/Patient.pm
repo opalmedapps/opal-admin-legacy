@@ -394,10 +394,10 @@ sub getPatientInfoFromSourceDBs
 	            pt.LastName,
 	            pt.PatientId,
 	            pt.PatientId2,
-	            pt.DateOfBirth,
+	            CONVERT(VARCHAR, pt.DateOfBirth, 120),
 	            ph.Picture,
 	            RTRIM(pt.Sex),
-	            ppt.DeathDate
+	            CONVERT(VARCHAR, ppt.DeathDate, 120)
 	        FROM 
 	            variansystem.dbo.Patient pt
 	        LEFT JOIN variansystem.dbo.Photo ph
@@ -425,11 +425,11 @@ sub getPatientInfoFromSourceDBs
 	        my $lastname        = $data[2];
 	        my $id              = $data[3];
 	        my $id2             = $data[4];
-	        my $dob             = convertDateTime($data[5]);
+	        my $dob             = $data[5];
 	        my $age             = getAgeAtDate($dob, $today);
 	        my $picture         = $data[6];
 	        my $sex             = $data[7];
-	        my $deathdate 		= convertDateTime($data[8]);
+	        my $deathdate 		= $data[8];
 
 	        # set the information
 	        $sourcePatient->setPatientSSN($patientSSN);
@@ -1029,7 +1029,7 @@ sub compareWith
 		print "Will update database entry to \"$updatedAge\".\n";
 
 		# block patient if patient passed 13 years of age
-		if ($OPatientAge < 14 && $SPatientAge >= 14) {
+		if ($OPatientAge < 14 && $SPatientAge >= 14 && $OPatientAge > 0) {
 			blockPatient($UpdatedPatient, "Patient passed 13 years of age");
 			#$UpdatedPatient->sendPatientEmail("<h1>Hello</h1>");
 		}
@@ -1101,24 +1101,6 @@ sub isValidDate
 
 	if (!$date or $date eq '1970-01-01 00:00:00' or $date eq '0000-00-00 00:00:00') {return undef;}
 	else {return 1;}
-}
-
-#======================================================================================
-# Subroutine to convert date format
-# 	Converts "Jul 13 2013 4:23pm" to "2013-07-13 16:23:00"
-#======================================================================================
-sub convertDateTime 
-{
-	my ($inputDate) = @_;
-
-	if (!$inputDate or $inputDate eq "0000-00-00 00:00:00" or $inputDate eq "1970-01-01 00:00:00") {
-		return undef;
-	}
-	my $dateFormat = Time::Piece->strptime($inputDate,"%b %d %Y %I:%M%p");
-
-	my $convertedDate = $dateFormat->strftime("%Y-%m-%d %H:%M:%S");
-
-	return $convertedDate;
 }
 
 #exit module 

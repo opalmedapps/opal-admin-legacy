@@ -455,11 +455,11 @@ sub getDocsFromSourceDB
 			    	    	visit_note.err_rsn_txt,
 				    	    visit_note.doc_file_loc,
 					        visit_note.appr_stkh_id,
-					        visit_note.appr_tstamp,
+					        CONVERT(VARCHAR, visit_note.appr_tstamp, 120),
 	    				    visit_note.author_stkh_id,
-		    			    visit_note.note_tstamp,
+		    			    CONVERT(VARCHAR, visit_note.note_tstamp, 120),
 			    		    visit_note.trans_log_userid,
-				    	    visit_note.trans_log_tstamp,
+				    	    CONVERT(VARCHAR, visit_note.trans_log_tstamp, 120),
 				    	    CASE WHEN 1=1 THEN '$expressionser' ELSE '$expressionser' END
 	        			FROM	
 		        			variansystem.dbo.Patient Patient,
@@ -506,11 +506,11 @@ sub getDocsFromSourceDB
 			        $errtxt			= $row->[5];
         			$fileloc		= $row->[6];
 	    		    $apprvby		= Staff::reassignStaff($row->[7], $sourceDBSer);
-		    	    $apprvts		= convertDateTime($row->[8]);
+		    	    $apprvts		= $row->[8];
                     $authoredby     = Staff::reassignStaff($row->[9]);
-                    $dos            = convertDateTime($row->[10]);
+                    $dos            = $row->[10];
                     $createdby      = Staff::reassignStaff($row->[11]);
-                    $createdts      = convertDateTime($row->[12]);
+                    $createdts      = $row->[12];
                     $expressionser 	= $row->[13];
                     	
     
@@ -829,7 +829,7 @@ sub transferPatientDocuments
 				    if (sourceDBSer eq 1) {
 	            		my $last_mod_sql = "
 				            SELECT 
-	            				visit_note.trans_log_mtstamp,
+	            				CONVERT(VARCHAR, visit_note.trans_log_mtstamp, 120),
 				            	RTRIM(visit_note.trans_log_muserid)
 	            			FROM
 				            	varianenm.dbo.visit_note visit_note
@@ -847,7 +847,7 @@ sub transferPatientDocuments
 
 	            		while (my @data = $query->fetchrow_array()) {
 				    
-	            			$lastModTimeStamp	= convertDateTime($data[0]);
+	            			$lastModTimeStamp	= $data[0];
 	            			$lastModUser		= Staff::reassignStaff($data[1], $sourceDBSer);
 	            		}
 	            	}
@@ -982,7 +982,7 @@ END
 
 	            		my $last_mod_sql = "
 				            SELECT 
-	            				visit_note.trans_log_mtstamp,
+	            				CONVERT(VARCHAR, visit_note.trans_log_mtstamp, 120),
 				            	RTRIM(visit_note.trans_log_muserid)
 	            			FROM
 				            	varianenm.dbo.visit_note visit_note
@@ -1000,7 +1000,7 @@ END
 
 	            		while (my @data = $query->fetchrow_array()) {
 				    
-	            			$lastModTimeStamp	= convertDateTime($data[0]);
+	            			$lastModTimeStamp	= $data[0];
 	            			$lastModUser		= Staff::reassignStaff($data[1], $sourceDBSer);
 	            		}
 	            	}
@@ -1410,21 +1410,6 @@ sub compareWith
 	}
 
 	return $UpdatedDoc;
-}
-
-#======================================================================================
-# Subroutine to convert date format
-# 	Converts "Jul 13 2013 4:23pm" to "2013-07-13 16:23:00"
-#======================================================================================
-sub convertDateTime 
-{
-	my ($inputDate) = @_;
-
-	my $dateFormat = Time::Piece->strptime($inputDate,"%b %d %Y %I:%M%p");
-
-	my $convertedDate = $dateFormat->strftime("%Y-%m-%d %H:%M:%S");
-
-	return $convertedDate;
 }
 
 # To exit/return always true (for the module itself)

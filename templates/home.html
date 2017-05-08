@@ -124,6 +124,23 @@
 									</div>
 								</div>
 							</div>
+							<div class="col-md-6">
+								<div class="panel-container animated" ng-class="{pulse: hoverZ}" ng-mouseenter="hoverZ=true" ng-mouseleave="hoverZ=false" style="cursor:pointer;" ng-click="goToQuestionnaire()">
+									<div class="panel-info" style="height: 180px;">
+										<div class="panel-content">
+											<div class="icon-home clearfix">
+												<span style="font-size: 50px;" class="glyphicon glyphicon-book" aria-hidden="true"></span>     
+											</div>
+											<div class="panel-title">  
+												<h1>Questionnaire</h1>
+											</div>  
+											<div class="panel-description">
+												<p>Tool for referencing educational material hosted on the web.</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div> 
 						</div>
           </div>
 					<div class="col-md-6" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
