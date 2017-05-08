@@ -346,16 +346,16 @@ sub getTasksFromSourceDB
 	                  
         	    		SELECT DISTINCT
 	        	    		NonScheduledActivity.NonScheduledActivitySer,
-			        	    NonScheduledActivity.DueDateTime,
-                            NonScheduledActivity.CreationDate,
+			        	    CONVERT(VARCHAR, NonScheduledActivity.DueDateTime, 120),
+                            CONVERT(VARCHAR, NonScheduledActivity.CreationDate, 120),
                             NonScheduledActivity.NonScheduledActivityCode,
                             NonScheduledActivity.ObjectStatus,
-                            (SELECT DISTINCT MIN(CONVERT(VARCHAR(19), NonScheduledActivityMH.HstryDateTime, 100)) HstryDateTime
+                            CONVERT(VARCHAR, (SELECT DISTINCT MIN(CONVERT(VARCHAR(19), NonScheduledActivityMH.HstryDateTime, 100)) HstryDateTime
                             FROM variansystem.dbo.NonScheduledActivityMH NonScheduledActivityMH
                             LEFT JOIN variansystem.dbo.NonScheduledActivity NonScheduledActivity
                             ON NonScheduledActivityMH.NonScheduledActivitySer  = NonScheduledActivity.NonScheduledActivitySer
                         	AND NonScheduledActivityMH.NonScheduledActivityCode = 'Completed'
-							GROUP BY NonScheduledActivityMH.NonScheduledActivitySer) AS HstryDateTime,
+							GROUP BY NonScheduledActivityMH.NonScheduledActivitySer), 120) AS HstryDateTime,
 							CASE WHEN 1=1 THEN '$expressionser' ELSE '$expressionser' END
             			FROM  
 	            			variansystem.dbo.Patient Patient,
@@ -393,11 +393,11 @@ sub getTasksFromSourceDB
 	        		my $task = new Task(); # new task object
 
     		    	$sourceuid	    = $row->[0];
-    	    		$duedatetime	= convertDateTime($row->[1]); # convert date format
-              	    $creationdate   = convertDateTime($row->[2]);
+    	    		$duedatetime	= $row->[1]; # convert date format
+              	    $creationdate   = $row->[2];
                     $status         = $row->[3];
                     $state          = $row->[4];
-                    $completiondate = convertDateTime($row->[5]);
+                    $completiondate = $row->[5];
                     $expressionser 	= $row->[6];
 
                     $priorityser	= Priority::getClosestPriority($patientSer, $duedatetime);
@@ -820,21 +820,6 @@ sub compareWith
 	}
 
 	return $UpdatedTask;
-}
-
-#======================================================================================
-# Subroutine to convert date format
-# 	Converts "Jul 13 2013 4:23pm" to "2013-07-13 16:23:00"
-#======================================================================================
-sub convertDateTime 
-{
-	my ($inputDate) = @_;
-
-	my $dateFormat = Time::Piece->strptime($inputDate,"%b %d %Y %I:%M%p");
-
-	my $convertedDate = $dateFormat->strftime("%Y-%m-%d %H:%M:%S");
-
-	return $convertedDate;
 }
 
 # To exit/return always true (for the module itself)

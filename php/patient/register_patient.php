@@ -20,7 +20,8 @@
 	$patientObj = new Patient; // Object
 
 	// Call function
-	$patientObj->registerPatient($patientArray);
+	$response = $patientObj->registerPatient($patientArray);
+	print json_encode($response);
 
 	
 ?>

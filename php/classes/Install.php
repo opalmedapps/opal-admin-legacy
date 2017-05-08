@@ -33,7 +33,7 @@ class Install {
 			$response['config_file']['js'] = 1;
 		}
 		// Perl
-		if (file_exists($abspath . 'backend/modules/Configs.pm')) {
+		if (file_exists($abspath . 'publisher/modules/Configs.pm')) {
 			$response['config_file']['perl'] = 1;
 		}
 
@@ -249,7 +249,7 @@ class Install {
 			file_put_contents($path_to_file, $file_contents);
 
 			// Perl
-			$path_to_file = $abspath . 'backend/modules/Configs.pm';
+			$path_to_file = $abspath . 'publisher/modules/Configs.pm';
 			$file_contents = file_get_contents($path_to_file);
 			$file_contents = str_replace('OPAL_DB_HOST_HERE', $opalCreds['host'], $file_contents);
 			$file_contents = str_replace('OPAL_DB_PORT_HERE', $opalCreds['port'], $file_contents);
@@ -259,9 +259,9 @@ class Install {
 			file_put_contents($path_to_file, $file_contents);
 
 			// Create local clinical documents directory
-			if (!is_dir($abspath . 'backend/clinical/documents')) {
-				if(!mkdir($abspath . 'backend/clinical/documents/', 0755, true))
-					die('Failed to create folder ' . $abspath . 'backend/clinical/documents/');
+			if (!is_dir($abspath . 'publisher/clinical/documents')) {
+				if(!mkdir($abspath . 'publisher/clinical/documents/', 0755, true))
+					die('Failed to create folder ' . $abspath . 'publisher/clinical/documents/');
 			}
 
 		}
@@ -283,7 +283,7 @@ class Install {
 				file_put_contents($path_to_file, $file_contents);
 
 				// Perl
-				$path_to_file = $abspath . 'backend/modules/Configs.pm';
+				$path_to_file = $abspath . 'publisher/modules/Configs.pm';
 				$file_contents = file_get_contents($path_to_file);
 				$file_contents = str_replace('ARIA_DB_HOST_HERE', $ariaCreds['host'], $file_contents);
 				$file_contents = str_replace('ARIA_DB_PORT_HERE', $ariaCreds['port'], $file_contents);
@@ -322,7 +322,7 @@ class Install {
 				file_put_contents($path_to_file, $file_contents);
 
 				// Perl
-				$path_to_file = $abspath . 'backend/modules/Configs.pm';
+				$path_to_file = $abspath . 'publisher/modules/Configs.pm';
 				$file_contents = file_get_contents($path_to_file);
 				$file_contents = str_replace('WRM_DB_HOST_HERE', $mediVisitCreds['host'], $file_contents);
 				$file_contents = str_replace('WRM_DB_PORT_HERE', $mediVisitCreds['port'], $file_contents);
@@ -361,7 +361,7 @@ class Install {
 				file_put_contents($path_to_file, $file_contents);
 
 				// Perl
-				$path_to_file = $abspath . 'backend/modules/Configs.pm';
+				$path_to_file = $abspath . 'publisher/modules/Configs.pm';
 				$file_contents = file_get_contents($path_to_file);
 				$file_contents = str_replace('MOSAIQ_DB_HOST_HERE', $mosaiqCreds['host'], $file_contents);
 				$file_contents = str_replace('MOSAIQ_DB_PORT_HERE', $mosaiqCreds['port'], $file_contents);
@@ -397,7 +397,7 @@ class Install {
 		file_put_contents($path_to_file, $file_contents);
 
 		// Perl
-		$path_to_file = $abspath . 'backend/modules/Configs.pm';
+		$path_to_file = $abspath . 'publisher/modules/Configs.pm';
 		$file_contents = file_get_contents($path_to_file);
 		$file_contents = str_replace('FRONTEND_ABS_PATH_HERE', $abspath, $file_contents);
 		$file_contents = str_replace('FRONTEND_REL_URL_HERE', $urlpath, $file_contents);
