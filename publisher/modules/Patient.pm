@@ -1029,7 +1029,7 @@ sub compareWith
 		print "Will update database entry to \"$updatedAge\".\n";
 
 		# block patient if patient passed 13 years of age
-		if ($OPatientAge < 14 && $SPatientAge >= 14) {
+		if ($OPatientAge < 14 && $SPatientAge >= 14 && $OPatientAge > 0) {
 			blockPatient($UpdatedPatient, "Patient passed 13 years of age");
 			#$UpdatedPatient->sendPatientEmail("<h1>Hello</h1>");
 		}
