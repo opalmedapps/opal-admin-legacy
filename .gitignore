@@ -8,6 +8,7 @@ publisher/clinical/documents
 
 # ignore certificates
 publisher/php/certificates
+js/firebaseServiceAccountKey.json
 
 # ignore swap files
 *.swp
