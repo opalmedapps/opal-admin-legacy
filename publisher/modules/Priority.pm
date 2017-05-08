@@ -188,7 +188,7 @@ sub getPrioritiesFromSourceDB
         	my $priorInfo_sql = "
 	    		SELECT DISTINCT
 		    		nsa.NonScheduledActivitySer,
-			    	nsa.DueDateTime,
+			    	CONVERT(VARCHAR, nsa.DueDateTime, 120),
 				    vva.Expression1
     			FROM	
 	    			variansystem.dbo.Patient pt,
@@ -220,7 +220,7 @@ sub getPrioritiesFromSourceDB
     			my $priority = new Priority(); # new priority object
     
 	    		$sourceuid	    = $row->[0];
-		    	$datestamp		= convertDateTime($row->[1]);
+		    	$datestamp		= $row->[1];
 			    $code			= $row->[2];
     
 	    		# set priority information
@@ -576,21 +576,6 @@ sub compareWith
 	}
 
 	return $UpdatedPriority;
-}
-
-#======================================================================================
-# Subroutine to convert date format
-# 	Converts "Jul 13 2013 4:23pm" to "2013-07-13 16:23:00"
-#======================================================================================
-sub convertDateTime 
-{
-	my ($inputDate) = @_;
-
-	my $dateFormat = Time::Piece->strptime($inputDate,"%b %d %Y %I:%M%p");
-
-	my $convertedDate = $dateFormat->strftime("%Y-%m-%d %H:%M:%S");
-
-	return $convertedDate;
 }
 
 # To exit/return always true (for the module itself)

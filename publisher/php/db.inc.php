@@ -1,7 +1,7 @@
 <?php
 
 	$pathname 	= __DIR__;
-	$abspath 	= str_replace('backend/php', '', $pathname);
+	$abspath 	= str_replace('publisher/php', '', $pathname);
 
 	include_once($abspath . 'php/config.php');
 
