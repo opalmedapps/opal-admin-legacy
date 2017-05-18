@@ -571,6 +571,56 @@ class Patient {
         }
     }
 
+	/**
+	 *
+	 * Gets details for one patient
+	 *
+	 * @param int $serial : the patient serial number
+	 * @return array $patientDetails : the patient details
+	 */
+	 public function getPatientDetails ($serial) {
+
+		 $patientDetails = array();
+		 try {
+			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+			$sql = "
+				SELECT DISTINCT 
+					pt.FirstName,
+					pt.LastName,
+					pt.PatientId,
+					usr.Username
+				FROM
+					Patient pt,
+					Users usr
+				WHERE
+					pt.PatientSerNum = '$serial'
+				AND pt.PatientSerNum = usr.UserTypeSerNum
+				AND usr.UserType = 'Patient'
+			";
+
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query->execute();
+
+			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
+
+			$patientDetails = array(
+				'serial'            => $serial,
+				'name'              => "$data[0] $data[1]",
+				'patientid'         => $data[2],
+				'uid' 				=> $data[3]
+			);
+
+			return $patientDetails;
+
+		} catch (PDOException $e) {
+			echo $e->getMessage();
+			return $patientDetails;
+		}
+
+	}
+
 }
 
 ?>
