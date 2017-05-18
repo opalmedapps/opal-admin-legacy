@@ -519,7 +519,7 @@
 										<col width="85%">
 										<tr ng-class="{'danger': !idCheck, 'success': idCheck}">
 											<td>
-												<div style="text-align: center; cursor: pointer;" ng-click="idCheck = !idCheck; finalCheckUpdate()">
+												<div style="text-align: center; cursor: pointer;" ng-click="idCheckUpdate()">
 													<span class="glyphicon glyphicon-remove" style="color: #d9534f" ng-if="!idCheck"></span>
 													<span class="glyphicon glyphicon-ok" style="color: #3c763d" ng-if="idCheck"></span>
 												</div>
@@ -528,7 +528,7 @@
 										</tr>
 										<tr ng-class="{'danger': !consentCheck, 'success': consentCheck}">
 											<td>
-												<div style="text-align: center; cursor: pointer;" ng-click="consentCheck = !consentCheck; finalCheckUpdate()">
+												<div style="text-align: center; cursor: pointer;" ng-click="consentCheckUpdate()">
 													<span class="glyphicon glyphicon-remove" style="color: #d9534f" ng-if="!consentCheck"></span>
 													<span class="glyphicon glyphicon-ok" style="color: #3c763d" ng-if="consentCheck"></span>
 												</div>
@@ -538,7 +538,7 @@
 
 										<tr ng-class="{'danger': !disclaimerCheck, 'success': disclaimerCheck}">
 											<td>
-												<div style="text-align: center; cursor: pointer;" ng-click="disclaimerCheck = !disclaimerCheck; finalCheckUpdate()">
+												<div style="text-align: center; cursor: pointer;" ng-click="disclaimerCheckUpdate()">
 													<span class="glyphicon glyphicon-remove" style="color: #d9534f" ng-if="!disclaimerCheck"></span>
 													<span class="glyphicon glyphicon-ok" style="color: #3c763d" ng-if="disclaimerCheck"></span>
 												</div>
@@ -548,7 +548,7 @@
 
 										<tr ng-class="{'danger': !slaCheck, 'success': slaCheck}">
 											<td>
-												<div style="text-align: center; cursor: pointer;" ng-click="slaCheck = !slaCheck; finalCheckUpdate()">
+												<div style="text-align: center; cursor: pointer;" ng-click="slaCheckUpdate()">
 													<span class="glyphicon glyphicon-remove" style="color: #d9534f" ng-if="!slaCheck"></span>
 													<span class="glyphicon glyphicon-ok" style="color: #3c763d" ng-if="slaCheck"></span>
 												</div>
@@ -558,7 +558,7 @@
 
 										<tr ng-class="{'danger': !opalDocCheck, 'success': opalDocCheck}">
 											<td>
-												<div style="text-align: center; cursor: pointer;" ng-click="opalDocCheck = !opalDocCheck; finalCheckUpdate()">
+												<div style="text-align: center; cursor: pointer;" ng-click="opalDocCheckUpdate()">
 													<span class="glyphicon glyphicon-remove" style="color: #d9534f" ng-if="!opalDocCheck"></span>
 													<span class="glyphicon glyphicon-ok" style="color: #3c763d" ng-if="opalDocCheck"></span>
 												</div>

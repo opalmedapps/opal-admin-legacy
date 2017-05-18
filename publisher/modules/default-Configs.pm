@@ -48,8 +48,8 @@ const our $MOSAIQ_DB_PASSWORD => 'MOSAIQ_DB_PASSWORD_HERE';
 # Environment-specific variables
 const our $FRONTEND_ABS_PATH    => 'FRONTEND_ABS_PATH_HERE';
 const our $FRONTEND_REL_URL     => 'FRONTEND_REL_URL_HERE';
-const our $BACKEND_ABS_PATH     => $FRONTEND_ABS_PATH . 'backend/'; # absolute path of this project (include trailing slash)
-const our $BACKEND_REL_URL      => $FRONTEND_REL_URL . 'backend/'; # relative path of this project from http host (include trailing slash)
+const our $BACKEND_ABS_PATH     => $FRONTEND_ABS_PATH . 'publisher/'; # absolute path of this project (include trailing slash)
+const our $BACKEND_REL_URL      => $FRONTEND_REL_URL . 'publisher/'; # relative path of this project from http host (include trailing slash)
 
 # DEFINE FTP CREDENTIALS HERE
 # NOTE: This is for sending clinical documents
