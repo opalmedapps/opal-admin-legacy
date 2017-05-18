@@ -49,3 +49,16 @@
    <div class="bannerMessage alert-success">{{bannerMessage}}</div>
   </div>
 
+	<script type="text/ng-template" id="editPatientModalContent.htm">
+      <div class="modal-header">
+        <h2 class="modal-title">
+          <span class="glyphicon glyphicon-pencil" style="font-size: 30px;"></span> 
+          Edit Patient: {{patient.name}} 
+          <span style="float:right;"> 
+            <form method="post" ng-submit="updatePatient()">
+              <input class="btn btn-primary" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
+              <input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
+            </form>
+          </span>     
+        </h2>
+      </div>
