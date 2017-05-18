@@ -12,6 +12,7 @@ var firebaseConfig = {
 	apiKey: 'API_KEY_HERE',
 	authDomain: 'AUTH_DOMAIN_HERE',
 	databaseURL: 'DATABASE_URL_HERE',
+	projectId: 'PROJECT_ID_HERE',
 	storageBucket: 'STORAGE_BUCKET_HERE',
 	messagingSenderId: 'MESSAGING_SENDER_ID_HERE'
 };
