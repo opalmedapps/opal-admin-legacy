@@ -199,7 +199,7 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 				if ($scope.currentPatient.reason) {
 
 					// Firebase (un)block
-					/*var serviceAccount = require(ABS_PATH + "js/firebaseServiceAccountKey.json");
+					var serviceAccount = require(ABS_PATH + "js/firebaseServiceAccountKey.json");
 					var admin = require("firebase-admin");
 
 					admin.initializeApp({
@@ -225,7 +225,7 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 							.catch(function (error) {
 								console.log(error);
 							});
-					}*/
+					}
 
 					// Database (un)block
 					$.ajax({
