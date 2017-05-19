@@ -40,7 +40,9 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 			'ng-checked="grid.appScope.updateTransferFlag(row.entity.transfer)" ng-model="row.entity.transfer"></div>';
 
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editPatient(row.entity)">Edit</a></strong></div> '; 
+			'<strong><a href="" ng-click="grid.appScope.editPatient(row.entity)">Edit</a></strong>' +
+			'- <strong><a href="" ng-click="grid.appScope.toggleBlock(row.entity)"><span ng-if="row.entity.disabled">Unblock</span>' + 
+			'<span ng-if="!row.entity.disabled">Block</span></a></strong></div> '; 
 
 		// patient table search textbox param
 		$scope.filterOptions = function (renderableRows) {
@@ -156,6 +158,108 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 			}
 		};
 
+		// Function for when a user has been clicked for (un)blocking
+		// Open a modal
+		$scope.patientToToggleBlock = null;
+		$scope.toggleBlock = function (currentPatient) {
+
+			$scope.patientToToggleBlock = currentPatient;
+			var modalInstance = $uibModal.open({
+				templateUrl: 'toggleBlockModalContent.htm',
+				windowClass: 'customModal',
+				controller: toggleBlockModalInstanceCtrl,
+				scope: $scope,
+				backdrop: 'static'
+			});
+
+			// After toggle, refresh the patient list 
+			modalInstance.result.then(function () {
+				// Call our API to get the list of existing patients
+				patientAPIservice.getPatients().success(function (response) {
+					// Assign value
+					$scope.patientList = response;
+				});
+			});
+		};
+
+		// Controller for the toggle block modal
+		var toggleBlockModalInstanceCtrl = function ($scope, $uibModalInstance) {
+
+			$scope.currentPatient = jQuery.extend(true, {}, $scope.patientToToggleBlock);
+
+			// toggle block immediately
+			if ($scope.currentPatient.disabled == 0)
+				$scope.currentPatient.disabled = 1;
+			else
+				$scope.currentPatient.disabled = 0;
+
+			// Submit (un)block
+			$scope.submitToggle = function () {
+
+				if ($scope.currentPatient.reason) {
+
+					// Firebase (un)block
+					/*var serviceAccount = require(ABS_PATH + "js/firebaseServiceAccountKey.json");
+					var admin = require("firebase-admin");
+
+					admin.initializeApp({
+						credential: admin.credential.cert(serviceAccount),
+						databaseURL: firebaseConfig.databaseURL
+					});
+
+					// If patient is marked to be blocked
+					if ($scope.currentPatient.disabled) {
+						admin.auth().updateUser($scope.patient.uid, {disabled: true})
+							.then(function (userRecord) {
+								console.log(userRecord);
+							})
+							.catch(function (error) {
+								console.log(error);
+							});
+					}
+					else { // else unblock
+						admin.auth().updateUser($scope.patient.uid, {disabled: false})
+							.then(function (userRecord) {
+								console.log(userRecord);
+							})
+							.catch(function (error) {
+								console.log(error);
+							});
+					}*/
+
+					// Database (un)block
+					$.ajax({
+						type: "POST",
+						url: "php/patient/toggle_block.php",
+						data: $scope.currentPatient,
+						success: function (response) {
+							response = JSON.parse(response);
+							if (response.value) {
+								var toggleText = "blocked";
+								if (!$scope.currentPatient.disabled)
+									toggleText = "unblocked";
+								$scope.setBannerClass('success');
+								$scope.$parent.bannerMessage = "Successfully " + toggleText + " \"" + $scope.userToDelete.username + "\"";
+							}
+							else {
+								$scope.setBannerClass('danger');
+								$scope.$parent.bannerMessage = response.message;
+							}
+							$scope.showBanner();
+							$uibModalInstance.close();
+
+						}
+					});
+				}
+			};
+
+			// Function to close modal dialog
+			$scope.cancel = function () {
+				$uibModalInstance.dismiss('cancel');
+			};
+
+		};
+
 		// Function for when the patient has been clicked for editing
 		// Open a modal
 		$scope.currentPatient = null;
@@ -166,7 +270,7 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 				templateUrl: 'editPatientModalContent.htm',
 				controller: EditPatientModalInstanceCtrl,
 				scope: $scope,
-				windowClass: 'editPatientModal',
+				windowClass: 'customModal',
 				backdrop: 'static',
 				keyboard: false,
 			});
@@ -187,7 +291,7 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 			// Default booleans
 			$scope.changesMade = false;
 			
-			$scope.user = {};
+			$scope.patient = {};
 
 			/* Function for the "Processing" dialog */
 			var processingModal;
@@ -210,6 +314,17 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 				processingModal = null; // revoke reference
 			});
 
+			// Function to validate old password
+			$scope.validOldPassword = { status: null, message: null };
+			$scope.validateOldPassword = function (oldPassword) {
+				if (!oldPassword) {
+					$scope.validOldPassword.status = null;
+					return;
+				} else {
+					$scope.validOldPassword.status = 'valid';
+				}
+			};
+
 			// Function to validate password 
 			$scope.validPassword = { status: null, message: null };
 			$scope.validatePassword = function (password) {
@@ -219,7 +334,6 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 
 				if (!password) {
 					$scope.validPassword.status = null;
-					$scope.passwordUpdate();
 					if (!$scope.validConfirmPassword)
 						$scope.passwordChange = false;
 					return;
@@ -228,12 +342,10 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 				if (password.length < 6) {
 					$scope.validPassword.status = 'invalid';
 					$scope.validPassword.message = 'Use greater than 6 characters';
-					$scope.passwordUpdate();
 					return;
 				} else {
 					$scope.validPassword.status = 'valid';
 					$scope.validPassword.message = null;
-					$scope.passwordUpdate();
 					if ($scope.validConfirmPassword.status == 'valid')
 						$scope.passwordChange = false;
 				}
@@ -246,7 +358,6 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 				$scope.passwordChange = true;
 				if (!confirmPassword) {
 					$scope.validConfirmPassword.status = null;
-					$scope.passwordUpdate();
 					if (!$scope.validPassword)
 						$scope.passwordChange = false;
 					return;
@@ -255,12 +366,10 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 				if ($scope.validPassword.status != 'valid' || $scope.patient.password != $scope.patient.confirmPassword) {
 					$scope.validConfirmPassword.status = 'invalid';
 					$scope.validConfirmPassword.message = 'Enter same valid password';
-					$scope.passwordUpdate();
 					return;
 				} else {
 					$scope.validConfirmPassword.status = 'valid';
 					$scope.validConfirmPassword.message = null;
-					$scope.passwordUpdate();
 					if ($scope.validPassword.status == 'valid')
 						$scope.passwordChange = false;
 				}
@@ -268,7 +377,7 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 
 			// Function to check for form completion
 			$scope.checkForm = function() {
-				if ( $scope.validPassword.status == 'valid' && $scope.validConfirmPassword.status == 'valid' )
+				if ( $scope.validOldPassword.status == 'valid' && $scope.validPassword.status == 'valid' && $scope.validConfirmPassword.status == 'valid' )
 					return true;
 				else
 					return false;
@@ -278,7 +387,7 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 			$scope.updatePatient = function () {
 				if ($scope.checkForm()) {
 
-					var serviceAccount = require("./../../firebaseServiceAccountKey.json");
+					var serviceAccount = require(ABS_PATH + "js/firebaseServiceAccountKey.json");
 					var admin = require("firebase-admin");
 
 					admin.initializeApp({
@@ -286,25 +395,27 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 						databaseURL: firebaseConfig.databaseURL
 					});
 
-					// Unblock user
-					admin.auth().updateUser($scope.patient.uid, {disabled: false})
-						.then(function (userRecord) {
-							console.log(userRecord);
-						})
-						.catch(function (error) {
-							console.log(error);
-						});
+					// Unblock user if they were initially blocked
+					if ($scope.patient.disabled) {
+						admin.auth().updateUser($scope.patient.uid, {disabled: false})
+							.then(function (userRecord) {
+								console.log(userRecord);
+							})
+							.catch(function (error) {
+								console.log(error);
+							});
+					}
 
 					// Authenticate user using username and old password
 					FB.auth().signInWithEmailAndPassword($scope.patient.email, $scope.patient.oldPassword)
 						.then(function (firebaseUser) {
 							// On successful login, update password in Firebase
-							firebaseUser.updatePassword($scope.patient.newPassword)
+							firebaseUser.updatePassword($scope.patient.password)
 								.then(function (){
 									// submit new password to database
 									console.log("Successfully update firebase password!");
 
-									$scope.patient.newPassword = CryptoJS.SHA256($scope.patient.newPassword).toString();
+									$scope.patient.password = CryptoJS.SHA256($scope.patient.password).toString();
 
 									$.ajax({
 										type: "POST",
@@ -329,7 +440,7 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 								})
 								.catch(function (error) {
 									console.log(error);
-								})
+								});
 						})
 						.catch (function (error){
 							// On failed login, handle errors
@@ -339,19 +450,22 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 							} 
 							else if (errorCode == 'auth/wrong-password') {
 								// set password is incorrect message
+								$scope.validOldPassword.status = 'invalid';
+								$scope.validOldPassword.message = 'Current password is incorrect';
 
-								// disable patient if was originally disabled
-								if ($scope.patient.disabled) {
-									admin.auth().updateUser($scope.patient.uid, {disabled: true})
-										.then(function (userRecord) {
-											console.log(userRecord);
-										})
-										.catch(function (error) {
-											console.log(error);
-										});
-								}
 							}
 						});
+
+					// disable patient if was originally disabled
+					if ($scope.patient.disabled) {
+						admin.auth().updateUser($scope.patient.uid, {disabled: true})
+							.then(function (userRecord) {
+								console.log(userRecord);
+							})
+							.catch(function (error) {
+								console.log(error);
+							});
+					}
 					
 				}
 			};

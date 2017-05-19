@@ -55,12 +55,17 @@ class Patient {
                     pt.FirstName,
                     pt.LastName,
                     pt.PatientId,
-                    pc.LastTransferred
+                    pc.LastTransferred,
+					pt.BlockedStatus
                 FROM
                     PatientControl pc,
                     Patient pt
                 WHERE
                     pt.PatientSerNum = pc.PatientSerNum
+				AND (pt.DeathDate 		IS NULL 
+					OR pt.DeathDate 	= '0000-00-00 00:00:00'
+					OR pt.DeathDate 	= '1970-01-01 00:00:00')
+				
             ";
 			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
@@ -72,7 +77,8 @@ class Patient {
                     'transfer'          => $data[1],
                     'name'              => "$data[2] $data[3]",
                     'patientid'         => $data[4],
-                    'lasttransferred'   => $data[5]
+                    'lasttransferred'   => $data[5],
+					'disabled' 			=> intval($data[6])
                 );
 
                 array_push($patientList, $patientArray);
@@ -590,7 +596,8 @@ class Patient {
 					pt.FirstName,
 					pt.LastName,
 					pt.PatientId,
-					usr.Username
+					usr.Username,
+					pt.BlockedStatus
 				FROM
 					Patient pt,
 					Users usr
@@ -609,7 +616,8 @@ class Patient {
 				'serial'            => $serial,
 				'name'              => "$data[0] $data[1]",
 				'patientid'         => $data[2],
-				'uid' 				=> $data[3]
+				'uid' 				=> $data[3],
+				'disabled'			=> intval($data[4])
 			);
 
 			return $patientDetails;
@@ -620,6 +628,100 @@ class Patient {
 		}
 
 	}
+
+	/**
+     *
+     * Updates the patient
+     *
+     * @param array $patientArray : the patient details
+     * @return array $response : response
+     */
+     public function updatePatient($patientArray) {
+		$response = array (
+			'value'		=> 0,
+			'error'		=> array(
+				'code'		=> '',
+				'message'	=> ''
+			)
+		);
+
+		$password 	= $patientArray['password'];
+		$serial 	= $patientArray['serial'];
+		try {
+			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+			$sql = "
+				UPDATE 
+					Users
+				SET
+					Users.Password
+				WHERE
+					Users.UserTypeSerNum = '$serial'
+				AND Users.UserType = 'Patient'
+			";
+
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query->execute();
+
+			$response['value'] = 1; // Success
+			return $response;
+			
+		} catch (PDOException $e) {
+			 $response['error']['code'] = 'db-catch';
+			 $response['error']['message'] = $e->getMessage();
+			 return $response;
+		}
+		 
+	 }
+
+	 /**
+     *
+     * Sets the block status
+     *
+     * @param array $patientArray : the patient details
+     * @return array $response : response
+     */
+     public function toggleBlock($patientArray) {
+		 $response = array (
+			'value'		=> 0,
+			'error'		=> array(
+				'code'		=> '',
+				'message'	=> ''
+			)
+		);
+
+		$blockedStatus 	= $patientArray['disabled'];
+		$reason 		= $patientArray['reason'];
+		$serial 		= $patientArray['serial'];
+
+		try {
+			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+			$sql = "
+				UPDATE 
+					Patient
+				SET
+					Patient.BlockedStatus 	= '$blockedStatus',
+					Patient.StatusReasonTxt = \"$reason\"
+				WHERE
+					Patient.PatientSerNum = '$serial'
+			";
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query->execute();
+
+			$response['value'] = 1; // Success
+			return $response;
+			
+		} catch (PDOException $e) {
+			 $response['error']['code'] = 'db-catch';
+			 $response['error']['message'] = $e->getMessage();
+			 return $response;
+		}
+	 }
+		 
+
 
 }
 
