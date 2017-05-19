@@ -239,7 +239,7 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 								if (!$scope.currentPatient.disabled)
 									toggleText = "unblocked";
 								$scope.setBannerClass('success');
-								$scope.$parent.bannerMessage = "Successfully " + toggleText + " \"" + $scope.userToDelete.username + "\"";
+								$scope.$parent.bannerMessage = "Successfully " + toggleText + " \"" + $scope.currentPatient.name + "\"";
 							}
 							else {
 								$scope.setBannerClass('danger');
