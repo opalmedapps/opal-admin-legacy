@@ -3,7 +3,7 @@ var admin = require("firebase-admin");
 
 admin.initializeApp({
 	credential: admin.credential.cert(serviceAccount),
-	databaseURL: "https://brilliant-inferno-7679.firebaseio.com"
+	databaseURL: "https://opal-dev.firebaseio.com"
 });
 
 // Command line example: `node firebaseSetBlock.js --blocked=0 --uid=123456

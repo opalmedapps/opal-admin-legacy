@@ -56,15 +56,20 @@ class Patient {
                     pt.LastName,
                     pt.PatientId,
                     pc.LastTransferred,
-					pt.BlockedStatus
+					pt.BlockedStatus,
+					usr.Username,
+					pt.email
                 FROM
                     PatientControl pc,
-                    Patient pt
+                    Patient pt,
+					Users usr
                 WHERE
                     pt.PatientSerNum = pc.PatientSerNum
 				AND (pt.DeathDate 		IS NULL 
 					OR pt.DeathDate 	= '0000-00-00 00:00:00'
 					OR pt.DeathDate 	= '1970-01-01 00:00:00')
+				AND pt.PatientSerNum 	= usr.UserTypeSerNum
+				AND usr.UserType 		= 'Patient'
 				
             ";
 			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -78,7 +83,9 @@ class Patient {
                     'name'              => "$data[2] $data[3]",
                     'patientid'         => $data[4],
                     'lasttransferred'   => $data[5],
-					'disabled' 			=> intval($data[6])
+					'disabled' 			=> intval($data[6]),
+					'uid'				=> $data[7],
+					'email'				=> $data[8]
                 );
 
                 array_push($patientList, $patientArray);
@@ -597,7 +604,8 @@ class Patient {
 					pt.LastName,
 					pt.PatientId,
 					usr.Username,
-					pt.BlockedStatus
+					pt.BlockedStatus,
+					pt.email
 				FROM
 					Patient pt,
 					Users usr
@@ -617,7 +625,8 @@ class Patient {
 				'name'              => "$data[0] $data[1]",
 				'patientid'         => $data[2],
 				'uid' 				=> $data[3],
-				'disabled'			=> intval($data[4])
+				'disabled'			=> intval($data[4]),
+				'email'				=> $data[5]
 			);
 
 			return $patientDetails;
@@ -713,11 +722,12 @@ class Patient {
 			$query->execute();
 
 			# call our nodejs script to block user on Firebase
-			$command = "/usr/bin/node " . FRONTEND_ABS_PATH . 'js/firebaseSetBlock.js --blocked=' . $blockedStatus . ' --uid=' . $firebaseUID;
+			$command = "/usr/local/bin/node " . FRONTEND_ABS_PATH . 'js/firebaseSetBlock.js --blocked=' . $blockedStatus . ' --uid=' . $firebaseUID;
 			$commandResponse = system($command);
 
 			if ($commandResponse == 0) {
 				$response['value'] = 1; // Success
+				$response['error']['message'] = $command;
 			}
 			else {
 				$response['error']['message'] = "System command failed";
