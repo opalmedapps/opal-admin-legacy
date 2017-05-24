@@ -624,7 +624,7 @@ sub blockPatient
 		or die "Could not execute query: " . $query->errstr;
 
 	# call our nodejs script to block user on Firebase
-	my $command = "/usr/bin/node " . $Configs::FRONTEND_ABS_PATH . 'js/firebaseBlockUser.js ' . $firebaseUID;
+	my $command = "/usr/bin/node " . $Configs::FRONTEND_ABS_PATH . 'js/firebaseSetBlock.js --blocked=1 --uid=' . $firebaseUID;
 
 	my $response = system($command);
 
