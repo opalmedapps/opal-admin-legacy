@@ -187,6 +187,7 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 
 			$scope.currentPatient = jQuery.extend(true, {}, $scope.patientToToggleBlock);
 
+			console.log($scope.currentPatient);
 			// toggle block immediately
 			if ($scope.currentPatient.disabled == 0)
 				$scope.currentPatient.disabled = 1;
@@ -409,6 +410,8 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 								});
 						})
 						.catch (function (error){
+
+							console.log(error);
 							// On failed login, handle errors
 							var errorCode = error.code;
 							if (errorCode == 'auth/user-disabled') {
@@ -419,6 +422,7 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 								// set password is incorrect message
 								$scope.validOldPassword.status = 'invalid';
 								$scope.validOldPassword.message = 'Old password is incorrect';
+								$scope.$apply();
 
 							}
 						});
