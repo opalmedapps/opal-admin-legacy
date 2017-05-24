@@ -198,35 +198,6 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 
 				if ($scope.currentPatient.reason) {
 
-					// Firebase (un)block
-					var serviceAccount = require(ABS_PATH + "js/firebaseServiceAccountKey.json");
-					var admin = require("firebase-admin");
-
-					admin.initializeApp({
-						credential: admin.credential.cert(serviceAccount),
-						databaseURL: firebaseConfig.databaseURL
-					});
-
-					// If patient is marked to be blocked
-					if ($scope.currentPatient.disabled) {
-						admin.auth().updateUser($scope.patient.uid, {disabled: true})
-							.then(function (userRecord) {
-								console.log(userRecord);
-							})
-							.catch(function (error) {
-								console.log(error);
-							});
-					}
-					else { // else unblock
-						admin.auth().updateUser($scope.patient.uid, {disabled: false})
-							.then(function (userRecord) {
-								console.log(userRecord);
-							})
-							.catch(function (error) {
-								console.log(error);
-							});
-					}
-
 					// Database (un)block
 					$.ajax({
 						type: "POST",
@@ -306,10 +277,23 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 			// Show processing dialog
 			$scope.showProcessingModal();
 
+			$scope.patientIsDisabled = false;
+
 			// Call our API service to get the current patient details
 			patientAPIservice.getPatientDetails($scope.currentPatient.serial).success(function (response){
 
 				$scope.patient = response;
+
+				// if the patient is block, revoke ability to change password
+				if ($scope.patient.disabled) {
+
+					$scope.patientIsDisabled = true;
+
+					$scope.validOldPassword.status = 'invalid';
+					$scope.validOldPassword.message = 'Account is blocked. Unblock first to change password';
+
+				}
+
 				processingModal.close(); // hide processing modal
 				processingModal = null; // revoke reference
 			});
@@ -385,26 +369,8 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 
 			// Submit changes
 			$scope.updatePatient = function () {
+
 				if ($scope.checkForm()) {
-
-					var serviceAccount = require(ABS_PATH + "js/firebaseServiceAccountKey.json");
-					var admin = require("firebase-admin");
-
-					admin.initializeApp({
-						credential: admin.credential.cert(serviceAccount),
-						databaseURL: firebaseConfig.databaseURL
-					});
-
-					// Unblock user if they were initially blocked
-					if ($scope.patient.disabled) {
-						admin.auth().updateUser($scope.patient.uid, {disabled: false})
-							.then(function (userRecord) {
-								console.log(userRecord);
-							})
-							.catch(function (error) {
-								console.log(error);
-							});
-					}
 
 					// Authenticate user using username and old password
 					FB.auth().signInWithEmailAndPassword($scope.patient.email, $scope.patient.oldPassword)
@@ -446,26 +412,16 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 							// On failed login, handle errors
 							var errorCode = error.code;
 							if (errorCode == 'auth/user-disabled') {
-								// set user disabled message
+								// set user disabled message.. Should never happen
+								console.log("Patient is still disabled");
 							} 
 							else if (errorCode == 'auth/wrong-password') {
 								// set password is incorrect message
 								$scope.validOldPassword.status = 'invalid';
-								$scope.validOldPassword.message = 'Current password is incorrect';
+								$scope.validOldPassword.message = 'Old password is incorrect';
 
 							}
 						});
-
-					// disable patient if was originally disabled
-					if ($scope.patient.disabled) {
-						admin.auth().updateUser($scope.patient.uid, {disabled: true})
-							.then(function (userRecord) {
-								console.log(userRecord);
-							})
-							.catch(function (error) {
-								console.log(error);
-							});
-					}
 					
 				}
 			};

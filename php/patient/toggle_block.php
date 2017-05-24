@@ -7,6 +7,7 @@
 	$patientArray = array(
 		'disabled'			=> $_POST['disabled'],
 		'serial'			=> $_POST['serial'],
+		'uid'				=> $_POST['uid'],
 		'reason'			=> $_POST['reason']
 	);
 
