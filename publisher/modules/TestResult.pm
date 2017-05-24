@@ -399,6 +399,7 @@ sub getTestResultsFromSourceDB
                 AND pt.patient_ser          = Patient.PatientSer
                 AND Patient.SSN      		LIKE '$patientSSN%'
                 AND tr.trans_log_mtstamp    > '$lasttransfer'
+				AND tr.valid_entry_ind 		= 'Y'
 
             ";
 
