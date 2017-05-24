@@ -655,7 +655,7 @@ class Patient {
 				UPDATE 
 					Users
 				SET
-					Users.Password
+					Users.Password = \"$password\"
 				WHERE
 					Users.UserTypeSerNum = '$serial'
 				AND Users.UserType = 'Patient'
@@ -694,6 +694,7 @@ class Patient {
 		$blockedStatus 	= $patientArray['disabled'];
 		$reason 		= $patientArray['reason'];
 		$serial 		= $patientArray['serial'];
+		$firebaseUID 	= $patientArray['uid'];
 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -711,7 +712,17 @@ class Patient {
 			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
-			$response['value'] = 1; // Success
+			# call our nodejs script to block user on Firebase
+			$command = "/usr/bin/node " . FRONTEND_ABS_PATH . 'js/firebaseSetBlock.js --blocked=' . $blockedStatus . ' --uid=' . $firebaseUID;
+			$commandResponse = system($command);
+
+			if ($commandResponse == 0) {
+				$response['value'] = 1; // Success
+			}
+			else {
+				$response['error']['message'] = "System command failed";
+			}
+			
 			return $response;
 			
 		} catch (PDOException $e) {
@@ -720,9 +731,6 @@ class Patient {
 			 return $response;
 		}
 	 }
-		 
-
-
 }
 
 ?>
