@@ -16,17 +16,42 @@ class Tag {
 	}
 	/* Check if the tag exist
 	 * @param: $tag-tag need to be checked
-	 */
+	 * @return exist as boolean
+	 *
 	public function ifExist($tag){
+		$exist = false;
+		$name_EN = $tag['name_EN'];
+		try {
+			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
+			$sql = "
+				SELECT 
+					QuestionnaireTag.name_EN
+				FROM
+					QuestionnaireTag
+				WHERE
+					name_EN = \"$name_EN\"
+			";
+
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query->execute();
+
+			//fetch and check
+
+			return $exist;
+
+		} catch(PDOException $e) {
+ 			echo $e->getMessage();
+ 			return $exist;
+ 		}
 	}
 
-	/* Add new tag
+	 * Add new tag
 	 * @param: $tagAdded-new tag inserted
-	 */
-	public function addTag($tagAdded){
-		$
-	}
+	 **********INCOMPLETE*********
+	 *
+	public function addTag($tagAdded){} */
 
 	/* Get tags from table
 	 * @return array $tags
@@ -71,7 +96,7 @@ class Tag {
 
 			return $tags;
 
-		} catch (PDOException $e) {
+		} catch(PDOException $e) {
 			echo $e->getMessage();
 			return $tags;
 		}

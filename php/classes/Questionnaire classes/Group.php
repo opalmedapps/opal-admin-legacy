@@ -28,6 +28,7 @@ class Group{
 
 	/* Add new Question group
 	 * @param: $QuestionGroupadded-array
+	 * @return null
 	 */
 	public function addQuestionGroup($QuestionGroupadded){
 		$name_EN = $QuestionGroupadded['name_EN'];
@@ -84,7 +85,7 @@ class Group{
 			$query = $host_db_link->prepare( $sql );
 			$query->execute();
 
-		} catch( PDOException $e) {
+		} catch(PDOException $e) {
 			return $e->getMessage();
 		}
 	}
