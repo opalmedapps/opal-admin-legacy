@@ -17,6 +17,7 @@ class Question {
 
 	/* Add new question into table.
 	 * @param: $questionAdded-array that contains necessary infromation for a question to be stored into table
+	 * @return null
 	 */
  	public function addQuestion($questionAdded){
  		// properties of a question
@@ -50,7 +51,7 @@ class Question {
 			$query = $host_db_link->prepare( $sql );
 			$query->execute();
 
-		} catch( PDOException $e) {
+		} catch(PDOException $e) {
 			return $e->getMessage();
 		}
 	}
