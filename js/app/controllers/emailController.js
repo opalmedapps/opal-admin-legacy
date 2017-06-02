@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 	/******************************************************************************
 	* Controller for the email page
 	*******************************************************************************/
-	controller('emailController', function ($scope, $uibModal, $filter, $state, $sce, notifAPIservice) {
+	controller('emailController', function ($scope, $uibModal, $filter, $state, $sce, emailAPIservice) {
 
 		// Function to go to add email page
 		$scope.goToAddEmail = function () {
@@ -49,8 +49,7 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 			data: 'emailList',
 			columnDefs: [
 				{ field: 'name_EN', displayName: 'Title (EN / FR)', cellTemplate: cellTemplateName, width: '40%' },
-				{ field: 'type', displayName: 'Type', width: '15%' },
-				{ field: 'description_EN', displayName: 'Message (EN)', width: '30%' },
+				{ field: 'type', displayName: 'Type', width: '45%' },
 				{ name: 'Operations', width: '15%', cellTemplate: cellTemplateOperations, sortable: false }
 			],
 			useExternalFiltering: true,
@@ -68,7 +67,7 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 		$scope.emailToDelete = {};
 
 		// Call our API to get the list of existing emails
-		notifAPIservice.getEmails().success(function (response) {
+		emailAPIservice.getEmails().success(function (response) {
 			$scope.emailList = response;
 		});
 
@@ -109,7 +108,7 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 			// After update, refresh the email list
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing emails
-				notifAPIservice.getEmails().success(function (response) {
+				emailAPIservice.getEmails().success(function (response) {
 
 					// Assign the retrieved response
 					$scope.emailList = response;
@@ -138,7 +137,7 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 			$scope.showProcessingModal();
 
 			// Call our API to get the current email details
-			notifAPIservice.getEmailDetails($scope.currentEmail.serial).success(function (response) {
+			emailAPIservice.getEmailDetails($scope.currentEmail.serial).success(function (response) {
 				$scope.email = response;
 				processingModal.close(); // hide modal
 				processingModal = null; // remove reference
@@ -147,7 +146,7 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 			// Function to check necessary form fields are complete
 			$scope.checkForm = function () {
 				if ($scope.email.name_EN && $scope.email.name_FR
-					&& $scope.email.description_EN && $scope.email.description_FR
+					&& $scope.email.body_EN && $scope.email.body_FR
 					&& $scope.changesMade) {
 					return true;
 				}
@@ -209,7 +208,7 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 			// After delete, refresh the map list
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing emails
-				notifAPIservice.getEmails().success(function (response) {
+				emailAPIservice.getEmails().success(function (response) {
 					// Assign the retrieved response
 					$scope.emailList = response;
 				});
