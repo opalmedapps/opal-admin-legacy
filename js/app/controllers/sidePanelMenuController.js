@@ -65,6 +65,10 @@ angular.module('opalAdmin.controllers.sidePanelMenuController', ['ui.bootstrap',
 		$scope.goToUsers = function () {
 			$state.go('users');
 		};
+		// Function to go to email page
+		$scope.goToEmail = function () {
+			$state.go('email');
+		};
 
 	});
 
