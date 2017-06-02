@@ -120,7 +120,7 @@ angular.module('opalAdmin.controllers.newEmailController', ['ngAnimate', 'ngSani
 		};
 
 		// Function to submit the new email
-		$scope.submitEmail = function () {
+		$scope.submitEmailTemplate = function () {
 			if ($scope.checkForm()) {
 
 				// Submit 
