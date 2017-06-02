@@ -362,6 +362,38 @@ angular.module('opalAdmin.collections', [])
 
 	})
 
+	// Email API service
+	.factory('emailAPIservice', function ($http) {
+
+		var emailAPI = {};
+
+		// Function to get the list of email templates
+		emailAPI.getEmails = function () {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/email/emails.php?callback=JSON_CALLBACK"
+			});
+		};
+
+		// Function to get email details given a serial
+		emailAPI.getEmailDetails = function (serial) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/email/email_details.php?callback=JSON_CALLBACK&serial=" + serial
+			});
+		};
+
+		// Function to get distinct email types 
+		emailAPI.getEmailTypes = function () {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/email/email_types.php?callback=JSON_CALLBACK"
+			});
+		};
+
+		return emailAPI;
+	})
+
 	// install API service
 	.factory('installAPIservice', function ($http) {
 
