@@ -25,7 +25,8 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.userController',
 	'opalAdmin.controllers.newUserController',
 	'opalAdmin.controllers.installationController',
-	'opalAdmin.controllers.emailController'
+	'opalAdmin.controllers.emailController',
+	'opalAdmin.controllers.newEmailController'
 ]);
 
 
