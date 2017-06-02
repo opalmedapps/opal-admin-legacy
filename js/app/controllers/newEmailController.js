@@ -119,8 +119,8 @@ angular.module('opalAdmin.controllers.newEmailController', ['ngAnimate', 'ngSani
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 		};
 
-		// Function to submit the new post
-		$scope.submitPost = function () {
+		// Function to submit the new email
+		$scope.submitEmail = function () {
 			if ($scope.checkForm()) {
 
 				// Submit 
