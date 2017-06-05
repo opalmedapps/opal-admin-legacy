@@ -16,7 +16,7 @@
 	);
 
 	// Call function
-    $response = $emailObject->updatePost($emailArray);
+    $response = $emailObject->updateEmail($emailArray);
 
     print json_encode($response); // Return response
 
