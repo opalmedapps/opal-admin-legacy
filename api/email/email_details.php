@@ -11,7 +11,7 @@
 	$emailObj = new Email; // Object
 
 	// Call function
-	$emailDetails = $emailObj->getEmailDetails($serials);
+	$emailDetails = $emailObj->getEmailDetails($serial);
 
 	// Callback to http request
 	print $callback.'('.json_encode($emailDetails).')';
