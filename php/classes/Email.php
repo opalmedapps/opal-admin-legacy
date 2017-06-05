@@ -25,9 +25,12 @@
 					ec.Name_FR,
 					ec.Body_EN,
 					ec.Body_FR,
-					ec.EmailTypeSerNum
+					et.EmailTypeId
 				FROM
-					EmailControl ec
+					EmailControl ec,
+					EmailType et
+				WHERE
+					ec.EmailTypeSerNum = et.EmailTypeSerNum
 			";
 			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
