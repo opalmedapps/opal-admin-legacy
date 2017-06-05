@@ -36,8 +36,8 @@
                     <col width="93%"> 
                     <tr>
                       <td>
-                        <span ng-hide="newEmail.type" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="newEmail.type" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                        <span ng-hide="newEmail.type.name" class="glyphicon glyphicon-minus"></span>
+                        <span ng-show="newEmail.type.name" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                       </td>
                       <td>
                         <div class="horz-line" style="line-height: 0px;">
@@ -50,8 +50,8 @@
                     <tr>
                       <td></td>
                       <td>
-                        <div ng-show="newEmail.type" class="description">
-                          <p>{{newEmail.type}}</p>
+                        <div ng-show="newEmail.type.name" class="description">
+                          <p>{{newEmail.type.name}}</p>
                         </div>
                       </td>
                     </tr>  
