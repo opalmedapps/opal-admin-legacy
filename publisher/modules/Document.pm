@@ -427,7 +427,42 @@ sub getDocsFromSourceDB
                 my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
                 my $numOfExpressions = @expressions; 
                 my $counter = 0;
-                my $docInfo_sql = "";
+                my $docInfo_sql = "
+					WITH note_typ AS (
+						SELECT DISTINCT 
+							Expression.note_typ,
+							Expression.note_type_desc
+						FROM
+							varianenm.dbo.note_typ Expression
+					)
+					SELECT DISTINCT
+						visit_note.pt_id,
+						visit_note.pt_visit_id,
+						visit_note.visit_note_id,
+						visit_note.revised_ind,
+						visit_note.valid_entry_ind,
+						visit_note.err_rsn_txt,
+						visit_note.doc_file_loc,
+						visit_note.appr_stkh_id,
+						CONVERT(VARCHAR, visit_note.appr_tstamp, 120),
+						visit_note.author_stkh_id,
+						CONVERT(VARCHAR, visit_note.note_tstamp, 120),
+						visit_note.trans_log_userid,
+						CONVERT(VARCHAR, visit_note.trans_log_tstamp, 120),
+						note_typ.note_typ_desc
+					FROM	
+						variansystem.dbo.Patient Patient,
+						varianenm.dbo.visit_note visit_note,
+						note_typ,
+						varianenm.dbo.pt pt
+					WHERE
+						pt.pt_id 			            = visit_note.pt_id
+					AND pt.patient_ser			        = Patient.PatientSer
+					AND Patient.SSN 		       	 	LIKE '$patientSSN%'
+					AND visit_note.note_typ		        = note_typ.note_typ
+					AND visit_note.appr_flag		    = 'A'
+					AND (
+				";
 
                 foreach my $Expression (@expressions) {
 
@@ -446,40 +481,18 @@ sub getDocsFromSourceDB
 		            }
         		
 	        		$docInfo_sql .= "
-		        		SELECT DISTINCT
-			        		visit_note.pt_id,
-				        	visit_note.pt_visit_id,
-					        visit_note.visit_note_id,
-	    	    			visit_note.revised_ind,
-		    	    		visit_note.valid_entry_ind,
-			    	    	visit_note.err_rsn_txt,
-				    	    visit_note.doc_file_loc,
-					        visit_note.appr_stkh_id,
-					        CONVERT(VARCHAR, visit_note.appr_tstamp, 120),
-	    				    visit_note.author_stkh_id,
-		    			    CONVERT(VARCHAR, visit_note.note_tstamp, 120),
-			    		    visit_note.trans_log_userid,
-				    	    CONVERT(VARCHAR, visit_note.trans_log_tstamp, 120),
-				    	    CASE WHEN 1=1 THEN '$expressionser' ELSE '$expressionser' END
-	        			FROM	
-		        			variansystem.dbo.Patient Patient,
-			        		varianenm.dbo.visit_note visit_note,
-				        	varianenm.dbo.note_typ note_typ,
-					        varianenm.dbo.pt pt
-	        			WHERE
-		        			pt.pt_id 			            = visit_note.pt_id
-			        	AND pt.patient_ser			        = Patient.PatientSer
-				        AND Patient.SSN 		       	 	LIKE '$patientSSN%'
-	        			AND visit_note.note_typ		        = note_typ.note_typ
-		        		AND visit_note.appr_flag		    = 'A'
-			        	AND	visit_note.trans_log_mtstamp	> '$lasttransfer'
-	                	AND RTRIM(note_typ.note_typ_desc)   = '$expressionName'
+						(RTRIM(note_typ.note_typ_desc)   = '$expressionName'
+		        		AND	visit_note.trans_log_mtstamp	> '$lasttransfer')
 	    		    ";
 					$counter++;
 	        		# concat "UNION" until we've reached the last query
 	        		if ($counter < $numOfExpressions) {
-	        			$docInfo_sql .= "UNION";
+	        			$docInfo_sql .= "OR";
 	        		}
+					# close bracket at end
+					else {
+						$docInfo_sql .= ")";
+					}
 	        	}
     	    	# prepare query
 	    	    my $query = $sourceDatabase->prepare($docInfo_sql)
@@ -511,8 +524,15 @@ sub getDocsFromSourceDB
                     $dos            = $row->[10];
                     $createdby      = Staff::reassignStaff($row->[11]);
                     $createdts      = $row->[12];
-                    $expressionser 	= $row->[13];
+                    $expressionname 	= $row->[13];
                     	
+					my $expressionser;
+					foreach my $checkExpression (@expressions) {
+						if ($checkExpression->{_name} eq $expressionname){ #match
+							$expressionser = $checkExpression->{_ser};
+							last; # break out of loop
+						}
+					}
     
         			$document->setDocSourceUID($sourceuid);
                     $document->setDocSourceDatabaseSer($sourceDBSer);
