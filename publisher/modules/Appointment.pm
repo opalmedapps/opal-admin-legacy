@@ -383,7 +383,7 @@ sub getApptsFromSourceDB
 						sa.ObjectStatus,
 						CONVERT(VARCHAR, sa.ActualStartDate, 120),
 						CONVERT(VARCHAR, sa.ActualEndDate, 120),
-						CASE WHEN 1=1 THEN '$expressionser' ELSE '$expressionser' END 
+						vva.Expression1
 					FROM 
 						variansystem.dbo.Patient pt, 
 						variansystem.dbo.ScheduledActivity sa, 
@@ -435,7 +435,7 @@ sub getApptsFromSourceDB
 					}
 	        	}
 				
-                print "$apptInfo_sql\n";
+                #print "$apptInfo_sql\n";
 		        # prepare query
     		    my $query = $sourceDatabase->prepare($apptInfo_sql)
 	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;
@@ -456,10 +456,18 @@ sub getApptsFromSourceDB
                     $state          = $row->[4];
                     $actualstartdate    = $row->[5];
                     $actualenddate      = $row->[6];
-                    $expressionser 	= $row->[7];
+                    $expressionname 	= $row->[7];
 
                     $priorityser    = Priority::getClosestPriority($patientSer, $startdatetime);
                     $diagnosisser   = Diagnosis::getClosestDiagnosis($patientSer, $startdatetime);
+
+					my $expressionser;
+					foreach my $checkExpression (@expressions) {
+						if ($checkExpression->{_name} eq $expressionname){ #match
+							$expressionser = $checkExpression->{_ser};
+							last; # break out of loop
+						}
+					}
     		
     	    		$appointment->setApptPatientSer($patientSer);
 	    	    	$appointment->setApptSourceUID($sourceuid);
