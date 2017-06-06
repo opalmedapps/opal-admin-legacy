@@ -431,7 +431,7 @@ sub getDocsFromSourceDB
 					WITH note_typ AS (
 						SELECT DISTINCT 
 							Expression.note_typ,
-							Expression.note_type_desc
+							Expression.note_typ_desc
 						FROM
 							varianenm.dbo.note_typ Expression
 					)
