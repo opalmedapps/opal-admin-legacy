@@ -367,7 +367,14 @@ sub getApptsFromSourceDB
                 my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
                 my $numOfExpressions = @expressions; 
                 my $counter = 0;
-                my $apptInfo_sql = "";
+                my $apptInfo_sql = "
+					WITH vva AS (
+						SELECT DISTINCT 
+							Expression.Expression1,
+							Expression.LookupValue
+						FROM
+							variansystem.dbo.vv_ActivityLng Expression
+					)";
 
                 foreach my $Expression (@expressions) {
 
@@ -401,7 +408,7 @@ sub getApptsFromSourceDB
 				    	    variansystem.dbo.ScheduledActivity sa, 
 	    			    	variansystem.dbo.ActivityInstance ai, 
 		    			    variansystem.dbo.Activity act, 
-	    		    		variansystem.dbo.vv_ActivityLng vva, 
+	    		    		vva, 
 		    		    	variansystem.dbo.Resource re,
 			    		    variansystem.dbo.Attendee att
 	    		    	WHERE 
