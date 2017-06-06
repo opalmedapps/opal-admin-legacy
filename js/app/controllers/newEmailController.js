@@ -53,8 +53,8 @@ angular.module('opalAdmin.controllers.newEmailController', ['ngAnimate', 'ngSani
 
 		// Initialize the new email object
 		$scope.newEmail = {
-			name_EN: "",
-			name_FR: "",
+			subject_EN: "",
+			subject_FR: "",
 			body_EN: "",
 			body_FR: "",
 			type: ""
@@ -69,7 +69,7 @@ angular.module('opalAdmin.controllers.newEmailController', ['ngAnimate', 'ngSani
 		// Function to toggle necessary changes when updating titles
 		$scope.titleUpdate = function () {
 
-			if ($scope.newEmail.name_EN && $scope.newEmail.name_FR) {
+			if ($scope.newEmail.subject_EN && $scope.newEmail.subject_FR) {
 				// Toggle step completion
 				steps.title.completed = true;
 				// Count the number of completed steps

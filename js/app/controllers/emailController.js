@@ -21,7 +21,7 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 		// Templates for the table
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents"' +
 			'ng-click="grid.appScope.editEmail(row.entity)">' +
-			'<a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></div>';
+			'<a href="">{{row.entity.subject_EN}} / {{row.entity.subject_FR}}</a></div>';
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
 			'<strong><a href="" ng-click="grid.appScope.editEmail(row.entity)">Edit</a></strong> ' +
 			'- <strong><a href="" ng-click="grid.appScope.deleteEmail(row.entity)">Delete</a></strong></div>';
@@ -31,7 +31,7 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 			var matcher = new RegExp($scope.filterValue, 'i');
 			renderableRows.forEach(function (row) {
 				var match = false;
-				['name_EN'].forEach(function (field) {
+				['subject_EN'].forEach(function (field) {
 					if (row.entity[field].match(matcher)) {
 						match = true;
 					}
@@ -48,7 +48,7 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 		$scope.gridOptions = {
 			data: 'emailList',
 			columnDefs: [
-				{ field: 'name_EN', displayName: 'Title (EN / FR)', cellTemplate: cellTemplateName, width: '40%' },
+				{ field: 'subject_EN', displayName: 'Title (EN)', cellTemplate: cellTemplateName, width: '40%' },
 				{ field: 'type', displayName: 'Type', width: '45%' },
 				{ name: 'Operations', width: '15%', cellTemplate: cellTemplateOperations, sortable: false }
 			],
@@ -145,7 +145,7 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 
 			// Function to check necessary form fields are complete
 			$scope.checkForm = function () {
-				if ($scope.email.name_EN && $scope.email.name_FR
+				if ($scope.email.subject_EN && $scope.email.subject_FR
 					&& $scope.email.body_EN && $scope.email.body_FR
 					&& $scope.changesMade) {
 					return true;
@@ -171,7 +171,7 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 							// Show success or failure depending on response
 							if (response.value) {
 								$scope.setBannerClass('success');
-								$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.email.name_EN + "/ " + $scope.email.name_FR + "\"!";
+								$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.email.subject_EN + "/ " + $scope.email.subject_FR + "\"!";
 							}
 							else {
 								$scope.setBannerClass('danger');
@@ -229,7 +229,7 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 						// Show success or failure depending on response
 						if (response.value) {
 							$scope.setBannerClass('success');
-							$scope.$parent.bannerMessage = "Successfully deleted \"" + $scope.emailToDelete.name_EN + "/ " + $scope.emailToDelete.name_FR + "\"!";
+							$scope.$parent.bannerMessage = "Successfully deleted \"" + $scope.emailToDelete.subject_EN + "/ " + $scope.emailToDelete.subject_FR + "\"!";
 						}
 						else {
 							$scope.setBannerClass('danger');

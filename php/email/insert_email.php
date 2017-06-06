@@ -5,8 +5,8 @@
 
 	// Construct array
 	$emailArray	= array(
-		'name_EN' 	        => $_POST['name_EN'],
-		'name_FR' 	        => $_POST['name_FR'],
+		'subject_EN' 	    => $_POST['subject_EN'],
+		'subject_FR' 	    => $_POST['subject_FR'],
         'body_EN'           => str_replace(array('"', "'"), '\"', $_POST['body_EN']),
         'body_FR'           => str_replace(array('"', "'"), '\"', $_POST['body_FR']),
  		'type' 		        => $_POST['type']['serial']

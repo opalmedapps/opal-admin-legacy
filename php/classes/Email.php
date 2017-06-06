@@ -21,8 +21,8 @@
 			$sql = "
 				SELECT DISTINCT
 					ec.EmailControlSerNum,
-					ec.Name_EN,
-					ec.Name_FR,
+					ec.Subject_EN,
+					ec.Subject_FR,
 					ec.Body_EN,
 					ec.Body_FR,
 					et.EmailTypeId
@@ -38,16 +38,16 @@
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
 				$serial 		= $data[0];
-				$name_EN 		= $data[1];
-				$name_FR 		= $data[2];
+				$subject_EN 	= $data[1];
+				$subject_FR 	= $data[2];
 				$body_EN 		= $data[3];
 				$body_FR 		= $data[4];
 				$type 			= $data[5];
 
 				$emailArray = array(
 					'serial'		=> $serial,
-					'name_EN'		=> $name_EN,
-					'name_FR' 		=> $name_FR,
+					'subject_EN'	=> $subject_EN,
+					'subject_FR' 	=> $subject_FR,
 					'body_EN'		=> $body_EN,
 					'body_FR'		=> $body_FR,
 					'type'			=> $type
@@ -77,8 +77,8 @@
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			$sql = "
 				SELECT DISTINCT
-					ec.Name_EN,
-					ec.Name_FR,
+					ec.Subject_EN,
+					ec.Subject_FR,
 					ec.Body_EN,
 					ec.Body_FR,
 					ec.EmailTypeSerNum
@@ -92,16 +92,16 @@
 
 			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
 
-			$name_EN 		= $data[0];
-			$name_FR 		= $data[1];
+			$subject_EN 	= $data[0];
+			$subject_FR 	= $data[1];
 			$body_EN 		= $data[2];
 			$body_FR 		= $data[3];
 			$type 			= $data[4];
 
 			$emailDetails = array(
 				'serial' 		=> $serial,
-				'name_EN'		=> $name_EN,
-				'name_FR'		=> $name_FR,
+				'subject_EN'	=> $subject_EN,
+				'subject_FR'	=> $subject_FR,
 				'body_EN'		=> $body_EN,
 				'body_FR'		=> $body_FR,
 				'type'			=> $type
@@ -165,10 +165,10 @@
 	*/
 	public function insertEmail($emailDetails){
 
-		$name_EN 			= $emailDetails['name_EN'];
-		$name_FR 			= $emailDetails['name_FR'];
-		$body_EN 			= $emailDetails['body_EN'];
-		$body_FR 			= $emailDetails['body_FR'];
+		$subject_EN 	= $emailDetails['subject_EN'];
+		$subject_FR 	= $emailDetails['subject_FR'];
+		$body_EN 		= $emailDetails['body_EN'];
+		$body_FR 		= $emailDetails['body_FR'];
 		$type 			= $emailDetails['type'];
 
 		try {
@@ -177,16 +177,16 @@
 			$sql = "
 				INSERT INTO 
 					EmailControl (
-						Name_EN,
-						Name_FR,
+						Subject_EN,
+						Subject_FR,
 						Body_EN,
 						Body_FR,
 						EmailTypeSerNum,
 						DateAdded
 					)
 				VALUES (
-					\"$name_EN\",
-					\"$name_FR\",
+					\"$subject_EN\",
+					\"$subject_FR\",
 					\"$body_EN\",
 					\"$body_FR\",
 					'$type',
@@ -210,8 +210,8 @@
 	*/
 	public function updateEmail ($emailDetails) {
 
-		$name_EN 		= $emailDetails['name_EN'];
-		$name_FR 		= $emailDetails['name_FR'];
+		$subject_EN 	= $emailDetails['subject_EN'];
+		$subject_FR 	= $emailDetails['subject_FR'];
 		$body_EN 		= $emailDetails['body_EN'];
 		$body_FR 		= $emailDetails['body_FR'];
 		$serial 		= $emailDetails['serial'];
@@ -228,8 +228,8 @@
 				UPDATE
 					EmailControl
 				SET
-					EmailControl.Name_EN 			= \"$name_EN\",
-					EmailControl.Name_FR 			= \"$name_FR\",
+					EmailControl.Subject_EN 		= \"$subject_EN\",
+					EmailControl.Subject_FR 		= \"$subject_FR\",
 					EmailControl.Body_EN 			= \"$body_EN\",
 					EmailControl.Body_FR 		 	= \"$body_FR\"
 				WHERE
