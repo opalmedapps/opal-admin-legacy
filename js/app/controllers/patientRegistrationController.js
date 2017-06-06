@@ -22,6 +22,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			security1: { completed: false },
 			security2: { completed: false },
 			security3: { completed: false },
+			access: {completed: false},
 			checks: { completed: false }
 		};
 		var steps = jQuery.extend(true, {}, defaultSteps);
@@ -30,7 +31,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 		$scope.numOfCompletedSteps = 0;
 
 		// Default total number of steps 
-		$scope.stepTotal = 7;
+		$scope.stepTotal = 8;
 
 		// Progress bar based on default completed steps and total
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -83,6 +84,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			securityQuestion1: { serial: null, answer: null },
 			securityQuestion2: { serial: null, answer: null },
 			securityQuestion3: { serial: null, answer: null },
+			accessLevel: null,
 			SSN: null,
 			data: null
 		};
@@ -301,6 +303,15 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			id: 'FR'
 		}];
 
+		// Initialize a list of access levels
+		$scope.accessLevels = [{
+			name: $filter('translate')('ACCESS_LEVEL_1'),
+			id: 1
+		}, {
+			name: $filter('translate')('ACCESS_LEVEL_3'),
+			id: 3
+		}];
+
 		// Keep track of cellNum status 
 		$scope.validCellNum = { status: null, message: null };
 		$scope.validateCellNum = function (cellNum) {
@@ -467,6 +478,16 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 				steps.security3.completed = true;
 			else
 				steps.security3.completed = false;
+
+			$scope.numOfCompletedSteps = stepsCompleted(steps);
+			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+		};
+		// Function to toggle steps when updating the access level field
+		$scope.accessLevelUpdate = function () {
+			if ($scope.newPatient.accessLevel)
+				steps.access.completed = true;
+			else
+				steps.access.completed = false;
 
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
