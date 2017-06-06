@@ -17,11 +17,11 @@ package Patient; # Declare package name
 use Exporter; # To export subroutines and variables
 use Database; # Use our custom database module Database.pm
 use Configs; # Use our custom configs module
+use Email; # Use our custom email module
 use Time::Piece; 
 use POSIX;
 use Storable qw(dclone); # for deep copies
 use Data::Dumper;
-use MIME::Lite; # emailing
 
 # Get the current time
 my $today = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
@@ -634,33 +634,6 @@ sub blockPatient
 }
 
 #======================================================================================
-# Subroutine to send an email to a patient
-#======================================================================================
-sub sendPatientEmail
-{
-
-	my ($patient, $message) = @_; # get patient object with message
-
-	# get patient email
-	my $patientEmail = $patient->getPatientEmail();
-
-	my $subject = "Your Opal account has been disabled";
-	my $sender = "opal\@muhc.mcgill.ca";
-
-	my $mime = MIME::Lite->new(
-	    'From'      => $sender,
-	    'To'        => $patientEmail,
-	    'Subject'   => $subject,
-	    'Type'      => 'text/html',
-	    'Data'      => $message,
-	);
-
-	$mime->send('smtp', '172.25.123.208') or die "Failed to send\n";
-
-}
-
-
-#======================================================================================
 # Subroutine to unset patient control
 #======================================================================================
 sub unsetPatientControl
@@ -1031,6 +1004,12 @@ sub compareWith
 		# block patient if patient passed 13 years of age
 		if ($OPatientAge < 14 && $SPatientAge >= 14 && $OPatientAge > 0) {
 			blockPatient($UpdatedPatient, "Patient passed 13 years of age");
+			my $patientser = $UpdatedPatient->getPatientSer();
+			my $patientemail = $UpdatedPatient->getPatientEmail();
+			my $email = Email::getEmailControlDetails($patientser, "PaedPatientBlock");
+			$email->setEmailToAddress($patientemail);
+			$email->sendEmail($patientser);
+
 			#$UpdatedPatient->sendPatientEmail("<h1>Hello</h1>");
 		}
 	}
