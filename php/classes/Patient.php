@@ -722,7 +722,9 @@ class Patient {
 			$query->execute();
 
 			# call our nodejs script to block user on Firebase
-			$command = "/usr/local/bin/node " . FRONTEND_ABS_PATH . 'js/firebaseSetBlock.js --blocked=' . $blockedStatus . ' --uid=' . $firebaseUID;
+            $command = "/usr/bin/node " . FRONTEND_ABS_PATH . 'js/firebaseSetBlock.js --blocked=' . $blockedStatus . ' --uid=' . $firebaseUID;
+            # uncomment appropriate system call
+			#$command = "/usr/local/bin/node " . FRONTEND_ABS_PATH . 'js/firebaseSetBlock.js --blocked=' . $blockedStatus . ' --uid=' . $firebaseUID;
 			$commandResponse = system($command);
 
 			if ($commandResponse == 0) {
