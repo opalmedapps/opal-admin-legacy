@@ -405,8 +405,8 @@ class Patient {
                     '$email',
                     '$language',
                     '$SSN',
-                    'AdminPanel',
-					NOW()
+                    'opalAdmin',
+					DATE_ADD(NOW(), INTERVAL 1 YEAR)
                 )
             ";
             $query = $host_db_link->prepare( $sql );
@@ -428,7 +428,7 @@ class Patient {
                     '$patientSer',
                     '$uid',
                     '$password',
-                    'AdminPanel'
+                    'opalAdmin'
                 )
             ";
             $query = $host_db_link->prepare( $sql );
