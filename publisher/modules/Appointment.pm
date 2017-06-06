@@ -374,7 +374,34 @@ sub getApptsFromSourceDB
 							Expression.LookupValue
 						FROM
 							variansystem.dbo.vv_ActivityLng Expression
-					)";
+					)
+					SELECT DISTINCT
+						sa.ScheduledActivitySer,
+						CONVERT(VARCHAR, sa.ScheduledStartTime, 120),
+						CONVERT(VARCHAR, sa.ScheduledEndTime, 120),
+						sa.ScheduledActivityCode,
+						sa.ObjectStatus,
+						CONVERT(VARCHAR, sa.ActualStartDate, 120),
+						CONVERT(VARCHAR, sa.ActualEndDate, 120),
+						CASE WHEN 1=1 THEN '$expressionser' ELSE '$expressionser' END 
+					FROM 
+						variansystem.dbo.Patient pt, 
+						variansystem.dbo.ScheduledActivity sa, 
+						variansystem.dbo.ActivityInstance ai, 
+						variansystem.dbo.Activity act, 
+						vva, 
+						variansystem.dbo.Resource re,
+						variansystem.dbo.Attendee att
+					WHERE 
+						sa.ActivityInstanceSer 		= ai.ActivityInstanceSer 
+					AND ai.ActivitySer 			    = act.ActivitySer 
+					AND act.ActivityCode 		    = vva.LookupValue 
+					AND pt.PatientSer 				= sa.PatientSer 
+					AND pt.SSN				        LIKE '$patientSSN%'
+					AND att.ActivityInstanceSer 	= sa.ActivityInstanceSer
+					AND att.ResourceSer 		    = re.ResourceSer
+					AND (
+				";
 
                 foreach my $Expression (@expressions) {
 
@@ -394,41 +421,21 @@ sub getApptsFromSourceDB
 
 		            # concatenate query
 	        		$apptInfo_sql .= "
-		        		SELECT DISTINCT
-			        		sa.ScheduledActivitySer,
-					        CONVERT(VARCHAR, sa.ScheduledStartTime, 120),
-	        				CONVERT(VARCHAR, sa.ScheduledEndTime, 120),
-	                        sa.ScheduledActivityCode,
-	                        sa.ObjectStatus,
-	                        CONVERT(VARCHAR, sa.ActualStartDate, 120),
-	                        CONVERT(VARCHAR, sa.ActualEndDate, 120),
-	                        CASE WHEN 1=1 THEN '$expressionser' ELSE '$expressionser' END 
-		    	    	FROM 
-			    	    	variansystem.dbo.Patient pt, 
-				    	    variansystem.dbo.ScheduledActivity sa, 
-	    			    	variansystem.dbo.ActivityInstance ai, 
-		    			    variansystem.dbo.Activity act, 
-	    		    		vva, 
-		    		    	variansystem.dbo.Resource re,
-			    		    variansystem.dbo.Attendee att
-	    		    	WHERE 
-		    		        sa.ActivityInstanceSer 		= ai.ActivityInstanceSer 
-	    		    	AND ai.ActivitySer 			    = act.ActivitySer 
-		    		    AND act.ActivityCode 		    = vva.LookupValue 
-	    	    		AND pt.PatientSer 				= sa.PatientSer 
-		    	    	AND pt.SSN				        LIKE '$patientSSN%'
-	    		    	AND att.ActivityInstanceSer 	= sa.ActivityInstanceSer
-	        	    	AND att.ResourceSer 		    = re.ResourceSer
-			        	AND sa.HstryDateTime	 		> '$lasttransfer' 
-	                    AND vva.Expression1             = '$expressionName'
+						(vva.Expression1             = '$expressionName'
+			        	AND sa.HstryDateTime	 	> '$lasttransfer') 
 	        		";
 	        		$counter++;
 	        		# concat "UNION" until we've reached the last query
 	        		if ($counter < $numOfExpressions) {
-	        			$apptInfo_sql .= "UNION";
+	        			$apptInfo_sql .= "OR";
 	        		}
+					# close bracket at end
+					else {
+						$apptInfo_sql .= ")";
+					}
 	        	}
-                #print "$apptInfo_sql\n";
+				
+                print "$apptInfo_sql\n";
 		        # prepare query
     		    my $query = $sourceDatabase->prepare($apptInfo_sql)
 	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;
