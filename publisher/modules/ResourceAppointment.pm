@@ -178,7 +178,35 @@ sub getResourceAppointmentsFromSourceDB
                 my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
                 my $numOfExpressions = @expressions; 
                 my $counter = 0;
-                my $raInfo_sql = "";
+                my $raInfo_sql = "
+					WITH vva AS (
+						SELECT DISTINCT 
+							Expression.Expression1,
+							Expression.LookupValue
+						FROM
+							variansystem.dbo.vv_ActivityLng Expression
+					)
+					SELECT DISTINCT
+						ra.ResourceSer,
+						ra.ScheduledActivitySer,
+						ra.ExclusiveFlag,
+						ra.PrimaryFlag
+					FROM
+						variansystem.dbo.Patient pt,
+						variansystem.dbo.ResourceActivity ra,
+						variansystem.dbo.ScheduledActivity sa,
+						variansystem.dbo.ActivityInstance ai,
+						variansystem.dbo.Activity Activity,
+						vva
+					WHERE
+						sa.ActivityInstanceSer		= ai.ActivityInstanceSer
+					AND sa.PatientSer               = pt.PatientSer
+					AND pt.SSN                      LIKE '$patientSSN%'
+					AND ai.ActivitySer			    = Activity.ActivitySer
+					AND	Activity.ActivityCode		= vva.LookupValue
+					AND	sa.ScheduledActivitySer		= ra.ScheduledActivitySer
+					AND (
+				";
 
                 foreach my $Expression (@expressions) {
 
@@ -197,34 +225,19 @@ sub getResourceAppointmentsFromSourceDB
 		            }
 
         			$raInfo_sql .= "
-		        		SELECT DISTINCT
-			        		ra.ResourceSer,
-				        	ra.ScheduledActivitySer,
-					        ra.ExclusiveFlag,
-	    				    ra.PrimaryFlag
-	    	    		FROM
-	                        variansystem.dbo.Patient pt,
-			        		variansystem.dbo.ResourceActivity ra,
-				        	variansystem.dbo.ScheduledActivity sa,
-					        variansystem.dbo.ActivityInstance ai,
-	    				    variansystem.dbo.Activity Activity,
-	    	    			variansystem.dbo.vv_ActivityLng va
-		    	    	WHERE
-			    	    	sa.ActivityInstanceSer		= ai.ActivityInstanceSer
-	                    AND sa.PatientSer               = pt.PatientSer
-	                    AND pt.SSN                      LIKE '$patientSSN%'
-	        			AND ai.ActivitySer			    = Activity.ActivitySer
-		        		AND	Activity.ActivityCode		= va.LookupValue
-			        	AND	sa.ScheduledActivitySer		= ra.ScheduledActivitySer
-				        AND	ra.HstryDateTime		    > '$lasttransfer'
-		    		    AND	va.Expression1			    = '$expressionName'
+						(vva.Expression1			    = '$expressionName'
+		        		AND ra.HstryDateTime		> '$lasttransfer')
 	        
 	    		    ";
 	    		    $counter++;
 	        		# concat "UNION" until we've reached the last query
 	        		if ($counter < $numOfExpressions) {
-	        			$raInfo_sql .= "UNION";
+	        			$raInfo_sql .= "OR";
 	        		}
+					# close bracket at end
+					else {
+						$raInfo_sql .= ")";
+					}
 	        	}
                 #print "$raInfo_sql\n";	
 		        # prepare query
