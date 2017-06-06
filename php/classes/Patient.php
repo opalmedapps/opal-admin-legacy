@@ -364,6 +364,7 @@ class Patient {
         $answer3            = $securityQuestion3['answer'];
         $cellNum            = $patientArray['cellNum'];
         $SSN                = $patientArray['SSN'];
+        $accessLevel        = $patientArray['accessLevel'];
         $sourceuid          = $patientArray['data']['sourceuid'];
         $firstname          = $patientArray['data']['firstname'];
         $lastname           = $patientArray['data']['lastname'];
@@ -390,6 +391,7 @@ class Patient {
                         Email,
                         Language,
                         SSN,
+                        AccessLevel,
                         SessionId,
 						ConsentFormExpirationDate
                     )
@@ -405,6 +407,7 @@ class Patient {
                     '$email',
                     '$language',
                     '$SSN',
+                    '$accessLevel',
                     'opalAdmin',
 					DATE_ADD(NOW(), INTERVAL 1 YEAR)
                 )
