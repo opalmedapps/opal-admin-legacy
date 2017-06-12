@@ -291,7 +291,7 @@
               </div>
             </div>    
             <div class="row">
-              <div ng-repeat="type in postTypes" class="col-md-2"> 
+              <div ng-repeat="type in postTypes" class="col-md-2 item-panel-select"> 
                 <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: newPost.type.name == type.name}" ng-click="typeUpdate(type)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
                   <div class="panel-info" ng-class="{active: newPost.type.name == type.name}">
                     <div class="panel-content" style="text-align:center">
