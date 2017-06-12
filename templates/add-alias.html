@@ -2,7 +2,7 @@
     <div id="top">
       <div class="clearfix">
         <div class="row">
-          <div class="col-md-2" style="position:fixed;">
+          <div class="col-md-2">
             <div ng-controller="sidePanelMenuController">
               <div class="row side-logo" ng-click="goToHome()">
                 <div class="col-md-12">
@@ -12,198 +12,190 @@
                   <h1 class="animated fadeIn">opal <strong>ADMIN</strong> </h1>
                 </div>
               </div>   
-            </div>  
-            <div class="row">
-              <div class="side-menu-title">
-                <div class="horz-line" style="height: 10px; text-align: center">
-                  <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <h2>Summary</h2>
-                  </span>  
-                </div>  
-              </div>
             </div>
-            <div class="row">
-              <div class="progress progress-striped active">
-                <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+            <div class="summary-fix">
+              <div class="row">
+                <div class="side-menu-title">
+                  <div class="horz-line" style="height: 10px; text-align: center">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <h2>Summary</h2>
+                    </span>  
+                  </div>  
                 </div>
               </div>
-            </div>
-            <div class="panel-container">
-              <div class="panel-info">
-                <div class="panel-content" style="padding-top: 0">
-                  <table class="summary-box" style="width: 100%">
-                    <col width="7%">
-                    <col width="93%"> 
+              <div class="row">
+                <div class="progress progress-striped active">
+                  <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                  </div>
+                </div>
+              </div>
+              <uib-accordion>
 
-                    <tr>
-                      <td>
-                        <span ng-hide="newAlias.source_db" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="newAlias.source_db" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Source Database</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>
-                        <div ng-show="newAlias.source_db.name" class="description">
-                          <p>{{newAlias.source_db.name}}</p>
-                        </div>
-                      </td>
-                    </tr>     
+                <div uib-accordion-group is-open="source.open" class="panel-container summary-box" is-disabled="!newAlias.source_db">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newAlias.source_db" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Source Database</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i ng-if="newAlias.source_db" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': source.open, 'glyphicon-chevron-right': !source.open}"></i>
+                      </div> 
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newAlias.source_db.name" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newAlias.source_db.name}}
+                    </p>
+                  </div> 
+                </div>
 
-                    <tr>
-                      <td>
-                        <span ng-hide="newAlias.name_EN && newAlias.name_FR && newAlias.description_EN && newAlias.description_FR" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="newAlias.name_EN && newAlias.name_FR && newAlias.description_EN && newAlias.description_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Title & Description</strong>
-                          </span>
-                        </div> 
-                      </td>
+                <div uib-accordion-group is-open="title_description.open" class="panel-container summary-box animated" ng-class="{fadeInUp: title_description.show}" ng-if="title_description.show" is-disabled="!newAlias.name_EN && !newAlias.name_FR && !newAlias.description_EN && !newAlias.description_FR">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newAlias.name_EN && newAlias.name_FR && newAlias.description_EN && newAlias.description_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Title & Description</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': title_description.open, 'glyphicon-chevron-right': !title_description.open}" ng-if="newAlias.name_EN || newAlias.name_FR || newAlias.description_EN || newAlias.description_FR"></i>
+                      </div> 
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newAlias.name_EN || newAlias.description_EN" class="description">
+                    <p ng-if="newAlias.name_EN" style="margin-bottom:5px;">
+                      <strong>EN</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newAlias.name_EN}}
+                    </p>
+                    <p ng-if="newAlias.description_EN" style="padding-left: 10px; font-size: 10px;"><em>{{newAlias.description_EN}}</em></p>  
+                  </div>
+                  <div ng-if="newAlias.name_FR || newAlias.description_FR" class="description">
+                    <p ng-if="newAlias.name_FR" style="margin-bottom:5px;">
+                      <strong>FR</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newAlias.name_FR}}
+                    </p>
+                    <p ng-if="newAlias.description_FR" style="padding-left: 10px; font-size: 10px;"><em>{{newAlias.description_FR}}</em></p>  
+                  </div>
+                </div>
 
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>
-                        <div ng-show="newAlias.name_EN || newAlias.description_EN" class="description">
-                          <p ng-show="newAlias.name_EN" style="margin-bottom:5px;"><strong>EN: </strong>{{newAlias.name_EN}}</p>
-                          <p ng-show="newAlias.description_EN"><em>{{newAlias.description_EN}}</em></p>
-                        </div>
-                        <div ng-show="newAlias.name_FR || newAlias.description_FR" class="description">
-                          <p ng-show="newAlias.name_FR" style="margin-bottom:5px;"><strong>FR: </strong>{{newAlias.name_FR}}</p>
-                          <p ng-show="newAlias.description_FR"><em>{{newAlias.description_FR}}</em></p>
-                        </div>
-                      </td>
-                    </tr>    
+                <div uib-accordion-group is-open="edumat.open" class="panel-container summary-box animated" ng-class="{fadeInUp: edumat.show}" is-disabled="!newAlias.eduMat" ng-if="edumat.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newAlias.eduMat" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Educational Material</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': edumat.open, 'glyphicon-chevron-right': !edumat.open}" ng-if="newAlias.eduMat"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading> 
+                  <div ng-if="newAlias.eduMat" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newAlias.eduMat.name_EN}}
+                    </p>
+                  </div>
+                </div>
 
-                    <tr>
-                      <td>
-                        <span ng-hide="newAlias.eduMat" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="newAlias.eduMat" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Education Material</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>
-                        <div ng-show="newAlias.eduMat" class="description">
-                          <p>{{newAlias.eduMat.name_EN}}</p>
-                        </div>
-                      </td>
-                    </tr>
+                <div uib-accordion-group is-open="type.open" class="panel-container summary-box animated" ng-class="{fadeInUp: type.show}" is-disabled="!newAlias.type" ng-if="type.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newAlias.type" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Type</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': type.open, 'glyphicon-chevron-right': !type.open}" ng-if="newAlias.type"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading> 
+                  <div ng-if="newAlias.type" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newAlias.type.name}}
+                    </p>
+                  </div>
+                </div>
 
-                    <tr>
-                      <td>
-                        <span ng-hide="newAlias.type" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="newAlias.type" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Type</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>
-                        <div ng-show="newAlias.type" class="description">
-                          <p>{{newAlias.type.name}}</p>
-                        </div>
-                      </td>  
-                    </tr>  
+                 <div uib-accordion-group is-open="color.open" class="panel-container summary-box animated" ng-class="{fadeInUp: color.show}" is-disabled="!newAlias.color" ng-if="color.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newAlias.color" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Icon Color</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': color.open, 'glyphicon-chevron-right': !color.open}" ng-if="newAlias.color"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading> 
+                  <div ng-if="newAlias.color" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newAlias.color}} <br>
+                      <span style="margin-top: 10px; display: block; border: 1px solid rgba(85, 85, 85, 0.2);"  class="color-palette" ng-style="{'background-color': newAlias.color}"></span>
+                    </p>
+                  </div>
+                </div>
 
-                    <tr>
-                      <td>
-                        <span ng-hide="newAlias.color" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="newAlias.color" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Icon Color</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>
-                        <div ng-show="newAlias.color" class="description"> 
-                          <div style="display:inline-block" ng-show="!newAlias.type" class="color-palette" ng-style="{'background-color': newAlias.color}"></div>
-                          <span ng-show="newAlias.type" class="glyphicon glyphicon-{{newAlias.type.icon}}" ng-style="{'color': newAlias.color}" style="font-size:30px;"></span>
-                          <h3 style="display: inline" ng-show="newAlias.color"> 
-                            {{newAlias.color}}
-                          </h3>
-                        </div> 
-                      </td>
-                    </tr>
-                
-                    <tr>
-                      <td>
-                        <span ng-hide="checkTermsAdded(termList)" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="checkTermsAdded(termList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Aliased Expressions</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>
-                        <div ng-show="checkTermsAdded(termList)" class="description">
-                          <p>
-                            <ul style="max-height: 100px; overflow-y: auto;">
-                              <li ng-repeat="term in termList | filter: {added: true} : true">
-                                {{term.id}}
-                              </li>
-                            </ul>
-                          </p>
-                        </div>
-                      </td>
-                    </tr>
+                 <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp: terms.show}" is-disabled="!checkTermsAdded(termList)" ng-if="terms.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkTermsAdded(termList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Aliased Expressions</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkTermsAdded(termList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading> 
+                  <div ng-if="checkTermsAdded(termList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="term in termList | filter: {added: true} : true">
+                          {{term.id}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
 
-
-                  </table>      
-
-                  <div ng-hide="toggleAlertText()" class="table-buttons" style="text-align: center">
-                    <form ng-submit="submitAlias()" method="post">
-                      <button class="btn btn-primary" ng-class="{'disabled': !checkForm()}" type="submit">Submit</button>
-                    </form>
+              </uib-accordion>
+           
+          
+              <div class="panel-container">
+                <a href="" ng-click="submitAlias()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                  <span style="font-size: 20px;"><strong>Submit {{newAlias.type.name}}</strong></span>
+                </a>
+              </div>
+              <div class="panel-container animated" ng-class="{pulse: hoverA}" ng-mouseenter="hoverA=true" ng-mouseleave="hoverA=false" style="cursor:pointer;" ng-click="goBack()">
+                <div class="side-panel-info">
+                  <div class="panel-content" style="text-align:center;">
+                    <span style="font-size: 23px; padding-right:10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                    <span style="font-size: 30px; font-weight:700">Go Back</span>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="panel-container animated" ng-class="{pulse: hoverA}" ng-mouseenter="hoverA=true" ng-mouseleave="hoverA=false" style="cursor:pointer;" ng-click="goBack()">
-              <div class="side-panel-info">
-                <div class="panel-content" style="text-align:center;">
-                  <span style="font-size: 23px; padding-right:10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-                  <span style="font-size: 30px; font-weight:700">Go Back</span>
-                </div>
-              </div>
-            </div>
           </div>
-          <div class="col-md-10 animated fadeInRight" style="margin-left:17%">
+          <div class="col-md-10 animated fadeInRight">
             <div class="row main-title">
               <div class="col-md-9 title-content">
                 <span class="glyphicon glyphicon-plus"></span>
@@ -221,7 +213,7 @@
             </div>    
             <div class="row">
               <div class="col-md-12 side-menu-title">
-                <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
                     <h2>Source Database</h2>
@@ -239,7 +231,7 @@
             </div>    
             <div class="row">
               <div class="col-md-12">
-                <div ng-repeat="sourceDB in sourceDBList" class="col-md-2"> 
+                <div ng-repeat="sourceDB in sourceDBList" class="col-md-2 item-panel-select"> 
                   <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: newAlias.source_db.name == sourceDB.name}" ng-click="sourceDBUpdate(sourceDB)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
                     <div class="panel-info" ng-class="{active: newAlias.source_db.name == sourceDB.name}">
                       <div class="panel-content" style="text-align:center">
@@ -251,9 +243,9 @@
                 </div>
               </div>
             </div>          
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: title_description.show}" ng-if="title_description.show">
               <div class="col-md-12 side-menu-title">
-                <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
                     <h2>Title & Description</h2>
@@ -261,7 +253,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: title_description.show}" ng-if="title_description.show">
               <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -269,7 +261,7 @@
                 </p>
               </div>
             </div>  
-            <div class="row"> 
+            <div class="row animated" ng-class="{fadeInUp: title_description.show}" ng-if="title_description.show"> 
               <div class="col-md-6">
                 <div class="panel" ng-class="(newAlias.name_EN && newAlias.description_EN) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>English</strong>
@@ -282,7 +274,7 @@
                         Title
                       </label>
                       <div class="col-md-10">
-                        <input class="form-control" type="text" ng-model="newAlias.name_EN" ng-change="titleUpdate()" placeholder="English Title" required="required">
+                        <input class="form-control" type="text" ng-model="newAlias.name_EN" ng-change="titleDescriptionUpdate()" placeholder="English Title" required="required">
                       </div>
                     </div>    
                     <div class="form-group">
@@ -290,7 +282,7 @@
                         Description
                       </label>
                       <div class="col-md-10">
-                        <textarea class="form-control" rows="5" ng-model="newAlias.description_EN" ng-change="descriptionUpdate()" placeholder="English Description" required="required"></textarea>
+                        <textarea class="form-control" rows="5" ng-model="newAlias.description_EN" ng-change="titleDescriptionUpdate()" placeholder="English Description" required="required"></textarea>
                       </div>
                     </div>
                   </div>
@@ -308,7 +300,7 @@
                         Titre
                       </label>
                       <div class="col-md-10">
-                        <input class="form-control" type="text" ng-model="newAlias.name_FR" ng-change="titleUpdate()" placeholder="Titre Français" required="required">
+                        <input class="form-control" type="text" ng-model="newAlias.name_FR" ng-change="titleDescriptionUpdate()" placeholder="Titre Français" required="required">
                       </div>
                     </div>    
                     <div class="form-group">
@@ -316,16 +308,16 @@
                         Description
                       </label>
                       <div class="col-md-10">
-                        <textarea class="form-control" rows="5" ng-model="newAlias.description_FR" ng-change="descriptionUpdate()" placeholder="Description Français" required="required"></textarea>
+                        <textarea class="form-control" rows="5" ng-model="newAlias.description_FR" ng-change="titleDescriptionUpdate()" placeholder="Description Français" required="required"></textarea>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>          
             </div>
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: edumat.show}" ng-if="edumat.show">
               <div class="col-md-12 side-menu-title">
-                <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
                     <h2>Educational Material</h2>
@@ -333,7 +325,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: edumat.show}" ng-if="edumat.show">
               <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
@@ -341,7 +333,7 @@
                 </p>
               </div>
             </div>  
-            <div class="row"> 
+            <div class="row animated" ng-class="{fadeInUp: edumat.show}" ng-if="edumat.show"> 
               <div class="col-md-8">
                 <div class="panel-container">
                   <div class="panel-info">
@@ -366,9 +358,9 @@
                 </div>
               </div>
             </div>
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: type.show}" ng-if="type.show">
               <div class="col-md-12 side-menu-title">
-                <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
                     <h2>Type</h2>
@@ -376,7 +368,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: type.show}" ng-if="type.show">
               <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -384,8 +376,8 @@
                 </p>
               </div>
             </div>    
-            <div class="row">
-              <div ng-repeat="type in aliasTypes" class="col-md-2"> 
+            <div class="row animated" ng-class="{fadeInUp: type.show}" ng-if="type.show">
+              <div ng-repeat="type in aliasTypes" class="col-md-2 item-panel-select"> 
                 <div class="panel-container animated" ng-style="{cursor: newAlias.source_db ? 'pointer' : ''}" ng-class="{pulse: hover && newAlias.source_db, active: newAlias.type.name == type.name, 'disabled': !newAlias.source_db}" ng-click="typeUpdate(type)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
                   <div class="panel-info" ng-class="{active: newAlias.type.name == type.name}">
                     <div class="panel-content" style="text-align:center">
@@ -396,9 +388,9 @@
                 </div>
               </div>
             </div>      
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: color.show}" ng-if="color.show">
               <div class="col-md-12 side-menu-title">
-                <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
                     <h2>Icon Color</h2>
@@ -406,7 +398,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: color.show}" ng-if="color.show">
               <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -414,22 +406,22 @@
                 </p>
               </div>
             </div>  
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: color.show}" ng-if="color.show">
               <div class="col-md-5">
                 <div class="panel-content">
                   <div class="panel-input">  
                     <div class="color-picker">
                       <div class="cp-main">
-                        <material-picker ng-model="newAlias.color" format="'hex'" size="20" hover-model="hoverColor"></material-picker>
+                        <material-picker ng-model="newAlias.color" format="'hex'" size="20" hover-model="hoverColor" ng-click="colorUpdate()"></material-picker>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
               <div class="col-md-12 side-menu-title">
-                <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
                     <h2>Aliased Expressions</h2>
@@ -437,7 +429,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
               <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -445,7 +437,7 @@
                 </p>
               </div>
             </div>  
-            <div class="row"> 
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show"> 
               <div class="col-md-9">
                 <div class="panel" ng-class="checkTermsAdded(termList) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>Expression List</strong>
