@@ -766,6 +766,8 @@ ul.no-list {
 .side-panel-menu .panel-content {
   padding: 3px;
   height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .panel-container {
@@ -776,6 +778,7 @@ ul.no-list {
   vertical-align: middle;
   color: #6f5499; 
   margin-bottom: 10px;
+  box-shadow: rgba(0, 0, 0, 0.6) 0px 3px 10px -3px;
 }
 .panel-container.active {
   color: #fffff4; 
@@ -812,6 +815,7 @@ ul.no-list {
   margin-right: -10px;
   margin-left: -10px;
   margin-bottom: 5px;
+  box-shadow: rgba(0, 0, 0, 0.6) 0px 6px 6px -6px;
 }
 
 .side-panel-title {
@@ -888,32 +892,44 @@ table.summary-box {
 
 .item-button {
   background-color: #fffff4;
-  border-color: transparent;	
+  border-color: transparent;
+  box-shadow: rgba(71, 71, 71, 0.6) 0px 6px 15px -5px;	
 }
 
 .item-button-success {
   background-color: #57a07f;
   color: #fffff4;
+  box-shadow: rgba(71, 71, 71, 0.6) 0px 6px 15px -5px;  
 }
 .item-button-success:focus,
 .item-button-success:hover{
   color: #fffff4;	
 }
 
+.item-panel-select .panel-container {
+  box-shadow: rgba(93, 93, 93, 0.6) 0px 3px 8px -3px;
+}
+
+.panel-container.summary-box {
+  margin-bottom: 5px;
+}
 .summary-box .title {
   font-size: 16px;
   padding-right: 10px;
 }
 
 .summary-box .description {
-  margin-top: 5px;
-  margin-bottom: 5px;
+  text-align: left;
 }
 
 .summary-box .description p {
   word-wrap: break-word;
 }
 
+.summary-box .panel-content {
+  padding-top: 0;
+  padding-bottom: 0;
+}
 .horz-line {
   border-bottom: 1px solid #6f5499;
 }
@@ -1034,7 +1050,7 @@ td.color-code h5 {
 }
 
 .home-header .logo {
-  width: 7%;
+  width: 100px;
   display: inline-block;
 }
 
@@ -1045,6 +1061,7 @@ td.color-code h5 {
 }
 
 .home-header h1 {
+  vertical-align: -webkit-baseline-middle;
   display: inline-block;
 }
 
