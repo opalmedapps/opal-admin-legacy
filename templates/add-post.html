@@ -2,7 +2,7 @@
     <div id="top">
       <div class="clearfix">
         <div class="row">
-          <div class="col-md-2" style="position:fixed;">
+          <div class="col-md-2">
             <div ng-controller="sidePanelMenuController">
               <div class="row side-logo" ng-click="goToHome()">
                 <div class="col-md-12">
@@ -12,250 +12,239 @@
                   <h1 class="animated fadeIn">opal <strong>ADMIN</strong> </h1>
                 </div>
               </div>   
-            </div>  
-            <div class="row">
-              <div class="side-menu-title">
-                <div class="horz-line" style="height: 10px; text-align: center">
-                  <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <h2>Summary</h2>
-                  </span>  
-                </div>  
-              </div>
             </div>
-            <div class="row">
-              <div class="progress progress-striped active">
-                <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+            <div class="summary-fix">  
+              <div class="row">
+                <div class="side-menu-title">
+                  <div class="horz-line" style="height: 10px; text-align: center">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <h2>Summary</h2>
+                    </span>  
+                  </div>  
                 </div>
               </div>
-            </div>
-            <div class="panel-container">
-              <div class="panel-info">
-                <div class="panel-content" style="padding-top: 0">
-                  <table class="summary-box" style="width: 100%">
-                    <col width="7%">
-                    <col width="93%"> 
-                    <tr>
-                      <td>
-                        <span ng-hide="newPost.type" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="newPost.type" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Type</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>
-                        <div ng-show="newPost.type" class="description">
-                          <p>{{newPost.type.name}}</p>
-                        </div>
-                      </td>
-                    </tr>       
+              <div class="row">
+                <div class="progress progress-striped active">
+                  <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                  </div>
+                </div>
+              </div>
 
-                    <tr>
-                      <td>
-                        <span ng-hide="newPost.name_EN && newPost.name_FR" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="newPost.name_EN && newPost.name_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Title</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>
-                        <div ng-show="newPost.name_EN" class="description">
-                          <p style="margin-bottom:5px;"><strong>EN: </strong>{{newPost.name_EN}}</p>
-                        </div>
-                        <div ng-show="newPost.name_FR" class="description">
-                          <p style="margin-bottom:5px;"><strong>FR: </strong>{{newPost.name_FR}}</p>
-                        </div>
-                      </td>
-                    </tr>
+              <uib-accordion>
 
-                    <tr>
-                      <td>    
-                        <span ng-hide="newPost.body_EN && newPost.body_FR" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="newPost.body_EN && newPost.body_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Body</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>
-                        <div ng-show="newPost.body_EN && newPost.body_FR" class="description">
-                          <p>See rendered output on the right</p>
-                        </div>
-                      </td>
-                    </tr>
- 
-                    <tr>
-                      <td>    
-                        <span ng-hide="newPost.publish_date && newPost.publish_time" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="newPost.publish_date && newPost.publish_time" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Publish Date</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>
-                        <div ng-show="newPost.publish_date && newPost.publish_time" class="description">
-                          <p>{{newPost.publish_date | date:'fullDate'}} at {{newPost.publish_time | date:'HH:mm'}}</p>
-                        </div>  
-                      </td>
-                    </tr>
+                <div uib-accordion-group is-open="type.open" class="panel-container summary-box" is-disabled="!newPost.type">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items:center">
+                      <div class="col-md-2">
+                        <span ng-if="newPost.type" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Type</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i ng-if="newPost.type" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':type.open, 'glyphicon-chevron-right':!type.open}"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newPost.type" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newPost.type.name}}
+                    </p>
+                  </div>
+                </div>
 
-                    <tr>
-                      <td>
-                        <span ng-hide="checkFilters(termList)" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="checkFilters(termList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Expression Filter(s)</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>
-                        <div ng-show="checkFilters(termList)" class="description">
-                          <p>
-                            <ul style="max-height: 100px; overflow-y: auto;">
-                              <li ng-repeat="term in termList | filter: {added: 1} : 1">
-                                {{term.name}}
-                              </li>
-                            </ul>
-                          </p>
-                        </div>
-                      </td>
-                    </tr>
+                <div uib-accordion-group is-open="title.open" class="panel-container summary-box animated" ng-class="{fadeInUp: title.show}" ng-if="title.show" is-disabled="!newPost.name_EN && !newPost.name_FR">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newPost.name_EN && newPost.name_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Title</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':title.open, 'glyphicon-chevron-right':!title.open}" ng-if="newPost.name_EN || newPost.name_FR"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newPost.name_EN" class="description">
+                    <p style="margin-bottom:5px;">
+                      <strong>EN</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newPost.name_EN}}
+                    </p>
+                  </div>
+                  <div ng-if="newPost.name_FR" class="description">
+                    <p style="margin-bottom:5px;">
+                      <strong>FR</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newPost.name_FR}}
+                    </p>
+                  </div>
+                </div>
 
-                    <tr>
-                      <td>
-                        <span ng-hide="checkFilters(dxFilterList)" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="checkFilters(dxFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Diagnosis Filter(s)</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>
-                        <div ng-show="checkFilters(dxFilterList)" class="description">
-                          <p>
-                            <ul style="max-height: 100px; overflow-y: auto;">
-                              <li ng-repeat="Filter in dxFilterList | filter: {added: 1} : 1">
-                                {{Filter.name}}
-                              </li>
-                            </ul>
-                          </p>
-                        </div>
-                      </td>
-                    </tr>
+                <div uib-accordion-group is-open="body.open" class="panel-container summary-box animated" ng-class="{fadeInUp:body.show}" ng-if="body.show" is-disabled="!newPost.body_EN && !newPost.body_FR">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newPost.body_EN && newPost.body_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Body</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': body.open, 'glyphicon-chevron-right': !body.open}" ng-if="newPost.body_EN || newPost.body.FR"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newPost.body_EN || newPost.body_FR" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      See rendered output on the right
+                    </p>
+                  </div>
+                </div>
 
-                    <tr>
-                      <td>
-                        <span ng-hide="checkFilters(doctorFilterList)" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="checkFilters(doctorFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Doctor Filter(s)</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>
-                        <div ng-show="checkFilters(doctorFilterList)" class="description">
-                          <p>
-                            <ul style="max-height: 100px; overflow-y: auto;">
-                              <li ng-repeat="Filter in doctorFilterList | filter: {added: 1} : 1">
-                                {{Filter.name}}
-                              </li>
-                            </ul>
-                          </p>
-                        </div>
-                      </td>
-                    </tr>
+                <div uib-accordion-group is-open="publish.open" class="panel-container summary-box animated" ng-class="{fadeInUp: publish.show}" is-disabled="!newPost.publish_date && !newPost.publish_time" ng-if="publish.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newPost.publish_date && newPost.publish_time" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Publish Date</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': publish.open, 'glyphicon-chevron-right': !publish.open}" ng-if="newPost.publish_date || newPost.publish_time"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newPost.publish_date && newPost.publish_time" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newPost.publish_date | date:'fullDate'}} at {{newPost.publish_time | date:'HH:mm'}}
+                    </p>
+                  </div> 
+                </div>
 
-                    <tr>
-                      <td>
-                        <span ng-hide="checkFilters(resourceFilterList)" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="checkFilters(resourceFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Resource Filter(s)</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>
-                        <div ng-show="checkFilters(resourceFilterList)" class="description">
-                          <p>
-                            <ul style="max-height: 100px; overflow-y: auto;">
-                              <li ng-repeat="Filter in resourceFilterList | filter: {added: 1} : 1">
-                                {{Filter.name}}
-                              </li>
-                            </ul>
-                          </p>
-                        </div>
-                      </td>
-                    </tr>
-                  </table>  
+                <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(termList)" ng-if="terms.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkFilters(termList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Expression Filter(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkFilters(termList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkFilters(termList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="term in termList | filter: {added: 1} : 1">
+                          {{term.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
 
-                  <div ng-hide="toggleAlertText()" class="table-buttons" style="text-align: center">
-                    <form ng-submit="submitPost()" method="post">
-                      <button class="btn btn-primary" ng-class="{'disabled': !checkForm()}" type="submit">Submit</button>
-                    </form>
+                <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(dxFilterList)" ng-if="terms.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkFilters(dxFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Diagnosis Filter(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkFilters(dxFilterList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkFilters(dxFilterList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="Filter in dxFilterList | filter: {added: 1} : 1">
+                          {{Filter.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
+
+                <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(doctorFilterList)" ng-if="terms.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkFilters(doctorFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Doctor Filter(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkFilters(doctorFilterList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkFilters(doctorFilterList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="Filter in doctorFilterList | filter: {added: 1} : 1">
+                          {{Filter.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
+
+                <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(resourceFilterList)" ng-if="terms.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkFilters(resourceFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Resource Filter(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkFilters(resourceFilterList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkFilters(resourceFilterList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="Filter in resourceFilterList | filter: {added: 1} : 1">
+                          {{Filter.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
+              </uib-accordion>
+
+              <div class="panel-container">
+                <a href="" ng-click="submitPost()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                  <span style="font-size: 20px;"><strong>Submit Post</strong></span>
+                </a>
+              </div>
+              <div class="panel-container animated" ng-class="{pulse: hoverA}" ng-mouseenter="hoverA=true" ng-mouseleave="hoverA=false" style="cursor:pointer;" ng-click="goBack()">
+                <div class="side-panel-info">
+                  <div class="panel-content" style="text-align:center">
+                    <span style="font-size: 23px; padding-right:10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                    <span style="font-size: 30px; font-weight:700">Go Back</span>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="panel-container animated" ng-class="{pulse: hoverA}" ng-mouseenter="hoverA=true" ng-mouseleave="hoverA=false" style="cursor:pointer;" ng-click="goBack()">
-              <div class="side-panel-info">
-                <div class="panel-content" style="text-align:center">
-                  <span style="font-size: 23px; padding-right:10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-                  <span style="font-size: 30px; font-weight:700">Go Back</span>
-                </div>
-              </div>
-            </div>
           </div>
-          <div class="col-md-10 animated fadeInRight" style="margin-left:17%">
+          <div class="col-md-10 animated fadeInRight">
             <div class="row main-title">
               <div class="col-md-9 title-content">
                 <span class="glyphicon glyphicon-plus"></span>
@@ -274,7 +263,7 @@
 
             <div class="row">
               <div class="col-md-12 side-menu-title">
-                <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                <div style="height: 10px; border-bottom: 2px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
                     <h2>Type</h2>
@@ -303,9 +292,9 @@
               </div>
             </div>    
 
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp:title.show}" ng-if="title.show">
               <div class="col-md-12 side-menu-title">
-                <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
                     <h2>Title</h2>
@@ -313,7 +302,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp:title.show}" ng-if="title.show">
               <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -321,7 +310,7 @@
                 </p>
               </div>
             </div>  
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp:title.show}" ng-if="title.show">
               <div class="col-md-6">
                 <div class="panel" ng-class="(newPost.name_EN) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>English</strong>
@@ -364,9 +353,9 @@
               </div>        
             </div>
 
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: body.show}" ng-if="body.show">
               <div class="col-md-12 side-menu-title">
-                <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                <div style="height: 10px; border-bottom:2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
                     <h2>Body</h2>
@@ -374,7 +363,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: body.show}" ng-if="body.show">
               <div class="col-md-12">
                 <p style="margin-bottom: 5px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -393,7 +382,7 @@
                 </p>
               </div>
             </div>  
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: body.show}" ng-if="body.show">
               <div class="col-md-12">
                 <div class="panel" ng-class="(newPost.body_EN) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>English</strong>
@@ -420,7 +409,7 @@
                 </div>
               </div>
             </div>           
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: body.show}" ng-if="body.show">
               <div class="col-md-12">
                 <div class="panel" ng-class="(newPost.body_FR) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>Français</strong>
@@ -447,9 +436,9 @@
                 </div>
               </div>
             </div>           
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: publish.show}" ng-if="publish.show">
               <div class="col-md-12 side-menu-title">
-                <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
                     <h2>Publish Date</h2>
@@ -457,7 +446,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: publish.show}" ng-if="publish.show">
               <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span ng-hide="newPost.type.name =='Announcement'"><strong>Optional field:</strong></span>
@@ -466,7 +455,7 @@
                 </p>
               </div>
             </div>    
-            <div class="row" style="margin-bottom: 15px;">
+            <div class="row animated" ng-class="{fadeInUp: publish.show}" ng-if="publish.show" style="margin-bottom: 15px;">
               <div class="col-md-8">
                 <div class="row">
                   <div class="col-md-6" style="padding-top: 10px;">
@@ -485,9 +474,9 @@
                 </div>
               </div>      
             </div>      
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
               <div class="col-md-12 side-menu-title">
-                <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
                     <h2>Expression Filters</h2>
@@ -495,7 +484,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
               <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
@@ -503,7 +492,7 @@
                 </p>
               </div>
             </div>  
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
               <div class="col-md-8">
                 <div class="panel-container">
                   <div class="panel-info">
@@ -534,9 +523,9 @@
               </div>
             </div>
 
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
               <div class="col-md-12 side-menu-title">
-                <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
                     <h2>Diagnosis Filters</h2>
@@ -544,7 +533,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
               <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
@@ -552,7 +541,7 @@
                 </p>
               </div>
             </div>  
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
               <div class="col-md-8">
                 <div class="panel-container">
                   <div class="panel-info">
@@ -579,9 +568,9 @@
             </div>
 
 
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
               <div class="col-md-12 side-menu-title">
-                <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
                     <h2>Doctor Filters</h2>
@@ -589,7 +578,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
               <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
@@ -597,7 +586,7 @@
                 </p>
               </div>
             </div>  
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
               <div class="col-md-8">
                 <div class="panel-container">
                   <div class="panel-info">
@@ -624,9 +613,9 @@
             </div>
 
 
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
               <div class="col-md-12 side-menu-title">
-                <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
                     <h2>Resource Filters</h2>
@@ -634,7 +623,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
               <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
@@ -642,7 +631,7 @@
                 </p>
               </div>
             </div>  
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
               <div class="col-md-8">
                 <div class="panel-container">
                   <div class="panel-info">
