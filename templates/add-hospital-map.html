@@ -2,7 +2,7 @@
     <div id="top">
       <div class="clearfix">
         <div class="row">
-          <div class="col-md-2" style="position:fixed;">
+          <div class="col-md-2">
             <div ng-controller="sidePanelMenuController">
               <div class="row side-logo" ng-click="goToHome()">
                 <div class="col-md-12">
@@ -12,99 +12,106 @@
                   <h1 class="animated fadeIn">opal <strong>ADMIN</strong> </h1>
                 </div>
               </div>   
-            </div>  
-            <div class="row">
-              <div class="side-menu-title">
-                <div class="horz-line" style="height: 10px; text-align: center">
-                  <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <h2>Summary</h2>
-                  </span>  
-                </div>  
-              </div>
-            </div>
-            <div class="row">
-              <div class="progress progress-striped active">
-                <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+            </div> 
+            <div class="summary-fix"> 
+              <div class="row">
+                <div class="side-menu-title">
+                  <div class="horz-line" style="height: 10px; text-align: center">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <h2>Summary</h2>
+                    </span>  
+                  </div>  
                 </div>
               </div>
-            </div>
-            <div class="panel-container">
-              <div class="panel-info">
-                <div class="panel-content" style="padding-top: 0">
-                  <table class="summary-box" style="width: 100%">
-                    <col width="7%">
-                    <col width="93%">
+              <div class="row">
+                <div class="progress progress-striped active">
+                  <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                  </div>
+                </div>
+              </div>
 
-                    <tr>
-                      <td>
-                        <span ng-hide="newHosMap.name_EN && newHosMap.name_FR && newHosMap.description_EN && newHosMap.description_FR" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="newHosMap.name_EN && newHosMap.name_FR && newHosMap.description_EN && newHosMap.description_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Title & Description</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>
-                        <div ng-show="newHosMap.name_EN || newHosMap.description_EN" class="description">
-                          <p ng-show="newHosMap.name_EN" style="margin-bottom:5px;"><strong>EN: </strong>{{newHosMap.name_EN}}</p>
-                          <p ng-show="newHosMap.description_EN"><em>{{newHosMap.description_EN}}</em></p>
-                        </div>
-                        <div ng-show="newHosMap.name_FR || newHosMap.description_FR" class="description">
-                          <p ng-show="newHosMap.name_FR" style="margin-bottom:5px;"><strong>FR: </strong>{{newHosMap.name_FR}}</p>
-                          <p ng-show="newHosMap.description_FR"><em>{{newHosMap.description_FR}}</em></p>
-                        </div>
-                      </td>
-                    </tr>
+              <uib-accordion>
 
-                    <tr>
-                      <td>
-                        <span ng-hide="newHosMap.qrid && newHosMap.url" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="newHosMap.qrid && newHosMap.url" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>QR & Map URL</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>
-                        <div ng-show="newHosMap.qrid" class="description">
-                          <p><strong>QR ID: </strong>{{newHosMap.qrid}}</p>
-                        </div>
-                        <div ng-show="newHosMap.url" class="description">
-                          <p><strong>URL: </strong>{{newHosMap.url}}</p>
-                        </div>
-                      </td>
-                    </tr>
-                  </table>
-                  <div ng-hide="toggleAlertText()" class="table-buttons" style="text-align: center">
-                    <form ng-submit="submitHosMap()" method="post">
-                      <button class="btn btn-primary" ng-class="{'disabled': !checkForm()}" type="submit">Submit</button>
-                    </form>
+                <div uib-accordion-group is-open="title_description.open" class="panel-container summary-box" is-disabled="!newHosMap.name_EN && !newHosMap.name_FR && !newHosMap.description_EN && !newHosMap.description_FR">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items:center">
+                      <div class="col-md-2">
+                        <span ng-if="newHosMap.name_EN && newHosMap.name_FR && newHosMap.description_EN && newHosMap.description_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Title & Description</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i ng-if="newHosMap.name_EN || newHosMap.name_FR || newHosMap.description_EN || newHosMap.description_FR" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': title_description.open, 'glyphicon-chevron-right': !title_description.open}"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newHosMap.name_EN || newHosMap.description_EN" class="description">
+                    <p ng-if="newHosMap.name_EN" style="margin-bottom:5px;">
+                      <strong>EN</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newHosMap.name_EN}}
+                    </p>
+                    <p ng-if="newHosMap.description_EN" style="padding-left: 10px; font-size: 10px;"><em>{{newHosMap.description_EN}}</em></p>
+                  </div>
+                  <div ng-if="newHosMap.name_FR || newHosMap.description_FR" class="description">
+                    <p ng-if="newHosMap.name_FR" style="margin-bottom:5px;">
+                      <strong>FR</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newHosMap.name_FR}}
+                    </p>
+                    <p ng-if="newHosMap.description_FR" style="padding-left: 10px; font-size: 10px;"><em>{{newHosMap.description_FR}}</em></p>
+                  </div>
+                </div>
+
+                <div uib-accordion-group is-open="url.open" class="panel-container summary-box animated" ng-class="{fadeInUp: url.show}" is-disabled="!newHosMap.qrid && !newHosMap.url" ng-if="url.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newHosMap.qrid && newHosMap.url" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>QR & Map URL</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': url.open, 'glyphicon-chevron-right': !url.open}" ng-if="newHosMap.qrid || newHosMap.url"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newHosMap.qrid" class="description">
+                    <p>
+                      <strong>QR ID</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newHosMap.qrid}}
+                    </p>
+                  </div>
+                  <div ng-if="newHosMap.url" class="description">
+                    <p>
+                      <strong>URL</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newHosMap.url}}
+                    </p>
+                  </div>
+                </div>
+              </uib-accordion>
+
+              <div class="panel-container">
+                <a href="" ng-click="submitHosMap()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                  <span style="font-size: 20px;"><strong>Submit Hospital Map</strong></span>
+                </a>
+              </div>
+
+              <div class="panel-container animated" ng-class="{pulse: hoverA}" ng-mouseenter="hoverA=true" ng-mouseleave="hoverA=false" style="cursor:pointer;" ng-click="goBack()">
+                <div class="side-panel-info">
+                  <div class="panel-content" style="text-align:center;">
+                    <span style="font-size: 23px; padding-right:10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                    <span style="font-size: 30px; font-weight:700">Go Back</span>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="panel-container animated" ng-class="{pulse: hoverA}" ng-mouseenter="hoverA=true" ng-mouseleave="hoverA=false" style="cursor:pointer;" ng-click="goBack()">
-              <div class="side-panel-info">
-                <div class="panel-content" style="text-align:center;">
-                  <span style="font-size: 23px; padding-right:10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-                  <span style="font-size: 30px; font-weight:700">Go Back</span>
-                </div>
-              </div>
-            </div>
           </div>
-          <div class="col-md-10 animated fadeInRight" style="margin-left:17%;">
+          <div class="col-md-10 animated fadeInRight">
             <div class="row main-title">
               <div class="col-md-8 title-content">
                 <span class="glyphicon glyphicon-plus"></span>
@@ -123,7 +130,7 @@
 
             <div class="row">
               <div class="col-md-12 side-menu-title">
-                <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
                     <h2>Title & Description</h2>
@@ -153,7 +160,7 @@
                       </div>
                       <div class="col-md-10">
                         <div class="form-group">
-                          <input class="form-control" type="text" ng-model="newHosMap.name_EN" ng-change="titleUpdate()" placeholder="English Title" required="required">
+                          <input class="form-control" type="text" ng-model="newHosMap.name_EN" ng-change="titleDescriptionUpdate()" placeholder="English Title" required="required">
                         </div>
                       </div>
                     </div>    
@@ -163,7 +170,7 @@
                       </div>
                       <div class="col-md-10">
                         <div class="form-group">
-                          <textarea class="form-control" rows="5" ng-model="newHosMap.description_EN" ng-change="descriptionUpdate()" placeholder="English Description" required="required"></textarea>
+                          <textarea class="form-control" rows="5" ng-model="newHosMap.description_EN" ng-change="titleDescriptionUpdate()" placeholder="English Description" required="required"></textarea>
                         </div>
                       </div>
                     </div>
@@ -183,7 +190,7 @@
                       </div>
                       <div class="col-md-10">
                         <div class="form-group">
-                          <input class="form-control" type="text" ng-model="newHosMap.name_FR" ng-change="titleUpdate()" placeholder="Titre Français" required="required">
+                          <input class="form-control" type="text" ng-model="newHosMap.name_FR" ng-change="titleDescriptionUpdate()" placeholder="Titre Français" required="required">
                         </div>
                       </div>
                     </div>    
@@ -193,7 +200,7 @@
                       </div>
                       <div class="col-md-10">
                         <div class="form-group">
-                          <textarea class="form-control" rows="5" ng-model="newHosMap.description_FR" ng-change="descriptionUpdate()" placeholder="Description Français" required="required"></textarea>
+                          <textarea class="form-control" rows="5" ng-model="newHosMap.description_FR" ng-change="titleDescriptionUpdate()" placeholder="Description Français" required="required"></textarea>
                         </div>
                       </div>
                     </div>
@@ -202,9 +209,9 @@
               </div>          
             </div>
 
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: url.show}" ng-if="url.show">
               <div class="col-md-12 side-menu-title">
-                <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
                     <h2>QR Identifier & Map URL</h2>
@@ -212,7 +219,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: url.show}" ng-if="url.show">
               <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -220,7 +227,7 @@
                 </p>
               </div>
             </div> 
-            <div class="row"> 
+            <div class="row animated" ng-class="{fadeInUp: url.show}" ng-if="url.show"> 
               <div class="col-md-6">
                 <div class="panel" ng-class="(newHosMap.qrid && newHosMap.qrcode) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>QR Identifier</strong>
