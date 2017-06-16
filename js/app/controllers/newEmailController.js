@@ -17,6 +17,11 @@ angular.module('opalAdmin.controllers.newEmailController', ['ngAnimate', 'ngSani
 			window.history.back();
 		};
 
+		// default boolean
+		$scope.type = {open: false, show: true};
+		$scope.title = {open: false, show: false};
+		$scope.body = {open: false, show: false};
+
 		// completed steps boolean object; used for progress bar
 		var steps = {
 			title: { completed: false },
@@ -69,7 +74,11 @@ angular.module('opalAdmin.controllers.newEmailController', ['ngAnimate', 'ngSani
 		// Function to toggle necessary changes when updating titles
 		$scope.titleUpdate = function () {
 
+			$scope.title.open = true;
+
 			if ($scope.newEmail.subject_EN && $scope.newEmail.subject_FR) {
+
+				$scope.body.show = true;
 				// Toggle step completion
 				steps.title.completed = true;
 				// Count the number of completed steps
@@ -88,6 +97,9 @@ angular.module('opalAdmin.controllers.newEmailController', ['ngAnimate', 'ngSani
 
 		// Function to toggle necessary changes when updating the email body
 		$scope.bodyUpdate = function () {
+			
+			$scope.body.open = true;
+
 			if ($scope.newEmail.body_EN && $scope.newEmail.body_FR) {
 				// Toggle boolean
 				steps.body.completed = true;
@@ -109,6 +121,9 @@ angular.module('opalAdmin.controllers.newEmailController', ['ngAnimate', 'ngSani
 		$scope.typeUpdate = function (type) {
 
 			$scope.newEmail.type = type;
+
+			$scope.type.open = true;
+			$scope.title.show = true;
 
 			// Toggle boolean
 			steps.type.completed = true;
@@ -142,5 +157,22 @@ angular.module('opalAdmin.controllers.newEmailController', ['ngAnimate', 'ngSani
 			else
 				return false;
 		};
+
+		var fixmeTop = $('.summary-fix').offset().top;
+		$(window).scroll(function() {
+		    var currentScroll = $(window).scrollTop();
+		    if (currentScroll >= fixmeTop) {
+		        $('.summary-fix').css({
+		            position: 'fixed',
+		            top: '0',
+		          	width: '15%'
+		        });
+		    } else {
+		        $('.summary-fix').css({
+		            position: 'static',
+		            width: ''
+		        });
+		    }
+		});
 
 	});
