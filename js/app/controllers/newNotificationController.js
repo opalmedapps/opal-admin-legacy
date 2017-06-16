@@ -11,10 +11,13 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 			window.history.back();
 		};
 
+		// default boolean
+		$scope.type = {open: false, show: true};
+		$scope.title_message = {open: false, show: false};
+
 		// completed steps boolean object; used for progress bar
 		var steps = {
-			title: { completed: false },
-			description: { completed: false },
+			title_message: { completed: false },
 			type: { completed: false }
 		};
 
@@ -22,7 +25,7 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 		$scope.numOfCompletedSteps = 0;
 
 		// Default total number of steps 
-		$scope.stepTotal = 3;
+		$scope.stepTotal = 2;
 
 		// Progress for progress bar on default steps and total
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -62,38 +65,27 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 		});
 
 		// Function to toggle necessary changes when updating titles
-		$scope.titleUpdate = function () {
+		$scope.titleMessageUpdate = function () {
 
-			if ($scope.newNotification.name_EN && $scope.newNotification.name_FR) {
-				// Toggle step completion
-				steps.title.completed = true;
-				// Count the number of completed steps
-				$scope.numOfCompletedSteps = stepsCompleted(steps);
-				// Change progress bar
-				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-			} else {
-				// Toggle step completion
-				steps.title.completed = false;
-				// Count the number of completed steps
-				$scope.numOfCompletedSteps = stepsCompleted(steps);
-				// Change progress bar
-				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+			$scope.title_message.open = true;
+
+			if (!$scope.newNotification.name_EN && !$scope.newNotification.name_FR &&
+				!$scope.newNotification.description_EN && !$scope.newNotification.description_FR) {
+				$scope.title_message.open = false;
 			}
-		};
 
-		// Function to toggle necessary changes when updating descriptions
-		$scope.descriptionUpdate = function () {
-
-			if ($scope.newNotification.description_EN && $scope.newNotification.description_FR) {
+			if ($scope.newNotification.name_EN && $scope.newNotification.name_FR &&
+				$scope.newNotification.description_EN && $scope.newNotification.description_FR) {
+				
 				// Toggle step completion
-				steps.description.completed = true;
+				steps.title_message.completed = true;
 				// Count the number of completed steps
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			} else {
 				// Toggle step completion
-				steps.description.completed = false;
+				steps.title_message.completed = false;
 				// Count the number of completed steps
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
 				// Change progress bar
@@ -106,7 +98,12 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 
 			$scope.newNotification.type = typeId;
 
+			$scope.type.open = true;
+
 			if ($scope.newNotification.type) {
+
+				$scope.title_message.show = true;
+
 				// Toggle step completion
 				steps.type.completed = true;
 				// Count the number of completed steps
@@ -146,5 +143,21 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 				return false;
 		};
 
+		var fixmeTop = $('.summary-fix').offset().top;
+		$(window).scroll(function() {
+		    var currentScroll = $(window).scrollTop();
+		    if (currentScroll >= fixmeTop) {
+		        $('.summary-fix').css({
+		            position: 'fixed',
+		            top: '0',
+		          	width: '15%'
+		        });
+		    } else {
+		        $('.summary-fix').css({
+		            position: 'static',
+		            width: ''
+		        });
+		    }
+		});
 
 	});
