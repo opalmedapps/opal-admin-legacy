@@ -2,7 +2,7 @@
     <div id="top">
       <div class="clearfix">
         <div class="row">
-          <div class="col-md-2" style="position:fixed;">
+          <div class="col-md-2">
             <div ng-controller="sidePanelMenuController">
               <div class="row side-logo" ng-click="goToHome()">
                 <div class="col-md-12">
@@ -13,97 +13,93 @@
                 </div>
               </div>   
             </div>  
-            <div class="row">
-              <div class="side-menu-title">
-                <div class="horz-line" style="height: 10px; text-align: center">
-                  <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <h2>Summary</h2>
-                  </span>  
-                </div>  
-              </div>
-            </div>
-            <div class="row">
-              <div class="progress progress-striped active">
-                <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+            <div class="summary-fix">
+              <div class="row">
+                <div class="side-menu-title">
+                  <div class="horz-line" style="height: 10px; text-align: center">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <h2>Summary</h2>
+                    </span>  
+                  </div>  
                 </div>
               </div>
-            </div>
-            <div class="panel-container">
-              <div class="panel-info">
-                <div class="panel-content" style="padding-top: 0">
-                  <table class="summary-box" style="width: 100%">
-                    <col width="7%">
-                    <col width="93%"> 
-                    <tr>
-                      <td>
-                        <span ng-hide="validUsername.status == 'valid'" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="validUsername.status == 'valid'" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Username</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
+              <div class="row">
+                <div class="progress progress-striped active">
+                  <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                  </div>
+                </div>
+              </div>
 
-                    <tr>
-                      <td>
-                        <span ng-hide="validPassword.status == 'valid' && validConfirmPassword.status == 'valid'" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="validPassword.status == 'valid' && validConfirmPassword.status == 'valid'" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Password</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
+              <uib-accordion>
+                <div uib-accordion-group is-open="username.open" class="panel-container summary-box" is-disabled="!newUser.username">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="validUsername.status == 'valid'" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Username</strong>
+                      </div>
+                      <div class="col-md-2">
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
 
-                    <tr>
-                      <td>
-                        <span ng-hide="newUser.role" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="newUser.role" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Role</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>
-                        <div ng-show="newUser.role" class="description">
-                          <p>{{newUser.role.name}}</p>
-                        </div>
-                      </td>
-                    </tr>
+                <div uib-accordion-group is-open="password.open" class="panel-container summary-box animated" ng-class="{fadeInUp: password.show}" ng-if="password.show" is-disabled="!newUser.password && !newUser.confirmPassword">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="validPassword.status == 'valid' && validConfirmPassword.status == 'valid'" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Password</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
 
-                  </table>
-                  <div class="table-buttons" style="text-align: center">
-                    <form ng-submit="registerUser()" method="post">
-                      <button class="btn btn-primary" ng-class="{'disabled': !checkRegistrationForm()}" type="submit">Register</button>
-                    </form>
+                <div uib-accordion-group is-open="role.open" class="panel-container summary-box animated" ng-class="{fadeInUp:role.show}" ng-if="role.show" is-disabled="!newUser.role">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newUser.role" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Role</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': role.open, 'glyphicon-chevron-right': !role.open}" ng-if="newUser.role"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newUser.role" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newUser.role.name}}
+                    </p>
+                  </div>
+                </div>
+              </uib-accordion>
+
+              <div class="panel-container">
+                <a href="" ng-click="registerUser()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkRegistrationForm()" style="width: 100%;">
+                  <span style="font-size: 20px;"><strong>Register User</strong></span>
+                </a>
+              </div>
+
+              <div class="panel-container animated" ng-class="{pulse: hoverA}" ng-mouseenter="hoverA=true" ng-mouseleave="hoverA=false" style="cursor:pointer;" ng-click="goBack()">
+                <div class="side-panel-info">
+                  <div class="panel-content" style="text-align:center">
+                    <span style="font-size: 23px; padding-right:10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                    <span style="font-size: 30px; font-weight:700">Go Back</span>
                   </div>
                 </div>
               </div>
             </div>
-
-            <div class="panel-container animated" ng-class="{pulse: hoverA}" ng-mouseenter="hoverA=true" ng-mouseleave="hoverA=false" style="cursor:pointer;" ng-click="goBack()">
-              <div class="side-panel-info">
-                <div class="panel-content" style="text-align:center">
-                  <span style="font-size: 23px; padding-right:10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-                  <span style="font-size: 30px; font-weight:700">Go Back</span>
-                </div>
-              </div>
-            </div>
           </div>
-          <div class="col-md-10 animated fadeIn" style="margin-left:17%">
+          <div class="col-md-10 animated fadeIn">
             <div class="row main-title">
               <div class="col-md-6 title-content">
                 <span class="glyphicon glyphicon-list-alt"></span>
@@ -121,7 +117,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12 side-menu-title">
-                  <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
                       <span class="fa fa-dot-circle-o"></span>
                       <h2>Username & Password</h2>
@@ -186,9 +182,9 @@
                 </div>          
               </div>
 
-              <div class="row">
+              <div class="row animated" ng-class="{fadeInUp: role.show}" ng-if="role.show">
                 <div class="col-md-12 side-menu-title">
-                  <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
                       <span class="fa fa-dot-circle-o"></span>
                       <h2>Role</h2>
@@ -196,7 +192,7 @@
                   </div>  
                 </div>
               </div>   
-              <div class="row">
+              <div class="row animated" ng-class="{fadeInUp: role.show}" ng-if="role.show">
                 <div class="col-md-12">
                   <p style="margin-bottom: 10px;">
                     <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -204,7 +200,7 @@
                   </p>
                 </div>
               </div>  
-              <div class="row" style="margin-bottom: 15px;">
+              <div class="row animated" ng-class="{fadeInUp: role.show}" ng-if="role.show" style="margin-bottom: 15px;">
                 <div class="col-md-5">
                   <div class="row">
                     <div class="col-md-6">
