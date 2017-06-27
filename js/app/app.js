@@ -108,6 +108,8 @@ angular.module('opalAdmin', [
 			.state('account', { url: '/account', templateUrl: "templates/account.html", controller: "accountController", data: { authorizedRoles: [USER_ROLES.all], requireLogin: true } })
 			.state('users', { url: '/users', templateUrl: "templates/user.html", controller: "userController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('user-register', { url: '/users/add', templateUrl: "templates/add-user.html", controller: "newUserController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+			.state('email', { url: '/email', templateUrl: "templates/email.html", controller: "emailController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+			.state('email-add', { url: '/email/add', templateUrl: "templates/add-email.html", controller: "newEmailController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('install', { url: '/install', templateUrl: "templates/install.html", controller: "installationController", data: { requireLogin: false, installAccess: INSTALL_ACCESS } })
 			.state('protected-route', { url: '/protected', resolve: { auth: function resolveAuthentication(AuthResolver) { return AuthResolver.resolve(); } } });
 	}])

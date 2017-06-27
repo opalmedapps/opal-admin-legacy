@@ -1,3 +1,48 @@
+Version 0.9.1:
+ -     --- Added fixed summary function
+ -     --- Redesigned patient registration pages
+ -     --- Redesigned pages
+ -     --- Redesigned user pages
+ -     --- Redesigned test result, notification, email, and cron pages
+ -     --- Redesigned hospital map pages
+ -     --- Redesigned educational material pages
+ -     --- Redesigned post pages
+ -     --- Changed design on alias pages
+ -     --- Added access level selection on registration page
+ - Merge branch 'develop' of https://gitlab.com/akimosupremo/opalAdmin-dev into develop
+ -     --- Fixed system call
+ - --- Fixed consent form expiration date
+ - --- Fixed query bug
+ - --- Optimized alias queries
+ - --- Further optimization
+ - --- First optimization of queries
+ - --- Changed all instances of name to subject for email
+ - --- Added publisher email functionality
+ - --- Fixed issue where type display improperly
+ - --- Fixed another bug
+ - --- Fixed bug
+ - --- Fixed mismatched function name
+ - --- Fixed issues
+ - --- Debugging
+ - --- Fixed missing files
+ - --- Added insert, remove, update email
+ - --- Added route to email
+ - --- Added email backend
+ - --- Improved design --- Added email template and controller
+ - --- Added functionality where only valid test results are published
+ - --- Debugged password update and block features
+ - --- Added block and update password functionality. To test
+ -     --- Added require js
+ -     --- Uncommented Firebase sections
+ - --- Fixed bug
+ - --- Added toggle block
+ - Merge branch 'develop' of https://gitlab.com/akimosupremo/opalAdmin-dev into develop
+ - --- Adding patient editing
+ - 	--- Fixed blank schema
+ - Merge branch 'release-0.9' into develop
+ -     --- Fixed issue where patient could not be added to database upon registration         -- Actually a database issue. For some reason I cannot set the DateOfBirth to be NULL
+ - --- Added consent form creation on registration
+
 Version 0.9.0:
  -     --- Fixed issue where final checklist was not completing the form on registration     --- Updated config to include firebase project ID
  - --- Added questionnaire button on home page

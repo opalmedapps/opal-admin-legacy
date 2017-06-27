@@ -13,6 +13,16 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			window.history.back();
 		};
 
+		// default booleans
+		$scope.email = {open:false, show:false};
+		$scope.password = {open:false, show:false};
+		$scope.language = {open:false, show:false};
+		$scope.cellnum = {open:false, show:false};
+		$scope.security_question_1 = {open:false, show:false};
+		$scope.security_question_2 = {open:false, show:false};
+		$scope.security_question_3 = {open:false, show:false};
+		$scope.access_level = {open:false, show:false};
+		$scope.final = {open:false, show: false};
 
 		// completed registration steps in object notation
 		var defaultSteps = {
@@ -22,6 +32,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			security1: { completed: false },
 			security2: { completed: false },
 			security3: { completed: false },
+			access: {completed: false},
 			checks: { completed: false }
 		};
 		var steps = jQuery.extend(true, {}, defaultSteps);
@@ -30,7 +41,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 		$scope.numOfCompletedSteps = 0;
 
 		// Default total number of steps 
-		$scope.stepTotal = 7;
+		$scope.stepTotal = 8;
 
 		// Progress bar based on default completed steps and total
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -83,6 +94,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			securityQuestion1: { serial: null, answer: null },
 			securityQuestion2: { serial: null, answer: null },
 			securityQuestion3: { serial: null, answer: null },
+			accessLevel: null,
 			SSN: null,
 			data: null
 		};
@@ -301,6 +313,15 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			id: 'FR'
 		}];
 
+		// Initialize a list of access levels
+		$scope.accessLevels = [{
+			name: $filter('translate')('ACCESS_LEVEL_1'),
+			id: 1
+		}, {
+			name: $filter('translate')('ACCESS_LEVEL_3'),
+			id: 3
+		}];
+
 		// Keep track of cellNum status 
 		$scope.validCellNum = { status: null, message: null };
 		$scope.validateCellNum = function (cellNum) {
@@ -413,8 +434,10 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 
 		// Function to toggle steps when updating the email field
 		$scope.emailUpdate = function () {
-			if ($scope.validEmail.status == 'valid')
+			if ($scope.validEmail.status == 'valid') {
 				steps.email.completed = true;
+				$scope.password.show = true;
+			}
 			else
 				steps.email.completed = false;
 
@@ -423,8 +446,10 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 		};
 		// Function to toggle steps when updating the password field
 		$scope.passwordUpdate = function () {
-			if ($scope.validPassword.status == 'valid' && $scope.validConfirmPassword.status == 'valid')
+			if ($scope.validPassword.status == 'valid' && $scope.validConfirmPassword.status == 'valid') {
 				steps.password.completed = true;
+				$scope.language.show = true;
+			}
 			else
 				steps.password.completed = false;
 
@@ -433,8 +458,13 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 		};
 		// Function to toggle steps when updating the language field
 		$scope.languageUpdate = function () {
-			if ($scope.newPatient.language)
+			if ($scope.newPatient.language) {
 				steps.language.completed = true;
+				$scope.cellnum.show = true;
+				$scope.security_question_1.show = true;
+				$scope.security_question_2.show = true;
+				$scope.security_question_3.show = true;
+			}
 			else
 				steps.language.completed = false;
 
@@ -448,6 +478,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			else
 				steps.security1.completed = false;
 
+			$scope.checkAllSecurityQuestions();
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 		};
@@ -458,6 +489,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			else
 				steps.security2.completed = false;
 
+			$scope.checkAllSecurityQuestions();
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 		};
@@ -467,6 +499,28 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 				steps.security3.completed = true;
 			else
 				steps.security3.completed = false;
+
+			$scope.checkAllSecurityQuestions();
+			$scope.numOfCompletedSteps = stepsCompleted(steps);
+			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+		};
+
+		// Function to check all security questions
+		$scope.checkAllSecurityQuestions = function () {
+			if ($scope.validAnswer1.status == 'valid' && $scope.validAnswer2.status == 'valid' &&
+				$scope.validAnswer3.status == 'valid') {
+				$scope.access_level.show = true;
+				$scope.final.show = true;
+			}
+		}
+		// Function to toggle steps when updating the access level field
+		$scope.accessLevelUpdate = function () {
+			if ($scope.newPatient.accessLevel) {
+				steps.access.completed = true;
+				$scope.final.show = true;
+			}
+			else
+				steps.access.completed = false;
 
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -648,6 +702,23 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			};
 
 		};
+
+		var fixmeTop = $('.summary-fix').offset().top;
+		$(window).scroll(function() {
+		    var currentScroll = $(window).scrollTop();
+		    if (currentScroll >= fixmeTop) {
+		        $('.summary-fix').css({
+		            position: 'fixed',
+		            top: '0',
+		          	width: '15%'
+		        });
+		    } else {
+		        $('.summary-fix').css({
+		            position: 'static',
+		            width: ''
+		        });
+		    }
+		});
 
 	});
 

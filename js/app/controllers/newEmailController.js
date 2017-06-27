@@ -1,10 +1,16 @@
-angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
+angular.module('opalAdmin.controllers.newEmailController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'textAngular']).
 
+	// Function to accept/trust html (styles, classes, etc.)
+	filter('deliberatelyTrustAsHtml', function ($sce) {
+		return function (text) {
+			return $sce.trustAsHtml(text);
+		};
+	}).
 
 	/******************************************************************************
-	* Controller for the Add Notification page
+	* Add Email Template Page controller 
 	*******************************************************************************/
-	controller('newNotificationController', function ($scope, $uibModal, $state, $filter, $sce, notifAPIservice) {
+	controller('newEmailController', function ($scope, $filter, $state, $sce, $uibModal, emailAPIservice) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -13,11 +19,13 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 
 		// default boolean
 		$scope.type = {open: false, show: true};
-		$scope.title_message = {open: false, show: false};
+		$scope.title = {open: false, show: false};
+		$scope.body = {open: false, show: false};
 
 		// completed steps boolean object; used for progress bar
 		var steps = {
-			title_message: { completed: false },
+			title: { completed: false },
+			body: { completed: false },
 			type: { completed: false }
 		};
 
@@ -25,7 +33,7 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 		$scope.numOfCompletedSteps = 0;
 
 		// Default total number of steps 
-		$scope.stepTotal = 2;
+		$scope.stepTotal = 3;
 
 		// Progress for progress bar on default steps and total
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -48,44 +56,38 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 			return numberOfTrues;
 		}
 
-		// Initialize the new notification object
-		$scope.newNotification = {
-			name_EN: "",
-			name_FR: "",
-			description_EN: "",
-			description_FR: "",
+		// Initialize the new email object
+		$scope.newEmail = {
+			subject_EN: "",
+			subject_FR: "",
+			body_EN: "",
+			body_FR: "",
 			type: ""
 		};
 
-
-		// Call our API to get the list of notification types
-		$scope.notificationTypes = [];
-		notifAPIservice.getNotificationTypes().success(function (response) {
-			$scope.notificationTypes = response;
+		// Call our API to get the list of email types 
+		$scope.emailTypes = [];
+		emailAPIservice.getEmailTypes().success(function (response) {
+			$scope.emailTypes = response;
 		});
 
 		// Function to toggle necessary changes when updating titles
-		$scope.titleMessageUpdate = function () {
+		$scope.titleUpdate = function () {
 
-			$scope.title_message.open = true;
+			$scope.title.open = true;
 
-			if (!$scope.newNotification.name_EN && !$scope.newNotification.name_FR &&
-				!$scope.newNotification.description_EN && !$scope.newNotification.description_FR) {
-				$scope.title_message.open = false;
-			}
+			if ($scope.newEmail.subject_EN && $scope.newEmail.subject_FR) {
 
-			if ($scope.newNotification.name_EN && $scope.newNotification.name_FR &&
-				$scope.newNotification.description_EN && $scope.newNotification.description_FR) {
-				
+				$scope.body.show = true;
 				// Toggle step completion
-				steps.title_message.completed = true;
+				steps.title.completed = true;
 				// Count the number of completed steps
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			} else {
 				// Toggle step completion
-				steps.title_message.completed = false;
+				steps.title.completed = false;
 				// Count the number of completed steps
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
 				// Change progress bar
@@ -93,43 +95,56 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 			}
 		};
 
-		// Function to toggle necessary changes when updating type
-		$scope.typeUpdate = function (typeId) {
+		// Function to toggle necessary changes when updating the email body
+		$scope.bodyUpdate = function () {
+			
+			$scope.body.open = true;
 
-			$scope.newNotification.type = typeId;
+			if ($scope.newEmail.body_EN && $scope.newEmail.body_FR) {
+				// Toggle boolean
+				steps.body.completed = true;
+				// Count the number of completed steps
+				$scope.numOfCompletedSteps = stepsCompleted(steps);
+				// Change progress bar
+				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+			} else {
+				// Toggle boolean
+				steps.body.completed = false;
+				// Count the number of completed steps
+				$scope.numOfCompletedSteps = stepsCompleted(steps);
+				// Change progress bar
+				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+			}
+		};
+
+		// Function to toggle necessary changes when updating the post type
+		$scope.typeUpdate = function (type) {
+
+			$scope.newEmail.type = type;
 
 			$scope.type.open = true;
+			$scope.title.show = true;
 
-			if ($scope.newNotification.type) {
+			// Toggle boolean
+			steps.type.completed = true;
 
-				$scope.title_message.show = true;
-
-				// Toggle step completion
-				steps.type.completed = true;
-				// Count the number of completed steps
-				$scope.numOfCompletedSteps = stepsCompleted(steps);
-				// Change progress bar
-				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-			} else {
-				// Toggle step completion
-				steps.type.completed = false;
-				// Count the number of completed steps
-				$scope.numOfCompletedSteps = stepsCompleted(steps);
-				// Change progress bar
-				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-			}
+			// Count the number of completed steps
+			$scope.numOfCompletedSteps = stepsCompleted(steps);
+			// Change progress bar
+			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 		};
 
-		// Function to submit the new notification
-		$scope.submitNotification = function () {
+		// Function to submit the new email
+		$scope.submitEmailTemplate = function () {
 			if ($scope.checkForm()) {
-				// Submit
+
+				// Submit 
 				$.ajax({
 					type: "POST",
-					url: "php/notification/insert_notification.php",
-					data: $scope.newNotification,
+					url: "php/email/insert_email.php",
+					data: $scope.newEmail,
 					success: function () {
-						$state.go('notification');
+						$state.go('email');
 					}
 				});
 			}

@@ -55,12 +55,22 @@ class Patient {
                     pt.FirstName,
                     pt.LastName,
                     pt.PatientId,
-                    pc.LastTransferred
+                    pc.LastTransferred,
+					pt.BlockedStatus,
+					usr.Username,
+					pt.email
                 FROM
                     PatientControl pc,
-                    Patient pt
+                    Patient pt,
+					Users usr
                 WHERE
                     pt.PatientSerNum = pc.PatientSerNum
+				AND (pt.DeathDate 		IS NULL 
+					OR pt.DeathDate 	= '0000-00-00 00:00:00'
+					OR pt.DeathDate 	= '1970-01-01 00:00:00')
+				AND pt.PatientSerNum 	= usr.UserTypeSerNum
+				AND usr.UserType 		= 'Patient'
+				
             ";
 			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
@@ -72,7 +82,10 @@ class Patient {
                     'transfer'          => $data[1],
                     'name'              => "$data[2] $data[3]",
                     'patientid'         => $data[4],
-                    'lasttransferred'   => $data[5]
+                    'lasttransferred'   => $data[5],
+					'disabled' 			=> intval($data[6]),
+					'uid'				=> $data[7],
+					'email'				=> $data[8]
                 );
 
                 array_push($patientList, $patientArray);
@@ -351,6 +364,7 @@ class Patient {
         $answer3            = $securityQuestion3['answer'];
         $cellNum            = $patientArray['cellNum'];
         $SSN                = $patientArray['SSN'];
+        $accessLevel        = $patientArray['accessLevel'];
         $sourceuid          = $patientArray['data']['sourceuid'];
         $firstname          = $patientArray['data']['firstname'];
         $lastname           = $patientArray['data']['lastname'];
@@ -377,7 +391,9 @@ class Patient {
                         Email,
                         Language,
                         SSN,
-                        SessionId
+                        AccessLevel,
+                        SessionId,
+						ConsentFormExpirationDate
                     )
                 VALUES (
                     '$sourceuid',
@@ -391,7 +407,9 @@ class Patient {
                     '$email',
                     '$language',
                     '$SSN',
-                    'AdminPanel'
+                    '$accessLevel',
+                    'opalAdmin',
+					DATE_ADD(NOW(), INTERVAL 1 YEAR)
                 )
             ";
             $query = $host_db_link->prepare( $sql );
@@ -413,7 +431,7 @@ class Patient {
                     '$patientSer',
                     '$uid',
                     '$password',
-                    'AdminPanel'
+                    'opalAdmin'
                 )
             ";
             $query = $host_db_link->prepare( $sql );
@@ -569,6 +587,165 @@ class Patient {
         }
     }
 
+	/**
+	 *
+	 * Gets details for one patient
+	 *
+	 * @param int $serial : the patient serial number
+	 * @return array $patientDetails : the patient details
+	 */
+	 public function getPatientDetails ($serial) {
+
+		 $patientDetails = array();
+		 try {
+			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+			$sql = "
+				SELECT DISTINCT 
+					pt.FirstName,
+					pt.LastName,
+					pt.PatientId,
+					usr.Username,
+					pt.BlockedStatus,
+					pt.email
+				FROM
+					Patient pt,
+					Users usr
+				WHERE
+					pt.PatientSerNum = '$serial'
+				AND pt.PatientSerNum = usr.UserTypeSerNum
+				AND usr.UserType = 'Patient'
+			";
+
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query->execute();
+
+			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
+
+			$patientDetails = array(
+				'serial'            => $serial,
+				'name'              => "$data[0] $data[1]",
+				'patientid'         => $data[2],
+				'uid' 				=> $data[3],
+				'disabled'			=> intval($data[4]),
+				'email'				=> $data[5]
+			);
+
+			return $patientDetails;
+
+		} catch (PDOException $e) {
+			echo $e->getMessage();
+			return $patientDetails;
+		}
+
+	}
+
+	/**
+     *
+     * Updates the patient
+     *
+     * @param array $patientArray : the patient details
+     * @return array $response : response
+     */
+     public function updatePatient($patientArray) {
+		$response = array (
+			'value'		=> 0,
+			'error'		=> array(
+				'code'		=> '',
+				'message'	=> ''
+			)
+		);
+
+		$password 	= $patientArray['password'];
+		$serial 	= $patientArray['serial'];
+		try {
+			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+			$sql = "
+				UPDATE 
+					Users
+				SET
+					Users.Password = \"$password\"
+				WHERE
+					Users.UserTypeSerNum = '$serial'
+				AND Users.UserType = 'Patient'
+			";
+
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query->execute();
+
+			$response['value'] = 1; // Success
+			return $response;
+			
+		} catch (PDOException $e) {
+			 $response['error']['code'] = 'db-catch';
+			 $response['error']['message'] = $e->getMessage();
+			 return $response;
+		}
+		 
+	 }
+
+	 /**
+     *
+     * Sets the block status
+     *
+     * @param array $patientArray : the patient details
+     * @return array $response : response
+     */
+     public function toggleBlock($patientArray) {
+		 $response = array (
+			'value'		=> 0,
+			'error'		=> array(
+				'code'		=> '',
+				'message'	=> ''
+			)
+		);
+
+		$blockedStatus 	= $patientArray['disabled'];
+		$reason 		= $patientArray['reason'];
+		$serial 		= $patientArray['serial'];
+		$firebaseUID 	= $patientArray['uid'];
+
+		try {
+			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+			$sql = "
+				UPDATE 
+					Patient
+				SET
+					Patient.BlockedStatus 	= '$blockedStatus',
+					Patient.StatusReasonTxt = \"$reason\"
+				WHERE
+					Patient.PatientSerNum = '$serial'
+			";
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query->execute();
+
+			# call our nodejs script to block user on Firebase
+            $command = "/usr/bin/node " . FRONTEND_ABS_PATH . 'js/firebaseSetBlock.js --blocked=' . $blockedStatus . ' --uid=' . $firebaseUID;
+            # uncomment appropriate system call
+			#$command = "/usr/local/bin/node " . FRONTEND_ABS_PATH . 'js/firebaseSetBlock.js --blocked=' . $blockedStatus . ' --uid=' . $firebaseUID;
+			$commandResponse = system($command);
+
+			if ($commandResponse == 0) {
+				$response['value'] = 1; // Success
+				$response['error']['message'] = $command;
+			}
+			else {
+				$response['error']['message'] = "System command failed";
+			}
+			
+			return $response;
+			
+		} catch (PDOException $e) {
+			 $response['error']['code'] = 'db-catch';
+			 $response['error']['message'] = $e->getMessage();
+			 return $response;
+		}
+	 }
 }
 
 ?>
