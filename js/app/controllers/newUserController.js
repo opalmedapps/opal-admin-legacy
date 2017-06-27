@@ -11,6 +11,10 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 			window.history.back();
 		};
 
+		// default booleans
+		$scope.password = {open:false, show:false};
+		$scope.role = {open:false, show:false};
+
 		// completed registration steps in object notation
 		var steps = {
 			username: { completed: false },
@@ -136,8 +140,10 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 
 		// Function to toggle steps when updating the username field
 		$scope.usernameUpdate = function () {
-			if ($scope.validUsername.status == 'valid')
+			if ($scope.validUsername.status == 'valid') {
 				steps.username.completed = true;
+				$scope.password.show = true;
+			}
 			else
 				steps.username.completed = false;
 
@@ -147,8 +153,10 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 
 		// Function to toggle steps when updating the password field
 		$scope.passwordUpdate = function () {
-			if ($scope.validPassword.status == 'valid' && $scope.validConfirmPassword.status == 'valid')
+			if ($scope.validPassword.status == 'valid' && $scope.validConfirmPassword.status == 'valid') {
 				steps.password.completed = true;
+				$scope.role.show = true;
+			}
 			else
 				steps.password.completed = false;
 
@@ -158,6 +166,7 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 
 		// Function to toggle steps when updating the role field
 		$scope.roleUpdate = function () {
+			$scope.role.open = true;
 			if ($scope.newUser.role)
 				steps.role.completed = true;
 			else
@@ -193,6 +202,23 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 				});
 			}
 		};
+
+		var fixmeTop = $('.summary-fix').offset().top;
+		$(window).scroll(function() {
+		    var currentScroll = $(window).scrollTop();
+		    if (currentScroll >= fixmeTop) {
+		        $('.summary-fix').css({
+		            position: 'fixed',
+		            top: '0',
+		          	width: '15%'
+		        });
+		    } else {
+		        $('.summary-fix').css({
+		            position: 'static',
+		            width: ''
+		        });
+		    }
+		});
 
 	});
 

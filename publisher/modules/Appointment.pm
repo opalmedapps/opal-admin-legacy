@@ -367,7 +367,41 @@ sub getApptsFromSourceDB
                 my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
                 my $numOfExpressions = @expressions; 
                 my $counter = 0;
-                my $apptInfo_sql = "";
+                my $apptInfo_sql = "
+					WITH vva AS (
+						SELECT DISTINCT 
+							Expression.Expression1,
+							Expression.LookupValue
+						FROM
+							variansystem.dbo.vv_ActivityLng Expression
+					)
+					SELECT DISTINCT
+						sa.ScheduledActivitySer,
+						CONVERT(VARCHAR, sa.ScheduledStartTime, 120),
+						CONVERT(VARCHAR, sa.ScheduledEndTime, 120),
+						sa.ScheduledActivityCode,
+						sa.ObjectStatus,
+						CONVERT(VARCHAR, sa.ActualStartDate, 120),
+						CONVERT(VARCHAR, sa.ActualEndDate, 120),
+						vva.Expression1
+					FROM 
+						variansystem.dbo.Patient pt, 
+						variansystem.dbo.ScheduledActivity sa, 
+						variansystem.dbo.ActivityInstance ai, 
+						variansystem.dbo.Activity act, 
+						vva, 
+						variansystem.dbo.Resource re,
+						variansystem.dbo.Attendee att
+					WHERE 
+						sa.ActivityInstanceSer 		= ai.ActivityInstanceSer 
+					AND ai.ActivitySer 			    = act.ActivitySer 
+					AND act.ActivityCode 		    = vva.LookupValue 
+					AND pt.PatientSer 				= sa.PatientSer 
+					AND pt.SSN				        LIKE '$patientSSN%'
+					AND att.ActivityInstanceSer 	= sa.ActivityInstanceSer
+					AND att.ResourceSer 		    = re.ResourceSer
+					AND (
+				";
 
                 foreach my $Expression (@expressions) {
 
@@ -387,40 +421,20 @@ sub getApptsFromSourceDB
 
 		            # concatenate query
 	        		$apptInfo_sql .= "
-		        		SELECT DISTINCT
-			        		sa.ScheduledActivitySer,
-					        CONVERT(VARCHAR, sa.ScheduledStartTime, 120),
-	        				CONVERT(VARCHAR, sa.ScheduledEndTime, 120),
-	                        sa.ScheduledActivityCode,
-	                        sa.ObjectStatus,
-	                        CONVERT(VARCHAR, sa.ActualStartDate, 120),
-	                        CONVERT(VARCHAR, sa.ActualEndDate, 120),
-	                        CASE WHEN 1=1 THEN '$expressionser' ELSE '$expressionser' END 
-		    	    	FROM 
-			    	    	variansystem.dbo.Patient pt, 
-				    	    variansystem.dbo.ScheduledActivity sa, 
-	    			    	variansystem.dbo.ActivityInstance ai, 
-		    			    variansystem.dbo.Activity act, 
-	    		    		variansystem.dbo.vv_ActivityLng vva, 
-		    		    	variansystem.dbo.Resource re,
-			    		    variansystem.dbo.Attendee att
-	    		    	WHERE 
-		    		        sa.ActivityInstanceSer 		= ai.ActivityInstanceSer 
-	    		    	AND ai.ActivitySer 			    = act.ActivitySer 
-		    		    AND act.ActivityCode 		    = vva.LookupValue 
-	    	    		AND pt.PatientSer 				= sa.PatientSer 
-		    	    	AND pt.SSN				        LIKE '$patientSSN%'
-	    		    	AND att.ActivityInstanceSer 	= sa.ActivityInstanceSer
-	        	    	AND att.ResourceSer 		    = re.ResourceSer
-			        	AND sa.HstryDateTime	 		> '$lasttransfer' 
-	                    AND vva.Expression1             = '$expressionName'
+						(vva.Expression1             = '$expressionName'
+			        	AND sa.HstryDateTime	 	> '$lasttransfer') 
 	        		";
 	        		$counter++;
 	        		# concat "UNION" until we've reached the last query
 	        		if ($counter < $numOfExpressions) {
-	        			$apptInfo_sql .= "UNION";
+	        			$apptInfo_sql .= "OR";
 	        		}
+					# close bracket at end
+					else {
+						$apptInfo_sql .= ")";
+					}
 	        	}
+				
                 #print "$apptInfo_sql\n";
 		        # prepare query
     		    my $query = $sourceDatabase->prepare($apptInfo_sql)
@@ -442,10 +456,18 @@ sub getApptsFromSourceDB
                     $state          = $row->[4];
                     $actualstartdate    = $row->[5];
                     $actualenddate      = $row->[6];
-                    $expressionser 	= $row->[7];
+                    $expressionname 	= $row->[7];
 
                     $priorityser    = Priority::getClosestPriority($patientSer, $startdatetime);
                     $diagnosisser   = Diagnosis::getClosestDiagnosis($patientSer, $startdatetime);
+
+					my $expressionser;
+					foreach my $checkExpression (@expressions) {
+						if ($checkExpression->{_name} eq $expressionname){ #match
+							$expressionser = $checkExpression->{_ser};
+							last; # break out of loop
+						}
+					}
     		
     	    		$appointment->setApptPatientSer($patientSer);
 	    	    	$appointment->setApptSourceUID($sourceuid);
