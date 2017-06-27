@@ -13,6 +13,16 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			window.history.back();
 		};
 
+		// default booleans
+		$scope.email = {open:false, show:false};
+		$scope.password = {open:false, show:false};
+		$scope.language = {open:false, show:false};
+		$scope.cellnum = {open:false, show:false};
+		$scope.security_question_1 = {open:false, show:false};
+		$scope.security_question_2 = {open:false, show:false};
+		$scope.security_question_3 = {open:false, show:false};
+		$scope.access_level = {open:false, show:false};
+		$scope.final = {open:false, show: false};
 
 		// completed registration steps in object notation
 		var defaultSteps = {
@@ -424,8 +434,10 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 
 		// Function to toggle steps when updating the email field
 		$scope.emailUpdate = function () {
-			if ($scope.validEmail.status == 'valid')
+			if ($scope.validEmail.status == 'valid') {
 				steps.email.completed = true;
+				$scope.password.show = true;
+			}
 			else
 				steps.email.completed = false;
 
@@ -434,8 +446,10 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 		};
 		// Function to toggle steps when updating the password field
 		$scope.passwordUpdate = function () {
-			if ($scope.validPassword.status == 'valid' && $scope.validConfirmPassword.status == 'valid')
+			if ($scope.validPassword.status == 'valid' && $scope.validConfirmPassword.status == 'valid') {
 				steps.password.completed = true;
+				$scope.language.show = true;
+			}
 			else
 				steps.password.completed = false;
 
@@ -444,8 +458,13 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 		};
 		// Function to toggle steps when updating the language field
 		$scope.languageUpdate = function () {
-			if ($scope.newPatient.language)
+			if ($scope.newPatient.language) {
 				steps.language.completed = true;
+				$scope.cellnum.show = true;
+				$scope.security_question_1.show = true;
+				$scope.security_question_2.show = true;
+				$scope.security_question_3.show = true;
+			}
 			else
 				steps.language.completed = false;
 
@@ -459,6 +478,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			else
 				steps.security1.completed = false;
 
+			$scope.checkAllSecurityQuestions();
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 		};
@@ -469,6 +489,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			else
 				steps.security2.completed = false;
 
+			$scope.checkAllSecurityQuestions();
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 		};
@@ -479,13 +500,25 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			else
 				steps.security3.completed = false;
 
+			$scope.checkAllSecurityQuestions();
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 		};
+
+		// Function to check all security questions
+		$scope.checkAllSecurityQuestions = function () {
+			if ($scope.validAnswer1.status == 'valid' && $scope.validAnswer2.status == 'valid' &&
+				$scope.validAnswer3.status == 'valid') {
+				$scope.access_level.show = true;
+				$scope.final.show = true;
+			}
+		}
 		// Function to toggle steps when updating the access level field
 		$scope.accessLevelUpdate = function () {
-			if ($scope.newPatient.accessLevel)
+			if ($scope.newPatient.accessLevel) {
 				steps.access.completed = true;
+				$scope.final.show = true;
+			}
 			else
 				steps.access.completed = false;
 
@@ -669,6 +702,23 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			};
 
 		};
+
+		var fixmeTop = $('.summary-fix').offset().top;
+		$(window).scroll(function() {
+		    var currentScroll = $(window).scrollTop();
+		    if (currentScroll >= fixmeTop) {
+		        $('.summary-fix').css({
+		            position: 'fixed',
+		            top: '0',
+		          	width: '15%'
+		        });
+		    } else {
+		        $('.summary-fix').css({
+		            position: 'static',
+		            width: ''
+		        });
+		    }
+		});
 
 	});
 
