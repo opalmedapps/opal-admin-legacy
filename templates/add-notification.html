@@ -2,7 +2,7 @@
     <div id="top">
       <div class="clearfix">
         <div class="row">
-          <div class="col-md-2" style="position:fixed;">
+          <div class="col-md-2">
             <div ng-controller="sidePanelMenuController">
               <div class="row side-logo" ng-click="goToHome()">
                 <div class="col-md-12">
@@ -13,96 +13,96 @@
                 </div>
               </div>   
             </div>  
-            <div class="row">
-              <div class="side-menu-title">
-                <div class="horz-line" style="height: 10px; text-align: center">
-                  <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <h2>Summary</h2>
-                  </span>  
-                </div>  
-              </div>
-            </div>
-            <div class="row">
-              <div class="progress progress-striped active">
-                <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+            <div class="summary-fix">
+              <div class="row">
+                <div class="side-menu-title">
+                  <div class="horz-line" style="height: 10px; text-align: center">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <h2>Summary</h2>
+                    </span>  
+                  </div>  
                 </div>
               </div>
-            </div>
-            <div class="panel-container">
-              <div class="panel-info">
-                <div class="panel-content" style="padding-top: 0">
-                  <table class="summary-box" style="width: 100%">
-                    <col width="7%">
-                    <col width="93%"> 
-                    <tr>
-                      <td>
-                        <span ng-hide="newNotification.type" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="newNotification.type" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Type</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>
-                        <div ng-show="newNotification.type" class="description">
-                          <p>{{newNotification.type}}</p>
-                        </div>
-                      </td>
-                    </tr>  
+              <div class="row">
+                <div class="progress progress-striped active">
+                  <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                  </div>
+                </div>
+              </div>
 
-                    <tr>
-                      <td>
-                        <span ng-hide="newNotification.name_EN && newNotification.name_FR && newNotification.description_EN && newNotification.description_FR" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="newNotification.name_EN && newNotification.name_FR && newNotification.description_EN && newNotification.description_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Title & Message</strong>
-                          </span>
-                        </div> 
-                      </td>
+              <uib-accordion>
 
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>
-                        <div ng-show="newNotification.name_EN || newNotification.description_EN" class="description">
-                          <p ng-show="newNotification.name_EN" style="margin-bottom:5px;"><strong>EN: </strong>{{newNotification.name_EN}}</p>
-                          <p ng-show="newNotification.description_EN"><em>{{newNotification.description_EN}}</em></p>
-                        </div>
-                        <div ng-show="newNotification.name_FR || newNotification.description_FR" class="description">
-                          <p ng-show="newNotification.name_FR" style="margin-bottom:5px;"><strong>FR: </strong>{{newNotification.name_FR}}</p>
-                          <p ng-show="newNotification.description_FR"><em>{{newNotification.description_FR}}</em></p>
-                        </div>
-                      </td>
-                    </tr>  
-                  </table>  
+                <div uib-accordion-group is-open="type.open" class="panel-container summary-box" is-disabled="!newNotification.type">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items:center">
+                      <div class="col-md-2">
+                        <span ng-if="newNotification.type" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Type</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i ng-if="newNotification.type" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': type.open, 'glyphicon-chevron-right': !type.open}"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newNotification.type" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newNotification.type}}
+                    </p>
+                  </div>
+                </div>
 
-                  <div ng-hide="toggleAlertText()" class="table-buttons" style="text-align: center">
-                    <form ng-submit="submitNotification()" method="post">
-                      <button class="btn btn-primary" ng-class="{'disabled': !checkForm()}" type="submit">Submit</button>
-                    </form>
+                <div uib-accordion-group is-open="title_message.open" class="panel-container summary-box animated" ng-class="{fadeInUp: title_message.show}" is-disabled="!newNotification.name_EN && !newNotification.name_FR && !newNotification.description_EN && !newNotification.description_FR" ng-if="title_message.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newNotification.name_EN && newNotification.name_FR && newNotification.description_EN && newNotification.description_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Title & Message</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': title_message.open, 'glyphicon-chevron-right': !title_message.open}" ng-if="newNotification.name_EN || newNotification.name_FR || newNotification.description_EN || newNotification.description_FR"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newNotification.name_EN || newNotification.description_EN" class="description">
+                    <p ng-if="newNotification.name_EN" style="margin-bottom:5px;">
+                      <strong>EN</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newNotification.name_EN}}
+                    </p>
+                    <p ng-if="newNotification.description_EN" style="padding-left: 10px; font-size: 10px;"><em>{{newNotification.description_EN}}</em></p>
+                  </div>
+                  <div ng-if="newNotification.name_FR || newNotification.description_FR" class="description">
+                    <p ng-if="newNotification.name_FR" style="margin-bottom:5px;">
+                      <strong>FR</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newNotification.name_FR}}
+                    </p>
+                    <p ng-if="newNotification.description_FR" style="padding-left: 10px; font-size: 10px;"><em>{{newNotification.description_FR}}</em></p>
+                  </div>
+                </div>
+              </uib-accordion>
+
+              <div class="panel-container">
+                <a href="" ng-click="submitNotification()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                  <span style="font-size: 20px;"><strong>Submit Notification</strong></span>
+                </a>
+              </div>
+              <div class="panel-container animated" ng-class="{pulse: hoverA}" ng-mouseenter="hoverA=true" ng-mouseleave="hoverA=false" style="cursor:pointer;" ng-click="goBack()">
+                <div class="side-panel-info">
+                  <div class="panel-content" style="text-align:center;">
+                    <span style="font-size: 23px; padding-right:10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                    <span style="font-size: 30px; font-weight:700">Go Back</span>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="panel-container animated" ng-class="{pulse: hoverA}" ng-mouseenter="hoverA=true" ng-mouseleave="hoverA=false" style="cursor:pointer;" ng-click="goBack()">
-              <div class="side-panel-info">
-                <div class="panel-content" style="text-align:center;">
-                  <span style="font-size: 23px; padding-right:10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-                  <span style="font-size: 30px; font-weight:700">Go Back</span>
-                </div>
-              </div>
-            </div>
           </div>
-          <div class="col-md-10 animated fadeInRight" style="margin-left:17%;">
+          <div class="col-md-10 animated fadeInRight">
             <div class="row main-title">
               <div class="col-md-8 title-content">
                 <span class="glyphicon glyphicon-plus"></span>
@@ -121,9 +121,9 @@
 
             <div class="row">
               <div class="col-md-12 side-menu-title">
-                <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-triangle-bottom"></span>
+                    <span class="fa fa-dot-circle-o"></span>
                     <h2>Type</h2>
                   </span>  
                 </div>  
@@ -150,17 +150,17 @@
               </div>
             </div> 
 
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: title_message.show}" ng-if="title_message.show">
               <div class="col-md-12 side-menu-title">
-                <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="glyphicon glyphicon-triangle-bottom"></span>
+                    <span class="fa fa-dot-circle-o"></span>
                     <h2>Title & Message</h2>
                   </span>  
                 </div>  
               </div>
             </div>   
-            <div class="row">
+            <div class="row animated" ng-class="{fadeInUp: title_message.show}" ng-if="title_message.show">
               <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -168,7 +168,7 @@
                 </p>
               </div>
             </div>  
-            <div class="row"> 
+            <div class="row animated" ng-class="{fadeInUp: title_message.show}" ng-if="title_message.show"> 
               <div class="col-md-6">
                 <div class="panel" ng-class="(newNotification.name_EN && newNotification.description_EN) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>English</strong>
@@ -182,7 +182,7 @@
                       </div>
                       <div class="col-md-10">
                         <div class="form-group">
-                          <input class="form-control" type="text" ng-model="newNotification.name_EN" ng-change="titleUpdate()" placeholder="English Title" required="required">
+                          <input class="form-control" type="text" ng-model="newNotification.name_EN" ng-change="titleMessageUpdate()" placeholder="English Title" required="required">
                         </div>
                       </div>
                     </div>    
@@ -192,7 +192,7 @@
                       </div>
                       <div class="col-md-10">
                         <div class="form-group">
-                          <textarea class="form-control" rows="5" ng-model="newNotification.description_EN" ng-change="descriptionUpdate()" placeholder="English Message" required="required"></textarea>
+                          <textarea class="form-control" rows="5" ng-model="newNotification.description_EN" ng-change="titleMessageUpdate()" placeholder="English Message" required="required"></textarea>
                         </div>
                       </div>
                     </div>
@@ -212,7 +212,7 @@
                       </div>
                       <div class="col-md-10">
                         <div class="form-group">
-                          <input class="form-control" type="text" ng-model="newNotification.name_FR" ng-change="titleUpdate()" placeholder="Titre Français" required="required">
+                          <input class="form-control" type="text" ng-model="newNotification.name_FR" ng-change="titleMessageUpdate()" placeholder="Titre Français" required="required">
                         </div>
                       </div>
                     </div>    
@@ -222,7 +222,7 @@
                       </div>
                       <div class="col-md-10">
                         <div class="form-group">
-                          <textarea class="form-control" rows="5" ng-model="newNotification.description_FR" ng-change="descriptionUpdate()" placeholder="Message Français" required="required"></textarea>
+                          <textarea class="form-control" rows="5" ng-model="newNotification.description_FR" ng-change="titleMessageUpdate()" placeholder="Message Français" required="required"></textarea>
                         </div>
                       </div>
                     </div>

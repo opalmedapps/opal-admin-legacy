@@ -324,7 +324,41 @@ sub getTasksFromSourceDB
                 my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
                 my $numOfExpressions = @expressions; 
                 my $counter = 0;
-                my $taskInfo_sql = "";
+                my $taskInfo_sql = "
+					WITH vva AS (
+						SELECT DISTINCT 
+							Expression.Expression1,
+							Expression.LookupValue
+						FROM
+							variansystem.dbo.vv_ActivityLng Expression
+					)
+					SELECT DISTINCT
+						NonScheduledActivity.NonScheduledActivitySer,
+						CONVERT(VARCHAR, NonScheduledActivity.DueDateTime, 120),
+						CONVERT(VARCHAR, NonScheduledActivity.CreationDate, 120),
+						NonScheduledActivity.NonScheduledActivityCode,
+						NonScheduledActivity.ObjectStatus,
+						CONVERT(VARCHAR, (SELECT DISTINCT MIN(CONVERT(VARCHAR(19), NonScheduledActivityMH.HstryDateTime, 100)) HstryDateTime
+						FROM variansystem.dbo.NonScheduledActivityMH NonScheduledActivityMH
+						LEFT JOIN variansystem.dbo.NonScheduledActivity NonScheduledActivity
+						ON NonScheduledActivityMH.NonScheduledActivitySer  = NonScheduledActivity.NonScheduledActivitySer
+						AND NonScheduledActivityMH.NonScheduledActivityCode = 'Completed'
+						GROUP BY NonScheduledActivityMH.NonScheduledActivitySer), 120) AS HstryDateTime,
+						vva.Expression1
+					FROM  
+						variansystem.dbo.Patient Patient,
+						variansystem.dbo.NonScheduledActivity NonScheduledActivity,
+						variansystem.dbo.ActivityInstance ActivityInstance,
+						variansystem.dbo.Activity Activity,
+						vva
+					WHERE     
+						NonScheduledActivity.ActivityInstanceSer 	= ActivityInstance.ActivityInstanceSer
+					AND ActivityInstance.ActivitySer 			    = Activity.ActivitySer
+					AND Activity.ActivityCode 				        = vva.LookupValue
+					AND Patient.PatientSer 				            = NonScheduledActivity.PatientSer     
+					AND	Patient.SSN				            		LIKE '$patientSSN%'
+					AND (
+				";
 
                 foreach my $Expression (@expressions) {
 
@@ -343,40 +377,18 @@ sub getTasksFromSourceDB
 		            }
 
 	        		$taskInfo_sql .= "
-	                  
-        	    		SELECT DISTINCT
-	        	    		NonScheduledActivity.NonScheduledActivitySer,
-			        	    CONVERT(VARCHAR, NonScheduledActivity.DueDateTime, 120),
-                            CONVERT(VARCHAR, NonScheduledActivity.CreationDate, 120),
-                            NonScheduledActivity.NonScheduledActivityCode,
-                            NonScheduledActivity.ObjectStatus,
-                            CONVERT(VARCHAR, (SELECT DISTINCT MIN(CONVERT(VARCHAR(19), NonScheduledActivityMH.HstryDateTime, 100)) HstryDateTime
-                            FROM variansystem.dbo.NonScheduledActivityMH NonScheduledActivityMH
-                            LEFT JOIN variansystem.dbo.NonScheduledActivity NonScheduledActivity
-                            ON NonScheduledActivityMH.NonScheduledActivitySer  = NonScheduledActivity.NonScheduledActivitySer
-                        	AND NonScheduledActivityMH.NonScheduledActivityCode = 'Completed'
-							GROUP BY NonScheduledActivityMH.NonScheduledActivitySer), 120) AS HstryDateTime,
-							CASE WHEN 1=1 THEN '$expressionser' ELSE '$expressionser' END
-            			FROM  
-	            			variansystem.dbo.Patient Patient,
-		            		variansystem.dbo.NonScheduledActivity NonScheduledActivity,
-			            	variansystem.dbo.ActivityInstance ActivityInstance,
-           		            variansystem.dbo.Activity Activity,
-    	           	        variansystem.dbo.vv_ActivityLng vv_ActivityLng
-                    	WHERE     
-                         	NonScheduledActivity.ActivityInstanceSer 	= ActivityInstance.ActivityInstanceSer
-	                    AND ActivityInstance.ActivitySer 			    = Activity.ActivitySer
-    	                AND Activity.ActivityCode 				        = vv_ActivityLng.LookupValue
-    	    	        AND Patient.PatientSer 				            = NonScheduledActivity.PatientSer     
-	    		        AND	Patient.SSN				            		LIKE '$patientSSN%'
-	        	        AND NonScheduledActivity.HstryDateTime		    > '$lasttransfer' 
-                        AND vv_ActivityLng.Expression1                  = '$expressionName'
+						(vva.Expression1    = '$expressionName'
+						AND NonScheduledActivity.HstryDateTime		    > '$lasttransfer')
 	         		";
 	         		$counter++;
 	        		# concat "UNION" until we've reached the last query
 	        		if ($counter < $numOfExpressions) {
-	        			$taskInfo_sql .= "UNION";
+	        			$taskInfo_sql .= "OR";
 	        		}
+					# close bracket at end
+					else {
+						$taskInfo_sql .= ")";
+					}
 	        	}
 
 	        	# prepare query
@@ -398,10 +410,18 @@ sub getTasksFromSourceDB
                     $status         = $row->[3];
                     $state          = $row->[4];
                     $completiondate = $row->[5];
-                    $expressionser 	= $row->[6];
+                    $expressionname = $row->[6];
 
                     $priorityser	= Priority::getClosestPriority($patientSer, $duedatetime);
     		    	$diagnosisser	= Diagnosis::getClosestDiagnosis($patientSer, $duedatetime);
+
+					my $expressionser;
+					foreach my $checkExpression (@expressions) {
+						if ($checkExpression->{_name} eq $expressionname){ #match
+							$expressionser = $checkExpression->{_ser};
+							last; # break out of loop
+						}
+					}
     
         			$task->setTaskPatientSer($patientSer);
 	        		$task->setTaskSourceUID($sourceuid); # assign id

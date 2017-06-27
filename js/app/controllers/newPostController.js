@@ -17,6 +17,13 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 			window.history.back();
 		};
 
+		// Default boolean variables
+		$scope.type = {open:false, show:true};
+		$scope.title = {open:false, show:false};
+		$scope.body = {open:false, show:false};
+		$scope.publish = {open:false, show:false};
+		$scope.terms = {open:false, show:false};
+
 		// completed steps boolean object; used for progress bar
 		var steps = {
 			title: { completed: false },
@@ -116,7 +123,12 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 		// Function to toggle necessary changes when updating post name
 		$scope.titleUpdate = function () {
 
+			$scope.title.open = true;
+
 			if ($scope.newPost.name_EN && $scope.newPost.name_FR) {
+
+				$scope.body.show = true;
+
 				// Toggle step completion
 				steps.title.completed = true;
 				// Count the number of completed steps
@@ -135,7 +147,16 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 
 		// Function to toggle necessary changes when updating the post body
 		$scope.bodyUpdate = function () {
+
+			$scope.body.open = true;
+
 			if ($scope.newPost.body_EN && $scope.newPost.body_FR) {
+
+				$scope.publish.show = true;
+
+				if ($scope.newPost.type.name != 'Announcement') {
+					$scope.terms.show = true;
+				}
 				// Toggle boolean
 				steps.body.completed = true;
 				// Count the number of completed steps
@@ -159,6 +180,8 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 
 			// Toggle boolean
 			steps.type.completed = true;
+			$scope.title.show = true;
+			$scope.type.open = true;
 
 			// Remove any entry in publish date
 			$scope.newPost.publish_date = null;
@@ -179,7 +202,13 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 
 		// Function to toggle necessary changes when updating the publish date
 		$scope.publishDateUpdate = function () {
+
+			$scope.publish.open = true; 
+
 			if ($scope.newPost.publish_date && $scope.newPost.publish_time) {
+
+				$scope.terms.show = true;
+
 				// Toggle boolean
 				steps.publish_date.completed = true;
 				// Count the number of completed steps
@@ -357,6 +386,24 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 			'Minutes',
 			'Hours'
 		];
+
+		var fixmeTop = $('.summary-fix').offset().top;
+		$(window).scroll(function() {
+		    var currentScroll = $(window).scrollTop();
+		    if (currentScroll >= fixmeTop) {
+		        $('.summary-fix').css({
+		            position: 'fixed',
+		            top: '0',
+		          	width: '15%'
+		        });
+		    } else {
+		        $('.summary-fix').css({
+		            position: 'static',
+		            width: ''
+		        });
+		    }
+		});
+
 
 	});
 

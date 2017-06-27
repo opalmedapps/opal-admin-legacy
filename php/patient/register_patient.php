@@ -14,6 +14,7 @@
 		'securityQuestion3'	=> $_POST['securityQuestion3'],
 		'cellNum'			=> $_POST['cellNum'],
 		'SSN'				=> $_POST['SSN'],
+		'accessLevel'		=> $_POST['accessLevel'],
 		'data'				=> $_POST['data']
 	);
 

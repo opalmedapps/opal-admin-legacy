@@ -13,12 +13,21 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 		// Default boolean variables
 		var selectAll = false; // select All button checked?
 
+		$scope.source = {open:false, show:true};
+		$scope.title_description = {open:false, show:false};
+		$scope.edumat = {open:false, show:false};
+		$scope.type = {open:false, show:false};
+		$scope.color = {open:false, show:false};
+		$scope.terms = {open:false, show:false};
+
+
+
 		// completed steps in object notation
 		var steps = {
 			source: { completed: false },
-			title: { completed: false },
-			description: { completed: false },
+			title_description: { completed: false },
 			type: { completed: false },
+			color: { completed: false },
 			terms: { completed: false }
 		};
 
@@ -102,6 +111,9 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 			$scope.newAlias.source_db = sourceDB;
 
 			// Toggle boolean
+			$scope.source.open = true;
+			$scope.title_description.show = true;
+
 			steps.source.completed = true;
 
 			// Count the number of completed steps
@@ -112,13 +124,24 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 
 		};
 
-		// Function to toggle necessary changes when updating alias title
-		$scope.titleUpdate = function () {
+		// Function to toggle necessary changes when updating alias title & description
+		$scope.titleDescriptionUpdate = function () {
 
-			if ($scope.newAlias.name_EN && $scope.newAlias.name_FR) { // if textboxes are not empty
+			$scope.title_description.open = true;
+
+			if (!$scope.newAlias.name_EN && !$scope.newAlias.name_FR &&
+			!$scope.newAlias.description_EN && !$scope.newAlias.description_FR) {
+				$scope.title_description.open = false;
+			}
+
+			if ($scope.newAlias.name_EN && $scope.newAlias.name_FR &&
+			$scope.newAlias.description_EN && $scope.newAlias.description_FR) { // if textboxes are not empty
 
 				// Toggle boolean
-				steps.title.completed = true;
+				$scope.edumat.show = true;
+				$scope.type.show = true;
+
+				steps.title_description.completed = true;
 
 				// Count the number of completed steps
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -130,7 +153,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 			else { // at least one textbox is empty
 
 				// Toggle boolean
-				steps.title.completed = false;
+				steps.title_description.completed = false;
 
 				// Count the number of completed steps
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -140,40 +163,21 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 			}
 		};
 
-		// Function to toggle necessary changes when updating alias description
-		$scope.descriptionUpdate = function () {
+		// Function to toggle necessary changes when updating educational material
+		$scope.eduMatUpdate = function () {
 
-			if ($scope.newAlias.description_EN && $scope.newAlias.description_FR) { // if textboxes are not empty
-
-				// Toggle boolean
-				steps.description.completed = true;
-
-				// Count the number of completed steps
-				$scope.numOfCompletedSteps = stepsCompleted(steps);
-
-				// Change progress bar
-				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-
-
-			}
-			else { // at least one textbox is empty
-
-				// Toggle boolean
-				steps.description.completed = false;
-
-				// Count the number of completed steps
-				$scope.numOfCompletedSteps = stepsCompleted(steps);
-
-				// Change progress bar
-				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-			}
-		};
+			// Toggle booleans
+			$scope.edumat.open = true;
+		}
 
 		// Function to toggle necessary changes when updating alias type
 		$scope.typeUpdate = function (type) {
 
 			if (!$scope.newAlias.source_db)
 				return;
+
+			$scope.type.open = true;
+			$scope.color.show = true;
 
 			// Set the name
 			$scope.newAlias.type = type;
@@ -235,8 +239,27 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 		};
 
+		// Function to toggle necessary changes when updating color
+		$scope.colorUpdate = function () {
+
+			// Toggle booleans
+			$scope.color.open = true;
+			$scope.terms.show = true;
+
+			steps.color.completed = true;
+
+			// Count the number of completed steps
+			$scope.numOfCompletedSteps = stepsCompleted(steps);
+
+			// Change progress bar
+			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+
+		}
+
 		// Function to add / remove a term to alias
 		$scope.toggleTermSelection = function (term) {
+
+			$scope.terms.open = true;
 
 			// If originally added, remove it
 			if (term.added) {
@@ -248,6 +271,8 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 
 					// Toggle boolean
 					steps.terms.completed = false;
+
+					$scope.terms.open = false;
 
 					// Count the number of completed steps
 					$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -402,14 +427,29 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 		// Function to return boolean for form completion
 		$scope.checkForm = function () {
 
-			if ($scope.newAlias.name_EN && $scope.newAlias.name_FR && $scope.newAlias.description_EN
-				&& $scope.newAlias.description_FR && $scope.newAlias.type && $scope.checkTermsAdded($scope.termList)
-				&& $scope.newAlias.source_db) {
+			if ($scope.stepProgress == 100) {
 				return true;
 			}
 			else
 				return false;
 		};
+
+		var fixmeTop = $('.summary-fix').offset().top;
+		$(window).scroll(function() {
+		    var currentScroll = $(window).scrollTop();
+		    if (currentScroll >= fixmeTop) {
+		        $('.summary-fix').css({
+		            position: 'fixed',
+		            top: '0',
+		          	width: '15%'
+		        });
+		    } else {
+		        $('.summary-fix').css({
+		            position: 'static',
+		            width: ''
+		        });
+		    }
+		});
 
 	});
 

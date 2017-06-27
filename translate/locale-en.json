@@ -54,7 +54,12 @@
 	"SLA_CHECK_DESCRIPTION": "Patient has read the service level agreement?",
 	"OPAL_DOCUMENTATION_CHECK_DESCRIPTION": "Patient has received the Opal documentation?",
 	"FINAL_CHECKS_TITLE": "Final Checks",
-	"FINAL_CHECKS_DESCRIPTION": "Please perform these final checks before registering the patient."
+	"FINAL_CHECKS_DESCRIPTION": "Please perform these final checks before registering the patient.",
+	"ACCESS_LEVEL_TITLE": "Access Level",
+	"ACCESS_LEVEL_DESCRIPTION": "Please specify medical record access level.",
+	"SELECT_ACCESS_LEVEL": "Select Access Level",
+	"ACCESS_LEVEL_1": "1 : Need-to-know information",
+	"ACCESS_LEVEL_3": "3 : All data"
 
 
 }
