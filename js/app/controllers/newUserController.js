@@ -203,5 +203,22 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 			}
 		};
 
+		var fixmeTop = $('.summary-fix').offset().top;
+		$(window).scroll(function() {
+		    var currentScroll = $(window).scrollTop();
+		    if (currentScroll >= fixmeTop) {
+		        $('.summary-fix').css({
+		            position: 'fixed',
+		            top: '0',
+		          	width: '15%'
+		        });
+		    } else {
+		        $('.summary-fix').css({
+		            position: 'static',
+		            width: ''
+		        });
+		    }
+		});
+
 	});
 
