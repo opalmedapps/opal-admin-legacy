@@ -43,9 +43,9 @@ angular.module('opalAdmin.controllers.loginController', ['ngAnimate', 'ui.bootst
 		// Function to "shake" form container if fields are incorrect
 		$scope.shakeForm = function () {
 			$scope.formLoaded = true;
-			$('.form-box').addClass('shake');
+			$('.form-box-shake').addClass('shake');
 			setTimeout(function () {
-				$('.form-box').removeClass('shake');
+				$('.form-box-shake').removeClass('shake');
 			}, 1000);
 		};
 
