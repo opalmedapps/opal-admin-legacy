@@ -1,3 +1,7 @@
+Version 0.9.2:
+ -     --- Redesigned login pages
+ - Merge branch 'release-0.9.1' into develop
+
 Version 0.9.1:
  -     --- Added fixed summary function
  -     --- Redesigned patient registration pages
