@@ -101,7 +101,7 @@ class CrontabManager {
 		if (is_null($cron_jobs)) $this->error_message("Nothing to append!  Please specify a cron job or an array of cron jobs.");
      
 		/* Constructing a command */
-		$append_cronfile = "echo '";
+		$append_cronfile = "bash -c 'echo -e \"";
 		
 		// Populate the string with the cron jobs.
 		// Using the ternary operator, if there are multiple cron jobs,
@@ -109,7 +109,7 @@ class CrontabManager {
 		$append_cronfile .= (is_array($cron_jobs)) ? implode("\\n", $cron_jobs) : $cron_jobs;
 
 		// Echo the jobs into the cron file by redirecting stout
-		$append_cronfile .= "' >> {$this->cron_file}";
+		$append_cronfile .= "\" >> {$this->cron_file}'";
 
 		// String command to install the new cron file
 		$install_cron = "crontab {$this->cron_file}";
