@@ -4,10 +4,10 @@ php/config.php
 publisher/modules/Configs.pm
 
 # ignore clinical documents
-publisher/clinical/documents
+publisher/clinical/documents/**
 
 # ignore certificates
-publisher/php/certificates
+publisher/php/certificates/**
 js/firebaseServiceAccountKey.json
 
 # ignore swap files
@@ -17,7 +17,7 @@ js/firebaseServiceAccountKey.json
 ./**/*.swo
 
 # ignore QR Images
-images/hospital-maps/qrCodes
+images/hospital-maps/qrCodes/**
 
 # ignore version control script
 bumpversion.sh
