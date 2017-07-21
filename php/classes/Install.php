@@ -71,7 +71,7 @@ class Install {
 			$pathname 	= getcwd();
 			$abspath 	= str_replace('php/install', '', $pathname);
 
-			$importFilename = $abspath . 'schema.sql';
+			$importFilename = $abspath . 'migration/0001-migration.sql';
 
 			//$command='/usr/local/mysql/bin/mysql -h' .$host .' -u' .$username .' -p' .$password .' ' .$name .' < ' .$importFilename;
 			$command='mysql -h' .$host .' -u' .$username .' -p' .$password .' ' .$name .' < ' .$importFilename;
