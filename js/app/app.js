@@ -34,7 +34,10 @@ angular.module('opalAdmin', [
 		admin: 'admin',
 		editor: 'editor',
 		guest: 'guest',
-		registrant: 'registrant'
+		registrant: 'registrant',
+		clinician: 'clinician',
+		manager: 'manager',
+		educationCreator: 'education-creator'
 	})
 
 	// Authentication and authorization service
