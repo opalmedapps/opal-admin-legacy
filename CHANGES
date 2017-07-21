@@ -1,3 +1,9 @@
+Version 0.9.4:
+ -     --- Switched to "migration" files
+ -     --- Added sql changes to update databases
+ - --- Added new roles
+ - Merge branch 'release-0.9.3' into develop
+
 Version 0.9.3:
  -     --- Fixed issue where cron settings wouldn't work on bash shells         -- Now forces bash command regardless of local shell environment
  - Merge branch 'release-0.9.2' into develop
