@@ -902,7 +902,7 @@ sub inOurDatabaseMH
 
 	my $inDB_sql = "
 		SELECT DISTINCT
-			plmh.PatientLocationSerNum,
+			plmh.PatientLocationMHSerNum,
 			plmh.SourceUID,
 			plmh.AppointmentSerNum,
 			plmh.RevCount,
