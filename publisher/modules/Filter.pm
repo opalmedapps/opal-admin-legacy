@@ -2,7 +2,7 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 04-May-2016 ++ File: Filter.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates a filter class. This module calls a contructor to 
+# Perl module that creates a filter class. This module calls a constructor to 
 # create a filter object that contains filter information stored as parameters
 #
 # There exists various subroutines to set / get filter information
@@ -25,6 +25,7 @@ sub new
     my $filter = {
         _sex            => undef,
         _age            => undef,
+		_patients 		=> undef,
         _expressions    => undef,
         _diagnoses      => undef,
         _doctors        => undef,
@@ -55,6 +56,16 @@ sub setAgeFilter
 	my ($filter, $age) = @_; # filter object with provided age in arguments
 	$filter->{_age} = $age; # set the age
     return $filter->{_age};
+}
+
+#======================================================================================
+# Subroutine to set the patient filters
+#======================================================================================
+sub setPatientFilters
+{
+	my ($filter, @patients) = @_; # filter object with provided patients in arguments
+	@{$filter->{_patients}} = @patients; # set the patients
+	return @{$filter->{_patients}};
 }
 
 #======================================================================================
@@ -116,6 +127,15 @@ sub getAgeFilter
 }
 
 #======================================================================================
+# Subroutine to get the patient filters
+#======================================================================================
+sub getPatientFilters
+{
+	my ($filter) = @_; # our filter object
+	return @{$filter->{_patients}};
+}
+
+#======================================================================================
 # Subroutine to get the expression filters
 #======================================================================================
 sub getExpressionFilters
@@ -160,6 +180,7 @@ sub getAllFiltersFromOurDB
 
     my $sexFilter           = getSexFilterFromOurDB($controlSer, $controlTable);
     my $ageFilter           = getAgeFilterFromOurDB($controlSer, $controlTable);
+	my @patientFilters 		= getPatientFiltersFromOurDB($controlSer, $controlTable);
     my @expressionFilters   = getExpressionFiltersFromOurDB($controlSer, $controlTable);
     my @diagnosisFilters    = getDiagnosisFiltersFromOurDB($controlSer, $controlTable);
     my @doctorFilters       = getDoctorFiltersFromOurDB($controlSer, $controlTable);
@@ -169,6 +190,7 @@ sub getAllFiltersFromOurDB
 
     $Filter->setSexFilter($sexFilter);
     $Filter->setAgeFilter($ageFilter);
+	$Filter->setPatientFilters(@patientFilters)
     $Filter->setExpressionFilters(@expressionFilters);
     $Filter->setDiagnosisFilters(@diagnosisFilters);
     $Filter->setDoctorFilters(@doctorFilters);
@@ -249,6 +271,40 @@ sub getAgeFilterFromOurDB
     }
 
     return $ageFilter;
+}
+
+#======================================================================================
+# Subroutine to get patient filters from DB given a control serial number and table name
+#======================================================================================
+sub getPatientFiltersFromOurDB
+{
+    my ($controlSer, $controlTable) = @_; # args
+
+    my @patientFilters = (); # initialize list
+    my $select_sql = "
+        SELECT DISTINCT
+            Filters.FilterId
+        FROM
+            Filters
+        WHERE
+            Filters.ControlTable         = '$controlTable'
+        AND Filters.ControlTableSerNum   = '$controlSer'
+        AND Filters.FilterType           = 'Patient'
+    ";
+
+    # prepare query
+	my $query = $SQLDatabase->prepare($select_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+	
+	while (my @data = $query->fetchrow_array()) {
+        push(@patientFilters, $data[0]);
+    }
+
+    return @patientFilters;
 }
 
 #======================================================================================

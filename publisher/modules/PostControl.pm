@@ -173,8 +173,6 @@ sub getPostControlsMarkedForPublish
         AND pc.PostType         = '$postType'
     ";
 
-
-
 	# prepare query
 	my $query = $SQLDatabase->prepare($info_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
