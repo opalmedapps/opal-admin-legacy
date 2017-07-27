@@ -12,7 +12,7 @@
 
 package Venue; # Declare package name
 
-use Database: # Use our custom Database module
+use Database; # Use our custom Database module
 use Storable qw(dclone); # for deep copies
 
 #---------------------------------------------------------------------------------
@@ -121,7 +121,6 @@ sub getVenueInfoFromSourceDB
 {
 	my ($Venue) = @_; # Venue object from args
 
-	my $id = $Venue->getVenueId();
 	my $sourcedbser = $Venue->getVenueSourceDatabaseSer();
 	my $sourceuid = $Venue->getVenueSourceUID();
 
@@ -134,12 +133,13 @@ sub getVenueInfoFromSourceDB
 
 		my $venue_sql = "
 			SELECT DISTINCT
-				Venue.Id
+				Venue.VenueId
 			FROM
 				variansystem.dbo.Venue Venue
 			WHERE
 				Venue.ResourceSer = '$sourceuid'
 		";
+
 		# prepare query
     	my $query = $sourceDatabase->prepare($venue_sql)
 	    	or die "Could not prepare query: " . $sourceDatabase->errstr;
@@ -169,11 +169,11 @@ sub getVenueInfoFromSourceDB
 
 		my $venue_sql = "
 			SELECT DISTINCT 
-				Venue.ResourceSer
+				Venue.VenueId
 			FROM
 				Venue
 			WHERE
-				Venue.VenueId = \"$id\"
+				Venue.ResourceSer = '$sourceuid'
 		";
 
 		# prepare query
@@ -187,9 +187,9 @@ sub getVenueInfoFromSourceDB
     	while (my @data = $query->fetchrow_array()) {
 
 			# query results
-			$sourceuid = $data[0];
+			$id = $data[0];
 
-			$Venue->setVenueSourceUID($sourceuid);
+			$Venue->setVenueId($id);
 		}
 
 		$sourceDatabase->disconnect();
@@ -245,7 +245,7 @@ sub inOurDatabase
 		SELECT DISTINCT
 			Venue.VenueSerNum,
 			Venue.SourceUID,
-			Venue.Id
+			Venue.VenueId
 		FROM 
 			Venue
 		WHERE
@@ -401,7 +401,6 @@ sub reassignVenue
 	my $Venue = new Venue(); # initialize venue object
 
 	$Venue->setVenueSourceUID($sourceuid);
-	$Venue->setVenueId($sourceuid);
 	$Venue->setVenueSourceDatabaseSer($sourcedbser);
 
 	# get venue info from source DB
@@ -419,7 +418,7 @@ sub reassignVenue
 		# update database
 		$UpdatedVenue->updateDatabase();
 
-		my $venueSer = $ExistingVenue->getExistingSer(); # get serial
+		my $venueSer = $ExistingVenue->getVenueSer(); # get serial
 
 		return $venueSer;
 	}

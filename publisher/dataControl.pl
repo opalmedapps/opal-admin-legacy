@@ -374,7 +374,7 @@ print "PL List\n" if $verbose;
 foreach my $PatientLocation (@PLMHList) {
 
 	# check if PL exists in our database 
-	my $PLExists = $PatientLocation->inOurDatabase();
+	my $PLExists = $PatientLocation->inOurDatabaseMH();
 
 	if ($PLExists) { # PL exists
 	
@@ -385,12 +385,12 @@ foreach my $PatientLocation (@PLMHList) {
 		my $UpdatedPL = $PatientLocation->compareWith($ExistingPL);
 
 		# after updating our PL object, update the database
-		$UpdatedPL->updateDatabase();
+		$UpdatedPL->updateDatabaseMH();
 
 	} else { #PL DNE
 	
 		# insert PL into our database 
-		$PatientLocation->insertPatientLocationIntoOurDB();
+		$PatientLocation->insertPatientLocationMHIntoOurDB();
 	}
 }
 

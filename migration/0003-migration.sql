@@ -24,6 +24,7 @@ ALTER TABLE `PatientLocation` ADD INDEX(`CheckedInFlag`);
 ALTER TABLE `PatientLocation` ADD INDEX(`VenueSerNum`);
 ALTER TABLE `PatientLocation` ADD FOREIGN KEY (`AppointmentSerNum`) REFERENCES `Appointment`(`AppointmentSerNum`) ON DELETE RESTRICT ON UPDATE CASCADE;
 ALTER TABLE `PatientLocation` ADD FOREIGN KEY (`VenueSerNum`) REFERENCES `Venue`(`VenueSerNum`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE  `PatientLocation` DROP FOREIGN KEY  `PatientLocation_ibfk_2` ;
 
 # Tracking report for table `PatientLocationMH`
 # 2017-07-26 16:42:13
@@ -52,6 +53,7 @@ ALTER TABLE `PatientLocationMH` ADD INDEX(`CheckedInFlag`);
 ALTER TABLE `PatientLocationMH` ADD INDEX(`VenueSerNum`);
 ALTER TABLE `PatientLocationMH` ADD FOREIGN KEY (`AppointmentSerNum`) REFERENCES `Appointment`(`AppointmentSerNum`) ON DELETE RESTRICT ON UPDATE CASCADE;
 ALTER TABLE `PatientLocationMH` ADD FOREIGN KEY (`VenueSerNum`) REFERENCES `Venue`(`VenueSerNum`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE  `PatientLocationMH` DROP FOREIGN KEY  `PatientLocationMH_ibfk_2` ;
 
 # Tracking report for table `Venue`
 # 2017-07-26 16:42:21
