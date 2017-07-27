@@ -1,3 +1,11 @@
+Version 0.9.5:
+ -     --- Removed Venue index from PLs         -- VenueSerNums can be 0 if a stored procedure to uncheckin a patient occurs (no resource/venue)
+ -     --- Added SQL migration for patient location
+ - --- Added patientlocation support in publisher
+ -     --- Added text to questionnaires
+ - Merge branch 'release-0.9.4' into develop
+ -     --- Moved to migration files
+
 Version 0.9.4:
  -     --- Switched to "migration" files
  -     --- Added sql changes to update databases
