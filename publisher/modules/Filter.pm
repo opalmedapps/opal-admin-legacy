@@ -190,7 +190,7 @@ sub getAllFiltersFromOurDB
 
     $Filter->setSexFilter($sexFilter);
     $Filter->setAgeFilter($ageFilter);
-	$Filter->setPatientFilters(@patientFilters)
+	$Filter->setPatientFilters(@patientFilters);
     $Filter->setExpressionFilters(@expressionFilters);
     $Filter->setDiagnosisFilters(@diagnosisFilters);
     $Filter->setDoctorFilters(@doctorFilters);
