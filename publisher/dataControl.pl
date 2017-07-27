@@ -40,6 +40,7 @@ use PatientsForPatients; # custom PatientsForPatients.pm
 use EducationalMaterialControl; 
 use EducationalMaterial; 
 use Priority; 
+use PatientLocation; 
 
 # Get the current time (for last-updates/logs)
 my $start_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
@@ -60,6 +61,8 @@ my @DiagnosisList = ();
 my @PriorityList = ();
 my @TRList = ();
 my @RAList = ();
+my @PLList = ();
+my @PLMHList = ();
 
 my $verbose = 1;
 
@@ -320,6 +323,78 @@ foreach my $ResourceAppointment (@RAList) {
 
 
 print "Got RAs\n" if $verbose;
+
+##########################################################################################
+# 
+# Data Retrieval PATIENTLOCATION - get list of PL info updated since last update
+#
+##########################################################################################
+@PLList = PatientLocation::getPatientLocationsFromSourceDB(@patientList);
+
+print "PL List\n" if $verbose;
+#=========================================================================================
+# Loop over each PL. Various functions are done.
+#=========================================================================================
+foreach my $PatientLocation (@PLList) {
+
+	# check if PL exists in our database 
+	my $PLExists = $PatientLocation->inOurDatabase();
+
+	if ($PLExists) { # PL exists
+	
+		my $ExistingPL = dclone($PLExists); # reassign variable
+
+		# compare our retrieved PL with the existing PL
+		# update is done on the original (existing) PL
+		my $UpdatedPL = $PatientLocation->compareWith($ExistingPL);
+
+		# after updating our PL object, update the database
+		$UpdatedPL->updateDatabase();
+
+	} else { #PL DNE
+	
+		# insert PL into our database 
+		$PatientLocation->insertPatientLocationIntoOurDB();
+	}
+}
+
+print "Got PLs\n" if $verbose;
+
+##########################################################################################
+# 
+# Data Retrieval PATIENTLOCATIONMH - get list of PL MH info updated since last update
+#
+##########################################################################################
+@PLMHList = PatientLocation::getPatientLocationsMHFromSourceDB(@patientList);
+
+print "PL List\n" if $verbose;
+#=========================================================================================
+# Loop over each PL MH. Various functions are done.
+#=========================================================================================
+foreach my $PatientLocation (@PLMHList) {
+
+	# check if PL exists in our database 
+	my $PLExists = $PatientLocation->inOurDatabaseMH();
+
+	if ($PLExists) { # PL exists
+	
+		my $ExistingPL = dclone($PLExists); # reassign variable
+
+		# compare our retrieved PL with the existing PL
+		# update is done on the original (existing) PL
+		my $UpdatedPL = $PatientLocation->compareWith($ExistingPL);
+
+		# after updating our PL object, update the database
+		$UpdatedPL->updateDatabaseMH();
+
+	} else { #PL DNE
+	
+		# insert PL into our database 
+		$PatientLocation->insertPatientLocationMHIntoOurDB();
+	}
+}
+
+print "Got PL MHs\n" if $verbose;
 
 ##########################################################################################
 # 
