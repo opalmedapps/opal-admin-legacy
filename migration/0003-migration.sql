@@ -1,3 +1,20 @@
+# Tracking report for table `Venue`
+# 2017-07-26 16:42:21
+
+DROP TABLE IF EXISTS `Venue`;
+
+CREATE TABLE `Venue` (
+  `VenueSerNum` int(11) NOT NULL AUTO_INCREMENT,
+  `SourceDatabaseSerNum` int(11) NOT NULL,
+  `SourceUID` int(11) NOT NULL,
+  `VenueId` varchar(100) NOT NULL,
+  `DateAdded` datetime NOT NULL,
+  `LastUpdated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`VenueSerNum`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+ALTER TABLE `Venue` ADD INDEX(`SourceDatabaseSerNum`);
+ALTER TABLE `Venue` ADD INDEX(`SourceUID`);
+
 # Tracking report for table `PatientLocation`
 # 2017-07-26 16:42:02
 
@@ -55,19 +72,4 @@ ALTER TABLE `PatientLocationMH` ADD FOREIGN KEY (`AppointmentSerNum`) REFERENCES
 ALTER TABLE `PatientLocationMH` ADD FOREIGN KEY (`VenueSerNum`) REFERENCES `Venue`(`VenueSerNum`) ON DELETE RESTRICT ON UPDATE CASCADE;
 ALTER TABLE  `PatientLocationMH` DROP FOREIGN KEY  `PatientLocationMH_ibfk_2` ;
 
-# Tracking report for table `Venue`
-# 2017-07-26 16:42:21
 
-DROP TABLE IF EXISTS `Venue`;
-
-CREATE TABLE `Venue` (
-  `VenueSerNum` int(11) NOT NULL AUTO_INCREMENT,
-  `SourceDatabaseSerNum` int(11) NOT NULL,
-  `SourceUID` int(11) NOT NULL,
-  `VenueId` varchar(100) NOT NULL,
-  `DateAdded` datetime NOT NULL,
-  `LastUpdated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`VenueSerNum`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-ALTER TABLE `Venue` ADD INDEX(`SourceDatabaseSerNum`);
-ALTER TABLE `Venue` ADD INDEX(`SourceUID`);
