@@ -181,7 +181,7 @@ sub getPatientLocationSourceUID
 sub getPatientLocationRevisionCount
 {
 	my ($patientlocation) = @_; # our PL object
-	return $patientlocation->{_revisioncount};
+	return $patientlocation->{_revcount};
 }
 
 #====================================================================================
@@ -292,9 +292,9 @@ sub getPatientLocationsFromSourceDB
 				foreach my $Expression (@expressions) {
 
 					my $expressionser = $Expression->{_ser};
-					my $expressName = $Expression->{_name};
+					my $expressionName = $Expression->{_name};
 					my $expressionLastTransfer = $Expression->{_lasttransfer};
-					my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%%Y-%m-%d %H:%M:%S");
+					my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
 
 					# compare the last updates to find the earliest date 
 					my $date_diff = $formatted_PLU - $formatted_ELU;
@@ -315,7 +315,7 @@ sub getPatientLocationsFromSourceDB
 					}
 					# close bracket at the end
 					else {
-						$plInfo_sql .= ")"''
+						$plInfo_sql .= ")";
 					}
 				}
 
@@ -369,15 +369,17 @@ sub getPatientLocationsFromSourceDB
 						pl.PatientLocationRevCount,
 						'1' as CheckedInFlag,
 						pl.ArrivalDateTime,
-						pl.CheckinVenueName
+						Venue.ResourceSer
 					FROM
 						Patient pt,
 						MediVisitAppointmentList mval,
-						PatientLocation pl
+						PatientLocation pl,
+						Venue
 					WHERE
 						mval.PatientSerNum 			= pt.PatientSerNum
 					AND	pt.SSN 						LIKE '$patientSSN%'
 					AND mval.AppointmentSerNum		= pl.AppointmentSerNum
+					AND Venue.VenueId 				= pl.CheckinVenueName
 					AND (
 				";
 
@@ -426,7 +428,7 @@ sub getPatientLocationsFromSourceDB
 
 					my $patientlocation = new PatientLocation(); # new PL object
 
-					$appointmentser 		= Appointment::reassignAppointment($row[0], $sourceDBSer, $aliasSer, $patientSer);
+					$appointmentser 		= Appointment::reassignAppointment($row->[0], $sourceDBSer, $aliasSer, $patientSer);
 					$sourceuid 				= $row->[1];
 					$revcount 				= $row->[2];
 					$checkedinflag 			= $row->[3];
@@ -588,7 +590,7 @@ sub getPatientLocationsMHFromSourceDB
 					my $expressionser = $Expression->{_ser};
 					my $expressName = $Expression->{_name};
 					my $expressionLastTransfer = $Expression->{_lasttransfer};
-					my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%%Y-%m-%d %H:%M:%S");
+					my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
 
 					# compare the last updates to find the earliest date 
 					my $date_diff = $formatted_PLU - $formatted_ELU;
@@ -609,7 +611,7 @@ sub getPatientLocationsMHFromSourceDB
 					}
 					# close bracket at the end
 					else {
-						$plInfo_sql .= ")"''
+						$plInfo_sql .= ")";
 					}
 				}
 
@@ -665,16 +667,18 @@ sub getPatientLocationsMHFromSourceDB
 						plmh.PatientLocationRevCount,
 						'1' as CheckedInFlag,
 						plmh.ArrivalDateTime,
-						plmh.CheckinVenueName,
-						plmh.DischargeThisLocationDateTime
+						Venue.ResourceSer,
+						plmh.DichargeThisLocationDateTime
 					FROM
 						Patient pt,
 						MediVisitAppointmentList mval,
-						PatientLocationMH plmh
+						PatientLocationMH plmh,
+						Venue
 					WHERE
 						mval.PatientSerNum 			= pt.PatientSerNum
 					AND	pt.SSN 						LIKE '$patientSSN%'
 					AND mval.AppointmentSerNum		= plmh.AppointmentSerNum
+					AND plmh.CheckinVenueName  		= Venue.VenueId
 					AND (
 				";
 
@@ -696,7 +700,7 @@ sub getPatientLocationsMHFromSourceDB
 
 					$plInfo_sql .= "
 						(mval.AppointmentCode 					= '$expressionName'
-						AND plmh.DischargeThisLocationDateTime 	> '$lasttransfer')
+						AND plmh.DichargeThisLocationDateTime 	> '$lasttransfer')
 					";
 					$counter++;
 					# concat "UNION" until we've reached the last query
@@ -723,7 +727,7 @@ sub getPatientLocationsMHFromSourceDB
 
 					my $patientlocation = new PatientLocation(); # new PL object
 
-					$appointmentser 		= Appointment::reassignAppointment($row[0], $sourceDBSer, $aliasSer, $patientSer);
+					$appointmentser 		= Appointment::reassignAppointment($row->[0], $sourceDBSer, $aliasSer, $patientSer);
 					$sourceuid 				= $row->[1];
 					$revcount 				= $row->[2];
 					$checkedinflag 			= $row->[3];
@@ -1031,7 +1035,7 @@ sub insertPatientLocationMHIntoOurDB
 
 	my $insert_sql = "
 		INSERT INTO 
-			PatientLocation (
+			PatientLocationMH (
 				SourceDatabaseSerNum,
 				SourceUID,
 				AppointmentSerNum,

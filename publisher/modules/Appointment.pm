@@ -957,7 +957,7 @@ sub inOurDatabase
     my ($status, $state, $actualstartdate, $actualenddate);
 
 	my $inDB_sql = "
-		SELECT
+		SELECT DISTINCT
 			Appointment.AppointmentAriaSer,
 			Appointment.AliasExpressionSerNum,
 			Appointment.ScheduledStartTime,
@@ -974,8 +974,8 @@ sub inOurDatabase
 		FROM
 			Appointment
 		WHERE
-			Appointment.AppointmentAriaSer      = $sourceUID
-        AND Appointment.SourceDatabaseSerNum    = $sourceDBSer
+			Appointment.AppointmentAriaSer      = '$sourceUID'
+        AND Appointment.SourceDatabaseSerNum    = '$sourceDBSer'
 	";
 
 	# prepare query
