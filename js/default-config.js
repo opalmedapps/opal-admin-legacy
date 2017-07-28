@@ -20,4 +20,6 @@ var firebaseConfig = {
 // firebaseConfig is a global variable from config.js
 var FB = firebase.initializeApp(firebaseConfig);
 
-var INSTALL_ACCESS = true; // Put false after successful installation
+var INSTALL_ACCESS = false; // Put false after successful installation
+
+var DEV_MODE = false;
