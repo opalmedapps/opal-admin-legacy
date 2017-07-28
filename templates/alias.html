@@ -2,7 +2,7 @@
     <div id="top">
       <div class="clearfix">
         <div class="row">
-          <div class="col-md-2">
+          <div id="side-panel-scrollbar" class="col-md-2">
             <div ng-include="'templates/side-panel-menu.html'"></div>
           </div>
           <div class="col-md-10 animated fadeIn">
@@ -84,9 +84,29 @@
           <div uib-accordion-group is-open="statusA.open">
             <uib-accordion-heading>
               <div>
-                Titles <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusA.open, 'glyphicon-chevron-right': !statusA.open}"></i>
+                <strong>Titles</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusA.open, 'glyphicon-chevron-right': !statusA.open}"></i>
               </div>
             </uib-accordion-heading>
+            <!--<div class="row" style="margin-left:auto;margin-right:auto;">
+              <div class="col-md-5 col-md-offset-3" style="margin-bottom:10px;">
+                <div class="edit-panel-info">
+                  <div class="panel-content">
+                    <h6 style="text-align:center;font-size:23px"><strong>Current Titles</strong></h6>
+                    <p style="margin-bottom:5px;">
+                      <strong>EN</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{alias.name_EN}}
+                    </p>
+                    <p style="margin-bottom:5px;">
+                      <strong>FR</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{alias.name_FR}}
+                    </p>
+                    <p style="text-align:center"><em>Update new title(s) below</em></p>
+                  </div>
+                </div>
+              </div>
+            </div>-->
             <div class="bs-callout bs-callout-info">
               <h4>Current Alias Titles (EN / FR): {{alias.name_EN}} / {{alias.name_FR}}</h4>
               To change the current title(s), enter the new title(s) in the text box(es) below.
@@ -110,7 +130,7 @@
           <div uib-accordion-group is-open="statusB.open">
             <uib-accordion-heading>
               <div>
-                Plain-Text Descriptions <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusB.open, 'glyphicon-chevron-right': !statusB.open}"></i>
+                <strong>Plain-Text Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusB.open, 'glyphicon-chevron-right': !statusB.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -133,7 +153,7 @@
           <div uib-accordion-group is-open="statusC.open">
             <uib-accordion-heading>
               <div>
-                Attached Educational Material <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusC.open, 'glyphicon-chevron-right': !statusC.open}"></i>
+                <strong>Attached Educational Material</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusC.open, 'glyphicon-chevron-right': !statusC.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -157,7 +177,7 @@
           <div uib-accordion-group is-open="statusD.open">
             <uib-accordion-heading>
               <div>
-                Color Tag <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusD.open, 'glyphicon-chevron-right': !statusD.open}"></i>
+                <strong>Color Tag</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusD.open, 'glyphicon-chevron-right': !statusD.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -217,7 +237,7 @@
           <div uib-accordion-group is-open="statusE.open">
             <uib-accordion-heading>
               <div>
-                Assigned Terms <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusE.open, 'glyphicon-chevron-right': !statusE.open}"></i>
+                <strong>Assigned Terms</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusE.open, 'glyphicon-chevron-right': !statusE.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
