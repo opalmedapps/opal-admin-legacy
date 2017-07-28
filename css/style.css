@@ -632,6 +632,74 @@ ul.no-list {
   box-shadow: rgba(0, 0, 0, 0.6) 0px 3px 10px -3px;
 }
 
+/* Turn on custom 8px wide scrollbar */
+::-webkit-scrollbar {
+  width: 10px; /* 1px wider than Lion. */
+  /* This is more usable for users trying to click it. */
+  background-color: rgba(0,0,0,0);
+  -webkit-border-radius: 100px;
+}
+/* hover effect for both scrollbar area, and scrollbar 'thumb' */
+::-webkit-scrollbar:hover {
+  background-color: rgba(0, 0, 0, 0.09);
+}
+ 
+/* The scrollbar 'thumb' ...that marque oval shape in a scrollbar */
+::-webkit-scrollbar-thumb:vertical {
+  /* This is the EXACT color of Mac OS scrollbars. 
+     Yes, I pulled out digital color meter */
+  background: rgba(0,0,0,0.5);
+  -webkit-border-radius: 100px;
+  background-clip: padding-box;
+  border: 2px solid rgba(0, 0, 0, 0);
+  min-height: 10px; /*Prevent it from getting too small */
+}
+::-webkit-scrollbar-thumb:vertical:active {
+  background: rgba(0,0,0,0.61); /* Some darker color when you click it */
+  -webkit-border-radius: 100px;
+}
+
+/* Turn on custom 8px wide scrollbar */
+#side-panel-scroll::-webkit-scrollbar {
+  width: 10px; /* 1px wider than Lion. */
+  /* This is more usable for users trying to click it. */
+  background-color: rgba(0,0,0,0);
+  -webkit-border-radius: 100px;
+}
+/* hover effect for both scrollbar area, and scrollbar 'thumb' */
+#side-panel-scroll::-webkit-scrollbar:hover {
+  background-color: rgba(0, 0, 0, 0.09);
+}
+ 
+/* The scrollbar 'thumb' ...that marque oval shape in a scrollbar */
+#side-panel-scroll::-webkit-scrollbar-thumb:vertical {
+  /* This is the EXACT color of Mac OS scrollbars. 
+     Yes, I pulled out digital color meter */
+  background: rgba(255,255,244,1);
+  -webkit-border-radius: 100px;
+  background-clip: padding-box;
+  border: 2px solid rgba(0, 0, 0, 0);
+  min-height: 10px; /*Prevent it from getting too small */
+}
+#side-panel-scroll::-webkit-scrollbar-thumb:vertical:active {
+  background: rgba(255,255,244,1); /* Some darker color when you click it */
+  -webkit-border-radius: 100px;
+}
+
+#gradient {
+    position:absolute;
+    z-index:2;
+    right:0; bottom:0; left:0;
+    height:13vh;
+    background: -moz-linear-gradient(top,  rgba(255,255,255,0) 0%, rgba(230,237,250,1) 75%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,0)), color-stop(75%,rgba(230,237,250,1)));
+    background: -webkit-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba(230,237,250,1) 75%);
+    background: -o-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba(230,237,250,1) 75%);
+    background: -ms-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba(230,237,250,1) 75%);
+    background: linear-gradient(to bottom,  rgba(255,255,255,0) 0%,rgba(230,237,250,1) 75%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#ffffff',GradientType=0 );
+}
+
 .circle {
   width: 140px;
   height: 140px;
@@ -761,6 +829,14 @@ ul.no-list {
 .side-panel-info-sm.active,
 .side-panel-info.active {
   background-color: #6f5499;
+}
+
+.edit-panel-info {
+  padding: 10px;
+  background-color: #fffff4;
+  border: 1px solid #e1e8ed;
+  border-radius: 7px;
+  /*height: 70px;*/
 }
 
 .active-purple-full {
