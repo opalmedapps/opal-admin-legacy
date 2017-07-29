@@ -2,56 +2,46 @@
 
 /* Questionnaire-Tag class */
 
-class Tag {
-	public $serNum;
-	public $level;
-	public $ref_tag_serNum;
-	public $name;
+include_once('questionnaire.inc');
 
-	public function __construct($serNum, $level, $ref_tag_serNum, $name){
-		$this->serNum = $serNum;
-		$this->level = $level;
-		$this->ref_tag_serNum = $ref_tag_serNum;
-		$this->name = $name;
-	}
-	/* Check if the tag exist
-	 * @param: $tag-tag need to be checked
-	 * @return exist as boolean
-	 *
-	public function ifExist($tag){
-		$exist = false;
-		$name_EN = $tag['name_EN'];
+class Tag {
+
+	/* Add new tag
+	 * @param: $tagAdded-new tag inserted
+	 */
+	public function addTag($tagAdded){
+		$name_EN = $tagAdded['name_EN'];
+		$name_FR = $tagAdded['name_FR'];
+		$level = $tagAdded['level'];
+		$created_by = $tagAdded['created_by'];
+		$last_updated_by = $tagAdded['last_updated_by'];
+
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
 			$sql = "
-				SELECT 
-					QuestionnaireTag.name_EN
-				FROM
-					QuestionnaireTag
-				WHERE
-					name_EN = \"$name_EN\"
+				INSERT INTO
+					QuestionnaireTag(
+						name_EN,
+						name_FR,
+						level,
+						created_by,
+						last_updated_by
+					)
+				VALUES(
+					\"$name_EN\",
+					\"$name_FR\",
+					'$level',
+					'$created_by',
+					'$last_updated_by'
+				)
 			";
-
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query = $host_db_link->prepare($sql);
 			$query->execute();
-
-			//fetch and check
-
-			return $exist;
-
 		} catch(PDOException $e) {
- 			echo $e->getMessage();
- 			return $exist;
- 		}
+			echo $e->getMessage();
+		}
 	}
-
-	 * Add new tag
-	 * @param: $tagAdded-new tag inserted
-	 **********INCOMPLETE*********
-	 *
-	public function addTag($tagAdded){} */
 
 	/* Get tags from table
 	 * @return array $tags
@@ -66,34 +56,30 @@ class Tag {
 				SELECT
 					serNum,
 					level,
-					ref_tag_serNum,
-					name_EN
+					name_EN,
+					name_FR
 				FROM
 					QuestionnaireTag
 			";
 			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
-			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
+			while($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)){
+				$serNum = $data[0];
+				$level = $data[1];
+				$name_EN = $data[2];
+				$name_FR = $data[3];
 
-			$serNum = $data[0];
-			$level = $data[1];
-			$ref_tag_serNum = $data[2];
-			$name_EN = $data[3];
-			// properties unselected
-			//$name_FR = $data[4];
-			//$last_updated = $data[5];
-			//$created = $data[6];
-			//$last_updated_by = $data[7];
-			$created_by = $data[8];
+				$tag = array(
+					'serNum' 			=> $serNum,
+					'level'  			=> $level,
+					'name_EN'			=> $name_EN,
+					'name_FR'			=> $name_FR,
+					'added'				=> 0
+				);
 
-			$tags = array(
-				'serNum' 			=> $serNum;
-				'level'  			=> $level;
-				'ref_tag_serNum' 	=> $ref_tag_serNum;
-				'name_EN'			=>$name_EN;
-			);
-
+				array_push($tags, $tag);
+			}
 			return $tags;
 
 		} catch(PDOException $e) {

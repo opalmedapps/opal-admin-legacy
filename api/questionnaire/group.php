@@ -4,11 +4,11 @@
 
     $callback = $_GET['callback'];
 	$userid = $_GET['userid'];
+	
+    $group = new Group();
 
-    $questionnaire = new Questionnaire();
-
-    $questionnairesList = $questionnaire->getQuestionnaire($userid);
+    $groupList = $group->getGroups($userid);
 
     // Callback to http request
-    print $callback.'('.json_encode($questionnairesList).')';
+    print $callback.'('.json_encode($groupList).')';
 ?>

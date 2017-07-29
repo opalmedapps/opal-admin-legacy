@@ -24,7 +24,11 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.accountController',
 	'opalAdmin.controllers.userController',
 	'opalAdmin.controllers.newUserController',
-	'opalAdmin.controllers.installationController'
+	'opalAdmin.controllers.installationController',
+	'opalAdmin.controllers.questionnaireController',
+	'opalAdmin.controllers.newQuestionnaireController',
+	'opalAdmin.controllers.questionController',
+	'opalAdmin.controllers.newQuestionController'
 ]);
 
 
