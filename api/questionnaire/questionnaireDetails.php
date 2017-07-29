@@ -3,12 +3,12 @@
     include_once('questionnaire.inc');
 
     $callback = $_GET['callback'];
-	$userid = $_GET['userid'];
+    $serNum = $_GET['serNum'];
 
     $questionnaire = new Questionnaire();
 
-    $questionnairesList = $questionnaire->getQuestionnaire($userid);
+    $questionnaireDetails = $questionnaire->getQuestionnaireDetails($serNum);
 
     // Callback to http request
-    print $callback.'('.json_encode($questionnairesList).')';
+    print $callback.'('.json_encode($questionnaireDetails).')';
 ?>

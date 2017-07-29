@@ -110,6 +110,11 @@ angular.module('opalAdmin', [
 			.state('user-register', { url: '/users/add', templateUrl: "templates/add-user.html", controller: "newUserController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('install', { url: '/install', templateUrl: "templates/install.html", controller: "installationController", data: { requireLogin: false, installAccess: INSTALL_ACCESS } })
 			.state('questionnaire', { url: '/questionnaire', templateUrl: "templates/questionnaire.html", controller: "questionnaireController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+			.state('questionnaire-manage', { url: '/questionnaire/manage', templateUrl: "templates/questionnaire-manage.html", controller: "questionnaireController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+			.state('questionnaire-add', { url: '/questionnaire/manage/add', templateUrl: "templates/questionnaire-add.html", controller: "newQuestionnaireController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+			.state('questionnaire-bank', { url: '/questionnaire/bank', templateUrl: "templates/questionnaire-bank.html", controller: "questionController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+            .state('question-add', { url: '/questionnaire/bank/add', templateUrl: "templates/question-add.html", controller: "newQuestionController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+			.state('questionnaire-completed', { url: '/questionnaire/completed', templateUrl: "templates/questionnaire-completed.html", controller: "questionnaireController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('protected-route', { url: '/protected', resolve: { auth: function resolveAuthentication(AuthResolver) { return AuthResolver.resolve(); } } });
 	}])
 

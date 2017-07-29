@@ -70,5 +70,16 @@ angular.module('opalAdmin.controllers.sidePanelMenuController', ['ui.bootstrap',
 			$state.go('questionnaire');
 		};
 
+		// Function to go to questionnaire sub-page
+		$scope.goToManage = function () {
+			$state.go('questionnaire-manage');
+		};
+		$scope.goToQuestionBank = function () {
+			$state.go('questionnaire-bank');
+		};
+		$scope.goToCompleted = function () {
+			$state.go('questionnaire-completed');
+		};
+
 	});
 
