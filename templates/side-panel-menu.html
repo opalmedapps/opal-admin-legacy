@@ -78,6 +78,16 @@
                   </div>
                 </div>
               </div>
+              <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">
+                <div class="panel-container animated" ng-class="{pulse: hoverN, active: currentPage == 'questionnaire'}" ng-mouseenter="hoverN=true" ng-mouseleave="hoverN=false" style="cursor:pointer;" ng-click="goToQuestionnaire()">
+                  <div class="side-panel-info-sm" ng-class="{active: currentPage == 'questionnaire'}">
+                    <div class="panel-content">
+                      <span style="font-size: 21px; vertical-align:middle" class="fa fa-pencil-square" aria-hidden="true"></span>
+                      <div class="side-panel-title" style="display:inline-block;margin:0"><strong>Questionnaire</strong></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="row">
               <div class="side-menu-title">

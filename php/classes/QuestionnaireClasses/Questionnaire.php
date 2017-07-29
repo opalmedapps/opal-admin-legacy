@@ -1,55 +1,37 @@
 <?php
 
 /* Questionnaire class 
- * Dependencies: Questionanire-Tag
  */
-include_once('Tag.php');
+include_once('questionnaire.inc');
 
 class Questionnaire{
-	public $serNum;
-	public $name;
-	public $private;
-	public $publish;
-	public $created_by;
-	public $tags;
-
-	public function __construct($serNum, $name, $private, $publish, $created_by){
-		$this->serNum = $serNum;
-		$this->name = $name;
-		$this->private = $private;
-		$this->publish = $publish;
-		$this->created_by = $created_by;
-		$this->tags = array();
-	}
-
-	public function addTag($tag){
-		array_push($this->tags,$tag);
-	}
 
 	/* Get Questionnaire
-	 * @param: $post(doctor id)
+	 * @param: userid
 	 * @return questionnaires as array
 	 */
-	public function getQuestionnaire($post){
-		$doctor_id = $post['doctorSerNum'];
+	public function getQuestionnaire($userid){
 		$questionnaires = array();
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 			$sql = "
-				SELECT
+				SELECT DISTINCT
 					serNum,
 					name_EN,
+					name_FR,
 					private,
 					publish,
+					last_updated,
 					created_by
 				FROM
 					Questionnaire
 				WHERE
-					private = 0
+					private = 0 
 				OR
-					created_by = $doctor_id
+					created_by = $userid
+				
 			";
 
 			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -58,20 +40,31 @@ class Questionnaire{
 			// fetch
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-	 			$serNum 	= $data[0];
-	 			$name_EN   	= $data[1];
-	 			$private 	= $data[2];
-	 			$publish 	= $data[3];
-	 			$created_by = $data[4];
+	 			$serNum 		= $data[0];
+	 			$name_EN   		= $data[1];
+	 			$name_FR		= $data[2];
+	 			$private 		= $data[3];
+	 			$publish 		= $data[4];
+	 			$last_updated	= $data[5];
+	 			$created_by 	= $data[6];
 
-	 			$questionnaireObj = new Questionnaire($serNum, $name_EN, $private, $publish, $created_by);
-	 			array_push($questionnaires, $questionnaireObj);
-
+	 			$questionnaireArray = array(
+	 				'serNum'		=> $serNum,
+	 				'name_EN'		=> $name_EN,
+	 				'name_FR'		=> $name_FR,
+	 				'private'		=> $private,
+	 				'publish'		=> $publish,
+	 				'last_updated'	=> $last_updated,
+	 				'created_by'	=> $created_by,
+	 				'tags' 			=> array()
+	 			);
+	 			
 	 			// get tags
 				$tagsql = "
 					SELECT
 						tag_serNum,
-						name_EN
+						name_EN,
+						name_FR
 					FROM
 						Questionnaire_tag,
 						QuestionnaireTag
@@ -87,16 +80,147 @@ class Questionnaire{
 				while ($tagdata = $tagquery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 					$tag_serNum = $tagdata[0];
 					$tagName_EN = $tagdata[1];
+					$tagName_FR = $tagdata[2];
 
-					$tagObj = new Tag($tag_serNum, $tagName_EN);
-					$questionnaireObj->addTag($tagObj);
+					//$tagObj = new Tag($tag_serNum, $tagName_EN);
+					//$questionnaireObj->addTag($tagObj);
+
+					$tagArray = array(
+						'serNum'	=> $tag_serNum,
+						'name_EN'	=> $tagName_EN,
+						'name_FR'	=> $tagName_FR
+					);
+
+					array_push($questionnaireArray['tags'], $tagArray);
 				}
-	 		} catch (PDOException $e) {
-	 			echo $e->getMessage();
-	 			return $questionnaires;
+				array_push($questionnaires, $questionnaireArray);
 	 		}
+	 		return $questionnaires; 
+	 	}
+	 	catch (PDOException $e) {
+ 			echo $e->getMessage();
+ 			return $questionnaires;
+	 	}
+	}
+
+	/* Get details of a given specific questionnaire
+	 * @param: serNum of questionnaire
+	 * @return questionnaireArray as array
+	 */
+	public function getQuestionnaireDetails($questionnaireSerNum){
+		try{
+			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+			$sql = "
+				SELECT DISTINCT
+					serNum,
+					name_EN,
+					name_FR,
+					private,
+					publish,
+					last_updated_by
+				FROM
+					Questionnaire
+				WHERE
+					serNum = $questionnaireSerNum
+			";
+
+			$query = $host_db_link->prepare($sql);
+			$query->execute();
+
+			// fetch
+			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
+
+ 			$serNum 		= $data[0];
+ 			$name_EN   		= $data[1];
+ 			$name_FR		= $data[2];
+ 			$private 		= $data[3];
+ 			$publish 		= $data[4];
+ 			$last_updated_by= $data[5];
+
+ 			$questionnaireArray = array(
+ 				'serNum'			=> $serNum,
+ 				'name_EN'			=> $name_EN,
+ 				'name_FR'			=> $name_FR,
+ 				'private'			=> $private,
+ 				'publish'			=> $publish,
+ 				'last_updated_by'	=> $last_updated_by,
+ 				'groups'			=> array(),
+ 				'tags' 				=> array()
+ 			);
+ 			
+ 			// get groups
+ 			$groupsql = "
+ 				SELECT
+ 					Questionnaire_questiongroup.position,
+ 					Questionnaire_questiongroup.questiongroup_serNum,
+ 					Questionnaire_questiongroup.optional,
+ 					Questionnaire_questiongroup.last_updated_by,
+ 					Questiongroup.name_EN,
+ 					Questiongroup.name_FR 					
+ 				FROM
+ 					Questionnaire_questiongroup,
+ 					Questiongroup
+ 				WHERE
+ 					Questionnaire_questiongroup.questionnaire_serNum = $questionnaireSerNum
+ 				AND
+ 					Questiongroup.serNum = Questionnaire_questiongroup.questiongroup_serNum
+ 				ORDER BY
+ 					Questionnaire_questiongroup.position
+ 			";
+
+ 			$query = $host_db_link->prepare($groupsql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query->execute();
+ 			
+ 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+ 				$questiongroup = array(
+ 					'serNum'			=> $data[1],
+ 					'position'			=> $data[0],
+ 					'optional'			=> $data[2],
+ 					'last_updated_by'	=> $data[3],
+ 					'name_EN'			=> $data[4],
+ 					'name_FR'			=> $data[5]
+ 				);
+ 				array_push($questionnaireArray['groups'], $questiongroup);
+ 			}
+
+ 			// get tag
+ 			$tagsql = "
+ 				SELECT
+ 					Questionnaire_tag.tag_serNum,
+ 					Questionnaire_tag.last_updated_by,
+ 					QuestionnaireTag.name_EN,
+ 					QuestionnaireTag.name_FR 					
+ 				FROM
+ 					Questionnaire_tag,
+ 					QuestionnaireTag
+ 				WHERE
+ 					Questionnaire_tag.questionnaire_serNum = $questionnaireSerNum
+ 				AND
+ 					QuestionnaireTag.serNum = Questionnaire_tag.tag_serNum
+ 			";
+
+ 			$query = $host_db_link->prepare($tagsql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query->execute();
+ 			
+ 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+ 				$tag = array(
+ 					'serNum'			=> $data[0],
+ 					'name_EN'			=> $data[2],
+ 					'name_FR'			=> $data[3],
+ 					'last_updated_by'	=> $data[1]
+ 				);
+ 				array_push($questionnaireArray['tags'], $tag);
+ 			}
+
+ 			return $questionnaireArray;
+		} catch( PDOException $e) {
+			return $e->getMessage();
+			return $questionnaireArray;
 		}
 	}
+	
 
 	/* Create Questionnaire
 	 * @param: $post(name_EN/FR, private, publish, created_by(doctor id), tags, questiongroups)
@@ -109,8 +233,9 @@ class Questionnaire{
 		$private = $post['private'];
 		$publish = $post['publish'];
 		$created_by = $post['created_by'];
+		$last_updated_by = $post['last_updated_by'];
 		$tags = $post['tags'];
-		$questiongroups = $post['questionGroups']
+		$questiongroups = $post['questiongroups'];
 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -123,14 +248,16 @@ class Questionnaire{
 						name_FR,
 						private,
 						publish,
+						last_updated_by,
 						created_by
 					)
 				VALUES(
 					\"$name_EN\",
 					\"$name_FR\",
-					$private,
-					$publish,
-					$created_by
+					'$private',
+					'$publish',
+					'$last_updated_by',
+					'$created_by'
 				)
 			";
 
@@ -138,28 +265,35 @@ class Questionnaire{
 			$query->execute();
 
 			$questionnaire_id =  $host_db_link->lastInsertId();
-			//position counter
-			$i = 0;
+			
 			foreach($questiongroups as $group){
-				$group_id = $group->serNum;
-				$optional = $group->optional;
+				$group_id = $group['questiongroup_serNum'];
+				$optional = $group['optional'];
+				$position = $group['position'];
 
 				$sql = "
 					INSERT INTO
 						Questionnaire_questiongroup(
 							questionnaire_serNum,
 							questiongroup_serNum,
-							position
+							position,
+							optional,
+							last_updated_by,
+							created_by
 						)
 					VALUES(
-						$questionnaire_id,
-						$group_id,
-						$i
+						'$questionnaire_id',
+						'$group_id',
+						'$position',
+						'$optional',
+						'$last_updated_by',
+						'$created_by'
 					)
 				";
 				$query = $host_db_link->prepare( $sql );
 				$query->execute();
-				i++;
+
+				
 			}
 
 			//add tag
@@ -167,15 +301,16 @@ class Questionnaire{
 				$sql = "
 					INSERT INTO
 						Questionnaire_tag(
-							Questionnaire_questiongroup(
-								questionnaire_serNum,
-								tah_serNum,
-								created_by
-							)
+							questionnaire_serNum,
+							tag_serNum,
+							last_updated_by,
+							created_by
+						)
 					VALUES(
-					$questionnaire_id,
-					$tag,
-					$created_by
+						'$questionnaire_id',
+						'$tag',
+						'$last_updated_by',
+						'$created_by'
 					)
 				";
 				$query = $host_db_link->prepare( $sql );
@@ -189,10 +324,13 @@ class Questionnaire{
 
 	/* Delete Questionnaire
 	 * @param: $post(questionnaire serial number)
-	 * @return null
+	 * @return response
 	 */
-	public function deleteQuestionnaire($post){
-		$questionnaire_serNum = $post['questiongroup_serNum'];
+	public function deleteQuestionnaire($questionnaire_serNum){
+		$response = array(
+            'value'     => 0,
+            'message'   => ''
+        );
 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -233,99 +371,76 @@ class Questionnaire{
 			";
 			$query = $host_db_link->prepare( $sql4 );
 			$query->execute();
+
+			$response['value'] = 1; // Success
+            return $response;
+
 		} catch(PDOException $e) {
-			return $e->getMessage();
+			$response['message'] = $e->getMessage();
+			return $response;
 		}
 	}
 
 	/* Add question group to questionnaire
-	 * @param: $post(questionnaire serial number, questiongroup serial number, created_by(doctor id))
-	 * @return null
+	 * @param: $post
+	 * @return response
 	 */
 	public function addGroupToQuestionnaire($post){
-		$questionnaire_serNum = $post['questionnaire_serNum'];
-		$questiongroup_serNum = $post['questiongroup_serNum'];
-		$created_by = $post['created_by'];
-
+		$groups = $post['groups'];
+		$response = array(
+            'value'     => 0,
+            'message'   => ''
+        );
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-			$sql = "
-				SELECT 
-					MAX(position)
-				FROM
-					Questionnaire_questiongroup
-				WHERE
-					questionnaire_serNum = $questiongroup_serNum
-			";
-			$query = $host_db_link->prepare( $sql );
-			$query->execute();
+			foreach($groups as $group) {
+				$questionnaire_serNum = $group['questionnaire_serNum'];
+				$questiongroup_serNum = $group['questiongroup_serNum'];
+				$optional = $group['optional'];
+				$position = $group['position'];
+				$last_updated_by = $group['last_updated_by'];
+				$created_by = $group['created_by'];
 
-			//fetch
-			$data = $query>fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
-			$max_pos = $data['MAX(position)'];
-			$new_pos = $max_pos + 1;
-
-			//add into Questionnaire_questiongroup
-			$sql = "
-				INSERT INTO
-					Questionnaire_questiongroup(
-						questionnaire_serNum,
-						questiongroup_serNum,
-						position,
-						created_by
+				$sql = "
+					INSERT INTO
+						Questionnaire_questiongroup(
+							questionnaire_serNum,
+							questiongroup_serNum,
+							optional,
+							position,
+							created_by,
+							last_updated_by
+						)
+					VALUES(
+						'$questionnaire_serNum',
+						'$questiongroup_serNum',
+						'$optional',
+						'$position',
+						'$created_by',
+						'$last_updated_by'
 					)
-				VALUES(
-					$questionnaire_serNum,
-					$questiongroup_serNum,
-					$new_pos,
-					$created_by
-				)
-			";
+				";
+				$query = $host_db_link->prepare( $sql );
+				$query->execute();
+			}
+
+			$response['value'] = 1; // Success
+            return $response;
+
 		} catch (PDOException $e) {
-	 		echo $e->getMessage();
-	 		return $answerTypes;
+			$response['message'] = $e->getMessage();
+			return $response;
 	 	}
-
-	}
-
-	/* Remove question group from questionnaire
-	 * @param: $post(questionnaire serial number, questiongroup serial number, created_by(doctor id))
-	 * @return null
-	 */
-	public function removeGroupFromQuestionnaire($post){
-		$questionnaire_serNum = $post['questionnaire_serNum'];
-		$questiongroup_serNum = $post['questiongroup_serNum'];
-		$created_by = $post['created_by'];
-
-		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-			$sql = "
-				DELETE FROM
-					Questionnaire_questiongroup
-				WHERE
-					questionnaire_serNum = $questionnaire_serNum
-				AND 
-					questiongroup_serNum = $questiongroup_serNum
-			";
-			$query = $host_db_link->prepare( $sql );
-			$query->execute();
-
-		} catch(PDOException $e) {
-			return $e->getMessage();
-		}	
 
 	}
 	
 	/* Publish Questionnaire
 	 * @param: $post(questionnaire serial number)
-	 * @return null
+	 * @return none
 	 */
-	public function publishQuestionnaire($post){
-		$questionnaire_serNum = $post['questionnaire_serNum'];
+	public function publishQuestionnaire($questionnaire_serNum){
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -344,201 +459,322 @@ class Questionnaire{
 		}
 	}
 
-	/* Get patients' completed Questionnaire
-	 * @param: $post(questionnaire_patient serial number, questionnaire serial number, created_by(doctor id))
-	 * @return questionGroups as array
+	/* Update Questionnaire: delete/change questiongroup, 
+	 * @param: $post(name_EN/FR, private, publish, last_updated_by(doctor id), tags, questiongroups)
+	 * @return response
 	 */
-	public function getCompletedQuestionnaire($post){
-		$qpSerNum = $post['qpSerNum'];
-		$qSerNum = $post['qSerNum'];
-		$created_by = $post['created_by'];
+	public function updateQuestionnaire($post){
+		// properties
+		$serNum = $post['serNum'];
+		$name_EN = $post['name_EN'];
+		$name_FR = $post['name_FR'];
+		$private = $post['private'];
+		$publish = $post['publish'];
+		$last_updated_by = $post['last_updated_by'];
+		$tags = $post['tags'];
+		$questiongroups = $post['groups'];
 
-		$questionGroups = array();
+		$response = array(
+            'value'     => 0,
+            'message'   => ''
+        );
 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
 			$sql = "
-				SELECT
-					Questiongroup.serNum,
-					Questiongroup.name_EN
-				FROM
-					Questionnaire,
-					Questionnaire_questiongroup,
-					Questiongroup
+				UPDATE
+					Questionnaire
+				SET
+					Questionnaire.name_EN = \"$name_EN\",
+					Questionnaire.name_FR = \"$name_FR\",
+					Questionnaire.private = '$private',
+					Questionnaire.publish = '$publish',
+					Questionnaire.last_updated_by = '$last_updated_by'
 				WHERE
-					Questionnaire.serNum = Questionnaire_questiongroup.questionnaire_serNum
-				AND
-					Questionnaire_questiongroup.questiongroup_serNum = questiongroup_serNum
-				AND
-					Questionnaire.serNum = $qSerNum
+					Questionnaire.serNum = $serNum
 			";
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+
+			$query = $host_db_link->prepare( $sql );
 			$query->execute();
+			
+			foreach($questiongroups as $group){
+				$group_id = $group['serNum'];
+				$optional = $group['optional'];
+				$position = $group['position'];
+				$deleted = $group['deleted'];
 
-			while($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)){
-				$questiongroup_serNum = $data[0];
-				$questiongroup_name = $data[1];
-				$questiongroup = new Group($questiongroup_serNum, $questiongroup_name);
-				array_push($questionGroups,$questiongroup) ;
-
-				//get questions from each question group
-				$qSQL = "
-					SELECT
-						QuestionnaireQuestion.serNum,
-						QuestionnaireQuestion.text_EN,
-						QuestionnaireQuestion.answertype_serNum
-					FROM
-						QuestionnaireQuestion
-					WHERE
-						QuestionnaireQuestion.questiongroup_serNum = $questiongroup_serNum
-				";
-				$qResult = $host_db_link->prepare($qSQL, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-				$qResult->execute();
-
-				while($row = $qResult->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)){
-					$question_serNum = $row[0];
-					$question_text = $row[1];
-					$type_serNum = $row[2];
-					
-					//read in answer type
-					$qtSQL = "
-						SELECT
-							serNum,
-							name_EN,
-							private,
-							category_EN,
-							created_by
-						FROM
-							QuestionnaireAnswerType
+				if ($deleted){
+					$sql = "
+						DELETE FROM
+							Questionnaire_questiongroup
 						WHERE
-							serNum = $type_serNum
+							questionnaire_serNum = $serNum
+						AND
+							questiongroup_serNum = $group_id
 					";
-					$qtResult = $host_db_link->prepare($qtSQL, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-					$qtResult->execute();
-
-					$qtrow = $qtResult->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
-					$qtSerNum = $qtrow[0];
-					$qtName = $qtrow[1];
-					$qtPrivate = $qtrow[2];
-					$qtCat = $qtrow[3];
-
-					//get patients' answer for the question
-					$pSQL = "
-						SELECT
-							QuestionnaireAnswerOption.text_EN
-						FROM
-							QuestionnaireAnswer,
-							QuestionnaireAnswerOption,
-							Questionnaire_patient
+					$query = $host_db_link->prepare( $sql );
+					$query->execute();
+				} else {
+					$sql = "
+						UPDATE
+							Questionnaire_questiongroup
+						SET
+							position = '$position',
+							optional = '$optional',
+							last_updated_by = '$last_updated_by'
 						WHERE
-							Questionnaire_patient.serNum = $qpSerNum
+							questiongroup_serNum = $group_id
 						AND
-							Questionnaire_patient.serNum = QuestionnaireAnswer.questionnaire_patient_serNum
-						AND
-							QuestionnaireAnswer.answeroption_serNum = QuestionnaireAnswerOption.serNum
-						AND
-							QuestionnaireAnswer.question_serNum = $question_serNum
+							questionnaire_serNum = $serNum
 					";
-					$pResult = $host_db_link->prepare($pSQL, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-					$pResult->execute();
-
-					//store answertype
-					$curr_qt;
-					//if answer exists
-					if($prow = $pResult->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)){
-						$answer_text = $prow[0];
-						if($qtCat == 'Short Answer'){
-							$optionSQL = "
-								SELECT
-									QuestionnaireAnswerText.answer_text
-								FROM
-									QuestionnaireAnswerText,
-									QuestionnaireAnswerOption
-								WHERE
-									QuestionnaireAnswerText.answer_serNum = QuestionnaireAnswerOption.serNum
-								AND 
-									QuestionnaireAnswerOption.answertype_serNum = $qtSerNum
-							";
-							$optionResult= $host_db_link->prepare($optionSQL, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-							$optionResult->execute();
-
-							$optionrow = $optionResult->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
-							$answer_text = $optionrow[0];
-						}
-						$curr_qt = new AnswerType($qtSerNum, $qtName, $qtPrivate, $qtCat, $answer_text);
-					}
-					//no answer
-					else{
-						$curr_qt = new AnswerType($qtSerNum, $qtName, $qtPrivate, $qtCat, null);
-					}
-
-					$question = new Question($question_serNum, $question_text, $curr_qt);
-					$questionGroup->addQuestion($question);
-
-					//read in options for each anwser type
-					if($qtCat = 'Linear Scale'){
-						$optionSQL = "
-							SELECT
-								text_EN,
-								caption_EN
-							FROM
-								QuestionnaireAnswerOption
-							WHERE
-								QuestionnaireAnswerOption.answertype_serNum = $qtSerNum
-						";
-						$optionResult= $host_db_link->prepare($optionSQL, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-						$optionResult->execute();
-
-						$min = null;
-						while($optionrow = $optionResult->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)){
-							$text_EN = $optionrow[0];
-							$caption_EN = $optionrow[1];
-
-							$curr_qt->addOption($text_EN);
-							//set min if 1st caption
-							if($caption_EN!=null && $min==null){
-								$min = $caption_EN;
-								$curr_qt->setMinCaption($caption_EN);
-							}
-							//check if caption is max and set
-							else if($caption_EN!=null && $min!=null){
-								if($min>$text_EN){
-									$curr_qt->setAndSwitchMinCaption($caption_EN);
-								}
-								else {
-									$curr_qt->setMaxCaption($caption_EN);
-								}
-							}
-						}
-					}
-					else if($qtCat = 'Short Answer'){
-						// no option
-					}
-					else {
-						$optionSQL = "
-							SELECT
-								text_EN
-							FROM
-								QuestionnaireAnswerOption
-							WHERE
-								QuestionnaireAnswerOption.answertype_serNum = $qtSerNum
-						";
-						$optionResult= $host_db_link->prepare($optionSQL, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-						$optionResult->execute();
-
-						while($optionrow = $optionResult->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)){
-							$curr_qt->addOption($optionrow[0]);
-						}
-					}
+					$query = $host_db_link->prepare( $sql );
+					$query->execute();
 				}
 			}
-			return $questionGroups;
-		} catch(PDOException $e) {
-	 		echo $e->getMessage();
-	 		return $questionGroups;
-	 	})
+
+			// add or delete tag
+			foreach($tags as $tag){
+				$added = $tag['added'];
+				$tagSerNum = $tag['serNum'];
+				// insert new tags
+				if($added){
+					$sql = "
+						INSERT INTO
+							Questionnaire_tag (
+								questionnaire_serNum,
+								tag_serNum,
+								created_by,
+								last_updated_by
+							)
+						VALUES(
+							'$serNum',
+							'$tagSerNum',
+							'$last_updated_by',
+							'$last_updated_by'
+						)
+					";
+					$query = $host_db_link->prepare( $sql );
+					$query->execute();
+				} else { //delete
+					$sql = "
+						DELETE FROM
+							Questionnaire_tag
+						WHERE
+							tag_serNum = $tagSerNum
+						AND
+							questionnaire_serNum = $serNum
+					";
+					$query = $host_db_link->prepare( $sql );
+					$query->execute();
+				}
+			}
+
+			$response['value'] = 1; // Success
+            return $response;
+
+		} catch( PDOException $e) {
+			$response['message'] = $e->getMessage();
+			return $response;
+		}
 	}
+
+	/* Get patients' completed Questionnaire
+	 * @param: $post(questionnaire_patient serial number, questionnaire serial number, created_by(doctor id))
+	 * @return questionGroups as array
+	 */
+	// public function getCompletedQuestionnaire($post){
+	// 	$qpSerNum = $post['qpSerNum'];
+	// 	$qSerNum = $post['qSerNum'];
+	// 	$created_by = $post['created_by'];
+
+	// 	$questionGroups = array();
+
+	// 	try {
+	// 		$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+	// 		$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+	// 		$sql = "
+	// 			SELECT
+	// 				Questiongroup.serNum,
+	// 				Questiongroup.name_EN
+	// 			FROM
+	// 				Questionnaire,
+	// 				Questionnaire_questiongroup,
+	// 				Questiongroup
+	// 			WHERE
+	// 				Questionnaire.serNum = Questionnaire_questiongroup.questionnaire_serNum
+	// 			AND
+	// 				Questionnaire_questiongroup.questiongroup_serNum = questiongroup_serNum
+	// 			AND
+	// 				Questionnaire.serNum = $qSerNum
+	// 		";
+	// 		$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+	// 		$query->execute();
+
+	// 		while($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)){
+	// 			$questiongroup_serNum = $data[0];
+	// 			$questiongroup_name = $data[1];
+	// 			$questiongroup = new Group($questiongroup_serNum, $questiongroup_name);
+	// 			array_push($questionGroups,$questiongroup) ;
+
+	// 			//get questions from each question group
+	// 			$qSQL = "
+	// 				SELECT
+	// 					QuestionnaireQuestion.serNum,
+	// 					QuestionnaireQuestion.text_EN,
+	// 					QuestionnaireQuestion.answertype_serNum
+	// 				FROM
+	// 					QuestionnaireQuestion
+	// 				WHERE
+	// 					QuestionnaireQuestion.questiongroup_serNum = $questiongroup_serNum
+	// 			";
+	// 			$qResult = $host_db_link->prepare($qSQL, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+	// 			$qResult->execute();
+
+	// 			while($row = $qResult->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)){
+	// 				$question_serNum = $row[0];
+	// 				$question_text = $row[1];
+	// 				$type_serNum = $row[2];
+					
+	// 				//read in answer type
+	// 				$qtSQL = "
+	// 					SELECT
+	// 						serNum,
+	// 						name_EN,
+	// 						private,
+	// 						category_EN,
+	// 						created_by
+	// 					FROM
+	// 						QuestionnaireAnswerType
+	// 					WHERE
+	// 						serNum = $type_serNum
+	// 				";
+	// 				$qtResult = $host_db_link->prepare($qtSQL, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+	// 				$qtResult->execute();
+
+	// 				$qtrow = $qtResult->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
+	// 				$qtSerNum = $qtrow[0];
+	// 				$qtName = $qtrow[1];
+	// 				$qtPrivate = $qtrow[2];
+	// 				$qtCat = $qtrow[3];
+
+	// 				//get patients' answer for the question
+	// 				$pSQL = "
+	// 					SELECT
+	// 						QuestionnaireAnswerOption.text_EN
+	// 					FROM
+	// 						QuestionnaireAnswer,
+	// 						QuestionnaireAnswerOption,
+	// 						Questionnaire_patient
+	// 					WHERE
+	// 						Questionnaire_patient.serNum = $qpSerNum
+	// 					AND
+	// 						Questionnaire_patient.serNum = QuestionnaireAnswer.questionnaire_patient_serNum
+	// 					AND
+	// 						QuestionnaireAnswer.answeroption_serNum = QuestionnaireAnswerOption.serNum
+	// 					AND
+	// 						QuestionnaireAnswer.question_serNum = $question_serNum
+	// 				";
+	// 				$pResult = $host_db_link->prepare($pSQL, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+	// 				$pResult->execute();
+
+	// 				//store answertype
+	// 				$curr_qt;
+	// 				//if answer exists
+	// 				if($prow = $pResult->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)){
+	// 					$answer_text = $prow[0];
+	// 					if($qtCat == 'Short Answer'){
+	// 						$optionSQL = "
+	// 							SELECT
+	// 								QuestionnaireAnswerText.answer_text
+	// 							FROM
+	// 								QuestionnaireAnswerText,
+	// 								QuestionnaireAnswerOption
+	// 							WHERE
+	// 								QuestionnaireAnswerText.answer_serNum = QuestionnaireAnswerOption.serNum
+	// 							AND 
+	// 								QuestionnaireAnswerOption.answertype_serNum = $qtSerNum
+	// 						";
+	// 						$optionResult= $host_db_link->prepare($optionSQL, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+	// 						$optionResult->execute();
+
+	// 						$optionrow = $optionResult->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
+	// 						$answer_text = $optionrow[0];
+	// 					}
+	// 					$curr_qt = new AnswerType($qtSerNum, $qtName, $qtPrivate, $qtCat, $answer_text);
+	// 				}
+	// 				//no answer
+	// 				else{
+	// 					$curr_qt = new AnswerType($qtSerNum, $qtName, $qtPrivate, $qtCat, null);
+	// 				}
+
+	// 				$question = new Question($question_serNum, $question_text, $curr_qt);
+	// 				$questionGroup->addQuestion($question);
+
+	// 				//read in options for each anwser type
+	// 				if($qtCat = 'Linear Scale'){
+	// 					$optionSQL = "
+	// 						SELECT
+	// 							text_EN,
+	// 							caption_EN
+	// 						FROM
+	// 							QuestionnaireAnswerOption
+	// 						WHERE
+	// 							QuestionnaireAnswerOption.answertype_serNum = $qtSerNum
+	// 					";
+	// 					$optionResult= $host_db_link->prepare($optionSQL, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+	// 					$optionResult->execute();
+
+	// 					$min = null;
+	// 					while($optionrow = $optionResult->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)){
+	// 						$text_EN = $optionrow[0];
+	// 						$caption_EN = $optionrow[1];
+
+	// 						$curr_qt->addOption($text_EN);
+	// 						//set min if 1st caption
+	// 						if($caption_EN!=null && $min==null){
+	// 							$min = $caption_EN;
+	// 							$curr_qt->setMinCaption($caption_EN);
+	// 						}
+	// 						//check if caption is max and set
+	// 						else if($caption_EN!=null && $min!=null){
+	// 							if($min>$text_EN){
+	// 								$curr_qt->setAndSwitchMinCaption($caption_EN);
+	// 							}
+	// 							else {
+	// 								$curr_qt->setMaxCaption($caption_EN);
+	// 							}
+	// 						}
+	// 					}
+	// 				}
+	// 				else if($qtCat = 'Short Answer'){
+	// 					// no option
+	// 				}
+	// 				else {
+	// 					$optionSQL = "
+	// 						SELECT
+	// 							text_EN
+	// 						FROM
+	// 							QuestionnaireAnswerOption
+	// 						WHERE
+	// 							QuestionnaireAnswerOption.answertype_serNum = $qtSerNum
+	// 					";
+	// 					$optionResult= $host_db_link->prepare($optionSQL, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+	// 					$optionResult->execute();
+
+	// 					while($optionrow = $optionResult->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)){
+	// 						$curr_qt->addOption($optionrow[0]);
+	// 					}
+	// 				}
+	// 			}
+	// 		}
+	// 		return $questionGroups;
+	// 	} catch(PDOException $e) {
+	//  		echo $e->getMessage();
+	//  		return $questionGroups;
+	//  	}
+	// }
 
 
 }

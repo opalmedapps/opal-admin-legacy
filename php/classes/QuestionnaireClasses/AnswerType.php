@@ -1,52 +1,23 @@
 <?php
 
 /* Questionnaire-AnswerType class */
+
+include_once('questionnaire.inc');
+
 class AnswerType {
-	public $serNum;
-	public $type;
-	public $private;
-	public $category;
-	public $num_options;
-	public $minCaption;
-	public $maxCaption;
-	public $optiosn;
-
-	public function __construct($serNum, $type, $private, $category){
-		$this->serNum = $serNum;
-		$this->type = $type;
-		$this->private = $private;
-		$this->num_options = 0;
-		$this->options = array();
-	}
-
-	// setter
-	function setMinCaption($caption){
-		$this->minCaption = $caption;
-	}
-
-	function setMaxCaption($caption){
-		$this->maxCaption = $caption;
-	}
-
-	function setAndSwitchMinCaption($caption){
-		$this->maxCaption = $this->minCaption;
-		$this->minCaption = $caption;
-	}
-
-	public function addOption($opt){
-		$this->num_options++;
-		array_push($this->options, $opt);
-	}
 
 	/* Add new answer type into table.
-	 * @param: $answerTypeAdded-array that contains necessary infromation for a answer type to be stored into table
-	 * @return null
+	 * @param: $answerTypeAdded - array that contains necessary infromation for a answer type to be stored into table
+	 * @return none
 	 */
-	public function addNewAnswerType($answerTypeAdded){
+	public function addAnswerType($answerTypeadded){
 		// properties
+		$name_EN = $answerTypeadded['name_EN'];
+		$name_FR = $answerTypeadded['name_FR'];
 		$category_EN = $answerTypeadded['category_EN'];
 		$category_FR = $answerTypeadded['category_FR'];
 		$private = $answerTypeadded['private'];
+		$last_updated_by = $answerTypeadded['last_updated_by'];
 		$created_by = $answerTypeadded['created_by'];
 		$options = $answerTypeadded['options'];
 
@@ -56,46 +27,60 @@ class AnswerType {
 			$sql = "
 				INSERT INTO
 					QuestionnaireAnswerType (
+						name_EN,
+						name_FR,
 						category_EN,
 						category_FR,
 						private,
-						created_by
+						created_by,
+						last_updated_by
 					)
 				VALUES (
+					\"$name_EN\",
+					\"$name_FR\",
 					\"$category_EN\",
 					\"$category_FR\",
 					'$private',
-					'$created_by'
+					'$created_by',
+					'$last_updated_by'
 				)
 			";
 
 			$query = $host_db_link->prepare( $sql );
 			$query->execute();
 			// add options
-			$answertype_serNum = $host_db_link->lastInsertId();
+			if ($options) {
+				$answertype_serNum = $host_db_link->lastInsertId();
 
-			foreach ($options as $option) {
-				$sql = "
-                    INSERT INTO 
-                        QuestionnaireAnswerOption (
-                            text_EN,
-                            text_FR,
-                            answertype_serNum,
-                            position,
-                            created_by
-                        )
-                    VALUES (
-                        \"$text_EN\",
-						\"$text_FR\",
-						'$answertype_serNum',
-						'$position',
-						'$created_by'
-                    )
-                    ON DUPLICATE KEY UPDATE
-                        answertype_serNum = '$answertype_serNum'
-				";
-				$query = $host_db_link->prepare( $sql );
-				$query->execute();
+				foreach ($options as $option) {
+					$text_EN = $option['text_EN'];
+					$text_FR = $option['text_FR'];
+					$position = $option['position'];
+
+					$sql = "
+	                    INSERT INTO 
+	                        QuestionnaireAnswerOption (
+	                            text_EN,
+	                            text_FR,
+	                            answertype_serNum,
+	                            position,
+	                            last_updated_by,
+	                            created_by
+	                        )
+	                    VALUES (
+	                        \"$text_EN\",
+							\"$text_FR\",
+							'$answertype_serNum',
+							'$position',
+							'$last_updated_by',
+							'$created_by'
+	                    )
+	                    ON DUPLICATE KEY UPDATE
+	                        answertype_serNum = '$answertype_serNum'
+					";
+					$query = $host_db_link->prepare( $sql );
+					$query->execute();
+				}
 			}
 
 		} catch(PDOException $e) {
@@ -104,10 +89,10 @@ class AnswerType {
 	}
 
 	/* Read in answer types from table.
-	 * @param: null
+	 * @param: userid
 	 * @return answerTypes as array
 	 */
-	public function getAnswerTypes(){
+	public function getAnswerTypes($userid){
 		$answerTypes = array();
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -116,11 +101,17 @@ class AnswerType {
 				SELECT
 					serNum,
 					name_EN,
+					name_FR,
 					private,
 					category_EN,
+					category_FR,
 					created_by
 				FROM
 					QuestionnaireAnswerType
+				WHERE
+					private = 0
+				OR
+					created_by = $userid
 			";
 			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
@@ -128,69 +119,58 @@ class AnswerType {
 			//fetch
 			while($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)){
 				$serNum = $data[0];
-				$name = $data[1];
-				$private = $data[2];
-				$category = $data[3];
-				$created_by = $data[4];
+				$name_EN = $data[1];
+				$name_FR = $data[2];
+				$private = $data[3];
+				$category_EN = $data[4];
+				$category_FR = $data[5];
+				$created_by = $data[6];
 
-				$curr_qt = new AnswerType($serNum, $name, $private, $category);
-				array_push($answerTypes, $curr_qt);
 
-				//options for each answer type
-				if($category = 'Linear Scale'){
-					$optionSQL = "
-						SELECT
-							text_EN,
-							caption_EN
-						FROM
-							QuestionnaireAnswerOption
-						WHERE
-							QuestionnaireAnswerOption.answertype_serNum = $serNum
-					";
-					$optionResult= $host_db_link->prepare($optionSQL, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-					$optionResult->execute();
+                $curr_qt = array(
+                    'serNum'        => $serNum,
+                    'name_EN'       => $name_EN,
+                    'name_FR'       => $name_FR,
+                    'private'       => $private,
+                    'category_EN'   => $category_EN,
+                    'category_FR'   => $category_FR,
+                    'created_by'    => $created_by,
+                    'options'       => array()
+                );
 
-					$min = null;
-					while($optionrow = $optionResult->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)){
-						$text_EN = $optionrow[0];
-						$caption_EN = $optionrow[1];
-
-						$curr_qt->addOption($text_EN);
-						//set min if 1st caption
-						if($caption_EN!=null && $min==null){
-							$min = $caption_EN;
-							$curr_qt->setMinCaption($caption_EN);
-						}
-						//check if caption is max and set
-						else if($caption_EN!=null && $min!=null){
-							if($min>$text_EN){
-								$curr_qt->setAndSwitchMinCaption($caption_EN);
-							}
-							else {
-								$curr_qt->setMaxCaption($caption_EN);
-							}
-						}
-					}
-				}
-				else if($category = 'Short Answer'){
+				//options for answer type
+				if($category_EN === 'Short Answer' || $category_EN === 'Time' || $category_FR === 'Date'){
 					// no option
 				}
 				else {
 					$optionSQL = "
-						SELECT
-							text_EN
+						SELECT 
+							text_EN,
+							text_FR,
+							position
 						FROM
 							QuestionnaireAnswerOption
 						WHERE
-							QuestionnaireAnswerOption.answertype_serNum = $serNum
+							answertype_serNum = $serNum
+						ORDER BY
+							position ASC
 					";
 					$optionResult= $host_db_link->prepare($optionSQL, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 					$optionResult->execute();
 
 					while($optionrow = $optionResult->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)){
-						$curr_qt->addOption($optionrow[0]);
+						$optext_EN = $optionrow[0];
+						$optext_FR = $optionrow[1];
+						$opposition = $optionrow[2];
+						$optext = array(
+							'position'	=> $opposition,
+							'text_EN'	=> $optext_EN,
+							'text_FR'	=> $optext_FR
+						);
+						array_push($curr_qt['options'], $optext);
 					}
 				}
+				array_push($answerTypes, $curr_qt);
 			}
 			return $answerTypes;
 		} catch (PDOException $e) {
@@ -198,6 +178,47 @@ class AnswerType {
 	 		return $answerTypes;
 	 	}
 
+	}
+
+	/* Get categories of answer types
+	 * @param: none
+	 * @return atCategories as an array of all categories from tables
+	 */
+	public function getAtCategory(){
+		$atCategories = array();
+
+		try {
+			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+			$sql = "
+				SELECT DISTINCT
+					category_EN,
+					category_FR
+				FROM
+					QuestionnaireAnswerType
+			";
+
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query->execute();
+
+			while($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)){
+				$category_EN = $data[0];
+				$category_FR = $data[1];
+
+				$atcatArray = array(
+					'category_EN'	=> $category_EN,
+					'category_FR'	=> $category_FR
+				);
+
+				array_push($atCategories, $atcatArray);
+			}
+
+			return $atCategories;
+		} catch (PDOException $e) {
+	 		echo $e->getMessage();
+	 		return $atCategories;
+		}
 	}
 }
 
