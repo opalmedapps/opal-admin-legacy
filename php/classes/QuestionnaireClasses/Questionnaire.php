@@ -102,7 +102,6 @@ class Questionnaire{
 	 * @param: $post(name_EN/FR, private, publish, created_by(doctor id), tags, questiongroups)
 	 * @return null
 	 */
-
 	public function createQuestionnaire($post){
 		// properties
 		$name_EN = $post['name_EN'];
@@ -242,7 +241,6 @@ class Questionnaire{
 	/* Add question group to questionnaire
 	 * @param: $post(questionnaire serial number, questiongroup serial number, created_by(doctor id))
 	 * @return null
-	 **********INCOMPLETE***********
 	 */
 	public function addGroupToQuestionnaire($post){
 		$questionnaire_serNum = $post['questionnaire_serNum'];
@@ -254,9 +252,8 @@ class Questionnaire{
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 			$sql = "
-				SELECT MAX(
-					position
-				)
+				SELECT 
+					MAX(position)
 				FROM
 					Questionnaire_questiongroup
 				WHERE
@@ -266,9 +263,30 @@ class Questionnaire{
 			$query->execute();
 
 			//fetch
-			$data = $query->PDO
+			$data = $query>fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
+			$max_pos = $data['MAX(position)'];
+			$new_pos = $max_pos + 1;
 
-		} catch{}
+			//add into Questionnaire_questiongroup
+			$sql = "
+				INSERT INTO
+					Questionnaire_questiongroup(
+						questionnaire_serNum,
+						questiongroup_serNum,
+						position,
+						created_by
+					)
+				VALUES(
+					$questionnaire_serNum,
+					$questiongroup_serNum,
+					$new_pos,
+					$created_by
+				)
+			";
+		} catch (PDOException $e) {
+	 		echo $e->getMessage();
+	 		return $answerTypes;
+	 	}
 
 	}
 
