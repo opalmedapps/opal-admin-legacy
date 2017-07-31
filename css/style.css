@@ -785,6 +785,25 @@ ul.no-list {
   margin-right: auto;
 }
 
+.previewContainer {
+  width: 100%;
+  height: 80vh;
+  float: right;
+  background-color: #fff;
+  word-wrap: break-word;
+  line-height: 100%;
+  border: 1px;
+  border-radius: 10px;
+  margin-bottom: auto;
+  padding: 5px;
+  text-align: left;
+  overflow: auto;
+}
+
+.previewContent {
+  margin: 10px;
+}
+
 .panel-buttons,
 .panel-input {
   padding-top: 10px;
@@ -815,6 +834,13 @@ ul.no-list {
   border: 1px solid #e1e8ed;
   border-radius: 7px;
   height: 45px;
+}
+.side-panel-info-md {
+  padding: 10px;
+  background-color: #fffff4;
+  border: 1px solid #e1e8ed;
+  border-radius: 7px;
+  height: 80px;
 }
 
 .side-panel-info {
