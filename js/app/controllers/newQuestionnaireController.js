@@ -1,13 +1,17 @@
 angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).
+
 controller('newQuestionnaireController',function($scope, $state, $filter, questionnaireAPIservice, filterAPIservice, Session, uiGridConstants){
+    
     // navigation function
     $scope.goBack = function () {
         $state.go('questionnaire-manage');
     };
 
-    $scope.goBack = function () {
-        window.history.back();
-    };
+    // Default booleans
+    $scope.title = {open:false, show:true};
+    $scope.privacy = {open:false, show:false};
+    $scope.questions = {open:false, show:false};
+    $scope.tags = {open:false, show:false};
 
     // get current user id
     var user = Session.retrieveObject('user');
@@ -73,7 +77,16 @@ controller('newQuestionnaireController',function($scope, $state, $filter, questi
 
     // update form functions
     $scope.titleUpdate = function () {
+
+        $scope.title.open = true;
+
+        if (!$scope.newQuestionnaire.name_EN && !$scope.newQuestionnaire.name_FR) {
+            $scope.title.open = false;
+        }
+
         if ($scope.newQuestionnaire.name_EN && $scope.newQuestionnaire.name_FR) {
+
+            $scope.privacy.show = true;
 
             steps.title.completed = true;
             $scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -89,10 +102,15 @@ controller('newQuestionnaireController',function($scope, $state, $filter, questi
     };
 
     $scope.privacyUpdate = function (value) {
+
+        $scope.privacy.open = true;
+
         if (value==0 || value==1) {
 
             // update value
             $scope.newQuestionnaire.private = value;
+
+            $scope.questions.show = true;
 
             steps.privacy.completed = true;
             $scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -108,6 +126,9 @@ controller('newQuestionnaireController',function($scope, $state, $filter, questi
     };
 
     var tagsUpdate = function (tagList) {
+
+        $scope.tags.open = true;
+
         // update steps bar
         if ($scope.checkTags(tagList)) {
 
@@ -117,6 +138,7 @@ controller('newQuestionnaireController',function($scope, $state, $filter, questi
 
         } else {
 
+            $scope.tags.open = false;
             steps.tags.completed = false; 
             $scope.numOfCompletedSteps = stepsCompleted(steps);
             $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -125,14 +147,18 @@ controller('newQuestionnaireController',function($scope, $state, $filter, questi
     };
 
     var questionsUpdate = function () {
-        if ($scope.newQuestionnaire.groups) {
 
+        $scope.questions.open = true;
+        if ($scope.newQuestionnaire.groups.length) {
+
+            $scope.tags.show = true;
             steps.questions.completed = true;
             $scope.numOfCompletedSteps = stepsCompleted(steps);
             $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
         } else {
 
+            $scope.questions.open = false
             steps.questions.completed = false; 
             $scope.numOfCompletedSteps = stepsCompleted(steps);
             $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -190,16 +216,15 @@ controller('newQuestionnaireController',function($scope, $state, $filter, questi
         enableFiltering: true,
         enableSorting: true,
         enableRowSelection: true,
-        enableSelectAll: true,
+        //enableSelectAll: true,
         enableSelectionBatchEvent: true,
-        showGridFooter:true,
+        //showGridFooter:true,
         onRegisterApi: function (gridApi) {
             $scope.gridApi = gridApi;
             gridApi.grid.registerRowsProcessor($scope.filterOptions, 300);
             gridApi.selection.on.rowSelectionChanged($scope,function(row){
                 selectUpdate();
                 questionsUpdate();
-                // console.log($scope.selectedGroups);
             });
         },
     };
@@ -236,20 +261,15 @@ controller('newQuestionnaireController',function($scope, $state, $filter, questi
                 $scope.newQuestionnaire.groups = tempGroupArray.slice(0);
             }
         }
-        console.log($scope.newQuestionnaire.groups);
     };
 
     // API getting group list
     questionnaireAPIservice.getGroupsWithQuestions(userid).success(function (response) {
-        console.log('grouplist:');
-        console.log(response);
         $scope.groupList = response;
     });
 
     // get tag list
     questionnaireAPIservice.getTag().success(function (response) {
-        console.log('taglist:');
-        console.log(response);
         $scope.tagList = response;
     });
 
@@ -316,8 +336,6 @@ controller('newQuestionnaireController',function($scope, $state, $filter, questi
                     alert('Successfully added the new tag. Please find your new tag in the form above.');
                     // update answer type list
                     questionnaireAPIservice.getTag().success(function (response) {
-                        // console.log('taglist:');
-                        // console.log(response);
                         $scope.tagList = response;
                     });
 
@@ -359,5 +377,21 @@ controller('newQuestionnaireController',function($scope, $state, $filter, questi
         }
     };
 
+    var fixmeTop = $('.summary-fix').offset().top;
+        $(window).scroll(function() {
+            var currentScroll = $(window).scrollTop();
+            if (currentScroll >= fixmeTop) {
+                $('.summary-fix').css({
+                    position: 'fixed',
+                    top: '0',
+                    width: '15%'
+                });
+            } else {
+                $('.summary-fix').css({
+                    position: 'static',
+                    width: ''
+                });
+            }
+        });
 
 });

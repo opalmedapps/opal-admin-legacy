@@ -9,10 +9,15 @@ controller('newQuestionController',function($scope, $state, $filter, $uibModal, 
         window.history.back();
     };
 
+    // Default booleans
+    $scope.title = {open:false, show:true};
+    $scope.answer_type = {open:false, show:false};
+    $scope.question_group = {open:false, show:false};
+
     // get current user id
     var user = Session.retrieveObject('user');
     var userid = user.id;
-    console.log(userid);
+    //console.log(userid);
 
     // step bar
     var steps = {
@@ -81,7 +86,14 @@ controller('newQuestionController',function($scope, $state, $filter, $uibModal, 
 
     // Update values from form
     $scope.updateQuestionText = function () {
+
+        $scope.title.open = true;
+        if (!$scope.newQuestion.text_EN && !$scope.newQuestion.text_FR) {
+            $scope.title.open = false
+        }
         if ($scope.newQuestion.text_EN && $scope.newQuestion.text_FR) {
+
+            $scope.answer_type.show = true;
 
             steps.question.completed = true;
             $scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -97,10 +109,13 @@ controller('newQuestionController',function($scope, $state, $filter, $uibModal, 
     };
 
     $scope.updateAt = function (selectedAt) {
+        $scope.answer_type.open = true;
         if ($scope.newQuestion.answertype_serNum) {
 
+            $scope.question_group.show = true;
+
             $scope.selectedAt = selectedAt;
-            console.log("selected answer type's category:" + $scope.selectedAt.category_EN);
+            //console.log("selected answer type's category:" + $scope.selectedAt.category_EN);
 
             steps.answerType.completed = true;
             $scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -116,6 +131,7 @@ controller('newQuestionController',function($scope, $state, $filter, $uibModal, 
     };
 
     $scope.updateGroup = function (selectedGroup) {
+        $scope.question_group.open = true;
         if ($scope.newQuestion.questiongroup_serNum) {
 
             $scope.selectedGroup = selectedGroup;
@@ -383,5 +399,22 @@ controller('newQuestionController',function($scope, $state, $filter, $uibModal, 
             });
         }
     };
+
+    var fixmeTop = $('.summary-fix').offset().top;
+    $(window).scroll(function() {
+        var currentScroll = $(window).scrollTop();
+        if (currentScroll >= fixmeTop) {
+            $('.summary-fix').css({
+                position: 'fixed',
+                top: '0',
+                width: '15%'
+            });
+        } else {
+            $('.summary-fix').css({
+                position: 'static',
+                width: ''
+            });
+        }
+    });
 
 });
