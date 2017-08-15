@@ -352,7 +352,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 					var selectedFilterId = selectedFilter.serNum;
 					angular.forEach(filterList, function (filter) {
 						var filterId = filter.serNum;
-						if (filterId === selectedFilterId) {
+						if (filterId == selectedFilterId) {
 							filter.added = 1;
 						}
 					});
