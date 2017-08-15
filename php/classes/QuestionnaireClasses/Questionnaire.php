@@ -176,7 +176,7 @@ class Questionnaire{
  			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
  				$questiongroup = array(
  					'serNum'			=> $data[1],
- 					'position'			=> $data[0],
+ 					'position'			=> intval($data[0]),
  					'optional'			=> $data[2],
  					'last_updated_by'	=> $data[3],
  					'name_EN'			=> $data[4],
