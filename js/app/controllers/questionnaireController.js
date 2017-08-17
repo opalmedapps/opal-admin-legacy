@@ -1,16 +1,10 @@
 angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular'])
 
-	// Function to accept/trust html (styles, classes, etc.)
-	.filter('deliberatelyTrustAsHtml', function ($sce) {
-		return function (text) {
-			return $sce.trustAsHtml(text);
-		};
-	})
-
 	.controller('questionnaireController', function ($sce, $scope, $state, $filter, $timeout, $uibModal, questionnaireAPIservice, filterAPIservice, Session, uiGridConstants) {
+		
 		// get current user id
 		var user = Session.retrieveObject('user');
-		var userid = user.id;
+		var userId = user.id;
 
 		// navigating functions
 		$scope.goToManage = function () {
@@ -47,14 +41,8 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 			$(".bannerMessage").addClass('alert-' + classname);
 		};
 
-		// Close Modal
-		$scope.cancel = function () {
-			$uibModalInstance.dismiss('cancel');
-		};
-
-
 		// Filter
-		// post table search textbox param
+		// search text-box param
 		$scope.filterOptions = function (renderableRows) {
 			var matcher = new RegExp($scope.filterValue, 'i');
 			renderableRows.forEach(function (row) {
@@ -71,7 +59,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 			return renderableRows;
 		};
 
-
+		// Function to filter questionnaires
 		$scope.filterQuestionnaire = function (filterValue) {
 			$scope.filterValue = filterValue;
 			$scope.gridApi.grid.refresh();
@@ -79,7 +67,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 		};
 
 		// Table
-		// Template
+		// Templates
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
 			'<strong><a href="" ng-click="grid.appScope.editQuestionnaire(row.entity)">Edit</a></strong> ' +
 			'- <strong><a href="" ng-click="grid.appScope.deleteQuestionnaire(row.entity)">Delete</a></strong></div>';
@@ -90,11 +78,10 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Private</p></div>';
 		var cellTemplatePublish = '<div class="ui-grid-cell-contents" ng-show="row.entity.publish == 0"><p>No</p></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.publish == 1"><p>Yes</p></div>';
-
 		var cellTemplateTags = '<div class="ui-grid-cell-contents">' +
 			'<span ng-repeat="tag in row.entity.tags">{{tag.name_EN}} / {{tag.name_FR}} ; </span></div>';
 
-		// Data binding
+		// Data binding for main table
 		$scope.gridOptions = {
 			data: 'questionnaireList',
 			columnDefs: [
@@ -128,10 +115,11 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 		$scope.questionnaireList = [];
 
 		// Call API to get the list of questionnaires
-		questionnaireAPIservice.getQuestionnaire(userid).success(function (response) {
-			$scope.questionnaireList = response;
-			//console.log($scope.questionnaireList);
-		});
+		questionnaireAPIservice.getQuestionnaire(userId).then(function (response) {
+			$scope.questionnaireList = response.data;
+		}).catch(function(response) {
+			console.error('Error occurred:', response.status, response.data);
+		});	
 
 		// Initialize the questionnaire to be deleted
 		$scope.questionnaireToDelete = {};
@@ -151,9 +139,8 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 
 			// After delete, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				questionnaireAPIservice.getQuestionnaire(userid).success(function (response) {
+				questionnaireAPIservice.getQuestionnaire(userId).success(function (response) {
 					$scope.questionnaireList = response;
-					//console.log($scope.questionnaireList);
 				});
 			});
 		};
@@ -172,9 +159,8 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 
 			// After update, refresh the post list
 			modalInstance.result.then(function () {
-				questionnaireAPIservice.getQuestionnaire(userid).success(function (response) {
+				questionnaireAPIservice.getQuestionnaire(userId).success(function (response) {
 					$scope.questionnaireList = response;
-					//console.log($scope.questionnaireList);
 				});
 			});
 		};
@@ -182,7 +168,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 		var EditQuestionnaireModalInstanceCtrl = function ($scope, $uibModalInstance) {
 			// get current user id
 			var user = Session.retrieveObject('user');
-			var userid = user.id;
+			var userId = user.id;
 
 			// initialize default variables & lists
 			$scope.changesMade = false;
@@ -289,7 +275,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 				});
 
 				var groupIndex = null;
-				if (!wasSelected) {  
+				if (!wasSelected) {  // Deselected
 					angular.forEach($scope.questionnaire.groups, function(group, index) {
 						if(group.serNum == row.entity.serNum) {
 							groupIndex = index;
@@ -299,6 +285,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 					angular.forEach($scope.questionnaire.groups, function(group, index) {
 						group.position = index + 1;
 					});
+					$scope.changesMade = true; // set changes made
 				}
 				else {
 					var inGroups = false;
@@ -312,8 +299,8 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 						var currentpos = $scope.questionnaire.groups.length + 1;
 						var group = {
 							questionnaire_serNum: $scope.questionnaire.serNum,
-							created_by: userid,
-							last_updated_by: userid,
+							created_by: userId,
+							last_updated_by: userId,
 							serNum: row.entity.serNum,
 							optional: 0,
 							position: currentpos,
@@ -321,43 +308,9 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 							name_FR: row.entity.name_FR
 						};
 						$scope.questionnaire.groups.push(group);
+						$scope.changesMade = true; // set changes made
 					}
 				}
-				$scope.changesMade = true;
-				// console.log(row);
-				// $scope.changesMade = true;
-				
-				// var selectedNum = $scope.gridApi.selection.getSelectedCount();
-				// console.log($scope.selectedGroups);
-				// if (selectedNum === 0) {
-				// 	$scope.questionnaire.groups = [];
-				// } else {
-				// 	var tempGroupArray = [];
-				// 	for (var i = 0; i < selectedNum; i++) {
-				// 		var currentpos = parseInt(i + 1);
-				// 		console.log($scope.selectedGroups[i].entity);
-				// 		if ($scope.selectedGroups[i].entity.position) {
-				// 			currentpos = $scope.selectedGroups[i].entity.position;
-				// 		}
-
-				// 		var group = {
-				// 			questionnaire_serNum: $scope.questionnaire.serNum,
-				// 			created_by: userid,
-				// 			last_updated_by: userid,
-				// 			questiongroup_serNum: $scope.selectedGroups[i].entity.serNum,
-				// 			optional: 0,
-				// 			position: currentpos,
-				// 			name_EN: $scope.selectedGroups[i].entity.name_EN,
-				// 			name_FR: $scope.selectedGroups[i].entity.name_FR
-				// 		};
-				// 		tempGroupArray.push(group);
-				// 		$scope.questionnaire.groups = tempGroupArray.slice(0);
-				// 		// sort question groups by retreived position
-				// 		$scope.questionnaire.groups.sort(function(a,b){
-				// 			return (a.position > b.position) ? 1 : ((b.position > a.position) ? -1 : 0);
-				// 		});
-				// 	}
-				// }
 			};
 
 			/* Function for the "Processing" dialog */
@@ -379,35 +332,29 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 
 				// Assign value
 				$scope.questionnaire = response;
-				console.log('questionnairedetails:');
-				console.log(response);
 
 				// API getting group list
-				questionnaireAPIservice.getGroupsWithQuestions(userid).success(function (response) {
-					console.log('grouplist:');
-					console.log(response);
+				questionnaireAPIservice.getGroupsWithQuestions(userId).success(function (response) {
 					$scope.groupList = response;
 
-					$timeout(function() {
-				        if($scope.gridApi.selection.selectRow){
-				        	angular.forEach($scope.questionnaire.groups, function (selectedGroup) {
-				        		angular.forEach($scope.groupList, function (group) {
-				        			if (selectedGroup.serNum == group.serNum) {
-				        				$scope.gridApi.selection.selectRow(group);
-				        			}
-				        		});
-				        	});
-				        }
-				    });
+					// This preselects the existing groups in the table
+					$timeout(function () {
+						if ($scope.gridApi.selection.selectRow) {
+							angular.forEach($scope.questionnaire.groups, function (selectedGroup) {
+								angular.forEach($scope.groupList, function (group) {
+									if (selectedGroup.serNum == group.serNum) {
+										$scope.gridApi.selection.selectRow(group);
+									}
+								});
+							});
+						}
+					});
 
 				});
 
 				// get tag list
 				questionnaireAPIservice.getTag().success(function (response) {
-					console.log('taglist:');
 					$scope.tagList = checkAdded(response);
-					console.log('check added:');
-					console.log($scope.tagList);
 				});
 
 				processingModal.close(); // hide modal
@@ -467,7 +414,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 						$scope.questionnaire.tags.push(Filter);
 					}
 				});
-			};
+			}
 
 			// check if there's any tag added
 			$scope.checkTags = function (tagList) {
@@ -509,7 +456,6 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 			$scope.updateQuestionnaire = function () {
 
 				addTags($scope.tagList);
-				console.log($scope.tagList);
 				// update
 				$.ajax({
 					type: "POST",
