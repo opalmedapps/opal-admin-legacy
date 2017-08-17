@@ -609,6 +609,24 @@ ul.no-list {
   padding: 0px 14px 15px; 
 }
 
+.none-to-display-container {
+  padding-top: 10%;
+  padding-bottom: 1%;
+  vertical-align: middle;
+}
+
+.none-to-display-container .content {
+  text-align: center;
+}
+
+.none-to-display-container .content h1.icon {
+  font-size: 165px;
+}
+
+.none-to-display-container .content p {
+  font-size: 45px;
+}
+
 .login-container {
   padding-top: 19%;
   padding-bottom: 1%;
