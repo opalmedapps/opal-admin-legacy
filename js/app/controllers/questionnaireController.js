@@ -7,7 +7,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 		};
 	})
 
-	.controller('questionnaireController', function ($sce, $scope, $state, $filter, $uibModal, questionnaireAPIservice, filterAPIservice, Session, uiGridConstants) {
+	.controller('questionnaireController', function ($sce, $scope, $state, $filter, $timeout, $uibModal, questionnaireAPIservice, filterAPIservice, Session, uiGridConstants) {
 		// get current user id
 		var user = Session.retrieveObject('user');
 		var userid = user.id;
@@ -91,8 +91,8 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 		var cellTemplatePublish = '<div class="ui-grid-cell-contents" ng-show="row.entity.publish == 0"><p>No</p></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.publish == 1"><p>Yes</p></div>';
 
-		var cellTemplateTags = '<div class="ui-grid-cell-contents" ng-repeat="tag in row.entity.tags"' +
-			'<p>{{tag.name_EN}} / {{tag.name_FR}} ;</p></div>';
+		var cellTemplateTags = '<div class="ui-grid-cell-contents">' +
+			'<span ng-repeat="tag in row.entity.tags">{{tag.name_EN}} / {{tag.name_FR}} ; </span></div>';
 
 		// Data binding
 		$scope.gridOptions = {
@@ -124,7 +124,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 			},
 		};
 
-		// Initialize object for storing quesitoinnaires
+		// Initialize object for storing questionnaires
 		$scope.questionnaireList = [];
 
 		// Call API to get the list of questionnaires
@@ -223,8 +223,8 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 				'<p>{{row.entity.library_name_EN}} / {{row.entity.library_name_FR}}</p></div>';
 			var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Public</p></div>' +
 				'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Private</p></div>';
-			var cellTemplateTags = '<div class="ui-grid-cell-contents" ng-repeat="tag in row.entity.tags"' +
-				'<p>{{tag.name_EN}} / {{tag.name_FR}} ;</p></div>';
+			var cellTemplateTags = '<div class="ui-grid-cell-contents">' +
+				'<span ng-repeat="tag in row.entity.tags">{{tag.name_EN}} / {{tag.name_FR}} ; </span></div>';
 
 
 			// Table Data binding
@@ -253,7 +253,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 					$scope.gridApi = gridApi;
 					gridApi.grid.registerRowsProcessor($scope.filterOptions, 300);
 					gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-						selectUpdate();
+						selectUpdate(row);
 
 					});
 				},
@@ -272,33 +272,92 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 			};
 
 			// function to update the newQuestionnaire content after changing selection
-			var selectUpdate = function () {
-				$scope.changesMade = true;
+			var selectUpdate = function (row) {
+
 				$scope.selectedGroups = $scope.gridApi.selection.getSelectedGridRows();
-				var selectedNum = $scope.gridApi.selection.getSelectedCount();
-				console.log($scope.selectedGroups);
-				if (selectedNum === 0) {
-					$scope.newgroups = [];
-				} else {
-					var tempGroupArray = [];
-					for (var i = 0; i < selectedNum; i++) {
-						var currentpos = parseInt(i + $scope.questionnaire.groups.length + 1);
+				//sort question groups by retreived position
+				$scope.questionnaire.groups.sort(function(a,b){
+					return (a.position > b.position) ? 1 : ((b.position > a.position) ? -1 : 0);
+				});
+
+				// Check to see if row was (de)selected
+				var wasSelected = false;
+				angular.forEach($scope.selectedGroups, function(selectedGroup) {
+					if (row.entity.serNum == selectedGroup.entity.serNum) {
+						wasSelected = true;
+					}
+				});
+
+				var groupIndex = null;
+				if (!wasSelected) {  
+					angular.forEach($scope.questionnaire.groups, function(group, index) {
+						if(group.serNum == row.entity.serNum) {
+							groupIndex = index;
+						}
+					});
+					$scope.questionnaire.groups.splice(groupIndex, 1);
+					angular.forEach($scope.questionnaire.groups, function(group, index) {
+						group.position = index + 1;
+					});
+				}
+				else {
+					var inGroups = false;
+					angular.forEach($scope.questionnaire.groups, function(group){
+						if (row.entity.serNum == group.serNum) {
+							inGroups = true;
+						}
+					});
+
+					if (!inGroups) {
+						var currentpos = $scope.questionnaire.groups.length + 1;
 						var group = {
 							questionnaire_serNum: $scope.questionnaire.serNum,
 							created_by: userid,
 							last_updated_by: userid,
-							questiongroup_serNum: $scope.selectedGroups[i].entity.serNum,
+							serNum: row.entity.serNum,
 							optional: 0,
 							position: currentpos,
-							name_EN: $scope.selectedGroups[i].entity.name_EN,
-							name_FR: $scope.selectedGroups[i].entity.name_FR
+							name_EN: row.entity.name_EN,
+							name_FR: row.entity.name_FR
 						};
-						tempGroupArray.push(group);
-						$scope.newgroups = tempGroupArray.slice(0);
+						$scope.questionnaire.groups.push(group);
 					}
 				}
-				console.log('new groups');
-				console.log($scope.newgroups);
+				$scope.changesMade = true;
+				// console.log(row);
+				// $scope.changesMade = true;
+				
+				// var selectedNum = $scope.gridApi.selection.getSelectedCount();
+				// console.log($scope.selectedGroups);
+				// if (selectedNum === 0) {
+				// 	$scope.questionnaire.groups = [];
+				// } else {
+				// 	var tempGroupArray = [];
+				// 	for (var i = 0; i < selectedNum; i++) {
+				// 		var currentpos = parseInt(i + 1);
+				// 		console.log($scope.selectedGroups[i].entity);
+				// 		if ($scope.selectedGroups[i].entity.position) {
+				// 			currentpos = $scope.selectedGroups[i].entity.position;
+				// 		}
+
+				// 		var group = {
+				// 			questionnaire_serNum: $scope.questionnaire.serNum,
+				// 			created_by: userid,
+				// 			last_updated_by: userid,
+				// 			questiongroup_serNum: $scope.selectedGroups[i].entity.serNum,
+				// 			optional: 0,
+				// 			position: currentpos,
+				// 			name_EN: $scope.selectedGroups[i].entity.name_EN,
+				// 			name_FR: $scope.selectedGroups[i].entity.name_FR
+				// 		};
+				// 		tempGroupArray.push(group);
+				// 		$scope.questionnaire.groups = tempGroupArray.slice(0);
+				// 		// sort question groups by retreived position
+				// 		$scope.questionnaire.groups.sort(function(a,b){
+				// 			return (a.position > b.position) ? 1 : ((b.position > a.position) ? -1 : 0);
+				// 		});
+				// 	}
+				// }
 			};
 
 			/* Function for the "Processing" dialog */
@@ -317,10 +376,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 
 			// questionnaire API: retrieve data
 			questionnaireAPIservice.getQuestionnaireDetails($scope.currentQuestionnaire.serNum).success(function (response) {
-				// parse
-				/*for (var g = 0; g < response.groups.length; g++) {
-					response.groups[g].position = parseInt(response.groups[g].position);
-				}*/
+
 				// Assign value
 				$scope.questionnaire = response;
 				console.log('questionnairedetails:');
@@ -331,6 +387,19 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 					console.log('grouplist:');
 					console.log(response);
 					$scope.groupList = response;
+
+					$timeout(function() {
+				        if($scope.gridApi.selection.selectRow){
+				        	angular.forEach($scope.questionnaire.groups, function (selectedGroup) {
+				        		angular.forEach($scope.groupList, function (group) {
+				        			if (selectedGroup.serNum == group.serNum) {
+				        				$scope.gridApi.selection.selectRow(group);
+				        			}
+				        		});
+				        	});
+				        }
+				    });
+
 				});
 
 				// get tag list
@@ -441,8 +510,6 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 
 				addTags($scope.tagList);
 				console.log($scope.tagList);
-				console.log('groupsfinal');
-				console.log($scope.newgroups);
 				// update
 				$.ajax({
 					type: "POST",
@@ -450,28 +517,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 					data: $scope.questionnaire,
 					success: function (response) {
 						response = JSON.parse(response);
-						// Show success or failure depending on response
-						if (response.value && $scope.newgroups.length) {
-							// add new groups
-							$.ajax({
-								type: "POST",
-								url: "php/questionnaire/addQuestionGroupToQuestionnaire.php",
-								data: { groupArray: $scope.newgroups },
-								success: function (response) {
-									response = JSON.parse(response);
-									// Show success or failure depending on response
-									if (response.value) {
-										$scope.setBannerClass('success');
-										$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.questionnaire.name_EN + "/ " + $scope.questionnaire.name_FR + "\"!";
-									}
-									else {
-										$scope.setBannerClass('danger');
-										$scope.$parent.bannerMessage = response.message;
-									}
-								}
-							});
-						}
-						else if (response.value && !$scope.newgroups.length) {
+						if (response.value) {
 							$scope.setBannerClass('success');
 							$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.questionnaire.name_EN + "/ " + $scope.questionnaire.name_FR + "\"!";
 						}

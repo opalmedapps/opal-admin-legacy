@@ -498,40 +498,72 @@ class Questionnaire{
 
 			$query = $host_db_link->prepare( $sql );
 			$query->execute();
-			
-			foreach($questiongroups as $group){
-				$group_id = $group['serNum'];
-				$optional = $group['optional'];
-				$position = $group['position'];
-				$deleted = $group['deleted'];
 
-				if ($deleted){
+			$existingGroups = array();
+
+			$sql = "
+				SELECT DISTINCT 
+					qg.questiongroup_serNum
+				FROM
+					Questionnaire_questiongroup qg 
+				WHERE
+					qg.questionnaire_serNum = '$serNum'
+			";
+
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$query->execute();
+ 			
+ 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+ 				array_push($existingGroups, $data[0]);
+ 			}
+			
+			foreach($existingGroups as $existingGroup) {
+				// if old groups not in new, delete it
+				if (!$this->nestedSearch($existingGroup, $questiongroups)) {
 					$sql = "
-						DELETE FROM
-							Questionnaire_questiongroup
-						WHERE
-							questionnaire_serNum = $serNum
-						AND
-							questiongroup_serNum = $group_id
-					";
-					$query = $host_db_link->prepare( $sql );
-					$query->execute();
-				} else {
-					$sql = "
-						UPDATE
-							Questionnaire_questiongroup
-						SET
-							position = '$position',
-							optional = '$optional',
-							last_updated_by = '$last_updated_by'
-						WHERE
-							questiongroup_serNum = $group_id
-						AND
-							questionnaire_serNum = $serNum
+						DELETE FROM 
+							Questionnaire_questiongroup  
+						WHERE 
+							Questionnaire_questiongroup.questionnaire_serNum = '$serNum'
+						AND Questionnaire_questiongroup.questiongroup_serNum = '$existingGroup'
 					";
 					$query = $host_db_link->prepare( $sql );
 					$query->execute();
 				}
+			}
+			
+			foreach($questiongroups as $group){
+
+				$group_id = $group['questiongroup_serNum'];
+				$optional = $group['optional'];
+				$position = $group['position'];
+
+				$sql = "
+					INSERT INTO 
+						Questionnaire_questiongroup(
+							questionnaire_serNum,
+							questiongroup_serNum,
+							position,
+							optional,
+							last_updated_by,
+							created_by
+						)
+					VALUES (
+						'$serNum',
+						'$group_id',
+						'$position',
+						'$optional',
+						'$last_updated_by',
+						'$last_updated_by'
+					)
+					ON DUPLICATE KEY UPDATE
+						position 		= VALUES(position),
+						optional 		= VALUES(optional),
+						last_updated_by = VALUES(last_updated_by)
+				";
+
+				$query = $host_db_link->prepare( $sql );
+				$query->execute();
 			}
 
 			// add or delete tag
@@ -578,6 +610,18 @@ class Questionnaire{
 			$response['message'] = $e->getMessage();
 			return $response;
 		}
+	}
+
+	public function nestedSearch($id, $array) {
+		if (empty($array) || !$id) {
+			return 0;
+		}
+		foreach ($array as $key => $val) {
+			if ($val['questiongroup_serNum'] == $id) {
+				return 1;
+			}
+		}
+		return 0;
 	}
 
 	/* Get patients' completed Questionnaire
