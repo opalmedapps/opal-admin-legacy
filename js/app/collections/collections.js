@@ -394,103 +394,103 @@ angular.module('opalAdmin.collections', [])
 		return emailAPI;
 	})
 
-    .factory('questionnaireAPIservice', function ($http) {
-        var questionnaireAPI = {};
+	.factory('questionnaireAPIservice', function ($http) {
+		var questionnaireAPI = {};
 
-        questionnaireAPI.getQuestionnaire = function(userid) {
-            return $http({
-                method: 'JSONP',
-                url: URLPATH+"api/questionnaire/questionnaire.php?callback=JSON_CALLBACK&userid="+userid
-            });
-        };
+		questionnaireAPI.getQuestionnaire = function (userid) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/questionnaire/questionnaire.php?callback=JSON_CALLBACK&userid=" + userid
+			});
+		};
 
-        questionnaireAPI.getLibrary = function(userid) {
-            return $http({
-                method: 'JSONP',
-                url: URLPATH+"api/questionnaire/library.php?callback=JSON_CALLBACK&userid="+userid
-            });
-        };
+		questionnaireAPI.getLibrary = function (userid) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/questionnaire/library.php?callback=JSON_CALLBACK&userid=" + userid
+			});
+		};
 
-        questionnaireAPI.getTag = function() {
-            return $http({
-                method: 'JSONP',
-                url: URLPATH+"api/questionnaire/tag.php?callback=JSON_CALLBACK"
-            });
-        };
+		questionnaireAPI.getTag = function () {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/questionnaire/tag.php?callback=JSON_CALLBACK"
+			});
+		};
 
-        questionnaireAPI.getAnswerType = function(userid) {
-            return $http({
-                method: 'JSONP',
-                url: URLPATH+"api/questionnaire/answerType.php?callback=JSON_CALLBACK&userid="+userid
-            });
-        };
+		questionnaireAPI.getAnswerType = function (userid) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/questionnaire/answerType.php?callback=JSON_CALLBACK&userid=" + userid
+			});
+		};
 
-        questionnaireAPI.getCategory = function() {
-            return $http({
-                method: 'JSONP',
-                url: URLPATH+"api/questionnaire/category.php?callback=JSON_CALLBACK"
-            });
-        };
+		questionnaireAPI.getCategory = function () {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/questionnaire/category.php?callback=JSON_CALLBACK"
+			});
+		};
 
-        questionnaireAPI.getAtCategory = function() {
-            return $http({
-                method: 'JSONP',
-                url: URLPATH+"api/questionnaire/atCategory.php?callback=JSON_CALLBACK"
-            });
-        };
+		questionnaireAPI.getAtCategory = function () {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/questionnaire/atCategory.php?callback=JSON_CALLBACK"
+			});
+		};
 
-        questionnaireAPI.getGroup = function(userid) {
-            return $http({
-                method: 'JSONP',
-                url: URLPATH+"api/questionnaire/group.php?callback=JSON_CALLBACK&userid="+userid
-            });
-        };
+		questionnaireAPI.getGroup = function (userid) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/questionnaire/group.php?callback=JSON_CALLBACK&userid=" + userid
+			});
+		};
 
-        questionnaireAPI.getQuestions = function() {
-            return $http({
-                method: 'JSONP',
-                url: URLPATH+"api/questionnaire/question.php?callback=JSON_CALLBACK"
-            });
-        };
+		questionnaireAPI.getQuestions = function () {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/questionnaire/question.php?callback=JSON_CALLBACK"
+			});
+		};
 
-        questionnaireAPI.getQuestionDetails = function(questionSerNum) {
-            return $http({
-                method: 'JSONP',
-                url: URLPATH+"api/questionnaire/questionDetails.php?callback=JSON_CALLBACK&questionSerNum="+questionSerNum
-            });
-        };
+		questionnaireAPI.getQuestionDetails = function (questionSerNum) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/questionnaire/questionDetails.php?callback=JSON_CALLBACK&questionSerNum=" + questionSerNum
+			});
+		};
 
-        questionnaireAPI.getGroupsWithQuestions = function(userid) {
-            return $http({
-                method: 'JSONP',
-                url: URLPATH+"api/questionnaire/groupsWithQuestions.php?callback=JSON_CALLBACK&userid="+userid
-            });
-        };
+		questionnaireAPI.getGroupsWithQuestions = function (userid) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/questionnaire/groupsWithQuestions.php?callback=JSON_CALLBACK&userid=" + userid
+			});
+		};
 
-        questionnaireAPI.getQuestionnaireDetails = function(questionnaireSerNum) {
-            return $http({
-                method: 'JSONP',
-                url: URLPATH+"api/questionnaire/questionnaireDetails.php?callback=JSON_CALLBACK&serNum="+questionnaireSerNum
-            });
-        };
+		questionnaireAPI.getQuestionnaireDetails = function (questionnaireSerNum) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/questionnaire/questionnaireDetails.php?callback=JSON_CALLBACK&serNum=" + questionnaireSerNum
+			});
+		};
 
 
-        return questionnaireAPI;
-    })
+		return questionnaireAPI;
+	})
 
-    // install API service
-    .factory('installAPIservice', function ($http) {
+	// install API service
+	.factory('installAPIservice', function ($http) {
 
-        var installAPI = {};
+		var installAPI = {};
 
-        // Function to verify installation requirements
-        installAPI.verifyRequirements = function (urlpath) {
-            return $http({
-                method: 'JSONP',
-                url: urlpath+"api/install/verify_requirements.php?callback=JSON_CALLBACK"
-            });
-        };
+		// Function to verify installation requirements
+		installAPI.verifyRequirements = function (urlpath) {
+			return $http({
+				method: 'JSONP',
+				url: urlpath + "api/install/verify_requirements.php?callback=JSON_CALLBACK"
+			});
+		};
 
-        return installAPI;
-    });
+		return installAPI;
+	});
 
