@@ -1,6 +1,6 @@
 <?php
-	
-	include_once('questionnaire.inc');
+	/* To update questionnaire information from POST request */
+	include_once('questionnaire.inc'); // Load library
 
 	$questionnaireArray = array(
 		'serNum'			=> $_POST['serNum'],
@@ -15,6 +15,7 @@
 
 	$questionnaireObj = new Questionnaire;
 
-	$response = $questionnaireObj->updateQuestionnaire($questionnaireArray);
-	print json_encode($response);
+	$response = $questionnaireObj->updateQuestionnaire($questionnaireArray); // Call class function
+
+	print json_encode($response); // "Return" response
 ?>
