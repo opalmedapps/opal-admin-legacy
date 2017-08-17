@@ -118,18 +118,17 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 		questionnaireAPIservice.getQuestionnaire(userId).then(function (response) {
 			$scope.questionnaireList = response.data;
 		}).catch(function(response) {
-			console.error('Error occurred:', response.status, response.data);
+			console.error('Error occurred getting questionnaire list:', response.status, response.data);
 		});	
 
 		// Initialize the questionnaire to be deleted
 		$scope.questionnaireToDelete = {};
-		// Initialize a scope variable for a selected questionnaire
-		$scope.currentQuestionnaire = {};
 
 		// Function to delete questionnaire
 		$scope.deleteQuestionnaire = function (questionnaire) {
 			$scope.questionnaireToDelete = questionnaire;
-			var modalInstance = $uibModal.open({
+
+			var modalInstance = $uibModal.open({ // open modal
 				templateUrl: 'deleteQuestionnaireModalContent.htm',
 				controller: DeleteQuestionnaireModalInstanceCtrl,
 				windowClass: 'deleteModal',
@@ -139,17 +138,53 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 
 			// After delete, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				questionnaireAPIservice.getQuestionnaire(userId).success(function (response) {
-					$scope.questionnaireList = response;
+				questionnaireAPIservice.getQuestionnaire(userId).then(function (response) {
+					$scope.questionnaireList = response.data;
+				}).catch(function(response) {
+					console.error('Error occurred getting questionnaire list after modal close:', response.status, response.data);
 				});
 			});
 		};
 
+		var DeleteQuestionnaireModalInstanceCtrl = function ($scope, $uibModalInstance) {
+			
+			// Submit delete
+			$scope.deleteQuestionnaire = function () {
+				$.ajax({
+					type: "POST",
+					url: "php/questionnaire/deleteQuestionnaire.php",
+					data: $scope.questionnaireToDelete,
+					success: function (response) {
+						response = JSON.parse(response);
+						// Show success or failure depending on response
+						if (response.value) {
+							$scope.setBannerClass('success');
+							$scope.$parent.bannerMessage = "Successfully deleted \"" + $scope.questionnaireToDelete.name_EN + "/ " + $scope.questionnaireToDelete.name_FR + "\"!";
+						}
+						else {
+							$scope.setBannerClass('danger');
+							$scope.$parent.bannerMessage = response.message;
+						}
+						$scope.showBanner();
+						$uibModalInstance.close();
+					}
+				});
+			};
 
+			// Function to close modal dialog
+			$scope.cancel = function () {
+				$uibModalInstance.dismiss('cancel');
+			};
+		};
+
+		// Initialize a scope variable for a selected questionnaire
+		$scope.currentQuestionnaire = {};
+
+		// Function to edit questionnaire
 		$scope.editQuestionnaire = function (questionnaire) {
 			$scope.currentQuestionnaire = questionnaire;
 
-			var modalInstance = $uibModal.open({
+			var modalInstance = $uibModal.open({ // open modal
 				templateUrl: 'editQuestionnaireModalContent.htm',
 				controller: EditQuestionnaireModalInstanceCtrl,
 				scope: $scope,
@@ -157,13 +192,16 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 				backdrop: 'static',
 			});
 
-			// After update, refresh the post list
+			// After update, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				questionnaireAPIservice.getQuestionnaire(userId).success(function (response) {
-					$scope.questionnaireList = response;
+				questionnaireAPIservice.getQuestionnaire(userId).then(function (response) {
+					$scope.questionnaireList = response.data;
+				}).catch(function(response) {
+					console.error('Error occurred getting questionnaire list after modal close:', response.status, response.data);
 				});
 			});
 		};
+
 		// Controller for editModal
 		var EditQuestionnaireModalInstanceCtrl = function ($scope, $uibModalInstance) {
 			// get current user id
@@ -178,9 +216,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 			$scope.tagList = [];
 			$scope.groupList = [];
 			$scope.selectedGroups;
-			$scope.newgroups = []; // holding new groups that want to be added
 			$scope.tagFilter = "";
-			$scope.removingGroups = []; // groups to be deleted
 
 			// table
 			// Filter in table
@@ -200,7 +236,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 				return renderableRows;
 			};
 
-			// Template for table
+			// Template for group table
 			var cellTemplateName = '<div class="ui-grid-cell-contents" ' +
 				'<p>{{row.entity.name_EN}} / {{row.entity.name_FR}}</p></div>';
 			var cellTemplateCat = '<div class="ui-grid-cell-contents" ' +
@@ -211,7 +247,6 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 				'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Private</p></div>';
 			var cellTemplateTags = '<div class="ui-grid-cell-contents">' +
 				'<span ng-repeat="tag in row.entity.tags">{{tag.name_EN}} / {{tag.name_FR}} ; </span></div>';
-
 
 			// Table Data binding
 			$scope.gridGroups = {
@@ -245,28 +280,18 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 				},
 			};
 
-			// cancel selection
-			$scope.cancelSelection = function () {
-				$scope.gridApi.selection.clearSelectedRows();
-				selectUpdate();
-			};
-
-			// select all rows
-			$scope.selectAll = function () {
-				$scope.gridApi.selection.selectAllRows();
-				selectUpdate();
-			};
-
-			// function to update the newQuestionnaire content after changing selection
+			// Function to update the newQuestionnaire groups after changing selection
 			var selectUpdate = function (row) {
 
+				// get selected rows
 				$scope.selectedGroups = $scope.gridApi.selection.getSelectedGridRows();
-				//sort question groups by retreived position
+
+				// sort question groups by retrieved position
 				$scope.questionnaire.groups.sort(function(a,b){
 					return (a.position > b.position) ? 1 : ((b.position > a.position) ? -1 : 0);
 				});
 
-				// Check to see if row was (de)selected
+				// Check to see if current row was (de)selected
 				var wasSelected = false;
 				angular.forEach($scope.selectedGroups, function(selectedGroup) {
 					if (row.entity.serNum == selectedGroup.entity.serNum) {
@@ -278,16 +303,17 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 				if (!wasSelected) {  // Deselected
 					angular.forEach($scope.questionnaire.groups, function(group, index) {
 						if(group.serNum == row.entity.serNum) {
-							groupIndex = index;
+							groupIndex = index; // array index of the group that was removed
 						}
 					});
-					$scope.questionnaire.groups.splice(groupIndex, 1);
+					$scope.questionnaire.groups.splice(groupIndex, 1); // Take it out of the array
 					angular.forEach($scope.questionnaire.groups, function(group, index) {
-						group.position = index + 1;
+						group.position = index + 1; // Refactor the positions of the leftover groups
 					});
 					$scope.changesMade = true; // set changes made
 				}
 				else {
+					// Check to see if added row exists already in the groups
 					var inGroups = false;
 					angular.forEach($scope.questionnaire.groups, function(group){
 						if (row.entity.serNum == group.serNum) {
@@ -295,15 +321,15 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 						}
 					});
 
-					if (!inGroups) {
-						var currentpos = $scope.questionnaire.groups.length + 1;
+					if (!inGroups) { // If not, append it to existing groups
+						var currentPosition = $scope.questionnaire.groups.length + 1;
 						var group = {
 							questionnaire_serNum: $scope.questionnaire.serNum,
 							created_by: userId,
 							last_updated_by: userId,
 							serNum: row.entity.serNum,
 							optional: 0,
-							position: currentpos,
+							position: currentPosition,
 							name_EN: row.entity.name_EN,
 							name_FR: row.entity.name_FR
 						};
@@ -324,20 +350,26 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 				});
 			};
 
-			// Show processing dialog
+			// Show processing dialog upon first load
 			$scope.showProcessingModal();
 
-			// questionnaire API: retrieve data
-			questionnaireAPIservice.getQuestionnaireDetails($scope.currentQuestionnaire.serNum).success(function (response) {
+			// Call our API service to get questionnaire details
+			questionnaireAPIservice.getQuestionnaireDetails($scope.currentQuestionnaire.serNum).then(function (response) {
 
 				// Assign value
-				$scope.questionnaire = response;
+				$scope.questionnaire = response.data;
 
-				// API getting group list
-				questionnaireAPIservice.getGroupsWithQuestions(userId).success(function (response) {
-					$scope.groupList = response;
+			}).catch(function (response) {
+				console.error('Error occurred getting questionnaire details after modal open:', response.status, response.data);
+				
+			}).finally(function () {
 
-					// This preselects the existing groups in the table
+				// Call our API service to get the list of possible question groups
+				questionnaireAPIservice.getGroupsWithQuestions(userId).then(function (response) {
+
+					$scope.groupList = response.data; // Assign response data
+
+					// This preselects the existing question groups in the table
 					$timeout(function () {
 						if ($scope.gridApi.selection.selectRow) {
 							angular.forEach($scope.questionnaire.groups, function (selectedGroup) {
@@ -350,19 +382,20 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 						}
 					});
 
+				}).catch(function (response){
+					console.error('Error occurred getting question groups:', response.status, response.data);
 				});
 
-				// get tag list
-				questionnaireAPIservice.getTag().success(function (response) {
-					$scope.tagList = checkAdded(response);
+				// Call our API service to get the list of possible tags
+				questionnaireAPIservice.getTag().then(function (response) {
+					$scope.tagList = checkAdded(response.data); // Assign value and check those that were already added
 				});
 
 				processingModal.close(); // hide modal
 				processingModal = null; // remove reference
-
 			});
 
-			// Function to assign 1 to existing tags
+			// Function to assign a "1" to existing tags
 			function checkAdded(filterList) {
 				angular.forEach($scope.questionnaire.tags, function (selectedFilter) {
 					var selectedFilterId = selectedFilter.serNum;
@@ -376,28 +409,18 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 				return filterList;
 			}
 
-			// update groups to be deleted 
-			$scope.selectGroupToDelete = function (group) {
-				$scope.changesMade = true;
-				if (group.deleted) {
-					group.deleted = 0;
-				} else {
-					group.deleted = 1;
-				}
-			};
-
-			// assign search field 
+			// assign search field for tags
 			$scope.searchTag = function (field) {
 				$scope.tagFilter = field;
 			};
 
-			// search filter
+			// search filter for tags
 			$scope.searchTagFilter = function (Filter) {
 				var keyword = new RegExp($scope.tagFilter, 'i');
 				return !$scope.tagFilter || keyword.test(Filter.name_EN);
 			};
 
-			// Function to toggle Item in a list on/off
+			// Function to toggle Tag in a list on/off
 			$scope.selectTag = function (tag) {
 				$scope.changesMade = true;
 				if (tag.added) {
@@ -407,7 +430,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 				}
 			};
 
-			// add tags
+			// add tags to the questionnaire tag array
 			function addTags(tagList) {
 				angular.forEach(tagList, function (Filter) {
 					if (Filter.added) {
@@ -426,6 +449,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 				return tagsAdded;
 			};
 
+			// Function called when changing the questionnaire privacy flag
 			$scope.privacyUpdate = function (value) {
 				if (value == 0 || value == 1) {
 					// update value
@@ -434,11 +458,12 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 				$scope.changesMade = true;
 			};
 
+			// Function called whenever there has been a change in the form
 			$scope.setChangesMade = function () {
 				$scope.changesMade = true;
 			};
 
-			// Function to close modal dialog
+			// Function to close edit modal dialog
 			$scope.cancel = function () {
 				$uibModalInstance.dismiss('cancel');
 			};
@@ -452,11 +477,11 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 					return false;
 			};
 
-			// update questionnaire in table
+			// Function for updating the questionnaire 
 			$scope.updateQuestionnaire = function () {
 
-				addTags($scope.tagList);
-				// update
+				addTags($scope.tagList); // Add tags to questionnaire object
+				// ajax POST
 				$.ajax({
 					type: "POST",
 					url: "php/questionnaire/updateQuestionnaire.php",
@@ -482,34 +507,5 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 
 		};
 
-		var DeleteQuestionnaireModalInstanceCtrl = function ($scope, $uibModalInstance) {
-			// Submit delete
-			$scope.deleteQuestionnaire = function () {
-				$.ajax({
-					type: "POST",
-					url: "php/questionnaire/deleteQuestionnaire.php",
-					data: $scope.questionnaireToDelete,
-					success: function (response) {
-						response = JSON.parse(response);
-						// Show success or failure depending on response
-						if (response.value) {
-							$scope.setBannerClass('success');
-							$scope.$parent.bannerMessage = "Successfully deleted \"" + $scope.questionnaireToDelete.name_EN + "/ " + $scope.questionnaireToDelete.name_FR + "\"!";
-						}
-						else {
-							$scope.setBannerClass('danger');
-							$scope.$parent.bannerMessage = response.message;
-						}
-						$scope.showBanner();
-						$uibModalInstance.close();
-					}
-				});
-			};
-
-			// Function to close modal dialog
-			$scope.cancel = function () {
-				$uibModalInstance.dismiss('cancel');
-			};
-		};
 
 	});
