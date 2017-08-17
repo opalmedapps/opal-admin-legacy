@@ -534,7 +534,7 @@ class Questionnaire{
 			
 			foreach($questiongroups as $group){
 
-				$group_id = $group['questiongroup_serNum'];
+				$group_id = $group['serNum'];
 				$optional = $group['optional'];
 				$position = $group['position'];
 
