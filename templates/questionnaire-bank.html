@@ -1,189 +1,182 @@
 <div id="main">
-    <div id="top">
-        <div class="clearfix">
+	<div id="top">
+		<div class="clearfix">
 
-            <div class="row">
-                <div class="col-md-2">
-                    <div ng-include="'templates/questionnaire-side-menu.html'"></div>
-                </div>
+			<div class="row">
+				<div class="col-md-2">
+					<div ng-include="'templates/questionnaire-side-menu.html'"></div>
+				</div>
 
-                <div class="col-md-10 animated fadeIn">
-                    <div class="row main-title">
-                        <div class="col-md-9 title-content">
-                            <span class="fa fa-search"></span>
-                            <h1><strong>Manage Question Bank</strong></h1>
-                        </div>
+				<div class="col-md-10 animated fadeIn">
+					<div class="row main-title">
+						<div class="col-md-9 title-content">
+							<span class="fa fa-search"></span>
+							<h1><strong>Manage Question Bank</strong></h1>
+						</div>
 
-                        <div class="col-md-3 title-breadcrumbs">
-			            	<span><a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <a href="#/questionnaire">Questionnaire</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Manage Question Bank</strong></span>
-                        </div>
-                    </div>
+						<div class="col-md-3 title-breadcrumbs">
+							<span><a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <a href="#/questionnaire">Questionnaire</a>	<span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Manage Question Bank</strong></span>
+						</div>
+					</div>
 
-                    <!-- Add button -->
-                    <div class="row clearfix" style="margin-bottom: 10px; display:flex; align-items: center">
-                        <div class="col-md-8">
-                            <a style="width:100px;margin-right:20px;" href="" ng-click="goToAddQuestion()" class="btn btn-md btn-outline item-button">
-                                <span style="font-size: 17px;" class="fa fa-plus"></span>
-                                <span style="font-size: 20px;"><strong>Add</strong></span>
-                            </a>
-                        </div>
-                    </div>
+					<!-- Add button -->
+					<div class="row clearfix" style="margin-bottom: 10px; display:flex; align-items: center">
+						<div class="col-md-8">
+							<a style="width:100px;margin-right:20px;" href="" ng-click="goToAddQuestion()" class="btn btn-md btn-outline item-button">
+								<span style="font-size: 17px;" class="fa fa-plus"></span>
+								<span style="font-size: 20px;"><strong>Add</strong></span>
+							</a>
+						</div>
+					</div>
 
-                    <div class="panel-container" style="text-align:left;">
-                        <div class="panel-info">
-                            <div class="panel-input">
-                                <div id="data-table">
-                                    <div class="gridStyle" ui-grid="gridLib" ui-grid-resize-columns style="height:75vh"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+					<div class="panel-container" style="text-align:left;">
+						<div class="panel-info">
+							<div class="panel-input">
+								<div id="data-table">
+									<div class="gridStyle" ui-grid="gridLib" ui-grid-resize-columns style="height:75vh"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 
-            </div>
-        </div>
-    </div>
-    <div class="bannerMessage alert-success">{{bannerMessage}}</div>
+			</div>
+		</div>
+	</div>
+	<div class="bannerMessage alert-success">{{bannerMessage}}</div>
 </div>
 
 <!-- Deleting Modal -->
 <script type="text/ng-template" id="deleteQuestionModalContent.htm">
-  <div class="modal-header">
-    <h2 class="modal-title">
-      <span class="glyphicon glyphicon-trash" style="font-size: 30px;"></span> 
-      Delete Question: {{questionToDelete.text_EN}} / {{questionToDelete.text_EN}}
-    </h2>
-  </div>
-  <div class="modal-body">
-    <div class="bs-callout bs-callout-danger">
-      <h4>Question Delete</h4>
-      <p class="deleteText">Are you sure you want to delete the Question "{{questionToDelete.text_EN}}" ?</p>
-      <form method="post" ng-submit="deleteQuestion()">          
-        <input class="btn btn-primary" type="submit" value="Delete">
-        <input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
-      </form>
-    </div>
-  </div>
+	<div class="modal-header">
+		<h2 class="modal-title">
+			<span class="glyphicon glyphicon-trash" style="font-size: 30px;"></span> Delete Question: {{questionToDelete.text_EN}}
+			/ {{questionToDelete.text_EN}}
+		</h2>
+	</div>
+	<div class="modal-body">
+		<div class="bs-callout bs-callout-danger">
+			<h4>Question Delete</h4>
+			<p class="deleteText">Are you sure you want to delete the Question "{{questionToDelete.text_EN}}" ?</p>
+			<form method="post" ng-submit="deleteQuestion()">
+				<input class="btn btn-primary" type="submit" value="Delete">
+				<input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
+			</form>
+		</div>
+	</div>
 </script>
 
 <!-- Editing Modal -->
 <script type="text/ng-template" id="editQuestionModalContent.htm">
-    <div class="modal-header">
-        <h2 class="modal-title">
-          <span class="glyphicon glyphicon-pencil" style="font-size: 30px;"></span> 
-          Edit Question: {{question.text_EN}} / {{question.text_EN}}
-          <span style="float:right;"> 
-            <form method="post" ng-submit="updateQuestion()">
-              <input class="btn btn-primary" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
-              <input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
-            </form>
-          </span>      
-        </h2>
-    </div>
-    <div class="modal-body">
-        <uib-accordion>
-            <div uib-accordion-group is-open="statusA.open">
-                <uib-accordion-heading>
-                    <div>
-                    Titles <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusA.open, 'glyphicon-chevron-right': !statusA.open}"></i>
-                    </div>
-                </uib-accordion-heading>
-                <div class="bs-callout bs-callout-info">
-                    <h4>Current Question Titles (EN / FR): {{question.text_EN}} / {{question.text_FR}}</h4>
-                    To change the current title(s), enter the new title(s) in the text box(es) below.
-                </div>
-                <div class="row">
-                    <div class="col-md-5">
-                        <div class="input-group">
-                            <span class="input-group-addon">EN</span>
-                            <textarea class="form-control" rows="5" ng-model="question.text_EN" placeholder="English Title" ng-change="setChangesMade()"></textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-1"></div>
-                    <div class="col-md-5">
-                        <div class="input-group">
-                            <span class="input-group-addon">FR</span>
-                            <textarea class="form-control" rows="5" ng-model="question.text_EN" placeholder="Titre Français" ng-change="setChangesMade()"></textarea>
-                        </div>
-                    </div>
-                </div>
-            </div>
+	<div class="modal-header">
+		<h2 class="modal-title">
+			<div class="col-md-9" style="text-overflow: ellipsis;">
+				<span class="glyphicon glyphicon-pencil" style="font-size: 30px;"></span> Edit Question: {{question.text_EN}} / {{question.text_EN}}
+			</div>
+			<span style="float:right;"> 
+				<form method="post" ng-submit="updateQuestion()">
+					<input class="btn btn-primary" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
+					<input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
+				</form>
+			</span>
+		</h2>
+	</div>
+	<div class="modal-body">
+		<uib-accordion>
+			<div uib-accordion-group is-open="statusA.open">
+				<uib-accordion-heading>
+					<div>
+						<strong>Titles</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusA.open, 'glyphicon-chevron-right': !statusA.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="bs-callout bs-callout-info">
+					<h4>Current Question Titles (EN / FR): {{question.text_EN}} / {{question.text_FR}}</h4>
+					To change the current title(s), enter the new title(s) in the text box(es) below.
+				</div>
+				<div class="row">
+					<div class="col-md-5">
+						<div class="input-group">
+							<span class="input-group-addon">EN</span>
+							<textarea class="form-control" rows="1" ng-model="question.text_EN" placeholder="English Title" ng-change="setChangesMade()"></textarea>
+						</div>
+					</div>
+					<div class="col-md-1"></div>
+					<div class="col-md-5">
+						<div class="input-group">
+							<span class="input-group-addon">FR</span>
+							<textarea class="form-control" rows="1" ng-model="question.text_EN" placeholder="Titre Français" ng-change="setChangesMade()"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
 
-            <div uib-accordion-group is-open="statusB.open">
-                <uib-accordion-heading>
-                    <div>
-                    Answer Type <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusB.open, 'glyphicon-chevron-right': !statusB.open}"></i>
-                    </div>
-                </uib-accordion-heading>
-                <div class="bs-callout bs-callout-info">
-                    <h4>Current Answer Type: 
-                        <span ng-show="!atSelected_name_EN">{{question.answertype_name_EN}} / {{question.answertype_name_FR}}</span>
-                        <span ng-show="question.answertype_serNum">{{atSelected_name_EN}} / {{atSelected_name_FR}}</span></h4>
-                    <p>To change answer type, use the form below.</p>
-                </div>
-                <div class="row">
-                    <div class="list-space">
-                        <div class="input-group">
-                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                            <input class="form-control" type="text" ng-model="atEntered" ng-change="searchAt(atEntered)" placeholder="Search Answer Type"/>
-                        </div> 
-                        <ul class="list-items">
-                            <li ng-repeat="at in atFilterList | filter: searchAtFilter">
-                                <label>
-                                    <input type="radio" name="{{at.name_EN}}" value="{{at.serNum}}" ng-model="question.answertype_serNum" ng-change="updateAt(at)"/> {{at.name_EN}} ({{at.category_EN}})
-                                </label>
-                            </li>
-                        </ul>
-                        <div style="margin-top: 10px;">
-                            <div class="btn btn-default" ng-click="atCancelSelection()"> Cancel selection</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+			<div uib-accordion-group is-open="statusB.open">
+				<uib-accordion-heading>
+					<div>
+						<strong>Answer Type</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusB.open, 'glyphicon-chevron-right': !statusB.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="bs-callout bs-callout-info">
+					<h4>Current Answer Type:
+						<span ng-show="!atSelected_name_EN">{{question.answertype_name_EN}} / {{question.answertype_name_FR}}</span>
+						<span ng-show="question.answertype_serNum">{{atSelected_name_EN}} / {{atSelected_name_FR}}</span></h4>
+					<p>To change answer type, use the form below.</p>
+				</div>
+				<div class="list-space">
+					<div class="input-group">
+						<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+						<input class="form-control" type="text" ng-model="atEntered" ng-change="searchAt(atEntered)" placeholder="Search Answer Type"
+						/>
+					</div>
+					<ul class="list-items">
+						<li ng-repeat="at in atFilterList | filter: searchAtFilter">
+							<label>
+								<input type="radio" name="{{at.name_EN}}" value="{{at.serNum}}" ng-model="question.answertype_serNum" ng-change="updateAt(at)"/> {{at.name_EN}} ({{at.category_EN}})
+							</label>
+						</li>
+					</ul>
+				</div>
+			</div>
 
-            <div uib-accordion-group is-open="statusC.open">
-                <uib-accordion-heading>
-                    <div>
-                    Question Group <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusC.open, 'glyphicon-chevron-right': !statusC.open}"></i>
-                    </div>
-                </uib-accordion-heading>
-                <div class="bs-callout bs-callout-info">
-                    <h4>Current Question Group: 
-                        <span ng-show="!groupSelected_name_EN">{{question.group_name_EN}} / {{question.group_name_FR}}</span> 
-                        <span ng-show="question.questiongroup_serNum">{{groupSelected_name_EN}} / {{groupSelected_name_FR}}</span>
-                    </h4>
-                    <p>To change question group, use the form below.</p>
-                </div>
-                <div class="row">
-                    <div class="list-space">
-                        <div class="input-group">
-                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                            <input class="form-control" type="text" ng-model="groupEntered" ng-change="searchGroup(groupEntered)" placeholder="Search Question Group"/>
-                        </div>
-                        <ul class="list-items">
-                            <li ng-repeat="group in groupFilterList | filter: searchGroupFilter">
-                                <label>
-                                    <input type="radio" name="{{group.name_EN}}" value="{{group.serNum}}" ng-model="question.questiongroup_serNum" ng-change="updateGroup(group)"/> {{group.name_EN}}
-                                </label>
-                            </li>
-                        </ul>
-                        <div style="margin-top: 10px;">
-                            <div class="btn btn-default" ng-click="groupCancelSelection()"> Cancel selection</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+			<div uib-accordion-group is-open="statusC.open">
+				<uib-accordion-heading>
+					<div>
+						<strong>Question Group</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusC.open, 'glyphicon-chevron-right': !statusC.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="bs-callout bs-callout-info">
+					<h4>Current Question Group:
+						<span ng-show="!groupSelected_name_EN">{{question.group_name_EN}} / {{question.group_name_FR}}</span>
+						<span ng-show="question.questiongroup_serNum">{{groupSelected_name_EN}} / {{groupSelected_name_FR}}</span>
+					</h4>
+					<p>To change question group, use the form below.</p>
+				</div>
+				<div class="list-space">
+					<div class="input-group">
+						<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+						<input class="form-control" type="text" ng-model="groupEntered" ng-change="searchGroup(groupEntered)" placeholder="Search Question Group"
+						/>
+					</div>
+					<ul class="list-items">
+						<li ng-repeat="group in groupFilterList | filter: searchGroupFilter">
+							<label>
+								<input type="radio" name="{{group.name_EN}}" value="{{group.serNum}}" ng-model="question.questiongroup_serNum" ng-change="updateGroup(group)"/> {{group.name_EN}}
+							</label>
+						</li>
+					</ul>
+				</div>
+			</div>
 
-        </uib-accordion>
-    </div>
+		</uib-accordion>
+	</div>
 </script>
 <script type="text/ng-template" id="processingModal.htm">
-  <div class="modal-header">
-    <h1> Processing...</h1>
-  </div>
-  <div class="modal-body">
-    <div class="progress progress-striped active">
-      <div class="progress-bar" style="width: 100%"></div>        
-    </div>
-  </div>
+	<div class="modal-header">
+		<h1> Processing...</h1>
+	</div>
+	<div class="modal-body">
+		<div class="progress progress-striped active">
+			<div class="progress-bar" style="width: 100%"></div>
+		</div>
+	</div>
 </script>
