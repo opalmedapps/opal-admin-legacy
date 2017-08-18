@@ -203,7 +203,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 		};
 
 		// Controller for editModal
-		var EditQuestionnaireModalInstanceCtrl = function ($scope, $uibModalInstance) {
+		var EditQuestionnaireModalInstanceCtrl = function ($scope, $uibModalInstance, $filter) {
 			// get current user id
 			var user = Session.retrieveObject('user');
 			var userId = user.id;
@@ -211,6 +211,68 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 			// initialize default variables & lists
 			$scope.changesMade = false;
 			$scope.questionnaire = {};
+
+			// Responsible for "searching" in search bars
+			$scope.filter = $filter('filter');
+
+			// Initialize a list of sexes
+			$scope.sexes = [
+				{ name: 'Male' },
+				{ name: 'Female' }
+			];
+
+			// Initialize to hold demographic filters
+			$scope.demoFilter = {
+				sex: null,
+				age: {
+					min: 0,
+					max: 100
+				}
+			};
+
+			// Initialize search field variables
+			$scope.termSearchField = "";
+			$scope.dxSearchField = "";
+			$scope.doctorSearchField = "";
+			$scope.resourceSearchField = "";
+
+			// Function to assign search fields when textbox changes
+			$scope.searchTerm = function (field) {
+				$scope.termSearchField = field;
+			};
+			$scope.searchDiagnosis = function (field) {
+				$scope.dxSearchField = field;
+			};
+			$scope.searchDoctor = function (field) {
+				$scope.doctorSearchField = field;
+			};
+			$scope.searchResource = function (field) {
+				$scope.resourceSearchField = field;
+			};
+
+			// Function for search through the filters
+			$scope.searchTermsFilter = function (Filter) {
+				var keyword = new RegExp($scope.termSearchField, 'i');
+				return !$scope.termSearchField || keyword.test(Filter.name);
+			};
+			$scope.searchDxFilter = function (Filter) {
+				var keyword = new RegExp($scope.dxSearchField, 'i');
+				return !$scope.dxSearchField || keyword.test(Filter.name);
+			};
+			$scope.searchDoctorFilter = function (Filter) {
+				var keyword = new RegExp($scope.doctorSearchField, 'i');
+				return !$scope.doctorSearchField || keyword.test(Filter.name);
+			};
+			$scope.searchResourceFilter = function (Filter) {
+				var keyword = new RegExp($scope.resourceSearchField, 'i');
+				return !$scope.resourceSearchField || keyword.test(Filter.name);
+			};
+
+			// Initialize lists to hold filters
+			$scope.termList = [];
+			$scope.dxFilterList = [];
+			$scope.doctorFilterList = [];
+			$scope.resourceFilterList = [];
 
 			// initialize variables
 			$scope.tagList = [];
@@ -391,9 +453,92 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 					$scope.tagList = checkAdded(response.data); // Assign value and check those that were already added
 				});
 
+				// Assign demographic filters
+				checkDemographicFilters();
+
+				// Call our API service to get each filter
+				filterAPIservice.getFilters().success(function (response) {
+
+					$scope.termList = checkAddedFilter(response.expressions); // Assign value
+					$scope.dxFilterList = checkAddedFilter(response.dx);
+					$scope.doctorFilterList = checkAddedFilter(response.doctors);
+					$scope.resourceFilterList = checkAddedFilter(response.resources);
+
+					processingModal.close(); // hide modal
+					processingModal = null; // remove reference
+
+				});
+
 				processingModal.close(); // hide modal
 				processingModal = null; // remove reference
 			});
+
+			// Function to toggle Item in a list on/off
+			$scope.selectItem = function (item) {
+				$scope.changesMade = true;
+				if (item.added)
+					item.added = 0;
+				else
+					item.added = 1;
+			};
+
+			// Function for selecting all terms in the expression list
+			var selectAllTerms = false;
+			$scope.selectAllTerms = function () {
+				var filtered = $scope.filter($scope.termList, $scope.termSearchField);
+
+				$scope.changesMade = true;
+
+				if (selectAllTerms) {
+					angular.forEach(filtered, function (term) {
+						term.added = 0;
+					});
+					selectAllTerms = !selectAllTerms;
+				} else {
+					angular.forEach(filtered, function (term) {
+						term.added = 1;
+					});
+					selectAllTerms = !selectAllTerms;
+				}
+			};
+
+			// Function to assign '1' to existing filters 
+			function checkAddedFilter(filterList) {
+				angular.forEach($scope.questionnaire.filters, function (selectedFilter) {
+					var selectedFilterId = selectedFilter.id;
+					var selectedFilterType = selectedFilter.type;
+					angular.forEach(filterList, function (filter) {
+						var filterId = filter.id;
+						var filterType = filter.type;
+						if (filterId == selectedFilterId && filterType == selectedFilterType) {
+							filter.added = 1;
+						}
+					});
+				});
+
+				return filterList;
+			}
+
+			// Function to check demographic filters
+			function checkDemographicFilters() {
+				var demoFilter = {
+					sex: null,
+					age: {
+						min: 0,
+						max: 100
+					}
+				};
+				angular.forEach($scope.questionnaire.filters, function (selectedFilter) {
+					if (selectedFilter.type == 'Sex')
+						$scope.demoFilter.sex = selectedFilter.id;
+					if (selectedFilter.type == 'Age') {
+						$scope.demoFilter.age.min = parseInt(selectedFilter.id.split(',')[0]);
+						$scope.demoFilter.age.max = parseInt(selectedFilter.id.split(',')[1]);
+					}
+				});
+
+				return demoFilter;
+			}
 
 			// Function to assign a "1" to existing tags
 			function checkAdded(filterList) {
@@ -477,31 +622,72 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 					return false;
 			};
 
+			// Function to return filters that have been checked
+			function addFilters(filterList) {
+				angular.forEach(filterList, function (Filter) {
+					if (Filter.added)
+						$scope.questionnaire.filters.push({ id: Filter.id, type: Filter.type });
+				});
+			}
+
+			// Function to check if all filters are added
+			$scope.allFilters = function (filterList) {
+				var allFiltersAdded = true;
+				angular.forEach(filterList, function (Filter) {
+					if (Filter.added)
+						allFiltersAdded = false;
+				});
+				return allFiltersAdded;
+			};
+
 			// Function for updating the questionnaire 
 			$scope.updateQuestionnaire = function () {
 
-				addTags($scope.tagList); // Add tags to questionnaire object
-				// ajax POST
-				$.ajax({
-					type: "POST",
-					url: "php/questionnaire/updateQuestionnaire.php",
-					data: $scope.questionnaire,
-					success: function (response) {
-						response = JSON.parse(response);
-						if (response.value) {
-							$scope.setBannerClass('success');
-							$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.questionnaire.name_EN + "/ " + $scope.questionnaire.name_FR + "\"!";
-						}
-						else {
-							$scope.setBannerClass('danger');
-							$scope.$parent.bannerMessage = response.message;
-						}
+				if ($scope.checkForm()) {
 
-						$scope.showBanner();
-						$uibModalInstance.close();
+					// Initialize filter
+					$scope.questionnaire.filters = [];
+
+					// Add demographic filters, if defined
+					if ($scope.demoFilter.sex)
+						$scope.questionnaire.filters.push({ id: $scope.demoFilter.sex, type: 'Sex' });
+					if ($scope.demoFilter.age.min >= 0 && $scope.demoFilter.age.max <= 100) { // i.e. not empty
+						if ($scope.demoFilter.age.min !== 0 || $scope.demoFilter.age.max != 100) { // Filters were changed
+							$scope.questionnaire.filters.push({
+								id: String($scope.demoFilter.age.min).concat(',', String($scope.demoFilter.age.max)),
+								type: 'Age'
+							});
+						}
 					}
-				});
 
+					// Add filters to edu material
+					addFilters($scope.termList);
+					addFilters($scope.dxFilterList);
+					addFilters($scope.doctorFilterList);
+					addFilters($scope.resourceFilterList);
+
+					addTags($scope.tagList); // Add tags to questionnaire object
+					// ajax POST
+					$.ajax({
+						type: "POST",
+						url: "php/questionnaire/updateQuestionnaire.php",
+						data: $scope.questionnaire,
+						success: function (response) {
+							response = JSON.parse(response);
+							if (response.value) {
+								$scope.setBannerClass('success');
+								$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.questionnaire.name_EN + "/ " + $scope.questionnaire.name_FR + "\"!";
+							}
+							else {
+								$scope.setBannerClass('danger');
+								$scope.$parent.bannerMessage = response.message;
+							}
+
+							$scope.showBanner();
+							$uibModalInstance.close();
+						}
+					});
+				}
 			};
 
 
