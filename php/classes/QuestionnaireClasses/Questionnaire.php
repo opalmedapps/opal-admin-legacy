@@ -691,7 +691,7 @@ class Questionnaire{
     			foreach ($filters as $filter) {
                     $id     = $filter['id'];
                     $type   = $filter['type'];
-                    if (!$this->nestedSearch($id, $type, $existingFilters)) {
+                    if (!$this->nestedSearchFilter($id, $type, $existingFilters)) {
                         $sql = "
                             INSERT INTO 
                                 Filters (
@@ -729,7 +729,7 @@ class Questionnaire{
 			return 0;
 		}
 		foreach ($array as $key => $val) {
-			if ($val['serNum'] == $id) {
+			if ($val['questiongroup_serNum'] == $id) {
 				return 1;
 			}
 		}
