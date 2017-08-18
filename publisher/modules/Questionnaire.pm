@@ -354,6 +354,50 @@ sub insertQuestionnaireIntoOurDB
 	return $questionnaire;
 }
 
+#======================================================================================
+# Subroutine to get a list of questionnaire controls marked for publish
+#======================================================================================
+sub getQuestionnaireControlsMarkedForPublish
+{
+    my @questionnaireControlList = (); # initialize a list
+
+    my $info_sql = "
+        SELECT DISTINCT
+           Questionnaire.serNum
+		FROM
+			Questionnaire
+		WHERE
+			Questionnaire.publish = 1
+    ";
+
+    # prepare query
+	my $query = $SQLDatabase->prepare($info_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+	while (my @data = $query->fetchrow_array()) {
+
+        my $questionnaireControl = new Questionnaire(); # new object
+
+        my $ser             = $data[0];
+
+        # set information
+        $questionnaireControl->setQuestionnaireControlSer($ser);
+
+        # get all the filters
+        my $filters = Filter::getAllFiltersFromOurDB($ser, 'Questionnaire');
+
+        $questionnaireControl->setQuestionnaireFilters($filters);
+
+        push(@questionnaireControlList, $questionnaireControl);
+    }
+
+    return @questionnaireControlList;
+}
+
 
 # Exit smoothly 
 1;
