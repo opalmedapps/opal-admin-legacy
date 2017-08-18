@@ -729,7 +729,7 @@ class Questionnaire{
 			return 0;
 		}
 		foreach ($array as $key => $val) {
-			if ($val['questiongroup_serNum'] == $id) {
+			if ($val['serNum'] == $id) {
 				return 1;
 			}
 		}
