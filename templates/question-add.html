@@ -15,7 +15,20 @@
                   <h1 class="animated fadeIn">opal <strong>ADMIN</strong> <span style="font-size: 20px;" ng-if="devMode">DEV</span></h1>
                 </div>
               </div>
-            </div>
+						</div>
+						
+						<div class="row side-panel-menu">
+							<div class="col-md-12">
+								<div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+									<div class="side-panel-info-sm">
+										<div class="panel-content">
+											<span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+											<h6 class="side-panel-title" style="display:inline-block;margin:0;font-size:14px;"><strong>Back to Manage Questions</strong></h6>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 
             <!-- Summary -->
             <div class="summary-fix">
@@ -138,26 +151,17 @@
                 </a>
               </div>
 
-              <!-- Go Back Button -->
-              <div class="panel-container animated" ng-class="{pulse: hoverA}" ng-mouseenter="hoverA=true" ng-mouseleave="hoverA=false" style="cursor:pointer;" ng-click="goBack()">
-                <div class="side-panel-info">
-                  <div class="panel-content" style="text-align:center">
-                    <span style="font-size: 23px; padding-right:10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-                    <span style="font-size: 30px; font-weight:700">Go Back</span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
 
           <div class="col-md-10 animated fadeInRight">
             <div class="row main-title">
-              <div class="col-md-9 title-content">
+              <div class="col-md-6 title-content">
                 <span class="fa fa-plus"></span>
                 <h1><strong>Add Question</strong></h1>
               </div>
 
-              <div class="col-md-3 title-breadcrumbs">
+              <div class="col-md-6 title-breadcrumbs">
                 <span>
                   <a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <a href="#/questionnaire">Questionnaires</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <a href="#/questionnaire/bank">Manage</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Add Question</strong></span>
                 </div>
