@@ -499,7 +499,7 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 		function addFilters(filterList) {
 			angular.forEach(filterList, function (Filter) {
 				if (Filter.added)
-					$scope.newEduMat.filters.push({ id: Filter.id, type: Filter.type });
+					$scope.newQuestionnaire.filters.push({ id: Filter.id, type: Filter.type });
 			});
 		}
 
@@ -538,7 +538,7 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 						});
 					}
 				}
-				// Add other filters to new edu material object
+				// Add other filters to new questionnaire object
 				addFilters($scope.termList);
 				addFilters($scope.dxFilterList);
 				addFilters($scope.doctorFilterList);
