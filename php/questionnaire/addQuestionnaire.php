@@ -10,7 +10,8 @@
 		'last_updated_by'	=> $_POST['last_updated_by'],
 		'created_by'		=> $_POST['created_by'],
 		'tags'				=> $_POST['tags'],
-		'questiongroups'	=> $_POST['groups']
+		'questiongroups'	=> $_POST['groups'],
+		'filters'			=> $_POST['filters']
 	);
 
 	$questionnaireObj = new Questionnaire;
