@@ -1082,6 +1082,9 @@ table.summary-box {
 .horz-line {
   border-bottom: 1px solid #6f5499;
 }
+.horz-line h2 {
+  font-size: 25px;
+}
 
 table.fixed-header > tbody,
 table.fixed-header tr,
