@@ -138,6 +138,37 @@ class Questionnaire{
  			$private 		= $data[3];
  			$publish 		= $data[4];
  			$last_updated_by= $data[5];
+			$filters 		= array();
+
+			$sql = "
+                SELECT DISTINCT 
+                    Filters.FilterType,
+                    Filters.FilterId
+                FROM
+                    Questionnaire que,
+                    Filters
+                WHERE
+                    que.serNum     = $serNum
+                AND Filters.ControlTable                    = 'Questionnaire'
+                AND Filters.ControlTableSerNum              = que.serNum
+                AND Filters.FilterType                      != ''
+                AND Filters.FilterId                        != ''
+            ";
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+	    	$query->execute();
+
+	    	while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+		    	$filterType = $data[0];
+				$filterId   = $data[1];
+    			$filterArray = array (
+	    			'type'  => $filterType,
+	    			'id'    => $filterId,
+		    		'added' => 1
+				);
+    
+	    		array_push($filters, $filterArray);
+            }
 
  			$questionnaireArray = array(
  				'serNum'			=> $serNum,
@@ -147,7 +178,8 @@ class Questionnaire{
  				'publish'			=> $publish,
  				'last_updated_by'	=> $last_updated_by,
  				'groups'			=> array(),
- 				'tags' 				=> array()
+ 				'tags' 				=> array(),
+				'filters'			=> $filters
  			);
  			
  			// get groups
@@ -473,6 +505,8 @@ class Questionnaire{
 		$last_updated_by = $post['last_updated_by'];
 		$tags = $post['tags'];
 		$questiongroups = $post['groups'];
+		$filters = $post['filters'];
+		$existingFilters = array();
 
 		$response = array(
             'value'     => 0,
@@ -603,6 +637,84 @@ class Questionnaire{
 				}
 			}
 
+			$sql = "
+		        SELECT DISTINCT 
+                    Filters.FilterType,
+                    Filters.FilterId
+    			FROM     
+    				Filters
+		    	WHERE 
+                    Filters.ControlTableSerNum       = $serNum
+                AND Filters.ControlTable             = 'Questionnaire'
+                AND Filters.FilterType              != ''
+                AND Filters.FilterId                != ''
+		    ";
+
+		    $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+    		$query->execute();
+
+			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+    
+                $filterArray = array(
+                    'type'  => $data[0],
+                    'id'    => $data[1]
+                );
+                array_push($existingFilters, $filterArray);
+            }
+
+            if($existingFilters) { 
+
+                // If old filters not in new filter list, then remove
+    	    	foreach ($existingFilters as $existingFilter) {
+                    $id     = $existingFilter['id'];
+                    $type   = $existingFilter['type'];
+                    if (!$this->nestedSearchFilter($id, $type, $filters)) {
+				    	$sql = "
+                            DELETE FROM 
+    					    	Filters
+    	    				WHERE
+                                Filters.FilterId            = \"$id\"
+                            AND Filters.FilterType          = '$type'
+                            AND Filters.ControlTableSerNum   = $serNum
+                            AND Filters.ControlTable         = 'Questionnaire'
+		    		    ";  
+            
+	    	    		$query = $host_db_link->prepare( $sql );
+		    	    	$query->execute();
+                    }
+                }
+	    	}
+
+            if($filters) {
+
+                // If new filters (i.e. not in old list), then insert
+    			foreach ($filters as $filter) {
+                    $id     = $filter['id'];
+                    $type   = $filter['type'];
+                    if (!$this->nestedSearch($id, $type, $existingFilters)) {
+                        $sql = "
+                            INSERT INTO 
+                                Filters (
+                                    ControlTable,
+                                    ControlTableSerNum,
+                                    FilterId,
+                                    FilterType,
+                                    DateAdded
+                                )
+                            VALUES (
+                                'Questionnaire',
+                                '$serNum',
+                                \"$id\",
+                                '$type',
+                                NOW()
+                            )
+	    	    		";
+		    	    	$query = $host_db_link->prepare( $sql );
+		    		    $query->execute();
+    			    }
+	    		}
+            }	
+
 			$response['value'] = 1; // Success
             return $response;
 
@@ -623,6 +735,27 @@ class Questionnaire{
 		}
 		return 0;
 	}
+
+	/**
+     *
+     * Does a nested search for match
+     *
+     * @param string $id    : the needle id
+     * @param string $type  : the needle type
+     * @param array $array  : the key-value haystack
+     * @return boolean
+     */
+    public function nestedSearchFilter($id, $type, $array) {
+        if(empty($array) || !$id || !$type){
+            return 0;
+        }
+        foreach ($array as $key => $val) {
+            if ($val['id'] === $id and $val['type'] === $type) {
+                return 1;
+            }
+        }
+        return 0;
+    }
 
 	/* Get patients' completed Questionnaire
 	 * @param: $post(questionnaire_patient serial number, questionnaire serial number, created_by(doctor id))
