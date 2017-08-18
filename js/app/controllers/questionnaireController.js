@@ -464,9 +464,6 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 					$scope.doctorFilterList = checkAddedFilter(response.doctors);
 					$scope.resourceFilterList = checkAddedFilter(response.resources);
 
-					processingModal.close(); // hide modal
-					processingModal = null; // remove reference
-
 				});
 
 				processingModal.close(); // hide modal
