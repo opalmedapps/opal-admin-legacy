@@ -41,6 +41,7 @@ use EducationalMaterialControl;
 use EducationalMaterial; 
 use Priority; 
 use PatientLocation; 
+use Questionnaire; 
 
 # Get the current time (for last-updates/logs)
 my $start_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
@@ -480,6 +481,15 @@ print "Got P4P\n";
 EducationalMaterial::publishEducationalMaterials(@patientList);
 
 print "Got Educational materials\n" if $verbose;
+
+##########################################################################################
+# 
+# Publishing QUESTIONNAIRES
+#
+##########################################################################################
+Questionnaire::publishQuestionnaires(@patientList);
+
+print "Got Questionnaires\n" if $verbose;
 
 # Once everything is complete, we update the "last transfered" field for all controls
 # Patient control
