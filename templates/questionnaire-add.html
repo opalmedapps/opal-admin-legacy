@@ -135,6 +135,136 @@
                       </ul>
                     </p>
                   </div>
+				</div>
+				
+				<div uib-accordion-group is-open="demo.open" class="panel-container summary-box animated" ng-class="{fadeInUp:demo.open}" is-disabled="!demoFilter.sex && demoFilter.age.min == 0 && demoFilter.age.max == 100" ng-if="demo.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="demoFilter.sex || demoFilter.age.min != 0 || demoFilter.age.max != 100" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Demographic Filter(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':demo.open, 'glyphicon-chevron-right':!demo.open}" ng-if="demoFilter.sex || demoFilter.age.min != 0 || demoFilter.age.max != 100"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="demoFilter.sex" class="description">
+                    <p>
+                      <strong>Sex</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{demoFilter.sex}}
+                    </p>
+                  </div>
+                  <div ng-if="demoFilter.age.min != 0 || demoFilter.age.max != 100" class="description">
+                    <p>
+                      <strong>Age Group</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{demoFilter.age.min}} to {{demoFilter.age.max}} 
+                    </p>
+                  </div>
+                </div>
+
+                <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(termList)" ng-if="terms.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkFilters(termList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Expression Filter(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkFilters(termList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkFilters(termList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="term in termList | filter: {added: 1} : 1">
+                          {{term.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
+
+                <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(dxFilterList)" ng-if="terms.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkFilters(dxFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Diagnosis Filter(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkFilters(dxFilterList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkFilters(dxFilterList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="Filter in dxFilterList | filter: {added: 1} : 1">
+                          {{Filter.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
+
+                <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(doctorFilterList)" ng-if="terms.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkFilters(doctorFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Doctor Filter(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkFilters(doctorFilterList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkFilters(doctorFilterList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="Filter in doctorFilterList | filter: {added: 1} : 1">
+                          {{Filter.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
+
+                <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(resourceFilterList)" ng-if="terms.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkFilters(resourceFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Resource Filter(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkFilters(resourceFilterList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkFilters(resourceFilterList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="Filter in resourceFilterList | filter: {added: 1} : 1">
+                          {{Filter.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
                 </div>
               </uib-accordion>
 
