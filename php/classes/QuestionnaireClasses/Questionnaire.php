@@ -47,6 +47,7 @@ class Questionnaire{
 	 			$publish 		= $data[4];
 	 			$last_updated	= $data[5];
 	 			$created_by 	= $data[6];
+				$filters 		= array();
 
 	 			$questionnaireArray = array(
 	 				'serNum'		=> $serNum,
@@ -58,6 +59,36 @@ class Questionnaire{
 	 				'created_by'	=> $created_by,
 	 				'tags' 			=> array()
 	 			);
+
+				$sql = "
+                    SELECT DISTINCT 
+                        Filters.FilterType,
+                        Filters.FilterId
+                    FROM
+                        Questionnaire,
+                        Filters
+                    WHERE   
+                        Questionnaire.serNum     				= $serNum
+                    AND Filters.ControlTable                    = 'Questionnaire'
+                    AND Filters.ControlTableSerNum              = Questionnaire.serNum
+                    AND Filters.FilterType                      != ''
+                    AND Filters.FilterId                        != ''
+                ";
+                $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				$secondQuery->execute();
+    
+				while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+    
+    				$filterType = $secondData[0];
+                    $filterId   = $secondData[1];
+			    	$filterArray = array (
+						'type'  => $filterType,
+				    	'id'    => $filterId,
+					    'added' => 1
+    				);
+    
+    				array_push($filters, $filterArray);
+                }
 	 			
 	 			// get tags
 				$tagsql = "
@@ -148,7 +179,7 @@ class Questionnaire{
                     Questionnaire que,
                     Filters
                 WHERE
-                    que.serNum     = $serNum
+                    que.serNum     							= $serNum
                 AND Filters.ControlTable                    = 'Questionnaire'
                 AND Filters.ControlTableSerNum              = que.serNum
                 AND Filters.FilterType                      != ''
@@ -268,6 +299,7 @@ class Questionnaire{
 		$last_updated_by = $post['last_updated_by'];
 		$tags = $post['tags'];
 		$questiongroups = $post['questiongroups'];
+		$filters = $post['filters'];
 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -349,6 +381,34 @@ class Questionnaire{
 				$query->execute();
 			}
 
+			if ($filters) {
+                foreach ($filters as $filter) {
+    
+                    $filterType = $filter['type'];
+                    $filterId   = $filter['id'];
+    
+	    			$sql = "
+                        INSERT INTO 
+                            Filters (
+                                ControlTable,
+                                ControlTableSerNum,
+                                FilterType,
+                                FilterId,
+                                DateAdded
+                            )
+                        VALUES (
+                            'Questionnaire',
+                            '$questionnaire_id',
+                            '$filterType',
+                            \"$filterId\",
+                            NOW()
+                        )
+		    		";
+			    	$query = $host_db_link->prepare( $sql );
+				    $query->execute();
+                }
+            }
+
 		} catch( PDOException $e) {
 			return $e->getMessage();
 		}
@@ -367,6 +427,17 @@ class Questionnaire{
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+			$sql = "
+                DELETE FROM
+                    Filters
+                WHERE
+                    Filters.ControlTableSerNum   = $questionnaire_serNum
+                AND Filters.ControlTable         = 'Questionnaire'
+            ";
+            $query = $host_db_link->prepare( $sql );
+			$query->execute();
+
 			//delete from questionnaire_questiongroup
 			$sql1 = "
 				DELETE FROM
