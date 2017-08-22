@@ -1,0 +1,97 @@
+<div id="main">
+	<div id="top">
+		<div class="clearfix">
+
+			<div class="row">
+				<div class="col-md-2">
+      		<div ng-include="'templates/side-panel-menu.html'"></div>
+    		</div>
+
+    		<div class="col-md-10 animated fadeIn">
+          <div class="row main-title">
+            <div class="col-md-9 title-content">
+              <span class="fa fa-pencil-square-o"></span>
+              <h1><strong>Questionnaires</strong></h1>
+            </div>
+
+            <div class="col-md-3 title-breadcrumbs"> 
+              <span><a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Questionnaires</strong></span>
+            </div>
+          </div> 
+
+          <!-- Panel Menu -->
+          <div class="row" style="text-align:left;">
+          	<div class="col-md-12 side-menu-title">
+              <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                <span style="background-color:#e6edfa; padding: 0 10px;">
+                  <span class="glyphicon glyphicon-menu-down"></span>
+                  <h2>Questionnaire Tools</h2>
+                </span>  
+	          	</div>  
+	          </div>
+	        </div>
+
+
+	        <div class="row">
+          	<!-- Manage Questionnaire -->
+          	<div class="col-md-4">
+          		<div class="panel-container animated" ng-class="{pulse: hoverManageQuestionnaires}" ng-mouseenter="hoverManageQuestionnaires=true" ng-mouseleave="hoverManageQuestionnaires=false" style="cursor:pointer;" ng-click="goToManage()">
+								<div class="panel-info" style="height: 180px;">
+									<div class="panel-content">
+										<div class="icon-home clearfix">
+											<span style="font-size: 50px;" class="fa fa-pencil" aria-hidden="true"></span>
+										</div>
+										<div class="panel-title">  
+											<h1>Manage Questionnaires</h1>
+										</div>  
+										<div class="panel-description">
+											<p>Create, view, update and delete questionnaires.</p>
+										</div>
+									</div>
+								</div>
+							</div>
+          	</div>
+
+          	<!-- View/Edit Question Bank -->
+          	<div class="col-md-4">
+          		<div class="panel-container animated" ng-class="{pulse: hoverQuestionBank}" ng-mouseenter="hoverQuestionBank=true" ng-mouseleave="hoverQuestionBank=false" style="cursor:pointer;" ng-click="goToQuestionBank()">
+								<div class="panel-info" style="height: 180px;">
+									<div class="panel-content">
+										<div class="icon-home clearfix">
+											<span style="font-size: 50px;" class="fa fa-search" aria-hidden="true"></span>
+										</div>
+										<div class="panel-title">  
+											<h1>Manage Question Bank</h1>
+										</div>  
+										<div class="panel-description">
+											<p>View and edit all the questions stored in the question bank.</p>
+										</div>
+									</div>
+								</div>
+							</div>
+          	</div>
+
+          	<!-- View Completed Questionnaire -->
+          	<div class="col-md-4">
+          		<div class="panel-container animated" ng-class="{pulse: hoverCompletedQuestionnaire}" ng-mouseenter="hoverCompletedQuestionnaire=true" ng-mouseleave="hoverCompletedQuestionnaire=false" style="cursor:pointer;" ng-click="goToCompleted()">
+								<div class="panel-info" style="height: 180px;">
+									<div class="panel-content">
+										<div class="icon-home clearfix">
+											<span style="font-size: 50px;" class="fa fa-check" aria-hidden="true"></span>
+										</div>
+										<div class="panel-title">  
+											<h1>Completed Questionnaires</h1>
+										</div>  
+										<div class="panel-description">
+											<p>View the completed questionnaires.</p>
+										</div>
+									</div>
+								</div>
+							</div>
+          	</div>
+          </div>
+    		</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -16,7 +16,6 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 		$scope.filterEduMat = function (filterValue) {
 			$scope.filterValue = filterValue;
 			$scope.gridApi.grid.refresh();
-
 		};
 
 		// Templates for the table
