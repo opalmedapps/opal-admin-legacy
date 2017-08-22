@@ -2,8 +2,10 @@
     <div class="login-container">
       <div class="col-md-9">
         <div class="row" style="display:flex; align-items:flex-end">
-          <div class="col-md-4 col-md-offset-4" style="text-align:right;">
-            <h1 class="animated flipInX" style="font-size: 55px;"><strong>opal</strong> ADMIN</h1>
+          <div class="col-md-5 col-md-offset-3" style="text-align:right;">
+            <h1 class="animated flipInX" style="font-size: 55px;">
+              opal <strong>ADMIN</strong> <span style="font-size: 30px;" ng-if="devMode">DEV</span>
+            </h1>
           </div>
           <div class="col-md-5">
             <div class="circle animated form-box-shake" style="z-index:0; box-shadow:rgba(0, 0, 0, 0.6) 0px 3px 6px -3px;" ng-class="{'pulse': !formLoaded}"></div>
@@ -14,18 +16,6 @@
           </div>
         </div>
       </div>
-     <!--  <div class="row">
-        <div class="login-header">
-          <div class="logo">
-            <img class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="200" width="200">
-          </div>
-          <h1><strong>opal</strong> ADMIN</h1>
-        </div>
-      </div> -->
-      <!-- <div class="row">
-
-        <div ng-include="'templates/login-form.html'"></div>
-      </div> -->
     </div>  
     <div class="bannerMessage alert-success">{{bannerMessage}}</div>                       
   </div>

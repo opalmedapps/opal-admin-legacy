@@ -588,7 +588,7 @@ sub getPatientLocationsMHFromSourceDB
 				foreach my $Expression (@expressions) {
 
 					my $expressionser = $Expression->{_ser};
-					my $expressName = $Expression->{_name};
+					my $expressionName = $Expression->{_name};
 					my $expressionLastTransfer = $Expression->{_lasttransfer};
 					my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
 
@@ -615,6 +615,7 @@ sub getPatientLocationsMHFromSourceDB
 					}
 				}
 
+                # print "$plInfo_sql\n";
 				# prepare query
 				my $query = $sourceDatabase->prepare($plInfo_sql)
 					or die "Could not prepare PL query: " . $sourceDatabase->errstr;

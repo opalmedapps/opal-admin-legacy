@@ -11,6 +11,8 @@ angular.module('opalAdmin.controllers.applicationController', ['ui.bootstrap', '
 		$rootScope.currentUser = null;
 
 		$rootScope.siteLanguage = null;
+
+		$rootScope.devMode = DEV_MODE; // constant fron config.js
 		
 		// Set the site language
 		$rootScope.setSiteLanguage = function (user) {
