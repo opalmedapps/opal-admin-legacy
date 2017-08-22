@@ -68,6 +68,20 @@ angular.module('opalAdmin.controllers.sidePanelMenuController', ['ui.bootstrap',
 		// Function to go to email page
 		$scope.goToEmail = function () {
 			$state.go('email');
+        };
+		// Function to go to questionnaire page
+		$scope.goToQuestionnaire = function () {
+			$state.go('questionnaire');
+		};
+		// Function to go to questionnaire sub-page
+		$scope.goToManage = function () {
+			$state.go('questionnaire-manage');
+		};
+		$scope.goToQuestionBank = function () {
+			$state.go('questionnaire-bank');
+		};
+		$scope.goToCompleted = function () {
+			$state.go('questionnaire-completed');
 		};
 
 	});
