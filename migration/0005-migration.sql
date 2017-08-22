@@ -31,14 +31,12 @@ CREATE TABLE `Questionnaire_section` (
   `position` int(11) NOT NULL,
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `last_updated_by` int(11) DEFAULT NULL,
+  `last_updated_by` int(11) DEFAULT NULL,i
   `created_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 ALTER TABLE `Questionnaire_section` ADD PRIMARY KEY( `questionnaire_serNum`, `section_serNum`);
 ALTER TABLE `Questionnaire_section` ADD INDEX(`section_serNum`);
-ALTER TABLE `Questionnaire_section` ADD FOREIGN KEY (`section_serNum`) REFERENCES `QuestionnaireSection`(`serNum`) ON DELETE RESTRICT ON UPDATE CASCADE;
 ALTER TABLE `Questionnaire_section` CHANGE `questionnaire_serNum` `questionnaire_serNum` INT(11) UNSIGNED NOT NULL;
-ALTER TABLE `Questionnaire_section` DROP FOREIGN KEY `Questionnaire_section_ibfk_1`;
 ALTER TABLE `Questionnaire_section` CHANGE `section_serNum` `section_serNum` INT(11) UNSIGNED NOT NULL;
 ALTER TABLE `Questionnaire_section` CHANGE `position` `position` INT(11) UNSIGNED NOT NULL;
 ALTER TABLE `Questionnaire_section` CHANGE `last_updated_by` `last_updated_by` INT(11) UNSIGNED NULL DEFAULT NULL;
@@ -54,11 +52,12 @@ ALTER TABLE `Questionnaire_questiongroup` CHANGE `section_serNum` `section_serNu
 
 INSERT INTO `NotificationTypes`(`NotificationTypeSerNum`, `NotificationTypeId`, `NotificationTypeName`, `DateAdded`, `LastUpdated`) VALUES (NULL,'Questionnaire','Questionnaire','2017-08-18 10:38:07','2017-08-18 10:38:07');
 
-DROP TRIGGER IF EXISTS `questionnaire_insert_trigger`;
+DELIMITER //
+DROP TRIGGER IF EXISTS `questionnaire_insert_trigger`//
 CREATE TRIGGER `questionnaire_insert_trigger` AFTER INSERT ON `Questionnaire_patient`
  FOR EACH ROW BEGIN
 INSERT INTO `Notification` (`PatientSerNum`, `NotificationControlSerNum`,`RefTableRowSerNum`, `DateAdded`, `ReadStatus`) SELECT  NEW.patient_serNum,ntc.NotificationControlSerNum,NEW.serNum,NOW(),0 FROM NotificationControl ntc WHERE ntc.NotificationType = 'Questionnaire';
-END;
+END
+//
 
-
-
+DELIMTER ;
