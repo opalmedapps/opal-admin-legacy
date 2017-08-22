@@ -1,3 +1,47 @@
+Version 0.10.0:
+ -     --- Migration file for changes made to the database
+ - --- Fixed formatting on zoomed in login page
+ - --- Added padding
+ - --- Redesigned side menu for adding content
+ - --- Added bold titles to accordions
+ - --- Delete modal had "Post" and not "Questionnaire"
+ - --- Added processing modal --- Fixed code copy
+ - --- Added missing content for filters
+ - --- Added filters to questionnaire creation
+ - --- bold the accordion titles
+ - --- Whoops didn't change another filter nest search function call
+ - --- Fixed issed where question group key could not be found
+ - --- Fixed issue where duplicate close processing modal call
+ - --- Added filters to edit questionnaires
+ - --- Added questionnaire control to publisher
+ -     --- Fixed design of empty completed questionnaires page
+ - --- Testing the placement of back button
+ - --- Added text for empty completed questionnaires
+ - --- Removed white space in one of the text area forms
+ - --- Improved readability of code
+ - --- Changed variable name in backend that was changed on frontend
+ - --- Refactored code for better readability
+ - --- Added Questionnaire module to publisher --- Fixed format in collectionsJS --- Testing a change from success callback to then callback
+ -     --- Improved functionaility when editing questionnaires         -- Existing tags were not showing up when opening the accordion in the edit modal         -- Current groups were not preselected in the table in the group section of the edit modal         -- There was a bit of confusion between current and new groups as one could add the same             group even if it already existed in the object
+ - --- Debugging
+ - --- Fixing bugs on questionnaire edit
+ -     --- Modifications
+ -     --- Fixed breadcrumb designs
+ -     --- Redesigned questionnaire pages to more consistent design of the rest of the website
+ -     --- Fix missing comma in controllers     --- Added SQL migration file for questionnaires
+ - Merge branch 'questionnaire' into develop
+ - Questionnaire interface: fixed the bug that page drop form didn't show correctly
+ - questionnaire interface
+ - questionnaire interface
+ -     --- Improved transparent side menu
+ -     --- Added "DEV" mode for opal Admin titles         -- DEV will appear for dev environments (from config file)
+ - Merge branch 'release-0.9.5' into develop
+ -     --- Fixed issue of ordered table creation
+ - 	--- Commit
+ - 	--- Committed on behalf of Qi (AJ)
+ - 	--- Committing on behalf of Qi (AJ)
+ - 	--- Added questionnaire bits
+
 Version 0.9.5:
  -     --- Removed Venue index from PLs         -- VenueSerNums can be 0 if a stored procedure to uncheckin a patient occurs (no resource/venue)
  -     --- Added SQL migration for patient location
