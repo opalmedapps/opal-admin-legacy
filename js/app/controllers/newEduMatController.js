@@ -301,26 +301,13 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 
 			$scope.demo.open = true;
 			
-		}
+		};
 
 		$scope.tocsComplete = false;
 		// Function to toggle necessary changes when updating the table of contents
 		$scope.tocUpdate = function () {
 
 			$scope.tocs.open = true;
-
-			// Toggle boolean
-			if ($scope.newEduMat.tocs.length) {
-				steps.url.completed = true; // Since it will be hidden
-				$scope.url.show = false;
-
-				if ($scope.tocsComplete) {
-					$scope.share_url.show = true;
-					$scope.demo.show = true;
-					$scope.terms.show = true;
-				}
-
-			}
 
 			steps.tocs.completed = true;
 			$scope.tocsComplete = true;
@@ -331,16 +318,28 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 				steps.tocs.completed = false;
 
 				$scope.url.show = true;
-			}
 
-			angular.forEach($scope.newEduMat.tocs, function (toc) {
-				if (!toc.name_EN || !toc.name_FR || !toc.url_EN
-					|| !toc.url_FR || !toc.type_EN || !toc.type_FR) {
-					$scope.tocsComplete = false;
-					steps.tocs.completed = false;
-					steps.url.completed = false;
+			} else {
+
+				steps.url.completed = true; // Since it will be hidden
+				$scope.url.show = false;
+
+				angular.forEach($scope.newEduMat.tocs, function (toc) {
+					if (!toc.name_EN || !toc.name_FR || !toc.url_EN
+						|| !toc.url_FR || !toc.type_EN || !toc.type_FR) {
+						$scope.tocsComplete = false;
+						steps.tocs.completed = false;
+						steps.url.completed = false;
+					}
+				});
+
+				if ($scope.tocsComplete) {
+					$scope.share_url.show = true;
+					$scope.demo.show = true;
+					$scope.terms.show = true;
 				}
-			});
+
+			}
 
 			// Count the number of completed steps
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
