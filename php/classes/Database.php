@@ -18,7 +18,7 @@ class Database {
 
 		if ($this->sourceDatabaseIsEnabled($sourceDBSer)) {
 
-			$creds = $this->fetchSourceCredentials($sourceDBSer);
+			$creds = $this->getSourceCredentials($sourceDBSer);
 
 			$db_link = new PDO( $creds['dsn'], $creds['username'], $creds['password'] );
  			$db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -63,7 +63,7 @@ class Database {
 	 * @param int $sourceDBSer : the serial number of the source database
 	 * @return array $credentials : source database credentials
 	 */
-	public function fetchSourceCredentials($sourceDBSer) {
+	public function getSourceCredentials($sourceDBSer) {
 		$credentials = array(
 			'dsn' 		=> null,
 			'username'	=> null,

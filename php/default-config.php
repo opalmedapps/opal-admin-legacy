@@ -64,15 +64,15 @@
 	include_once( FRONTEND_ABS_PATH . "php/classes/TestResult.php" );
 	include_once( FRONTEND_ABS_PATH . "php/classes/Install.php" );
 	include_once( FRONTEND_ABS_PATH . "php/classes/Email.php" );
-	include_once( FRONTEND_ABS_PATH . "php/classes/QuestionnaireClasses/Questionnaire.php");
-	include_once( FRONTEND_ABS_PATH . "php/classes/QuestionnaireClasses/Question.php");
-	include_once( FRONTEND_ABS_PATH . "php/classes/QuestionnaireClasses/Group.php");
-	include_once( FRONTEND_ABS_PATH . "php/classes/QuestionnaireClasses/Tag.php");
-	include_once( FRONTEND_ABS_PATH . "php/classes/QuestionnaireClasses/Category.php");
-	include_once( FRONTEND_ABS_PATH . "php/classes/QuestionnaireClasses/AnswerType.php");
-	include_once( FRONTEND_ABS_PATH . "php/classes/QuestionnaireClasses/Library.php");
+	include_once( FRONTEND_ABS_PATH . "php/classes/Questionnaire/Questionnaire.php");
+	include_once( FRONTEND_ABS_PATH . "php/classes/Questionnaire/Question.php");
+	include_once( FRONTEND_ABS_PATH . "php/classes/Questionnaire/QuestionGroup.php");
+	include_once( FRONTEND_ABS_PATH . "php/classes/Questionnaire/Tag.php");
+	include_once( FRONTEND_ABS_PATH . "php/classes/Questionnaire/Category.php");
+	include_once( FRONTEND_ABS_PATH . "php/classes/Questionnaire/AnswerType.php");
+	include_once( FRONTEND_ABS_PATH . "php/classes/Questionnaire/Library.php");
 
-	// Push Notification FCM and APN credientials.
+	// Push Notification FCM and APN credentials.
     define( "API_KEY" , "API_KEY_HERE" );
     define( "CERTIFICATE_PASSWORD" , "CERTIFICATE_PASSWORD_HERE" );
     define( "CERTIFICATE_FILE" , 'CERTIFICATE_FILE_HERE' );

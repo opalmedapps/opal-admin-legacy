@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).
 
-	controller('newQuestionnaireController', function ($scope, $state, $filter, $uibModal, questionnaireAPIservice, filterAPIservice, Session, uiGridConstants) {
+	controller('newQuestionnaireController', function ($scope, $state, $filter, $uibModal, questionnaireCollectionService, filterCollectionService, Session, uiGridConstants) {
 
 		// navigation function
 		$scope.goBack = function () {
@@ -120,12 +120,12 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 		};
 
 		// Call our API service to get each filter
-		filterAPIservice.getFilters().success(function (response) {
+		filterCollectionService.getFilters().then(function (response) {
 
-			$scope.termList = response.expressions; // Assign value
-			$scope.dxFilterList = response.dx;
-			$scope.doctorFilterList = response.doctors;
-			$scope.resourceFilterList = response.resources;
+			$scope.termList = response.data.expressions; // Assign value
+			$scope.dxFilterList = response.data.dx;
+			$scope.doctorFilterList = response.data.doctors;
+			$scope.resourceFilterList = response.data.resources;
 
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
@@ -133,6 +133,8 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 			$scope.formLoaded = true;
 			$scope.loadForm();
 
+		}).catch(function(response) {
+			console.error('Error occurred getting filter list:', response.status, response.data);
 		});
 
 		// update form functions
@@ -349,13 +351,17 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 		};
 
 		// API getting group list
-		questionnaireAPIservice.getGroupsWithQuestions(userId).success(function (response) {
-			$scope.groupList = response;
+		questionnaireCollectionService.getQuestionGroupWithLibraries(userId).then(function (response) {
+			$scope.groupList = response.data;
+		}).catch(function(response) {
+			console.error('Error occurred getting group list:', response.status, response.data);
 		});
 
 		// get tag list
-		questionnaireAPIservice.getTag().success(function (response) {
-			$scope.tagList = response;
+		questionnaireCollectionService.getTags().then(function (response) {
+			$scope.tagList = response.data;
+		}).catch(function(response) {
+			console.error('Error occurred getting tags:', response.status, response.data);
 		});
 
 		// assign search field 
@@ -415,13 +421,15 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 				// write in to db
 				$.ajax({
 					type: "POST",
-					url: "php/questionnaire/addTag.php",
+					url: "php/questionnaire/insert.tag.php",
 					data: $scope.newTag,
 					success: function () {
 						alert('Successfully added the new tag. Please find your new tag in the form above.');
 						// update answer type list
-						questionnaireAPIservice.getTag().success(function (response) {
-							$scope.tagList = response;
+						questionnaireCollectionService.getTags().then(function (response) {
+							$scope.tagList = response.data;
+						}).catch(function(response) {
+							console.error('Error occurred getting tags:', response.status, response.data);
 						});
 
 					},
@@ -431,7 +439,7 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 				});
 			} else {
 				// do nothing
-				console.log("Cancel creating new tage.")
+				console.log("Cancel creating new tag.")
 			}
 
 		};
@@ -546,10 +554,10 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 				// Submit 
 				$.ajax({
 					type: "POST",
-					url: "php/questionnaire/addQuestionnaire.php",
+					url: "php/questionnaire/insert.questionnaire.php",
 					data: $scope.newQuestionnaire,
 					success: function () {
-						$state.go('questionnaire-manage');
+						$state.go('questionnaire');
 					}
 				});
 			}

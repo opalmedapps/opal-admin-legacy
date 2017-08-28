@@ -42,7 +42,7 @@ sub new
 		_primaryflag	=> undef,
 	};
 	# bless associates an object with a class so Perl knows which package to search for
-	# when a method is envoked on this object
+	# when a method is invoked on this object
 	bless $resappt, $class;
 	return $resappt;
 }
@@ -504,7 +504,7 @@ sub inOurDatabase
 
 	}
 
-	else {return $ExistingRA;} # this is falseful (ie. RA DNE, return empty)
+	else {return $ExistingRA;} # this is false (ie. RA DNE, return empty)
 }
 
 #======================================================================================

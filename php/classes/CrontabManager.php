@@ -1,12 +1,16 @@
 <?php 
-
+/**
+ *
+ * CrontabManager class
+ *
+ */
 class CrontabManager {
 
 	private $path;
 	private $handle;
 	private $cron_file;
 
-	/* Class contructor */
+	/* Class constructor */
 	function __construct() {
 
 		/* Default directory for our temporary cron file */
@@ -23,7 +27,7 @@ class CrontabManager {
 	/* Function to execute commands on the server */
 	public function exec () {
 
-		// Count the total number of argments passed	
+		// Count the total number of arguments passed	
 		$argument_count = func_num_args();
 
 		try {
@@ -53,7 +57,7 @@ class CrontabManager {
 	/* Function to remove the temporary cron file */
 	public function remove_file() {
 		
-		// Check for existance of temp cron file
+		// Check for existdnce of temp cron file
 		// then execute rm to delete it
 		if ($this->crontab_file_exists()) $this->exec("rm {$this->cron_file}");
 

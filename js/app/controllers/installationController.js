@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 	/******************************************************************************
 	* Controller for the installation process
 	*******************************************************************************/
-	controller('installationController', function($scope, installAPIservice, $state) {
+	controller('installationController', function($scope, installCollectionService, $state) {
 
 		var pathname = location.pathname;
 		var urlpath = pathname.replace('main.html', '');
@@ -55,9 +55,9 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 
 		// call our API service to verify requirements
 		$scope.verifyRequirements = null;
-		installAPIservice.verifyRequirements(urlpath).success(function (response) {
+		installCollectionService.verifyRequirements(urlpath).then(function (response) {
 			// Handle logic here
-			$scope.verifyRequirements = response;
+			$scope.verifyRequirements = response.data;
 			if ($scope.verifyRequirements.config_file.php && 
 				$scope.verifyRequirements.config_file.js &&
 				$scope.verifyRequirements.config_file.perl) {
@@ -66,9 +66,11 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 
 				steps.requirements.completed = true;
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
-	            $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
 			}
+		}).catch(function(response) {
+			console.error('Error occurred verifying requirements:', response.status, response.data);
 		});
 
 		$scope.opal_setup = {

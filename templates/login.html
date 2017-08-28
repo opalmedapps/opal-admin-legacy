@@ -2,16 +2,19 @@
     <div class="login-container">
       <div class="col-md-9">
         <div class="row" style="display:flex; align-items:flex-end">
+          <!-- Opal title -->
           <div class="col-md-5 col-md-offset-3" style="text-align:right;">
             <h1 class="animated flipInX" style="font-size: 55px;">
               opal <strong>ADMIN</strong> <span style="font-size: 30px;" ng-if="devMode">DEV</span>
             </h1>
           </div>
+          <!-- Logo -->
           <div class="col-md-5">
             <div class="circle animated form-box-shake" style="z-index:0; box-shadow:rgba(0, 0, 0, 0.6) 0px 3px 6px -3px;" ng-class="{'pulse': !formLoaded}"></div>
             <div class="circle animated form-box-shake" ng-class="{'pulse': !formLoaded}" >
               <img class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="100" width="100">
             </div>
+            <!-- Load login form -->
             <div ng-include="'templates/login-form.html'"></div>
           </div>
         </div>

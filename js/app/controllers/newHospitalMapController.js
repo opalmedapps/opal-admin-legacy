@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', '
 	/******************************************************************************
 	* New Hospital Map Page controller 
 	*******************************************************************************/
-	controller('newHospitalMapController', function ($scope, $filter, $state, $sce, $uibModal, hosmapAPIservice) {
+	controller('newHospitalMapController', function ($scope, $filter, $state, $sce, $uibModal, hospitalMapCollectionService) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -121,12 +121,14 @@ angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', '
 		$scope.generateQRCode = function (qrid) {
 
 			if (qrid) {
-				hosmapAPIservice.generateQRCode(qrid, $scope.oldqrid).success(function (response) {
-					$scope.newHosMap.qrcode = response.qrcode;
-					$scope.newHosMap.qrpath = response.qrpath;
+				hospitalMapCollectionService.generateQRCode(qrid, $scope.oldqrid).then(function (response) {
+					$scope.newHosMap.qrcode = response.data.qrcode;
+					$scope.newHosMap.qrpath = response.data.qrpath;
 
 					$scope.oldqrid = qrid;
 					$scope.qridUpdate();
+				}).catch(function(response) {
+					console.error('Error occurred generating QR code:', response.status, response.data);
 				});
 			}
 			else {
@@ -150,7 +152,7 @@ angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', '
 				// Submit
 				$.ajax({
 					type: "POST",
-					url: "php/hospital-map/insert_hospitalMap.php",
+					url: "php/hospital-map/insert.hospital_map.php",
 					data: $scope.newHosMap,
 					success: function () {
 						$state.go('hospital-map');

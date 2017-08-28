@@ -1,97 +1,565 @@
 <div id="main">
 	<div id="top">
 		<div class="clearfix">
-
 			<div class="row">
+        <!-- Load side menu -->
 				<div class="col-md-2">
-      		<div ng-include="'templates/side-panel-menu.html'"></div>
-    		</div>
-
-    		<div class="col-md-10 animated fadeIn">
-          <div class="row main-title">
-            <div class="col-md-9 title-content">
-              <span class="fa fa-pencil-square-o"></span>
-              <h1><strong>Questionnaires</strong></h1>
-            </div>
-
-            <div class="col-md-3 title-breadcrumbs"> 
-              <span><a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Questionnaires</strong></span>
-            </div>
-          </div> 
-
-          <!-- Panel Menu -->
-          <div class="row" style="text-align:left;">
-          	<div class="col-md-12 side-menu-title">
-              <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                <span style="background-color:#e6edfa; padding: 0 10px;">
-                  <span class="glyphicon glyphicon-menu-down"></span>
-                  <h2>Questionnaire Tools</h2>
-                </span>  
-	          	</div>  
-	          </div>
-	        </div>
-
-
-	        <div class="row">
-          	<!-- Manage Questionnaire -->
-          	<div class="col-md-4">
-          		<div class="panel-container animated" ng-class="{pulse: hoverManageQuestionnaires}" ng-mouseenter="hoverManageQuestionnaires=true" ng-mouseleave="hoverManageQuestionnaires=false" style="cursor:pointer;" ng-click="goToManage()">
-								<div class="panel-info" style="height: 180px;">
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span style="font-size: 50px;" class="fa fa-pencil" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">  
-											<h1>Manage Questionnaires</h1>
-										</div>  
-										<div class="panel-description">
-											<p>Create, view, update and delete questionnaires.</p>
-										</div>
-									</div>
+					<div ng-include="'templates/questionnaire-side-menu.html'"></div>
+				</div>
+        <!-- Right side detail view -->
+				<div class="col-md-10 animated fadeIn">
+					<div class="row main-title">
+            <!-- Page title -->
+						<div class="col-md-6 title-content">
+							<span class="fa fa-pencil"></span>
+							<h1><strong>Manage Questionnaires</strong></h1>
+						</div>
+            <!-- Breadcrumbs -->
+						<div class="col-md-6 title-breadcrumbs">
+							<a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <a href="#/questionnaire">Questionnaires</a>							<span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Manage Questionnaires</strong></span>
+						</div>
+					</div>
+					<div class="row clearfix" style="margin-bottom: 10px; display:flex; align-items: center">
+						<div class="col-md-8">
+              <!-- Add button -->
+							<a style="width:100px;margin-right:20px;" href="" ng-click="goToAddQuestionnaire()" class="btn btn-md btn-outline item-button">
+                <span style="font-size: 17px;" class="fa fa-plus"></span>
+                <span style="font-size: 20px;"><strong>Add</strong></span>
+              </a>
+						</div>
+					</div>
+          <!-- Load main table -->
+					<div class="panel-container" style="text-align:left;">
+						<div class="panel-info">
+							<div class="panel-input">
+								<div id="data-table">
+									<div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:75vh"></div>
 								</div>
 							</div>
-          	</div>
+						</div>
+					</div>
+				</div>
 
-          	<!-- View/Edit Question Bank -->
-          	<div class="col-md-4">
-          		<div class="panel-container animated" ng-class="{pulse: hoverQuestionBank}" ng-mouseenter="hoverQuestionBank=true" ng-mouseleave="hoverQuestionBank=false" style="cursor:pointer;" ng-click="goToQuestionBank()">
-								<div class="panel-info" style="height: 180px;">
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span style="font-size: 50px;" class="fa fa-search" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">  
-											<h1>Manage Question Bank</h1>
-										</div>  
-										<div class="panel-description">
-											<p>View and edit all the questions stored in the question bank.</p>
-										</div>
-									</div>
-								</div>
-							</div>
-          	</div>
-
-          	<!-- View Completed Questionnaire -->
-          	<div class="col-md-4">
-          		<div class="panel-container animated" ng-class="{pulse: hoverCompletedQuestionnaire}" ng-mouseenter="hoverCompletedQuestionnaire=true" ng-mouseleave="hoverCompletedQuestionnaire=false" style="cursor:pointer;" ng-click="goToCompleted()">
-								<div class="panel-info" style="height: 180px;">
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span style="font-size: 50px;" class="fa fa-check" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">  
-											<h1>Completed Questionnaires</h1>
-										</div>  
-										<div class="panel-description">
-											<p>View the completed questionnaires.</p>
-										</div>
-									</div>
-								</div>
-							</div>
-          	</div>
-          </div>
-    		</div>
 			</div>
 		</div>
 	</div>
+	<div class="bannerMessage alert-success">{{bannerMessage}}</div>
 </div>
+
+<!-- Deleting Modal -->
+<script type="text/ng-template" id="deleteQuestionnaireModalContent.htm">
+	<div class="modal-header">
+		<h2 class="modal-title">
+			<span class="glyphicon glyphicon-trash" style="font-size: 30px;"></span> Delete Questionnaire: {{questionnaireToDelete.name_EN}}
+			/ {{questionnaireToDelete.name_FR}}
+		</h2>
+	</div>
+	<div class="modal-body">
+		<div class="bs-callout bs-callout-danger">
+			<h4>Questionnaire Delete</h4>
+			<p class="deleteText">Are you sure you want to delete the questionnaire "{{questionnaireToDelete.name_EN}}" ?</p>
+			<form method="post" ng-submit="deleteQuestionnaire()">
+				<input class="btn btn-primary" type="submit" value="Delete">
+				<input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
+			</form>
+		</div>
+	</div>
+</script>
+
+<!-- Editing Modal -->
+<script type="text/ng-template" id="editQuestionnaireModalContent.htm">
+  <!-- Modal title -->
+	<div class="modal-header">
+		<h2 class="modal-title">
+			<span class="glyphicon glyphicon-pencil" style="font-size: 30px;"></span> Edit Questionnaire: {{questionnaire.name_EN}}
+			/ {{questionnaire.name_FR}}
+			<span style="float:right;"> 
+        <form method="post" ng-submit="updateQuestionnaire()">
+          <input class="btn btn-primary" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
+          <input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
+        </form>
+      </span>
+		</h2>
+	</div>
+	<div class="modal-body">
+		<uib-accordion>
+
+      <!-- SECTION: Titles -->
+			<div uib-accordion-group is-open="statusTitle.open">
+				<uib-accordion-heading>
+					<div>
+						<strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTitle.open, 'glyphicon-chevron-right': !statusTitle.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="bs-callout bs-callout-info">
+					<h4>Current Questionnaire Titles (EN / FR): {{questionnaire.name_EN}} / {{questionnaire.name_FR}}</h4>
+					To change the current title(s), enter the new title(s) in the text box(es) below.
+				</div>
+				<div class="row">
+					<div class="col-md-5">
+						<div class="input-group">
+							<span class="input-group-addon">EN</span>
+							<textarea class="form-control" rows="1" ng-model="questionnaire.name_EN" placeholder="English Title" ng-change="setChangesMade()"></textarea>
+						</div>
+					</div>
+					<div class="col-md-1"></div>
+					<div class="col-md-5">
+						<div class="input-group">
+							<span class="input-group-addon">FR</span>
+							<textarea class="form-control" rows="1" ng-model="questionnaire.name_FR" placeholder="Titre Français" ng-change="setChangesMade()"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+
+      <!-- SECTION: Privacy -->
+			<div uib-accordion-group is-open="statusPrivacy.open">
+				<uib-accordion-heading>
+					<div>
+						<strong>Privacy </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusPrivacy.open, 'glyphicon-chevron-right': !statusPrivacy.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="bs-callout bs-callout-info">
+					<h4>Current Privacy:
+						<span ng-show="questionnaire.private == 1">Private</span>
+						<span ng-show="questionnaire.private == 0">Public</span>
+					</h4>
+					<p>To change privacy, use the form below.</p>
+				</div>
+				<div class="row">
+					<div class="col-md-2">
+						<div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hoverB, active: questionnaire.private == 1}"
+						 ng-click="privacyUpdate(1)" ng-mouseenter="hoverB=true" ng-mouseleave="hoverB=false">
+							<div class="panel-info" ng-class="{active: questionnaire.private == 1}">
+								<div class="panel-content" style="text-align:center">
+									<span style="font-size:30px;" class="fa fa-lock"></span>
+									<div class="option-panel-title">Private</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-2">
+						<div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hoverC, active: questionnaire.private == 0}"
+						 ng-click="privacyUpdate(0)" ng-mouseenter="hoverC=true" ng-mouseleave="hoverC=false">
+							<div class="panel-info" ng-class="{active: questionnaire.private == 0}">
+								<div class="panel-content" style="text-align:center">
+									<span style="font-size:30px;" class="fa fa-unlock-alt"></span>
+									<div class="option-panel-title">Public</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+      <!-- SECTION: Question group -->
+			<div uib-accordion-group is-open="statusQuestionGroup.open">
+				<uib-accordion-heading>
+					<div>
+						<strong>Question Group </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusQuestionGroup.open, 'glyphicon-chevron-right': !statusQuestionGroup.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="bs-callout bs-callout-info">
+					<h4>Current Question Groups: </h4>
+					<ul class="list-items-4col">
+						<li ng-repeat="group in questionnaire.groups">
+							{{group.name_EN}}
+						</li>
+					</ul>
+					<p>To update question groups, use the form below.</p>
+				</div>
+				<div class="row">
+					<div class="panel-container" style="margin:20px;">
+						<h4 style="text-align:left;">Edit current question groups: </h4>
+						<div class="panel-info">
+							<table style="width:100%;">
+								<tr style="font-size:16px;">
+									<td>Current Position</td>
+									<td>Change Position</td>
+									<td>Question Group</td>
+									<td>Required/Optional</td>
+									<td>Delete</td>
+								</tr>
+								<tr>
+								</tr>
+								<tr ng-repeat="group in questionnaire.groups">
+									<td>
+										{{group.position}}
+									</td>
+									<td>
+										<label><input type="number" min="1" ng-model="group.position" ng-change="setChangesMade()"></label>
+									</td>
+									<td>
+										{{group.name_EN}} / {{group.name_FR}}
+									</td>
+									<td>
+										<select name="groupOptional" ng-model="group.optional" ng-change="setChangesMade()" required>
+                      <option value=0 selected>Required</option>
+                      <option value=1>Optional</option>
+                    </select>
+									</td>
+									<td>
+										<input type="checkbox" ng-click="selectGroupToDelete(group)" ng-checked="group.deleted">
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<h4 style="text-align:left; margin-left:20px" ;>Add new question groups: </h4>
+					<!-- Selected groups: change position -->
+					<div class="col-md-12" ng-show="newgroups.length">
+						<div class="panel-container" style="margin:10px;">
+							<div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
+								<span style="background-color: #fff; padding: 0 10px; font-size:16px;"> Edit selected question groups </span>
+							</div>
+							<div class="panel-info">
+								<table style="width:100%;">
+									<tr style="font-size:16px;">
+										<td>Current Position</td>
+										<td>Change Position</td>
+										<td>Question Group</td>
+										<td>Required/Optional(default: required)</td>
+									</tr>
+									<tr>
+									</tr>
+									<tr ng-repeat="newgroup in newgroups">
+										<td>
+											{{newgroup.position}}
+										</td>
+										<td>
+											<label><input type="number" min="1" ng-model="newgroup.position"></label>
+										</td>
+										<td>
+											{{newgroup.name_EN}} / {{newgroup.name_FR}}
+										</td>
+										<td>
+											<select name="groupOption" ng-model="newgroup.optional" required>
+                        <option value=0 selected>Required</option>
+                        <option value=1>Optional</option>
+                      </select>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<!-- question group table -->
+						<div class="col-md-8">
+							<div class="panel-container" style="text-align:left;">
+								<div class="panel-info">
+									<button class="btn btn-default" ng-click="selectAll()">Select All</button>
+									<button class="btn btn-default" ng-click="cancelSelection()">Clear Selection</button>
+									<div class="panel-input">
+										<div id="data-table">
+											<div class="gridStyle" ui-grid="gridGroups" ui-grid-resize-columns ui-grid-selection style="height:75vh"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- Preview -->
+						<div class="col-md-4" style="text-align:right">
+							<div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
+								<span style="background-color: #fff; padding: 0 10px; font-size:16px;">
+                  Selected questions preview</span>
+							</div>
+							<div class="previewContainer">
+								<div class="previewContent">
+									<div ng-repeat="selectedGroupObj in selectedGroups">
+										<h4 style="font-weight:bold;">{{selectedGroupObj.entity.name_EN}} / {{selectedGroupObj.entity.name_FR}}:</h4>
+										<div ng-repeat="question in selectedGroupObj.entity.questions">
+											<p>{{question.text_EN}} / {{question.text_FR}}
+												<span style="color:#d9534f">( Question type: {{question.answertype_category_EN}} - {{question.answertype_name_EN}} / {{question.answertype_name_FR}} )</span>
+											</p>
+
+											<!-- Answer type preview -->
+											<div ng-if="question.answertype_category_EN == 'Multiple Choice'">
+												<div ng-repeat="option in question.options">
+													<label><input type="radio"> {{option.text_EN}} / {{option.text_FR}}</label>
+												</div>
+											</div>
+
+											<div ng-if="question.answertype_category_EN == 'Checkboxes'">
+												<div ng-repeat="option in question.options">
+													<label><input type="checkbox"> {{option.text_EN}} / {{option.text_FR}}</label>
+												</div>
+											</div>
+
+											<div ng-if="question.answertype_category_EN == 'Linear Scale'">
+												<div ng-repeat="option in question.options">
+													<label><input type="radio"> {{option.text_EN}} / {{option.text_FR}}</label>
+												</div>
+											</div>
+
+											<div ng-if="question.answertype_category_EN == 'Date'">
+												<label>Date:<input type="date"></label>
+											</div>
+
+											<div ng-if="question.answertype_category_EN == 'Time'">
+												<label>Time:<input type="time"></label>
+											</div>
+
+											<div ng-if="question.answertype_category_EN == 'Short Answer'">
+												<textarea rows="3" cols="50">Type in your answer.</textarea>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+      <!-- SECTION: Tags -->
+			<div uib-accordion-group is-open="statusTags.open">
+				<uib-accordion-heading>
+					<div>
+						<strong>Tag </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTags.open, 'glyphicon-chevron-right': !statusTags.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="bs-callout bs-callout-info">
+					<h4>Current Tags:</h4>
+					<ul class="list-items-4col">
+						<li ng-show="allTags(tagList)">
+							All Tags
+						</li>
+						<li ng-repeat="tag in tagList | filter: {added: 1} : 1" ng-hide="allTags(tagList)">
+							{{tag.name_EN}}
+						</li>
+					</ul>
+					<p>To change tags, use the form below.</p>
+				</div>
+				<div class="list-space">
+					<div class="input-group">
+						<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+						<input class="form-control" type="text" ng-model="tagFilter" ng-change="searchTag(tagFilter)" placeholder="Search Tag" />
+					</div>
+					<ul class="list-items">
+						<li ng-repeat="tag in tagList | filter: searchTagFilter">
+							<label><input type="checkbox" ng-click="selectTag(tag)" ng-checked="tag.added"/> {{tag.name_EN}}</label>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+      <!-- SECTION: Demographic filters -->
+			<div uib-accordion-group is-open="statusDemographicFilter.open"> 
+				<uib-accordion-heading>
+					<div>
+						<strong>Filter Demographics </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDemographicFilter.open, 'glyphicon-chevron-right': !statusDemographicFilter.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="bs-callout bs-callout-info">
+					<h4>Current Sex Filter: <span ng-hide="demoFilter.sex">None</span><span ng-show="demoFilter.sex">{{demoFilter.sex}}</span> </h4>
+					<h4>Current Age Group Filter: <span ng-hide="demoFilter.age">None</span><span ng-show="demoFilter.age">{{demoFilter.age.min}} to {{demoFilter.age.max}}</span> </h4>
+					<p>To change the current filter(s), use the fields below.</p>
+				</div>
+				<div class="row">
+					<div class="col-md-6">
+						<h2 style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Sex</h2>
+						<ul class="list-items">
+							<li ng-repeat="sex in sexes">
+								<label>
+									<input type="radio" ng-model="demoFilter.sex" ng-change="setChangesMade()" ng-value="sex.name" /> {{sex.name}}
+								</label>
+							</li>
+						</ul>
+						<div style="padding: 10px;">
+							<button class="btn btn-primary" ng-click="demoFilter.sex=''">Remove Filter</button>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<h2 style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Age Group</h2>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="input-group">
+									<span class="input-group-addon">MIN</span>
+									<input class="form-control" ng-model="demoFilter.age.min" ng-change="setChangesMade()" type="number" ng-max="demoFilter.age.max" min="0">
+								</div> 
+							</div>
+							<div class="col-md-6">
+								<div class="input-group">
+									<span class="input-group-addon">MAX</span>
+									<input class="form-control" ng-model="demoFilter.age.max" ng-change="setChangesMade()" type="number" max="100" ng-min="demoFilter.age.min">
+								</div> 
+							</div>
+						</div>
+					</div>
+				</div>
+      </div> 
+      
+      <!-- SECTION: Expression filters -->
+			<div uib-accordion-group is-open="statusFilterTerms.open">
+				<uib-accordion-heading>
+					<div>
+						<strong>Filter Terms </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusFilterTerms.open, 'glyphicon-chevron-right': !statusFilterTerms.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="bs-callout bs-callout-info">
+					<h4>Current Terms</h4>
+					<ul class="list-items-4col">
+						<li ng-show="allFilters(termList)">
+							All Terms
+						</li>  
+						<li ng-repeat="selectedTerm in termList | filter: {added: 1} : 1" ng-hide="allFilters(termList)">
+							{{selectedTerm.name}}
+						</li>
+					</ul>
+					<p>To add/remove term filter, use the list below.</p>
+				</div>
+				<div class="list-space">
+					<div class="input-group">
+						<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+						<input class="form-control" type="text" ng-model="termSearchField" ng-change="searchTerm(termSearchField)" placeholder="Search..."/>
+					</div>
+					<div style="padding: 10px;">
+						<label> 
+							<input type="checkbox" ng-click="selectAllTerms()"> Select All
+						</label>
+					</div>    
+					<ul class="list-items">
+						<li ng-repeat="term in termList | filter: searchTermsFilter">
+							<label>
+								<input type="checkbox" ng-click="selectItem(term)" ng-checked="term.added" /> {{term.name}}
+							</label>
+						</li>
+					</ul>
+				</div>
+      </div>
+      
+      <!-- SECTION: Diagnosis filters -->
+			<div uib-accordion-group is-open="statusFilterDiagnosis.open">
+				<uib-accordion-heading>
+					<div>
+						<strong>Filter Diagnoses </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusFilterDiagnosis.open, 'glyphicon-chevron-right': !statusFilterDiagnosis.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="bs-callout bs-callout-info">
+					<h4>Current Diagnosis Filters</h4>
+					<ul class="list-items-4col">
+						<li ng-show="allFilters(dxFilterList)">
+							All Diagnoses
+						</li>  
+						<li ng-repeat="dx in dxFilterList | filter: {added: 1} : 1" ng-hide="allFilters(dxFilterList)">
+							{{dx.name}}
+						</li>
+					</ul>
+					<p>To add/remove diagnosis filter, use the list below.</p>
+				</div>
+				<div class="list-space">
+					<div class="input-group">
+						<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+						<input class="form-control" type="text" ng-model="dxSearchField" ng-change="searchDiagnosis(dxSearchField)" placeholder="Search..."/>
+					</div>
+					<div style="padding: 10px;">
+						<strong> 
+							To select all, leave all boxes unchecked.
+						</strong>
+					</div>    
+					<ul class="list-items">
+						<li ng-repeat="dx in dxFilterList | filter: searchDxFilter">
+							<label>
+								<input type="checkbox" ng-click="selectItem(dx)" ng-checked="dx.added" /> {{dx.name}}
+							</label>
+						</li>
+					</ul>
+				</div>
+      </div>
+      
+      <!-- SECTION: Doctor filters -->
+			<div uib-accordion-group is-open="statusFilterDoctor.open">
+				<uib-accordion-heading>
+					<div>
+						<strong>Filter Doctors </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusFilterDoctor.open, 'glyphicon-chevron-right': !statusFilterDoctor.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="bs-callout bs-callout-info">
+					<h4>Current Doctor Filters</h4>
+					<ul class="list-items-4col">
+						<li ng-show="allFilters(doctorFilterList)">
+							All Doctors
+						</li>  
+						<li ng-repeat="doctor in doctorFilterList | filter: {added: 1} : 1" ng-hide="allFilters(doctorFilterList)">
+							{{doctor.name}}
+						</li>
+					</ul>
+					<p>To add/remove doctors, use the list below.</p>
+				</div>
+				<div class="list-space">
+					<div class="input-group">
+						<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+						<input class="form-control" type="text" ng-model="doctorSearchField" ng-change="searchDoctor(doctorSearchField)" placeholder="Search..."/>
+					</div>
+					<div style="padding: 10px;">
+						<strong> 
+							To select all, leave all boxes unchecked.
+						</strong>
+					</div>    
+					<ul class="list-items">
+						<li ng-repeat="doctor in doctorFilterList | filter: searchDoctorFilter">
+							<label>
+								<input type="checkbox" ng-click="selectItem(doctor)" ng-checked="doctor.added" /> {{doctor.name}}
+							</label>
+						</li>
+					</ul>
+				</div>
+      </div>
+      
+      <!-- SECTION: Resource filter -->
+			<div uib-accordion-group is-open="statusFilterResource.open">
+				<uib-accordion-heading>
+					<div>
+						<strong>Filter Resources </stron><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusFilterResource.open, 'glyphicon-chevron-right': !statusFilterResource.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="bs-callout bs-callout-info">
+					<h4>Current Resource Filters</h4>
+					<ul class="list-items-4col">
+						<li ng-show="allFilters(resourceFilterList)">
+							All Resources
+						</li>  
+						<li ng-repeat="resource in resourceFilterList | filter: {added: 1} : 1" ng-hide="allFilters(resourceFilterList)">
+							{{resource.name}}
+						</li>
+					</ul>
+					<p>To add/remove resources, use the list below.</p>
+				</div>
+				<div class="list-space">
+					<div class="input-group">
+						<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+						<input class="form-control" type="text" ng-model="resourceSearchField" ng-change="searchResource(resourceSearchField)" placeholder="Search..."/>
+					</div>
+					<div style="padding: 10px;">
+						<strong> 
+							To select all, leave all boxes unchecked.
+						</strong>
+					</div>    
+					<ul class="list-items">
+						<li ng-repeat="resource in resourceFilterList | filter: searchResourceFilter">
+							<label>
+								<input type="checkbox" ng-click="selectItem(resource)" ng-checked="resource.added" /> {{resource.name}}
+							</label>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+		</uib-accordion>
+	</div>
+</script>
+
+<!-- "Processing" modal template -->
+<script type="text/ng-template" id="processingModal.htm">
+	<div class="modal-header">
+		<h1> Processing...</h1>
+	</div>
+	<div class="modal-body">
+		<div class="progress progress-striped active">
+			<div class="progress-bar" style="width: 100%"></div>
+		</div>
+	</div>
+</script>

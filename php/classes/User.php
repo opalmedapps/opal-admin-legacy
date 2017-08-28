@@ -1,5 +1,9 @@
 <?php
-
+	/**
+	 * User class
+	 *
+	 *
+	 */
  class Users {
 	 public $username = null;
 	 public $password = null;
@@ -8,6 +12,7 @@
 	 public $userid = null;
 	 public $salt = "Zo4rU5Z1YyKJAASY0PT6EUg7BBYdlEhPaNLuxAwU8lqu1ElzHv0Ri7EM6irpx5w";
 	 
+	 /* Class constructor*/ 
 	 public function __construct( $data = array() ) {
 		 if( isset( $data->username ) ) $this->username = stripslashes( strip_tags( $data->username ) );
 		 if( isset( $data->password ) ) $this->password = stripslashes( strip_tags( $data->password ) );
@@ -18,6 +23,12 @@
 		$this->__construct( $params ); 
 	 }
 	 
+	 /**
+     *
+     * Logs in a particular user
+     *
+     * @return boolean $success : successful login flag
+     */
 	 public function userLogin() {
 		 $success = false;
 		 try{
@@ -47,6 +58,13 @@
 		 }
 	 }
 
+	/**
+     *
+     * Updates a user's password
+     *
+     * @param array $userArray  : the user details
+     * @return array $response : response
+     */
 	public function updatePassword($userArray) {
 	 	$response = array (
 	 		'value'		=> 0,
@@ -95,6 +113,13 @@
 		}
 	 }
 	 
+	 /**
+     *
+     * Updates a user
+     *
+     * @param array $userArray  : the user details
+     * @return boolean
+     */
 	 public function updateUser($userArray) {
 	 	$response = array (
 	 		'value'		=> 0,
@@ -167,6 +192,13 @@
 		}
 	}
 
+	/**
+     *
+     * Gets a list of existing users
+     *
+     * @param array $USERS : the list of existing users
+     * @return boolean
+     */
 	public function getUsers() {
 	 	$users = array();
 	 	try {
@@ -212,6 +244,13 @@
 	 	}
 	 }
 
+	/**
+     *
+     * Gets a user's details
+     *
+     * @param integer $userSer    : the user serial number
+     * @return array $userDetails : the user details
+     */
 	 public function getUserDetails($userSer) { 
 	 	$userDetails = array();
 	 	try {
@@ -304,12 +343,12 @@
 
 	/**
 	 *
-	 * Removes a user from the database
+	 * Deletes a user from the database
 	 *
 	 * @param integer $userSer : the user serial number
 	 * @return array $response : response
 	 */
-	public function removeUser( $userSer ) {
+	public function deleteUser( $userSer ) {
 
 		// Initialize a response array
 		$response = array(

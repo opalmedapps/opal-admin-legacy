@@ -11,6 +11,7 @@ class Patient {
      * Updates the patient transfer flags in the database
      *
      * @param array $patientList : a list of patients
+	 * @return void
      */
     public function updatePatientTransferFlags( $patientList ) {
 
@@ -41,9 +42,9 @@ class Patient {
      *
      * Gets a list of existing patients in the database
      *
-     * @return array
+     * @return array $patientList : the list of existing patients 
      */
-    public function getExistingPatients() {
+    public function getPatients() {
         $patientList = array();
         try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
@@ -143,7 +144,6 @@ class Patient {
      * Determines the existence of a patient
      *
      * @param string $ssn : patient SSN
-     *
      * @return array $patientResponse : patient information or response
      */
     public function findPatient($ssn, $id) {
@@ -309,7 +309,7 @@ class Patient {
      * @param string $language : site language
      * @return array $securityQuestions
      */
-    public function fetchSecurityQuestions($language) {
+    public function getSecurityQuestions($language) {
         $securityQuestions = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
@@ -489,7 +489,7 @@ class Patient {
      *
      * Gets a list of patient activities
      *
-     * @return array $patientActivityList
+     * @return array $patientActivityList : the list of patient activities
      */
      public function getPatientActivities() {
         $patientActivityList = array();
