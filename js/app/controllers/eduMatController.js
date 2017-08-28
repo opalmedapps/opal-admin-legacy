@@ -356,10 +356,10 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 				// Call our API service to get each filter
 				filterCollectionService.getFilters().then(function (response) {
 
-					$scope.termList = checkAdded(response.expressions); // Assign value
-					$scope.dxFilterList = checkAdded(response.dx);
-					$scope.doctorFilterList = checkAdded(response.doctors);
-					$scope.resourceFilterList = checkAdded(response.resources);
+					$scope.termList = checkAdded(response.data.expressions); // Assign value
+					$scope.dxFilterList = checkAdded(response.data.dx);
+					$scope.doctorFilterList = checkAdded(response.data.doctors);
+					$scope.resourceFilterList = checkAdded(response.data.resources);
 
 					processingModal.close(); // hide modal
 					processingModal = null; // remove reference
