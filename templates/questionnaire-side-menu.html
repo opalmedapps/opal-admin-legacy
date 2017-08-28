@@ -39,7 +39,7 @@
   <div class="row side-panel-menu">
     <!-- Manage questionnaire -->
     <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">   
-      <div class="panel-container animated" ng-class="{pulse: hoverManageQuestionnaires, active: currentPage == 'questionnaire/manage'}" ng-mouseenter="hoverManageQuestionnaires=true" ng-mouseleave="hoverManageQuestionnaires=false" style="cursor:pointer;" ng-click="goToQuestionnaire()">
+      <div class="panel-container animated" ng-class="{pulse: hoverManageQuestionnaires, active: currentPage == 'questionnaire'}" ng-mouseenter="hoverManageQuestionnaires=true" ng-mouseleave="hoverManageQuestionnaires=false" style="cursor:pointer;" ng-click="goToQuestionnaire()">
         <div class="side-panel-info-sm" ng-class="{active: currentPage == 'questionnaire/manage'}">
           <div class="panel-content">
             <span style="font-size: 23px;vertical-align:middle" class="fa fa-pencil" aria-hidden="true"></span>
@@ -50,7 +50,7 @@
     </div>
     <!-- Manage questions -->
     <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">   
-      <div class="panel-container animated" ng-class="{pulse: hoverManageQuestions, active: currentPage == 'questionnaire/bank'}" ng-mouseenter="hoverManageQuestions=true" ng-mouseleave="hoverManageQuestions=false" style="cursor:pointer;" ng-click="goToQuestionnaireQuestionBank()">
+      <div class="panel-container animated" ng-class="{pulse: hoverManageQuestions, active: currentPage == 'questionnaire/question'}" ng-mouseenter="hoverManageQuestions=true" ng-mouseleave="hoverManageQuestions=false" style="cursor:pointer;" ng-click="goToQuestionnaireQuestionBank()">
         <div class="side-panel-info-sm" ng-class="{active: currentPage == 'questionnaire/bank'}">
           <div class="panel-content">
             <span style="font-size: 23px;vertical-align:middle" class="fa fa-search" aria-hidden="true"></span>
