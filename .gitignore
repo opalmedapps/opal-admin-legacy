@@ -30,3 +30,6 @@ node_modules/**
 
 # ignore vscode editor config
 .editorconfig
+
+# ignore idea for PhpStorm
+.idea
