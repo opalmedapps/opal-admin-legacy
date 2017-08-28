@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 
 		// navigation function
 		$scope.goBack = function () {
-			$state.go('questionnaire-manage');
+			$state.go('questionnaire');
 		};
 
 		// Default booleans

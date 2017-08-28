@@ -184,7 +184,7 @@
               <ul class="list-items">
                 <li ng-repeat="eduMat in eduMatList | filter: searchEduMatsFilter">
                   <label>
-                    <input type="radio" ng-model="alias.eduMat" ng-change="eduMatUpdate()" ng-value="eduMat" /> {{eduMat.name_EN}}
+                    <input type="radio" ng-model="alias.eduMat" ng-change="eduMatUpdate()" ng-checked="alias.eduMat.serial == eduMat.serial" ng-value="eduMat" /> {{eduMat.name_EN}}
                   </label>
                 </li>
               </ul>

@@ -211,7 +211,7 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
-		// API to fetch sequrity questions
+		// API to fetch security questions
 		patientAPI.fetchSecurityQuestions = function (lang) {
 			return $http({
 				method: 'JSONP',
@@ -369,7 +369,7 @@ angular.module('opalAdmin.collections', [])
 		emailAPI.getEmails = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/email/get.emails.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/email/get.email_templates.php?callback=JSON_CALLBACK"
 			});
 		};
 
