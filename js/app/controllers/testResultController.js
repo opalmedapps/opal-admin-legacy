@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 	/******************************************************************************
 	* Test Result Page controller 
 	*******************************************************************************/
-	controller('testResultController', function ($scope, $filter, $sce, $state, $uibModal, testresAPIservice) {
+	controller('testResultController', function ($scope, $filter, $sce, $state, $uibModal, testResultCollectionService) {
 
 		// Function to go to add test result page
 		$scope.goToAddTestResult = function () {
@@ -77,9 +77,11 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 		$scope.testResultToDelete = {};
 
 		// Call our API to get the list of existing test results
-		testresAPIservice.getExistingTestResults().success(function (response) {
+		testResultCollectionService.getExistingTestResults().then(function (response) {
 
-			$scope.testList = response;
+			$scope.testList = response.data;
+		}).catch(function(response) {
+			console.error('Error occurred getting test results:', response.status, response.data);
 		});
 
 		$scope.bannerMessage = "";
@@ -143,13 +145,15 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/test-result/update_publishFlag.php",
+					url: "php/test-result/update.test_result_publish_flags.php",
 					data: $scope.testResultPublishes,
 					success: function (response) {
 						// Call our API to get the list of existing test results
-						testresAPIservice.getExistingTestResults().success(function (response) {
+						testResultCollectionService.getExistingTestResults().then(function (response) {
 							// Assign value
-							$scope.testList = response;
+							$scope.testList = response.data;
+						}).catch(function(response) {
+							console.error('Error occurred getting test results:', response.status, response.data);
 						});
 						response = JSON.parse(response);
 						// Show success or failure depending on response
@@ -187,8 +191,10 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 			modalInstance.result.then(function () {
 				$scope.testList = [];
 				// Call our API to get the list of existing test results
-				testresAPIservice.getExistingTestResults().success(function (response) {
-					$scope.testList = response;
+				testResultCollectionService.getExistingTestResults().then(function (response) {
+					$scope.testList = response.data;
+				}).catch(function(response) {
+					console.error('Error occurred getting test results:', response.status, response.data);
 				});
 
 			});
@@ -214,9 +220,11 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 			$scope.TestResultGroups_FR = [];
 
 			// Call our API to get the list of test result groups
-			testresAPIservice.getTestResultGroups().success(function (response) {
-				$scope.TestResultGroups_EN = response.EN;
-				$scope.TestResultGroups_FR = response.FR;
+			testResultCollectionService.getTestResultGroups().then(function (response) {
+				$scope.TestResultGroups_EN = response.data.EN;
+				$scope.TestResultGroups_FR = response.data.FR;
+			}).catch(function(response) {
+				console.error('Error occurred test result groups:', response.status, response.data);
 			});
 
 			// Initialize search field 
@@ -249,21 +257,25 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 			$scope.showProcessingModal();
 
 			// Call our API service to get the current test result details
-			testresAPIservice.getTestResultDetails($scope.currentTestResult.serial).success(function (response) {
+			testResultCollectionService.getTestResultDetails($scope.currentTestResult.serial).then(function (response) {
 
-				$scope.testResult = response;
+				$scope.testResult = response.data;
 
 				// Call our API service to get the list of test names
-				testresAPIservice.getTestNames().success(function (response) {
+				testResultCollectionService.getTestNames().then(function (response) {
 
-					$scope.testList = checkAdded(response);
+					$scope.testList = checkAdded(response.data);
 
 
 					processingModal.close(); // hide modal
 					processingModal = null; // remove reference
 
+				}).catch(function(response) {
+					console.error('Error occurred getting test names:', response.status, response.data);
 				});
 
+			}).catch(function(response) {
+				console.error('Error occurred getting test result details:', response.status, response.data);
 			});
 
 			// Function to toggle Item in a list on/off
@@ -355,7 +367,7 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 					// Submit form
 					$.ajax({
 						type: "POST",
-						url: "php/test-result/update_testResult.php",
+						url: "php/test-result/update.test_result.php",
 						data: $scope.testResult,
 						success: function (response) {
 							response = JSON.parse(response);
@@ -400,8 +412,10 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 			modalInstance.result.then(function () {
 				$scope.testList = [];
 				// Call our API to get the list of existing test result
-				testresAPIservice.getExistingTestResults().success(function (response) {
-					$scope.testList = response;
+				testResultCollectionService.getExistingTestResults().then(function (response) {
+					$scope.testList = response.data;
+				}).catch(function(response) {
+					console.error('Error occurred test results:', response.status, response.data);
 				});
 
 			});
@@ -414,7 +428,7 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 			$scope.deleteTestResult = function () {
 				$.ajax({
 					type: "POST",
-					url: "php/test-result/delete_testResult.php",
+					url: "php/test-result/delete.test_result.php",
 					data: $scope.testResultToDelete,
 					success: function (response) {
 						response = JSON.parse(response);

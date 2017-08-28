@@ -6,7 +6,7 @@
 
 	include_once($abspath . 'php/classes/Install.php');
 
-	// Retrieve FORM params
+	// Construct array from FORM params
 	$mosaiqCreds = array(
 		'host' 			=> $_POST['host'],
 		'document_path' => $_POST['document_path'],

@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 	/******************************************************************************
 	* Patient Page controller 
 	*******************************************************************************/
-	controller('patientController', function ($scope, $filter, $sce, $state, $uibModal, patientAPIservice) {
+	controller('patientController', function ($scope, $filter, $sce, $state, $uibModal, patientCollectionService) {
 
 		// Function to go to register new patient
 		$scope.goToAddPatient = function () {
@@ -97,9 +97,11 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 		};
 
 		// Call our API to get the list of existing patients
-		patientAPIservice.getPatients().success(function (response) {
+		patientCollectionService.getPatients().then(function (response) {
 			// Assign value
-			$scope.patientList = response;
+			$scope.patientList = response.data;
+		}).catch(function(response) {
+			console.error('Error occurred getting patient list:', response.status, response.data);
 		});
 
 		// When this function is called, we set the "publish" field to checked 
@@ -142,13 +144,15 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/patient/update_transferFlag.php",
+					url: "php/patient/update.patient_publish_flags.php",
 					data: $scope.patientTransfers,
 					success: function () {
 						// Call our API to get the list of existing patients
-						patientAPIservice.getPatients().success(function (response) {
+						patientCollectionService.getPatients().then(function (response) {
 							// Assign value
-							$scope.patientList = response;
+							$scope.patientList = response.data;
+						}).catch(function(response) {
+							console.error('Error occurred getting patient list:', response.status, response.data);
 						});
 						$scope.bannerMessage = "Transfer Flags Saved!";
 						$scope.showBanner();
@@ -175,9 +179,11 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 			// After toggle, refresh the patient list 
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing patients
-				patientAPIservice.getPatients().success(function (response) {
+				patientCollectionService.getPatients().then(function (response) {
 					// Assign value
-					$scope.patientList = response;
+					$scope.patientList = response.data;
+				}).catch(function(response) {
+					console.error('Error occurred getting patient list:', response.status, response.data);
 				});
 			});
 		};
@@ -250,9 +256,11 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 			// After update, refresh the patient list 
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing patients
-				patientAPIservice.getPatients().success(function (response) {
+				patientCollectionService.getPatients().then(function (response) {
 					// Assign value
-					$scope.patientList = response;
+					$scope.patientList = response.data;
+				}).catch(function(response) {
+					console.error('Error occurred getting patient list:', response.status, response.data);
 				});
 			});
 		};
@@ -281,9 +289,9 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 			$scope.patientIsDisabled = false;
 
 			// Call our API service to get the current patient details
-			patientAPIservice.getPatientDetails($scope.currentPatient.serial).success(function (response){
+			patientCollectionService.getPatientDetails($scope.currentPatient.serial).then(function (response){
 
-				$scope.patient = response;
+				$scope.patient = response.data;
 
 				// if the patient is block, revoke ability to change password
 				if ($scope.patient.disabled) {
@@ -297,6 +305,8 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 
 				processingModal.close(); // hide processing modal
 				processingModal = null; // revoke reference
+			}).catch(function(response) {
+				console.error('Error occurred getting patient details:', response.status, response.data);
 			});
 
 			// Function to validate old password
@@ -386,7 +396,7 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 
 									$.ajax({
 										type: "POST",
-										url: "php/patient/update_patient.php",
+										url: "php/patient/update.patient.php",
 										data: $scope.patient,
 										success: function (response) {
 											response = JSON.parse(response);

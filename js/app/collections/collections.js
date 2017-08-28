@@ -1,15 +1,13 @@
 // Angular Module 
 // To collect various data using JSONP (JavaScript Object Notation with Padding), a safer (than JSON) cross-domain ajax call
-// Most pages on the site require information from either our database or ARIA so we create an "API service" (Application
+// Most pages on the site require information from either our database or clinical databases so we create an "API service" (Application
 // Programming Interface) for each page with functions to collect relevant data. 
-// Each function calls a JSON script (located in api directory), it's really a PHP script (and 
-// also encodes the data in JSON because the callback will not work otherwise. So in reality, we are calling a PHP script (that executes 
-// JSON_ENCODE) to get relevant data using JavaScript 
+// Each function calls a PHP script (located in api directory) and encodes the data in JSON because the callback will not work otherwise. 
 
 angular.module('opalAdmin.collections', [])
 
 	// Alias API service
-	.factory('aliasAPIservice', function ($http) {
+	.factory('aliasCollectionService', function ($http) {
 
 		var aliasAPI = {};
 
@@ -17,7 +15,7 @@ angular.module('opalAdmin.collections', [])
 		aliasAPI.getAliases = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/alias/alias.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/alias/get.aliases.php?callback=JSON_CALLBACK"
 			});
 		};
 
@@ -25,7 +23,7 @@ angular.module('opalAdmin.collections', [])
 		aliasAPI.getAliasDetails = function (serial) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/alias/alias_details.php?callback=JSON_CALLBACK&serial=" + serial
+				url: URLPATH + "api/alias/get.alias_details.php?callback=JSON_CALLBACK&serial=" + serial
 			});
 		};
 
@@ -33,7 +31,7 @@ angular.module('opalAdmin.collections', [])
 		aliasAPI.getExpressions = function (sourcedbser, type) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/alias/expressions.php?callback=JSON_CALLBACK&sourcedbser=" + sourcedbser + "&type=" + type
+				url: URLPATH + "api/alias/get.expressions.php?callback=JSON_CALLBACK&sourcedbser=" + sourcedbser + "&type=" + type
 			});
 		};
 
@@ -41,7 +39,7 @@ angular.module('opalAdmin.collections', [])
 		aliasAPI.getSourceDatabases = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/alias/source_databases.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/alias/get.source_databases.php?callback=JSON_CALLBACK"
 			});
 		};
 
@@ -49,7 +47,7 @@ angular.module('opalAdmin.collections', [])
 		aliasAPI.getExistingColorTags = function (type) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/alias/color_tags.php?callback=JSON_CALLBACK&type=" + type
+				url: URLPATH + "api/alias/get.color_tags.php?callback=JSON_CALLBACK&type=" + type
 			});
 		};
 
@@ -57,7 +55,7 @@ angular.module('opalAdmin.collections', [])
 	})
 
 	// Post API service
-	.factory('postAPIservice', function ($http) {
+	.factory('postCollectionService', function ($http) {
 
 		var postAPI = {};
 
@@ -65,7 +63,7 @@ angular.module('opalAdmin.collections', [])
 		postAPI.getPosts = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/post/posts.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/post/get.posts.php?callback=JSON_CALLBACK"
 			});
 		};
 
@@ -73,7 +71,7 @@ angular.module('opalAdmin.collections', [])
 		postAPI.getPostDetails = function (serial) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/post/post_details.php?callback=JSON_CALLBACK&serial=" + serial
+				url: URLPATH + "api/post/get.post_details.php?callback=JSON_CALLBACK&serial=" + serial
 			});
 		};
 
@@ -81,119 +79,119 @@ angular.module('opalAdmin.collections', [])
 	})
 
 	// Educational Material API service
-	.factory('edumatAPIservice', function ($http) {
+	.factory('educationalMaterialCollectionService', function ($http) {
 
-		var edumatAPI = {};
+		var educationalMaterialAPI = {};
 
 		// Function to get the list of existing education materials
-		edumatAPI.getEducationalMaterials = function () {
+		educationalMaterialAPI.getEducationalMaterials = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/educational-material/educational-materials.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/educational-material/get.educational_materials.php?callback=JSON_CALLBACK"
 			});
 		};
 
 		// Function to get an educational material detail given a serial
-		edumatAPI.getEducationalMaterialDetails = function (serial) {
+		educationalMaterialAPI.getEducationalMaterialDetails = function (serial) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/educational-material/educationalMaterial_details.php?callback=JSON_CALLBACK&serial=" + serial
+				url: URLPATH + "api/educational-material/get.educational_material_details.php?callback=JSON_CALLBACK&serial=" + serial
 			});
 		};
 
 		// Function to get distinct educational material types 
-		edumatAPI.getEducationalMaterialTypes = function () {
+		educationalMaterialAPI.getEducationalMaterialTypes = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/educational-material/educationalMaterial_types.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/educational-material/get.educational_material_types.php?callback=JSON_CALLBACK"
 			});
 		};
 
 		// Function to get phases in treatment 
-		edumatAPI.getPhaseInTreatments = function () {
+		educationalMaterialAPI.getPhasesInTreatment = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/educational-material/phase_in_treatments.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/educational-material/get.phases_in_treatment.php?callback=JSON_CALLBACK"
 			});
 		};
 
 		// Function to get parent educational materials
-		edumatAPI.getParentEducationalMaterials = function () {
+		educationalMaterialAPI.getParentEducationalMaterials = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/educational-material/educationalMaterial_parents.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/educational-material/get.educational_material_parents.php?callback=JSON_CALLBACK"
 			});
 		};
 
-		return edumatAPI;
+		return educationalMaterialAPI;
 	})
 
 	// Hospital Map API service
-	.factory('hosmapAPIservice', function ($http) {
+	.factory('hospitalMapCollectionService', function ($http) {
 
-		var hosmapAPI = {};
+		var hospitalMapAPI = {};
 
 		// Function to get the list of hospital maps
-		hosmapAPI.getHospitalMaps = function () {
+		hospitalMapAPI.getHospitalMaps = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/hospital-map/hospital-maps.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/hospital-map/get.hospital_maps.php?callback=JSON_CALLBACK"
 			});
 		};
 
 		// Function to get map details given a serial
-		hosmapAPI.getHospitalMapDetails = function (serial) {
+		hospitalMapAPI.getHospitalMapDetails = function (serial) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/hospital-map/hospitalMap_details.php?callback=JSON_CALLBACK&serial=" + serial
+				url: URLPATH + "api/hospital-map/get.hospital_map_details.php?callback=JSON_CALLBACK&serial=" + serial
 			});
 		};
 
 		// Function to generate qrcode and return image path
-		hosmapAPI.generateQRCode = function (qrid, oldqrid) {
+		hospitalMapAPI.generateQRCode = function (qrid, oldqrid) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/hospital-map/generateQRCode.php?callback=JSON_CALLBACK&qrid=" + qrid + "&oldqrid=" + oldqrid
+				url: URLPATH + "api/hospital-map/generate_QR_code.php?callback=JSON_CALLBACK&qrid=" + qrid + "&oldqrid=" + oldqrid
 			});
 		};
 
-		return hosmapAPI;
+		return hospitalMapAPI;
 	})
 
 	// Notification API service
-	.factory('notifAPIservice', function ($http) {
+	.factory('notificationCollectionService', function ($http) {
 
-		var notifAPI = {};
+		var notificationAPI = {};
 
 		// Function to get the list of notifications
-		notifAPI.getNotifications = function () {
+		notificationAPI.getNotifications = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/notification/notifications.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/notification/get.notifications.php?callback=JSON_CALLBACK"
 			});
 		};
 
 		// Function to get notification details given a serial
-		notifAPI.getNotificationDetails = function (serial) {
+		notificationAPI.getNotificationDetails = function (serial) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/notification/notification_details.php?callback=JSON_CALLBACK&serial=" + serial
+				url: URLPATH + "api/notification/get.notification_details.php?callback=JSON_CALLBACK&serial=" + serial
 			});
 		};
 
 		// Function to get distinct notification types 
-		notifAPI.getNotificationTypes = function () {
+		notificationAPI.getNotificationTypes = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/notification/notification_types.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/notification/get.notification_types.php?callback=JSON_CALLBACK"
 			});
 		};
 
-		return notifAPI;
+		return notificationAPI;
 	})
 
 	// Patient API service
-	.factory('patientAPIservice', function ($http) {
+	.factory('patientCollectionService', function ($http) {
 
 		var patientAPI = {};
 
@@ -201,7 +199,7 @@ angular.module('opalAdmin.collections', [])
 		patientAPI.getPatients = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/patient/patients.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/patient/get.patients.php?callback=JSON_CALLBACK"
 			});
 		};
 
@@ -217,7 +215,7 @@ angular.module('opalAdmin.collections', [])
 		patientAPI.fetchSecurityQuestions = function (lang) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/patient/fetch_security_questions.php?callback=JSON_CALLBACK&lang=" + lang
+				url: URLPATH + "api/patient/get.security_questions.php?callback=JSON_CALLBACK&lang=" + lang
 			});
 		};
 
@@ -225,7 +223,7 @@ angular.module('opalAdmin.collections', [])
 		patientAPI.emailAlreadyInUse = function (email) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/patient/email_taken.php?callback=JSON_CALLBACK&email=" + email
+				url: URLPATH + "api/patient/email_in_use.php?callback=JSON_CALLBACK&email=" + email
 			});
 		};
 
@@ -233,7 +231,7 @@ angular.module('opalAdmin.collections', [])
 		patientAPI.getPatientActivities = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/patient/patient_activity.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/patient/get.patient_activities.php?callback=JSON_CALLBACK"
 			});
 		};
 
@@ -241,15 +239,15 @@ angular.module('opalAdmin.collections', [])
 		patientAPI.getPatientDetails = function (serial) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/patient/patient_details.php?callback=JSON_CALLBACK&serial=" + serial
+				url: URLPATH + "api/patient/get.patient_details.php?callback=JSON_CALLBACK&serial=" + serial
 			});
 		};
 
 		return patientAPI;
 	})
 
-	// Fitler API service
-	.factory('filterAPIservice', function ($http) {
+	// Filter API service
+	.factory('filterCollectionService', function ($http) {
 
 		var filterAPI = {};
 
@@ -257,7 +255,7 @@ angular.module('opalAdmin.collections', [])
 		filterAPI.getFilters = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/filter/filters.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/filter/get.filters.php?callback=JSON_CALLBACK"
 			});
 		};
 
@@ -265,48 +263,48 @@ angular.module('opalAdmin.collections', [])
 	})
 
 	// Test Result API service
-	.factory('testresAPIservice', function ($http) {
+	.factory('testResultCollectionService', function ($http) {
 
-		var testresAPI = {};
+		var testResultAPI = {};
 
 		// Function to get distinct test groups
-		testresAPI.getTestResultGroups = function () {
+		testResultAPI.getTestResultGroups = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/test-result/testResult_groups.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/test-result/get.test_result_groups.php?callback=JSON_CALLBACK"
 			});
 		};
 
 		// Function to get distinct tests
-		testresAPI.getTestNames = function () {
+		testResultAPI.getTestNames = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/test-result/testNames.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/test-result/get.test_names.php?callback=JSON_CALLBACK"
 			});
 		};
 
 		// Function to get existing test results
-		testresAPI.getExistingTestResults = function () {
+		testResultAPI.getExistingTestResults = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/test-result/testResults.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/test-result/get.test_results.php?callback=JSON_CALLBACK"
 			});
 		};
 
 		// Function to get test result details
-		testresAPI.getTestResultDetails = function (serial) {
+		testResultAPI.getTestResultDetails = function (serial) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/test-result/testResult_details.php?callback=JSON_CALLBACK&serial=" + serial
+				url: URLPATH + "api/test-result/get.test_result_details.php?callback=JSON_CALLBACK&serial=" + serial
 			});
 		};
 
-		return testresAPI;
+		return testResultAPI;
 	})
 
 
 	// Cron API service
-	.factory('cronAPIservice', function ($http) {
+	.factory('cronCollectionService', function ($http) {
 
 		var cronAPI = {};
 
@@ -314,7 +312,7 @@ angular.module('opalAdmin.collections', [])
 		cronAPI.getCronDetails = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/cron/cron_details.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/cron/get.cron_details.php?callback=JSON_CALLBACK"
 			});
 		};
 
@@ -322,7 +320,7 @@ angular.module('opalAdmin.collections', [])
 	})
 
 	// user API service
-	.factory('userAPIservice', function ($http) {
+	.factory('userCollectionService', function ($http) {
 
 		var userAPI = {};
 
@@ -330,7 +328,7 @@ angular.module('opalAdmin.collections', [])
 		userAPI.getUserDetails = function (userser) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/user/user_details.php?callback=JSON_CALLBACK&userser=" + userser
+				url: URLPATH + "api/user/get.user_details.php?callback=JSON_CALLBACK&userser=" + userser
 			});
 		};
 
@@ -338,7 +336,7 @@ angular.module('opalAdmin.collections', [])
 		userAPI.getUsers = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/user/users.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/user/get.users.php?callback=JSON_CALLBACK"
 			});
 		};
 
@@ -346,7 +344,7 @@ angular.module('opalAdmin.collections', [])
 		userAPI.usernameAlreadyInUse = function (username) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/user/username_taken.php?callback=JSON_CALLBACK&username=" + username
+				url: URLPATH + "api/user/username_in_use.php?callback=JSON_CALLBACK&username=" + username
 			});
 		};
 
@@ -354,7 +352,7 @@ angular.module('opalAdmin.collections', [])
 		userAPI.getRoles = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/user/roles.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/user/get.roles.php?callback=JSON_CALLBACK"
 			});
 		};
 
@@ -363,7 +361,7 @@ angular.module('opalAdmin.collections', [])
 	})
 
 	// Email API service
-	.factory('emailAPIservice', function ($http) {
+	.factory('emailCollectionService', function ($http) {
 
 		var emailAPI = {};
 
@@ -371,7 +369,7 @@ angular.module('opalAdmin.collections', [])
 		emailAPI.getEmails = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/email/emails.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/email/get.emails.php?callback=JSON_CALLBACK"
 			});
 		};
 
@@ -379,7 +377,7 @@ angular.module('opalAdmin.collections', [])
 		emailAPI.getEmailDetails = function (serial) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/email/email_details.php?callback=JSON_CALLBACK&serial=" + serial
+				url: URLPATH + "api/email/get.email_details.php?callback=JSON_CALLBACK&serial=" + serial
 			});
 		};
 
@@ -387,90 +385,90 @@ angular.module('opalAdmin.collections', [])
 		emailAPI.getEmailTypes = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/email/email_types.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/email/get.email_types.php?callback=JSON_CALLBACK"
 			});
 		};
 
 		return emailAPI;
 	})
 
-	.factory('questionnaireAPIservice', function ($http) {
+	.factory('questionnaireCollectionService', function ($http) {
 		var questionnaireAPI = {};
 
-		questionnaireAPI.getQuestionnaire = function (userid) {
+		questionnaireAPI.getQuestionnaires = function (userid) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/questionnaire/questionnaire.php?callback=JSON_CALLBACK&userid=" + userid
+				url: URLPATH + "api/questionnaire/get.questionnaires.php?callback=JSON_CALLBACK&userid=" + userid
 			});
 		};
 
-		questionnaireAPI.getLibrary = function (userid) {
+		questionnaireAPI.getLibraries = function (userid) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/questionnaire/library.php?callback=JSON_CALLBACK&userid=" + userid
+				url: URLPATH + "api/questionnaire/get.libraries.php?callback=JSON_CALLBACK&userid=" + userid
 			});
 		};
 
-		questionnaireAPI.getTag = function () {
+		questionnaireAPI.getTags = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/questionnaire/tag.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/questionnaire/get.tags.php?callback=JSON_CALLBACK"
 			});
 		};
 
-		questionnaireAPI.getAnswerType = function (userid) {
+		questionnaireAPI.getAnswerTypes = function (userid) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/questionnaire/answerType.php?callback=JSON_CALLBACK&userid=" + userid
+				url: URLPATH + "api/questionnaire/get.answer_types.php?callback=JSON_CALLBACK&userid=" + userid
 			});
 		};
 
-		questionnaireAPI.getCategory = function () {
+		questionnaireAPI.getQuestionGroupCategories = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/questionnaire/category.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/questionnaire/get.question_group_categories.php?callback=JSON_CALLBACK"
 			});
 		};
 
-		questionnaireAPI.getAtCategory = function () {
+		questionnaireAPI.getAnswerTypeCategories = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/questionnaire/atCategory.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/questionnaire/get.answer_type_categories.php?callback=JSON_CALLBACK"
 			});
 		};
 
-		questionnaireAPI.getGroup = function (userid) {
+		questionnaireAPI.getQuestionGroups = function (userid) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/questionnaire/group.php?callback=JSON_CALLBACK&userid=" + userid
+				url: URLPATH + "api/questionnaire/get.question_groups.php?callback=JSON_CALLBACK&userid=" + userid
 			});
 		};
 
 		questionnaireAPI.getQuestions = function () {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/questionnaire/question.php?callback=JSON_CALLBACK"
+				url: URLPATH + "api/questionnaire/get.questions.php?callback=JSON_CALLBACK"
 			});
 		};
 
 		questionnaireAPI.getQuestionDetails = function (questionSerNum) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/questionnaire/questionDetails.php?callback=JSON_CALLBACK&questionSerNum=" + questionSerNum
+				url: URLPATH + "api/questionnaire/get.question_details.php?callback=JSON_CALLBACK&questionSerNum=" + questionSerNum
 			});
 		};
 
-		questionnaireAPI.getGroupsWithQuestions = function (userid) {
+		questionnaireAPI.getQuestionGroupWithLibraries = function (userid) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/questionnaire/groupsWithQuestions.php?callback=JSON_CALLBACK&userid=" + userid
+				url: URLPATH + "api/questionnaire/get.question_group_with_libraries.php?callback=JSON_CALLBACK&userid=" + userid
 			});
 		};
 
 		questionnaireAPI.getQuestionnaireDetails = function (questionnaireSerNum) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/questionnaire/questionnaireDetails.php?callback=JSON_CALLBACK&serNum=" + questionnaireSerNum
+				url: URLPATH + "api/questionnaire/get.questionnaire_details.php?callback=JSON_CALLBACK&serNum=" + questionnaireSerNum
 			});
 		};
 
@@ -479,7 +477,7 @@ angular.module('opalAdmin.collections', [])
 	})
 
 	// install API service
-	.factory('installAPIservice', function ($http) {
+	.factory('installCollectionService', function ($http) {
 
 		var installAPI = {};
 

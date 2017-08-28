@@ -2,37 +2,45 @@
     <div id="top">
       <div class="clearfix">
         <div class="row">
+          <!-- Load side menu -->
           <div class="col-md-2">
             <div ng-include="'templates/side-panel-menu.html'"></div>
           </div>
+          <!-- Right side detail view -->
           <div class="col-md-10 animated fadeIn">
             <div class="row main-title">
+              <!-- Page title --> 
               <div class="col-md-8 title-content">
                 <span class="fa fa-heartbeat"></span>
                 <h1><strong>Test Results</strong></h1>
               </div>
+              <!-- Breadcrumbs -->
               <div class="col-md-4 title-breadcrumbs"> 
                 <span><a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Test Results</strong></span>
               </div>
             </div>
 						<div class="row clearfix" style="margin-bottom: 10px;">
 							<div class="col-md-8">
+                <!-- Add button -->
 								<a style="width:100px;margin-right:20px;" href="" ng-click="goToAddTestResult()" class="btn btn-md btn-outline item-button">
 									<span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
 									<span style="font-size: 20px;"><strong>Add</strong></span>
-								</a>
+                </a>
+                <!-- Save changes button -->
 								<a href="" ng-click="submitPublishFlags()" class="btn btn-md item-button-success animated" ng-if="changesMade" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false">
 									<span style="font-size: 17px;" class="glyphicon glyphicon-ok"></span>
 									<span style="font-size: 20px;"><strong>Save Changes</strong></span>
 								</a>
-							</div>
+              </div>
+              <!-- Search field -->
 							<div class="col-md-4">
 								<div class="form-group has-feedback" style="margin-bottom: 0">
 								<input type="text" class="form-control" ng-model="filterValue" ng-change="filterTestResult(filterValue)" placeholder="Search...">
 									<span class="glyphicon glyphicon-search form-control-feedback"></span>
 								</div>
 							</div>
-						</div>
+            </div>
+            <!-- Load main table -->
             <div class="panel-container" style="text-align:left">
               <div class="panel-info">
                 <div class="panel-input">
@@ -49,6 +57,8 @@
     </div>
   <div class="bannerMessage alert-success">{{bannerMessage}}</div>
   </div>
+
+  <!-- Delete test result modal template -->
   <script type="text/ng-template" id="deleteTestResultModalContent.htm">
       <div class="modal-header">
         <h2 class="modal-title">
@@ -67,7 +77,10 @@
         </div>
       </div>
     </script>
+
+    <!-- Edit test result modal template -->
     <script type="text/ng-template" id="editTestResultModalContent.htm">
+      <!-- Modal title -->
       <div class="modal-header">
         <h2 class="modal-title">
           <span class="glyphicon glyphicon-pencil" style="font-size: 30px;"></span> 
@@ -82,10 +95,12 @@
       </div>
       <div class="modal-body">
         <uib-accordion>
-          <div uib-accordion-group is-open="statusA.open">
+          
+          <!-- SECTION: Test names -->
+          <div uib-accordion-group is-open="statusTestResult.open">
             <uib-accordion-heading>
               <div>
-                <strong>Assigned Tests</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusA.open, 'glyphicon-chevron-right': !statusA.open}"></i>
+                <strong>Assigned Tests</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTestResult.open, 'glyphicon-chevron-right': !statusTestResult.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -111,10 +126,12 @@
               </ul>
             </div>
           </div>
-          <div uib-accordion-group is-open="statusB.open">
+
+          <!-- SECTION: Titles -->
+          <div uib-accordion-group is-open="statusTitle.open">
             <uib-accordion-heading>
               <div>
-                <strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusB.open, 'glyphicon-chevron-right': !statusB.open}"></i>
+                <strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTitle.open, 'glyphicon-chevron-right': !statusTitle.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -137,10 +154,12 @@
               </div>
             </div>
           </div>
-          <div uib-accordion-group is-open="statusC.open">
+
+          <!-- SECTION: Description -->
+          <div uib-accordion-group is-open="statusDescription.open">
             <uib-accordion-heading>
               <div>
-                <strong>Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusC.open, 'glyphicon-chevron-right': !statusC.open}"></i>
+                <strong>Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDescription.open, 'glyphicon-chevron-right': !statusDescription.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -160,10 +179,12 @@
               </div>
             </div>
           </div>
-          <div uib-accordion-group is-open="statusD.open">
+
+          <!-- SECTION: Test group -->
+          <div uib-accordion-group is-open="statusTestGroup.open">
             <uib-accordion-heading>
               <div>
-                <strong>Test Group</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusD.open, 'glyphicon-chevron-right': !statusD.open}"></i>
+                <strong>Test Group</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTestGroup.open, 'glyphicon-chevron-right': !statusTestGroup.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -189,6 +210,8 @@
         </uib-accordion>
       </div>
     </script>
+
+<!-- "Processing" modal template -->
 <script type="text/ng-template" id="processingModal.htm">
   <div class="modal-header">
     <h1> Processing...</h1>

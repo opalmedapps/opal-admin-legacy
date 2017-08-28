@@ -11,7 +11,7 @@ class Post {
      * Updates the post flags in the database
      *
      * @param array $postList : the list of posts
-     * @return array : response
+     * @return array $response : response
      */    
     public function updatePostFlags( $postList ) {
 
@@ -52,9 +52,9 @@ class Post {
      *
      * Gets a list of existing posts
      *
-     * @return array
+     * @return array $postList : the list of existing posts
      */        
-	public function getExistingPosts() {
+	public function getPosts() {
 		$postList = array();
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -148,7 +148,7 @@ class Post {
      * Gets details on a particular post
      *
      * @param integer $postSer : the post serial number
-     * @return array
+     * @return array $postDetails : the post details
      */    			
     public function getPostDetails ($postSer) {
 
@@ -247,6 +247,7 @@ class Post {
      * Inserts a post into the database
      *
      * @param array $postArray : the post details
+	 * @return void
      */    
 	public function insertPost( $postArray ) {
 
@@ -321,12 +322,12 @@ class Post {
 
     /**
      *
-     * Removes a post from the database
+     * Deletes a post from the database
      *
      * @param integer $postSer : the post serial number
      * @return array : response
      */        
-    public function removePost( $postSer ) {
+    public function deletePost( $postSer ) {
 
         $response = array(
             'value'     => 0,
@@ -492,6 +493,15 @@ class Post {
 		}
     }
 
+	/**
+     *
+     * Does a nested search for match
+     *
+     * @param string $id    : the needle id
+     * @param string $type  : the needle type
+     * @param array $array  : the key-value haystack
+     * @return boolean
+     */
     public function nestedSearch($id, $type, $array) {
         if(empty($array) || !$id || !$type){
             return 0;

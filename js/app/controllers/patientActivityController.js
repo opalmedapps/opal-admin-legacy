@@ -1,7 +1,7 @@
 angular.module('opalAdmin.controllers.patientActivityController', ['ngAnimate', 'ui.bootstrap']).
 
 
-	controller('patientActivityController', function ($scope, $uibModal, patientAPIservice) {
+	controller('patientActivityController', function ($scope, $uibModal, patientCollectionService) {
 
 		$scope.bannerMessage = "";
 		// Function to show page banner 
@@ -70,11 +70,12 @@ angular.module('opalAdmin.controllers.patientActivityController', ['ngAnimate', 
 
 		$scope.loading = true;
 		// Call our API to get the list of patient activities
-		patientAPIservice.getPatientActivities().success(function (response) {
+		patientCollectionService.getPatientActivities().then(function (response) {
 			// Assign value
-			$scope.patientActivityList = response;
-		})
-			.finally(function () { $scope.loading = false; });
+			$scope.patientActivityList = response.data;
+		}).catch(function(response) {
+			console.error('Error occurred getting patient activities:', response.status, response.data);
+		}).finally(function () { $scope.loading = false; });
 
 	});
 

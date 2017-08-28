@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 	/******************************************************************************
 	* Add Test Result Page controller 
 	*******************************************************************************/
-	controller('newTestResultController', function ($scope, $filter, $sce, $state, $uibModal, testresAPIservice) {
+	controller('newTestResultController', function ($scope, $filter, $sce, $state, $uibModal, testResultCollectionService) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -93,23 +93,27 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 		};
 
 		// Call our API to get the list of test groups
-		testresAPIservice.getTestResultGroups().success(function (response) {
+		testResultCollectionService.getTestResultGroups().then(function (response) {
 
-			$scope.TestResultGroups_EN = response.EN;
-			$scope.TestResultGroups_FR = response.FR;
+			$scope.TestResultGroups_EN = response.data.EN;
+			$scope.TestResultGroups_FR = response.data.FR;
 
+		}).catch(function(response) {
+			console.error('Error occurred getting test result groups:', response.status, response.data);
 		});
 
 		// Call our API to get the list of tests
-		testresAPIservice.getTestNames().success(function (response) {
+		testResultCollectionService.getTestNames().then(function (response) {
 
-			$scope.testList = response;
+			$scope.testList = response.data;
 
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
 
 			$scope.formLoaded = true;
 			$scope.loadForm();
+		}).catch(function(response) {
+			console.error('Error occurred getting test names:', response.status, response.data);
 		});
 
 		// Function to toggle necessary changes when updating title and description
@@ -232,7 +236,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 				// Submit form
 				$.ajax({
 					type: 'POST',
-					url: 'php/test-result/insert_testResult.php',
+					url: 'php/test-result/insert.test_result.php',
 					data: $scope.newTestResult,
 					success: function () {
 						$state.go('test-result');
