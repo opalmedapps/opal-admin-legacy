@@ -115,7 +115,7 @@ angular.module('opalAdmin', [
 			.state('email-add', { url: '/email/add', templateUrl: "templates/email-add.html", controller: "newEmailController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('install', { url: '/install', templateUrl: "templates/install.html", controller: "installationController", data: { requireLogin: false, installAccess: INSTALL_ACCESS } })
 			.state('questionnaire-menu', { url: '/questionnaire/menu', templateUrl: "templates/questionnaire-main-menu.html", controller: "questionnaireController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
-			.state('questionnaire', { url: '/questionnaire/', templateUrl: "templates/questionnaire.html", controller: "questionnaireController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+			.state('questionnaire', { url: '/questionnaire', templateUrl: "templates/questionnaire.html", controller: "questionnaireController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('questionnaire-add', { url: '/questionnaire/add', templateUrl: "templates/questionnaire-add.html", controller: "newQuestionnaireController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('questionnaire-question', { url: '/questionnaire/question', templateUrl: "templates/questionnaire-question.html", controller: "questionController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
             .state('questionnaire-question-add', { url: '/questionnaire/question/add', templateUrl: "templates/questionnaire-question-add.html", controller: "newQuestionController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
