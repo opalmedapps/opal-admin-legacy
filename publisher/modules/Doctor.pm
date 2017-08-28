@@ -40,7 +40,7 @@ sub new
         _email          => undef,
 	};
 	# bless associates an object with a class so Perl knows which package to search for
-	# when a method is envoked on this object
+	# when a method is invoked on this object
 	bless $doctor, $class;
 	return $doctor;
 }
@@ -360,7 +360,7 @@ sub inOurDatabase
 		return $ExistingDoctor; # this is truthful (ie. doctor exists) return object
 	}
 	
-	else {return $ExistingDoctor;} # this is falseful (ie. doctor DNE) return empty
+	else {return $ExistingDoctor;} # this is false (ie. doctor DNE) return empty
 }
 
 #======================================================================================

@@ -10,7 +10,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 	/******************************************************************************
 	* Add Post Page controller 
 	*******************************************************************************/
-	controller('newPostController', function ($scope, $filter, $state, $sce, $uibModal, aliasAPIservice, filterAPIservice) {
+	controller('newPostController', function ($scope, $filter, $state, $sce, $uibModal, aliasCollectionService, filterCollectionService) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -105,12 +105,12 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 
 
 		// Call our API service to get each filter
-		filterAPIservice.getFilters().success(function (response) {
+		filterCollectionService.getFilters().then(function (response) {
 
-			$scope.termList = response.expressions; // Assign value
-			$scope.dxFilterList = response.dx;
-			$scope.doctorFilterList = response.doctors;
-			$scope.resourceFilterList = response.resources;
+			$scope.termList = response.data.expressions; // Assign value
+			$scope.dxFilterList = response.data.dx;
+			$scope.doctorFilterList = response.data.doctors;
+			$scope.resourceFilterList = response.data.resources;
 
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
@@ -118,6 +118,8 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 			$scope.formLoaded = true;
 			$scope.loadForm();
 
+		}).catch(function(response) {
+			console.error('Error occurred getting filter list:', response.status, response.data);
 		});
 
 		// Function to toggle necessary changes when updating post name
@@ -241,7 +243,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 				// Submit 
 				$.ajax({
 					type: "POST",
-					url: "php/post/insert_post.php",
+					url: "php/post/insert.post.php",
 					data: $scope.newPost,
 					success: function () {
 						$state.go('post');

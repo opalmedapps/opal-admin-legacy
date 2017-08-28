@@ -1,8 +1,10 @@
- <div id="main">
+  <div id="main">
     <div id="top">
       <div class="clearfix">
         <div class="row">
-          <div class="col-md-2" style="position:fixed;">
+          <!-- Left side detail view -->
+          <div class="col-md-2">
+            <!-- Logo -->
             <div ng-controller="sidePanelMenuController">
               <div class="row side-logo">
                 <div class="col-md-12">
@@ -12,116 +14,125 @@
                   <h1 class="animated fadeIn">opal <strong>ADMIN</strong> <span style="font-size: 20px;" ng-if="devMode">DEV</span></h1>
                 </div>
               </div>   
-            </div>  
-            <div class="row">
-              <div class="side-menu-title">
-                <div class="horz-line" style="height: 10px; text-align: center">
-                  <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <h2>Summary</h2>
-                  </span>  
-                </div>  
-              </div>
-            </div>
-            <div class="row">
-              <div class="progress progress-striped active">
-                <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+            </div> 
+            <!-- Summary -->
+            <div class="summary-fix"> 
+              <div class="row">
+                <div class="side-menu-title">
+                  <div class="horz-line" style="height: 16px; text-align: center">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <h2>Summary</h2>
+                    </span>  
+                  </div>  
                 </div>
               </div>
-            </div>
-            <div class="panel-container">
-              <div class="panel-info">
-                <div class="panel-content" style="padding-top: 0">
-                  <table class="summary-box" style="width: 100%">
-                    <col width="7%">
-                    <col width="93%"> 
-
-                    <tr>
-                      <td>
-                        <span ng-hide="installation.requirements" style="color:#d9534f" class="glyphicon glyphicon-remove"></span>
-                        <span ng-show="installation.requirements" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Verify Requirements</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>
-                        <span ng-hide="installation.opal_setup" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="installation.opal_setup" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Opal Database Setup</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>
-                        <span ng-hide="installation.clinical_setup" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="installation.clinical_setup" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Clinical Database Setup</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>
-                        <span ng-hide="installation.config_files" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="installation.config_files" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Set Configurations</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>
-                        <span ng-hide="installation.site_account" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="installation.site_account" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Site Account</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-                  </table>      
-
-                  <div class="table-buttons" style="text-align: center" ng-if="checkInstallationForm()">
-                    <form ng-submit="installSite()" method="post">
-                      <button class="btn btn-success" ng-class="{'disabled': !checkInstallationForm()}" type="submit">Visit New Site</button>
-                    </form>
+              <div class="row">
+                <div class="progress progress-striped active">
+                  <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
                   </div>
                 </div>
               </div>
+              <uib-accordion>
+                <!-- SECTION: Verify requirements -->
+                <div uib-accordion-group is-open="false" class="panel-container summary-box" ng-disabled="!installation.requirements">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="!installation.requirements" style="color:#d9534f" class="glyphicon glyphicon-remove"></span>
+                        <span ng-if="installation.requirements" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Verify Requirements</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+
+                <!-- SECTION: Opal database setup -->
+                <div uib-accordion-group is-open="false" class="panel-container summary-box" ng-disable="!installation.opal_setup">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="!installation.opal_setup" style="color:#d9534f" class="glyphicon glyphicon-remove"></span>
+                        <span ng-if="installation.opal_setup" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Opal Database Setup</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+
+                <!-- SECTION: Clinical Database Setup -->
+                <div uib-accordion-group is-open="false" class="panel-container summary-box" ng-disable="!installation.clinical_setup">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="!installation.clinical_setup" style="color:#d9534f" class="glyphicon glyphicon-remove"></span>
+                        <span ng-if="installation.clinical_setup" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Clinical Database Setup</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+
+                <!-- SECTION: Set configurations -->
+                <div uib-accordion-group is-open="false" class="panel-container summary-box" ng-disable="!installation.config_files">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="!installation.config_files" style="color:#d9534f" class="glyphicon glyphicon-remove"></span>
+                        <span ng-if="installation.config_files" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Set Configurations</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+
+                <!-- SECTION: Site Account -->
+                <div uib-accordion-group is-open="false" class="panel-container summary-box" ng-disable="!installation.site_account">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="!installation.site_account" style="color:#d9534f" class="glyphicon glyphicon-remove"></span>
+                        <span ng-if="installation.site_account" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Site Account</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+              </uib-accordion>
+
+              <!-- Submit button -->
+              <div class="panel-container">
+                <a href="" ng-click="installSite()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkInstallationForm()" style="width: 100%;">
+                  <span style="font-size: 20px;"><strong>Visit New Site</strong></span>
+                </a>
+              </div>
             </div>
           </div>
+          <!-- Right side details view -->
           <div class="col-md-10 animated fadeIn" style="margin-left:17%">
             <div class="row main-title">
+              <!-- Page title -->
               <div class="col-md-6 title-content">
                 <span class="glyphicon glyphicon-list-alt"></span>
                 <h1><strong>Installation</strong></h1>
               </div>
             </div>
+
+            <!-- SECTION: Verify requirements -->
             <div class="row">
               <div class="col-md-10 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
@@ -181,6 +192,7 @@
               </div>
             </div>
 
+            <!-- SECTION: Opal database setup -->
             <div class="row" ng-if="installation.requirements">
               <div class="col-md-10 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
@@ -265,6 +277,7 @@
               </div>   
             </div>
 
+            <!-- SECTION: Clinical database setup -->
             <div class="row" ng-if="installation.opal_setup">
               <div class="col-md-10 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
@@ -297,7 +310,7 @@
                 </div>
               </div>
             </div>
-
+            <!-- ARIA HOST -->
             <div ng-if="sourceDBList[0].selected" class="row"> 
               <div class="col-md-6">
                 <div class="panel" ng-class="clinical_setup.aria.status ? 'panel-success': 'panel-danger'">
@@ -363,7 +376,7 @@
                 </div>
               </div>   
             </div>
-
+            <!-- MEDIVISIT HOST -->
             <div ng-if="sourceDBList[1].selected" class="row"> 
               <div class="col-md-6">
                 <div class="panel" ng-class="clinical_setup.medivisit.status ? 'panel-success': 'panel-danger'">
@@ -429,7 +442,7 @@
                 </div>
               </div>   
             </div>
-
+            <!-- MOSAIQ HOST -->
             <div ng-if="sourceDBList[2].selected" class="row"> 
               <div class="col-md-6">
                 <div class="panel" ng-class="clinical_setup.mosaiq.status ? 'panel-success': 'panel-danger'">
@@ -496,6 +509,7 @@
               </div>   
             </div>
 
+            <!-- SECTION: Set configurations -->
             <div class="row" ng-if="installation.clinical_setup">
               <div class="col-md-10 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
@@ -522,6 +536,7 @@
               </em>
             </div>
 
+            <!-- SECTION: Site account -->
             <div class="row" ng-if="installation.config_files">
               <div class="col-md-10 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
@@ -602,6 +617,7 @@
                 </div>
               </div>          
             </div>
+            <!-- END SECTION -->
 
           </div>
         </div>

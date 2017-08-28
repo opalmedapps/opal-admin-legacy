@@ -491,7 +491,7 @@ Questionnaire::publishQuestionnaires(@patientList);
 
 print "Got Questionnaires\n" if $verbose;
 
-# Once everything is complete, we update the "last transfered" field for all controls
+# Once everything is complete, we update the "last transferred" field for all controls
 # Patient control
 Patient::setPatientLastTransferredIntoOurDB($start_datetime);
 # Alias control

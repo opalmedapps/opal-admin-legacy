@@ -7,7 +7,7 @@
 # variables.
 #
 # There exists various subroutines to set TestResult information, get TestResult information
-# and compare TestResult information between two TestRestul objects. 
+# and compare TestResult information between two TestResult objects. 
 # There exists various subroutines that use the Database.pm module to update the
 # MySQL database and check if a TestResult exists already in this database.
 
@@ -52,7 +52,7 @@ sub new
         _validentry         => undef,
     };
 	# bless associates an object with a class so Perl knows which package to search for
-	# when a method is envoked on this object
+	# when a method is invoked on this object
 	bless $testresult, $class; 
 	return $testresult;
 }
