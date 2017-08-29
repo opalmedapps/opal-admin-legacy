@@ -8,11 +8,11 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-For opalAdmin to work, a Linux-based operating system with MySQL, PHP (> 5.3, < 7), and perl are required. 
+For opalAdmin to work, a Linux-based operating system with a local web server, MySQL, PHP (> 5.3, < 7), and perl are required.
 
 ### Installing
 
-On your Linux server, navigate into a project directory of your choosing within your www-Apache directory (i.e. a directory that is accessible via an internet browser). 
+On your Linux server, navigate into a project directory of your choosing within your www-Apache directory (i.e. the directory that is accessible via an internet browser). 
 
 Clone this project from Gitlab
 
