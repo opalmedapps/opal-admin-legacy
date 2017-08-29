@@ -17,7 +17,7 @@ On your Linux server, navigate into a project directory of your choosing within 
 Clone this project from Gitlab
 
 ```
-git clone https://gitlab.com/akimosupremo/opalAdmin.git
+git clone https://gitlab.com/akimosupremo/opalAdmin-dev.git
 ```
 
 ## Managing Configuration Files
