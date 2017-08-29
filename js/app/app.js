@@ -1,9 +1,9 @@
 /* Angular module */
 /*
- * Constant:  To define all of the available event codes in a central place. If you ever 
- * want to give all editors the same rights as administrators, you can simply change the 
+ * Constant:  To define all of the available event codes in a central place. If you ever
+ * want to give all editors the same rights as administrators, you can simply change the
  * value of editor to ‘admin’.
- * 
+ *
  * Config: To provide location directives when certain links are contained in the url.
  * All pages have a template and a controller module that handles all functions and variables for a given page.
  * If there is an unknown url path, we redirect to the home page.
@@ -115,10 +115,10 @@ angular.module('opalAdmin', [
 			.state('email-add', { url: '/email/add', templateUrl: "templates/email-add.html", controller: "newEmailController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('install', { url: '/install', templateUrl: "templates/install.html", controller: "installationController", data: { requireLogin: false, installAccess: INSTALL_ACCESS } })
 			.state('questionnaire-menu', { url: '/questionnaire/menu', templateUrl: "templates/questionnaire-main-menu.html", controller: "questionnaireController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
-			.state('questionnaire', { url: '/questionnaire', templateUrl: "templates/questionnaire.html", controller: "questionnaireController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+			.state('questionnaire', { url: '/questionnaire/', templateUrl: "templates/questionnaire.html", controller: "questionnaireController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('questionnaire-add', { url: '/questionnaire/add', templateUrl: "templates/questionnaire-add.html", controller: "newQuestionnaireController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('questionnaire-question', { url: '/questionnaire/question', templateUrl: "templates/questionnaire-question.html", controller: "questionController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
-            .state('questionnaire-question-add', { url: '/questionnaire/question/add', templateUrl: "templates/questionnaire-question-add.html", controller: "newQuestionController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+      .state('questionnaire-question-add', { url: '/questionnaire/question/add', templateUrl: "templates/questionnaire-question-add.html", controller: "newQuestionController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('questionnaire-completed', { url: '/questionnaire/completed', templateUrl: "templates/questionnaire-completed.html", controller: "questionnaireController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('protected-route', { url: '/protected', resolve: { auth: function resolveAuthentication(AuthResolver) { return AuthResolver.resolve(); } } });
 	}])
@@ -141,9 +141,9 @@ angular.module('opalAdmin', [
 		$translateProvider.preferredLanguage('en');
 		// Enable escaping of HTML
 		$translateProvider.useSanitizeValueStrategy('escaped');
-	}) 
+	})
 
-	// To broadcast the notAuthenticated / notAuthorized 
+	// To broadcast the notAuthenticated / notAuthorized
 	// event based on the HTTP response status code
 	.factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
 		return {
@@ -172,7 +172,7 @@ angular.module('opalAdmin', [
 					// user is not allowed
 					$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
 				} else {
-					// user is not logged in 
+					// user is not logged in
 					$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
 				}
 			}
