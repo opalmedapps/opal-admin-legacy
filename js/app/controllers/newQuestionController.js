@@ -2,7 +2,7 @@ angular.module('opalAdmin.controllers.newQuestionController', ['ngAnimate', 'ngS
 	controller('newQuestionController', function ($scope, $state, $filter, $uibModal, Session, filterCollectionService, questionnaireCollectionService) {
 		// navigation function
 		$scope.goBack = function () {
-			$state.go('questionnaire-manage');
+			$state.go('questionnaire');
 		};
 
 		$scope.goBack = function () {
@@ -209,7 +209,7 @@ angular.module('opalAdmin.controllers.newQuestionController', ['ngAnimate', 'ngS
 			console.error('Error occurred getting answer type categories:', response.status, response.data);
 		});
 
-		// add new types & write into DB 
+		// add new types & write into DB
 		// Initialize the new answer type object
 		$scope.newAnswerType = {
 			name_EN: "",
@@ -294,7 +294,7 @@ angular.module('opalAdmin.controllers.newQuestionController', ['ngAnimate', 'ngS
 					data: $scope.newLibrary,
 					success: function () {
 						alert('Successfully added the new library. Please find your new library in the dropdown form above.');
-						// update 
+						// update
 						questionnaireCollectionService.getLibraries(userid).then(function (response) {
 							$scope.libFilterList = response.data;
 						}).catch(function(response) {
@@ -364,7 +364,7 @@ angular.module('opalAdmin.controllers.newQuestionController', ['ngAnimate', 'ngS
 					data: $scope.newGroup,
 					success: function () {
 						alert('Successfully added the new group. Please find your new group in the radio button form above.');
-						// update 
+						// update
 						questionnaireCollectionService.getQuestionGroups(userid).then(function (response) {
 							$scope.groupFilterList = response.data;
 						}).catch(function(response) {
