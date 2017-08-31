@@ -198,9 +198,6 @@
                       <option value=1>Optional</option>
                     </select>
 									</td>
-									<td>
-										<input type="checkbox" ng-click="selectGroupToDelete(group)" ng-checked="group.deleted">
-									</td>
 								</tr>
 							</table>
 						</div>
@@ -250,8 +247,6 @@
 						<div class="col-md-8">
 							<div class="panel-container" style="text-align:left;">
 								<div class="panel-info">
-									<button class="btn btn-default" ng-click="selectAll()">Select All</button>
-									<button class="btn btn-default" ng-click="cancelSelection()">Clear Selection</button>
 									<div class="panel-input">
 										<div id="data-table">
 											<div class="gridStyle" ui-grid="gridGroups" ui-grid-resize-columns ui-grid-selection style="height:75vh"></div>

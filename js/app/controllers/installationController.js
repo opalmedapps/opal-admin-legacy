@@ -4,46 +4,46 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 	/******************************************************************************
 	* Controller for the installation process
 	*******************************************************************************/
-	controller('installationController', function($scope, installCollectionService, $state) {
+	controller('installationController', function ($scope, installCollectionService, $state) {
 
 		var pathname = location.pathname;
 		var urlpath = pathname.replace('main.html', '');
 
 		// completed registration steps in object notation
-        var steps = {
-           	requirements: {completed: false},
-            opal_setup: {completed: false},
-            clinical_setup: {completed: false},
-            config_files: {completed: false},
-            site_account: {completed: false}
-        };
+		var steps = {
+			requirements: { completed: false },
+			opal_setup: { completed: false },
+			clinical_setup: { completed: false },
+			config_files: { completed: false },
+			site_account: { completed: false }
+		};
 
-        // Default count of completed steps
-        $scope.numOfCompletedSteps = 0;
+		// Default count of completed steps
+		$scope.numOfCompletedSteps = 0;
 
-        // Default total number of steps 
-        $scope.stepTotal = 5;
+		// Default total number of steps 
+		$scope.stepTotal = 5;
 
-        // Progress bar based on default completed steps and total
-        $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+		// Progress bar based on default completed steps and total
+		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
-        // Function to calculate / return step progress
-        function trackProgress(value, total) {
-            return Math.round(100 * value / total);
-        }
-    
-        // Function to return number of steps completed
-        function stepsCompleted(steps) {
+		// Function to calculate / return step progress
+		function trackProgress(value, total) {
+			return Math.round(100 * value / total);
+		}
 
-            var numberOfTrues = 0;
-            for (var step in steps) {
-                if (steps[step].completed === true) {
-                    numberOfTrues++;
-                }
-            }
+		// Function to return number of steps completed
+		function stepsCompleted(steps) {
 
-            return numberOfTrues;
-        }
+			var numberOfTrues = 0;
+			for (var step in steps) {
+				if (steps[step].completed === true) {
+					numberOfTrues++;
+				}
+			}
+
+			return numberOfTrues;
+		}
 
 		$scope.installation = {
 			requirements: false,
@@ -58,7 +58,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 		installCollectionService.verifyRequirements(urlpath).then(function (response) {
 			// Handle logic here
 			$scope.verifyRequirements = response.data;
-			if ($scope.verifyRequirements.config_file.php && 
+			if ($scope.verifyRequirements.config_file.php &&
 				$scope.verifyRequirements.config_file.js &&
 				$scope.verifyRequirements.config_file.perl) {
 
@@ -69,7 +69,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
 			}
-		}).catch(function(response) {
+		}).catch(function (response) {
 			console.error('Error occurred verifying requirements:', response.status, response.data);
 		});
 
@@ -92,7 +92,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 
 		$scope.testOpalConnection = function () {
 
-			if($scope.checkOpalForm()) {
+			if ($scope.checkOpalForm()) {
 				// Ajax call
 				$.ajax({
 					type: "POST",
@@ -113,30 +113,30 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 						}
 
 						$scope.numOfCompletedSteps = stepsCompleted(steps);
-			            $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+						$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
-			            $scope.$apply();
+						$scope.$apply();
 
 					}
 				});
 
-				
-				
+
+
 			}
 		};
 
 		$scope.sourceDBList = [
-			{serial:1,name:'Aria',selected:false},
-			{serial:2,name:'MediVisit',selected:false},
-			{serial:3,name:'Mosaiq',selected:false}
+			{ serial: 1, name: 'Aria', selected: false },
+			{ serial: 2, name: 'MediVisit', selected: false },
+			{ serial: 3, name: 'Mosaiq', selected: false }
 		];
-				
+
 
 		$scope.clinical_setup = {
 			aria: null,
 			medivisit: null,
 			mosaiq: null
-		};	
+		};
 
 		$scope.clinical_setup.aria = {
 			status: null,
@@ -148,7 +148,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 			message: null
 		};
 
-		$scope.checkAriaForm = function() { 
+		$scope.checkAriaForm = function () {
 			if ($scope.clinical_setup.aria.host && $scope.clinical_setup.aria.username
 				&& $scope.clinical_setup.aria.password && $scope.clinical_setup.aria.port) {
 				return true;
@@ -158,7 +158,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 		};
 
 		$scope.testAriaConnection = function () {
-			
+
 			if ($scope.checkAriaForm()) {
 
 				// Ajax call
@@ -185,9 +185,9 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 						}
 
 						$scope.numOfCompletedSteps = stepsCompleted(steps);
-			            $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+						$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
-			            $scope.$apply();
+						$scope.$apply();
 
 					}
 				});
@@ -206,7 +206,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 		};
 
 		$scope.checkMediVisitForm = function () {
-			if($scope.clinical_setup.medivisit.host && $scope.clinical_setup.medivisit.name
+			if ($scope.clinical_setup.medivisit.host && $scope.clinical_setup.medivisit.name
 				&& $scope.clinical_setup.medivisit.username && $scope.clinical_setup.medivisit.password) {
 				return true;
 			}
@@ -240,13 +240,13 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 						}
 
 						$scope.numOfCompletedSteps = stepsCompleted(steps);
-			            $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+						$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
-			            $scope.$apply();
+						$scope.$apply();
 
 					}
 				});
-				
+
 			}
 		};
 
@@ -261,7 +261,7 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 		};
 
 		$scope.checkMosaiqForm = function () {
-			if($scope.clinical_setup.mosaiq.host && $scope.clinical_setup.mosaiq.username
+			if ($scope.clinical_setup.mosaiq.host && $scope.clinical_setup.mosaiq.username
 				&& $scope.clinical_setup.mosaiq.password) {
 				return true;
 			}
@@ -295,9 +295,9 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 						}
 
 						$scope.numOfCompletedSteps = stepsCompleted(steps);
-			            $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+						$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
-			            $scope.$apply();
+						$scope.$apply();
 
 					}
 				});
@@ -322,10 +322,10 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 		};
 
 		$scope.configurations = {
-			message : null
+			message: null
 		};
 		$scope.submitConfigurations = function () {
-			
+
 			$scope.configs = {
 				opal: $scope.opal_setup,
 				clinical: $scope.clinical_setup,
@@ -352,9 +352,9 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 					}
 
 					$scope.numOfCompletedSteps = stepsCompleted(steps);
-		            $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+					$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
-		            $scope.$apply();
+					$scope.$apply();
 
 				}
 			});
@@ -362,119 +362,119 @@ angular.module('opalAdmin.controllers.installationController', ['ui.bootstrap'])
 		};
 
 		// Initialize admin user object
-        $scope.adminUser = {
-        	username: null,
-        	password: null,
-        	confirmPassword: null,
-        	status: null,
-        	message: null
-        };
-		 
+		$scope.adminUser = {
+			username: null,
+			password: null,
+			confirmPassword: null,
+			status: null,
+			message: null
+		};
+
 		// Function to validate username 
-        $scope.validUsername = {status:null,message:null};
-        $scope.validateUsername = function (username) {
+		$scope.validUsername = { status: null, message: null };
+		$scope.validateUsername = function (username) {
 
-        	if (!username) {
-        		$scope.validUsername.status = null;
-        		return;
-        	}
-        	else {
-        		$scope.validUsername.status = 'valid';
-        	}
+			if (!username) {
+				$scope.validUsername.status = null;
+				return;
+			}
+			else {
+				$scope.validUsername.status = 'valid';
+			}
 
-        };
+		};
 
-        // Function to validate password 
-        $scope.validPassword = {status:null,message:null};
-        $scope.validatePassword = function (password) {
+		// Function to validate password 
+		$scope.validPassword = { status: null, message: null };
+		$scope.validatePassword = function (password) {
 
-            if (!password) {
-                $scope.validPassword.status = null;
-                return;
-            }
+			if (!password) {
+				$scope.validPassword.status = null;
+				return;
+			}
 
-            if (password.length < 6) {
-                $scope.validPassword.status = 'invalid';
-                $scope.validPassword.message = 'Use greater than 6 characters';
-                return;
-            } else {
-                $scope.validPassword.status = 'valid';
-                $scope.validPassword.message = null;
-            }
-        };
+			if (password.length < 6) {
+				$scope.validPassword.status = 'invalid';
+				$scope.validPassword.message = 'Use greater than 6 characters';
+				return;
+			} else {
+				$scope.validPassword.status = 'valid';
+				$scope.validPassword.message = null;
+			}
+		};
 
-        // Function to validate confirm password
-        $scope.validConfirmPassword = {status:null,message:null};
-        $scope.validateConfirmPassword = function (confirmPassword) {
+		// Function to validate confirm password
+		$scope.validConfirmPassword = { status: null, message: null };
+		$scope.validateConfirmPassword = function (confirmPassword) {
 
-            if (!confirmPassword) {
-                $scope.validConfirmPassword.status = null;
-                return;
-            }
+			if (!confirmPassword) {
+				$scope.validConfirmPassword.status = null;
+				return;
+			}
 
-            if ($scope.validPassword.status != 'valid' || $scope.adminUser.password != $scope.adminUser.confirmPassword) {
-                $scope.validConfirmPassword.status = 'invalid';
-                $scope.validConfirmPassword.message = 'Enter same valid password';
-                return;
-            } else {
-                $scope.validConfirmPassword.status = 'valid';
-                $scope.validConfirmPassword.message = null;
-            }
-        };
-			
-        $scope.checkAdminForm = function () {
-        	if($scope.validUsername.status == 'valid' && $scope.validPassword.status == 'valid'
-        		&& $scope.validConfirmPassword.status == 'valid') {
-        		return true;
-        	}
-        	else return false;
-        };
+			if ($scope.validPassword.status != 'valid' || $scope.adminUser.password != $scope.adminUser.confirmPassword) {
+				$scope.validConfirmPassword.status = 'invalid';
+				$scope.validConfirmPassword.message = 'Enter same valid password';
+				return;
+			} else {
+				$scope.validConfirmPassword.status = 'valid';
+				$scope.validConfirmPassword.message = null;
+			}
+		};
 
-        $scope.addAdminUser = function () {
-        	if ($scope.checkAdminForm()) {
+		$scope.checkAdminForm = function () {
+			if ($scope.validUsername.status == 'valid' && $scope.validPassword.status == 'valid'
+				&& $scope.validConfirmPassword.status == 'valid') {
+				return true;
+			}
+			else return false;
+		};
 
-        		// Ajax call
-        		$.ajax({
-        			type: "POST",
-        			url: 'php/install/register_admin.php',
-        			data: $scope.adminUser,
-        			success: function (response) {
-        				response = JSON.parse(response);
+		$scope.addAdminUser = function () {
+			if ($scope.checkAdminForm()) {
+
+				// Ajax call
+				$.ajax({
+					type: "POST",
+					url: 'php/install/register_admin.php',
+					data: $scope.adminUser,
+					success: function (response) {
+						response = JSON.parse(response);
 						if (response.value) {
 							$scope.installation.site_account = true;
-        					steps.site_account.completed = true;
+							steps.site_account.completed = true;
 							$scope.adminUser.message = "Added " + $scope.adminUser.username + "!";
 							$scope.adminUser.status = true;
 
 						}
 						else {
 							$scope.installation.site_account = false;
-        					steps.site_account.completed = false;
+							steps.site_account.completed = false;
 							$scope.adminUser.message = response.error;
 							$scope.adminUser.status = false;
 						}
 
 						$scope.numOfCompletedSteps = stepsCompleted(steps);
-			            $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+						$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
-			            $scope.$apply();
-        			}
-        		});        		
-        	}
-        };
+						$scope.$apply();
+					}
+				});
+			}
+		};
 
-        $scope.checkInstallationForm = function () {
-        	if ($scope.stepProgress == 100)
-        		return true;
-        	else 
-        		return false;
-        };
+		$scope.checkInstallationForm = function () {
+			if ($scope.stepProgress == 100)
+				return true;
+			else
+				return false;
+		};
 
-        $scope.installSite = function () {
-        	if ($scope.checkInstallationForm()) {
-        		$state.go('login');
-        	}
-        };
+		$scope.installSite = function () {
+			if ($scope.checkInstallationForm()) {
+				$state.go('login');
+			}
+		};
 
 
 	});
