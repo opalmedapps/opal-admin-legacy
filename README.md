@@ -20,7 +20,7 @@ Clone this project from Gitlab
 git clone https://gitlab.com/akimosupremo/opalAdmin-dev.git
 ```
 
-## 3rd-Party Libraries
+### 3rd-Party Libraries
 
 Installing 3rd-party libraries require both [NodeJS](https://nodejs.org/en/download/) and [Bower](https://bower.io/#install-bower) to be installed on your server. To install the 3rd-party libraries, navigate to the project directory and execute:
 
