@@ -12,12 +12,26 @@ For opalAdmin to work, a Linux-based operating system with a local web server, M
 
 ### Installing
 
-On your Linux server, navigate into a project directory of your choosing within your www-Apache directory (i.e. the directory that is accessible via an internet browser). 
+On your server, navigate into your web server directory (i.e. the "localhost" directory that is accessible via an internet browser). 
 
 Clone this project from Gitlab
 
 ```
 git clone https://gitlab.com/akimosupremo/opalAdmin-dev.git
+```
+
+### 3rd-Party Libraries
+
+Installing 3rd-party libraries require both [NodeJS](https://nodejs.org/en/download/) and [Bower](https://bower.io/#install-bower) to be installed on your server. To install the 3rd-party libraries, navigate to the project directory and execute:
+
+```
+bower install 
+```
+
+and
+
+```
+npm install
 ```
 
 ## Managing Configuration Files
