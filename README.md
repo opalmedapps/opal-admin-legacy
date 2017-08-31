@@ -12,7 +12,7 @@ For opalAdmin to work, a Linux-based operating system with a local web server, M
 
 ### Installing
 
-On your Linux server, navigate into a project directory of your choosing within your www-Apache directory (i.e. the directory that is accessible via an internet browser). 
+On your server, navigate into your web server directory (i.e. the "localhost" directory that is accessible via an internet browser). 
 
 Clone this project from Gitlab
 
