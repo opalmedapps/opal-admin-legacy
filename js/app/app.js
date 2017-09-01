@@ -176,11 +176,18 @@ angular.module('opalAdmin', [
 					$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
 				}
 			}
-			if (installAccess !== undefined) {
-				if (!installAccess) {
+			if (INSTALL_ACCESS !== undefined && next.name != 'install') {
+				
+				if (INSTALL_ACCESS === true) {
 					event.preventDefault();
+					$state.go('install');
 				}
-
+			}
+			if (INSTALL_ACCESS !== undefined && next.name == 'install') {
+				if (INSTALL_ACCESS === false) {
+					event.preventDefault();
+					$state.go('home');
+				}
 			}
 		});
 	})
