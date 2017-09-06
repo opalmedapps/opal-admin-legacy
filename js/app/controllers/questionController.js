@@ -1,10 +1,10 @@
 angular.module('opalAdmin.controllers.questionController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns'])
 
-	.controller('questionController', function ($scope, $state, $filter, $uibModal, questionnaireAPIservice, filterAPIservice, uiGridConstants, Session) {
+	.controller('questionController', function ($scope, $state, $filter, $uibModal, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
 
 		// Routing to go to add question page
 		$scope.goToAddQuestion = function () {
-			$state.go('question-add');
+			$state.go('questionnaire-question-add');
 		};
 
 		// Table
@@ -74,7 +74,7 @@ angular.module('opalAdmin.controllers.questionController', ['ngAnimate', 'ngSani
 		};
 
 		// Call our API service to get the list of existing questions
-		questionnaireAPIservice.getQuestions().then(function (response) {
+		questionnaireCollectionService.getQuestions().then(function (response) {
 			$scope.questionList = response.data;
 			
 		}).catch(function(response) {
@@ -120,7 +120,7 @@ angular.module('opalAdmin.controllers.questionController', ['ngAnimate', 'ngSani
 			modalInstance.result.then(function () {
 				$scope.questionList = [];
 				// Call our API service to get the list of existing questions
-				questionnaireAPIservice.getQuestions().then(function (response) {
+				questionnaireCollectionService.getQuestions().then(function (response) {
 					$scope.questionList = response.data;
 				}).catch(function(response) {
 					console.error('Error occurred getting question list after modal close:', response.status, response.data);
@@ -218,7 +218,7 @@ angular.module('opalAdmin.controllers.questionController', ['ngAnimate', 'ngSani
 			$scope.showProcessingModal();
 
 			// Call our API service to get the questionnaire details
-			questionnaireAPIservice.getQuestionDetails($scope.currentQuestion.serNum).then(function (response) {
+			questionnaireCollectionService.getQuestionDetails($scope.currentQuestion.serNum).then(function (response) {
 				// Assign value
 				$scope.question = response.data;
 
@@ -229,27 +229,18 @@ angular.module('opalAdmin.controllers.questionController', ['ngAnimate', 'ngSani
 			});
 
 			// Call our API service to get the list of existing answer types 
-			questionnaireAPIservice.getAnswerType(userId).then(function (response) {
+			questionnaireCollectionService.getAnswerTypes(userId).then(function (response) {
 				$scope.atFilterList = response.data;
 			}).catch(function (response){
 				console.error('Error occurred getting answer types:', response.status, response.data);
 			});
 
-			// library with sub-array: categories
-			// questionnaireAPIservice.getLibrary(userId).success(function (response) {
-			// 	$scope.libFilterList = response;
-			// });
-
 			// Call our API service to get the list of existing groups
-			questionnaireAPIservice.getGroup(userId).then(function (response) {
+			questionnaireCollectionService.getQuestionGroups(userId).then(function (response) {
 				$scope.groupFilterList = response.data;
 			}).catch(function (response){
 				console.error('Error occurred getting question groups:', response.status, response.data);
 			});
-
-			// questionnaireAPIservice.getAtCategory().success(function (response) {
-			// 	$scope.atCatList = response;
-			// });
 
 			// Function to check necessary form fields are complete
 			$scope.checkForm = function () {
@@ -280,7 +271,7 @@ angular.module('opalAdmin.controllers.questionController', ['ngAnimate', 'ngSani
 					// Submit form
 					$.ajax({
 						type: "POST",
-						url: "php/questionnaire/updateQuestion.php",
+						url: "php/questionnaire/update.question.php",
 						data: $scope.question,
 						success: function (response) {
 							response = JSON.parse(response);
@@ -320,7 +311,7 @@ angular.module('opalAdmin.controllers.questionController', ['ngAnimate', 'ngSani
 			modalInstance.result.then(function () {
 				$scope.questionList = [];
 				// update data
-				questionnaireAPIservice.getQuestions().then(function (response) {
+				questionnaireCollectionService.getQuestions().then(function (response) {
 					$scope.questionList = response.data;
 				}).catch(function (response){
 					console.error('Error occurred getting question lsit after modal close:', response.status, response.data);
@@ -335,7 +326,7 @@ angular.module('opalAdmin.controllers.questionController', ['ngAnimate', 'ngSani
 			$scope.deleteQuestion = function () {
 				$.ajax({
 					type: "POST",
-					url: "php/questionnaire/deleteQuestion.php",
+					url: "php/questionnaire/delete.question.php",
 					data: $scope.questionToDelete,
 					success: function (response) {
 						response = JSON.parse(response);

@@ -6,7 +6,7 @@
 
 	include_once($abspath . 'php/classes/Install.php');
 
-	// Retrieve FORM params
+	// Construct array from FORM params
 	$configs = array(
 		'opal' 			=> $_POST['opal'],
 		'clinical' 		=> $_POST['clinical'],

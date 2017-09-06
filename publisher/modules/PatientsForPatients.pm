@@ -7,7 +7,7 @@
 # variables.
 #
 # There exists various subroutines to set and get p4p information and compare
-# p4p infomation between two p4p objects.
+# p4p information between two p4p objects.
 
 package PatientsForPatients; # Declaring package name
 
@@ -45,7 +45,7 @@ sub new
     };
 
     # bless associates an object with a class so Perl knows which package to search for
-	# when a method is envoked on this object
+	# when a method is invoked on this object
     bless $patsforpats, $class;
     return $patsforpats;
 }
@@ -141,7 +141,7 @@ sub publishPatientsForPatients
     # Date object of today at 8PM
     my $today_at_eightPM = Time::Piece->strptime($today_date . " 20:00:00", "%Y-%m-%d %H:%M:%S");
 
-    # If we are not within the window to publish patsforpatss then return
+    # If we are not within the window to publish patsforpats then return
     if ( (($now - $today_at_eightAM) < 0) or (($now - $today_at_eightPM) > 0) ) {return;}
 
     my @patsForPatsControls = PostControl::getPostControlsMarkedForPublish('Patients For Patients');

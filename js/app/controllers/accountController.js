@@ -124,7 +124,7 @@ angular.module('opalAdmin.controllers.accountController', ['ui.bootstrap']).
 				// submit form 
 				$.ajax({
 					type: "POST",
-					url: "php/user/update_password.php",
+					url: "php/user/update.password.php",
 					data: $scope.account,
 					success: function (response) {
 						response = JSON.parse(response);

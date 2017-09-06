@@ -2,37 +2,45 @@
     <div id="top">
       <div class="clearfix">
         <div class="row">
+          <!-- Load side menu -->
           <div class="col-md-2">
             <div ng-include="'templates/side-panel-menu.html'"></div>
           </div>
+          <!-- Right side detail view -->
           <div class="col-md-10 animated fadeIn">
             <div class="row main-title">
+              <!-- Page title -->
               <div class="col-md-9 title-content">
                 <span class="glyphicon glyphicon-book"></span>
                 <h1><strong>Educational Material</strong></h1>
               </div>
+              <!-- Breadcrumbs -->
               <div class="col-md-3 title-breadcrumbs"> 
                 <span><a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Edu Material</strong></span>
               </div>
             </div> 
 						<div class="row clearfix" style="margin-bottom: 10px;display:flex; align-items: center">
 							<div class="col-md-8">
+                <!-- Add button -->
 								<a style="width:100px;margin-right:20px;" href="" ng-click="goToAddEducationalMaterial()" class="btn btn-md btn-outline item-button">
 									<span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
 									<span style="font-size: 20px;"><strong>Add</strong></span>
-								</a>
+                </a>
+                <!-- Save changes button -->
 								<a href="" ng-click="submitPublishFlags()" class="btn btn-md item-button-success animated" ng-if="changesMade" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false">
 									<span style="font-size: 17px;" class="glyphicon glyphicon-ok"></span>
 									<span style="font-size: 20px;"><strong>Save Changes</strong></span>
 								</a>
-							</div>
+              </div>
+              <!-- Search field -->
 							<div class="col-md-4">
 								<div class="form-group has-feedback" style="margin-bottom: 0">
 								<input type="text" class="form-control" ng-model="filterValue" ng-change="filterEduMat(filterValue)" placeholder="Search...">
 									<span class="glyphicon glyphicon-search form-control-feedback"></span>
 								</div>
 							</div>
-						</div>
+            </div>
+            <!-- Load main table -->
             <div class="panel-container" style="text-align:left">
               <div class="panel-info">
                 <div class="panel-input">
@@ -49,7 +57,7 @@
   <div class="bannerMessage alert-success">{{bannerMessage}}</div>
   </div>
 
-
+  <!-- Delete education material template -->
   <script type="text/ng-template" id="deleteEduMatModalContent.htm">
       <div class="modal-header">
         <h2 class="modal-title">
@@ -68,7 +76,10 @@
         </div>
       </div>
     </script>
+
+    <!-- Edit educational material template -->
     <script type="text/ng-template" id="editEduMatModalContent.htm">
+      <!-- Modal title -->
       <div class="modal-header">
         <h2 class="modal-title">
           <span class="glyphicon glyphicon-pencil" style="font-size: 30px;"></span> 
@@ -83,10 +94,11 @@
       </div>
       <div class="modal-body">
         <uib-accordion>
-          <div uib-accordion-group is-open="statusA.open">
+          <!-- SECTION: Titles -->
+          <div uib-accordion-group is-open="statusTitle.open">
             <uib-accordion-heading>
               <div>
-                <strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusA.open, 'glyphicon-chevron-right': !statusA.open}"></i>
+                <strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTitle.open, 'glyphicon-chevron-right': !statusTitle.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -109,10 +121,11 @@
               </div>
             </div>
           </div>
-          <div uib-accordion-group is-open="statusB.open" ng-show="!eduMat.tocs.length">
+          <!-- SECTION: Single URL --> 
+          <div uib-accordion-group is-open="statusURL.open" ng-show="!eduMat.tocs.length">
             <uib-accordion-heading>
               <div>
-                <strong>URLs</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusB.open, 'glyphicon-chevron-right': !statusB.open}"></i>
+                <strong>URLs</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusURL.open, 'glyphicon-chevron-right': !statusURL.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -135,10 +148,11 @@
               </div>
             </div>
           </div>
-          <div uib-accordion-group is-open="statusC" ng-hide="eduMat.url_EN || eduMat.url_FR">
+          <!-- SECTION: Table of contents -->
+          <div uib-accordion-group is-open="statusTOC" ng-hide="eduMat.url_EN || eduMat.url_FR">
             <uib-accordion-heading>
               <div>
-                <strong>Table of Contents</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusC, 'glyphicon-chevron-right': !statusC}"></i>
+                <strong>Table of Contents</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTOC, 'glyphicon-chevron-right': !statusTOC}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -181,10 +195,11 @@
               <button class="btn btn-primary" ng-click="addTOC()">Add another TOC</button>
             </div>
           </div>  
-          <div uib-accordion-group is-open="statusH.open">
+          <!-- SECTION: Supporting PDF -->
+          <div uib-accordion-group is-open="statusPDF.open">
             <uib-accordion-heading>
               <div>
-                <strong>Supporting PDF Document</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusH.open, 'glyphicon-chevron-right': !statusH.open}"></i>
+                <strong>Supporting PDF Document</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusPDF.open, 'glyphicon-chevron-right': !statusPDF.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -207,10 +222,11 @@
               </div>
             </div>
           </div>
-          <div uib-accordion-group is-open="statusI.open"> 
+          <!-- SECTION: Demographic filters -->
+          <div uib-accordion-group is-open="statusIemoFilter.open"> 
             <uib-accordion-heading>
               <div>
-                <strong>Filter Demographics</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusD.open, 'glyphicon-chevron-right': !statusD.open}"></i>
+                <strong>Filter Demographics</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDemoFilter.open, 'glyphicon-chevron-right': !statusDemoFilter.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -251,10 +267,11 @@
               </div>
             </div>
           </div>     
-          <div uib-accordion-group is-open="statusD.open">
+          <!-- SECTION: Expression filters -->
+          <div uib-accordion-group is-open="statusExpressionFilter.open">
             <uib-accordion-heading>
               <div>
-                <strong>Filter Terms </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusD.open, 'glyphicon-chevron-right': !statusD.open}"></i>
+                <strong>Filter Terms </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusExpressionFilter.open, 'glyphicon-chevron-right': !statusExpressionFilter.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -288,10 +305,11 @@
               </ul>
             </div>
           </div>
-          <div uib-accordion-group is-open="statusE.open">
+          <!-- SECTION: Diagnosis filters -->
+          <div uib-accordion-group is-open="statusDiagnosisFilter.open">
             <uib-accordion-heading>
               <div>
-                <strong>Filter Diagnoses</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusE.open, 'glyphicon-chevron-right': !statusE.open}"></i>
+                <strong>Filter Diagnoses</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDiagnosisFilter.open, 'glyphicon-chevron-right': !statusDiagnosisFilter.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -325,10 +343,11 @@
               </ul>
             </div>
           </div>
-          <div uib-accordion-group is-open="statusF.open">
+          <!-- SECTION: Doctor filters -->
+          <div uib-accordion-group is-open="statusDoctorFilter.open">
             <uib-accordion-heading>
               <div>
-                <strong>Filter Doctors</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusF.open, 'glyphicon-chevron-right': !statusF.open}"></i>
+                <strong>Filter Doctors</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDoctorFilter.open, 'glyphicon-chevron-right': !statusDoctorFilter.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -362,10 +381,11 @@
               </ul>
             </div>
           </div>
-          <div uib-accordion-group is-open="statusG.open">
+          <!-- SECTION: Resource filters -->
+          <div uib-accordion-group is-open="statusResourceFilter.open">
             <uib-accordion-heading>
               <div>
-                <strong>Filter Resources</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusG.open, 'glyphicon-chevron-right': !statusG.open}"></i>
+                <strong>Filter Resources</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusResourceFilter.open, 'glyphicon-chevron-right': !statusResourceFilter.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -402,6 +422,8 @@
         </uib-accordion>
       </div>
     </script>
+
+<!-- "Processing" modal template -->
 <script type="text/ng-template" id="processingModal.htm">
   <div class="modal-header">
     <h1> Processing...</h1>

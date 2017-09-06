@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 	/******************************************************************************
 	* New Educational Material Page controller 
 	*******************************************************************************/
-	controller('newEduMatController', function ($scope, $filter, $state, $sce, $uibModal, edumatAPIservice, filterAPIservice) {
+	controller('newEduMatController', function ($scope, $filter, $state, $sce, $uibModal, educationalMaterialCollectionService, filterCollectionService) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -133,12 +133,12 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		};
 
 		// Call our API service to get each filter
-		filterAPIservice.getFilters().success(function (response) {
+		filterCollectionService.getFilters().then(function (response) {
 
-			$scope.termList = response.expressions; // Assign value
-			$scope.dxFilterList = response.dx;
-			$scope.doctorFilterList = response.doctors;
-			$scope.resourceFilterList = response.resources;
+			$scope.termList = response.data.expressions; // Assign value
+			$scope.dxFilterList = response.data.dx;
+			$scope.doctorFilterList = response.data.doctors;
+			$scope.resourceFilterList = response.data.resources;
 
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
@@ -146,18 +146,24 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 			$scope.formLoaded = true;
 			$scope.loadForm();
 
+		}).catch(function(response) {
+			console.error('Error occurred getting filter list:', response.status, response.data);
 		});
 
 		// Call our API to get the list of edu material types
-		edumatAPIservice.getEducationalMaterialTypes().success(function (response) {
+		educationalMaterialCollectionService.getEducationalMaterialTypes().then(function (response) {
 
-			$scope.EduMatTypes_EN = response.EN;
-			$scope.EduMatTypes_FR = response.FR;
+			$scope.EduMatTypes_EN = response.data.EN;
+			$scope.EduMatTypes_FR = response.data.FR;
+		}).catch(function(response) {
+			console.error('Error occurred getting educational material types:', response.status, response.data);
 		});
 
 		// Call our API to get the list of phase-in-treatments
-		edumatAPIservice.getPhaseInTreatments().success(function (response) {
-			$scope.phaseInTxs = response;
+		educationalMaterialCollectionService.getPhasesInTreatment().then(function (response) {
+			$scope.phaseInTxs = response.data;
+		}).catch(function(response) {
+			console.error('Error occurred getting phases in treatment:', response.status, response.data);
 		});
 
 		// Function to toggle necessary changes when updating titles
@@ -295,26 +301,13 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 
 			$scope.demo.open = true;
 			
-		}
+		};
 
 		$scope.tocsComplete = false;
 		// Function to toggle necessary changes when updating the table of contents
 		$scope.tocUpdate = function () {
 
 			$scope.tocs.open = true;
-
-			// Toggle boolean
-			if ($scope.newEduMat.tocs.length) {
-				steps.url.completed = true; // Since it will be hidden
-				$scope.url.show = false;
-
-				if ($scope.tocsComplete) {
-					$scope.share_url.show = true;
-					$scope.demo.show = true;
-					$scope.terms.show = true;
-				}
-
-			}
 
 			steps.tocs.completed = true;
 			$scope.tocsComplete = true;
@@ -325,16 +318,28 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 				steps.tocs.completed = false;
 
 				$scope.url.show = true;
-			}
 
-			angular.forEach($scope.newEduMat.tocs, function (toc) {
-				if (!toc.name_EN || !toc.name_FR || !toc.url_EN
-					|| !toc.url_FR || !toc.type_EN || !toc.type_FR) {
-					$scope.tocsComplete = false;
-					steps.tocs.completed = false;
-					steps.url.completed = false;
+			} else {
+
+				steps.url.completed = true; // Since it will be hidden
+				$scope.url.show = false;
+
+				angular.forEach($scope.newEduMat.tocs, function (toc) {
+					if (!toc.name_EN || !toc.name_FR || !toc.url_EN
+						|| !toc.url_FR || !toc.type_EN || !toc.type_FR) {
+						$scope.tocsComplete = false;
+						steps.tocs.completed = false;
+						steps.url.completed = false;
+					}
+				});
+
+				if ($scope.tocsComplete) {
+					$scope.share_url.show = true;
+					$scope.demo.show = true;
+					$scope.terms.show = true;
 				}
-			});
+
+			}
 
 			// Count the number of completed steps
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -390,7 +395,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 				// Submit
 				$.ajax({
 					type: "POST",
-					url: "php/educational-material/insert_educational-material.php",
+					url: "php/educational-material/insert.educational_material.php",
 					data: $scope.newEduMat,
 					success: function () {
 						$state.go('educational-material');

@@ -23,7 +23,7 @@ use ResourceAppointment; # ResourceAppointment.pm
 use Diagnosis; # Diagnosis.pm
 use Appointment; # Our custom appointment module
 use Filter; # Our custom filter module
-use EducationalMaterialControl; # Our custom educatinal material control module
+use EducationalMaterialControl; # Our custom educational material control module
 use PushNotification;
 
 #---------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ sub new
     };
 
     # bless associates an object with a class so Perl knows which package to search for
-	# when a method is envoked on this object
+	# when a method is invoked on this object
     bless $edumat, $class;
     return $edumat;
 }
@@ -339,7 +339,6 @@ sub insertEducationalMaterialIntoOurDB
         )
     ";
         
-    #print "$insert_sql\n";
     # prepare query
 	my $query = $SQLDatabase->prepare($insert_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;

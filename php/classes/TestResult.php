@@ -11,7 +11,7 @@ class TestResult {
      * Updates the publish flag(s) in the database
      *
      * @param array $testResultList : a list of test results
-     * @return array : response
+     * @return array $response : response
      */
     public function updatePublishFlags( $testResultList ) {
         $response = array(
@@ -48,7 +48,7 @@ class TestResult {
      * Gets details on a particular test result
      *
      * @param integer $serial : the serial number of the test result
-     * @return array
+     * @return array $testResultDetails : the test result details
      */
     public function getTestResultDetails ($serial) {
         $testResultDetails = array();
@@ -124,7 +124,7 @@ class TestResult {
      *
      * Gets a list of test result groups
      *
-     * @return array
+     * @return array $groups : the list of existing test groups
      */
     public function getTestResultGroups () {
 
@@ -173,9 +173,9 @@ class TestResult {
 
     /**
      *
-     * Gets a list of test result names from ARIA
+     * Gets a list of test result names from a source database
      *
-     * @return array
+     * @return array $testNames : the list of test names
      */
     public function getTestNames() {
         $testNames = array();
@@ -263,6 +263,7 @@ class TestResult {
      * Inserts a test result into the database
      *
      * @param array $testResultArray : the test result details
+	 * @return void
      */
     public function insertTestResult ($testResultArray) {
 
@@ -336,7 +337,7 @@ class TestResult {
      *
      * Gets a list of existing test results in the database
      *
-     * @return array
+     * @return array $testResultList : the list of existing test results 
      */
     public function getExistingTestResults () {
 
@@ -526,9 +527,9 @@ class TestResult {
      * Removes a test result from the database
      *
      * @param integer $testResultSer : the serial number of the test result
-     * @return array : response
+     * @return array $response : response
      */
-    public function removeTestResult ($testResultSer) {
+    public function deleteTestResult ($testResultSer) {
 
         $response = array(
             'value'     => 0,
