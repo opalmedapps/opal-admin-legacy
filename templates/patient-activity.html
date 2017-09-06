@@ -2,19 +2,24 @@
     <div id="top"> 
       <div class="clearfix">
         <div class="row">
+          <!-- Load side menu -->
           <div class="col-md-2">
             <div ng-include="'templates/side-panel-menu.html'"></div>
           </div>
+          <!-- Right side detail view -->
           <div class="col-md-10 animated fadeIn">
             <div class="row main-title">
+              <!-- Page title -->
               <div class="col-md-8 title-content">
                 <span class="fa fa-hourglass-half"></span>
                 <h1><strong>Patient Activity</strong></h1>
               </div>
+              <!-- Breadcrumbs -->
               <div class="col-md-4 title-breadcrumbs"> 
                 <span><a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Patient Activity</strong></span>
               </div>
             </div>  
+            <!-- Load main table -->
             <div class="panel-container" style="text-align:left">
               <div class="panel-info">
                 <div class="panel-input">
@@ -37,7 +42,7 @@
    <div class="bannerMessage alert-success">{{bannerMessage}}</div>
   </div>
 
-  
+<!-- "Processing" modal template --> 
 <script type="text/ng-template" id="processingModal.htm">
   <div class="modal-header">
     <h1> Processing...</h1>

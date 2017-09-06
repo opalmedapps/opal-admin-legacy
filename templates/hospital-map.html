@@ -2,33 +2,40 @@
     <div id="top">
       <div class="clearfix">
         <div class="row">
+          <!-- Load side menu -->
           <div class="col-md-2">
             <div ng-include="'templates/side-panel-menu.html'"></div>
           </div>
+          <!-- Right side detail view -->
           <div class="col-md-10 animated fadeIn">
             <div class="row main-title">
+              <!-- Page title -->
               <div class="col-md-9 title-content">
                 <span class="fa fa-map"></span>
                 <h1><strong>Hospital Maps</strong></h1>
               </div>
+              <!-- Breadcrumbs -->
               <div class="col-md-3 title-breadcrumbs"> 
                 <span><a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Hospital Maps</strong></span>
               </div>
             </div> 
 						<div class="row clearfix" style="margin-bottom: 10px;display:flex; align-items: center">
+              <!-- Add button -->
 							<div class="col-md-8">
 								<a style="width:100px;margin-right:20px;" href="" ng-click="goToAddHospitalMap()" class="btn btn-md btn-outline item-button">
 									<span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
 									<span style="font-size: 20px;"><strong>Add</strong></span>
 								</a>
-							</div>
+              </div>
+              <!-- Search field -->
 							<div class="col-md-4">
 								<div class="form-group has-feedback" style="margin-bottom: 0">
 								<input type="text" class="form-control" ng-model="filterValue" ng-change="filterHosMap(filterValue)" placeholder="Search...">
 									<span class="glyphicon glyphicon-search form-control-feedback"></span>
 								</div>
 							</div>
-						</div>
+            </div>
+            <!-- Load main table -->
             <div class="panel-container" style="text-align:left">
               <div class="panel-info">
                 <div class="panel-input">
@@ -45,6 +52,8 @@
     </div>
   <div class="bannerMessage alert-success">{{bannerMessage}}</div>
   </div>
+
+  <!-- Delete hospital map modal template -->
   <script type="text/ng-template" id="deleteHosMapModalContent.htm">
       <div class="modal-header">
         <h2 class="modal-title">
@@ -63,7 +72,10 @@
         </div>
       </div>
     </script>
+
+    <!-- Edit hospital map modal template -->
     <script type="text/ng-template" id="editHosMapModalContent.htm">
+      <!-- Modal title -->
       <div class="modal-header">
         <h2 class="modal-title">
           <span class="glyphicon glyphicon-pencil" style="font-size: 30px;"></span> 
@@ -78,10 +90,12 @@
       </div>
       <div class="modal-body">
         <uib-accordion>
-          <div uib-accordion-group is-open="statusA.open">
+          
+          <!-- SECTION: Title -->
+          <div uib-accordion-group is-open="statusTitle.open">
             <uib-accordion-heading>
               <div>
-                <strong>Titles</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusA.open, 'glyphicon-chevron-right': !statusA.open}"></i>
+                <strong>Titles</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTitle.open, 'glyphicon-chevron-right': !statusTitle.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -104,10 +118,12 @@
               </div>
             </div>
           </div>
-          <div uib-accordion-group is-open="statusB.open">
+
+          <!-- SECTION: Description -->
+          <div uib-accordion-group is-open="statusDescription.open">
             <uib-accordion-heading>
               <div>
-                <strong>Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusB.open, 'glyphicon-chevron-right': !statusB.open}"></i>
+                <strong>Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDescription.open, 'glyphicon-chevron-right': !statusDescription.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info" style="word-wrap:break-word">
@@ -128,10 +144,12 @@
               </div>
             </div>
           </div>
-          <div uib-accordion-group is-open="statusC.open">
+
+          <!-- SECTION: QR Code & Map URL -->
+          <div uib-accordion-group is-open="statusQRMap.open">
             <uib-accordion-heading>
               <div>
-                <strong>QR Identifier / Map URL</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusC.open, 'glyphicon-chevron-right': !statusC.open}"></i>
+                <strong>QR Identifier / Map URL</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusQRMap.open, 'glyphicon-chevron-right': !statusQRMap.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info" style="word-wrap:break-word">
@@ -167,6 +185,8 @@
         </uib-accordion>
       </div>
     </script>
+
+<!-- "Processing" modal template -->
 <script type="text/ng-template" id="processingModal.htm">
   <div class="modal-header">
     <h1> Processing...</h1>

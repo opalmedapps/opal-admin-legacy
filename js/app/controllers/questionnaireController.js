@@ -1,22 +1,22 @@
 angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular'])
 
-	.controller('questionnaireController', function ($sce, $scope, $state, $filter, $timeout, $uibModal, questionnaireAPIservice, filterAPIservice, Session, uiGridConstants) {
+	.controller('questionnaireController', function ($sce, $scope, $state, $filter, $timeout, $uibModal, questionnaireCollectionService, filterCollectionService, Session, uiGridConstants) {
 		
 		// get current user id
 		var user = Session.retrieveObject('user');
 		var userId = user.id;
 
 		// navigating functions
-		$scope.goToManage = function () {
-			$state.go('questionnaire-manage');
+		$scope.goToQuestionnaire = function () {
+			$state.go('questionnaire');
 		};
 		$scope.goToAddQuestionnaire = function () {
 			$state.go('questionnaire-add');
 		};
-		$scope.goToQuestionBank = function () {
-			$state.go('questionnaire-bank');
+		$scope.goToQuestionnaireQuestionBank = function () {
+			$state.go('questionnaire-question');
 		};
-		$scope.goToCompleted = function () {
+		$scope.goToQuestionnaireCompleted = function () {
 			$state.go('questionnaire-completed');
 		};
 
@@ -115,7 +115,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 		$scope.questionnaireList = [];
 
 		// Call API to get the list of questionnaires
-		questionnaireAPIservice.getQuestionnaire(userId).then(function (response) {
+		questionnaireCollectionService.getQuestionnaires(userId).then(function (response) {
 			$scope.questionnaireList = response.data;
 		}).catch(function(response) {
 			console.error('Error occurred getting questionnaire list:', response.status, response.data);
@@ -138,7 +138,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 
 			// After delete, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				questionnaireAPIservice.getQuestionnaire(userId).then(function (response) {
+				questionnaireCollectionService.getQuestionnaires(userId).then(function (response) {
 					$scope.questionnaireList = response.data;
 				}).catch(function(response) {
 					console.error('Error occurred getting questionnaire list after modal close:', response.status, response.data);
@@ -152,7 +152,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 			$scope.deleteQuestionnaire = function () {
 				$.ajax({
 					type: "POST",
-					url: "php/questionnaire/deleteQuestionnaire.php",
+					url: "php/questionnaire/delete.questionnaire.php",
 					data: $scope.questionnaireToDelete,
 					success: function (response) {
 						response = JSON.parse(response);
@@ -194,7 +194,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 
 			// After update, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				questionnaireAPIservice.getQuestionnaire(userId).then(function (response) {
+				questionnaireCollectionService.getQuestionnaires(userId).then(function (response) {
 					$scope.questionnaireList = response.data;
 				}).catch(function(response) {
 					console.error('Error occurred getting questionnaire list after modal close:', response.status, response.data);
@@ -416,7 +416,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 			$scope.showProcessingModal();
 
 			// Call our API service to get questionnaire details
-			questionnaireAPIservice.getQuestionnaireDetails($scope.currentQuestionnaire.serNum).then(function (response) {
+			questionnaireCollectionService.getQuestionnaireDetails($scope.currentQuestionnaire.serNum).then(function (response) {
 
 				// Assign value
 				$scope.questionnaire = response.data;
@@ -427,7 +427,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 			}).finally(function () {
 
 				// Call our API service to get the list of possible question groups
-				questionnaireAPIservice.getGroupsWithQuestions(userId).then(function (response) {
+				questionnaireCollectionService.getQuestionGroupWithLibraries(userId).then(function (response) {
 
 					$scope.groupList = response.data; // Assign response data
 
@@ -449,21 +449,25 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 				});
 
 				// Call our API service to get the list of possible tags
-				questionnaireAPIservice.getTag().then(function (response) {
+				questionnaireCollectionService.getTags().then(function (response) {
 					$scope.tagList = checkAdded(response.data); // Assign value and check those that were already added
+				}).catch(function(response) {
+					console.error('Error occurred getting tags:', response.status, response.data);
 				});
 
 				// Assign demographic filters
 				checkDemographicFilters();
 
 				// Call our API service to get each filter
-				filterAPIservice.getFilters().success(function (response) {
+				filterCollectionService.getFilters().then(function (response) {
 
-					$scope.termList = checkAddedFilter(response.expressions); // Assign value
-					$scope.dxFilterList = checkAddedFilter(response.dx);
-					$scope.doctorFilterList = checkAddedFilter(response.doctors);
-					$scope.resourceFilterList = checkAddedFilter(response.resources);
+					$scope.termList = checkAddedFilter(response.data.expressions); // Assign value
+					$scope.dxFilterList = checkAddedFilter(response.data.dx);
+					$scope.doctorFilterList = checkAddedFilter(response.data.doctors);
+					$scope.resourceFilterList = checkAddedFilter(response.data.resources);
 
+				}).catch(function(response) {
+					console.error('Error occurred getting filter list:', response.status, response.data);
 				});
 
 				processingModal.close(); // hide modal
@@ -667,7 +671,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 					// ajax POST
 					$.ajax({
 						type: "POST",
-						url: "php/questionnaire/updateQuestionnaire.php",
+						url: "php/questionnaire/update.questionnaire.php",
 						data: $scope.questionnaire,
 						success: function (response) {
 							response = JSON.parse(response);

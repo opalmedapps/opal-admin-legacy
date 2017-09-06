@@ -363,11 +363,11 @@ sub getQuestionnaireControlsMarkedForPublish
 
     my $info_sql = "
         SELECT DISTINCT
-           Questionnaire.serNum
+           QuestionnaireControlNew.serNum
 		FROM
-			Questionnaire
+			QuestionnaireControlNew
 		WHERE
-			Questionnaire.publish = 1
+			QuestionnaireControlNew.publish = 1
     ";
 
     # prepare query
@@ -388,7 +388,7 @@ sub getQuestionnaireControlsMarkedForPublish
         $questionnaireControl->setQuestionnaireControlSer($ser);
 
         # get all the filters
-        my $filters = Filter::getAllFiltersFromOurDB($ser, 'Questionnaire');
+        my $filters = Filter::getAllFiltersFromOurDB($ser, 'QuestionnaireControl');
 
         $questionnaireControl->setQuestionnaireFilters($filters);
 

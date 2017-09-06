@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
 	/******************************************************************************
 	* Controller for the notification page
 	*******************************************************************************/
-	controller('notificationController', function ($scope, $uibModal, $filter, $state, $sce, notifAPIservice) {
+	controller('notificationController', function ($scope, $uibModal, $filter, $state, $sce, notificationCollectionService) {
 
 		// Function to go to add notification page
 		$scope.goToAddNotification = function () {
@@ -68,8 +68,10 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
 		$scope.notificationToDelete = {};
 
 		// Call our API to get the list of existing notifications
-		notifAPIservice.getNotifications().success(function (response) {
-			$scope.notificationList = response;
+		notificationCollectionService.getNotifications().then(function (response) {
+			$scope.notificationList = response.data;
+		}).catch(function(response) {
+			console.error('Error occurred getting notifications:', response.status, response.data);
 		});
 
 		$scope.bannerMessage = "";
@@ -109,10 +111,12 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
 			// After update, refresh the notification list
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing notifications
-				notifAPIservice.getNotifications().success(function (response) {
+				notificationCollectionService.getNotifications().then(function (response) {
 
 					// Assign the retrieved response
-					$scope.notificationList = response;
+					$scope.notificationList = response.data;
+				}).catch(function(response) {
+					console.error('Error occurred getting notifications:', response.status, response.data);
 				});
 			});
 		};
@@ -138,10 +142,12 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
 			$scope.showProcessingModal();
 
 			// Call our API to get the current notification details
-			notifAPIservice.getNotificationDetails($scope.currentNotification.serial).success(function (response) {
-				$scope.notification = response;
+			notificationCollectionService.getNotificationDetails($scope.currentNotification.serial).then(function (response) {
+				$scope.notification = response.data;
 				processingModal.close(); // hide modal
 				processingModal = null; // remove reference
+			}).catch(function(response) {
+				console.error('Error occurred getting notification details:', response.status, response.data);
 			});
 
 			// Function to check necessary form fields are complete
@@ -165,7 +171,7 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
 					// Submit form
 					$.ajax({
 						type: "POST",
-						url: "php/notification/update_notification.php",
+						url: "php/notification/update.notification.php",
 						data: $scope.notification,
 						success: function (response) {
 							response = JSON.parse(response);
@@ -209,9 +215,11 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
 			// After delete, refresh the map list
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing notifications
-				notifAPIservice.getNotifications().success(function (response) {
+				notificationCollectionService.getNotifications().then(function (response) {
 					// Assign the retrieved response
-					$scope.notificationList = response;
+					$scope.notificationList = response.data;
+				}).catch(function(response) {
+					console.error('Error occurred getting notifications:', response.status, response.data);
 				});
 			});
 		};
@@ -223,7 +231,7 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
 			$scope.deleteNotification = function () {
 				$.ajax({
 					type: "POST",
-					url: "php/notification/delete_notification.php",
+					url: "php/notification/delete.notification.php",
 					data: $scope.notificationToDelete,
 					success: function (response) {
 						response = JSON.parse(response);

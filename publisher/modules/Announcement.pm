@@ -7,7 +7,7 @@
 # variables.
 #
 # There exists various subroutines to set and get announcement information and compare
-# announcement infomation between two announcement objects.
+# announcement information between two announcement objects.
 
 package Announcement; # Declaring package name
 
@@ -45,7 +45,7 @@ sub new
     };
 
     # bless associates an object with a class so Perl knows which package to search for
-	# when a method is envoked on this object
+	# when a method is invoked on this object
     bless $announcement, $class;
     return $announcement;
 }
@@ -146,7 +146,6 @@ sub publishAnnouncements
 
     my @announcementControls = PostControl::getPostControlsMarkedForPublish('Announcement');
 
-    print "After announce controls\n";
     foreach my $Patient (@patientList) {
 
         my $patientSer          = $Patient->getPatientSer(); # get patient serial

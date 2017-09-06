@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 	/******************************************************************************
 	* Controller for user registration
 	*******************************************************************************/
-	controller('newUserController', function ($scope, userAPIservice, $state) {
+	controller('newUserController', function ($scope, userCollectionService, $state) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -59,8 +59,10 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 
 		// Call our API service to get the list of possible roles
 		$scope.roles = [];
-		userAPIservice.getRoles().success(function (response) {
-			$scope.roles = response;
+		userCollectionService.getRoles().then(function (response) {
+			$scope.roles = response.data;
+		}).catch(function(response) {
+			console.error('Error occurred getting roles:', response.status, response.data);
 		});
 
 		// Function to validate username 
@@ -74,13 +76,13 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 			}
 
 			// Make request to check if username already in use
-			userAPIservice.usernameAlreadyInUse(username).success(function (response) {
-				if (response == 'TRUE') {
+			userCollectionService.usernameAlreadyInUse(username).then(function (response) {
+				if (response.data == 'TRUE') {
 					$scope.validUsername.status = 'warning';
 					$scope.validUsername.message = 'Username already in use';
 					$scope.usernameUpdate();
 					return;
-				} else if (response == 'FALSE') {
+				} else if (response.data == 'FALSE') {
 					$scope.validUsername.status = 'valid';
 					$scope.validUsername.message = null;
 					$scope.usernameUpdate();
@@ -90,6 +92,8 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 					$scope.validUsername.message = 'Something went wrong';
 					$scope.usernameUpdate();
 				}
+			}).catch(function(response) {
+				console.error('Error occurred verifying username:', response.status, response.data);
 			});
 
 		};
@@ -194,7 +198,7 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 				// submit form
 				$.ajax({
 					type: "POST",
-					url: 'php/user/register_user.php',
+					url: 'php/user/insert.user.php',
 					data: $scope.newUser,
 					success: function () {
 						$state.go('users');

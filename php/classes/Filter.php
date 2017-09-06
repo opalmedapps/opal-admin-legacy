@@ -10,7 +10,7 @@ class Filter {
      *
      * Gets a list of possible filters 
      *
-     * @return array
+     * @return array $filters : the list of filters separated by type
      */
     public function getFilters () {
         $filters = array(

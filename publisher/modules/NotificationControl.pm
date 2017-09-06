@@ -7,7 +7,7 @@
 # object variables
 #
 # There exists various subroutines to set / get information and compare information
-# between two notificaion objects.
+# between two notification objects.
 
 package NotificationControl; # Declaring package name
 
@@ -33,7 +33,7 @@ sub new
     };
 
     # bless associates an object with a class so Perl knows which package to search for
-	# when a method is envoked on this object
+	# when a method is invoked on this object
     bless $notification, $class;
     return $notification;
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Alias API class
+ *   Alias class
  *
  */
 class Alias {
@@ -12,7 +12,7 @@ class Alias {
      *
      * @param int $sourceDBSer : the serial number of the source database
      * @param string $expressionType : the type of expressions to look out for
-     * @return array
+     * @return array $expressionList : the list of existing expressions
      */
 	public function getExpressions ($sourceDBSer, $expressionType) {
         $expressionList = array();
@@ -158,12 +158,12 @@ class Alias {
 
     /**
      *
-     * Updates AliasUpdate flag in MySQL
+     * Updates Alias publish flags in our database
      *
      * @param array $aliasList : a list of aliases
-     * @return array : response
+     * @return array $response : response
      */
-    public function updateAliasControls( $aliasList ) {
+    public function updateAliasPublishFlags( $aliasList ) {
 
         // Initialize a response array
         $response = array(
@@ -205,9 +205,9 @@ class Alias {
      *
      * Gets a list of existing color tags
      *
-     * @return array
+     * @return array $colorTags : the list of existing color tags
      */
-    public function getExistingColorTags($type) {
+    public function getColorTags($type) {
         $colorTags = array();
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -256,9 +256,9 @@ class Alias {
      *
      * Gets a list of existing aliases
      *
-     * @return array
+     * @return array $aliasList : the list of existing aliases
      */
-	public function getExistingAliases() {
+	public function getAliases() {
 		$aliasList = array();
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -368,7 +368,7 @@ class Alias {
      * Gets details for one particular alias
      *
      * @param integer $ser : the alias serial number
-     * @return array
+     * @return array $aliasDetails : the alias details
      */			
     public function getAliasDetails ($ser) { 
 
@@ -559,9 +559,9 @@ class Alias {
      * Deletes an alias from the database
      *
      * @param integer $aliasSer : the alias serial number
-     * @return array : response
+     * @return array $response : response
      */
-    public function removeAlias( $aliasSer ) {
+    public function deleteAlias( $aliasSer ) {
 
         // Initialize a response array
         $response = array(
@@ -607,7 +607,7 @@ class Alias {
      * Updates an alias in the database
      *
      * @param array $aliasArray : the alias details
-     * @return array : response
+     * @return array $response : response
      */    
     public function updateAlias( $aliasArray ) {
 
@@ -721,7 +721,7 @@ class Alias {
      *
      * Gets a list of source databases 
      *
-     * @return array
+     * @return array $sourceDBList : the list of source databases
      */
 	public function getSourceDatabases () {
         $sourceDBList = array();
@@ -760,10 +760,6 @@ class Alias {
 			return $sourceDBList;
 		}
 	}
-
-
-                    
-                
 
 }
 ?>

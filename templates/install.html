@@ -1,8 +1,10 @@
- <div id="main">
+  <div id="main">
     <div id="top">
       <div class="clearfix">
         <div class="row">
-          <div class="col-md-2" style="position:fixed;">
+          <!-- Left side detail view -->
+          <div class="col-md-2">
+            <!-- Logo -->
             <div ng-controller="sidePanelMenuController">
               <div class="row side-logo">
                 <div class="col-md-12">
@@ -11,125 +13,134 @@
                   </div>
                   <h1 class="animated fadeIn">opal <strong>ADMIN</strong> <span style="font-size: 20px;" ng-if="devMode">DEV</span></h1>
                 </div>
-              </div>   
-            </div>  
-            <div class="row">
-              <div class="side-menu-title">
-                <div class="horz-line" style="height: 10px; text-align: center">
-                  <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <h2>Summary</h2>
-                  </span>  
-                </div>  
               </div>
             </div>
-            <div class="row">
-              <div class="progress progress-striped active">
-                <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
-                </div>
-              </div>
-            </div>
-            <div class="panel-container">
-              <div class="panel-info">
-                <div class="panel-content" style="padding-top: 0">
-                  <table class="summary-box" style="width: 100%">
-                    <col width="7%">
-                    <col width="93%"> 
-
-                    <tr>
-                      <td>
-                        <span ng-hide="installation.requirements" style="color:#d9534f" class="glyphicon glyphicon-remove"></span>
-                        <span ng-show="installation.requirements" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Verify Requirements</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>
-                        <span ng-hide="installation.opal_setup" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="installation.opal_setup" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Opal Database Setup</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>
-                        <span ng-hide="installation.clinical_setup" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="installation.clinical_setup" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Clinical Database Setup</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>
-                        <span ng-hide="installation.config_files" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="installation.config_files" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Set Configurations</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>
-                        <span ng-hide="installation.site_account" class="glyphicon glyphicon-minus"></span>
-                        <span ng-show="installation.site_account" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </td>
-                      <td>
-                        <div class="horz-line" style="line-height: 0px;">
-                          <span class="title" style="background-color: #fff;">
-                            <strong>Site Account</strong>
-                          </span>
-                        </div> 
-                      </td>
-                    </tr>
-                  </table>      
-
-                  <div class="table-buttons" style="text-align: center" ng-if="checkInstallationForm()">
-                    <form ng-submit="installSite()" method="post">
-                      <button class="btn btn-success" ng-class="{'disabled': !checkInstallationForm()}" type="submit">Visit New Site</button>
-                    </form>
+            <!-- Summary -->
+            <div class="summary-fix">
+              <div class="row">
+                <div class="side-menu-title">
+                  <div class="horz-line" style="height: 16px; text-align: center">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <h2>Summary</h2>
+                    </span>
                   </div>
                 </div>
               </div>
+              <div class="row">
+                <div class="progress progress-striped active">
+                  <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                  </div>
+                </div>
+              </div>
+              <uib-accordion>
+                <!-- SECTION: Verify requirements -->
+                <div uib-accordion-group is-open="false" class="panel-container summary-box" ng-disabled="!installation.requirements">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="!installation.requirements" style="color:#d9534f" class="glyphicon glyphicon-remove"></span>
+                        <span ng-if="installation.requirements" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Verify Requirements</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+
+                <!-- SECTION: Opal database setup -->
+                <div uib-accordion-group is-open="false" class="panel-container summary-box" ng-disable="!installation.opal_setup">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="!installation.opal_setup" style="color:#d9534f" class="glyphicon glyphicon-remove"></span>
+                        <span ng-if="installation.opal_setup" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Opal Database Setup</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+
+                <!-- SECTION: Clinical Database Setup -->
+                <div uib-accordion-group is-open="false" class="panel-container summary-box" ng-disable="!installation.clinical_setup">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="!installation.clinical_setup" style="color:#d9534f" class="glyphicon glyphicon-remove"></span>
+                        <span ng-if="installation.clinical_setup" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Clinical Database Setup</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+
+                <!-- SECTION: Set configurations -->
+                <div uib-accordion-group is-open="false" class="panel-container summary-box" ng-disable="!installation.config_files">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="!installation.config_files" style="color:#d9534f" class="glyphicon glyphicon-remove"></span>
+                        <span ng-if="installation.config_files" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Set Configurations</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+
+                <!-- SECTION: Site Account -->
+                <div uib-accordion-group is-open="false" class="panel-container summary-box" ng-disable="!installation.site_account">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="!installation.site_account" style="color:#d9534f" class="glyphicon glyphicon-remove"></span>
+                        <span ng-if="installation.site_account" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Site Account</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+              </uib-accordion>
+
+              <!-- Submit button -->
+              <div class="panel-container">
+                <a href="" ng-click="installSite()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkInstallationForm()" style="width: 100%;">
+                  <span style="font-size: 20px;"><strong>Visit New Site</strong></span>
+                </a>
+              </div>
             </div>
           </div>
+          <!-- Right side details view -->
           <div class="col-md-10 animated fadeIn" style="margin-left:17%">
             <div class="row main-title">
+              <!-- Page title -->
               <div class="col-md-6 title-content">
                 <span class="glyphicon glyphicon-list-alt"></span>
                 <h1><strong>Installation</strong></h1>
               </div>
             </div>
+
+            <!-- SECTION: Verify requirements -->
             <div class="row">
               <div class="col-md-10 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="glyphicon glyphicon-menu-down"></span>
                     <h2>Verify Requirements</h2>
-                  </span>  
-                </div>  
+                  </span>
+                </div>
               </div>
             </div>
             <div class="row">
@@ -177,20 +188,21 @@
                       </div>
                     </div>
                   </li>
-                </ul> 
+                </ul>
               </div>
             </div>
 
+            <!-- SECTION: Opal database setup -->
             <div class="row" ng-if="installation.requirements">
               <div class="col-md-10 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="glyphicon glyphicon-menu-down"></span>
                     <h2>Opal Database Setup</h2>
-                  </span>  
-                </div>  
+                  </span>
+                </div>
               </div>
-            </div>   
+            </div>
             <div class="row" ng-if="installation.requirements">
               <div class="col-md-10">
                 <p style="margin-bottom: 10px;">
@@ -199,7 +211,7 @@
                 </p>
               </div>
             </div>
-            <div class="row" ng-if="installation.requirements"> 
+            <div class="row" ng-if="installation.requirements">
               <div class="col-md-6">
                 <div class="panel" ng-class="installation.opal_setup ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>Opal Database</strong>
@@ -214,7 +226,7 @@
                       <div class="col-md-9">
                         <input class="form-control" type="text" ng-model="opal_setup.host" placeholder="IP Address" required="required">
                       </div>
-                    </div>    
+                    </div>
                     <div class="form-group">
                       <label class="control-label col-md-3">
                         Database Port
@@ -262,19 +274,20 @@
                     </div>
                   </div>
                 </div>
-              </div>   
+              </div>
             </div>
 
+            <!-- SECTION: Clinical database setup -->
             <div class="row" ng-if="installation.opal_setup">
               <div class="col-md-10 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="glyphicon glyphicon-menu-down"></span>
                     <h2>Clinical Database Setup</h2>
-                  </span>  
-                </div>  
+                  </span>
+                </div>
               </div>
-            </div>   
+            </div>
             <div class="row" ng-if="installation.opal_setup">
               <div class="col-md-10">
                 <p style="margin-bottom: 10px;">
@@ -282,10 +295,10 @@
                   Please choose one or more clinical databases to setup.
                 </p>
               </div>
-            </div>  
+            </div>
             <div class="row" ng-if="installation.opal_setup">
               <div class="col-md-12">
-                <div ng-repeat="sourceDB in sourceDBList" class="col-md-1"> 
+                <div ng-repeat="sourceDB in sourceDBList" class="col-md-1">
                   <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: sourceDB.selected}" ng-click="sourceDB.selected = !sourceDB.selected" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
                     <div class="panel-info" ng-class="{active: sourceDB.selected}">
                       <div class="panel-content" style="text-align:center">
@@ -297,8 +310,8 @@
                 </div>
               </div>
             </div>
-
-            <div ng-if="sourceDBList[0].selected" class="row"> 
+            <!-- ARIA HOST -->
+            <div ng-if="sourceDBList[0].selected" class="row">
               <div class="col-md-6">
                 <div class="panel" ng-class="clinical_setup.aria.status ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>ARIA - Credentials</strong>
@@ -313,7 +326,7 @@
                       <div class="col-md-9">
                         <input class="form-control" type="text" ng-model="clinical_setup.aria.host" placeholder="IP Address" required="required">
                       </div>
-                    </div>  
+                    </div>
                     <div class="form-group">
                       <label class="control-label col-md-3">
                         Aria Port
@@ -321,7 +334,7 @@
                       <div class="col-md-9">
                         <input class="form-control" type="number" ng-model="clinical_setup.aria.port" placeholder="Port Number" required="required">
                       </div>
-                    </div>  
+                    </div>
                     <div class="form-group">
                       <label class="control-label col-md-3">
                         Aria Username
@@ -361,10 +374,10 @@
                     </div>
                   </div>
                 </div>
-              </div>   
+              </div>
             </div>
-
-            <div ng-if="sourceDBList[1].selected" class="row"> 
+            <!-- MEDIVISIT HOST -->
+            <div ng-if="sourceDBList[1].selected" class="row">
               <div class="col-md-6">
                 <div class="panel" ng-class="clinical_setup.medivisit.status ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>MediVisit - Credentials</strong>
@@ -379,7 +392,7 @@
                       <div class="col-md-9">
                         <input class="form-control" type="text" ng-model="clinical_setup.medivisit.host" placeholder="IP Address" required="required">
                       </div>
-                    </div>  
+                    </div>
                     <div class="form-group">
                       <label class="control-label col-md-3">
                         MediVisit Port
@@ -387,7 +400,7 @@
                       <div class="col-md-9">
                         <input class="form-control" type="number" ng-model="clinical_setup.medivisit.port" placeholder="Port Number" required="required">
                       </div>
-                    </div>  
+                    </div>
                     <div class="form-group">
                       <label class="control-label col-md-3">
                         MediVisit Name
@@ -395,7 +408,7 @@
                       <div class="col-md-9">
                         <input class="form-control" type="text" ng-model="clinical_setup.medivisit.name" placeholder="Name" required="required">
                       </div>
-                    </div>  
+                    </div>
                     <div class="form-group">
                       <label class="control-label col-md-3">
                         MediVisit Username
@@ -427,10 +440,10 @@
                     </div>
                   </div>
                 </div>
-              </div>   
+              </div>
             </div>
-
-            <div ng-if="sourceDBList[2].selected" class="row"> 
+            <!-- MOSAIQ HOST -->
+            <div ng-if="sourceDBList[2].selected" class="row">
               <div class="col-md-6">
                 <div class="panel" ng-class="clinical_setup.mosaiq.status ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>Mosaiq - Credentials</strong>
@@ -445,7 +458,7 @@
                       <div class="col-md-9">
                         <input class="form-control" type="text" ng-model="clinical_setup.mosaiq.host" placeholder="IP Address" required="required">
                       </div>
-                    </div>  
+                    </div>
                     <div class="form-group">
                       <label class="control-label col-md-3">
                         Mosaiq Port
@@ -453,7 +466,7 @@
                       <div class="col-md-9">
                         <input class="form-control" type="number" ng-model="clinical_setup.mosaiq.port" placeholder="Port Number" required="required">
                       </div>
-                    </div>   
+                    </div>
                     <div class="form-group">
                       <label class="control-label col-md-3">
                         Mosaiq Username
@@ -493,26 +506,27 @@
                     </div>
                   </div>
                 </div>
-              </div>   
+              </div>
             </div>
 
+            <!-- SECTION: Set configurations -->
             <div class="row" ng-if="installation.clinical_setup">
               <div class="col-md-10 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="glyphicon glyphicon-menu-down"></span>
                     <h2>Set Configurations</h2>
-                  </span>  
-                </div>  
+                  </span>
+                </div>
               </div>
-            </div>   
+            </div>
             <div class="row" ng-if="installation.clinical_setup">
               <div class="col-md-6">
                 <p style="margin-bottom: 10px; font-size: 19px;" >
                   At this point, the above credentials will be written to the configuration files. Please make sure the credentials are correct. Incorrect credentials (i.e. failed connections) will not be written. To confirm these configurations, click "Submit Configurations" below.
                 </p>
               </div>
-            </div>  
+            </div>
             <div class="row" style="margin-bottom: 15px;" ng-if="installation.clinical_setup">
               <div class="col-md-2">
                 <button class="btn btn-primary" ng-click="submitConfigurations()">Submit Configurations</button>
@@ -522,16 +536,17 @@
               </em>
             </div>
 
+            <!-- SECTION: Site account -->
             <div class="row" ng-if="installation.config_files">
               <div class="col-md-10 side-menu-title">
                 <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="glyphicon glyphicon-menu-down"></span>
                     <h2>Site Account</h2>
-                  </span>  
-                </div>  
+                  </span>
+                </div>
               </div>
-            </div>   
+            </div>
             <div class="row" ng-if="installation.config_files">
               <div class="col-md-10">
                 <p style="margin-bottom: 10px;">
@@ -541,7 +556,7 @@
               </div>
             </div>
 
-            <div class="row" ng-if="installation.config_files"> 
+            <div class="row" ng-if="installation.config_files">
               <div class="col-md-8">
                 <div class="panel" ng-class="adminUser.status ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>Admin User</strong>
@@ -554,7 +569,7 @@
                         Username
                       </label>
                       <div class="col-md-7">
-                        <input type="text" class="form-control" required="required" ng-blur="validateUsername(adminUser.username)" ng-change="usernameUpdate()" ng-model="adminUser.username">
+                        <input type="text" class="form-control" required="required" ng-blur="validateUsername(adminUser.username)" ng-model="adminUser.username">
                         <span ng-show="validUsername.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validUsername.status == 'valid', 'glyphicon-remove': validUsername.status == 'invalid', 'glyphicon-warning-sign': validUsername.status == 'warning'}" aria-hidden="true"></span>
                       </div>
                       <em class="control-label col-md-3" ng-show="validUsername.status == 'invalid' || validUsername.status == 'warning'" ng-class="{'has-success': validUsername.status == 'valid', 'has-error': validUsername.status == 'invalid', 'has-warning': validUsername.status == 'warning'}" style="text-align:left;">
@@ -566,13 +581,13 @@
                         Password <br><em><small>(min: 6 characters)</small></em>
                       </label>
                       <div class="col-md-7">
-                        <input type="password" class="form-control" required="required" ng-blur="validatePassword(adminUser.password)" ng-change="passwordUpdate()" ng-model="adminUser.password">
+                        <input type="password" class="form-control" required="required" ng-blur="validatePassword(adminUser.password)" ng-model="adminUser.password">
                         <span ng-show="validPassword.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validPassword.status == 'valid', 'glyphicon-remove': validPassword.status == 'invalid', 'glyphicon-warning-sign': validPassword.status == 'warning'}" aria-hidden="true"></span>
                       </div>
                       <em class="control-label col-md-3" ng-show="validPassword.status == 'invalid' || validPassword.status == 'warning'" ng-class="{'has-success': validPassword.status == 'valid', 'has-error': validPassword.status == 'invalid', 'has-warning': validPassword.status == 'warning'}" style="text-align:left">
                         {{validPassword.message}}
                       </em>
-                    </div>    
+                    </div>
                     <div class="form-group has-feedback" ng-class="{'has-success': validConfirmPassword.status == 'valid', 'has-error': validConfirmPassword.status == 'invalid', 'has-warning': validConfirmPassword.status == 'warning'}">
                       <label class="control-label col-md-2">
                         Re-type Password
@@ -600,12 +615,12 @@
                     </div>
                   </div>
                 </div>
-              </div>          
+              </div>
             </div>
+            <!-- END SECTION -->
 
           </div>
         </div>
       </div>
     </div>
   </div>
-
