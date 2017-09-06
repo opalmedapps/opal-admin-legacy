@@ -28,7 +28,7 @@ class Questionnaire{
 					last_updated,
 					created_by
 				FROM
-					Questionnaire
+					QuestionnaireControlNew
 				WHERE
 					private = 0 
 				OR
@@ -67,12 +67,12 @@ class Questionnaire{
                         Filters.FilterType,
                         Filters.FilterId
                     FROM
-                        Questionnaire,
+                        QuestionnaireControlNew que,
                         Filters
                     WHERE   
-                        Questionnaire.serNum     				= $serNum
-                    AND Filters.ControlTable                    = 'Questionnaire'
-                    AND Filters.ControlTableSerNum              = Questionnaire.serNum
+                        que.serNum     							= $serNum
+                    AND Filters.ControlTable                    = 'QuestionnaireControl'
+                    AND Filters.ControlTableSerNum              = que.serNum
                     AND Filters.FilterType                      != ''
                     AND Filters.FilterId                        != ''
                 ";
@@ -158,7 +158,7 @@ class Questionnaire{
 					publish,
 					last_updated_by
 				FROM
-					Questionnaire
+					QuestionnaireControlNew
 				WHERE
 					serNum = $questionnaireSerNum
 			";
@@ -182,7 +182,7 @@ class Questionnaire{
                     Filters.FilterType,
                     Filters.FilterId
                 FROM
-                    Questionnaire que,
+                    QuestionnaireControlNew que,
                     Filters
                 WHERE
                     que.serNum     							= $serNum
@@ -315,7 +315,7 @@ class Questionnaire{
 
 			$sql = "
 				INSERT INTO
-					Questionnaire(
+					QuestionnaireControlNew(
 						name_EN,
 						name_FR,
 						private,
@@ -405,7 +405,7 @@ class Questionnaire{
                                 DateAdded
                             )
                         VALUES (
-                            'Questionnaire',
+                            'QuestionnaireControl',
                             '$questionnaire_id',
                             '$filterType',
                             \"$filterId\",
@@ -444,7 +444,7 @@ class Questionnaire{
                     Filters
                 WHERE
                     Filters.ControlTableSerNum   = $questionnaire_serNum
-                AND Filters.ControlTable         = 'Questionnaire'
+                AND Filters.ControlTable         = 'QuestionnaireControl'
             ";
             $query = $host_db_link->prepare( $sql );
 			$query->execute();
@@ -479,7 +479,7 @@ class Questionnaire{
 			//delete from questionnaire
 			$sql4 = "
 				DELETE FROM
-					Questionnaire
+					QuestionnaireControlNew
 				WHERE
 					serNum = $questionnaire_serNum
 			";
@@ -566,7 +566,7 @@ class Questionnaire{
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			$sql = "
 				UPDATE
-					Questionnaire
+					QuestionnaireControlNew
 				SET
 					publish = 1
 				WHERE
@@ -610,15 +610,15 @@ class Questionnaire{
 
 			$sql = "
 				UPDATE
-					Questionnaire
+					QuestionnaireControlNew
 				SET
-					Questionnaire.name_EN = \"$name_EN\",
-					Questionnaire.name_FR = \"$name_FR\",
-					Questionnaire.private = '$private',
-					Questionnaire.publish = '$publish',
-					Questionnaire.last_updated_by = '$last_updated_by'
+					QuestionnaireControlNew.name_EN 		= \"$name_EN\",
+					QuestionnaireControlNew.name_FR 		= \"$name_FR\",
+					QuestionnaireControlNew.private 		= '$private',
+					QuestionnaireControlNew.publish 		= '$publish',
+					QuestionnaireControlNew.last_updated_by = '$last_updated_by'
 				WHERE
-					Questionnaire.serNum = $serNum
+					QuestionnaireControlNew.serNum = $serNum
 			";
 
 			$query = $host_db_link->prepare( $sql );
@@ -736,7 +736,7 @@ class Questionnaire{
     				Filters
 		    	WHERE 
                     Filters.ControlTableSerNum       = $serNum
-                AND Filters.ControlTable             = 'Questionnaire'
+                AND Filters.ControlTable             = 'QuestionnaireControl'
                 AND Filters.FilterType              != ''
                 AND Filters.FilterId                != ''
 		    ";
@@ -767,7 +767,7 @@ class Questionnaire{
                                 Filters.FilterId            = \"$id\"
                             AND Filters.FilterType          = '$type'
                             AND Filters.ControlTableSerNum   = $serNum
-                            AND Filters.ControlTable         = 'Questionnaire'
+                            AND Filters.ControlTable         = 'QuestionnaireControl'
 		    		    ";  
             
 	    	    		$query = $host_db_link->prepare( $sql );
@@ -793,7 +793,7 @@ class Questionnaire{
                                     DateAdded
                                 )
                             VALUES (
-                                'Questionnaire',
+                                'QuestionnaireControl',
                                 '$serNum',
                                 \"$id\",
                                 '$type',
