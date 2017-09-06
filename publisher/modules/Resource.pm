@@ -34,7 +34,7 @@ sub new
         _type           => undef,
 	};
 	# bless associates an object with a class so Perl knows which package to search for
-	# when a method is envoked on this object
+	# when a method is invoked on this object
 	bless $resource, $class;
 	return $resource;
 }

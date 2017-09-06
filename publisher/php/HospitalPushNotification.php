@@ -1,5 +1,5 @@
 <?php
-    include_once "db.inc.php";
+    include_once "database.inc";
     require_once('PushNotifications.php');
    
    

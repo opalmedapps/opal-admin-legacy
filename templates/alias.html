@@ -2,37 +2,45 @@
     <div id="top">
       <div class="clearfix">
         <div class="row">
+          <!-- Load side menu -->
           <div id="side-panel-scrollbar" class="col-md-2">
             <div ng-include="'templates/side-panel-menu.html'"></div>
           </div>
+          <!-- Right detail panel view -->
           <div class="col-md-10 animated fadeIn">
             <div class="row main-title">
+              <!-- Page title -->
               <div class="col-md-9 title-content">
                 <span class="glyphicon glyphicon-cloud"></span>
                 <h1><strong>Tasks / Appointments / Documents</strong></h1>
               </div>
+              <!-- Breadcrumbs -->
               <div class="col-md-3 title-breadcrumbs"> 
                 <span><a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>TAD</strong></span>
               </div>
             </div> 
 						<div class="row clearfix" style="margin-bottom: 10px; display:flex; align-items: center">
 							<div class="col-md-8">
+                <!-- Add button -->
 								<a style="width:100px;margin-right:20px;" href="" ng-click="goToAddAlias()" class="btn btn-md btn-outline item-button">
 									<span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
 									<span style="font-size: 20px;"><strong>Add</strong></span>
-								</a>
+                </a>
+                <!-- Save changes button -->
 								<a href="" ng-click="submitUpdate()" class="btn btn-md item-button-success animated" ng-if="changesMade" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false">
 									<span style="font-size: 17px;" class="glyphicon glyphicon-ok"></span>
 									<span style="font-size: 20px;"><strong>Save Changes</strong></span>
 								</a>
-							</div>
+              </div>
+              <!-- Search field -->
 							<div class="col-md-4">
 								<div class="form-group has-feedback" style="margin-bottom: 0">
 								<input type="text" class="form-control" ng-model="filterValue" ng-change="filterAlias(filterValue)" placeholder="Search...">
 									<span class="glyphicon glyphicon-search form-control-feedback"></span>
 								</div>
 							</div>
-						</div>   
+            </div>   
+            <!-- Load main table -->
             <div class="panel-container" style="text-align:left;">
               <div class="panel-info">
                 <div class="panel-input">
@@ -48,6 +56,8 @@
     </div>
     <div class="bannerMessage alert-success">{{bannerMessage}}</div>
   </div>
+
+  <!-- Delete alias modal template -->
   <script type="text/ng-template" id="deleteAliasModalContent.htm">
       <div class="modal-header">
         <h2 class="modal-title">
@@ -66,7 +76,10 @@
         </div>
       </div>
     </script>
+
+    <!-- Edit alias modal template -->
     <script type="text/ng-template" id="editAliasModalContent.htm">
+      <!-- Modal title -->
       <div class="modal-header">
         <h2 class="modal-title">
           <span class="glyphicon glyphicon-pencil" style="font-size: 30px;"></span> 
@@ -81,10 +94,11 @@
       </div>
       <div class="modal-body">
         <uib-accordion>
-          <div uib-accordion-group is-open="statusA.open">
+          <!-- SECTION: Title -->
+          <div uib-accordion-group is-open="statusTitle.open">
             <uib-accordion-heading>
               <div>
-                <strong>Titles</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusA.open, 'glyphicon-chevron-right': !statusA.open}"></i>
+                <strong>Titles</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTitle.open, 'glyphicon-chevron-right': !statusTitle.open}"></i>
               </div>
             </uib-accordion-heading>
             <!--<div class="row" style="margin-left:auto;margin-right:auto;">
@@ -127,10 +141,11 @@
               </div>
             </div>
           </div>
-          <div uib-accordion-group is-open="statusB.open">
+          <!-- SECTION: Description -->
+          <div uib-accordion-group is-open="statusDescription.open">
             <uib-accordion-heading>
               <div>
-                <strong>Plain-Text Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusB.open, 'glyphicon-chevron-right': !statusB.open}"></i>
+                <strong>Plain-Text Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDescription.open, 'glyphicon-chevron-right': !statusDescription.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -150,10 +165,11 @@
               </div>
             </div>
           </div>
-          <div uib-accordion-group is-open="statusC.open">
+          <!-- SECTION: Educational material -->
+          <div uib-accordion-group is-open="statusEducationalMaterial.open">
             <uib-accordion-heading>
               <div>
-                <strong>Attached Educational Material</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusC.open, 'glyphicon-chevron-right': !statusC.open}"></i>
+                <strong>Attached Educational Material</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusEducationalMaterial.open, 'glyphicon-chevron-right': !statusEducationalMaterial.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -168,16 +184,17 @@
               <ul class="list-items">
                 <li ng-repeat="eduMat in eduMatList | filter: searchEduMatsFilter">
                   <label>
-                    <input type="radio" ng-model="alias.eduMat" ng-change="eduMatUpdate()" ng-value="eduMat" /> {{eduMat.name_EN}}
+                    <input type="radio" ng-model="alias.eduMat" ng-change="eduMatUpdate()" ng-checked="alias.eduMat.serial == eduMat.serial" ng-value="eduMat" /> {{eduMat.name_EN}}
                   </label>
                 </li>
               </ul>
             </div>
           </div>
-          <div uib-accordion-group is-open="statusD.open">
+          <!-- SECTION: Color tag -->
+          <div uib-accordion-group is-open="statusColorTag.open">
             <uib-accordion-heading>
               <div>
-                <strong>Color Tag</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusD.open, 'glyphicon-chevron-right': !statusD.open}"></i>
+                <strong>Color Tag</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusColorTag.open, 'glyphicon-chevron-right': !statusColorTag.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -194,7 +211,6 @@
                 </div>
               </div>           
             </div>
-
             <div class="row" style="padding-top: 15px; border-top: solid 1px #ddd;">
               <div class="col-md-4">
                 <div class="panel panel-default">
@@ -232,12 +248,12 @@
                 </div>
               </div>   
             </div>      
-            
           </div>
-          <div uib-accordion-group is-open="statusE.open">
+          <!-- SECTION: Assigned expressions -->
+          <div uib-accordion-group is-open="statusExpressions.open">
             <uib-accordion-heading>
               <div>
-                <strong>Assigned Terms</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusE.open, 'glyphicon-chevron-right': !statusE.open}"></i>
+                <strong>Assigned Terms</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusExpressions.open, 'glyphicon-chevron-right': !statusExpressions.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -266,6 +282,7 @@
         </uib-accordion>
       </div>
     </script>
+<!-- "Processing" modal template -->
 <script type="text/ng-template" id="processingModal.htm">
   <div class="modal-header">
     <h1> Processing...</h1>

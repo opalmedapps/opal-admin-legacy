@@ -2,33 +2,40 @@
     <div id="top">
       <div class="clearfix">
         <div class="row">
+          <!-- Load side menu -->
           <div class="col-md-2">
             <div ng-include="'templates/side-panel-menu.html'"></div>
           </div>
+          <!-- Right side detail view -->
           <div class="col-md-10 animated fadeIn">
             <div class="row main-title">
+              <!-- Page title -->
               <div class="col-md-9 title-content">
                 <span class="fa fa-envelope"></span>
                 <h1><strong>Email</strong></h1>
               </div>
+              <!-- Breadcrumbs -->
               <div class="col-md-3 title-breadcrumbs"> 
                 <span><a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Email</strong></span>
               </div>
             </div>  
 						<div class="row clearfix" style="margin-bottom: 10px; display:flex; align-items: center">
 							<div class="col-md-8">
+                <!-- Add button -->
 								<a style="width:100px;margin-right:20px;" href="" ng-click="goToAddEmail()" class="btn btn-md btn-outline item-button">
 									<span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
 									<span style="font-size: 20px;"><strong>Add</strong></span>
 								</a>
-							</div>
+              </div>
+              <!-- Search field -->
 							<div class="col-md-4">
 								<div class="form-group has-feedback" style="margin-bottom: 0">
 								<input type="text" class="form-control" ng-model="filterValue" ng-change="filterEmail(filterValue)" placeholder="Search...">
 									<span class="glyphicon glyphicon-search form-control-feedback"></span>
 								</div>
 							</div>
-						</div>  
+            </div>  
+            <!-- Load main table -->
             <div class="panel-container" style="text-align:left">
               <div class="panel-info">
                 <div class="panel-input">
@@ -45,6 +52,8 @@
     </div>
   <div class="bannerMessage alert-success">{{bannerMessage}}</div>
   </div>
+
+  <!-- Delete email modal template -->
    <script type="text/ng-template" id="deleteEmailModalContent.htm">
       <div class="modal-header">
         <h2 class="modal-title">
@@ -63,7 +72,10 @@
         </div>
       </div>
     </script>
+
+    <!-- Edit email modal template --> 
     <script type="text/ng-template" id="editEmailModalContent.htm">
+      <!-- Modal title -->
       <div class="modal-header">
         <h2 class="modal-title">
           <span class="glyphicon glyphicon-pencil" style="font-size: 30px;"></span> 
@@ -78,10 +90,11 @@
       </div>
       <div class="modal-body">
         <uib-accordion>
-          <div uib-accordion-group is-open="statusA.open">
+          <!-- SECTION: Subject -->
+          <div uib-accordion-group is-open="statusSubject.open">
             <uib-accordion-heading>
               <div>
-                <strong>Subjects</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusA.open, 'glyphicon-chevron-right': !statusA.open}"></i>
+                <strong>Subjects</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusSubject.open, 'glyphicon-chevron-right': !statusSubject.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
@@ -104,10 +117,11 @@
               </div>
             </div>
           </div>
-          <div uib-accordion-group is-open="statusB.open">
+          <!-- SECTION: Message -->
+          <div uib-accordion-group is-open="statusMessage.open">
             <uib-accordion-heading>
               <div>
-                <strong>Messages</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusB.open, 'glyphicon-chevron-right': !statusB.open}"></i>
+                <strong>Messages</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusMessage.open, 'glyphicon-chevron-right': !statusMessage.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="row">
@@ -127,6 +141,8 @@
         </uib-accordion>
       </div>
     </script>
+
+<!-- "Processing" modal template -->
 <script type="text/ng-template" id="processingModal.htm">
   <div class="modal-header">
     <h1> Processing...</h1>
