@@ -36,23 +36,24 @@ npm install
 
 ## Managing Configuration Files
 
-In order for opalAdmin to work, you must create a copy of the existing configuration files. 
-This project consists of a JavaScript, a Perl, and a PHP configuration file located in:
+In order for opalAdmin to work, you must create a copy of the existing default configuration files. 
+This project consists of a JavaScript, a Perl, and a PHP default configuration file located in:
 
 * js/default-config.js
 * php/default-config.php
-* modules/default-Configs.pm
+* publisher/modules/default-Configs.pm
 
-Before manipulating the configuration files, copy each config file as a new file by removing the *default-* prefix. For example:
+To create a copy of these default files, run the executable bash script located in the project's root:
+
 
 ```
-cp php/default-config php/config.php
+bash ./makeconfigs.sh
 ```
-**Note:** Do not simply rename the file
+**NOTE:** opalAdmin **will not work** if copies of the configuration files do not exist.
 
 ## Configuring the opalAdmin installation
 
-Navigate to the URL of your opalAdmin site and run the install page (for example http://yourdomain/main.html#/install, where *yourdomain* is the path of your opalAdmin site). Follow the instructions on the page.
+Navigate to the URL of your opalAdmin site and run the install page (for example http://yourdomain/main.html/#/install, where **_yourdomain_** is the path of your opalAdmin site). Follow the instructions on the page.
 
 ### Step 1 : Setting up the Opal database
 
