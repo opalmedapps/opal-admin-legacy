@@ -43,7 +43,7 @@ sub new
 	};
 
 	# bless associates an object with a class so Perl knows which package to search for
-	# when a method is envoked on this object
+	# when a method is invoked on this object
 	bless $priority, $class; 
 	return $priority;
 }
@@ -534,7 +534,7 @@ sub updateDatabase
 
 
 #======================================================================================
-# Subroutine to compare two priority objects. If different, use setter funtions
+# Subroutine to compare two priority objects. If different, use setter functions
 # to update priority object.
 #======================================================================================
 sub compareWith

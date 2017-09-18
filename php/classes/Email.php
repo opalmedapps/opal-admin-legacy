@@ -12,7 +12,7 @@
 	*
 	* @return array $emailList : list of existing email templates
 	*/
-	public function getExistingEmails() {
+	public function getEmailTemplates() {
 		$emailList = array();
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -251,12 +251,12 @@
 
 	/**
 	*
-	* Removes an email template from the database 
+	* Deletes an email template from the database 
 	*
 	* @param integer $serial : the email control serial number
 	* @return array $response : response
 	*/
-	public function removeEmail ($serial) {
+	public function deleteEmail ($serial) {
 
 		$response = array(
             'value'     => 0,

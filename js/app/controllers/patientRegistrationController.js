@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 	/******************************************************************************
 	* Patient Registration Page controller 
 	*******************************************************************************/
-	controller('patientRegistrationController', function ($scope, $filter, $sce, $state, $uibModal, patientAPIservice, $translate, $rootScope) {
+	controller('patientRegistrationController', function ($scope, $filter, $sce, $state, $uibModal, patientCollectionService, $translate, $rootScope) {
 
 		$scope.ssnHtmlInstruction = $filter('translate')('PATIENT_REGISTRATION_SEARCH_DESCRIPTION');
 
@@ -180,21 +180,21 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 
 			if ($scope.validSearchForm()) {
 				// Call our API service to find patient 
-				patientAPIservice.findPatient($scope.validSSN.SSN, $scope.validPatientId.id).success(function (response) {
+				patientCollectionService.findPatient($scope.validSSN.SSN, $scope.validPatientId.id).then(function (response) {
 
-					if (response.status == 'PatientAlreadyRegistered') {
+					if (response.data.status == 'PatientAlreadyRegistered') {
 						$scope.validSSN.status = 'warning';
 						$scope.validSSN.message = $filter('translate')('STATUS_PATIENT_EXISTS');
 						$scope.validPatientSearch = 'warning';
 					}
-					else if (response.status == 'PatientNotFound') {
+					else if (response.data.status == 'PatientNotFound') {
 						$scope.validSSN.status = 'invalid';
 						$scope.validSSN.message = $filter('translate')('STATUS_PATIENT_NOT_FOUND');
 						$scope.validPatientSearch = 'invalid';
 					}
-					else if (response.status == 'Error') {
+					else if (response.data.status == 'Error') {
 						$scope.validSSN.status = 'invalid';
-						$scope.validSSN.message = $filter('translate')('STATUS_MISC_ERROR') + ": " + response.message;
+						$scope.validSSN.message = $filter('translate')('STATUS_MISC_ERROR') + ": " + response.data.message;
 						$scope.validPatientSearch = 'invalid';
 					}
 					else {
@@ -202,17 +202,21 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 						$scope.validSSN.message = $filter('translate')('STATUS_PATIENT_FOUND');
 						$scope.validPatientSearch = 'valid';
 
-						$scope.newPatient.data = response.data; // Assign data
+						$scope.newPatient.data = response.data.data; // Assign data
 
 						$scope.accordionOpen = false;
 
 						// Call our API service to get security questions 
-						patientAPIservice.fetchSecurityQuestions($rootScope.siteLanguage).success(function (response) {
-							$scope.securityQuestions = response;
+						patientCollectionService.fetchSecurityQuestions($rootScope.siteLanguage).then(function (response) {
+							$scope.securityQuestions = response.data;
+						}).catch(function(response) {
+							console.error('Error occurred fetching security questions:', response.status, response.data);
 						});
 
 					}
 
+				}).catch(function(response) {
+					console.error('Error occurred verifying patient:', response.status, response.data);
 				});
 			}
 
@@ -238,13 +242,13 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 			} else {
 
 				// Make request to check if email already in use
-				patientAPIservice.emailAlreadyInUse(email).success(function (response) {
-					if (response == 'TRUE') {
+				patientCollectionService.emailAlreadyInUse(email).then(function (response) {
+					if (response.data == 'TRUE') {
 						$scope.validEmail.status = 'warning';
 						$scope.validEmail.message = $filter('translate')('STATUS_EMAIL_IN_USE');
 						$scope.emailUpdate();
 						return;
-					} else if (response == 'FALSE') {
+					} else if (response.data == 'FALSE') {
 						$scope.validEmail.status = 'valid';
 						$scope.validEmail.message = null;
 						$scope.emailUpdate();
@@ -255,6 +259,8 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 						$scope.emailUpdate();
 					}
 
+				}).catch(function(response) {
+					console.error('Error occurred verifying email:', response.status, response.data);
 				});
 
 			}
@@ -597,15 +603,15 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 						// on success, register to our database
 						$scope.newPatient.uid = userData.uid;
 						$scope.newPatient.SSN = $scope.validSSN.SSN;
-						$scope.newPatient.password = CryptoJS.SHA256($scope.newPatient.password).toString();
-						$scope.newPatient.securityQuestion1.answer = CryptoJS.SHA256($scope.newPatient.securityQuestion1.answer.toUpperCase()).toString();
-						$scope.newPatient.securityQuestion2.answer = CryptoJS.SHA256($scope.newPatient.securityQuestion2.answer.toUpperCase()).toString();
-						$scope.newPatient.securityQuestion3.answer = CryptoJS.SHA256($scope.newPatient.securityQuestion3.answer.toUpperCase()).toString();
+						$scope.newPatient.password = CryptoJS.SHA512($scope.newPatient.password).toString();
+						$scope.newPatient.securityQuestion1.answer = CryptoJS.SHA512($scope.newPatient.securityQuestion1.answer.toUpperCase()).toString();
+						$scope.newPatient.securityQuestion2.answer = CryptoJS.SHA512($scope.newPatient.securityQuestion2.answer.toUpperCase()).toString();
+						$scope.newPatient.securityQuestion3.answer = CryptoJS.SHA512($scope.newPatient.securityQuestion3.answer.toUpperCase()).toString();
 
 						// submit form
 						$.ajax({
 							type: "POST",
-							url: "php/patient/register_patient.php",
+							url: "php/patient/insert.patient.php",
 							data: $scope.newPatient,
 							success: function () {
 								$state.go('home');

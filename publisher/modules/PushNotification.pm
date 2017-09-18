@@ -7,7 +7,7 @@
 # object variables
 #
 # There exists various subroutines to set / get information and compare information
-# between two push notificaion objects.
+# between two push notification objects.
 
 package PushNotification; # Declaring package name
 
@@ -51,7 +51,7 @@ sub new
     };
 
     # bless associates an object with a class so Perl knows which package to search for
-	# when a method is envoked on this object
+	# when a method is invoked on this object
     bless $pushnotification, $class;
     return $pushnotification;
 }
@@ -196,7 +196,7 @@ sub sendPushNotification
 {
     my ($patientser, $reftablerowser, $notificationtype) = @_; # args
 
-    # retrieve notifcation parameters
+    # retrieve notification parameters
     my $notification        = NotificationControl::getNotificationControlDetails($patientser, $notificationtype);
     my $controlser          = $notification->getNotificationControlSer();
     my $title               = $notification->getNotificationControlName();

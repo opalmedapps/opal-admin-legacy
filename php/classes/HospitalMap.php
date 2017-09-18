@@ -45,6 +45,7 @@ class HospitalMap {
      * Inserts hospital map info
      *
      * @param array $hosMapArray : the hospital map details
+	 * @return void
      */
     public function insertHospitalMap ($hosMapArray) {
 
@@ -94,7 +95,7 @@ class HospitalMap {
      *
      * Gets a list of existing hospital maps
      *
-     * @return array
+     * @return array $hosMapList : the list of existing hospital maps
      */
     public function getHospitalMaps() {
         $hosMapList = array();
@@ -156,7 +157,7 @@ class HospitalMap {
      * Gets details on a particular hospital map
      *
      * @param integer $serial : the hospital map serial number
-     * @return array
+     * @return array $hosMapDetails : the hospital map details
      */
     public function getHospitalMapDetails ($serial) {
 
@@ -218,6 +219,7 @@ class HospitalMap {
      * Updates hospital map's details
      *
      * @param array $hosMapArray : the hospital map details
+	 * @return void
      */
     public function updateHospitalMap ($hosMapArray) {
 
@@ -258,11 +260,12 @@ class HospitalMap {
 
     /**
      *
-     * Removes a hospital map from the database
+     * Deletes a hospital map from the database
      *
      * @param integer $serial : the hospital map serial number
+	 * @return void
      */
-    public function removeHospitalMap ($serial) {
+    public function deleteHospitalMap ($serial) {
         try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );

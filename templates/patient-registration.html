@@ -2,21 +2,37 @@
     <div id="top">
       <div class="clearfix">
         <div class="row">
+          <!-- Left side view -->
           <div class="col-md-2">
+            <!-- Logo -->
             <div ng-controller="sidePanelMenuController">
               <div class="row side-logo" ng-click="goToHome()">
                 <div class="col-md-12">
                   <div class="logo">
                     <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
                   </div>
-                  <h1 class="animated fadeIn">opal <strong>ADMIN</strong> </h1>
+                  <h1 class="animated fadeIn">opal <strong>ADMIN</strong> <span style="font-size: 20px;" ng-if="devMode">DEV</span></h1>
                 </div>
               </div>   
             </div>
+            <!-- Back button -->
+						<div class="row side-panel-menu">
+							<div class="col-md-12">
+								<div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+									<div class="side-panel-info-sm">
+										<div class="panel-content">
+											<span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+											<h6 class="side-panel-title" style="display:inline-block;margin:0;font-size:14px;"><strong>{{ 'GO_BACK' | translate }}</strong></h6>
+										</div>
+									</div>
+								</div>
+							</div>
+            </div>
+            <!-- Summary -->
             <div class="summary-fix">  
               <div ng-if="validPatientSearch == 'valid'" class="row">
                 <div class="side-menu-title">
-                  <div class="horz-line" style="height: 10px; text-align: center">
+                  <div class="horz-line" style="height: 16px; text-align: center">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
                       <h2>{{ 'SUMMARY' | translate }}</h2>
                     </span>  
@@ -31,6 +47,8 @@
               </div>
 
               <uib-accordion ng-if="validPatientSearch == 'valid'">
+
+                <!-- SECTION: Email --> 
                 <div uib-accordion-group is-open="email.open" class="panel-container summary-box animated" ng-class="{fadeInUp: validPatientSearch == 'valid'}" is-disabled="!newPatient.email" ng-if="validPatientSearch == 'valid'">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
@@ -45,6 +63,7 @@
                   </uib-accordion-heading>
                 </div>
 
+                <!-- SECTION: Password -->
                 <div uib-accordion-group is-open="password.open" class="panel-container summary-box animated" ng-class="{fadeInUp: password.show}" ng-if="password.show" is-disabled="!newPatient.password && !newPassword.confirmPassword">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
@@ -59,6 +78,7 @@
                   </uib-accordion-heading>
                 </div>
 
+                <!-- SECTION: Language -->
                 <div uib-accordion-group is-open="language.open" class="panel-container summary-box animated" ng-class="{fadeInUp: language.show}" ng-if="language.show" is-disabled="!newPatient.language">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
@@ -73,6 +93,7 @@
                   </uib-accordion-heading>
                 </div>
 
+                <!-- SECTION: Cellphone --> 
                 <div uib-accordion-group is-open="cellnum.open" class="panel-container summary-box animated" ng-class="{fadeInUp: cellnum.show}" ng-if="cellnum.show" is-disabled="!newPatient.cellNum">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
@@ -87,6 +108,7 @@
                   </uib-accordion-heading>
                 </div>
 
+                <!-- SECTION: Security question 1 -->
                 <div uib-accordion-group is-open="security_question_1.open" class="panel-container summary-box animated" ng-class="{fadeInUp: security_question_1.show}" ng-if="security_question_1.show" is-disabled="!newPatient.securityQuestion1.answer">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
@@ -101,6 +123,7 @@
                   </uib-accordion-heading>
                 </div>
 
+                <!-- SECTION: Security question 2 -->
                 <div uib-accordion-group is-open="security_question_2.open" class="panel-container summary-box animated" ng-class="{fadeInUp: security_question_2.show}" ng-if="security_question_2.show" is-disabled="!newPatient.securityQuestion2.answer">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
@@ -115,6 +138,7 @@
                   </uib-accordion-heading>
                 </div>
 
+                <!-- SECTION: Security question 3 -->
                 <div uib-accordion-group is-open="security_question_3.open" class="panel-container summary-box animated" ng-class="{fadeInUp: security_question_3.show}" ng-if="security_question_3.show" is-disabled="!newPatient.securityQuestion3.answer">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
@@ -129,6 +153,7 @@
                   </uib-accordion-heading>
                 </div>
 
+                <!-- SECTION: Access level -->
                 <div uib-accordion-group is-open="access_level.open" class="panel-container summary-box animated" ng-class="{fadeInUp: access_level.show}" ng-if="access_level.show" is-disabled="!newPatient.accessLevel">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
@@ -143,6 +168,7 @@
                   </uib-accordion-heading>
                 </div>
 
+                <!-- SECTION: Final checks --> 
                 <div uib-accordion-group is-open="final.open" class="panel-container summary-box animated" ng-class="{fadeInUp: final.show}" ng-if="final.show" is-disabled="!idCheck && !consentCheck && !disclaimerCheck && !slaCheck && !opalDocCheck">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
@@ -158,28 +184,25 @@
                 </div>
               </uib-accordion>
 
+              <!-- Register button -->
               <div class="panel-container">
                 <a href="" ng-click="registerPatient()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkRegistrationForm()" style="width: 100%;">
                   <span style="font-size: 20px;"><strong>{{ 'REGISTER' | translate }}</strong></span>
                 </a>
               </div>
 
-              <div class="panel-container animated" ng-class="{pulse: hoverA}" ng-mouseenter="hoverA=true" ng-mouseleave="hoverA=false" style="cursor:pointer;" ng-click="goBack()">
-                <div class="side-panel-info">
-                  <div class="panel-content" style="text-align:center">
-                    <span style="font-size: 23px; padding-right:10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-                    <span style="font-size: 30px; font-weight:700">{{ 'GO_BACK' | translate }}</span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
+
+          <!-- Right side detaul view -->
           <div class="col-md-10 animated fadeIn">
             <div class="row main-title">
+              <!-- Page title -->
               <div class="col-md-8 title-content">
                 <span class="glyphicon glyphicon-list-alt"></span>
                 <h1><strong>{{ 'PATIENT_REGISTRATION_TITLE' | translate }}</strong></h1>
               </div>
+              <!-- Breadcrumbs -->
               <div class="col-md-4 title-breadcrumbs"> 
                 <span>
                   <span><a ui-sref="home">Home</a></span> 
@@ -188,6 +211,8 @@
                 </span>
               </div>
             </div>    
+
+            <!-- SECTION: Patient search -->
             <div class="row">
               <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: px solid rgba(111, 84, 153, 0.8);">
@@ -201,7 +226,6 @@
             <div class="row">
               <div class="col-md-12">
                 <p style="margin-bottom: 10px;"  ng-bind-html="ssnHtmlInstruction">
-                  <!--{{ 'PATIENT_REGISTRATION_SEARCH_DESCRIPTION'| translate }}-->
                 </p>
               </div>
             </div>
@@ -252,10 +276,14 @@
                 </uib-accordion>
               </div>
             </div>
+
             <div ng-if="validPatientSearch == 'valid'">
+              <!-- SECTION: Patient details -->
               <div class="animated" ng-class="{fadeInUp: validPatientSearch == 'valid'}" ng-if="validPatientSearch == 'valid'" style="margin-bottom:20px; color:#3c763d;">
                 <h1><strong>--- Patient: <em>{{newPatient.data.lastname}}, {{newPatient.data.firstname}}</em></strong></h1>
               </div>
+
+              <!-- SECTION: Email & password -->
               <div class="row animated" ng-class="{fadeInUp: validPatientSearch == 'valid'}" ng-if="validPatientSearch == 'valid'">
                 <div class="col-md-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 1px solid #6f5499;">
@@ -323,6 +351,7 @@
                 </div>          
               </div>
 
+              <!-- SECTION: Language -->
               <div class="row animated" ng-class="{fadeInUp: language.show}" ng-if="language.show">
                 <div class="col-md-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 1px solid #6f5499;">
@@ -353,6 +382,7 @@
                 </div>  
               </div>
 
+              <!-- SECTION: Cellphone number -->
               <div class="row animated" ng-class="{fadeInUp: cellnum.show}" ng-if="cellnum.show">
                 <div class="col-md-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 1px solid #6f5499;">
@@ -385,6 +415,7 @@
                 </div>
               </div>
 
+              <!-- SECTION: Security questions -->
               <div class="row animated" ng-class="{faceInUp: security_question_1.show}" ng-if="security_question_1.show">
                 <div class="col-md-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 1px solid #6f5499;">
@@ -502,6 +533,7 @@
                 </div>          
               </div>
 
+              <!-- SECTION: Access level -->
               <div class="row animated" ng-class="{fadeInUp: access_level.show}" ng-if="access_level.show">
                 <div class="col-md-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 1px solid #6f5499;">
@@ -532,6 +564,7 @@
                 </div>  
               </div>
 
+              <!-- SECTION: Final checks -->
 							<div class="row animated" ng-class="{fadeInUp: final.show}" ng-if="final.show">
                 <div class="col-md-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 1px solid #6f5499;">
@@ -608,13 +641,14 @@
                 </div>
 			  			</div>
             </div>
-
+            <!-- END SECTION -->
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Confirm section modal template -->
   <script type="text/ng-template" id="confirmRegistrationModalContent.htm"> 
     <div class="form-box animated" ng-class="{'pulse': !formLoaded}">
       <p class="login-title">
@@ -638,21 +672,18 @@
                 <div class="input-group">
                   <span class="input-group-addon">P</span>
                   <input type="password" class="form-control" required="required" ng-model="credentials.password">    
-
                 </div>
               </div>
             </div>  
             <div class="table-buttons" style="text-align:right">
-              
-                  <input class="btn btn-success" ng-class="{'disabled': !loginFormComplete()}" type="submit" value="Confirm">
-                  <input ng-click="cancel()" class="btn btn-danger" type="button" value="{{ 'CANCEL' | translate }}">
+              <input class="btn btn-success" ng-class="{'disabled': !loginFormComplete()}" type="submit" value="Confirm">
+              <input ng-click="cancel()" class="btn btn-danger" type="button" value="{{ 'CANCEL' | translate }}">
             </div>
           </form>
         </div>
       </div>
     </div>
     <div class="bannerMessage alert-success">{{bannerMessage}}</div>
-
   </script>
 
 

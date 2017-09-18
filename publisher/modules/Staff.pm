@@ -37,7 +37,7 @@ sub new
 		_initials	    => undef,
 	};
 	# bless associates an object with a class so Perl knows which package to search for
-	# when a method is envoked on this object
+	# when a method is invoked on this object
 	bless $staff, $class; 
 	return $staff;
 }
@@ -321,7 +321,7 @@ sub inOurDatabase
 		return $ExistingStaff; # this is truthful (ie. staff exists) return object
 	}
 
-	else {return $ExistingStaff;} # this is falseful (ie. staff DNE) return empty
+	else {return $ExistingStaff;} # this is false (ie. staff DNE) return empty
 }
 
 #======================================================================================

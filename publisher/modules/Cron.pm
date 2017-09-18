@@ -2,7 +2,7 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 17-Nov-2015 ++ File: Cron.pm
 #---------------------------------------------------------------------------------
-# Perl module that handles the backend cron controls (logs)
+# Perl module that handles the cron controls (logs)
 #
 
 package Cron; # Declare package name
@@ -92,7 +92,7 @@ sub setNextCron
     if ($repeatUnits eq "Minutes") {
         $minutes = $nextCron->minute;
         # because cron runs on every multiple of $repeatInterval (starting from 0)
-        # we only need to add the neccesary minutes that result in a multiple of $repeatInterval
+        # we only need to add the necessary minutes that result in a multiple of $repeatInterval
         # for ex: if $repeatInterval = 5 and the cron was set at 2:03;
         # the crontab will execute on every 5 (so, 2:05); so we only need to add
         # 2 minutes to the initial cron set. 

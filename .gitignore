@@ -27,3 +27,9 @@ bower_components
 node_modules/**
 # except firebase-admin
 !node_modules/firebase-admin 
+
+# ignore vscode editor config
+.editorconfig
+
+# ignore idea for PhpStorm
+.idea

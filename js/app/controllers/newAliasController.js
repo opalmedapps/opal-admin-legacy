@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 	/******************************************************************************
 	* Add Alias Page controller 
 	*******************************************************************************/
-	controller('newAliasController', function ($scope, $filter, $uibModal, aliasAPIservice, $state, edumatAPIservice) {
+	controller('newAliasController', function ($scope, $filter, $uibModal, aliasCollectionService, $state, educationalMaterialCollectionService) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -95,13 +95,17 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 		};
 
 		// Call our API service to get the list of educational material
-		edumatAPIservice.getEducationalMaterials().success(function (response) {
-			$scope.eduMatList = response; // Assign value
+		educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+			$scope.eduMatList = response.data; // Assign value
+		}).catch(function(response) {
+			console.error('Error occurred getting educational materials:', response.status, response.data);
 		});
 
 		// Call our API service to get the list of source databases
-		aliasAPIservice.getSourceDatabases().success(function (response) {
-			$scope.sourceDBList = response; // Assign value
+		aliasCollectionService.getSourceDatabases().then(function (response) {
+			$scope.sourceDBList = response.data; // Assign value
+		}).catch(function(response) {
+			console.error('Error occurred getting source database list:', response.status, response.data);
 		});
 
 		// Function to toggle necessary changes when updating the source database buttons
@@ -202,9 +206,9 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 			if ($scope.newAlias.source_db) {
 
 				// Call our API service to get the list of alias expressions
-				aliasAPIservice.getExpressions($scope.newAlias.source_db.serial, $scope.newAlias.type.name).success(function (response) {
+				aliasCollectionService.getExpressions($scope.newAlias.source_db.serial, $scope.newAlias.type.name).then(function (response) {
 
-					$scope.termList = response; // Assign value
+					$scope.termList = response.data; // Assign value
 
 					processingModal.close(); // hide modal
 					processingModal = null; // remove reference
@@ -223,13 +227,17 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 							return 1;
 						else return 0; // no sorting
 					});
+				}).catch(function(response) {
+					console.error('Error occurred getting alias expressions:', response.status, response.data);
 				});
 			}
 
 			// Call our API service to get the list of existing color tags
-			aliasAPIservice.getExistingColorTags($scope.newAlias.type).success(function (response) {
-				$scope.existingColorTags = response; // Assign response
+			aliasCollectionService.getExistingColorTags($scope.newAlias.type).then(function (response) {
+				$scope.existingColorTags = response.data; // Assign response
 
+			}).catch(function(response) {
+				console.error('Error occurred getting color tags:', response.status, response.data);
 			});
 
 			// Count the number of completed steps
@@ -316,7 +324,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/alias/insert_alias.php",
+					url: "php/alias/insert.alias.php",
 					data: $scope.newAlias,
 					success: function () {
 						$state.go('alias');
