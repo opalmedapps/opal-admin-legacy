@@ -6,7 +6,7 @@
 
 	include_once($abspath . 'php/classes/Install.php');
 
-	// Retrieve FORM params
+	// Construct array from FORM params
 	$mediVisitCreds = array(
 		'host' 			=> $_POST['host'],
 		'name' 			=> $_POST['name'],

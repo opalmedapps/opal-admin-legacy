@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 	/******************************************************************************
 	* Controller for the Add Notification page
 	*******************************************************************************/
-	controller('newNotificationController', function ($scope, $uibModal, $state, $filter, $sce, notifAPIservice) {
+	controller('newNotificationController', function ($scope, $uibModal, $state, $filter, $sce, notificationCollectionService) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -60,8 +60,10 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 
 		// Call our API to get the list of notification types
 		$scope.notificationTypes = [];
-		notifAPIservice.getNotificationTypes().success(function (response) {
-			$scope.notificationTypes = response;
+		notificationCollectionService.getNotificationTypes().then(function (response) {
+			$scope.notificationTypes = response.data;
+		}).catch(function(response) {
+			console.error('Error occurred getting notification types:', response.status, response.data);
 		});
 
 		// Function to toggle necessary changes when updating titles
@@ -126,7 +128,7 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 				// Submit
 				$.ajax({
 					type: "POST",
-					url: "php/notification/insert_notification.php",
+					url: "php/notification/insert.notification.php",
 					data: $scope.newNotification,
 					success: function () {
 						$state.go('notification');

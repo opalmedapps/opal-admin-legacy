@@ -10,7 +10,7 @@ angular.module('opalAdmin.controllers.newEmailController', ['ngAnimate', 'ngSani
 	/******************************************************************************
 	* Add Email Template Page controller 
 	*******************************************************************************/
-	controller('newEmailController', function ($scope, $filter, $state, $sce, $uibModal, emailAPIservice) {
+	controller('newEmailController', function ($scope, $filter, $state, $sce, $uibModal, emailCollectionService) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -67,8 +67,10 @@ angular.module('opalAdmin.controllers.newEmailController', ['ngAnimate', 'ngSani
 
 		// Call our API to get the list of email types 
 		$scope.emailTypes = [];
-		emailAPIservice.getEmailTypes().success(function (response) {
-			$scope.emailTypes = response;
+		emailCollectionService.getEmailTypes().then(function (response) {
+			$scope.emailTypes = response.data;
+		}).catch(function(response) {
+			console.error('Error occurred getting email types:', response.status, response.data);
 		});
 
 		// Function to toggle necessary changes when updating titles
@@ -141,7 +143,7 @@ angular.module('opalAdmin.controllers.newEmailController', ['ngAnimate', 'ngSani
 				// Submit 
 				$.ajax({
 					type: "POST",
-					url: "php/email/insert_email.php",
+					url: "php/email/insert.email.php",
 					data: $scope.newEmail,
 					success: function () {
 						$state.go('email');

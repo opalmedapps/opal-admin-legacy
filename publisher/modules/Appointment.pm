@@ -55,12 +55,11 @@ sub new
 	};
 
 	# bless associates an object with a class so Perl knows which package to search for
-	# when a method is envoked on this object
+	# when a method is invoked on this object
 	bless $appointment, $class; 
 	return $appointment;
 }
 
-# HETR HJDEWS HJDE
 #====================================================================================
 # Subroutine to set the Appointment Serial
 #====================================================================================
@@ -958,7 +957,7 @@ sub inOurDatabase
     my ($status, $state, $actualstartdate, $actualenddate);
 
 	my $inDB_sql = "
-		SELECT
+		SELECT DISTINCT
 			Appointment.AppointmentAriaSer,
 			Appointment.AliasExpressionSerNum,
 			Appointment.ScheduledStartTime,
@@ -975,8 +974,8 @@ sub inOurDatabase
 		FROM
 			Appointment
 		WHERE
-			Appointment.AppointmentAriaSer      = $sourceUID
-        AND Appointment.SourceDatabaseSerNum    = $sourceDBSer
+			Appointment.AppointmentAriaSer      = '$sourceUID'
+        AND Appointment.SourceDatabaseSerNum    = '$sourceDBSer'
 	";
 
 	# prepare query
@@ -1262,7 +1261,7 @@ sub reassignAppointment
 
 		return $apptSerNum;
 	}
-	else {# appointment DNE
+	else { # appointment DNE
 
 		# get appt info from source database (ARIA)
 		$Appointment = $Appointment->getApptInfoFromSourceDB();

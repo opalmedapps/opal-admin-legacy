@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 	/******************************************************************************
 	* Educational Material Page controller 
 	*******************************************************************************/
-	controller('eduMatController', function ($scope, $filter, $sce, $uibModal, $state, edumatAPIservice, filterAPIservice, uiGridConstants) {
+	controller('eduMatController', function ($scope, $filter, $sce, $uibModal, $state, educationalMaterialCollectionService, filterCollectionService, uiGridConstants) {
 
 
 		// Function to go to add educational material page
@@ -16,7 +16,6 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 		$scope.filterEduMat = function (filterValue) {
 			$scope.filterValue = filterValue;
 			$scope.gridApi.grid.refresh();
-
 		};
 
 		// Templates for the table
@@ -93,21 +92,25 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 		$scope.eduMatToDelete = {};
 
 		// Call our API to get the list of existing material
-		edumatAPIservice.getEducationalMaterials().success(function (response) {
+		educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+
+			var educationalMaterials = response.data;
 			// Assign value
-			for (var i = 0; i < response.length; i++) {
-				if (response[i].parentFlag == 1) {
-					response[i].subGridOptions = {
+			for (var i = 0; i < educationalMaterials.length; i++) {
+				if (educationalMaterials[i].parentFlag == 1) {
+					educationalMaterials[i].subGridOptions = {
 						columnDefs: [
 							{ field: 'name_EN', displayName: 'Name (EN)', width: '355' },
 							{ field: 'type_EN', displayName: 'Type (EN)', width: '145' }
 						],
-						data: response[i].tocs
+						data: educationalMaterials[i].tocs
 					};
-					$scope.eduMatList.push(response[i]);
+					$scope.eduMatList.push(educationalMaterials[i]);
 				}
 			}
 
+		}).catch(function(response) {
+			console.error('Error occurred getting educational material list:', response.status, response.data);
 		});
 
 
@@ -173,13 +176,15 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/educational-material/update_publishFlag.php",
+					url: "php/educational-material/update.educational_material_publish_flags.php",
 					data: $scope.eduMatPublishes,
 					success: function (response) {
 						// Call our API to get the list of existing educational materials
-						edumatAPIservice.getEducationalMaterials().success(function (response) {
+						educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
 							// Assign value
-							$scope.edumatList = response;
+							$scope.edumatList = response.data;
+						}).catch(function(response) {
+							console.error('Error occurred getting educational material list:', response.status, response.data);
 						});
 						response = JSON.parse(response);
 						// Show success or failure depending on response
@@ -218,20 +223,25 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 			modalInstance.result.then(function () {
 				$scope.eduMatList = [];
 				// Call our API to get the list of existing educational material
-				edumatAPIservice.getEducationalMaterials().success(function (response) {
-					for (var i = 0; i < response.length; i++) {
-						if (response[i].parentFlag == 1) {
-							response[i].subGridOptions = {
+				educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+
+					var educationalMaterials = response.data;
+
+					for (var i = 0; i < educationalMaterials.length; i++) {
+						if (educationalMaterials[i].parentFlag == 1) {
+							educationalMaterials[i].subGridOptions = {
 								columnDefs: [
 									{ field: 'name_EN', displayName: 'Name (EN / FR)', width: '355' },
 									{ field: 'type_EN', displayName: 'Type (EN)', width: '145' }
 								],
-								data: response[i].tocs,
+								data: educationalMaterials[i].tocs,
 							};
-							$scope.eduMatList.push(response[i]);
+							$scope.eduMatList.push(educationalMaterials[i]);
 						}
 					}
 
+				}).catch(function(response) {
+					console.error('Error occurred getting educational material list:', response.status, response.data);
 				});
 
 			});
@@ -274,10 +284,12 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 			$scope.EduMatTypes_EN = [];
 			$scope.EduMatTypes_FR = [];
 			// Call our API to get the list of edu material types
-			edumatAPIservice.getEducationalMaterialTypes().success(function (response) {
+			educationalMaterialCollectionService.getEducationalMaterialTypes().then(function (response) {
 
-				$scope.EduMatTypes_EN = response.EN;
-				$scope.EduMatTypes_FR = response.FR;
+				$scope.EduMatTypes_EN = response.data.EN;
+				$scope.EduMatTypes_FR = response.data.FR;
+			}).catch(function(response) {
+				console.error('Error occurred getting educational material types:', response.status, response.data);
 			});
 
 
@@ -333,26 +345,30 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 			$scope.showProcessingModal();
 
 			// Call our API service to get the current educational material details
-			edumatAPIservice.getEducationalMaterialDetails($scope.currentEduMat.serial).success(function (response) {
+			educationalMaterialCollectionService.getEducationalMaterialDetails($scope.currentEduMat.serial).then(function (response) {
 
 				// Assign value
-				$scope.eduMat = response;
+				$scope.eduMat = response.data;
 
 				// Assign demographic filters
 				checkDemographicFilters();
 
 				// Call our API service to get each filter
-				filterAPIservice.getFilters().success(function (response) {
+				filterCollectionService.getFilters().then(function (response) {
 
-					$scope.termList = checkAdded(response.expressions); // Assign value
-					$scope.dxFilterList = checkAdded(response.dx);
-					$scope.doctorFilterList = checkAdded(response.doctors);
-					$scope.resourceFilterList = checkAdded(response.resources);
+					$scope.termList = checkAdded(response.data.expressions); // Assign value
+					$scope.dxFilterList = checkAdded(response.data.dx);
+					$scope.doctorFilterList = checkAdded(response.data.doctors);
+					$scope.resourceFilterList = checkAdded(response.data.resources);
 
 					processingModal.close(); // hide modal
 					processingModal = null; // remove reference
 
+				}).catch(function(response) {
+					console.error('Error occurred getting filters:', response.status, response.data);
 				});
+			}).catch(function(response) {
+				console.error('Error occurred getting educational material details:', response.status, response.data);
 			});
 
 			// Function to toggle Item in a list on/off
@@ -478,7 +494,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 					// Submit form
 					$.ajax({
 						type: "POST",
-						url: "php/educational-material/update_educationalMaterial.php",
+						url: "php/educational-material/update.educational_material.php",
 						data: $scope.eduMat,
 						success: function (response) {
 							response = JSON.parse(response);
@@ -605,20 +621,24 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 			modalInstance.result.then(function () {
 				$scope.eduMatList = [];
 				// Call our API to get the list of existing educational material
-				edumatAPIservice.getEducationalMaterials().success(function (response) {
-					for (var i = 0; i < response.length; i++) {
-						if (response[i].parentFlag == 1) {
-							response[i].subGridOptions = {
+				educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+
+					var educationalMaterials = response.data;
+					for (var i = 0; i < educationalMaterials.length; i++) {
+						if (educationalMaterials[i].parentFlag == 1) {
+							educationalMaterials[i].subGridOptions = {
 								columnDefs: [
 									{ field: 'name_EN', displayName: 'Name (EN / FR)', width: '355' },
 									{ field: 'type_EN', displayName: 'Type (EN)', width: '145' }
 								],
-								data: response[i].tocs
+								data: educationalMaterials[i].tocs
 							};
-							$scope.eduMatList.push(response[i]);
+							$scope.eduMatList.push(educationalMaterials[i]);
 						}
 					}
 
+				}).catch(function(response) {
+					console.error('Error occurred getting educational material list:', response.status, response.data);
 				});
 			});
 		};
@@ -630,7 +650,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 			$scope.deleteEducationalMaterial = function () {
 				$.ajax({
 					type: "POST",
-					url: "php/educational-material/delete_educationalMaterial.php",
+					url: "php/educational-material/delete.educational_material.php",
 					data: $scope.eduMatToDelete,
 					success: function (response) {
 						response = JSON.parse(response);

@@ -10,7 +10,7 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 	/******************************************************************************
 	* Post Page controller 
 	*******************************************************************************/
-	controller('postController', function ($scope, $filter, $sce, $state, $uibModal, postAPIservice, filterAPIservice, uiGridConstants) {
+	controller('postController', function ($scope, $filter, $sce, $state, $uibModal, postCollectionService, filterCollectionService, uiGridConstants) {
 
 		// Function to go to add post page
 		$scope.goToAddPost = function () {
@@ -123,9 +123,11 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 		$scope.postToDelete = {};
 
 		// Call our API to get the list of existing posts
-		postAPIservice.getPosts().success(function (response) {
+		postCollectionService.getPosts().then(function (response) {
 			// Assign value
-			$scope.postList = response;
+			$scope.postList = response.data;
+		}).catch(function(response) {
+			console.error('Error occurred getting posts:', response.status, response.data);
 		});
 
 		// When this function is called, we set the post flags to checked 
@@ -185,13 +187,15 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/post/update_flags.php",
+					url: "php/post/update.post_publish_flags.php",
 					data: $scope.postFlags,
 					success: function (response) {
 						// Call our API to get the list of existing posts
-						postAPIservice.getPosts().success(function (response) {
+						postCollectionService.getPosts().then(function (response) {
 							// Assign value
-							$scope.postList = response;
+							$scope.postList = response.data;
+						}).catch(function(response) {
+							console.error('Error occurred getting posts:', response.status, response.data);
 						});
 						response = JSON.parse(response);
 						// Show success or failure depending on response
@@ -233,10 +237,12 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 			// After update, refresh the post list
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing posts
-				postAPIservice.getPosts().success(function (response) {
+				postCollectionService.getPosts().then(function (response) {
 
 					// Assign the retrieved response
-					$scope.postList = response;
+					$scope.postList = response.data;
+				}).catch(function(response) {
+					console.error('Error occurred getting posts:', response.status, response.data);
 				});
 			});
 
@@ -312,10 +318,10 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 			$scope.showProcessingModal();
 
 			// Call our API service to get the current post details
-			postAPIservice.getPostDetails($scope.currentPost.serial).success(function (response) {
+			postCollectionService.getPostDetails($scope.currentPost.serial).then(function (response) {
 
 				// Assign value
-				$scope.post = response;
+				$scope.post = response.data;
 				$scope.postModal = jQuery.extend(true, {}, $scope.post); // deep copy
 
 				if ($scope.post.publish_date) {
@@ -338,17 +344,21 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 				}
 
 				// Call our API service to get each filter
-				filterAPIservice.getFilters().success(function (response) {
+				filterCollectionService.getFilters().then(function (response) {
 
-					$scope.termList = checkAdded(response.expressions); // Assign value
-					$scope.dxFilterList = checkAdded(response.dx);
-					$scope.doctorFilterList = checkAdded(response.doctors);
-					$scope.resourceFilterList = checkAdded(response.resources);
+					$scope.termList = checkAdded(response.data.expressions); // Assign value
+					$scope.dxFilterList = checkAdded(response.data.dx);
+					$scope.doctorFilterList = checkAdded(response.data.doctors);
+					$scope.resourceFilterList = checkAdded(response.data.resources);
 
 					processingModal.close(); // hide modal
 					processingModal = null; // remove reference
 
+				}).catch(function(response) {
+					console.error('Error occurred getting filter list:', response.status, response.data);
 				});
+			}).catch(function(response) {
+				console.error('Error occurred getting post details:', response.status, response.data);
 			});
 
 			// Function to toggle Item in a list on/off
@@ -430,7 +440,7 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 					// Submit form
 					$.ajax({
 						type: "POST",
-						url: "php/post/update_post.php",
+						url: "php/post/update.post.php",
 						data: $scope.post,
 						success: function (response) {
 							response = JSON.parse(response);
@@ -528,9 +538,11 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 			// After delete, refresh the post list
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing posts
-				postAPIservice.getPosts().success(function (response) {
+				postCollectionService.getPosts().then(function (response) {
 					// Assign the retrieved response
-					$scope.postList = response;
+					$scope.postList = response.data;
+				}).catch(function(response) {
+					console.error('Error occurred getting posts:', response.status, response.data);
 				});
 			});
 
@@ -543,7 +555,7 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 			$scope.deletePost = function () {
 				$.ajax({
 					type: "POST",
-					url: "php/post/delete_post.php",
+					url: "php/post/delete.post.php",
 					data: $scope.postToDelete,
 					success: function (response) {
 						response = JSON.parse(response);

@@ -1,9 +1,9 @@
 <?php 
 
-	/* To set block status in DB*/
+	/* To set block status in the database */
 	include_once('patient.inc');
 
-	// Construct array
+	// Construct array from FORM params
 	$patientArray = array(
 		'disabled'			=> $_POST['disabled'],
 		'serial'			=> $_POST['serial'],

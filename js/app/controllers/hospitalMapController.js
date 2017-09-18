@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.hospitalMapController', ['ngAnimate', 'ngS
 	/******************************************************************************
 	* Hospital Map Page controller 
 	*******************************************************************************/
-	controller('hospitalMapController', function ($scope, $filter, $sce, $state, $uibModal, hosmapAPIservice) {
+	controller('hospitalMapController', function ($scope, $filter, $sce, $state, $uibModal, hospitalMapCollectionService) {
 
 		// Function to go to add hospital map page
 		$scope.goToAddHospitalMap = function () {
@@ -70,8 +70,10 @@ angular.module('opalAdmin.controllers.hospitalMapController', ['ngAnimate', 'ngS
 		$scope.updatedHosMap = false;
 
 		// Call our API to get the list of existing maps
-		hosmapAPIservice.getHospitalMaps().success(function (response) {
-			$scope.hosMapList = response;
+		hospitalMapCollectionService.getHospitalMaps().then(function (response) {
+			$scope.hosMapList = response.data;
+		}).catch(function(response) {
+			console.error('Error occurred getting hospital map list:', response.status, response.data);
 		});
 
 		$scope.bannerMessage = "";
@@ -102,18 +104,22 @@ angular.module('opalAdmin.controllers.hospitalMapController', ['ngAnimate', 'ngS
 			// After update, refresh the hospital map list
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing maps
-				hosmapAPIservice.getHospitalMaps().success(function (response) {
+				hospitalMapCollectionService.getHospitalMaps().then(function (response) {
 
 					// Assign the retrieved response
-					$scope.hosMapList = response;
+					$scope.hosMapList = response.data;
+				}).catch(function(response) {
+					console.error('Error occurred getting hospital map list:', response.status, response.data);
 				});
 			});
 
 			modalInstance.closed.then(function () {
 
 				if (!$scope.updatedHosMap) {
-					hosmapAPIservice.generateQRCode($scope.currentHosMap.qrid, $scope.oldqrid).success(function () {
+					hospitalMapCollectionService.generateQRCode($scope.currentHosMap.qrid, $scope.oldqrid).then(function () {
 						$scope.updatedHosMap = false;
+					}).catch(function(response) {
+						console.error('Error occurred generating QR code:', response.status, response.data);
 					});
 				}
 
@@ -144,25 +150,29 @@ angular.module('opalAdmin.controllers.hospitalMapController', ['ngAnimate', 'ngS
 			$scope.mapURL = "";
 
 			// Call our API to get the current map details
-			hosmapAPIservice.getHospitalMapDetails($scope.currentHosMap.serial).success(function (response) {
-				$scope.hosMap = response;
-				$scope.$parent.oldqrid = response.qrid;
-				$scope.mapURL = response.url;
+			hospitalMapCollectionService.getHospitalMapDetails($scope.currentHosMap.serial).then(function (response) {
+				$scope.hosMap = response.data;
+				$scope.$parent.oldqrid = response.data.qrid;
+				$scope.mapURL = response.data.url;
 
 				processingModal.close(); // hide modal
 				processingModal = null; // remove reference
+			}).catch(function(response) {
+				console.error('Error occurred getting hospital map details:', response.status, response.data);
 			});
 
 			// Function to call api to generate qr code
 			$scope.generateQRCode = function (qrid) {
 
 				if (qrid && $scope.changesMade) {
-					hosmapAPIservice.generateQRCode(qrid, $scope.$parent.oldqrid).success(function (response) {
-						$scope.hosMap.qrcode = response.qrcode;
-						$scope.hosMap.qrpath = response.qrpath;
+					hospitalMapCollectionService.generateQRCode(qrid, $scope.$parent.oldqrid).then(function (response) {
+						$scope.hosMap.qrcode = response.data.qrcode;
+						$scope.hosMap.qrpath = response.data.qrpath;
 
 						$scope.$parent.oldqrid = qrid;
 
+					}).catch(function(response) {
+						console.error('Error occurred generating QR code:', response.status, response.data);
 					});
 				}
 				else if (!qrid) {
@@ -198,7 +208,7 @@ angular.module('opalAdmin.controllers.hospitalMapController', ['ngAnimate', 'ngS
 					// Submit form
 					$.ajax({
 						type: "POST",
-						url: "php/hospital-map/update_hospitalMap.php",
+						url: "php/hospital-map/update.hospital_map.php",
 						data: $scope.hosMap,
 						success: function () {
 							$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.hosMap.name_EN + "/ " + $scope.hosMap.name_FR + "\"!";
@@ -235,9 +245,11 @@ angular.module('opalAdmin.controllers.hospitalMapController', ['ngAnimate', 'ngS
 			// After delete, refresh the map list
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing hospital maps
-				hosmapAPIservice.getHospitalMaps().success(function (response) {
+				hospitalMapCollectionService.getHospitalMaps().then(function (response) {
 					// Assign the retrieved response
-					$scope.hosMapList = response;
+					$scope.hosMapList = response.data;
+				}).catch(function(response) {
+					console.error('Error occurred getting hospital map list:', response.status, response.data);
 				});
 			});
 		};
@@ -249,7 +261,7 @@ angular.module('opalAdmin.controllers.hospitalMapController', ['ngAnimate', 'ngS
 			$scope.deleteHospitalMap = function () {
 				$.ajax({
 					type: "POST",
-					url: "php/hospital-map/delete_hospitalMap.php",
+					url: "php/hospital-map/delete.hospital_map.php",
 					data: $scope.hosMapToDelete,
 					success: function () {
 						$scope.$parent.bannerMessage = "Successfully deleted \"" + $scope.hosMapToDelete.name_EN + "/ " + $scope.hosMapToDelete.name_FR + "\"!";

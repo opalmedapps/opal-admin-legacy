@@ -10,7 +10,7 @@ class EduMaterial {
      * Updates the publish flags in the database
      *
      * @param array $eduMatList : the list of educational materials
-     * @return array : response
+     * @return array $response : response
      */    
     public function updatePublishFlags( $eduMatList ) {
 
@@ -54,9 +54,9 @@ class EduMaterial {
      *
      * Gets a list of distinct phases in treatment defined in the database
      *
-     * @return array
+     * @return array $phases : the phases in treatment
      */
-    public function getPhaseInTreatments() {
+    public function getPhasesInTreatment() {
         $phases = array();
         try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -95,7 +95,7 @@ class EduMaterial {
      *
      * Gets a list of educational material types
      *
-     * @return array
+     * @return array $types : the educational material types
      */
     public function getEducationalMaterialTypes() {
 
@@ -150,7 +150,7 @@ class EduMaterial {
      * Gets educational material details
      *
      * @param integer $eduMatSer : the educational material serial number
-     * @return array
+     * @return array $eduMatDetails : the educational material details
      */
     public function getEducationalMaterialDetails ($eduMatSer) {
 
@@ -302,9 +302,9 @@ class EduMaterial {
      *
      * Gets a list of existing educational materials
      *
-     * @return array
+     * @return array $eduMatList : the list of existing educational materials 
      */                  
-    public function getExistingEducationalMaterials() {
+    public function getEducationalMaterials() {
         $eduMatList = array();
  		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -486,6 +486,7 @@ class EduMaterial {
      * Inserts educational material into the database
      *
      * @param array $eduMatArray : the educational material details
+	 * @return void
      */
     public function insertEducationalMaterial ( $eduMatArray ) {
 
@@ -638,7 +639,7 @@ class EduMaterial {
      * Updates educational material details in the database
      *
      * @param array $eduMatArray : the educational material details
-     * @return array : response
+     * @return array $response : response
      */
     public function updateEducationalMaterial ($eduMatArray) {
 
@@ -862,12 +863,12 @@ class EduMaterial {
 
     /**
      *
-     * Removes educational material from the database
+     * Deletes educational material from the database
      *
      * @param integer $eduMatSer : the educational material serial
-     * @return array : response
+     * @return array $response : response
      */
-    public function removeEducationalMaterial ( $eduMatSer ){
+    public function deleteEducationalMaterial ( $eduMatSer ){
 
         $response = array(
             'value'     => 0,

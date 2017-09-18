@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 	/******************************************************************************
 	* Controller for the email page
 	*******************************************************************************/
-	controller('emailController', function ($scope, $uibModal, $filter, $state, $sce, emailAPIservice) {
+	controller('emailController', function ($scope, $uibModal, $filter, $state, $sce, emailCollectionService) {
 
 		// Function to go to add email page
 		$scope.goToAddEmail = function () {
@@ -67,8 +67,10 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 		$scope.emailToDelete = {};
 
 		// Call our API to get the list of existing emails
-		emailAPIservice.getEmails().success(function (response) {
-			$scope.emailList = response;
+		emailCollectionService.getEmails().then(function (response) {
+			$scope.emailList = response.data;
+		}).catch(function(response) {
+			console.error('Error occurred getting email list:', response.status, response.data);
 		});
 
 		$scope.bannerMessage = "";
@@ -108,10 +110,12 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 			// After update, refresh the email list
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing emails
-				emailAPIservice.getEmails().success(function (response) {
+				emailCollectionService.getEmails().then(function (response) {
 
 					// Assign the retrieved response
-					$scope.emailList = response;
+					$scope.emailList = response.data;
+				}).catch(function(response) {
+					console.error('Error occurred getting email list:', response.status, response.data);
 				});
 			});
 		};
@@ -137,10 +141,12 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 			$scope.showProcessingModal();
 
 			// Call our API to get the current email details
-			emailAPIservice.getEmailDetails($scope.currentEmail.serial).success(function (response) {
-				$scope.email = response;
+			emailCollectionService.getEmailDetails($scope.currentEmail.serial).then(function (response) {
+				$scope.email = response.data;
 				processingModal.close(); // hide modal
 				processingModal = null; // remove reference
+			}).catch(function(response) {
+				console.error('Error occurred getting email details:', response.status, response.data);
 			});
 
 			// Function to check necessary form fields are complete
@@ -164,7 +170,7 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 					// Submit form
 					$.ajax({
 						type: "POST",
-						url: "php/email/update_email.php",
+						url: "php/email/update.email.php",
 						data: $scope.email,
 						success: function (response) {
 							response = JSON.parse(response);
@@ -208,9 +214,11 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 			// After delete, refresh the map list
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing emails
-				emailAPIservice.getEmails().success(function (response) {
+				emailCollectionService.getEmails().then(function (response) {
 					// Assign the retrieved response
-					$scope.emailList = response;
+					$scope.emailList = response.data;
+				}).catch(function(response) {
+					console.error('Error occurred getting email list:', response.status, response.data);
 				});
 			});
 		};
@@ -222,7 +230,7 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 			$scope.deleteEmail = function () {
 				$.ajax({
 					type: "POST",
-					url: "php/email/delete_email.php",
+					url: "php/email/delete.email.php",
 					data: $scope.emailToDelete,
 					success: function (response) {
 						response = JSON.parse(response);
