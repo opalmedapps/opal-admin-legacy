@@ -1,3 +1,90 @@
+Version 0.10.2:
+ -     --- Changed encryption from SHA256 to SHA512
+ - Merge branch 'develop' of https://gitlab.com/akimosupremo/opalAdmin-dev into develop
+ - Merge branch 'release-0.10.1' into develop
+ - Update README.md
+
+Version 0.10.1:
+ -     --- Created a temporary table called QuestionnaireControlNew and adjusted scripts accordingly         -- The old questionnaire system already has a table named QuestionnaireControl. So         to avoid overwritting, we will execute a phase in / phase out so that when we're ready         to use the new questionnaire system, we will change the table names/scripts accordingly.
+ -     --- Added install access functionality (not completed)
+ -     --- Added a new file to handle config file generations
+ -     --- Set default install access flag to true         -- Makes sense considering the first installation of opalAdmin requires default access
+ -     --- Missed the removal of the "delete" header tag from previous commit
+ - Merge branch 'develop' of https://gitlab.com/akimosupremo/opalAdmin-dev into develop
+ - --- No longer using Grunt --- Fixed #1 --- Linted installationController to remove spaces and replace with tabs
+ - Update README.md
+ - Updated README.md
+ - Updated README.md
+ - -- modified line 5 "questionnaire-manage" to "questionnaire"
+ - Update README.md
+ - -- remove ng-change=“usernameUpdate()” on line 572 and ng-change=“passwordUpdate()” on line 584 because it is no longer required.
+ - Merge branch 'develop' of https://gitlab.com/akimosupremo/opalAdmin-dev into develop
+ - -- accidentally overwritten Ackeem modification on line 118, so changed it back from url: '/questionnaire/' to url: '/questionnaire'
+ - Update README.md
+ - -- Modified test-result.html on lines 172 & 177 ng-change=“descriptionUpdate()” to ng-change=“setChangesMade()”
+ - --- Minor change to questionnaire url
+ - --- Missed container classes from previous commit
+ - --- Fixed issue where current page wasn't highlighted in changed questionnaire menus
+ - --- Fixed issue where alias educational material was not auto filled in list
+ - --- Fixed deprecated PHP file call
+ - --- Fixed merge errors
+ - --- Renamed files to more sensible names     -- For better readability and understand of each script without necessarily having to open the file     -- Words in PHP files in /php and /api are now separated by underscores and lowercases (for consistency)     -- Prefixes added to each PHP filename that either gets, insert, deletes, or updates (for better readibility)
+ - 	--- Added phpstorm gitignore 	--- fixed indentation
+ - Merge branch 'release-0.10.0' into develop
+ -     --- Debugged queries
+
+Version 0.10.0:
+ -     --- Migration file for changes made to the database
+ - --- Fixed formatting on zoomed in login page
+ - --- Added padding
+ - --- Redesigned side menu for adding content
+ - --- Added bold titles to accordions
+ - --- Delete modal had "Post" and not "Questionnaire"
+ - --- Added processing modal --- Fixed code copy
+ - --- Added missing content for filters
+ - --- Added filters to questionnaire creation
+ - --- bold the accordion titles
+ - --- Whoops didn't change another filter nest search function call
+ - --- Fixed issed where question group key could not be found
+ - --- Fixed issue where duplicate close processing modal call
+ - --- Added filters to edit questionnaires
+ - --- Added questionnaire control to publisher
+ -     --- Fixed design of empty completed questionnaires page
+ - --- Testing the placement of back button
+ - --- Added text for empty completed questionnaires
+ - --- Removed white space in one of the text area forms
+ - --- Improved readability of code
+ - --- Changed variable name in backend that was changed on frontend
+ - --- Refactored code for better readability
+ - --- Added Questionnaire module to publisher --- Fixed format in collectionsJS --- Testing a change from success callback to then callback
+ -     --- Improved functionaility when editing questionnaires         -- Existing tags were not showing up when opening the accordion in the edit modal         -- Current groups were not preselected in the table in the group section of the edit modal         -- There was a bit of confusion between current and new groups as one could add the same             group even if it already existed in the object
+ - --- Debugging
+ - --- Fixing bugs on questionnaire edit
+ -     --- Modifications
+ -     --- Fixed breadcrumb designs
+ -     --- Redesigned questionnaire pages to more consistent design of the rest of the website
+ -     --- Fix missing comma in controllers     --- Added SQL migration file for questionnaires
+ - Merge branch 'questionnaire' into develop
+ - Questionnaire interface: fixed the bug that page drop form didn't show correctly
+ - questionnaire interface
+ - questionnaire interface
+ -     --- Improved transparent side menu
+ -     --- Added "DEV" mode for opal Admin titles         -- DEV will appear for dev environments (from config file)
+ - Merge branch 'release-0.9.5' into develop
+ -     --- Fixed issue of ordered table creation
+ - 	--- Commit
+ - 	--- Committed on behalf of Qi (AJ)
+ - 	--- Committing on behalf of Qi (AJ)
+ - 	--- Added questionnaire bits
+
+Version 0.9.5:
+ -     --- Removed Venue index from PLs         -- VenueSerNums can be 0 if a stored procedure to uncheckin a patient occurs (no resource/venue)
+ -     --- Added SQL migration for patient location
+ - --- Added patientlocation support in publisher
+ -     --- Added text to questionnaires
+ - Merge branch 'release-0.9.4' into develop
+ -     --- Moved to migration files
+
 Version 0.9.4:
  -     --- Switched to "migration" files
  -     --- Added sql changes to update databases

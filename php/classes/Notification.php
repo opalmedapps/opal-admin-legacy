@@ -10,7 +10,7 @@ class Notification {
      *
      * Gets a list of existing notifications
      *
-     * @return array
+     * @return array $notificationList : the list of existing notifications
      */
     public function getNotifications() {
         $notificationList = array();
@@ -64,7 +64,7 @@ class Notification {
      * Gets details of a particular notification
      *
      * @param integer $serial : the notification serial number
-     * @return array
+     * @return array $notificationDetails : the notification details
      */
     public function getNotificationDetails ($serial) {
         $notificationDetails = array();
@@ -115,7 +115,7 @@ class Notification {
      *
      * Gets the types of notifications from the database
      *
-     * @return array
+     * @return array $types : the notification types
      */
     public function getNotificationTypes () {
         $types = array();
@@ -157,6 +157,7 @@ class Notification {
      * Inserts a notification into the database
      *
      * @param array $notification : the notification details
+	 * @return void
      */
     public function insertNotification($notification) {
 
@@ -245,12 +246,12 @@ class Notification {
 
     /**
      *
-     * Removes a notification from the database
+     * Deletes a notification from the database
      *
      * @param integer $serial : the notification serial number
      * @return array : response
      */
-    public function removeNotification($serial) {
+    public function deleteNotification($serial) {
 
         $response = array(
             'value'     => 0,

@@ -3,7 +3,7 @@
 # A.Joseph 06-May-2016 ++ File: TxTeamMessage.pm
 #---------------------------------------------------------------------------------
 # Perl module that creates a treatment team message (ttm) class. This module calls 
-# a contructor to create a ttm object that contains ttm information stored as 
+# a constructor to create a ttm object that contains ttm information stored as 
 # object variables.
 #
 # There exists various subroutines to set and get ttm information and compare ttm
@@ -45,7 +45,7 @@ sub new
     };
 
     # bless associates an object with a class so Perl knows which package to search for
-	# when a method is envoked on this object
+	# when a method is invoked on this object
     bless $ttm, $class;
     return $ttm;
 }
@@ -205,7 +205,7 @@ sub publishTxTeamMessages
 
             # If we've reached this point, we've passed all catches (filter restrictions). We make
             # a tx team message object, check if it exists already in the database. If it does 
-            # this means the mesasge has already been publish to the patient. If it doesn't
+            # this means the message has already been publish to the patient. If it doesn't
             # exist then we publish to the patient (insert into DB).
             $txTeamMessage = new TxTeamMessage();
 
@@ -275,7 +275,7 @@ sub inOurDatabase
 
     if ($serInDB) {
 
-        $ExistingTTM = new TxTeamMessage(); # initlaize object
+        $ExistingTTM = new TxTeamMessage(); # initialize object
 
         # set params
         $ExistingTTM->setTTMSer($serInDB);

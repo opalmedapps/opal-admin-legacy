@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
 	/******************************************************************************
 	* Controller for the users page
 	*******************************************************************************/
-	controller('userController', function ($scope, $uibModal, $filter, $sce, $state, userAPIservice) {
+	controller('userController', function ($scope, $uibModal, $filter, $sce, $state, userCollectionService) {
 
 		// Function to go to register new user
 		$scope.goToAddUser = function () {
@@ -79,8 +79,10 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
 		$scope.userList = [];
 
 		// Call out API service to get the list of existing users
-		userAPIservice.getUsers().success(function (response) {
-			$scope.userList = response;
+		userCollectionService.getUsers().then(function (response) {
+			$scope.userList = response.data;
+		}).catch(function(response) {
+			console.error('Error occurred getting user list:', response.status, response.data);
 		});
 
 		// Function for when a user has been clicked for deletion
@@ -100,8 +102,10 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
 			// After delete, refresh the user list
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing users
-				userAPIservice.getUsers().success(function (response) {
-					$scope.userList = response;
+				userCollectionService.getUsers().then(function (response) {
+					$scope.userList = response.data;
+				}).catch(function(response) {
+					console.error('Error occurred getting user list:', response.status, response.data);
 				});
 			});
 		};
@@ -113,7 +117,7 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
 			$scope.deleteUser = function () {
 				$.ajax({
 					type: "POST",
-					url: "php/user/delete_user.php",
+					url: "php/user/delete.user.php",
 					data: $scope.userToDelete,
 					success: function (response) {
 						response = JSON.parse(response);
@@ -155,8 +159,10 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
 			// After update, refresh the user list
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing users
-				userAPIservice.getUsers().success(function (response) {
-					$scope.userList = response;
+				userCollectionService.getUsers().then(function (response) {
+					$scope.userList = response.data;
+				}).catch(function(response) {
+					console.error('Error occurred getting user list:', response.status, response.data);
 				});
 			});
 		};
@@ -184,17 +190,21 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
 			$scope.showProcessingModal();
 
 			// Call our API service to get the current user's details
-			userAPIservice.getUserDetails($scope.currentUser.serial).success(function (response) {
+			userCollectionService.getUserDetails($scope.currentUser.serial).then(function (response) {
 
-				$scope.user = response;
+				$scope.user = response.data;
 				processingModal.close(); // hide modal
 				processingModal = null; // remove reference
+			}).catch(function(response) {
+				console.error('Error occurred getting user details:', response.status, response.data);
 			});
 
 			// Call our API service to get the list of possible roles
 			$scope.roles = [];
-			userAPIservice.getRoles().success(function (response) {
-				$scope.roles = response;
+			userCollectionService.getRoles().then(function (response) {
+				$scope.roles = response.data;
+			}).catch(function(response) {
+				console.error('Error occurred getting roles:', response.status, response.data);
 			});
 
 			// Function that triggers when the password fields are updated
@@ -279,7 +289,7 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
 					// submit 
 					$.ajax({
 						type: "POST",
-						url: "php/user/update_user.php",
+						url: "php/user/update.user.php",
 						data: $scope.user,
 						success: function (response) {
 							response = JSON.parse(response);

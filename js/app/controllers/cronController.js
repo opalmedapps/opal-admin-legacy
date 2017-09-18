@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.cronController', ['ngAnimate', 'ui.bootstr
 	/******************************************************************************
 	* Cron Page controller 
 	*******************************************************************************/
-	controller('cronController', function ($scope, cronAPIservice) {
+	controller('cronController', function ($scope, cronCollectionService) {
 
 		$scope.bannerMessage = "";
 		// Function to show page banner 
@@ -68,8 +68,8 @@ angular.module('opalAdmin.controllers.cronController', ['ngAnimate', 'ui.bootstr
 		$scope.cronDetailsMod = {};
 
 		// Call our API to get the cron details from our DB
-		cronAPIservice.getCronDetails().success(function (response) {
-			$scope.cronDetails = response; // assign value
+		cronCollectionService.getCronDetails().then(function (response) {
+			$scope.cronDetails = response.data; // assign value
 
 			// Split the hours and minutes to display them in their respective text boxes
 			var hours = $scope.cronDetails.nextCronTime.split(":")[0];
@@ -84,6 +84,8 @@ angular.module('opalAdmin.controllers.cronController', ['ngAnimate', 'ui.bootstr
 			var month = parseInt($scope.cronDetailsMod.nextCronDate.split("-")[1]) - 1;
 			var day = parseInt($scope.cronDetailsMod.nextCronDate.split("-")[2]) + 1;
 			$scope.cronDetailsMod.nextCronDate = new Date(Date.UTC(year, month, day));
+		}).catch(function(response) {
+			console.error('Error occurred getting cron details:', response.status, response.data);
 		});
 
 		// Ajax call when cron details are submitted
@@ -96,13 +98,13 @@ angular.module('opalAdmin.controllers.cronController', ['ngAnimate', 'ui.bootstr
 
 				$.ajax({
 					type: "POST",
-					url: "php/cron/update_cron.php",
+					url: "php/cron/update.cron.php",
 					data: $scope.cronDetailsMod,
 					success: function () {
 
 						// Call our API to get the cron details from our DB
-						cronAPIservice.getCronDetails().success(function (response) {
-							$scope.cronDetails = response; // assign value
+						cronCollectionService.getCronDetails().then(function (response) {
+							$scope.cronDetails = response.data; // assign value
 
 							// Split the hours and minutes to display them in their respective text boxes
 							var hours = $scope.cronDetails.nextCronTime.split(":")[0];
@@ -117,6 +119,8 @@ angular.module('opalAdmin.controllers.cronController', ['ngAnimate', 'ui.bootstr
 							var month = parseInt($scope.cronDetailsMod.nextCronDate.split("-")[1]) - 1;
 							var day = parseInt($scope.cronDetailsMod.nextCronDate.split("-")[2]) + 1;
 							$scope.cronDetailsMod.nextCronDate = new Date(Date.UTC(year, month, day));
+						}).catch(function(response) {
+							console.error('Error occurred getting cron details:', response.status, response.data);
 						});
 
 						$scope.bannerMessage = "Saved Cron Settings!";

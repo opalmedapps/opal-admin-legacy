@@ -21,3 +21,5 @@ var firebaseConfig = {
 var FB = firebase.initializeApp(firebaseConfig);
 
 var INSTALL_ACCESS = true; // Put false after successful installation
+
+var DEV_MODE = false;

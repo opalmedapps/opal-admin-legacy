@@ -56,7 +56,7 @@ sub new
 		_firebaseuid	=> undef, 		
 	};
 	# bless associates an object with a class so Perl knows which package to search for
-	# when a method is envoked on this object
+	# when a method is invoked on this object
 	bless $patient, $class; 
 	return $patient;
 }
@@ -375,7 +375,7 @@ sub getPatientInfoFromSourceDBs
 
     my @patientList = (); # initialize a list 
 
-    my $patientSSN      = $Patient->getPatientSSN(); # retreive the ssn
+    my $patientSSN      = $Patient->getPatientSSN(); # retrieve the ssn
     my $lastTransfer    = $Patient->getPatientLastTransfer();
 
     ######################################
@@ -452,6 +452,9 @@ sub getPatientInfoFromSourceDBs
 	    # db disconnect
 	    $sourceDatabase->disconnect();
 	}
+
+	# MediVisit section commented out as to only use one source for updating patient information
+	# Hopefully in the future there will be one central source for patient info
 =pod
     ######################################
     # MediVisit
@@ -583,7 +586,7 @@ sub getPatientsMarkedForUpdate
 		$lasttransfer	= $data[0];
         $ssn            = $data[1];
 
-		# set patient infomation
+		# set patient information
 		$Patient->setPatientLastTransfer($lasttransfer);
         $Patient->setPatientSSN($ssn);
 
@@ -823,7 +826,7 @@ sub insertPatientIntoOurDB
 {
 	my ($patient) = @_; # our patient object to insert
 
-	# Retrieve all the neccesary details from this object
+	# Retrieve all the necessary details from this object
     my $sourceuid           = $patient->getPatientSourceUID();
     my $id                  = $patient->getPatientId();
     my $id2                 = $patient->getPatientId2();
@@ -929,7 +932,7 @@ sub updateDatabase
 }
 
 #======================================================================================
-# Subroutine to compare two patient objects. If different, use setter funtions
+# Subroutine to compare two patient objects. If different, use setter functions
 # to update patient object.
 #======================================================================================
 sub compareWith
@@ -967,28 +970,28 @@ sub compareWith
 	# go through each parameter
     if ($SPatientSourceUID ne $OPatientSourceUID) {
 
-		$change = 1; # change occured
+		$change = 1; # change occurred
 		print "Patient Source UID has changed from $OPatientSourceUID to $SPatientSourceUID!\n";
 		my $updatedUID = $UpdatedPatient->setPatientSourceUID($SPatientSourceUID); # update patient id
 		print "Will update database entry to '$updatedUID'.\n";
 	}
 	if ($SPatientId ne $OPatientId) {
 
-		$change = 1; # change occured
+		$change = 1; # change occurred
 		print "Patient ID has changed from $OPatientId to $SPatientId!\n";
 		my $updatedId = $UpdatedPatient->setPatientId($SPatientId); # update patient id
 		print "Will update database entry to '$updatedId'.\n";
 	}
 	if ($SPatientId2 ne $OPatientId2) {
 
-		$change = 1; # change occured
+		$change = 1; # change occurred
 		print "Patient ID2 has changed from $OPatientId2 to $SPatientId2!\n";
 		my $updatedId2 = $UpdatedPatient->setPatientId2($SPatientId2); # update patient id2
 		print "Will update database entry to \"$updatedId2\".\n";
 	}	
 	if ($SPatientDOB ne $OPatientDOB and (isValidDate($SPatientDOB) or isValidDate($OPatientDOB))) {
 
-		$change = 1; # change occured
+		$change = 1; # change occurred
 		print "Patient Date of Birth has changed from $OPatientDOB to $SPatientDOB!\n";
 		my $updatedDOB = $UpdatedPatient->setPatientDOB($SPatientDOB); # update patient date of birth
 		print "Will update database entry to \"$updatedDOB\".\n";
@@ -996,12 +999,12 @@ sub compareWith
 	}
 	if ($SPatientAge ne $OPatientAge) {
 
-		$change = 1; # change occured
+		$change = 1; # change occurred
 		print "Patient Age has changed from $OPatientAge to $SPatientAge!\n";
 		my $updatedAge = $UpdatedPatient->setPatientAge($SPatientAge); # update patient age
 		print "Will update database entry to \"$updatedAge\".\n";
 
-		# block patient if patient passed 13 years of age
+		# block patient if patient passed 13 years of age and send email
 		if ($OPatientAge < 14 && $SPatientAge >= 14 && $OPatientAge > 0) {
 			blockPatient($UpdatedPatient, "Patient passed 13 years of age");
 			my $patientser = $UpdatedPatient->getPatientSer();
@@ -1009,41 +1012,39 @@ sub compareWith
 			my $email = Email::getEmailControlDetails($patientser, "PaedPatientBlock");
 			$email->setEmailToAddress($patientemail);
 			$email->sendEmail($patientser);
-
-			#$UpdatedPatient->sendPatientEmail("<h1>Hello</h1>");
 		}
 	}
 	if ($SPatientSex ne $OPatientSex) {
 
-		$change = 1; # change occured
+		$change = 1; # change occurred
 		print "Patient Sex has changed from $OPatientSex to $SPatientSex!\n";
 		my $updatedSex = $UpdatedPatient->setPatientSex($SPatientSex); # update patient sex
 		print "Will update database entry to \"$updatedSex\".\n";
 	}
 	if ($SPatientFirstName ne $OPatientFirstName) {
 
-		$change = 1; # change occured
+		$change = 1; # change occurred
 		print "Patient First Name has changed from $OPatientFirstName to $SPatientFirstName!\n";
 		my $updatedFirstName = $UpdatedPatient->setPatientFirstName($SPatientFirstName); # update patient first name
 		print "Will update database entry to \"$updatedFirstName\".\n";
 	}
 	if ($SPatientLastName ne $OPatientLastName) {
 
-		$change = 1; # change occured
+		$change = 1; # change occurred
 		print "Patient Last Name has changed from $OPatientLastName to $SPatientLastName!\n";
 		my $updatedLastName = $UpdatedPatient->setPatientLastName($SPatientLastName); # update patient last name
 		print "Will update database entry to \"$updatedLastName\".\n";
 	}
 	if ($SPatientPicture ne $OPatientPicture) {
 
-		$change = 1; # change occured
+		$change = 1; # change occurred
 		print "Patient Picture has changed from $OPatientPicture to $SPatientPicture!\n";
 		my $updatedPicture = $UpdatedPatient->setPatientPicture($SPatientPicture); # update patient picture
 		print "Will update database entry to \"$updatedPicture\".\n";
 	}
 	if ($SPatientDeathDate ne $OPatientDeathDate and (isValidDate($SPatientDeathDate) or isValidDate($OPatientDeathDate))) {
 
-		$change = 1; # change occured
+		$change = 1; # change occurred
 		print "Patient Death Date has changed from $OPatientDeathDate to $SPatientDeathDate!\n";
 		my $updatedDeathDate = $UpdatedPatient->setPatientDeathDate($SPatientDeathDate); # update patient death date 
 		print "Will update database entry to \"$updatedDeathDate\" and block patient.\n";

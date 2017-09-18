@@ -69,6 +69,22 @@ angular.module('opalAdmin.controllers.sidePanelMenuController', ['ui.bootstrap',
 		$scope.goToEmail = function () {
 			$state.go('email');
 		};
+		// Function to go to questionnaire main menu page
+		$scope.goToQuestionnaireMainMenu = function () {
+			$state.go('questionnaire-menu');
+		};
+		// Function to go to questionnaire page
+		$scope.goToQuestionnaire = function () {
+			$state.go('questionnaire');
+		};
+		// Function to go to questionnaire question bank
+		$scope.goToQuestionnaireQuestionBank = function () {
+			$state.go('questionnaire-question');
+		};
+		// Function to go to completed questionnaires page
+		$scope.goToQuestionnaireCompleted = function () {
+			$state.go('questionnaire-completed');
+		};
 
 	});
 

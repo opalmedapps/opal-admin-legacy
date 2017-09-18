@@ -33,7 +33,7 @@ sub new
     };
 
 	# bless associates an object with a class so Perl knows which package to search for
-	# when a method is envoked on this object
+	# when a method is invoked on this object
 	bless $postcontrol, $class; 
 	return $postcontrol;
 }
@@ -172,8 +172,6 @@ sub getPostControlsMarkedForPublish
             pc.PublishFlag      = 1
         AND pc.PostType         = '$postType'
     ";
-
-
 
 	# prepare query
 	my $query = $SQLDatabase->prepare($info_sql)

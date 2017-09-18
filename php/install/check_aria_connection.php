@@ -6,7 +6,7 @@
 
 	include_once($abspath . 'php/classes/Install.php');
 
-	// Retrieve FORM params
+	// Construct array from FORM params
 	$ariaCreds = array(
 		'host' 			=> $_POST['host'],
 		'port' 			=> $_POST['port'],

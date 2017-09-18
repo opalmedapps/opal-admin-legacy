@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 	/******************************************************************************
 	* Alias Page controller 
 	*******************************************************************************/
-	controller('aliasController', function ($scope, $uibModal, aliasAPIservice, edumatAPIservice, uiGridConstants, $state) {
+	controller('aliasController', function ($scope, $uibModal, aliasCollectionService, educationalMaterialCollectionService, uiGridConstants, $state) {
 
 
 		// Function to go to add alias page
@@ -117,9 +117,12 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 		$scope.aliasToDelete = {};
 
 		// Call our API to get the list of existing aliases
-		aliasAPIservice.getAliases().success(function (response) {
+		aliasCollectionService.getAliases().then(function (response) {
 			// Assign value
-			$scope.aliasList = response;
+			$scope.aliasList = response.data;
+
+		}).catch(function(response) {
+			console.error('Error occurred getting alias list:', response.status, response.data);
 		});
 
 		// When this function is called, we set the "update" field to checked 
@@ -162,13 +165,15 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/alias/update_control.php",
+					url: "php/alias/update.alias_publish_flags.php",
 					data: $scope.aliasUpdates,
 					success: function (response) {
 						// Call our API to get the list of existing aliases
-						aliasAPIservice.getAliases().success(function (response) {
+						aliasCollectionService.getAliases().then(function (response) {
 							// Assign value
-							$scope.aliasList = response;
+							$scope.aliasList = response.data;
+						}).catch(function(response) {
+							console.error('Error occurred getting alias list:', response.status, response.data);
 						});
 						response = JSON.parse(response);
 						// Show success or failure depending on response
@@ -204,10 +209,12 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 			// After update, refresh the alias list
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing aliases
-				aliasAPIservice.getAliases().success(function (response) {
+				aliasCollectionService.getAliases().then(function (response) {
 
 					// Assign the retrieved response
-					$scope.aliasList = response;
+					$scope.aliasList = response.data;
+				}).catch(function(response) {
+					console.error('Error occurred getting alias list:', response.status, response.data);
 				});
 			});
 
@@ -234,8 +241,10 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 			$scope.eduMatFilter = null;
 
 			// Call our API service to get the list of educational material
-			edumatAPIservice.getEducationalMaterials().success(function (response) {
-				$scope.eduMatList = response; // Assign value
+			educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+				$scope.eduMatList = response.data; // Assign value
+			}).catch(function(response) {
+				console.error('Error occurred getting educational material list:', response.status, response.data);
 			});
 
 			// Function to assign termFilter when textbox is changing 
@@ -274,16 +283,16 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 			$scope.showProcessingModal();
 
 			// Call our API service to get the current alias details
-			aliasAPIservice.getAliasDetails($scope.currentAlias.serial).success(function (response) {
+			aliasCollectionService.getAliasDetails($scope.currentAlias.serial).then(function (response) {
 
 				// Assign value
-				$scope.alias = response;
+				$scope.alias = response.data;
 				$scope.aliasModal = jQuery.extend(true, {}, $scope.alias); // deep copy
 
 
 				// Call our API service to get the list of alias expressions
-				aliasAPIservice.getExpressions($scope.alias.source_db.serial, $scope.alias.type).success(function (response) {
-					$scope.termList = response; // Assign value
+				aliasCollectionService.getExpressions($scope.alias.source_db.serial, $scope.alias.type).then(function (response) {
+					$scope.termList = response.data; // Assign value
 
 					processingModal.close(); // hide modal
 					processingModal = null; // remove reference
@@ -321,14 +330,20 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 					});
 
 
+				}).catch(function(response) {
+					console.error('Error occurred getting expression list:', response.status, response.data);
 				});
 
 				// Call our API service to get the list of existing color tags
-				aliasAPIservice.getExistingColorTags($scope.alias.type).success(function (response) {
-					$scope.existingColorTags = response; // Assign response
+				aliasCollectionService.getExistingColorTags($scope.alias.type).then(function (response) {
+					$scope.existingColorTags = response.data; // Assign response
 
+				}).catch(function(response) {
+					console.error('Error occurred getting color tags:', response.status, response.data);
 				});
 
+			}).catch(function(response) {
+				console.error('Error occurred getting alias details:', response.status, response.data);
 			});
 
 			// Function to add / remove a term to alias
@@ -441,7 +456,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 					// Submit form
 					$.ajax({
 						type: "POST",
-						url: "php/alias/update_alias.php",
+						url: "php/alias/update.alias.php",
 						data: $scope.alias,
 						success: function (response) {
 							response = JSON.parse(response);
@@ -512,10 +527,12 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 			// After delete, refresh the alias list
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing aliases
-				aliasAPIservice.getAliases().success(function (response) {
+				aliasCollectionService.getAliases().then(function (response) {
 
 					// Assign the retrieved response
-					$scope.aliasList = response;
+					$scope.aliasList = response.data;
+				}).catch(function(response) {
+					console.error('Error occurred getting alias list:', response.status, response.data);
 				});
 			});
 
@@ -528,7 +545,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 			$scope.deleteAlias = function () {
 				$.ajax({
 					type: "POST",
-					url: "php/alias/delete_alias.php",
+					url: "php/alias/delete.alias.php",
 					data: $scope.aliasToDelete,
 					success: function (response) {
 						response = JSON.parse(response);
