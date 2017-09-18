@@ -31,7 +31,7 @@ CREATE TABLE `Questionnaire_section` (
   `position` int(11) NOT NULL,
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `last_updated_by` int(11) DEFAULT NULL,i
+  `last_updated_by` int(11) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 ALTER TABLE `Questionnaire_section` ADD PRIMARY KEY( `questionnaire_serNum`, `section_serNum`);
