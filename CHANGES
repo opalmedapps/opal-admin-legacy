@@ -1,3 +1,9 @@
+Version 0.10.2:
+ -     --- Changed encryption from SHA256 to SHA512
+ - Merge branch 'develop' of https://gitlab.com/akimosupremo/opalAdmin-dev into develop
+ - Merge branch 'release-0.10.1' into develop
+ - Update README.md
+
 Version 0.10.1:
  -     --- Created a temporary table called QuestionnaireControlNew and adjusted scripts accordingly         -- The old questionnaire system already has a table named QuestionnaireControl. So         to avoid overwritting, we will execute a phase in / phase out so that when we're ready         to use the new questionnaire system, we will change the table names/scripts accordingly.
  -     --- Added install access functionality (not completed)
