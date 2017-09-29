@@ -1,0 +1,336 @@
+<div id="main">
+	<div id="top">
+		<div class="clearfix">
+			<div class="row">
+        <!-- Load side menu -->
+				<div class="col-md-2">
+					<div ng-include="'templates/side-panel-menu.html'"></div>
+				</div>
+        <!-- Right side detail view -->
+				<div class="col-md-10 animated fadeIn">
+					<div class="row main-title">
+            <!-- Page title -->
+						<div class="col-md-6 title-content">
+							<span class="fa fa-pencil"></span>
+							<h1><strong>Manage Legacy Questionnaires</strong></h1>
+						</div>
+            <!-- Breadcrumbs -->
+						<div class="col-md-6 title-breadcrumbs">
+							<a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <a href="#/legacy-questionnaire">Legacy Questionnaires</a>							<span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Manage Legacy Questionnaires</strong></span>
+						</div>
+					</div>
+					<div class="row clearfix" style="margin-bottom: 10px; display:flex; align-items: center">
+						<div class="col-md-8">
+              <!-- Add button -->
+							<a style="width:100px;margin-right:20px;" href="" ng-click="goToAddLegacyQuestionnaire()" class="btn btn-md btn-outline item-button">
+                <span style="font-size: 17px;" class="fa fa-plus"></span>
+                <span style="font-size: 20px;"><strong>Add</strong></span>
+              </a>
+              <!-- Save changes button -->
+							<a href="" ng-click="submitPublishFlags()" class="btn btn-md item-button-success animated" ng-if="changesMade" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false">
+								<span style="font-size: 17px;" class="glyphicon glyphicon-ok"></span>
+								<span style="font-size: 20px;"><strong>Save Changes</strong></span>
+							</a>
+						</div>
+					</div>
+          <!-- Load main table -->
+					<div class="panel-container" style="text-align:left;">
+						<div class="panel-info">
+							<div class="panel-input">
+								<div id="data-table">
+									<div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:75vh"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<div class="bannerMessage alert-success">{{bannerMessage}}</div>
+</div>
+
+<!-- Deleting Modal -->
+<script type="text/ng-template" id="deleteLegacyQuestionnaireModalContent.htm">
+	<div class="modal-header">
+		<h2 class="modal-title">
+			<span class="glyphicon glyphicon-trash" style="font-size: 30px;"></span> Delete Legacy Questionnaire: {{legacyQuestionnaireToDelete.name_EN}}
+			/ {{legacyQuestionnaireToDelete.name_FR}}
+		</h2>
+	</div>
+	<div class="modal-body">
+		<div class="bs-callout bs-callout-danger">
+			<h4>Legacy Questionnaire Delete</h4>
+			<p class="deleteText">Are you sure you want to delete the legacy questionnaire "{{legacyQuestionnaireToDelete.name_EN}}" ?</p>
+			<form method="post" ng-submit="deleteLegacyQuestionnaire()">
+				<input class="btn btn-primary" type="submit" value="Delete">
+				<input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
+			</form>
+		</div>
+	</div>
+</script>
+
+<!-- Editing Modal -->
+<script type="text/ng-template" id="editLegacyQuestionnaireModalContent.htm">
+  <!-- Modal title -->
+	<div class="modal-header">
+		<h2 class="modal-title">
+			<span class="glyphicon glyphicon-pencil" style="font-size: 30px;"></span> Edit Legacy Questionnaire: {{legacyQuestionnaire.name_EN}}
+			/ {{legacyQuestionnaire.name_FR}}
+			<span style="float:right;"> 
+        <form method="post" ng-submit="updateLegacyQuestionnaire()">
+          <input class="btn btn-primary" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
+          <input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
+        </form>
+      </span>
+		</h2>
+	</div>
+	<div class="modal-body">
+		<uib-accordion>
+
+      <!-- SECTION: Titles -->
+			<div uib-accordion-group is-open="statusTitle.open">
+				<uib-accordion-heading>
+					<div>
+						<strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTitle.open, 'glyphicon-chevron-right': !statusTitle.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="bs-callout bs-callout-info">
+					<h4>Current Legacy Questionnaire Titles (EN / FR): {{legacyQuestionnaire.name_EN}} / {{legacyQuestionnaire.name_FR}}</h4>
+					To change the current title(s), enter the new title(s) in the text box(es) below.
+				</div>
+				<div class="row">
+					<div class="col-md-5">
+						<div class="input-group">
+							<span class="input-group-addon">EN</span>
+							<textarea class="form-control" rows="1" ng-model="legacyQuestionnaire.name_EN" placeholder="English Title" ng-change="setChangesMade()"></textarea>
+						</div>
+					</div>
+					<div class="col-md-1"></div>
+					<div class="col-md-5">
+						<div class="input-group">
+							<span class="input-group-addon">FR</span>
+							<textarea class="form-control" rows="1" ng-model="legacyQuestionnaire.name_FR" placeholder="Titre Français" ng-change="setChangesMade()"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+
+      <!-- SECTION: Demographic filters -->
+			<div uib-accordion-group is-open="statusDemographicFilter.open"> 
+				<uib-accordion-heading>
+					<div>
+						<strong>Filter Demographics </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDemographicFilter.open, 'glyphicon-chevron-right': !statusDemographicFilter.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="bs-callout bs-callout-info">
+					<h4>Current Sex Filter: <span ng-hide="demoFilter.sex">None</span><span ng-show="demoFilter.sex">{{demoFilter.sex}}</span> </h4>
+					<h4>Current Age Group Filter: <span ng-hide="demoFilter.age">None</span><span ng-show="demoFilter.age">{{demoFilter.age.min}} to {{demoFilter.age.max}}</span> </h4>
+					<p>To change the current filter(s), use the fields below.</p>
+				</div>
+				<div class="row">
+					<div class="col-md-6">
+						<h2 style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Sex</h2>
+						<ul class="list-items">
+							<li ng-repeat="sex in sexes">
+								<label>
+									<input type="radio" ng-model="demoFilter.sex" ng-change="setChangesMade()" ng-value="sex.name" /> {{sex.name}}
+								</label>
+							</li>
+						</ul>
+						<div style="padding: 10px;">
+							<button class="btn btn-primary" ng-click="demoFilter.sex=''">Remove Filter</button>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<h2 style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Age Group</h2>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="input-group">
+									<span class="input-group-addon">MIN</span>
+									<input class="form-control" ng-model="demoFilter.age.min" ng-change="setChangesMade()" type="number" ng-max="demoFilter.age.max" min="0">
+								</div> 
+							</div>
+							<div class="col-md-6">
+								<div class="input-group">
+									<span class="input-group-addon">MAX</span>
+									<input class="form-control" ng-model="demoFilter.age.max" ng-change="setChangesMade()" type="number" max="100" ng-min="demoFilter.age.min">
+								</div> 
+							</div>
+						</div>
+					</div>
+				</div>
+      </div> 
+      
+      <!-- SECTION: Expression filters -->
+			<div uib-accordion-group is-open="statusFilterTerms.open">
+				<uib-accordion-heading>
+					<div>
+						<strong>Filter Terms </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusFilterTerms.open, 'glyphicon-chevron-right': !statusFilterTerms.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="bs-callout bs-callout-info">
+					<h4>Current Terms</h4>
+					<ul class="list-items-4col">
+						<li ng-show="allFilters(termList)">
+							All Terms
+						</li>  
+						<li ng-repeat="selectedTerm in termList | filter: {added: 1} : 1" ng-hide="allFilters(termList)">
+							{{selectedTerm.name}}
+						</li>
+					</ul>
+					<p>To add/remove term filter, use the list below.</p>
+				</div>
+				<div class="list-space">
+					<div class="input-group">
+						<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+						<input class="form-control" type="text" ng-model="termSearchField" ng-change="searchTerm(termSearchField)" placeholder="Search..."/>
+					</div>
+					<div style="padding: 10px;">
+						<label> 
+							<input type="checkbox" ng-click="selectAllTerms()"> Select All
+						</label>
+					</div>    
+					<ul class="list-items">
+						<li ng-repeat="term in termList | filter: searchTermsFilter">
+							<label>
+								<input type="checkbox" ng-click="selectItem(term)" ng-checked="term.added" /> {{term.name}}
+							</label>
+						</li>
+					</ul>
+				</div>
+      </div>
+      
+      <!-- SECTION: Diagnosis filters -->
+			<div uib-accordion-group is-open="statusFilterDiagnosis.open">
+				<uib-accordion-heading>
+					<div>
+						<strong>Filter Diagnoses </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusFilterDiagnosis.open, 'glyphicon-chevron-right': !statusFilterDiagnosis.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="bs-callout bs-callout-info">
+					<h4>Current Diagnosis Filters</h4>
+					<ul class="list-items-4col">
+						<li ng-show="allFilters(dxFilterList)">
+							All Diagnoses
+						</li>  
+						<li ng-repeat="dx in dxFilterList | filter: {added: 1} : 1" ng-hide="allFilters(dxFilterList)">
+							{{dx.name}}
+						</li>
+					</ul>
+					<p>To add/remove diagnosis filter, use the list below.</p>
+				</div>
+				<div class="list-space">
+					<div class="input-group">
+						<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+						<input class="form-control" type="text" ng-model="dxSearchField" ng-change="searchDiagnosis(dxSearchField)" placeholder="Search..."/>
+					</div>
+					<div style="padding: 10px;">
+						<strong> 
+							To select all, leave all boxes unchecked.
+						</strong>
+					</div>    
+					<ul class="list-items">
+						<li ng-repeat="dx in dxFilterList | filter: searchDxFilter">
+							<label>
+								<input type="checkbox" ng-click="selectItem(dx)" ng-checked="dx.added" /> {{dx.name}}
+							</label>
+						</li>
+					</ul>
+				</div>
+      </div>
+      
+      <!-- SECTION: Doctor filters -->
+			<div uib-accordion-group is-open="statusFilterDoctor.open">
+				<uib-accordion-heading>
+					<div>
+						<strong>Filter Doctors </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusFilterDoctor.open, 'glyphicon-chevron-right': !statusFilterDoctor.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="bs-callout bs-callout-info">
+					<h4>Current Doctor Filters</h4>
+					<ul class="list-items-4col">
+						<li ng-show="allFilters(doctorFilterList)">
+							All Doctors
+						</li>  
+						<li ng-repeat="doctor in doctorFilterList | filter: {added: 1} : 1" ng-hide="allFilters(doctorFilterList)">
+							{{doctor.name}}
+						</li>
+					</ul>
+					<p>To add/remove doctors, use the list below.</p>
+				</div>
+				<div class="list-space">
+					<div class="input-group">
+						<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+						<input class="form-control" type="text" ng-model="doctorSearchField" ng-change="searchDoctor(doctorSearchField)" placeholder="Search..."/>
+					</div>
+					<div style="padding: 10px;">
+						<strong> 
+							To select all, leave all boxes unchecked.
+						</strong>
+					</div>    
+					<ul class="list-items">
+						<li ng-repeat="doctor in doctorFilterList | filter: searchDoctorFilter">
+							<label>
+								<input type="checkbox" ng-click="selectItem(doctor)" ng-checked="doctor.added" /> {{doctor.name}}
+							</label>
+						</li>
+					</ul>
+				</div>
+      </div>
+      
+      <!-- SECTION: Resource filter -->
+			<div uib-accordion-group is-open="statusFilterResource.open">
+				<uib-accordion-heading>
+					<div>
+						<strong>Filter Resources </stron><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusFilterResource.open, 'glyphicon-chevron-right': !statusFilterResource.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="bs-callout bs-callout-info">
+					<h4>Current Resource Filters</h4>
+					<ul class="list-items-4col">
+						<li ng-show="allFilters(resourceFilterList)">
+							All Resources
+						</li>  
+						<li ng-repeat="resource in resourceFilterList | filter: {added: 1} : 1" ng-hide="allFilters(resourceFilterList)">
+							{{resource.name}}
+						</li>
+					</ul>
+					<p>To add/remove resources, use the list below.</p>
+				</div>
+				<div class="list-space">
+					<div class="input-group">
+						<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+						<input class="form-control" type="text" ng-model="resourceSearchField" ng-change="searchResource(resourceSearchField)" placeholder="Search..."/>
+					</div>
+					<div style="padding: 10px;">
+						<strong> 
+							To select all, leave all boxes unchecked.
+						</strong>
+					</div>    
+					<ul class="list-items">
+						<li ng-repeat="resource in resourceFilterList | filter: searchResourceFilter">
+							<label>
+								<input type="checkbox" ng-click="selectItem(resource)" ng-checked="resource.added" /> {{resource.name}}
+							</label>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+		</uib-accordion>
+	</div>
+</script>
+
+<!-- "Processing" modal template -->
+<script type="text/ng-template" id="processingModal.htm">
+	<div class="modal-header">
+		<h1> Processing...</h1>
+	</div>
+	<div class="modal-body">
+		<div class="progress progress-striped active">
+			<div class="progress-bar" style="width: 100%"></div>
+		</div>
+	</div>
+</script>
