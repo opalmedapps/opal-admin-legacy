@@ -118,8 +118,10 @@ angular.module('opalAdmin', [
 			.state('questionnaire', { url: '/questionnaire', templateUrl: "templates/questionnaire.html", controller: "questionnaireController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('questionnaire-add', { url: '/questionnaire/add', templateUrl: "templates/questionnaire-add.html", controller: "newQuestionnaireController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('questionnaire-question', { url: '/questionnaire/question', templateUrl: "templates/questionnaire-question.html", controller: "questionController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
-      .state('questionnaire-question-add', { url: '/questionnaire/question/add', templateUrl: "templates/questionnaire-question-add.html", controller: "newQuestionController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+      		.state('questionnaire-question-add', { url: '/questionnaire/question/add', templateUrl: "templates/questionnaire-question-add.html", controller: "newQuestionController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('questionnaire-completed', { url: '/questionnaire/completed', templateUrl: "templates/questionnaire-completed.html", controller: "questionnaireController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+			.state('legacy-questionnaire', { url: '/legacy-questionnaire', templateUrl: "templates/legacy-questionnaire.html", controller: "legacyQuestionnaireController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+			.state('legacy-questionnaire-add', { url: '/legacy-questionnaire/add', templateUrl: "templates/legacy-questionnaire-add.html", controller: "newLegacyQuestionnaireController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('protected-route', { url: '/protected', resolve: { auth: function resolveAuthentication(AuthResolver) { return AuthResolver.resolve(); } } });
 	}])
 
