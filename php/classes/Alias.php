@@ -205,9 +205,10 @@ class Alias {
      *
      * Gets a list of existing color tags
      *
+	 * @param string $aliasType : the alias type
      * @return array $colorTags : the list of existing color tags
      */
-    public function getColorTags($type) {
+    public function getColorTags($aliasType) {
         $colorTags = array();
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -221,7 +222,7 @@ class Alias {
                 FROM
                     Alias
                 WHERE
-                    Alias.AliasType = '$type'
+                    Alias.AliasType = '$aliasType'
                 ORDER BY
                     Alias.AliasName_EN
             ";
@@ -367,10 +368,10 @@ class Alias {
      *
      * Gets details for one particular alias
      *
-     * @param integer $ser : the alias serial number
+     * @param integer $aliasSer : the alias serial number
      * @return array $aliasDetails : the alias details
      */			
-    public function getAliasDetails ($ser) { 
+    public function getAliasDetails ($aliasSer) { 
 
 		$aliasDetails = array();
 		try {
@@ -393,7 +394,7 @@ class Alias {
                     Alias, 
                     SourceDatabase
 				WHERE 
-                    Alias.AliasSerNum                       = $ser
+                    Alias.AliasSerNum                       = $aliasSer
                 AND SourceDatabase.SourceDatabaseSerNum     = Alias.SourceDatabaseSerNum
 
 			";
@@ -425,7 +426,7 @@ class Alias {
 				FROM 	
 					AliasExpression 
 				WHERE 
-					AliasExpression.AliasSerNum = $ser
+					AliasExpression.AliasSerNum = $aliasSer
 			";
 
 			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -450,7 +451,7 @@ class Alias {
 			$aliasDetails = array(
 				'name_FR' 		    => $aliasName_FR, 
 				'name_EN' 		    => $aliasName_EN, 
-				'serial' 		    => $ser, 
+				'serial' 		    => $aliasSer, 
                 'type'			    => $aliasType, 
                 'color'             => $aliasColorTag,
                 'update'            => $aliasUpdate,
@@ -474,23 +475,23 @@ class Alias {
      *
      * Inserts an alias into the database
      *
-     * @param array $aliasArray : the alias details
+     * @param array $aliasDetails : the alias details
      * @return void
      */
-	public function insertAlias( $aliasArray ) {
+	public function insertAlias( $aliasDetails ) {
 
-		$aliasName_EN 	= $aliasArray['name_EN'];
-		$aliasName_FR 	= $aliasArray['name_FR'];
-		$aliasDesc_EN	= $aliasArray['description_EN'];
-		$aliasDesc_FR	= $aliasArray['description_FR'];
-        $aliasType	    = $aliasArray['type']['name'];
-        $aliasColorTag  = $aliasArray['color'];
-		$aliasTerms	    = $aliasArray['terms'];
+		$aliasName_EN 	= $aliasDetails['name_EN'];
+		$aliasName_FR 	= $aliasDetails['name_FR'];
+		$aliasDesc_EN	= $aliasDetails['description_EN'];
+		$aliasDesc_FR	= $aliasDetails['description_FR'];
+        $aliasType	    = $aliasDetails['type']['name'];
+        $aliasColorTag  = $aliasDetails['color'];
+		$aliasTerms	    = $aliasDetails['terms'];
         $aliasEduMatSer = 0;
-        if ( is_array($aliasArray['edumat']) && isset($aliasArray['edumat']['serial']) ) {
-            $aliasEduMatSer = $aliasArray['edumat']['serial'];
+        if ( is_array($aliasDetails['edumat']) && isset($aliasDetails['edumat']['serial']) ) {
+            $aliasEduMatSer = $aliasDetails['edumat']['serial'];
         }
-        $sourceDBSer    = $aliasArray['source_db']['serial'];
+        $sourceDBSer    = $aliasDetails['source_db']['serial'];
 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -606,22 +607,22 @@ class Alias {
      *
      * Updates an alias in the database
      *
-     * @param array $aliasArray : the alias details
+     * @param array $aliasDetails : the alias details
      * @return array $response : response
      */    
-    public function updateAlias( $aliasArray ) {
+    public function updateAlias( $aliasDetails ) {
 
-		$aliasName_EN 	= $aliasArray['name_EN'];
-		$aliasName_FR 	= $aliasArray['name_FR'];
-		$aliasDesc_EN	= $aliasArray['description_EN'];
-		$aliasDesc_FR	= $aliasArray['description_FR'];
-		$aliasSer	    = $aliasArray['serial'];
-        $aliasTerms	    = $aliasArray['terms'];
+		$aliasName_EN 	= $aliasDetails['name_EN'];
+		$aliasName_FR 	= $aliasDetails['name_FR'];
+		$aliasDesc_EN	= $aliasDetails['description_EN'];
+		$aliasDesc_FR	= $aliasDetails['description_FR'];
+		$aliasSer	    = $aliasDetails['serial'];
+        $aliasTerms	    = $aliasDetails['terms'];
         $aliasEduMatSer = 0;
-        if ( is_array($aliasArray['edumat']) && isset($aliasArray['edumat']['serial']) ) {
-            $aliasEduMatSer = $aliasArray['edumat']['serial'];
+        if ( is_array($aliasDetails['edumat']) && isset($aliasDetails['edumat']['serial']) ) {
+            $aliasEduMatSer = $aliasDetails['edumat']['serial'];
         }
-        $aliasColorTag  = $aliasArray['color'];
+        $aliasColorTag  = $aliasDetails['color'];
 
         $existingTerms	= array();
 

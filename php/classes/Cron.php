@@ -59,16 +59,16 @@ class Cron {
      *
      * Updates cron settings in the database and sets the crontab
      *
-     * @param array $cronArray : cron details
+     * @param array $cronDetails : cron details
      * @return void
      */
-    public function updateCron( $cronArray ) {
+    public function updateCron( $cronDetails ) {
 
 		$cronSer	    = 1;
-		$nextCronDate	= $cronArray['nextCronDate'];
-		$repeatUnits	= $cronArray['repeatUnits'];
-		$nextCronTime	= $cronArray['nextCronTime'];
-		$repeatInterval	= $cronArray['repeatInterval'];
+		$nextCronDate	= $cronDetails['nextCronDate'];
+		$repeatUnits	= $cronDetails['repeatUnits'];
+		$nextCronTime	= $cronDetails['nextCronTime'];
+		$repeatInterval	= $cronDetails['repeatInterval'];
 	
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
