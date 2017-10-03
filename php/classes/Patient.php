@@ -344,34 +344,34 @@ class Patient {
      *
      * Registers a patient into the database
      *
-     * @param array $patientArray : the patient details
+     * @param array $patientDetails : the patient details
      * @return void
      */
-     public function registerPatient($patientArray) {
+     public function registerPatient($patientDetails) {
 
-        $email              = $patientArray['email'];
-        $password           = $patientArray['password'];
-        $language           = $patientArray['language'];
-        $uid                = $patientArray['uid'];
-        $securityQuestion1  = $patientArray['securityQuestion1'];
+        $email              = $patientDetails['email'];
+        $password           = $patientDetails['password'];
+        $language           = $patientDetails['language'];
+        $uid                = $patientDetails['uid'];
+        $securityQuestion1  = $patientDetails['securityQuestion1'];
         $questionSerial1    = $securityQuestion1['serial'];
         $answer1            = $securityQuestion1['answer'];
-        $securityQuestion2  = $patientArray['securityQuestion2'];
+        $securityQuestion2  = $patientDetails['securityQuestion2'];
         $questionSerial2    = $securityQuestion2['serial'];
         $answer2            = $securityQuestion2['answer'];
-        $securityQuestion3  = $patientArray['securityQuestion3'];
+        $securityQuestion3  = $patientDetails['securityQuestion3'];
         $questionSerial3    = $securityQuestion3['serial'];
         $answer3            = $securityQuestion3['answer'];
-        $cellNum            = $patientArray['cellNum'];
-        $SSN                = $patientArray['SSN'];
-        $accessLevel        = $patientArray['accessLevel'];
-        $sourceuid          = $patientArray['data']['sourceuid'];
-        $firstname          = $patientArray['data']['firstname'];
-        $lastname           = $patientArray['data']['lastname'];
-        $id                 = $patientArray['data']['id'];
-        $id2                = $patientArray['data']['id2'];
-        $picture            = $patientArray['data']['picture'];
-        $sex                = $patientArray['data']['sex'];
+        $cellNum            = $patientDetails['cellNum'];
+        $SSN                = $patientDetails['SSN'];
+        $accessLevel        = $patientDetails['accessLevel'];
+        $sourceuid          = $patientDetails['data']['sourceuid'];
+        $firstname          = $patientDetails['data']['firstname'];
+        $lastname           = $patientDetails['data']['lastname'];
+        $id                 = $patientDetails['data']['id'];
+        $id2                = $patientDetails['data']['id2'];
+        $picture            = $patientDetails['data']['picture'];
+        $sex                = $patientDetails['data']['sex'];
 
         try {
 
@@ -645,10 +645,10 @@ class Patient {
      *
      * Updates the patient
      *
-     * @param array $patientArray : the patient details
+     * @param array $patientDetails : the patient details
      * @return array $response : response
      */
-     public function updatePatient($patientArray) {
+     public function updatePatient($patientDetails) {
 		$response = array (
 			'value'		=> 0,
 			'error'		=> array(
@@ -657,8 +657,8 @@ class Patient {
 			)
 		);
 
-		$password 	= $patientArray['password'];
-		$serial 	= $patientArray['serial'];
+		$password 	= $patientDetails['password'];
+		$serial 	= $patientDetails['serial'];
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -691,10 +691,10 @@ class Patient {
      *
      * Sets the block status
      *
-     * @param array $patientArray : the patient details
+     * @param array $patientDetails : the patient details
      * @return array $response : response
      */
-     public function toggleBlock($patientArray) {
+     public function toggleBlock($patientDetails) {
 		 $response = array (
 			'value'		=> 0,
 			'error'		=> array(
@@ -703,10 +703,10 @@ class Patient {
 			)
 		);
 
-		$blockedStatus 	= $patientArray['disabled'];
-		$reason 		= $patientArray['reason'];
-		$serial 		= $patientArray['serial'];
-		$firebaseUID 	= $patientArray['uid'];
+		$blockedStatus 	= $patientDetails['disabled'];
+		$reason 		= $patientDetails['reason'];
+		$serial 		= $patientDetails['serial'];
+		$firebaseUID 	= $patientDetails['uid'];
 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
