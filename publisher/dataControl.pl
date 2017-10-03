@@ -42,6 +42,7 @@ use EducationalMaterial;
 use Priority; 
 use PatientLocation; 
 use Questionnaire; 
+use LegacyQuestionnaire;
 
 # Get the current time (for last-updates/logs)
 my $start_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
@@ -490,6 +491,15 @@ print "Got Educational materials\n" if $verbose;
 Questionnaire::publishQuestionnaires(@patientList);
 
 print "Got Questionnaires\n" if $verbose;
+
+##########################################################################################
+# 
+# Publishing LEGACY QUESTIONNAIRES
+#
+##########################################################################################
+LegacyQuestionnaire::publishLegacyQuestionnaires(@patientList);
+
+print "Got Legacy Questionnaires\n" if $verbose;
 
 # Once everything is complete, we update the "last transferred" field for all controls
 # Patient control
