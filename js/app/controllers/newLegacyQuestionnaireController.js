@@ -16,6 +16,7 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 
 		$scope.legacy_questionnaire = {open:false, show:true};
 		$scope.title = {open:false, show:false};
+		$scope.demo = {open:false, show:false};
 		$scope.terms = {open:false, show:false};
 
 		// completed steps boolean object; used for progress bar
@@ -53,6 +54,25 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 		// Initialize list that will hold legacy questionnaires
 		$scope.legacyQuestionnaireList = [];
 
+		// Initialize a list of sexes
+		$scope.sexes = [
+			{
+				name: 'Male',
+				icon: 'male'
+			}, {
+				name: 'Female',
+				icon: 'female'
+			}
+		];
+
+		// Initialize lists to hold filters
+		$scope.demoFilter = {
+			sex: null,
+			age: {
+				min: 0,
+				max: 100
+			}
+		};
 		// Initialize lists to hold filters
 		$scope.termList = [];
 		$scope.dxFilterList = [];
@@ -127,6 +147,7 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 
 			if ($scope.newLegacyQuestionnaire.name_EN && $scope.newLegacyQuestionnaire.name_FR) {
 
+				$scope.demo.show = true;
 				$scope.terms.show = true;
 
 				// Toggle step completion
@@ -143,6 +164,28 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 				// Change progress bar
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
+		};
+
+		// Function to toggle necessary changes when updating the sex
+		$scope.sexUpdate = function (sex) {
+
+			$scope.demo.open = true;
+
+			if (!$scope.demoFilter.sex) {
+				$scope.demoFilter.sex = sex.name;
+			} else if ($scope.demoFilter.sex == sex.name) {
+				$scope.demoFilter.sex = null; // Toggle off
+			} else {
+				$scope.demoFilter.sex = sex.name;
+			}
+
+		};
+
+		// Function to toggle necessary changes when updating the age 
+		$scope.ageUpdate = function () {
+
+			$scope.demo.open = true;
+			
 		};
 
 		// Function to toggle Item in a list on/off
@@ -261,6 +304,18 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 		// Function to submit the new legacy questionnaire
 		$scope.submitLegacyQuestionnaire = function () {
 			if ($scope.checkForm()) {
+
+				// Add demographic filters, if defined
+				if ($scope.demoFilter.sex)
+					$scope.newLegacyQuestionnaire.filters.push({ id: $scope.demoFilter.sex, type: 'Sex' });
+				if ($scope.demoFilter.age.min >= 0 && $scope.demoFilter.age.max <= 100) { // i.e. not empty
+					if ($scope.demoFilter.age.min !== 0 || $scope.demoFilter.age.max != 100) { // Filters were changed
+						$scope.newLegacyQuestionnaire.filters.push({
+							id: String($scope.demoFilter.age.min).concat(',', String($scope.demoFilter.age.max)),
+							type: 'Age'
+						});
+					}
+				}
 				// Add filters to new legacy questionnaire object
 				addFilters($scope.termList);
 				addFilters($scope.dxFilterList);
