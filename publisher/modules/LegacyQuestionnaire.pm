@@ -73,8 +73,8 @@ sub setLegacyQuestionnairePatientSer
 #====================================================================================
 sub setLegacyQuestionnaireControlSer
 {
-    my ($questionnaire, $questionnaireControlSer) = @_; # questionnaire object with provided serial in args
-    $questionnaire->{_questionnairecontrolser} = $questionnaireControlSer; # set the ser
+    my ($questionnaire, $questionnairecontrolser) = @_; # questionnaire object with provided serial in args
+    $questionnaire->{_questionnairecontrolser} = $questionnairecontrolser; # set the ser
     return $questionnaire->{_questionnairecontrolser};
 }
 
@@ -140,8 +140,8 @@ sub publishLegacyQuestionnaires
 
 		foreach my $QuestionnaireControl (@legacyQuestionnaireControls) {
 
-			my $questionnaireControlSer 	= $QuestionnaireControl->getQuestionnaireLegacyControlSer();
-			my $questionnaireFilters 		= $QuestionnaireControl->getQuestionnaireLegacyFilters();
+			my $questionnaireControlSer 	= $QuestionnaireControl->getLegacyQuestionnaireControlSer();
+			my $questionnaireFilters 		= $QuestionnaireControl->getLegacyQuestionnaireFilters();
 
 			# Fetch sex filter (if any)
 			my $sexFilter = $questionnaireFilters->getSexFilter();
@@ -223,8 +223,8 @@ sub publishLegacyQuestionnaires
 			$questionnaire = new LegacyQuestionnaire();
 
 			# set the necessary values 
-			$questionnaire->setQuestionnaireLegacyControlSer($questionnaireControlSer);
-			$questionnaire->setQuestionnaireLegacyPatientSer($patientSer);
+			$questionnaire->setLegacyQuestionnaireControlSer($questionnaireControlSer);
+			$questionnaire->setLegacyQuestionnairePatientSer($patientSer);
 
 			if (!$questionnaire->inOurDatabase()) {
 
