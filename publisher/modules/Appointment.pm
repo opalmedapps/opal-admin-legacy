@@ -791,7 +791,7 @@ sub getApptInfoFromSourceDB
                 sa.ScheduledActivityCode,
                 sa.ObjectStatus,
                 CONVERT(VARCHAR, sa.ActualStartDate, 120),
-                CONVERT(VARCHAR, sa.ActualEndDate, 120),
+                CONVERT(VARCHAR, sa.ActualEndDate, 120)
 	    	FROM 
 		    	variansystem.dbo.Patient pt, 
 			    variansystem.dbo.ScheduledActivity sa, 
@@ -802,7 +802,7 @@ sub getApptInfoFromSourceDB
     			variansystem.dbo.Attendee att 
 	    	WHERE 
 		        sa.ActivityInstanceSer 	    = ai.ActivityInstanceSer 
-    		AND au.ActivitySer 			    = act.ActivitySer 
+    		AND ai.ActivitySer 			    = act.ActivitySer 
 	    	AND act.ActivityCode 			= vva.LookupValue 
 		    AND pt.PatientSer 				= sa.PatientSer 
     		AND att.ActivityInstanceSer 	= sa.ActivityInstanceSer
