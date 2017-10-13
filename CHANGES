@@ -1,3 +1,12 @@
+Version 0.11.0:
+ - Merge branch 'oldQuestionnaire' into develop
+ -     --- Fixed syntax and comma issue of Appointments crashing     --- Added missing demographic filters to legacy questionnaires
+ - --- Added legacy questionnaire setup to publisher
+ -     --- Added new legacy questionnaire feature.         -- Frontend and backend complete         -- ToDO: publisher
+ - Merge branch 'hotfix-0.10.3' into develop
+ -     --- Added new migration file to change table name
+ - Merge branch 'release-0.10.2' into develop
+
 Version 0.10.3:
  -     --- Removed illegal character
  - Merge branch 'release-0.10.2'
