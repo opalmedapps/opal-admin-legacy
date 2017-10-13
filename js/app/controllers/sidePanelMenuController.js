@@ -85,6 +85,10 @@ angular.module('opalAdmin.controllers.sidePanelMenuController', ['ui.bootstrap',
 		$scope.goToQuestionnaireCompleted = function () {
 			$state.go('questionnaire-completed');
 		};
+		// Function to go to legacy questionnaires page
+		$scope.goToLegacyQuestionnaire = function () {
+			$state.go('legacy-questionnaire');
+		};
 
 	});
 

@@ -476,6 +476,39 @@ angular.module('opalAdmin.collections', [])
 		return questionnaireAPI;
 	})
 
+	// Legacy Questionnaire API service
+	.factory('legacyQuestionnaireCollectionService', function ($http) {
+
+		var legacyQuestionnaireAPI = {};
+
+		// Function to get the list of legacy questionnaires
+		legacyQuestionnaireAPI.getLegacyQuestionnaires = function () {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/legacy-questionnaire/get.legacy_questionnaires.php?callback=JSON_CALLBACK"
+			});
+		};
+
+		// Function to get legacy questionnaire details given a serial
+		legacyQuestionnaireAPI.getLegacyQuestionnaireDetails = function (serial) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/legacy-questionnaire/get.legacy_questionnaire_details.php?callback=JSON_CALLBACK&serial=" + serial
+			});
+		};
+
+		// Function to get legacy questionnaire expressions
+		legacyQuestionnaireAPI.getLegacyQuestionnaireExpressions = function () {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/legacy-questionnaire/get.legacy_questionnaire_expressions.php?callback=JSON_CALLBACK"
+			});
+		};
+
+		return legacyQuestionnaireAPI;
+	})
+
+
 	// install API service
 	.factory('installCollectionService', function ($http) {
 

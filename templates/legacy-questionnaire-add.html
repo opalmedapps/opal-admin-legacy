@@ -1,0 +1,634 @@
+  <div id="main">
+    <div id="top">
+      <div class="clearfix">
+        <div class="row">
+          <!-- Left side view -->
+          <div class="col-md-2">
+            <!-- Logo -->
+            <div ng-controller="sidePanelMenuController">
+              <div class="row side-logo" ng-click="goToHome()">
+                <div class="col-md-12">
+                  <div class="logo">
+                    <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+                  </div>
+                  <h1 class="animated fadeIn">opal <strong>ADMIN</strong> <span style="font-size: 20px;" ng-if="devMode">DEV</span></h1>
+                </div>
+              </div>   
+            </div>
+            <!-- Back button -->
+            <div class="row side-panel-menu">
+              <div class="col-md-12">
+                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                  <div class="side-panel-info-sm">
+                    <div class="panel-content">
+                      <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                      <h6 class="side-panel-title" style="display:inline-block;margin:0;font-size:14px;"><strong>Back to Legacy Questionnaires</strong></h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Summary -->
+            <div class="summary-fix">  
+              <div class="row">
+                <div class="side-menu-title">
+                  <div class="horz-line" style="height: 16px; text-align: center">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <h2>Summary</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>
+              <div class="row">
+                <div class="progress progress-striped active">
+                  <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                  </div>
+                </div>
+              </div>
+              <uib-accordion>
+                <!-- SECTION: Legacy Questionnaire -->
+                <div uib-accordion-group is-open="legacy_questionnaire.open" class="panel-container summary-box" is-disabled="!newLegacyQuestionnaire.legacy_questionnaire">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newLegacyQuestionnaire.legacy_questionnaire" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Legacy Questionnaire</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': type.open, 'glyphicon-chevron-right': !type.open}" ng-if="newLegacyQuestionnaire.legacy_questionnaire"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading> 
+                  <div ng-if="newLegacyQuestionnaire.legacy_questionnaire" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newLegacyQuestionnaire.legacy_questionnaire.name}}
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Title -->
+                <div uib-accordion-group is-open="title.open" class="panel-container summary-box animated" ng-class="{fadeInUp: title.show}" is-disabled="!newLegacyQuestionnaire.name_EN && !newLegacyQuestionnaire.name_FR" ng-if="title.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newLegacyQuestionnaire.name_EN && newLegacyQuestionnaire.name_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Title</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':title.open, 'glyphicon-chevron-right':!title.open}" ng-if="newLegacyQuestionnaire.name_EN || newLegacyQuestionnaire.name_FR"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newLegacyQuestionnaire.name_EN" class="description">
+                    <p style="margin-bottom:5px;">
+                      <strong>EN</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newLegacyQuestionnaire.name_EN}}
+                    </p>
+                  </div>
+                  <div ng-if="newLegacyQuestionnaire.name_FR" class="description">
+                    <p style="margin-bottom:5px;">
+                      <strong>FR</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newLegacyQuestionnaire.name_FR}}
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Demographic filter -->
+                <div uib-accordion-group is-open="demo.open" class="panel-container summary-box animated" ng-class="{fadeInUp:demo.open}" is-disabled="!demoFilter.sex && demoFilter.age.min == 0 && demoFilter.age.max == 100" ng-if="demo.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="demoFilter.sex || demoFilter.age.min != 0 || demoFilter.age.max != 100" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Demographic Filter(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':demo.open, 'glyphicon-chevron-right':!demo.open}" ng-if="demoFilter.sex || demoFilter.age.min != 0 || demoFilter.age.max != 100"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="demoFilter.sex" class="description">
+                    <p>
+                      <strong>Sex</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{demoFilter.sex}}
+                    </p>
+                  </div>
+                  <div ng-if="demoFilter.age.min != 0 || demoFilter.age.max != 100" class="description">
+                    <p>
+                      <strong>Age Group</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{demoFilter.age.min}} to {{demoFilter.age.max}} 
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Expression filters -->
+                <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(termList)" ng-if="terms.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkFilters(termList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Expression Filter(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkFilters(termList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkFilters(termList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="term in termList | filter: {added: 1} : 1">
+                          {{term.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Diagnosis filters -->
+                <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(dxFilterList)" ng-if="terms.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkFilters(dxFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Diagnosis Filter(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkFilters(dxFilterList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkFilters(dxFilterList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="Filter in dxFilterList | filter: {added: 1} : 1">
+                          {{Filter.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Doctor filters -->
+                <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(doctorFilterList)" ng-if="terms.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkFilters(doctorFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Doctor Filter(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkFilters(doctorFilterList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkFilters(doctorFilterList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="Filter in doctorFilterList | filter: {added: 1} : 1">
+                          {{Filter.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Resource filters -->
+                <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(resourceFilterList)" ng-if="terms.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkFilters(resourceFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Resource Filter(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkFilters(resourceFilterList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkFilters(resourceFilterList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="Filter in resourceFilterList | filter: {added: 1} : 1">
+                          {{Filter.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
+              </uib-accordion>
+              <!-- Submit button -->
+              <div class="panel-container">
+                <a href="" ng-click="submitLegacyQuestionnaire()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                  <span style="font-size: 20px;"><strong>Submit Legacy Questionnaire</strong></span>
+                </a>
+              </div>
+            </div>
+          </div>
+          <!-- Right side detail view -->
+          <div class="col-md-10 animated fadeInRight">
+            <div class="row main-title">
+              <!-- Page title -->
+              <div class="col-md-9 title-content">
+                <span class="glyphicon glyphicon-plus"></span>
+                <h1><strong>Add Legacy Questionnaire</strong></h1>
+              </div>
+              <!-- Breadcrumbs -->
+              <div class="col-md-3 title-breadcrumbs"> 
+                <span>
+                  <span><a href="#/">Home</a></span>
+                  <span class="teflon glyphicon glyphicon-menu-right"></span> 
+                  <span><a href="#/legacy-questionnaire">Legacy Questionnaires</a></span>
+                  <span class="teflon glyphicon glyphicon-menu-right"></span> 
+                  <span><strong>Add Legacy Questionnaire</strong></span>
+                </span>
+              </div>
+            </div> 
+            <!-- SECTION: Legacy Questionnaire -->
+            <div class="row">
+              <div class="col-md-12 side-menu-title">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fa fa-dot-circle-o"></span>
+                    <h2>Legacy Questionnaire</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>   
+            <div class="row">
+              <div class="col-md-12">
+                <p style="margin-bottom: 10px;">
+                  <span style="color:#d9534f"><strong>Required field:</strong></span>
+                  Choose the legacy questionnaire to add.
+                </p>
+              </div>
+            </div>  
+            <div class="row"> 
+              <div class="col-md-8">
+                <div class="panel-container">
+                  <div class="panel-info">
+                    <div class="panel-content">
+                      <div class="panel-input">  
+                        <div class="list-space">
+                          <div class="input-group">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                            <input class="form-control" type="text" ng-model="legacyQuestionnaireFilter" ng-change="changeLegacyQuestionnaireFilter(legacyQuestionnaireFilter)" placeholder="Search Legacy Questionnaire"/>
+                          </div>
+                          <ul class="list-items">
+                            <li ng-repeat="legacyQuestionnaire in legacyQuestionnaireList | filter: searchLegacyQuestionnairesFilter">
+                              <label>
+                                <input type="radio" ng-model="newLegacyQuestionnaire.legacy_questionnaire" ng-change="legacyQuestionnaireUpdate()" ng-value="legacyQuestionnaire" /> {{legacyQuestionnaire.name}}
+                              </label>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>   
+            <!-- SECTION: Title -->
+            <div class="row animated" ng-class="{fadeInUp:title.show}" ng-if="title.show">
+              <div class="col-md-12 side-menu-title">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fa fa-dot-circle-o"></span>
+                    <h2>Title</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>   
+            <div class="row animated" ng-class="{fadeInUp:title.show}" ng-if="title.show">
+              <div class="col-md-12">
+                <p style="margin-bottom: 10px;">
+                  <span style="color:#d9534f"><strong>Required field:</strong></span>
+                  Please assign an english and french title.
+                </p>
+              </div>
+            </div>  
+            <div class="row animated" ng-class="{fadeInUp:title.show}" ng-if="title.show">
+              <div class="col-md-6">
+                <div class="panel" ng-class="(newLegacyQuestionnaire.name_EN) ? 'panel-success': 'panel-danger'">
+                  <div class="panel-heading"><strong>English</strong>
+                    <span ng-hide="newLegacyQuestionnaire.name_EN" style="float:right"><em>Incomplete</em></span>
+                    <span ng-show="newLegacyQuestionnaire.name_EN" style="float:right"><em>Complete</em></span>
+                  </div>
+                  <div class="panel-body">
+                    <div class="row">
+                      <div class="col-md-2">
+                        <div style="font-size:18px; text-align:right;">Title</div>
+                      </div>
+                      <div class="col-md-10">
+                        <div class="form-group">
+                          <input class="form-control" type="text" ng-model="newLegacyQuestionnaire.name_EN" ng-change="titleUpdate()" placeholder="English Title" required="required">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>          
+              <div class="col-md-6">
+                <div class="panel" ng-class="(newLegacyQuestionnaire.name_FR) ? 'panel-success': 'panel-danger'">
+                  <div class="panel-heading"><strong>Français</strong>
+                    <span ng-hide="newLegacyQuestionnaire.name_FR" style="float:right"><em>Incomplete</em></span>
+                    <span ng-show="newLegacyQuestionnaire.name_FR" style="float:right"><em>Complete</em></span>
+                  </div>
+                  <div class="panel-body">
+                    <div class="row">
+                      <div class="col-md-2">
+                        <div style="font-size:18px; text-align:right;">Titre</div>
+                      </div>
+                      <div class="col-md-10">
+                        <div class="form-group">
+                          <input class="form-control" type="text" ng-model="newLegacyQuestionnaire.name_FR" ng-change="titleUpdate()" placeholder="Titre Français" required="required">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>        
+            </div>
+            <!-- SECTION: Demographic filters -->
+            <div class="row animated" ng-class="{fadeInUp:demo.show}" ng-if="demo.show">
+              <div class="col-md-12 side-menu-title">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fa fa-dot-circle-o"></span>
+                    <h2>Demographic Filters</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>   
+            <div class="row animated" ng-class="{fadeInUp:demo.show}" ng-if="demo.show">
+              <div class="col-md-12">
+                <p style="margin-bottom: 10px;">
+                  <span><strong>Optional field:</strong></span>
+                  Please assign a demographic filter. Leave unmarked for no filter.
+                </p>
+              </div>
+            </div>  
+            <div class="row animated" ng-class="{fadeInUp:demo.show}" ng-if="demo.show">
+              <div class="col-md-6">
+                <h2 style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Sex</h2>
+              </div>  
+              <div class="row">
+                <h2 style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Age Group</h2>
+              </div>
+            </div>
+            <div class="row animated" ng-class="{fadeInUp:demo.show}" ng-if="demo.show">
+              <div ng-repeat="sex in sexes" class="col-md-2">
+                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: demoFilter.sex == sex.name}" ng-click="sexUpdate(sex)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                  <div class="panel-info" ng-class="{active: demoFilter.sex == sex.name}">
+                    <div class="panel-content" style="text-align:center">
+                      <span style="font-size:30px;" class="fa fa-{{sex.icon}}"></span>
+                      <div class="option-panel-title">{{sex.name}}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-1"></div>
+              <div class="col-md-3">
+                <div class="panel">
+                  <div class="panel-body">
+                    <div class="row">
+                      <div class="col-md-2">
+                        <div style="font-size:16px; text-align:right;">MIN</div>
+                      </div>
+                      <div class="col-md-10">
+                        <div class="form-group" style="margin-bottom:0px;">
+                          <input class="form-control" ng-model="demoFilter.age.min" type="number" ng-change="ageUpdate()" ng-max="demoFilter.age.max" min="0">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>          
+              <div class="col-md-3">
+                <div class="panel">
+                  <div class="panel-body">
+                    <div class="row">
+                      <div class="col-md-2">
+                        <div style="font-size:16px; text-align:right;">MAX</div>
+                      </div>
+                      <div class="col-md-10">
+                        <div class="form-group" style="margin-bottom:0px;">
+                          <input class="form-control" ng-model="demoFilter.age.max" type="number" ng-change="ageUpdate()" max="100" ng-min="demoFilter.age.min">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>        
+            </div>
+            <!-- SECTION: Expression filters -->
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+              <div class="col-md-12 side-menu-title">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fa fa-dot-circle-o"></span>
+                    <h2>Expression Filters</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>   
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+              <div class="col-md-12">
+                <p style="margin-bottom: 10px;">
+                  <span><strong>Optional field:</strong></span>
+                  Select one of more expression filters below. This will target patients with these specific filters. Leave blank for no filters.
+                </p>
+              </div>
+            </div>  
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+              <div class="col-md-8">
+                <div class="panel-container">
+                  <div class="panel-info">
+                    <div class="panel-content">
+                      <div class="panel-input">  
+                        <div class="list-space">
+                          <div class="input-group">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                            <input class="form-control" type="text" ng-model="termSearchField" ng-change="searchTerm(termSearchField)" placeholder="Search Terms"/>
+                          </div>
+                          <div style="padding: 10px;">
+                            <label>
+                              <input type="checkbox" ng-click="selectAllTerms()"> Select All
+                            </label>
+                          </div>
+                          <ul class="list-items">
+                            <li ng-repeat="term in termList | filter: searchTermsFilter">
+                              <label>
+                                <input type="checkbox" ng-click="selectItem(term)" ng-checked="term.added" /> {{term.name}}
+                              </label>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- SECTION: Diagnosis filters -->
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+              <div class="col-md-12 side-menu-title">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fa fa-dot-circle-o"></span>
+                    <h2>Diagnosis Filters</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>   
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+              <div class="col-md-12">
+                <p style="margin-bottom: 10px;">
+                  <span><strong>Optional field:</strong></span>
+                  Select one of more diagnosis filters below. This will target patients with these specific diagnoses. Leave blank for no filters.
+                </p>
+              </div>
+            </div>  
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+              <div class="col-md-8">
+                <div class="panel-container">
+                  <div class="panel-info">
+                    <div class="panel-content">
+                      <div class="panel-input">  
+                        <div class="list-space">
+                          <div class="input-group">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                            <input class="form-control" type="text" ng-model="dxSearchField" ng-change="searchDiagnosis(dxSearchField)" placeholder="Search Diagnosis"/>
+                          </div>
+                          <ul class="list-items">
+                            <li ng-repeat="Filter in dxFilterList | filter: searchDxFilter">
+                              <label>
+                                <input type="checkbox" ng-click="selectItem(Filter)" ng-checked="Filter.added" /> {{Filter.name}}
+                              </label>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- SECTION: Doctor filters -->
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+              <div class="col-md-12 side-menu-title">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fa fa-dot-circle-o"></span>
+                    <h2>Doctor Filters</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>   
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+              <div class="col-md-12">
+                <p style="margin-bottom: 10px;">
+                  <span><strong>Optional field:</strong></span>
+                  Select one of more doctor filters below. This will target patients with these specific doctors. Leave blank for no filters.
+                </p>
+              </div>
+            </div>  
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+              <div class="col-md-8">
+                <div class="panel-container">
+                  <div class="panel-info">
+                    <div class="panel-content">
+                      <div class="panel-input">  
+                        <div class="list-space">
+                          <div class="input-group">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                            <input class="form-control" type="text" ng-model="doctorSearchField" ng-change="searchDoctor(doctorSearchField)" placeholder="Search Doctor"/>
+                          </div>
+                          <ul class="list-items">
+                            <li ng-repeat="Filter in doctorFilterList | filter: searchDoctorFilter">
+                              <label>
+                                <input type="checkbox" ng-click="selectItem(Filter)" ng-checked="Filter.added" /> {{Filter.name}}
+                              </label>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- SECTION: Resource filters -->
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+              <div class="col-md-12 side-menu-title">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fa fa-dot-circle-o"></span>
+                    <h2>Resource Filters</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>   
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+              <div class="col-md-12">
+                <p style="margin-bottom: 10px;">
+                  <span><strong>Optional field:</strong></span>
+                  Select one of more resource filters below. This will target patients with these specific resources. Leave blank for no filters.
+                </p>
+              </div>
+            </div>  
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+              <div class="col-md-8">
+                <div class="panel-container">
+                  <div class="panel-info">
+                    <div class="panel-content">
+                      <div class="panel-input">  
+                        <div class="list-space">
+                          <div class="input-group">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                            <input class="form-control" type="text" ng-model="resourceSearchField" ng-change="searchResource(resourceSearchField)" placeholder="Search Resource"/>
+                          </div>
+                          <ul class="list-items">
+                            <li ng-repeat="Filter in resourceFilterList | filter: searchResourceFilter">
+                              <label>
+                                <input type="checkbox" ng-click="selectItem(Filter)" ng-checked="Filter.added" /> {{Filter.name}}
+                              </label>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- END SECTION -->
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- "Processing" modal template -->
+<script type="text/ng-template" id="processingModal.htm">
+  <div class="modal-header">
+    <h1> Processing...</h1>
+  </div>
+  <div class="modal-body">
+    <div class="progress progress-striped active">
+      <div class="progress-bar" style="width: 100%"></div>        
+    </div>
+  </div>
+</script>
+
+
