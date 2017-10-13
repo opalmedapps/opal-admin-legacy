@@ -17,6 +17,15 @@
 	define( "OPAL_DB_USERNAME", "OPAL_DB_USERNAME_HERE" ); 
 	define( "OPAL_DB_PASSWORD", "OPAL_DB_PASSWORD_HERE" ); 
 
+	// DEFINE LEGACY QUESTIONNAIRE SERVER/DATABASE CREDENTIALS HERE
+	// NOTE: This works for a MySQL setup. 
+	define( "QUESTIONNAIRE_DB_HOST", "QUESTIONNAIRE_DB_HOST_HERE" );
+	define( "QUESTIONNAIRE_DB_PORT", "QUESTIONNAIRE_DB_PORT_HERE" );
+	define( "QUESTIONNAIRE_DB_NAME", "QUESTIONNAIRE_DB_NAME_HERE" );
+	define( "QUESTIONNAIRE_DB_DSN", "mysql:host=" . QUESTIONNAIRE_DB_HOST . ";port=" . QUESTIONNAIRE_DB_PORT . ";dbname=" . QUESTIONNAIRE_DB_NAME . ";charset=utf8" ); 
+	define( "QUESTIONNAIRE_DB_USERNAME", "QUESTIONNAIRE_DB_USERNAME_HERE" ); 
+	define( "QUESTIONNAIRE_DB_PASSWORD", "QUESTIONNAIRE_DB_PASSWORD_HERE" ); 
+
     // DEFINE ARIA SERVER/DATABASE CREDENTIALS HERE
     // NOTE: This works for a MicrosoftSQL (MSSQL) setup. 
     define( "ARIA_DB_HOST", "ARIA_DB_HOST_HERE" );
@@ -71,6 +80,7 @@
 	include_once( FRONTEND_ABS_PATH . "php/classes/Questionnaire/Category.php");
 	include_once( FRONTEND_ABS_PATH . "php/classes/Questionnaire/AnswerType.php");
 	include_once( FRONTEND_ABS_PATH . "php/classes/Questionnaire/Library.php");
+	include_once( FRONTEND_ABS_PATH . "php/classes/LegacyQuestionnaire.php");
 
 	// Push Notification FCM and APN credentials.
     define( "API_KEY" , "API_KEY_HERE" );
