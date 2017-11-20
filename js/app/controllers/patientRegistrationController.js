@@ -270,18 +270,25 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 		$scope.validPassword = { status: null, message: null };
 		$scope.validatePassword = function (password) {
 
-			if (!password) {
-				$scope.validPassword.status = null;
-				$scope.passwordUpdate();
-				return;
-			}
-
+			// Password must be at least 6 characters long
 			if (password.length < 6) {
 				$scope.validPassword.status = 'invalid';
-				$scope.validPassword.message = $filter('translate')('STATUS_PASSWORD_ERROR');
+				$scope.validPassword.message = $filter('translate')('STATUS_PASSWORD_CHARACTER_ERROR');
 				$scope.passwordUpdate();
 				return;
-			} else {
+			} 
+
+			// Password must contain at least one capital letter and one number
+			var capitalRegex = /[A-Z]/;
+			var numberRegex = /\d/g;
+			if (!capitalRegex.test(password) || !numberRegex.test(password)) {
+				$scope.validPassword.status = 'invalid';
+				$scope.validPassword.message = $filter('translate')('STATUS_PASSWORD_CAP_NUM_ERROR');
+				$scope.passwordUpdate();
+			 	return;
+			}
+
+			else {
 				$scope.validPassword.status = 'valid';
 				$scope.validPassword.message = null;
 				$scope.passwordUpdate();

@@ -1,3 +1,8 @@
+Version 0.11.2:
+ -     --- Removed commented code on notification insert for calling patients         -- Since there is a view in the app for it
+ -     --- Added stricter password requirements for patient registration         -- Password now must contain at least one capital letter and at least one number
+ - Merge branch 'release-0.11.1' into develop
+
 Version 0.11.1:
  - Merge branch 'checkin' into develop
  - 	--- Check In Notification Module : send a notification to the user device that they are checked in.
