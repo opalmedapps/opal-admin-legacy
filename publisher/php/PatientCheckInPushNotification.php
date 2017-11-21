@@ -1,5 +1,5 @@
 <?php
-    include_once "database.inc";
+    include_once "databasePreProd.inc";
     require_once('PushNotifications.php');
 
    class PatientCheckInPushNotification{
@@ -91,6 +91,46 @@
                 exit();
             }
             
+           
+		   $HoldDate = date("Y-m-d");
+		   // Get a list of appointments for today
+		   $sql = "Select Appointment.AppointmentSerNum, Appointment.Checkin
+						from Patient, Appointment 
+						where Patient.PatientId =  :patientId
+						and Appointment.Checkin in (0,1)
+						and Patient.PatientSerNum = Appointment.PatientSerNum
+						and DATE_FORMAT(Appointment.ScheduledStartTime, '%Y-%m-%d') =  DATE_FORMAT(NOW(), '%Y-%m-%d');";
+
+			try{
+                $r = $pdo->prepare($sql);
+                $r->bindValue(':patientId', $patientId);
+                $r->execute();
+                $result = $r->fetchAll();
+           }catch(PDOException $e)
+           {
+               return array("success"=>0,"failure"=>1,"error"=>$e);
+               exit();
+           }
+			
+			print_r($result);
+
+			foreach($result as $apt)
+			{
+					echo 'LOOPING!!! <br />';
+					print_r ($apt);
+				  //Insert into notifications table 
+				  try{
+					 $sql = 'INSERT INTO `Notification` (`PatientSerNum`, `NotificationControlSerNum`, `RefTableRowSerNum`, `DateAdded`, `ReadStatus`) 
+								SELECT  ' . $patientSerNum . ',ntc.NotificationControlSerNum, '.$apt['AppointmentSerNum'] . ', NOW(),0 
+								FROM NotificationControl ntc WHERE ntc.NotificationType = "CheckInNotification"';
+					 $resultNotification = $pdo->query($sql);
+				   }catch(PDOException $e)
+				   {
+					   return array("success"=>0,"failure"=>1,"error"=>$e);
+					   exit(); 
+				   }
+			}
+		   
             // Step 3 - Send message to patient devices and record in database
             $resultsArray = array();
             foreach($patientDevices as $device)
@@ -167,6 +207,7 @@
 							WHERE P.PatientId = '".$patientId."' 
 								AND P.PatientSerNum = PD.PatientSerNum
 								AND length(trim(PD.RegistrationId)) > 0
+								AND PD.DeviceType in (0,1)
 								ORDER BY PD.PatientDeviceIdentifierSerNum;";
 
 		   // $sql = "SELECT PD.PatientDeviceIdentifierSerNum, PD.RegistrationId, PD.DeviceType 
