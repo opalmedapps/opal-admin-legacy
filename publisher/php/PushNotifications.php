@@ -92,17 +92,21 @@ class PushNotifications {
 		// Encode the payload as JSON
 		$payload = json_encode($body);
 		// Build the binary notification
-		$msg = chr(0) . pack('n', 32) . pack('H*', $deviceToken) . pack('n', strlen($payload)) . $payload;
-		// Send it to the server
-		$result = fwrite($fp, $msg, strlen($msg));
-		// Close the connection to the server
-		fclose($fp);
-		if (!$result)
-			$response =  array("success"=>0,"failure"=>1,"error"=>"Unable to send packets to APN socket");
-		else{
-			$response =  array("success"=>1,"failure"=>0);
-		}
-		return $response;
+		
+		echo 'Device Token :' .  $deviceToken . '<br />';
+		if (strlen($deviceToken) == 64) {
+			$msg = chr(0) . pack('n', 32) . pack('H*', $deviceToken) . pack('n', strlen($payload)) . $payload;
+			// Send it to the server
+			$result = fwrite($fp, $msg, strlen($msg));
+			// Close the connection to the server
+			fclose($fp);
+			if (!$result)
+				$response =  array("success"=>0,"failure"=>1,"error"=>"Unable to send packets to APN socket");
+			else{
+				$response =  array("success"=>1,"failure"=>0);
+			}
+			return $response;
+			}
 		}
 	
 	// Curl 
