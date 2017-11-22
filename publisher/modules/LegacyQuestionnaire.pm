@@ -131,17 +131,17 @@ sub publishLegacyQuestionnaires
 {
 	my (@patientList) = @_; # patient list from args
 
-	# Retrieve all the questionnaire controls
-	my @questionnaireControls = getQuestionnaireControlsMarkedForPublish(); 
+	# Retrieve all the legacy questionnaire controls
+	my @legacyQuestionnaireControls = getLegacyQuestionnaireControlsMarkedForPublish(); 
 
 	foreach my $Patient (@patientList) {
 
 		my $patientSer = $Patient->getPatientSer(); 
 
-		foreach my $QuestionnaireControl (@questionnaireControls) {
+		foreach my $QuestionnaireControl (@legacyQuestionnaireControls) {
 
-			my $questionnaireControlSer 	= $QuestionnaireControl->getQuestionnaireControlSer();
-			my $questionnaireFilters 		= $QuestionnaireControl->getQuestionnaireFilters();
+			my $questionnaireControlSer 	= $QuestionnaireControl->getLegacyQuestionnaireControlSer();
+			my $questionnaireFilters 		= $QuestionnaireControl->getLegacyQuestionnaireFilters();
 
 			# Fetch sex filter (if any)
 			my $sexFilter = $questionnaireFilters->getSexFilter();
@@ -223,17 +223,17 @@ sub publishLegacyQuestionnaires
 			$questionnaire = new LegacyQuestionnaire();
 
 			# set the necessary values 
-			$questionnaire->setQuestionnaireControlSer($questionnaireControlSer);
-			$questionnaire->setQuestionnairePatientSer($patientSer);
+			$questionnaire->setLegacyQuestionnaireControlSer($questionnaireControlSer);
+			$questionnaire->setLegacyQuestionnairePatientSer($patientSer);
 
 			if (!$questionnaire->inOurDatabase()) {
 
-				$questionnaire = $questionnaire->insertQuestionnaireIntoOurDB();
+				$questionnaire = $questionnaire->insertLegacyQuestionnaireIntoOurDB();
 
 				# send push notification
-				my $questionnaireSer = $questionnaire->getQuestionnaireSer();
-				my $patientSer = $questionnaire->getQuestionnairePatientSer();
-				#PushNotification::sendPushNotification($patientSer, $questionnaireSer, 'Questionnaire');
+				my $questionnaireSer = $questionnaire->getLegacyQuestionnaireSer();
+				my $patientSer = $questionnaire->getLegacyQuestionnairePatientSer();
+				#PushNotification::sendPushNotification($patientSer, $questionnaireSer, 'LegacyQuestionnaire');
 			}
 
 		}
@@ -250,20 +250,20 @@ sub inOurDatabase
 {
 	my ($questionnaire) = @_; # our questionnaire object in args
 
-	my $patientser 				= $questionnaire->getQuestionnairePatientSer();
-	my $questionnairecontrolser	= $questionnaire->getQuestionnaireControlSer();
+	my $patientser 				= $questionnaire->getLegacyQuestionnairePatientSer();
+	my $questionnaireControlSer	= $questionnaire->getLegacyQuestionnaireControlSer();
 
 	my $serInDB = 0; # false by default. Will be true if questionnaire exists
-	my $ExistingQuestionnaire = (); # data to be entered if questionnaire exists 
+	my $ExistingLegacyQuestionnaire = (); # data to be entered if questionnaire exists 
 
 	my $inDB_sql = "
 		SELECT DISTINCT
-			qp.serNum
+			Questionnaire.QuestionnaireSerNum
 		FROM
-			Questionnaire_patient qp
+			Questionnaire
 		WHERE
-			qp.patient_serNum  		= '$patientser'
-		AND qp.questionnaire_serNum	= '$questionnairecontrolser'
+			Questionnaire.PatientSerNum  				= '$patientser'
+		AND Questionnaire.QuestionnaireControlSerNum 	= '$questionnaireControlSer'
 	";
 
 	  # prepare query
@@ -281,38 +281,40 @@ sub inOurDatabase
 
 	if ($serInDB) {
 
-		$ExistingQuestionnaire = new Questionnaire(); # initialize
+		$ExistingLegacyQuestionnaire = new LegacyQuestionnaire(); # initialize
 
 		# set params
-		$ExistingQuestionnaire->setQuestionnaireSer($serInDB);
-		$ExistingQuestionnaire->setQuestionnairePatientSer($patientser);
-		$ExistingQuestionnaire->setQuestionnaireControlSer($questionnairecontrolser);
+		$ExistingLegacyQuestionnaire->setLegacyQuestionnaireSer($serInDB);
+		$ExistingLegacyQuestionnaire->setLegacyQuestionnairePatientSer($patientser);
+		$ExistingLegacyQuestionnaire->setLegacyQuestionnaireControlSer($questionnaireControlSer);
 
-		return $ExistingQuestionnaire; # this is true (i.e. questionnaire exists. return object)
+		return $ExistingLegacyQuestionnaire; # this is true (i.e. questionnaire exists. return object)
 	}
 
-	else {return $ExistingQuestionnaire}; # this is false (i.e. questionnaire DNE)
+	else {return $ExistingLegacyQuestionnaire}; # this is false (i.e. questionnaire DNE)
 }
 
 #======================================================================================
 # Subroutine to insert our questionnaire in our database
 #======================================================================================
-sub insertQuestionnaireIntoOurDB
+sub insertLegacyQuestionnaireIntoOurDB
 {
 	my ($questionnaire) = @_; # our questionnaire object
 
-	my $patientser  			= $questionnaire->getQuestionnairePatientSer();
-	my $questionnairecontrolser = $questionnaire->getQuestionnaireControlSer();
+	my $patientser  			= $questionnaire->getLegacyQuestionnairePatientSer();
+	my $questionnaireControlSer = $questionnaire->getLegacyQuestionnaireControlSer();
 
 	my $insert_sql = "
 		INSERT INTO 
-			Questionnaire_patient (
-				patient_serNum,
-				questionnaire_serNum
+			Questionnaire (
+				PatientSerNum,
+				QuestionnaireControlSerNum,
+				DateAdded
 			)
 		VALUES (
 			'$patientser',
-			'$questionnairecontrolser'
+			'$questionnaireControlSer',
+			NOW()
 		)
 	"; 
 	
@@ -329,25 +331,25 @@ sub insertQuestionnaireIntoOurDB
 	my $ser = $SQLDatabase->last_insert_id(undef, undef, undef, undef);
 
 	# Set the Serial in our object
-	$questionnaire->setQuestionnaireSer($ser);
+	$questionnaire->setLegacyQuestionnaireSer($ser);
 	
 	return $questionnaire;
 }
 
 #======================================================================================
-# Subroutine to get a list of questionnaire controls marked for publish
+# Subroutine to get a list of legacy questionnaire controls marked for publish
 #======================================================================================
-sub getQuestionnaireControlsMarkedForPublish
+sub getLegacyQuestionnaireControlsMarkedForPublish
 {
     my @questionnaireControlList = (); # initialize a list
 
     my $info_sql = "
         SELECT DISTINCT
-           QuestionnaireControlNew.serNum
+           	QuestionnaireControl.QuestionnaireControlSerNum
 		FROM
-			QuestionnaireControlNew
+			QuestionnaireControl
 		WHERE
-			QuestionnaireControlNew.publish = 1
+			QuestionnaireControl.PublishFlag = 1
     ";
 
     # prepare query
@@ -360,17 +362,17 @@ sub getQuestionnaireControlsMarkedForPublish
 
 	while (my @data = $query->fetchrow_array()) {
 
-        my $questionnaireControl = new Questionnaire(); # new object
+        my $questionnaireControl = new LegacyQuestionnaire(); # new object
 
         my $ser             = $data[0];
 
         # set information
-        $questionnaireControl->setQuestionnaireControlSer($ser);
+        $questionnaireControl->setLegacyQuestionnaireControlSer($ser);
 
         # get all the filters
-        my $filters = Filter::getAllFiltersFromOurDB($ser, 'QuestionnaireControl');
+        my $filters = Filter::getAllFiltersFromOurDB($ser, 'LegacyQuestionnaireControl');
 
-        $questionnaireControl->setQuestionnaireFilters($filters);
+        $questionnaireControl->setLegacyQuestionnaireFilters($filters);
 
         push(@questionnaireControlList, $questionnaireControl);
     }
