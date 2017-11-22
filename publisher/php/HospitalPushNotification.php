@@ -124,9 +124,8 @@
                exit();
            }
            
-            //Insert into notifications table -- DISABLED FOR NOW
-            /*
-           try{
+          //Insert into notifications table 
+          try{
              $sql = 'INSERT INTO `Notification` (`PatientSerNum`, `NotificationControlSerNum`, `RefTableRowSerNum`, `DateAdded`, `ReadStatus`) SELECT '.$result[0]["PatientSerNum"].',ntc.NotificationControlSerNum,'.$result[0]["AppointmentSerNum"].', NOW(),0 FROM NotificationControl ntc WHERE ntc.NotificationType = "RoomAssignment"';
              $resultNotification = $pdo->query($sql);
            }catch(PDOException $e)
@@ -134,7 +133,7 @@
                return array("success"=>0,"failure"=>1,"error"=>$e);
                exit();
            }
-             */
+            
  
            //Obtain NotificationSerNum for the last inserted Id.
             //$notificationSerNum = $pdo->lastInsertId();
