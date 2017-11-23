@@ -11,9 +11,6 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 			window.history.back();
 		};
 
-		// Default boolean variables
-		var selectAll = false; // select All button checked?
-
 		$scope.legacy_questionnaire = {open:false, show:true};
 		$scope.title = {open:false, show:false};
 		$scope.demo = {open:false, show:false};
@@ -33,6 +30,7 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 		$scope.dxSearchField = null;
 		$scope.doctorSearchField = null;
 		$scope.resourceSearchField = null;
+		$scope.patientSearchField = null;
 
 		// Default count of completed steps
 		$scope.numOfCompletedSteps = 0;
@@ -78,6 +76,7 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 		$scope.dxFilterList = [];
 		$scope.doctorFilterList = [];
 		$scope.resourceFilterList = [];
+		$scope.patientFilterList = [];
 
 		/* Function for the "Processing..." dialog */
 		var processingModal;
@@ -112,6 +111,7 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 			$scope.dxFilterList = response.data.dx;
 			$scope.doctorFilterList = response.data.doctors;
 			$scope.resourceFilterList = response.data.resources;
+			$scope.patientFilterList = response.data.patients;
 
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
@@ -227,6 +227,9 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 		$scope.searchResource = function (field) {
 			$scope.resourceSearchField = field;
 		};
+		$scope.searchPatient = function (field) {
+			$scope.patientSearchField = field;
+		};
 
 		// Function to assign legacy questionnaire when textbox is changing 
 		$scope.changeLegacyQuestionnaireFilter = function (legacyQuestionnaireFilter) {
@@ -255,6 +258,10 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 		$scope.searchResourceFilter = function (Filter) {
 			var keyword = new RegExp($scope.resourceSearchField, 'i');
 			return !$scope.resourceSearchField || keyword.test(Filter.name);
+		};
+		$scope.searchPatientFilter = function (Filter) {
+			var keyword = new RegExp($scope.patientSearchField, 'i');
+			return !$scope.patientSearchField || keyword.test(Filter.name);
 		};
 
 		// Function to calculate / return step progress
@@ -321,6 +328,7 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 				addFilters($scope.dxFilterList);
 				addFilters($scope.doctorFilterList);
 				addFilters($scope.resourceFilterList);
+				addFilters($scope.patientFilterList);
 				// Submit 
 				$.ajax({
 					type: "POST",
@@ -335,19 +343,19 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 
 		var fixmeTop = $('.summary-fix').offset().top;
 		$(window).scroll(function() {
-		    var currentScroll = $(window).scrollTop();
-		    if (currentScroll >= fixmeTop) {
-		        $('.summary-fix').css({
-		            position: 'fixed',
-		            top: '0',
-		          	width: '15%'
-		        });
-		    } else {
-		        $('.summary-fix').css({
-		            position: 'static',
-		            width: ''
-		        });
-		    }
+			var currentScroll = $(window).scrollTop();
+			if (currentScroll >= fixmeTop) {
+				$('.summary-fix').css({
+					position: 'fixed',
+					top: '0',
+					width: '15%'
+				});
+			} else {
+				$('.summary-fix').css({
+					position: 'static',
+					width: ''
+				});
+			}
 		});
 
 	});
