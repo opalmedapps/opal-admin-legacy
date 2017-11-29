@@ -17,11 +17,50 @@ class Filter {
             'expressions'   => array(),
             'dx'            => array(),
             'doctors'       => array(),
-            'resources'     => array()
+			'resources'     => array(),
+			'patients'		=> array()
         );
         $databaseObj = new Database();
 
         try {
+
+			// ***********************************
+            // OpalDB 
+            // ***********************************
+			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			if ($host_db_link) {
+
+				$sql = "
+					SELECT DISTINCT
+						pt.PatientSerNum,
+						pt.PatientId,
+						pt.FirstName,
+						pt.LastName
+					FROM
+						Patient pt
+					ORDER BY
+						pt.PatientSerNum
+				";
+
+				$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				$query->execute();
+	
+				while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+					$serial 	= $data[0];
+					$patientId 	= $data[1];
+					$firstName 	= $data[2];
+					$lastName 	= $data[3];
+					$patientName = "$lastName, $firstName ($patientId)";
+					$patientArray = array(
+						'name'	=> $patientName,
+						'id'	=> $patientName,
+						'type' 	=> 'Patient',
+						'added'	=> 0
+					);
+					array_push($filters['patients'], $patientArray);
+			}
 
             // ***********************************
             // ARIA 
