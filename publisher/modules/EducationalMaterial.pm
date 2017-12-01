@@ -156,31 +156,49 @@ sub publishEducationalMaterials
             my $eduMatControlSer    = $EduMatControl->getEduMatControlSer();
             my $eduMatFilters       = $EduMatControl->getEduMatControlFilters();
 
+			# Fetch patient-specific filters (if any)
+            my @patientFilters = $eduMatFilters->getPatientFilters();
+
+			# We will flag whether there are patient-specific filters or other (non-patient-specific) filters
+			# The reason is that the patient-specific filter introduces a new logic
+			# If any of the non-patient-specific filters exist, then we don't want to lose the exception 
+			# that a patient-specific filter has been defined
+			# If there is a patient-specific filter defined, then we only send the content to the patients 
+			# selected in the filter UNLESS other non-patient-specific filters have been defined. In that case,
+			# we send to the patients defined in the patient-specific filters AND to the patients that pass
+			# in the non-patient-specific filters (i.e. UNION logic) 
+			my $isNonPatientSpecificFilterDefined = 0;
+
             # Fetch sex filter (if any) 
             my $sexFilter =  $eduMatFilters->getSexFilter();
             if ($sexFilter) {
 
-                my $test = $Patient->getPatientSex();
+				# toggle flag
+				$isNonPatientSpecificFilterDefined = 1;
+
+                my $patientSex = $Patient->getPatientSex();
 
                 # Determine if the filter matches the current patient's sex
-                # If not, continue to the next educational material
-                if ($sexFilter ne $Patient->getPatientSex()){next;}
+                # If not, and there are no patient-specific filters, continue to the next educational material
+                if ($sexFilter ne $patientSex and !@patientFilters){next;}
             }
 
             # Fetch age group filter (if any)
             my $ageFilter = $eduMatFilters->getAgeFilter();
             if ($ageFilter) {
 
+				# toggle flag
+				$isNonPatientSpecificFilterDefined = 1;
+
                 my $patientAge = $Patient->getPatientAge();
                 # Determine if the patient's age falls within the age group
-                # If not, continue to the next educational material
-                if ($patientAge < $ageFilter->{_min} or $patientAge > $ageFilter->{_max}) {next;}
+                # If not, and there are no patient-specific filters, continue to the next educational material
+                if (($patientAge < $ageFilter->{_min} or $patientAge > $ageFilter->{_max}) and !@patientFilters) {next;}
 
             }
 
             # Retrieve all patient's appointment(s) up until tomorrow
             my @patientAppointments = Appointment::getAllPatientsAppointmentsFromOurDB($patientSer);
-            #if (!@patientAppointments) {next;}
 
             my @expressionNames = ();
             my @diagnosisNames = ();
@@ -204,31 +222,52 @@ sub publishEducationalMaterials
             my @expressionFilters =  $eduMatFilters->getExpressionFilters();
             if (@expressionFilters) {
 
+				# toggle flag
+				$isNonPatientSpecificFilterDefined = 1;
+
                 # Finding the existence of the patient expressions in the expression filters
-                # If there is an intersection, then patient is part of this publishing announcement
-                # If not, then continue to next announcement
-                if (!intersect(@expressionFilters, @expressionNames)) {next;} 
+                # If there is an intersection, then patient is part of this publishing educational material
+                # If not, and there are no patient-specific filters, then continue to next educational material
+                if (!intersect(@expressionFilters, @expressionNames) and !@patientFilters) {next;} 
             }
 
             # Fetch diagnosis filters (if any)
             my @diagnosisFilters = $eduMatFilters->getDiagnosisFilters();
             if (@diagnosisFilters) {
 
+				# toggle flag
+				$isNonPatientSpecificFilterDefined = 1;
+
                 # Finding the intersection of the patient's diagnosis and the diagnosis filters
-                # If there is an intersection, then patient is part of this publishing announcement
-                # If not, then continue to next announcement
-                if (!intersect(@diagnosisFilters, @diagnosisNames)) {next;} 
+                # If there is an intersection, then patient is part of this publishing educational material
+                # If not, and there are no patient-specific filters, then continue to next educational material
+                if (!intersect(@diagnosisFilters, @diagnosisNames) and !@patientFilters) {next;} 
             }
 
             # Fetch doctor filters (if any)
             my @doctorFilters = $eduMatFilters->getDoctorFilters();
             if (@doctorFilters) {
 
+				# toggle flag
+				$isNonPatientSpecificFilterDefined = 1;
+
                 # Finding the intersection of the patient's doctor(s) and the doctor filters
-                # If there is an intersection, then patient is part of this publishing announcement
-                # If not, then continue to next announcement
-                if (!intersect(@doctorFilters, @patientDoctors)) {next;} 
+                # If there is an intersection, then patient is part of this publishing educational material
+                # If not, and there are no patient-specific filters, then continue to next educational material
+                if (!intersect(@doctorFilters, @patientDoctors) and !@patientFilters) {next;} 
             }
+
+			# If we've reached this point, then the patient passes all non-patient-specific filters
+			# We look into whether any patient-specific filters have been defined and no non-patient-specific filters have been defined
+			# If we enter this if statement, then only patient-specific filters have been defined and we check if that patient is in that list
+			# If we don't enter this if statement, then either no filters were defined at all or the patient passed one or more of the 
+			# non-patient-specific filters above
+			if (@patientFilters and !$isNonPatientSpecificFilterDefined) {
+
+				# Finding the existence of the patient in the patient-specific filters
+				# If the patient does not exist, then continue to the next educational material
+				if (grep $patientSer ne $_, @patientFilters) {next;}
+			}
 
             # If we've reached this point, we've passed all catches (filter restrictions). We make
             # an educational material object, check if it exists already in the database. If it does 

@@ -211,8 +211,8 @@ sub publishQuestionnaires
             if (@expressionFilters) {
 
                 # Finding the existence of the patient expressions in the expression filters
-                # If there is an intersection, then patient is part of this publishing questionnaire
-                # If not, then continue to next questionnaire
+                # If there is an intersection, then patient is part of this publishing announcement
+                # If not, then continue to next announcement
                 if (!intersect(@expressionFilters, @expressionNames)) {next;} 
             }
 
@@ -221,8 +221,8 @@ sub publishQuestionnaires
             if (@diagnosisFilters) {
 
                 # Finding the intersection of the patient's diagnosis and the diagnosis filters
-                # If there is an intersection, then patient is part of this publishing questionnaire
-                # If not, then continue to next questionnaire
+                # If there is an intersection, then patient is part of this publishing announcement
+                # If not, then continue to next announcement
                 if (!intersect(@diagnosisFilters, @diagnosisNames)) {next;} 
             }
 
@@ -231,20 +231,10 @@ sub publishQuestionnaires
             if (@doctorFilters) {
 
                 # Finding the intersection of the patient's doctor(s) and the doctor filters
-                # If there is an intersection, then patient is part of this publishing questionnaire
-                # If not, then continue to next questionnaire
+                # If there is an intersection, then patient is part of this publishing announcement
+                # If not, then continue to next announcement
                 if (!intersect(@doctorFilters, @patientDoctors)) {next;} 
             }
-
-			# Fetch patient filters (if any)
-			my @patientFilters = $questionnaireFilters->getPatientFilters();
-			if (@patientFilters) {
-
-				# Finding the existence of the patient in the patient filters
-				# If the patient exists, then the patient is part of this publishing questionnaire
-				# IF not, then continue to the next questionnaire
-				if (grep $patientSer ne $_, @patientFilters) {next;}
-			}
 
             # If we've reached this point, we've passed all catches (filter restrictions). We make
             # a questionnaire object, check if it exists already in the database. If it does 
