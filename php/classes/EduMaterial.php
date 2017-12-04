@@ -485,22 +485,22 @@ class EduMaterial {
      *
      * Inserts educational material into the database
      *
-     * @param array $eduMatArray : the educational material details
+     * @param array $eduMatDetails : the educational material details
 	 * @return void
      */
-    public function insertEducationalMaterial ( $eduMatArray ) {
+    public function insertEducationalMaterial ( $eduMatDetails ) {
 
-        $name_EN        = $eduMatArray['name_EN'];
-        $name_FR        = $eduMatArray['name_FR'];
-        $url_EN         = $eduMatArray['url_EN'];
-        $url_FR         = $eduMatArray['url_FR'];
-        $shareURL_EN    = $eduMatArray['share_url_EN'];
-        $shareURL_FR    = $eduMatArray['share_url_FR'];
-        $type_EN        = $eduMatArray['type_EN'];
-        $type_FR        = $eduMatArray['type_FR'];
-        $phaseSer       = $eduMatArray['phase_in_tx']['serial'];
-        $tocs           = $eduMatArray['tocs'];
-        $filters        = $eduMatArray['filters'];
+        $name_EN        = $eduMatDetails['name_EN'];
+        $name_FR        = $eduMatDetails['name_FR'];
+        $url_EN         = $eduMatDetails['url_EN'];
+        $url_FR         = $eduMatDetails['url_FR'];
+        $shareURL_EN    = $eduMatDetails['share_url_EN'];
+        $shareURL_FR    = $eduMatDetails['share_url_FR'];
+        $type_EN        = $eduMatDetails['type_EN'];
+        $type_FR        = $eduMatDetails['type_FR'];
+        $phaseSer       = $eduMatDetails['phase_in_tx']['serial'];
+        $tocs           = $eduMatDetails['tocs'];
+        $filters        = $eduMatDetails['filters'];
 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -638,21 +638,21 @@ class EduMaterial {
      *
      * Updates educational material details in the database
      *
-     * @param array $eduMatArray : the educational material details
+     * @param array $eduMatDetails : the educational material details
      * @return array $response : response
      */
-    public function updateEducationalMaterial ($eduMatArray) {
+    public function updateEducationalMaterial ($eduMatDetails) {
 
-        $name_EN            = $eduMatArray['name_EN'];
-        $name_FR            = $eduMatArray['name_FR'];
-        $url_EN             = $eduMatArray['url_EN'];
-        $url_FR             = $eduMatArray['url_FR'];
-        $shareURL_EN        = $eduMatArray['share_url_EN'];
-        $shareURL_FR        = $eduMatArray['share_url_FR'];
-        $eduMatSer          = $eduMatArray['serial'];
-        $filters            = $eduMatArray['filters'];
-        $tocs               = $eduMatArray['tocs'];
-        $phaseSer           = $eduMatArray['phase_serial'];
+        $name_EN            = $eduMatDetails['name_EN'];
+        $name_FR            = $eduMatDetails['name_FR'];
+        $url_EN             = $eduMatDetails['url_EN'];
+        $url_FR             = $eduMatDetails['url_FR'];
+        $shareURL_EN        = $eduMatDetails['share_url_EN'];
+        $shareURL_FR        = $eduMatDetails['share_url_FR'];
+        $eduMatSer          = $eduMatDetails['serial'];
+        $filters            = $eduMatDetails['filters'];
+        $tocs               = $eduMatDetails['tocs'];
+        $phaseSer           = $eduMatDetails['phase_serial'];
 		$existingFilters	= array();
         $existingTOCs       = array();
 

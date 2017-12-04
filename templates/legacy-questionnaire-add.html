@@ -127,7 +127,34 @@
                       {{demoFilter.age.min}} to {{demoFilter.age.max}} 
                     </p>
                   </div>
-                </div>
+								</div>
+								<!-- SECTION: Patient filters -->
+								<div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}"
+								 is-disabled="!checkFilters(patientFilterList)" ng-if="terms.show">
+									<uib-accordion-heading>
+										<div class="row" style="align-items: center">
+											<div class="col-md-2">
+												<span ng-if="checkFilters(patientFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+											</div>
+											<div class="col-md-8">
+												<strong>Patient Filter(s)</strong>
+											</div>
+											<div class="col-md-2">
+												<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}"
+												 ng-if="checkFilters(patientFilterList)"></i>
+											</div>
+										</div>
+									</uib-accordion-heading>
+									<div ng-if="checkFilters(patientFilterList)" class="description">
+										<p>
+											<ul style="max-height: 100px; overflow-y: auto;">
+												<li ng-repeat="patient in patientFilterList | filter: {added: 1} : 1">
+													{{patient.name}}
+												</li>
+											</ul>
+										</p>
+									</div>
+								</div>
                 <!-- SECTION: Expression filters -->
                 <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(termList)" ng-if="terms.show">
                   <uib-accordion-heading>
@@ -433,13 +460,13 @@
                 </div>
               </div>        
             </div>
-            <!-- SECTION: Expression filters -->
+            <!-- SECTION: Patient filters -->
             <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
               <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
-                    <h2>Expression Filters</h2>
+                    <h2>Patient Filters</h2>
                   </span>  
                 </div>  
               </div>
@@ -448,7 +475,7 @@
               <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
-                  Select one of more expression filters below. This will target patients with these specific filters. Leave blank for no filters.
+                  Select one of more patient filters below. This will target patients with these specific filters. Leave blank for no filters.
                 </p>
               </div>
             </div>  
@@ -461,17 +488,12 @@
                         <div class="list-space">
                           <div class="input-group">
                             <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                            <input class="form-control" type="text" ng-model="termSearchField" ng-change="searchTerm(termSearchField)" placeholder="Search Terms"/>
-                          </div>
-                          <div style="padding: 10px;">
-                            <label>
-                              <input type="checkbox" ng-click="selectAllTerms()"> Select All
-                            </label>
+                            <input class="form-control" type="text" ng-model="patientSearchField" ng-change="searchPatient(patientSearchField)" placeholder="Search Patients"/>
                           </div>
                           <ul class="list-items">
-                            <li ng-repeat="term in termList | filter: searchTermsFilter">
+                            <li ng-repeat="patient in patientFilterList | filter: searchPatientFilter">
                               <label>
-                                <input type="checkbox" ng-click="selectItem(term)" ng-checked="term.added" /> {{term.name}}
+                                <input type="checkbox" ng-click="selectItem(patient)" ng-checked="patient.added" /> {{patient.name}}
                               </label>
                             </li>
                           </ul>
@@ -481,7 +503,61 @@
                   </div>
                 </div>
               </div>
-            </div>
+						</div>
+						<!-- SECTION: Expression filters -->
+						<div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+							<div class="col-md-12 side-menu-title">
+								<div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+									<span style="background-color:#e6edfa; padding: 0 10px;">
+										<span class="fa fa-dot-circle-o"></span>
+										<h2>Expression Filters</h2>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+							<div class="col-md-12">
+								<p style="margin-bottom: 10px;">
+									<span>
+										<strong>Optional field:</strong>
+									</span>
+									Select one of more expression filters below. This will target patients with these specific filters. Leave blank for no filters.
+								</p>
+							</div>
+						</div>
+						<div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+							<div class="col-md-8">
+								<div class="panel-container">
+									<div class="panel-info">
+										<div class="panel-content">
+											<div class="panel-input">
+												<div class="list-space">
+													<div class="input-group">
+														<span class="input-group-addon">
+															<span class="glyphicon glyphicon-search"></span>
+														</span>
+														<input class="form-control" type="text" ng-model="termSearchField" ng-change="searchTerm(termSearchField)" placeholder="Search Terms"
+														/>
+													</div>
+													<div style="padding: 10px;">
+														<label>
+															<input type="checkbox" ng-click="selectAllTerms()"> Select All
+														</label>
+													</div>
+													<ul class="list-items">
+														<li ng-repeat="term in termList | filter: searchTermsFilter">
+															<label>
+																<input type="checkbox" ng-click="selectItem(term)" ng-checked="term.added" /> {{term.name}}
+															</label>
+														</li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
             <!-- SECTION: Diagnosis filters -->
             <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
               <div class="col-md-12 side-menu-title">
