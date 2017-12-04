@@ -413,18 +413,18 @@ class Install {
 	 *
 	 * Registers an admin user into the database
 	 *
-	 * @param array $userArray : the user details
+	 * @param array $adminDetails : the admin details
 	 * @return array $response : response
 	 */
-	public function registerAdminUser($userArray) {
+	public function registerAdminUser($adminDetails) {
 
 		$response = array (
 			'value' 	=> 0,
 			'error'		=> ''
 		);
 
-		$username 		= $userArray['username'];
-		$password 		= $userArray['password'];
+		$username 		= $adminDetails['username'];
+		$password 		= $adminDetails['password'];
 		$roleSer 		= 1; // admin
 		try {
 			$con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );

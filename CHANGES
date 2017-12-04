@@ -1,3 +1,15 @@
+Version 0.11.4:
+ -     --- Removed hardcoded config
+ - Merge branch 'push-checkin-notification' into develop
+ -     --- Removed file
+ -     --- Added push notification functionality for checkin
+ - --- Added patient-specific filter to frontend and to publisher
+ - Merge branch 'develop' of https://gitlab.com/akimosupremo/opalAdmin-dev into develop
+ - Merge branch 'hotfix-0.11.3' into develop
+ -  - New push check-in notification
+ - Merge branch 'release-0.11.2' into develop
+ - --- Changed most instances of the term "array" to "details" for better legibility
+
 Version 0.11.3:
 
 
