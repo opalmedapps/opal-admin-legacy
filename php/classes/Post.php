@@ -246,18 +246,18 @@ class Post {
      *
      * Inserts a post into the database
      *
-     * @param array $postArray : the post details
+     * @param array $postDetails : the post details
 	 * @return void
      */    
-	public function insertPost( $postArray ) {
+	public function insertPost( $postDetails ) {
 
-		$postName_EN 	= $postArray['name_EN'];
-		$postName_FR 	= $postArray['name_FR'];
-		$postBody_EN	= $postArray['body_EN'];
-		$postBody_FR	= $postArray['body_FR'];
-        $postType	    = $postArray['type'];
-        $postPublishDate= $postArray['publish_date'];
-		$postFilters	= $postArray['filters'];
+		$postName_EN 	= $postDetails['name_EN'];
+		$postName_FR 	= $postDetails['name_FR'];
+		$postBody_EN	= $postDetails['body_EN'];
+		$postBody_FR	= $postDetails['body_FR'];
+        $postType	    = $postDetails['type'];
+        $postPublishDate= $postDetails['publish_date'];
+		$postFilters	= $postDetails['filters'];
 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -370,18 +370,18 @@ class Post {
      *
      * Updates a post's details in the database
      *
-     * @param array $postArray : the post details
+     * @param array $postDetails : the post details
      * @return array : response
      */        
-    public function updatePost( $postArray ) {
+    public function updatePost( $postDetails ) {
 
-		$postName_EN 	    = $postArray['name_EN'];
-		$postName_FR 	    = $postArray['name_FR'];
-		$postBody_EN	    = $postArray['body_EN'];
-		$postBody_FR	    = $postArray['body_FR'];
-        $postSer	        = $postArray['serial'];
-        $postPublishDate    = $postArray['publish_date'];
-		$postFilters	    = $postArray['filters'];
+		$postName_EN 	    = $postDetails['name_EN'];
+		$postName_FR 	    = $postDetails['name_FR'];
+		$postBody_EN	    = $postDetails['body_EN'];
+		$postBody_FR	    = $postDetails['body_FR'];
+        $postSer	        = $postDetails['serial'];
+        $postPublishDate    = $postDetails['publish_date'];
+		$postFilters	    = $postDetails['filters'];
 
         $existingFilters	= array();
 
