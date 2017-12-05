@@ -26,7 +26,7 @@ class PushNotifications {
 	*   Requires: $data must contain mtitle, and mdesc for the 
 	*             push notification.
 	**/
-	public function android($data, $reg_id) {
+	public static function android($data, $reg_id) {
 	        $url = 'https://fcm.googleapis.com/fcm/send';
 	        $message = array(
 	            'title'         => $data['mtitle'],
@@ -64,7 +64,7 @@ class PushNotifications {
 	*   Requires: $data must contain mtitle, and mdesc for the 
 	*             push notification.
 	**/
-	public function iOS($data, $devicetoken) {
+	public static function iOS($data, $devicetoken) {
 		$deviceToken = $devicetoken;
 		$ctx = stream_context_create();
 		// ck.pem is your certificate file
@@ -92,17 +92,21 @@ class PushNotifications {
 		// Encode the payload as JSON
 		$payload = json_encode($body);
 		// Build the binary notification
-		$msg = chr(0) . pack('n', 32) . pack('H*', $deviceToken) . pack('n', strlen($payload)) . $payload;
-		// Send it to the server
-		$result = fwrite($fp, $msg, strlen($msg));
-		// Close the connection to the server
-		fclose($fp);
-		if (!$result)
-			$response =  array("success"=>0,"failure"=>1,"error"=>"Unable to send packets to APN socket");
-		else{
-			$response =  array("success"=>1,"failure"=>0);
-		}
-		return $response;
+		
+		// echo 'Device Token :' .  $deviceToken . '<br />';
+		if (strlen($deviceToken) == 64) {
+			$msg = chr(0) . pack('n', 32) . pack('H*', $deviceToken) . pack('n', strlen($payload)) . $payload;
+			// Send it to the server
+			$result = fwrite($fp, $msg, strlen($msg));
+			// Close the connection to the server
+			fclose($fp);
+			if (!$result)
+				$response =  array("success"=>0,"failure"=>1,"error"=>"Unable to send packets to APN socket");
+			else{
+				$response =  array("success"=>1,"failure"=>0);
+			}
+			return $response;
+			}
 		}
 	
 	// Curl 
