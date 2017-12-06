@@ -149,11 +149,26 @@ sub publishPatientsForPatients
     foreach my $Patient (@patientList) {
 
         my $patientSer          = $Patient->getPatientSer(); # get patient serial
+		my $patientId 			= $Patient->getPatientId(); # get patient id 
 
         foreach my $PostControl (@patsForPatsControls) {
 
             my $postControlSer          = $PostControl->getPostControlSer();
             my $postFilters             = $PostControl->getPostControlFilters();
+
+			# Fetch patient filters (if any)
+			my @patientFilters = $postFilters->getPatientFilters();
+
+			# We will flag whether there are patient filters or other (non-patient) filters
+			# The reason is that the patient filter will combine as an OR with the non-patient filters
+			# If any of the non-patient filters exist, all non-patient filters combine in an AND (i.e. intersection)
+            # However, we don't want to lose the exception that a patient filter has been defined
+			# If there is a patient filter defined, then we only send the content to the patients 
+			# selected in the filter UNLESS other non-patient filters have been defined. In that case,
+			# we send to the patients defined in the patient filters AND to the patients that pass
+			# in the non-patient filters  
+			my $isNonPatientSpecificFilterDefined = 0;
+            my $isPatientSpecificFilterDefined = 0;
 
             my @expressionNames = ();
 
@@ -165,6 +180,9 @@ sub publishPatientsForPatients
             my @expressionFilters =  $postFilters->getExpressionFilters();
             if (@expressionFilters) {
   
+				# toggle flag
+				$isNonPatientSpecificFilterDefined = 1;
+
                 # Retrieve the patient appointment(s) if one (or more) lands within one day of today
                 my @patientAppointments = Appointment::getPatientsAppointmentsFromDateInOurDB($patientSer, $postPublishDate, 0);
 
@@ -178,39 +196,80 @@ sub publishPatientsForPatients
                 }
 
                 # Finding the existence of the patient expressions in the expression filters
-                # If there is an intersection, then patient is part of this publishing announcement
-                # If not, then continue to next announcement
-                if (!intersect(@expressionFilters, @expressionNames)) {next;} 
+                # If there is an intersection, then patient is part of this publishing P4P
+                if (!intersect(@expressionFilters, @expressionNames)) {
+                   if (@patientFilters) {
+                        # if the patient failed to match the expression filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the expression filter
+                    # move on to the next P4P
+                    else{next;}
+                } 
             }
 
             # Fetch diagnosis filters (if any)
             my @diagnosisFilters = $postFilters->getDiagnosisFilters();
             if (@diagnosisFilters) {
 
+                # toggle flag
+				$isNonPatientSpecificFilterDefined = 1;
+
                 # Finding the intersection of the patient's diagnosis and the diagnosis filters
-                # If there is an intersection, then patient is part of this publishing patsforpats
-                # If not, then continue to next patsforpats
-                if (!intersect(@diagnosisFilters, @diagnosisNames)) {next;} 
+                # If there is an intersection, then patient is part of this publishing P4P
+                if (!intersect(@diagnosisFilters, @diagnosisNames)) {
+                    if (@patientFilters) {
+                        # if the patient failed to match the diagnosis filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the diagnosis filter
+                    # move on to the next P4P
+                    else{next;}
+                }
             }
 
             # Fetch doctor filters (if any)
             my @doctorFilters = $postFilters->getDoctorFilters();
             if (@doctorFilters) {
 
+                # toggle flag
+				$isNonPatientSpecificFilterDefined = 1;
+
                 # Finding the intersection of the patient's doctor(s) and the doctor filters
-                # If there is an intersection, then patient is part of this publishing patsforpats
-                # If not, then continue to next patsforpats
-                if (!intersect(@doctorFilters, @patientDoctors)) {next;} 
+                # If there is an intersection, then patient is part of this publishing P4P
+                if (!intersect(@doctorFilters, @patientDoctors)) {
+                    if (@patientFilters) {
+                        # if the patient failed to match the doctor filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the doctor filter
+                    # move on to the next P4P
+                    else{next;}
+                } 
             }
 
             # Fetch resource filters (if any)
             my @resourceFilters = $postFilters->getResourceFilters();
             if (@resourceFilters) {
 
-                # Finding the intersection of the patient resource(s) and the resource filters
-                # If there is an intersection, then patient is part of this publishing patsforpats
-                # If not, then continue to next patsforpats
-                if (!intersect(@resourceFilters, @patientResources)) {next;} 
+                # toggle flag
+				$isNonPatientSpecificFilterDefined = 1;
+
+                # Finding the intersection of the patient's resource(s) and the resource filters
+                # If there is an intersection, then patient is part of this publishing educational material
+                if (!intersect(@resourcesFilters, @patientResources)) {
+                    if (@patientFilters) {
+                        # if the patient failed to match the resource filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the resource filter
+                    # move on to the next P4P
+                    else{next;}
+                } 
             }
 
 
