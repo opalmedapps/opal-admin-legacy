@@ -331,7 +331,7 @@ sub publishEducationalMaterials
                 # send push notification
                 my $eduMatSer = $eduMat->getEduMatSer();
                 my $patientSer = $eduMat->getEduMatPatientSer();
-                #PushNotification::sendPushNotification($patientSer, $eduMatSer, 'EducationalMaterial');
+                PushNotification::sendPushNotification($patientSer, $eduMatSer, 'EducationalMaterial');
 
             }
 
