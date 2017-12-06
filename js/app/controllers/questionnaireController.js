@@ -522,6 +522,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 						var filterId = filter.id;
 						var filterType = filter.type;
 						if (filterId == selectedFilterId && filterType == selectedFilterType) {
+							console.log("HERE");
 							filter.added = 1;
 						}
 					});
