@@ -150,24 +150,26 @@ sub publishEducationalMaterials
     foreach my $Patient (@patientList) {
 
         my $patientSer          = $Patient->getPatientSer(); # get patient serial
+        my $patientId           = $Patient->getPatientId(); # get patient id
 
         foreach my $EduMatControl (@eduMatControls) {
 
             my $eduMatControlSer    = $EduMatControl->getEduMatControlSer();
             my $eduMatFilters       = $EduMatControl->getEduMatControlFilters();
 
-			# Fetch patient-specific filters (if any)
+			# Fetch patient filters (if any)
             my @patientFilters = $eduMatFilters->getPatientFilters();
 
-			# We will flag whether there are patient-specific filters or other (non-patient-specific) filters
-			# The reason is that the patient-specific filter introduces a new logic
-			# If any of the non-patient-specific filters exist, then we don't want to lose the exception 
-			# that a patient-specific filter has been defined
-			# If there is a patient-specific filter defined, then we only send the content to the patients 
-			# selected in the filter UNLESS other non-patient-specific filters have been defined. In that case,
-			# we send to the patients defined in the patient-specific filters AND to the patients that pass
-			# in the non-patient-specific filters (i.e. UNION logic) 
+			# We will flag whether there are patient filters or other (non-patient) filters
+			# The reason is that the patient filter will combine as an OR with the non-patient filters
+			# If any of the non-patient filters exist, all non-patient filters combine in an AND (i.e. intersection)
+            # However, we don't want to lose the exception that a patient filter has been defined
+			# If there is a patient filter defined, then we only send the content to the patients 
+			# selected in the filter UNLESS other non-patient filters have been defined. In that case,
+			# we send to the patients defined in the patient filters AND to the patients that pass
+			# in the non-patient filters  
 			my $isNonPatientSpecificFilterDefined = 0;
+            my $isPatientSpecificFilterDefined = 0;
 
             # Fetch sex filter (if any) 
             my $sexFilter =  $eduMatFilters->getSexFilter();
@@ -179,11 +181,19 @@ sub publishEducationalMaterials
                 my $patientSex = $Patient->getPatientSex();
 
                 # Determine if the filter matches the current patient's sex
-                # If not, and there are no patient-specific filters, continue to the next educational material
-                if ($sexFilter ne $patientSex and !@patientFilters){next;}
+                if ($sexFilter ne $patientSex){
+                    if (@patientFilters) {
+                        # if the patient failed to match the sex filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the sex filter
+                    # move on to the next educational material
+                    else{next;}
+                }
             }
 
-            # Fetch age group filter (if any)
+            # Next fetch age group filter (if any)
             my $ageFilter = $eduMatFilters->getAgeFilter();
             if ($ageFilter) {
 
@@ -192,8 +202,16 @@ sub publishEducationalMaterials
 
                 my $patientAge = $Patient->getPatientAge();
                 # Determine if the patient's age falls within the age group
-                # If not, and there are no patient-specific filters, continue to the next educational material
-                if (($patientAge < $ageFilter->{_min} or $patientAge > $ageFilter->{_max}) and !@patientFilters) {next;}
+                if (($patientAge < $ageFilter->{_min} or $patientAge > $ageFilter->{_max})) {
+                    if (@patientFilters) {
+                        # if the patient failed to match the age filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the age filter
+                    # move on to the next educational material
+                    else{next;}
+                }
 
             }
 
@@ -227,8 +245,16 @@ sub publishEducationalMaterials
 
                 # Finding the existence of the patient expressions in the expression filters
                 # If there is an intersection, then patient is part of this publishing educational material
-                # If not, and there are no patient-specific filters, then continue to next educational material
-                if (!intersect(@expressionFilters, @expressionNames) and !@patientFilters) {next;} 
+                if (!intersect(@expressionFilters, @expressionNames)) {
+                   if (@patientFilters) {
+                        # if the patient failed to match the expression filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the expression filter
+                    # move on to the next educational material
+                    else{next;}
+                } 
             }
 
             # Fetch diagnosis filters (if any)
@@ -240,8 +266,16 @@ sub publishEducationalMaterials
 
                 # Finding the intersection of the patient's diagnosis and the diagnosis filters
                 # If there is an intersection, then patient is part of this publishing educational material
-                # If not, and there are no patient-specific filters, then continue to next educational material
-                if (!intersect(@diagnosisFilters, @diagnosisNames) and !@patientFilters) {next;} 
+                if (!intersect(@diagnosisFilters, @diagnosisNames)) {
+                    if (@patientFilters) {
+                        # if the patient failed to match the diagnosis filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the diagnosis filter
+                    # move on to the next educational material
+                    else{next;}
+                }
             }
 
             # Fetch doctor filters (if any)
@@ -253,20 +287,31 @@ sub publishEducationalMaterials
 
                 # Finding the intersection of the patient's doctor(s) and the doctor filters
                 # If there is an intersection, then patient is part of this publishing educational material
-                # If not, and there are no patient-specific filters, then continue to next educational material
-                if (!intersect(@doctorFilters, @patientDoctors) and !@patientFilters) {next;} 
+                if (!intersect(@doctorFilters, @patientDoctors)) {
+                    if (@patientFilters) {
+                        # if the patient failed to match the doctor filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the doctor filter
+                    # move on to the next educational material
+                    else{next;}
+                } 
             }
 
-			# If we've reached this point, then the patient passes all non-patient-specific filters
-			# We look into whether any patient-specific filters have been defined and no non-patient-specific filters have been defined
-			# If we enter this if statement, then only patient-specific filters have been defined and we check if that patient is in that list
-			# If we don't enter this if statement, then either no filters were defined at all or the patient passed one or more of the 
-			# non-patient-specific filters above
-			if (@patientFilters and !$isNonPatientSpecificFilterDefined) {
+			# We look into whether any patient-specific filters have been defined 
+			# If we enter this if statement, then we check if that patient is in that list
+			if (@patientFilters) {
 
-				# Finding the existence of the patient in the patient-specific filters
-				# If the patient does not exist, then continue to the next educational material
-				if (grep $patientSer ne $_, @patientFilters) {next;}
+                # if the patient-specific flag was enabled then it means this patient failed
+                # one of the filters above 
+                # OR if the non patient specific flag was disabled then there were no filters defined above
+                # and this is the last test to see if this patient passes
+                if ($isPatientSpecificFilterDefined or !$isNonPatientSpecificFilterDefined) {
+    				# Finding the existence of the patient in the patient-specific filters
+    				# If the patient does not exist, then continue to the next educational material
+    				if (grep $patientId ne $_, @patientFilters) {next;}
+                }
 			}
 
             # If we've reached this point, we've passed all catches (filter restrictions). We make
