@@ -348,7 +348,7 @@ sub getTasksFromSourceDB
 						variansystem.dbo.NonScheduledActivity NonScheduledActivity
                     LEFT JOIN variansystem.dbo.NonScheduledActivityMH NonScheduledActivityMH
                     ON  NonScheduledActivityMH.NonScheduledActivitySer = NonScheduledActivity.NonScheduledActivitySer
-                    AND NonScheduledActivityMH.RevCount = (
+                    AND NonScheduledActivityMH.NonScheduledActivityRevCount = (
                         SELECT MIN(nsamh.NonScheduledActivityRevCount)
                         FROM variansystem.dbo.NonScheduledActivityMH nsamh
                         WHERE nsamh.NonScheduledActivitySer = NonScheduledActivity.NonScheduledActivitySer

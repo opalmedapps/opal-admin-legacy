@@ -73,6 +73,7 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 		$scope.dxSearchField = "";
 		$scope.doctorSearchField = "";
 		$scope.resourceSearchField = "";
+		$scope.patientSearchField = "";
 
 		// new questionnaire object
 		$scope.newQuestionnaire = {
@@ -111,6 +112,7 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 		$scope.dxFilterList = [];
 		$scope.doctorFilterList = [];
 		$scope.resourceFilterList = [];
+		$scope.patientFilterList = [];
 
 		$scope.formLoaded = false;
 		// Function to load form as animations
@@ -126,6 +128,7 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 			$scope.dxFilterList = response.data.dx;
 			$scope.doctorFilterList = response.data.doctors;
 			$scope.resourceFilterList = response.data.resources;
+			$scope.patientFilterList = response.data.patients;
 
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
@@ -484,6 +487,9 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 		$scope.searchResource = function (field) {
 			$scope.resourceSearchField = field;
 		};
+		$scope.searchPatient = function (field) {
+			$scope.patientSearchField = field;
+		};
 
 		// Function for search through the filters
 		$scope.searchTermsFilter = function (Filter) {
@@ -501,6 +507,10 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 		$scope.searchResourceFilter = function (Filter) {
 			var keyword = new RegExp($scope.resourceSearchField, 'i');
 			return !$scope.resourceSearchField || keyword.test(Filter.name);
+		};
+		$scope.searchPatientFilter = function (Filter) {
+			var keyword = new RegExp($scope.patientSearchField, 'i');
+			return !$scope.patientSearchField || keyword.test(Filter.name);
 		};
 
 		// Function to return filters that have been checked
@@ -551,6 +561,7 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 				addFilters($scope.dxFilterList);
 				addFilters($scope.doctorFilterList);
 				addFilters($scope.resourceFilterList);
+				addFilters($scope.patientFilterList);
 				// Submit 
 				$.ajax({
 					type: "POST",

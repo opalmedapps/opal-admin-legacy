@@ -17,7 +17,8 @@ class Filter {
             'expressions'   => array(),
             'dx'            => array(),
             'doctors'       => array(),
-            'resources'     => array()
+			'resources'     => array(),
+			'patients'		=> array()
         );
         $databaseObj = new Database();
 
@@ -136,7 +137,7 @@ class Filter {
                 // $query->execute();
                 // while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
                 //     $doctorArray = array(
-                //         'name'  => $data[1],
+                //         'name'  => $data[0],
                 //         'id'    => $data[0],
                 //         'type'  => 'Doctor',
                 //         'added' => 0
@@ -149,7 +150,7 @@ class Filter {
                 // $query->execute();
                 // while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
                 //     $resourceArray = array(
-                //         'name'  => $data[1],
+                //         'name'  => $data[0],
                 //         'id'    => $data[0],
                 //         'type'  => 'Resource',
                 //         'added' => 0
@@ -204,30 +205,66 @@ class Filter {
                 //     );
                 //     array_push($filters['resources'], $resourceArray);
                 // }
-            }
+			}
+			
+			// ***********************************
+            // OpalDB 
+            // ***********************************
+			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			if ($host_db_link) {
 
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-        
-            $sql = "
-                SELECT DISTINCT
-                    dt.AliasName
-                FROM
-                    DiagnosisTranslation dt
-            ";
-	        $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
+				$sql = "
+					SELECT DISTINCT
+						pt.PatientSerNum,
+						pt.PatientId,
+						pt.FirstName,
+						pt.LastName
+					FROM
+						Patient pt
+					ORDER BY
+						pt.PatientSerNum
+				";
 
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $dxArray = array(
-                    'name'  => $data[0],
-                    'id'    => $data[0],
-                    'type'  => 'Diagnosis',
-                    'added' => 0
-                );
+				$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				$query->execute();
+	
+				while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-                array_push($filters['dx'], $dxArray);
-            }
+					$serial 	= $data[0];
+					$patientId 	= $data[1];
+					$firstName 	= $data[2];
+					$lastName 	= $data[3];
+					$patientName = "$lastName, $firstName ($patientId)";
+					$patientArray = array(
+						'name'	=> $patientName,
+						'id'	=> $patientId,
+						'type' 	=> 'Patient',
+						'added'	=> 0
+					);
+					array_push($filters['patients'], $patientArray);
+				}
+
+				$sql = "
+					SELECT DISTINCT
+						dt.AliasName
+					FROM
+						DiagnosisTranslation dt
+				";
+				$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				$query->execute();
+
+				while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+					$dxArray = array(
+						'name'  => $data[0],
+						'id'    => $data[0],
+						'type'  => 'Diagnosis',
+						'added' => 0
+					);
+
+					array_push($filters['dx'], $dxArray);
+				}
+			}
 
             return $filters;
 
