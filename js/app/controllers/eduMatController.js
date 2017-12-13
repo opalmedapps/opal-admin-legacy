@@ -279,6 +279,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 			$scope.dxFilterList = [];
 			$scope.doctorFilterList = [];
 			$scope.resourceFilterList = [];
+			$scope.patientFilterList = [];
 
 			// Initialize lists to hold the distinct edu material types
 			$scope.EduMatTypes_EN = [];
@@ -298,6 +299,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 			$scope.dxSearchField = "";
 			$scope.doctorSearchField = "";
 			$scope.resourceSearchField = "";
+			$scope.patientSearchField = "";
 
 			// Function to assign search fields when textbox changes
 			$scope.searchTerm = function (field) {
@@ -311,6 +313,9 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 			};
 			$scope.searchResource = function (field) {
 				$scope.resourceSearchField = field;
+			};
+			$scope.searchPatient = function (field) {
+				$scope.patientSearchField = field;
 			};
 
 			// Function for search through the filters
@@ -329,6 +334,10 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 			$scope.searchResourceFilter = function (Filter) {
 				var keyword = new RegExp($scope.resourceSearchField, 'i');
 				return !$scope.resourceSearchField || keyword.test(Filter.name);
+			};
+			$scope.searchPatientFilter = function (Filter) {
+				var keyword = new RegExp($scope.patientSearchField, 'i');
+				return !$scope.patientSearchField || keyword.test(Filter.name);
 			};
 
 			/* Function for the "Processing" dialog */
@@ -360,6 +369,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 					$scope.dxFilterList = checkAdded(response.data.dx);
 					$scope.doctorFilterList = checkAdded(response.data.doctors);
 					$scope.resourceFilterList = checkAdded(response.data.resources);
+					$scope.patientFilterList = checkAdded(response.data.patients);
 
 					processingModal.close(); // hide modal
 					processingModal = null; // remove reference
@@ -490,6 +500,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 					addFilters($scope.dxFilterList);
 					addFilters($scope.doctorFilterList);
 					addFilters($scope.resourceFilterList);
+					addFilters($scope.patientFilterList);
 
 					// Submit form
 					$.ajax({
