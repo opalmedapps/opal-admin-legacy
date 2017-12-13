@@ -66,9 +66,6 @@ class Patient {
 					Users usr
                 WHERE
                     pt.PatientSerNum = pc.PatientSerNum
-				AND (pt.DeathDate 		IS NULL 
-					OR pt.DeathDate 	= '0000-00-00 00:00:00'
-					OR pt.DeathDate 	= '1970-01-01 00:00:00')
 				AND pt.PatientSerNum 	= usr.UserTypeSerNum
 				AND usr.UserType 		= 'Patient'
 				

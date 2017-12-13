@@ -78,7 +78,7 @@
       </div>
     </script>
 
-    <!-- Edit post modal tempalte -->
+    <!-- Edit post modal template -->
     <script type="text/ng-template" id="editPostModalContent.htm">
       <!-- Modal title -->
       <div class="modal-header">
@@ -200,6 +200,45 @@
                   <div uib-timepicker ng-change="setChangesMade()" ng-model="post.publish_time" minute-step="5" show-meridian="false"></div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <!-- SECTION: Patient filter -->
+          <div uib-accordion-group is-open="statusPatientFilter.open">
+            <uib-accordion-heading>
+              <div>
+                <strong>Filter Patient </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusPatientFilter.open, 'glyphicon-chevron-right': !statusPatientFilter.open}"></i>
+              </div>
+            </uib-accordion-heading>
+            <div class="bs-callout bs-callout-info">
+              <h4>Current Patient Filters</h4>
+              <ul class="list-items-4col">
+                <li ng-show="allFilters(patientFilterList)">
+                  All Patients
+                </li>  
+                <li ng-repeat="patient in patientFilterList | filter: {added: 1} : 1" ng-hide="allFilters(patientFilterList)">
+                  {{patient.name}}
+                </li>
+              </ul>
+              <p>To add/remove patient filter, use the list below.</p>
+            </div>
+            <div class="list-space">
+              <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                <input class="form-control" type="text" ng-model="patientSearchField" ng-change="searchPatient(patientSearchField)" placeholder="Search..."/>
+              </div>
+              <div style="padding: 10px;">
+                <strong> 
+                  To select all, leave all boxes unchecked.
+                </strong>
+              </div>    
+              <ul class="list-items">
+                <li ng-repeat="patient in patientFilterList | filter: searchPatientFilter">
+                  <label>
+                    <input type="checkbox" ng-click="selectItem(patient)" ng-checked="patient.added" /> {{patient.name}}
+                  </label>
+                </li>
+              </ul>
             </div>
           </div>
 

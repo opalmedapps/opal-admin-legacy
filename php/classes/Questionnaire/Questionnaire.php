@@ -186,7 +186,7 @@ class Questionnaire{
                     Filters
                 WHERE
                     que.serNum     							= $serNum
-                AND Filters.ControlTable                    = 'Questionnaire'
+                AND Filters.ControlTable                    = 'QuestionnaireControl'
                 AND Filters.ControlTableSerNum              = que.serNum
                 AND Filters.FilterType                      != ''
                 AND Filters.FilterId                        != ''

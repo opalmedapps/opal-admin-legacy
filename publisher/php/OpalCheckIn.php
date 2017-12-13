@@ -14,6 +14,16 @@ include_once "database.inc";
 // Used to send push notification to all of the user devices
 require_once('PatientCheckInPushNotification.php');
 
+
+//
+// PROCESS INCOMING REQUEST
+//============================================
+$PatientId = $_GET["PatientId"];
+
+$success = OpalCheckin::ValidateCheckin($PatientId);
+return OpalCheckin::UpdateCheckinOnOpal($success, $PatientId);
+
+
 //
 // OPALCHECKIN CLASS
 //=============================================
@@ -57,9 +67,9 @@ class OpalCheckin{
             $responses = PatientCheckInPushNotification::sendPatientCheckInNotification($patientSerNum, $success);
 
             // Return responses
-            print json_encode($responses);
+            return json_encode($responses);
         } else {
-            die('Patient is not an Opal Patient');
+            return json_encode('Patient is not an Opal Patient');
         }
     }
 
@@ -102,7 +112,7 @@ class OpalCheckin{
      * @param $patientId
      * @return array of appointments
      */
-    private function getTodaysAppointments($patientId){
+    private static function getTodaysAppointments($patientId){
 
         // Create DB connection  **** CURRENTLY OPAL_DB POINTS TO PRE_PROD ****
         $conn = new mysqli(OPAL_DB_HOST, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, OPAL_DB_NAME);
@@ -159,7 +169,7 @@ class OpalCheckin{
      * @param $location
      * @return array
      */
-    private function validateCheckinsWithExternalDB($appts, $patientId, $location){
+    private static function validateCheckinsWithExternalDB($appts, $patientId, $location){
         $success = array();
 
         //Get Aria ser num of each checked in appointment in Aria
@@ -174,7 +184,7 @@ class OpalCheckin{
         return $success;
     }
 
-    private function getCheckedInAriaAppointments($patientId){
+    private static function getCheckedInAriaAppointments($patientId){
 
         // Create DB connection  **** CURRENTLY OPAL_DB POINTS TO ARIA ****
         $conn = mssql_connect(ARIA_DB_HOST, ARIA_DB_USERNAME, ARIA_DB_PASSWORD);
@@ -208,7 +218,7 @@ class OpalCheckin{
         return $apts;
     }
 
-    private function getCheckedInMediAppointments($patientId){
+    private static function getCheckedInMediAppointments($patientId){
 
         // Create DB connection to WaitingRoomManagement
         $conn = new mysqli(WRM_DB_HOST, WRM_DB_USERNAME, WRM_DB_PASSWORD, WRM_DB_NAME);
