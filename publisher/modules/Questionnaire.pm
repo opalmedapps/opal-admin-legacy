@@ -157,31 +157,68 @@ sub publishQuestionnaires
 	foreach my $Patient (@patientList) {
 
 		my $patientSer = $Patient->getPatientSer(); 
+		my $patientId = $Patient->getPatientId();
 
 		foreach my $QuestionnaireControl (@questionnaireControls) {
 
 			my $questionnaireControlSer 	= $QuestionnaireControl->getQuestionnaireControlSer();
 			my $questionnaireFilters 		= $QuestionnaireControl->getQuestionnaireFilters();
 
+			# Fetch patient filters (if any)
+			my @patientFilters = $questionnaireFilters->getPatientFilters();
+
+			# We will flag whether there are patient filters or other (non-patient) filters
+			# The reason is that the patient filter will combine as an OR with the non-patient filters
+			# If any of the non-patient filters exist, all non-patient filters combine in an AND (i.e. intersection)
+            # However, we don't want to lose the exception that a patient filter has been defined
+			# If there is a patient filter defined, then we only send the content to the patients 
+			# selected in the filter UNLESS other non-patient filters have been defined. In that case,
+			# we send to the patients defined in the patient filters AND to the patients that pass
+			# in the non-patient filters  
+			my $isNonPatientSpecificFilterDefined = 0;
+            my $isPatientSpecificFilterDefined = 0;
+
 			# Fetch sex filter (if any)
 			my $sexFilter = $questionnaireFilters->getSexFilter();
 			if ($sexFilter) {
 
-				my $patientSex = $Patient->getPatientSex();
+				# toggle flag
+				$isNonPatientSpecificFilterDefined = 1;
 
-				# Determine if the filter matches the current patient's sex
-				# If not, continue to the next questionnaire
-				if ($sexFilter ne $patientSex){next;}
+                my $patientSex = $Patient->getPatientSex();
+
+                # Determine if the filter matches the current patient's sex
+                if ($sexFilter ne $patientSex){
+                    if (@patientFilters) {
+                        # if the patient failed to match the sex filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the sex filter
+                    # move on to the next questionnaire
+                    else{next;}
+                }
 			}
 
 			# Fetch age group filter (if any)
             my $ageFilter = $questionnaireFilters->getAgeFilter();
             if ($ageFilter) {
 
+                # toggle flag
+				$isNonPatientSpecificFilterDefined = 1;
+
                 my $patientAge = $Patient->getPatientAge();
                 # Determine if the patient's age falls within the age group
-                # If not, continue to the next questionnaire
-                if ($patientAge < $ageFilter->{_min} or $patientAge > $ageFilter->{_max}) {next;}
+                if (($patientAge < $ageFilter->{_min} or $patientAge > $ageFilter->{_max})) {
+                    if (@patientFilters) {
+                        # if the patient failed to match the age filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the age filter
+                    # move on to the next questionnaire
+                    else{next;}
+                }
 
             }
 
@@ -210,40 +247,78 @@ sub publishQuestionnaires
             my @expressionFilters =  $questionnaireFilters->getExpressionFilters();
             if (@expressionFilters) {
 
+                # toggle flag
+				$isNonPatientSpecificFilterDefined = 1;
+
                 # Finding the existence of the patient expressions in the expression filters
                 # If there is an intersection, then patient is part of this publishing questionnaire
-                # If not, then continue to next questionnaire
-                if (!intersect(@expressionFilters, @expressionNames)) {next;} 
+                if (!intersect(@expressionFilters, @expressionNames)) {
+                   if (@patientFilters) {
+                        # if the patient failed to match the expression filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the expression filter
+                    # move on to the next questionnaire
+                    else{next;}
+                } 
             }
 
             # Fetch diagnosis filters (if any)
             my @diagnosisFilters = $questionnaireFilters->getDiagnosisFilters();
             if (@diagnosisFilters) {
 
+                # toggle flag
+				$isNonPatientSpecificFilterDefined = 1;
+
                 # Finding the intersection of the patient's diagnosis and the diagnosis filters
                 # If there is an intersection, then patient is part of this publishing questionnaire
-                # If not, then continue to next questionnaire
-                if (!intersect(@diagnosisFilters, @diagnosisNames)) {next;} 
+                if (!intersect(@diagnosisFilters, @diagnosisNames)) {
+                    if (@patientFilters) {
+                        # if the patient failed to match the diagnosis filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the diagnosis filter
+                    # move on to the next questionnaire
+                    else{next;}
+                }
             }
 
             # Fetch doctor filters (if any)
             my @doctorFilters = $questionnaireFilters->getDoctorFilters();
             if (@doctorFilters) {
 
+                # toggle flag
+				$isNonPatientSpecificFilterDefined = 1;
+
                 # Finding the intersection of the patient's doctor(s) and the doctor filters
                 # If there is an intersection, then patient is part of this publishing questionnaire
-                # If not, then continue to next questionnaire
-                if (!intersect(@doctorFilters, @patientDoctors)) {next;} 
+                if (!intersect(@doctorFilters, @patientDoctors)) {
+                    if (@patientFilters) {
+                        # if the patient failed to match the doctor filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the doctor filter
+                    # move on to the next questionnaire
+                    else{next;}
+                }  
             }
 
-			# Fetch patient filters (if any)
-			my @patientFilters = $questionnaireFilters->getPatientFilters();
+			# We look into whether any patient-specific filters have been defined 
+			# If we enter this if statement, then we check if that patient is in that list
 			if (@patientFilters) {
 
-				# Finding the existence of the patient in the patient filters
-				# If the patient exists, then the patient is part of this publishing questionnaire
-				# IF not, then continue to the next questionnaire
-				if (grep $patientSer ne $_, @patientFilters) {next;}
+                # if the patient-specific flag was enabled then it means this patient failed
+                # one of the filters above 
+                # OR if the non patient specific flag was disabled then there were no filters defined above
+                # and this is the last test to see if this patient passes
+                if ($isPatientSpecificFilterDefined or !$isNonPatientSpecificFilterDefined) {
+    				# Finding the existence of the patient in the patient-specific filters
+    				# If the patient does not exist, then continue to the next educational material
+    				if (grep $patientId ne $_, @patientFilters) {next;}
+                }
 			}
 
             # If we've reached this point, we've passed all catches (filter restrictions). We make
@@ -263,7 +338,7 @@ sub publishQuestionnaires
 				# send push notification
 				my $questionnaireSer = $questionnaire->getQuestionnaireSer();
 				my $patientSer = $questionnaire->getQuestionnairePatientSer();
-				#PushNotification::sendPushNotification($patientSer, $questionnaireSer, 'Questionnaire');
+				PushNotification::sendPushNotification($patientSer, $questionnaireSer, 'Questionnaire');
 			}
 
 		}

@@ -284,6 +284,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			$scope.dxSearchField = "";
 			$scope.doctorSearchField = "";
 			$scope.resourceSearchField = "";
+			$scope.patientSearchField = "";
 
 			// Function to assign search fields when textbox changes
 			$scope.searchTerm = function (field) {
@@ -297,6 +298,9 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			};
 			$scope.searchResource = function (field) {
 				$scope.resourceSearchField = field;
+			};
+			$scope.searchPatient = function (field) {
+				$scope.patientSearchField = field;
 			};
 
 			// Function for search through the filters
@@ -316,12 +320,17 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 				var keyword = new RegExp($scope.resourceSearchField, 'i');
 				return !$scope.resourceSearchField || keyword.test(Filter.name);
 			};
+			$scope.searchPatientFilter = function (Filter) {
+				var keyword = new RegExp($scope.patientSearchField, 'i');
+				return !$scope.patientSearchField || keyword.test(Filter.name);
+			};
 
 			// Initialize lists to hold filters
 			$scope.termList = [];
 			$scope.dxFilterList = [];
 			$scope.doctorFilterList = [];
 			$scope.resourceFilterList = [];
+			$scope.patientFilterList = [];
 
 			// Call our API service to get legacy questionnaire details
 			legacyQuestionnaireCollectionService.getLegacyQuestionnaireDetails($scope.currentLegacyQuestionnaire.serial).then(function (response) {
@@ -344,6 +353,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 					$scope.dxFilterList = checkAddedFilter(response.data.dx);
 					$scope.doctorFilterList = checkAddedFilter(response.data.doctors);
 					$scope.resourceFilterList = checkAddedFilter(response.data.resources);
+					$scope.patientFilterList = checkAddedFilter(response.data.patients);
 
 				}).catch(function(response) {
 					console.error('Error occurred getting filter list:', response.status, response.data);
@@ -482,6 +492,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 					addFilters($scope.dxFilterList);
 					addFilters($scope.doctorFilterList);
 					addFilters($scope.resourceFilterList);
+					addFilters($scope.patientFilterList);
 
 					// ajax POST
 					$.ajax({
