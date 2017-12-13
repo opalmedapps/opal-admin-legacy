@@ -1,3 +1,21 @@
+Version 0.11.5:
+ -     --- Remove unnecessary files
+ - Merge branch 'patientFilter' into develop
+ -     --- Removed backend filter of deseased patients         -- Now will show deseased patients in the patient list in opalAdmin         Was initially filtered because deseased patients will no longer be using the app.         But in this case, a family member still wanted access to their mother's chart         So I was asked to unblock the patient but in order to do that, this fix allows         them to show up in the list to then click "unblock"
+ -     --- Changed declarations and returns         -- This is on behalf of someone else editing this file
+ -     --- Fixed a bug that could retrieve questionnaire filters     --- Reordered the patient filter on templates
+ - --- Missed a file to add patient filter to
+ - --- Added patient filter to legacy questionnaires
+ - --- Added end to end patient filters to questionnaires
+ - --- Added end to end patient filter to posts
+ - --- Added patient field to the editing of educational material
+ -     --- Fixed up logic for educational material publisher
+ - Merge branch 'develop' into patientFilter
+ - Merge branch 'release-0.11.4' into develop
+ - --- See previous commit message
+ - --- Added end-to-end patient-specific filter to educational material --- This commit also staging changes that were made on the develop branch but seemed to be removed because this git repo is in a icloud directory
+ - --- Added backend functionality to get a list of patients --- Fixed task issue that caused a crash in publish manager
+
 Version 0.11.4:
  -     --- Removed hardcoded config
  - Merge branch 'push-checkin-notification' into develop
