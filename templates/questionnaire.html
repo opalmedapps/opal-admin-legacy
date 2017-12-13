@@ -338,7 +338,46 @@
 						</li>
 					</ul>
 				</div>
-			</div>
+      </div>
+      
+      <!-- SECTION: Patient filters -->
+			<div uib-accordion-group is-open="statusFilterPatient.open">
+				<uib-accordion-heading>
+					<div>
+						<strong>Filter Patients </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusFilterPatient.open, 'glyphicon-chevron-right': !statusFilterPatient.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="bs-callout bs-callout-info">
+					<h4>Current Patient Filters</h4>
+					<ul class="list-items-4col">
+						<li ng-show="allFilters(patientFilterList)">
+							All Patients
+						</li>  
+						<li ng-repeat="patient in patientFilterList | filter: {added: 1} : 1" ng-hide="allFilters(patientFilterList)">
+							{{patient.name}}
+						</li>
+					</ul>
+					<p>To add/remove patient filter, use the list below.</p>
+				</div>
+				<div class="list-space">
+					<div class="input-group">
+						<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+						<input class="form-control" type="text" ng-model="patientSearchField" ng-change="searchDiagnosis(patientSearchField)" placeholder="Search..."/>
+					</div>
+					<div style="padding: 10px;">
+						<strong> 
+							To select all, leave all boxes unchecked.
+						</strong>
+					</div>    
+					<ul class="list-items">
+						<li ng-repeat="patient in patientFilterList | filter: searchPatientFilter">
+							<label>
+								<input type="checkbox" ng-click="selectItem(patient)" ng-checked="patient.added" /> {{patient.name}}
+							</label>
+						</li>
+					</ul>
+				</div>
+      </div>
 
       <!-- SECTION: Demographic filters -->
 			<div uib-accordion-group is-open="statusDemographicFilter.open"> 
