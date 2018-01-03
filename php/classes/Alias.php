@@ -736,6 +736,8 @@ class Alias {
                     sd.SourceDatabaseName
                 FROM
                     SourceDatabase sd
+                WHERE
+                    sd.Enabled = 1
                 ORDER BY 
                     sd.SourceDatabaseSerNum
             ";
