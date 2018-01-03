@@ -262,18 +262,18 @@ class TestResult {
      *
      * Inserts a test result into the database
      *
-     * @param array $testResultArray : the test result details
+     * @param array $testResultDetails : the test result details
 	 * @return void
      */
-    public function insertTestResult ($testResultArray) {
+    public function insertTestResult ($testResultDetails) {
 
-        $name_EN            = $testResultArray['name_EN'];
-        $name_FR            = $testResultArray['name_FR'];
-        $description_EN     = $testResultArray['description_EN'];
-        $description_FR     = $testResultArray['description_FR'];
-        $group_EN           = $testResultArray['group_EN'];
-        $group_FR           = $testResultArray['group_FR'];
-        $tests              = $testResultArray['tests'];
+        $name_EN            = $testResultDetails['name_EN'];
+        $name_FR            = $testResultDetails['name_FR'];
+        $description_EN     = $testResultDetails['description_EN'];
+        $description_FR     = $testResultDetails['description_FR'];
+        $group_EN           = $testResultDetails['group_EN'];
+        $group_FR           = $testResultDetails['group_FR'];
+        $tests              = $testResultDetails['tests'];
 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -422,19 +422,19 @@ class TestResult {
      *
      * Updates test result details in the database
      *
-     * @param array $testResultArray : the test result details
+     * @param array $testResultDetails : the test result details
      * @return array : response
      */
-    public function updateTestResult ($testResultArray) {
+    public function updateTestResult ($testResultDetails) {
 
-        $name_EN            = $testResultArray['name_EN'];
-        $name_FR            = $testResultArray['name_FR'];
-        $description_EN     = $testResultArray['description_EN'];
-        $description_FR     = $testResultArray['description_FR'];
-        $group_EN           = $testResultArray['group_EN'];
-        $group_FR           = $testResultArray['group_FR'];
-        $serial             = $testResultArray['serial'];
-        $tests              = $testResultArray['tests'];
+        $name_EN            = $testResultDetails['name_EN'];
+        $name_FR            = $testResultDetails['name_FR'];
+        $description_EN     = $testResultDetails['description_EN'];
+        $description_FR     = $testResultDetails['description_FR'];
+        $group_EN           = $testResultDetails['group_EN'];
+        $group_FR           = $testResultDetails['group_FR'];
+        $serial             = $testResultDetails['serial'];
+        $tests              = $testResultDetails['tests'];
 
         $existingTests      = array();
 

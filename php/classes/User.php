@@ -62,10 +62,10 @@
      *
      * Updates a user's password
      *
-     * @param array $userArray  : the user details
+     * @param array $userDetails  : the user details
      * @return array $response : response
      */
-	public function updatePassword($userArray) {
+	public function updatePassword($userDetails) {
 	 	$response = array (
 	 		'value'		=> 0,
 	 		'error'		=> array(
@@ -73,14 +73,14 @@
 	 			'message'	=> ''
 	 		)
 	 	);
-	 	$oldPassword 	= $userArray['oldPassword'];
-	 	$userSer		= $userArray['user']['id'];
-	 	$newPassword	= $userArray['password'];
+	 	$oldPassword 	= $userDetails['oldPassword'];
+	 	$userSer		= $userDetails['user']['id'];
+	 	$newPassword	= $userDetails['password'];
 	 	try {
 	 		$con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD ); 
 			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-			if (!isset($userArray['override'])) {
+			if (!isset($userDetails['override'])) {
 				$sql = "SELECT * FROM OAUser WHERE OAUser.OAUserSerNum = :ser AND OAUser.Password = :password";
 
 				$stmt = $con->prepare( $sql );
@@ -117,10 +117,10 @@
      *
      * Updates a user
      *
-     * @param array $userArray  : the user details
+     * @param array $userDetails  : the user details
      * @return boolean
      */
-	 public function updateUser($userArray) {
+	 public function updateUser($userDetails) {
 	 	$response = array (
 	 		'value'		=> 0,
 	 		'error'		=> array(
@@ -128,15 +128,15 @@
 	 			'message'	=> ''
 	 		)
 	 	);
-	 	$userSer			= $userArray['user']['id'];
-	 	$newPassword 		= $userArray['password'];
-	 	$confirmPassword 	= $userArray['confirmPassword'];
-	 	$roleSer 			= $userArray['role']['serial'];
+	 	$userSer			= $userDetails['user']['id'];
+	 	$newPassword 		= $userDetails['password'];
+	 	$confirmPassword 	= $userDetails['confirmPassword'];
+	 	$roleSer 			= $userDetails['role']['serial'];
 
 	 	try {
 
 	 		if ( ($newPassword && $confirmPassword) && ($newPassword == $confirmPassword) ) {
-	 			$response = $this->updatePassword($userArray);
+	 			$response = $this->updatePassword($userDetails);
 	 			if ($response['value'] == 0) {
 	 				return $response;
 	 			}
@@ -163,13 +163,13 @@
 	 *
 	 * Registers a user into the database
 	 *
-	 * @param array $userArray : the user details
+	 * @param array $userDetails : the user details
 	 * @return void
 	 */
-	public function registerUser($userArray) {
-		$username 		= $userArray['username'];
-		$password 		= $userArray['password'];
-		$roleSer 		= $userArray['role']['serial'];
+	public function registerUser($userDetails) {
+		$username 		= $userDetails['username'];
+		$password 		= $userDetails['password'];
+		$roleSer 		= $userDetails['role']['serial'];
 		try {
 			$con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );

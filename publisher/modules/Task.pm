@@ -338,19 +338,22 @@ sub getTasksFromSourceDB
 						CONVERT(VARCHAR, NonScheduledActivity.CreationDate, 120),
 						NonScheduledActivity.NonScheduledActivityCode,
 						NonScheduledActivity.ObjectStatus,
-						CONVERT(VARCHAR, (SELECT DISTINCT MIN(CONVERT(VARCHAR(19), NonScheduledActivityMH.HstryDateTime, 100)) HstryDateTime
-						FROM variansystem.dbo.NonScheduledActivityMH NonScheduledActivityMH
-						LEFT JOIN variansystem.dbo.NonScheduledActivity NonScheduledActivity
-						ON NonScheduledActivityMH.NonScheduledActivitySer  = NonScheduledActivity.NonScheduledActivitySer
-						AND NonScheduledActivityMH.NonScheduledActivityCode = 'Completed'
-						GROUP BY NonScheduledActivityMH.NonScheduledActivitySer), 120) AS HstryDateTime,
+						CONVERT(VARCHAR, NonScheduledActivityMH.HstryDateTime, 120) HstryDateTime,
 						vva.Expression1
 					FROM  
 						variansystem.dbo.Patient Patient,
-						variansystem.dbo.NonScheduledActivity NonScheduledActivity,
 						variansystem.dbo.ActivityInstance ActivityInstance,
 						variansystem.dbo.Activity Activity,
-						vva
+						vva,
+						variansystem.dbo.NonScheduledActivity NonScheduledActivity
+                    LEFT JOIN variansystem.dbo.NonScheduledActivityMH NonScheduledActivityMH
+                    ON  NonScheduledActivityMH.NonScheduledActivitySer = NonScheduledActivity.NonScheduledActivitySer
+                    AND NonScheduledActivityMH.NonScheduledActivityRevCount = (
+                        SELECT MIN(nsamh.NonScheduledActivityRevCount)
+                        FROM variansystem.dbo.NonScheduledActivityMH nsamh
+                        WHERE nsamh.NonScheduledActivitySer = NonScheduledActivity.NonScheduledActivitySer
+                        AND nsamh.NonScheduledActivityCode = 'Completed'
+                    )
 					WHERE     
 						NonScheduledActivity.ActivityInstanceSer 	= ActivityInstance.ActivityInstanceSer
 					AND ActivityInstance.ActivitySer 			    = Activity.ActivitySer
@@ -390,6 +393,8 @@ sub getTasksFromSourceDB
 						$taskInfo_sql .= ")";
 					}
 	        	}
+                
+                print "$taskInfo_sql\n";
 
 	        	# prepare query
     		    my $query = $sourceDatabase->prepare($taskInfo_sql)

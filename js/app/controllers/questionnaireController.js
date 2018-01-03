@@ -235,6 +235,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 			$scope.dxSearchField = "";
 			$scope.doctorSearchField = "";
 			$scope.resourceSearchField = "";
+			$scope.patientSearchField = "";
 
 			// Function to assign search fields when textbox changes
 			$scope.searchTerm = function (field) {
@@ -248,6 +249,9 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 			};
 			$scope.searchResource = function (field) {
 				$scope.resourceSearchField = field;
+			};
+			$scope.searchPatient = function (field) {
+				$scope.patientSearchField = field;
 			};
 
 			// Function for search through the filters
@@ -267,12 +271,17 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 				var keyword = new RegExp($scope.resourceSearchField, 'i');
 				return !$scope.resourceSearchField || keyword.test(Filter.name);
 			};
+			$scope.searchPatientFilter = function (Filter) {
+				var keyword = new RegExp($scope.patientSearchField, 'i');
+				return !$scope.patientSearchField || keyword.test(Filter.name);
+			};
 
 			// Initialize lists to hold filters
 			$scope.termList = [];
 			$scope.dxFilterList = [];
 			$scope.doctorFilterList = [];
 			$scope.resourceFilterList = [];
+			$scope.patientFilterList = [];
 
 			// initialize variables
 			$scope.tagList = [];
@@ -465,6 +474,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 					$scope.dxFilterList = checkAddedFilter(response.data.dx);
 					$scope.doctorFilterList = checkAddedFilter(response.data.doctors);
 					$scope.resourceFilterList = checkAddedFilter(response.data.resources);
+					$scope.patientFilterList = checkAddedFilter(response.data.patients);
 
 				}).catch(function(response) {
 					console.error('Error occurred getting filter list:', response.status, response.data);
@@ -512,6 +522,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 						var filterId = filter.id;
 						var filterType = filter.type;
 						if (filterId == selectedFilterId && filterType == selectedFilterType) {
+							console.log("HERE");
 							filter.added = 1;
 						}
 					});
@@ -666,6 +677,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 					addFilters($scope.dxFilterList);
 					addFilters($scope.doctorFilterList);
 					addFilters($scope.resourceFilterList);
+					addFilters($scope.patientFilterList);
 
 					addTags($scope.tagList); // Add tags to questionnaire object
 					// ajax POST
