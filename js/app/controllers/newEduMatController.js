@@ -38,6 +38,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		$scope.dxSearchField = "";
 		$scope.doctorSearchField = "";
 		$scope.resourceSearchField = "";
+		$scope.patientSearchField = "";
 
 		// Default count of completed steps
 		$scope.numOfCompletedSteps = 0;
@@ -107,6 +108,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		$scope.dxFilterList = [];
 		$scope.doctorFilterList = [];
 		$scope.resourceFilterList = [];
+		$scope.patientFilterList = [];
 
 		// Initialize lists to hold the distinct edu material types
 		$scope.EduMatTypes_EN = [];
@@ -139,6 +141,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 			$scope.dxFilterList = response.data.dx;
 			$scope.doctorFilterList = response.data.doctors;
 			$scope.resourceFilterList = response.data.resources;
+			$scope.patientFilterList = response.data.patients;
 
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
@@ -392,6 +395,8 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 				addFilters($scope.dxFilterList);
 				addFilters($scope.doctorFilterList);
 				addFilters($scope.resourceFilterList);
+				addFilters($scope.patientFilterList);
+
 				// Submit
 				$.ajax({
 					type: "POST",
@@ -443,6 +448,9 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		$scope.searchResource = function (field) {
 			$scope.resourceSearchField = field;
 		};
+		$scope.searchPatient = function (field) {
+			$scope.patientSearchField = field;
+		};
 
 		// Function for search through the filters
 		$scope.searchTermsFilter = function (Filter) {
@@ -460,6 +468,10 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		$scope.searchResourceFilter = function (Filter) {
 			var keyword = new RegExp($scope.resourceSearchField, 'i');
 			return !$scope.resourceSearchField || keyword.test(Filter.name);
+		};
+		$scope.searchPatientFilter = function (Filter) {
+			var keyword = new RegExp($scope.patientSearchField, 'i');
+			return !$scope.patientSearchField || keyword.test(Filter.name);
 		};
 
 		// Function to return filters that have been checked
@@ -489,20 +501,20 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		};
 
 		var fixmeTop = $('.summary-fix').offset().top;
-		$(window).scroll(function() {
-		    var currentScroll = $(window).scrollTop();
-		    if (currentScroll >= fixmeTop) {
-		        $('.summary-fix').css({
-		            position: 'fixed',
-		            top: '0',
-		          	width: '15%'
-		        });
-		    } else {
-		        $('.summary-fix').css({
-		            position: 'static',
-		            width: ''
-		        });
-		    }
+		$(window).scroll(function () {
+			var currentScroll = $(window).scrollTop();
+			if (currentScroll >= fixmeTop) {
+				$('.summary-fix').css({
+					position: 'fixed',
+					top: '0',
+					width: '15%'
+				});
+			} else {
+				$('.summary-fix').css({
+					position: 'static',
+					width: ''
+				});
+			}
 		});
 
 
