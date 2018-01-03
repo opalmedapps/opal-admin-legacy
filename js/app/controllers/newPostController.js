@@ -40,6 +40,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 		$scope.dxSearchField = null;
 		$scope.doctorSearchField = null;
 		$scope.resourceSearchField = null;
+		$scope.patientSearchField = null; 
 
 		// Default count of completed steps
 		$scope.numOfCompletedSteps = 0;
@@ -83,6 +84,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 		$scope.dxFilterList = [];
 		$scope.doctorFilterList = [];
 		$scope.resourceFilterList = [];
+		$scope.patientFilterList = [];
 
 		/* Function for the "Processing..." dialog */
 		var processingModal;
@@ -111,6 +113,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 			$scope.dxFilterList = response.data.dx;
 			$scope.doctorFilterList = response.data.doctors;
 			$scope.resourceFilterList = response.data.resources;
+			$scope.patientFilterList = response.data.patients;
 
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
@@ -235,6 +238,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 				addFilters($scope.dxFilterList);
 				addFilters($scope.doctorFilterList);
 				addFilters($scope.resourceFilterList);
+				addFilters($scope.patientFilterList);
 				if ($scope.newPost.publish_date && $scope.newPost.publish_time) {
 					// Concat date and time
 					$scope.newPost.publish_date = String(moment($scope.newPost.publish_date).format("YYYY-MM-DD")) + " " +
@@ -291,6 +295,9 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 		$scope.searchResource = function (field) {
 			$scope.resourceSearchField = field;
 		};
+		$scope.searchPatient = function (field) {
+			$scope.patientSearchField = field;
+		};
 
 		// Function for search through the filters
 		$scope.searchTermsFilter = function (Filter) {
@@ -308,6 +315,10 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 		$scope.searchResourceFilter = function (Filter) {
 			var keyword = new RegExp($scope.resourceSearchField, 'i');
 			return !$scope.resourceSearchField || keyword.test(Filter.name);
+		};
+		$scope.searchPatientFilter = function (Filter) {
+			var keyword = new RegExp($scope.patientSearchField, 'i');
+			return !$scope.patientSearchField || keyword.test(Filter.name);
 		};
 
 		// Function to calculate / return step progress
@@ -391,19 +402,19 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 
 		var fixmeTop = $('.summary-fix').offset().top;
 		$(window).scroll(function() {
-		    var currentScroll = $(window).scrollTop();
-		    if (currentScroll >= fixmeTop) {
-		        $('.summary-fix').css({
-		            position: 'fixed',
-		            top: '0',
-		          	width: '15%'
-		        });
-		    } else {
-		        $('.summary-fix').css({
-		            position: 'static',
-		            width: ''
-		        });
-		    }
+			var currentScroll = $(window).scrollTop();
+			if (currentScroll >= fixmeTop) {
+				$('.summary-fix').css({
+					position: 'fixed',
+					top: '0',
+					width: '15%'
+				});
+			} else {
+				$('.summary-fix').css({
+					position: 'static',
+					width: ''
+				});
+			}
 		});
 
 

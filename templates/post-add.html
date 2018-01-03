@@ -142,6 +142,31 @@
                     </p>
                   </div> 
                 </div>
+                <!-- SECTION: Patient filters -->
+                 <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(patientFilterList)" ng-if="terms.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkFilters(patientFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Patient Filter(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkFilters(patientFilterList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkFilters(patientFilterList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="Filter in patientFilterList | filter: {added: 1} : 1">
+                          {{Filter.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
                 <!-- SECTION: Expression filters -->
                 <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(termList)" ng-if="terms.show">
                   <uib-accordion-heading>
@@ -484,7 +509,51 @@
                   </div>
                 </div>
               </div>      
-            </div>      
+            </div>    
+            <!-- SECTION: Patient filters -->
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+              <div class="col-md-12 side-menu-title">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fa fa-dot-circle-o"></span>
+                    <h2>Patient Filters</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>   
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+              <div class="col-md-12">
+                <p style="margin-bottom: 10px;">
+                  <span><strong>Optional field:</strong></span>
+                  Select one of more patient filters below. This will target patients selected here. Leave blank for no filters.
+                </p>
+              </div>
+            </div>  
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+              <div class="col-md-8">
+                <div class="panel-container">
+                  <div class="panel-info">
+                    <div class="panel-content">
+                      <div class="panel-input">  
+                        <div class="list-space">
+                          <div class="input-group">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                            <input class="form-control" type="text" ng-model="patientSearchField" ng-change="searchPatient(patientSearchField)" placeholder="Search Patient"/>
+                          </div>
+                          <ul class="list-items">
+                            <li ng-repeat="Filter in patientFilterList | filter: searchPatientFilter">
+                              <label>
+                                <input type="checkbox" ng-click="selectItem(Filter)" ng-checked="Filter.added" /> {{Filter.name}}
+                              </label>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>  
             <!-- SECTION: Expression filters -->
             <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
               <div class="col-md-12 side-menu-title">

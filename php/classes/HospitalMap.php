@@ -44,17 +44,17 @@ class HospitalMap {
      *
      * Inserts hospital map info
      *
-     * @param array $hosMapArray : the hospital map details
+     * @param array $hosMapDetails : the hospital map details
 	 * @return void
      */
-    public function insertHospitalMap ($hosMapArray) {
+    public function insertHospitalMap ($hosMapDetails) {
 
-        $name_EN            = $hosMapArray['name_EN'];
-        $name_FR            = $hosMapArray['name_FR'];
-        $description_EN     = $hosMapArray['description_EN'];
-        $description_FR     = $hosMapArray['description_FR'];
-        $url                = $hosMapArray['url'];
-        $qrid               = $hosMapArray['qrid'];
+        $name_EN            = $hosMapDetails['name_EN'];
+        $name_FR            = $hosMapDetails['name_FR'];
+        $description_EN     = $hosMapDetails['description_EN'];
+        $description_FR     = $hosMapDetails['description_FR'];
+        $url                = $hosMapDetails['url'];
+        $qrid               = $hosMapDetails['qrid'];
 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -218,18 +218,18 @@ class HospitalMap {
      *
      * Updates hospital map's details
      *
-     * @param array $hosMapArray : the hospital map details
+     * @param array $hosMapDetails : the hospital map details
 	 * @return void
      */
-    public function updateHospitalMap ($hosMapArray) {
+    public function updateHospitalMap ($hosMapDetails) {
 
-        $name_EN            = $hosMapArray['name_EN'];
-        $name_FR            = $hosMapArray['name_FR'];
-        $description_EN     = $hosMapArray['description_EN'];
-        $description_FR     = $hosMapArray['description_FR'];
-        $url                = $hosMapArray['url'];
-        $qrid               = $hosMapArray['qrid'];
-        $serial             = $hosMapArray['serial'];
+        $name_EN            = $hosMapDetails['name_EN'];
+        $name_FR            = $hosMapDetails['name_FR'];
+        $description_EN     = $hosMapDetails['description_EN'];
+        $description_FR     = $hosMapDetails['description_FR'];
+        $url                = $hosMapDetails['url'];
+        $qrid               = $hosMapDetails['qrid'];
+        $serial             = $hosMapDetails['serial'];
 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
