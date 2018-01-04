@@ -21,7 +21,7 @@ use Storable qw(dclone);
 use Data::Dumper;
 
 use Patient; # Our patient module
-use Alias; # Our Alias module
+use TestResultControl; # Our Test Result Control module
 
 #---------------------------------------------------------------------------------
 # Connect to our database
@@ -35,21 +35,23 @@ sub new
 {
 	my $class = shift;
     my $testresult = {
-        _ser                => undef,
-        _sourceuid          => undef,
-        _sourcedbser        => undef,
-        _patientser         => undef,
-        _name               => undef,
-        _facname            => undef,
-        _abnormalflag       => undef,
-        _testdate           => undef,
-        _maxnorm            => undef,
-        _minnorm            => undef,
-        _approvedflag       => undef,
-        _testvalue          => undef,
-        _testvaluestring    => undef,
-        _unitdesc           => undef,
-        _validentry         => undef,
+        _ser                		=> undef,
+        _sourceuid          		=> undef,
+        _sourcedbser        		=> undef,
+        _controlser					=> undef,
+        _expressionser				=> undef,
+        _patientser         		=> undef,
+        _name               		=> undef,
+        _facname            		=> undef,
+        _abnormalflag       		=> undef,
+        _testdate           		=> undef,
+        _maxnorm            		=> undef,
+        _minnorm            		=> undef,
+        _approvedflag       		=> undef,
+        _testvalue          		=> undef,
+        _testvaluestring    		=> undef,
+        _unitdesc           		=> undef,
+        _validentry         		=> undef,
     };
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
@@ -95,6 +97,26 @@ sub setTestResultPatientSer
 	my ($testresult, $patientser) = @_; # object with provided serial in arguments
 	$testresult->{_patientser} = $patientser; # set the ser
 	return $testresult->{_patientser};
+}
+
+#====================================================================================
+# Subroutine to set the testresult control serial
+#====================================================================================
+sub setTestResultControlSer
+{
+	my ($testresult, $controlser) = @_; # object with provided serial in arguments
+	$testresult->{_controlser} = $controlser; # set the ser
+	return $testresult->{_controlser};
+}
+
+#====================================================================================
+# Subroutine to set the testresult expression serial
+#====================================================================================
+sub setTestResultExpressionSer
+{
+	my ($testresult, $expressionser) = @_; # object with provided serial in arguments
+	$testresult->{_expressionser} = $expressionser; # set the ser
+	return $testresult->{_expressionser};
 }
 
 #====================================================================================
@@ -244,6 +266,24 @@ sub getTestResultPatientSer
 }
 
 #====================================================================================
+# Subroutine to get the testresult control ser
+#====================================================================================
+sub getTestResultControlSer
+{
+	my ($testresult) = @_; # our testresult object
+	return $testresult->{_controlser};
+}
+
+#====================================================================================
+# Subroutine to get the testresult expression ser
+#====================================================================================
+sub getTestResultExpressionSer
+{
+	my ($testresult) = @_; # our testresult object
+	return $testresult->{_expressionser};
+}
+
+#====================================================================================
 # Subroutine to get the testresult name
 #====================================================================================
 sub getTestResultName
@@ -355,170 +395,233 @@ sub getTestResultsFromSourceDB
     my ($pt_id, $visit_id, $test_id, $tr_group_id, $tr_id, $sourceuid, $name, $facname, $testdate);
     my ($maxnorm, $minnorm, $apprvflag, $abnormalflag, $testvalue, $testvaluestring);
     my ($unitdesc, $validentry);
+    my $lastpublished;
 
-    
+    # retrieve all test results that are marked for update
+    my @testResultList = TestResultControl::getTestResultControlsMarkedForUpdate();
+
 	# Go through the list of Patient objects and get the information that we need
     # in order to search for the corresponding test result in the database
 	foreach my $Patient (@patientList) {
 
 		my $patientSer		    = $Patient->getPatientSer(); # get patient serial
 		my $patientSSN    		= $Patient->getPatientSSN(); # get ssn
-		my $lasttransfer	    = $Patient->getPatientLastTransfer(); # get last updated
+		my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
 
-        ######################################
-	    # ARIA
-	    ######################################
-        my $sourceDBSer = 1; # ARIA
-	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-        if ($sourceDatabase) {
+		my $formatted_PLT = Time::Piece->strptime($patientLastTransfer, "%Y-%m-%d %H:%M:%S");
 
-            my $trInfo_sql = "
-                SELECT DISTINCT
-                    tr.pt_id,
-                    tr.pt_visit_id,
-                    tr.test_id,
-                    tr.test_result_group_id,
-                    tr.test_result_id,
-                    RTRIM(tr.abnormal_flag_cd),
-                    RTRIM(tr.comp_name),
-                    RTRIM(tr.fac_comp_name),
-                    CONVERT(VARCHAR, tr.date_test_pt_test, 120),
-                    tr.max_norm,
-                    tr.min_norm,
-                    tr.result_appr_ind,
-                    tr.test_value,
-                    tr.test_value_string,
-                    RTRIM(tr.unit_desc),
-                    tr.valid_entry_ind
-                FROM 
-                    varianenm.dbo.test_result tr,
-                    varianenm.dbo.pt pt,
-                    variansystem.dbo.Patient Patient
-                WHERE
-                    tr.pt_id                = pt.pt_id
-                AND pt.patient_ser          = Patient.PatientSer
-                AND Patient.SSN      		LIKE '$patientSSN%'
-                AND tr.trans_log_mtstamp    > '$lasttransfer'
-				AND tr.valid_entry_ind 		= 'Y'
+		foreach my $TestResult (@testResultList) {
 
-            ";
+			my $controlSer 			= $TestResult->getTestResultControlSer();
+			my @expressions 		= $TestResult->getTestResultControlExpressions();
+			my $sourceDBSer 		= $TestResult->getTestResultControlSourceDatabaseSer();
 
-            # prepare query
-	    	my $query = $sourceDatabase->prepare($trInfo_sql)
-		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
+	        ######################################
+		    # ARIA
+		    ######################################
+		    if ($sourceDBSer eq 1) {
 
-    		# execute query
-	    	$query->execute()
-		    	or die "Could not execute query: " . $query->errstr;
+			    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+			    my $numOfExpressions = @expressions; 
+                my $counter = 0;
+		        if ($sourceDatabase) {
 
-    		$data = $query->fetchall_arrayref(); 
-            foreach my $row (@$data) {
+		            my $trInfo_sql = "
+		                SELECT DISTINCT
+		                    tr.pt_id,
+		                    tr.pt_visit_id,
+		                    tr.test_id,
+		                    tr.test_result_group_id,
+		                    tr.test_result_id,
+		                    RTRIM(tr.abnormal_flag_cd),
+		                    RTRIM(tr.comp_name),
+		                    RTRIM(tr.fac_comp_name),
+		                    CONVERT(VARCHAR, tr.date_test_pt_test, 120),
+		                    tr.max_norm,
+		                    tr.min_norm,
+		                    tr.result_appr_ind,
+		                    tr.test_value,
+		                    tr.test_value_string,
+		                    RTRIM(tr.unit_desc),
+		                    tr.valid_entry_ind
+		                FROM 
+		                    varianenm.dbo.test_result tr,
+		                    varianenm.dbo.pt pt,
+		                    variansystem.dbo.Patient Patient
+		                WHERE
+		                    tr.pt_id                = pt.pt_id
+		                AND pt.patient_ser          = Patient.PatientSer
+		                AND Patient.SSN      		LIKE '$patientSSN%'
+						AND tr.valid_entry_ind 		= 'Y'
+						AND (
+		            ";
 
-                my $testresult = new TestResult();
+		            foreach my $Expression (@expressions) {
 
-                $pt_id              = $row->[0];
-                $visit_id           = $row->[1];
-                $test_id            = $row->[2];
-                $tr_group_id        = $row->[3];
-                $tr_id              = $row->[4];
-                # combine the above id to create a unique id
-                $sourceuid          = $pt_id.$visit_id.$test_id.$tr_group_id.$tr_id;
-        
-                $abnormalflag       = $row->[5];
-                $name               = $row->[6];
-                $facname            = $row->[7];
-                $testdate           = $row->[8];
-                $maxnorm            = $row->[9];
-                $minnorm            = $row->[10];
-                $apprvflag          = $row->[11];
-                $testvalue          = $row->[12];
-                $testvaluestring    = $row->[13];
-                $unitdesc           = $row->[14];
-                $validentry         = $row->[15];
-    
-                $testresult->setTestResultPatientSer($patientSer);
-                $testresult->setTestResultSourceDatabaseSer($sourceDBSer);
-                $testresult->setTestResultSourceUID($sourceuid);
-                $testresult->setTestResultName($name);
-                $testresult->setTestResultFacName($facname);
-                $testresult->setTestResultAbnormalFlag($abnormalflag);
-                $testresult->setTestResultTestDate($testdate);
-                $testresult->setTestResultMaxNorm($maxnorm);
-                $testresult->setTestResultMinNorm($minnorm);
-                $testresult->setTestResultApprovedFlag($apprvflag);
-                $testresult->setTestResultTestValue($testvalue);
-                $testresult->setTestResultTestValueString($testvaluestring);
-                $testresult->setTestResultUnitDesc($unitdesc);
-                $testresult->setTestResultValidEntry($validentry);
-           
-                push(@TRList, $testresult);
-            }
+		            	my $expressionser = $Expression->{_ser};
+	                	my $expressionName = $Expression->{_name};
+	                	my $expressionLastPublished = $Expression->{_lastpublished};
+	                	my $formatted_ELP = Time::Piece->strptime($expressionLastPublished, "%Y-%m-%d %H:%M:%S");
 
-            $sourceDatabase->disconnect();
+	                	# compare last updates to find the earliest date 
+			            # get the diff in seconds
+			            my $date_diff = $formatted_PLT - $formatted_ELP;
+			            if ($date_diff < 0) {
+			                $lastpublished = $patientLastTransfer;
+			            } else {
+			                $lastpublished = $expressionLastPublished;
+			            }
 
-        }
+			            # concatenate query
+			            $trInfo_sql .= "
+			            	(tr.comp_name 	LIKE	'$expressionName%'
+			            	AND tr.trans_log_mtstamp    > '$lastpublished')
+			            ";
+			            $counter++;
 
-        ######################################
-	    # MediVisit
-	    ######################################
-	    my $sourceDBSer = 2; # MediVisit
-	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-        if ($sourceDatabase) {
+			            # concat "UNION" until we've reached the last query
+		        		if ($counter < $numOfExpressions) {
+		        			$trInfo_sql .= "OR";
+		        		}
+						# close bracket at end
+						else {
+							$trInfo_sql .= ")";
+						}
+		            }
 
-        	my $trInfo_sql = "SELECT 'QUERY_HERE'";
+			        print "query: $trInfo_sql\n";
+		            # prepare query
+			    	my $query = $sourceDatabase->prepare($trInfo_sql)
+				    	or die "Could not prepare query: " . $sourceDatabase->errstr;
 
-        	# prepare query
-	    	my $query = $sourceDatabase->prepare($trInfo_sql)
-		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
+		    		# execute query
+			    	$query->execute()
+				    	or die "Could not execute query: " . $query->errstr;
 
-    		# execute query
-	    	$query->execute()
-		    	or die "Could not execute query: " . $query->errstr;
+		    		$data = $query->fetchall_arrayref(); 
+		            foreach my $row (@$data) {
 
-    		$data = $query->fetchall_arrayref(); 
-            foreach my $row (@$data) {
+		                my $testresult = new TestResult();
 
-                #my $testresult = new TestResult(); # uncomment for use
+		                $pt_id              = $row->[0];
+		                $visit_id           = $row->[1];
+		                $test_id            = $row->[2];
+		                $tr_group_id        = $row->[3];
+		                $tr_id              = $row->[4];
+		                # combine the above id to create a unique id
+		                $sourceuid          = $pt_id.$visit_id.$test_id.$tr_group_id.$tr_id;
+	        
+		                $abnormalflag       = $row->[5];
+		                $expressionname     = $row->[6];
 
-                # use setters to set appropriate test result information from query
+		                my $expressionser;
+						foreach my $checkExpression (@expressions) {
+							if ($checkExpression->{_name} eq $expressionname){ #match
+								$expressionser = $checkExpression->{_ser};
+								last; # break out of loop
+							}
+						}
 
-                #push(@TRList, $testresult); # uncomment for use
-            }
+		                $facname            = $row->[7];
+		                $testdate           = $row->[8];
+		                $maxnorm            = $row->[9];
+		                $minnorm            = $row->[10];
+		                $apprvflag          = $row->[11];
+		                $testvalue          = $row->[12];
+		                $testvaluestring    = $row->[13];
+		                $unitdesc           = $row->[14];
+		                $validentry         = $row->[15];
+	    
+		                $testresult->setTestResultPatientSer($patientSer);
+		                $testresult->setTestResultSourceDatabaseSer($sourceDBSer);
+		                $testresult->setTestResultSourceUID($sourceuid);
+		                $testresult->setTestResultExpressionSer($expressionser);
+		                $testresult->setTestResultName($expressionname);
+		                $testresult->setTestResultFacName($facname);
+		                $testresult->setTestResultAbnormalFlag($abnormalflag);
+		                $testresult->setTestResultTestDate($testdate);
+		                $testresult->setTestResultMaxNorm($maxnorm);
+		                $testresult->setTestResultMinNorm($minnorm);
+		                $testresult->setTestResultApprovedFlag($apprvflag);
+		                $testresult->setTestResultTestValue($testvalue);
+		                $testresult->setTestResultTestValueString($testvaluestring);
+		                $testresult->setTestResultUnitDesc($unitdesc);
+		                $testresult->setTestResultValidEntry($validentry);
+	           
+		                push(@TRList, $testresult);
+		            }
 
-            $sourceDatabase->disconnect();
+		            $sourceDatabase->disconnect();
+		        }
 
-        }
+	        }
 
-        ######################################
-	    # MOSAIQ
-	    ######################################
-	    my $sourceDBSer = 3; # MOSAIQ
-	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-        if ($sourceDatabase) {
+	        ######################################
+		    # MediVisit
+		    ######################################
+		    if ($sourceDBSer eq 2) {
 
-        	my $trInfo_sql = "SELECT 'QUERY_HERE'";
+			    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+		        if ($sourceDatabase) {
 
-        	# prepare query
-	    	my $query = $sourceDatabase->prepare($trInfo_sql)
-		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
+		        	my $trInfo_sql = "SELECT 'QUERY_HERE'";
 
-    		# execute query
-	    	$query->execute()
-		    	or die "Could not execute query: " . $query->errstr;
+		        	# prepare query
+			    	my $query = $sourceDatabase->prepare($trInfo_sql)
+				    	or die "Could not prepare query: " . $sourceDatabase->errstr;
 
-    		$data = $query->fetchall_arrayref(); 
-            foreach my $row (@$data) {
+		    		# execute query
+			    	$query->execute()
+				    	or die "Could not execute query: " . $query->errstr;
 
-                #my $testresult = new TestResult(); # uncomment for use
+		    		$data = $query->fetchall_arrayref(); 
+		            foreach my $row (@$data) {
 
-                # use setters to set appropriate test result information from query
+		                #my $testresult = new TestResult(); # uncomment for use
 
-                #push(@TRList, $testresult); # uncomment for use
-            }
+		                # use setters to set appropriate test result information from query
 
-            $sourceDatabase->disconnect();
+		                #push(@TRList, $testresult); # uncomment for use
+		            }
 
-        }
+		            $sourceDatabase->disconnect();
+
+		        }
+		    }
+
+	        ######################################
+		    # MOSAIQ
+		    ######################################
+		    if ($sourceDBSer eq 3) {
+
+			    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+		        if ($sourceDatabase) {
+
+		        	my $trInfo_sql = "SELECT 'QUERY_HERE'";
+
+		        	# prepare query
+			    	my $query = $sourceDatabase->prepare($trInfo_sql)
+				    	or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+		    		# execute query
+			    	$query->execute()
+				    	or die "Could not execute query: " . $query->errstr;
+
+		    		$data = $query->fetchall_arrayref(); 
+		            foreach my $row (@$data) {
+
+		                #my $testresult = new TestResult(); # uncomment for use
+
+		                # use setters to set appropriate test result information from query
+
+		                #push(@TRList, $testresult); # uncomment for use
+		            }
+
+		            $sourceDatabase->disconnect();
+
+		        }
+		    }
+		}
 
     }
 
@@ -537,11 +640,11 @@ sub inOurDatabase
     my $sourceuid   = $testresult->getTestResultSourceUID();
     my $sourcedbser = $testresult->getTestResultSourceDatabaseSer();
 
-    my $TRSourceUIDInDB = 0; # false by default. Will be tru if test result exists
+    my $TRSourceUIDInDB = 0; # false by default. Will be true if test result exists
     my $ExistingTR = (); # data to be entered if test result exists
 
     # Other variables, if it exists
-    my ($ser, $patientser, $name, $facname, $abnormalflag, $testdate, $maxnorm, $minnorm);
+    my ($ser, $patientser, $expressionser, $name, $facname, $abnormalflag, $testdate, $maxnorm, $minnorm);
     my ($apprvflag, $testvalue, $testvaluestring, $unitdesc, $validentry);
 
     my $inDB_sql = "
@@ -559,7 +662,8 @@ sub inOurDatabase
             tr.TestValue,
             tr.TestValueString,
             tr.UnitDescription,
-            tr.ValidEntry
+            tr.ValidEntry,
+            tr.TestResultExpressionSerNum
         FROM
             TestResult AS tr
         WHERE
@@ -591,6 +695,7 @@ sub inOurDatabase
         $testvaluestring    = $data[11];
         $unitdesc           = $data[12];
         $validentry         = $data[13];
+        $expressionser 		= $data[14];
     }
 
     if ($TRSourceUIDInDB) {
@@ -601,6 +706,7 @@ sub inOurDatabase
         $ExistingTR->setTestResultPatientSer($patientser);
         $ExistingTR->setTestResultSourceUID($TRSourceUIDInDB);
         $ExistingTR->setTestResultSourceDatabaseSer($sourcedbser);
+        $ExistingTR->setTestResultExpressionSer($expressionser);
         $ExistingTR->setTestResultName($name);
         $ExistingTR->setTestResultFacName($facname);
         $ExistingTR->setTestResultAbnormalFlag($abnormalflag);
@@ -629,6 +735,7 @@ sub insertTestResultIntoOurDB
     my $patientser              = $testresult->getTestResultPatientSer();
     my $sourceuid               = $testresult->getTestResultSourceUID();
     my $sourcedbser             = $testresult->getTestResultSourceDatabaseSer();
+    my $expressionser 			= $testresult->getTestResultExpressionSer();
     my $name                    = $testresult->getTestResultName();
     my $facname                 = $testresult->getTestResultFacName();
     my $abnormalflag            = $testresult->getTestResultAbnormalFlag();
@@ -647,6 +754,7 @@ sub insertTestResultIntoOurDB
                 PatientSerNum,
                 SourceDatabaseSerNum,
                 TestResultAriaSer,
+                TestResultExpressionSerNum,
                 ComponentName,
                 FacComponentName,
                 AbnormalFlag,
@@ -657,12 +765,14 @@ sub insertTestResultIntoOurDB
                 TestValue,
                 TestValueString,
                 UnitDescription,
-                ValidEntry
+                ValidEntry,
+                DateAdded
             )
         VALUES (
             '$patientser',
             '$sourcedbser',
             '$sourceuid',
+            '$expressionser',
             \"$name\",
             \"$facname\",
             '$abnormalflag',
@@ -673,7 +783,8 @@ sub insertTestResultIntoOurDB
             '$testvalue',
             '$testvaluestring',
             '$unitdesc',
-            '$validentry'
+            '$validentry',
+            NOW()
         )
     
     ";
@@ -705,6 +816,7 @@ sub updateDatabase
 
     my $sourceuid               = $testresult->getTestResultSourceUID();
     my $sourcedbser             = $testresult->getTestResultSourceDatabaseSer();
+    my $expressionser 			= $testresult->getTestResultExpressionSer();
     my $name                    = $testresult->getTestResultName();
     my $facname                 = $testresult->getTestResultFacName();
     my $abnormalflag            = $testresult->getTestResultAbnormalFlag();
@@ -721,20 +833,22 @@ sub updateDatabase
         UPDATE
             TestResult
         SET
-            ComponentName           = \"$name\",
-            FacComponentName        = \"$facname\",
-            AbnormalFlag            = '$abnormalflag',
-            TestDate                = '$testdate',
-            MaxNorm                 = '$maxnorm',
-            MinNorm                 = '$minnorm',
-            ApprovedFlag            = '$apprvflag',
-            TestValue               = '$testvalue',
-            TestValueString         = '$testvaluestring',
-            UnitDescription         = '$unitdesc',
-            ValidEntry              = '$validentry'
+        	TestResultExpressionSerNum	= '$expressionser',
+            ComponentName           	= \"$name\",
+            FacComponentName        	= \"$facname\",
+            AbnormalFlag            	= '$abnormalflag',
+            TestDate                	= '$testdate',
+            MaxNorm                 	= '$maxnorm',
+            MinNorm                 	= '$minnorm',
+            ApprovedFlag            	= '$apprvflag',
+            TestValue               	= '$testvalue',
+            TestValueString         	= '$testvaluestring',
+            UnitDescription         	= '$unitdesc',
+            ValidEntry              	= '$validentry',
+            ReadStatus 					= 0
         WHERE
-            TestResultAriaSer       = '$sourceuid'
-        AND SourceDatabaseSerNum    = '$sourcedbser'
+            TestResultAriaSer       	= '$sourceuid'
+        AND SourceDatabaseSerNum    	= '$sourcedbser'
     ";
 
     # prepare query
@@ -758,6 +872,7 @@ sub compareWith
 
     # retrieve params
     # Suspect TR
+    my $Sexpressionser 		= $SuspectTR->getTestResultExpressionSer();
     my $Sname               = $SuspectTR->getTestResultName();
     my $Sfacname            = $SuspectTR->getTestResultFacName();
     my $Sabnormalflag       = $SuspectTR->getTestResultAbnormalFlag();
@@ -771,6 +886,7 @@ sub compareWith
     my $Svalidentry         = $SuspectTR->getTestResultValidEntry();
 
     # Original TR
+    my $Oexpressionser 		= $OriginalTR->getTestResultExpressionSer();
     my $Oname               = $OriginalTR->getTestResultName();
     my $Ofacname            = $OriginalTR->getTestResultFacName();
     my $Oabnormalflag       = $OriginalTR->getTestResultAbnormalFlag();
@@ -784,6 +900,11 @@ sub compareWith
     my $Ovalidentry         = $OriginalTR->getTestResultValidEntry();
 
     # go through each param
+    if ($Sexpressionser ne $Oexpressionser) {
+        print "Test Result expression serial has changed from '$Oexpressionser' to '$Sexpressionser'\n";
+        my $updatedExpressionSer = $UpdatedTR->setTestResultExpressionSer($Sexpressionser); # update
+        print "Will updated database entry to '$updatedExpressionSer'.\n";
+    }
     if ($Sname ne $Oname) {
         print "Test Result name has changed from '$Oname' to '$Sname'\n";
         my $updatedName = $UpdatedTR->setTestResultName($Sname); # update
