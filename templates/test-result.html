@@ -207,6 +207,31 @@
               </div>
             </div>
           </div>
+          <!-- SECTION: Educational material -->
+          <div uib-accordion-group is-open="statusEducationalMaterial.open">
+            <uib-accordion-heading>
+              <div>
+                <strong>Attached Educational Material</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusEducationalMaterial.open, 'glyphicon-chevron-right': !statusEducationalMaterial.open}"></i>
+              </div>
+            </uib-accordion-heading>
+            <div class="bs-callout bs-callout-info">
+              <h4>Current Educational Material (EN / FR): {{testResult.eduMat.name_EN}} / {{testResult.eduMat.name_FR}}</h4>
+              <p>To change the current educational material, use the list below.</p>
+            </div>
+            <div class="list-space">
+              <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                <input class="form-control" type="text" ng-model="eduMatFilter" ng-change="changeEduMatFilter(eduMatFilter)" placeholder="Search Educational Material..."/>
+              </div>
+              <ul class="list-items">
+                <li ng-repeat="eduMat in eduMatList | filter: searchEduMatsFilter">
+                  <label>
+                    <input type="radio" ng-model="testResult.eduMat" ng-change="eduMatUpdate()" ng-checked="testResult.eduMat.serial == eduMat.serial" ng-value="eduMat" /> {{eduMat.name_EN}}
+                  </label>
+                </li>
+              </ul>
+            </div>
+          </div>
         </uib-accordion>
       </div>
     </script>

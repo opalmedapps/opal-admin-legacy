@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 	/******************************************************************************
 	* Add Test Result Page controller 
 	*******************************************************************************/
-	controller('newTestResultController', function ($scope, $filter, $sce, $state, $uibModal, testResultCollectionService) {
+	controller('newTestResultController', function ($scope, $filter, $sce, $state, $uibModal, testResultCollectionService, educationalMaterialCollectionService) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -14,6 +14,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 		$scope.tests = {open: false, show: true};
 		$scope.title_description = {open: false, show: false};
 		$scope.group = {open: false, show: false};
+		$scope.edumat = {open: false, show: false};
 
 		// completed steps boolean object; used for progress bar
 		var steps = {
@@ -66,12 +67,16 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 			description_FR: null,
 			group_EN: "",
 			group_FR: "",
+			eduMat: null,
 			tests: []
 		};
 
 		// Initialize lists to hold distinct test groups 
 		$scope.TestResultGroups_EN = [];
 		$scope.TestResultGroups_FR = [];
+		// Initialize list that will hold educational materials
+		$scope.eduMatList = [];
+
 
 		/* Function for the "Processing..." dialog */
 		var processingModal;
@@ -91,6 +96,13 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 			$('.form-box-left').addClass('fadeInDown');
 			$('.form-box-right').addClass('fadeInRight');
 		};
+
+		// Call our API service to get the list of educational material
+		educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+			$scope.eduMatList = response.data; // Assign value
+		}).catch(function(response) {
+			console.error('Error occurred getting educational materials:', response.status, response.data);
+		});
 
 		// Call our API to get the list of test groups
 		testResultCollectionService.getTestResultGroups().then(function (response) {
@@ -126,6 +138,8 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 
 				// Toggle step completion
 				steps.title_description.completed = true;
+				$scope.group.show = true;
+
 				// Count the number of completed steps
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
 				// Change progress bar
@@ -147,6 +161,8 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 
 			if ($scope.newTestResult.group_EN && $scope.newTestResult.group_FR) {
 
+				$scope.edumat.show = true;
+
 				// Toggle step completion
 				steps.group.completed = true;
 				// Count the number of completed steps
@@ -162,6 +178,13 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
 		};
+
+		// Function to toggle necessary changes when updating educational material
+		$scope.eduMatUpdate = function () {
+
+			// Toggle booleans
+			$scope.edumat.open = true;
+		}
 
 		// Function to return boolean for # of added tests
 		$scope.checkTestsAdded = function (testList) {
@@ -211,7 +234,6 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 
 				$scope.tests.open = true;
 				$scope.title_description.show = true;
-				$scope.group.show = true;
 
 				// Count the number of steps completed
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -262,6 +284,17 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 		$scope.searchTestsFilter = function (Filter) {
 			var keyword = new RegExp($scope.testFilter, 'i');
 			return !$scope.testFilter || keyword.test(Filter.name);
+		};
+
+		// Function to assign eduMateFilter when textbox is changing 
+		$scope.changeEduMatFilter = function (eduMatFilter) {
+			$scope.eduMatFilter = eduMatFilter;
+		};
+
+		// Function for searching through the educational material list
+		$scope.searchEduMatsFilter = function (edumat) {
+			var keyword = new RegExp($scope.eduMatFilter, 'i');
+			return !$scope.eduMatFilter || keyword.test(edumat.name_EN);
 		};
 
 

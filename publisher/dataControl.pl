@@ -32,6 +32,7 @@ use Doctor;
 use Diagnosis; 
 use PatientDoctor; 
 use TestResult; 
+use TestResultControl;
 use Cron; 
 use PostControl; 
 use Announcement; 
@@ -510,6 +511,8 @@ Alias::setAliasLastTransferIntoOurDB($start_datetime);
 PostControl::setPostControlLastPublishedIntoOurDB($start_datetime);
 # Educational material control
 EducationalMaterialControl::setEduMatControlLastPublishedIntoOurDB($start_datetime);
+# Test result control
+TestResultControl::setTestResultLastPublishedIntoOurDB($start_datetime);
 
 
 # Get the current time
