@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 	/******************************************************************************
 	* Test Result Page controller 
 	*******************************************************************************/
-	controller('testResultController', function ($scope, $filter, $sce, $state, $uibModal, testResultCollectionService) {
+	controller('testResultController', function ($scope, $filter, $sce, $state, $uibModal, testResultCollectionService, educationalMaterialCollectionService) {
 
 		// Function to go to add test result page
 		$scope.goToAddTestResult = function () {
@@ -210,10 +210,12 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 			// Responsible for "searching" in search bars
 			$scope.filter = $filter('filter');
 
+
 			$scope.testResult = {}; // Initialize test result object
 
 			// Initialize list to hold test names
 			$scope.testList = [];
+			$scope.eduMatList = [];
 
 			// Initialize lists to hold distinct test groups
 			$scope.TestResultGroups_EN = [];
@@ -229,6 +231,14 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 
 			// Initialize search field 
 			$scope.testFilter = "";
+			$scope.eduMatFilter = null;
+
+			// Call our API service to get the list of educational material
+			educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+				$scope.eduMatList = response.data; // Assign value
+			}).catch(function(response) {
+				console.error('Error occurred getting educational material list:', response.status, response.data);
+			});
 
 			// Function to assign search field when textbox changes
 			$scope.changeTestFilter = function (field) {
@@ -242,6 +252,16 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 				return !$scope.testFilter || keyword.test(Filter.name);
 			};
 
+			// Function to assign eduMatFilter when textbox is changing 
+			$scope.changeEduMatFilter = function (eduMatFilter) {
+				$scope.eduMatFilter = eduMatFilter;
+			};
+
+			// Function for searching through expression names
+			$scope.searchEduMatsFilter = function (edumat) {
+				var keyword = new RegExp($scope.eduMatFilter, 'i');
+				return !$scope.eduMatFilter || keyword.test(edumat.name_EN);
+			};
 
 			/* Function for the "Processing" dialog */
 			var processingModal;
@@ -312,6 +332,12 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 				else return false;
 			};
 
+			$scope.eduMatUpdate = function () {
+
+				// Toggle boolean
+				$scope.changesMade = true;
+			};
+
 			// Function to add / remove a test
 			$scope.toggleTestSelection = function (test) {
 
@@ -331,8 +357,6 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 				}
 			};
 
-
-
 			// Function to return boolean for # of added tests
 			$scope.checkTestsAdded = function (testList) {
 
@@ -350,7 +374,6 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 			$scope.setChangesMade = function () {
 				$scope.changesMade = true;
 			};
-
 
 			// Submit changes
 			$scope.updateTestResult = function () {
