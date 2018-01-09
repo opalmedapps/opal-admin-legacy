@@ -265,7 +265,7 @@
                     </p>
                   </div>
                 </div>
-                <!-- SECTION: Expression filter -->
+                <!-- SECTION: Expression filter / Internal Hospital Code -->
                 <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(termList)" ng-if="terms.show">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
@@ -273,7 +273,7 @@
                         <span ng-if="checkFilters(termList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                       </div>
                       <div class="col-md-8">
-                        <strong>Expression Filter(s)</strong>
+                        <strong>Internal Hospital Code Filter(s)</strong>
                       </div>
                       <div class="col-md-2">
                         <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkFilters(termList)"></i>
@@ -892,13 +892,13 @@
                 </div>
               </div>        
             </div>  
-            <!-- SECTION: Expression filters -->
+            <!-- SECTION: Expression / Internal Hospital Code filters -->
             <div class="row animated" ng-class="{fadeInUp:terms.show}" ng-if="terms.show">
               <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
-                    <h2>Expression Filters</h2>
+                    <h2>Internal Hospital Code Filters</h2>
                   </span>  
                 </div>  
               </div>
@@ -907,7 +907,7 @@
               <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
-                  Select one of more expression filters below. This will target patients with these specific filters. Leave blank for no filters.
+                  Select one of more internal hospital code filters below. This will target patients with these specific filters. Leave blank for no filters.
                 </p>
               </div>
             </div>  
