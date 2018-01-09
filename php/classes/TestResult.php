@@ -62,7 +62,8 @@ class TestResult {
                     tr.Description_EN,
                     tr.Description_FR,
                     tr.Group_EN,
-                    tr.Group_FR
+                    tr.Group_FR,
+                    tr.EducationalMaterialControlSerNum
                 FROM
                     TestResultControl tr
                 WHERE
@@ -79,7 +80,10 @@ class TestResult {
             $description_FR = $data[3];
             $group_EN       = $data[4];
             $group_FR       = $data[5];
+            $eduMatSer      = $data[6];
             $tests          = array();
+
+            $eduMat         = "";
 
             $sql = "
                 SELECT DISTINCT
@@ -103,6 +107,11 @@ class TestResult {
                 array_push($tests, $testArray);
             }
 
+            if ($eduMatSer != 0) {
+                $eduMatObj = new EduMaterial();
+                $eduMat = $eduMatObj->getEducationalMaterialDetails($eduMatSer);
+            }
+
             $testResultDetails = array(
                 'name_EN'           => $name_EN,
                 'name_FR'           => $name_FR,
@@ -111,6 +120,8 @@ class TestResult {
                 'group_EN'          => $group_EN,
                 'group_FR'          => $group_FR,
                 'serial'            => $serial,
+                'eduMat'            => $eduMat,
+                'count'             => count($tests),
                 'tests'             => $tests
             );
             return $testResultDetails;
@@ -274,6 +285,10 @@ class TestResult {
         $group_EN           = $testResultDetails['group_EN'];
         $group_FR           = $testResultDetails['group_FR'];
         $tests              = $testResultDetails['tests'];
+        $eduMatSer          = 0;
+        if ( is_array($testResultDetails['edumat']) && isset($testResultDetails['edumat']['serial']) ) {
+            $eduMatSer = $testResultDetails['edumat']['serial'];
+        }
 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -287,6 +302,7 @@ class TestResult {
                         Description_FR,
                         Group_EN,
                         Group_FR,
+                        EducationalMaterialControlSerNum,
                         DateAdded,
                         LastPublished
                     )
@@ -297,6 +313,7 @@ class TestResult {
                     \"$description_FR\",
                     \"$group_EN\",
                     \"$group_FR\",
+                    '$eduMatSer',
                     NOW(),
                     NOW()
                 )
@@ -322,6 +339,8 @@ class TestResult {
                         \"$name\",
                         NOW()
                     )
+                    ON DUPLICATE KEY UPDATE 
+                        TestResultControlSerNum = '$testResultSer'
                 ";
 	            $query = $host_db_link->prepare( $sql );
 				$query->execute();
@@ -355,7 +374,8 @@ class TestResult {
                     tr.Description_FR,
                     tr.Group_EN,
                     tr.Group_FR,
-                    tr.PublishFlag
+                    tr.PublishFlag,
+                    tr.EducationalMaterialControlSerNum
                 FROM
                     TestResultControl tr
             ";
@@ -372,6 +392,8 @@ class TestResult {
                 $group_EN               = $data[5];
                 $group_FR               = $data[6];
                 $publishFlag            = $data[7];
+                $eduMatSer              = $data[8];
+                $eduMat                 = "";
                 $tests                  = array();
 
                 $sql = "
@@ -397,6 +419,11 @@ class TestResult {
                     array_push($tests, $testNameArray);
                 }
 
+                if ($eduMatSer != 0) {
+                    $eduMatObj = new EduMaterial();
+                    $eduMat = $eduMatObj->getEducationalMaterialDetails($eduMatSer);
+                }
+
                 $testArray = array(
                     'name_EN'           => $name_EN,
                     'name_FR'           => $name_FR,
@@ -406,7 +433,9 @@ class TestResult {
                     'group_EN'          => $group_EN,
                     'group_FR'          => $group_FR,
                     'publish'           => $publishFlag,
-                    'tests'             => $tests
+                    'eduMat'            => $eduMat,
+                    'tests'             => $tests,
+                    'count'             => count($tests)
                 );
 
                 array_push($testResultList, $testArray);
@@ -435,6 +464,10 @@ class TestResult {
         $group_FR           = $testResultDetails['group_FR'];
         $serial             = $testResultDetails['serial'];
         $tests              = $testResultDetails['tests'];
+        $eduMatSer          = 0;
+        if ( is_array($testResultDetails['edumat']) && isset($testResultDetails['edumat']['serial']) ) {
+            $eduMatSer = $testResultDetails['edumat']['serial'];
+        }
 
         $existingTests      = array();
 
@@ -454,7 +487,8 @@ class TestResult {
                     TestResultControl.Description_EN    = \"$description_EN\",
                     TestResultControl.Description_FR    = \"$description_FR\",
                     TestResultControl.Group_EN          = \"$group_EN\",
-                    TestResultControl.Group_FR          = \"$group_FR\"
+                    TestResultControl.Group_FR          = \"$group_FR\",
+                    TestResultControl.EducationalMaterialControlSerNum = '$eduMatSer'
                 WHERE
                     TestResultControl.TestResultControlSerNum = $serial
             ";
@@ -507,6 +541,8 @@ class TestResult {
                             '$serial',
                             \"$test\"
                         )
+                        ON DUPLICATE KEY UPDATE
+                            TestResultControlSerNum = '$serial'
                     ";
 
 	                $query = $host_db_link->prepare( $sql );
