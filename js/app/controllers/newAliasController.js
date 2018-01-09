@@ -80,7 +80,8 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 		// Initialize list that will hold existing color tags
 		$scope.existingColorTags = [];
 
-		$scope.termFilter = null;
+		// Initialize the termFilter from NULL to single quotes 
+		$scope.termFilter = '';
 		$scope.eduMatFilter = null;
 
 		/* Function for the "Processing" dialog */
@@ -358,8 +359,9 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 
 		// Function for selecting all terms in the expression list
 		$scope.selectAllFilteredTerms = function () {
-			var filtered = $scope.filter($scope.termList, $scope.termFilter);
 
+			var filtered = $scope.filter($scope.termList, $scope.termFilter);
+			
 			if (selectAll) { // was checked
 				angular.forEach(filtered, function (term) {
 					term.added = false;
@@ -368,7 +370,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 
 				// Check if there are still terms added, if not, flag
 				if (!$scope.checkTermsAdded($scope.termList)) {
-
+					
 					// Toggle boolean
 					steps.terms.completed = false;
 
@@ -382,6 +384,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 
 			}
 			else { // was not checked
+				
 				angular.forEach(filtered, function (term) {
 					term.added = true;
 				});
@@ -420,7 +423,6 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 
 		// Function to return boolean for # of added terms
 		$scope.checkTermsAdded = function (termList) {
-
 			var addedParam = false;
 			angular.forEach(termList, function (term) {
 				if (term.added === true)
