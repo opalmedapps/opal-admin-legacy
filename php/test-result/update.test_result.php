@@ -13,6 +13,7 @@
         'description_FR'    => $_POST['description_FR'],
         'group_EN'          => $_POST['group_EN'],
         'group_FR'          => $_POST['group_FR'],
+        'edumat'            => $_POST['eduMat'],
         'serial'            => $_POST['serial'],
         'tests'             => $_POST['tests']
     );

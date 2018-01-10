@@ -134,6 +134,28 @@
                     </p>
                   </div>
                 </div>
+                <!-- SECTION: Educational material -->
+                <div uib-accordion-group is-open="edumat.open" class="panel-container summary-box animated" ng-class="{fadeInUp: edumat.show}" is-disabled="!newTestResult.eduMat" ng-if="edumat.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newTestResult.eduMat" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Educational Material</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': edumat.open, 'glyphicon-chevron-right': !edumat.open}" ng-if="newTestResult.eduMat"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading> 
+                  <div ng-if="newTestResult.eduMat" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newTestResult.eduMat.name_EN}}
+                    </p>
+                  </div>
+                </div>
               </uib-accordion>
               <!-- Submit button -->
               <div class="panel-container">
@@ -206,13 +228,13 @@
                 </div>
               </div>
             </div>
-            <!-- SECTION: Title, test group, & Description -->
+            <!-- SECTION: Title & Description -->
             <div class="row animated" ng-class="{fadeInUp: title_description.show}" ng-if="title_description.show">
               <div class="col-md-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
-                    <h2>Title, Test Group & Description</h2>
+                    <h2>Title & Description</h2>
                   </span>  
                 </div>  
               </div>
@@ -221,85 +243,158 @@
               <div class="col-md-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
-                  Please assign an english and french title, test group, and description.
+                  Please assign an english and french title and description.
                 </p>
               </div>
             </div>  
             <div class="row animated" ng-class="{fadeInUp: title_description.show}" ng-if="title_description.show"> 
               <div class="col-md-6">
-                <div class="panel" ng-class="(newTestResult.name_EN && newTestResult.description_EN && newTestResult.group_EN) ? 'panel-success': 'panel-danger'">
+                <div class="panel" ng-class="(newTestResult.name_EN && newTestResult.description_EN) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>English</strong>
-                    <span ng-hide="newTestResult.name_EN && newTestResult.description_EN && newTestResult.group_EN" style="float:right"><em>Incomplete</em></span>
-                    <span ng-show="newTestResult.name_EN && newTestResult.description_EN && newTestResult.group_EN" style="float:right"><em>Complete</em></span>
+                    <span ng-hide="newTestResult.name_EN && newTestResult.description_EN" style="float:right"><em>Incomplete</em></span>
+                    <span ng-show="newTestResult.name_EN && newTestResult.description_EN" style="float:right"><em>Complete</em></span>
                   </div>
-                  <div class="panel-body">
-                    <div class="row">
-                      <div class="col-md-2">
-                        <div style="font-size:18px; text-align:right;">Title</div>
-                      </div>
+                  <div class="panel-body form-horizontal">
+                    <div class="form-group">
+                      <label class="control-label col-md-2">
+                        Title
+                      </label>
                       <div class="col-md-10">
-                        <div class="form-group">
-                          <input class="form-control" type="text" ng-model="newTestResult.name_EN" ng-change="titleDescriptionUpdate()" placeholder="English Title" required="required">
-                        </div>
+                        <input class="form-control" type="text" ng-model="newTestResult.name_EN" ng-change="titleDescriptionUpdate()" placeholder="English Title" required="required">
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-md-2">
-                        <div style="font-size:18px; text-align:right;">Test Group</div>
-                      </div>
+                      <label class="control-label col-md-2">
+                        Description
+                      </label>
                       <div class="col-md-10">
-                        <div class="form-group">
-                          <input class="form-control" type="text" ng-model="newTestResult.group_EN" ng-change="groupUpdate()" typeahead-on-select="groupUpdate()" uib-typeahead="group for group in TestResultGroups_EN | filter:$viewValue" typeahead-min-length="0" placeholder="English" required="required"> 
-                        </div>
-                      </div>
-                    </div>    
-                    <div class="row">
-                      <div class="col-md-2">
-                        <div style="font-size:18px; text-align:right;">Description</div>
-                      </div>
-                      <div class="col-md-10">
-                        <div class="form-group">
-                          <textarea class="form-control" rows="5" ng-model="newTestResult.description_EN" ng-change="titleDescriptionUpdate()" placeholder="English Description" required="required"></textarea>
-                        </div>
+                        <textarea class="form-control" rows="5" ng-model="newTestResult.description_EN" ng-change="titleDescriptionUpdate()" placeholder="English Description" required="required"></textarea>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>          
               <div class="col-md-6">
-                <div class="panel" ng-class="(newTestResult.name_FR && newTestResult.description_FR && newTestResult.group_FR) ? 'panel-success': 'panel-danger'">
+                <div class="panel" ng-class="(newTestResult.name_FR && newTestResult.description_FR) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>Français</strong>
-                    <span ng-hide="newTestResult.name_FR && newTestResult.description_FR && newTestResult.group_FR" style="float:right"><em>Incomplete</em></span>
-                    <span ng-show="newTestResult.name_FR && newTestResult.description_FR && newTestResult.group_FR" style="float:right"><em>Complete</em></span>
+                    <span ng-hide="newTestResult.name_FR && newTestResult.description_FR" style="float:right"><em>Incomplete</em></span>
+                    <span ng-show="newTestResult.name_FR && newTestResult.description_FR" style="float:right"><em>Complete</em></span>
                   </div>
-                  <div class="panel-body">
-                    <div class="row">
-                      <div class="col-md-2">
-                        <div style="font-size:18px; text-align:right;">Titre</div>
-                      </div>
+                  <div class="panel-body form-horizontal">
+                    <div class="form-group">
+                      <label class="control-label col-md-2">
+                        Titre
+                      </label>
                       <div class="col-md-10">
-                        <div class="form-group">
-                          <input class="form-control" type="text" ng-model="newTestResult.name_FR" ng-change="titleDescriptionUpdate()" placeholder="Titre Français" required="required">
-                        </div>
+                        <input class="form-control" type="text" ng-model="newTestResult.name_FR" ng-change="titleDescriptionUpdate()" placeholder="Titre Français" required="required">
                       </div>
                     </div> 
-                    <div class="row">
-                      <div class="col-md-2">
-                        <div style="font-size:18px; text-align:right;">Groupe d'Essai</div>
-                      </div>
+                    <div class="form-group">
+                      <label class="control-label col-md-2">
+                        Description
+                      </label>
                       <div class="col-md-10">
-                        <div class="form-group">
-                          <input class="form-control" type="text" ng-model="newTestResult.group_FR" ng-change="groupUpdate()" typeahead-on-select="groupUpdate()" uib-typeahead="group for group in TestResultGroups_FR | filter:$viewValue" typeahead-min-length="0" placeholder="Francais" required="required"> 
-                        </div>
+                        <textarea class="form-control" rows="5" ng-model="newTestResult.description_FR" ng-change="titleDescriptionUpdate()" placeholder="Description Français" required="required"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- SECTION: Test group -->
+            <div class="row animated" ng-class="{fadeInUp: group.show}" ng-if="group.show">
+              <div class="col-md-12 side-menu-title">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fa fa-dot-circle-o"></span>
+                    <h2>Test Group</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>   
+            <div class="row animated" ng-class="{fadeInUp: group.show}" ng-if="group.show">
+              <div class="col-md-12">
+                <p style="margin-bottom: 10px;">
+                  <span style="color:#d9534f"><strong>Required field:</strong></span>
+                  Please assign an english and french test group.
+                </p>
+              </div>
+            </div>  
+            <div class="row animated" ng-class="{fadeInUp: group.show}" ng-if="group.show"> 
+              <div class="col-md-6">
+                <div class="panel" ng-class="(newTestResult.group_EN) ? 'panel-success': 'panel-danger'">
+                  <div class="panel-heading"><strong>English</strong>
+                    <span ng-hide="newTestResult.group_EN" style="float:right"><em>Incomplete</em></span>
+                    <span ng-show="newTestResult.group_EN" style="float:right"><em>Complete</em></span>
+                  </div>
+                  <div class="panel-body form-horizontal">
+                    <div class="form-group">
+                      <label class="control-label col-md-2">
+                        Test Group
+                      </label>
+                      <div class="col-md-10">
+                        <input class="form-control" type="text" ng-model="newTestResult.group_EN" ng-change="groupUpdate()" typeahead-on-select="groupUpdate()" uib-typeahead="group for group in TestResultGroups_EN | filter:$viewValue" typeahead-min-length="0" placeholder="English" required="required"> 
+                      </div>
+                    </div>  
+                  </div>  
+                </div>
+              </div>          
+              <div class="col-md-6">
+                <div class="panel" ng-class="(newTestResult.group_FR) ? 'panel-success': 'panel-danger'">
+                  <div class="panel-heading"><strong>Français</strong>
+                    <span ng-hide="newTestResult.group_FR" style="float:right"><em>Incomplete</em></span>
+                    <span ng-show="newTestResult.group_FR" style="float:right"><em>Complete</em></span>
+                  </div>
+                  <div class="panel-body form-horizontal">
+                    <div class="form-group">
+                      <label class="control-label col-md-2">
+                        Groupe d'Essai
+                      </label>
+                      <div class="col-md-10">
+                        <input class="form-control" type="text" ng-model="newTestResult.group_FR" ng-change="groupUpdate()" typeahead-on-select="groupUpdate()" uib-typeahead="group for group in TestResultGroups_FR | filter:$viewValue" typeahead-min-length="0" placeholder="Francais" required="required"> 
                       </div>
                     </div>    
-                    <div class="row">
-                      <div class="col-md-2">
-                        <div style="font-size:18px; text-align:right;">Description</div>
-                      </div>
-                      <div class="col-md-10">
-                        <div class="form-group">
-                          <textarea class="form-control" rows="5" ng-model="newTestResult.description_FR" ng-change="titleDescriptionUpdate()" placeholder="Description Français" required="required"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- SECTION: Educational material -->
+            <div class="row animated" ng-class="{fadeInUp: edumat.show}" ng-if="edumat.show">
+              <div class="col-md-12 side-menu-title">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fa fa-dot-circle-o"></span>
+                    <h2>Educational Material</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>
+            <div class="row animated" ng-class="{fadeInUp: edumat.show}" ng-if="edumat.show">
+              <div class="col-md-12">
+                <p style="margin-bottom: 10px;">
+                  <span><strong>Optional field:</strong></span>
+                  Assigning an educational material will provide a rich-text description of the test result.
+                </p>
+              </div>
+            </div>
+            <div class="row animated" ng-class="{fadeInUp: edumat.show}" ng-if="edumat.show"> 
+              <div class="col-md-8">
+                <div class="panel-container">
+                  <div class="panel-info">
+                    <div class="panel-content">
+                      <div class="panel-input">  
+                        <div class="list-space">
+                          <div class="input-group">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                            <input class="form-control" type="text" ng-model="eduMatFilter" ng-change="changeEduMatFilter(eduMatFilter)" placeholder="Search Educational Material"/>
+                          </div>
+                          <ul class="list-items">
+                            <li ng-repeat="eduMat in eduMatList | filter: searchEduMatsFilter">
+                              <label>
+                                <input type="radio" ng-model="newTestResult.eduMat" ng-change="eduMatUpdate()" ng-value="eduMat" /> {{eduMat.name_EN}}
+                              </label>
+                            </li>
+                          </ul>
                         </div>
                       </div>
                     </div>

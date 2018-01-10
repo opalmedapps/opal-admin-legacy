@@ -10,7 +10,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		$scope.goBack = function () {
 			window.history.back();
 		};
-
+		
 		// Default boolean variables
 		$scope.title = {open:false, show:true};
 		$scope.type = {open:false, show:false};

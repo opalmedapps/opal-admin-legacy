@@ -1,3 +1,23 @@
+Version 0.12.1:
+ -     --- Changes made by Yick and James
+ - Merge branch 'release-0.12.0' into develop
+
+Version 0.12.0:
+ - Merge branch 'OpalAdmin_Expression_To_Internal_Hospital_Code' into develop
+ - Merge branch 'testResultFeature' into develop
+ -     --- Added educational material to test results     --- Reorganized test group field when creating new test result
+ -     --- Added publisher control to test results
+ - Changed the Expression to internal hospital code
+ - Merge branch 'release-0.11.7' into develop
+ - Merge branch 'release-0.11.7'
+ - Merge branch 'release-0.11.6'
+ - Merge branch 'release-0.11.5'
+ - Merge branch 'release-0.11.4'
+ - Merge branch 'master' of https://gitlab.com/akimosupremo/opalAdmin
+ -     --- Fixed crash caused by invalid column name
+ - Merge branch 'hotfix-0.11.3'
+ - Merge branch 'hotfix-0.11.3'
+
 Version 0.11.7:
  -     --- Fixes #1 where there was an empty expression list         -- Actually, worked as intended since waiting room management system wasn't         set up as a source database in production. Added functionality that ignored         source databases that aren't setup when adding a new alias.
  - Merge branch 'release-0.11.6' into develop
