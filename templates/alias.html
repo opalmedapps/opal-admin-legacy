@@ -253,17 +253,17 @@
           <div uib-accordion-group is-open="statusExpressions.open">
             <uib-accordion-heading>
               <div>
-                <strong>Assigned Terms</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusExpressions.open, 'glyphicon-chevron-right': !statusExpressions.open}"></i>
+                <strong>Internal Hospital Code</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusExpressions.open, 'glyphicon-chevron-right': !statusExpressions.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="bs-callout bs-callout-info">
-              <h4>Current Terms</h4>
+              <h4>Current Internal Hospital Code</h4>
               <ul class="list-items-4col">
                 <li ng-repeat="selectedTerm in termList | filter: {added: true} : true">
                   {{selectedTerm.name}}
                 </li>
               </ul>
-              <p>To add/remove terms, use the list below.</p>
+              <p>To add/remove internal hospital code, use the list below.</p>
             </div>
             <div class="list-space">
               <div class="input-group">
