@@ -9,26 +9,37 @@
 //=============================================
 
 // Get the database configurations
-include_once "database.inc";	
+require_once "database.inc";
 
 // Used to send push notification to all of the user devices
 require_once('PatientCheckInPushNotification.php');
-
 
 //
 // PROCESS INCOMING REQUEST
 //============================================
 $PatientId = $_GET["PatientId"];
 
-$success = OpalCheckin::ValidateCheckin($PatientId);
-return OpalCheckin::UpdateCheckinOnOpal($success, $PatientId);
+$response = OpalCheckin::ValidateCheckin($PatientId);
 
+
+if($response['failure']) print("Error: " . $response['error']);
+else if (count($response['data']) > 0) {
+	$result = OpalCheckin::UpdateCheckinOnOpal($response['data'], $PatientId);
+	print(implode($result['data']));
+}
+else print('Error: No appointments were successfully checked into or no appointments exist today');
 
 //
 // OPALCHECKIN CLASS
 //=============================================
 class OpalCheckin{
 
+    /**
+     * Updates OpalDB with the checkin states of the inputted appointments and then sends notifications to the patient
+     * @param $success
+     * @param $patientId
+     * @return array
+     */
 	public static function UpdateCheckinOnOpal($success, $patientId){
 
         //
@@ -46,48 +57,63 @@ class OpalCheckin{
         $sql = "Select Patient.PatientSerNum
 				From Patient
 				Where PatientId = " . $patientId;
-        $patientSerNum = $conn->query($sql);
 
-        // if Opal Patient exists
-        if ($patientSerNum->num_rows > 0) {
-            foreach ($success as $app){
-                // Checkin the patient in our Database
-                $sql = "Update Appointment 
-                        Set Appointment.Checkin = 1
-                        Where Appointment.AppointmentSerNum = " . $app;
-                $conn->query($sql);
-            }
+        try {
+            $patientSerNum = $conn->query($sql);
 
-            //
-            // SEND NOTIFICATION TO PATIENT ABOUT CHECKIN STATUS
-            //========================================================
-            $patientSerNum = $patientSerNum->fetch_row();
-            $patientSerNum = $patientSerNum[0];
+            // if Opal Patient exists
+            if ($patientSerNum->num_rows > 0) {
+                foreach ($success as $app) {
+                    // Checkin the patient in our Database
+                    $sql = "UPDATE Appointment 
+                            SET Appointment.Checkin = 1
+                            WHERE Appointment.AppointmentSerNum = " . $app;
+                    $conn->query($sql);
+                }
 
-            $responses = PatientCheckInPushNotification::sendPatientCheckInNotification($patientSerNum, $success);
+                //
+                // SEND NOTIFICATION TO PATIENT ABOUT CHECKIN STATUS
+                //========================================================
+                $patientSerNum = $patientSerNum->fetch_row();
+				
+                $patientSerNum = $patientSerNum[0];
+				
+                PatientCheckInPushNotification::sendPatientCheckInNotification($patientSerNum, $success);
 
-            // Return responses
-            return json_encode($responses);
-        } else {
-            return json_encode('Patient is not an Opal Patient');
+                // Return responses
+                return self::SuccessResponse($success);
+            } else return self::ErrorResponse('Inputted patient is not an Opal Patient');
+        } catch(mysqli_sql_exception $e) {
+            return self::ErrorResponse($e);
         }
     }
 
+    /**
+     * Validates whether or not a patient's appointments were successfully checked in on Aria and/or Medivist and then
+     * returns an array of appointments that were successfully checked in
+     * @param $patientId
+     * @return array
+     */
     public static function ValidateCheckin($patientId){
 	    // Array that will hold appointmentsernum of appointments that were successfully checked in
 	    $success = array();
 
 	    // Get all of the patients appointments that are today
         $apts = self::getTodaysAppointments($patientId);
+        if($apts['failure']) return self::ErrorResponse($apts['error']);
+		else $apts = $apts['data'];
 
         //If aria appointments exist...
         if(count($apts[0]) > 0){
 
             //Get appointmentsernums of successfully checked in aria appointments
             $validAriaAppointments = self::validateCheckinsWithExternalDB($apts[0], $patientId, 'Aria');
+            if($validAriaAppointments['failure']) return self::ErrorResponse($validAriaAppointments['error']);
+            else $validAriaAppointments = $validAriaAppointments['data'];
 
             // Push appointmentSerNums to success array
             $success = array_merge($success, $validAriaAppointments);
+			
         }
 
         //If medivisit appointments exist...
@@ -95,12 +121,15 @@ class OpalCheckin{
 
             //Get appointmentsernums of successfully checked in medivist appointments
             $validMediAppointments = self::validateCheckinsWithExternalDB($apts[1], $patientId, 'Medi');
+            if($validMediAppointments['failure']) return self::ErrorResponse($validMediAppointments['error']);
+            else $validMediAppointments = $validMediAppointments['data'];
 
             // Push appointmentSerNums to success array
             $success = array_merge($success, $validMediAppointments);
         }
+		
 
-        return $success;
+        return self::SuccessResponse($success);
     }
 
     //
@@ -108,7 +137,7 @@ class OpalCheckin{
     //===========================================
 
     /**
-     * @name getTodaysAppointments
+     * Gets a list of all appointments of patient on a given day from Aria and Medivisit
      * @param $patientId
      * @return array of appointments
      */
@@ -154,16 +183,14 @@ class OpalCheckin{
              $apts[] = $aria;
              $apts[] = $medi;
 
-
-             return $apts;
+             return self::SuccessResponse($apts);
          }catch(mysqli_sql_exception $e) {
-             return array("success"=>0,"failure"=>1,"error"=>$e);
+             return self::ErrorResponse($e);
          }
     }
 
     /**
-     * @name ValidateCheckinsWithExternalDB
-     * @desc Checks whether opalDB appointments exist in either aria or medivist and returns array of verified appointments
+     * Checks whether opalDB appointments exist in either aria or medivisit and returns array of verified appointments
      * @param $appts
      * @param $patientId
      * @param $location
@@ -173,7 +200,13 @@ class OpalCheckin{
         $success = array();
 
         //Get Aria ser num of each checked in appointment in Aria
-        $ext_appts = ($location == 'Aria') ?  self::getCheckedInAriaAppointments($patientId) : self::getCheckedInMediAppointments($patientId);
+        try{
+            $ext_appts = ($location == 'Aria') ?  self::getCheckedInAriaAppointments($patientId) : self::getCheckedInMediAppointments($patientId);
+            $ext_appts = $ext_appts['data'];
+						
+        } catch (Exception $e) {
+            return self::ErrorResponse($e);
+        }
 
         // Cross verify opalDB appointments with external DB appointments
         foreach ($appts as $apt){
@@ -181,9 +214,17 @@ class OpalCheckin{
                 $success[] = $apt['AppointmentSerNum'];
             }
         }
-        return $success;
+		
+		
+        return self::SuccessResponse($success);
     }
 
+    /**
+     * Gets a list of checked in appointments in Aria
+     * @param $patientId
+     * @return array
+     * @throws Exception
+     */
     private static function getCheckedInAriaAppointments($patientId){
 
         // Create DB connection  **** CURRENTLY OPAL_DB POINTS TO ARIA ****
@@ -191,7 +232,7 @@ class OpalCheckin{
 
         // Check connections
         if (!$conn) {
-            die('Something went wrong while connecting to MSSQL');
+            throw new Exception('Something went wrong while connecting to MSSQL');
         }
 
         // The first subquery gets the list of todays Schedule Activity of a patient
@@ -215,9 +256,14 @@ class OpalCheckin{
             $apts[] = $row['AppointmentSerNum'];
         }
 
-        return $apts;
+        return self::SuccessResponse($apts);
     }
 
+    /**
+     * Gets a list of all checked in appointments on MediVisit
+     * @param $patientId
+     * @return array
+     */
     private static function getCheckedInMediAppointments($patientId){
 
         // Create DB connection to WaitingRoomManagement
@@ -232,15 +278,28 @@ class OpalCheckin{
                     And CheckinVenueName like '%Waiting Room%'
                     And DATE_FORMAT(ArrivalDateTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d');";
 
-        $resultMedi = $conn->query($sql);
+        try{
+            $resultMedi = $conn->query($sql);
 
-        $medi = array();
+            $medi = array();
 
-        while ($row = $resultMedi->fetch_assoc()) {
-            $medi[] = $row['AppointmentSerNum'];
+            while ($row = $resultMedi->fetch_assoc()) {
+                $medi[] = $row['AppointmentSerNum'];
+            }
+        } catch (mysqli_sql_exception $e) {
+            return self::ErrorResponse($e);
         }
 
-        return $medi;
+
+        return self::SuccessResponse($medi);
+    }
+
+    public static function SuccessResponse($data){
+        return array("success"=>true, "failure"=>false, "data"=>$data);
+    }
+
+    public static function ErrorResponse($err){
+        return array("success"=>false, "failure"=>true, "error"=>$err);
     }
 
 }
