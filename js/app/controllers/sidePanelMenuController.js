@@ -89,6 +89,10 @@ angular.module('opalAdmin.controllers.sidePanelMenuController', ['ui.bootstrap',
 		$scope.goToLegacyQuestionnaire = function () {
 			$state.go('legacy-questionnaire');
 		};
+		// Function to go to diagnosis translation page
+		$scope.goToDiagnosisTranslation = function () {
+			$state.go('diagnosis-translation');
+		};
 
 	});
 

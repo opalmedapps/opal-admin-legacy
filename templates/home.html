@@ -139,7 +139,7 @@
 								</div>
               </div>
               
-              <!-- SECTION: Quetionnaires -->
+              <!-- SECTION: Questionnaires -->
 							<div class="col-md-6">
 								<div class="panel-container animated" ng-class="{pulse: hoverQuestionnaireMenu}" ng-mouseenter="hoverQuestionnaireMenu=true" ng-mouseleave="hoverQuestionnaireMenu=false" style="cursor:pointer;" ng-click="goToQuestionnaireMainMenu()">
 									<div class="panel-info" style="height: 180px;">
@@ -210,6 +210,25 @@
           		</div>
         		</div>
 						<div class="row animated fadeIn" style="padding: 0 20px 0 20px">
+
+							<!-- SECTION: Diagnosis translation control -->
+							<div class="col-md-6" ng-if="isAuthorized([userRoles.admin])">
+								<div class="panel-container animated" ng-class="{pulse: hoverDiagnosisMenu}" ng-mouseenter="hoverDiagnosisMenu=true" ng-mouseleave="hoverDiagnosisMenu=false" style="cursor:pointer;" ng-click="goToDiagnosisTranslation()">
+									<div class="panel-info" style="height: 180px;">
+										<div class="panel-content">
+											<div class="icon-home clearfix">
+												<span style="font-size: 50px;" class="fa fa-stethoscope" aria-hidden="true"></span>
+											</div>
+											<div class="panel-title">  
+												<h1>Diagnosis Translation</h1>
+											</div>  
+											<div class="panel-description">
+												<p>Manage diagnosis codes for labelling, translating, and categorization.</p>
+											</div>
+										</div>
+									</div>
+								</div>
+              </div>
 
               <!-- SECTION: Cron control -->
 							<div class="col-md-6" ng-if="isAuthorized([userRoles.admin])">

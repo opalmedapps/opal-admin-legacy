@@ -508,6 +508,38 @@ angular.module('opalAdmin.collections', [])
 		return legacyQuestionnaireAPI;
 	})
 
+	// Diagnosis API service
+	.factory('diagnosisCollectionService', function ($http) {
+
+		var diagnosisAPI = {};
+
+		// Function to get distinct diagnosis codes
+		diagnosisAPI.getDiagnoses = function () {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/diagnosis-translation/get.diagnoses.php?callback=JSON_CALLBACK"
+			});
+		};
+
+		// Function to get existing diagnosis translations
+		diagnosisAPI.getExistingDiagnosisTranslations = function () {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/diagnosis-translation/get.diagnosis_translations.php?callback=JSON_CALLBACK"
+			});
+		};
+
+		// Function to get diagnosis translation details
+		diagnosisAPI.getDiagnosisTranslationDetails = function (serial) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/diagnosis-translation/get.diagnosis_translation_details.php?callback=JSON_CALLBACK&serial=" + serial
+			});
+		};
+
+		return diagnosisAPI;
+	})
+
 
 	// install API service
 	.factory('installCollectionService', function ($http) {

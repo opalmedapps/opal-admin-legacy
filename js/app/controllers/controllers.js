@@ -32,7 +32,9 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.questionController',
 	'opalAdmin.controllers.newQuestionController',
 	'opalAdmin.controllers.legacyQuestionnaireController',
-	'opalAdmin.controllers.newLegacyQuestionnaireController'
+	'opalAdmin.controllers.newLegacyQuestionnaireController',
+	'opalAdmin.controllers.diagnosisTranslationController',
+	'opalAdmin.controllers.newDiagnosisTranslationController'
 ]);
 
 
