@@ -9,7 +9,7 @@
 	$Diagnosis = new Diagnosis; // Object
 
 	// Call function
-	$diagnosisTranslationDetails = $Diagnosis->getDiagnosisTranslationDetailsDetails($serial);
+	$diagnosisTranslationDetails = $Diagnosis->getDiagnosisTranslationDetails($serial);
 
 	// Callback to http request
 	print $callback.'('.json_encode($diagnosisTranslationDetails).')';
