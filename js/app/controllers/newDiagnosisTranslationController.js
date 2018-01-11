@@ -72,7 +72,6 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 		// Initialize list that will hold educational materials
 		$scope.eduMatList = [];
 
-
 		/* Function for the "Processing..." dialog */
 		var processingModal;
 		$scope.showProcessingModal = function () {
@@ -116,7 +115,7 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 		$scope.checkDiagnosesAdded = function (diagnosisList) {
 
 			var addedParam = false;
-			angular.forEach(diagnosisList, function (diagnosis) {
+			angular.forEach($scope.diagnosisList, function (diagnosis) {
 				if (diagnosis.added)
 					addedParam = true;
 			});
@@ -255,6 +254,56 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 			var keyword = new RegExp($scope.eduMatFilter, 'i');
 			return !$scope.eduMatFilter || keyword.test(edumat.name_EN);
 		};
+
+		// Function for selecting all codes in the diagnosis list
+		$scope.selectAllFilteredDiagnoses = function () {
+
+			var filtered = $scope.filter($scope.diagnosisList, $scope.diagnosisFilter);
+			
+			if (selectAll) { // was checked
+				angular.forEach(filtered, function (diagnosis) {
+					diagnosis.added = 0;
+				});
+				selectAll = false; // toggle off
+
+				// Check if there are still terms added, if not, flag
+				if (!$scope.checkDiagnosesAdded($scope.diagnosisList)) {
+					
+					// Toggle boolean
+					steps.diagnoses.completed = false;
+
+					// Count the number of completed steps
+					$scope.numOfCompletedSteps = stepsCompleted(steps);
+
+					// Change progress bar
+					$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+
+				}
+
+			}
+			else { // was not checked
+				
+				angular.forEach(filtered, function (diagnosis) {
+					diagnosis.added = 1;
+				});
+
+				selectAll = true; // toggle on
+
+				// Boolean
+				steps.diagnoses.completed = true;
+
+				$scope.diagnoses.open = true;
+				$scope.title_description.show = true;
+
+				// Count the number of steps completed
+				$scope.numOfCompletedSteps = stepsCompleted(steps);
+
+				// Change progress bar
+				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+
+			}
+		};
+
 
 
 		// Function to return boolean for form completion

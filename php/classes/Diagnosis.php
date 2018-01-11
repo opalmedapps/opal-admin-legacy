@@ -46,7 +46,9 @@ class Diagnosis {
 
 			$sql = "
 				SELECT DISTINCT
-					dxc.DiagnosisCode
+					dxc.SourceUID,
+					dxc.DiagnosisCode,
+					dxc.Description
 				FROM
 					DiagnosisCode dxc
 				WHERE
@@ -58,9 +60,11 @@ class Diagnosis {
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
 				$diagnosisCodeDetails = array(
-					'name' 	=> $data[0],
-                    'id'    => $data[0],
-                    'added' => 1
+					'sourceuid'		=> $data[0],
+					'code'			=> $data[1],
+					'description'	=> $data[2],
+					'name' 			=> "$data[1] ($data[2])",
+                    'added' 		=> 1
                 );
 				array_push($diagnoses, $diagnosisCodeDetails);
 			}
@@ -108,10 +112,18 @@ class Diagnosis {
 
 				$sql = "
 					SELECT DISTINCT
-						dx.DiagnosisId
-						RTRIM(REPLACE(REPLACE(dx.Description,'Malignant neoplasm','malignant neoplasm'),'malignant neoplasm','Ca')),
+						-- get min because for some reason there are multiple diagnosis ser for many codes
+						-- min will never change so its good enough as a unique id
+						MIN(dx.DiagnosisSer),
+						dx.DiagnosisId,
+						RTRIM(REPLACE(REPLACE(dx.Description,'Malignant neoplasm','malignant neoplasm'),'malignant neoplasm','Ca'))
 					FROM
 						variansystem.dbo.Diagnosis dx
+					WHERE
+						dx.ObjectStatus = 'Active'
+					GROUP BY 
+						dx.DiagnosisId,
+						RTRIM(REPLACE(REPLACE(dx.Description,'Malignant neoplasm','malignant neoplasm'),'malignant neoplasm','Ca'))
 				";
 				$query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
                 $query->execute();
@@ -119,9 +131,11 @@ class Diagnosis {
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                     $diagnosisDetails = array(
-                        'name'      => "$data[0] ($data[1])",
-                        'id'        => $data[0],
-                        'added'     => 0
+                    	'sourceuid'		=> $data[0],
+                    	'code'			=> $data[1],
+                    	'description' 	=> $data[2],
+                        'name'      	=> "$data[1] ($data[2])",
+                        'added'     	=> 0
                     );
                     array_push($diagnoses, $diagnosisDetails);
                 }
@@ -221,18 +235,24 @@ class Diagnosis {
 			
 			foreach ($diagnoses as $diagnosis) {
 
-				$name = $diagnosis['name'];
+				$sourceuid 	= $diagnosis['sourceuid'];
+				$code 		= $diagnosis['code'];
+				$description= $diagnosis['description'];
 
 				$sql = "
 					INSERT INTO 
 						DiagnosisCode (
 							DiagnosisTranslationSerNum,
+							SourceUID,
 							DiagnosisCode,
+							Description,
 							DateAdded
 						)
 					VALUES (
 						'$diagnosisTranslationSer',
-						\"$name\",
+						'$sourceuid',
+						'$code',
+						\"$description\",
 						NOW()
 					)
 					ON DUPLICATE KEY UPDATE
@@ -271,6 +291,8 @@ class Diagnosis {
 					dxt.EducationalMaterialControlSerNum
 				FROM
 					DiagnosisTranslation dxt
+				WHERE
+					dxt.Name_EN != ''
 			";
 			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
@@ -283,12 +305,14 @@ class Diagnosis {
 				$description_EN 					= $data[3];
 				$description_FR						= $data[4];
 				$eduMatSer 						 	= $data[5];
-				$eduMat 							"";
-				$diagnoses 							array();
+				$eduMat 							= "";
+				$diagnoses 							= array();
 
 				$sql = "
 					SELECT DISTINCT
-						dxc.DiagnosisCode
+						dxc.SourceUID,
+						dxc.DiagnosisCode,
+						dxc.Description
 					FROM
 						DiagnosisCode dxc
 					WHERE
@@ -301,8 +325,10 @@ class Diagnosis {
 				while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
 					$diagnosisDetail = array(
-						'name' 	=> $secondData[0],
-						'id' 	=> $secondData[0],
+						'sourceuid'		=> $secondData[0],
+						'code' 			=> $secondData[1],
+						'description'	=> $secondData[2],
+						'name' 			=> "$secondData[1] ($secondData[2])",
 						'added' => 1
 					);
 
@@ -382,7 +408,7 @@ class Diagnosis {
 
 			$sql = "
 				SELECT DISTINCT
-					dxc.DiagnosisCode
+					dxc.SourceUID
 				FROM
 					DiagnosisCode dxc
 				WHERE 
@@ -402,7 +428,7 @@ class Diagnosis {
                         DELETE FROM
                             DiagnosisCode
                         WHERE
-                            DiagnosisCode.DiagnosisCode = \"$existingDiagnosis\"
+                            DiagnosisCode.SourceUID = \"$existingDiagnosis\"
                         AND DiagnosisCode.DiagnosisTranslationSerNum = $serial
                     ";
 
@@ -413,17 +439,23 @@ class Diagnosis {
 
 			// If new diagnosis codes, insert into database
             foreach ($diagnoses as $diagnosis) {
-                $diagnosis = $diagnosis['name'];
+            	$sourceuid 		= $diagnosis['sourceuid'];
+            	$code 			= $diagnosis['code'];
+            	$description 	= $diagnosis['description'];
                 if(!in_array($diagnosis, $existingTests)) {
                     $sql = "
                         INSERT INTO
                             DiagnosisCode (
                                 DiagnosisTranslationSerNum,
-                                DiagnosisCode
+                                SourceUID,
+                                DiagnosisCode,
+                                Description
                             )
                         VALUES (
                             '$serial',
-                            \"$diagnosis\"
+                            '$sourceuid',
+                            '$code',
+                            \"$description\"
                         )
                         ON DUPLICATE KEY UPDATE
                             DiagnosisTranslationSerNum = '$serial'

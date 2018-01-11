@@ -54,7 +54,7 @@
 						</div>
 						<uib-accordion>
 							<!-- SECTION: Diagnosis codes -->
-							<div uib-accordion-group is-open="tests.open" class="panel-container summary-box" is-disabled="!checkDiagnosesAdded(diagnosisList)">
+							<div uib-accordion-group is-open="diagnoses.open" class="panel-container summary-box" is-disabled="!checkDiagnosesAdded(diagnosisList)">
 								<uib-accordion-heading>
 									<div class="row" style="align-items:center">
 										<div class="col-md-2">
@@ -80,11 +80,11 @@
 							</div>
 							<!-- SECTION: Title & description -->
 							<div uib-accordion-group is-open="title_description.open" class="panel-container summary-box animated" ng-class="{fadeInUp: title_description.show}"
-							 ng-if="title_description.show" is-disabled="!newAlias.name_EN && !newAlias.name_FR && !newAlias.description_EN && !newAlias.description_FR">
+							 ng-if="title_description.show" is-disabled="!newDiagnosisTranslation.name_EN && !newDiagnosisTranslation.name_FR && !newDiagnosisTranslation.description_EN && !newDiagnosisTranslation.description_FR">
 								<uib-accordion-heading>
 									<div class="row" style="align-items: center">
 										<div class="col-md-2">
-											<span ng-if="newAlias.name_EN && newAlias.name_FR && newAlias.description_EN && newAlias.description_FR" style="color:#5cb85c"
+											<span ng-if="newDiagnosisTranslation.name_EN && newDiagnosisTranslation.name_FR && newDiagnosisTranslation.description_EN && newDiagnosisTranslation.description_FR" style="color:#5cb85c"
 											 class="glyphicon glyphicon-ok"></span>
 										</div>
 										<div class="col-md-8">
@@ -92,52 +92,52 @@
 										</div>
 										<div class="col-md-2">
 											<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': title_description.open, 'glyphicon-chevron-right': !title_description.open}"
-											 ng-if="newAlias.name_EN || newAlias.name_FR || newAlias.description_EN || newAlias.description_FR"></i>
+											 ng-if="newDiagnosisTranslation.name_EN || newDiagnosisTranslation.name_FR || newDiagnosisTranslation.description_EN || newDiagnosisTranslation.description_FR"></i>
 										</div>
 									</div>
 								</uib-accordion-heading>
-								<div ng-if="newAlias.name_EN || newAlias.description_EN" class="description">
-									<p ng-if="newAlias.name_EN" style="margin-bottom:5px;">
+								<div ng-if="newDiagnosisTranslation.name_EN || newDiagnosisTranslation.description_EN" class="description">
+									<p ng-if="newDiagnosisTranslation.name_EN" style="margin-bottom:5px;">
 										<strong>EN</strong>
 										<span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-										{{newAlias.name_EN}}
+										{{newDiagnosisTranslation.name_EN}}
 									</p>
-									<p ng-if="newAlias.description_EN" style="padding-left: 10px; font-size: 10px;">
-										<em>{{newAlias.description_EN}}</em>
+									<p ng-if="newDiagnosisTranslation.description_EN" style="padding-left: 10px; font-size: 10px;">
+										<em>{{newDiagnosisTranslation.description_EN}}</em>
 									</p>
 								</div>
-								<div ng-if="newAlias.name_FR || newAlias.description_FR" class="description">
-									<p ng-if="newAlias.name_FR" style="margin-bottom:5px;">
+								<div ng-if="newDiagnosisTranslation.name_FR || newDiagnosisTranslation.description_FR" class="description">
+									<p ng-if="newDiagnosisTranslation.name_FR" style="margin-bottom:5px;">
 										<strong>FR</strong>
 										<span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-										{{newAlias.name_FR}}
+										{{newDiagnosisTranslation.name_FR}}
 									</p>
-									<p ng-if="newAlias.description_FR" style="padding-left: 10px; font-size: 10px;">
-										<em>{{newAlias.description_FR}}</em>
+									<p ng-if="newDiagnosisTranslation.description_FR" style="padding-left: 10px; font-size: 10px;">
+										<em>{{newDiagnosisTranslation.description_FR}}</em>
 									</p>
 								</div>
 							</div>
 							<!-- SECTION: Educational material -->
 							<div uib-accordion-group is-open="edumat.open" class="panel-container summary-box animated" ng-class="{fadeInUp: edumat.show}"
-							 is-disabled="!newAlias.eduMat" ng-if="edumat.show">
+							 is-disabled="!newDiagnosisTranslation.eduMat" ng-if="edumat.show">
 								<uib-accordion-heading>
 									<div class="row" style="align-items: center">
 										<div class="col-md-2">
-											<span ng-if="newAlias.eduMat" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+											<span ng-if="newDiagnosisTranslation.eduMat" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
 										</div>
 										<div class="col-md-8">
 											<strong>Educational Material</strong>
 										</div>
 										<div class="col-md-2">
 											<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': edumat.open, 'glyphicon-chevron-right': !edumat.open}"
-											 ng-if="newAlias.eduMat"></i>
+											 ng-if="newDiagnosisTranslation.eduMat"></i>
 										</div>
 									</div>
 								</uib-accordion-heading>
-								<div ng-if="newAlias.eduMat" class="description">
+								<div ng-if="newDiagnosisTranslation.eduMat" class="description">
 									<p>
 										<span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-										{{newAlias.eduMat.name_EN}}
+										{{newDiagnosisTranslation.eduMat.name_EN}}
 									</p>
 								</div>
 							</div>
@@ -205,7 +205,7 @@
 						<div class="col-md-9">
 							<div class="panel" ng-class="checkDiagnosesAdded(diagnosisList) ? 'panel-success': 'panel-danger'">
 								<div class="panel-heading">
-									<strong>Test List</strong>
+									<strong>Diagnosis List</strong>
 									<span ng-hide="checkDiagnosesAdded(diagnosisList)" style="float:right">
 										<em>Incomplete</em>
 									</span>
@@ -222,10 +222,15 @@
 											<input class="form-control" type="text" ng-model="diagnosisFilter" ng-change="changeDiagnosisFilter(diagnosisFilter)" placeholder="Search diagnosis..."
 											/>
 										</div>
+										<div style="padding: 10px;">
+                      <label>
+                        <input type="checkbox" ng-click="selectAllFilteredDiagnoses()"> Select All
+                      </label>
+                    </div>
 										<ul class="list-items">
 											<li ng-repeat="diagnosis in diagnosisList | filter: searchDiagnosesFilter">
 												<label>
-													<input type="checkbox" ng-click="toggleTestSelection(diagnosis)" ng-checked="diagnosis.added" /> {{diagnosis.name}}
+													<input type="checkbox" ng-click="toggleDiagnosisSelection(diagnosis)" ng-checked="diagnosis.added" /> {{diagnosis.name}}
 												</label>
 											</li>
 										</ul>

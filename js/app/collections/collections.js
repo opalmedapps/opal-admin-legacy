@@ -522,7 +522,7 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// Function to get existing diagnosis translations
-		diagnosisAPI.getExistingDiagnosisTranslations = function () {
+		diagnosisAPI.getDiagnosisTranslations = function () {
 			return $http({
 				method: 'JSONP',
 				url: URLPATH + "api/diagnosis-translation/get.diagnosis_translations.php?callback=JSON_CALLBACK"
