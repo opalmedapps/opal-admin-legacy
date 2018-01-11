@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslationController', ['ngAnima
 	/******************************************************************************
 	* Diagnosis Translation Page controller 
 	*******************************************************************************/
-	controller('diagnosisTranslationController', function ($scope, $uibModal, diagnosisCollectionService, educationalMaterialCollectionService, uiGridConstants, $state) {
+	controller('diagnosisTranslationController', function ($scope, $filter, $uibModal, diagnosisCollectionService, educationalMaterialCollectionService, uiGridConstants, $state) {
 
 		// Function to go to add diagnosis page
 		$scope.goToAddDiagnosisTranslation = function () {
@@ -37,19 +37,19 @@ angular.module('opalAdmin.controllers.diagnosisTranslationController', ['ngAnima
 
 		// Templates for alias table
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents"' +
-			'ng-click="grid.appScope.editAlias(row.entity)">' +
+			'ng-click="grid.appScope.editDiagnosisTranslation(row.entity)">' +
 			'<a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></div>';
 
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editAlias(row.entity)">Edit</a></strong> ' +
-			'- <strong><a href="" ng-click="grid.appScope.deleteAlias(row.entity)">Delete</a></strong></div>';
+			'<strong><a href="" ng-click="grid.appScope.editDiagnosisTranslation(row.entity)">Edit</a></strong> ' +
+			'- <strong><a href="" ng-click="grid.appScope.deleteDiagnosisTranslation(row.entity)">Delete</a></strong></div>';
 	
 		// Diagnosis Translation table search textbox param
 		$scope.filterOptions = function (renderableRows) {
 			var matcher = new RegExp($scope.filterValue, 'i');
 			renderableRows.forEach(function (row) {
 				var match = false;
-				['name_EN', 'type'].forEach(function (field) {
+				['name_EN'].forEach(function (field) {
 					if (row.entity[field].match(matcher)) {
 						match = true;
 					}
@@ -129,7 +129,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslationController', ['ngAnima
 		};
 
 		// Controller for the edit alias modal
-		var EditAliasModalInstanceCtrl = function ($scope, $uibModalInstance) {
+		var EditDiagnosisTranslationModalInstanceCtrl = function ($scope, $uibModalInstance) {
 
 			// Default booleans
 			$scope.changesMade = false;
@@ -223,10 +223,10 @@ angular.module('opalAdmin.controllers.diagnosisTranslationController', ['ngAnima
 			// Function to assign '1' to existing diagnosis
 			function checkAdded(diagnosisList) {
 				angular.forEach($scope.diagnosisTranslation.diagnoses, function (selectedDiagnosis) {
-					var selectedDiagnosis = selectedDiagnosis.name;
+					var selectedDiagnosis = selectedDiagnosis.sourceuid;
 					angular.forEach(diagnosisList, function (diagnosis) {
-						var name = diagnosis.name;
-						if (name == selectedDiagnosis) {
+						var sourceuid = diagnosis.sourceuid;
+						if (sourceuid == selectedDiagnosis) {
 							diagnosis.added = 1;
 						}
 					});
@@ -296,7 +296,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslationController', ['ngAnima
 					// Fill in the diagnoses from diagnosisList
 					angular.forEach($scope.diagnosisList, function (diagnosis) {
 						if(diagnosis.added) {
-							$scope.diagnosisTranslation.diagnoses.push(diagnosis.name);
+							$scope.diagnosisTranslation.diagnoses.push(diagnosis.sourceuid);
 						}
 					});
 					// Submit form
@@ -347,7 +347,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslationController', ['ngAnima
 			modalInstance.result.then(function () {
 				$scope.diagnosisTranslationList = [];
 				// Call our API to get the list of existing diagnosis translations
-				diagnosisCollectionService.getExistingDiagnosisTranslations().then(function (response) {
+				diagnosisCollectionService.getDiagnosisTranslations().then(function (response) {
 					$scope.diagnosisTranslationList = response.data;
 				}).catch(function(response) {
 					console.error('Error occurred diagnosis translations:', response.status, response.data);
