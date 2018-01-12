@@ -120,6 +120,7 @@ class TestResult {
                 'group_EN'          => $group_EN,
                 'group_FR'          => $group_FR,
                 'serial'            => $serial,
+                'eduMatSer'         => $eduMatSer,
                 'eduMat'            => $eduMat,
                 'count'             => count($tests),
                 'tests'             => $tests
@@ -433,6 +434,7 @@ class TestResult {
                     'group_EN'          => $group_EN,
                     'group_FR'          => $group_FR,
                     'publish'           => $publishFlag,
+                    'eduMatSer'         => $eduMatSer,
                     'eduMat'            => $eduMat,
                     'tests'             => $tests,
                     'count'             => count($tests)
@@ -464,10 +466,7 @@ class TestResult {
         $group_FR           = $testResultDetails['group_FR'];
         $serial             = $testResultDetails['serial'];
         $tests              = $testResultDetails['tests'];
-        $eduMatSer          = 0;
-        if ( is_array($testResultDetails['edumat']) && isset($testResultDetails['edumat']['serial']) ) {
-            $eduMatSer = $testResultDetails['edumat']['serial'];
-        }
+        $eduMatSer          = $testResultDetails['edumatser'];
 
         $existingTests      = array();
 
