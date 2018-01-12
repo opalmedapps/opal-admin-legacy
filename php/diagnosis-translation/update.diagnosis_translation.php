@@ -11,13 +11,13 @@
         'name_FR'           => $_POST['name_FR'],
         'description_EN'    => $_POST['description_EN'],
 		'description_FR'    => $_POST['description_FR'],
-		'edumat'            => $_POST['eduMat'],
+		'edumatser'         => $_POST['eduMatSer'],
         'serial'            => $_POST['serial'],
         'diagnoses'         => $_POST['diagnoses']
 	);
 
 	 // Call function
-	 $response = $Diagnosis->updateDiagosisTranslation($diagnosisTranslationDetails);
+	 $response = $Diagnosis->updateDiagnosisTranslation($diagnosisTranslationDetails);
 	 print json_encode($response); // Return response
 
  ?>

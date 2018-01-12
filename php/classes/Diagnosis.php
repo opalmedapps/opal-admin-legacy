@@ -80,7 +80,8 @@ class Diagnosis {
                 'description_EN'    => $description_EN,
 				'description_FR'    => $description_FR,
 				'serial'            => $serial,
-                'eduMat'            => $eduMat,
+                'eduMatSer'         => $eduMatSer,
+                'eduMat'			=> $eduMat,
                 'count'             => count($diagnoses),
                 'diagnoses'         => $diagnoses
 			);
@@ -124,6 +125,8 @@ class Diagnosis {
 					GROUP BY 
 						dx.DiagnosisId,
 						RTRIM(REPLACE(REPLACE(dx.Description,'Malignant neoplasm','malignant neoplasm'),'malignant neoplasm','Ca'))
+					ORDER BY
+						dx.DiagnosisId
 				";
 				$query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
                 $query->execute();
@@ -251,7 +254,7 @@ class Diagnosis {
 					VALUES (
 						'$diagnosisTranslationSer',
 						'$sourceuid',
-						'$code',
+						\"$code\",
 						\"$description\",
 						NOW()
 					)
@@ -329,7 +332,7 @@ class Diagnosis {
 						'code' 			=> $secondData[1],
 						'description'	=> $secondData[2],
 						'name' 			=> "$secondData[1] ($secondData[2])",
-						'added' => 1
+						'added' 		=> 1
 					);
 
 					array_push($diagnoses, $diagnosisDetail);
@@ -346,7 +349,8 @@ class Diagnosis {
 					'serial' 			=> $diagnosisTranslationSer,
 					'description_EN'    => $description_EN,
 					'description_FR'    => $description_FR,
-					'eduMat'            => $eduMat,
+					'eduMatSer'         => $eduMatSer,
+					'eduMat'			=> $eduMat,
                     'diagnoses'         => $diagnoses,
                     'count'             => count($diagnoses)
 				);
@@ -376,10 +380,7 @@ class Diagnosis {
 		$description_EN		= $diagnosisTranslationDetails['description_EN'];
 		$description_FR		= $diagnosisTranslationDetails['description_FR'];
 		$diagnoses 			= $diagnosisTranslationDetails['diagnoses'];
-		$eduMatSer 			= 0;
-		if ( is_array($diagnosisTranslationDetails['edumat']) && isset($diagnosisTranslationDetails['edumat']['serial']) ) {
-            $eduMatSer = $diagnosisTranslationDetails['edumat']['serial'];
-		}
+		$eduMatSer 			= $diagnosisTranslationDetails['edumatser'];
 		
 		$existingDiagnoses = array();
 
@@ -398,7 +399,7 @@ class Diagnosis {
 					DiagnosisTranslation.Name_FR 	 	= \"$name_FR\",
 					DiagnosisTranslation.Description_EN = \"$description_EN\",
 					DiagnosisTranslation.Description_FR = \"$description_FR\",
-					DiagnosisTranslation.EducationalMaterialControlerSerNum '$eduMatSer'
+					DiagnosisTranslation.EducationalMaterialControlSerNum = '$eduMatSer'
 				WHERE
 					DiagnosisTranslation.DiagnosisTranslationSerNum = $serial 
 			";
@@ -423,7 +424,7 @@ class Diagnosis {
 			
 			// If old diagnosis codes not in new diagnosis codes, delete from database
             foreach ($existingDiagnoses as $existingDiagnosis) {
-                if (!in_array($existingDiagnosis, $diagnoses)) {
+                if (!$this->nestedSearch($existingDiagnosis, $diagnoses)) {
                     $sql = "
                         DELETE FROM
                             DiagnosisCode
@@ -442,7 +443,7 @@ class Diagnosis {
             	$sourceuid 		= $diagnosis['sourceuid'];
             	$code 			= $diagnosis['code'];
             	$description 	= $diagnosis['description'];
-                if(!in_array($diagnosis, $existingTests)) {
+                if(!in_array($diagnosis, $existingDiagnoses)) {
                     $sql = "
                         INSERT INTO
                             DiagnosisCode (
@@ -454,7 +455,7 @@ class Diagnosis {
                         VALUES (
                             '$serial',
                             '$sourceuid',
-                            '$code',
+                            \"$code\",
                             \"$description\"
                         )
                         ON DUPLICATE KEY UPDATE
@@ -518,6 +519,26 @@ class Diagnosis {
 			return $response;
 		}
 	}
+
+	 /**
+     *
+     * Does a nested search for match
+     *
+     * @param string $id    : the needle id
+     * @param array $array  : the key-value haystack
+     * @return boolean
+     */
+    public function nestedSearch($id, $array) {
+        if(empty($array) || !$id){
+            return 0;
+        }
+        foreach ($array as $key => $val) {
+            if ($val['id'] === $id) {
+                return 1;
+            }
+        }
+        return 0;
+    }
 		
 }
 

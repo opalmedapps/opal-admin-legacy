@@ -277,7 +277,7 @@ class EduMaterial {
             $eduMatDetails = array (
                 'name_EN'           => $name_EN,
                 'name_FR'           => $name_FR,
-                'serial'            => $eduMatSer,
+                'serial'            => intval($eduMatSer),
                 'type_EN'           => $type_EN,
                 'type_FR'           => $type_FR,
                 'url_EN'            => $url_EN,
@@ -337,7 +337,7 @@ class EduMaterial {
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-                $eduMatSer              = $data[0];
+                $eduMatSer              = intval($data[0]);
                 $type_EN                = $data[1];
                 $type_FR                = $data[2];
                 $name_EN                = $data[3];
