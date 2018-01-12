@@ -475,6 +475,50 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 
 			};
 
+			// Function to validate english share url
+			$scope.validShareURLEN = { status: null, message: null };
+			$scope.validateShareURLEN = function (url) {
+				if (!url) {
+					$scope.validShareURLEN.status = null;
+					$scope.setChangesMade();
+					return;
+				}
+				// regex to check pdf extension
+				var re = /(?:\.([^.]+))?$/;
+				if (re.exec(url)[1] != 'pdf') {
+					$scope.validShareURLEN.status = 'invalid';
+					$scope.validShareURLEN.message = 'URL must be a pdf';
+					$scope.setChangesMade();
+					return;
+				} else {
+					$scope.validShareURLEN.status = 'valid';
+					$scope.validShareURLEN.message = null;
+					$scope.setChangesMade();
+				}
+			}
+
+			// Function to validate french share url
+			$scope.validShareURLFR = { status: null, message: null };
+			$scope.validateShareURLFR = function (url) {
+				if (!url) {
+					$scope.validShareURLFR.status = null;
+					$scope.setChangesMade();
+					return;
+				}
+				// regex to check pdf extension
+				var re = /(?:\.([^.]+))?$/;
+				if (re.exec(url)[1] != 'pdf') {
+					$scope.validShareURLFR.status = 'invalid';
+					$scope.validShareURLFR.message = 'URL must be a pdf';
+					$scope.setChangesMade();
+					return;
+				} else {
+					$scope.validShareURLFR.status = 'valid';
+					$scope.validShareURLFR.message = null;
+					$scope.setChangesMade();
+				}
+			}
+
 			// Submit changes
 			$scope.updateEduMat = function () {
 
