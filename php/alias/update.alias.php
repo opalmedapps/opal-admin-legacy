@@ -15,7 +15,7 @@
         'terms' 	        => $_POST['terms'],
         'source_db'         => $_POST['source_db'],
         'color'             => $_POST['color'],
-        'edumat'            => $_POST['eduMat']
+        'edumatser'            => $_POST['eduMatSer']
 	);
 
 	// Call function

@@ -72,9 +72,9 @@ angular.module('opalAdmin.controllers.diagnosisTranslationController', ['ngAnima
 		$scope.gridOptions = {
 			data: 'diagnosisTranslationList',
 			columnDefs: [
-				{ field: 'name_EN', displayName: 'Diagnosis Translation (EN / FR)', cellTemplate: cellTemplateName, width: '30%' },
-				{ field: 'count', type: 'number', displayName: '# of codes', width: '5%', enableFiltering: false },
-				{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '15%' }
+				{ field: 'name_EN', displayName: 'Diagnosis Translation (EN / FR)', cellTemplate: cellTemplateName, width: '50%' },
+				{ field: 'count', type: 'number', displayName: '# of codes', width: '15%', enableFiltering: false },
+				{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '35%' }
 			],
 			//useExternalFiltering: true,
 			enableColumnResizing: true,
@@ -296,7 +296,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslationController', ['ngAnima
 					// Fill in the diagnoses from diagnosisList
 					angular.forEach($scope.diagnosisList, function (diagnosis) {
 						if(diagnosis.added) {
-							$scope.diagnosisTranslation.diagnoses.push(diagnosis.sourceuid);
+							$scope.diagnosisTranslation.diagnoses.push(diagnosis);
 						}
 					});
 					// Submit form
