@@ -143,9 +143,21 @@
                   </div>  
                 </div>
               </div>  
-              
-              <!-- SECTION: Cron -->
               <div class="clearfix side-panel-menu">
+
+							<!-- SECTION: Diagnosis -->
+                <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">
+                  <div class="panel-container animated" ng-class="{pulse: hoverDiagnosisMenu, active: currentPage == 'diagnosis-translation'}" ng-mouseenter="hoverDiagnosisMenu=true" ng-mouseleave="hoverDiagnosisMenu=false" style="cursor:pointer;" ng-click="goToDiagnosisTranslation()">
+                    <div class="side-panel-info-sm" ng-class="{active: currentPage == 'diagnosis-translation'}">
+                      <div class="panel-content">
+                        <span style="font-size: 21px; vertical-align:middle" class="fa fa-stethoscope" aria-hidden="true"></span>
+                        <div class="side-panel-title" style="display:inline-block;margin:0"><strong>Diagnosis Translation</strong></div>
+                      </div>
+                    </div>
+                  </div>
+								</div>
+								
+								<!-- SECTION: Cron -->
                 <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">
                   <div class="panel-container animated" ng-class="{pulse: hoverCronMenu, active: currentPage == 'cron'}" ng-mouseenter="hoverCronMenu=true" ng-mouseleave="hoverCronMenu=false" style="cursor:pointer;" ng-click="goToCron()">
                     <div class="side-panel-info-sm" ng-class="{active: currentPage == 'cron'}">
