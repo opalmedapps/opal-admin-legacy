@@ -293,6 +293,26 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 				console.error('Error occurred getting educational material types:', response.status, response.data);
 			});
 
+			$scope.bannerMessageModal = "";
+
+			// Function to show page banner 
+			$scope.showBannerModal = function () {
+				$(".bannerMessageModal").slideDown(function () {
+					setTimeout(function () {
+						$(".bannerMessageModal").slideUp();
+					}, 5000);
+				});
+			};
+
+			// Function to set banner class
+			$scope.setBannerModalClass = function (classname) {
+				// Remove any classes starting with "alert-" 
+				$(".bannerMessageModal").removeClass(function (index, css) {
+					return (css.match(/(^|\s)alert-\S+/g) || []).join(' ');
+				});
+				// Add class
+				$(".bannerMessageModal").addClass('alert-' + classname);
+			};
 
 			// Initialize search field variables
 			$scope.termSearchField = "";
@@ -557,14 +577,16 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 							if (response.value) {
 								$scope.setBannerClass('success');
 								$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.eduMat.name_EN + "/ " + $scope.eduMat.name_FR + "\"!";
+								$scope.showBanner();
+								$uibModalInstance.close();
 							}
 							else {
-								$scope.setBannerClass('danger');
-								$scope.$parent.bannerMessage = response.message;
+								$scope.setBannerModalClass('danger');
+								$scope.bannerMessageModal = response.message;
+								$scope.$apply();
+								$scope.showBannerModal();
 							}
-
-							$scope.showBanner();
-							$uibModalInstance.close();
+							
 						}
 					});
 				}
