@@ -10,6 +10,26 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		$scope.goBack = function () {
 			window.history.back();
 		};
+
+		$scope.bannerMessage = "";
+		// Function to show page banner 
+		$scope.showBanner = function () {
+			$(".bannerMessage").slideDown(function () {
+				setTimeout(function () {
+					$(".bannerMessage").slideUp();
+				}, 3000);
+			});
+		};
+
+		// Function to set banner class
+		$scope.setBannerClass = function (classname) {
+			// Remove any classes starting with "alert-" 
+			$(".bannerMessage").removeClass(function (index, css) {
+				return (css.match(/(^|\s)alert-\S+/g) || []).join(' ');
+			});
+			// Add class
+			$(".bannerMessage").addClass('alert-' + classname);
+		};
 		
 		// Default boolean variables
 		$scope.title = {open:false, show:true};
@@ -402,8 +422,18 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 					type: "POST",
 					url: "php/educational-material/insert.educational_material.php",
 					data: $scope.newEduMat,
-					success: function () {
-						$state.go('educational-material');
+					success: function (response) {
+						response = JSON.parse(response);
+							// Show success or failure depending on response
+						if (response.value) {
+							$state.go('educational-material');
+						}
+						else {
+							$scope.setBannerClass('danger');
+							$scope.bannerMessage = response.message;
+							$scope.$apply();
+							$scope.showBanner();
+						}
 					}
 				});
 			}
