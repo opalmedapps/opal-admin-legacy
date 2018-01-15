@@ -486,7 +486,7 @@ class EduMaterial {
      * Inserts educational material into the database
      *
      * @param array $eduMatDetails : the educational material details
-	 * @return void
+	 * @return array $response : response
      */
     public function insertEducationalMaterial ( $eduMatDetails ) {
 
@@ -502,9 +502,71 @@ class EduMaterial {
         $tocs           = $eduMatDetails['tocs'];
         $filters        = $eduMatDetails['filters'];
 
+        $urlExt_EN          = '';
+        $urlExt_FR          = '';
+
+
+        $response = array(
+            'value'     => 0,
+            'message'   => ''
+        );
+
+        // Validate share url extension
+        // Comment out for now because unsure if share url can be anything 
+        /*if ($shareURL_EN || $shareURL_FR) {
+
+            $shareEXT_EN = $this->extensionSearch($shareURL_EN);
+            $shareEXT_FR = $this->extensionSearch($shareURL_FR);
+
+            if ($shareEXT_EN != 'pdf' || $shareEXT_FR != 'pdf') {
+                $response['message'] = 'Supporting PDF fields must be pdfs!';
+                return $response; // return error
+            }
+        }*/
+
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            // Validate each table of content or URL
+            $extensions = array();
+            $sql = "
+                SELECT DISTINCT 
+                    ae.Name 
+                FROM
+                    AllowableExtension ae
+            ";
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                array_push($extensions, $data[0]);
+            }
+
+            if ($url_EN || $url_FR) {
+
+                $urlExt_EN = $this->extensionSearch($url_EN);
+                $urlExt_FR = $this->extensionSearch($url_FR);
+
+                if (!in_array($urlExt_EN, $extensions) || !in_array($urlExt_FR, $extensions) ) {
+                    $response['message'] = "Allowable extensions for URLs are: " . implode(',', $extensions);
+                    return $response; // return error
+                }
+            }
+
+            if ($tocs) {
+                foreach ($tocs as $toc) {
+
+                    $tocExt_EN      = $this->extensionSearch($toc['url_EN']); 
+                    $tocExt_FR      = $this->extensionSearch($toc['url_FR']); 
+
+                    if (!in_array($tocExt_FR, $extensions) || !in_array($tocExt_EN, $extensions)) {
+                        $response['message'] = "Allowable extensions for URLs are: " . implode(',', $extensions);
+                        return $response; // return error
+                    }
+                }
+            }
+
             $sql = "
                 INSERT INTO 
                     EducationalMaterialControl (
@@ -512,6 +574,8 @@ class EduMaterial {
                         Name_FR,
                         URL_EN,
                         URL_FR, 
+                        URLType_EN,
+                        URLType_FR,
                         ShareURL_EN,
                         ShareURL_FR,
                         EducationalMaterialType_EN,
@@ -520,11 +584,13 @@ class EduMaterial {
                         DateAdded,
                         LastPublished
                     )
-                VALUES (
+                SELECT DISTINCT
                     \"$name_EN\",
                     \"$name_FR\",
                     \"$url_EN\",
                     \"$url_FR\",
+                    IFNULL(ae_en.Type, NULL),
+                    IFNULL(ae_fr.Type, NULL),
                     \"$shareURL_EN\",
                     \"$shareURL_FR\",
                     \"$type_EN\",
@@ -532,7 +598,13 @@ class EduMaterial {
                     '$phaseSer',
                     NOW(),
                     NOW()
-                )
+                FROM 
+                    AllowableExtension dummy 
+                LEFT JOIN AllowableExtension ae_en
+                ON ae_en.Name = '$urlExt_EN'
+                LEFT JOIN AllowableExtension ae_fr
+                ON ae_fr.Name = '$urlExt_FR'
+                
             ";
 			$query = $host_db_link->prepare( $sql );
 			$query->execute();
@@ -577,6 +649,9 @@ class EduMaterial {
                     $tocURL_FR      = $toc['url_FR'];
                     $tocType_EN     = $toc['type_EN'];
                     $tocType_FR     = $toc['type_FR'];
+
+                    $tocExt_EN      = $this->extensionSearch($toc['url_EN']); 
+                    $tocExt_FR      = $this->extensionSearch($toc['url_FR']); 
     
                     $sql = "
                         INSERT INTO
@@ -587,23 +662,32 @@ class EduMaterial {
                                 Name_FR,
                                 URL_EN,
                                 URL_FR,
+                                URLType_EN,
+                                URLType_FR,
                                 PhaseInTreatmentSerNum,
                                 ParentFlag,
                                 DateAdded,
                                 LastPublished
                             )
-                        VALUES (
+                        SELECT 
                             \"$tocType_EN\",
                             \"$tocType_FR\",
                             \"$tocName_EN\",
                             \"$tocName_FR\",
                             \"$tocURL_EN\",
                             \"$tocURL_FR\",
+                            ae_en.Type,
+                            ae_fr.Type,
                             '$phaseSer',
                             0,
                             NOW(),
                             NOW()
-                        )
+                        FROM 
+                            AllowableExtension ae_en,
+                            AllowableExtension ae_fr
+                        WHERE
+                            ae_en.Name = '$tocExt_EN'
+                        AND ae_fr.Name = '$tocExt_FR'
                     ";
                     $query = $host_db_link->prepare( $sql );
 	    			$query->execute();
@@ -628,9 +712,14 @@ class EduMaterial {
 			    	$query->execute();
                 }
             }
+
+            $response['value'] = 1; // Success
+            return $response;
+
         } catch( PDOException $e) {
-			return $e->getMessage();
-		}
+            $response['message'] = $e->getMessage();
+            return $response; // Fail
+        }
 
     }
 
@@ -653,6 +742,8 @@ class EduMaterial {
         $filters            = $eduMatDetails['filters'];
         $tocs               = $eduMatDetails['tocs'];
         $phaseSer           = $eduMatDetails['phase_serial'];
+        $urlExt_EN          = null;
+        $urlExt_FR          = null;
 		$existingFilters	= array();
         $existingTOCs       = array();
 
@@ -660,21 +751,82 @@ class EduMaterial {
             'value'     => 0,
             'message'   => ''
         );
+
+        // Validate share url extension
+        // Comment out for now because unsure if share url can be anything 
+        /*if ($shareURL_EN || $shareURL_FR) {
+
+            $shareEXT_EN = $this->extensionSearch($shareURL_EN);
+            $shareEXT_FR = $this->extensionSearch($shareURL_FR);
+
+            if ($shareEXT_EN != 'pdf' || $shareEXT_FR != 'pdf') {
+                $response['message'] = 'Supporting PDF fields must be pdfs!';
+                return $response; // return error
+            }
+        }*/
+
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            // Validate each table of content or URL
+            $extensions = array();
+            $sql = "
+                SELECT DISTINCT 
+                    ae.Name 
+                FROM
+                    AllowableExtension ae
+            ";
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                array_push($extensions, $data[0]);
+            }
+
+            if ($url_EN || $url_FR) {
+
+                $urlExt_EN = $this->extensionSearch($url_EN);
+                $urlExt_FR = $this->extensionSearch($url_FR);
+
+                if (!in_array($urlExt_EN, $extensions) || !in_array($urlExt_FR, $extensions) ) {
+                    $response['message'] = "Allowable extensions for URLs are: " . implode(',', $extensions);
+                    return $response; // return error
+                }
+            }
+
+            if ($tocs) {
+                foreach ($tocs as $toc) {
+
+                    $tocExt_EN      = $this->extensionSearch($toc['url_EN']); 
+                    $tocExt_FR      = $this->extensionSearch($toc['url_FR']); 
+
+                    if (!in_array($tocExt_FR, $extensions) || !in_array($tocExt_EN, $extensions)) {
+                        $response['message'] = "Allowable extensions for URLs are: " . implode(',', $extensions);
+                        return $response; // return error
+                    }
+                }
+            }
+
+            // Update
 			$sql = "
                 UPDATE
-                    EducationalMaterialControl
+                    EducationalMaterialControl,
+                    AllowableExtension ae_en,
+                    AllowableExtension ae_fr
                 SET
                     EducationalMaterialControl.Name_EN     = \"$name_EN\",
                     EducationalMaterialControl.Name_FR     = \"$name_FR\",
                     EducationalMaterialControl.URL_EN      = \"$url_EN\",
                     EducationalMaterialControl.URL_FR      = \"$url_FR\",
+                    EducationalMaterialControl.URLType_EN  = ae_en.Type,
+                    EducationalMaterialControl.URLType_FR  = ae_fr.Type,
                     EducationalMaterialControl.ShareURL_EN = \"$shareURL_EN\",
                     EducationalMaterialControl.ShareURL_FR = \"$shareURL_FR\"
                 WHERE
                     EducationalMaterialControl.EducationalMaterialControlSerNum = $eduMatSer
+                AND ae_en.Name = '$urlExt_EN'
+                AND ae_fr.Name = '$urlExt_FR'
             ";
         
 			$query = $host_db_link->prepare( $sql );
@@ -802,6 +954,9 @@ class EduMaterial {
                     $tocURL_FR      = $toc['url_FR'];
                     $tocType_EN     = $toc['type_EN'];
                     $tocType_FR     = $toc['type_FR'];
+
+                    $tocExt_EN      = $this->extensionSearch($toc['url_EN']); 
+                    $tocExt_FR      = $this->extensionSearch($toc['url_FR']); 
     
                     $sql = "
                         INSERT INTO
@@ -812,21 +967,30 @@ class EduMaterial {
                                 Name_FR,
                                 URL_EN,
                                 URL_FR,
+                                URLType_EN,
+                                URLType_FR,
                                 PhaseInTreatmentSerNum,
                                 ParentFlag,
                                 DateAdded
                             )
-                        VALUES (
+                        SELECT 
                             \"$tocType_EN\",
                             \"$tocType_FR\",
                             \"$tocName_EN\",
                             \"$tocName_FR\",
                             \"$tocURL_EN\",
                             \"$tocURL_FR\",
+                            ae_en.Type,
+                            ae_fr.Type,
                             '$phaseSer',
                             0,
                             NOW()
-                        )
+                        FROM 
+                            AllowableExtension ae_en,
+                            AllowableExtension ae_fr
+                        WHERE
+                            ae_en.Name = '$tocExt_EN'
+                        AND ae_fr.Name = '$tocExt_FR'
                     ";
                     $query = $host_db_link->prepare( $sql );
 	    			$query->execute();
@@ -959,6 +1123,38 @@ class EduMaterial {
             }
         }
         return 0;
+    }
+
+    /**
+     *
+     * Does a nested search for extension
+     *
+     * @param string $url       : the url
+     * @return string $extension or null
+     */
+    public function extensionSearch($url) {
+
+        // get host
+        $host = parse_url($url, PHP_URL_HOST);
+        // get path
+        $path = parse_url($url, PHP_URL_PATH);
+
+        // if no host return null
+        if (!$host) {return null;}
+
+        // host extension
+        $extension = pathinfo($host, PATHINFO_EXTENSION);
+
+        // if there's a path then check extension on path
+        // eg. depdocs.com/education-material/material.php
+        if ($path) {
+            $pathExtension = pathinfo($path, PATHINFO_EXTENSION);
+            if ($pathExtension) {return $pathExtension;}
+            else {return $extension;} // eg. youtube.com/embed/h583d89 -- return host extension instead (com)
+        }
+            
+        return $extension;
+
     }
 
 
