@@ -502,6 +502,10 @@ class EduMaterial {
         $tocs           = $eduMatDetails['tocs'];
         $filters        = $eduMatDetails['filters'];
 
+        $urlExt_EN          = '';
+        $urlExt_FR          = '';
+
+
         $response = array(
             'value'     => 0,
             'message'   => ''
@@ -570,6 +574,8 @@ class EduMaterial {
                         Name_FR,
                         URL_EN,
                         URL_FR, 
+                        URLType_EN,
+                        URLType_FR,
                         ShareURL_EN,
                         ShareURL_FR,
                         EducationalMaterialType_EN,
@@ -578,11 +584,13 @@ class EduMaterial {
                         DateAdded,
                         LastPublished
                     )
-                VALUES (
+                SELECT DISTINCT
                     \"$name_EN\",
                     \"$name_FR\",
                     \"$url_EN\",
                     \"$url_FR\",
+                    IFNULL(ae_en.Type, NULL),
+                    IFNULL(ae_fr.Type, NULL),
                     \"$shareURL_EN\",
                     \"$shareURL_FR\",
                     \"$type_EN\",
@@ -590,7 +598,13 @@ class EduMaterial {
                     '$phaseSer',
                     NOW(),
                     NOW()
-                )
+                FROM 
+                    AllowableExtension dummy 
+                LEFT JOIN AllowableExtension ae_en
+                ON ae_en.Name = '$urlExt_EN'
+                LEFT JOIN AllowableExtension ae_fr
+                ON ae_fr.Name = '$urlExt_FR'
+                
             ";
 			$query = $host_db_link->prepare( $sql );
 			$query->execute();
@@ -635,6 +649,9 @@ class EduMaterial {
                     $tocURL_FR      = $toc['url_FR'];
                     $tocType_EN     = $toc['type_EN'];
                     $tocType_FR     = $toc['type_FR'];
+
+                    $tocExt_EN      = $this->extensionSearch($toc['url_EN']); 
+                    $tocExt_FR      = $this->extensionSearch($toc['url_FR']); 
     
                     $sql = "
                         INSERT INTO
@@ -645,23 +662,32 @@ class EduMaterial {
                                 Name_FR,
                                 URL_EN,
                                 URL_FR,
+                                URLType_EN,
+                                URLType_FR,
                                 PhaseInTreatmentSerNum,
                                 ParentFlag,
                                 DateAdded,
                                 LastPublished
                             )
-                        VALUES (
+                        SELECT 
                             \"$tocType_EN\",
                             \"$tocType_FR\",
                             \"$tocName_EN\",
                             \"$tocName_FR\",
                             \"$tocURL_EN\",
                             \"$tocURL_FR\",
+                            ae_en.Type,
+                            ae_fr.Type,
                             '$phaseSer',
                             0,
                             NOW(),
                             NOW()
-                        )
+                        FROM 
+                            AllowableExtension ae_en,
+                            AllowableExtension ae_fr
+                        WHERE
+                            ae_en.Name = '$tocExt_EN'
+                        AND ae_fr.Name = '$tocExt_FR'
                     ";
                     $query = $host_db_link->prepare( $sql );
 	    			$query->execute();
@@ -716,6 +742,8 @@ class EduMaterial {
         $filters            = $eduMatDetails['filters'];
         $tocs               = $eduMatDetails['tocs'];
         $phaseSer           = $eduMatDetails['phase_serial'];
+        $urlExt_EN          = null;
+        $urlExt_FR          = null;
 		$existingFilters	= array();
         $existingTOCs       = array();
 
@@ -783,16 +811,22 @@ class EduMaterial {
             // Update
 			$sql = "
                 UPDATE
-                    EducationalMaterialControl
+                    EducationalMaterialControl,
+                    AllowableExtension ae_en,
+                    AllowableExtension ae_fr
                 SET
                     EducationalMaterialControl.Name_EN     = \"$name_EN\",
                     EducationalMaterialControl.Name_FR     = \"$name_FR\",
                     EducationalMaterialControl.URL_EN      = \"$url_EN\",
                     EducationalMaterialControl.URL_FR      = \"$url_FR\",
+                    EducationalMaterialControl.URLType_EN  = ae_en.Type,
+                    EducationalMaterialControl.URLType_FR  = ae_fr.Type,
                     EducationalMaterialControl.ShareURL_EN = \"$shareURL_EN\",
                     EducationalMaterialControl.ShareURL_FR = \"$shareURL_FR\"
                 WHERE
                     EducationalMaterialControl.EducationalMaterialControlSerNum = $eduMatSer
+                AND ae_en.Name = '$urlExt_EN'
+                AND ae_fr.Name = '$urlExt_FR'
             ";
         
 			$query = $host_db_link->prepare( $sql );
@@ -920,6 +954,9 @@ class EduMaterial {
                     $tocURL_FR      = $toc['url_FR'];
                     $tocType_EN     = $toc['type_EN'];
                     $tocType_FR     = $toc['type_FR'];
+
+                    $tocExt_EN      = $this->extensionSearch($toc['url_EN']); 
+                    $tocExt_FR      = $this->extensionSearch($toc['url_FR']); 
     
                     $sql = "
                         INSERT INTO
@@ -930,21 +967,30 @@ class EduMaterial {
                                 Name_FR,
                                 URL_EN,
                                 URL_FR,
+                                URLType_EN,
+                                URLType_FR,
                                 PhaseInTreatmentSerNum,
                                 ParentFlag,
                                 DateAdded
                             )
-                        VALUES (
+                        SELECT 
                             \"$tocType_EN\",
                             \"$tocType_FR\",
                             \"$tocName_EN\",
                             \"$tocName_FR\",
                             \"$tocURL_EN\",
                             \"$tocURL_FR\",
+                            ae_en.Type,
+                            ae_fr.Type,
                             '$phaseSer',
                             0,
                             NOW()
-                        )
+                        FROM 
+                            AllowableExtension ae_en,
+                            AllowableExtension ae_fr
+                        WHERE
+                            ae_en.Name = '$tocExt_EN'
+                        AND ae_fr.Name = '$tocExt_FR'
                     ";
                     $query = $host_db_link->prepare( $sql );
 	    			$query->execute();
