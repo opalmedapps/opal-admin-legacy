@@ -1265,16 +1265,28 @@ footer {
   -o-transition: padding .2s ease-in-out;
   transition: padding .2s ease-in-out; }
   
-  .bannerMessage {
-    width: 100%;
-    height: 50px;
-    position: fixed;
-    bottom: 0;
-    display: none;
-    left: 0;
-    text-align: center;
-    line-height: 50px;
-    font-weight: bold;
+.bannerMessage {
+  width: 100%;
+  height: 50px;
+  position: fixed;
+  bottom: 0;
+  display: none;
+  left: 0;
+  text-align: center;
+  line-height: 50px;
+  font-weight: bold;
+}
+
+.bannerMessageModal {
+  width: 100%;
+  height: 50px;
+  position: relative;
+  display: none;
+  left: 0;
+  text-align: center;
+  line-height: 50px;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
 /* 
