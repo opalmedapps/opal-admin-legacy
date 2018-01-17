@@ -410,13 +410,13 @@ sub getDiagnosisNameFromOurDB
 
     my $select_sql = "
         SELECT DISTINCT
-            dxt.AliasName
+            dc.DiagnosisTranslationSerNum
         FROM
             Diagnosis dx,
-            DiagnosisTranslation dxt
+            DiagnosisCode dc
         WHERE
             dx.DiagnosisSerNum          = '$diagnosisSer'
-        AND dx.DiagnosisCode            = dxt.DiagnosisCode
+        AND dx.DiagnosisCode            = dc.DiagnosisCode
     ";
 
     # prepare query
@@ -448,13 +448,13 @@ sub getPatientsDiagnosesFromOurDB
 
     my $select_sql = "
         SELECT DISTINCT
-            dxt.AliasName
+            dc.DiagnosisTranslationSerNum
         FROM
             Diagnosis dx,
-            DiagnosisTranslation dxt
+            DiagnosisCode dc
         WHERE
             dx.PatientSerNum            = '$patientSer'
-        AND dx.DiagnosisCode            = dxt.DiagnosisCode
+        AND dx.DiagnosisCode            = dc.DiagnosisCode
 
     ";
 
