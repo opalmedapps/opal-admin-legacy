@@ -21,6 +21,7 @@
 	$eduMat = new EduMaterial; // Object
 
 	// Call function
-	print $eduMat->insertEducationalMaterial($eduMatArray);
+	$response = $eduMat->insertEducationalMaterial($eduMatArray);
+	print json_encode($response); // Return response
 	
 ?>
