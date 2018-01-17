@@ -385,6 +385,9 @@ sub getPatientInfoFromSourceDBs
     my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
     if ($sourceDatabase) {
 
+    	# mssql truncates texts to 4096 bytes so need to set textsize (for picture) to a high number
+    	$sourceDatabase->do('set textsize 100000');
+
 	    my $sourcePatient  = undef;
 
 	    my $patientInfo_sql = "
@@ -397,7 +400,8 @@ sub getPatientInfoFromSourceDBs
 	            CONVERT(VARCHAR, pt.DateOfBirth, 120),
 	            ph.Picture,
 	            RTRIM(pt.Sex),
-	            CONVERT(VARCHAR, ppt.DeathDate, 120)
+	            CONVERT(VARCHAR, ppt.DeathDate, 120),
+	            LEN(ph.Picture)
 	        FROM 
 	            variansystem.dbo.Patient pt
 	        LEFT JOIN variansystem.dbo.Photo ph
@@ -416,20 +420,24 @@ sub getPatientInfoFromSourceDBs
 	    $query->execute()
 	        or die "Could not execute query: " . $query->errstr;
 
-	    while (my @data = $query->fetchrow_array()) {
+	    #print "$patientInfo_sql\n";
+
+	    my $data = $query->fetchall_arrayref();
+		foreach my $row (@$data) {
+	   # while (my @data = $query->fetchrow_array()) {
 	    
 	        $sourcePatient  = new Patient();
 
-	        my $sourceuid       = $data[0];
-	        my $firstname       = $data[1];
-	        my $lastname        = $data[2];
-	        my $id              = $data[3];
-	        my $id2             = $data[4];
-	        my $dob             = $data[5];
+	        my $sourceuid       = $row->[0];
+	        my $firstname       = $row->[1];
+	        my $lastname        = $row->[2];
+	        my $id              = $row->[3];
+	        my $id2             = $row->[4];
+	        my $dob             = $row->[5];
 	        my $age             = getAgeAtDate($dob, $today);
-	        my $picture         = $data[6];
-	        my $sex             = $data[7];
-	        my $deathdate 		= $data[8];
+	        my $picture         = $row->[6];
+	        my $sex             = $row->[7];
+	        my $deathdate 		= $row->[8];
 
 	        # set the information
 	        $sourcePatient->setPatientSSN($patientSSN);
