@@ -394,7 +394,7 @@ sub getTasksFromSourceDB
 					}
 	        	}
                 
-                print "$taskInfo_sql\n";
+                #print "$taskInfo_sql\n";
 
 	        	# prepare query
     		    my $query = $sourceDatabase->prepare($taskInfo_sql)
