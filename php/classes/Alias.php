@@ -345,6 +345,7 @@ class Alias {
                     'type'			    => $aliasType, 
                     'color'             => $aliasColorTag,
                     'update'            => $aliasUpdate,
+                    'eduMatSer'         => $aliasEduMatSer,
                     'eduMat'            => $aliasEduMat,
 					'description_EN' 	=> $aliasDesc_EN, 
                     'description_FR' 	=> $aliasDesc_FR,
@@ -455,6 +456,7 @@ class Alias {
                 'type'			    => $aliasType, 
                 'color'             => $aliasColorTag,
                 'update'            => $aliasUpdate,
+                'eduMatSer'         => $aliasEduMatSer,
                 'eduMat'            => $aliasEduMat,
 				'description_EN' 	=> $aliasDesc_EN, 
                 'description_FR' 	=> $aliasDesc_FR, 
@@ -618,10 +620,8 @@ class Alias {
 		$aliasDesc_FR	= $aliasDetails['description_FR'];
 		$aliasSer	    = $aliasDetails['serial'];
         $aliasTerms	    = $aliasDetails['terms'];
-        $aliasEduMatSer = 0;
-        if ( is_array($aliasDetails['edumat']) && isset($aliasDetails['edumat']['serial']) ) {
-            $aliasEduMatSer = $aliasDetails['edumat']['serial'];
-        }
+        $aliasEduMatSer = $aliasDetails['edumatser'];
+      
         $aliasColorTag  = $aliasDetails['color'];
 
         $existingTerms	= array();

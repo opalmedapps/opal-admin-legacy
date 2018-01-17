@@ -1,3 +1,21 @@
+Version 0.12.5:
+ -     --- Fixes issue of corrupted image         The Sybase DBI (or Aria database) has a max length of 4096 for query results.         My guess is that this happened during the virtualization of the Aria database servers.         Had to increase the max length in order to get the rest of the image hex.
+ - Merge branch 'release-0.12.3' into develop
+
+Version 0.12.3:
+
+
+Version 0.12.4:
+ -     --- Added automatic url type to educational material control table         -- Not only validates urls but also sets the appropriate url type so app can properly load         educational material
+ -     --- Added backend educational material allowable extensions         -- Based on AllowableExtension table in the database
+ - Merge branch 'release-0.12.2' into develop
+
+Version 0.12.2:
+ -     --- Fixes issue where radio buttons for educational material weren't auto selected on load.     --- Fixes other bugs related to diagnosis translation functionality
+ -     --- Bug fixes
+ - --- Added diagnosis translation to web app
+ - Merge branch 'release-0.12.1' into develop
+
 Version 0.12.1:
  -     --- Changes made by Yick and James
  - Merge branch 'release-0.12.0' into develop
