@@ -247,9 +247,12 @@ class Filter {
 
 				$sql = "
 					SELECT DISTINCT
-						dt.AliasName
+						dt.Name_EN,
+                        dt.DiagnosisTranslationSerNum
 					FROM
 						DiagnosisTranslation dt
+                    WHERE
+                        dt.Name_EN != ''
 				";
 				$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 				$query->execute();
@@ -257,7 +260,7 @@ class Filter {
 				while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 					$dxArray = array(
 						'name'  => $data[0],
-						'id'    => $data[0],
+						'id'    => $data[1],
 						'type'  => 'Diagnosis',
 						'added' => 0
 					);
