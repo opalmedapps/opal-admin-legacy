@@ -1,3 +1,10 @@
+Version 0.12.6:
+ -     --- Fixes issue of patients getting material that are not supposed to get         -- In the process of adding diagnosis control, the "AliasName" became deprecated         however, this affected the diagnosis filter and caused the removal of all diagnosis         filters for educational material for example. So some educational materials where         inappropriately sent to patients.
+ - Merge branch 'develop' of https://gitlab.com/akimosupremo/opalAdmin into develop
+ - Merge branch 'release-0.12.5' into develop
+ - Merge branch 'develop' of https://gitlab.com/akimosupremo/opalAdmin into develop
+ - --- Put code in place for validating shared url on educational material
+
 Version 0.12.5:
  -     --- Fixes issue of corrupted image         The Sybase DBI (or Aria database) has a max length of 4096 for query results.         My guess is that this happened during the virtualization of the Aria database servers.         Had to increase the max length in order to get the rest of the image hex.
  - Merge branch 'release-0.12.3' into develop
