@@ -651,18 +651,17 @@ class TestResult {
 				}
 			}
 
+            // clear existing links
+            $sql = "
+                DELETE FROM 
+                    TestResultAdditionalLinks
+                WHERE
+                    TestResultAdditionalLinks.TestResultControlSerNum = '$serial'
+            ";
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
+
             if ($additionalLinks) {
-
-                // clear existing links
-                $sql = "
-                    DELECT FROM 
-                        TestResultAdditionalLinks
-                    WHERE
-                        TestResultAdditionalLinks.TestResultControlSerNum = '$serial'
-                ";
-                $query = $host_db_link->prepare( $sql );
-                $query->execute();
-
                 // add new links
                 foreach ($additionalLinks as $link) {
                     
@@ -721,16 +720,7 @@ class TestResult {
 	    try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                DELETE FROM
-                    TestResultControl
-                WHERE
-                    TestResultControl.TestResultControlSerNum = $testResultSer
-            ";
-
-	        $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
+                
             $sql = "
                 DELETE FROM
                     TestResultExpression
@@ -738,7 +728,7 @@ class TestResult {
                     TestResultExpression.TestResultControlSerNum = $testResultSer
             ";
             $query = $host_db_link->prepare( $sql );
-			$query->execute();
+            $query->execute();
 
             $sql = "
                 DELETE FROM
@@ -747,6 +737,16 @@ class TestResult {
                     TestResultAdditionalLinks.TestResultControlSerNum = $testResultSer
             ";
             $query = $host_db_link->prepare( $sql );
+            $query->execute();
+
+            $sql = "
+                DELETE FROM
+                    TestResultControl
+                WHERE
+                    TestResultControl.TestResultControlSerNum = $testResultSer
+            ";
+
+	        $query = $host_db_link->prepare( $sql );
             $query->execute();
 
             $response['value'] = 1;

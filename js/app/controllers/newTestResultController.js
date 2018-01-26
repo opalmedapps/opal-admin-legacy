@@ -164,6 +164,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 			if ($scope.newTestResult.group_EN && $scope.newTestResult.group_FR) {
 
 				$scope.edumat.show = true;
+				$scope.additional_links.show = true;
 
 				// Toggle step completion
 				steps.group.completed = true;
@@ -288,7 +289,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 
 		// Function to remove additional link from newTestResult object
 		$scope.removeAdditionalLink = function (index) {
-			$scope.newTestResult.additional_links.splice(index - 1, 1);
+			$scope.newTestResult.additional_links.splice(index, 1);
 			$scope.additionalLinkUpdate();
 		};
 
@@ -347,8 +348,13 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 
 		// Function to return boolean for form completion
 		$scope.checkForm = function () {
-			if (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) == 100)
-				return true;
+			if (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) == 100) {
+				if ($scope.newTestResult.additional_links.length && !$scope.additionalLinksComplete) {
+					return false;
+				}
+				else
+					return true;
+			}
 			else
 				return false;
 		};
