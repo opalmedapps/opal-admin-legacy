@@ -392,7 +392,8 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 									// submit new password to database
 									console.log("Successfully update firebase password!");
 
-									$scope.patient.password = CryptoJS.SHA256($scope.patient.password).toString();
+									// $scope.patient.password = CryptoJS.SHA256($scope.patient.password).toString();
+									$scope.patient.password = CryptoJS.SHA512($scope.patient.password).toString();
 
 									$.ajax({
 										type: "POST",

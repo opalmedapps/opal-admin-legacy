@@ -156,6 +156,28 @@
                     </p>
                   </div>
                 </div>
+                <!-- SECTION: Additional Links -->
+                <div uib-accordion-group is-open="additional_links.open" class="panel-container summary-box animated" ng-class="{fadeInUp:additional_links.show}" is-disabled="!newTestResult.additional_links.length" ng-if="additional_links.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="additionalLinksComplete" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Additional Links</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':additional_links.open, 'glyphicon-chevron-right':!additional_links.open}" ng-if="newTestResult.additional_links.length"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newTestResult.additional_links.length" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newTestResult.additional_links.length}} Item(s)
+                    </p>
+                  </div>
+                </div>
               </uib-accordion>
               <!-- Submit button -->
               <div class="panel-container">
@@ -397,6 +419,101 @@
                           </ul>
                         </div>
                       </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- SECTION: Additional Links -->
+            <div class="row animated" ng-class="{fadeInUp:additional_links.show}" ng-if="additional_links.show">
+              <div class="col-md-12 side-menu-title">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fa fa-dot-circle-o"></span>
+                    <h2>Additional Links</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>   
+            <div class="row animated" ng-class="{fadeInUp:additional_links.show}" ng-if="additional_links.show">
+              <div class="col-md-12">
+                <p style="margin-bottom: 10px;">
+                  <span style="color:#d9534f"><strong>Optional field:</strong></span>
+                  Please provide additional links for more information on this test result.
+                </p>
+              </div>
+            </div> 
+            <div class="row" ng-repeat="link in newTestResult.additional_links" style="margin-bottom: 7px;">
+              <div class="col-md-6">
+                <div class="panel" ng-class="(link.name_EN && link.url_EN) ? 'panel-success' : 'panel-danger'">
+                  <div class="panel-heading"><strong>English</strong>
+                    <span style="float:right; cursor:pointer; margin-left:10px;" ng-click="removeAdditionalLink($index)" class="glyphicon glyphicon-remove"></span></span>
+                    <span ng-hide="link.name_EN && link.url_EN" style="float:right;"><em>Incomplete</em></span>
+                    <span ng-show="link.name_EN && link.url_EN" style="float:right;"><em>Complete</em></span>
+                  </div>
+                  <div class="panel-body">
+                    <div class="row">
+                      <div class="col-md-2">
+                        <div style="font-size:18px; text-align:right;">Title</div>
+                      </div>
+                      <div class="col-md-10">
+                        <div class="form-group">
+                          <input class="form-control" type="text" ng-change="additionalLinkUpdate()" ng-model="link.name_EN" placeholder="English Title" required="required">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-2">
+                        <div style="font-size:18px; text-align:right;">URL</div>
+                      </div>
+                      <div class="col-md-10">
+                        <div class="form-group">
+                          <input class="form-control" type="text" ng-change="additionalLinkUpdate()" ng-model="link.url_EN" placeholder="English URL" required="required">
+                        </div>
+                      </div>
+                    </div>  
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="panel" ng-class="(link.name_FR && link.url_FR) ? 'panel-success' : 'panel-danger'">
+                  <div class="panel-heading"><strong>Français</strong>
+                    <span style="float:right; cursor:pointer; margin-left:10px;" ng-click="removeAdditionalLink($index)" class="glyphicon glyphicon-remove"></span></span>
+                    <span ng-hide="link.name_FR && link.url_FR" style="float:right;"><em>Incomplete</em></span>
+                    <span ng-show="link.name_FR && link.url_FR" style="float:right;"><em>Complete</em></span>
+                  </div>
+                  <div class="panel-body">
+                    <div class="row">
+                      <div class="col-md-2">
+                        <div style="font-size:18px; text-align:right;">Titre</div>
+                      </div>
+                      <div class="col-md-10">
+                        <div class="form-group">
+                          <input class="form-control" type="text" ng-change="additionalLinkUpdate()" ng-model="link.name_FR" placeholder="Title Français" required="required">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-2">
+                        <div style="font-size:18px; text-align:right;">URL</div>
+                      </div>
+                      <div class="col-md-10">
+                        <div class="form-group">
+                          <input class="form-control" type="text" ng-change="additionalLinkUpdate()" ng-model="link.url_FR" placeholder="URL Français" required="required">
+                        </div>
+                      </div>
+                    </div>  
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row animated" ng-class="{fadeInUp:additional_links.show}" ng-if="additional_links.show">
+              <div class="col-md-1">
+                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hoverJ}" ng-click="addAdditionalLink()" ng-mouseenter="hoverJ=true" ng-mouseleave="hoverJ=false">
+                  <div class="panel-info">
+                    <div class="panel-content" style="text-align:center">
+                      <span style="font-size:30px;" class="glyphicon glyphicon-plus"></span>
+                      <div class="option-panel-title">Add</div>
                     </div>
                   </div>
                 </div>
