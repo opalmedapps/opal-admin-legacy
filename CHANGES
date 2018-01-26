@@ -1,3 +1,10 @@
+Version 0.12.7:
+ -     --- Bug fixes
+ - --- Added frontend for additional links
+ -     --- Added backend tracking of additional links for test results
+ -     --- Changed missing 512 password encryption
+ - Merge branch 'release-0.12.6' into develop
+
 Version 0.12.6:
  -     --- Fixes issue of patients getting material that are not supposed to get         -- In the process of adding diagnosis control, the "AliasName" became deprecated         however, this affected the diagnosis filter and caused the removal of all diagnosis         filters for educational material for example. So some educational materials where         inappropriately sent to patients.
  - Merge branch 'develop' of https://gitlab.com/akimosupremo/opalAdmin into develop
