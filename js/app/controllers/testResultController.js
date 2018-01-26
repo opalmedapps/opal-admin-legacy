@@ -210,7 +210,6 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 			// Responsible for "searching" in search bars
 			$scope.filter = $filter('filter');
 
-
 			$scope.testResult = {}; // Initialize test result object
 
 			// Initialize list to hold test names
@@ -336,6 +335,24 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 
 				// Toggle boolean
 				$scope.changesMade = true;
+			};
+
+			// Function to add an additional link to the test result
+			$scope.addAdditionalLink = function () {
+				$scope.testResult.additional_links.push({
+					name_EN: "",
+					name_FR: "",
+					url_EN: "",
+					url_FR: "",
+					serial: null
+				});
+				$scope.setChangesMade();
+			};
+
+			// Function to remove an additional link from the test result
+			$scope.removeAdditionalLink = function (index) {
+				$scope.testResult.additional_links.splice(index - 1, 1);
+				$scope.setChangesMade();
 			};
 
 			// Function to add / remove a test
