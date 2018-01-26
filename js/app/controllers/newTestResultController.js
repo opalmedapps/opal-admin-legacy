@@ -15,6 +15,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 		$scope.title_description = {open: false, show: false};
 		$scope.group = {open: false, show: false};
 		$scope.edumat = {open: false, show: false};
+		$scope.additional_links = {open: false, show: false};
 
 		// completed steps boolean object; used for progress bar
 		var steps = {
@@ -68,7 +69,8 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 			group_EN: "",
 			group_FR: "",
 			eduMat: null,
-			tests: []
+			tests: [],
+			additional_links: []
 		};
 
 		// Initialize lists to hold distinct test groups 
@@ -186,6 +188,34 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 			$scope.edumat.open = true;
 		}
 
+		$scope.additionalLinksComplete = false;
+		// Function to toggle necessary changes when updating the additional links
+		$scope.additionalLinkUpdate = function () {
+
+			$scope.additional_links.open = true;
+
+			$scope.additionalLinksComplete = true;
+
+			if (!$scope.newTestResult.additional_links.length) {
+				$scope.additionalLinksComplete = false;
+
+			} else {
+
+				angular.forEach($scope.newTestResult.additional_links, function (link) {
+					if (!link.name_EN || !link.name_FR || !link.url_EN
+						|| !link.url_FR) {
+						$scope.additionalLinksComplete = false;
+					}
+				});
+
+			}
+
+			// Count the number of completed steps
+			$scope.numOfCompletedSteps = stepsCompleted(steps);
+			// Change progress bar
+			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+		};
+
 		// Function to return boolean for # of added tests
 		$scope.checkTestsAdded = function (testList) {
 
@@ -243,6 +273,23 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 
 			}
 
+		};
+
+		// Function to add additioanl links to newTestResult object
+		$scope.addAdditionalLink = function () {
+			$scope.newTestResult.additional_links.push({
+				name_EN: "",
+				name_FR: "",
+				url_EN: "",
+				url_FR: ""
+			});
+			$scope.additionalLinkUpdate();
+		};
+
+		// Function to remove additional link from newTestResult object
+		$scope.removeAdditionalLink = function (index) {
+			$scope.newTestResult.additional_links.splice(index - 1, 1);
+			$scope.additionalLinkUpdate();
 		};
 
 		// Function to submit the new test result
