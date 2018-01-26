@@ -325,7 +325,7 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 			$scope.checkForm = function () {
 				if ($scope.testResult.name_EN && $scope.testResult.name_FR && $scope.testResult.description_EN
 					&& $scope.testResult.description_FR && $scope.testResult.group_EN && $scope.testResult.group_FR
-					&& $scope.checkTestsAdded($scope.testList) && $scope.changesMade) {
+					&& $scope.checkTestsAdded($scope.testList) && $scope.additionalLinksComplete && $scope.changesMade) {
 					return true;
 				}
 				else return false;
@@ -351,7 +351,11 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 
 			// Function to remove an additional link from the test result
 			$scope.removeAdditionalLink = function (index) {
-				$scope.testResult.additional_links.splice(index - 1, 1);
+				$scope.testResult.additional_links.splice(index, 1);
+
+				if (!$scope.testResult.additional_links) {
+					$scope.testResult.additional_links = [];
+				}
 				$scope.setChangesMade();
 			};
 
@@ -390,6 +394,15 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 
 			$scope.setChangesMade = function () {
 				$scope.changesMade = true;
+				$scope.additionalLinksComplete = true;
+				if($scope.testResult.additional_links) {
+					angular.forEach($scope.testResult.additional_links, function (link) {
+						if (!link.name_EN || !link.name_FR || !link.url_EN 
+							|| !link.url_FR) {
+							$scope.additionalLinksComplete = false;
+						}
+					});
+				}
 			};
 
 			// Submit changes

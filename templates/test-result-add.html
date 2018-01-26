@@ -157,7 +157,7 @@
                   </div>
                 </div>
                 <!-- SECTION: Additional Links -->
-                <div uib-accordion-group is-open="additional_links.open" class="panel-container summary-box animated" ng-class="{fadeInUp:additional_links.show}" is-disabled="!newEduMat.tocs.length" ng-if="additional_links.show">
+                <div uib-accordion-group is-open="additional_links.open" class="panel-container summary-box animated" ng-class="{fadeInUp:additional_links.show}" is-disabled="!newTestResult.additional_links.length" ng-if="additional_links.show">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -507,7 +507,7 @@
                 </div>
               </div>
             </div>
-            <div class="row animated" ng-class="{fadeInUp:additional_link.show}" ng-if="additional_link.show">
+            <div class="row animated" ng-class="{fadeInUp:additional_links.show}" ng-if="additional_links.show">
               <div class="col-md-1">
                 <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hoverJ}" ng-click="addAdditionalLink()" ng-mouseenter="hoverJ=true" ng-mouseleave="hoverJ=false">
                   <div class="panel-info">
