@@ -1,3 +1,12 @@
+Version 0.12.8:
+ - Merge branch 'release-0.12.7'
+ - Merge branch 'release-0.12.6'
+ - Merge branch 'release-0.12.5'
+ - Merge branch 'release-0.12.3'
+ - Merge branch 'release-0.12.2'
+ - Merge branch 'release-0.12.1'
+ - Merge branch 'release-0.12.0'
+
 Version 0.12.7:
  -     --- Bug fixes
  - --- Added frontend for additional links
