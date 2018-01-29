@@ -449,7 +449,7 @@ sub getDocsFromSourceDB
 						CONVERT(VARCHAR, visit_note.note_tstamp, 120),
 						visit_note.trans_log_userid,
 						CONVERT(VARCHAR, visit_note.trans_log_tstamp, 120),
-						note_typ.note_typ_desc
+						RTRIM(note_typ.note_typ_desc)
 					FROM	
 						variansystem.dbo.Patient Patient,
 						varianenm.dbo.visit_note visit_note,
@@ -812,7 +812,7 @@ sub transferPatientDocuments
 		my $finalfilenum = $filefields[0]; # remove extension of file
 		my $finalextension = $filefields[1]; # get the extension
 
-		my $clinicalDir = $ftpsObject->getFTPClinicalDir(); # get local directory of documents
+		my $clinicalDir = $ftpObject->getFTPClinicalDir(); # get local directory of documents
 
 		my $sourcefile = "$clinicalDir/$finalfileloc"; # concatenate directory and file
 
