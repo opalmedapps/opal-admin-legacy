@@ -331,10 +331,11 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 				else return false;
 			};
 
-			$scope.eduMatUpdate = function () {
+			$scope.eduMatUpdate = function (eduMat) {
 
+				$scope.testResult.eduMat = eduMat;
 				// Toggle boolean
-				$scope.changesMade = true;
+				$scope.setChangesMade();
 			};
 
 			// Function to add an additional link to the test result
@@ -362,7 +363,7 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 			// Function to add / remove a test
 			$scope.toggleTestSelection = function (test) {
 
-				$scope.changesMade = true;
+				$scope.setChangesMade();
 
 				// If originally added, remove it
 				if (test.added) {
