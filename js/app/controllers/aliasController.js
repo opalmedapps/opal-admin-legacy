@@ -78,7 +78,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 		$scope.gridOptions = {
 			data: 'aliasList',
 			columnDefs: [
-				{ field: 'name_EN', displayName: 'Alias (EN / FR)', cellTemplate: cellTemplateName, width: '30%' },
+				{ field: 'name_EN', displayName: 'Title (EN / FR)', cellTemplate: cellTemplateName, width: '30%' },
 				{
 					field: 'type', displayName: 'Type', width: '10%', filter: {
 						type: uiGridConstants.filter.SELECT,
@@ -86,15 +86,15 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 					}
 				},
 				{ field: 'update', displayName: 'Update', width: '5%', cellTemplate: checkboxCellTemplate, enableFiltering: false },
-				{ field: 'count', type: 'number', displayName: '# of terms', width: '5%', enableFiltering: false },
+				{ field: 'count', type: 'number', displayName: '# of assigned codes', width: '5%', enableFiltering: false },
 				{
-					field: 'source_db.name', displayName: 'Source DB', width: '10%', filter: {
+					field: 'source_db.name', displayName: 'Clinical Database', width: '10%', filter: {
 						type: uiGridConstants.filter.SELECT,
 						selectOptions: [{ value: 'Aria', label: 'Aria' }, { value: 'MediVisit', label: 'MediVisit' }]
 					}
 				},
 				{ field: 'color', displayName: 'Color Tag', width: '10%', cellTemplate: cellTemplateColor, enableFiltering: false },
-				{ field: "lastupdated", displayName: 'Updated', width: '15%' },
+				{ field: "lastupdated", displayName: 'Last Updated', width: '15%' },
 				{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '15%' }
 			],
 			//useExternalFiltering: true,

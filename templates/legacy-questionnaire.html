@@ -121,31 +121,26 @@
 			<div uib-accordion-group is-open="statusFilterPatient.open">
 				<uib-accordion-heading>
 					<div>
-						<strong>Filter Patients </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusFilterPatient.open, 'glyphicon-chevron-right': !statusFilterPatient.open}"></i>
+						<strong>Filter By Patient</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusFilterPatient.open, 'glyphicon-chevron-right': !statusFilterPatient.open}"></i>
 					</div>
 				</uib-accordion-heading>
 				<div class="bs-callout bs-callout-info">
 					<h4>Current Patient Filters</h4>
 					<ul class="list-items-4col">
 						<li ng-show="allFilters(patientFilterList)">
-							All Patients
+							No Filter
 						</li>  
 						<li ng-repeat="patient in patientFilterList | filter: {added: 1} : 1" ng-hide="allFilters(patientFilterList)">
 							{{patient.name}}
 						</li>
 					</ul>
-					<p>To add/remove patient filter, use the list below.</p>
+					<p>To add/remove a patient filter, use the list below.</p>
 				</div>
 				<div class="list-space">
 					<div class="input-group">
 						<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
 						<input class="form-control" type="text" ng-model="patientSearchField" ng-change="searchPatient(patientSearchField)" placeholder="Search..."/>
 					</div>
-					<div style="padding: 10px;">
-						<strong> 
-							To select all, leave all boxes unchecked.
-						</strong>
-					</div>    
 					<ul class="list-items">
 						<li ng-repeat="patient in patientFilterList | filter: searchPatientFilter">
 							<label>
@@ -160,7 +155,7 @@
 			<div uib-accordion-group is-open="statusDemographicFilter.open"> 
 				<uib-accordion-heading>
 					<div>
-						<strong>Filter Demographics </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDemographicFilter.open, 'glyphicon-chevron-right': !statusDemographicFilter.open}"></i>
+						<strong>Filter By Demographics </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDemographicFilter.open, 'glyphicon-chevron-right': !statusDemographicFilter.open}"></i>
 					</div>
 				</uib-accordion-heading>
 				<div class="bs-callout bs-callout-info">
@@ -202,24 +197,24 @@
 				</div>
       </div> 
       
-      <!-- SECTION: Expression filters -->
+      <!-- SECTION: Appointment/Task filters -->
 			<div uib-accordion-group is-open="statusFilterTerms.open">
 				<uib-accordion-heading>
 					<div>
-						<strong>Filter Terms </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusFilterTerms.open, 'glyphicon-chevron-right': !statusFilterTerms.open}"></i>
+						<strong>Filter By Appointment or Task Code </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusFilterTerms.open, 'glyphicon-chevron-right': !statusFilterTerms.open}"></i>
 					</div>
 				</uib-accordion-heading>
 				<div class="bs-callout bs-callout-info">
-					<h4>Current Terms</h4>
+					<h4>Current Filters</h4>
 					<ul class="list-items-4col">
 						<li ng-show="allFilters(termList)">
-							All Terms
+							No Filter
 						</li>  
 						<li ng-repeat="selectedTerm in termList | filter: {added: 1} : 1" ng-hide="allFilters(termList)">
 							{{selectedTerm.name}}
 						</li>
 					</ul>
-					<p>To add/remove term filter, use the list below.</p>
+					<p>To add/remove a filter, use the list below.</p>
 				</div>
 				<div class="list-space">
 					<div class="input-group">
@@ -245,31 +240,26 @@
 			<div uib-accordion-group is-open="statusFilterDiagnosis.open">
 				<uib-accordion-heading>
 					<div>
-						<strong>Filter Diagnoses </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusFilterDiagnosis.open, 'glyphicon-chevron-right': !statusFilterDiagnosis.open}"></i>
+						<strong>Filter By Diagnoses </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusFilterDiagnosis.open, 'glyphicon-chevron-right': !statusFilterDiagnosis.open}"></i>
 					</div>
 				</uib-accordion-heading>
 				<div class="bs-callout bs-callout-info">
 					<h4>Current Diagnosis Filters</h4>
 					<ul class="list-items-4col">
 						<li ng-show="allFilters(dxFilterList)">
-							All Diagnoses
+							No Filter
 						</li>  
 						<li ng-repeat="dx in dxFilterList | filter: {added: 1} : 1" ng-hide="allFilters(dxFilterList)">
 							{{dx.name}}
 						</li>
 					</ul>
-					<p>To add/remove diagnosis filter, use the list below.</p>
+					<p>To add/remove a diagnosis filter, use the list below.</p>
 				</div>
 				<div class="list-space">
 					<div class="input-group">
 						<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
 						<input class="form-control" type="text" ng-model="dxSearchField" ng-change="searchDiagnosis(dxSearchField)" placeholder="Search..."/>
 					</div>
-					<div style="padding: 10px;">
-						<strong> 
-							To select all, leave all boxes unchecked.
-						</strong>
-					</div>    
 					<ul class="list-items">
 						<li ng-repeat="dx in dxFilterList | filter: searchDxFilter">
 							<label>
@@ -284,31 +274,26 @@
 			<div uib-accordion-group is-open="statusFilterDoctor.open">
 				<uib-accordion-heading>
 					<div>
-						<strong>Filter Doctors </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusFilterDoctor.open, 'glyphicon-chevron-right': !statusFilterDoctor.open}"></i>
+						<strong>Filter By Doctor </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusFilterDoctor.open, 'glyphicon-chevron-right': !statusFilterDoctor.open}"></i>
 					</div>
 				</uib-accordion-heading>
 				<div class="bs-callout bs-callout-info">
 					<h4>Current Doctor Filters</h4>
 					<ul class="list-items-4col">
 						<li ng-show="allFilters(doctorFilterList)">
-							All Doctors
+							No Filter
 						</li>  
 						<li ng-repeat="doctor in doctorFilterList | filter: {added: 1} : 1" ng-hide="allFilters(doctorFilterList)">
 							{{doctor.name}}
 						</li>
 					</ul>
-					<p>To add/remove doctors, use the list below.</p>
+					<p>To add/remove a doctor, use the list below.</p>
 				</div>
 				<div class="list-space">
 					<div class="input-group">
 						<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
 						<input class="form-control" type="text" ng-model="doctorSearchField" ng-change="searchDoctor(doctorSearchField)" placeholder="Search..."/>
 					</div>
-					<div style="padding: 10px;">
-						<strong> 
-							To select all, leave all boxes unchecked.
-						</strong>
-					</div>    
 					<ul class="list-items">
 						<li ng-repeat="doctor in doctorFilterList | filter: searchDoctorFilter">
 							<label>
@@ -319,35 +304,30 @@
 				</div>
       </div>
       
-      <!-- SECTION: Resource filter -->
+      <!-- SECTION: Treatment machine filter -->
 			<div uib-accordion-group is-open="statusFilterResource.open">
 				<uib-accordion-heading>
 					<div>
-						<strong>Filter Resources </stron><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusFilterResource.open, 'glyphicon-chevron-right': !statusFilterResource.open}"></i>
+						<strong>Filter By Treatment Machine </stron><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusFilterResource.open, 'glyphicon-chevron-right': !statusFilterResource.open}"></i>
 					</div>
 				</uib-accordion-heading>
 				<div class="bs-callout bs-callout-info">
-					<h4>Current Resource Filters</h4>
+					<h4>Current Treatment Machine Filters</h4>
 					<ul class="list-items-4col">
 						<li ng-show="allFilters(resourceFilterList)">
-							All Resources
+							No Filter
 						</li>  
 						<li ng-repeat="resource in resourceFilterList | filter: {added: 1} : 1" ng-hide="allFilters(resourceFilterList)">
 							{{resource.name}}
 						</li>
 					</ul>
-					<p>To add/remove resources, use the list below.</p>
+					<p>To add/remove a treatment machine, use the list below.</p>
 				</div>
 				<div class="list-space">
 					<div class="input-group">
 						<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
 						<input class="form-control" type="text" ng-model="resourceSearchField" ng-change="searchResource(resourceSearchField)" placeholder="Search..."/>
 					</div>
-					<div style="padding: 10px;">
-						<strong> 
-							To select all, leave all boxes unchecked.
-						</strong>
-					</div>    
 					<ul class="list-items">
 						<li ng-repeat="resource in resourceFilterList | filter: searchResourceFilter">
 							<label>
