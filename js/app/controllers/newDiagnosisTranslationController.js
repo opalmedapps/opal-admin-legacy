@@ -12,6 +12,8 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 
 		// Default boolean variables
 		var selectAll = false; // select All button checked?
+		$scope.showAssigned = false;
+		$scope.hideAssigned = false;
 
 		$scope.diagnoses = {open:false, show: true};
 		$scope.title_description = {open:false, show:false};
@@ -116,8 +118,11 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 
 			var addedParam = false;
 			angular.forEach($scope.diagnosisList, function (diagnosis) {
-				if (diagnosis.added)
-					addedParam = true;
+				// ignore already assigned diagnoses
+				if (!diagnosis.assigned) {
+					if (diagnosis.added)
+						addedParam = true;
+				}
 			});
 			if (addedParam)
 				return true;
@@ -209,8 +214,11 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 
 				// Fill in the diagnosis from diagnosisList
 				angular.forEach($scope.diagnosisList, function (diagnosis) {
-					if (diagnosis.added)
-						$scope.newDiagnosisTranslation.diagnoses.push(diagnosis);
+					// ignore already assigned diagnoses
+					if (!diagnosis.assigned) {
+						if (diagnosis.added)
+							$scope.newDiagnosisTranslation.diagnoses.push(diagnosis);
+					}
 				});
 
 				// Submit form
@@ -236,12 +244,13 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 		// Function to assign search field when textbox changes
 		$scope.changeDiagnosisFilter = function (field) {
 			$scope.diagnosisFilter = field;
+			selectAll = false; // uncheck select all 
 		};
 
 		// Function for search through the diagnoses
 		$scope.searchDiagnosesFilter = function (Filter) {
 			var keyword = new RegExp($scope.diagnosisFilter, 'i');
-			return !$scope.diagnosisFilter || keyword.test(Filter.name);
+			return (!$scope.diagnosisFilter || keyword.test(Filter.name)) && (!$scope.showAssigned || Filter.assigned) && (!$scope.hideAssigned || !Filter.assigned);
 		};
 
 		// Function to assign eduMateFilter when textbox is changing 
@@ -262,7 +271,9 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 			
 			if (selectAll) { // was checked
 				angular.forEach(filtered, function (diagnosis) {
-					diagnosis.added = 0;
+					// ignore assigned diagnoses
+					if (!diagnosis.assigned)
+						diagnosis.added = 0;
 				});
 				selectAll = false; // toggle off
 
@@ -271,6 +282,7 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 					
 					// Toggle boolean
 					steps.diagnoses.completed = false;
+					$scope.diagnoses.open = false;
 
 					// Count the number of completed steps
 					$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -284,16 +296,27 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 			else { // was not checked
 				
 				angular.forEach(filtered, function (diagnosis) {
-					diagnosis.added = 1;
+					// ignore already assigned diagnoses
+					if (!diagnosis.assigned)
+						diagnosis.added = 1;
 				});
 
 				selectAll = true; // toggle on
 
-				// Boolean
-				steps.diagnoses.completed = true;
+				// Check if there are still terms added, if not, flag
+				if (!$scope.checkDiagnosesAdded($scope.diagnosisList)) {
+					
+					// Toggle boolean
+					steps.diagnoses.completed = false;
+					$scope.diagnoses.open = false;
 
-				$scope.diagnoses.open = true;
-				$scope.title_description.show = true;
+				}
+				else {
+					// Boolean
+					steps.diagnoses.completed = true;
+					$scope.diagnoses.open = true;
+					$scope.title_description.show = true;
+				}
 
 				// Count the number of steps completed
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
