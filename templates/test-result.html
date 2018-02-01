@@ -16,7 +16,7 @@
               </div>
               <!-- Breadcrumbs -->
               <div class="col-md-4 title-breadcrumbs">
-                <span><a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Test Results</strong></span>
+                <span><a ui-sref="home">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Test Results</strong></span>
               </div>
             </div>
 						<div class="row clearfix" style="margin-bottom: 10px;">
@@ -226,7 +226,7 @@
               <ul class="list-items">
                 <li ng-repeat="eduMat in eduMatList | filter: searchEduMatsFilter">
                   <label>
-                    <input type="radio" ng-model="testResult.eduMatSer" ng-change="eduMatUpdate()" ng-checked="testResult.eduMatSer == eduMat.serial" ng-value="eduMat.serial" /> {{eduMat.name_EN}}
+                    <input type="radio" ng-model="testResult.eduMatSer" ng-change="eduMatUpdate(eduMat)" ng-checked="testResult.eduMatSer == eduMat.serial" ng-value="eduMat.serial" /> {{eduMat.name_EN}}
                   </label>
                 </li>
               </ul>

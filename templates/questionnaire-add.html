@@ -208,7 +208,7 @@
                   </div>
                 </div>
 
-                <!-- SECTION: Expression filters -->
+                <!-- SECTION: Appointment/Task filters -->
                 <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(termList)" ng-if="terms.show">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
@@ -216,7 +216,7 @@
                         <span ng-if="checkFilters(termList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                       </div>
                       <div class="col-md-8">
-                        <strong>Expression Filter(s)</strong>
+                        <strong>Appointment/Task Filter(s)</strong>
                       </div>
                       <div class="col-md-2">
                         <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkFilters(termList)"></i>
@@ -286,7 +286,7 @@
                   </div>
                 </div>
 
-                <!-- SECTION: Resource filters -->
+                <!-- SECTION: Treatment Machine filters -->
                 <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(resourceFilterList)" ng-if="terms.show">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
@@ -294,7 +294,7 @@
                         <span ng-if="checkFilters(resourceFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                       </div>
                       <div class="col-md-8">
-                        <strong>Resource Filter(s)</strong>
+                        <strong>Treatment Machine Filter(s)</strong>
                       </div>
                       <div class="col-md-2">
                         <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkFilters(resourceFilterList)"></i>
@@ -334,10 +334,10 @@
               <!-- Breadcrumbs -->
               <div class="col-md-6 title-breadcrumbs">
                 <span>
-                  <a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span>
-                  <a href="#/questionnaire">Questionnaires</a>
+                  <a ui-sref="home">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span>
+                  <a ui-sref="questionnaire-menu">Questionnaires</a>
                   <span class="glyphicon glyphicon-menu-right teflon"></span>
-                  <a href="#/questionnaire/manage">Manage</a>
+                  <a ui-sref="questionnaire">Manage</a>
                   <span class="glyphicon glyphicon-menu-right teflon"></span>
                   <strong>Add Questionnaire</strong>
                 </span>
@@ -755,13 +755,13 @@
                 </div>        
               </div>  
 
-              <!-- SECTION: Expression filters -->
+              <!-- SECTION: Appointment/Task filters -->
               <div class="row animated" ng-class="{fadeInUp:terms.show}" ng-if="terms.show">
                 <div class="col-md-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
                       <span class="fa fa-dot-circle-o"></span>
-                      <h2>Expression Filters</h2>
+                      <h2>Appointment/Task Filters</h2>
                     </span>  
                   </div>  
                 </div>
@@ -770,7 +770,7 @@
                 <div class="col-md-12">
                   <p style="margin-bottom: 10px;">
                     <span><strong>Optional field:</strong></span>
-                    Select one of more expression filters below. This will target patients with these specific filters. Leave blank for no filters.
+                    Select one of more activity filters below. This will target patients with these specific filters. Leave blank for no filters.
                   </p>
                 </div>
               </div>  
@@ -895,13 +895,13 @@
                 </div>
               </div>
 
-              <!-- SECTION: Resource filters -->
+              <!-- SECTION: Treatment machine filters -->
               <div class="row animated" ng-class="{fadeInUp:terms.show}" ng-if="terms.show">
                 <div class="col-md-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
                       <span class="fa fa-dot-circle-o"></span>
-                      <h2>Resource Filters</h2>
+                      <h2>Treatment Machine Filters</h2>
                     </span>  
                   </div>  
                 </div>
@@ -910,7 +910,7 @@
                 <div class="col-md-12">
                   <p style="margin-bottom: 10px;">
                     <span><strong>Optional field:</strong></span>
-                    Select one of more resource filters below. This will target patients with these specific resources. Leave blank for no filters.
+                    Select one of more machine filters below. This will target patients with these specific treatment machines. Leave blank for no filters.
                   </p>
                 </div>
               </div>  
