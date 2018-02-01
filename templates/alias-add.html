@@ -68,6 +68,53 @@
                     </p>
                   </div> 
                 </div>
+                <!-- SECTION: Type -->
+                <div uib-accordion-group is-open="type.open" class="panel-container summary-box animated" ng-class="{fadeInUp: type.show}" is-disabled="!newAlias.type" ng-if="type.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newAlias.type" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Type</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': type.open, 'glyphicon-chevron-right': !type.open}" ng-if="newAlias.type"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading> 
+                  <div ng-if="newAlias.type" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newAlias.type.name}}
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Clinical codes -->
+                 <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp: terms.show}" is-disabled="!checkTermsAdded(termList)" ng-if="terms.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkTermsAdded(termList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Assigned Clinical {{newAlias.type.name}} Code(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkTermsAdded(termList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading> 
+                  <div ng-if="checkTermsAdded(termList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="term in termList | filter: {added: 1, assigned: null}">
+                          {{term.id}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
 								<!-- SECTION: Title & description -->
                 <div uib-accordion-group is-open="title_description.open" class="panel-container summary-box animated" ng-class="{fadeInUp: title_description.show}" ng-if="title_description.show" is-disabled="!newAlias.name_EN && !newAlias.name_FR && !newAlias.description_EN && !newAlias.description_FR">
                   <uib-accordion-heading>
@@ -122,28 +169,6 @@
                     </p>
                   </div>
                 </div>
-								<!-- SECTION: Type -->
-                <div uib-accordion-group is-open="type.open" class="panel-container summary-box animated" ng-class="{fadeInUp: type.show}" is-disabled="!newAlias.type" ng-if="type.show">
-                  <uib-accordion-heading>
-                    <div class="row" style="align-items: center">
-                      <div class="col-md-2">
-                        <span ng-if="newAlias.type" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </div>
-                      <div class="col-md-8">
-                        <strong>Type</strong>
-                      </div>
-                      <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': type.open, 'glyphicon-chevron-right': !type.open}" ng-if="newAlias.type"></i>
-                      </div>
-                    </div>
-                  </uib-accordion-heading> 
-                  <div ng-if="newAlias.type" class="description">
-                    <p>
-                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                      {{newAlias.type.name}}
-                    </p>
-                  </div>
-                </div>
 								<!-- SECTION: Icon color -->
                  <div uib-accordion-group is-open="color.open" class="panel-container summary-box animated" ng-class="{fadeInUp: color.show}" is-disabled="!newAlias.color" ng-if="color.show">
                   <uib-accordion-heading>
@@ -164,31 +189,6 @@
                       <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                       {{newAlias.color}} <br>
                       <span style="margin-top: 10px; display: block; border: 1px solid rgba(85, 85, 85, 0.2);"  class="color-palette" ng-style="{'background-color': newAlias.color}"></span>
-                    </p>
-                  </div>
-                </div>
-								<!-- SECTION: Alias expressions -->
-                 <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp: terms.show}" is-disabled="!checkTermsAdded(termList)" ng-if="terms.show">
-                  <uib-accordion-heading>
-                    <div class="row" style="align-items: center">
-                      <div class="col-md-2">
-                        <span ng-if="checkTermsAdded(termList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </div>
-                      <div class="col-md-8">
-                        <strong>Internal Hospital Code</strong>
-                      </div>
-                      <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkTermsAdded(termList)"></i>
-                      </div>
-                    </div>
-                  </uib-accordion-heading> 
-                  <div ng-if="checkTermsAdded(termList)" class="description">
-                    <p>
-                      <ul style="max-height: 100px; overflow-y: auto;">
-                        <li ng-repeat="term in termList | filter: {added: true} : true">
-                          {{term.id}}
-                        </li>
-                      </ul>
                     </p>
                   </div>
                 </div>
@@ -253,7 +253,96 @@
                   </div>
                 </div>
               </div>
-						</div>  
+						</div> 
+            <!-- SECTION: Type -->
+            <div class="row animated" ng-class="{fadeInUp: type.show}" ng-if="type.show">
+              <div class="col-md-12 side-menu-title">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fa fa-dot-circle-o"></span>
+                    <h2>Type</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>   
+            <div class="row animated" ng-class="{fadeInUp: type.show}" ng-if="type.show">
+              <div class="col-md-12">
+                <p style="margin-bottom: 10px;">
+                  <span style="color:#d9534f"><strong>Required field:</strong></span>
+                  Please select the alias type.
+                </p>
+              </div>
+            </div>    
+            <div class="row animated" ng-class="{fadeInUp: type.show}" ng-if="type.show">
+              <div ng-repeat="type in aliasTypes" class="col-md-2 item-panel-select"> 
+                <div class="panel-container animated" ng-style="{cursor: newAlias.source_db ? 'pointer' : ''}" ng-class="{pulse: hover && newAlias.source_db, active: newAlias.type.name == type.name, 'disabled': !newAlias.source_db}" ng-click="typeUpdate(type)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                  <div class="panel-info" ng-class="{active: newAlias.type.name == type.name}">
+                    <div class="panel-content" style="text-align:center">
+                      <span style="font-size:30px;" class="glyphicon glyphicon-{{type.icon}}"></span>
+                      <div class="option-panel-title">{{type.name}}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>  
+            <!-- SECTION: Clinical codes -->
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+              <div class="col-md-12 side-menu-title">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fa fa-dot-circle-o"></span>
+                    <h2>Clinical Codes</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>   
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+              <div class="col-md-12">
+                <p style="margin-bottom: 10px;">
+                  <span style="color:#d9534f"><strong>Required field:</strong></span>
+                  Please assign clinical {{newAlias.type.name}} code(s).
+                </p>
+              </div>
+            </div>  
+            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show"> 
+              <div class="col-md-9">
+                <div class="panel" ng-class="checkTermsAdded(termList) ? 'panel-success': 'panel-danger'">
+                  <div class="panel-heading"><strong>Clinical Codes</strong>
+                    <span ng-hide="checkTermsAdded(termList)" style="float:right"><em>Incomplete</em></span>
+                    <span ng-show="checkTermsAdded(termList)" style="float:right"><em>Complete</em></span>
+                  </div>
+                  <div class="panel-body">
+                    <div class="list-space" ng-show="newAlias.source_db && newAlias.type">
+                      <div class="input-group">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                        <input class="form-control" type="text" ng-model="termFilter" ng-change="changeTermFilter(termFilter)" placeholder="Search Codes"/>
+                      </div>
+                    <div style="padding: 10px;">
+                        <label>
+                          <input type="checkbox" ng-click="selectAllFilteredTerms()" ng-checked="selectAll"> Select All
+                        </label>
+                      </div>
+                      <div class="btn-group btn-group-justified">
+                        <a class="btn btn-default" ng-class="{'active' : !showAssigned && !hideAssigned}" ng-click="changeShowAll()">Show all</a>
+                        <a class="btn btn-default" ng-class="{'active' : showAssigned}" ng-click="changeShowAssigned()">Only show assigned</a>
+                        <a class="btn btn-default" ng-class="{'active' : hideAssigned}" ng-click="changeShowUnassigned()">Only show unassigned</a>
+                      </div>
+                      <ul class="list-items">
+                        <li ng-repeat="term in termList | filter: searchTermsFilter">
+                          <label ng-class="{greenText: term.added, grayText: term.assigned}">
+                            <input type="checkbox" ng-click="toggleTermSelection(term)" ng-checked="term.added" ng-disabled="term.assigned"/> {{term.name}}
+                            <span ng-class="{redText: term.assigned}" ng-if="term.assigned"><em> --- Assigned to: {{term.assigned.name_EN}}</em></span>
+                          </label>
+                        </li>
+                      </ul>
+                    </div>
+                    <div style="text-align:center" ng-hide="newAlias.source_db && newAlias.type">
+                      <h1>Please select a source database AND assign an internal hospital code type!</h1>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>   
 						<!-- SECTION: Title & description -->        
             <div class="row animated" ng-class="{fadeInUp: title_description.show}" ng-if="title_description.show">
               <div class="col-md-12 side-menu-title">
@@ -371,37 +460,6 @@
                 </div>
               </div>
 						</div>
-						<!-- SECTION: Type -->
-            <div class="row animated" ng-class="{fadeInUp: type.show}" ng-if="type.show">
-              <div class="col-md-12 side-menu-title">
-                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                  <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="fa fa-dot-circle-o"></span>
-                    <h2>Type</h2>
-                  </span>  
-                </div>  
-              </div>
-            </div>   
-            <div class="row animated" ng-class="{fadeInUp: type.show}" ng-if="type.show">
-              <div class="col-md-12">
-                <p style="margin-bottom: 10px;">
-                  <span style="color:#d9534f"><strong>Required field:</strong></span>
-                  Please select the alias type.
-                </p>
-              </div>
-            </div>    
-            <div class="row animated" ng-class="{fadeInUp: type.show}" ng-if="type.show">
-              <div ng-repeat="type in aliasTypes" class="col-md-2 item-panel-select"> 
-                <div class="panel-container animated" ng-style="{cursor: newAlias.source_db ? 'pointer' : ''}" ng-class="{pulse: hover && newAlias.source_db, active: newAlias.type.name == type.name, 'disabled': !newAlias.source_db}" ng-click="typeUpdate(type)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                  <div class="panel-info" ng-class="{active: newAlias.type.name == type.name}">
-                    <div class="panel-content" style="text-align:center">
-                      <span style="font-size:30px;" class="glyphicon glyphicon-{{type.icon}}"></span>
-                      <div class="option-panel-title">{{type.name}}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-						</div>   
 						<!-- SECTION: Icon color -->   
             <div class="row animated" ng-class="{fadeInUp: color.show}" ng-if="color.show">
               <div class="col-md-12 side-menu-title">
@@ -434,58 +492,6 @@
                 </div>
               </div>
 						</div>
-						<!-- SECTION: Alias expression -->
-            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
-              <div class="col-md-12 side-menu-title">
-                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                  <span style="background-color:#e6edfa; padding: 0 10px;">
-                    <span class="fa fa-dot-circle-o"></span>
-                    <h2>Internal Hospital Code</h2>
-                  </span>  
-                </div>  
-              </div>
-            </div>   
-            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
-              <div class="col-md-12">
-                <p style="margin-bottom: 10px;">
-                  <span style="color:#d9534f"><strong>Required field:</strong></span>
-                  Please add internal hospital code alias.
-                </p>
-              </div>
-            </div>  
-            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show"> 
-              <div class="col-md-9">
-                <div class="panel" ng-class="checkTermsAdded(termList) ? 'panel-success': 'panel-danger'">
-                  <div class="panel-heading"><strong>Internal Hospital Code List</strong>
-                    <span ng-hide="checkTermsAdded(termList)" style="float:right"><em>Incomplete</em></span>
-                    <span ng-show="checkTermsAdded(termList)" style="float:right"><em>Complete</em></span>
-                  </div>
-                  <div class="panel-body">
-                    <div class="list-space" ng-show="newAlias.source_db && newAlias.type">
-                      <div class="input-group">
-                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                        <input class="form-control" type="text" ng-model="termFilter" ng-change="changeTermFilter(termFilter)" placeholder="Search Terms"/>
-                      </div>
-                 	  <div style="padding: 10px;">
-                        <label>
-                          <input type="checkbox" ng-click="selectAllFilteredTerms()"> Select All
-                        </label>
-                      </div>
-                      <ul class="list-items">
-                        <li ng-repeat="term in termList | filter: searchTermsFilter">
-                          <label>
-                            <input type="checkbox" ng-click="toggleTermSelection(term)" ng-checked="term.added" /> {{term.name}}
-                          </label>
-                        </li>
-                      </ul>
-                    </div>
-                    <div style="text-align:center" ng-hide="newAlias.source_db && newAlias.type">
-                      <h1>Please select a source database AND assign an internal hospital code type!</h1>
-                    </div>
-                  </div>
-                </div>
-              </div>
-						</div>   
 						<!-- END SECTION-->       
           </div>
         </div>

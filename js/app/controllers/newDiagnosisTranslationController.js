@@ -11,7 +11,7 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 		};
 
 		// Default boolean variables
-		var selectAll = false; // select All button checked?
+		$scope.selectAll = false; // select All button checked?
 		$scope.showAssigned = false;
 		$scope.hideAssigned = false;
 
@@ -244,7 +244,7 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 		// Function to assign search field when textbox changes
 		$scope.changeDiagnosisFilter = function (field) {
 			$scope.diagnosisFilter = field;
-			selectAll = false; // uncheck select all 
+			$scope.selectAll = false; // uncheck select all 
 		};
 
 		// Function for search through the diagnoses
@@ -264,18 +264,36 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 			return !$scope.eduMatFilter || keyword.test(edumat.name_EN);
 		};
 
+		// Function to enable "Show all" 
+		$scope.changeShowAssigned = function () {
+			$scope.showAssigned = true;
+			$scope.hideAssigned = false;
+		}
+
+		// Function to enable "Show only assigned" tab 
+		$scope.changeShowUnassigned = function () {
+			$scope.hideAssigned = true;
+			$scope.showAssigned = false;
+		}
+
+		// Function to enable "Show only unassigned" tab 
+		$scope.changeShowAll = function () {
+			$scope.showAssigned = false;
+			$scope.hideAssigned = false;
+		}
+
 		// Function for selecting all codes in the diagnosis list
 		$scope.selectAllFilteredDiagnoses = function () {
 
-			var filtered = $scope.filter($scope.diagnosisList, $scope.diagnosisFilter);
-			
-			if (selectAll) { // was checked
+			var filtered = $scope.filter($scope.diagnosisList, $scope.searchDiagnosesFilter);
+
+			if ($scope.selectAll) { // was checked
 				angular.forEach(filtered, function (diagnosis) {
 					// ignore assigned diagnoses
 					if (!diagnosis.assigned)
 						diagnosis.added = 0;
 				});
-				selectAll = false; // toggle off
+				$scope.selectAll = false; // toggle off
 
 				// Check if there are still terms added, if not, flag
 				if (!$scope.checkDiagnosesAdded($scope.diagnosisList)) {
@@ -301,7 +319,7 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 						diagnosis.added = 1;
 				});
 
-				selectAll = true; // toggle on
+				$scope.selectAll = true; // toggle on
 
 				// Check if there are still terms added, if not, flag
 				if (!$scope.checkDiagnosesAdded($scope.diagnosisList)) {
