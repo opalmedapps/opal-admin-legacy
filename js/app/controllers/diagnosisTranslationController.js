@@ -169,16 +169,19 @@ angular.module('opalAdmin.controllers.diagnosisTranslationController', ['ngAnima
 				return (!$scope.diagnosisFilter || keyword.test(Filter.name)) && (!$scope.showAssigned || Filter.assigned) && (!$scope.hideAssigned || !Filter.assigned);
 			};
 
+			// Function to enable "Show all" in diagnoses accordion
 			$scope.changeShowAssigned = function () {
 				$scope.showAssigned = true;
 				$scope.hideAssigned = false;
 			}
 
+			// Function to enable "Show only assigned" tab in diagnoses accordion
 			$scope.changeShowUnassigned = function () {
 				$scope.hideAssigned = true;
 				$scope.showAssigned = false;
 			}
 
+			// Function to enable "Show only unassigned" tab in diagnoses accordion
 			$scope.changeShowAll = function () {
 				$scope.showAssigned = false;
 				$scope.hideAssigned = false;
@@ -313,7 +316,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslationController', ['ngAnima
 			// Function for selecting all codes in the diagnosis list
 			$scope.selectAllFilteredDiagnoses = function () {
 
-				var filtered = $scope.filter($scope.diagnosisList, $scope.diagnosisFilter);
+				var filtered = $scope.filter($scope.diagnosisList, $scope.searchDiagnosesFilter);
 				
 				if ($scope.selectAll) { // was checked
 					angular.forEach(filtered, function (diagnosis) {
