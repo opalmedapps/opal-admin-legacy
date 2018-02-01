@@ -200,8 +200,14 @@ class PatientCheckInPushNotification{
         //======================================================
         $messageLabels = self::getNotificationMessage($type, $language);
 
+        $datetimestamp = "";
         // Get the date and time stamp of when the person checked in
-        $datetimestamp = date("H:i");
+        if ($language == "FR") {
+            $datetimestamp = date("H:i"); // "14:20"
+        }
+        else if ($language == "EN") {
+            $datetimestamp = date("g:i A"); // "3:14 AM"
+        }
 
         return array(
             "mtitle"=> $messageLabels["Name_".$language ],
