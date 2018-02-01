@@ -55,17 +55,17 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 		$scope.gridOptions = {
 			data: 'eduMatList',
 			columnDefs: [
-				{ field: 'name_EN', displayName: 'Name (EN / FR)', cellTemplate: cellTemplateName, width: '25%' },
-				{ field: 'rating', name: 'Avg Rating', cellTemplate: ratingCellTemplate, width: '10%', enableFiltering: false },
+				{ field: 'name_EN', displayName: 'Title (EN / FR)', cellTemplate: cellTemplateName, width: '25%' },
+				{ field: 'rating', name: 'Average Rating', cellTemplate: ratingCellTemplate, width: '10%', enableFiltering: false },
 				{ field: 'type_EN', displayName: 'Type (EN)', width: '15%' },
-				{ field: 'publish', displayName: 'Publish', width: '10%', cellTemplate: checkboxCellTemplate, enableFiltering: false },
+				{ field: 'publish', displayName: 'Publish Flag', width: '10%', cellTemplate: checkboxCellTemplate, enableFiltering: false },
 				{
-					field: 'phase_EN', displayName: 'Phase In Tx (EN)', width: '10%', filter: {
+					field: 'phase_EN', displayName: 'Phase In Treatment (EN)', width: '10%', filter: {
 						type: uiGridConstants.filter.SELECT,
 						selectOptions: [{ value: 'Prior To Treatment', label: 'Prior To Treatment' }, { value: 'During Treatment', label: 'During Treatment' }, { value: 'After Treatment', label: 'After Treatment' }]
 					}
 				},
-				{ field: 'lastupdated', displayName: 'Updated', width: '10%' },
+				{ field: 'lastupdated', displayName: 'Last Updated', width: '10%' },
 				{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false }
 			],
 			//useExternalFiltering: true,

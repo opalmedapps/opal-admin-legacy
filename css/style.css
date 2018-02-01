@@ -957,6 +957,18 @@ ul.no-list {
   color: #433061;
 }
 
+.greenText {
+  color: #5cb85c;
+}
+
+.redText {
+  color: #a94442;
+}
+
+.grayText {
+  color: #777;
+}
+
 /*.grid-disabled-row .ui-grid-cell-contents{
   background-color: #a5a5a5 !important;
 }*/
