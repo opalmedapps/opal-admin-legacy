@@ -20,6 +20,9 @@ class Alias {
         
         try {
 
+            // get already assigned expressions from our database
+            $assignedExpressions = $this->getAssignedExpressions($sourceDBSer, $expressionType);
+
             // ***********************************
             // ARIA 
             // ***********************************
@@ -46,10 +49,17 @@ class Alias {
 
                             $termName = $data[0];
                             $termArray = array(
-    				           	'name' => $termName,
-                                'id'   => $termName, 
-    			        	    'added'=> 'false'
+    				           	'name'      => $termName,
+                                'id'        => $termName, 
+    			        	    'added'     => 0,
+                                'assigned'  => null
     		    	        );
+
+                            $assignedExpression = $this->assignedSearch($termName, $assignedExpressions);
+                            if ($assignedExpression) {
+                                $termArray['added'] = 1;
+                                $termArray['assigned'] = $assignedExpression;
+                            }
 
                             array_push($expressionList, $termArray);
 
@@ -74,10 +84,17 @@ class Alias {
                             $termName = $data[0];
                                 
                             $termArray = array(
-    				           	'name' => $termName,
-                                'id'   => $termName,
-    			            	'added'=> 'false'
+    				           	'name'      => $termName,
+                                'id'        => $termName,
+    			            	'added'     => 0,
+                                'assigned'  => null
         			        );
+
+                            $assignedExpression = $this->assignedSearch($termName, $assignedExpressions);
+                            if ($assignedExpression) {
+                                $termArray['added'] = 1;
+                                $termArray['assigned'] = $assignedExpression;
+                            }
         
                             array_push($expressionList, $termArray);
                         }
@@ -116,8 +133,15 @@ class Alias {
                         $termArray = array(
     				       	'name'          => "$termName ($termDesc)",
                             'id'            => $termName,
-    			        	'added'         => 'false'
+    			        	'added'         => 0,
+                            'assigned'      => null
     			        );
+
+                        $assignedExpression = $this->assignedSearch($termName, $assignedExpressions);
+                        if ($assignedExpression) {
+                            $termArray['added'] = 1;
+                            $termArray['assigned'] = $assignedExpression;
+                        }
 
                         array_push($expressionList, $termArray);
                     }
@@ -155,6 +179,52 @@ class Alias {
 			return $expressionList;
 		}
 	}
+
+    /**
+     *
+     * Gets a list of already assigned expressions in our database
+     *
+     * @param int $sourceDBSer : the serial number of the source database
+     * @param string $expressionType : the type of expressions to look out for
+     * @return array $diagnoses : the list of diagnoses
+     */
+    public function getAssignedExpressions ($sourceDBSer, $expressionType) {
+        $expressions = array();
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
+                SELECT DISTINCT 
+                    ae.ExpressionName,
+                    Alias.AliasName_EN
+                FROM
+                    AliasExpression ae,
+                    Alias
+                WHERE
+                    ae.AliasSerNum = Alias.AliasSerNum
+                AND Alias.AliasType = '$expressionType'
+                AND Alias.SourceDatabaseSerNum = '$sourceDBSer'
+            ";
+
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $expressionDetails = array (
+                    'id'        => $data[0],
+                    'name_EN'   => "$data[1]"   
+                );
+                array_push($expressions, $expressionDetails);
+            }
+
+            return $expressions;
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return $expressions;
+        }
+
+    }
 
     /**
      *
@@ -327,7 +397,7 @@ class Alias {
 					$termName = $secondData[0];
 					$termArray = array(
 						'name' => $termName,
-						'added'=> 'true'
+						'added'=> 1
 					);
 
 					array_push($aliasTerms, $termArray);
@@ -438,7 +508,7 @@ class Alias {
 					$termName = $data[0];
 					$termArray = array(
 						'name' => $termName,
-						'added'=> 'true'
+						'added'=> 1
 					);
 
 					array_push($aliasTerms, $termArray);
@@ -763,6 +833,28 @@ class Alias {
 			return $sourceDBList;
 		}
 	}
+
+    /**
+     *
+     * Checks if an expression has been assigned to an alias
+     *
+     * @param string $id    : the needle id
+     * @param array $array  : the key-value haystack
+     * @return $assignedAlias
+     */
+    public function assignedSearch($id, $array) {
+        $assignedAlias = null;
+        if(empty($array) || !$id){
+            return $assignedAlias;
+        }
+        foreach ($array as $key => $val) {
+            if ($val['id'] === $id) {
+                $assignedAlias = $val;
+                return $assignedAlias;
+            }
+        }
+        return $assignedAlias;
+    }
 
 }
 ?>
