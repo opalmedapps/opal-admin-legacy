@@ -1,3 +1,16 @@
+Version 0.13.0:
+ -     --- Changed time format for check in notifications based on language
+ -     --- Added functionality to see assigned clinical codes         -- Already assigned clinical codes are disabled in the checkbox and shows         which alias it has been assigned to         -- Selected codes show up in green     --- Fixed filter bug when selecting all terms
+ -     --- Added display for assigned diagnoses         -- Diagnoses assigned to another translation will show up as gray and disabled         with information on which translation the diagnosis is assigned to         -- Selected diagnoses are in green     --- Added tabs to filter assigned diagnoses
+ -     --- Changed instances of "expression" or "terms" or "internal hospital code" to "Appointment/Task Code"     --- Added better legeability
+ -     --- Fixed typo in side menu     --- Fixed breadcrumb linking to the wrong pages
+ -     --- Removed seconds from the check in notification
+ -     --- Fixes issue of update button not getting enabled after editing test results
+ - --- Chages date time format of check in notification to use only time in 24 h
+ - Merge branch 'hotfix-0.12.8' into develop
+ -     --- Fixes syntax error on variable name that caused a crash on undefined object     --- Fixes issue where document could not be found because of blank spaces after the expression name
+ - Merge branch 'release-0.12.7' into develop
+
 Version 0.12.8:
  - Merge branch 'release-0.12.7'
  - Merge branch 'release-0.12.6'
