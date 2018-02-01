@@ -16,7 +16,7 @@
 						</div>
 						<!-- Breadcrumbs -->
 						<div class="col-md-3 title-breadcrumbs"> 
-							<span><a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Diagnosis Translation</strong></span>
+							<span><a ui-sref="home">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Diagnosis Translation</strong></span>
 						</div>
 					</div> 
 					<div class="row clearfix" style="margin-bottom: 10px; display:flex; align-items: center">
@@ -120,7 +120,7 @@
 				<div class="bs-callout bs-callout-info">
 					<h4>Currently assigned diagnoses</h4>
 					<ul class="list-items-4col">
-						<li ng-repeat="selectedDiagnosis in diagnosisList | filter: {added: 1} : 1">
+						<li ng-repeat="selectedDiagnosis in diagnosisList | filter: {added: 1, assigned: null}">
 							{{selectedDiagnosis.name}}
 						</li>
 					</ul>
@@ -131,10 +131,21 @@
 						<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
 						<input class="form-control" type="text" ng-model="diagnosisFilter" ng-change="changeDiagnosisFilter(diagnosisFilter)" placeholder="Search Diagnoses..."/>
 					</div>
+					<div style="padding: 10px;">
+            <label>
+              <input type="checkbox" ng-click="selectAllFilteredDiagnoses()" ng-checked="selectAll"> Select All
+            </label>
+          </div>
+					<div class="btn-group btn-group-justified">
+					  <a class="btn btn-default" ng-class="{'active' : !showAssigned && !hideAssigned}" ng-click="changeShowAll()">Show all</a>
+					  <a class="btn btn-default" ng-class="{'active' : showAssigned}" ng-click="changeShowAssigned()">Only show assigned</a>
+					  <a class="btn btn-default" ng-class="{'active' : hideAssigned}" ng-click="changeShowUnassigned()">Only show unassigned</a>
+					</div>
 					<ul class="list-items">
 						<li ng-repeat="diagnosis in diagnosisList | filter: searchDiagnosesFilter">
-							<label>
-								<input type="checkbox" ng-click="toggleDiagnosisSelection(diagnosis)" ng-checked="diagnosis.added" /> {{diagnosis.name}}
+							<label ng-class="{greenText: diagnosis.added, grayText: diagnosis.assigned}">
+								<input type="checkbox" ng-click="toggleDiagnosisSelection(diagnosis)" ng-checked="diagnosis.added" ng-disabled="diagnosis.assigned"/> {{diagnosis.name}}
+								<span ng-class="{redText: diagnosis.assigned}" ng-if="diagnosis.assigned"><em> --- Assigned to: {{diagnosis.assigned.name_EN}}</em></span>
 							</label>
 						</li>
 					</ul>

@@ -16,7 +16,7 @@
               </div>
               <!-- Breadcrumbs -->
               <div class="col-md-3 title-breadcrumbs"> 
-                <span><a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>TAD</strong></span>
+                <span><a ui-sref="home">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>TAD</strong></span>
               </div>
             </div> 
 						<div class="row clearfix" style="margin-bottom: 10px; display:flex; align-items: center">
@@ -94,6 +94,47 @@
       </div>
       <div class="modal-body">
         <uib-accordion>
+          <!-- SECTION: Assigned expressions -->
+          <div uib-accordion-group is-open="statusExpressions.open">
+            <uib-accordion-heading>
+              <div>
+                <strong>Assigned Clinical {{alias.type}} Code(s)</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusExpressions.open, 'glyphicon-chevron-right': !statusExpressions.open}"></i>
+              </div>
+            </uib-accordion-heading>
+            <div class="bs-callout bs-callout-info">
+              <h4>Current Assigned Code(s)</h4>
+              <ul class="list-items-4col">
+                <li ng-repeat="selectedTerm in termList | filter: {added: 1, assigned: null}">
+                  {{selectedTerm.name}}
+                </li>
+              </ul>
+              <p>To add/remove internal {{alias.type}} code, use the list below.</p>
+            </div>
+            <div class="list-space">
+              <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                <input class="form-control" type="text" ng-model="termFilter" ng-change="changeTermFilter(termFilter)" placeholder="Search..."/>
+              </div>
+              <div style="padding: 10px;">
+                <label>
+                  <input type="checkbox" ng-click="selectAllFilteredTerms()" ng-checked="selectAll"> Select All
+                </label>
+              </div>
+              <div class="btn-group btn-group-justified">
+                <a class="btn btn-default" ng-class="{'active' : !showAssigned && !hideAssigned}" ng-click="changeShowAll()">Show all</a>
+                <a class="btn btn-default" ng-class="{'active' : showAssigned}" ng-click="changeShowAssigned()">Only show assigned</a>
+                <a class="btn btn-default" ng-class="{'active' : hideAssigned}" ng-click="changeShowUnassigned()">Only show unassigned</a>
+              </div>
+              <ul class="list-items">
+                <li ng-repeat="term in termList | filter: searchTermsFilter">
+                  <label ng-class="{greenText: term.added, grayText: term.assigned}">
+                    <input type="checkbox" ng-click="toggleTermSelection(term)" ng-checked="term.added" ng-disabled="term.assigned"/> {{term.name}}
+                    <span ng-class="{redText: term.assigned}" ng-if="term.assigned"><em> --- Assigned to: {{term.assigned.name_EN}}</em></span>
+                  </label>
+                </li>
+              </ul>
+            </div>
+          </div>
           <!-- SECTION: Title -->
           <div uib-accordion-group is-open="statusTitle.open">
             <uib-accordion-heading>
@@ -248,36 +289,6 @@
                 </div>
               </div>   
             </div>      
-          </div>
-          <!-- SECTION: Assigned expressions -->
-          <div uib-accordion-group is-open="statusExpressions.open">
-            <uib-accordion-heading>
-              <div>
-                <strong>Internal Hospital Code</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusExpressions.open, 'glyphicon-chevron-right': !statusExpressions.open}"></i>
-              </div>
-            </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Internal Hospital Code</h4>
-              <ul class="list-items-4col">
-                <li ng-repeat="selectedTerm in termList | filter: {added: true} : true">
-                  {{selectedTerm.name}}
-                </li>
-              </ul>
-              <p>To add/remove internal hospital code, use the list below.</p>
-            </div>
-            <div class="list-space">
-              <div class="input-group">
-                <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                <input class="form-control" type="text" ng-model="termFilter" ng-change="changeTermFilter(termFilter)" placeholder="Search Terms..."/>
-              </div>
-              <ul class="list-items">
-                <li ng-repeat="term in termList | filter: searchTermsFilter">
-                  <label>
-                    <input type="checkbox" ng-click="toggleTermSelection(term)" ng-checked="term.added" /> {{term.name}}
-                  </label>
-                </li>
-              </ul>
-            </div>
           </div>
         </uib-accordion>
       </div>

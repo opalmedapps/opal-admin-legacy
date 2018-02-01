@@ -111,6 +111,9 @@ class Diagnosis {
             $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
             if ($source_db_link) {
 
+            	// get already assigned diagnoses from our database
+            	$assignedDiagnoses = $this->getAssignedDiagnoses();
+
 				$sql = "
 					SELECT DISTINCT
 						-- get min because for some reason there are multiple diagnosis ser for many codes
@@ -133,15 +136,28 @@ class Diagnosis {
 
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
+                	$sourceUID 		= $data[0];
+                	$diagnosisCode 	= $data[1];
+                	$description 	= $data[2];
+
                     $diagnosisDetails = array(
-                    	'sourceuid'		=> $data[0],
-                    	'code'			=> $data[1],
-                    	'description' 	=> $data[2],
-                        'name'      	=> "$data[1] ($data[2])",
-                        'added'     	=> 0
+                    	'sourceuid'		=> $sourceUID,
+                    	'code'			=> $diagnosisCode,
+                    	'description' 	=> $description,
+                        'name'      	=> "$diagnosisCode ($description)",
+                        'added'     	=> 0,
+                        'assigned'		=> null
                     );
+
+                    $assignedDiagnosis = $this->assignedSearch($sourceUID, $assignedDiagnoses);
+                    if ($assignedDiagnosis) {
+                    	$diagnosisDetails['added'] = 1;
+                    	$diagnosisDetails['assigned'] = $assignedDiagnosis;
+                    }
                     array_push($diagnoses, $diagnosisDetails);
                 }
+
+
 			}
 			
 			// ***********************************
@@ -183,9 +199,50 @@ class Diagnosis {
 
             }
 
-
             return $diagnoses;
+
   	  	} catch (PDOException $e) {
+            echo $e->getMessage();
+            return $diagnoses;
+		}
+	}
+
+	/**
+     *
+     * Gets a list of already assigned diagnoses in our database
+     *
+     * @return array $diagnoses : the list of diagnoses
+     */
+	public function getAssignedDiagnoses () {
+		$diagnoses = array();
+ 		try {
+			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$sql = "
+				SELECT DISTINCT 
+					dxc.SourceUID,
+					dxt.Name_EN
+				FROM 
+					DiagnosisCode dxc,
+					DiagnosisTranslation dxt
+				WHERE
+					dxt.DiagnosisTranslationSerNum = dxc.DiagnosisTranslationSerNum
+			";
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+	    	$query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+				$diagnosisDetails = array(
+					'sourceuid'		=> $data[0],
+					'name_EN' 		=> "$data[1]"
+                );
+				array_push($diagnoses, $diagnosisDetails);
+			}
+
+			return $diagnoses;
+
+		} catch (PDOException $e) {
             echo $e->getMessage();
             return $diagnoses;
 		}
@@ -492,6 +549,15 @@ class Diagnosis {
 	    try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$sql = "
+                DELETE FROM
+                    DiagnosisCode
+                WHERE
+                    DiagnosisCode.DiagnosisTranslationSerNum = $diagnosisTranslationSer
+            ";
+            $query = $host_db_link->prepare( $sql );
+			$query->execute();
+
             $sql = "
                 DELETE FROM
                     DiagnosisTranslation
@@ -501,15 +567,6 @@ class Diagnosis {
 
 	        $query = $host_db_link->prepare( $sql );
             $query->execute();
-
-            $sql = "
-                DELETE FROM
-                    DiagnosisCode
-                WHERE
-                    DiagnosisCode.DiagnosisTranslationSerNum = $diagnosisTranslationSer
-            ";
-            $query = $host_db_link->prepare( $sql );
-			$query->execute();
 
             $response['value'] = 1;
             return $response;
@@ -538,6 +595,28 @@ class Diagnosis {
             }
         }
         return 0;
+    }
+
+     /**
+     *
+     * Checks if a diagnosis has been assigned to a translation
+     *
+     * @param string $id    : the needle id
+     * @param array $array  : the key-value haystack
+     * @return $assignedDiagnosis
+     */
+    public function assignedSearch($id, $array) {
+    	$assignedDiagnosis = null;
+        if(empty($array) || !$id){
+            return $assignedDiagnosis;
+        }
+        foreach ($array as $key => $val) {
+            if ($val['sourceuid'] === $id) {
+            	$assignedDiagnosis = $val;
+                return $assignedDiagnosis;
+            }
+        }
+        return $assignedDiagnosis;
     }
 		
 }
