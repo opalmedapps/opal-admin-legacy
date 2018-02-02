@@ -719,8 +719,8 @@ ul.no-list {
 }
 
 .circle {
-  width: 140px;
-  height: 140px;
+  width: 110px;
+  height: 110px;
   background: #fff; 
   -moz-border-radius: 70px; 
   -webkit-border-radius: 70px; 
@@ -1301,6 +1301,13 @@ footer {
   margin-bottom: 10px;
 }
 
+.title-login {
+  text-align: center;
+}
+.title-login h1 {
+  font-size: 35px;
+}
+
 /* 
  * Custom Styles for ngGrid
  */
@@ -1327,6 +1334,15 @@ footer {
     font-size: 0.8em;
     line-height: 1.05em; }
 
+  .title-login h1 {
+    font-size: 45px;
+  }
+
+  .circle {
+    width: 140px;
+    height: 140px;
+  }
+
   
 }
 
@@ -1351,5 +1367,16 @@ footer {
 
 @media only screen and (min-width:1200px) {
 
+  .flex {
+    display:flex;
+    align-items: flex-end;
+  }
+
+  .title-login {
+    text-align: right;
+  }
+  .title-login h1 {
+    font-size: 55px;
+  }
 
 }
