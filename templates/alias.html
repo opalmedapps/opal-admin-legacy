@@ -60,19 +60,28 @@
   <!-- Delete alias modal template -->
   <script type="text/ng-template" id="deleteAliasModalContent.htm">
       <div class="modal-header">
-        <h2 class="modal-title">
-          <span class="glyphicon glyphicon-trash" style="font-size: 30px;"></span> 
-          Delete Alias: {{aliasToDelete.name_EN}} / {{aliasToDelete.name_FR}}
+        <h2 class="modal-title col-xs-12">
+          <span class="glyphicon glyphicon-trash"></span> 
+          Delete {{aliasToDelete.type}} 
         </h2>
+        <p class="modal-title-caption col-xs-12">
+          {{aliasToDelete.name_EN}} / {{aliasToDelete.name_FR}}
+        </p>
       </div>
       <div class="modal-body">
-        <div class="bs-callout bs-callout-danger">
-          <h4>TAD Delete</h4>
-          <p class="deleteText">Are you sure you want to delete the alias "{{aliasToDelete.name_EN}}" ?</p>
-          <form method="post" ng-submit="deleteAlias()">			
-            <input class="btn btn-primary" type="submit" value="Delete">
-            <input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
-          </form>
+        <div class="alert alert-danger" role="alert">
+          <strong>Delete {{aliasToDelete.type}}</strong><br>
+          <p>
+            Are you sure you want to delete the {{aliasToDelete.type}} "{{aliasToDelete.name_EN}}" ?
+          </p>
+        </div>
+        <div class="row">
+          <div class="modal-buttons col-xs-12">
+            <form method="post" ng-submit="deleteAlias()">			
+              <input class="btn btn-primary submit" type="submit" value="Delete">
+              <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+            </form>
+          </div>
         </div>
       </div>
     </script>
@@ -83,7 +92,7 @@
       <div class="modal-header">
         <h2 class="modal-title col-xs-12">
           <span class="glyphicon glyphicon-pencil"></span> 
-          Edit TAD
+          Edit {{alias.type}}
         </h2>
         <p class="modal-title-caption col-xs-12">
           {{alias.name_EN}} / {{alias.name_FR}}
@@ -106,14 +115,15 @@
                 <strong>Assigned Clinical {{alias.type}} Code(s)</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusExpressions.open, 'glyphicon-chevron-right': !statusExpressions.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Assigned Code(s)</h4>
-              <ul class="list-items-4col">
-                <li ng-repeat="selectedTerm in termList | filter: {added: 1, assigned: null}">
-                  {{selectedTerm.name}}
-                </li>
-              </ul>
-              <p>To add/remove internal {{alias.type}} code, use the list below.</p>
+            <div class="alert alert-info" role="alert">
+              <strong>Current Assigned Code(s)</strong><br>
+              <p>
+                <ul class="list-items">
+                  <li ng-repeat="selectedTerm in termList | filter: {added: 1, assigned: null}">
+                    {{selectedTerm.name}}
+                  </li>
+                </ul>
+              </p>
             </div>
             <div class="list-space">
               <div class="input-group">
@@ -152,13 +162,13 @@
               To change the current title(s), enter the new title(s) in the text box(es) below.
             </div>
             <div class="row">
-              <div class="col-xs-12 col-md-5" style="margin-bottom: 10px;">
+              <div class="col-xs-12 col-sm-6 col-md-5" style="margin-bottom: 10px;">
                 <div class="input-group">
                   <span class="input-group-addon">EN</span>
                   <input class="form-control" type="text" ng-model="alias.name_EN" ng-change="titleUpdate()" placeholder="English Title" required="required">
                 </div>
               </div>
-              <div class="col-xs-12 col-md-offset-1 col-md-5" style="margin-bottom: 10px;">
+              <div class="col-xs-12 col-sm-6 col-md-offset-1 col-md-5" style="margin-bottom: 10px;">
                 <div class="input-group">
                   <span class="input-group-addon">FR</span>
                   <input class="form-control" type="text" ng-model="alias.name_FR" ng-change="titleUpdate()" placeholder="Titre Français" required="required">
@@ -178,13 +188,13 @@
               To change the current description(s), enter the new description(s) in the text area(s) below.
             </div>
             <div class="row">
-              <div class="col-xs-12 col-md-6" style="margin-bottom: 10px;">
+              <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                 <div class="input-group">
                   <span class="input-group-addon">EN</span>
                   <textarea class="form-control" rows="5" ng-model="alias.description_EN" ng-change="descriptionUpdate()" placeholder="English Description" required="required"></textarea>
                 </div>
               </div>
-              <div class="col-xs-12 col-md-6" style="margin-bottom: 10px;">
+              <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                 <div class="input-group">
                   <span class="input-group-addon">FR</span>
                   <textarea class="form-control" rows="5" ng-model="alias.description_FR" ng-change="descriptionUpdate()" placeholder="Description Francais" required="required"></textarea>
@@ -207,7 +217,6 @@
                 <span ng-if="!alias.eduMat">None</span>
               </p>
             </div>
-            
             <div class="list-space">
               <div class="input-group">
                 <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
@@ -229,56 +238,32 @@
                 <strong>Color Tag</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusColorTag.open, 'glyphicon-chevron-right': !statusColorTag.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4 style="text-align: center">Current Color Tag</h4>
-              <div class="color-data">
-                <div class="color-picked">
-                  <div class="color-palette" ng-style="{'background-color': alias.color}"></div>
-                </div>
-                <div class="color-label hex">
-                  <h4>HEX</h4>
-                </div>
-                <div class="color-code">
-                  <h4>{{alias.color}}</h4>
-                </div>
-              </div>           
-            </div>
-            <div class="row" style="padding-top: 15px; border-top: solid 1px #ddd;">
-              <div class="col-md-4">
-                <div class="panel panel-default">
-                  <div class="panel-heading">Existing Colors</div>
-                  <table class="table table-condensed fixed-header">
-                    <tbody>
-                      <tr ng-repeat="existingColor in existingColorTags" class="color"> 
-                        <td class="color-picked">
-                          <div class="color-palette" ng-style="{'background-color': existingColor.color}" ng-click="colorUpdate(existingColor.color)"></div>
-                        </td>
-                        <td class="color-assignee">
-                          <h5>{{existingColor.name_EN}}</h5>
-                        </td>
-                        <td class="color-code">
-                          <h5>{{existingColor.color}}</h5>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <div class="col-md-8">
+            <div class="row" style="padding-top: 15px;">
+              <div class="col-xs-6">
                 <div class="color-picker">
                   <div class="cp-description">
                     <p class="cp-header">
-                      Choose an icon color.
-                    </p>
-                    <p class="cp-sub-header">
-                      Or select an existing color on the left.
+                      Choose an icon color
                     </p>
                   </div>  
                   <div class="cp-main">
                     <material-picker ng-model="alias.color" ng-click="colorUpdate()" format="'hex'" size="20" hover-model="hoverColor"></material-picker>
                   </div> 
                 </div>
-              </div>   
+              </div> 
+              <div class="col-xs-6">
+                <div class="color-data" style="height: 285px; line-height: 285px;">
+                  <div class="color-picked">
+                    <div class="color-palette" ng-style="{'background-color': alias.color}"></div>
+                  </div>
+                  <div class="color-label hex">
+                    <h4>HEX</h4>
+                  </div>
+                  <div class="color-code">
+                    <h4>{{alias.color}}</h4>
+                  </div>
+                </div>
+              </div>
             </div>      
           </div>
         </uib-accordion>
