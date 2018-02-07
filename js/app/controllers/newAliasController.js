@@ -515,10 +515,10 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 		    }
 		});
 
-		var fixmeTop2 = $('.mobile-side-panel-menu').offset().top;
+		var fixMeMobile = $('.mobile-side-panel-menu').offset().top;
 		$(window).scroll(function() {
 		    var currentScroll = $(window).scrollTop();
-		    if (currentScroll >= fixmeTop2) {
+		    if (currentScroll >= fixMeMobile) {
 		        $('.mobile-side-panel-menu').css({
 		            position: 'fixed',
 		            top: '50px',

@@ -636,6 +636,7 @@ ul.no-list {
 .login-title {
   text-align: center;
   font-size: 18px;
+  font-weight: 700;
 }
 .login-register-block-main {
   margin-bottom: 20px;
@@ -752,7 +753,7 @@ ul.no-list {
 
 .side-logo h1 {
   margin-top: -15px;
-  font-size: 35px;
+  font-size: 2vw;
 }
 
 .home-side-menu {
@@ -1007,8 +1008,19 @@ ul.no-list {
 }
 
 .side-panel-title {
-  font-size: 17px;
   padding-left: 10px;
+  font-size: 17px;
+}
+
+#side-panel-scrollbar .side-panel-title,
+.side-panel-info-sm .side-panel-title {
+  font-size: 1vw;
+  padding-left: 10px;
+}
+
+.home-side-panel .side-panel-title,
+.mobile-side-panel-menu .side-panel-title {
+  font-size: 16px;
 }
 
 .option-panel-title {
@@ -1513,13 +1525,21 @@ footer {
 }
 
 .home-menu .panel-content {
-  padding: 0;
+ /* padding: 0;*/
 }
 
 
 
 .home-main .side-logo {
   display: none;
+}
+
+.home-side-panel .side-panel-scroll {
+  display: block;
+}
+
+.home-main .side-navbar {
+  display: block;
 }
 
 /* 
@@ -1601,6 +1621,14 @@ footer {
     margin-bottom: 10px;
   }
 
+  .modal-header .modal-title {
+    font-size: 2.1vw;
+  }
+
+  .modal-header .modal-title-caption {
+    font-size: 1.7vw;
+  }
+
   
 }
 
@@ -1612,8 +1640,11 @@ footer {
   #copyright {
     float: left; }
 
+}
+
+@media only screen and (min-width: 992px) {
   .home-menu .panel-description {
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .home-menu .panel-title h1 {
@@ -1623,8 +1654,6 @@ footer {
   .home-menu .icon-home {
     font-size: 40px;
   }
-
-
 }
 
 @media only screen and (min-width:1200px) {
@@ -1685,11 +1714,11 @@ footer {
   }
 
   .home-menu .panel-title h1 {
-    font-size: 27px;
+    font-size: 1.6vw;
   }
 
   .home-menu .icon-home {
-    font-size: 50px;
+    font-size: 3vw;
   }
 
   .modal-header .modal-title {
