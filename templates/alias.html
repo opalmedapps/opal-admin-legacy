@@ -45,7 +45,7 @@
               <div class="panel-info">
                 <div class="panel-input">
                   <div id="data-table">
-                    <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns ui-grid-auto-resize style="height:75vh"></div>
+                    <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:75vh"></div>
                   </div>
                 </div>            
               </div>
@@ -157,10 +157,6 @@
                 <strong>Titles</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTitle.open, 'glyphicon-chevron-right': !statusTitle.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="modal-content-current-description bs-callout bs-callout-info">
-              <h4>Current Alias Titles (EN / FR): {{alias.name_EN}} / {{alias.name_FR}}</h4>
-              To change the current title(s), enter the new title(s) in the text box(es) below.
-            </div>
             <div class="row">
               <div class="col-xs-12 col-sm-6 col-md-5" style="margin-bottom: 10px;">
                 <div class="input-group">
