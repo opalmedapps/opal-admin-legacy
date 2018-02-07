@@ -11,7 +11,7 @@
                   <div class="logo">
                     <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
                   </div>
-                  <h1 class="animated fadeIn">opal <strong>ADMIN</strong> <span style="font-size: 20px;" ng-if="devMode">DEV</span></h1>
+                  <h1 class="animated fadeIn">opal <strong>ADMIN</strong></h1>
                 </div>
               </div>   
 						</div>
@@ -29,15 +29,17 @@
   								</div>
   							</div>
     						<!-- Summary -->
-                <div class="side-menu-title">
+                <div class="side-menu-title col-lg-12">
                   <div class="horz-line" style="height: 16px; text-align: center">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
                       <h2>Summary</h2>
                     </span>  
                   </div>  
                 </div>
-                <div class="progress progress-striped active col-xs-12 col-sm-offset-1 col-sm-5 col-lg-offset-0 col-lg-12">
-                  <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                <div class="col-xs-12 col-sm-offset-1 col-sm-5 col-lg-offset-0 col-lg-12">
+                  <div class="progress progress-striped active">
+                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                    </div>
                   </div>
                 </div>
               </div>
@@ -199,7 +201,7 @@
             </div>
 					</div>
 					<!-- Right detail panel view -->
-          <div class="col-xs-12 col-md-10 animated fadeInRight">
+          <div class="col-xs-12 col-lg-10 animated fadeInRight">
             <div class="main-title">
               <div class="row">
   							<!-- Page title -->
@@ -229,7 +231,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6">
+                <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkForm()">
                   <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
                     <span style="padding: 0 10px;">
                       <h2>Step {{numOfCompletedSteps}} of {{stepTotal}} Completed</h2>
@@ -238,6 +240,13 @@
                   <div class="progress progress-striped active">
                     <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
                     </div>
+                  </div>
+                </div>
+                <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkForm()">
+                  <div class="panel-container">
+                    <a href="" ng-click="submitAlias()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                      <span style="font-size: 20px;"><strong>Submit {{newAlias.type.name}}</strong></span>
+                    </a>
                   </div>
                 </div> 
               </div>
@@ -264,7 +273,7 @@
               </div>    
               <div class="row">
                 <div class="col-md-xs">
-                  <div ng-repeat="sourceDB in sourceDBList" class="col-xs-4 col-lg-3 item-panel-select"> 
+                  <div ng-repeat="sourceDB in sourceDBList" class="col-xs-4 col-lg-2 item-panel-select"> 
                     <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: newAlias.source_db.name == sourceDB.name}" ng-click="sourceDBUpdate(sourceDB)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
                       <div class="panel-info" ng-class="{active: newAlias.source_db.name == sourceDB.name}">
                         <div class="panel-content" style="text-align:center">
@@ -278,7 +287,7 @@
   						</div> 
               <!-- SECTION: Type -->
               <div class="row animated" ng-class="{fadeInUp: type.show}" ng-if="type.show">
-                <div class="col-md-12 side-menu-title">
+                <div class="col-xs-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
                       <span class="fa fa-dot-circle-o"></span>
@@ -288,7 +297,7 @@
                 </div>
               </div>   
               <div class="row animated" ng-class="{fadeInUp: type.show}" ng-if="type.show">
-                <div class="col-md-12">
+                <div class="col-xs-12">
                   <p style="margin-bottom: 10px;">
                     <span style="color:#d9534f"><strong>Required field:</strong></span>
                     Please select the alias type.
@@ -296,7 +305,7 @@
                 </div>
               </div>    
               <div class="row animated" ng-class="{fadeInUp: type.show}" ng-if="type.show">
-                <div ng-repeat="type in aliasTypes" class="col-md-2 item-panel-select"> 
+                <div ng-repeat="type in aliasTypes" class="col-xs-4 col-lg-2 item-panel-select"> 
                   <div class="panel-container animated" ng-style="{cursor: newAlias.source_db ? 'pointer' : ''}" ng-class="{pulse: hover && newAlias.source_db, active: newAlias.type.name == type.name, 'disabled': !newAlias.source_db}" ng-click="typeUpdate(type)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
                     <div class="panel-info" ng-class="{active: newAlias.type.name == type.name}">
                       <div class="panel-content" style="text-align:center">
@@ -309,7 +318,7 @@
               </div>  
               <!-- SECTION: Clinical codes -->
               <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
-                <div class="col-md-12 side-menu-title">
+                <div class="col-xs-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
                       <span class="fa fa-dot-circle-o"></span>
@@ -319,7 +328,7 @@
                 </div>
               </div>   
               <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
-                <div class="col-md-12">
+                <div class="col-xs-12">
                   <p style="margin-bottom: 10px;">
                     <span style="color:#d9534f"><strong>Required field:</strong></span>
                     Please assign clinical {{newAlias.type.name}} code(s).
@@ -327,7 +336,7 @@
                 </div>
               </div>  
               <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show"> 
-                <div class="col-md-9">
+                <div class="col-xs-12 col-lg-9">
                   <div class="panel" ng-class="checkTermsAdded(termList) ? 'panel-success': 'panel-danger'">
                     <div class="panel-heading"><strong>Clinical Codes</strong>
                       <span ng-hide="checkTermsAdded(termList)" style="float:right"><em>Incomplete</em></span>
@@ -367,7 +376,7 @@
               </div>   
   						<!-- SECTION: Title & description -->        
               <div class="row animated" ng-class="{fadeInUp: title_description.show}" ng-if="title_description.show">
-                <div class="col-md-12 side-menu-title">
+                <div class="col-xs-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
                       <span class="fa fa-dot-circle-o"></span>
@@ -377,7 +386,7 @@
                 </div>
               </div>   
               <div class="row animated" ng-class="{fadeInUp: title_description.show}" ng-if="title_description.show">
-                <div class="col-md-12">
+                <div class="col-xs-12">
                   <p style="margin-bottom: 10px;">
                     <span style="color:#d9534f"><strong>Required field:</strong></span>
                     Please assign an english and french title and description.
@@ -385,7 +394,7 @@
                 </div>
               </div>  
               <div class="row animated" ng-class="{fadeInUp: title_description.show}" ng-if="title_description.show"> 
-                <div class="col-md-6">
+                <div class="col-xs-12 col-md-6 col-lg-6">
                   <div class="panel" ng-class="(newAlias.name_EN && newAlias.description_EN) ? 'panel-success': 'panel-danger'">
                     <div class="panel-heading"><strong>English</strong>
                       <span ng-hide="newAlias.name_EN && newAlias.description_EN" style="float:right"><em>Incomplete</em></span>
@@ -393,25 +402,25 @@
                     </div>
                     <div class="panel-body form-horizontal">
                       <div class="form-group">
-                        <label class="control-label col-md-2">
+                        <label class="control-label col-xs-12 col-lg-2">
                           Title
                         </label>
-                        <div class="col-md-10">
+                        <div class="col-xs-12 col-lg-10">
                           <input class="form-control" type="text" ng-model="newAlias.name_EN" ng-change="titleDescriptionUpdate()" placeholder="English Title" required="required">
                         </div>
                       </div>    
                       <div class="form-group">
-                        <label class="control-label col-md-2">
+                        <label class="control-label col-xs-12 col-lg-2">
                           Description
                         </label>
-                        <div class="col-md-10">
+                        <div class="col-xs-12 col-lg-10">
                           <textarea class="form-control" rows="5" ng-model="newAlias.description_EN" ng-change="titleDescriptionUpdate()" placeholder="English Description" required="required"></textarea>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>          
-                <div class="col-md-6">
+                <div class="col-xs-12 col-md-6 col-lg-6">
                   <div class="panel" ng-class="(newAlias.name_FR && newAlias.description_FR) ? 'panel-success': 'panel-danger'">
                     <div class="panel-heading"><strong>Français</strong>
                       <span ng-hide="newAlias.name_FR && newAlias.description_FR" style="float:right"><em>Incomplete</em></span>
@@ -419,18 +428,18 @@
                     </div>
                     <div class="panel-body form-horizontal">
                       <div class="form-group">
-                        <label class="control-label col-md-2">
+                        <label class="control-label col-xs-12 col-lg-2">
                           Titre
                         </label>
-                        <div class="col-md-10">
+                        <div class="col-xs-12 col-lg-10">
                           <input class="form-control" type="text" ng-model="newAlias.name_FR" ng-change="titleDescriptionUpdate()" placeholder="Titre Français" required="required">
                         </div>
                       </div>    
                       <div class="form-group">
-                        <label class="control-label col-md-2">
+                        <label class="control-label col-xs-12 col-lg-2">
                           Description
                         </label>
-                        <div class="col-md-10">
+                        <div class="col-xs-12 col-lg-10">
                           <textarea class="form-control" rows="5" ng-model="newAlias.description_FR" ng-change="titleDescriptionUpdate()" placeholder="Description Français" required="required"></textarea>
                         </div>
                       </div>
@@ -440,7 +449,7 @@
   						</div>
   						<!-- SECTION: Educational material -->
               <div class="row animated" ng-class="{fadeInUp: edumat.show}" ng-if="edumat.show">
-                <div class="col-md-12 side-menu-title">
+                <div class="col-xs-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
                       <span class="fa fa-dot-circle-o"></span>
@@ -450,7 +459,7 @@
                 </div>
               </div>   
               <div class="row animated" ng-class="{fadeInUp: edumat.show}" ng-if="edumat.show">
-                <div class="col-md-12">
+                <div class="col-xs-12">
                   <p style="margin-bottom: 10px;">
                     <span><strong>Optional field:</strong></span>
                     Assigning an educational material will provide a rich-text description of the alias.
@@ -458,7 +467,7 @@
                 </div>
               </div>  
               <div class="row animated" ng-class="{fadeInUp: edumat.show}" ng-if="edumat.show"> 
-                <div class="col-md-8">
+                <div class="col-xs-12 col-lg-8">
                   <div class="panel-container">
                     <div class="panel-info">
                       <div class="panel-content">
@@ -484,7 +493,7 @@
   						</div>
   						<!-- SECTION: Icon color -->   
               <div class="row animated" ng-class="{fadeInUp: color.show}" ng-if="color.show">
-                <div class="col-md-12 side-menu-title">
+                <div class="col-xs-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
                       <span class="fa fa-dot-circle-o"></span>
@@ -494,7 +503,7 @@
                 </div>
               </div>   
               <div class="row animated" ng-class="{fadeInUp: color.show}" ng-if="color.show">
-                <div class="col-md-12">
+                <div class="col-xs-12">
                   <p style="margin-bottom: 10px;">
                     <span style="color:#d9534f"><strong>Required field:</strong></span>
                     Please select the icon color to be displayed.
@@ -502,7 +511,7 @@
                 </div>
               </div>  
               <div class="row animated" ng-class="{fadeInUp: color.show}" ng-if="color.show">
-                <div class="col-md-5">
+                <div class="col-xs-6">
                   <div class="panel-content">
                     <div class="panel-input">  
                       <div class="color-picker">
@@ -510,6 +519,19 @@
                           <material-picker ng-model="newAlias.color" format="'hex'" size="20" hover-model="hoverColor" ng-click="colorUpdate()"></material-picker>
                         </div>
                       </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="right-color-picker col-xs-6">
+                  <div ng-if="newAlias.color" class="color-data" style="height: 285px; line-height: 285px;">
+                    <div class="color-picked">
+                      <div class="color-palette" ng-style="{'background-color': newAlias.color}"></div>
+                    </div>
+                    <div class="color-label hex">
+                      <h4>HEX</h4>
+                    </div>
+                    <div class="color-code">
+                      <h4>{{newAlias.color}}</h4>
                     </div>
                   </div>
                 </div>
