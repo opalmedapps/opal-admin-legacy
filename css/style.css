@@ -679,19 +679,19 @@ ul.no-list {
 }
 
 /* Turn on custom 8px wide scrollbar */
-#side-panel-scroll::-webkit-scrollbar {
+#side-panel-scrollbar #side-panel-scroll::-webkit-scrollbar {
   width: 10px; /* 1px wider than Lion. */
   /* This is more usable for users trying to click it. */
   background-color: rgba(0,0,0,0);
   -webkit-border-radius: 100px;
 }
 /* hover effect for both scrollbar area, and scrollbar 'thumb' */
-#side-panel-scroll::-webkit-scrollbar:hover {
+#side-panel-scrollbar #side-panel-scroll::-webkit-scrollbar:hover {
   background-color: rgba(0, 0, 0, 0.09);
 }
  
 /* The scrollbar 'thumb' ...that marque oval shape in a scrollbar */
-#side-panel-scroll::-webkit-scrollbar-thumb:vertical {
+#side-panel-scrollbar #side-panel-scroll::-webkit-scrollbar-thumb:vertical {
   /* This is the EXACT color of Mac OS scrollbars. 
      Yes, I pulled out digital color meter */
   background: rgba(255,255,244,1);
@@ -700,9 +700,18 @@ ul.no-list {
   border: 2px solid rgba(0, 0, 0, 0);
   min-height: 10px; /*Prevent it from getting too small */
 }
-#side-panel-scroll::-webkit-scrollbar-thumb:vertical:active {
+#side-panel-scrollbar #side-panel-scroll::-webkit-scrollbar-thumb:vertical:active {
   background: rgba(255,255,244,1); /* Some darker color when you click it */
   -webkit-border-radius: 100px;
+}
+
+#side-panel-scrollbar #side-panel-scroll {
+  overflow-y: auto; 
+  max-height: 80vh;
+}
+
+#side-panel-scrollbar {
+  display: none;
 }
 
 #gradient {
@@ -1058,6 +1067,7 @@ ol, ul {
 
 .mobile-summary {
   margin-top: 10px;
+  margin-bottom: 10px;
 }
 .mobile-summary h2 {
   display: inline;
@@ -1338,15 +1348,19 @@ footer {
   font-size: 35px;
 }
 
-.main-menu .panel-description {
+.home-menu {
   display: none;
 }
 
-.main-menu .panel-info {
-  height: 100px;
+.home-menu .panel-description {
+  display: none;
 }
 
-.main-menu .icon-home {
+.home-menu .panel-info {
+  height: 60px;
+}
+
+.home-menu .icon-home {
   font-size: 50px;
 }
 
@@ -1478,6 +1492,36 @@ footer {
   display: none;
 }
 
+.form-horizontal .control-label {
+  text-align: left;
+}
+
+.operations {
+  
+}
+
+.operations .save-add {
+  margin-bottom: 10px;
+}
+
+.operations .search {
+  margin-bottom: 10px;
+}
+
+.home-logo {
+  display: none;
+}
+
+.home-menu .panel-content {
+  padding: 0;
+}
+
+
+
+.home-main .side-logo {
+  display: none;
+}
+
 /* 
  * Custom Styles for ngGrid
  */
@@ -1513,16 +1557,24 @@ footer {
     height: 140px;
   }
 
-  .main-menu .panel-description {
+  .home-menu {
+    display: block;
+  }
+
+  .home-menu .panel-description {
     display: block;
   }
   
-  .main-menu .panel-info {
+  .home-menu .panel-info {
     height: 180px;
   }
 
-  .main-menu .icon-home {
+  .home-menu .icon-home {
     font-size: 50px;
+  }
+
+  .home-side-panel {
+    display: none;
   }
 }
 
@@ -1543,6 +1595,12 @@ footer {
     margin-top: 0;
   }
 
+  .operations {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
   
 }
 
@@ -1553,6 +1611,18 @@ footer {
 
   #copyright {
     float: left; }
+
+  .home-menu .panel-description {
+    font-size: 12px;
+  }
+
+  .home-menu .panel-title h1 {
+    font-size: 20px;
+  }
+
+  .home-menu .icon-home {
+    font-size: 40px;
+  }
 
 
 }
@@ -1575,7 +1645,7 @@ footer {
     display: none;
   }
 
-  .side-navbar, .summary-fix {
+ .side-navbar, .summary-fix {
     display: block;
   }
 
@@ -1591,6 +1661,53 @@ footer {
 
   .editUserModal .modal-dialog {
     width: 50% !important;
+  }
+
+  .mobile-side-panel-menu,
+  .mobile-summary {
+    display: none;
+  }
+
+  .right-color-picker {
+    display: none;
+  }
+
+  .home-logo {
+    display: block;
+  }
+
+  #side-panel-scrollbar {
+    display: block;
+  }
+
+  .home-menu .panel-description {
+    font-size: initial;
+  }
+
+  .home-menu .panel-title h1 {
+    font-size: 27px;
+  }
+
+  .home-menu .icon-home {
+    font-size: 50px;
+  }
+
+  .modal-header .modal-title {
+    font-size: 27px;
+  }
+
+  .modal-header .modal-title-caption {
+    font-size: 18px;
+  }
+
+  .modal-header .modal-buttons {
+    text-align: center;
+  }
+
+  .modal-buttons .submit,
+  .modal-buttons .cancel {
+    float: none;
+    width: 160px;
   }
 
 }
