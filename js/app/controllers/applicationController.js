@@ -12,8 +12,6 @@ angular.module('opalAdmin.controllers.applicationController', ['ui.bootstrap', '
 
 		$rootScope.siteLanguage = null;
 
-		$rootScope.devMode = DEV_MODE; // constant fron config.js
-		
 		// Set the site language
 		$rootScope.setSiteLanguage = function (user) {
 			$rootScope.siteLanguage = user.language;
@@ -22,6 +20,7 @@ angular.module('opalAdmin.controllers.applicationController', ['ui.bootstrap', '
 
 		$scope.userRoles = USER_ROLES;
 		$scope.isAuthorized = AuthService.isAuthorized;
+		$scope.isAuthenticated = AuthService.isAuthenticated;
 
 		// Function to close idle modal
 		function closeIdleModal() {

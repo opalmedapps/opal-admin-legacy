@@ -3,14 +3,14 @@
       <div class="clearfix">
         <div class="row">
           <!-- Load side menu -->
-          <div class="col-md-2">
+          <div id="side-panel-scrollbar" class="col-lg-2">
             <div ng-include="'templates/side-panel-menu.html'"></div>
           </div>
           <!-- Right details panel view -->
-          <div class="col-md-10 animated fadeIn">
+          <div class="col-lg-10 animated fadeIn">
             <div class="row main-title">
               <!-- Page title -->
-              <div class="col-md-9 title-content">
+              <div class="col-xs-12 col-md-9 title-content">
                 <span class="glyphicon glyphicon-comment"></span>
                 <h1><strong>Posts</strong></h1>
               </div>
@@ -19,8 +19,8 @@
                 <span><a ui-sref="home">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Posts</strong></span>
               </div>
             </div> 
-						<div class="row clearfix" style="margin-bottom: 10px; display:flex; align-items: center">
-							<div class="col-md-8">
+						<div class="row clearfix operations">
+							<div class="save-add col-xs-12 col-sm-6 col-md-8">
                 <!-- Add button -->
 								<a style="width:100px;margin-right:20px;" href="" ng-click="goToAddPost()" class="btn btn-md btn-outline item-button">
 									<span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
@@ -33,7 +33,7 @@
 								</a>
               </div>
               <!-- Search field -->
-							<div class="col-md-4">
+							<div class="search col-xs-12 col-sm-6 col-md-4">
 								<div class="form-group has-feedback" style="margin-bottom: 0">
 								<input type="text" class="form-control" ng-model="filterValue" ng-change="filterPost(filterValue)" placeholder="Search...">
 									<span class="glyphicon glyphicon-search form-control-feedback"></span>
@@ -61,19 +61,28 @@
   <!-- Delete post modal template -->
   <script type="text/ng-template" id="deletePostModalContent.htm">
       <div class="modal-header">
-        <h2 class="modal-title">
-          <span class="glyphicon glyphicon-trash" style="font-size: 30px;"></span> 
-          Delete Post: {{postToDelete.name_EN}} / {{postToDelete.name_FR}}
+        <h2 class="modal-title col-xs-12">
+          <span class="glyphicon glyphicon-trash"></span> 
+          Delete Post 
         </h2>
+        <p class="modal-title-caption col-xs-12">
+          {{postToDelete.name_EN}} / {{postToDelete.name_FR}}
+        </p>
       </div>
       <div class="modal-body">
-        <div class="bs-callout bs-callout-danger">
-          <h4>Post Delete</h4>
-          <p class="deleteText">Are you sure you want to delete the post "{{postToDelete.name_EN}}" ?</p>
-          <form method="post" ng-submit="deletePost()">			
-            <input class="btn btn-primary" type="submit" value="Delete">
-            <input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
-          </form>
+        <div class="alert alert-danger" role="alert">
+          <strong>Delete Post</strong><br>
+          <p>
+            Are you sure you want to delete the post "{{postToDelete.name_EN}}" ?
+          </p>
+        </div>
+        <div class="row">
+          <div class="modal-buttons col-xs-12">
+            <form method="post" ng-submit="deletePost()">      
+              <input class="btn btn-primary submit" type="submit" value="Delete">
+              <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+            </form>
+          </div>
         </div>
       </div>
     </script>
@@ -82,16 +91,21 @@
     <script type="text/ng-template" id="editPostModalContent.htm">
       <!-- Modal title -->
       <div class="modal-header">
-        <h2 class="modal-title">
-          <span class="glyphicon glyphicon-pencil" style="font-size: 30px;"></span> 
-          Edit Post: {{post.name_EN}} / {{post.name_FR}}
-          <span style="float:right;"> 
-            <form method="post" ng-submit="updatePost()">
-              <input class="btn btn-primary" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
-              <input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
-            </form>
-          </span>      
+        <h2 class="modal-title col-xs-12">
+          <span class="glyphicon glyphicon-pencil"></span> 
+          Edit Post 
         </h2>
+        <p class="modal-title-caption col-xs-12">
+          {{post.name_EN}} / {{post.name_FR}}
+        </p>
+        <div class="modal-buttons col-xs-12">
+          <span> 
+            <form method="post" ng-submit="updatePost()">
+              <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
+              <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+            </form>
+          </span>
+        </div>      
       </div>
       <div class="modal-body">
         <uib-accordion>
@@ -102,19 +116,14 @@
                 <strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTitle.open, 'glyphicon-chevron-right': !statusTitle.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Post Titles (EN / FR): {{post.name_EN}} / {{post.name_FR}}</h4>
-              To change the current title(s), enter the new title(s) in the text box(es) below.
-            </div>
             <div class="row">
-              <div class="col-md-5">
+              <div class="col-xs-12 col-sm-6 col-md-5" style="margin-bottom: 10px;">
                 <div class="input-group">
                   <span class="input-group-addon">EN</span>
                   <input class="form-control" type="text" ng-model="post.name_EN" ng-change="setChangesMade()" placeholder="English Title" required="required">
                 </div>
               </div>
-              <div class="col-md-1"></div>
-              <div class="col-md-5">
+              <div class="col-xs-12 col-sm-6 col-md-offset-1 col-md-5" style="margin-bottom: 10px;">
                 <div class="input-group">
                   <span class="input-group-addon">FR</span>
                   <input class="form-control" type="text" ng-model="post.name_FR" ng-change="setChangesMade()" placeholder="Titre Français" required="required">
@@ -131,15 +140,15 @@
               </div>
             </uib-accordion-heading>
             <div class="row">
-              <div class="col-md-8">
+              <div class="col-xs-12 col-lg-8">
                 <div style="text-align:center;">
-                  <span style="font-size:20px;">HTML</span>
+                  <span style="font-size:20px;">HTML (English)</span>
                 </div>
                 <div class="form-group">
                   <div text-angular ng-model="post.body_EN" ng-change="setChangesMade()"></div>
                 </div>
               </div>
-              <div class="col-md-4">
+              <div class="col-xs-12 col-lg-4">
                 <div style="text-align:center;">
                   <span style="font-size:20px;">iPhone 4 Rendered</span>
                 </div>
@@ -152,15 +161,15 @@
               <div style="min-height: 15px;"></div><hr>
             </div>
             <div class="row">  
-              <div class="col-md-8">
+              <div class="col-xs-12 col-lg-8">
                 <div style="text-align:center;">
-                  <span style="font-size:20px;">HTML</span>
+                  <span style="font-size:20px;">HTML (Français) </span>
                 </div>
                 <div class="form-group">
                   <div text-angular ng-model="post.body_FR" ng-change="setChangesMade()"></div>
                 </div>
               </div>
-              <div class="col-md-4">
+              <div class="col-xs-12 col-lg-4">
                 <div style="text-align:center;">
                   <span style="font-size:20px;">iPhone 4 Rendered</span>
                 </div>
@@ -172,22 +181,23 @@
           </div>
 
           <!-- SECTION: Publish date -->
-          <div uib-accordion-group is-open="statusPublishDate.open" ng-show="post.type == 'Announcement'">
+          <div uib-accordion-group is-open="statusPublishDate.open" ng-if="post.type == 'Announcement'">
             <uib-accordion-heading>
               <div>
                 <strong>Publish Date </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusPublishDate.open, 'glyphicon-chevron-right': !statusPublishDate.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Publish Date:
+            <div class="alert alert-info" role="alert">
+              <strong>Current Publish Date</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                 <span ng-hide="post.publish_date && post.publish_time"> NONE</span>
                 <span ng-show="post.publish_date && post.publish_time">
                   {{post.publish_date | date:'fullDate'}} at {{post.publish_time | date:'HH:mm'}}
-              </h4>
-              To change the publish date, use the fields below.
+              </p>
             </div>
             <div class="row">
-              <div class="col-md-6" style="padding-top: 10px;">
+              <div class="col-xs-12 col-sm-7 col-lg-6" style="padding-top: 10px;margin-bottom: 20px;">
                 <p class="input-group">
                   <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="post.publish_date" is-open="popup.opened" min="minDate" ng-change="setChangesMade()" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
                   <span class="input-group-btn">
@@ -195,7 +205,7 @@
                   </span>
                 </p>
               </div>
-              <div class="col-md-6" style="margin-top: -24px;">
+              <div class="col-xs-12 col-sm-5 col-lg-6" style="margin-top: -24px;">
                 <div>
                   <div uib-timepicker ng-change="setChangesMade()" ng-model="post.publish_time" minute-step="5" show-meridian="false"></div>
                 </div>
@@ -210,17 +220,17 @@
                 <strong>Filter By Patient </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusPatientFilter.open, 'glyphicon-chevron-right': !statusPatientFilter.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Patient Filters</h4>
-              <ul class="list-items-4col">
-                <li ng-show="allFilters(patientFilterList)">
-                  No Filter
-                </li>  
-                <li ng-repeat="patient in patientFilterList | filter: {added: 1} : 1" ng-hide="allFilters(patientFilterList)">
-                  {{patient.name}}
-                </li>
-              </ul>
-              <p>To add/remove patient filter, use the list below.</p>
+            <div class="alert alert-info" role="alert">
+              <strong>Current Patient Filters</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(patientFilterList)"></span>
+                <span ng-if="allFilters(patientFilterList)">No filter</span>
+                <ul class="list-items" ng-if="!allFilters(patientFilterList)">
+                  <li ng-repeat="patient in patientFilterList | filter: {added: 1} : 1">
+                    {{patient.name}}
+                  </li>
+                </ul>
+              </p>
             </div>
             <div class="list-space">
               <div class="input-group">
