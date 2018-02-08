@@ -1739,4 +1739,8 @@ footer {
     width: 160px;
   }
 
+  .questionnaire-main .side-logo {
+    display: block;
+  }
+
 }
