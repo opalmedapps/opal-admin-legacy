@@ -1,16 +1,20 @@
 <div id="main">
-	<div id="top">
+	<div id="top" class="home-main questionnaire-main">
 		<div class="clearfix">
       <!-- Load side menu -->
 			<div class="row">
-				<div class="col-md-2">
+				<!-- Load side menu -->
+        <div class="home-side-panel col-xs-12">
+          <div ng-include="'templates/questionnaire-side-menu.html'"></div>
+        </div>
+				<div id="side-panel-scrollbar" class="col-lg-2">
       		<div ng-include="'templates/side-panel-menu.html'"></div>
     		</div>
         <!-- Right side view -->
-    		<div class="col-md-10 animated fadeIn">
+    		<div class="col-lg-10 animated fadeIn home-menu">
           <div class="row main-title">
             <!-- Page title -->
-            <div class="col-md-9 title-content">
+            <div class="col-xs-12 col-md-9 title-content">
               <span class="fa fa-pencil-square-o"></span>
               <h1><strong>Questionnaires</strong></h1>
             </div>
@@ -22,7 +26,7 @@
 
           <!-- Panel Menu -->
           <div class="row" style="text-align:left;">
-          	<div class="col-md-12 side-menu-title">
+          	<div class="col-xs-12 side-menu-title">
               <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                 <span style="background-color:#e6edfa; padding: 0 10px;">
                   <span class="glyphicon glyphicon-menu-down"></span>
@@ -35,12 +39,12 @@
 
 	        <div class="row">
           	<!-- Questionnaire -->
-          	<div class="col-md-4">
+          	<div class="col-xs-12 col-sm-6 col-md-4">
           		<div class="panel-container animated" ng-class="{pulse: hoverManageQuestionnaires}" ng-mouseenter="hoverManageQuestionnaires=true" ng-mouseleave="hoverManageQuestionnaires=false" style="cursor:pointer;" ng-click="goToQuestionnaire()">
-								<div class="panel-info" style="height: 180px;">
+								<div class="panel-info">
 									<div class="panel-content">
 										<div class="icon-home clearfix">
-											<span style="font-size: 50px;" class="fa fa-pencil" aria-hidden="true"></span>
+											<span class="fa fa-pencil" aria-hidden="true"></span>
 										</div>
 										<div class="panel-title">  
 											<h1>Manage Questionnaires</h1>
@@ -54,12 +58,12 @@
           	</div>
 
           	<!-- View/Edit Question Bank -->
-          	<div class="col-md-4">
+          	<div class="col-xs-12 col-sm-6 col-md-4">
           		<div class="panel-container animated" ng-class="{pulse: hoverQuestionBank}" ng-mouseenter="hoverQuestionBank=true" ng-mouseleave="hoverQuestionBank=false" style="cursor:pointer;" ng-click="goToQuestionnaireQuestionBank()">
-								<div class="panel-info" style="height: 180px;">
+								<div class="panel-info">
 									<div class="panel-content">
 										<div class="icon-home clearfix">
-											<span style="font-size: 50px;" class="fa fa-search" aria-hidden="true"></span>
+											<span class="fa fa-search" aria-hidden="true"></span>
 										</div>
 										<div class="panel-title">  
 											<h1>Manage Question Bank</h1>
@@ -73,12 +77,12 @@
           	</div>
 
           	<!-- View Completed Questionnaire -->
-          	<div class="col-md-4">
+          	<div class="col-xs-12 col-sm-6 col-md-4">
           		<div class="panel-container animated" ng-class="{pulse: hoverCompletedQuestionnaire}" ng-mouseenter="hoverCompletedQuestionnaire=true" ng-mouseleave="hoverCompletedQuestionnaire=false" style="cursor:pointer;" ng-click="goToQuestionnaireCompleted()">
-								<div class="panel-info" style="height: 180px;">
+								<div class="panel-info">
 									<div class="panel-content">
 										<div class="icon-home clearfix">
-											<span style="font-size: 50px;" class="fa fa-check" aria-hidden="true"></span>
+											<span class="fa fa-check" aria-hidden="true"></span>
 										</div>
 										<div class="panel-title">  
 											<h1>Completed Questionnaires</h1>
