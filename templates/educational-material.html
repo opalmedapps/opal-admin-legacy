@@ -3,14 +3,14 @@
       <div class="clearfix">
         <div class="row">
           <!-- Load side menu -->
-          <div class="col-md-2">
+          <div id="side-panel-scrollbar" class="col-lg-2">
             <div ng-include="'templates/side-panel-menu.html'"></div>
           </div>
           <!-- Right side detail view -->
-          <div class="col-md-10 animated fadeIn">
+          <div class="col-lg-10 animated fadeIn">
             <div class="row main-title">
               <!-- Page title -->
-              <div class="col-md-9 title-content">
+              <div class="col-xs-12 col-md-9 title-content">
                 <span class="glyphicon glyphicon-book"></span>
                 <h1><strong>Educational Material</strong></h1>
               </div>
@@ -19,8 +19,8 @@
                 <span><a ui-sref="home">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Edu Material</strong></span>
               </div>
             </div> 
-						<div class="row clearfix" style="margin-bottom: 10px;display:flex; align-items: center">
-							<div class="col-md-8">
+						<div class="row clearfix operations">
+							<div class="save-add col-xs-12 col-sm-6 col-md-8">
                 <!-- Add button -->
 								<a style="width:100px;margin-right:20px;" href="" ng-click="goToAddEducationalMaterial()" class="btn btn-md btn-outline item-button">
 									<span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
@@ -33,7 +33,7 @@
 								</a>
               </div>
               <!-- Search field -->
-							<div class="col-md-4">
+							<div class="search col-xs-12 col-sm-6 col-md-4">
 								<div class="form-group has-feedback" style="margin-bottom: 0">
 								<input type="text" class="form-control" ng-model="filterValue" ng-change="filterEduMat(filterValue)" placeholder="Search...">
 									<span class="glyphicon glyphicon-search form-control-feedback"></span>
@@ -60,19 +60,28 @@
   <!-- Delete education material template -->
   <script type="text/ng-template" id="deleteEduMatModalContent.htm">
       <div class="modal-header">
-        <h2 class="modal-title">
-          <span class="glyphicon glyphicon-trash" style="font-size: 30px;"></span> 
-          Delete Educational Material: {{eduMatToDelete.name_EN}} / {{eduMatToDelete.name_FR}}
+        <h2 class="modal-title col-xs-12">
+          <span class="glyphicon glyphicon-trash"></span> 
+            Delete Educational Material 
         </h2>
+        <p class="modal-title-caption col-xs-12">
+          {{eduMatToDelete.name_EN}} / {{eduMatToDelete.name_FR}}
+        </p>
       </div>
       <div class="modal-body">
-        <div class="bs-callout bs-callout-danger">
-          <h4>Educational Material Delete</h4>
-          <p class="deleteText">Are you sure you want to delete the Educational Material "{{eduMatToDelete.name_EN}}" ?</p>
-          <form method="post" ng-submit="deleteEducationalMaterial()">			
-            <input class="btn btn-primary" type="submit" value="Delete">
-            <input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
-          </form>
+         <div class="alert alert-danger" role="alert">
+          <strong>Delete Educational Material</strong><br>
+          <p>
+            Are you sure you want to delete the educational material "{{eduMatToDelete.name_EN}}" ?
+          </p>
+        </div>
+        <div class="row">
+          <div class="modal-buttons col-xs-12">
+            <form method="post" ng-submit="deleteEducationalMaterial()">      
+              <input class="btn btn-primary submit" type="submit" value="Delete">
+              <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+            </form>
+          </div>
         </div>
       </div>
     </script>
@@ -81,16 +90,22 @@
     <script type="text/ng-template" id="editEduMatModalContent.htm">
       <!-- Modal title -->
       <div class="modal-header">
-        <h2 class="modal-title">
-          <span class="glyphicon glyphicon-pencil" style="font-size: 30px;"></span> 
-          Edit Educational Material: {{eduMat.name_EN}} / {{eduMat.name_FR}}
+        <h2 class="modal-title col-xs-12">
+          <span class="glyphicon glyphicon-pencil"></span> 
+            Edit Educational Material 
           <span style="float:right;"> 
-            <form method="post" ng-submit="updateEduMat()">
-              <input class="btn btn-primary" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
-              <input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
-            </form>
-          </span>      
         </h2>
+        <p class="modal-title-caption col-xs-12">
+          {{eduMat.name_EN}} / {{eduMat.name_FR}}
+        </p>
+        <div class="modal-buttons col-xs-12">
+          <span> 
+            <form method="post" ng-submit="updateEduMat()">
+              <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
+              <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+            </form>
+          </span>
+        </div>
       </div>
       <div class="modal-body">
         <div class="bannerMessageModal alert-success">{{bannerMessageModal}}</div>
@@ -102,19 +117,14 @@
                 <strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTitle.open, 'glyphicon-chevron-right': !statusTitle.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Educational Material Titles (EN / FR): {{eduMat.name_EN}} / {{eduMat.name_FR}}</h4>
-              To change the current title(s), enter the new title(s) in the text box(es) below.
-            </div>
             <div class="row">
-              <div class="col-md-5">
+              <div class="col-xs-12 col-sm-6 col-md-5" style="margin-bottom: 10px;">
                 <div class="input-group">
                   <span class="input-group-addon">EN</span>
                   <input class="form-control" type="text" ng-model="eduMat.name_EN" ng-change="setChangesMade()" placeholder="English Title" required="required">
                 </div>
               </div>
-              <div class="col-md-1"></div>
-              <div class="col-md-5">
+              <div class="col-xs-12 col-sm-6 col-md-offset-1 col-md-5" style="margin-bottom: 10px;">
                 <div class="input-group">
                   <span class="input-group-addon">FR</span>
                   <input class="form-control" type="text" ng-model="eduMat.name_FR" ng-change="setChangesMade()" placeholder="Titre Français" required="required">
@@ -129,19 +139,27 @@
                 <strong>URLs</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusURL.open, 'glyphicon-chevron-right': !statusURL.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Educational Material URLs (EN / FR): {{eduMat.url_EN}} / {{eduMat.url_FR}}</h4>
-              To change the current URL(s), enter the new URL(s) in the text box(es) below.
+            <div class="alert alert-info" role="alert">
+              <strong>Current URLs</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                <span style="word-wrap: break-word">
+                  <strong>EN </strong> -- {{eduMat.url_EN}} <br> 
+                </span>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                <span style="word-wrap: break-word">
+                  <strong>FR </strong> -- {{eduMat.url_FR}}
+                </span>
+              </p>
             </div>
             <div class="row">
-              <div class="col-md-5">
+              <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                 <div class="input-group">
                   <span class="input-group-addon">EN</span>
                   <input class="form-control" type="text" ng-model="eduMat.url_EN" ng-change="setChangesMade()" placeholder="English URL" required="required">
                 </div>
               </div>
-              <div class="col-md-1"></div>
-              <div class="col-md-5">
+              <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                 <div class="input-group">
                   <span class="input-group-addon">FR</span>
                   <input class="form-control" type="text" ng-model="eduMat.url_FR" ng-change="setChangesMade()" placeholder="URL Français" required="required">
@@ -156,14 +174,11 @@
                 <strong>Table of Contents</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTOC, 'glyphicon-chevron-right': !statusTOC}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              To change edit the TOC(s), modify the text field(s) below.    
-            </div>
             <div class="row" ng-repeat="toc in eduMat.tocs" style="margin-bottom:7px; border-bottom:1px solid #ddd;">
               <h2 style="margin:0 0 7px 0; padding:0 15px; font-size:30px;">Order: {{toc.order}}
               <span style="float:right; cursor:pointer;" ng-click="removeTOC(toc.order)"><span class="glyphicon glyphicon-remove"></span></span>
               </h2>
-              <div class="col-md-6">
+              <div class="col-xs-12 col-md-6">
                 <div class="input-group" style="margin-bottom: 7px;">
                   <span class="input-group-addon">Title EN</span>
                   <input class="form-control" type="text" ng-model="toc.name_EN" ng-change="setChangesMade()" placeholder="English Title" required="required">
@@ -172,12 +187,12 @@
                   <span class="input-group-addon">URL EN</span>
                   <input class="form-control" type="text" ng-model="toc.url_EN" ng-change="setChangesMade()" placeholder="English URL" required="required">
                 </div>
-                <div class="input-group" style="margin-bottom: 7px;">
+                <div class="input-group" style="margin-bottom: 20px;">
                   <span class="input-group-addon">Type EN</span>
                   <input class="form-control" type="text" ng-model="toc.type_EN" ng-change="setChangesMade()" typeahead-on-select="setChangesMade()" uib-typeahead="type for type in EduMatTypes_EN | filter:$viewValue" typeahead-min-length="0" placeholder="English Type" required="required"> 
                 </div>
               </div>  
-              <div class="col-md-6">           
+              <div class="col-xs-12 col-md-6">           
                 <div class="input-group" style="margin-bottom: 7px;">
                   <span class="input-group-addon">Titre FR</span>
                   <input class="form-control" type="text" ng-model="toc.name_FR" ng-change="setChangesMade()" placeholder="Titre Français" required="required">
@@ -186,7 +201,7 @@
                   <span class="input-group-addon">URL FR</span>
                   <input class="form-control" type="text" ng-model="toc.url_FR" ng-change="setChangesMade()" placeholder="URL Français" required="required">
                 </div>
-                <div class="input-group" style="margin-bottom: 7px;">
+                <div class="input-group" style="margin-bottom: 20px;">
                   <span class="input-group-addon">Type FR</span>
                   <input class="form-control" type="text" ng-model="toc.type_FR" ng-change="setChangesMade()" typeahead-on-select="setChangesMade()" uib-typeahead="type for type in EduMatTypes_FR | filter:$viewValue" typeahead-min-length="0" placeholder="Type Francais" required="required"> 
                  </div>
@@ -203,19 +218,27 @@
                 <strong>Supporting PDF Document</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusPDF.open, 'glyphicon-chevron-right': !statusPDF.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Supporting Educational Material URLs (EN / FR): {{eduMat.share_url_EN}} / {{eduMat.share_url_FR}}</h4>
-              To change the current URL(s), enter the new URL(s) in the text box(es) below.
+            <div class="alert alert-info" role="alert">
+              <strong>Current Supporting PDFs</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                <span style="word-wrap: break-word">
+                  <strong>EN </strong> -- {{eduMat.share_url_EN}} <br>
+                </span>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                <span style="word-wrap: break-word">
+                  <strong>FR </strong> -- {{eduMat.share_url_FR}}
+                </span>
+              </p>
             </div>
             <div class="row">
-              <div class="col-md-5">
+              <div class="col-xs-12 col-md-6" style="margin-bottom: 10px;">
                 <div class="input-group">
                   <span class="input-group-addon">EN</span>
                   <input class="form-control" type="text" ng-model="eduMat.share_url_EN" ng-change="setChangesMade()" placeholder="English URL" required="required">
                 </div>
               </div>
-              <div class="col-md-1"></div>
-              <div class="col-md-5">
+              <div class="col-xs-12 col-md-6" style="margin-bottom: 10px;">
                 <div class="input-group">
                   <span class="input-group-addon">FR</span>
                   <input class="form-control" type="text" ng-model="eduMat.share_url_FR" ng-change="setChangesMade()" placeholder="URL Français" required="required">
@@ -223,24 +246,25 @@
               </div>
             </div>
           </div>
-          <!-- SECTION: Patient filters -->
+
+          <!-- SECTION: Patient filter -->
           <div uib-accordion-group is-open="statusPatientFilter.open">
             <uib-accordion-heading>
               <div>
-                <strong>Filter By Patients</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusPatientFilter.open, 'glyphicon-chevron-right': !statusPatientFilter.open}"></i>
+                <strong>Filter By Patient </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusPatientFilter.open, 'glyphicon-chevron-right': !statusPatientFilter.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Patient Filters</h4>
-              <ul class="list-items-4col">
-                <li ng-show="allFilters(patientFilterList)">
-                  No Filter
-                </li>  
-                <li ng-repeat="patient in patientFilterList | filter: {added: 1} : 1" ng-hide="allFilters(patientFilterList)">
-                  {{patient.name}}
-                </li>
-              </ul>
-              <p>To add/remove a patient filter, use the list below.</p>
+            <div class="alert alert-info" role="alert">
+              <strong>Current Patient Filters</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(patientFilterList)"></span>
+                <span ng-if="allFilters(patientFilterList)">No filter</span>
+                <ul class="list-items" ng-if="!allFilters(patientFilterList)">
+                  <li ng-repeat="patient in patientFilterList | filter: {added: 1} : 1">
+                    {{patient.name}}
+                  </li>
+                </ul>
+              </p>
             </div>
             <div class="list-space">
               <div class="input-group">
@@ -256,69 +280,25 @@
               </ul>
             </div>
           </div>
-          <!-- SECTION: Demographic filters -->
-          <div uib-accordion-group is-open="statusIemoFilter.open"> 
-            <uib-accordion-heading>
-              <div>
-                <strong>Filter By Demographics</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDemoFilter.open, 'glyphicon-chevron-right': !statusDemoFilter.open}"></i>
-              </div>
-            </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Sex Filter: <span ng-hide="demoFilter.sex">None</span><span ng-show="demoFilter.sex">{{demoFilter.sex}}</span> </h4>
-              <h4>Current Age Group Filter: <span ng-hide="demoFilter.age">None</span><span ng-show="demoFilter.age">{{demoFilter.age.min}} to {{demoFilter.age.max}}</span> </h4>
-              <p>To change the current filter(s), use the fields below.</p>
-            </div>
-            <div class="row">
-              <div class="col-md-6">
-                <h2 style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Sex</h2>
-                <ul class="list-items">
-                  <li ng-repeat="sex in sexes">
-                    <label>
-                      <input type="radio" ng-model="demoFilter.sex" ng-change="setChangesMade()" ng-value="sex.name" /> {{sex.name}}
-                    </label>
-                  </li>
-                </ul>
-                <div style="padding: 10px;">
-                  <button class="btn btn-primary" ng-click="demoFilter.sex=''">Remove Sex Filter</button>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <h2 style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Age Group</h2>
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="input-group">
-                      <span class="input-group-addon">MIN</span>
-                      <input class="form-control" ng-model="demoFilter.age.min" ng-change="setChangesMade()" type="number" ng-max="demoFilter.age.max" min="0">
-                    </div> 
-                  </div>
-                  <div class="col-md-6">
-                    <div class="input-group">
-                      <span class="input-group-addon">MAX</span>
-                      <input class="form-control" ng-model="demoFilter.age.max" ng-change="setChangesMade()" type="number" max="100" ng-min="demoFilter.age.min">
-                    </div> 
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>     
-          <!-- SECTION: Activity filters / Internal Hospital Code -->
+
+          <!-- SECTION: Appointment/Task filter -->
           <div uib-accordion-group is-open="statusExpressionFilter.open">
             <uib-accordion-heading>
               <div>
                 <strong>Filter By Appointment or Task Code</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusExpressionFilter.open, 'glyphicon-chevron-right': !statusExpressionFilter.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Filters</h4>
-              <ul class="list-items-4col">
-                <li ng-show="allFilters(termList)">
-                  No Filter
-                </li>  
-                <li ng-repeat="selectedTerm in termList | filter: {added: 1} : 1" ng-hide="allFilters(termList)">
-                  {{selectedTerm.name}}
-                </li>
-              </ul>
-              <p>To add/remove an activity code filter, use the list below.</p>
+            <div class="alert alert-info" role="alert">
+              <strong>Current Activity Filters</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(termList)"></span>
+                <span ng-if="allFilters(termList)">No filter</span>
+                <ul class="list-items" ng-if="!allFilters(termList)">
+                  <li ng-repeat="selectedTerm in termList | filter: {added: 1} : 1" ng-hide="allFilters(termList)">
+                    {{selectedTerm.name}}
+                  </li>
+                </ul>
+              </p>
             </div>
             <div class="list-space">
               <div class="input-group">
@@ -339,24 +319,25 @@
               </ul>
             </div>
           </div>
-          <!-- SECTION: Diagnosis filters -->
+
+          <!-- SECTION: Diagnosis filter -->
           <div uib-accordion-group is-open="statusDiagnosisFilter.open">
             <uib-accordion-heading>
               <div>
-                <strong>Filter By Diagnoses</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDiagnosisFilter.open, 'glyphicon-chevron-right': !statusDiagnosisFilter.open}"></i>
+                <strong>Filter By Diagnosis </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDiagnosisFilter.open, 'glyphicon-chevron-right': !statusDiagnosisFilter.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Diagnosis Filters</h4>
-              <ul class="list-items-4col">
-                <li ng-show="allFilters(dxFilterList)">
-                  No Filter
-                </li>  
-                <li ng-repeat="dx in dxFilterList | filter: {added: 1} : 1" ng-hide="allFilters(dxFilterList)">
-                  {{dx.name}}
-                </li>
-              </ul>
-              <p>To add/remove a diagnosis filter, use the list below.</p>
+            <div class="alert alert-info" role="alert">
+              <strong>Current Doctor Filters</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(dxFilterList)"></span>
+                <span ng-if="allFilters(dxFilterList)">No filter</span>
+                <ul class="list-items" ng-if="!allFilters(dxFilterList)">
+                    <li ng-repeat="dx in dxFilterList | filter: {added: 1} : 1" ng-hide="allFilters(dxFilterList)">
+                    {{dx.name}}
+                  </li>
+                </ul>
+              </p>
             </div>
             <div class="list-space">
               <div class="input-group">
@@ -372,24 +353,25 @@
               </ul>
             </div>
           </div>
-          <!-- SECTION: Doctor filters -->
+
+          <!-- SECTION: Doctor filter -->
           <div uib-accordion-group is-open="statusDoctorFilter.open">
             <uib-accordion-heading>
               <div>
-                <strong>Filter By Doctor</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDoctorFilter.open, 'glyphicon-chevron-right': !statusDoctorFilter.open}"></i>
+                <strong>Filter By Doctor </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDoctorFilter.open, 'glyphicon-chevron-right': !statusDoctorFilter.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Doctor Filters</h4>
-              <ul class="list-items-4col">
-                <li ng-show="allFilters(doctorFilterList)">
-                  No Filter
-                </li>  
-                <li ng-repeat="doctor in doctorFilterList | filter: {added: 1} : 1" ng-hide="allFilters(doctorFilterList)">
-                  {{doctor.name}}
-                </li>
-              </ul>
-              <p>To add/remove a doctor, use the list below.</p>
+            <div class="alert alert-info" role="alert">
+              <strong>Current Doctor Filters</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(doctorFilterList)"></span>
+                <span ng-if="allFilters(doctorFilterList)">No filter</span>
+                <ul class="list-items" ng-if="!allFilters(doctorFilterList)">
+                    <li ng-repeat="doctor in doctorFilterList | filter: {added: 1} : 1" ng-hide="allFilters(doctorFilterList)">
+                    {{doctor.name}}
+                  </li>
+                </ul>
+              </p>
             </div>
             <div class="list-space">
               <div class="input-group">
@@ -405,24 +387,25 @@
               </ul>
             </div>
           </div>
-          <!-- SECTION: Resource filters -->
+
+          <!-- SECTION: Resource Filter -->
           <div uib-accordion-group is-open="statusResourceFilter.open">
             <uib-accordion-heading>
               <div>
-                <strong>Filter By Treatment Machine</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusResourceFilter.open, 'glyphicon-chevron-right': !statusResourceFilter.open}"></i>
+                <strong>Filter By Treatment Machine </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusResourceFilter.open, 'glyphicon-chevron-right': !statusResourceFilter.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Treatment Machine Filters</h4>
-              <ul class="list-items-4col">
-                <li ng-show="allFilters(resourceFilterList)">
-                  No Filter
-                </li>  
-                <li ng-repeat="resource in resourceFilterList | filter: {added: 1} : 1" ng-hide="allFilters(resourceFilterList)">
-                  {{resource.name}}
-                </li>
-              </ul>
-              <p>To add/remove a machine, use the list below.</p>
+            <div class="alert alert-info" role="alert">
+              <strong>Current Treatment Machine Filters</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(resourceFilterList)"></span>
+                <span ng-if="allFilters(resourceFilterList)">No filter</span>
+                <ul class="list-items" ng-if="!allFilters(resourceFilterList)">
+                    <li ng-repeat="resource in resourceFilterList | filter: {added: 1} : 1" ng-hide="allFilters(resourceFilterList)">
+                    {{resource.name}}
+                  </li>
+                </ul>
+              </p>
             </div>
             <div class="list-space">
               <div class="input-group">
