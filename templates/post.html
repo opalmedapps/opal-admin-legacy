@@ -194,6 +194,7 @@
                 <span ng-hide="post.publish_date && post.publish_time"> NONE</span>
                 <span ng-show="post.publish_date && post.publish_time">
                   {{post.publish_date | date:'fullDate'}} at {{post.publish_time | date:'HH:mm'}}
+                </span>
               </p>
             </div>
             <div class="row">
@@ -254,17 +255,17 @@
                 <strong>Filter By Appointment or Task Code</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusExpressionFilter.open, 'glyphicon-chevron-right': !statusExpressionFilter.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Filters</h4>
-              <ul class="list-items-4col">
-                <li ng-show="allFilters(termList)">
-                  No Filter
-                </li>  
-                <li ng-repeat="selectedTerm in termList | filter: {added: 1} : 1" ng-hide="allFilters(termList)">
-                  {{selectedTerm.name}}
-                </li>
-              </ul>
-              <p>To add/remove an activity code filter, use the list below.</p>
+            <div class="alert alert-info" role="alert">
+              <strong>Current Activity Filters</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(termList)"></span>
+                <span ng-if="allFilters(termList)">No filter</span>
+                <ul class="list-items" ng-if="!allFilters(termList)">
+                  <li ng-repeat="selectedTerm in termList | filter: {added: 1} : 1" ng-hide="allFilters(termList)">
+                    {{selectedTerm.name}}
+                  </li>
+                </ul>
+              </p>
             </div>
             <div class="list-space">
               <div class="input-group">
@@ -293,17 +294,17 @@
                 <strong>Filter By Diagnosis </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDiagnosisFilter.open, 'glyphicon-chevron-right': !statusDiagnosisFilter.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Diagnosis Filters</h4>
-              <ul class="list-items-4col">
-                <li ng-show="allFilters(dxFilterList)">
-                  No Filter
-                </li>  
-                <li ng-repeat="dx in dxFilterList | filter: {added: 1} : 1" ng-hide="allFilters(dxFilterList)">
-                  {{dx.name}}
-                </li>
-              </ul>
-              <p>To add/remove a diagnosis filter, use the list below.</p>
+            <div class="alert alert-info" role="alert">
+              <strong>Current Doctor Filters</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(dxFilterList)"></span>
+                <span ng-if="allFilters(dxFilterList)">No filter</span>
+                <ul class="list-items" ng-if="!allFilters(dxFilterList)">
+                    <li ng-repeat="dx in dxFilterList | filter: {added: 1} : 1" ng-hide="allFilters(dxFilterList)">
+                    {{dx.name}}
+                  </li>
+                </ul>
+              </p>
             </div>
             <div class="list-space">
               <div class="input-group">
@@ -327,17 +328,17 @@
                 <strong>Filter By Doctor </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDoctorFilter.open, 'glyphicon-chevron-right': !statusDoctorFilter.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Doctor Filters</h4>
-              <ul class="list-items-4col">
-                <li ng-show="allFilters(doctorFilterList)">
-                  No Filter
-                </li>  
-                <li ng-repeat="doctor in doctorFilterList | filter: {added: 1} : 1" ng-hide="allFilters(doctorFilterList)">
-                  {{doctor.name}}
-                </li>
-              </ul>
-              <p>To add/remove a doctor, use the list below.</p>
+            <div class="alert alert-info" role="alert">
+              <strong>Current Doctor Filters</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(doctorFilterList)"></span>
+                <span ng-if="allFilters(doctorFilterList)">No filter</span>
+                <ul class="list-items" ng-if="!allFilters(doctorFilterList)">
+                    <li ng-repeat="doctor in doctorFilterList | filter: {added: 1} : 1" ng-hide="allFilters(doctorFilterList)">
+                    {{doctor.name}}
+                  </li>
+                </ul>
+              </p>
             </div>
             <div class="list-space">
               <div class="input-group">
@@ -361,17 +362,17 @@
                 <strong>Filter By Treatment Machine </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusResourceFilter.open, 'glyphicon-chevron-right': !statusResourceFilter.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Resource Filters</h4>
-              <ul class="list-items-4col">
-                <li ng-show="allFilters(resourceFilterList)">
-                  No Filter
-                </li>  
-                <li ng-repeat="resource in resourceFilterList | filter: {added: 1} : 1" ng-hide="allFilters(resourceFilterList)">
-                  {{resource.name}}
-                </li>
-              </ul>
-              <p>To add/remove a machine, use the list below.</p>
+            <div class="alert alert-info" role="alert">
+              <strong>Current Treatment Machine Filters</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(resourceFilterList)"></span>
+                <span ng-if="allFilters(resourceFilterList)">No filter</span>
+                <ul class="list-items" ng-if="!allFilters(resourceFilterList)">
+                    <li ng-repeat="resource in resourceFilterList | filter: {added: 1} : 1" ng-hide="allFilters(resourceFilterList)">
+                    {{resource.name}}
+                  </li>
+                </ul>
+              </p>
             </div>
             <div class="list-space">
               <div class="input-group">
