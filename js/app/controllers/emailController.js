@@ -203,6 +203,7 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 
 			// Assign selected email as the item to delete
 			$scope.emailToDelete = currentEmail;
+
 			var modalInstance = $uibModal.open({
 				templateUrl: 'deleteEmailModalContent.htm',
 				controller: DeleteEmailModalInstanceCtrl,
@@ -225,7 +226,6 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 
 		// Controller for the delete email modal
 		var DeleteEmailModalInstanceCtrl = function ($scope, $uibModalInstance) {
-
 			// Submit delete
 			$scope.deleteEmail = function () {
 				$.ajax({

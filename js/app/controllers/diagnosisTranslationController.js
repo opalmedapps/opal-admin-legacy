@@ -90,7 +90,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslationController', ['ngAnima
 		$scope.diagnosisTranslationList = [];
 
 		// Initialize an object for deleting a diagnosis translation
-		$scope.diagnosisToDelete = {};
+		$scope.diagnosisTranslationToDelete = {};
 
 		// Call our API to get the list of existing diagnosis translations
 		diagnosisCollectionService.getDiagnosisTranslations().then(function (response) {
@@ -267,7 +267,9 @@ angular.module('opalAdmin.controllers.diagnosisTranslationController', ['ngAnima
 				else return false;
 			};
 
-			$scope.eduMatUpdate = function () {
+			$scope.eduMatUpdate = function (eduMat) {
+
+				$scope.diagnosisTranslation.eduMat = eduMat;
 
 				// Toggle boolean
 				$scope.changesMade = true;

@@ -3,14 +3,14 @@
 		<div class="clearfix">
 			<div class="row">
 				<!-- Load side menu -->
-				<div id="side-panel-scrollbar" class="col-md-2">
+				<div id="side-panel-scrollbar" class="col-lg-2">
 					<div ng-include="'templates/side-panel-menu.html'"></div>
 				</div>
 				<!-- Right detail panel view -->
-				<div class="col-md-10 animated fadeIn">
+				<div class="col-lg-10 animated fadeIn">
 					<div class="row main-title">
 						<!-- Page title -->
-						<div class="col-md-9 title-content">
+						<div class="col-xs-12 col-md-9 title-content">
 							<span class="glyphicon glyphicon-cloud"></span>
 							<h1><strong>Diagnosis Translation</strong></h1>
 						</div>
@@ -19,8 +19,8 @@
 							<span><a ui-sref="home">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Diagnosis Translation</strong></span>
 						</div>
 					</div> 
-					<div class="row clearfix" style="margin-bottom: 10px; display:flex; align-items: center">
-						<div class="col-md-8">
+					<div class="row clearfix operations">
+						<div class="save-add col-xs-12 col-sm-6 col-md-8">
 							<!-- Add button -->
 							<a style="width:100px;margin-right:20px;" href="" ng-click="goToAddDiagnosisTranslation()" class="btn btn-md btn-outline item-button">
 								<span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
@@ -28,7 +28,7 @@
 							</a>
 						</div>
 						<!-- Search field -->
-						<div class="col-md-4">
+						<div class="search col-xs-12 col-sm-6 col-md-4">
 							<div class="form-group has-feedback" style="margin-bottom: 0">
 							<input type="text" class="form-control" ng-model="filterValue" ng-change="filterDiagnosis(filterValue)" placeholder="Search...">
 								<span class="glyphicon glyphicon-search form-control-feedback"></span>
@@ -55,40 +55,29 @@
 <!-- Delete diagnosis translation modal template -->
 <script type="text/ng-template" id="deleteDiagnosisTranslationModalContent.htm">
 	<div class="modal-header">
-		<h2 class="modal-title">
-			<span class="glyphicon glyphicon-trash" style="font-size: 30px;"></span> 
-			Delete Diagnosis Translation: {{dxTranslationToDelete.name_EN}} / {{dxTranslationToDelete.name_FR}}
+		<h2 class="modal-title col-xs-12">
+			<span class="glyphicon glyphicon-trash"></span> 
+			Delete Diagnosis Translation 
 		</h2>
+		<p class="modal-title-caption col-xs-12">
+			{{diagnosisTranslationToDelete.name_EN}} / {{diagnosisTranslationToDelete.name_FR}}
+		</p>
 	</div>
 	<div class="modal-body">
-		<div class="bs-callout bs-callout-danger">
-			<h4>Diagnosis Translation Delete</h4>
-			<p class="deleteText">Are you sure you want to delete the diagnosis translation "{{dxTranslationToDelete.name_EN}}" ?</p>
-			<form method="post" ng-submit="deleteDiagnosisTranslation()">			
-				<input class="btn btn-primary" type="submit" value="Delete">
-				<input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
-			</form>
-		</div>
-	</div>
-</script>
-
-<!-- Delete diagnosis translation modal template -->
-<script type="text/ng-template" id="deleteDiagnosisTranslationModalContent.htm">
-	<div class="modal-header">
-		<h2 class="modal-title">
-			<span class="glyphicon glyphicon-trash" style="font-size: 30px;"></span>
-			Delete Diagnosis Translation: {{diagnosisTranslationToDelete.name_EN}} / {{diagnosisTranslationToDelete.name_FR}}
-		</h2>
-	</div>
-	<div class="modal-body">
-		<div class="bs-callout bs-callout-danger">
-			<h4>Diagnosis Translation Delete</h4>
-			<p class="deleteText">Are you sure you want to delete the diagnosis translation "{{diagnosisTranslationToDelete.name_EN}}" ?</p>
-			<form method="post" ng-submit="deleteDiagnosisTranslation()">
-				<input class="btn btn-primary" type="submit" value="Delete">
-				<input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
-			</form>
-		</div>
+		<div class="alert alert-danger" role="alert">
+      <strong>Delete Diagnosis Translation</strong><br>
+      <p>
+        Are you sure you want to delete the diagnosis translation "{{diagnosisTranslationToDelete.name_EN}}" ?
+      </p>
+    </div>
+    <div class="row">
+      <div class="modal-buttons col-xs-12">
+        <form method="post" ng-submit="deleteDiagnosisTranslation()">			
+          <input class="btn btn-primary submit" type="submit" value="Delete">
+          <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+        </form>
+      </div>
+    </div>
 	</div>
 </script>
 
@@ -96,16 +85,21 @@
 <script type="text/ng-template" id="editDiagnosisTranslationModalContent.htm">
 	<!-- Modal title -->
 	<div class="modal-header">
-		<h2 class="modal-title">
-			<span class="glyphicon glyphicon-pencil" style="font-size: 30px;"></span>
-			Edit Diagnosis Translation: {{diagnosisTranslation.name_EN}} / {{diagnosisTranslation.name_FR}}
-			<span style="float:right;">
-				<form method="post" ng-submit="updateDiagnosisTranslation()">
-					<input class="btn btn-primary" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
-					<input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
-				</form>
-			</span>
+		<h2 class="modal-title col-xs-12">
+			<span class="glyphicon glyphicon-pencil"></span>
+			Edit Diagnosis Translation 
 		</h2>
+		<p class="modal-title-caption col-xs-12">
+			{{diagnosisTranslation.name_EN}} / {{diagnosisTranslation.name_FR}}
+		</p>
+		<div class="modal-buttons col-xs-12">
+	    <span> 
+        <form method="post" ng-submit="updateDiagnosisTranslation()">
+          <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
+	          <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+        </form>
+      </span>     
+    </div>
 	</div>
 	<div class="modal-body">
 		<uib-accordion>
@@ -117,15 +111,16 @@
 						<strong>Assigned Diagnoses</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDiagnosis.open, 'glyphicon-chevron-right': !statusDiagnosis.open}"></i>
 					</div>
 				</uib-accordion-heading>
-				<div class="bs-callout bs-callout-info">
-					<h4>Currently assigned diagnoses</h4>
-					<ul class="list-items-4col">
-						<li ng-repeat="selectedDiagnosis in diagnosisList | filter: {added: 1, assigned: null}">
-							{{selectedDiagnosis.name}}
-						</li>
-					</ul>
-					<p>To add/remove a diagnosis, use the list below.</p>
-				</div>
+				<div class="alert alert-info" role="alert">
+          <strong>Currently assigned diagnoses</strong><br>
+          <p>
+            <ul class="list-items">
+              <li ng-repeat="selectedDiagnosis in diagnosisList | filter: {added: 1, assigned: null}">
+								{{selectedDiagnosis.name}}
+							</li>
+            </ul>
+          </p>
+        </div>
 				<div class="list-space">
 					<div class="input-group">
 						<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
@@ -159,19 +154,14 @@
 							<strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTitle.open, 'glyphicon-chevron-right': !statusTitle.open}"></i>
 						</div>
 					</uib-accordion-heading>
-					<div class="bs-callout bs-callout-info">
-						<h4>Current Diagnosis Translation Titles (EN / FR): {{diagnosisTranslation.name_EN}} / {{diagnosisTranslation.name_FR}}</h4>
-						To change the current title(s), enter the new title(s) in the text box(es) below.
-					</div>
 					<div class="row">
-						<div class="col-md-5">
+						<div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
 							<div class="input-group">
 								<span class="input-group-addon">EN</span>
 								<input class="form-control" type="text" ng-model="diagnosisTranslation.name_EN" ng-change="setChangesMade()" placeholder="English Title" required="required">
 							</div>
 						</div>
-						<div class="col-md-1"></div>
-						<div class="col-md-5">
+						<div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
 							<div class="input-group">
 								<span class="input-group-addon">FR</span>
 								<input class="form-control" type="text" ng-model="diagnosisTranslation.name_FR" ng-change="setChangesMade()" placeholder="Titre Français" required="required">
@@ -187,19 +177,17 @@
 							<strong>Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDescription.open, 'glyphicon-chevron-right': !statusDescription.open}"></i>
 						</div>
 					</uib-accordion-heading>
-					<div class="bs-callout bs-callout-info">
-						<h4>Current Diagnosis Translation Descriptions (EN / FR): {{diagnosisTranslation.description_EN}} / {{diagnosisTranslation.description_FR}}</h4>
-						To change the current description(s), enter the new description(s) in the text area(s) below.
-					</div>
 					<div class="row">
-						<div class="col-md-6">
-							<div class="form-group">
-								<textarea class="form-control" rows="10" ng-model="diagnosisTranslation.description_EN" ng-change="setChangesMade()" placeholder="English Description" required="required"></textarea>
+						<div class="col-xs-12 col-sm-6">
+							<div class="input-group">
+								<span class="input-group-addon">EN</span>
+								<textarea class="form-control" rows="5" ng-model="diagnosisTranslation.description_EN" ng-change="setChangesMade()" placeholder="English Description" required="required"></textarea>
 							</div>
 						</div>
-						<div class="col-md-6">
-							<div class="form-group">
-								<textarea class="form-control" rows="10" ng-model="diagnosisTranslation.description_FR" ng-change="setChangesMade()" placeholder="Description Francais" required="required"></textarea>
+						<div class="col-xs-12 col-sm-6">
+							<div class="input-group">
+								<span class="input-group-addon">FR</span>
+								<textarea class="form-control" rows="5" ng-model="diagnosisTranslation.description_FR" ng-change="setChangesMade()" placeholder="Description Francais" required="required"></textarea>
 							</div>
 						</div>
 					</div>
@@ -212,9 +200,13 @@
                 <strong>Attached Educational Material</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusEducationalMaterial.open, 'glyphicon-chevron-right': !statusEducationalMaterial.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Educational Material (EN / FR): {{diagnosisTranslation.eduMat.name_EN}} / {{diagnosisTranslation.eduMat.name_FR}}</h4>
-              <p>To change the current educational material, use the list below.</p>
+            <div class="alert alert-info" role="alert">
+              <strong>Current Educational Material (EN / FR)</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                <span ng-if="diagnosisTranslation.eduMat">{{diagnosisTranslation.eduMat.name_EN}} / {{diagnosisTranslation.eduMat.name_FR}}</span>
+                <span ng-if="!diagnosisTranslation.eduMat">None</span>
+              </p>
             </div>
             <div class="list-space">
               <div class="input-group">
@@ -224,7 +216,7 @@
               <ul class="list-items">
                 <li ng-repeat="eduMat in eduMatList | filter: searchEduMatsFilter">
                   <label>
-                    <input type="radio" ng-model="diagnosisTranslation.eduMatSer" ng-change="eduMatUpdate()" ng-checked="diagnosisTranslation.eduMatSer == eduMat.serial" ng-value="eduMat.serial" /> {{eduMat.name_EN}}
+                    <input type="radio" ng-model="diagnosisTranslation.eduMatSer" ng-change="eduMatUpdate(eduMat)" ng-checked="diagnosisTranslation.eduMatSer == eduMat.serial" ng-value="eduMat.serial" /> {{eduMat.name_EN}}
                   </label>
                 </li>
               </ul>
