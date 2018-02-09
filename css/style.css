@@ -1530,9 +1530,11 @@ footer {
 
 
 
-.home-main .side-logo {
+.home-main .side-logo,
+.home-main .back-questionnaire {
   display: none;
 }
+
 
 .home-side-panel .side-panel-scroll {
   display: block;
