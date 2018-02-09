@@ -217,8 +217,13 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 
 			// Initialize a list of sexes
 			$scope.sexes = [
-				{ name: 'Male' },
-				{ name: 'Female' }
+				{
+					name: 'Male',
+					icon: 'male'
+				}, {
+					name: 'Female',
+					icon: 'female'
+				}
 			];
 
 			// Initialize to hold demographic filters
@@ -551,6 +556,21 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 
 				return demoFilter;
 			}
+
+			// Function to toggle necessary changes when updating the sex
+			$scope.sexUpdate = function (sex) {
+
+				if (!$scope.demoFilter.sex) {
+					$scope.demoFilter.sex = sex.name;
+				} else if ($scope.demoFilter.sex == sex.name) {
+					$scope.demoFilter.sex = null; // Toggle off
+				} else {
+					$scope.demoFilter.sex = sex.name;
+				}
+
+				$scope.changesMade = true;
+
+			};
 
 			// Function to assign a "1" to existing tags
 			function checkAdded(filterList) {
