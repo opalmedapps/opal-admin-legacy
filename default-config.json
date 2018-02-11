@@ -1,0 +1,58 @@
+{
+	"version": "0.0.1",
+	"buildType": "production",
+	"databases": {
+		"opal": {
+			"host": "",
+			"port": "",
+			"name": "",
+			"username": "",
+			"password": "" 
+		},
+		"questionnaire": {
+			"host": "",
+			"port": "",
+			"name": "",
+			"username": "",
+			"password": ""
+		},
+		"aria": {
+			"host": "",
+			"port": "",
+			"username": "",
+			"password": ""
+		},
+		"wrm": {
+			"host": "",
+			"port": "",
+			"username": "",
+			"password": ""
+		},
+		"mosaiq": {
+			"host": "",
+			"port": "",
+			"username": "",
+			"password": ""
+		}
+	},
+	"pushNotificationConfig": {
+		"apiKey": "",
+		"certificate" : {
+			"password": "",
+			"file": ""
+		}
+	},
+	"firebaseConfig": {
+		"apiKey": "",
+		"authDomain": "",
+		"databaseURL": "",
+		"projectId": "",
+		"storageBucket": "",
+		"massagingSenderId": ""
+	},
+	"clinicalDocuments": {
+		"aria": "",
+		"mosaiq": ""
+	}
+
+}
