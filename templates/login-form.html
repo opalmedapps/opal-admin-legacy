@@ -2,7 +2,7 @@
             <div class="row" style="margin-top:10px;">
               <div class="horz-line" style="height: 10px; text-align: center; margin-left:25px; margin-right:34px">
                 <span style="background-color:#fff; padding: 0 10px;">
-                  <h2 style="display:inline;">
+                  <h2 style="display:inline; font-size: 20px;">
                     <strong>Log in to start your session</strong>
                   </h2>  
                 </span>
@@ -12,23 +12,23 @@
               <div class="login-content clearfix">
                 <form ng-submit="submitLogin(credentials)" method="post">
                   <div class="row clearfix" style="margin-top:20px; margin-bottom:20px; display:flex; align-items:center;">
-                    <div class="col-md-1">
+                    <div class="col-xs-1">
                       <i class="fa fa-user-circle-o fa-2x" aria-hidden="true"></i>
                     </div>
-                    <div class="col-md-10">
+                    <div class="col-xs-10">
                       <input type="text" class="form-control" required="required" ng-model="credentials.username" placeholder="Username">    
                     </div>
                   </div>
                   <div class="row" style="margin-bottom:20px; display:flex; align-items:center;">    
-                    <div class="col-md-1">
+                    <div class="col-xs-1">
                       <i class="fa fa-key fa-2x" aria-hidden="true"></i>
                     </div>
-                    <div class="col-md-10">
+                    <div class="col-xs-10">
                       <input type="password" class="form-control" required="required" ng-model="credentials.password" placeholder="Password">    
                     </div>
                   </div>  
                   <div class="row table-buttons">
-                    <div class="btn-group btn-group-justified col-md-4 col-md-offset-1" role="group" style="width:30%">
+                    <div class="btn-group btn-group-justified col-xs-4 col-xs-offset-1" role="group" style="width:30%">
                       <div class="btn-group" role="group">
                         <input class="btn btn-primary" ng-class="{'disabled': !loginFormComplete()}" type="submit" value="Login">
                       </div>
