@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers', [
-	'opalAdmin.controllers.headerController',
 	'opalAdmin.controllers.applicationController',
+	'opalAdmin.controllers.navigationController',
 	'opalAdmin.controllers.homeController',
 	'opalAdmin.controllers.aliasController',
 	'opalAdmin.controllers.newAliasController',
@@ -16,7 +16,6 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.patientRegistrationController',
 	'opalAdmin.controllers.testResultController',
 	'opalAdmin.controllers.newTestResultController',
-	'opalAdmin.controllers.sidePanelMenuController',
 	'opalAdmin.controllers.cronController',
 	'opalAdmin.controllers.loginController',
 	'opalAdmin.controllers.loginModalController',
