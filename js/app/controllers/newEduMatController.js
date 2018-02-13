@@ -262,7 +262,6 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 			type = type.toLowerCase(); 
 			for (var i=0; i < $scope.EduMatTypes.length; i++) {
 				if (language === 'EN') {
-					$scope.newEduMat.type_FR = "";
 					typeCompare = $scope.EduMatTypes[i].EN.toLowerCase();
 					if (type === typeCompare) {
 						// set the french to be the same
@@ -271,7 +270,6 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 					}
 				} 
 				else if (language === 'FR') {
-					$scope.newEduMat.type_EN = "";
 					typeCompare = $scope.EduMatTypes[i].FR.toLowerCase();
 					if (type === typeCompare) {
 						// set the english to be the same
