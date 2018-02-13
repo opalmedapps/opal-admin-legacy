@@ -224,5 +224,35 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 		    }
 		});
 
+		var fixMeMobile = $('.mobile-side-panel-menu').offset().top;
+		$(window).scroll(function() {
+		    var currentScroll = $(window).scrollTop();
+		    if (currentScroll >= fixMeMobile) {
+		        $('.mobile-side-panel-menu').css({
+		            position: 'fixed',
+		            top: '50px',
+		            width: '100%',
+		            zIndex: '100',
+		            background: '#6f5499',
+		            boxShadow: 'rgba(93, 93, 93, 0.6) 0px 3px 8px -3px'
+		          	
+		        });
+		        $('.mobile-summary .summary-title').css({
+		        	color: 'white'
+		        });
+		    } else {
+		        $('.mobile-side-panel-menu').css({
+		            position: 'static',
+		            width: '',
+		            background: '',
+		            boxShadow: ''
+		        });
+		         $('.mobile-summary .summary-title').css({
+		        	color: '#6f5499'
+		        });
+		    }
+		});
+
+
 	});
 

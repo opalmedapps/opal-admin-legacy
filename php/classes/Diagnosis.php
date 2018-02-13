@@ -42,7 +42,7 @@ class Diagnosis {
 			$eduMatSer 		= $data[4];
 			$diagnoses 		= array();
 
-			$eduMat 		= "";
+			$eduMat 		= null;
 
 			$sql = "
 				SELECT DISTINCT
