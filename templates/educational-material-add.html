@@ -512,7 +512,7 @@
                           Type
                         </label>
                         <div class="col-xs-12 col-lg-10">
-                          <input class="form-control" type="text" ng-model="newEduMat.type_EN" ng-change="typeUpdate(type.EN, 'EN')" typeahead-on-select="typeUpdate(type.EN, 'EN')" uib-typeahead="type.EN for type in EduMatTypes | filter:$viewValue" typeahead-min-length="0" placeholder="English Type" required="required"> 
+                          <input class="form-control" type="text" ng-model="newEduMat.type_EN" ng-change="typeUpdate(newEduMat.type_EN, 'EN')" typeahead-on-select="typeUpdate(newEduMat.type_EN, 'EN')" uib-typeahead="type.EN as type.EN for type in EduMatTypes | filter:{EN:$viewValue}" typeahead-min-length="0" placeholder="English Type" required="required"> 
                         </div>
                       </div>
                     </div>
@@ -530,7 +530,7 @@
                           Type
                         </label>
                         <div class="col-xs-12 col-lg-10">
-                          <input class="form-control" type="text" ng-model="newEduMat.type_FR" ng-change="typeUpdate(type.FR, 'FR')" typeahead-on-select="typeUpdate(type.FR, 'FR')" uib-typeahead="type.FR for type in EduMatTypes | filter:$viewValue" typeahead-min-length="0" placeholder="Type Francais" required="required"> 
+                          <input class="form-control" type="text" ng-model="newEduMat.type_FR" ng-change="typeUpdate(newEduMat.type_FR, 'FR')" typeahead-on-select="typeUpdate(newEduMat.type_FR, 'FR')" uib-typeahead="type.FR as type.FR for type in EduMatTypes | filter:{FR:$viewValue}" typeahead-min-length="0" placeholder="Type Francais" required="required"> 
                         </div>
                       </div>
                     </div>
