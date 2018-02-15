@@ -6,6 +6,22 @@
 
 angular.module('opalAdmin.collections', [])
 
+	// Application API server
+	.factory('applicationCollectionService', function ($http) {
+
+		var applicationAPI = {};
+
+		// Function to get the app version and build
+		applicationAPI.getApplicationBuild = function () {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/application/get.application_build.php?callback=JSON_CALLBACK"
+			});
+		};
+
+		return applicationAPI;
+	})
+
 	// Alias API service
 	.factory('aliasCollectionService', function ($http) {
 

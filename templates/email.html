@@ -3,14 +3,14 @@
       <div class="clearfix">
         <div class="row">
           <!-- Load side menu -->
-          <div class="col-md-2">
+          <div id="side-panel-scrollbar" class="col-lg-2">
             <div ng-include="'templates/side-panel-menu.html'"></div>
           </div>
           <!-- Right side detail view -->
-          <div class="col-md-10 animated fadeIn">
+          <div class="col-lg-10 animated fadeIn">
             <div class="row main-title">
               <!-- Page title -->
-              <div class="col-md-9 title-content">
+              <div class="col-xs-12 col-md-9 title-content">
                 <span class="fa fa-envelope"></span>
                 <h1><strong>Email</strong></h1>
               </div>
@@ -19,8 +19,8 @@
                 <span><a ui-sref="home">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Email</strong></span>
               </div>
             </div>  
-						<div class="row clearfix" style="margin-bottom: 10px; display:flex; align-items: center">
-							<div class="col-md-8">
+						<div class="row clearfix operations">
+							<div class="save-add col-xs-12 col-sm-6 col-md-8">
                 <!-- Add button -->
 								<a style="width:100px;margin-right:20px;" href="" ng-click="goToAddEmail()" class="btn btn-md btn-outline item-button">
 									<span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
@@ -28,7 +28,7 @@
 								</a>
               </div>
               <!-- Search field -->
-							<div class="col-md-4">
+							<div class="search col-xs-12 col-sm-6 col-md-4">
 								<div class="form-group has-feedback" style="margin-bottom: 0">
 								<input type="text" class="form-control" ng-model="filterValue" ng-change="filterEmail(filterValue)" placeholder="Search...">
 									<span class="glyphicon glyphicon-search form-control-feedback"></span>
@@ -41,7 +41,6 @@
                 <div class="panel-input">
                   <div id="data-table">
                     <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:75vh"></div>
-                  </div>
                   </div>
                 </div>
               </div>
@@ -56,19 +55,28 @@
   <!-- Delete email modal template -->
    <script type="text/ng-template" id="deleteEmailModalContent.htm">
       <div class="modal-header">
-        <h2 class="modal-title">
-          <span class="glyphicon glyphicon-trash" style="font-size: 30px;"></span> 
-          Delete Email: {{emailToDelete.name_EN}} / {{emailToDelete.name_FR}}
+        <h2 class="modal-title col-xs-12">
+          <span class="glyphicon glyphicon-trash"></span> 
+          Delete Email 
         </h2>
+        <p class="modal-title-caption col-xs-12">
+          {{emailToDelete.subject_EN}} / {{emailToDelete.subject_FR}}
+        </p>
       </div>
       <div class="modal-body">
-        <div class="bs-callout bs-callout-danger">
-          <h4>Email Delete</h4>
-          <p class="deleteText">Are you sure you want to delete the Email "{{emailToDelete.name_EN}}" ?</p>
-          <form method="post" ng-submit="deleteEmail()">			
-            <input class="btn btn-primary" type="submit" value="Delete">
-            <input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
-          </form>
+        <div class="alert alert-danger" role="alert">
+          <strong>Delete Email</strong><br>
+          <p>
+            Are you sure you want to delete the email "{{emailToDelete.subject_EN}}" ?
+          </p>
+        </div>
+        <div class="row">
+          <div class="modal-buttons col-xs-12">
+            <form method="post" ng-submit="deleteEmail()">      
+              <input class="btn btn-primary submit" type="submit" value="Delete">
+              <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+            </form>
+          </div>
         </div>
       </div>
     </script>
@@ -77,16 +85,21 @@
     <script type="text/ng-template" id="editEmailModalContent.htm">
       <!-- Modal title -->
       <div class="modal-header">
-        <h2 class="modal-title">
-          <span class="glyphicon glyphicon-pencil" style="font-size: 30px;"></span> 
-          Edit Email: {{email.name_EN}} / {{email.name_FR}}
-          <span style="float:right;"> 
-            <form method="post" ng-submit="updateEmail()">
-              <input class="btn btn-primary" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
-              <input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
-            </form>
-          </span>      
+        <h2 class="modal-title col-xs-12">
+          <span class="glyphicon glyphicon-pencil"></span> 
+          Edit Email 
         </h2>
+        <p class="modal-title-caption col-xs-12">
+          {{email.subject_EN}} / {{email.subject_FR}}
+        </p>
+        <div class="modal-buttons col-xs-12">
+          <span> 
+            <form method="post" ng-submit="updateEmail()">
+              <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
+              <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+            </form>
+          </span>     
+        </div>
       </div>
       <div class="modal-body">
         <uib-accordion>
@@ -97,19 +110,14 @@
                 <strong>Subjects</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusSubject.open, 'glyphicon-chevron-right': !statusSubject.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Email Subjects (EN / FR): {{email.subject_EN}} / {{email.subject_FR}}</h4>
-              To change the current subject(s), enter the new subject(s) in the text box(es) below.
-            </div>
             <div class="row">
-              <div class="col-md-5">
+              <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                 <div class="input-group">
                   <span class="input-group-addon">EN</span>
                   <input class="form-control" type="text" ng-model="email.subject_EN" ng-change="setChangesMade()" placeholder="English Title" required="required">
                 </div>
               </div>
-              <div class="col-md-1"></div>
-              <div class="col-md-5">
+              <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                 <div class="input-group">
                   <span class="input-group-addon">FR</span>
                   <input class="form-control" type="text" ng-model="email.subject_FR" ng-change="setChangesMade()" placeholder="Titre Français" required="required">
@@ -125,13 +133,12 @@
               </div>
             </uib-accordion-heading>
             <div class="row">
-              <div class="col-md-5">
+              <div class="col-xs-12 col-sm-6">
                 <div class="form-group">
                   <div text-angular ng-model="email.body_EN" ng-change="setChangesMade()"></div>
                 </div>
               </div>
-              <div class="col-md-1"></div>
-              <div class="col-md-5">
+              <div class="col-xs-12 col-sm-6">
                 <div class="form-group">
                   <div text-angular ng-model="email.body_FR" ng-change="setChangesMade()"></div>
                 </div>
