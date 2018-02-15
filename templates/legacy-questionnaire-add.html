@@ -3,49 +3,47 @@
       <div class="clearfix">
         <div class="row">
           <!-- Left side view -->
-          <div class="col-md-2">
+          <div class="col-lg-2">
             <!-- Logo -->
-            <div ng-controller="sidePanelMenuController">
+            <div class="side-navbar" ng-controller="navigationController">
               <div class="row side-logo" ng-click="goToHome()">
                 <div class="col-md-12">
                   <div class="logo">
                     <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
                   </div>
-                  <h1 class="animated fadeIn">opal <strong>ADMIN</strong> <span style="font-size: 20px;" ng-if="devMode">DEV</span></h1>
+                  <h1 class="animated fadeIn">opal <strong>ADMIN</strong></h1>
                 </div>
               </div>   
             </div>
-            <!-- Back button -->
-            <div class="row side-panel-menu">
-              <div class="col-md-12">
-                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
-                  <div class="side-panel-info-sm">
-                    <div class="panel-content">
-                      <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
-                      <h6 class="side-panel-title" style="display:inline-block;margin:0;font-size:14px;"><strong>Back to Legacy Questionnaires</strong></h6>
+            <div class="summary-fix">  
+              <!-- Back button -->
+              <div class="row side-panel-menu">
+                <div class="col-xs-12 col-sm-5 col-lg-12">
+                  <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                    <div class="side-panel-info-sm">
+                      <div class="panel-content">
+                        <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                        <h6 class="side-panel-title" style="display:inline-block;margin:0;font-size:14px;"><strong>Back to Legacy Questionnaires</strong></h6>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            <!-- Summary -->
-            <div class="summary-fix">  
-              <div class="row">
-                <div class="side-menu-title">
+                <!-- Summary -->
+                <div class="side-menu-title col-lg-12">
                   <div class="horz-line" style="height: 16px; text-align: center">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
                       <h2>Summary</h2>
                     </span>  
                   </div>  
                 </div>
-              </div>
-              <div class="row">
-                <div class="progress progress-striped active">
-                  <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                <div class="col-lg-12">
+                  <div class="progress progress-striped active">
+                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                    </div>
                   </div>
                 </div>
               </div>
-              <uib-accordion>
+              <uib-accordion class="side-navbar">
                 <!-- SECTION: Legacy Questionnaire -->
                 <div uib-accordion-group is-open="legacy_questionnaire.open" class="panel-container summary-box" is-disabled="!newLegacyQuestionnaire.legacy_questionnaire">
                   <uib-accordion-heading>
@@ -265,10 +263,10 @@
             </div>
           </div>
           <!-- Right side detail view -->
-          <div class="col-md-10 animated fadeInRight">
+          <div class="col-xs-12 col-lg-10 animated fadeInRight">
             <div class="row main-title">
               <!-- Page title -->
-              <div class="col-md-9 title-content">
+              <div class="col-xs-12 col-md-9 title-content">
                 <span class="glyphicon glyphicon-plus"></span>
                 <h1><strong>Add Legacy Questionnaire</strong></h1>
               </div>
@@ -283,9 +281,41 @@
                 </span>
               </div>
             </div> 
+
+            <div class="row mobile-side-panel-menu">
+              <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
+                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                  <div class="side-panel-info-sm">
+                    <div class="panel-content">
+                      <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                      <h6 class="side-panel-title"><strong>Back to Legacy Questionnaires</strong></h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkForm()">
+                <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
+                  <span style="padding: 0 10px;">
+                    <h2>Step {{numOfCompletedSteps}} of {{stepTotal}} Completed</h2>
+                  </span>  
+                </div>  
+                <div class="progress progress-striped active">
+                  <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                  </div>
+                </div>
+              </div>
+              <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkForm()">
+                <div class="panel-container">
+                  <a href="" ng-click="submitLegacyQuestionnaire()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                    <span style="font-size: 20px;"><strong>Submit Post</strong></span>
+                  </a>
+                </div>
+              </div> 
+            </div>
+
             <!-- SECTION: Legacy Questionnaire -->
             <div class="row">
-              <div class="col-md-12 side-menu-title">
+              <div class="col-xs-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
@@ -295,7 +325,7 @@
               </div>
             </div>   
             <div class="row">
-              <div class="col-md-12">
+              <div class="col-xs-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
                   Choose the legacy questionnaire to add.
@@ -303,7 +333,7 @@
               </div>
             </div>  
             <div class="row"> 
-              <div class="col-md-8">
+              <div class="col-xs-12 col-md-8">
                 <div class="panel-container">
                   <div class="panel-info">
                     <div class="panel-content">
@@ -329,7 +359,7 @@
             </div>   
             <!-- SECTION: Title -->
             <div class="row animated" ng-class="{fadeInUp:title.show}" ng-if="title.show">
-              <div class="col-md-12 side-menu-title">
+              <div class="col-xs-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
@@ -339,7 +369,7 @@
               </div>
             </div>   
             <div class="row animated" ng-class="{fadeInUp:title.show}" ng-if="title.show">
-              <div class="col-md-12">
+              <div class="col-xs-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
                   Please assign an english and french title.
@@ -347,41 +377,37 @@
               </div>
             </div>  
             <div class="row animated" ng-class="{fadeInUp:title.show}" ng-if="title.show">
-              <div class="col-md-6">
+              <div class="col-xs-12 col-md-6">
                 <div class="panel" ng-class="(newLegacyQuestionnaire.name_EN) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>English</strong>
                     <span ng-hide="newLegacyQuestionnaire.name_EN" style="float:right"><em>Incomplete</em></span>
                     <span ng-show="newLegacyQuestionnaire.name_EN" style="float:right"><em>Complete</em></span>
                   </div>
-                  <div class="panel-body">
-                    <div class="row">
-                      <div class="col-md-2">
-                        <div style="font-size:18px; text-align:right;">Title</div>
-                      </div>
-                      <div class="col-md-10">
-                        <div class="form-group">
-                          <input class="form-control" type="text" ng-model="newLegacyQuestionnaire.name_EN" ng-change="titleUpdate()" placeholder="English Title" required="required">
-                        </div>
+                  <div class="panel-body form-horizontal">
+                    <div class="form-group">
+                      <label class="control-label col-xs-12 col-lg-2">
+                        Title
+                      </label>
+                      <div class="col-xs-12 col-lg-10">
+                        <input class="form-control" type="text" ng-model="newLegacyQuestionnaire.name_EN" ng-change="titleUpdate()" placeholder="English Title" required="required">
                       </div>
                     </div>
                   </div>
                 </div>
               </div>          
-              <div class="col-md-6">
+              <div class="col-xs-12 col-md-6">
                 <div class="panel" ng-class="(newLegacyQuestionnaire.name_FR) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>Français</strong>
                     <span ng-hide="newLegacyQuestionnaire.name_FR" style="float:right"><em>Incomplete</em></span>
                     <span ng-show="newLegacyQuestionnaire.name_FR" style="float:right"><em>Complete</em></span>
                   </div>
-                  <div class="panel-body">
-                    <div class="row">
-                      <div class="col-md-2">
-                        <div style="font-size:18px; text-align:right;">Titre</div>
-                      </div>
-                      <div class="col-md-10">
-                        <div class="form-group">
-                          <input class="form-control" type="text" ng-model="newLegacyQuestionnaire.name_FR" ng-change="titleUpdate()" placeholder="Titre Français" required="required">
-                        </div>
+                  <div class="panel-body form-horizontal">
+                    <div class="form-group">
+                      <label class="control-label col-xs-12 col-lg-2">
+                        Titre
+                      </label>
+                      <div class="col-xs-12 col-lg-10">
+                        <input class="form-control" type="text" ng-model="newLegacyQuestionnaire.name_FR" ng-change="titleUpdate()" placeholder="Titre Français" required="required">
                       </div>
                     </div>
                   </div>
@@ -390,7 +416,7 @@
             </div>
             <!-- SECTION: Patient filters -->
             <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
-              <div class="col-md-12 side-menu-title">
+              <div class="col-xs-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
@@ -400,7 +426,7 @@
               </div>
             </div>   
             <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
-              <div class="col-md-12">
+              <div class="col-xs-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
                   Select one of more patient filters below. This will target patients with these specific filters. Leave blank for no filters.
@@ -408,7 +434,7 @@
               </div>
             </div>  
             <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
-              <div class="col-md-8">
+              <div class="col-xs-12 col-lg-8">
                 <div class="panel-container">
                   <div class="panel-info">
                     <div class="panel-content">
@@ -434,7 +460,7 @@
             </div>
             <!-- SECTION: Demographic filters -->
             <div class="row animated" ng-class="{fadeInUp:demo.show}" ng-if="demo.show">
-              <div class="col-md-12 side-menu-title">
+              <div class="col-xs-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
@@ -444,7 +470,7 @@
               </div>
             </div>   
             <div class="row animated" ng-class="{fadeInUp:demo.show}" ng-if="demo.show">
-              <div class="col-md-12">
+              <div class="col-xs-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
                   Please assign a demographic filter. Leave unmarked for no filter.
@@ -452,61 +478,62 @@
               </div>
             </div>  
             <div class="row animated" ng-class="{fadeInUp:demo.show}" ng-if="demo.show">
-              <div class="col-md-6">
-                <h2 style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Sex</h2>
-              </div>  
-              <div class="row">
-                <h2 style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Age Group</h2>
-              </div>
-            </div>
-            <div class="row animated" ng-class="{fadeInUp:demo.show}" ng-if="demo.show">
-              <div ng-repeat="sex in sexes" class="col-md-2">
-                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: demoFilter.sex == sex.name}" ng-click="sexUpdate(sex)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                  <div class="panel-info" ng-class="{active: demoFilter.sex == sex.name}">
-                    <div class="panel-content" style="text-align:center">
-                      <span style="font-size:30px;" class="fa fa-{{sex.icon}}"></span>
-                      <div class="option-panel-title">{{sex.name}}</div>
-                    </div>
-                  </div>
+              <div class="col-xs-12 col-md-6">
+                <div class="row">
+                  <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Sex</h2>
                 </div>
-              </div>
-              <div class="col-md-1"></div>
-              <div class="col-md-3">
-                <div class="panel">
-                  <div class="panel-body">
-                    <div class="row">
-                      <div class="col-md-2">
-                        <div style="font-size:16px; text-align:right;">MIN</div>
-                      </div>
-                      <div class="col-md-10">
-                        <div class="form-group" style="margin-bottom:0px;">
-                          <input class="form-control" ng-model="demoFilter.age.min" type="number" ng-change="ageUpdate()" ng-max="demoFilter.age.max" min="0">
+                <div class="row">
+                  <div ng-repeat="sex in sexes" class="col-xs-12 col-sm-6">
+                    <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: demoFilter.sex == sex.name}" ng-click="sexUpdate(sex)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                      <div class="panel-info" ng-class="{active: demoFilter.sex == sex.name}">
+                        <div class="panel-content" style="text-align:center">
+                          <span style="font-size:30px;" class="fa fa-{{sex.icon}}"></span>
+                          <div class="option-panel-title">{{sex.name}}</div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>          
-              <div class="col-md-3">
-                <div class="panel">
-                  <div class="panel-body">
-                    <div class="row">
-                      <div class="col-md-2">
-                        <div style="font-size:16px; text-align:right;">MAX</div>
-                      </div>
-                      <div class="col-md-10">
-                        <div class="form-group" style="margin-bottom:0px;">
-                          <input class="form-control" ng-model="demoFilter.age.max" type="number" ng-change="ageUpdate()" max="100" ng-min="demoFilter.age.min">
+              </div>
+              <div class="col-xs-12 col-md-6">
+                <div class="row">
+                  <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Age Group</h2>
+                </div>
+                <div class="row">
+                  <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="panel">
+                      <div class="panel-body form-horizontal">
+                        <div class="form-group">
+                          <label class="control-label col-xs-12 col-lg-2">
+                            MIN
+                          </label>
+                          <div class="col-xs-12 col-lg-10">
+                            <input class="form-control" ng-model="demoFilter.age.min" type="number" ng-change="ageUpdate()" ng-max="demoFilter.age.max" min="0">
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div>          
+                  <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="panel">
+                      <div class="panel-body form-horizontal">
+                        <div class="form-group">
+                          <label class="control-label col-xs-12 col-lg-2">
+                            MAX
+                          </label>
+                          <div class="col-xs-12 col-lg-10">
+                            <input class="form-control" ng-model="demoFilter.age.max" type="number" ng-change="ageUpdate()" max="100" ng-min="demoFilter.age.min">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>  
                 </div>
-              </div>        
-            </div>
+              </div>      
+            </div>  
 						<!-- SECTION: Expression filters -->
 						<div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
-							<div class="col-md-12 side-menu-title">
+							<div class="col-xs-12 side-menu-title">
 								<div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
 									<span style="background-color:#e6edfa; padding: 0 10px;">
 										<span class="fa fa-dot-circle-o"></span>
@@ -516,7 +543,7 @@
 							</div>
 						</div>
 						<div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
-							<div class="col-md-12">
+							<div class="col-xs-12">
 								<p style="margin-bottom: 10px;">
 									<span>
 										<strong>Optional field:</strong>
@@ -526,7 +553,7 @@
 							</div>
 						</div>
 						<div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
-							<div class="col-md-8">
+							<div class="col-xs-12 col-lg-8">
 								<div class="panel-container">
 									<div class="panel-info">
 										<div class="panel-content">
@@ -560,7 +587,7 @@
 						</div>
             <!-- SECTION: Diagnosis filters -->
             <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
-              <div class="col-md-12 side-menu-title">
+              <div class="col-xs-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
@@ -570,7 +597,7 @@
               </div>
             </div>   
             <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
-              <div class="col-md-12">
+              <div class="col-xs-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
                   Select one of more diagnosis filters below. This will target patients with these specific diagnoses. Leave blank for no filters.
@@ -578,7 +605,7 @@
               </div>
             </div>  
             <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
-              <div class="col-md-8">
+              <div class="col-xs-12 col-lg-8">
                 <div class="panel-container">
                   <div class="panel-info">
                     <div class="panel-content">
@@ -604,7 +631,7 @@
             </div>
             <!-- SECTION: Doctor filters -->
             <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
-              <div class="col-md-12 side-menu-title">
+              <div class="col-xs-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
@@ -614,7 +641,7 @@
               </div>
             </div>   
             <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
-              <div class="col-md-12">
+              <div class="col-xs-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
                   Select one of more doctor filters below. This will target patients with these specific doctors. Leave blank for no filters.
@@ -622,7 +649,7 @@
               </div>
             </div>  
             <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
-              <div class="col-md-8">
+              <div class="col-xs-12 col-lg-8">
                 <div class="panel-container">
                   <div class="panel-info">
                     <div class="panel-content">
@@ -648,7 +675,7 @@
             </div>
             <!-- SECTION: Resource filters -->
             <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
-              <div class="col-md-12 side-menu-title">
+              <div class="col-xs-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fa fa-dot-circle-o"></span>
@@ -658,7 +685,7 @@
               </div>
             </div>   
             <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
-              <div class="col-md-12">
+              <div class="col-xs-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
                   Select one of more resource filters below. This will target patients with these specific resources. Leave blank for no filters.
@@ -666,7 +693,7 @@
               </div>
             </div>  
             <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
-              <div class="col-md-8">
+              <div class="col-xs-12 col-lg-8">
                 <div class="panel-container">
                   <div class="panel-info">
                     <div class="panel-content">

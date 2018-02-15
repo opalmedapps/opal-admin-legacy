@@ -1,10 +1,10 @@
-angular.module('opalAdmin.controllers.sidePanelMenuController', ['ui.bootstrap', 'ui.grid']).
+angular.module('opalAdmin.controllers.navigationController', ['ui.bootstrap']).
 
 
 	/******************************************************************************
-	* Controller for the side panel on main pages
+	* Controller for navigating the site
 	*******************************************************************************/
-	controller('sidePanelMenuController', function ($scope, $location, $state, LogoutService) {
+	controller('navigationController', function ($scope, $location, $state, LogoutService) {
 
 		// Get the current page from url
 		$scope.currentPage = $location.path().replace('/', ''); // and remove leading slash
@@ -93,6 +93,40 @@ angular.module('opalAdmin.controllers.sidePanelMenuController', ['ui.bootstrap',
 		$scope.goToDiagnosisTranslation = function () {
 			$state.go('diagnosis-translation');
 		};
+
+		// Function to close the navbar on selection of a menu page
+		$scope.closeNav = function () {
+			$(".navbar-collapse").collapse('hide');
+		}
+
+		// Function to set dropdown active for publishing tools
+		$scope.currentActivePublishingTool = function () {
+			var publishingToolPages = ['alias','post','educational-material','hospital-map','notification',
+			'test-result','questionnaire-menu','email','legacy-questionnaire'];
+			if (publishingToolPages.indexOf($state.current.name) !== -1) {
+				return true;
+			}
+			else return false;
+		}
+		// Function to set dropdown active for administration menu
+		$scope.currentActiveAdministration = function () {
+			var adminstrationPages = ['diagnosis-translation','cron','patients','patients-register',
+			'patient-activity','users'];
+			if (adminstrationPages.indexOf($state.current.name) !== -1) {
+				return true;
+			}
+			else return false;
+		}
+		// Function to set dropdown active for profile menu
+		$scope.currentActiveProfile = function () {
+			var profilePages = ['account'];
+			if (profilePages.indexOf($state.current.name) !== -1) {
+				return true;
+			}
+			else return false;
+		}
+
+		
 
 	});
 
