@@ -5,7 +5,7 @@ angular.module('opalAdmin.controllers.applicationController', ['ui.bootstrap', '
 	* Top level application controller
 	*******************************************************************************/
 	controller('applicationController', function ($scope, $rootScope, $state, Idle, Keepalive,
-		$uibModal, Session, loginModal, AUTH_EVENTS, USER_ROLES, AuthService, $translate) {
+		$uibModal, Session, loginModal, AUTH_EVENTS, USER_ROLES, AuthService, $translate, applicationCollectionService) {
 
 		// Set current user 
 		$rootScope.currentUser = null;
@@ -29,6 +29,16 @@ angular.module('opalAdmin.controllers.applicationController', ['ui.bootstrap', '
 				$scope.warning = null;
 			}
 		}
+
+		$scope.build = null;
+		// Call our collection service to get the applicaiton build type
+		applicationCollectionService.getApplicationBuild().then(function (response) {
+			// Assign value
+			$scope.build = response.data;
+			console.log ($scope.build);
+		}).catch(function(response) {
+			console.error('Error occured getting application build: ', response.status, response.data);
+		});
 
 		$scope.inAuthLoginModal = false;
 
