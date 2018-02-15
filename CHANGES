@@ -1,3 +1,11 @@
+Version 0.14.1:
+ -     --- Added branch info to build display
+ -     --- Added version and build display on bottom right
+ -     --- Bug fixes
+ -     --- Fixed issues
+ - --- Added autocomplete to educational material types     -- When choosing a type, the corresponding other language will autocomplete in order to match the right types in both languages
+ - Merge branch 'release-0.14.0' into develop
+
 Version 0.14.0:
  -     --- Changed settings in gruntfile
  -     --- Added gruntfile to track version in package.json

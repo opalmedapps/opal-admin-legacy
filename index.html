@@ -127,8 +127,8 @@
 	<div ng-include="'templates/navbar-menu.html'" ></div>
 	<div id="page">
 		<div ui-view style="position: relative; height: inherit;"></div>
-		<div class="app-version">
-			Version {{build.version}} ({{build.environment}})
+		<div ng-if="build" class="app-version">
+			{{build.version}} (E: {{build.environment}} - B: {{build.branch}})
 		</div>
 	</div>
  
