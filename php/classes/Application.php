@@ -31,15 +31,19 @@ class Application {
 
 			$buildName = $data[0];
 
-			$versionFile = fopen("../../VERSION", "r") 
-				or die("Unable to open VERSION file!");
+			// $versionFile = fopen("../../VERSION", "r") 
+			// 	or die("Unable to open VERSION file!");
 
-			$version = fgets($versionFile);
-			fclose($versionFile);
+			// $version = fgets($versionFile);
+			// fclose($versionFile);
+
+			$version = shell_exec('git describe');
+			$branch = shell_exec('git rev-parse --abbrev-ref HEAD');
 
 			$build = array(
 				'version'		=> $version,
-				'environment'	=> $buildName
+				'environment'	=> $buildName,
+				'branch'		=> $branch
 			);
 
 			return $build;
