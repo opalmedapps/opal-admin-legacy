@@ -1547,7 +1547,7 @@ footer {
 .app-version {
   position: fixed;
   right: 5px;
-  bottom: 15px;
+  bottom: 5px;
   font-size: 12px;
 }
 
