@@ -1544,6 +1544,13 @@ footer {
   display: block;
 }
 
+.app-version {
+  position: fixed;
+  right: 5px;
+  bottom: 15px;
+  font-size: 12px;
+}
+
 /* 
  * Custom Styles for ngGrid
  */
