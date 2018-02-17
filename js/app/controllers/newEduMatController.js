@@ -131,8 +131,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		$scope.patientFilterList = [];
 
 		// Initialize lists to hold the distinct edu material types
-		$scope.EduMatTypes_EN = [];
-		$scope.EduMatTypes_FR = [];
+		$scope.EduMatTypes = [];
 
 
 		/* Function for the "Processing..." dialog */
@@ -176,8 +175,8 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		// Call our API to get the list of edu material types
 		educationalMaterialCollectionService.getEducationalMaterialTypes().then(function (response) {
 
-			$scope.EduMatTypes_EN = response.data.EN;
-			$scope.EduMatTypes_FR = response.data.FR;
+			$scope.EduMatTypes = response.data;
+
 		}).catch(function(response) {
 			console.error('Error occurred getting educational material types:', response.status, response.data);
 		});
@@ -255,9 +254,30 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		};
 
 		// Function to toggle necessary changes when updating the types
-		$scope.typeUpdate = function () {
+		$scope.typeUpdate = function (type, language) {
 
 			$scope.type.open = true;
+
+			// Perform a string comparison to auto complete the other language field
+			type = type.toLowerCase(); 
+			for (var i=0; i < $scope.EduMatTypes.length; i++) {
+				if (language === 'EN') {
+					typeCompare = $scope.EduMatTypes[i].EN.toLowerCase();
+					if (type === typeCompare) {
+						// set the french to be the same
+						$scope.newEduMat.type_FR = $scope.EduMatTypes[i].FR;
+						break;
+					}
+				} 
+				else if (language === 'FR') {
+					typeCompare = $scope.EduMatTypes[i].FR.toLowerCase();
+					if (type === typeCompare) {
+						// set the english to be the same
+						$scope.newEduMat.type_EN = $scope.EduMatTypes[i].EN;
+						break;
+					}
+				}
+			}
 
 			if ($scope.newEduMat.type_EN && $scope.newEduMat.type_FR) {
 
