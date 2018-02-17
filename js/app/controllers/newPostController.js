@@ -18,11 +18,11 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 		};
 
 		// Default boolean variables
-		$scope.type = {open:false, show:true};
-		$scope.title = {open:false, show:false};
-		$scope.body = {open:false, show:false};
-		$scope.publish = {open:false, show:false};
-		$scope.terms = {open:false, show:false};
+		$scope.typeSection = {open:false, show:true};
+		$scope.titleSection = {open:false, show:false};
+		$scope.bodySection = {open:false, show:false};
+		$scope.publishSection = {open:false, show:false};
+		$scope.filterSection = {open:false, show:false};
 
 		// completed steps boolean object; used for progress bar
 		var steps = {
@@ -36,7 +36,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 		$scope.filter = $filter('filter');
 
 		// Initialize search field variables
-		$scope.termSearchField = null;
+		$scope.appointmentSearchField = null;
 		$scope.dxSearchField = null;
 		$scope.doctorSearchField = null;
 		$scope.resourceSearchField = null;
@@ -80,7 +80,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 		};
 
 		// Initialize lists to hold filters
-		$scope.termList = [];
+		$scope.appointmentList = [];
 		$scope.dxFilterList = [];
 		$scope.doctorFilterList = [];
 		$scope.resourceFilterList = [];
@@ -109,7 +109,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 		// Call our API service to get each filter
 		filterCollectionService.getFilters().then(function (response) {
 
-			$scope.termList = response.data.expressions; // Assign value
+			$scope.appointmentList = response.data.appointments; // Assign value
 			$scope.dxFilterList = response.data.dx;
 			$scope.doctorFilterList = response.data.doctors;
 			$scope.resourceFilterList = response.data.resources;
@@ -128,11 +128,11 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 		// Function to toggle necessary changes when updating post name
 		$scope.titleUpdate = function () {
 
-			$scope.title.open = true;
+			$scope.titleSection.open = true;
 
 			if ($scope.newPost.name_EN && $scope.newPost.name_FR) {
 
-				$scope.body.show = true;
+				$scope.bodySection.show = true;
 
 				// Toggle step completion
 				steps.title.completed = true;
@@ -153,14 +153,14 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 		// Function to toggle necessary changes when updating the post body
 		$scope.bodyUpdate = function () {
 
-			$scope.body.open = true;
+			$scope.bodySection.open = true;
 
 			if ($scope.newPost.body_EN && $scope.newPost.body_FR) {
 
-				$scope.publish.show = true;
+				$scope.publishSection.show = true;
 
 				if ($scope.newPost.type.name != 'Announcement') {
-					$scope.terms.show = true;
+					$scope.filterSection.show = true;
 				}
 				// Toggle boolean
 				steps.body.completed = true;
@@ -185,8 +185,8 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 
 			// Toggle boolean
 			steps.type.completed = true;
-			$scope.title.show = true;
-			$scope.type.open = true;
+			$scope.titleSection.show = true;
+			$scope.typeSection.open = true;
 
 			// Remove any entry in publish date
 			$scope.newPost.publish_date = null;
@@ -208,11 +208,11 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 		// Function to toggle necessary changes when updating the publish date
 		$scope.publishDateUpdate = function () {
 
-			$scope.publish.open = true; 
+			$scope.publishSection.open = true; 
 
 			if ($scope.newPost.publish_date && $scope.newPost.publish_time) {
 
-				$scope.terms.show = true;
+				$scope.filterSection.show = true;
 
 				// Toggle boolean
 				steps.publish_date.completed = true;
@@ -234,7 +234,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 		$scope.submitPost = function () {
 			if ($scope.checkForm()) {
 				// Add filters to new post object
-				addFilters($scope.termList);
+				addFilters($scope.appointmentList);
 				addFilters($scope.dxFilterList);
 				addFilters($scope.doctorFilterList);
 				addFilters($scope.resourceFilterList);
@@ -264,27 +264,9 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 				item.added = 1;
 		};
 
-		// Function for selecting all terms in the expression list
-		var selectAllTerms = false;
-		$scope.selectAllTerms = function () {
-			var filtered = $scope.filter($scope.termList, $scope.termSearchField);
-
-			if (selectAllTerms) {
-				angular.forEach(filtered, function (term) {
-					term.added = 0;
-				});
-				selectAllTerms = !selectAllTerms;
-			} else {
-				angular.forEach(filtered, function (term) {
-					term.added = 1;
-				});
-				selectAllTerms = !selectAllTerms;
-			}
-		};
-
 		// Function to assign search fields when textbox changes
-		$scope.searchTerm = function (field) {
-			$scope.termSearchField = field;
+		$scope.searchAppointment = function (field) {
+			$scope.appointmentSearchField = field;
 		};
 		$scope.searchDiagnosis = function (field) {
 			$scope.dxSearchField = field;
@@ -300,9 +282,9 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 		};
 
 		// Function for search through the filters
-		$scope.searchTermsFilter = function (Filter) {
-			var keyword = new RegExp($scope.termSearchField, 'i');
-			return !$scope.termSearchField || keyword.test(Filter.name);
+		$scope.searchAppointmentFilter = function (Filter) {
+			var keyword = new RegExp($scope.appointmentSearchField, 'i');
+			return !$scope.appointmentSearchField || keyword.test(Filter.name);
 		};
 		$scope.searchDxFilter = function (Filter) {
 			var keyword = new RegExp($scope.dxSearchField, 'i');
