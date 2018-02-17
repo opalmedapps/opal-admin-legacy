@@ -100,41 +100,26 @@ class EduMaterial {
     public function getEducationalMaterialTypes() {
 
         // Initialize list of types, separate languages
-        $types = array(
-            'EN'    => array(),
-            'FR'    => array()
-        );
+        $types = array();
         try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
-                    em.EducationalMaterialType_EN
+                    em.EducationalMaterialType_EN,
+                    em.EducationalMaterialType_FR
                 FROM
                     EducationalMaterialControl em
-                ORDER BY 
-                    em.EducationalMaterialType_EN
             ";
 			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                array_push($types['EN'], $data[0]);
-            }
-
-            $sql = "
-                SELECT DISTINCT
-                    em.EducationalMaterialType_FR
-                FROM
-                    EducationalMaterialControl em
-                ORDER BY 
-                    em.EducationalMaterialType_FR
-            ";
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
-
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                array_push($types['FR'], $data[0]);
+                $typeDetails = array(
+                    'EN'    => $data[0],
+                    'FR'    => $data[1]
+                );
+                array_push($types, $typeDetails);
             }
 
             return $types;

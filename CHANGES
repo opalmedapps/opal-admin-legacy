@@ -1,3 +1,24 @@
+Version 0.14.1:
+ -     --- Added branch info to build display
+ -     --- Added version and build display on bottom right
+ -     --- Bug fixes
+ -     --- Fixed issues
+ - --- Added autocomplete to educational material types     -- When choosing a type, the corresponding other language will autocomplete in order to match the right types in both languages
+ - Merge branch 'release-0.14.0' into develop
+
+Version 0.14.0:
+ -     --- Changed settings in gruntfile
+ -     --- Added gruntfile to track version in package.json
+ -     --- Added mobile support to pages above     --- Finalized mobile support
+ -     --- Added mobile support for the above files
+ -     --- Added mobile support for posts and educational material
+ -     --- Further fixes for mobile design     --- Added mobile support for patient registration     --- Adding mobile support for posts
+ -     --- Finished mobile support for home and alias pages
+ -     --- More design implementation         -- responsive delete and edit         -- responsive add with summary display
+ -     --- Added navbar for mobile view     --- Redesigning for mobile/tablet support
+ -     --- Preliminary design changes for mobile/tablet devices
+ - Merge branch 'release-0.13.0' into develop
+
 Version 0.13.0:
  -     --- Changed time format for check in notifications based on language
  -     --- Added functionality to see assigned clinical codes         -- Already assigned clinical codes are disabled in the checkbox and shows         which alias it has been assigned to         -- Selected codes show up in green     --- Fixed filter bug when selecting all terms
