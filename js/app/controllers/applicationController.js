@@ -35,7 +35,7 @@ angular.module('opalAdmin.controllers.applicationController', ['ui.bootstrap', '
 		applicationCollectionService.getApplicationBuild().then(function (response) {
 			// Assign value
 			$scope.build = response.data;
-			console.log ($scope.build);
+
 		}).catch(function(response) {
 			console.error('Error occured getting application build: ', response.status, response.data);
 		});
