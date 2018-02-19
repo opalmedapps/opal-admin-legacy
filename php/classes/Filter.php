@@ -14,11 +14,12 @@ class Filter {
      */
     public function getFilters () {
         $filters = array(
-            'appointments'  => array(),
-            'dx'            => array(),
-            'doctors'       => array(),
-			'resources'     => array(),
-			'patients'		=> array()
+            'appointments'          => array(),
+            'dx'                    => array(),
+            'doctors'               => array(),
+			'resources'             => array(),
+			'patients'		        => array(),
+            'appointmentStatuses'   => array()
         );
         $databaseObj = new Database();
 
@@ -245,6 +246,36 @@ class Filter {
                     );
 					array_push($filters['appointments'], $appointmentDetails);
 				}
+
+                // Appointment Status Filters
+                $sql = "
+                    SELECT DISTINCT
+                        sa.Name 
+                    FROM
+                        StatusAlias sa
+                ";
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $statusDetails = array(
+                        'name'  => $data[0],
+                        'id'    => $data[0],
+                        'type'  => 'AppointmentStatus',
+                        'added' => 0
+                    );
+                    array_push($filters['appointmentStatuses'], $statusDetails);
+                }
+
+                // Manually add checked in flag
+                $statusDetails = array(
+                    'name'  => 'Checked In',
+                    'id'    => 1,
+                    'type'  => 'CheckedInFlag',
+                    'added' => 0
+                );
+                array_push($filters['appointmentStatuses'], $statusDetails);
 			}
 
             return $filters;
