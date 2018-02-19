@@ -10,9 +10,9 @@ angular.module('opalAdmin.controllers.newQuestionController', ['ngAnimate', 'ngS
 		};
 
 		// Default booleans
-		$scope.title = { open: false, show: true };
-		$scope.answer_type = { open: false, show: false };
-		$scope.question_group = { open: false, show: false };
+		$scope.titleSection = { open: false, show: true };
+		$scope.answerTypeSection = { open: false, show: false };
+		$scope.questionGroupSection = { open: false, show: false };
 
 		// get current user id
 		var user = Session.retrieveObject('user');
@@ -86,13 +86,13 @@ angular.module('opalAdmin.controllers.newQuestionController', ['ngAnimate', 'ngS
 		// Update values from form
 		$scope.updateQuestionText = function () {
 
-			$scope.title.open = true;
+			$scope.titleSection.open = true;
 			if (!$scope.newQuestion.text_EN && !$scope.newQuestion.text_FR) {
-				$scope.title.open = false
+				$scope.titleSection.open = false
 			}
 			if ($scope.newQuestion.text_EN && $scope.newQuestion.text_FR) {
 
-				$scope.answer_type.show = true;
+				$scope.answerTypeSection.show = true;
 
 				steps.question.completed = true;
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -108,10 +108,10 @@ angular.module('opalAdmin.controllers.newQuestionController', ['ngAnimate', 'ngS
 		};
 
 		$scope.updateAt = function (selectedAt) {
-			$scope.answer_type.open = true;
+			$scope.answerTypeSection.open = true;
 			if ($scope.newQuestion.answertype_serNum) {
 
-				$scope.question_group.show = true;
+				$scope.questionGroupSection.show = true;
 
 				$scope.selectedAt = selectedAt;
 				//console.log("selected answer type's category:" + $scope.selectedAt.category_EN);
@@ -130,7 +130,7 @@ angular.module('opalAdmin.controllers.newQuestionController', ['ngAnimate', 'ngS
 		};
 
 		$scope.updateGroup = function (selectedGroup) {
-			$scope.question_group.open = true;
+			$scope.questionGroupSection.open = true;
 			if ($scope.newQuestion.questiongroup_serNum) {
 
 				$scope.selectedGroup = selectedGroup;

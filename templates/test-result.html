@@ -111,10 +111,10 @@
         <uib-accordion>
 
           <!-- SECTION: Test names -->
-          <div uib-accordion-group is-open="statusTestResult.open">
+          <div uib-accordion-group is-open="testsSection.open">
             <uib-accordion-heading>
               <div>
-                <strong>Assigned Tests</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTestResult.open, 'glyphicon-chevron-right': !statusTestResult.open}"></i>
+                <strong>Assigned Tests</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': testsSection.open, 'glyphicon-chevron-right': !testsSection.open}"></i>
               </div>
             </uib-accordion-heading>
              <div class="alert alert-info" role="alert">
@@ -143,10 +143,10 @@
           </div>
 
           <!-- SECTION: Titles -->
-          <div uib-accordion-group is-open="statusTitle.open">
+          <div uib-accordion-group is-open="titleSection.open">
             <uib-accordion-heading>
               <div>
-                <strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTitle.open, 'glyphicon-chevron-right': !statusTitle.open}"></i>
+                <strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="row">
@@ -166,10 +166,10 @@
           </div>
 
           <!-- SECTION: Description -->
-          <div uib-accordion-group is-open="statusDescription.open">
+          <div uib-accordion-group is-open="descriptionSection.open">
             <uib-accordion-heading>
               <div>
-                <strong>Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDescription.open, 'glyphicon-chevron-right': !statusDescription.open}"></i>
+                <strong>Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': descriptionSection.open, 'glyphicon-chevron-right': !descriptionSection.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="row">
@@ -189,10 +189,10 @@
           </div>
 
           <!-- SECTION: Test group -->
-          <div uib-accordion-group is-open="statusTestGroup.open">
+          <div uib-accordion-group is-open="testGroupSection.open">
             <uib-accordion-heading>
               <div>
-                <strong>Test Group</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTestGroup.open, 'glyphicon-chevron-right': !statusTestGroup.open}"></i>
+                <strong>Test Group</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': testGroupSection.open, 'glyphicon-chevron-right': !testGroupSection.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="row">
@@ -211,10 +211,10 @@
             </div>
           </div>
           <!-- SECTION: Educational material -->
-          <div uib-accordion-group is-open="statusEducationalMaterial.open">
+          <div uib-accordion-group is-open="educationalMaterialSection.open">
             <uib-accordion-heading>
               <div>
-                <strong>Attached Educational Material</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusEducationalMaterial.open, 'glyphicon-chevron-right': !statusEducationalMaterial.open}"></i>
+                <strong>Attached Educational Material</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': educationalMaterialSection.open, 'glyphicon-chevron-right': !educationalMaterialSection.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
@@ -240,10 +240,10 @@
             </div>
           </div>
           <!-- SECTION: Additional links -->
-          <div uib-accordion-group is-open="statusLinks.open">
+          <div uib-accordion-group is-open="additionalLinksSection.open">
             <uib-accordion-heading>
               <div>
-                <strong>Additional Links</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusLinks.open, 'glyphicon-chevron-right': !statusLinks.open}"></i>
+                <strong>Additional Links</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': additionalLinksSection.open, 'glyphicon-chevron-right': !additionalLinksSection.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="row" ng-repeat="link in testResult.additional_links" style="margin-bottom:7px; border-bottom:1px solid #ddd;">

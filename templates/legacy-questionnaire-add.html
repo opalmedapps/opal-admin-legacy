@@ -124,7 +124,7 @@
                   </div>
                 </div>
                 <!-- SECTION: Demographic filter -->
-                <div uib-accordion-group is-open="demo.open" class="panel-container summary-box animated" ng-class="{fadeInUp:demo.open}" is-disabled="!demoFilter.sex && demoFilter.age.min == 0 && demoFilter.age.max == 100" ng-if="demo.show">
+                <div uib-accordion-group is-open="demoSection.open " class="panel-container summary-box animated" ng-class="{fadeInUp:demoSection.open }" is-disabled="!demoFilter.sex && demoFilter.age.min == 0 && demoFilter.age.max == 100" ng-if="demoSection.show ">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -134,7 +134,7 @@
                         <strong>Demographic Filter(s)</strong>
                       </div>
                       <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':demo.open, 'glyphicon-chevron-right':!demo.open}" ng-if="demoFilter.sex || demoFilter.age.min != 0 || demoFilter.age.max != 100"></i>
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':demoSection.open , 'glyphicon-chevron-right':!demoSection.open }" ng-if="demoFilter.sex || demoFilter.age.min != 0 || demoFilter.age.max != 100"></i>
                       </div>
                     </div>
                   </uib-accordion-heading>
@@ -459,7 +459,7 @@
               </div>
             </div>
             <!-- SECTION: Demographic filters -->
-            <div class="row animated" ng-class="{fadeInUp:demo.show}" ng-if="demo.show">
+            <div class="row animated" ng-class="{fadeInUp:demoSection.show }" ng-if="demoSection.show ">
               <div class="col-xs-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -469,7 +469,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row animated" ng-class="{fadeInUp:demo.show}" ng-if="demo.show">
+            <div class="row animated" ng-class="{fadeInUp:demoSection.show }" ng-if="demoSection.show ">
               <div class="col-xs-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
@@ -477,7 +477,7 @@
                 </p>
               </div>
             </div>  
-            <div class="row animated" ng-class="{fadeInUp:demo.show}" ng-if="demo.show">
+            <div class="row animated" ng-class="{fadeInUp:demoSection.show }" ng-if="demoSection.show ">
               <div class="col-xs-12 col-md-6">
                 <div class="row">
                   <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Sex</h2>

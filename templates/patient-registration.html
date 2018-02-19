@@ -51,7 +51,7 @@
               <uib-accordion ng-if="validPatientSearch == 'valid'" class="side-navbar">
 
                 <!-- SECTION: Email --> 
-                <div uib-accordion-group is-open="email.open" class="panel-container summary-box animated" ng-class="{fadeInUp: validPatientSearch == 'valid'}" is-disabled="!newPatient.email" ng-if="validPatientSearch == 'valid'">
+                <div uib-accordion-group is-open="emailSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: validPatientSearch == 'valid'}" is-disabled="!newPatient.email" ng-if="validPatientSearch == 'valid'">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -66,7 +66,7 @@
                 </div>
 
                 <!-- SECTION: Password -->
-                <div uib-accordion-group is-open="password.open" class="panel-container summary-box animated" ng-class="{fadeInUp: password.show}" ng-if="password.show" is-disabled="!newPatient.password && !newPassword.confirmPassword">
+                <div uib-accordion-group is-open="passwordSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: passwordSection.show}" ng-if="passwordSection.show" is-disabled="!newPatient.password && !newPassword.confirmPassword">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -81,7 +81,7 @@
                 </div>
 
                 <!-- SECTION: Language -->
-                <div uib-accordion-group is-open="language.open" class="panel-container summary-box animated" ng-class="{fadeInUp: language.show}" ng-if="language.show" is-disabled="!newPatient.language">
+                <div uib-accordion-group is-open="languageSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: languageSection.show}" ng-if="languageSection.show" is-disabled="!newPatient.language">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -96,7 +96,7 @@
                 </div>
 
                 <!-- SECTION: Cellphone --> 
-                <div uib-accordion-group is-open="cellnum.open" class="panel-container summary-box animated" ng-class="{fadeInUp: cellnum.show}" ng-if="cellnum.show" is-disabled="!newPatient.cellNum">
+                <div uib-accordion-group is-open="cellNumberSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: cellNumberSection.show}" ng-if="cellNumberSection.show" is-disabled="!newPatient.cellNum">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -111,7 +111,7 @@
                 </div>
 
                 <!-- SECTION: Security question 1 -->
-                <div uib-accordion-group is-open="security_question_1.open" class="panel-container summary-box animated" ng-class="{fadeInUp: security_question_1.show}" ng-if="security_question_1.show" is-disabled="!newPatient.securityQuestion1.answer">
+                <div uib-accordion-group is-open="securityQuestion1Section.open" class="panel-container summary-box animated" ng-class="{fadeInUp: securityQuestion1Section.show}" ng-if="securityQuestion1Section.show" is-disabled="!newPatient.securityQuestion1.answer">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -126,7 +126,7 @@
                 </div>
 
                 <!-- SECTION: Security question 2 -->
-                <div uib-accordion-group is-open="security_question_2.open" class="panel-container summary-box animated" ng-class="{fadeInUp: security_question_2.show}" ng-if="security_question_2.show" is-disabled="!newPatient.securityQuestion2.answer">
+                <div uib-accordion-group is-open="securityQuestion2Section.open" class="panel-container summary-box animated" ng-class="{fadeInUp: securityQuestion2Section.show}" ng-if="securityQuestion2Section.show" is-disabled="!newPatient.securityQuestion2.answer">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -141,7 +141,7 @@
                 </div>
 
                 <!-- SECTION: Security question 3 -->
-                <div uib-accordion-group is-open="security_question_3.open" class="panel-container summary-box animated" ng-class="{fadeInUp: security_question_3.show}" ng-if="security_question_3.show" is-disabled="!newPatient.securityQuestion3.answer">
+                <div uib-accordion-group is-open="securityQuestion3Section.open" class="panel-container summary-box animated" ng-class="{fadeInUp: securityQuestion3Section.show}" ng-if="securityQuestion3Section.show" is-disabled="!newPatient.securityQuestion3.answer">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -156,7 +156,7 @@
                 </div>
 
                 <!-- SECTION: Access level -->
-                <div uib-accordion-group is-open="access_level.open" class="panel-container summary-box animated" ng-class="{fadeInUp: access_level.show}" ng-if="access_level.show" is-disabled="!newPatient.accessLevel">
+                <div uib-accordion-group is-open="accessLevelSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: accessLevelSection.show}" ng-if="accessLevelSection.show" is-disabled="!newPatient.accessLevel">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -171,7 +171,7 @@
                 </div>
 
                 <!-- SECTION: Final checks --> 
-                <div uib-accordion-group is-open="final.open" class="panel-container summary-box animated" ng-class="{fadeInUp: final.show}" ng-if="final.show" is-disabled="!idCheck && !consentCheck && !disclaimerCheck && !slaCheck && !opalDocCheck">
+                <div uib-accordion-group is-open="finalCheckSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: finalCheckSection.show}" ng-if="finalCheckSection.show" is-disabled="!idCheck && !consentCheck && !disclaimerCheck && !slaCheck && !opalDocCheck">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -386,7 +386,7 @@
                 </div>
 
                 <!-- SECTION: Language -->
-                <div class="row animated" ng-class="{fadeInUp: language.show}" ng-if="language.show">
+                <div class="row animated" ng-class="{fadeInUp: languageSection.show}" ng-if="languageSection.show">
                   <div class="col-xs-12 side-menu-title">
                     <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                       <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -396,7 +396,7 @@
                     </div>  
                   </div>
                 </div>   
-                <div class="row animated" ng-class="{fadeInUp: language.show}" ng-if="language.show">
+                <div class="row animated" ng-class="{fadeInUp: languageSection.show}" ng-if="languageSection.show">
                   <div class="col-xs-12">
                     <p style="margin-bottom: 10px;">
                       <span style="color:#d9534f"><strong>{{ 'REQUIRED_FIELD' | translate }}:</strong></span>
@@ -404,7 +404,7 @@
                     </p>
                   </div>
                 </div>  
-                <div class="row animated" style="margin-bottom: 15px;" ng-class="{fadeInUp: language.show}" ng-if="language.show">
+                <div class="row animated" style="margin-bottom: 15px;" ng-class="{fadeInUp: languageSection.show}" ng-if="languageSection.show">
                   <div class="col-xs-12 col-sm-9">
                     <div class="row">
                       <div class="col-md-5">
@@ -417,7 +417,7 @@
                 </div>
 
                 <!-- SECTION: Cellphone number -->
-                <div class="row animated" ng-class="{fadeInUp: cellnum.show}" ng-if="cellnum.show">
+                <div class="row animated" ng-class="{fadeInUp: cellNumberSection.show}" ng-if="cellNumberSection.show">
                   <div class="col-xs-12 side-menu-title">
                     <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                       <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -427,7 +427,7 @@
                     </div>  
                   </div>
                 </div>   
-                <div class="row animated" ng-class="{fadeInUp: cellnum.show}" ng-if="cellnum.show">
+                <div class="row animated" ng-class="{fadeInUp: cellNumberSection.show}" ng-if="cellNumberSection.show">
                   <div class="col-xs-12">
                     <p style="margin-bottom: 10px;">
                       <span><strong>{{ 'OPTIONAL_FIELD' | translate }}:</strong></span>
@@ -435,7 +435,7 @@
                     </p>
                   </div>
                 </div>   
-                <div class="row animated" ng-class="{fadeInUp: cellnum.show}" ng-if="cellnum.show">
+                <div class="row animated" ng-class="{fadeInUp: cellNumberSection.show}" ng-if="cellNumberSection.show">
                   <div class="col-xs-12 col-sm-9 form-horizontal">
                     <div class="form-group has-feedback" ng-class="{'has-success': validCellNum.status=='valid', 'has-error': validCellNum.status=='invalid'}">
                       <div class="col-md-5">
@@ -450,7 +450,7 @@
                 </div>
 
                 <!-- SECTION: Security questions -->
-                <div class="row animated" ng-class="{faceInUp: security_question_1.show}" ng-if="security_question_1.show">
+                <div class="row animated" ng-class="{faceInUp: securityQuestion1Section.show}" ng-if="securityQuestion1Section.show">
                   <div class="col-xs-12 side-menu-title">
                     <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                       <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -460,7 +460,7 @@
                     </div>  
                   </div>
                 </div>   
-                <div class="row animated" ng-class="{faceInUp: security_question_1.show}" ng-if="security_question_1.show">
+                <div class="row animated" ng-class="{faceInUp: securityQuestion1Section.show}" ng-if="securityQuestion1Section.show">
                   <div class="col-xs-12">
                     <p style="margin-bottom: 10px;">
                       <span style="color:#d9534f"><strong>{{ 'REQUIRED_FIELD' | translate }}:</strong></span>
@@ -468,7 +468,7 @@
                     </p>
                   </div>
                 </div>  
-                <div class="row animated" ng-class="{faceInUp: security_question_1.show}" ng-if="security_question_1.show"> 
+                <div class="row animated" ng-class="{faceInUp: securityQuestion1Section.show}" ng-if="securityQuestion1Section.show"> 
                   <div class="col-xs-12 col-md-8">
                     <div class="panel" ng-class="validAnswer1.status == 'valid' ? 'panel-success': 'panel-danger'">
                       <div class="panel-heading"><strong>{{ 'SECURITY_QUESTION' | translate }} 1</strong>
@@ -568,7 +568,7 @@
                 </div>
 
                 <!-- SECTION: Access level -->
-                <div class="row animated" ng-class="{fadeInUp: access_level.show}" ng-if="access_level.show">
+                <div class="row animated" ng-class="{fadeInUp: accessLevelSection.show}" ng-if="accessLevelSection.show">
                   <div class="col-xs-12 side-menu-title">
                     <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                       <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -578,7 +578,7 @@
                     </div>  
                   </div>
                 </div>   
-                <div class="row animated" ng-class="{fadeInUp: access_level.show}" ng-if="access_level.show">
+                <div class="row animated" ng-class="{fadeInUp: accessLevelSection.show}" ng-if="accessLevelSection.show">
                   <div class="col-xs-12">
                     <p style="margin-bottom: 10px;">
                       <span style="color:#d9534f"><strong>{{ 'REQUIRED_FIELD' | translate }}:</strong></span>
@@ -586,7 +586,7 @@
                     </p>
                   </div>
                 </div>  
-                <div class="row animated" style="margin-bottom: 15px;" ng-class="{fadeInUp: access_level.show}" ng-if="access_level.show">
+                <div class="row animated" style="margin-bottom: 15px;" ng-class="{fadeInUp: accessLevelSection.show}" ng-if="accessLevelSection.show">
                   <div class="col-xs-12 col-md-12">
                     <div class="row">
                       <div class="col-md-5">
@@ -599,7 +599,7 @@
                 </div>
 
                 <!-- SECTION: Final checks -->
-  							<div class="row animated" ng-class="{fadeInUp: final.show}" ng-if="final.show">
+  							<div class="row animated" ng-class="{fadeInUp: finalCheckSection.show}" ng-if="finalCheckSection.show">
                   <div class="col-xs-12 side-menu-title">
                     <div style="height: 10px; border-bottom: 1px solid #6f5499;">
                       <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -609,7 +609,7 @@
                     </div>  
                   </div>
                 </div>   
-                <div class="row animated" ng-class="{fadeInUp: final.show}" ng-if="final.show">
+                <div class="row animated" ng-class="{fadeInUp: finalCheckSection.show}" ng-if="finalCheckSection.show">
                   <div class="col-xs-12">
                     <p style="margin-bottom: 10px;">
                       <span style="color:#d9534f"><strong>{{ 'REQUIRED_FIELD' | translate }}:</strong></span>
@@ -618,7 +618,7 @@
                   </div>
                 </div> 
 
-  			  			<div class="row animated" ng-class="{fadeInUp: final.show}" ng-if="final.show">
+  			  			<div class="row animated" ng-class="{fadeInUp: finalCheckSection.show}" ng-if="finalCheckSection.show">
                   <div class="col-xs-12 col-sm-9 col-md-9 col-lg-6"> 
   									<table class="table table-bordered table-condensed">
   										<col width="15%">
