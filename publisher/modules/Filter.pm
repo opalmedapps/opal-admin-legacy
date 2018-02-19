@@ -26,7 +26,7 @@ sub new
         _sex            => undef,
         _age            => undef,
 		_patients 		=> undef,
-        _expressions    => undef,
+        _appointments   => undef,
         _diagnoses      => undef,
         _doctors        => undef,
         _resources      => undef,
@@ -69,13 +69,13 @@ sub setPatientFilters
 }
 
 #======================================================================================
-# Subroutine to set the expression filters
+# Subroutine to set the appointment filters
 #======================================================================================
-sub setExpressionFilters
+sub setAppointmentFilters
 {
-	my ($filter, @expressions) = @_; # filter object with provided expressions in arguments
-	@{$filter->{_expressions}} = @expressions; # set the expressions
-	return @{$filter->{_expressions}};
+	my ($filter, @appointments) = @_; # filter object with provided appointments in arguments
+	@{$filter->{_appointments}} = @appointments; # set the appointments
+	return @{$filter->{_appointments}};
 }
 
 #======================================================================================
@@ -136,12 +136,12 @@ sub getPatientFilters
 }
 
 #======================================================================================
-# Subroutine to get the expression filters
+# Subroutine to get the appointment filters
 #======================================================================================
-sub getExpressionFilters
+sub getAppointmentFilters
 {
 	my ($filter) = @_; # our filter object
-	return @{$filter->{_expressions}};
+	return @{$filter->{_appointments}};
 }
 
 #======================================================================================
@@ -181,7 +181,7 @@ sub getAllFiltersFromOurDB
     my $sexFilter           = getSexFilterFromOurDB($controlSer, $controlTable);
     my $ageFilter           = getAgeFilterFromOurDB($controlSer, $controlTable);
 	my @patientFilters 		= getPatientFiltersFromOurDB($controlSer, $controlTable);
-    my @expressionFilters   = getExpressionFiltersFromOurDB($controlSer, $controlTable);
+    my @appointmentFilters   = geAppointmentFiltersFromOurDB($controlSer, $controlTable);
     my @diagnosisFilters    = getDiagnosisFiltersFromOurDB($controlSer, $controlTable);
     my @doctorFilters       = getDoctorFiltersFromOurDB($controlSer, $controlTable);
     my @resourceFilters     = getResourceFiltersFromOurDB($controlSer, $controlTable);
@@ -191,7 +191,7 @@ sub getAllFiltersFromOurDB
     $Filter->setSexFilter($sexFilter);
     $Filter->setAgeFilter($ageFilter);
 	$Filter->setPatientFilters(@patientFilters);
-    $Filter->setExpressionFilters(@expressionFilters);
+    $Filter->setAppointmentFilters(@appointmentFilters);
     $Filter->setDiagnosisFilters(@diagnosisFilters);
     $Filter->setDoctorFilters(@doctorFilters);
     $Filter->setResourceFilters(@resourceFilters);
@@ -308,13 +308,13 @@ sub getPatientFiltersFromOurDB
 }
 
 #======================================================================================
-# Subroutine to get expression filters from DB given a control serial number and table name
+# Subroutine to get appointment filters from DB given a control serial number and table name
 #======================================================================================
-sub getExpressionFiltersFromOurDB
+sub getAppointmentFiltersFromOurDB
 {
     my ($controlSer, $controlTable) = @_; # args
 
-    my @expressionFilters = (); # initialize list
+    my @appointmentFilters = (); # initialize list
     my $select_sql = "
         SELECT DISTINCT
             Filters.FilterId
@@ -323,7 +323,7 @@ sub getExpressionFiltersFromOurDB
         WHERE
             Filters.ControlTable         = '$controlTable'
         AND Filters.ControlTableSerNum   = '$controlSer'
-        AND Filters.FilterType           = 'Expression'
+        AND Filters.FilterType           = 'Appointment'
     ";
 
     # prepare query
@@ -335,10 +335,10 @@ sub getExpressionFiltersFromOurDB
 		or die "Could not execute query: " . $query->errstr;
 	
 	while (my @data = $query->fetchrow_array()) {
-        push(@expressionFilters, $data[0]);
+        push(@appointmentFilters, $data[0]);
     }
 
-    return @expressionFilters;
+    return @appointmentFilters;
 }
 
 #======================================================================================
