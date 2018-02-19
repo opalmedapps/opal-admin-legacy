@@ -331,6 +331,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			$scope.doctorFilterList = [];
 			$scope.resourceFilterList = [];
 			$scope.patientFilterList = [];
+			$scope.appointmentStatusList = [];
 
 			// Call our API service to get legacy questionnaire details
 			legacyQuestionnaireCollectionService.getLegacyQuestionnaireDetails($scope.currentLegacyQuestionnaire.serial).then(function (response) {
@@ -354,6 +355,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 					$scope.doctorFilterList = checkAddedFilter(response.data.doctors);
 					$scope.resourceFilterList = checkAddedFilter(response.data.resources);
 					$scope.patientFilterList = checkAddedFilter(response.data.patients);
+					$scope.appointmentStatusList = checkAddedFilter(response.data.appointmentStatuses);
 
 				}).catch(function(response) {
 					console.error('Error occurred getting filter list:', response.status, response.data);
@@ -370,6 +372,22 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 					item.added = 0;
 				else
 					item.added = 1;
+			};
+
+			// Function to toggle appointment status filter 
+			$scope.appointmentStatusUpdate = function (index) {
+				$scope.setChangesMade();
+				angular.forEach($scope.appointmentStatusList, function (appointmentStatus, loopIndex) {
+					if (index == loopIndex) {
+						if (appointmentStatus.added) 
+							appointmentStatus.added = 0;
+						else
+							appointmentStatus.added = 1;
+					}
+					else {
+						appointmentStatus.added = 0;
+					}
+				});
 			};
 
 			// Function to assign '1' to existing filters 
@@ -391,13 +409,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 
 			// Function to check demographic filters
 			function checkDemographicFilters() {
-				var demoFilter = {
-					sex: null,
-					age: {
-						min: 0,
-						max: 100
-					}
-				};
+
 				angular.forEach($scope.legacyQuestionnaire.filters, function (selectedFilter) {
 					if (selectedFilter.type == 'Sex')
 						$scope.demoFilter.sex = selectedFilter.id;
@@ -406,8 +418,6 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 						$scope.demoFilter.age.max = parseInt(selectedFilter.id.split(',')[1]);
 					}
 				});
-
-				return demoFilter;
 			}
 
 			// Function called whenever there has been a change in the form
@@ -473,6 +483,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 					addFilters($scope.doctorFilterList);
 					addFilters($scope.resourceFilterList);
 					addFilters($scope.patientFilterList);
+					addFilters($scope.appointmentStatusList);
 
 					// ajax POST
 					$.ajax({
