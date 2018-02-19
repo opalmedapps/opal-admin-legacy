@@ -202,18 +202,24 @@ sub publishLegacyQuestionnaires
 
             }
 
-			# Retrieve all patient's appointment(s) up until tomorrow
-            my @patientAppointments = Appointment::getAllPatientsAppointmentsFromOurDB($patientSer);
+			# Retrieve all today's appointment(s)
+            my @patientAppointments = Appointment::getTodaysPatientsAppointmentsFromOurDB($patientSer);
 
             my @aliasSerials = ();
             my @diagnosisNames = ();
+            my @appointmentStatuses = ();
+            my @checkins = ();
 
             # we build all possible appointment and diagnoses for each appointment found
             foreach my $appointment (@patientAppointments) {
 
                 my $expressionSer = $appointment->getApptAliasExpressionSer();
                 my $aliasSer = Alias::getAliasFromOurDB($expressionSer);
+                my $status = $appointment->getApptStatus();
+                my $checkinFlag = $appointment->getApptCheckin();
                 push(@aliasSerials, $aliasSer) unless grep{$_ eq $aliasSer} @aliasSerials;
+                push(@appointmentStatuses, $status) unless grep{$_ eq $status} @appointmentStatuses;
+                push(@checkins, $checkinFlag) unless grep{$_ eq $checkinFlag} @checkins;
 
                 my $diagnosisSer = $appointment->getApptDiagnosisSer();
                 my $diagnosisName = Diagnosis::getDiagnosisNameFromOurDB($diagnosisSer);
@@ -222,6 +228,48 @@ sub publishLegacyQuestionnaires
             }
 
             my @patientDoctors = PatientDoctor::getPatientsDoctorsFromOurDB($patientSer);
+
+            # Fetch checkin filter (if any)
+            my @checkinFilter = $questionnaireFilters->getCheckinFilter();
+            if (@checkinFilter) {
+
+                # toggle flag
+                $isNonPatientSpecificFilterDefined = 1;
+
+                # Finding the existence of the patient checkin in the checkin filters
+                # If there is an intersection, then patient is part of this publishing questionnaire
+                if (!intersect(@checkinFilter, @checkins)) {
+                   if (@patientFilters) {
+                        # if the patient failed to match the checkin filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the checkin filter
+                    # move on to the next questionnaire
+                    else{next;}
+                } 
+            }
+
+            # Fetch appointment status filters (if any)
+            my @appointmentStatusFilters =  $questionnaireFilters->getAppointmentStatusFilters();
+            if (@appointmentStatusFilters) {
+
+                # toggle flag
+                $isNonPatientSpecificFilterDefined = 1;
+
+                # Finding the existence of the patient status in the status filters
+                # If there is an intersection, then patient is part of this publishing questionnaire
+                if (!intersect(@appointmentStatusFilters, @appointmentStatuses)) {
+                   if (@patientFilters) {
+                        # if the patient failed to match the status filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the status filter
+                    # move on to the next questionnaire
+                    else{next;}
+                } 
+            }
 
 			# Fetch appointment filters (if any)
             my @appointmentFilters =  $questionnaireFilters->getAppointmentFilters();
@@ -349,6 +397,7 @@ sub inOurDatabase
 		WHERE
 			Questionnaire.PatientSerNum  				= '$patientser'
 		AND Questionnaire.QuestionnaireControlSerNum 	= '$questionnaireControlSer'
+        AND DATE(Questionnaire.DateAdded)               = CURDATE()
 	";
 
 	  # prepare query

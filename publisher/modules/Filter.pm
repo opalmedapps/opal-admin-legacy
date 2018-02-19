@@ -23,13 +23,15 @@ sub new
 {
     my $class = shift;
     my $filter = {
-        _sex            => undef,
-        _age            => undef,
-		_patients 		=> undef,
-        _appointments   => undef,
-        _diagnoses      => undef,
-        _doctors        => undef,
-        _resources      => undef,
+        _sex                => undef,
+        _age                => undef,
+		_patients 		    => undef,
+        _appointments       => undef,
+        _diagnoses          => undef,
+        _doctors            => undef,
+        _resources          => undef,
+        _appointmentStatuses=> undef,
+        _checkin            => undef,
     };
 
 	# bless associates an object with a class so Perl knows which package to search for
@@ -109,6 +111,26 @@ sub setResourceFilters
 }
 
 #======================================================================================
+# Subroutine to set the appointment status filters
+#======================================================================================
+sub setAppointmentStatusFilters
+{
+    my ($filter, @appointmentStatuses) = @_; # filter object with provided statuses in arguments
+    @{$filter->{_appointmentStatuses}} = @appointmentStatuses; # set the statuses
+    return @{$filter->{_appointmentStatuses}};
+}
+
+#======================================================================================
+# Subroutine to set the checkin filters
+#======================================================================================
+sub setCheckinFilters
+{
+    my ($filter, @checkin) = @_; # filter object with provided flag in arguments
+    @{$filter->{_checkin}} = @checkin; # set the flag
+    return @{$filter->{_checkin}};
+}
+
+#======================================================================================
 # Subroutine to get the sex filter
 #======================================================================================
 sub getSexFilter
@@ -172,19 +194,39 @@ sub getResourceFilters
 }
 
 #======================================================================================
+# Subroutine to get the appointment status filters
+#======================================================================================
+sub getAppointmentStatusFilters
+{
+    my ($filter) = @_; # our filter object
+    return @{$filter->{_appointmentStatuses}};
+}
+
+#======================================================================================
+# Subroutine to get the checkin filters
+#======================================================================================
+sub getCheckinFilters
+{
+    my ($filter) = @_; # our filter object
+    return @{$filter->{_checkin}};
+}
+
+#======================================================================================
 # Subroutine to get all filters given a control serial number and table name
 #======================================================================================
 sub getAllFiltersFromOurDB
 {
     my ($controlSer, $controlTable) = @_; # args
 
-    my $sexFilter           = getSexFilterFromOurDB($controlSer, $controlTable);
-    my $ageFilter           = getAgeFilterFromOurDB($controlSer, $controlTable);
-	my @patientFilters 		= getPatientFiltersFromOurDB($controlSer, $controlTable);
-    my @appointmentFilters   = geAppointmentFiltersFromOurDB($controlSer, $controlTable);
-    my @diagnosisFilters    = getDiagnosisFiltersFromOurDB($controlSer, $controlTable);
-    my @doctorFilters       = getDoctorFiltersFromOurDB($controlSer, $controlTable);
-    my @resourceFilters     = getResourceFiltersFromOurDB($controlSer, $controlTable);
+    my $sexFilter                   = getSexFilterFromOurDB($controlSer, $controlTable);
+    my $ageFilter                   = getAgeFilterFromOurDB($controlSer, $controlTable);
+	my @patientFilters 		        = getPatientFiltersFromOurDB($controlSer, $controlTable);
+    my @appointmentFilters          = geAppointmentFiltersFromOurDB($controlSer, $controlTable);
+    my @diagnosisFilters            = getDiagnosisFiltersFromOurDB($controlSer, $controlTable);
+    my @doctorFilters               = getDoctorFiltersFromOurDB($controlSer, $controlTable);
+    my @resourceFilters             = getResourceFiltersFromOurDB($controlSer, $controlTable);
+    my @appointmentStatusFilters    = getAppointmentStatusFiltersFromOurDB($controlSer, $controlTable);
+    my @checkinFilter               = getCheckinFiltersFromOurDB($controlSer, $controlTable);
 
     my $Filter = new Filter(); # initialize object
 
@@ -195,6 +237,8 @@ sub getAllFiltersFromOurDB
     $Filter->setDiagnosisFilters(@diagnosisFilters);
     $Filter->setDoctorFilters(@doctorFilters);
     $Filter->setResourceFilters(@resourceFilters);
+    $Filter->setAppointmentFilters(@appointmentStatusFilters);
+    $Filter->setCheckinFilters(@checkinFilter);
 
     return $Filter;
 
@@ -441,6 +485,73 @@ sub getResourceFiltersFromOurDB
     }
 
     return @resourceFilters;
+}
+
+#======================================================================================
+# Subroutine to get appointment status filters from DB given a control serial number and table name
+#======================================================================================
+sub getAppointmentStatusFiltersFromOurDB
+{
+    my ($controlSer, $controlTable) = @_; # args
+
+    my @appointmentStatusFilters = (); # initialize list
+    my $select_sql = "
+        SELECT DISTINCT
+            Filters.FilterId
+        FROM
+            Filters
+        WHERE
+            Filters.ControlTable         = '$controlTable'
+        AND Filters.ControlTableSerNum   = '$controlSer'
+        AND Filters.FilterType           = 'AppointmentStatus'
+    ";
+
+    # prepare query
+    my $query = $SQLDatabase->prepare($select_sql)
+        or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+    # execute query
+    $query->execute()
+        or die "Could not execute query: " . $query->errstr;
+    
+    while (my @data = $query->fetchrow_array()) {
+        push(@appointmentStatusFilters, $data[0]);
+    }
+
+    return @appointmentStatusFilters;
+}
+#======================================================================================
+# Subroutine to get checkin filters from DB given a control serial number and table name
+#======================================================================================
+sub getCheckinFiltersFromOurDB
+{
+    my ($controlSer, $controlTable) = @_; # args
+
+    my @checkinFilters = (); # initialize list
+    my $select_sql = "
+        SELECT DISTINCT
+            Filters.FilterId
+        FROM
+            Filters
+        WHERE
+            Filters.ControlTable         = '$controlTable'
+        AND Filters.ControlTableSerNum   = '$controlSer'
+        AND Filters.FilterType           = 'CheckedInFlag'
+    ";
+
+    # prepare query
+    my $query = $SQLDatabase->prepare($select_sql)
+        or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+    # execute query
+    $query->execute()
+        or die "Could not execute query: " . $query->errstr;
+    
+    while (my @data = $query->fetchrow_array()) {
+        push(@checkinFilters, $data[0]);
+    }
+
+    return @checkinFilters;
 }
 
 # exit smoothly for module

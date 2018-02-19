@@ -228,6 +228,38 @@
         </div>
       </div> 
 
+      <!-- SECTION: Appointment status filter -->
+      <div uib-accordion-group is-open="appointmentStatusFilterSection.open">
+        <uib-accordion-heading>
+          <div>
+            <strong>Filter By Appointment Status</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': appointmentStatusFilterSection.open, 'glyphicon-chevron-right': !appointmentStatusFilterSection.open}"></i>
+          </div>
+        </uib-accordion-heading>
+        <div class="alert alert-info" role="alert">
+          <strong>Current Appointment Status Filter</strong><br>
+          <p>
+            <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+            <span ng-if="allFilters(appointmentStatusList)">No filter</span>
+            <span ng-repeat="selectedAppointmentStatus in appointmentStatusList | filter: {added: 1} : 1" ng-if="!allFilters(appointmentStatusList)">
+                {{selectedAppointmentStatus.name}}
+            </span>
+          </p>
+        </div>
+        <div class="row">
+          <div ng-repeat="appointmentStatus in appointmentStatusList" class="col-xs-12 col-sm-4 col-md-3 item-panel-select">
+            <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: appointmentStatus.added}" ng-click="appointmentStatusUpdate($index)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+              <div class="panel-info" ng-class="{active: appointmentStatus.added}">
+                <div class="panel-content" style="text-align:center">
+                  <span ng-if="!appointmentStatus.added" style="font-size:30px;" class="glyphicon glyphicon-minus"></span>
+                  <span ng-if="appointmentStatus.added" style="font-size:30px;" class="glyphicon glyphicon-ok"></span>
+                  <div class="option-panel-title">{{appointmentStatus.name}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- SECTION: Appointment filter -->
       <div uib-accordion-group is-open="appointmentFilterSection.open">
         <uib-accordion-heading>
@@ -241,7 +273,7 @@
             <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(appointmentList)"></span>
             <span ng-if="allFilters(appointmentList)">No filter</span>
             <ul class="list-items" ng-if="!allFilters(appointmentList)">
-              <li ng-repeat="selectedAppointment in appointmentList | filter: {added: 1} : 1" ng-hide="allFilters(appointmentList)">
+              <li ng-repeat="selectedAppointment in appointmentList | filter: {added: 1} : 1">
                 {{selectedAppointment.name}}
               </li>
             </ul>
@@ -275,7 +307,7 @@
             <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(dxFilterList)"></span>
             <span ng-if="allFilters(dxFilterList)">No filter</span>
             <ul class="list-items" ng-if="!allFilters(dxFilterList)">
-                <li ng-repeat="dx in dxFilterList | filter: {added: 1} : 1" ng-hide="allFilters(dxFilterList)">
+                <li ng-repeat="dx in dxFilterList | filter: {added: 1} : 1">
                 {{dx.name}}
               </li>
             </ul>
@@ -309,7 +341,7 @@
             <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(doctorFilterList)"></span>
             <span ng-if="allFilters(doctorFilterList)">No filter</span>
             <ul class="list-items" ng-if="!allFilters(doctorFilterList)">
-                <li ng-repeat="doctor in doctorFilterList | filter: {added: 1} : 1" ng-hide="allFilters(doctorFilterList)">
+                <li ng-repeat="doctor in doctorFilterList | filter: {added: 1} : 1">
                 {{doctor.name}}
               </li>
             </ul>
@@ -343,7 +375,7 @@
             <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(resourceFilterList)"></span>
             <span ng-if="allFilters(resourceFilterList)">No filter</span>
             <ul class="list-items" ng-if="!allFilters(resourceFilterList)">
-                <li ng-repeat="resource in resourceFilterList | filter: {added: 1} : 1" ng-hide="allFilters(resourceFilterList)">
+                <li ng-repeat="resource in resourceFilterList | filter: {added: 1} : 1">
                 {{resource.name}}
               </li>
             </ul>
