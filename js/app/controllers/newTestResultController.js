@@ -11,11 +11,11 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 		};
 
 		// default boolean
-		$scope.tests = {open: false, show: true};
-		$scope.title_description = {open: false, show: false};
-		$scope.group = {open: false, show: false};
-		$scope.edumat = {open: false, show: false};
-		$scope.additional_links = {open: false, show: false};
+		$scope.testsSection = {open: false, show: true};
+		$scope.titleDescriptionSection = {open: false, show: false};
+		$scope.testGroupSection = {open: false, show: false};
+		$scope.educationalMaterialSection = {open: false, show: false};
+		$scope.additionalLinksSection = {open: false, show: false};
 
 		// completed steps boolean object; used for progress bar
 		var steps = {
@@ -133,14 +133,14 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 		// Function to toggle necessary changes when updating title and description
 		$scope.titleDescriptionUpdate = function () {
 
-			$scope.title_description.open = true;
+			$scope.titleDescriptionSection.open = true;
 
 			if ($scope.newTestResult.name_EN && $scope.newTestResult.name_FR &&
 				$scope.newTestResult.description_EN && $scope.newTestResult.description_FR) {
 
 				// Toggle step completion
 				steps.title_description.completed = true;
-				$scope.group.show = true;
+				$scope.testGroupSection.show = true;
 
 				// Count the number of completed steps
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -159,12 +159,12 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 		// Function to toggle necessary changes when updating groups
 		$scope.groupUpdate = function () {
 
-			$scope.group.open = true; 
+			$scope.testGroupSection.open = true; 
 
 			if ($scope.newTestResult.group_EN && $scope.newTestResult.group_FR) {
 
-				$scope.edumat.show = true;
-				$scope.additional_links.show = true;
+				$scope.educationalMaterialSection.show = true;
+				$scope.additionalLinksSection.show = true;
 
 				// Toggle step completion
 				steps.group.completed = true;
@@ -186,14 +186,14 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 		$scope.eduMatUpdate = function () {
 
 			// Toggle booleans
-			$scope.edumat.open = true;
+			$scope.educationalMaterialSection.open = true;
 		}
 
 		$scope.additionalLinksComplete = false;
 		// Function to toggle necessary changes when updating the additional links
 		$scope.additionalLinkUpdate = function () {
 
-			$scope.additional_links.open = true;
+			$scope.additionalLinksSection.open = true;
 
 			$scope.additionalLinksComplete = true;
 
@@ -242,7 +242,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 				// Check if there are still tests added, if not, flag
 				if (!$scope.checkTestsAdded($scope.testList)) {
 
-					$scope.tests.open = false;
+					$scope.testsSection.open = false;
 
 					// Toggle boolean
 					steps.tests.completed = false;
@@ -263,8 +263,8 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 				// Boolean
 				steps.tests.completed = true;
 
-				$scope.tests.open = true;
-				$scope.title_description.show = true;
+				$scope.testsSection.open = true;
+				$scope.titleDescriptionSection.show = true;
 
 				// Count the number of steps completed
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
