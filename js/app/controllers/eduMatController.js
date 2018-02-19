@@ -408,7 +408,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 
 			// Function to toggle Item in a list on/off
 			$scope.selectItem = function (item) {
-				$scope.changesMade = true;
+				$scope.setChangesMade();
 				if (item.added)
 					item.added = 0;
 				else
