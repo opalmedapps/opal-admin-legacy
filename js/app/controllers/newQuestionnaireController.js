@@ -8,12 +8,12 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 		};
 
 		// Default booleans
-		$scope.title = { open: false, show: true };
-		$scope.privacy = { open: false, show: false };
-		$scope.questions = { open: false, show: false };
-		$scope.tags = { open: false, show: false };
-		$scope.demo = {open:false, show:false};
-		$scope.terms = {open:false, show:false};
+		$scope.titleSection = { open: false, show: true };
+		$scope.privacySection = { open: false, show: false };
+		$scope.questionsSection = { open: false, show: false };
+		$scope.tagsSection = { open: false, show: false };
+		$scope.demoSection = {open:false, show:false};
+		$scope.filterSection = {open:false, show:false};
 
 		// get current user id
 		var user = Session.retrieveObject('user');
@@ -69,7 +69,7 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 		$scope.filter = $filter('filter');
 
 		// Initialize search field variables
-		$scope.termSearchField = "";
+		$scope.appointmentSearchField = "";
 		$scope.dxSearchField = "";
 		$scope.doctorSearchField = "";
 		$scope.resourceSearchField = "";
@@ -108,7 +108,7 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 			}
 		};
 
-		$scope.termList = [];
+		$scope.appointmentList = [];
 		$scope.dxFilterList = [];
 		$scope.doctorFilterList = [];
 		$scope.resourceFilterList = [];
@@ -124,7 +124,7 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 		// Call our API service to get each filter
 		filterCollectionService.getFilters().then(function (response) {
 
-			$scope.termList = response.data.expressions; // Assign value
+			$scope.appointmentList = response.data.appointments; // Assign value
 			$scope.dxFilterList = response.data.dx;
 			$scope.doctorFilterList = response.data.doctors;
 			$scope.resourceFilterList = response.data.resources;
@@ -143,15 +143,15 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 		// update form functions
 		$scope.titleUpdate = function () {
 
-			$scope.title.open = true;
+			$scope.titleSection.open = true;
 
 			if (!$scope.newQuestionnaire.name_EN && !$scope.newQuestionnaire.name_FR) {
-				$scope.title.open = false;
+				$scope.titleSection.open = false;
 			}
 
 			if ($scope.newQuestionnaire.name_EN && $scope.newQuestionnaire.name_FR) {
 
-				$scope.privacy.show = true;
+				$scope.privacySection.show = true;
 
 				steps.title.completed = true;
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -168,14 +168,14 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 
 		$scope.privacyUpdate = function (value) {
 
-			$scope.privacy.open = true;
+			$scope.privacySection.open = true;
 
 			if (value == 0 || value == 1) {
 
 				// update value
 				$scope.newQuestionnaire.private = value;
 
-				$scope.questions.show = true;
+				$scope.questionsSection.show = true;
 
 				steps.privacy.completed = true;
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -192,13 +192,13 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 
 		var tagsUpdate = function (tagList) {
 
-			$scope.tags.open = true;
+			$scope.tagsSection.open = true;
 
 			// update steps bar
 			if ($scope.checkTags(tagList)) {
 
-				$scope.demo.show = true;
-				$scope.terms.show = true;
+				$scope.demoSection.show = true;
+				$scope.filterSection.show = true;
 
 				steps.tags.completed = true;
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -206,7 +206,7 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 
 			} else {
 
-				$scope.tags.open = false;
+				$scope.tagsSection.open = false;
 				steps.tags.completed = false;
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -216,17 +216,17 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 
 		var questionsUpdate = function () {
 
-			$scope.questions.open = true;
+			$scope.questionsSection.open = true;
 			if ($scope.newQuestionnaire.groups.length) {
 
-				$scope.tags.show = true;
+				$scope.tagsSection.show = true;
 				steps.questions.completed = true;
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
 			} else {
 
-				$scope.questions.open = false
+				$scope.questionsSection.open = false
 				steps.questions.completed = false;
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -237,7 +237,7 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 		// Function to toggle necessary changes when updating the sex
 		$scope.sexUpdate = function (sex) {
 
-			$scope.demo.open = true;
+			$scope.demoSection.open = true;
 
 			if (!$scope.demoFilter.sex) {
 				$scope.demoFilter.sex = sex.name;
@@ -252,7 +252,7 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 		// Function to toggle necessary changes when updating the age 
 		$scope.ageUpdate = function () {
 
-			$scope.demo.open = true;
+			$scope.demoSection.open = true;
 			
 		};
 
@@ -456,27 +456,9 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 				item.added = 1;
 		};
 
-		// Function for selecting all terms in the expression list
-		var selectAllTerms = false;
-		$scope.selectAllTerms = function () {
-			var filtered = $scope.filter($scope.termList, $scope.termSearchField);
-
-			if (selectAllTerms) {
-				angular.forEach(filtered, function (term) {
-					term.added = 0;
-				});
-				selectAllTerms = !selectAllTerms;
-			} else {
-				angular.forEach(filtered, function (term) {
-					term.added = 1;
-				});
-				selectAllTerms = !selectAllTerms;
-			}
-		};
-
 		// Function to assign search fields when textbox changes
-		$scope.searchTerm = function (field) {
-			$scope.termSearchField = field;
+		$scope.searchAppointment = function (field) {
+			$scope.appointmentSearchField = field;
 		};
 		$scope.searchDiagnosis = function (field) {
 			$scope.dxSearchField = field;
@@ -492,9 +474,9 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 		};
 
 		// Function for search through the filters
-		$scope.searchTermsFilter = function (Filter) {
-			var keyword = new RegExp($scope.termSearchField, 'i');
-			return !$scope.termSearchField || keyword.test(Filter.name);
+		$scope.searchAppointmentFilter = function (Filter) {
+			var keyword = new RegExp($scope.appointmentSearchField, 'i');
+			return !$scope.appointmentSearchField || keyword.test(Filter.name);
 		};
 		$scope.searchDxFilter = function (Filter) {
 			var keyword = new RegExp($scope.dxSearchField, 'i');
@@ -557,7 +539,7 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 					}
 				}
 				// Add other filters to new questionnaire object
-				addFilters($scope.termList);
+				addFilters($scope.appointmentList);
 				addFilters($scope.dxFilterList);
 				addFilters($scope.doctorFilterList);
 				addFilters($scope.resourceFilterList);

@@ -52,7 +52,7 @@
 						</div>
 						<uib-accordion class="side-navbar">
 							<!-- SECTION: Diagnosis codes -->
-							<div uib-accordion-group is-open="diagnoses.open" class="panel-container summary-box" is-disabled="!checkDiagnosesAdded(diagnosisList)">
+							<div uib-accordion-group is-open="diagnosesSection.open" class="panel-container summary-box" is-disabled="!checkDiagnosesAdded(diagnosisList)">
 								<uib-accordion-heading>
 									<div class="row" style="align-items:center">
 										<div class="col-md-2">
@@ -62,7 +62,7 @@
 											<strong>Diagnosis Code(s)</strong>
 										</div>
 										<div class="col-md-2">
-											<i ng-if="checkDiagnosesAdded(diagnosisList)" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': diagnoses.open, 'glyphicon-chevron-right': !diagnoses.open}"></i>
+											<i ng-if="checkDiagnosesAdded(diagnosisList)" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': diagnosesSection.open, 'glyphicon-chevron-right': !diagnosesSection.open}"></i>
 										</div>
 									</div>
 								</uib-accordion-heading>
@@ -77,8 +77,8 @@
 								</div>
 							</div>
 							<!-- SECTION: Title & description -->
-							<div uib-accordion-group is-open="title_description.open" class="panel-container summary-box animated" ng-class="{fadeInUp: title_description.show}"
-							 ng-if="title_description.show" is-disabled="!newDiagnosisTranslation.name_EN && !newDiagnosisTranslation.name_FR && !newDiagnosisTranslation.description_EN && !newDiagnosisTranslation.description_FR">
+							<div uib-accordion-group is-open="titleDescriptionSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: titleDescriptionSection.show}"
+							 ng-if="titleDescriptionSection.show" is-disabled="!newDiagnosisTranslation.name_EN && !newDiagnosisTranslation.name_FR && !newDiagnosisTranslation.description_EN && !newDiagnosisTranslation.description_FR">
 								<uib-accordion-heading>
 									<div class="row" style="align-items: center">
 										<div class="col-md-2">
@@ -89,7 +89,7 @@
 											<strong>Title & Description</strong>
 										</div>
 										<div class="col-md-2">
-											<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': title_description.open, 'glyphicon-chevron-right': !title_description.open}"
+											<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleDescriptionSection.open, 'glyphicon-chevron-right': !titleDescriptionSection.open}"
 											 ng-if="newDiagnosisTranslation.name_EN || newDiagnosisTranslation.name_FR || newDiagnosisTranslation.description_EN || newDiagnosisTranslation.description_FR"></i>
 										</div>
 									</div>
@@ -116,8 +116,8 @@
 								</div>
 							</div>
 							<!-- SECTION: Educational material -->
-							<div uib-accordion-group is-open="edumat.open" class="panel-container summary-box animated" ng-class="{fadeInUp: edumat.show}"
-							 is-disabled="!newDiagnosisTranslation.eduMat" ng-if="edumat.show">
+							<div uib-accordion-group is-open="educationalMaterialSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: educationalMaterialSection.show}"
+							 is-disabled="!newDiagnosisTranslation.eduMat" ng-if="educationalMaterialSection.show">
 								<uib-accordion-heading>
 									<div class="row" style="align-items: center">
 										<div class="col-md-2">
@@ -127,7 +127,7 @@
 											<strong>Educational Material</strong>
 										</div>
 										<div class="col-md-2">
-											<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': edumat.open, 'glyphicon-chevron-right': !edumat.open}"
+											<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': educationalMaterialSection.open, 'glyphicon-chevron-right': !educationalMaterialSection.open}"
 											 ng-if="newDiagnosisTranslation.eduMat"></i>
 										</div>
 									</div>
@@ -277,7 +277,7 @@
 							</div>
 						</div>
 						<!-- SECTION: Title & Description -->
-						<div class="row animated" ng-class="{fadeInUp: title_description.show}" ng-if="title_description.show">
+						<div class="row animated" ng-class="{fadeInUp: titleDescriptionSection.show}" ng-if="titleDescriptionSection.show">
 							<div class="col-xs-12 side-menu-title">
 								<div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
 									<span style="background-color:#e6edfa; padding: 0 10px;">
@@ -287,7 +287,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="row animated" ng-class="{fadeInUp: title_description.show}" ng-if="title_description.show">
+						<div class="row animated" ng-class="{fadeInUp: titleDescriptionSection.show}" ng-if="titleDescriptionSection.show">
 							<div class="col-xs-12">
 								<p style="margin-bottom: 10px;">
 									<span style="color:#d9534f">
@@ -297,7 +297,7 @@
 								</p>
 							</div>
 						</div>
-						<div class="row animated" ng-class="{fadeInUp: title_description.show}" ng-if="title_description.show">
+						<div class="row animated" ng-class="{fadeInUp: titleDescriptionSection.show}" ng-if="titleDescriptionSection.show">
 							<div class="col-xs-12 col-md-6">
 								<div class="panel" ng-class="(newDiagnosisTranslation.name_EN && newDiagnosisTranslation.description_EN) ? 'panel-success': 'panel-danger'">
 									<div class="panel-heading">
@@ -366,7 +366,7 @@
 							</div>
 						</div>
 						<!-- SECTION: Educational material -->
-						<div class="row animated" ng-class="{fadeInUp: edumat.show}" ng-if="edumat.show">
+						<div class="row animated" ng-class="{fadeInUp: educationalMaterialSection.show}" ng-if="educationalMaterialSection.show">
 							<div class="col-xs-12 side-menu-title">
 								<div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
 									<span style="background-color:#e6edfa; padding: 0 10px;">
@@ -376,7 +376,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="row animated" ng-class="{fadeInUp: edumat.show}" ng-if="edumat.show">
+						<div class="row animated" ng-class="{fadeInUp: educationalMaterialSection.show}" ng-if="educationalMaterialSection.show">
 							<div class="col-xs-12">
 								<p style="margin-bottom: 10px;">
 									<span>
@@ -386,7 +386,7 @@
 								</p>
 							</div>
 						</div>
-						<div class="row animated" ng-class="{fadeInUp: edumat.show}" ng-if="edumat.show">
+						<div class="row animated" ng-class="{fadeInUp: educationalMaterialSection.show}" ng-if="educationalMaterialSection.show">
 							<div class="col-xs-12 col-lg-8">
 								<div class="panel-container">
 									<div class="panel-info">
