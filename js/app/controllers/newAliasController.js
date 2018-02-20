@@ -13,12 +13,12 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 		// Default boolean variables
 		$scope.selectAll = false; // select All button checked?
 
-		$scope.source = {open:false, show:true};
-		$scope.title_description = {open:false, show:false};
-		$scope.edumat = {open:false, show:false};
-		$scope.type = {open:false, show:false};
-		$scope.color = {open:false, show:false};
-		$scope.terms = {open:false, show:false};
+		$scope.sourceSection = {open:false, show:true};
+		$scope.titleDescriptionSection = {open:false, show:false};
+		$scope.educationalMaterialSection = {open:false, show:false};
+		$scope.typeSection = {open:false, show:false};
+		$scope.colorSection = {open:false, show:false};
+		$scope.termSection = {open:false, show:false};
 
 		$scope.showAssigned = false;
 		$scope.hideAssigned = false;
@@ -117,8 +117,8 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 			$scope.newAlias.source_db = sourceDB;
 
 			// Toggle boolean
-			$scope.source.open = true;
-			$scope.type.show = true;
+			$scope.sourceSection.open = true;
+			$scope.typeSection.show = true;
 
 			steps.source.completed = true;
 
@@ -164,19 +164,19 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 		// Function to toggle necessary changes when updating alias title & description
 		$scope.titleDescriptionUpdate = function () {
 
-			$scope.title_description.open = true;
+			$scope.titleDescriptionSection.open = true;
 
 			if (!$scope.newAlias.name_EN && !$scope.newAlias.name_FR &&
 			!$scope.newAlias.description_EN && !$scope.newAlias.description_FR) {
-				$scope.title_description.open = false;
+				$scope.titleDescriptionSection.open = false;
 			}
 
 			if ($scope.newAlias.name_EN && $scope.newAlias.name_FR &&
 			$scope.newAlias.description_EN && $scope.newAlias.description_FR) { // if textboxes are not empty
 
 				// Toggle boolean
-				$scope.edumat.show = true;
-				$scope.color.show = true;
+				$scope.educationalMaterialSection.show = true;
+				$scope.colorSection.show = true;
 
 				steps.title_description.completed = true;
 
@@ -204,7 +204,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 		$scope.eduMatUpdate = function () {
 
 			// Toggle booleans
-			$scope.edumat.open = true;
+			$scope.educationalMaterialSection.open = true;
 		}
 
 		// Function to toggle necessary changes when updating alias type
@@ -213,8 +213,8 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 			if (!$scope.newAlias.source_db)
 				return;
 
-			$scope.type.open = true;
-			$scope.terms.show = true;
+			$scope.typeSection.open = true;
+			$scope.termSection.show = true;
 
 			// Set the name
 			$scope.newAlias.type = type;
@@ -261,10 +261,10 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 		};
 
 		// Function to toggle necessary changes when updating color
-		$scope.colorUpdate = function () {
+		$scope.colorSectionUpdate = function () {
 
 			// Toggle booleans
-			$scope.color.open = true;
+			$scope.colorSection.open = true;
 
 			steps.color.completed = true;
 
@@ -279,7 +279,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 		// Function to add / remove a term to alias
 		$scope.toggleTermSelection = function (term) {
 
-			$scope.terms.open = true;
+			$scope.termSection.open = true;
 
 			// If originally added, remove it
 			if (term.added) {
@@ -292,7 +292,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 					// Toggle boolean
 					steps.terms.completed = false;
 
-					$scope.terms.open = false;
+					$scope.termSection.open = false;
 
 					// Count the number of completed steps
 					$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -307,7 +307,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 
 				term.added = 1;
 
-				$scope.title_description.show = true;
+				$scope.titleDescriptionSection.show = true;
 
 				// Boolean
 				steps.terms.completed = true;
@@ -409,7 +409,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 					
 					// Toggle boolean
 					steps.terms.completed = false;
-					$scope.terms.open = false;
+					$scope.termSection.open = false;
 
 					// Count the number of completed steps
 					$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -435,14 +435,14 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 					
 					// Toggle boolean
 					steps.terms.completed = false;
-					$scope.terms.open = false;
+					$scope.termSection.open = false;
 
 				}
 				else {
 					// Boolean
 					steps.terms.completed = true;
-					$scope.terms.open = true;
-					$scope.title_description.show = true;
+					$scope.termSection.open = true;
+					$scope.titleDescriptionSection.show = true;
 				}
 
 				// Count the number of steps completed

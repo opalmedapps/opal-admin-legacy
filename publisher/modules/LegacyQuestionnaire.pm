@@ -202,18 +202,24 @@ sub publishLegacyQuestionnaires
 
             }
 
-			# Retrieve all patient's appointment(s) up until tomorrow
-            my @patientAppointments = Appointment::getAllPatientsAppointmentsFromOurDB($patientSer);
+			# Retrieve all today's appointment(s)
+            my @patientAppointments = Appointment::getTodaysPatientsAppointmentsFromOurDB($patientSer);
 
-            my @expressionNames = ();
+            my @aliasSerials = ();
             my @diagnosisNames = ();
+            my @appointmentStatuses = ();
+            my @checkins = ();
 
-            # we build all possible expression names, and diagnoses for each appointment found
+            # we build all possible appointment and diagnoses for each appointment found
             foreach my $appointment (@patientAppointments) {
 
                 my $expressionSer = $appointment->getApptAliasExpressionSer();
-                my $expressionName = Alias::getExpressionNameFromOurDB($expressionSer);
-                push(@expressionNames, $expressionName) unless grep{$_ eq $expressionName} @expressionNames;
+                my $aliasSer = Alias::getAliasFromOurDB($expressionSer);
+                my $status = $appointment->getApptStatus();
+                my $checkinFlag = $appointment->getApptCheckin();
+                push(@aliasSerials, $aliasSer) unless grep{$_ eq $aliasSer} @aliasSerials;
+                push(@appointmentStatuses, $status) unless grep{$_ eq $status} @appointmentStatuses;
+                push(@checkins, $checkinFlag) unless grep{$_ eq $checkinFlag} @checkins;
 
                 my $diagnosisSer = $appointment->getApptDiagnosisSer();
                 my $diagnosisName = Diagnosis::getDiagnosisNameFromOurDB($diagnosisSer);
@@ -223,22 +229,64 @@ sub publishLegacyQuestionnaires
 
             my @patientDoctors = PatientDoctor::getPatientsDoctorsFromOurDB($patientSer);
 
-			# Fetch expression filters (if any)
-            my @expressionFilters =  $questionnaireFilters->getExpressionFilters();
-            if (@expressionFilters) {
+            # Fetch checkin filter (if any)
+            my @checkinFilter = $questionnaireFilters->getCheckinFilters();
+            if (@checkinFilter) {
+
+                # toggle flag
+                $isNonPatientSpecificFilterDefined = 1;
+
+                # Finding the existence of the patient checkin in the checkin filters
+                # If there is an intersection, then patient is part of this publishing questionnaire
+                if (!intersect(@checkinFilter, @checkins)) {
+                   if (@patientFilters) {
+                        # if the patient failed to match the checkin filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the checkin filter
+                    # move on to the next questionnaire
+                    else{next;}
+                } 
+            }
+
+            # Fetch appointment status filters (if any)
+            my @appointmentStatusFilters =  $questionnaireFilters->getAppointmentStatusFilters();
+            if (@appointmentStatusFilters) {
+
+                # toggle flag
+                $isNonPatientSpecificFilterDefined = 1;
+
+                # Finding the existence of the patient status in the status filters
+                # If there is an intersection, then patient is part of this publishing questionnaire
+                if (!intersect(@appointmentStatusFilters, @appointmentStatuses)) {
+                   if (@patientFilters) {
+                        # if the patient failed to match the status filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the status filter
+                    # move on to the next questionnaire
+                    else{next;}
+                } 
+            }
+
+			# Fetch appointment filters (if any)
+            my @appointmentFilters =  $questionnaireFilters->getAppointmentFilters();
+            if (@appointmentFilters) {
 
                 # toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
-                # Finding the existence of the patient expressions in the expression filters
+                # Finding the existence of the patient expressions in the appointment filters
                 # If there is an intersection, then patient is part of this publishing questionnaire
-                if (!intersect(@expressionFilters, @expressionNames)) {
+                if (!intersect(@appointmentFilters, @aliasSerials)) {
                    if (@patientFilters) {
-                        # if the patient failed to match the expression filter but there are patient filters
+                        # if the patient failed to match the appointment filter but there are patient filters
                         # then we flag to check later if this patient matches with the patient filters
                         $isPatientSpecificFilterDefined = 1;
                     }
-                    # else no patient filters were defined and failed to match the expression filter
+                    # else no patient filters were defined and failed to match the appointment filter
                     # move on to the next questionnaire
                     else{next;}
                 } 
@@ -297,7 +345,8 @@ sub publishLegacyQuestionnaires
                 if ($isPatientSpecificFilterDefined or !$isNonPatientSpecificFilterDefined) {
     				# Finding the existence of the patient in the patient-specific filters
     				# If the patient does not exist, then continue to the next educational material
-    				if (grep $patientId ne $_, @patientFilters) {next;}
+    				if ($patientId ~~ @patientFilters) {}
+                    else {next;}
                 }
 			}
 
@@ -349,6 +398,7 @@ sub inOurDatabase
 		WHERE
 			Questionnaire.PatientSerNum  				= '$patientser'
 		AND Questionnaire.QuestionnaireControlSerNum 	= '$questionnaireControlSer'
+        AND DATE(Questionnaire.DateAdded)               = CURDATE()
 	";
 
 	  # prepare query

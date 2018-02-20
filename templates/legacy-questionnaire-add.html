@@ -45,7 +45,7 @@
               </div>
               <uib-accordion class="side-navbar">
                 <!-- SECTION: Legacy Questionnaire -->
-                <div uib-accordion-group is-open="legacy_questionnaire.open" class="panel-container summary-box" is-disabled="!newLegacyQuestionnaire.legacy_questionnaire">
+                <div uib-accordion-group is-open="legacyQuestionnaireSection.open" class="panel-container summary-box" is-disabled="!newLegacyQuestionnaire.legacy_questionnaire">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -67,7 +67,7 @@
                   </div>
                 </div>
                 <!-- SECTION: Title -->
-                <div uib-accordion-group is-open="title.open" class="panel-container summary-box animated" ng-class="{fadeInUp: title.show}" is-disabled="!newLegacyQuestionnaire.name_EN && !newLegacyQuestionnaire.name_FR" ng-if="title.show">
+                <div uib-accordion-group is-open="titleSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: titleSection.show}" is-disabled="!newLegacyQuestionnaire.name_EN && !newLegacyQuestionnaire.name_FR" ng-if="titleSection.show">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -77,7 +77,7 @@
                         <strong>Title</strong>
                       </div>
                       <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':title.open, 'glyphicon-chevron-right':!title.open}" ng-if="newLegacyQuestionnaire.name_EN || newLegacyQuestionnaire.name_FR"></i>
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':titleSection.open, 'glyphicon-chevron-right':!titleSection.open}" ng-if="newLegacyQuestionnaire.name_EN || newLegacyQuestionnaire.name_FR"></i>
                       </div>
                     </div>
                   </uib-accordion-heading>
@@ -97,8 +97,8 @@
                   </div>
                 </div>
                 <!-- SECTION: Patient filters -->
-                <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}"
-                 is-disabled="!checkFilters(patientFilterList)" ng-if="terms.show">
+                <div uib-accordion-group is-open="filterSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:filterSection.show}"
+                 is-disabled="!checkFilters(patientFilterList)" ng-if="filterSection.show">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -108,7 +108,7 @@
                         <strong>Patient Filter(s)</strong>
                       </div>
                       <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}"
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': filterSection.open, 'glyphicon-chevron-right': !filterSection.open}"
                          ng-if="checkFilters(patientFilterList)"></i>
                       </div>
                     </div>
@@ -124,7 +124,7 @@
                   </div>
                 </div>
                 <!-- SECTION: Demographic filter -->
-                <div uib-accordion-group is-open="demo.open" class="panel-container summary-box animated" ng-class="{fadeInUp:demo.open}" is-disabled="!demoFilter.sex && demoFilter.age.min == 0 && demoFilter.age.max == 100" ng-if="demo.show">
+                <div uib-accordion-group is-open="demoSection.open " class="panel-container summary-box animated" ng-class="{fadeInUp:demoSection.open }" is-disabled="!demoFilter.sex && demoFilter.age.min == 0 && demoFilter.age.max == 100" ng-if="demoSection.show ">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -134,7 +134,7 @@
                         <strong>Demographic Filter(s)</strong>
                       </div>
                       <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':demo.open, 'glyphicon-chevron-right':!demo.open}" ng-if="demoFilter.sex || demoFilter.age.min != 0 || demoFilter.age.max != 100"></i>
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':demoSection.open , 'glyphicon-chevron-right':!demoSection.open }" ng-if="demoFilter.sex || demoFilter.age.min != 0 || demoFilter.age.max != 100"></i>
                       </div>
                     </div>
                   </uib-accordion-heading>
@@ -153,33 +153,33 @@
                     </p>
                   </div>
 								</div>
-                <!-- SECTION: Expression filters -->
-                <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(termList)" ng-if="terms.show">
+                <!-- SECTION: Appointment filters -->
+                <div uib-accordion-group is-open="filterSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:filterSection.show}" is-disabled="!checkFilters(appointmentList)" ng-if="filterSection.show">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
-                        <span ng-if="checkFilters(termList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                        <span ng-if="checkFilters(appointmentList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                       </div>
                       <div class="col-md-8">
-                        <strong>Expression Filter(s)</strong>
+                        <strong>Appointment Filter(s)</strong>
                       </div>
                       <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkFilters(termList)"></i>
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': filterSection.open, 'glyphicon-chevron-right': !filterSection.open}" ng-if="checkFilters(appointmentList)"></i>
                       </div>
                     </div>
                   </uib-accordion-heading>
-                  <div ng-if="checkFilters(termList)" class="description">
+                  <div ng-if="checkFilters(appointmentList)" class="description">
                     <p>
                       <ul style="max-height: 100px; overflow-y: auto;">
-                        <li ng-repeat="term in termList | filter: {added: 1} : 1">
-                          {{term.name}}
+                        <li ng-repeat="appointment in appointmentList | filter: {added: 1} : 1">
+                          {{appointment.name}}
                         </li>
                       </ul>
                     </p>
                   </div>
                 </div>
                 <!-- SECTION: Diagnosis filters -->
-                <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(dxFilterList)" ng-if="terms.show">
+                <div uib-accordion-group is-open="filterSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:filterSection.show}" is-disabled="!checkFilters(dxFilterList)" ng-if="filterSection.show">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -189,7 +189,7 @@
                         <strong>Diagnosis Filter(s)</strong>
                       </div>
                       <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkFilters(dxFilterList)"></i>
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': filterSection.open, 'glyphicon-chevron-right': !filterSection.open}" ng-if="checkFilters(dxFilterList)"></i>
                       </div>
                     </div>
                   </uib-accordion-heading>
@@ -204,7 +204,7 @@
                   </div>
                 </div>
                 <!-- SECTION: Doctor filters -->
-                <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(doctorFilterList)" ng-if="terms.show">
+                <div uib-accordion-group is-open="filterSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:filterSection.show}" is-disabled="!checkFilters(doctorFilterList)" ng-if="filterSection.show">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -214,7 +214,7 @@
                         <strong>Doctor Filter(s)</strong>
                       </div>
                       <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkFilters(doctorFilterList)"></i>
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': filterSection.open, 'glyphicon-chevron-right': !filterSection.open}" ng-if="checkFilters(doctorFilterList)"></i>
                       </div>
                     </div>
                   </uib-accordion-heading>
@@ -229,7 +229,7 @@
                   </div>
                 </div>
                 <!-- SECTION: Resource filters -->
-                <div uib-accordion-group is-open="terms.open" class="panel-container summary-box animated" ng-class="{fadeInUp:terms.show}" is-disabled="!checkFilters(resourceFilterList)" ng-if="terms.show">
+                <div uib-accordion-group is-open="filterSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:filterSection.show}" is-disabled="!checkFilters(resourceFilterList)" ng-if="filterSection.show">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -239,7 +239,7 @@
                         <strong>Resource Filter(s)</strong>
                       </div>
                       <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': terms.open, 'glyphicon-chevron-right': !terms.open}" ng-if="checkFilters(resourceFilterList)"></i>
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': filterSection.open, 'glyphicon-chevron-right': !filterSection.open}" ng-if="checkFilters(resourceFilterList)"></i>
                       </div>
                     </div>
                   </uib-accordion-heading>
@@ -358,7 +358,7 @@
               </div>
             </div>   
             <!-- SECTION: Title -->
-            <div class="row animated" ng-class="{fadeInUp:title.show}" ng-if="title.show">
+            <div class="row animated" ng-class="{fadeInUp:titleSection.show}" ng-if="titleSection.show">
               <div class="col-xs-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -368,7 +368,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row animated" ng-class="{fadeInUp:title.show}" ng-if="title.show">
+            <div class="row animated" ng-class="{fadeInUp:titleSection.show}" ng-if="titleSection.show">
               <div class="col-xs-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -376,7 +376,7 @@
                 </p>
               </div>
             </div>  
-            <div class="row animated" ng-class="{fadeInUp:title.show}" ng-if="title.show">
+            <div class="row animated" ng-class="{fadeInUp:titleSection.show}" ng-if="titleSection.show">
               <div class="col-xs-12 col-md-6">
                 <div class="panel" ng-class="(newLegacyQuestionnaire.name_EN) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>English</strong>
@@ -415,7 +415,7 @@
               </div>        
             </div>
             <!-- SECTION: Patient filters -->
-            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+            <div class="row animated" ng-class="{fadeInUp: filterSection.show}" ng-if="filterSection.show">
               <div class="col-xs-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -425,7 +425,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+            <div class="row animated" ng-class="{fadeInUp: filterSection.show}" ng-if="filterSection.show">
               <div class="col-xs-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
@@ -433,7 +433,7 @@
                 </p>
               </div>
             </div>  
-            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+            <div class="row animated" ng-class="{fadeInUp: filterSection.show}" ng-if="filterSection.show">
               <div class="col-xs-12 col-lg-8">
                 <div class="panel-container">
                   <div class="panel-info">
@@ -459,7 +459,7 @@
               </div>
             </div>
             <!-- SECTION: Demographic filters -->
-            <div class="row animated" ng-class="{fadeInUp:demo.show}" ng-if="demo.show">
+            <div class="row animated" ng-class="{fadeInUp:demoSection.show }" ng-if="demoSection.show ">
               <div class="col-xs-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -469,7 +469,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row animated" ng-class="{fadeInUp:demo.show}" ng-if="demo.show">
+            <div class="row animated" ng-class="{fadeInUp:demoSection.show }" ng-if="demoSection.show ">
               <div class="col-xs-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
@@ -477,7 +477,7 @@
                 </p>
               </div>
             </div>  
-            <div class="row animated" ng-class="{fadeInUp:demo.show}" ng-if="demo.show">
+            <div class="row animated" ng-class="{fadeInUp:demoSection.show }" ng-if="demoSection.show ">
               <div class="col-xs-12 col-md-6">
                 <div class="row">
                   <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Sex</h2>
@@ -531,28 +531,28 @@
                 </div>
               </div>      
             </div>  
-						<!-- SECTION: Expression filters -->
-						<div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+						<!-- SECTION: Appointment filters -->
+						<div class="row animated" ng-class="{fadeInUp: filterSection.show}" ng-if="filterSection.show">
 							<div class="col-xs-12 side-menu-title">
 								<div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
 									<span style="background-color:#e6edfa; padding: 0 10px;">
 										<span class="fa fa-dot-circle-o"></span>
-										<h2>Expression Filters</h2>
+										<h2>Appointment Filters</h2>
 									</span>
 								</div>
 							</div>
 						</div>
-						<div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+						<div class="row animated" ng-class="{fadeInUp: filterSection.show}" ng-if="filterSection.show">
 							<div class="col-xs-12">
 								<p style="margin-bottom: 10px;">
 									<span>
 										<strong>Optional field:</strong>
 									</span>
-									Select one of more expression filters below. This will target patients with these specific filters. Leave blank for no filters.
+									Select one of more appointment filters below. This will target patients with these specific appointments. Leave blank for no filters.
 								</p>
 							</div>
 						</div>
-						<div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+						<div class="row animated" ng-class="{fadeInUp: filterSection.show}" ng-if="filterSection.show">
 							<div class="col-xs-12 col-lg-8">
 								<div class="panel-container">
 									<div class="panel-info">
@@ -563,18 +563,13 @@
 														<span class="input-group-addon">
 															<span class="glyphicon glyphicon-search"></span>
 														</span>
-														<input class="form-control" type="text" ng-model="termSearchField" ng-change="searchTerm(termSearchField)" placeholder="Search Terms"
+														<input class="form-control" type="text" ng-model="appointmntSearchField" ng-change="searchAppointment(appointmntSearchField)" placeholder="Search..."
 														/>
 													</div>
-													<div style="padding: 10px;">
-														<label>
-															<input type="checkbox" ng-click="selectAllTerms()"> Select All
-														</label>
-													</div>
 													<ul class="list-items">
-														<li ng-repeat="term in termList | filter: searchTermsFilter">
+														<li ng-repeat="appointment in appointmentList | filter: searchAppointmentFilter">
 															<label>
-																<input type="checkbox" ng-click="selectItem(term)" ng-checked="term.added" /> {{term.name}}
+																<input type="checkbox" ng-click="selectItem(appointment)" ng-checked="appointment.added" /> {{appointment.name}}
 															</label>
 														</li>
 													</ul>
@@ -586,7 +581,7 @@
 							</div>
 						</div>
             <!-- SECTION: Diagnosis filters -->
-            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+            <div class="row animated" ng-class="{fadeInUp: filterSection.show}" ng-if="filterSection.show">
               <div class="col-xs-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -596,7 +591,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+            <div class="row animated" ng-class="{fadeInUp: filterSection.show}" ng-if="filterSection.show">
               <div class="col-xs-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
@@ -604,7 +599,7 @@
                 </p>
               </div>
             </div>  
-            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+            <div class="row animated" ng-class="{fadeInUp: filterSection.show}" ng-if="filterSection.show">
               <div class="col-xs-12 col-lg-8">
                 <div class="panel-container">
                   <div class="panel-info">
@@ -630,7 +625,7 @@
               </div>
             </div>
             <!-- SECTION: Doctor filters -->
-            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+            <div class="row animated" ng-class="{fadeInUp: filterSection.show}" ng-if="filterSection.show">
               <div class="col-xs-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -640,7 +635,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+            <div class="row animated" ng-class="{fadeInUp: filterSection.show}" ng-if="filterSection.show">
               <div class="col-xs-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
@@ -648,7 +643,7 @@
                 </p>
               </div>
             </div>  
-            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+            <div class="row animated" ng-class="{fadeInUp: filterSection.show}" ng-if="filterSection.show">
               <div class="col-xs-12 col-lg-8">
                 <div class="panel-container">
                   <div class="panel-info">
@@ -674,7 +669,7 @@
               </div>
             </div>
             <!-- SECTION: Resource filters -->
-            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+            <div class="row animated" ng-class="{fadeInUp: filterSection.show}" ng-if="filterSection.show">
               <div class="col-xs-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -684,7 +679,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+            <div class="row animated" ng-class="{fadeInUp: filterSection.show}" ng-if="filterSection.show">
               <div class="col-xs-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
@@ -692,7 +687,7 @@
                 </p>
               </div>
             </div>  
-            <div class="row animated" ng-class="{fadeInUp: terms.show}" ng-if="terms.show">
+            <div class="row animated" ng-class="{fadeInUp: filterSection.show}" ng-if="filterSection.show">
               <div class="col-xs-12 col-lg-8">
                 <div class="panel-container">
                   <div class="panel-info">

@@ -46,7 +46,7 @@
 
               <uib-accordion class="side-navbar">
                 <!-- SECTION: Title & description -->
-                <div uib-accordion-group is-open="title_description.open" class="panel-container summary-box" is-disabled="!newHosMap.name_EN && !newHosMap.name_FR && !newHosMap.description_EN && !newHosMap.description_FR">
+                <div uib-accordion-group is-open="titleDescriptionSection.open" class="panel-container summary-box" is-disabled="!newHosMap.name_EN && !newHosMap.name_FR && !newHosMap.description_EN && !newHosMap.description_FR">
                   <uib-accordion-heading>
                     <div class="row" style="align-items:center">
                       <div class="col-md-2">
@@ -56,7 +56,7 @@
                         <strong>Title & Description</strong>
                       </div>
                       <div class="col-md-2">
-                        <i ng-if="newHosMap.name_EN || newHosMap.name_FR || newHosMap.description_EN || newHosMap.description_FR" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': title_description.open, 'glyphicon-chevron-right': !title_description.open}"></i>
+                        <i ng-if="newHosMap.name_EN || newHosMap.name_FR || newHosMap.description_EN || newHosMap.description_FR" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleDescriptionSection.open, 'glyphicon-chevron-right': !titleDescriptionSection.open}"></i>
                       </div>
                     </div>
                   </uib-accordion-heading>
@@ -78,7 +78,7 @@
                   </div>
                 </div>
                 <!-- SECTION: QR code & Map URL -->
-                <div uib-accordion-group is-open="url.open" class="panel-container summary-box animated" ng-class="{fadeInUp: url.show}" is-disabled="!newHosMap.qrid && !newHosMap.url" ng-if="url.show">
+                <div uib-accordion-group is-open="qrUrlSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: qrUrlSection.show}" is-disabled="!newHosMap.qrid && !newHosMap.url" ng-if="qrUrlSection.show">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -88,7 +88,7 @@
                         <strong>QR & Map URL</strong>
                       </div>
                       <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': url.open, 'glyphicon-chevron-right': !url.open}" ng-if="newHosMap.qrid || newHosMap.url"></i>
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': qrUrlSection.open, 'glyphicon-chevron-right': !qrUrlSection.open}" ng-if="newHosMap.qrid || newHosMap.url"></i>
                       </div>
                     </div>
                   </uib-accordion-heading>
@@ -241,7 +241,7 @@
                 </div>          
               </div>
               <!-- SECTION: QR Code & Map URL -->
-              <div class="row animated" ng-class="{fadeInUp: url.show}" ng-if="url.show">
+              <div class="row animated" ng-class="{fadeInUp: qrUrlSection.show}" ng-if="qrUrlSection.show">
                 <div class="col-xs-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -251,7 +251,7 @@
                   </div>  
                 </div>
               </div>   
-              <div class="row animated" ng-class="{fadeInUp: url.show}" ng-if="url.show">
+              <div class="row animated" ng-class="{fadeInUp: qrUrlSection.show}" ng-if="qrUrlSection.show">
                 <div class="col-xs-12">
                   <p style="margin-bottom: 10px;">
                     <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -259,7 +259,7 @@
                   </p>
                 </div>
               </div> 
-              <div class="row animated" ng-class="{fadeInUp: url.show}" ng-if="url.show"> 
+              <div class="row animated" ng-class="{fadeInUp: qrUrlSection.show}" ng-if="qrUrlSection.show"> 
                 <div class="col-xs-12 col-md-6">
                   <div class="panel" ng-class="(newHosMap.qrid && newHosMap.qrcode) ? 'panel-success': 'panel-danger'">
                     <div class="panel-heading"><strong>QR Identifier</strong>

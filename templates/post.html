@@ -110,10 +110,10 @@
       <div class="modal-body">
         <uib-accordion>
           <!-- SECTION: Titles -->
-          <div uib-accordion-group is-open="statusTitle.open">
+          <div uib-accordion-group is-open="titleSection.open">
             <uib-accordion-heading>
               <div>
-                <strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTitle.open, 'glyphicon-chevron-right': !statusTitle.open}"></i>
+                <strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="row">
@@ -133,10 +133,10 @@
           </div>
 
           <!-- SECTION: Body -->
-          <div uib-accordion-group is-open="statusBody.open">
+          <div uib-accordion-group is-open="bodySection.open">
             <uib-accordion-heading>
               <div>
-                <strong>Body </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusBody.open, 'glyphicon-chevron-right': !statusBody.open}"></i>
+                <strong>Body </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': bodySection.open, 'glyphicon-chevron-right': !bodySection.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="row">
@@ -181,10 +181,10 @@
           </div>
 
           <!-- SECTION: Publish date -->
-          <div uib-accordion-group is-open="statusPublishDate.open" ng-if="post.type == 'Announcement'">
+          <div uib-accordion-group is-open="publishDateSection.open" ng-if="post.type == 'Announcement'">
             <uib-accordion-heading>
               <div>
-                <strong>Publish Date </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusPublishDate.open, 'glyphicon-chevron-right': !statusPublishDate.open}"></i>
+                <strong>Publish Date </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': publishDateSection.open, 'glyphicon-chevron-right': !publishDateSection.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
@@ -215,10 +215,10 @@
           </div>
 
           <!-- SECTION: Patient filter -->
-          <div uib-accordion-group is-open="statusPatientFilter.open">
+          <div uib-accordion-group is-open="patientFilterSection.open">
             <uib-accordion-heading>
               <div>
-                <strong>Filter By Patient </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusPatientFilter.open, 'glyphicon-chevron-right': !statusPatientFilter.open}"></i>
+                <strong>Filter By Patient </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': patientFilterSection.open, 'glyphicon-chevron-right': !patientFilterSection.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
@@ -248,21 +248,21 @@
             </div>
           </div>
 
-          <!-- SECTION: Appointment/Task filter -->
-          <div uib-accordion-group is-open="statusExpressionFilter.open">
+          <!-- SECTION: Appointment filter -->
+          <div uib-accordion-group is-open="appointmentFilterSection.open">
             <uib-accordion-heading>
               <div>
-                <strong>Filter By Appointment or Task Code</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusExpressionFilter.open, 'glyphicon-chevron-right': !statusExpressionFilter.open}"></i>
+                <strong>Filter By Appointment</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': appointmentFilterSection.open, 'glyphicon-chevron-right': !appointmentFilterSection.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
-              <strong>Current Activity Filters</strong><br>
+              <strong>Current Appointment Filters</strong><br>
               <p>
-                <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(termList)"></span>
-                <span ng-if="allFilters(termList)">No filter</span>
-                <ul class="list-items" ng-if="!allFilters(termList)">
-                  <li ng-repeat="selectedTerm in termList | filter: {added: 1} : 1" ng-hide="allFilters(termList)">
-                    {{selectedTerm.name}}
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(appointmentList)"></span>
+                <span ng-if="allFilters(appointmentList)">No filter</span>
+                <ul class="list-items" ng-if="!allFilters(appointmentList)">
+                  <li ng-repeat="selectedAppointment in appointmentList | filter: {added: 1} : 1" ng-hide="allFilters(appointmentList)">
+                    {{selectedAppointment.name}}
                   </li>
                 </ul>
               </p>
@@ -270,17 +270,12 @@
             <div class="list-space">
               <div class="input-group">
                 <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                <input class="form-control" type="text" ng-model="termSearchField" ng-change="searchTerm(termSearchField)" placeholder="Search..."/>
+                <input class="form-control" type="text" ng-model="appointmentSearchField" ng-change="searchAppointment(appointmentSearchField)" placeholder="Search..."/>
               </div>
-              <div style="padding: 10px;">
-                <label> 
-                  <input type="checkbox" ng-click="selectAllTerms()"> Select All
-                </label>
-              </div>    
               <ul class="list-items">
-                <li ng-repeat="term in termList | filter: searchTermsFilter">
+                <li ng-repeat="appointment in appointmentList | filter: searchAppointmentFilter">
                   <label>
-                    <input type="checkbox" ng-click="selectItem(term)" ng-checked="term.added" /> {{term.name}}
+                    <input type="checkbox" ng-click="selectItem(appointment)" ng-checked="appointment.added" /> {{appointment.name}}
                   </label>
                 </li>
               </ul>
@@ -288,10 +283,10 @@
           </div>
 
           <!-- SECTION: Diagnosis filter -->
-          <div uib-accordion-group is-open="statusDiagnosisFilter.open">
+          <div uib-accordion-group is-open="diagnosisFilterSection.open">
             <uib-accordion-heading>
               <div>
-                <strong>Filter By Diagnosis </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDiagnosisFilter.open, 'glyphicon-chevron-right': !statusDiagnosisFilter.open}"></i>
+                <strong>Filter By Diagnosis </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': diagnosisFilterSection.open, 'glyphicon-chevron-right': !diagnosisFilterSection.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
@@ -322,10 +317,10 @@
           </div>
 
           <!-- SECTION: Doctor filter -->
-          <div uib-accordion-group is-open="statusDoctorFilter.open">
+          <div uib-accordion-group is-open="doctorFilterSection.open">
             <uib-accordion-heading>
               <div>
-                <strong>Filter By Doctor </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDoctorFilter.open, 'glyphicon-chevron-right': !statusDoctorFilter.open}"></i>
+                <strong>Filter By Doctor </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': doctorFilterSection.open, 'glyphicon-chevron-right': !doctorFilterSection.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
@@ -356,10 +351,10 @@
           </div>
 
           <!-- SECTION: Resource Filter -->
-          <div uib-accordion-group is-open="statusResourceFilter.open">
+          <div uib-accordion-group is-open="resourceFilterSection.open">
             <uib-accordion-heading>
               <div>
-                <strong>Filter By Treatment Machine </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusResourceFilter.open, 'glyphicon-chevron-right': !statusResourceFilter.open}"></i>
+                <strong>Filter By Treatment Machine </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': resourceFilterSection.open, 'glyphicon-chevron-right': !resourceFilterSection.open}"></i>
               </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">

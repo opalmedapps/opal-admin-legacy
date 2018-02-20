@@ -280,15 +280,15 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			};
 
 			// Initialize search field variables
-			$scope.termSearchField = "";
+			$scope.appointmentSearchField = "";
 			$scope.dxSearchField = "";
 			$scope.doctorSearchField = "";
 			$scope.resourceSearchField = "";
 			$scope.patientSearchField = "";
 
 			// Function to assign search fields when textbox changes
-			$scope.searchTerm = function (field) {
-				$scope.termSearchField = field;
+			$scope.searchAppointment = function (field) {
+				$scope.appointmentSearchField = field;
 			};
 			$scope.searchDiagnosis = function (field) {
 				$scope.dxSearchField = field;
@@ -304,9 +304,9 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			};
 
 			// Function for search through the filters
-			$scope.searchTermsFilter = function (Filter) {
-				var keyword = new RegExp($scope.termSearchField, 'i');
-				return !$scope.termSearchField || keyword.test(Filter.name);
+			$scope.searchAppointmentFilter = function (Filter) {
+				var keyword = new RegExp($scope.appointmentSearchField, 'i');
+				return !$scope.appointmentSearchField || keyword.test(Filter.name);
 			};
 			$scope.searchDxFilter = function (Filter) {
 				var keyword = new RegExp($scope.dxSearchField, 'i');
@@ -326,11 +326,12 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			};
 
 			// Initialize lists to hold filters
-			$scope.termList = [];
+			$scope.appointmentList = [];
 			$scope.dxFilterList = [];
 			$scope.doctorFilterList = [];
 			$scope.resourceFilterList = [];
 			$scope.patientFilterList = [];
+			$scope.appointmentStatusList = [];
 
 			// Call our API service to get legacy questionnaire details
 			legacyQuestionnaireCollectionService.getLegacyQuestionnaireDetails($scope.currentLegacyQuestionnaire.serial).then(function (response) {
@@ -349,11 +350,12 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 				// Call our API service to get each filter
 				filterCollectionService.getFilters().then(function (response) {
 
-					$scope.termList = checkAddedFilter(response.data.expressions); // Assign value
+					$scope.appointmentList = checkAddedFilter(response.data.appointments); // Assign value
 					$scope.dxFilterList = checkAddedFilter(response.data.dx);
 					$scope.doctorFilterList = checkAddedFilter(response.data.doctors);
 					$scope.resourceFilterList = checkAddedFilter(response.data.resources);
 					$scope.patientFilterList = checkAddedFilter(response.data.patients);
+					$scope.appointmentStatusList = checkAddedFilter(response.data.appointmentStatuses);
 
 				}).catch(function(response) {
 					console.error('Error occurred getting filter list:', response.status, response.data);
@@ -372,24 +374,20 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 					item.added = 1;
 			};
 
-			// Function for selecting all terms in the expression list
-			var selectAllTerms = false;
-			$scope.selectAllTerms = function () {
-				var filtered = $scope.filter($scope.termList, $scope.termSearchField);
-
-				$scope.changesMade = true;
-
-				if (selectAllTerms) {
-					angular.forEach(filtered, function (term) {
-						term.added = 0;
-					});
-					selectAllTerms = !selectAllTerms;
-				} else {
-					angular.forEach(filtered, function (term) {
-						term.added = 1;
-					});
-					selectAllTerms = !selectAllTerms;
-				}
+			// Function to toggle appointment status filter 
+			$scope.appointmentStatusUpdate = function (index) {
+				$scope.setChangesMade();
+				angular.forEach($scope.appointmentStatusList, function (appointmentStatus, loopIndex) {
+					if (index == loopIndex) {
+						if (appointmentStatus.added) 
+							appointmentStatus.added = 0;
+						else
+							appointmentStatus.added = 1;
+					}
+					else {
+						appointmentStatus.added = 0;
+					}
+				});
 			};
 
 			// Function to assign '1' to existing filters 
@@ -411,13 +409,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 
 			// Function to check demographic filters
 			function checkDemographicFilters() {
-				var demoFilter = {
-					sex: null,
-					age: {
-						min: 0,
-						max: 100
-					}
-				};
+
 				angular.forEach($scope.legacyQuestionnaire.filters, function (selectedFilter) {
 					if (selectedFilter.type == 'Sex')
 						$scope.demoFilter.sex = selectedFilter.id;
@@ -426,8 +418,6 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 						$scope.demoFilter.age.max = parseInt(selectedFilter.id.split(',')[1]);
 					}
 				});
-
-				return demoFilter;
 			}
 
 			// Function called whenever there has been a change in the form
@@ -488,11 +478,12 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 					}
 
 					// Add filters to legacy questionnaire
-					addFilters($scope.termList);
+					addFilters($scope.appointmentList);
 					addFilters($scope.dxFilterList);
 					addFilters($scope.doctorFilterList);
 					addFilters($scope.resourceFilterList);
 					addFilters($scope.patientFilterList);
+					addFilters($scope.appointmentStatusList);
 
 					// ajax POST
 					$.ajax({

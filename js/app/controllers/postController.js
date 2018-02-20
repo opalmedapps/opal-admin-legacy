@@ -261,22 +261,22 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 			$scope.postModal = {}; // for deep copy
 
 			// Initialize lists to hold filters
-			$scope.termList = [];
+			$scope.appointmentList = [];
 			$scope.dxFilterList = [];
 			$scope.doctorFilterList = [];
 			$scope.resourceFilterList = [];
 			$scope.patientFilterList = [];
 
 			// Initialize search field variables
-			$scope.termSearchField = "";
+			$scope.appointmentSearchField = "";
 			$scope.dxSearchField = "";
 			$scope.doctorSearchField = "";
 			$scope.resourceSearchField = "";
 			$scope.patientSearchField = "";
 
 			// Function to assign search fields when textbox changes
-			$scope.searchTerm = function (field) {
-				$scope.termSearchField = field;
+			$scope.searchAppointment = function (field) {
+				$scope.appointmentSearchField = field;
 			};
 			$scope.searchDiagnosis = function (field) {
 				$scope.dxSearchField = field;
@@ -292,9 +292,9 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 			};
 
 			// Function for search through the filters
-			$scope.searchTermsFilter = function (Filter) {
-				var keyword = new RegExp($scope.termSearchField, 'i');
-				return !$scope.termSearchField || keyword.test(Filter.name);
+			$scope.searchAppointmentFilter = function (Filter) {
+				var keyword = new RegExp($scope.appointmentSearchField, 'i');
+				return !$scope.appointmentSearchField || keyword.test(Filter.name);
 			};
 			$scope.searchDxFilter = function (Filter) {
 				var keyword = new RegExp($scope.dxSearchField, 'i');
@@ -355,7 +355,7 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 				// Call our API service to get each filter
 				filterCollectionService.getFilters().then(function (response) {
 
-					$scope.termList = checkAdded(response.data.expressions); // Assign value
+					$scope.appointmentList = checkAdded(response.data.appointments); // Assign value
 					$scope.dxFilterList = checkAdded(response.data.dx);
 					$scope.doctorFilterList = checkAdded(response.data.doctors);
 					$scope.resourceFilterList = checkAdded(response.data.resources);
@@ -378,26 +378,6 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 					item.added = 0;
 				else
 					item.added = 1;
-			};
-
-			// Function for selecting all terms in the expression list
-			var selectAllTerms = false;
-			$scope.selectAllTerms = function () {
-				var filtered = $scope.filter($scope.termList, $scope.termSearchField);
-
-				$scope.changesMade = true;
-
-				if (selectAllTerms) {
-					angular.forEach(filtered, function (term) {
-						term.added = 0;
-					});
-					selectAllTerms = !selectAllTerms;
-				} else {
-					angular.forEach(filtered, function (term) {
-						term.added = 1;
-					});
-					selectAllTerms = !selectAllTerms;
-				}
 			};
 
 			// Function to assign 1 to existing filters
@@ -438,7 +418,7 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 				if ($scope.checkForm()) {
 					$scope.post.filters = []; // Empty filters
 					// Add filters to post
-					addFilters($scope.termList);
+					addFilters($scope.appointmentList);
 					addFilters($scope.dxFilterList);
 					addFilters($scope.doctorFilterList);
 					addFilters($scope.resourceFilterList);
