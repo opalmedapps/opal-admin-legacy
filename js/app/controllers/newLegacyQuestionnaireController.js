@@ -11,10 +11,10 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 			window.history.back();
 		};
 
-		$scope.legacy_questionnaire = {open:false, show:true};
-		$scope.title = {open:false, show:false};
-		$scope.demo = {open:false, show:false};
-		$scope.terms = {open:false, show:false};
+		$scope.legacyQuestionnaireSection = {open:false, show:true};
+		$scope.titleSection = {open:false, show:false};
+		$scope.demoSection = {open:false, show:false};
+		$scope.filterSection = {open:false, show:false};
 
 		// completed steps boolean object; used for progress bar
 		var steps = {
@@ -26,7 +26,7 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 		$scope.filter = $filter('filter');
 
 		// Initialize search field variables
-		$scope.termSearchField = null;
+		$scope.appointmentSearchField = null;
 		$scope.dxSearchField = null;
 		$scope.doctorSearchField = null;
 		$scope.resourceSearchField = null;
@@ -72,7 +72,7 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 			}
 		};
 		// Initialize lists to hold filters
-		$scope.termList = [];
+		$scope.appointmentList = [];
 		$scope.dxFilterList = [];
 		$scope.doctorFilterList = [];
 		$scope.resourceFilterList = [];
@@ -107,7 +107,7 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 		// Call our API service to get each filter
 		filterCollectionService.getFilters().then(function (response) {
 
-			$scope.termList = response.data.expressions; // Assign value
+			$scope.appointmentList = response.data.appointments; // Assign value
 			$scope.dxFilterList = response.data.dx;
 			$scope.doctorFilterList = response.data.doctors;
 			$scope.resourceFilterList = response.data.resources;
@@ -126,9 +126,9 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 		// Function to toggle necessary changes when updating the legacy questionnaire
 		$scope.legacyQuestionnaireUpdate = function () {
 
-			$scope.legacy_questionnaire.open = true;
+			$scope.legacyQuestionnaireSection.open = true;
 
-			$scope.title.show = true;
+			$scope.titleSection.show = true;
 
 			// Toggle step completion
 			steps.legacy_questionnaire.completed = true;
@@ -143,12 +143,12 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 		// Function to toggle necessary changes when updating post name
 		$scope.titleUpdate = function () {
 
-			$scope.title.open = true;
+			$scope.titleSection.open = true;
 
 			if ($scope.newLegacyQuestionnaire.name_EN && $scope.newLegacyQuestionnaire.name_FR) {
 
-				$scope.demo.show = true;
-				$scope.terms.show = true;
+				$scope.demoSection.show = true;
+				$scope.filterSection.show = true;
 
 				// Toggle step completion
 				steps.title.completed = true;
@@ -169,7 +169,7 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 		// Function to toggle necessary changes when updating the sex
 		$scope.sexUpdate = function (sex) {
 
-			$scope.demo.open = true;
+			$scope.demoSection.open = true;
 
 			if (!$scope.demoFilter.sex) {
 				$scope.demoFilter.sex = sex.name;
@@ -184,7 +184,7 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 		// Function to toggle necessary changes when updating the age 
 		$scope.ageUpdate = function () {
 
-			$scope.demo.open = true;
+			$scope.demoSection.open = true;
 			
 		};
 
@@ -196,27 +196,9 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 				item.added = 1;
 		};
 
-		// Function for selecting all terms in the expression list
-		var selectAllTerms = false;
-		$scope.selectAllTerms = function () {
-			var filtered = $scope.filter($scope.termList, $scope.termSearchField);
-
-			if (selectAllTerms) {
-				angular.forEach(filtered, function (term) {
-					term.added = 0;
-				});
-				selectAllTerms = !selectAllTerms;
-			} else {
-				angular.forEach(filtered, function (term) {
-					term.added = 1;
-				});
-				selectAllTerms = !selectAllTerms;
-			}
-		};
-
 		// Function to assign search fields when textbox changes
-		$scope.searchTerm = function (field) {
-			$scope.termSearchField = field;
+		$scope.searchAppointment = function (field) {
+			$scope.appointmentSearchField = field;
 		};
 		$scope.searchDiagnosis = function (field) {
 			$scope.dxSearchField = field;
@@ -243,9 +225,9 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 		};
 
 		// Function for search through the filters
-		$scope.searchTermsFilter = function (Filter) {
-			var keyword = new RegExp($scope.termSearchField, 'i');
-			return !$scope.termSearchField || keyword.test(Filter.name);
+		$scope.searchAppointmentFilter = function (Filter) {
+			var keyword = new RegExp($scope.appointmentSearchField, 'i');
+			return !$scope.appointmentSearchField || keyword.test(Filter.name);
 		};
 		$scope.searchDxFilter = function (Filter) {
 			var keyword = new RegExp($scope.dxSearchField, 'i');
@@ -324,7 +306,7 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 					}
 				}
 				// Add filters to new legacy questionnaire object
-				addFilters($scope.termList);
+				addFilters($scope.appointmentList);
 				addFilters($scope.dxFilterList);
 				addFilters($scope.doctorFilterList);
 				addFilters($scope.resourceFilterList);
