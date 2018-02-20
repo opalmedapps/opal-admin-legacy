@@ -733,14 +733,17 @@ sub getTodaysPatientsAppointmentsFromOurDB
             ap.ScheduledEndTime,
             ap.DiagnosisSerNum,
             ap.SourceDatabaseSerNum,
-            ap.Status,
+            sa.Name,
             ap.Checkin
         FROM 
-            Appointment ap
+            Appointment ap,
+            StatusAlias sa
         WHERE
             ap.PatientSerNum            = '$patientSer'
         AND DATE(ap.ScheduledStartTime) = CURDATE()
         AND ap.State 					= 'Active'
+        AND ap.Status 					= sa.Expression
+        AND ap.SourceDatabaseSerNum		= sa.SourceDatabaseSerNum
     ";
 
     # prepare query

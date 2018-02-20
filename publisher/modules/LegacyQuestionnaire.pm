@@ -230,7 +230,7 @@ sub publishLegacyQuestionnaires
             my @patientDoctors = PatientDoctor::getPatientsDoctorsFromOurDB($patientSer);
 
             # Fetch checkin filter (if any)
-            my @checkinFilter = $questionnaireFilters->getCheckinFilter();
+            my @checkinFilter = $questionnaireFilters->getCheckinFilters();
             if (@checkinFilter) {
 
                 # toggle flag
@@ -345,7 +345,8 @@ sub publishLegacyQuestionnaires
                 if ($isPatientSpecificFilterDefined or !$isNonPatientSpecificFilterDefined) {
     				# Finding the existence of the patient in the patient-specific filters
     				# If the patient does not exist, then continue to the next educational material
-    				if (grep $patientId ne $_, @patientFilters) {next;}
+    				if ($patientId ~~ @patientFilters) {}
+                    else {next;}
                 }
 			}
 
