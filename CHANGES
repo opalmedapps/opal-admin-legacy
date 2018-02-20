@@ -1,3 +1,18 @@
+Version 0.15.0.0:
+ -     --- Fixed failed publishing issue         -- When more than one patient filter is defined, the logic would fail to see an         existance of a patient in the filter list even though it is there. Marked down as         a coding error. Changed logic to check if it does exist. The else contains the next statement.
+ -     --- Added checkin and appointment status filters to legacy questionnaires
+ -     --- Fixed bug where save changes button didn't enable when updating a filter     --- Changed publisher to use alias appointment filters instead of aria expressions
+ - --- Made section variables more meaningful --- Changed "terms" filter to appointment alias filter now
+ - --- Made variables more meaningful for sections
+ - --- See above
+ - --- Removed expression references to these files --- Made clearer variable names
+ -     --- Changed expressions to alias appointment filter     --- Added environment to build display
+ - --- Merge
+ -     --- Added favicon
+ - Merge branch 'release-0.14.1' into develop
+ - --- Setting up for versioning
+ - 	--- Lockfile suggested
+
 Version 0.14.1:
  -     --- Added branch info to build display
  -     --- Added version and build display on bottom right
