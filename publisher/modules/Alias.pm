@@ -355,3 +355,40 @@ sub getExpressionNameFromOurDB
     return $expressionName;
 
 }
+
+#======================================================================================
+# Subroutine to get alias serial from our db given an expression serial
+#======================================================================================
+sub getAliasFromOurDB
+{
+    my ($expressionSer) = @_; # args
+
+    my $aliasSer; #  initialize 
+
+    my $select_sql = "
+        SELECT DISTINCT
+            ae.AliasSerNum
+        FROM
+            AliasExpression ae
+        WHERE
+            ae.AliasExpressionSerNum = '$expressionSer'
+    ";
+
+    # prepare query
+	my $query = $SQLDatabase->prepare($select_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+	while (my @data = $query->fetchrow_array()) {
+
+        $aliasSer = $data[0];
+
+    }
+
+    return $aliasSer;
+
+}
+

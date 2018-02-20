@@ -46,7 +46,7 @@
 
               <uib-accordion class="side-navbar">
                 <!-- SECTION: Type -->
-                <div uib-accordion-group is-open="type.open" class="panel-container summary-box" is-disabled="!newNotification.type">
+                <div uib-accordion-group is-open="typeSection.open" class="panel-container summary-box" is-disabled="!newNotification.type">
                   <uib-accordion-heading>
                     <div class="row" style="align-items:center">
                       <div class="col-md-2">
@@ -56,7 +56,7 @@
                         <strong>Type</strong>
                       </div>
                       <div class="col-md-2">
-                        <i ng-if="newNotification.type" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': type.open, 'glyphicon-chevron-right': !type.open}"></i>
+                        <i ng-if="newNotification.type" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': typeSection.open, 'glyphicon-chevron-right': !typeSection.open}"></i>
                       </div>
                     </div>
                   </uib-accordion-heading>
@@ -68,7 +68,7 @@
                   </div>
                 </div>
                 <!-- SECTION: Title & Message -->
-                <div uib-accordion-group is-open="title_message.open" class="panel-container summary-box animated" ng-class="{fadeInUp: title_message.show}" is-disabled="!newNotification.name_EN && !newNotification.name_FR && !newNotification.description_EN && !newNotification.description_FR" ng-if="title_message.show">
+                <div uib-accordion-group is-open="titleMessageSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: titleMessageSection.show}" is-disabled="!newNotification.name_EN && !newNotification.name_FR && !newNotification.description_EN && !newNotification.description_FR" ng-if="titleMessageSection.show">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -78,7 +78,7 @@
                         <strong>Title & Message</strong>
                       </div>
                       <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': title_message.open, 'glyphicon-chevron-right': !title_message.open}" ng-if="newNotification.name_EN || newNotification.name_FR || newNotification.description_EN || newNotification.description_FR"></i>
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleMessageSection.open, 'glyphicon-chevron-right': !titleMessageSection.open}" ng-if="newNotification.name_EN || newNotification.name_FR || newNotification.description_EN || newNotification.description_FR"></i>
                       </div>
                     </div>
                   </uib-accordion-heading>
@@ -190,7 +190,7 @@
                 </div>
               </div> 
               <!-- SECTION: Title & Message -->
-              <div class="row animated" ng-class="{fadeInUp: title_message.show}" ng-if="title_message.show">
+              <div class="row animated" ng-class="{fadeInUp: titleMessageSection.show}" ng-if="titleMessageSection.show">
                 <div class="col-xs-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -200,7 +200,7 @@
                   </div>  
                 </div>
               </div>   
-              <div class="row animated" ng-class="{fadeInUp: title_message.show}" ng-if="title_message.show">
+              <div class="row animated" ng-class="{fadeInUp: titleMessageSection.show}" ng-if="titleMessageSection.show">
                 <div class="col-xs-12">
                   <p style="margin-bottom: 10px;">
                     <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -208,7 +208,7 @@
                   </p>
                 </div>
               </div>  
-              <div class="row animated" ng-class="{fadeInUp: title_message.show}" ng-if="title_message.show"> 
+              <div class="row animated" ng-class="{fadeInUp: titleMessageSection.show}" ng-if="titleMessageSection.show"> 
                 <div class="col-xs-12 col-md-6">
                   <div class="panel" ng-class="(newNotification.name_EN && newNotification.description_EN) ? 'panel-success': 'panel-danger'">
                     <div class="panel-heading"><strong>English</strong>

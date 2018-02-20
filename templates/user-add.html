@@ -46,7 +46,7 @@
 
               <uib-accordion class="side-navbar">
                 <!-- SECTION: Username -->
-                <div uib-accordion-group is-open="username.open" class="panel-container summary-box" is-disabled="!newUser.username">
+                <div uib-accordion-group is-open="usernameSection.open" class="panel-container summary-box" is-disabled="!newUser.username">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -61,7 +61,7 @@
                   </uib-accordion-heading>
                 </div>
                 <!-- SECTION: Password -->
-                <div uib-accordion-group is-open="password.open" class="panel-container summary-box animated" ng-class="{fadeInUp: password.show}" ng-if="password.show" is-disabled="!newUser.password && !newUser.confirmPassword">
+                <div uib-accordion-group is-open="passwordSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: passwordSection.show}" ng-if="passwordSection.show" is-disabled="!newUser.password && !newUser.confirmPassword">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -75,7 +75,7 @@
                   </uib-accordion-heading>
                 </div>
                 <!-- SECTION: Role -->
-                <div uib-accordion-group is-open="role.open" class="panel-container summary-box animated" ng-class="{fadeInUp:role.show}" ng-if="role.show" is-disabled="!newUser.role">
+                <div uib-accordion-group is-open="roleSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:roleSection.show}" ng-if="roleSection.show" is-disabled="!newUser.role">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -85,7 +85,7 @@
                         <strong>Role</strong>
                       </div>
                       <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': role.open, 'glyphicon-chevron-right': !role.open}" ng-if="newUser.role"></i>
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': roleSection.open, 'glyphicon-chevron-right': !roleSection.open}" ng-if="newUser.role"></i>
                       </div>
                     </div>
                   </uib-accordion-heading>
@@ -225,7 +225,7 @@
                 </div>          
               </div>
               <!-- SECTION: Role -->
-              <div class="row animated" ng-class="{fadeInUp: role.show}" ng-if="role.show">
+              <div class="row animated" ng-class="{fadeInUp: roleSection.show}" ng-if="roleSection.show">
                 <div class="col-xs-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -235,7 +235,7 @@
                   </div>  
                 </div>
               </div>   
-              <div class="row animated" ng-class="{fadeInUp: role.show}" ng-if="role.show">
+              <div class="row animated" ng-class="{fadeInUp: roleSection.show}" ng-if="roleSection.show">
                 <div class="col-xs-12">
                   <p style="margin-bottom: 10px;">
                     <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -243,7 +243,7 @@
                   </p>
                 </div>
               </div>  
-              <div class="row animated" ng-class="{fadeInUp: role.show}" ng-if="role.show" style="margin-bottom: 15px;">
+              <div class="row animated" ng-class="{fadeInUp: roleSection.show}" ng-if="roleSection.show" style="margin-bottom: 15px;">
                 <div class="col-xs-12 col-sm-8">
                   <div class="row">
                     <div class="col-xs-12 col-sm-6">
