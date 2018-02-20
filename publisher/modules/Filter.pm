@@ -221,7 +221,7 @@ sub getAllFiltersFromOurDB
     my $sexFilter                   = getSexFilterFromOurDB($controlSer, $controlTable);
     my $ageFilter                   = getAgeFilterFromOurDB($controlSer, $controlTable);
 	my @patientFilters 		        = getPatientFiltersFromOurDB($controlSer, $controlTable);
-    my @appointmentFilters          = geAppointmentFiltersFromOurDB($controlSer, $controlTable);
+    my @appointmentFilters          = getAppointmentFiltersFromOurDB($controlSer, $controlTable);
     my @diagnosisFilters            = getDiagnosisFiltersFromOurDB($controlSer, $controlTable);
     my @doctorFilters               = getDoctorFiltersFromOurDB($controlSer, $controlTable);
     my @resourceFilters             = getResourceFiltersFromOurDB($controlSer, $controlTable);
@@ -237,7 +237,7 @@ sub getAllFiltersFromOurDB
     $Filter->setDiagnosisFilters(@diagnosisFilters);
     $Filter->setDoctorFilters(@doctorFilters);
     $Filter->setResourceFilters(@resourceFilters);
-    $Filter->setAppointmentFilters(@appointmentStatusFilters);
+    $Filter->setAppointmentStatusFilters(@appointmentStatusFilters);
     $Filter->setCheckinFilters(@checkinFilter);
 
     return $Filter;
