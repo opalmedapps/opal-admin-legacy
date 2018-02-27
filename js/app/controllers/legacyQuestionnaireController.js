@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular', 'multipleDatePicker', 'angularjs-dropdown-multiselect'])
 
-.controller('legacyQuestionnaireController', function ($sce, $scope, $state, $filter, $timeout, $uibModal, legacyQuestionnaireCollectionService, filterCollectionService, uiGridConstants) {
+.controller('legacyQuestionnaireController', function ($sce, $scope, $state, $filter, $timeout, $uibModal, legacyQuestionnaireCollectionService, filterCollectionService, uiGridConstants, FrequencyFilterService) {
 
 	$scope.goToAddLegacyQuestionnaire = function () {
 		$state.go('legacy-questionnaire-add');
@@ -458,7 +458,58 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			};
 
 			// Default boolean for showing frequency section details
-			$scope.showFrequency = true;
+			$scope.showFrequency = false;
+
+			// Function for adding new frequency filter
+			$scope.addFrequencyFilter = function () {
+				$scope.showFrequency = true;
+			}
+
+			// Function for removing new frequency filter
+			$scope.removeFrequencyFilter = function () {
+				$scope.showFrequency = false; // Hide form
+				$scope.legacyQuestionnaire.occurrence.set = 0; // Not set anymore
+				$scope.flushAllFrequencyFilters();
+			}
+
+			// Function to reset all frequency filters
+			$scope.flushAllFrequencyFilters = function () {
+				$scope.flushPresetFrequency();
+				$scope.flushRepeatDates();
+				$scope.flushRepeatInterval();
+				$scope.flushRepeatTypes();
+			}
+
+			// Function to reset the preset frequency
+			$scope.flushPresetFrequency = function () {
+				$scope.frequencySelected = $scope.presetFrequencies[0];
+			}
+
+			// Function to reset repeat dates
+			$scope.flushRepeatDates = function () {
+				$scope.legacyQuestionnaire.occurrence.start_date = null;
+				$scope.legacyQuestionnaire.occurrence.end_date = null;
+			}
+
+			// Function to reset repeat interval
+			$scope.flushRepeatInterval = function () {
+				$scope.customFrequency = jQuery.extend(true, {}, FrequencyFilterService.customFrequency);
+				$scope.customFrequency.unit = $scope.frequencyUnits[0];
+			}
+
+			// Function to reset repeat types
+			$scope.flushRepeatTypes = function () {
+				$scope.additionalMeta = jQuery.extend(true, {}, FrequencyFilterService.additionalMeta);
+				$scope.repeatSub = null;
+				$scope.selectedDaysInWeek = [];
+				$scope.selectedDaysInWeekText = "";
+				$scope.selectedSingleDayInWeek = null; // Default
+				$scope.selectedDatesInMonthText = "";
+				$scope.selectedDatesInMonth = [];
+				$scope.selectedWeekNumberInMonthText = "";
+				$scope.selectedMonthsInYear = [];
+				$scope.selectedMonthsInYearText = "";
+			}
 
 			// Date format for start and end frequency dates
 			$scope.format = 'yyyy-MM-dd';
@@ -474,11 +525,13 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 				minDate: new Date(),
 				maxDate: null
 			};
+			// Watch to restrict the end calendar to not choose an earlier date than the start date
 			$scope.$watch('legacyQuestionnaire.occurrence.start_date', function(startDate){
 			    if (startDate !== undefined) { 
 				    $scope.dateOptionsEnd.minDate = startDate;
 				}
 		  	});
+		  	// Watch to restrict the start calendar to not choose a start after the end date
 		  	$scope.$watch('legacyQuestionnaire.occurrence.end_date', function(endDate){
 				if (endDate !== undefined) {
 				    $scope.dateOptionsStart.maxDate = endDate;
@@ -514,88 +567,28 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			}
 
 			// Initialize list of preset publishing frequencies
-			$scope.presetFrequencies = [
-			{
-				name: 'Once',
-				id: 'once',
-				meta_key: 'repeat_day',
-				meta_value: 0
-			},{
-				name: 'Every Day',
-				id: 'every_day',
-				meta_key: 'repeat_day',
-				meta_value: 1
-			},{
-				name: 'Every Other Day',
-				id: 'every_other_day',
-				meta_key: 'repeat_day',
-				meta_value: 2
-			},{
-				name: 'Every Week',
-				id: 'every_week',
-				meta_key: 'repeat_week',
-				meta_value: 1
-			},{
-				name: 'Every 2 Weeks',
-				id: 'every_2_weeks',
-				meta_key: 'repeat_week',
-				meta_value: 2
-			},{
-				name: 'Every Month',
-				id: 'every_month',
-				meta_key: 'repeat_month',
-				meta_value: 1
-			},{
-				name: 'Custom',
-				id: 'custom',
-				meta_key: null,
-				meta_value: null
-			}];
-			// Default
-			$scope.frequencySelected = $scope.presetFrequencies[0];
+			$scope.presetFrequencies = FrequencyFilterService.presetFrequencies;
+			$scope.frequencySelected = $scope.presetFrequencies[0]; // Default "Once"
 
 			$scope.selectFrequency = function (frequency) {
 				$scope.frequencySelected = frequency;
 			}
 
-			$scope.customFrequency = "Every";
-
 			// Initialize object for repeat interval
-			$scope.customMeta = {
-				meta_value: 1,
-				unit:null
-			}
-			$scope.frequencyUnits = [
-			{
-				name: 'Days',
-				id: 'day',
-				meta_key: 'repeat_day'
-			},{
-				name: 'Weeks',
-				id: 'week',
-				meta_key: 'repeat_week'
-			},{
-				name: 'Months',
-				id: 'month',
-				meta_key: 'repeat_month'
-			},{
-				name: 'Years',
-				id: 'year',
-				meta_key: 'repeat_year'
-			}];
-			// Default
-			$scope.customMeta.unit = $scope.frequencyUnits[0];
+			$scope.customFrequency = FrequencyFilterService.customFrequency;
+			$scope.frequencyUnits = FrequencyFilterService.frequencyUnits;
+			$scope.customFrequency.unit = $scope.frequencyUnits[0]; // Default "1 Day"
 
 			// Custom watch to singularize/pluralize frequency unit names
-			$scope.$watch('customMeta.meta_value', function(newValue, oldValue){
-			    if (newValue === 1) { 
+			$scope.$watch('customFrequency.meta_value', function(newValue, oldValue){
+			    if (newValue === 1) { // Singular
 				    angular.forEach($scope.frequencyUnits, function (unit) {
 				    	unit.name = unit.name.slice(0,-1); // remove plural 's'
 				    });
 				}
-				if (newValue > 1 && oldValue === 1) {
+				else if (newValue > 1 && oldValue === 1) { // Was singular now plural
 					angular.forEach($scope.frequencyUnits, function (unit) {
-				    	unit.name = unit.name + 's'; // plural names
+				    	unit.name = unit.name + 's'; // pluralize words
 				    });
 				}
 		  	});
@@ -603,31 +596,10 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			// Default
 			$scope.selectedDaysInWeek = [];
 			$scope.selectedDaysInWeekText = "";
+
 			// Initialize days of the week
-			$scope.daysInWeek = [
-			{
-				name: 'Sunday',
-				id: 1
-			},{
-				name: 'Monday',
-				id: 2
-			},{
-				name: 'Tuesday',
-				id: 3
-			},{
-				name: 'Wednesday',
-				id: 4
-			},{
-				name: 'Thursday',
-				id: 5
-			},{
-				name: 'Friday',
-				id: 6
-			},{
-				name: 'Saturday',
-				id: 7
-			}];
-			$scope.dayInWeek = null; // Default
+			$scope.daysInWeek = FrequencyFilterService.daysInWeek;
+			$scope.selectedSingleDayInWeek = null; // Default
 
 			// settings for week dropdown menu 
 			$scope.weekDropdownSettings = {
@@ -645,73 +617,92 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			}
 			// event options for week dropdown menu
 			$scope.weekDropdownEvents = {
-				onItemSelect: function (day) {$scope.selectDayInWeek(day, $scope.customMeta.unit.id);},
-				onItemDeselect: function (day) {$scope.selectDayInWeek(day, $scope.customMeta.unit.id);}
+				onItemSelect: function (dayInWeek) {$scope.selectDayInWeek(dayInWeek, $scope.customFrequency.unit.id);},
+				onItemDeselect: function (dayInWeek) {$scope.selectDayInWeek(dayInWeek, $scope.customFrequency.unit.id);}
 			}
 			// Function when selecting the days on the week
 			$scope.selectDayInWeek = function (day, unit) {
-				$scope.dayInWeek = day;
+				$scope.selectedSingleDayInWeek = day;
 				if (day) {
-					$scope.selectedDaysInWeekText = "";
-					if (unit == 'week') {
+					$scope.selectedDaysInWeekText = ""; // Destroy string
+					if (unit == 'week') { // Selecting multiple days from week repeat interval
+
+						// Manipulate day in week meta data array
 						var indexOfDay = $scope.additionalMeta.repeat_day_iw.indexOf(day.id);
 						if (indexOfDay > -1) {
 							$scope.additionalMeta.repeat_day_iw.splice(indexOfDay,1);
 						} else {
 							$scope.additionalMeta.repeat_day_iw.push(day.id);
 						}
+
+						// Construct text for display of selected days
 						for (var i = 0; i < $scope.selectedDaysInWeek.length; i++) {
 							if ($scope.selectedDaysInWeek.length == 1) {
+								// Eg. Sunday
 								$scope.selectedDaysInWeekText = $scope.selectedDaysInWeek[i].name;
 							}
 							else if (i < $scope.selectedDaysInWeek.length-1) {
+								// Eg. Sunday, Monday, etc.
 								$scope.selectedDaysInWeekText += $scope.selectedDaysInWeek[i].name + ", "
 							}
 							else {
+								// Remove last comma and replace with "and"
+								// Eg. Sunday, Monday and Tuesday
 								$scope.selectedDaysInWeekText = $scope.selectedDaysInWeekText.slice(0,-2) + " and " + $scope.selectedDaysInWeek[i].name;
 							}
 						}
 					}
+					// Selecting a single day in the week from month or year repeat interval
 					else if (unit == 'month' || unit == 'year') {
-						
-						if ($scope.weekInMonth) {
+						// If a week number exists we are ready to add meta data 
+						if ($scope.selectedWeekNumberInMonth) {
 							$scope.additionalMeta.repeat_day_iw = [day.id];
-							$scope.additionalMeta.repeat_week_im = [$scope.weekInMonth.id];	
-							$scope.weekInMonthText = $scope.weekInMonth.name + " " + day.name;
+							$scope.additionalMeta.repeat_week_im = [$scope.selectedWeekNumberInMonth.id];	
+							$scope.selectedWeekNumberInMonthText = $scope.selectedWeekNumberInMonth.name + " " + day.name;
 						}
-						else {
+						else { // Empty meta data array
 							$scope.additionalMeta.repeat_day_iw = [];
 							$scope.additionalMeta.repeat_week_im = [];
-							$scope.weekInMonthText = "";
+							$scope.selectedWeekNumberInMonthText = "";
 						}
 					}
 				}
-				else {
+				else { // A day in week was not selected 
 					if (unit == 'month' || unit == 'year') {
+						// Empty meta data array
 						$scope.additionalMeta.repeat_day_iw = [];
 						$scope.additionalMeta.repeat_week_im = [];
-						$scope.weekInMonthText = "";
+						$scope.selectedWeekNumberInMonthText = "";
 					}
 				}
 			};
 
+			// Function when a repeat interval is selected
 			$scope.selectRepeatInterval = function (unit) {
-				if (unit.name != 'week') {
+				if (unit.name != 'week') { // Week wasn't selected
+					// Remove week-related meta data
 					$scope.selectedDaysInWeek = [];
 					$scope.selectedDaysInWeekText = "";
 					$scope.additionalMeta.repeat_day_iw = [];
 				}
-				if (unit.name != 'month') {
+				if (unit.name != 'month') { // Month wasn't selected
+					// Remove month-related meta data
 					$scope.additionalMeta.repeat_date_im = [];
 					$scope.selectedDatesInMonthText = "";
 					$scope.selectedDatesInMonth = [];
 					$scope.repeatSub = null;
 					$scope.additionalMeta.repeat_day_iw = [];
 					$scope.additionalMeta.repeat_week_im = [];
-					$scope.weekInMonthText = "";
-					$scope.weekInMonth = $scope.weeksInMonth[0];
-					$scope.dayInWeek = null;
+					$scope.selectedWeekNumberInMonthText = "";
+					$scope.selectedWeekNumberInMonth = $scope.weekNumbersInMonth[0];
+					$scope.selectedSingleDayInWeek = null;
 
+				}
+				if(unit.name != 'year') { // Year wasn't selected
+					// Remove year-related meta data
+					$scope.additionalMeta.repeat_month_iy = []
+					$scope.selectedMonthsInYear = [];
+					$scope.selectedMonthsInYearText = "";
 				}
 			}
 
@@ -720,30 +711,33 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			$scope.setRepeatSub = function(repeatSub) {
 				
 				if ($scope.repeatSub != repeatSub) {
-					$scope.repeatSub = repeatSub;
+					$scope.repeatSub = repeatSub; // set tab active
 				} 
 				else
 					$scope.repeatSub = null; // remove reference/active
 
-				if ($scope.repeatSub != 'onDate') {
+				if ($scope.repeatSub != 'onDate') { // date tab wasn't selected
+					// Remove date-related meta data
 					$scope.additionalMeta.repeat_date_im = [];
 					$scope.selectedDatesInMonthText = "";
 					$scope.selectedDatesInMonth = [];
 				}
-				if ($scope.repeatSub != 'onWeek') {
+				if ($scope.repeatSub != 'onWeek') { // week tab wasn't selected
+					// Remove week-related meta data
 					$scope.additionalMeta.repeat_day_iw = [];
 					$scope.additionalMeta.repeat_week_im = [];
-					$scope.weekInMonthText = "";
-					$scope.weekInMonth = $scope.weeksInMonth[0];
-					$scope.dayInWeek = null;
+					$scope.selectedWeekNumberInMonthText = "";
+					$scope.selectedWeekNumberInMonth = $scope.weekNumbersInMonth[0];
+					$scope.selectedSingleDayInWeek = null;
 				}
 			}
 
-			// Function watch to deal with selected dates
+			// Function watch to deal with selected dates in calendar
 			$scope.selectedDatesInMonth = [];
 			$scope.selectedDatesInMonthText = "";
 			$scope.$watch('selectedDatesInMonth', function(newArray, oldArray){
 			    if(newArray){
+			    	// Manage date metadata array
 			    	$scope.additionalMeta.repeat_date_im = [];
 					$scope.selectedDatesInMonthText = "";
 			    	angular.forEach(newArray, function (date) {
@@ -751,26 +745,36 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			    		$scope.additionalMeta.repeat_date_im.push(dateNumber);
 			    	});
 
+			    	// Sort array
 			    	$scope.additionalMeta.repeat_date_im.sort(function(a, b){return a - b});
+			    	
+			    	// Construct text for display of selected dates
 			    	angular.forEach($scope.additionalMeta.repeat_date_im, function (dateNumber,index) {
-			    		if (dateNumber % 10 == 1) {
+			    		// Conditionals for proper suffix
+			    		if (dateNumber % 10 == 1 && dateNumber != 11) {
 			    			dateNumber += "st";
 			    		}
-			    		if (dateNumber % 10 == 2) {
+			    		else if (dateNumber % 10 == 2 && dateNumber != 12) {
 			    			dateNumber += "nd";
 			    		}
-			    		if (dateNumber % 10 == 3) {
+			    		else if (dateNumber % 10 == 3 && dateNumber != 13) {
 			    			dateNumber += "rd";
 			    		}
-			    		if (dateNumber % 10 > 3 || dateNumber % 10 == 0) {
+			    		else {
 			    			dateNumber += "th";
 			    		}
+			    		// Single date chosen
+			    		// Eg. 4th
 			    		if (newArray.length == 1) {
 								$scope.selectedDatesInMonthText = dateNumber;
 						}
+						// Concat commas 
+						// Eg. 4th, 5th
 						else if (index < newArray.length-1) {
 							$scope.selectedDatesInMonthText += dateNumber + ", "
 						}
+						// Replace last comma with an "and"
+						// Eg. 1st, 2nd and 4th
 						else {
 							$scope.selectedDatesInMonthText = $scope.selectedDatesInMonthText.slice(0,-2) + " and " + dateNumber;
 						}
@@ -779,49 +783,31 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			}, true);
 
 			// initialize list of weeks in month
-			$scope.weeksInMonth = [
-			{
-				name: '---',
-				id: null
-			},{
-				name: '1st',
-				id: 1
-			},{
-				name: '2nd',
-				id: 2
-			},{
-				name: '3rd',
-				id: 3
-			},{
-				name: '4th',
-				id: 4
-			},{
-				name: '5th',
-				id: 5
-			},{
-				name: 'Last',
-				id: 6
-			}];
-			$scope.weekInMonth = $scope.weeksInMonth[0]; // Default
-			$scope.weekInMonthText = "";
+			$scope.weekNumbersInMonth = FrequencyFilterService.weekNumbersInMonth;
+			$scope.selectedWeekNumberInMonth = $scope.weekNumbersInMonth[0]; // Default null
+			$scope.selectedWeekNumberInMonthText = "";
 
 			// Function to set week of the month
 			$scope.selectWeekInMonth = function (week) {
-				$scope.weekInMonth = week;
-				if (week.id && $scope.dayInWeek) {
-					$scope.additionalMeta.repeat_day_iw = [$scope.dayInWeek.id];
+				$scope.selectedWeekNumberInMonth = week;
+				// If a single day was chosen
+				if (week.id && $scope.selectedSingleDayInWeek) {
+					// Manage meta data
+					$scope.additionalMeta.repeat_day_iw = [$scope.selectedSingleDayInWeek.id];
 					$scope.additionalMeta.repeat_week_im = [week.id];
-					$scope.weekInMonthText = week.name + " " + $scope.dayInWeek.name;
+					$scope.selectedWeekNumberInMonthText = week.name + " " + $scope.selectedSingleDayInWeek.name;
 
 				}
 				else {
+					// Erase meta data arrays
 					$scope.additionalMeta.repeat_day_iw = [];
 					$scope.additionalMeta.repeat_week_im = [];
-					$scope.weekInMonthText = "";
+					$scope.selectedWeekNumberInMonthText = "";
 				}
 			}
 
-			// Set month calendar to static date that starts on Sunday
+			// Set calendar to static date that starts on Sunday (Eg. Jan. 2018)
+			// (For easy use when selecting dates on the calendar)
 			$scope.staticMonth = moment().set({'year':2018, 'month': 0});
 
 			// settings for month dropdown menu 
@@ -838,7 +824,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 					return selectionArray.length + " Months Selected"; 
 				}
 			}
-			// event options for week dropdown menu
+			// event options for month dropdown menu
 			$scope.monthDropdownEvents = {
 				onItemSelect: function (month) {$scope.selectMonthInYear(month);},
 				onItemDeselect: function (month) {$scope.selectMonthInYear(month);}
@@ -846,63 +832,46 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 
 			// Initialize list of months in a year
 			$scope.selectedMonthsInYear = [];
-			$scope.monthsInYear = [
-			{
-				name: 'January',
-				id: 1
-			},{
-				name: 'February',
-				id: 2
-			},{
-				name: 'March',
-				id: 3
-			},{
-				name: 'April',
-				id: 4
-			},{
-				name: 'May',
-				id: 5
-			},{
-				name: 'June',
-				id: 6
-			},{
-				name: 'July',
-				id: 7
-			},{
-				name: 'August',
-				id: 8
-			},{
-				name: 'September',
-				id: 9
-			},{ 
-				name: 'October',
-				id: 10
-			},{
-				name: 'November',
-				id: 11
-			},{
-				name: 'December',
-				id: 12
-			}];
+			$scope.selectedMonthsInYearText = "";
+			$scope.monthsInYear = FrequencyFilterService.monthsInYear;
 
 			// Function to place appropriate meta data from the month in the year
 			$scope.selectMonthInYear = function (month) {
-				if (month.id) {
+				if (month) {
+					$scope.selectedMonthsInYearText = ""; // Destroy text
+
+					// Manage meta data
 					var indexOfMonth = $scope.additionalMeta.repeat_month_iy.indexOf(month.id);
 					if (indexOfMonth > -1) {
 						$scope.additionalMeta.repeat_month_iy.splice(indexOfMonth,1);
 					} else {
 						$scope.additionalMeta.repeat_month_iy.push(month.id);
 					}
+
+					// Construct text for display of selected months
+					for (var i = 0; i < $scope.selectedMonthsInYear.length; i++) {
+						// Single month
+						// Eg. January
+						if ($scope.selectedMonthsInYear.length == 1) {
+							$scope.selectedMonthsInYearText = $scope.selectedMonthsInYear[i].name;
+						}
+						// Concat months with commas
+						// Eg. January, March, April
+						else if (i < $scope.selectedMonthsInYear.length-1) {
+							$scope.selectedMonthsInYearText += $scope.selectedMonthsInYear[i].name + ", "
+						}
+
+						// Replace last comma with "and"
+						// Eg. January, March and April
+						else {
+							$scope.selectedMonthsInYearText = $scope.selectedMonthsInYearText.slice(0,-2) + " and " + $scope.selectedMonthsInYear[i].name;
+						}
+					}
 				}
 			};
 
-			$scope.additionalMeta = {
-				repeat_day_iw: [],
-				repeat_week_im: [],
-				repeat_date_im: [],
-				repeat_month_iy: []
-			}
+			// Initialize array holding additional meta data for custom repeats
+			$scope.additionalMeta = FrequencyFilterService.additionalMeta;
 
 			// Function for updating the legacy questionnaire 
 			$scope.updateLegacyQuestionnaire = function () {
