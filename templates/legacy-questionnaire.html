@@ -141,92 +141,70 @@
           </div>
         </uib-accordion-heading>
         <div class="alert alert-info" role="alert">
-          <strong>Current Publish Date Range</strong><br>
-          <p>
-            <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-            <span ng-if="legacyQuestionnaire.occurrence.start_date">
-              {{legacyQuestionnaire.occurrence.start_date | date:'fullDate' }} to
-              <span ng-if="legacyQuestionnaire.occurrence.end_date">
-                {{legacyQuestionnaire.occurrence.end_date | date:'fullDate' }}
-              </span>
-              <span ng-if="!legacyQuestionnaire.occurrence.end_date">Forever</span>
-            </span>
-            <span ng-if="!legacyQuestionnaire.occurrence.start_date">None</span>
-          </p>
-          <strong>Repeat</strong><br>
-          <p>
-            <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-            <span ng-if="frequencySelected.id != 'custom'">{{frequencySelected.name}}</span>
-            <span ng-if="frequencySelected.id == 'custom'">
-              Every 
-              <span ng-if="customMeta.meta_value != 1">{{customMeta.meta_value}}</span>
-              {{customMeta.unit.name}} 
-              <span ng-if="selectedDaysInWeek.length">On {{selectedDaysInWeekText}}</span>
-              <span ng-if="selectedDatesInMonth.length">on the {{selectedDatesInMonthText}} of the month</span>
-              <span ng-if="weekInMonth.id && dayInWeek.id">on the {{weekInMonthText}} of the month</span>
-            </span>
-          </p>
+          <div class="row">
+            <div class="col-xs-12 col-sm-4">
+              <strong>Repeat</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                <span ng-if="!showFrequency">N/A</span>
+                <span ng-if="frequencySelected.id != 'custom' && showFrequency">{{frequencySelected.name}}</span>
+                <span ng-if="frequencySelected.id == 'custom'">
+                  Every 
+                  <span ng-if="customFrequency.meta_value != 1">{{customFrequency.meta_value}}</span>
+                  {{customFrequency.unit.name}} 
+                  <span ng-if="selectedDaysInWeek.length">On {{selectedDaysInWeekText}}</span>
+                  <span ng-if="selectedMonthsInYear.length">in {{selectedMonthsInYearText}} </span>
+                  <span ng-if="selectedDatesInMonth.length">on the {{selectedDatesInMonthText}} of
+                    <span ng-if="selectedMonthsInYear.length > 1">each</span>
+                    <span ng-if="selectedMonthsInYear.length < 2">the</span>
+                  month</span>
+                  <span ng-if="selectedWeekNumberInMonth.id && selectedSingleDayInWeek.id">on the {{selectedWeekNumberInMonthText}} of 
+                  <span ng-if="selectedMonthsInYear.length > 1">each</span>
+                  <span ng-if="selectedMonthsInYear.length < 2">the</span>
+                    month</span>
+                </span>
+              </p>
+            </div>
+            <div class="col-xs-12 col-sm-4">
+
+              <strong>Repeat Start</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                <span ng-if="legacyQuestionnaire.occurrence.start_date">
+                  {{legacyQuestionnaire.occurrence.start_date | date:'fullDate' }}
+                </span>
+                <span ng-if="!legacyQuestionnaire.occurrence.start_date">N/A</span>
+              </p>
+            </div>
+            <div class="col-xs-12 col-sm-4">
+
+              <strong>Repeat End</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                  <span ng-if="legacyQuestionnaire.occurrence.end_date">
+                    {{legacyQuestionnaire.occurrence.end_date | date:'fullDate' }}
+                  </span>
+                  <span ng-if="!legacyQuestionnaire.occurrence.end_date">Never</span>
+                </span>
+              </p>
+            </div>
+          </div>
+          Testing region<br>
+          
         </div>
         <div class="row" style="margin-bottom:10px;">
           <div class="col-xs-12">
-            <button class="btn btn-success" ng-if="!showFrequency">
+            <button class="btn btn-success" ng-if="!showFrequency" ng-click="addFrequencyFilter()">
               <span style="font-size: 17px;" class="fa fa-plus"></span>
               <span style="font-size: 20px;"><strong>Add</strong></span>
             </button>
-            <button class="btn btn-success" ng-if="showFrequency" ng-disabled="checkFrequency()">
-              <span style="font-size: 17px;" class="glyphicon glyphicon-ok"></span>
-              <span style="font-size: 20px;"><strong>Confirm</strong></span>
-            </button>
-            <button class="btn btn-danger" ng-if="showFrequency">
+            <button class="btn btn-danger" ng-if="showFrequency" ng-click="removeFrequencyFilter()">
               <span style="font-size: 17px;" class="glyphicon glyphicon-minus"></span>
               <span style="font-size: 20px;"><strong>Remove</strong></span>
             </button>
           </div>
         </div>
-        <div class="row" style="margin-bottom:15px;" ng-if="showFrequency">
-          <div class="col-xs-12 col-md-4">  
-            <div class="form-horizontal">
-              <div class="form-group">
-                <label class="control-label col-xs-12 col-lg-2" style="text-align:right;">
-                  Starts
-                </label>
-                <div class="input-group col-xs-12 col-lg-10">
-                  <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="legacyQuestionnaire.occurrence.start_date" ng-change="setChangesMade()" is-open="popupStart.opened"datepicker-options="dateOptionsStart" ng-required="true" close-text="Close" />
-                  <span class="input-group-btn">
-                    <button class="btn btn-default" ng-click="openStart($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-xs-12 col-md-4">  
-            <div class="form-horizontal">
-              <div class="form-group">
-                <label class="control-label col-xs-12 col-lg-2" style="text-align:right;">
-                  Ends
-                </label>
-                <div class="input-group col-xs-12 col-lg-10">
-                  <button class="btn btn-default" ng-if="!addEndDate" ng-click="toggleEndDate()">
-                    <span class="fa fa-plus"></span>
-                    <span><strong>Add End Date</strong></span>
-                  </button>
-                  <input ng-if="addEndDate" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="legacyQuestionnaire.occurrence.end_date" ng-change="setChangesMade()" is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true" close-text="Close" />
-                  <span ng-if="addEndDate" class="input-group-btn">
-                    <button class="btn btn-default" ng-click="openEnd($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-xs-12 col-md-4">
-            <button class="btn btn-default" ng-if="addEndDate" ng-click="toggleEndDate()">
-              <span class="glyphicon glyphicon-minus"></span>
-              <span><strong>Remove End Date</strong></span>
-            </button>
-          </div>
-        </div>
-
-        <!--<div class="row" style="margin-bottom:10px;" ng-if="legacyQuestionnaire.occurrence.start_date && legacyQuestionnaire.occurrence.end_date">-->
+       
         <div class="row" style="margin-bottom:10px;" ng-if="showFrequency">
           <div class="col-xs-12 col-sm-4">
             <div class="form-horizontal">
@@ -241,6 +219,55 @@
               </div>
             </div>
           </div>
+          <div class="col-xs-12 col-sm-4">  
+            <div class="form-horizontal">
+              <div class="form-group">
+                <label class="control-label col-xs-12">
+                  Repeat Start
+                </label>
+                <div class="col-xs-12 col-lg-9">
+                  <div class="input-group">
+                    <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="legacyQuestionnaire.occurrence.start_date" ng-change="setChangesMade()" is-open="popupStart.opened"datepicker-options="dateOptionsStart" ng-required="true" close-text="Close" />
+                    <span class="input-group-btn">
+                      <button class="btn btn-default" ng-click="openStart($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-4">  
+            <div class="form-horizontal">
+              <div class="form-group">
+                <label class="control-label col-xs-12">
+                  Repeat End
+                </label>
+                <div ng-if="!addEndDate" class="col-xs-12 col-lg-9">
+                  <button class="btn btn-default" ng-click="toggleEndDate()">
+                    <span class="fa fa-plus"></span>
+                    <span><strong>Add End Date</strong></span>
+                  </button>
+                </div>
+                <div class="col-xs-12 col-lg-9" style="margin-bottom:10px;">
+                  <div class="input-group">
+                    <input ng-if="addEndDate" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="legacyQuestionnaire.occurrence.end_date" ng-change="setChangesMade()" is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true" close-text="Close" />
+                    <span ng-if="addEndDate" class="input-group-btn">
+                      <button class="btn btn-default" ng-click="openEnd($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                  </div>
+                </div>
+                <div class="col-xs-12">
+                  <button class="btn btn-default" ng-if="addEndDate" ng-click="toggleEndDate()">
+                    <span class="glyphicon glyphicon-minus"></span>
+                    <span><strong>Remove End Date</strong></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
           <div class="col-xs-12 col-sm-4" ng-if="frequencySelected.id == 'custom'">
             <div class="form-horizontal">
               <div class="form-group">
@@ -248,30 +275,30 @@
                   Repeat Interval
                 </label>
                 <div class="col-xs-3">
-                  <input class="form-control" ng-model="customMeta.meta_value" type="number" max="59" min="1">
+                  <input class="form-control" ng-model="customFrequency.meta_value" type="number" max="59" min="1">
                 </div>
                 <div class="col-xs-6">
-                  <select class="form-control" ng-options="unit as unit.name for unit in frequencyUnits track by unit.id" ng-model="customMeta.unit" ng-change="selectRepeatInterval(customMeta.unit)">
+                  <select class="form-control" ng-options="unit as unit.name for unit in frequencyUnits track by unit.id" ng-model="customFrequency.unit" ng-change="selectRepeatInterval(customFrequency.unit)">
                   </select>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="col-xs-12 col-sm-4" ng-if="frequencySelected.id == 'custom' && customMeta.unit.id != 'day'">
+          <div class="col-xs-12 col-sm-4" ng-if="frequencySelected.id == 'custom' && customFrequency.unit.id != 'day'">
             <div class="form-horizontal">
               <div class="form-group">
                 <label class="control-label col-xs-12">
-                  <span ng-if="customMeta.unit.id == 'week'">Repeat On Day(s)</span>
-                  <span ng-if="customMeta.unit.id == 'month' || customMeta.unit.id == 'year'">Repeat Options</span>
+                  <span ng-if="customFrequency.unit.id == 'week'">Repeat On Day(s)</span>
+                  <span ng-if="customFrequency.unit.id == 'month' || customFrequency.unit.id == 'year'">Repeat Options</span>
                 </label>
-                <div class="col-xs-8" style="margin-bottom: 10px;" ng-if="customMeta.unit.id == 'week'">
+                <div class="col-xs-8" style="margin-bottom: 10px;" ng-if="customFrequency.unit.id == 'week'">
                   <div ng-dropdown-multiselect="" options="daysInWeek" selected-model="selectedDaysInWeek" extra-settings="weekDropdownSettings" events="weekDropdownEvents"></div>
                 </div>
-                <div ng-if="customMeta.unit.id == 'year'"class="col-xs-10" style="margin-bottom: 10px;">
+                <div ng-if="customFrequency.unit.id == 'year'"class="col-xs-10" style="margin-bottom: 10px;">
                   <div ng-dropdown-multiselect="" options="monthsInYear" selected-model="selectedMonthsInYear" extra-settings="monthDropdownSettings" events="monthDropdownEvents"></div>
                 </div>
-                <div ng-if="customMeta.unit.id == 'month'" class="col-xs-12" style="margin-bottom: 10px;">
+                <div ng-if="customFrequency.unit.id == 'month'" class="col-xs-12" style="margin-bottom: 10px;">
                   <div class="btn-group btn-group-justified" role="group">
                     <div class="btn-group" role="group">
                       <button type="button" class="btn btn-default" ng-class="{active: repeatSub == 'onDate'}" ng-click="setRepeatSub('onDate')">On Date</button>
@@ -281,24 +308,23 @@
                     </div>
                   </div>
                 </div>
-                <div ng-if="repeatSub == 'onDate' && customMeta.unit.id == 'month'" class="no-calendar-header col-xs-12" style="margin-bottom: 10px;">
+                <div ng-if="repeatSub == 'onDate' && customFrequency.unit.id == 'month'" class="no-calendar-header col-xs-12" style="margin-bottom: 10px;">
                   <multiple-date-picker ng-model="selectedDatesInMonth" month="staticMonth"></multiple-date-picker>
                 </div>
-                <div ng-if="repeatSub == 'onWeek' || customMeta.unit.id == 'year'" class="col-xs-4" style="margin-bottom: 10px;">
-                  <select class="form-control" ng-options="week as week.name for week in weeksInMonth track by week.id" ng-model="weekInMonth" ng-change="selectWeekInMonth(weekInMonth)" >
+                <div ng-if="repeatSub == 'onWeek' || customFrequency.unit.id == 'year'" class="col-xs-4" style="margin-bottom: 10px;">
+                  <select class="form-control" ng-options="week as week.name for week in weekNumbersInMonth track by week.id" ng-model="selectedWeekNumberInMonth" ng-change="selectWeekInMonth(selectedWeekNumberInMonth)" >
                   </select>
                 </div>
-                <div ng-if="repeatSub == 'onWeek' || customMeta.unit.id == 'year'" class="col-xs-6" style="margin-bottom: 10px;">
-                  <select class="form-control" ng-options="day as day.name for day in daysInWeek track by day.id" ng-model="dayInWeek" ng-change="selectDayInWeek(dayInWeek, customMeta.unit.id)">
+                <div ng-if="repeatSub == 'onWeek' || customFrequency.unit.id == 'year'" class="col-xs-6" style="margin-bottom: 10px;">
+                  <select class="form-control" ng-options="day as day.name for day in daysInWeek track by day.id" ng-model="selectedSingleDayInWeek" ng-change="selectDayInWeek(selectedSingleDayInWeek, customFrequency.unit.id)">
                     <option value="" selected="selected">---</option>
                   </select>
                 </div>
               </div>
             </div>
           </div>
-
-
         </div>
+        
 
       </div>
       

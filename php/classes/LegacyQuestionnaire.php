@@ -175,6 +175,17 @@ class LegacyQuestionnaire {
 					array_push($questionnaireFilters, $filterArray);
 				}
 
+                $occurrenceArray = array(
+                    'start_date' => null,
+                    'end_date'  => null,
+                    'set'       => 0,
+                    'frequency' => array (
+                        'meta_key'  => null,
+                        'meta_value'    => null,
+                        'additionalMeta'    => array()
+                    )
+                );
+
 				$questionnaireArray = array(
 					'name_FR' 		    => $questionnaireName_FR, 
 					'name_EN' 		    => $questionnaireName_EN, 
@@ -182,7 +193,8 @@ class LegacyQuestionnaire {
                     'db_serial'			=> $questionnaireDBSer, 
                     'publish'          	=> $questionnairePublish,
                     'expression'        => $questionnaireExpression,
-					'filters' 		    => $questionnaireFilters
+					'filters' 		    => $questionnaireFilters,
+                    'occurrence'        => $occurrenceArray
 				);
 
 				array_push($legacyQuestionnaireList, $questionnaireArray);
@@ -266,13 +278,25 @@ class LegacyQuestionnaire {
 
             }
 
+            $occurrenceArray = array(
+                'start_date' => null,
+                'end_date'  => null,
+                'set'          => 0,
+                'frequency' => array (
+                    'meta_key'  => null,
+                    'meta_value'    => null,
+                    'additionalMeta'    => array()
+                )
+            );
+
 			$legacyQuestionnaireDetails = array(
 	            'name_FR' 		    => $questionnaireName_FR, 
 				'name_EN' 		    => $questionnaireName_EN, 
 				'serial' 		    => $legacyQuestionnaireSer, 
                 'publish'           => $questionnairePublish,
                 'db_serial'         => $questionnaireDBSer,
-				'filters' 		    => $questionnaireFilters
+				'filters' 		    => $questionnaireFilters,
+                'occurrence'        => $occurrenceArray
             );
 		
 			return $legacyQuestionnaireDetails;
