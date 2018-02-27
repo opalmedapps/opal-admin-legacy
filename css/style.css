@@ -1551,6 +1551,18 @@ footer {
   font-size: 12px;
 }
 
+.no-calendar-header .picker-top-row,
+.no-calendar-header .picker-days-week-row {
+  display: none;
+}
+
+.btn-group {
+  width: 100%;
+}
+.btn-frequency-select {
+  width: 100%;
+}
+
 /* 
  * Custom Styles for ngGrid
  */
