@@ -1,12 +1,12 @@
-angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular'])
+angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular', 'multipleDatePicker', 'angularjs-dropdown-multiselect'])
 
-	.controller('legacyQuestionnaireController', function ($sce, $scope, $state, $filter, $timeout, $uibModal, legacyQuestionnaireCollectionService, filterCollectionService, uiGridConstants) {
+.controller('legacyQuestionnaireController', function ($sce, $scope, $state, $filter, $timeout, $uibModal, legacyQuestionnaireCollectionService, filterCollectionService, uiGridConstants) {
 
-		$scope.goToAddLegacyQuestionnaire = function () {
-			$state.go('legacy-questionnaire-add');
-		};
+	$scope.goToAddLegacyQuestionnaire = function () {
+		$state.go('legacy-questionnaire-add');
+	};
 
-		$scope.changesMade = false;
+	$scope.changesMade = false;
 
 		// Banner
 		$scope.bannerMessage = "";
@@ -56,29 +56,29 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 		// Table
 		// Templates
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editLegacyQuestionnaire(row.entity)">Edit</a></strong> ' +
-			'- <strong><a href="" ng-click="grid.appScope.deleteLegacyQuestionnaire(row.entity)">Delete</a></strong></div>';
+		'<strong><a href="" ng-click="grid.appScope.editLegacyQuestionnaire(row.entity)">Edit</a></strong> ' +
+		'- <strong><a href="" ng-click="grid.appScope.deleteLegacyQuestionnaire(row.entity)">Delete</a></strong></div>';
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
-			'ng-click="grid.appScope.editLegacyQuestionnaire(row.entity)">' +
-			'<a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></div>';
+		'ng-click="grid.appScope.editLegacyQuestionnaire(row.entity)">' +
+		'<a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></div>';
 		var cellTemplatePublish = '<div style="text-align: center; cursor: pointer;" ' +
-			'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
-			'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
-			'ng-checked="grid.appScope.updatePublishFlag(row.entity.publish)" ng-model="row.entity.publish"></div>';
+		'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
+		'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
+		'ng-checked="grid.appScope.updatePublishFlag(row.entity.publish)" ng-model="row.entity.publish"></div>';
 
 		// Data binding for main table
 		$scope.gridOptions = {
 			data: 'legacyQuestionnaireList',
 			columnDefs: [
-				{ field: 'name_EN', displayName: 'Title (EN / FR)', cellTemplate: cellTemplateName, width: '25%' },
-				{
-					field: 'publish', displayName: 'Publish', cellTemplate: cellTemplatePublish, width: '10%', filter: {
-						type: uiGridConstants.filter.SELECT,
-						selectOptions: [{ value: '1', label: 'Yes' }, { value: '0', label: 'No' }]
-					}
-				},
-				{ field: 'expression', name: 'Legacy Questionnaire', filter: 'text'},
-				{ name: 'Operations', width: '15%', cellTemplate: cellTemplateOperations, enableFiltering: false, sortable: false }
+			{ field: 'name_EN', displayName: 'Title (EN / FR)', cellTemplate: cellTemplateName, width: '25%' },
+			{
+				field: 'publish', displayName: 'Publish', cellTemplate: cellTemplatePublish, width: '10%', filter: {
+					type: uiGridConstants.filter.SELECT,
+					selectOptions: [{ value: '1', label: 'Yes' }, { value: '0', label: 'No' }]
+				}
+			},
+			{ field: 'expression', name: 'Legacy Questionnaire', filter: 'text'},
+			{ name: 'Operations', width: '15%', cellTemplate: cellTemplateOperations, enableFiltering: false, sortable: false }
 			],
 			enableFiltering: true,
 			enableSorting: true,
@@ -171,8 +171,8 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 
 					}
 				});
-			}
-		};
+}
+};
 		// Initialize the legacy questionnaire to be deleted
 		$scope.legacyQuestionnaireToDelete = {};
 
@@ -266,8 +266,8 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 
 			// Initialize a list of sexes
 			$scope.sexes = [
-				{ name: 'Male' },
-				{ name: 'Female' }
+			{ name: 'Male' },
+			{ name: 'Female' }
 			];
 
 			// Initialize to hold demographic filters
@@ -457,6 +457,453 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 				return allFiltersAdded;
 			};
 
+			// Default boolean for showing frequency section details
+			$scope.showFrequency = true;
+
+			// Date format for start and end frequency dates
+			$scope.format = 'yyyy-MM-dd';
+			$scope.dateOptionsStart = {
+				formatYear: "'yy'",
+				startingDay: 0,
+				minDate: new Date(),
+				maxDate: null
+			};
+			$scope.dateOptionsEnd = {
+				formatYear: "'yy'",
+				startingDay: 0,
+				minDate: new Date(),
+				maxDate: null
+			};
+			$scope.$watch('legacyQuestionnaire.occurrence.start_date', function(startDate){
+			    if (startDate !== undefined) { 
+				    $scope.dateOptionsEnd.minDate = startDate;
+				}
+		  	});
+		  	$scope.$watch('legacyQuestionnaire.occurrence.end_date', function(endDate){
+				if (endDate !== undefined) {
+				    $scope.dateOptionsStart.maxDate = endDate;
+				} 
+				else 	
+					$scope.dateOptionsStart.maxDate = null;
+			});
+
+			// Open popup calendar
+			$scope.popupStart = {};
+			$scope.popupEnd = {};
+			$scope.openStart = function ($event) {
+				$event.preventDefault();
+			    $event.stopPropagation();
+
+				$scope.popupStart['opened'] = true;
+				$scope.popupEnd['opened'] = false;
+			};
+			$scope.openEnd = function ($event) {
+				$event.preventDefault();
+			    $event.stopPropagation();
+			    $scope.popupStart['opened'] = false;
+				$scope.popupEnd['opened'] = true;
+			};
+
+			// default hide end date
+			$scope.addEndDate = false;
+			$scope.toggleEndDate = function () {
+				$scope.addEndDate = !$scope.addEndDate;
+				if (!$scope.addEndDate) {
+					$scope.legacyQuestionnaire.occurrence.end_date = null;
+				}
+			}
+
+			// Initialize list of preset publishing frequencies
+			$scope.presetFrequencies = [
+			{
+				name: 'Once',
+				id: 'once',
+				meta_key: 'repeat_day',
+				meta_value: 0
+			},{
+				name: 'Every Day',
+				id: 'every_day',
+				meta_key: 'repeat_day',
+				meta_value: 1
+			},{
+				name: 'Every Other Day',
+				id: 'every_other_day',
+				meta_key: 'repeat_day',
+				meta_value: 2
+			},{
+				name: 'Every Week',
+				id: 'every_week',
+				meta_key: 'repeat_week',
+				meta_value: 1
+			},{
+				name: 'Every 2 Weeks',
+				id: 'every_2_weeks',
+				meta_key: 'repeat_week',
+				meta_value: 2
+			},{
+				name: 'Every Month',
+				id: 'every_month',
+				meta_key: 'repeat_month',
+				meta_value: 1
+			},{
+				name: 'Custom',
+				id: 'custom',
+				meta_key: null,
+				meta_value: null
+			}];
+			// Default
+			$scope.frequencySelected = $scope.presetFrequencies[0];
+
+			$scope.selectFrequency = function (frequency) {
+				$scope.frequencySelected = frequency;
+			}
+
+			$scope.customFrequency = "Every";
+
+			// Initialize object for repeat interval
+			$scope.customMeta = {
+				meta_value: 1,
+				unit:null
+			}
+			$scope.frequencyUnits = [
+			{
+				name: 'Days',
+				id: 'day',
+				meta_key: 'repeat_day'
+			},{
+				name: 'Weeks',
+				id: 'week',
+				meta_key: 'repeat_week'
+			},{
+				name: 'Months',
+				id: 'month',
+				meta_key: 'repeat_month'
+			},{
+				name: 'Years',
+				id: 'year',
+				meta_key: 'repeat_year'
+			}];
+			// Default
+			$scope.customMeta.unit = $scope.frequencyUnits[0];
+
+			// Custom watch to singularize/pluralize frequency unit names
+			$scope.$watch('customMeta.meta_value', function(newValue, oldValue){
+			    if (newValue === 1) { 
+				    angular.forEach($scope.frequencyUnits, function (unit) {
+				    	unit.name = unit.name.slice(0,-1); // remove plural 's'
+				    });
+				}
+				if (newValue > 1 && oldValue === 1) {
+					angular.forEach($scope.frequencyUnits, function (unit) {
+				    	unit.name = unit.name + 's'; // plural names
+				    });
+				}
+		  	});
+
+			// Default
+			$scope.selectedDaysInWeek = [];
+			$scope.selectedDaysInWeekText = "";
+			// Initialize days of the week
+			$scope.daysInWeek = [
+			{
+				name: 'Sunday',
+				id: 1
+			},{
+				name: 'Monday',
+				id: 2
+			},{
+				name: 'Tuesday',
+				id: 3
+			},{
+				name: 'Wednesday',
+				id: 4
+			},{
+				name: 'Thursday',
+				id: 5
+			},{
+				name: 'Friday',
+				id: 6
+			},{
+				name: 'Saturday',
+				id: 7
+			}];
+			$scope.dayInWeek = null; // Default
+
+			// settings for week dropdown menu 
+			$scope.weekDropdownSettings = {
+				displayProp: 'name',
+				showCheckAll: false,
+				showUncheckAll: false,
+				styleActive: true,
+				buttonClasses: 'btn btn-default btn-frequency-select',
+				smartButtonTextProvider: function (selectionArray) { 
+					if (selectionArray.length == 1) {
+						return '1 Day Selected';
+					}
+					return selectionArray.length + " Days Selected"; 
+				}
+			}
+			// event options for week dropdown menu
+			$scope.weekDropdownEvents = {
+				onItemSelect: function (day) {$scope.selectDayInWeek(day, $scope.customMeta.unit.id);},
+				onItemDeselect: function (day) {$scope.selectDayInWeek(day, $scope.customMeta.unit.id);}
+			}
+			// Function when selecting the days on the week
+			$scope.selectDayInWeek = function (day, unit) {
+				$scope.dayInWeek = day;
+				if (day) {
+					$scope.selectedDaysInWeekText = "";
+					if (unit == 'week') {
+						var indexOfDay = $scope.additionalMeta.repeat_day_iw.indexOf(day.id);
+						if (indexOfDay > -1) {
+							$scope.additionalMeta.repeat_day_iw.splice(indexOfDay,1);
+						} else {
+							$scope.additionalMeta.repeat_day_iw.push(day.id);
+						}
+						for (var i = 0; i < $scope.selectedDaysInWeek.length; i++) {
+							if ($scope.selectedDaysInWeek.length == 1) {
+								$scope.selectedDaysInWeekText = $scope.selectedDaysInWeek[i].name;
+							}
+							else if (i < $scope.selectedDaysInWeek.length-1) {
+								$scope.selectedDaysInWeekText += $scope.selectedDaysInWeek[i].name + ", "
+							}
+							else {
+								$scope.selectedDaysInWeekText = $scope.selectedDaysInWeekText.slice(0,-2) + " and " + $scope.selectedDaysInWeek[i].name;
+							}
+						}
+					}
+					else if (unit == 'month' || unit == 'year') {
+						
+						if ($scope.weekInMonth) {
+							$scope.additionalMeta.repeat_day_iw = [day.id];
+							$scope.additionalMeta.repeat_week_im = [$scope.weekInMonth.id];	
+							$scope.weekInMonthText = $scope.weekInMonth.name + " " + day.name;
+						}
+						else {
+							$scope.additionalMeta.repeat_day_iw = [];
+							$scope.additionalMeta.repeat_week_im = [];
+							$scope.weekInMonthText = "";
+						}
+					}
+				}
+				else {
+					if (unit == 'month' || unit == 'year') {
+						$scope.additionalMeta.repeat_day_iw = [];
+						$scope.additionalMeta.repeat_week_im = [];
+						$scope.weekInMonthText = "";
+					}
+				}
+			};
+
+			$scope.selectRepeatInterval = function (unit) {
+				if (unit.name != 'week') {
+					$scope.selectedDaysInWeek = [];
+					$scope.selectedDaysInWeekText = "";
+					$scope.additionalMeta.repeat_day_iw = [];
+				}
+				if (unit.name != 'month') {
+					$scope.additionalMeta.repeat_date_im = [];
+					$scope.selectedDatesInMonthText = "";
+					$scope.selectedDatesInMonth = [];
+					$scope.repeatSub = null;
+					$scope.additionalMeta.repeat_day_iw = [];
+					$scope.additionalMeta.repeat_week_im = [];
+					$scope.weekInMonthText = "";
+					$scope.weekInMonth = $scope.weeksInMonth[0];
+					$scope.dayInWeek = null;
+
+				}
+			}
+
+			$scope.repeatSub = null;
+			// Function to set the tab options for repeats onDate or onWeek
+			$scope.setRepeatSub = function(repeatSub) {
+				
+				if ($scope.repeatSub != repeatSub) {
+					$scope.repeatSub = repeatSub;
+				} 
+				else
+					$scope.repeatSub = null; // remove reference/active
+
+				if ($scope.repeatSub != 'onDate') {
+					$scope.additionalMeta.repeat_date_im = [];
+					$scope.selectedDatesInMonthText = "";
+					$scope.selectedDatesInMonth = [];
+				}
+				if ($scope.repeatSub != 'onWeek') {
+					$scope.additionalMeta.repeat_day_iw = [];
+					$scope.additionalMeta.repeat_week_im = [];
+					$scope.weekInMonthText = "";
+					$scope.weekInMonth = $scope.weeksInMonth[0];
+					$scope.dayInWeek = null;
+				}
+			}
+
+			// Function watch to deal with selected dates
+			$scope.selectedDatesInMonth = [];
+			$scope.selectedDatesInMonthText = "";
+			$scope.$watch('selectedDatesInMonth', function(newArray, oldArray){
+			    if(newArray){
+			    	$scope.additionalMeta.repeat_date_im = [];
+					$scope.selectedDatesInMonthText = "";
+			    	angular.forEach(newArray, function (date) {
+			    		dateNumber = moment(date).get('date');
+			    		$scope.additionalMeta.repeat_date_im.push(dateNumber);
+			    	});
+
+			    	$scope.additionalMeta.repeat_date_im.sort(function(a, b){return a - b});
+			    	angular.forEach($scope.additionalMeta.repeat_date_im, function (dateNumber,index) {
+			    		if (dateNumber % 10 == 1) {
+			    			dateNumber += "st";
+			    		}
+			    		if (dateNumber % 10 == 2) {
+			    			dateNumber += "nd";
+			    		}
+			    		if (dateNumber % 10 == 3) {
+			    			dateNumber += "rd";
+			    		}
+			    		if (dateNumber % 10 > 3 || dateNumber % 10 == 0) {
+			    			dateNumber += "th";
+			    		}
+			    		if (newArray.length == 1) {
+								$scope.selectedDatesInMonthText = dateNumber;
+						}
+						else if (index < newArray.length-1) {
+							$scope.selectedDatesInMonthText += dateNumber + ", "
+						}
+						else {
+							$scope.selectedDatesInMonthText = $scope.selectedDatesInMonthText.slice(0,-2) + " and " + dateNumber;
+						}
+			    	});
+			    }
+			}, true);
+
+			// initialize list of weeks in month
+			$scope.weeksInMonth = [
+			{
+				name: '---',
+				id: null
+			},{
+				name: '1st',
+				id: 1
+			},{
+				name: '2nd',
+				id: 2
+			},{
+				name: '3rd',
+				id: 3
+			},{
+				name: '4th',
+				id: 4
+			},{
+				name: '5th',
+				id: 5
+			},{
+				name: 'Last',
+				id: 6
+			}];
+			$scope.weekInMonth = $scope.weeksInMonth[0]; // Default
+			$scope.weekInMonthText = "";
+
+			// Function to set week of the month
+			$scope.selectWeekInMonth = function (week) {
+				$scope.weekInMonth = week;
+				if (week.id && $scope.dayInWeek) {
+					$scope.additionalMeta.repeat_day_iw = [$scope.dayInWeek.id];
+					$scope.additionalMeta.repeat_week_im = [week.id];
+					$scope.weekInMonthText = week.name + " " + $scope.dayInWeek.name;
+
+				}
+				else {
+					$scope.additionalMeta.repeat_day_iw = [];
+					$scope.additionalMeta.repeat_week_im = [];
+					$scope.weekInMonthText = "";
+				}
+			}
+
+			// Set month calendar to static date that starts on Sunday
+			$scope.staticMonth = moment().set({'year':2018, 'month': 0});
+
+			// settings for month dropdown menu 
+			$scope.monthDropdownSettings = {
+				displayProp: 'name',
+				showCheckAll: false,
+				showUncheckAll: false,
+				styleActive: true,
+				buttonClasses: 'btn btn-default btn-frequency-select',
+				smartButtonTextProvider: function (selectionArray) { 
+					if (selectionArray.length == 1) {
+						return '1 Month Selected';
+					}
+					return selectionArray.length + " Months Selected"; 
+				}
+			}
+			// event options for week dropdown menu
+			$scope.monthDropdownEvents = {
+				onItemSelect: function (month) {$scope.selectMonthInYear(month);},
+				onItemDeselect: function (month) {$scope.selectMonthInYear(month);}
+			}
+
+			// Initialize list of months in a year
+			$scope.selectedMonthsInYear = [];
+			$scope.monthsInYear = [
+			{
+				name: 'January',
+				id: 1
+			},{
+				name: 'February',
+				id: 2
+			},{
+				name: 'March',
+				id: 3
+			},{
+				name: 'April',
+				id: 4
+			},{
+				name: 'May',
+				id: 5
+			},{
+				name: 'June',
+				id: 6
+			},{
+				name: 'July',
+				id: 7
+			},{
+				name: 'August',
+				id: 8
+			},{
+				name: 'September',
+				id: 9
+			},{ 
+				name: 'October',
+				id: 10
+			},{
+				name: 'November',
+				id: 11
+			},{
+				name: 'December',
+				id: 12
+			}];
+
+			// Function to place appropriate meta data from the month in the year
+			$scope.selectMonthInYear = function (month) {
+				if (month.id) {
+					var indexOfMonth = $scope.additionalMeta.repeat_month_iy.indexOf(month.id);
+					if (indexOfMonth > -1) {
+						$scope.additionalMeta.repeat_month_iy.splice(indexOfMonth,1);
+					} else {
+						$scope.additionalMeta.repeat_month_iy.push(month.id);
+					}
+				}
+			};
+
+			$scope.additionalMeta = {
+				repeat_day_iw: [],
+				repeat_week_im: [],
+				repeat_date_im: [],
+				repeat_month_iy: []
+			}
+
 			// Function for updating the legacy questionnaire 
 			$scope.updateLegacyQuestionnaire = function () {
 
@@ -512,4 +959,16 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 		};
 
 
+	})
+
+	.filter('range', function() {
+	  	return function(input, total) {
+	    	total = parseInt(total);
+
+	    	for (var i=0; i<total; i++) {
+	      		input.push(i);
+	    	}
+
+	    	return input;
+		};
 	});
