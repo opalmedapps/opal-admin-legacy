@@ -495,6 +495,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			$scope.flushRepeatInterval = function () {
 				$scope.customFrequency = jQuery.extend(true, {}, FrequencyFilterService.customFrequency);
 				$scope.customFrequency.unit = $scope.frequencyUnits[0];
+				$scope.customFrequency.meta_value = 1;
 			}
 
 			// Function to reset repeat types
