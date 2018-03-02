@@ -339,6 +339,44 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 				// Assign value
 				$scope.legacyQuestionnaire = response.data;
 
+				if ($scope.legacyQuestionnaire.occurrence.set) {
+
+					$scope.showFrequency = true;
+
+					$scope.legacyQuestionnaire.occurrence.start_date = new Date($scope.legacyQuestionnaire.occurrence.start_date*1000);
+					if ($scope.legacyQuestionnaire.occurrence.end_date) {
+						$scope.legacyQuestionnaire.occurrence.end_date = new Date($scope.legacyQuestionnaire.occurrence.end_date*1000);
+						$scope.addEndDate = true;
+					}
+					var additionalMetaKeys = Object.keys($scope.legacyQuestionnaire.occurrence.frequency.additionalMeta);
+
+					angular.forEach(additionalMetaKeys, function (key) {
+						$scope.additionalMeta[key] = $scope.legacyQuestionnaire.occurrence.frequency.additionalMeta[key];
+						console.log($scope.additionalMeta[key]);
+					});
+
+					if ($scope.legacyQuestionnaire.occurrence.frequency.custom) { // custom frequency
+						$scope.customFrequency.meta_value = $scope.legacyQuestionnaire.occurrence.frequency.meta_value;
+						$scope.frequencySelected = $scope.presetFrequencies[$scope.presetFrequencies.length - 1];
+						for (var i=0; i < $scope.frequencyUnits.length; i++) {
+							if ($scope.frequencyUnits[i].meta_key == $scope.legacyQuestionnaire.occurrence.frequency.meta_key) {
+								$scope.customFrequency.unit = $scope.frequencyUnits[i]; 
+								break;
+							}
+						}
+						$scope.setRepeatOptions($scope.legacyQuestionnaire.occurrence.frequency.additionalMeta, $scope.customFrequency.unit.id);
+					} 
+					else { // non-custom frequency (i.e preset frequency)
+						for (var i=0; i < $scope.presetFrequencies.length; i++) {
+							if ($scope.presetFrequencies[i].meta_key == $scope.legacyQuestionnaire.occurrence.frequency.meta_key
+								&& $scope.presetFrequencies[i].meta_value == $scope.legacyQuestionnaire.occurrence.frequency.meta_value) {
+								$scope.frequencySelected = $scope.presetFrequencies[i];
+								break;
+							}
+						}
+					}
+				}
+
 			}).catch(function (response) {
 				console.error('Error occurred getting legacy questionnaire details after modal open:', response.status, response.data);
 				
@@ -364,6 +402,43 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 				processingModal.close(); // hide modal
 				processingModal = null; // remove reference
 			});
+
+			// Function to set repeat options in frequency filter
+			$scope.setRepeatOptions = function (additionalMeta, unit) {
+				if (Object.keys(additionalMeta).indexOf('repeat_day_iw') > -1) {
+					if (unit == 'week') {
+						angular.forEach(additionalMeta.repeat_day_iw, function (day){
+							$scope.selectedDaysInWeek.push($scope.daysInWeek[day - 1]);
+						});
+						$scope.setSelectedDaysInWeekText($scope.selectedDaysInWeek);
+					}
+					else {
+						$scope.selectedSingleDayInWeek = $scope.daysInWeek[additionalMeta.repeat_day_iw[0] - 1];
+						$scope.setSelectedSingleDayInWeekText($scope.selectedSingleDayInWeek);
+					}
+				}
+				if (Object.keys(additionalMeta).indexOf('repeat_date_im') > -1) {
+					angular.forEach(additionalMeta.repeat_date_im, function (date) {
+						$scope.selectedDatesInMonth.push(moment().year(2018).month("January").date(date));
+					});
+					$scope.setRepeatSub('onDate');
+					$scope.setSelectedDatesInMonthText($scope.selectedDatesInMonth);
+				}
+				if (Object.keys(additionalMeta).indexOf('repeat_week_im') > -1) {
+					$scope.selectedWeekNumberInMonth = $scope.weekNumbersInMonth[additionalMeta.repeat_week_im[0]];
+					if (unit == 'month') {
+						$scope.setRepeatSub('onWeek');
+					}
+					$scope.setSelectedWeekNumberInMonthText($scope.selectedWeekNumberInMonth);
+				}
+				if (Object.keys(additionalMeta).indexOf('repeat_month_iy') > -1) {
+					angular.forEach(additionalMeta.repeat_month_iy, function(month){
+						$scope.selectedMonthsInYear.push($scope.monthsInYear[month-1]);
+					});
+					$scope.setSelectedMonthsInYearText($scope.selectedMonthsInYear);
+				}
+
+			}
 
 			// Function to toggle Item in a list on/off
 			$scope.selectItem = function (item) {
@@ -598,9 +673,11 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			$scope.selectedDaysInWeek = [];
 			$scope.selectedDaysInWeekText = "";
 
+
 			// Initialize days of the week
 			$scope.daysInWeek = FrequencyFilterService.daysInWeek;
 			$scope.selectedSingleDayInWeek = null; // Default
+			$scope.selectedSingleDayInWeekText = "";
 
 			// settings for week dropdown menu 
 			$scope.weekDropdownSettings = {
@@ -625,7 +702,6 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			$scope.selectDayInWeek = function (day, unit) {
 				$scope.selectedSingleDayInWeek = day;
 				if (day) {
-					$scope.selectedDaysInWeekText = ""; // Destroy string
 					if (unit == 'week') { // Selecting multiple days from week repeat interval
 
 						// Manipulate day in week meta data array
@@ -636,22 +712,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 							$scope.additionalMeta.repeat_day_iw.push(day.id);
 						}
 
-						// Construct text for display of selected days
-						for (var i = 0; i < $scope.selectedDaysInWeek.length; i++) {
-							if ($scope.selectedDaysInWeek.length == 1) {
-								// Eg. Sunday
-								$scope.selectedDaysInWeekText = $scope.selectedDaysInWeek[i].name;
-							}
-							else if (i < $scope.selectedDaysInWeek.length-1) {
-								// Eg. Sunday, Monday, etc.
-								$scope.selectedDaysInWeekText += $scope.selectedDaysInWeek[i].name + ", "
-							}
-							else {
-								// Remove last comma and replace with "and"
-								// Eg. Sunday, Monday and Tuesday
-								$scope.selectedDaysInWeekText = $scope.selectedDaysInWeekText.slice(0,-2) + " and " + $scope.selectedDaysInWeek[i].name;
-							}
-						}
+						$scope.setSelectedDaysInWeekText($scope.selectedDaysInWeek);
 					}
 					// Selecting a single day in the week from month or year repeat interval
 					else if (unit == 'month' || unit == 'year') {
@@ -659,7 +720,9 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 						if ($scope.selectedWeekNumberInMonth) {
 							$scope.additionalMeta.repeat_day_iw = [day.id];
 							$scope.additionalMeta.repeat_week_im = [$scope.selectedWeekNumberInMonth.id];	
-							$scope.selectedWeekNumberInMonthText = $scope.selectedWeekNumberInMonth.name + " " + day.name;
+							$scope.setSelectedWeekNumberInMonthText($scope.selectedWeekNumberInMonth);
+							$scope.setSelectedSingleDayInWeekText(day);
+
 						}
 						else { // Empty meta data array
 							$scope.additionalMeta.repeat_day_iw = [];
@@ -677,6 +740,93 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 					}
 				}
 			};
+
+			$scope.setSelectedDaysInWeekText = function (days) {
+				$scope.selectedDaysInWeekText = ""; // Destroy text
+
+				// Construct text for display of selected days
+				for (var i = 0; i < days.length; i++) {
+					if (days.length == 1) {
+						// Eg. Sunday
+						$scope.selectedDaysInWeekText = days[i].name;
+					}
+					else if (i < days.length-1) {
+						// Eg. Sunday, Monday, etc.
+						$scope.selectedDaysInWeekText += days[i].name + ", "
+					}
+					else {
+						// Remove last comma and replace with "and"
+						// Eg. Sunday, Monday and Tuesday
+						$scope.selectedDaysInWeekText = $scope.selectedDaysInWeekText.slice(0,-2) + " and " + $scope.selectedDaysInWeek[i].name;
+					}
+				}
+			}
+
+			$scope.setSelectedWeekNumberInMonthText = function (week) {
+				$scope.selectedWeekNumberInMonthText = week.name;
+
+			}
+
+			$scope.setSelectedSingleDayInWeekText = function (day) {
+				$scope.selectedSingleDayInWeekText = day.name;
+			}
+
+			$scope.setSelectedMonthsInYearText = function (months) {
+				// Construct text for display of selected months
+				for (var i = 0; i < months.length; i++) {
+					// Single month
+					// Eg. January
+					if (months.length == 1) {
+						$scope.selectedMonthsInYearText = months[i].name;
+					}
+					// Concat months with commas
+					// Eg. January, March, April
+					else if (i < months.length-1) {
+						$scope.selectedMonthsInYearText += months[i].name + ", "
+					}
+
+					// Replace last comma with "and"
+					// Eg. January, March and April
+					else {
+						$scope.selectedMonthsInYearText = $scope.selectedMonthsInYearText.slice(0,-2) + " and " + $scope.selectedMonthsInYear[i].name;
+					}
+				}
+
+			}
+
+			$scope.setSelectedDatesInMonthText = function (dates) {
+				// Construct text for display of selected dates
+		    	angular.forEach(dates, function (dateNumber,index) {
+		    		// Conditionals for proper suffix
+		    		if (dateNumber % 10 == 1 && dateNumber != 11) {
+		    			dateNumber += "st";
+		    		}
+		    		else if (dateNumber % 10 == 2 && dateNumber != 12) {
+		    			dateNumber += "nd";
+		    		}
+		    		else if (dateNumber % 10 == 3 && dateNumber != 13) {
+		    			dateNumber += "rd";
+		    		}
+		    		else {
+		    			dateNumber += "th";
+		    		}
+		    		// Single date chosen
+		    		// Eg. 4th
+		    		if (dates.length == 1) {
+							$scope.selectedDatesInMonthText = dateNumber;
+					}
+					// Concat commas 
+					// Eg. 4th, 5th
+					else if (index < dates.length-1) {
+						$scope.selectedDatesInMonthText += dateNumber + ", "
+					}
+					// Replace last comma with an "and"
+					// Eg. 1st, 2nd and 4th
+					else {
+						$scope.selectedDatesInMonthText = $scope.selectedDatesInMonthText.slice(0,-2) + " and " + dateNumber;
+					}
+		    	});
+			}
 
 			// Function when a repeat interval is selected
 			$scope.selectRepeatInterval = function (unit) {
@@ -749,37 +899,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			    	// Sort array
 			    	$scope.additionalMeta.repeat_date_im.sort(function(a, b){return a - b});
 			    	
-			    	// Construct text for display of selected dates
-			    	angular.forEach($scope.additionalMeta.repeat_date_im, function (dateNumber,index) {
-			    		// Conditionals for proper suffix
-			    		if (dateNumber % 10 == 1 && dateNumber != 11) {
-			    			dateNumber += "st";
-			    		}
-			    		else if (dateNumber % 10 == 2 && dateNumber != 12) {
-			    			dateNumber += "nd";
-			    		}
-			    		else if (dateNumber % 10 == 3 && dateNumber != 13) {
-			    			dateNumber += "rd";
-			    		}
-			    		else {
-			    			dateNumber += "th";
-			    		}
-			    		// Single date chosen
-			    		// Eg. 4th
-			    		if (newArray.length == 1) {
-								$scope.selectedDatesInMonthText = dateNumber;
-						}
-						// Concat commas 
-						// Eg. 4th, 5th
-						else if (index < newArray.length-1) {
-							$scope.selectedDatesInMonthText += dateNumber + ", "
-						}
-						// Replace last comma with an "and"
-						// Eg. 1st, 2nd and 4th
-						else {
-							$scope.selectedDatesInMonthText = $scope.selectedDatesInMonthText.slice(0,-2) + " and " + dateNumber;
-						}
-			    	});
+			    	$scope.setSelectedDatesInMonthText($scope.additionalMeta.repeat_date_im);
 			    }
 			}, true);
 
@@ -796,7 +916,8 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 					// Manage meta data
 					$scope.additionalMeta.repeat_day_iw = [$scope.selectedSingleDayInWeek.id];
 					$scope.additionalMeta.repeat_week_im = [week.id];
-					$scope.selectedWeekNumberInMonthText = week.name + " " + $scope.selectedSingleDayInWeek.name;
+					$scope.setSelectedWeekNumberInMonthText(week);
+					$scope.setSelectedSingleDayInWeekText($scope.selectedSingleDayInWeek);
 
 				}
 				else {
@@ -849,25 +970,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 						$scope.additionalMeta.repeat_month_iy.push(month.id);
 					}
 
-					// Construct text for display of selected months
-					for (var i = 0; i < $scope.selectedMonthsInYear.length; i++) {
-						// Single month
-						// Eg. January
-						if ($scope.selectedMonthsInYear.length == 1) {
-							$scope.selectedMonthsInYearText = $scope.selectedMonthsInYear[i].name;
-						}
-						// Concat months with commas
-						// Eg. January, March, April
-						else if (i < $scope.selectedMonthsInYear.length-1) {
-							$scope.selectedMonthsInYearText += $scope.selectedMonthsInYear[i].name + ", "
-						}
-
-						// Replace last comma with "and"
-						// Eg. January, March and April
-						else {
-							$scope.selectedMonthsInYearText = $scope.selectedMonthsInYearText.slice(0,-2) + " and " + $scope.selectedMonthsInYear[i].name;
-						}
-					}
+					$scope.setSelectedMonthsInYearText($scope.selectedMonthsInYear);
 				}
 			};
 

@@ -283,12 +283,59 @@ class LegacyQuestionnaire {
                 'end_date'  => null,
                 'set'          => 0,
                 'frequency' => array (
+                    'custom' => 0,
                     'meta_key'  => null,
                     'meta_value'    => null,
                     'additionalMeta'    => array()
                 )
             );
 
+            $sql = "
+                SELECT DISTINCT
+                    fe.CustomFlag,
+                    fe.MetaKey,
+                    fe.MetaValue 
+                FROM 
+                    FrequencyEvents fe
+                WHERE
+                    fe.ControlTable             = 'LegacyQuestionnaire'
+                AND fe.ControlTableSerNum       = $legacyQuestionnaireSer
+            ";
+
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                // if we've entered, then a frequency has been set
+                $occurrenceArray['set'] = 1;
+
+                $customFlag     = $data[0];
+                $metaKey        = $data[1];
+                $metaValue      = $data[2];
+
+                if ($metaKey == 'repeat_start') {
+                    $occurrenceArray['start_date'] = $metaValue;
+                }
+                else if ($metaKey == 'repeat_end') {
+                    $occurrenceArray['end_date'] = $metaValue;
+                }
+                else if ($customFlag == 1 and $metaKey == 'repeat_day') {
+                    $occurrenceArray['frequency']['custom'] = 1;
+                    $occurrenceArray['frequency']['meta_key'] = $metaKey;
+                    $occurrenceArray['frequency']['meta_value'] = intval($metaValue);
+                }
+                else if ($customFlag == 1) {
+                    $occurrenceArray['frequency']['custom'] = 1;
+                    $occurrenceArray['frequency']['additionalMeta'][$metaKey] = array_map('intval', explode(',', $metaValue));
+                    sort($occurrenceArray['frequency']['additionalMeta'][$metaKey]);   
+                }
+                else { // should only be one
+                    $occurrenceArray['frequency']['meta_key'] = $metaKey;
+                    $occurrenceArray['frequency']['meta_value'] = intval($metaValue);
+                }
+            }
+            
 			$legacyQuestionnaireDetails = array(
 	            'name_FR' 		    => $questionnaireName_FR, 
 				'name_EN' 		    => $questionnaireName_EN, 
