@@ -86,19 +86,19 @@ angular.module('opalAdmin.services', [])
 
 		this.frequencyUnits = [
 		{
-			name: 'Days',
+			name: 'Day',
 			id: 'day',
 			meta_key: 'repeat_day'
 		},{
-			name: 'Weeks',
+			name: 'Week',
 			id: 'week',
 			meta_key: 'repeat_week'
 		},{
-			name: 'Months',
+			name: 'Month',
 			id: 'month',
 			meta_key: 'repeat_month'
 		},{
-			name: 'Years',
+			name: 'Year',
 			id: 'year',
 			meta_key: 'repeat_year'
 		}];
