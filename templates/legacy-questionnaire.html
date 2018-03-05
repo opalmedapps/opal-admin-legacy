@@ -189,10 +189,6 @@
               </p>
             </div>
           </div>
-          Testing region<br>
-          {{legacyQuestionnaire.occurrence.frequency}}<br>
-          {{customFrequency}}<br>
-          {{additionalMeta}}<br>
           
         </div>
         <div class="row" style="margin-bottom:10px;">
@@ -312,7 +308,7 @@
                   </div>
                 </div>
                 <div ng-if="repeatSub == 'onDate' && customFrequency.unit.id == 'month'" class="no-calendar-header col-xs-12" style="margin-bottom: 10px;">
-                  <multiple-date-picker ng-model="selectedDatesInMonth" month="staticMonth"></multiple-date-picker>
+                  <multiple-date-picker day-click="setChangesMade()" ng-model="selectedDatesInMonth" month="staticMonth"></multiple-date-picker>
                 </div>
                 <div ng-if="repeatSub == 'onWeek' || customFrequency.unit.id == 'year'" class="col-xs-4" style="margin-bottom: 10px;">
                   <select class="form-control" ng-options="week as week.name for week in weekNumbersInMonth track by week.id" ng-model="selectedWeekNumberInMonth" ng-change="selectWeekInMonth(selectedWeekNumberInMonth)" >

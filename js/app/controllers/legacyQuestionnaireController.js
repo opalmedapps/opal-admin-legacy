@@ -338,7 +338,6 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 
 				// Assign value
 				$scope.legacyQuestionnaire = response.data;
-
 				if ($scope.legacyQuestionnaire.occurrence.set) {
 
 					$scope.showFrequency = true;
@@ -352,7 +351,6 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 
 					angular.forEach(additionalMetaKeys, function (key) {
 						$scope.additionalMeta[key] = $scope.legacyQuestionnaire.occurrence.frequency.additionalMeta[key];
-						console.log($scope.additionalMeta[key]);
 					});
 
 					if ($scope.legacyQuestionnaire.occurrence.frequency.custom) { // custom frequency
@@ -375,6 +373,8 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 							}
 						}
 					}
+					$scope.legacyQuestionnaire.occurrence.frequency.additionalMeta = [$scope.legacyQuestionnaire.occurrence.frequency.additionalMeta];
+
 				}
 
 			}).catch(function (response) {
@@ -507,12 +507,56 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 
 			// Function to check necessary form fields are complete
 			$scope.checkForm = function () {
-				if ($scope.legacyQuestionnaire.name_EN && $scope.legacyQuestionnaire.name_FR && $scope.changesMade) {
+				if ($scope.legacyQuestionnaire.name_EN && $scope.legacyQuestionnaire.name_FR && $scope.changesMade
+					&& $scope.checkFrequencyFilter()) {
 					return true;
 				}
 				else
 					return false;
 			};
+
+			// Function to check frequency filter forms are complete
+			$scope.checkFrequencyFilter = function () {
+				if ($scope.showFrequency) {
+					if (!$scope.legacyQuestionnaire.occurrence.start_date || 
+						($scope.addEndDate && !$scope.legacyQuestionnaire.occurrence.end_date) ) {
+						return false;
+					} else {
+						if ($scope.frequencySelected.id != 'custom') {
+							return true;
+						}
+						else {
+							if ($scope.customFrequency.unit.id == 'month') {
+								if ($scope.repeatSub == 'onDate' && $scope.selectedDatesInMonth.length) {
+									return true;
+								}
+								else if ($scope.repeatSub == 'onWeek' && $scope.selectedWeekNumberInMonth && $scope.selectedSingleDayInWeek) {
+									return true;
+								}
+								else if (!$scope.repeatSub) {
+									return true;
+								}
+								else 
+									return false;
+							}
+							else if ($scope.customFrequency.unit.id == 'year') {
+								if ($scope.selectedWeekNumberInMonth.id && $scope.selectedSingleDayInWeek) {
+									return true;
+								}
+								else if (!$scope.selectedWeekNumberInMonth.id && !$scope.selectedSingleDayInWeek) {
+									return true;
+								}
+								else 
+									return false;
+							}
+							else 
+								return true;
+						}
+					}
+				} else {
+					return true;
+				}
+			}
 
 			// Function to return filters that have been checked
 			function addFilters(filterList) {
@@ -538,6 +582,9 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			// Function for adding new frequency filter
 			$scope.addFrequencyFilter = function () {
 				$scope.showFrequency = true;
+				$scope.setChangesMade();
+				$scope.legacyQuestionnaire.occurrence.frequency.meta_value = $scope.frequencySelected.meta_value;
+				$scope.legacyQuestionnaire.occurrence.frequency.meta_key = $scope.frequencySelected.meta_key;
 			}
 
 			// Function for removing new frequency filter
@@ -545,6 +592,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 				$scope.showFrequency = false; // Hide form
 				$scope.legacyQuestionnaire.occurrence.set = 0; // Not set anymore
 				$scope.flushAllFrequencyFilters();
+				$scope.setChangesMade();
 			}
 
 			// Function to reset all frequency filters
@@ -640,6 +688,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 				if (!$scope.addEndDate) {
 					$scope.legacyQuestionnaire.occurrence.end_date = null;
 				}
+				$scope.setChangesMade();
 			}
 
 			// Initialize list of preset publishing frequencies
@@ -648,6 +697,15 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 
 			$scope.selectFrequency = function (frequency) {
 				$scope.frequencySelected = frequency;
+				$scope.setChangesMade();
+				if (frequency.id != 'custom') {
+					$scope.legacyQuestionnaire.occurrence.frequency.meta_value = $scope.frequencySelected.meta_value;
+					$scope.legacyQuestionnaire.occurrence.frequency.meta_key = $scope.frequencySelected.meta_key;
+					$scope.legacyQuestionnaire.occurrence.frequency.custom = 0;
+				}
+				else {
+					$scope.legacyQuestionnaire.occurrence.frequency.custom = 1;
+				}
 			}
 
 			// Initialize object for repeat interval
@@ -657,15 +715,18 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 
 			// Custom watch to singularize/pluralize frequency unit names
 			$scope.$watch('customFrequency.meta_value', function(newValue, oldValue){
-			    if (newValue === 1) { // Singular
-				    angular.forEach($scope.frequencyUnits, function (unit) {
-				    	unit.name = unit.name.slice(0,-1); // remove plural 's'
-				    });
-				}
-				else if (newValue > 1 && oldValue === 1) { // Was singular now plural
-					angular.forEach($scope.frequencyUnits, function (unit) {
-				    	unit.name = unit.name + 's'; // pluralize words
-				    });
+			    
+				if ($scope.frequencySelected.id == 'custom') {
+				    if (newValue === 1) { // Singular
+					    angular.forEach($scope.frequencyUnits, function (unit) {
+					    	unit.name = unit.name.slice(0,-1); // remove plural 's'
+					    });
+					}
+					else if (newValue > 1 && oldValue === 1) { // Was singular now plural
+						angular.forEach($scope.frequencyUnits, function (unit) {
+					    	unit.name = unit.name + 's'; // pluralize words
+					    });
+					}
 				}
 		  	});
 
@@ -700,6 +761,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			}
 			// Function when selecting the days on the week
 			$scope.selectDayInWeek = function (day, unit) {
+				$scope.setChangesMade();
 				$scope.selectedSingleDayInWeek = day;
 				if (day) {
 					if (unit == 'week') { // Selecting multiple days from week repeat interval
@@ -855,11 +917,13 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 					$scope.selectedMonthsInYear = [];
 					$scope.selectedMonthsInYearText = "";
 				}
+				$scope.setChangesMade();
 			}
 
 			$scope.repeatSub = null;
 			// Function to set the tab options for repeats onDate or onWeek
 			$scope.setRepeatSub = function(repeatSub) {
+				$scope.setChangesMade();
 				
 				if ($scope.repeatSub != repeatSub) {
 					$scope.repeatSub = repeatSub; // set tab active
@@ -881,6 +945,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 					$scope.selectedWeekNumberInMonth = $scope.weekNumbersInMonth[0];
 					$scope.selectedSingleDayInWeek = null;
 				}
+
 			}
 
 			// Function watch to deal with selected dates in calendar
@@ -910,6 +975,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 
 			// Function to set week of the month
 			$scope.selectWeekInMonth = function (week) {
+				$scope.setChangesMade();
 				$scope.selectedWeekNumberInMonth = week;
 				// If a single day was chosen
 				if (week.id && $scope.selectedSingleDayInWeek) {
@@ -960,6 +1026,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			// Function to place appropriate meta data from the month in the year
 			$scope.selectMonthInYear = function (month) {
 				if (month) {
+					$scope.setChangesMade();
 					$scope.selectedMonthsInYearText = ""; // Destroy text
 
 					// Manage meta data
@@ -1004,6 +1071,29 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 					addFilters($scope.resourceFilterList);
 					addFilters($scope.patientFilterList);
 					addFilters($scope.appointmentStatusList);
+
+					// Add frequency filter if exists
+					if ($scope.showFrequency) {
+						$scope.legacyQuestionnaire.occurrence.set = 1;
+						// convert dates to timestamps
+						$scope.legacyQuestionnaire.occurrence.start_date = moment($scope.legacyQuestionnaire.occurrence.start_date).format('X');
+						if ($scope.legacyQuestionnaire.occurrence.end_date) {
+							$scope.legacyQuestionnaire.occurrence.end_date = moment($scope.legacyQuestionnaire.occurrence.end_date).format('X');
+						}
+						if ($scope.legacyQuestionnaire.occurrence.frequency.custom) {
+							$scope.legacyQuestionnaire.occurrence.frequency.meta_key = $scope.customFrequency.unit.meta_key;
+							$scope.legacyQuestionnaire.occurrence.frequency.meta_value = $scope.customFrequency.meta_value;
+							angular.forEach(Object.keys($scope.additionalMeta), function(meta_key){
+								if ($scope.additionalMeta[meta_key].length) {
+									var metaDetails = {
+										meta_key: meta_key,
+										meta_value: $scope.additionalMeta[meta_key]
+									}
+									$scope.legacyQuestionnaire.occurrence.frequency.additionalMeta.push(metaDetails);
+								}
+							});
+						} 
+					}
 
 					// ajax POST
 					$.ajax({
