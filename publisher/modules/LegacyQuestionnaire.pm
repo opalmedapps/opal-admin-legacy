@@ -483,8 +483,36 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
            	QuestionnaireControl.QuestionnaireControlSerNum
 		FROM
 			QuestionnaireControl
+        LEFT JOIN FrequencyEvents fe1 ON QuestionnaireControl.QuestionnaireControlSerNum = fe1.ControlTableSerNum
+        AND fe1.ControlTable = 'LegacyQuestionnaireControl'
+        AND fe1.MetaKey = 'repeat_start'
+        LEFT JOIN FrequencyEvents fe2 ON fe2.MetaKey = 'repeat_day'
+        LEFT JOIN FrequencyEvents fe3 ON fe3.MetaKey = 'repeat_week'
+        LEFT JOIN FrequencyEvents fe4 ON fe4.MetaKey = 'repeat_month'
+        LEFT JOIN FrequencyEvents fe5 ON fe5.MetaKey = 'repeat_year'
+        LEFT JOIN FrequencyEvents fe6 ON fe6.MetaKey = 'repeat_day_iw'
+        LEFT JOIN FrequencyEvents fe7 ON fe7.MetaKey = 'repeat_week_im'
+        LEFT JOIN FrequencyEvents fe8 ON fe8.MetaKey = 'repeat_date_im'
+        LEFT JOIN FrequencyEvents fe9 ON fe9.MetaKey = 'repeate_month_iy'
 		WHERE
+        -- Flag
 			QuestionnaireControl.PublishFlag = 1
+        -- Compare day interval
+        AND (MOD(TIMESTAMPDIFF(DAY, FROM_UNIXTIME(fe1.MetaValue), NOW()), fe2.MetaValue) = 0
+            OR fe2.MetaValue = 0 OR fe2.MetaValue IS NULL)
+        -- Compare week interval
+        AND (MOD(TIMESTAMPDIFF(DAY, FROM_UNIXTIME(fe1.MetaValue), NOW()), fe3.MetaValue*7) = 0
+            OR fe3.MetaValue IS NULL)
+        -- Compare month interval
+        AND (MOD(TIMESTAMPDIFF(MONTH, FROM_UNIXTIME(fe1.MetaValue), NOW()) +
+            DATEDIFF(NOW(), FROM_UNIXTIME(fe1.MetaValue) + INTERVAL TIMESTAMPDIFF(MONTH, FROM_UNIXTIME(fe1.MetaValue), NOW()) MONTH) /
+            DATEDIFF(FROM_UNIXTIME(fe1.MetaValue) + INTERVAL TIMESTAMPDIFF(MONTH, FROM_UNIXTIME(fe1.MetaValue), NOW()) + 1 MONTH,
+                FROM_UNIXTIME(fe1.MetaValue) + INTERVAL TIMESTAMPDIFF(MONTH, FROM_UNIXTIME(fe1.MetaValue), NOW()) MONTH ), fe4.MetaValue) = 0 
+            OR fe4.MetaValue IS NULL)
+        -- Compare year interval
+        AND (MOD(TIMESTAMPDIFF(DAY, FROM_UNIXTIME(fe1.MetaValue), NOW())/365, fe5.MetaValue) = 0
+            OR fe5.MetaValue IS NULL)
+        AND FROM_UNIXTIME(fe1.MetaValue) <= NOW()
     ";
 
     # prepare query
