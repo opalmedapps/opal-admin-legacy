@@ -497,22 +497,132 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
 		WHERE
         -- Flag
 			QuestionnaireControl.PublishFlag = 1
-        -- Compare day interval
-        AND (MOD(TIMESTAMPDIFF(DAY, FROM_UNIXTIME(fe1.MetaValue), NOW()), fe2.MetaValue) = 0
-            OR fe2.MetaValue = 0 OR fe2.MetaValue IS NULL)
-        -- Compare week interval
-        AND (MOD(TIMESTAMPDIFF(DAY, FROM_UNIXTIME(fe1.MetaValue), NOW()), fe3.MetaValue*7) = 0
-            OR fe3.MetaValue IS NULL)
-        -- Compare month interval
-        AND (MOD(TIMESTAMPDIFF(MONTH, FROM_UNIXTIME(fe1.MetaValue), NOW()) +
-            DATEDIFF(NOW(), FROM_UNIXTIME(fe1.MetaValue) + INTERVAL TIMESTAMPDIFF(MONTH, FROM_UNIXTIME(fe1.MetaValue), NOW()) MONTH) /
-            DATEDIFF(FROM_UNIXTIME(fe1.MetaValue) + INTERVAL TIMESTAMPDIFF(MONTH, FROM_UNIXTIME(fe1.MetaValue), NOW()) + 1 MONTH,
-                FROM_UNIXTIME(fe1.MetaValue) + INTERVAL TIMESTAMPDIFF(MONTH, FROM_UNIXTIME(fe1.MetaValue), NOW()) MONTH ), fe4.MetaValue) = 0 
-            OR fe4.MetaValue IS NULL)
-        -- Compare year interval
-        AND (MOD(TIMESTAMPDIFF(DAY, FROM_UNIXTIME(fe1.MetaValue), NOW())/365, fe5.MetaValue) = 0
-            OR fe5.MetaValue IS NULL)
-        AND FROM_UNIXTIME(fe1.MetaValue) <= NOW()
+        AND ( 
+            -- Compare day interval
+            (
+                -- Number of days passed since start is divisible by repeat interval
+                MOD(TIMESTAMPDIFF(DAY, FROM_UNIXTIME(fe1.MetaValue), NOW()), fe2.MetaValue) = 0
+                -- or repeat once chosen
+                OR fe2.MetaValue = 0 
+                -- or day repeat not even defined
+                OR fe2.MetaValue IS NULL
+            )
+            -- Compare week interval
+            AND (
+                -- If only week interval is defined
+                (
+                    -- Number of weeks (in days) passed since start is divisible by repeat interval
+                    MOD(TIMESTAMPDIFF(DAY, FROM_UNIXTIME(fe1.MetaValue), NOW()), fe3.MetaValue*7) = 0
+                    -- No repeat_day_iw defined
+                    AND fe6.MetaValue IS NULL
+                    -- or week repeat not even defined at all
+                    OR fe3.MetaValue IS NULL
+                )
+                -- If repeat_day_iw define, we override week logic 
+                OR (
+                    -- Number of weeks passed since start is divisible by repeat interval
+                    -- BUT shift both start date and now to Sunday to compare weeks passed
+                    -- Because if triggers are on Mon, Tues, but today is Thurs then technically Mon, Tues next week
+                    -- should trigger even though a true week hasn't passed
+                    MOD(
+                        TIMESTAMPDIFF(
+                            WEEK,
+                            DATE_SUB(FROM_UNIXTIME(fe1.MetaValue), INTERVAL DAYOFWEEK(FROM_UNIXTIME(fe1.MetaValue))-1 DAY),
+                            DATE_SUB(NOW(), INTERVAL DAYOFWEEK(NOW())-1 DAY)
+                        ),
+                        fe3.MetaValue
+                    ) = 0
+                    -- today is in list of days in week 
+                    AND find_in_set(DAYOFWEEK(NOW()), fe6.MetaValue) > 0
+                )
+            )
+            -- Compare month interval
+            AND (
+                -- If only the month interval is defined 
+                (
+                    -- Number of months passed since start is divisible by repeat interval
+                    -- https://stackoverflow.com/questions/288984/the-difference-in-months-between-dates-in-mysql
+                    MOD(
+                        TIMESTAMPDIFF(MONTH,FROM_UNIXTIME(fe1.MetaValue), NOW()) 
+                        + DATEDIFF(
+                            NOW(), 
+                            FROM_UNIXTIME(fe1.MetaValue) + INTERVAL TIMESTAMPDIFF(MONTH, FROM_UNIXTIME(fe1.MetaValue), NOW()) MONTH
+                        ) /
+                        DATEDIFF(
+                            FROM_UNIXTIME(fe1.MetaValue) + INTERVAL TIMESTAMPDIFF(MONTH, FROM_UNIXTIME(fe1.MetaValue), NOW()) + 1 MONTH,
+                            FROM_UNIXTIME(fe1.MetaValue) + INTERVAL TIMESTAMPDIFF(MONTH, FROM_UNIXTIME(fe1.MetaValue), NOW()) MONTH 
+                        ), 
+                        fe4.MetaValue
+                    ) = 0 
+                    -- No repeat_day_iw defined
+                    AND fe6.MetaValue IS NULL
+                    -- No repeat_week_im defined
+                    AND fe7.MetaValue IS NULL
+                    -- No repeat_date_im defined
+                    AND fe8.MetaValue IS NULL
+                    -- or month repeat interval not defined at all
+                    OR fe4.MetaValue IS NULL
+                )
+                -- If other repeats are defined in conjuntion to months 
+                OR (
+                    -- Number of months passed since start is divisible by repeat interval 
+                    -- BUT shift both start date and today's date to the 1st to compare months passed 
+                    -- Because if triggers are on 2nd and 3rd of the month and today is the 15th, then
+                    -- we shouldn't trigger on the next 2nd and 3rd if we check every 2 months even though
+                    -- a true month hasn't passed
+                    MOD(
+                        TIMESTAMPDIFF(
+                            MONTH,
+                            DATE_SUB(FROM_UNIXTIME(fe1.MetaValue), INTERVAL DAY(FROM_UNIXTIME(fe1.MetaValue))-1 DAY),
+                            DATE_SUB(NOW(), INTERVAL DAY(NOW())-1 DAY)
+                        ),
+                        fe4.MetaValue
+                    ) = 0
+                    AND (
+                        -- logic for day and week in month
+                        (
+                            -- today lands on the defined day in week 
+                            MOD(DAYOFWEEK(NOW()), fe6.MetaValue) = 0
+                            -- today lands on the week number in month 
+                            AND (
+                                -- logic for week number other than last day in month
+                                (
+                                    MOD(
+                                        WEEK(NOW(),3) - WEEK(NOW() - INTERVAL DAY(NOW()) - 1 DAY,3),
+                                        fe7.MetaValue
+                                    ) = 0
+                                    -- if not looking for last day in month 
+                                    AND fe7.MetaValue != 6
+                                )
+                                -- logic for last day in month
+                                OR (
+                                    DAY(NOW()) = DAY(LAST_DAY(NOW()) - ((7 + DAYOFWEEK(LAST_DAY(NOW())) - fe6.MetaValue) % 7))
+                                    AND fe7.MetaValue = 6
+                                )
+                            )
+                        )
+                        -- logic for date in month
+                        OR (
+                            -- today's date in list of dates
+                            find_in_set(DAY(NOW()), fe8.MetaValue) > 0
+                        )
+                    )
+                )
+            )
+            -- Compare year interval
+            AND (
+                -- Number of years passed (in days) since start is divisible by repeat interval
+                MOD(TIMESTAMPDIFF(DAY, FROM_UNIXTIME(fe1.MetaValue), NOW())/365, fe5.MetaValue) = 0
+                -- or repeat interval not defined at all
+                OR fe5.MetaValue IS NULL
+            )
+            -- today must be greater than start date
+            AND FROM_UNIXTIME(fe1.MetaValue) <= NOW()
+            -- or no frequency was set at all 
+            OR fe1.MetaValue IS NULL
+        ) 
+         
+        
     ";
 
     # prepare query
