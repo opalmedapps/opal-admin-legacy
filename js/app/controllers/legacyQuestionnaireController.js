@@ -1083,6 +1083,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 						if ($scope.legacyQuestionnaire.occurrence.frequency.custom) {
 							$scope.legacyQuestionnaire.occurrence.frequency.meta_key = $scope.customFrequency.unit.meta_key;
 							$scope.legacyQuestionnaire.occurrence.frequency.meta_value = $scope.customFrequency.meta_value;
+							$scope.legacyQuestionnaire.occurrence.frequency.additionalMeta = [];
 							angular.forEach(Object.keys($scope.additionalMeta), function(meta_key){
 								if ($scope.additionalMeta[meta_key].length) {
 									var metaDetails = {
