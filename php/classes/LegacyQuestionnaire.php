@@ -300,6 +300,7 @@ class LegacyQuestionnaire {
                 WHERE
                     fe.ControlTable             = 'LegacyQuestionnaireControl'
                 AND fe.ControlTableSerNum       = $legacyQuestionnaireSer
+                AND fe.MetaValue                != '*'
             ";
 
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -311,7 +312,8 @@ class LegacyQuestionnaire {
                 $occurrenceArray['set'] = 1;
 
                 $customFlag     = $data[0];
-                $metaKey        = $data[1];
+                // the type of meta key and which content it belongs to is separated by the | delimeter
+                list($metaKey, $dontNeed) = explode('|', $data[1]);
                 $metaValue      = $data[2];
 
                 if ($metaKey == 'repeat_start') {
@@ -320,17 +322,19 @@ class LegacyQuestionnaire {
                 else if ($metaKey == 'repeat_end') {
                     $occurrenceArray['end_date'] = $metaValue;
                 }
-                else if ($customFlag == 1 and $metaKey == 'repeat_day') {
+                // custom non-additional meta (eg. repeat_day, repeat_week ... any meta with one underscore that was custom made)
+                else if ($customFlag == 1 and count(explode('_', $metaKey)) == 2) {
                     $occurrenceArray['frequency']['custom'] = 1;
                     $occurrenceArray['frequency']['meta_key'] = $metaKey;
                     $occurrenceArray['frequency']['meta_value'] = intval($metaValue);
                 }
+                // additional meta (eg. repeat_day_iw, repeat_week_im ... any meta with two underscores)
                 else if ($customFlag == 1 and count(explode('_', $metaKey)) == 3) {
                     $occurrenceArray['frequency']['custom'] = 1;
                     $occurrenceArray['frequency']['additionalMeta'][$metaKey] = array_map('intval', explode(',', $metaValue));
                     sort($occurrenceArray['frequency']['additionalMeta'][$metaKey]);   
                 }
-                else { // should only be one
+                else { // should only be one predefined frequency chosen, if chosen 
                     $occurrenceArray['frequency']['meta_key'] = $metaKey;
                     $occurrenceArray['frequency']['meta_value'] = intval($metaValue);
                 }
@@ -624,55 +628,58 @@ class LegacyQuestionnaire {
                 $query->execute();
 
                 $occurrenceEnd = $questionnaireOccurrence['end_date'];
-                if ($occurrenceEnd) {
-                    $sql = "
-                        INSERT INTO 
-                            FrequencyEvents (
-                                ControlTable,
-                                ControlTableSerNum,
-                                MetaKey,
-                                MetaValue,
-                                CustomFlag,
-                                DateAdded
-                            )
-                        VALUES (
-                            'LegacyQuestionnaireControl',
-                            '$questionnaireSer',
-                            'repeat_end',
-                            '$occurrenceEnd',
-                            '0',
-                            NOW()
-                        )
-                        ON DUPLICATE KEY 
-                        UPDATE 
-                            MetaValue = '$occurrenceEnd'
-                    ";
-                    $query = $host_db_link->prepare( $sql );
-                    $query->execute();
+                if (!$occurrenceEnd) {
+                    $occurrenceEnd = '*';
                 }
-                else {
-                    $sql = "
-                        DELETE FROM 
-                            FrequencyEvents 
-                        WHERE
-                            FrequencyEvents.ControlTable        = 'LegacyQuestionnaireControl'
-                        AND FrequencyEvents.ControlTableSerNum  = $questionnaireSer
-                        AND FrequencyEvents.MetaKey             = 'repeat_end'
-                    ";
-
-                    $query = $host_db_link->prepare( $sql );
-                    $query->execute();
-                }
-
-                // clear other metas
                 $sql = "
-                     DELETE FROM 
-                        FrequencyEvents 
-                    WHERE
-                        FrequencyEvents.ControlTable        = 'LegacyQuestionnaireControl'
-                    AND FrequencyEvents.ControlTableSerNum  = $questionnaireSer
-                    AND FrequencyEvents.MetaKey             != 'repeat_start'
-                    AND FrequencyEvents.MetaKey             != 'repeat_end'
+                    INSERT INTO 
+                        FrequencyEvents (
+                            ControlTable,
+                            ControlTableSerNum,
+                            MetaKey,
+                            MetaValue,
+                            CustomFlag,
+                            DateAdded
+                        )
+                    VALUES (
+                        'LegacyQuestionnaireControl',
+                        '$questionnaireSer',
+                        'repeat_end',
+                        '$occurrenceEnd',
+                        '0',
+                        NOW()
+                    )
+                    ON DUPLICATE KEY 
+                    UPDATE 
+                        MetaValue = '$occurrenceEnd'
+                ";
+                $query = $host_db_link->prepare( $sql );
+                $query->execute();
+
+                // clear all other metas
+                $sql = "
+                    INSERT INTO 
+                        FrequencyEvents (
+                            ControlTable,
+                            ControlTableSerNum,
+                            MetaKey,
+                            MetaValue,
+                            CustomFlag,
+                            DateAdded
+                        )
+                    VALUES 
+                        ('LegacyQuestionnaireControl', '$questionnaireSer', 'repeat_day|lqc_$questionnaireSer', '*', 0, NOW()),
+                        ('LegacyQuestionnaireControl', '$questionnaireSer', 'repeat_week|lqc_$questionnaireSer', '*', 0, NOW()),
+                        ('LegacyQuestionnaireControl', '$questionnaireSer', 'repeat_month|lqc_$questionnaireSer', '*', 0, NOW()),
+                        ('LegacyQuestionnaireControl', '$questionnaireSer', 'repeat_year|lqc_$questionnaireSer', '*', 0, NOW()),
+                        ('LegacyQuestionnaireControl', '$questionnaireSer', 'repeat_day_iw|lqc_$questionnaireSer', '*', 1, NOW()),
+                        ('LegacyQuestionnaireControl', '$questionnaireSer', 'repeat_week_im|lqc_$questionnaireSer', '*', 1, NOW()),
+                        ('LegacyQuestionnaireControl', '$questionnaireSer', 'repeat_date_im|lqc_$questionnaireSer', '*', 1, NOW()),
+                        ('LegacyQuestionnaireControl', '$questionnaireSer', 'repeat_month_iy|lqc_$questionnaireSer', '*', 1, NOW())
+                    ON DUPLICATE KEY 
+                    UPDATE
+                        MetaValue = VALUES(MetaValue),
+                        CustomFlag = VALUES(CustomFlag)
                 ";
                 $query = $host_db_link->prepare( $sql );
                 $query->execute();
@@ -694,11 +701,15 @@ class LegacyQuestionnaire {
                     VALUES (
                         'LegacyQuestionnaireControl',
                         '$questionnaireSer',
-                        '$metaKey',
+                        '$metaKey|lqc_$questionnaireSer',
                         '$metaValue',
                         '$customFlag',
                         NOW()
                     )
+                    ON DUPLICATE KEY
+                    UPDATE
+                        MetaValue = VALUES(MetaValue),
+                        CustomFlag = VALUES(CustomFlag)
                 ";
 
                 $query = $host_db_link->prepare( $sql );
@@ -707,7 +718,7 @@ class LegacyQuestionnaire {
                 $additionalMeta = $questionnaireOccurrence['frequency']['additionalMeta'];
                 if (!empty($additionalMeta)) {
                     foreach ($additionalMeta as $meta) {
-                        # code...
+
                         $metaKey = $meta['meta_key'];
                         $metaValue = implode(',', $meta['meta_value']);
 
@@ -724,11 +735,15 @@ class LegacyQuestionnaire {
                             VALUES (
                                 'LegacyQuestionnaireControl',
                                 '$questionnaireSer',
-                                '$metaKey',
+                                '$metaKey|lqc_$questionnaireSer',
                                 '$metaValue',
                                 '1',
                                 NOW()
                             )
+                            ON DUPLICATE KEY
+                            UPDATE
+                                MetaValue = VALUES(MetaValue),
+                                CustomFlag = VALUES(CustomFlag)
                         ";
 
                         $query = $host_db_link->prepare( $sql );
