@@ -702,6 +702,8 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 					$scope.legacyQuestionnaire.occurrence.frequency.meta_value = $scope.frequencySelected.meta_value;
 					$scope.legacyQuestionnaire.occurrence.frequency.meta_key = $scope.frequencySelected.meta_key;
 					$scope.legacyQuestionnaire.occurrence.frequency.custom = 0;
+					$scope.flushRepeatInterval();
+					$scope.flushRepeatTypes();
 				}
 				else {
 					$scope.legacyQuestionnaire.occurrence.frequency.custom = 1;
@@ -1094,6 +1096,9 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 								}
 							});
 						} 
+						else {
+							$scope.legacyQuestionnaire.occurrence.frequency.additionalMeta = [];
+						}
 					}
 
 					// ajax POST
