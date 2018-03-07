@@ -513,7 +513,7 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
                 -- or repeat once chosen
                 OR fe2.MetaValue = 0 
                 -- or day repeat not defined
-                OR fe2.MetaValue = '*'
+                OR fe2.MetaValue IS NULL
             )
             -- Compare week interval
             AND (
@@ -522,9 +522,9 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
                     -- Number of weeks (in days) passed since start is divisible by repeat interval
                     MOD(TIMESTAMPDIFF(DAY, FROM_UNIXTIME(fe1.MetaValue), NOW()), fe3.MetaValue*7) = 0
                     -- No repeat_day_iw defined
-                    AND fe6.MetaValue = '*'
+                    AND fe6.MetaValue IS NULL
                     -- or week repeat not even defined at all
-                    OR fe3.MetaValue = '*'
+                    OR fe3.MetaValue IS NULL
                 )
                 -- If repeat_day_iw define, we override basic repeat week logic 
                 OR (
@@ -563,13 +563,13 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
                         fe4.MetaValue
                     ) = 0 
                     -- No repeat_day_iw defined
-                    AND fe6.MetaValue = '*'
+                    AND fe6.MetaValue IS NULL
                     -- No repeat_week_im defined
-                    AND fe7.MetaValue = '*'
+                    AND fe7.MetaValue IS NULL
                     -- No repeat_date_im defined
-                    AND fe8.MetaValue = '*'
+                    AND fe8.MetaValue IS NULL
                     -- or month repeat interval not defined at all
-                    OR fe4.MetaValue = '*'
+                    OR fe4.MetaValue IS NULL
                 )
                 -- If other repeats are defined in conjuntion to month repeat
                 OR (
@@ -625,13 +625,13 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
                     -- Number of years passed (in days) since start is divisible by repeat interval
                     MOD(TIMESTAMPDIFF(DAY, FROM_UNIXTIME(fe1.MetaValue), NOW())/365, fe5.MetaValue) = 0
                     -- No day in week defined 
-                    AND fe6.MetaValue = '*'
+                    AND fe6.MetaValue IS NULL
                     -- No repeat_week_im defined 
-                    AND fe7.MetaValue = '*'
+                    AND fe7.MetaValue IS NULL
                     -- No repeat_month_iy defined 
-                    AND fe9.MetaValue = '*'
+                    AND fe9.MetaValue IS NULL
                     -- or year repeat interval not defined at all
-                    OR fe5.MetaValue = '*'
+                    OR fe5.MetaValue IS NULL
                 )
                 -- If other repeats are defined in conjunction with the year
                 OR (
@@ -660,16 +660,16 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
                                 )
                             )
                             -- and repeat_month_iy not defined 
-                            AND fe9.MetaValue = '*'
+                            AND fe9.MetaValue IS NULL
                         )
                         -- logic for months in year 
                         OR (
                             -- today's month in list of months 
                             find_in_set(MONTH(NOW()), fe9.MetaValue) > 0
                             -- and repeat_day_iw is null
-                            AND fe6.MetaValue = '*' 
+                            AND fe6.MetaValue IS NULL 
                             -- and repeat_week_im is null 
-                            AND fe7.MetaValue = '*'
+                            AND fe7.MetaValue IS NULL
                         )
                         -- logic for both day and week and months in year 
                         OR (
@@ -704,7 +704,7 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
                 -- today must be less than end date 
                 DATE(NOW()) <= FROM_UNIXTIME(fe10.MetaValue)
                 -- or no end date is defined 
-                OR fe10.MetaValue = '*'
+                OR fe10.MetaValue IS NULL
             )
             -- or no start date is set at all 
             OR fe1.MetaValue IS NULL
