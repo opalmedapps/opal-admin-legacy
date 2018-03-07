@@ -493,7 +493,10 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
         LEFT JOIN FrequencyEvents fe6 ON fe6.MetaKey = 'repeat_day_iw'
         LEFT JOIN FrequencyEvents fe7 ON fe7.MetaKey = 'repeat_week_im'
         LEFT JOIN FrequencyEvents fe8 ON fe8.MetaKey = 'repeat_date_im'
-        LEFT JOIN FrequencyEvents fe9 ON fe9.MetaKey = 'repeate_month_iy'
+        LEFT JOIN FrequencyEvents fe9 ON fe9.MetaKey = 'repeat_month_iy'
+        LEFT JOIN FrequencyEvents fe10 ON QuestionnaireControl.QuestionnaireControlSerNum = fe10.ControlTableSerNum
+        AND fe10.ControlTable = 'LegacyQuestionnaireControl'
+        AND fe10.MetaKey = 'repeat_end'
 		WHERE
         -- Flag
 			QuestionnaireControl.PublishFlag = 1
@@ -611,14 +614,94 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
             )
             -- Compare year interval
             AND (
-                -- Number of years passed (in days) since start is divisible by repeat interval
-                MOD(TIMESTAMPDIFF(DAY, FROM_UNIXTIME(fe1.MetaValue), NOW())/365, fe5.MetaValue) = 0
-                -- or repeat interval not defined at all
-                OR fe5.MetaValue IS NULL
+                -- If only the year interval is defined
+                (
+
+                    -- Number of years passed (in days) since start is divisible by repeat interval
+                    MOD(TIMESTAMPDIFF(DAY, FROM_UNIXTIME(fe1.MetaValue), NOW())/365, fe5.MetaValue) = 0
+                    -- No day in week defined 
+                    AND fe6.MetaValue IS NULL
+                    -- No repeat_week_im defined 
+                    AND fe7.MetaValue IS NULL
+                    -- No repeat_month_iy defined 
+                    AND fe9.MetaValue IS NULL
+                    -- or year repeat interval not defined at all
+                    OR fe5.MetaValue IS NULL
+                )
+                -- If other repeats are defined in conjunction with the year
+                OR (
+                    -- Subtract year number since start is divisible by repeat interval
+                    MOD (YEAR(NOW()) - YEAR(FROM_UNIXTIME(fe1.MetaValue)), fe5.MetaValue) = 0
+                    -- 
+                    AND (
+                        -- logic for day and week in month 
+                        (
+                            MOD(DAYOFWEEK(NOW()), fe6.MetaValue) = 0
+                            -- today lands on the week number in month 
+                            AND (
+                                -- logic for week number other than last day in month
+                                (
+                                    MOD(
+                                        WEEK(NOW(),3) - WEEK(NOW() - INTERVAL DAY(NOW()) - 1 DAY,3),
+                                        fe7.MetaValue
+                                    ) = 0
+                                    -- if not looking for last day in month 
+                                    AND fe7.MetaValue != 6
+                                )
+                                -- logic for last day in month
+                                OR (
+                                    DAY(NOW()) = DAY(LAST_DAY(NOW()) - ((7 + DAYOFWEEK(LAST_DAY(NOW())) - fe6.MetaValue) % 7))
+                                    AND fe7.MetaValue = 6
+                                )
+                            )
+                            -- and repeat_month_iy not defined 
+                            AND fe9.MetaValue IS NULL
+                        )
+                        -- logic for months in year 
+                        OR (
+                            -- today's month in list of months 
+                            find_in_set(MONTH(NOW()), fe9.MetaValue) > 0
+                            -- and repeat_day_iw is null
+                            AND fe6.MetaValue IS NULL 
+                            -- and repeat_week_im is null 
+                            AND fe7.MetaValue IS NULL
+                        )
+                        -- logic for both day and week and months in year 
+                        OR (
+                            MOD(DAYOFWEEK(NOW()), fe6.MetaValue) = 0
+                            -- today lands on the week number in month 
+                            AND (
+                                -- logic for week number other than last day in month
+                                (
+                                    MOD(
+                                        WEEK(NOW(),3) - WEEK(NOW() - INTERVAL DAY(NOW()) - 1 DAY,3),
+                                        fe7.MetaValue
+                                    ) = 0
+                                    -- if not looking for last day in month 
+                                    AND fe7.MetaValue != 6
+                                )
+                                -- logic for last day in month
+                                OR (
+                                    DAY(NOW()) = DAY(LAST_DAY(NOW()) - ((7 + DAYOFWEEK(LAST_DAY(NOW())) - fe6.MetaValue) % 7))
+                                    AND fe7.MetaValue = 6
+                                )
+                            )
+                            -- today's month in list of months 
+                            AND find_in_set(MONTH(NOW()), fe9.MetaValue) > 0
+                        )
+                    )
+                )
             )
             -- today must be greater than start date
             AND FROM_UNIXTIME(fe1.MetaValue) <= NOW()
-            -- or no frequency was set at all 
+            -- end date logic 
+            AND (
+                -- today must be less than end date 
+                DATE(NOW()) <= FROM_UNIXTIME(fe10.MetaValue)
+                -- or no end date is set at all 
+                OR fe10.MetaValue IS NULL
+            )
+            -- or no start date is set at all 
             OR fe1.MetaValue IS NULL
         ) 
          
