@@ -273,7 +273,7 @@
                   Repeat Interval
                 </label>
                 <div class="col-xs-3">
-                  <input class="form-control" ng-model="customFrequency.meta_value" type="number" max="59" min="1">
+                  <input class="form-control" ng-model="customFrequency.meta_value" ng-change="setChangesMade()" type="number" max="59" min="1">
                 </div>
                 <div class="col-xs-6">
                   <select class="form-control" ng-options="unit as unit.name for unit in frequencyUnits track by unit.id" ng-model="customFrequency.unit" ng-change="selectRepeatInterval(customFrequency.unit)">
