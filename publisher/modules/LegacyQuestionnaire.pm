@@ -157,6 +157,12 @@ sub publishLegacyQuestionnaires
 			# in the non-patient filters  
 			my $isNonPatientSpecificFilterDefined = 0;
             my $isPatientSpecificFilterDefined = 0;
+            # We flag whether this legacy questionnaire is a recurring event for recurring filters 
+            # (appointment, appointment status, checkin status, frequency events)
+            # If there are recurring filters, then we flag = 1. This will allow publishing the same
+            # legacy questionnaire more than once based on whether or not we published already today
+            # or for all time. See inOurDatabase() function
+            my $recurringFlag = 0;
 
 			# Fetch sex filter (if any)
 			my $sexFilter = $questionnaireFilters->getSexFilter();
@@ -210,6 +216,8 @@ sub publishLegacyQuestionnaires
             my @appointmentStatuses = ();
             my @checkins = ();
 
+            my $frequencyFilter = $questionnaireFilters->getFrequencyFilter();
+
             # we build all possible appointment and diagnoses for each appointment found
             foreach my $appointment (@patientAppointments) {
 
@@ -235,6 +243,7 @@ sub publishLegacyQuestionnaires
 
                 # toggle flag
                 $isNonPatientSpecificFilterDefined = 1;
+                $recurringFlag = 1;
 
                 # Finding the existence of the patient checkin in the checkin filters
                 # If there is an intersection, then patient is part of this publishing questionnaire
@@ -256,6 +265,7 @@ sub publishLegacyQuestionnaires
 
                 # toggle flag
                 $isNonPatientSpecificFilterDefined = 1;
+                $recurringFlag = 1;
 
                 # Finding the existence of the patient status in the status filters
                 # If there is an intersection, then patient is part of this publishing questionnaire
@@ -277,6 +287,7 @@ sub publishLegacyQuestionnaires
 
                 # toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
+                $recurringFlag = 1;
 
                 # Finding the existence of the patient expressions in the appointment filters
                 # If there is an intersection, then patient is part of this publishing questionnaire
@@ -345,7 +356,14 @@ sub publishLegacyQuestionnaires
                 if ($isPatientSpecificFilterDefined or !$isNonPatientSpecificFilterDefined) {
     				# Finding the existence of the patient in the patient-specific filters
     				# If the patient does not exist, then continue to the next educational material
-    				if ($patientId ~~ @patientFilters) {}
+    				if ($patientId ~~ @patientFilters) {
+                        if ($frequencyFilter) {
+                            $recurringFlag = 1;
+                        }
+                        else {
+                            $recurringFlag = 0;
+                        }
+                    }
                     else {next;}
                 }
 			}
@@ -360,14 +378,14 @@ sub publishLegacyQuestionnaires
 			$questionnaire->setLegacyQuestionnaireControlSer($questionnaireControlSer);
 			$questionnaire->setLegacyQuestionnairePatientSer($patientSer);
 
-			if (!$questionnaire->inOurDatabase()) {
+			if (!$questionnaire->inOurDatabase($recurringFlag)) { 
 
 				$questionnaire = $questionnaire->insertLegacyQuestionnaireIntoOurDB();
 
 				# send push notification
 				my $questionnaireSer = $questionnaire->getLegacyQuestionnaireSer();
 				my $patientSer = $questionnaire->getLegacyQuestionnairePatientSer();
-				PushNotification::sendPushNotification($patientSer, $questionnaireSer, 'LegacyQuestionnaire');
+				#PushNotification::sendPushNotification($patientSer, $questionnaireSer, 'LegacyQuestionnaire');
 			}
 
 		}
@@ -382,7 +400,8 @@ sub publishLegacyQuestionnaires
 #======================================================================================
 sub inOurDatabase
 {
-	my ($questionnaire) = @_; # our questionnaire object in args
+    # our questionnaire object in args
+	my ($questionnaire, $recurringflag) = @_; 
 
 	my $patientser 				= $questionnaire->getLegacyQuestionnairePatientSer();
 	my $questionnaireControlSer	= $questionnaire->getLegacyQuestionnaireControlSer();
@@ -398,10 +417,14 @@ sub inOurDatabase
 		WHERE
 			Questionnaire.PatientSerNum  				= '$patientser'
 		AND Questionnaire.QuestionnaireControlSerNum 	= '$questionnaireControlSer'
-        AND DATE(Questionnaire.DateAdded)               = CURDATE()
-	";
+    ";
+    if ($recurringflag) {
+        $inDB_sql .= " 
+            AND DATE(Questionnaire.DateAdded)= DATE(NOW())
+        ";
+    }
 
-	  # prepare query
+    # prepare query
 	my $query = $SQLDatabase->prepare($inDB_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
 
@@ -510,8 +533,6 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
             (
                 -- Number of days passed since start is divisible by repeat interval
                 MOD(TIMESTAMPDIFF(DAY, FROM_UNIXTIME(fe1.MetaValue), NOW()), fe2.MetaValue) = 0
-                -- or repeat once chosen
-                OR fe2.MetaValue = 0 
                 -- or day repeat not defined
                 OR fe2.MetaValue IS NULL
             )

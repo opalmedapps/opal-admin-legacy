@@ -32,6 +32,7 @@ sub new
         _resources          => undef,
         _appointmentStatuses=> undef,
         _checkin            => undef,
+        _frequencyflag      => undef,
     };
 
 	# bless associates an object with a class so Perl knows which package to search for
@@ -131,6 +132,16 @@ sub setCheckinFilters
 }
 
 #======================================================================================
+# Subroutine to set the frequency filter
+#======================================================================================
+sub setFrequencyFilter
+{
+    my ($filter, $frequencyflag) = @_; # filter object with provided flag in arguments
+    $filter->{_frequencyflag} = $frequencyflag; # set the flag
+    return $filter->{_frequencyflag};
+}
+
+#======================================================================================
 # Subroutine to get the sex filter
 #======================================================================================
 sub getSexFilter
@@ -212,6 +223,15 @@ sub getCheckinFilters
 }
 
 #======================================================================================
+# Subroutine to get the frequency filter flag
+#======================================================================================
+sub getFrequencyFilter
+{
+    my ($filter) = @_; # our filter object
+    return $filter->{_frequencyflag};
+}
+
+#======================================================================================
 # Subroutine to get all filters given a control serial number and table name
 #======================================================================================
 sub getAllFiltersFromOurDB
@@ -227,6 +247,7 @@ sub getAllFiltersFromOurDB
     my @resourceFilters             = getResourceFiltersFromOurDB($controlSer, $controlTable);
     my @appointmentStatusFilters    = getAppointmentStatusFiltersFromOurDB($controlSer, $controlTable);
     my @checkinFilter               = getCheckinFiltersFromOurDB($controlSer, $controlTable);
+    my $frequencyFilter             = getFrequencyFilterFromOurDB($controlSer, $controlTable);
 
     my $Filter = new Filter(); # initialize object
 
@@ -239,6 +260,7 @@ sub getAllFiltersFromOurDB
     $Filter->setResourceFilters(@resourceFilters);
     $Filter->setAppointmentStatusFilters(@appointmentStatusFilters);
     $Filter->setCheckinFilters(@checkinFilter);
+    $Filter->setFrequencyFilter($frequencyFilter);
 
     return $Filter;
 
@@ -553,6 +575,41 @@ sub getCheckinFiltersFromOurDB
 
     return @checkinFilters;
 }
+
+#======================================================================================
+# Subroutine to get frequency filter from DB given a control serial number and table name
+#======================================================================================
+sub getFrequencyFilterFromOurDB
+{
+    my ($controlSer, $controlTable) = @_; # args
+
+    my $frequencyFlag = undef; # initialize
+    my $select_sql = "
+        SELECT DISTINCT
+            fe.MetaKey 
+        FROM
+            FrequencyEvents fe
+        WHERE
+            fe.ControlTable         = '$controlTable'
+        AND fe.ControlTableSerNum   = '$controlSer'
+        AND fe.MetaKey              = 'repeat_start'
+    ";
+
+    # prepare query
+    my $query = $SQLDatabase->prepare($select_sql)
+        or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+    # execute query
+    $query->execute()
+        or die "Could not execute query: " . $query->errstr;
+    
+    while (my @data = $query->fetchrow_array()) {
+        $frequencyFlag = 1;
+    }
+
+    return $frequencyFlag;
+}
+
 
 # exit smoothly for module
 1;
