@@ -43,11 +43,6 @@ angular.module('opalAdmin.services', [])
 	.service('FrequencyFilterService', function () {
 		this.presetFrequencies = [
 		{
-			name: 'Once',
-			id: 'once',
-			meta_key: 'repeat_day',
-			meta_value: 0
-		},{
 			name: 'Every Day',
 			id: 'every_day',
 			meta_key: 'repeat_day',
