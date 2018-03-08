@@ -214,6 +214,31 @@
                     </p>
                   </div>
 								</div>
+                <!-- SECTION: Appointment Status filter -->
+                <div uib-accordion-group is-open="filterSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:filterSection.show}" is-disabled="!checkFilters(appointmentStatusList)" ng-if="filterSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkFilters(appointmentStatusList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Appointment Status Filter</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': filterSection.open, 'glyphicon-chevron-right': !filterSection.open}" ng-if="checkFilters(appointmentStatusList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkFilters(appointmentStatusList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="appointmentStatus in appointmentStatusList | filter: {added: 1} : 1">
+                          {{appointmentStatus.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
                 <!-- SECTION: Appointment filters -->
                 <div uib-accordion-group is-open="filterSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:filterSection.show}" is-disabled="!checkFilters(appointmentList)" ng-if="filterSection.show">
                   <uib-accordion-heading>
@@ -746,6 +771,40 @@
                   </div>  
                 </div>
               </div>      
+            </div>
+            <!-- SECTION: Appointment Status filter -->
+            <div class="row animated" ng-class="{fadeInUp: filterSection.show}" ng-if="filterSection.show">
+              <div class="col-xs-12 side-menu-title">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fa fa-dot-circle-o"></span>
+                    <h2>Appointment Status Filter</h2>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="row animated" ng-class="{fadeInUp: filterSection.show}" ng-if="filterSection.show">
+              <div class="col-xs-12">
+                <p style="margin-bottom: 10px;">
+                  <span>
+                    <strong>Optional field:</strong>
+                  </span>
+                  Select an appointment status. This will target patients with appointments having this status on the day of the appointment. Using this filter with the appointment filter below will target statuses for specific appointments.
+                </p>
+              </div>
+            </div>
+            <div class="row animated" ng-class="{fadeInUp: filterSection.show}" ng-if="filterSection.show">
+              <div ng-repeat="appointmentStatus in appointmentStatusList" class="col-xs-12 col-sm-4 col-md-3 item-panel-select">
+                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: appointmentStatus.added}" ng-click="appointmentStatusUpdate($index)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                  <div class="panel-info" ng-class="{active: appointmentStatus.added}">
+                    <div class="panel-content" style="text-align:center">
+                      <span ng-if="!appointmentStatus.added" style="font-size:30px;" class="glyphicon glyphicon-minus"></span>
+                      <span ng-if="appointmentStatus.added" style="font-size:30px;" class="glyphicon glyphicon-ok"></span>
+                      <div class="option-panel-title">{{appointmentStatus.name}}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>  
 						<!-- SECTION: Appointment filters -->
 						<div class="row animated" ng-class="{fadeInUp: filterSection.show}" ng-if="filterSection.show">
