@@ -89,6 +89,7 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 		$scope.doctorFilterList = [];
 		$scope.resourceFilterList = [];
 		$scope.patientFilterList = [];
+		$scope.appointmentStatusList = [];
 
 		/* Function for the "Processing..." dialog */
 		var processingModal;
@@ -124,6 +125,7 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 			$scope.doctorFilterList = response.data.doctors;
 			$scope.resourceFilterList = response.data.resources;
 			$scope.patientFilterList = response.data.patients;
+			$scope.appointmentStatusList = response.data.appointmentStatuses;
 
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
@@ -199,6 +201,21 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 
 			$scope.demoSection.open = true;
 			
+		};
+
+		// Function to toggle appointment status filter 
+		$scope.appointmentStatusUpdate = function (index) {
+			angular.forEach($scope.appointmentStatusList, function (appointmentStatus, loopIndex) {
+				if (index == loopIndex) {
+					if (appointmentStatus.added) 
+						appointmentStatus.added = 0;
+					else
+						appointmentStatus.added = 1;
+				}
+				else {
+					appointmentStatus.added = 0;
+				}
+			});
 		};
 
 		// Function to toggle Item in a list on/off
@@ -839,6 +856,7 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 				addFilters($scope.doctorFilterList);
 				addFilters($scope.resourceFilterList);
 				addFilters($scope.patientFilterList);
+				addFilters($scope.appointmentStatusList);
 
 				// Add frequency filter if exists
 				if ($scope.showFrequency) {
