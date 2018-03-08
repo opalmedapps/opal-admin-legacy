@@ -8,7 +8,8 @@
 		'name_EN' 	        => $_POST['name_EN'],
 		'name_FR' 	        => $_POST['name_FR'],
 		'expression' 	    => $_POST['legacy_questionnaire'],
-		'filters'			=> $_POST['filters']
+		'filters'			=> $_POST['filters'],
+        'occurrence'		=> $_POST['occurrence']
 	);
 
 	$legacyQuestionnaire = new LegacyQuestionnaire; // Object
