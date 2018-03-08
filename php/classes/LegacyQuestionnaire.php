@@ -226,6 +226,8 @@ class LegacyQuestionnaire {
                     qc.QuestionnaireDBSerNum,
                     qc.QuestionnaireName_EN,
                     qc.QuestionnaireName_FR,
+                    qc.Intro_EN,
+                    qc.Intro_FR,
                     qc.PublishFlag
                 FROM
                     QuestionnaireControl qc
@@ -241,7 +243,9 @@ class LegacyQuestionnaire {
 			$questionnaireDBSer	        = $data[0];
 			$questionnaireName_EN	    = $data[1];
 			$questionnaireName_FR	    = $data[2];
-            $questionnairePublish       = $data[3];
+            $questionnaireIntro_EN      = $data[3];
+            $questionnaireIntro_FR      = $data[4];
+            $questionnairePublish       = $data[5];
 			$questionnaireFilters	    = array();
 
 			$sql = "
@@ -342,6 +346,8 @@ class LegacyQuestionnaire {
 			$legacyQuestionnaireDetails = array(
 	            'name_FR' 		    => $questionnaireName_FR, 
 				'name_EN' 		    => $questionnaireName_EN, 
+                'intro_EN'          => $questionnaireIntro_EN,
+                'intro_FR'          => $questionnaireIntro_FR,
 				'serial' 		    => $legacyQuestionnaireSer, 
                 'publish'           => $questionnairePublish,
                 'db_serial'         => $questionnaireDBSer,
@@ -367,6 +373,8 @@ class LegacyQuestionnaire {
 
 		$questionnaireName_EN 	= $legacyQuestionnaireDetails['name_EN'];
 		$questionnaireName_FR 	= $legacyQuestionnaireDetails['name_FR'];
+        $questionnaireIntro_EN  = $legacyQuestionnaireDetails['intro_EN'];
+        $questionnaireIntro_FR  = $legacyQuestionnaireDetails['intro_FR'];
         $questionnaireDBSer     = $legacyQuestionnaireDetails['expression']['serial'];
 
 		$questionnaireFilters	= $legacyQuestionnaireDetails['filters'];
@@ -381,12 +389,16 @@ class LegacyQuestionnaire {
                         QuestionnaireDBSerNum,
                         QuestionnaireName_EN,
                         QuestionnaireName_FR,
+                        Intro_EN,
+                        Intro_FR,
                         DateAdded
 					) 
 				VALUES (
                     '$questionnaireDBSer',
 					\"$questionnaireName_EN\", 
 					\"$questionnaireName_FR\",
+                    \"$questionnaireIntro_EN\",
+                    \"$questionnaireIntro_FR\",
                     NOW()
 				)
 			";
@@ -395,31 +407,33 @@ class LegacyQuestionnaire {
 
 			$questionnaireSer = $host_db_link->lastInsertId();
 
-			foreach ($questionnaireFilters as $filter) {
+            if (!empty($questionnaireFilters)) {
+    			foreach ($questionnaireFilters as $filter) {
 
-                $filterType = $filter['type'];
-                $filterId   = $filter['id'];
+                    $filterType = $filter['type'];
+                    $filterId   = $filter['id'];
 
-				$sql = "
-                    INSERT INTO 
-                        Filters (
-                            ControlTable,
-                            ControlTableSerNum,
-                            FilterType,
-                            FilterId,
-                            DateAdded
+    				$sql = "
+                        INSERT INTO 
+                            Filters (
+                                ControlTable,
+                                ControlTableSerNum,
+                                FilterType,
+                                FilterId,
+                                DateAdded
+                            )
+                        VALUE (
+                            'LegacyQuestionnaireControl',
+                            '$questionnaireSer',
+                            '$filterType',
+                            \"$filterId\",
+                            NOW()
                         )
-                    VALUE (
-                        'LegacyQuestionnaireControl',
-                        '$questionnaireSer',
-                        '$filterType',
-                        \"$filterId\",
-                        NOW()
-                    )
-				";
-				$query = $host_db_link->prepare( $sql );
-				$query->execute();
-			}
+    				";
+    				$query = $host_db_link->prepare( $sql );
+    				$query->execute();
+    			}
+            }
 
             if ($questionnaireOccurrence['set']) {
 
@@ -607,6 +621,8 @@ class LegacyQuestionnaire {
 
 		$questionnaireName_EN 	    = $legacyQuestionnaireDetails['name_EN'];
 		$questionnaireName_FR 	    = $legacyQuestionnaireDetails['name_FR'];
+        $questionnaireIntro_EN      = $legacyQuestionnaireDetails['intro_EN'];
+        $questionnaireIntro_FR      = $legacyQuestionnaireDetails['intro_FR'];
         $questionnaireSer	        = $legacyQuestionnaireDetails['serial'];
 		$questionnaireFilters	    = $legacyQuestionnaireDetails['filters'];
         $questionnaireOccurrence    = $legacyQuestionnaireDetails['occurrence'];
@@ -626,7 +642,9 @@ class LegacyQuestionnaire {
 					QuestionnaireControl 
 				SET 
 					QuestionnaireControl.QuestionnaireName_EN 		= \"$questionnaireName_EN\", 
-					QuestionnaireControl.QuestionnaireName_FR 		= \"$questionnaireName_FR\"
+					QuestionnaireControl.QuestionnaireName_FR 		= \"$questionnaireName_FR\",
+                    QuestionnaireControl.Intro_EN                   = \"$questionnaireIntro_EN\",
+                    QuestionnaireControl.Intro_FR                   = \"$questionnaireIntro_FR\"
 				WHERE 
 					QuestionnaireControl.QuestionnaireControlSerNum = $questionnaireSer
 			";

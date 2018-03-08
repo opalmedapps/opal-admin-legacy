@@ -1,10 +1,16 @@
-angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAnimate', 'ui.bootstrap']).
+angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAnimate', 'ui.bootstrap', 'ngSanitize']).
 
+	// Function to accept/trust html (styles, classes, etc.)
+	filter('deliberatelyTrustAsHtml', function ($sce) {
+		return function (text) {
+			return $sce.trustAsHtml(text);
+		};
+	}).
 
 	/******************************************************************************
 	* New Legacy Questionnaire Page controller 
 	*******************************************************************************/
-	controller('newLegacyQuestionnaireController', function($scope, $filter, $uibModal, legacyQuestionnaireCollectionService, $state, filterCollectionService, FrequencyFilterService) {
+	controller('newLegacyQuestionnaireController', function($scope, $filter, $uibModal, $sce, legacyQuestionnaireCollectionService, $state, filterCollectionService, FrequencyFilterService) {
        
        // Function to go to previous page
 		$scope.goBack = function () {
@@ -13,6 +19,7 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 
 		$scope.legacyQuestionnaireSection = {open:false, show:true};
 		$scope.titleSection = {open:false, show:false};
+		$scope.introSection = {open:false, show:false};
 		$scope.demoSection = {open:false, show:false};
 		$scope.filterSection = {open:false, show:false};
 		$scope.publishFrequencySection = {open: false, show:false};
@@ -20,7 +27,8 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 		// completed steps boolean object; used for progress bar
 		var steps = {
 			title: { completed: false },
-			legacy_questionnaire: { completed: false }
+			legacy_questionnaire: { completed: false },
+			intro: {completed: false}
 		};
 
 		// Responsible for "searching" in search bars
@@ -37,7 +45,7 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 		$scope.numOfCompletedSteps = 0;
 
 		// Default total number of steps 
-		$scope.stepTotal = 2;
+		$scope.stepTotal = 3;
 
 		// Progress for progress bar on default steps and total
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -46,6 +54,8 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 		$scope.newLegacyQuestionnaire = {
 			name_EN: null,
 			name_FR: null,
+			intro_EN: null,
+			intro_FR: null,
 			legacy_questionnaire: null,
 			filters: [],
 			occurrence: {
@@ -161,9 +171,7 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 
 			if ($scope.newLegacyQuestionnaire.name_EN && $scope.newLegacyQuestionnaire.name_FR) {
 
-				$scope.demoSection.show = true;
-				$scope.filterSection.show = true;
-				$scope.publishFrequencySection.show = true;
+				$scope.introSection.show = true;
 
 				// Toggle step completion
 				steps.title.completed = true;
@@ -181,6 +189,30 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 			}
 		};
 
+		// Function to toggle necessary changes when updating the intro section
+		$scope.introUpdate = function () {
+
+			$scope.introSection.open = true;
+
+			if ($scope.newLegacyQuestionnaire.intro_EN && $scope.newLegacyQuestionnaire.intro_FR) {
+
+				$scope.demoSection.show = true;
+				$scope.filterSection.show = true;
+				$scope.publishFrequencySection.show = true;
+
+				// Toggle step completion
+				steps.intro.completed = true;
+			}
+			else {
+				// Toggle step completion
+				steps.intro.completed = false;
+			}
+			// Count the number of completed steps
+			$scope.numOfCompletedSteps = stepsCompleted(steps);
+			// Change progress bar
+			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+		}
+
 		// Function to toggle necessary changes when updating the sex
 		$scope.sexUpdate = function (sex) {
 
@@ -190,6 +222,9 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 				$scope.demoFilter.sex = sex.name;
 			} else if ($scope.demoFilter.sex == sex.name) {
 				$scope.demoFilter.sex = null; // Toggle off
+				if ($scope.demoFilter.age.min == 0 && $scope.demoFilter.age.max == 100) {
+					$scope.demoSection.open = false; 
+				}
 			} else {
 				$scope.demoFilter.sex = sex.name;
 			}
@@ -200,6 +235,10 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 		$scope.ageUpdate = function () {
 
 			$scope.demoSection.open = true;
+			if ($scope.demoFilter.age.min == 0 && $scope.demoFilter.age.max == 100 
+				&& !$scope.demoFilter.sex) {
+				$scope.demoSection.open = false; 
+			}
 			
 		};
 
@@ -838,6 +877,11 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 		// Function to submit the new legacy questionnaire
 		$scope.submitLegacyQuestionnaire = function () {
 			if ($scope.checkForm()) {
+
+				// For some reason the HTML text fields add a zero-width-space
+				// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
+				$scope.newLegacyQuestionnaire.intro_EN = $scope.newLegacyQuestionnaire.intro_EN.replace(/\u200B/g,'');
+				$scope.newLegacyQuestionnaire.intro_FR = $scope.newLegacyQuestionnaire.intro_FR.replace(/\u200B/g,'');
 
 				// Add demographic filters, if defined
 				if ($scope.demoFilter.sex)

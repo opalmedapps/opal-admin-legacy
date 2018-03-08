@@ -133,6 +133,55 @@
 				</div>
       </div>
 
+      <!-- SECTION: Body -->
+      <div uib-accordion-group is-open="introSection.open">
+        <uib-accordion-heading>
+          <div>
+            <strong>Introduction Text </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': introSection.open, 'glyphicon-chevron-right': !introSection.open}"></i>
+          </div>
+        </uib-accordion-heading>
+        <div class="row">
+          <div class="col-xs-12 col-lg-8">
+            <div style="text-align:center;">
+              <span style="font-size:20px;">HTML (English)</span>
+            </div>
+            <div class="form-group">
+              <div text-angular ng-model="legacyQuestionnaire.intro_EN" ng-change="setChangesMade()"></div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-lg-4">
+            <div style="text-align:center;">
+              <span style="font-size:20px;">iPhone 4 Rendered</span>
+            </div>
+            <div class="render-html-iphone4"> 
+              <iframe frameborder="0" height="100%" width="100%" srcdoc="{{legacyQuestionnaire.intro_EN | deliberatelyTrustAsHtml}}"></iframe>
+            </div>
+          </div>    
+        </div>
+        <div class="row">
+          <div style="min-height: 15px;"></div><hr>
+        </div>
+        <div class="row">  
+          <div class="col-xs-12 col-lg-8">
+            <div style="text-align:center;">
+              <span style="font-size:20px;">HTML (Français) </span>
+            </div>
+            <div class="form-group">
+              <div text-angular ng-model="legacyQuestionnaire.intro_FR" ng-change="setChangesMade()"></div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-lg-4">
+            <div style="text-align:center;">
+              <span style="font-size:20px;">iPhone 4 Rendered</span>
+            </div>
+            <div class="render-html-iphone4"> 
+              <iframe frameborder="0" height="100%" width="100%" srcdoc="{{legacyQuestionnaire.intro_FR | deliberatelyTrustAsHtml}}"></iframe>
+            </div>
+          </div>    
+        </div>
+      </div>
+
+
       <!-- SECTION: Publish Frequency -->
       <div uib-accordion-group is-open="frequencySection.open">
         <uib-accordion-heading>
