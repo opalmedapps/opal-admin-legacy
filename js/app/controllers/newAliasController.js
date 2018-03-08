@@ -18,7 +18,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 		$scope.educationalMaterialSection = {open:false, show:false};
 		$scope.typeSection = {open:false, show:false};
 		$scope.colorSection = {open:false, show:false};
-		$scope.termSection = {open:false, show:false};
+		$scope.clinicalCodeSection = {open:false, show:false};
 
 		$scope.showAssigned = false;
 		$scope.hideAssigned = false;
@@ -214,7 +214,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 				return;
 
 			$scope.typeSection.open = true;
-			$scope.termSection.show = true;
+			$scope.clinicalCodeSection.show = true;
 
 			// Set the name
 			$scope.newAlias.type = type;
@@ -261,7 +261,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 		};
 
 		// Function to toggle necessary changes when updating color
-		$scope.colorSectionUpdate = function () {
+		$scope.colorUpdate = function () {
 
 			// Toggle booleans
 			$scope.colorSection.open = true;
@@ -279,7 +279,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 		// Function to add / remove a term to alias
 		$scope.toggleTermSelection = function (term) {
 
-			$scope.termSection.open = true;
+			$scope.clinicalCodeSection.open = true;
 
 			// If originally added, remove it
 			if (term.added) {
@@ -292,7 +292,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 					// Toggle boolean
 					steps.terms.completed = false;
 
-					$scope.termSection.open = false;
+					$scope.clinicalCodeSection.open = false;
 
 					// Count the number of completed steps
 					$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -409,7 +409,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 					
 					// Toggle boolean
 					steps.terms.completed = false;
-					$scope.termSection.open = false;
+					$scope.clinicalCodeSection.open = false;
 
 					// Count the number of completed steps
 					$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -435,13 +435,13 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 					
 					// Toggle boolean
 					steps.terms.completed = false;
-					$scope.termSection.open = false;
+					$scope.clinicalCodeSection.open = false;
 
 				}
 				else {
 					// Boolean
 					steps.terms.completed = true;
-					$scope.termSection.open = true;
+					$scope.clinicalCodeSection.open = true;
 					$scope.titleDescriptionSection.show = true;
 				}
 
