@@ -1,6 +1,13 @@
-angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular', 'multipleDatePicker', 'angularjs-dropdown-multiselect'])
+angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular', 'multipleDatePicker', 'angularjs-dropdown-multiselect']).
 
-	.controller('legacyQuestionnaireController', function ($sce, $scope, $state, $filter, $timeout, $uibModal, legacyQuestionnaireCollectionService, filterCollectionService, uiGridConstants, FrequencyFilterService) {
+	// Function to accept/trust html (styles, classes, etc.)
+	filter('deliberatelyTrustAsHtml', function ($sce) {
+		return function (text) {
+			return $sce.trustAsHtml(text);
+		};
+	}).
+	
+	controller('legacyQuestionnaireController', function ($sce, $scope, $state, $filter, $timeout, $uibModal, legacyQuestionnaireCollectionService, filterCollectionService, uiGridConstants, FrequencyFilterService) {
 
 		$scope.goToAddLegacyQuestionnaire = function () {
 			$state.go('legacy-questionnaire-add');
@@ -508,6 +515,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			// Function to check necessary form fields are complete
 			$scope.checkForm = function () {
 				if ($scope.legacyQuestionnaire.name_EN && $scope.legacyQuestionnaire.name_FR && $scope.changesMade
+					&& $scope.legacyQuestionnaire.intro_EN && $scope.legacyQuestionnaire.intro_FR
 					&& $scope.checkFrequencyFilter()) {
 					return true;
 				}

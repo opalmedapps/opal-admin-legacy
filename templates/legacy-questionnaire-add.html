@@ -96,6 +96,28 @@
                     </p>
                   </div>
                 </div>
+                <!-- SECTION: Introduction Text -->
+                <div uib-accordion-group is-open="introSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:introSection.show}" ng-if="introSection.show" is-disabled="!newLegacyQuestionnaire.intro_EN && !newLegacyQuestionnaire.intro_FR">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newLegacyQuestionnaire.intro_EN && newLegacyQuestionnaire.intro_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Introduction Text</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': introSection.open, 'glyphicon-chevron-right': !introSection.open}" ng-if="newLegacyQuestionnaire.intro_EN || newLegacyQuestionnaire.body.FR"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newLegacyQuestionnaire.intro_EN || newLegacyQuestionnaire.intro_FR" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      See rendered output on the right
+                    </p>
+                  </div>
+                </div>
                 <!-- SECTION: Publish Frequency -->
                 <div uib-accordion-group is-open="publishFrequencySection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:publishFrequencySection.show}" is-disabled="!showFrequency" ng-if="publishFrequencySection.show">
                   <uib-accordion-heading>
@@ -500,6 +522,90 @@
                 </div>
               </div>        
             </div>
+            <!-- SECTION: Introduction Text -->
+            <div class="row animated" ng-class="{fadeInUp: introSection.show}" ng-if="introSection.show">
+              <div class="col-xs-12 side-menu-title">
+                <div style="height: 10px; border-bottom:2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fa fa-dot-circle-o"></span>
+                    <h2>Introduction Text</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>   
+            <div class="row animated" ng-class="{fadeInUp: introSection.show}" ng-if="introSection.show">
+              <div class="col-xs-12">
+                <p style="margin-bottom: 5px;">
+                  <span style="color:#d9534f"><strong>Required field:</strong></span>
+                  Please assign the introduction content in both english and in french.
+                </p>
+                <p style="margin-bottom: 5px;">
+                  <span style="color:#d9534f"><strong>HTML exceptions</strong></span><br>
+                  <ul style="margin-left: 15px; margin-bottom: 10px;">
+                    <li>Add <strong>img-responsive</strong> class to img tags. Ex: 
+                      <code data-lang="html">&lt;img class="img-responsive"&gt;</code> 
+                    </li>
+                    <li>No <strong>absolute</strong> measurements! Ie. 
+                      <code data-lang="html">&lt;span style="width:200px"&gt;</code>
+                    </li>
+                  </ul>
+                </p>
+              </div>
+            </div>  
+            <div class="row animated" ng-class="{fadeInUp: introSection.show}" ng-if="introSection.show">
+              <div class="col-xs-12">
+                <div class="panel" ng-class="(newLegacyQuestionnaire.intro_EN) ? 'panel-success': 'panel-danger'">
+                  <div class="panel-heading"><strong>English</strong>
+                    <span ng-hide="newLegacyQuestionnaire.intro_EN" style="float:right"><em>Incomplete</em></span>
+                    <span ng-show="newLegacyQuestionnaire.intro_EN" style="float:right"><em>Complete</em></span>
+                  </div>
+                  <div class="panel-body">
+                    <div class="row">
+                      <div class="col-xs-12 col-md-8">
+                        <div class="form-group">
+                          <div text-angular ng-model="newLegacyQuestionnaire.intro_EN" ng-change="introUpdate()"></div>
+                        </div> 
+                      </div>  
+                      <div class="col-xs-12 col-md-4">
+                        <div style="text-align:center;">
+                          <span style="font-size:20px;">iPhone 4 Rendered</span>
+                        </div>
+                        <div class="render-html-iphone4"> 
+                          <iframe height="100%" width="100%" srcdoc="{{newLegacyQuestionnaire.intro_EN | deliberatelyTrustAsHtml}}" frameborder="0"></iframe>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>           
+            <div class="row animated" ng-class="{fadeInUp: introSection.show}" ng-if="introSection.show">
+              <div class="col-xs-12">
+                <div class="panel" ng-class="(newLegacyQuestionnaire.intro_FR) ? 'panel-success': 'panel-danger'">
+                  <div class="panel-heading"><strong>Français</strong>
+                    <span ng-hide="newLegacyQuestionnaire.intro_FR" style="float:right"><em>Incomplete</em></span>
+                    <span ng-show="newLegacyQuestionnaire.intro_FR" style="float:right"><em>Complete</em></span>
+                  </div>
+                  <div class="panel-body">
+                    <div class="row">
+                      <div class="col-xs-12 col-md-8">
+                        <div class="form-group">
+                          <div text-angular ng-model="newLegacyQuestionnaire.intro_FR" ng-change="introUpdate()"></div>
+                        </div> 
+                      </div>  
+                      <div class="col-xs-12 col-md-4">
+                        <div style="text-align:center;">
+                          <span style="font-size:20px;">iPhone 4 Rendered</span>
+                        </div>
+                        <div class="render-html-iphone4"> 
+                          <iframe height="100%" width="100%" srcdoc="{{newLegacyQuestionnaire.intro_FR | deliberatelyTrustAsHtml}}" frameborder="0"></iframe>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>  
             <!-- SECTION: Publish frequency -->
             <div class="row animated" ng-class="{fadeInUp: filterSection.show}" ng-if="filterSection.show">
               <div class="col-xs-12 side-menu-title">
