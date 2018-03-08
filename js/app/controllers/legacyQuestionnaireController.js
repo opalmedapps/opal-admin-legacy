@@ -1,12 +1,12 @@
 angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular', 'multipleDatePicker', 'angularjs-dropdown-multiselect'])
 
-.controller('legacyQuestionnaireController', function ($sce, $scope, $state, $filter, $timeout, $uibModal, legacyQuestionnaireCollectionService, filterCollectionService, uiGridConstants, FrequencyFilterService) {
+	.controller('legacyQuestionnaireController', function ($sce, $scope, $state, $filter, $timeout, $uibModal, legacyQuestionnaireCollectionService, filterCollectionService, uiGridConstants, FrequencyFilterService) {
 
-	$scope.goToAddLegacyQuestionnaire = function () {
-		$state.go('legacy-questionnaire-add');
-	};
+		$scope.goToAddLegacyQuestionnaire = function () {
+			$state.go('legacy-questionnaire-add');
+		};
 
-	$scope.changesMade = false;
+		$scope.changesMade = false;
 
 		// Banner
 		$scope.bannerMessage = "";
