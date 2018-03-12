@@ -233,6 +233,11 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 		// Function to submit the new post
 		$scope.submitPost = function () {
 			if ($scope.checkForm()) {
+				// For some reason the HTML text fields add a zero-width-space
+				// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
+				$scope.newPost.body_EN = $scope.newPost.body_EN.replace(/\u200B/g,'');
+				$scope.newPost.body_FR = $scope.newPost.body_FR.replace(/\u200B/g,'');
+				
 				// Add filters to new post object
 				addFilters($scope.appointmentList);
 				addFilters($scope.dxFilterList);

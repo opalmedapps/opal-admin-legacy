@@ -530,6 +530,9 @@ class EduMaterial {
 
             if ($url_EN || $url_FR) {
 
+                $url_EN = $this->urlCheck($url_EN);
+                $url_FR = $this->urlCheck($url_FR);
+
                 $urlExt_EN = $this->extensionSearch($url_EN);
                 $urlExt_FR = $this->extensionSearch($url_FR);
 
@@ -541,6 +544,9 @@ class EduMaterial {
 
             if ($tocs) {
                 foreach ($tocs as $toc) {
+
+                    $toc['url_EN'] = $this->urlCheck($toc['url_EN']);
+                    $toc['url_FR'] = $this->urlCheck($toc['url_FR']);
 
                     $tocExt_EN      = $this->extensionSearch($toc['url_EN']); 
                     $tocExt_FR      = $this->extensionSearch($toc['url_FR']); 
@@ -634,6 +640,9 @@ class EduMaterial {
                     $tocURL_FR      = $toc['url_FR'];
                     $tocType_EN     = $toc['type_EN'];
                     $tocType_FR     = $toc['type_FR'];
+
+                    $toc['url_EN'] = $this->urlCheck($toc['url_EN']);
+                    $toc['url_FR'] = $this->urlCheck($toc['url_FR']);
 
                     $tocExt_EN      = $this->extensionSearch($toc['url_EN']); 
                     $tocExt_FR      = $this->extensionSearch($toc['url_FR']); 
@@ -771,6 +780,9 @@ class EduMaterial {
 
             if ($url_EN || $url_FR) {
 
+                $url_EN = $this->urlCheck($url_EN);
+                $url_FR = $this->urlCheck($url_FR);
+
                 $urlExt_EN = $this->extensionSearch($url_EN);
                 $urlExt_FR = $this->extensionSearch($url_FR);
 
@@ -782,6 +794,9 @@ class EduMaterial {
 
             if ($tocs) {
                 foreach ($tocs as $toc) {
+
+                    $toc['url_EN'] = $this->urlCheck($toc['url_EN']);
+                    $toc['url_FR'] = $this->urlCheck($toc['url_FR']);
 
                     $tocExt_EN      = $this->extensionSearch($toc['url_EN']); 
                     $tocExt_FR      = $this->extensionSearch($toc['url_FR']); 
@@ -939,6 +954,9 @@ class EduMaterial {
                     $tocURL_FR      = $toc['url_FR'];
                     $tocType_EN     = $toc['type_EN'];
                     $tocType_FR     = $toc['type_FR'];
+
+                    $toc['url_EN'] = $this->urlCheck($toc['url_EN']);
+                    $toc['url_FR'] = $this->urlCheck($toc['url_FR']);
 
                     $tocExt_EN      = $this->extensionSearch($toc['url_EN']); 
                     $tocExt_FR      = $this->extensionSearch($toc['url_FR']); 
@@ -1139,6 +1157,53 @@ class EduMaterial {
         }
             
         return $extension;
+
+    }
+
+    /**
+     *
+     * Does a url check for cetain domains (eg.youtube)
+     *
+     * @param string $url       : the url
+     * @return string $url
+     */
+    public function urlCheck($url) {
+
+        $urlCheck = $url;
+
+        // get host
+        $host = parse_url($url, PHP_URL_HOST);
+
+
+        // if no host return url
+        if (!$host) {return $urlCheck;}
+
+        // YouTube .. So it can render/embed properly in app 
+        if (strpos($host, 'youtube') !== false) {
+            // First remove any potential arguments in url
+            // Eg. https://www.youtube.com/watch?v=AAAA&feature=youtu.be -> https://www.youtube.com/watch?v=AAAA
+            $pos = strpos($urlCheck, "&");
+            $urlCheck = $pos ===false ? $urlCheck : substr($urlCheck, 0, $pos);
+
+            // Replace potential youtube website urls to embed
+            // https://www.youtube.com/watch?v=AAAA - > https://www.youtube.com/embed/AAAA
+            $urlCheck = str_replace('watch?v=', 'embed/', $urlCheck);
+            return $urlCheck;
+        }
+        // Youtu.be .. same reason
+        if (strpos($host, 'youtu.be') !== false) {
+            // get youtube ID 
+            // eg: https://youtu.be/AAAA ... ID = AAAA
+            $pos = strrpos($url, '/');
+            $id = $pos === false ? false : substr($url, $pos + 1);
+            if (!id) {
+                return $urlCheck;
+            }
+            $urlCheck = 'https://www.youtube.com/embed/' . $id;
+            return $urlCheck;
+        }
+
+        return $urlCheck;
 
     }
 
