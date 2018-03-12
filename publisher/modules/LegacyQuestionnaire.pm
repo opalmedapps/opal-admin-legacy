@@ -157,6 +157,12 @@ sub publishLegacyQuestionnaires
 			# in the non-patient filters  
 			my $isNonPatientSpecificFilterDefined = 0;
             my $isPatientSpecificFilterDefined = 0;
+            # We flag whether this legacy questionnaire is a recurring event for recurring filters 
+            # (appointment, appointment status, checkin status, frequency events)
+            # If there are recurring filters, then we flag = 1. This will allow publishing the same
+            # legacy questionnaire more than once based on whether or not we published already today
+            # or for all time. See inOurDatabase() function
+            my $recurringFlag = 0;
 
 			# Fetch sex filter (if any)
 			my $sexFilter = $questionnaireFilters->getSexFilter();
@@ -202,18 +208,26 @@ sub publishLegacyQuestionnaires
 
             }
 
-			# Retrieve all patient's appointment(s) up until tomorrow
-            my @patientAppointments = Appointment::getAllPatientsAppointmentsFromOurDB($patientSer);
+			# Retrieve all today's appointment(s)
+            my @patientAppointments = Appointment::getTodaysPatientsAppointmentsFromOurDB($patientSer);
 
-            my @expressionNames = ();
+            my @aliasSerials = ();
             my @diagnosisNames = ();
+            my @appointmentStatuses = ();
+            my @checkins = ();
 
-            # we build all possible expression names, and diagnoses for each appointment found
+            my $frequencyFilter = $questionnaireFilters->getFrequencyFilter();
+
+            # we build all possible appointment and diagnoses for each appointment found
             foreach my $appointment (@patientAppointments) {
 
                 my $expressionSer = $appointment->getApptAliasExpressionSer();
-                my $expressionName = Alias::getExpressionNameFromOurDB($expressionSer);
-                push(@expressionNames, $expressionName) unless grep{$_ eq $expressionName} @expressionNames;
+                my $aliasSer = Alias::getAliasFromOurDB($expressionSer);
+                my $status = $appointment->getApptStatus();
+                my $checkinFlag = $appointment->getApptCheckin();
+                push(@aliasSerials, $aliasSer) unless grep{$_ eq $aliasSer} @aliasSerials;
+                push(@appointmentStatuses, $status) unless grep{$_ eq $status} @appointmentStatuses;
+                push(@checkins, $checkinFlag) unless grep{$_ eq $checkinFlag} @checkins;
 
                 my $diagnosisSer = $appointment->getApptDiagnosisSer();
                 my $diagnosisName = Diagnosis::getDiagnosisNameFromOurDB($diagnosisSer);
@@ -223,22 +237,67 @@ sub publishLegacyQuestionnaires
 
             my @patientDoctors = PatientDoctor::getPatientsDoctorsFromOurDB($patientSer);
 
-			# Fetch expression filters (if any)
-            my @expressionFilters =  $questionnaireFilters->getExpressionFilters();
-            if (@expressionFilters) {
+            # Fetch checkin filter (if any)
+            my @checkinFilter = $questionnaireFilters->getCheckinFilters();
+            if (@checkinFilter) {
 
                 # toggle flag
-				$isNonPatientSpecificFilterDefined = 1;
+                $isNonPatientSpecificFilterDefined = 1;
+                $recurringFlag = 1;
 
-                # Finding the existence of the patient expressions in the expression filters
+                # Finding the existence of the patient checkin in the checkin filters
                 # If there is an intersection, then patient is part of this publishing questionnaire
-                if (!intersect(@expressionFilters, @expressionNames)) {
+                if (!intersect(@checkinFilter, @checkins)) {
                    if (@patientFilters) {
-                        # if the patient failed to match the expression filter but there are patient filters
+                        # if the patient failed to match the checkin filter but there are patient filters
                         # then we flag to check later if this patient matches with the patient filters
                         $isPatientSpecificFilterDefined = 1;
                     }
-                    # else no patient filters were defined and failed to match the expression filter
+                    # else no patient filters were defined and failed to match the checkin filter
+                    # move on to the next questionnaire
+                    else{next;}
+                } 
+            }
+
+            # Fetch appointment status filters (if any)
+            my @appointmentStatusFilters =  $questionnaireFilters->getAppointmentStatusFilters();
+            if (@appointmentStatusFilters) {
+
+                # toggle flag
+                $isNonPatientSpecificFilterDefined = 1;
+                $recurringFlag = 1;
+
+                # Finding the existence of the patient status in the status filters
+                # If there is an intersection, then patient is part of this publishing questionnaire
+                if (!intersect(@appointmentStatusFilters, @appointmentStatuses)) {
+                   if (@patientFilters) {
+                        # if the patient failed to match the status filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the status filter
+                    # move on to the next questionnaire
+                    else{next;}
+                } 
+            }
+
+			# Fetch appointment filters (if any)
+            my @appointmentFilters =  $questionnaireFilters->getAppointmentFilters();
+            if (@appointmentFilters) {
+
+                # toggle flag
+				$isNonPatientSpecificFilterDefined = 1;
+                $recurringFlag = 1;
+
+                # Finding the existence of the patient expressions in the appointment filters
+                # If there is an intersection, then patient is part of this publishing questionnaire
+                if (!intersect(@appointmentFilters, @aliasSerials)) {
+                   if (@patientFilters) {
+                        # if the patient failed to match the appointment filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the appointment filter
                     # move on to the next questionnaire
                     else{next;}
                 } 
@@ -297,7 +356,15 @@ sub publishLegacyQuestionnaires
                 if ($isPatientSpecificFilterDefined or !$isNonPatientSpecificFilterDefined) {
     				# Finding the existence of the patient in the patient-specific filters
     				# If the patient does not exist, then continue to the next educational material
-    				if (grep $patientId ne $_, @patientFilters) {next;}
+    				if ($patientId ~~ @patientFilters) {
+                        if ($frequencyFilter) {
+                            $recurringFlag = 1;
+                        }
+                        else {
+                            $recurringFlag = 0;
+                        }
+                    }
+                    else {next;}
                 }
 			}
 
@@ -311,14 +378,14 @@ sub publishLegacyQuestionnaires
 			$questionnaire->setLegacyQuestionnaireControlSer($questionnaireControlSer);
 			$questionnaire->setLegacyQuestionnairePatientSer($patientSer);
 
-			if (!$questionnaire->inOurDatabase()) {
+			if (!$questionnaire->inOurDatabase($recurringFlag)) { 
 
 				$questionnaire = $questionnaire->insertLegacyQuestionnaireIntoOurDB();
 
 				# send push notification
 				my $questionnaireSer = $questionnaire->getLegacyQuestionnaireSer();
 				my $patientSer = $questionnaire->getLegacyQuestionnairePatientSer();
-				PushNotification::sendPushNotification($patientSer, $questionnaireSer, 'LegacyQuestionnaire');
+				#PushNotification::sendPushNotification($patientSer, $questionnaireSer, 'LegacyQuestionnaire');
 			}
 
 		}
@@ -333,7 +400,8 @@ sub publishLegacyQuestionnaires
 #======================================================================================
 sub inOurDatabase
 {
-	my ($questionnaire) = @_; # our questionnaire object in args
+    # our questionnaire object in args
+	my ($questionnaire, $recurringflag) = @_; 
 
 	my $patientser 				= $questionnaire->getLegacyQuestionnairePatientSer();
 	my $questionnaireControlSer	= $questionnaire->getLegacyQuestionnaireControlSer();
@@ -349,9 +417,14 @@ sub inOurDatabase
 		WHERE
 			Questionnaire.PatientSerNum  				= '$patientser'
 		AND Questionnaire.QuestionnaireControlSerNum 	= '$questionnaireControlSer'
-	";
+    ";
+    if ($recurringflag) {
+        $inDB_sql .= " 
+            AND DATE(Questionnaire.DateAdded)= DATE(NOW())
+        ";
+    }
 
-	  # prepare query
+    # prepare query
 	my $query = $SQLDatabase->prepare($inDB_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
 
@@ -428,13 +501,235 @@ sub getLegacyQuestionnaireControlsMarkedForPublish
 {
     my @questionnaireControlList = (); # initialize a list
 
+    # this query combines the retrieval of all legacy questionnaires with a publish flag turned on 
+    # and checks whether a questionnaire lands on the scheduled frequency time that is defined, if it is defined
+    # (See the "Publish Frequency" section on opalAdmin for legacy questionnaires)
+    # complex query inspiration from 
+    # https://stackoverflow.com/questions/5183630/calendar-recurring-repeating-events-best-storage-method
     my $info_sql = "
         SELECT DISTINCT
            	QuestionnaireControl.QuestionnaireControlSerNum
 		FROM
 			QuestionnaireControl
+        LEFT JOIN FrequencyEvents fe1 ON QuestionnaireControl.QuestionnaireControlSerNum = fe1.ControlTableSerNum
+            AND fe1.ControlTable = 'LegacyQuestionnaireControl'
+            AND fe1.MetaKey = 'repeat_start'
+        LEFT JOIN FrequencyEvents fe2 ON fe2.MetaKey = CONCAT( 'repeat_day|lqc_', fe1.ControlTableSerNum )
+        LEFT JOIN FrequencyEvents fe3 ON fe3.MetaKey = CONCAT( 'repeat_week|lqc_', fe1.ControlTableSerNum )
+        LEFT JOIN FrequencyEvents fe4 ON fe4.MetaKey = CONCAT( 'repeat_month|lqc_', fe1.ControlTableSerNum )
+        LEFT JOIN FrequencyEvents fe5 ON fe5.MetaKey = CONCAT( 'repeat_year|lqc_', fe1.ControlTableSerNum )
+        LEFT JOIN FrequencyEvents fe6 ON fe6.MetaKey = CONCAT( 'repeat_day_iw|lqc_', fe1.ControlTableSerNum )
+        LEFT JOIN FrequencyEvents fe7 ON fe7.MetaKey = CONCAT( 'repeat_week_im|lqc_', fe1.ControlTableSerNum )
+        LEFT JOIN FrequencyEvents fe8 ON fe8.MetaKey = CONCAT( 'repeat_date_im|lqc_', fe1.ControlTableSerNum )
+        LEFT JOIN FrequencyEvents fe9 ON fe9.MetaKey = CONCAT( 'repeat_month_iy|lqc_', fe1.ControlTableSerNum )
+        LEFT JOIN FrequencyEvents fe10 ON QuestionnaireControl.QuestionnaireControlSerNum = fe10.ControlTableSerNum
+            AND fe10.ControlTable = 'LegacyQuestionnaireControl'
+            AND fe10.MetaKey = 'repeat_end'
 		WHERE
+        -- Flag
 			QuestionnaireControl.PublishFlag = 1
+        AND ( 
+            -- Compare day interval
+            (
+                -- Number of days passed since start is divisible by repeat interval
+                MOD(TIMESTAMPDIFF(DAY, FROM_UNIXTIME(fe1.MetaValue), NOW()), fe2.MetaValue) = 0
+                -- or day repeat not defined
+                OR fe2.MetaValue IS NULL
+            )
+            -- Compare week interval
+            AND (
+                -- If only week interval is defined
+                (
+                    -- Number of weeks (in days) passed since start is divisible by repeat interval
+                    MOD(TIMESTAMPDIFF(DAY, FROM_UNIXTIME(fe1.MetaValue), NOW()), fe3.MetaValue*7) = 0
+                    -- No repeat_day_iw defined
+                    AND fe6.MetaValue IS NULL
+                    -- or week repeat not even defined at all
+                    OR fe3.MetaValue IS NULL
+                )
+                -- If repeat_day_iw define, we override basic repeat week logic 
+                OR (
+                    -- Number of weeks passed since start is divisible by repeat interval
+                    -- BUT shift both start date and now to Sunday to compare weeks passed
+                    -- Because if triggers are on Mon, Tues, but today is Thurs then technically Mon, Tues next week
+                    -- should trigger even though a true week hasn't passed
+                    MOD(
+                        TIMESTAMPDIFF(
+                            WEEK,
+                            DATE_SUB(FROM_UNIXTIME(fe1.MetaValue), INTERVAL DAYOFWEEK(FROM_UNIXTIME(fe1.MetaValue))-1 DAY),
+                            DATE_SUB(NOW(), INTERVAL DAYOFWEEK(NOW())-1 DAY)
+                        ),
+                        fe3.MetaValue
+                    ) = 0
+                    -- today is in list of days in week 
+                    AND find_in_set(DAYOFWEEK(NOW()), fe6.MetaValue) > 0
+                )
+            )
+            -- Compare month interval
+            AND (
+                -- If only the month interval is defined 
+                (
+                    -- Number of months passed since start is divisible by repeat interval
+                    -- https://stackoverflow.com/questions/288984/the-difference-in-months-between-dates-in-mysql
+                    MOD(
+                        TIMESTAMPDIFF(MONTH,FROM_UNIXTIME(fe1.MetaValue), NOW()) 
+                        + DATEDIFF(
+                            NOW(), 
+                            FROM_UNIXTIME(fe1.MetaValue) + INTERVAL TIMESTAMPDIFF(MONTH, FROM_UNIXTIME(fe1.MetaValue), NOW()) MONTH
+                        ) /
+                        DATEDIFF(
+                            FROM_UNIXTIME(fe1.MetaValue) + INTERVAL TIMESTAMPDIFF(MONTH, FROM_UNIXTIME(fe1.MetaValue), NOW()) + 1 MONTH,
+                            FROM_UNIXTIME(fe1.MetaValue) + INTERVAL TIMESTAMPDIFF(MONTH, FROM_UNIXTIME(fe1.MetaValue), NOW()) MONTH 
+                        ), 
+                        fe4.MetaValue
+                    ) = 0 
+                    -- No repeat_day_iw defined
+                    AND fe6.MetaValue IS NULL
+                    -- No repeat_week_im defined
+                    AND fe7.MetaValue IS NULL
+                    -- No repeat_date_im defined
+                    AND fe8.MetaValue IS NULL
+                    -- or month repeat interval not defined at all
+                    OR fe4.MetaValue IS NULL
+                )
+                -- If other repeats are defined in conjuntion to month repeat
+                OR (
+                    -- Number of months passed since start is divisible by repeat interval 
+                    -- BUT shift both start date and today's date to the 1st to compare months passed 
+                    -- Because if triggers are on 2nd and 3rd of the month and today is the 15th, then
+                    -- we shouldn't trigger on the next 2nd and 3rd if we check every 2 months even though
+                    -- a true month hasn't passed
+                    MOD(
+                        TIMESTAMPDIFF(
+                            MONTH,
+                            DATE_SUB(FROM_UNIXTIME(fe1.MetaValue), INTERVAL DAY(FROM_UNIXTIME(fe1.MetaValue))-1 DAY),
+                            DATE_SUB(NOW(), INTERVAL DAY(NOW())-1 DAY)
+                        ),
+                        fe4.MetaValue
+                    ) = 0
+                    AND (
+                        -- logic for day and week in month
+                        (
+                            -- today lands on the defined day in week 
+                            MOD(DAYOFWEEK(NOW()), fe6.MetaValue) = 0
+                            -- today lands on the week number in month 
+                            AND (
+                                -- logic for week number other than last day in month
+                                (
+                                    MOD(
+                                        WEEK(NOW(),3) - WEEK(NOW() - INTERVAL DAY(NOW()) - 1 DAY,3),
+                                        fe7.MetaValue
+                                    ) = 0
+                                    -- if not looking for last day in month 
+                                    AND fe7.MetaValue != 6
+                                )
+                                -- logic for last day in month
+                                OR (
+                                    DAY(NOW()) = DAY(LAST_DAY(NOW()) - ((7 + DAYOFWEEK(LAST_DAY(NOW())) - fe6.MetaValue) % 7))
+                                    AND fe7.MetaValue = 6
+                                )
+                            )
+                        )
+                        -- logic for date in month
+                        OR (
+                            -- today's date in list of dates
+                            find_in_set(DAY(NOW()), fe8.MetaValue) > 0
+                        )
+                    )
+                )
+            )
+            -- Compare year interval
+            AND (
+                -- If only the year interval is defined
+                (
+
+                    -- Number of years passed (in days) since start is divisible by repeat interval
+                    MOD(TIMESTAMPDIFF(DAY, FROM_UNIXTIME(fe1.MetaValue), NOW())/365, fe5.MetaValue) = 0
+                    -- No day in week defined 
+                    AND fe6.MetaValue IS NULL
+                    -- No repeat_week_im defined 
+                    AND fe7.MetaValue IS NULL
+                    -- No repeat_month_iy defined 
+                    AND fe9.MetaValue IS NULL
+                    -- or year repeat interval not defined at all
+                    OR fe5.MetaValue IS NULL
+                )
+                -- If other repeats are defined in conjunction with the year
+                OR (
+                    -- Subtract year number since start is divisible by repeat interval
+                    MOD (YEAR(NOW()) - YEAR(FROM_UNIXTIME(fe1.MetaValue)), fe5.MetaValue) = 0
+                    -- 
+                    AND (
+                        -- logic for day and week in month 
+                        (
+                            MOD(DAYOFWEEK(NOW()), fe6.MetaValue) = 0
+                            -- today lands on the week number in month 
+                            AND (
+                                -- logic for week number other than last day in month
+                                (
+                                    MOD(
+                                        WEEK(NOW(),3) - WEEK(NOW() - INTERVAL DAY(NOW()) - 1 DAY,3),
+                                        fe7.MetaValue
+                                    ) = 0
+                                    -- if not looking for last day in month 
+                                    AND fe7.MetaValue != 6
+                                )
+                                -- logic for last day in month
+                                OR (
+                                    DAY(NOW()) = DAY(LAST_DAY(NOW()) - ((7 + DAYOFWEEK(LAST_DAY(NOW())) - fe6.MetaValue) % 7))
+                                    AND fe7.MetaValue = 6
+                                )
+                            )
+                            -- and repeat_month_iy not defined 
+                            AND fe9.MetaValue IS NULL
+                        )
+                        -- logic for months in year 
+                        OR (
+                            -- today's month in list of months 
+                            find_in_set(MONTH(NOW()), fe9.MetaValue) > 0
+                            -- and repeat_day_iw is null
+                            AND fe6.MetaValue IS NULL 
+                            -- and repeat_week_im is null 
+                            AND fe7.MetaValue IS NULL
+                        )
+                        -- logic for both day and week and months in year 
+                        OR (
+                            MOD(DAYOFWEEK(NOW()), fe6.MetaValue) = 0
+                            -- today lands on the week number in month 
+                            AND (
+                                -- logic for week number other than last day in month
+                                (
+                                    MOD(
+                                        WEEK(NOW(),3) - WEEK(NOW() - INTERVAL DAY(NOW()) - 1 DAY,3),
+                                        fe7.MetaValue
+                                    ) = 0
+                                    -- if not looking for last day in month 
+                                    AND fe7.MetaValue != 6
+                                )
+                                -- logic for last day in month
+                                OR (
+                                    DAY(NOW()) = DAY(LAST_DAY(NOW()) - ((7 + DAYOFWEEK(LAST_DAY(NOW())) - fe6.MetaValue) % 7))
+                                    AND fe7.MetaValue = 6
+                                )
+                            )
+                            -- today's month in list of months 
+                            AND find_in_set(MONTH(NOW()), fe9.MetaValue) > 0
+                        )
+                    )
+                )
+            )
+            -- today must be greater than start date
+            AND FROM_UNIXTIME(fe1.MetaValue) <= NOW()
+            -- end date logic 
+            AND (
+                -- today must be less than end date 
+                DATE(NOW()) <= FROM_UNIXTIME(fe10.MetaValue)
+                -- or no end date is defined 
+                OR fe10.MetaValue IS NULL
+            )
+            -- or no start date is set at all 
+            OR fe1.MetaValue IS NULL
+        ) 
     ";
 
     # prepare query
