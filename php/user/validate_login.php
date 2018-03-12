@@ -11,7 +11,7 @@
 	
 	// Store FORM params
 	$usr->storeFormValues( $request );
-	
+
 	// Successful login
 	if( $usr->userLogin() ) {
 	

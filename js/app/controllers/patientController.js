@@ -193,7 +193,6 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 
 			$scope.currentPatient = jQuery.extend(true, {}, $scope.patientToToggleBlock);
 
-			console.log($scope.currentPatient);
 			// toggle block immediately
 			if ($scope.currentPatient.disabled == 0)
 				$scope.currentPatient.disabled = 1;
@@ -383,27 +382,33 @@ angular.module('opalAdmin.controllers.patientController', ['ngAnimate', 'ngSanit
 
 				if ($scope.checkForm()) {
 
+					// deep copy patient object
+					var patient = jQuery.extend(true, {}, $scope.patient);
+
 					// Authenticate user using username and old password
-					FB.auth().signInWithEmailAndPassword($scope.patient.email, $scope.patient.oldPassword)
+					FB.auth().signInWithEmailAndPassword(patient.email, patient.oldPassword)
 						.then(function (firebaseUser) {
 							// On successful login, update password in Firebase
-							firebaseUser.updatePassword($scope.patient.password)
+							firebaseUser.updatePassword(patient.password)
 								.then(function (){
 									// submit new password to database
-									console.log("Successfully update firebase password!");
+									// patient.password = CryptoJS.SHA256(patient.password).toString();
+									patient.password = CryptoJS.SHA512(patient.password).toString();
 
-									// $scope.patient.password = CryptoJS.SHA256($scope.patient.password).toString();
-									$scope.patient.password = CryptoJS.SHA512($scope.patient.password).toString();
+									// encrypting other password fields before post to avoid readable password
+									patient.oldPassword = CryptoJS.SHA512(patient.oldPassword).toString();
+									patient.confirmPassword = CryptoJS.SHA512(patient.confirmPassword).toString();
+
 
 									$.ajax({
 										type: "POST",
 										url: "php/patient/update.patient.php",
-										data: $scope.patient,
+										data: patient,
 										success: function (response) {
 											response = JSON.parse(response);
 											if (response.value) {
 												$scope.setBannerClass('success');
-												$scope.$parent.bannerMessage = "Successfully update \"" + $scope.patient.name + "\"";
+												$scope.$parent.bannerMessage = "Successfully update \"" + patient.name + "\"";
 											}
 											else {
 												$scope.setBannerClass('danger');

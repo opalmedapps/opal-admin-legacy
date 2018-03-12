@@ -10,7 +10,8 @@
 		'oldPassword'		=> $_POST['oldPassword'],
 		'password'			=> $_POST['password'],
 		'confirmPassword'	=> $_POST['confirmPassword'],
-		'user'				=> $_POST['user']
+		'user'				=> $_POST['user'],
+		'cypher'			=> $_POST['cypher']
 	);
 
 	// Call function 
