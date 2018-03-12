@@ -15,7 +15,8 @@
         'group_FR'          => $_POST['group_FR'],
         'edumatser'         => $_POST['eduMatSer'],
         'serial'            => $_POST['serial'],
-        'tests'             => $_POST['tests']
+        'tests'             => $_POST['tests'],
+        'additional_links'  => $_POST['additional_links']
     );
 
     // Call function

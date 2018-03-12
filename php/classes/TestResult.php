@@ -74,14 +74,15 @@ class TestResult {
 
 			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
 
-            $name_EN        = $data[0];
-            $name_FR        = $data[1];
-            $description_EN = $data[2];
-            $description_FR = $data[3];
-            $group_EN       = $data[4];
-            $group_FR       = $data[5];
-            $eduMatSer      = $data[6];
-            $tests          = array();
+            $name_EN            = $data[0];
+            $name_FR            = $data[1];
+            $description_EN     = $data[2];
+            $description_FR     = $data[3];
+            $group_EN           = $data[4];
+            $group_FR           = $data[5];
+            $eduMatSer          = $data[6];
+            $tests              = array();
+            $additionalLinks    = array();
 
             $eduMat         = "";
 
@@ -112,6 +113,38 @@ class TestResult {
                 $eduMat = $eduMatObj->getEducationalMaterialDetails($eduMatSer);
             }
 
+            $sql = "
+                SELECT DISTINCT
+                    tral.TestResultAdditionalLinksSerNum,
+                    tral.Name_EN,
+                    tral.Name_FR,
+                    tral.URL_EN,
+                    tral.URL_FR
+                FROM
+                    TestResultAdditionalLinks tral
+                WHERE
+                    tral.TestResultControlSerNum = $serial
+            ";
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                $linkSer        = $data[0];
+                $linkName_EN    = $data[1];
+                $linkName_FR    = $data[2];
+                $linkURL_EN     = urldecode($data[3]);
+                $linkURL_FR     = urldecode($data[4]);
+
+                $linkDetails = array (
+                    'serial'        => $linkSer,
+                    'name_EN'       => $linkName_EN,
+                    'name_FR'       => $linkName_FR,
+                    'url_EN'        => $linkURL_EN,
+                    'url_FR'        => $linkURL_FR
+                );
+                array_push($additionalLinks, $linkDetails);
+            }
+
             $testResultDetails = array(
                 'name_EN'           => $name_EN,
                 'name_FR'           => $name_FR,
@@ -123,7 +156,8 @@ class TestResult {
                 'eduMatSer'         => $eduMatSer,
                 'eduMat'            => $eduMat,
                 'count'             => count($tests),
-                'tests'             => $tests
+                'tests'             => $tests,
+                'additional_links'  => $additionalLinks
             );
             return $testResultDetails;
         } catch (PDOException $e) {
@@ -286,6 +320,7 @@ class TestResult {
         $group_EN           = $testResultDetails['group_EN'];
         $group_FR           = $testResultDetails['group_FR'];
         $tests              = $testResultDetails['tests'];
+        $additionalLinks    = $testResultDetails['additional_links'];
         $eduMatSer          = 0;
         if ( is_array($testResultDetails['edumat']) && isset($testResultDetails['edumat']['serial']) ) {
             $eduMatSer = $testResultDetails['edumat']['serial'];
@@ -347,6 +382,38 @@ class TestResult {
 				$query->execute();
             }
 
+            if ($additionalLinks) {
+                foreach ($additionalLinks as $link) {
+                    
+                    $linkName_EN        = $link['name_EN'];
+                    $linkName_FR        = $link['name_FR'];
+                    $linkURL_EN         = $link['url_EN'];
+                    $linkURL_FR         = $link['url_FR'];
+
+                    $sql = "
+                        INSERT INTO 
+                            TestResultAdditionalLinks (
+                                TestResultControlSerNum,
+                                Name_EN,
+                                Name_FR,
+                                URL_EN,
+                                URL_FR,
+                                DateAdded
+                            )
+                        VALUES (
+                            '$testResultSer',
+                            \"$linkName_EN\",
+                            \"$linkName_FR\",
+                            \"$linkURL_EN\",
+                            \"$linkURL_FR\",
+                            NOW()
+                        )
+                    ";
+                    $query = $host_db_link->prepare( $sql );
+                    $query->execute();
+                }
+            }
+
         } catch( PDOException $e) {
 			return $e->getMessage();
 		}
@@ -396,6 +463,7 @@ class TestResult {
                 $eduMatSer              = $data[8];
                 $eduMat                 = "";
                 $tests                  = array();
+                $additionalLinks        = array();
 
                 $sql = "
                     SELECT DISTINCT
@@ -425,6 +493,38 @@ class TestResult {
                     $eduMat = $eduMatObj->getEducationalMaterialDetails($eduMatSer);
                 }
 
+                $sql = "
+                    SELECT DISTINCT
+                        tral.TestResultAdditionalLinksSerNum,
+                        tral.Name_EN,
+                        tral.Name_FR,
+                        tral.URL_EN,
+                        tral.URL_FR
+                    FROM
+                        TestResultAdditionalLinks tral
+                    WHERE
+                        tral.TestResultControlSerNum = $testResultSer
+                ";
+                $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $secondQuery->execute();
+
+                while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                    $linkSer        = $secondData[0];
+                    $linkName_EN    = $secondData[1];
+                    $linkName_FR    = $secondData[2];
+                    $linkURL_EN     = urldecode($secondData[3]);
+                    $linkURL_FR     = urldecode($secondData[4]);
+
+                    $linkDetails = array (
+                        'serial'        => $linkSer,
+                        'name_EN'       => $linkName_EN,
+                        'name_FR'       => $linkName_FR,
+                        'url_EN'        => $linkURL_EN,
+                        'url_FR'        => $linkURL_FR
+                    );
+                    array_push($additionalLinks, $linkDetails);
+                }
+
                 $testArray = array(
                     'name_EN'           => $name_EN,
                     'name_FR'           => $name_FR,
@@ -437,7 +537,8 @@ class TestResult {
                     'eduMatSer'         => $eduMatSer,
                     'eduMat'            => $eduMat,
                     'tests'             => $tests,
-                    'count'             => count($tests)
+                    'count'             => count($tests),
+                    'additional_links'  => $additionalLinks
                 );
 
                 array_push($testResultList, $testArray);
@@ -467,6 +568,7 @@ class TestResult {
         $serial             = $testResultDetails['serial'];
         $tests              = $testResultDetails['tests'];
         $eduMatSer          = $testResultDetails['edumatser'];
+        $additionalLinks    = $testResultDetails['additional_links'];
 
         $existingTests      = array();
 
@@ -548,6 +650,50 @@ class TestResult {
 					$query->execute();
 				}
 			}
+
+            // clear existing links
+            $sql = "
+                DELETE FROM 
+                    TestResultAdditionalLinks
+                WHERE
+                    TestResultAdditionalLinks.TestResultControlSerNum = '$serial'
+            ";
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
+
+            if ($additionalLinks) {
+                // add new links
+                foreach ($additionalLinks as $link) {
+                    
+                    $linkName_EN        = $link['name_EN'];
+                    $linkName_FR        = $link['name_FR'];
+                    $linkURL_EN         = $link['url_EN'];
+                    $linkURL_FR         = $link['url_FR'];
+
+                    $sql = "
+                        INSERT INTO 
+                            TestResultAdditionalLinks (
+                                TestResultControlSerNum,
+                                Name_EN,
+                                Name_FR,
+                                URL_EN,
+                                URL_FR,
+                                DateAdded
+                            )
+                        VALUES (
+                            '$serial',
+                            \"$linkName_EN\",
+                            \"$linkName_FR\",
+                            \"$linkURL_EN\",
+                            \"$linkURL_FR\",
+                            NOW()
+                        )
+                    ";
+                    $query = $host_db_link->prepare( $sql );
+                    $query->execute();
+                }
+            }
+
             $response['value'] = 1; // Success
             return $response;
 
@@ -574,6 +720,25 @@ class TestResult {
 	    try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+                
+            $sql = "
+                DELETE FROM
+                    TestResultExpression
+                WHERE
+                    TestResultExpression.TestResultControlSerNum = $testResultSer
+            ";
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
+
+            $sql = "
+                DELETE FROM
+                    TestResultAdditionalLinks
+                WHERE
+                    TestResultAdditionalLinks.TestResultControlSerNum = $testResultSer
+            ";
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
+
             $sql = "
                 DELETE FROM
                     TestResultControl
@@ -583,15 +748,6 @@ class TestResult {
 
 	        $query = $host_db_link->prepare( $sql );
             $query->execute();
-
-            $sql = "
-                DELETE FROM
-                    TestResultExpression
-                WHERE
-                    TestResultExpression.TestResultControlSerNum = $testResultSer
-            ";
-            $query = $host_db_link->prepare( $sql );
-			$query->execute();
 
             $response['value'] = 1;
             return $response;

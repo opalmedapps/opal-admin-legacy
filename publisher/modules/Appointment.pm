@@ -52,6 +52,7 @@ sub new
         _state              => undef,
         _actualstartdate    => undef,
         _actualenddate      => undef,
+        _checkin 			=> undef,
 	};
 
 	# bless associates an object with a class so Perl knows which package to search for
@@ -202,6 +203,16 @@ sub setApptDiagnosisSer
 }
 
 #====================================================================================
+# Subroutine to set the Appointment Checkin flag
+#====================================================================================
+sub setApptCheckin
+{
+	my ($appointment, $checkin) = @_; # appt object with provided flag in arguments
+	$appointment->{_checkin} = $checkin; # set the flag
+	return $appointment->{_checkin};
+}
+
+#====================================================================================
 # Subroutine to get the Appointment Serial
 #====================================================================================
 sub getApptSer
@@ -325,6 +336,15 @@ sub getApptDiagnosisSer
 {
 	my ($appointment) = @_; # our appt object
 	return $appointment->{_diagnosisser};
+}
+
+#====================================================================================
+# Subroutine to get the Appointment checkin
+#====================================================================================
+sub getApptCheckin
+{
+	my ($appointment) = @_; # our appt object
+	return $appointment->{_checkin};
 }
 
 #======================================================================================
@@ -653,8 +673,9 @@ sub getPatientsAppointmentsFromDateInOurDB
             Appointment ap
         WHERE
             ap.PatientSerNum            = '$patientSer'
-        AND ap.ScheduledStartTime       <= '$dateOfInterest 11:59:59'
-        AND ap.ScheduledStartTime       >= DATE_SUB('$dateOfInterest', INTERVAL $dayInterval DAY) 
+        AND ap.ScheduledStartTime       <= '$dateOfInterest 23:59:59'
+        AND ap.ScheduledStartTime       >= DATE_SUB('$dateOfInterest 00:00:00', INTERVAL $dayInterval DAY) 
+        AND ap.State 					= 'Active'
     ";
 
     # prepare query
@@ -695,6 +716,78 @@ sub getPatientsAppointmentsFromDateInOurDB
 }
 
 #======================================================================================
+# Subroutine to get patient's today's appointment(s) from our db given a patient serial and date
+#======================================================================================
+sub getTodaysPatientsAppointmentsFromOurDB
+{
+    my ($patientSer) = @_; # args
+
+    my @appointments = (); 
+
+    my $select_sql = "
+        SELECT DISTINCT
+            ap.AppointmentSerNum,
+            ap.AliasExpressionSerNum,
+            ap.AppointmentAriaSer,
+            ap.ScheduledStartTime,
+            ap.ScheduledEndTime,
+            ap.DiagnosisSerNum,
+            ap.SourceDatabaseSerNum,
+            sa.Name,
+            ap.Checkin
+        FROM 
+            Appointment ap,
+            StatusAlias sa
+        WHERE
+            ap.PatientSerNum            = '$patientSer'
+        AND DATE(ap.ScheduledStartTime) = CURDATE()
+        AND ap.State 					= 'Active'
+        AND ap.Status 					= sa.Expression
+        AND ap.SourceDatabaseSerNum		= sa.SourceDatabaseSerNum
+    ";
+
+    # prepare query
+	my $query = $SQLDatabase->prepare($select_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+	
+	while (my @data = $query->fetchrow_array()) {
+
+        my $ser             = $data[0];
+        my $expressionser   = $data[1];
+        my $sourceUID       = $data[2];
+        my $scheduledST     = $data[3];
+        my $scheduledET     = $data[4];
+        my $diagnosisser    = $data[5];
+        my $sourceDBSer     = $data[6];
+        my $status 			= $data[7];
+        my $checkin 		= $data[8];
+
+        $appointment = new Appointment();
+
+        $appointment->setApptSer($ser);
+        $appointment->setApptAliasExpressionSer($expressionser);
+        $appointment->setApptSourceUID($sourceUID);
+        $appointment->setApptPatientSer($patientSer);
+        $appointment->setApptStartDateTime($scheduledST);
+        $appointment->setApptEndDateTime($scheduledET);
+        $appointment->setApptDiagnosisSer($diagnosisser);
+        $appointment->setApptSourceDatabaseSer($sourceDBSer);
+        $appointment->setApptStatus($status);
+        $appointment->setApptCheckin($checkin);
+
+        push(@appointments, $appointment);
+
+    }
+
+    return @appointments;
+
+}
+
+#======================================================================================
 # Subroutine to get all patient's appointment(s) up until tomorrow
 #======================================================================================
 sub getAllPatientsAppointmentsFromOurDB
@@ -717,6 +810,7 @@ sub getAllPatientsAppointmentsFromOurDB
         WHERE
             ap.PatientSerNum            = '$patientSer'
         AND ap.ScheduledStartTime       <= DATE_ADD(NOW(), INTERVAL 1 DAY)
+        AND ap.State 					= 'Active'
     ";
     # prepare query
 	my $query = $SQLDatabase->prepare($select_sql)

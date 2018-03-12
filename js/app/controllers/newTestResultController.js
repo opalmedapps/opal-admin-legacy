@@ -11,10 +11,11 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 		};
 
 		// default boolean
-		$scope.tests = {open: false, show: true};
-		$scope.title_description = {open: false, show: false};
-		$scope.group = {open: false, show: false};
-		$scope.edumat = {open: false, show: false};
+		$scope.testsSection = {open: false, show: true};
+		$scope.titleDescriptionSection = {open: false, show: false};
+		$scope.testGroupSection = {open: false, show: false};
+		$scope.educationalMaterialSection = {open: false, show: false};
+		$scope.additionalLinksSection = {open: false, show: false};
 
 		// completed steps boolean object; used for progress bar
 		var steps = {
@@ -68,7 +69,8 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 			group_EN: "",
 			group_FR: "",
 			eduMat: null,
-			tests: []
+			tests: [],
+			additional_links: []
 		};
 
 		// Initialize lists to hold distinct test groups 
@@ -131,14 +133,14 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 		// Function to toggle necessary changes when updating title and description
 		$scope.titleDescriptionUpdate = function () {
 
-			$scope.title_description.open = true;
+			$scope.titleDescriptionSection.open = true;
 
 			if ($scope.newTestResult.name_EN && $scope.newTestResult.name_FR &&
 				$scope.newTestResult.description_EN && $scope.newTestResult.description_FR) {
 
 				// Toggle step completion
 				steps.title_description.completed = true;
-				$scope.group.show = true;
+				$scope.testGroupSection.show = true;
 
 				// Count the number of completed steps
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -157,11 +159,12 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 		// Function to toggle necessary changes when updating groups
 		$scope.groupUpdate = function () {
 
-			$scope.group.open = true; 
+			$scope.testGroupSection.open = true; 
 
 			if ($scope.newTestResult.group_EN && $scope.newTestResult.group_FR) {
 
-				$scope.edumat.show = true;
+				$scope.educationalMaterialSection.show = true;
+				$scope.additionalLinksSection.show = true;
 
 				// Toggle step completion
 				steps.group.completed = true;
@@ -183,8 +186,36 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 		$scope.eduMatUpdate = function () {
 
 			// Toggle booleans
-			$scope.edumat.open = true;
+			$scope.educationalMaterialSection.open = true;
 		}
+
+		$scope.additionalLinksComplete = false;
+		// Function to toggle necessary changes when updating the additional links
+		$scope.additionalLinkUpdate = function () {
+
+			$scope.additionalLinksSection.open = true;
+
+			$scope.additionalLinksComplete = true;
+
+			if (!$scope.newTestResult.additional_links.length) {
+				$scope.additionalLinksComplete = false;
+
+			} else {
+
+				angular.forEach($scope.newTestResult.additional_links, function (link) {
+					if (!link.name_EN || !link.name_FR || !link.url_EN
+						|| !link.url_FR) {
+						$scope.additionalLinksComplete = false;
+					}
+				});
+
+			}
+
+			// Count the number of completed steps
+			$scope.numOfCompletedSteps = stepsCompleted(steps);
+			// Change progress bar
+			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+		};
 
 		// Function to return boolean for # of added tests
 		$scope.checkTestsAdded = function (testList) {
@@ -211,7 +242,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 				// Check if there are still tests added, if not, flag
 				if (!$scope.checkTestsAdded($scope.testList)) {
 
-					$scope.tests.open = false;
+					$scope.testsSection.open = false;
 
 					// Toggle boolean
 					steps.tests.completed = false;
@@ -232,8 +263,8 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 				// Boolean
 				steps.tests.completed = true;
 
-				$scope.tests.open = true;
-				$scope.title_description.show = true;
+				$scope.testsSection.open = true;
+				$scope.titleDescriptionSection.show = true;
 
 				// Count the number of steps completed
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -243,6 +274,23 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 
 			}
 
+		};
+
+		// Function to add additioanl links to newTestResult object
+		$scope.addAdditionalLink = function () {
+			$scope.newTestResult.additional_links.push({
+				name_EN: "",
+				name_FR: "",
+				url_EN: "",
+				url_FR: ""
+			});
+			$scope.additionalLinkUpdate();
+		};
+
+		// Function to remove additional link from newTestResult object
+		$scope.removeAdditionalLink = function (index) {
+			$scope.newTestResult.additional_links.splice(index, 1);
+			$scope.additionalLinkUpdate();
 		};
 
 		// Function to submit the new test result
@@ -300,8 +348,13 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 
 		// Function to return boolean for form completion
 		$scope.checkForm = function () {
-			if (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) == 100)
-				return true;
+			if (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) == 100) {
+				if ($scope.newTestResult.additional_links.length && !$scope.additionalLinksComplete) {
+					return false;
+				}
+				else
+					return true;
+			}
 			else
 				return false;
 		};
@@ -322,5 +375,35 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 		        });
 		    }
 		});
+
+		var fixMeMobile = $('.mobile-side-panel-menu').offset().top;
+		$(window).scroll(function() {
+		    var currentScroll = $(window).scrollTop();
+		    if (currentScroll >= fixMeMobile) {
+		        $('.mobile-side-panel-menu').css({
+		            position: 'fixed',
+		            top: '50px',
+		            width: '100%',
+		            zIndex: '100',
+		            background: '#6f5499',
+		            boxShadow: 'rgba(93, 93, 93, 0.6) 0px 3px 8px -3px'
+		          	
+		        });
+		        $('.mobile-summary .summary-title').css({
+		        	color: 'white'
+		        });
+		    } else {
+		        $('.mobile-side-panel-menu').css({
+		            position: 'static',
+		            width: '',
+		            background: '',
+		            boxShadow: ''
+		        });
+		         $('.mobile-summary .summary-title').css({
+		        	color: '#6f5499'
+		        });
+		    }
+		});
+
 
 	});

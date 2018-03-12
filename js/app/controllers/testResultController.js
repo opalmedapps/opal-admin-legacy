@@ -210,7 +210,6 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 			// Responsible for "searching" in search bars
 			$scope.filter = $filter('filter');
 
-
 			$scope.testResult = {}; // Initialize test result object
 
 			// Initialize list to hold test names
@@ -326,22 +325,45 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 			$scope.checkForm = function () {
 				if ($scope.testResult.name_EN && $scope.testResult.name_FR && $scope.testResult.description_EN
 					&& $scope.testResult.description_FR && $scope.testResult.group_EN && $scope.testResult.group_FR
-					&& $scope.checkTestsAdded($scope.testList) && $scope.changesMade) {
+					&& $scope.checkTestsAdded($scope.testList) && $scope.additionalLinksComplete && $scope.changesMade) {
 					return true;
 				}
 				else return false;
 			};
 
-			$scope.eduMatUpdate = function () {
+			$scope.eduMatUpdate = function (eduMat) {
 
+				$scope.testResult.eduMat = eduMat;
 				// Toggle boolean
-				$scope.changesMade = true;
+				$scope.setChangesMade();
+			};
+
+			// Function to add an additional link to the test result
+			$scope.addAdditionalLink = function () {
+				$scope.testResult.additional_links.push({
+					name_EN: "",
+					name_FR: "",
+					url_EN: "",
+					url_FR: "",
+					serial: null
+				});
+				$scope.setChangesMade();
+			};
+
+			// Function to remove an additional link from the test result
+			$scope.removeAdditionalLink = function (index) {
+				$scope.testResult.additional_links.splice(index, 1);
+
+				if (!$scope.testResult.additional_links) {
+					$scope.testResult.additional_links = [];
+				}
+				$scope.setChangesMade();
 			};
 
 			// Function to add / remove a test
 			$scope.toggleTestSelection = function (test) {
 
-				$scope.changesMade = true;
+				$scope.setChangesMade();
 
 				// If originally added, remove it
 				if (test.added) {
@@ -373,6 +395,15 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 
 			$scope.setChangesMade = function () {
 				$scope.changesMade = true;
+				$scope.additionalLinksComplete = true;
+				if($scope.testResult.additional_links) {
+					angular.forEach($scope.testResult.additional_links, function (link) {
+						if (!link.name_EN || !link.name_FR || !link.url_EN 
+							|| !link.url_FR) {
+							$scope.additionalLinksComplete = false;
+						}
+					});
+				}
 			};
 
 			// Submit changes
