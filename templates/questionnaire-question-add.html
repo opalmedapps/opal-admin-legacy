@@ -49,7 +49,7 @@
               <uib-accordion class="side-navbar">
 
                 <!-- SECTION: Question Text -->
-                <div uib-accordion-group is-open="title.open" class="panel-container summary-box" is-disabled="!newQuestion.text_EN && !newQuestion.text_FR">
+                <div uib-accordion-group is-open="titleSection.open" class="panel-container summary-box" is-disabled="!newQuestion.text_EN && !newQuestion.text_FR">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -59,7 +59,7 @@
                         <strong>Question</strong>
                       </div>
                       <div class="col-md-2">
-                        <i ng-if="newQuestion.text_EN || newQuestion.text_FR" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': title.open, 'glyphicon-chevron-right': !title.open}"></i>
+                        <i ng-if="newQuestion.text_EN || newQuestion.text_FR" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
                       </div>
                     </div>
                   </uib-accordion-heading>
@@ -80,7 +80,7 @@
                 </div>
 
                 <!-- SECTION: Answer type -->
-                <div uib-accordion-group is-open="answer_type.open" class="panel-container summary-box animated" ng-class="{fadeInUp: answer_type.show}" ng-if="answer_type.show" is-disabled="!newQuestion.answertype_serNum">
+                <div uib-accordion-group is-open="answerTypeSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show" is-disabled="!newQuestion.answertype_serNum">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -90,7 +90,7 @@
                         <strong>Answer Type</strong>
                       </div>
                       <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': answer_type.open, 'glyphicon-chevron-right': !answer_type.open}" ng-if="newQuestion.answertype_serNum"></i>
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': answerTypeSection.open, 'glyphicon-chevron-right': !answerTypeSection.open}" ng-if="newQuestion.answertype_serNum"></i>
                       </div>
                     </div>
                   </uib-accordion-heading>
@@ -114,7 +114,7 @@
                 </div>
 
                 <!-- SECTION: Question group -->
-                <div uib-accordion-group is-open="question_group.open" class="panel-container summary-box animated" ng-class="{fadeInUp: question_group.show}" ng-if="question_group.show" is-disabled="!newQuestion.questiongroup_serNum">
+                <div uib-accordion-group is-open="questionGroupSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: questionGroupSection.show}" ng-if="questionGroupSection.show" is-disabled="!newQuestion.questiongroup_serNum">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -124,7 +124,7 @@
                         <strong>Question Group</strong>
                       </div>
                       <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': question_group.open, 'glyphicon-chevron-right': !question_group.open}" ng-if="newQuestion.questiongroup_serNum"></i>
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': questionGroupSection.open, 'glyphicon-chevron-right': !questionGroupSection.open}" ng-if="newQuestion.questiongroup_serNum"></i>
                       </div>
                     </div>
                   </uib-accordion-heading>
@@ -254,7 +254,7 @@
                 </div>
 
                 <!-- SECTION: Answer Type -->
-                <div class="row animated" ng-class="{fadeInUp: answer_type.show}" ng-if="answer_type.show">
+                <div class="row animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show">
                   <div class="col-xs-12 side-menu-title">
                     <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                       <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -264,13 +264,13 @@
                     </div>
                   </div>
                 </div>
-                <div class="row animated" ng-class="{fadeInUp: answer_type.show}" ng-if="answer_type.show">
+                <div class="row animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show">
                   <div class="col-xs-12 col-md-6">
                     <p style="margin-bottom: 10px;">
                       <span style="color:#d9534f"><strong>Required field:</strong></span>
                       Please choose an answer type where to add this question.
                     </p>
-                    <div class="row animated" ng-class="{fadeInUp: answer_type.show}" ng-if="answer_type.show">
+                    <div class="row animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show">
                       <div class="col-xs-12">
                         <div class="panel" ng-class="newQuestion.answertype_serNum ? 'panel-success': 'panel-danger'">
                           <div class="panel-heading"><strong>Answer Type</strong>
@@ -331,7 +331,7 @@
                   </div>
 
                 </div>
-                <div class="row animated" ng-class="{fadeInUp: answer_type.show}" ng-if="answer_type.show">
+                <div class="row animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show">
                   <div class="col-xs-12 col-md-8">
                     <p style="margin-bottom: 10px; margin-top: 10px;">
                       <span style="font-size: 20px;" class="fa fa-question-circle"></span>
@@ -387,7 +387,7 @@
                 </div>
 
                 <!-- SECTION: Question grouping -->
-                <div class="row animated" ng-class="{fadeInUp: question_group.show}" ng-if="question_group.show" style="margin-top: 10px;">
+                <div class="row animated" ng-class="{fadeInUp: questionGroupSection.show}" ng-if="questionGroupSection.show" style="margin-top: 10px;">
                   <div class="col-xs-12 side-menu-title">
                     <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                       <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -397,7 +397,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="row animated" ng-class="{fadeInUp: question_group.show}" ng-if="question_group.show">
+                <div class="row animated" ng-class="{fadeInUp: questionGroupSection.show}" ng-if="questionGroupSection.show">
                   <div class="col-xs-12">
                     <p style="margin-bottom: 10px;">
                       <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -405,7 +405,7 @@
                     </p>
                   </div>
                 </div>
-                <div class="row animated" ng-class="{fadeInUp: question_group.show}" ng-if="question_group.show">
+                <div class="row animated" ng-class="{fadeInUp: questionGroupSection.show}" ng-if="questionGroupSection.show">
                   <div class="col-xs-12 col-md-8">
                     <div class="panel" ng-class="newQuestion.questiongroup_serNum ? 'panel-success': 'panel-danger'">
                       <div class="panel-heading"><strong>Question Group</strong>
@@ -433,7 +433,7 @@
                 </div>
 
                 <!-- Add new Library/Category/Group -->
-                <div class="row animated" ng-class="{fadeInUp: question_group.show}" ng-if="question_group.show">
+                <div class="row animated" ng-class="{fadeInUp: questionGroupSection.show}" ng-if="questionGroupSection.show">
                   <div class="col-xs-12">
                     <p style="margin-bottom: 10px; margin-top: 10px;">
                       <span style="font-size: 20px;" class="fa fa-question-circle"></span>

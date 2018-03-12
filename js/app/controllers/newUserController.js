@@ -12,8 +12,8 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 		};
 
 		// default booleans
-		$scope.password = {open:false, show:false};
-		$scope.role = {open:false, show:false};
+		$scope.passwordSection = {open:false, show:false};
+		$scope.roleSection = {open:false, show:false};
 
 		// completed registration steps in object notation
 		var steps = {
@@ -146,7 +146,7 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 		$scope.usernameUpdate = function () {
 			if ($scope.validUsername.status == 'valid') {
 				steps.username.completed = true;
-				$scope.password.show = true;
+				$scope.passwordSection.show = true;
 			}
 			else
 				steps.username.completed = false;
@@ -159,7 +159,7 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 		$scope.passwordUpdate = function () {
 			if ($scope.validPassword.status == 'valid' && $scope.validConfirmPassword.status == 'valid') {
 				steps.password.completed = true;
-				$scope.role.show = true;
+				$scope.roleSection.show = true;
 			}
 			else
 				steps.password.completed = false;
@@ -170,7 +170,7 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 
 		// Function to toggle steps when updating the role field
 		$scope.roleUpdate = function () {
-			$scope.role.open = true;
+			$scope.roleSection.open = true;
 			if ($scope.newUser.role)
 				steps.role.completed = true;
 			else

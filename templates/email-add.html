@@ -45,7 +45,7 @@
               </div>
               <uib-accordion class="side-navbar">
                 <!-- SECTION: Type -->
-                <div uib-accordion-group is-open="type.open" class="panel-container summary-box" is-disabled="!newEmail.type">
+                <div uib-accordion-group is-open="typeSection.open" class="panel-container summary-box" is-disabled="!newEmail.type">
                   <uib-accordion-heading>
                     <div class="row" style="align-items:center">
                       <div class="col-md-2">
@@ -55,7 +55,7 @@
                         <strong>Type</strong>
                       </div>
                       <div class="col-md-2">
-                        <i ng-if="newEmail.type" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':type.open, 'glyphicon-chevron-right': !type.open}"></i>
+                        <i ng-if="newEmail.type" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':typeSection.open, 'glyphicon-chevron-right': !typeSection.open}"></i>
                       </div>
                     </div>
                   </uib-accordion-heading>
@@ -67,7 +67,7 @@
                   </div>
                 </div>
                 <!-- SECTION: Title -->
-                <div uib-accordion-group is-open="title.open" class="panel-container summary-box animated" ng-class="{fadeInUp: title.show}" is-disabled="!newEmail.subject_EN && !newEmail.subject_FR" ng-if="title.show">
+                <div uib-accordion-group is-open="titleSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: titleSection.show}" is-disabled="!newEmail.subject_EN && !newEmail.subject_FR" ng-if="titleSection.show">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -77,7 +77,7 @@
                         <strong>Title</strong> 
                       </div>
                       <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': title.open, 'glyphicon-chevron-right': !title.open}" ng-if="newEmail.subject_EN || newEmail.subject_FR"></i>
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}" ng-if="newEmail.subject_EN || newEmail.subject_FR"></i>
                       </div>
                     </div>
                   </uib-accordion-heading>
@@ -97,7 +97,7 @@
                   </div>
                 </div>
                 <!-- SECTION: Body -->
-                <div uib-accordion-group is-open="body.open" class="panel-container summary-box animated" ng-class="{fadeInUp: body.show}" is-disabled="!newEmail.body_EN && !newEmail.body_FR" ng-if="body.show">
+                <div uib-accordion-group is-open="bodySection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: bodySection.show}" is-disabled="!newEmail.body_EN && !newEmail.body_FR" ng-if="bodySection.show">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -107,7 +107,7 @@
                         <strong>Body</strong> 
                       </div>
                       <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': body.open, 'glyphicon-chevron-right': !body.open}" ng-if="newEmail.body_EN || newEmail.body_FR"></i>
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': bodySection.open, 'glyphicon-chevron-right': !bodySection.open}" ng-if="newEmail.body_EN || newEmail.body_FR"></i>
                       </div>
                     </div>
                   </uib-accordion-heading>
@@ -210,7 +210,7 @@
                 </div>
               </div> 
               <!-- SECTION: Title -->
-  						<div class="row animated" ng-class="{fadeInUp: title.show}" ng-if="title.show">
+  						<div class="row animated" ng-class="{fadeInUp: titleSection.show}" ng-if="titleSection.show">
                 <div class="col-xs-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -220,7 +220,7 @@
                   </div>  
                 </div>
               </div>   
-              <div class="row animated" ng-class="{fadeInUp: title.show}" ng-if="title.show">
+              <div class="row animated" ng-class="{fadeInUp: titleSection.show}" ng-if="titleSection.show">
                 <div class="col-xs-12">
                   <p style="margin-bottom: 10px;">
                     <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -228,7 +228,7 @@
                   </p>
                 </div>
               </div>  
-              <div class="row aniamted" ng-class="{fadeInUp: title.show}" ng-if="title.show">
+              <div class="row aniamted" ng-class="{fadeInUp: titleSection.show}" ng-if="titleSection.show">
                 <div class="col-xs-12 col-md-6">
                   <div class="panel" ng-class="(newEmail.subject_EN) ? 'panel-success': 'panel-danger'">
                     <div class="panel-heading"><strong>English</strong>
@@ -267,7 +267,7 @@
                 </div>        
               </div>
               <!-- SECTION: Body -->
-  						<div class="row animated" ng-class="{fadeInUp: body.show}" ng-if="body.show">
+  						<div class="row animated" ng-class="{fadeInUp: bodySection.show}" ng-if="bodySection.show">
                 <div class="col-xs-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -277,7 +277,7 @@
                   </div>  
                 </div>
               </div>   
-              <div class="row animated" ng-class="{fadeInUp: body.show}" ng-if="body.show">
+              <div class="row animated" ng-class="{fadeInUp: bodySection.show}" ng-if="bodySection.show">
                 <div class="col-xs-12">
                   <p style="margin-bottom: 5px;">
                     <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -285,7 +285,7 @@
                   </p>
                 </div>
               </div>  
-              <div class="row animated" ng-class="{fadeInUp: body.show}" ng-if="body.show">
+              <div class="row animated" ng-class="{fadeInUp: bodySection.show}" ng-if="bodySection.show">
                 <div class="col-xs-12 col-md-9">
                   <div class="panel" ng-class="(newEmail.body_EN) ? 'panel-success': 'panel-danger'">
                     <div class="panel-heading"><strong>English</strong>
@@ -304,7 +304,7 @@
                   </div>
                 </div>
               </div>           
-              <div class="row animated" ng-class="{fadeInUp: body.show}" ng-if="body.show">
+              <div class="row animated" ng-class="{fadeInUp: bodySection.show}" ng-if="bodySection.show">
                 <div class="col-xs-12 col-md-9">
                   <div class="panel" ng-class="(newEmail.body_FR) ? 'panel-success': 'panel-danger'">
                     <div class="panel-heading"><strong>Français</strong>

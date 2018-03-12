@@ -14,11 +14,12 @@ class Filter {
      */
     public function getFilters () {
         $filters = array(
-            'expressions'   => array(),
-            'dx'            => array(),
-            'doctors'       => array(),
-			'resources'     => array(),
-			'patients'		=> array()
+            'appointments'          => array(),
+            'dx'                    => array(),
+            'doctors'               => array(),
+			'resources'             => array(),
+			'patients'		        => array(),
+            'appointmentStatuses'   => array()
         );
         $databaseObj = new Database();
 
@@ -30,29 +31,6 @@ class Filter {
             $sourceDBSer = 1;
             $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
             if ($source_db_link) {
-		
-                $sql = "
-                    SELECT DISTINCT
-                        vva.Expression1
-                    FROM   
-                        variansystem.dbo.vv_ActivityLng vva
-                    ORDER BY
-                        vva.Expression1
-                ";
-
-                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                $query->execute();
-
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-             
-                    $expressionArray = array(
-                        'name'  => $data[0],
-                        'id'    => $data[0],
-                        'type'  => 'Expression',
-                        'added' => 0
-                    );
-                    array_push($filters['expressions'], $expressionArray);
-                }
 
                 $sql = "
                     SELECT DISTINCT
@@ -117,20 +95,6 @@ class Filter {
             $sourceDBSer = 2;
             $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
             if ($source_db_link) {
-        
-                $sql = "SELECT 'EXPRESSION_QUERY_HERE'";
-                // $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                // $query->execute();
-                // while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-             
-                    // $expressionArray = array(
-                    //     'name'  => $data[0],
-                    //     'id'    => $data[0],
-                    //     'type'  => 'Expression',
-                    //     'added' => 0
-                    // );
-                    // array_push($filters['expressions'], $expressionArray);
-                //}
 
                 $sql = "SELECT 'DOCTOR_QUERY_HERE'";
                 // $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
@@ -165,20 +129,6 @@ class Filter {
             $sourceDBSer = 3;
             $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
             if ($source_db_link) {
-        
-                $sql = "SELECT 'EXPRESSION_QUERY_HERE'";
-                // $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                // $query->execute();
-                // while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-             
-                    // $expressionArray = array(
-                    //     'name'  => $data[0],
-                    //     'id'    => $data[0],
-                    //     'type'  => 'Expression',
-                    //     'added' => 0
-                    // );
-                    // array_push($filters['expressions'], $expressionArray);
-                //}
 
                 $sql = "SELECT 'DOCTOR_QUERY_HERE'";
                 // $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
@@ -214,6 +164,7 @@ class Filter {
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			if ($host_db_link) {
 
+				// Patient Filters
 				$sql = "
 					SELECT DISTINCT
 						pt.PatientSerNum,
@@ -245,6 +196,7 @@ class Filter {
 					array_push($filters['patients'], $patientArray);
 				}
 
+				// Diagnosis Filters
 				$sql = "
 					SELECT DISTINCT
 						dt.Name_EN,
@@ -267,6 +219,63 @@ class Filter {
 
 					array_push($filters['dx'], $dxArray);
 				}
+	
+				// Appointment Filters
+                $sql = "
+                    SELECT DISTINCT
+						Alias.AliasName_EN,
+						Alias.AliasSerNum
+                    FROM   
+						Alias
+					WHERE
+						Alias.AliasType = 'Appointment'
+                    ORDER BY
+                        Alias.AliasName_EN
+                ";
+
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				$query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+             
+                    $appointmentDetails = array(
+                        'name'  => $data[0],
+                        'id'    => $data[1],
+                        'type'  => 'Appointment',
+                        'added' => 0
+                    );
+					array_push($filters['appointments'], $appointmentDetails);
+				}
+
+                // Appointment Status Filters
+                $sql = "
+                    SELECT DISTINCT
+                        sa.Name 
+                    FROM
+                        StatusAlias sa
+                ";
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $statusDetails = array(
+                        'name'  => $data[0],
+                        'id'    => $data[0],
+                        'type'  => 'AppointmentStatus',
+                        'added' => 0
+                    );
+                    array_push($filters['appointmentStatuses'], $statusDetails);
+                }
+
+                // Manually add checked in flag
+                $statusDetails = array(
+                    'name'  => 'Checked In',
+                    'id'    => 1,
+                    'type'  => 'CheckedInFlag',
+                    'added' => 0
+                );
+                array_push($filters['appointmentStatuses'], $statusDetails);
 			}
 
             return $filters;
