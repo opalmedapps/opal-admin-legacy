@@ -55,17 +55,17 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 		$scope.gridOptions = {
 			data: 'eduMatList',
 			columnDefs: [
-				{ field: 'name_EN', displayName: 'Name (EN / FR)', cellTemplate: cellTemplateName, width: '25%' },
-				{ field: 'rating', name: 'Avg Rating', cellTemplate: ratingCellTemplate, width: '10%', enableFiltering: false },
+				{ field: 'name_EN', displayName: 'Title (EN / FR)', cellTemplate: cellTemplateName, width: '25%' },
+				{ field: 'rating', name: 'Average Rating', cellTemplate: ratingCellTemplate, width: '10%', enableFiltering: false },
 				{ field: 'type_EN', displayName: 'Type (EN)', width: '15%' },
-				{ field: 'publish', displayName: 'Publish', width: '10%', cellTemplate: checkboxCellTemplate, enableFiltering: false },
+				{ field: 'publish', displayName: 'Publish Flag', width: '10%', cellTemplate: checkboxCellTemplate, enableFiltering: false },
 				{
-					field: 'phase_EN', displayName: 'Phase In Tx (EN)', width: '10%', filter: {
+					field: 'phase_EN', displayName: 'Phase In Treatment (EN)', width: '10%', filter: {
 						type: uiGridConstants.filter.SELECT,
 						selectOptions: [{ value: 'Prior To Treatment', label: 'Prior To Treatment' }, { value: 'During Treatment', label: 'During Treatment' }, { value: 'After Treatment', label: 'After Treatment' }]
 					}
 				},
-				{ field: 'lastupdated', displayName: 'Updated', width: '10%' },
+				{ field: 'lastupdated', displayName: 'Last Updated', width: '10%' },
 				{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false }
 			],
 			//useExternalFiltering: true,
@@ -261,8 +261,13 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 
 			// Initialize a list of sexes
 			$scope.sexes = [
-				{ name: 'Male' },
-				{ name: 'Female' }
+				{
+					name: 'Male',
+					icon: 'male'
+				}, {
+					name: 'Female',
+					icon: 'female'
+				}
 			];
 
 			// Initialize to hold demographic filters
@@ -275,7 +280,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 			};
 
 			// Initialize lists to hold filters
-			$scope.termList = [];
+			$scope.appointmentList = [];
 			$scope.dxFilterList = [];
 			$scope.doctorFilterList = [];
 			$scope.resourceFilterList = [];
@@ -315,15 +320,15 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 			};
 
 			// Initialize search field variables
-			$scope.termSearchField = "";
+			$scope.appointmentSearchField = "";
 			$scope.dxSearchField = "";
 			$scope.doctorSearchField = "";
 			$scope.resourceSearchField = "";
 			$scope.patientSearchField = "";
 
 			// Function to assign search fields when textbox changes
-			$scope.searchTerm = function (field) {
-				$scope.termSearchField = field;
+			$scope.searchAppointment = function (field) {
+				$scope.appointmentSearchField = field;
 			};
 			$scope.searchDiagnosis = function (field) {
 				$scope.dxSearchField = field;
@@ -339,9 +344,9 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 			};
 
 			// Function for search through the filters
-			$scope.searchTermsFilter = function (Filter) {
-				var keyword = new RegExp($scope.termSearchField, 'i');
-				return !$scope.termSearchField || keyword.test(Filter.name);
+			$scope.searchAppointmentFilter = function (Filter) {
+				var keyword = new RegExp($scope.appointmentSearchField, 'i');
+				return !$scope.appointmentSearchField || keyword.test(Filter.name);
 			};
 			$scope.searchDxFilter = function (Filter) {
 				var keyword = new RegExp($scope.dxSearchField, 'i');
@@ -385,7 +390,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 				// Call our API service to get each filter
 				filterCollectionService.getFilters().then(function (response) {
 
-					$scope.termList = checkAdded(response.data.expressions); // Assign value
+					$scope.appointmentList = checkAdded(response.data.appointments); // Assign value
 					$scope.dxFilterList = checkAdded(response.data.dx);
 					$scope.doctorFilterList = checkAdded(response.data.doctors);
 					$scope.resourceFilterList = checkAdded(response.data.resources);
@@ -403,31 +408,11 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 
 			// Function to toggle Item in a list on/off
 			$scope.selectItem = function (item) {
-				$scope.changesMade = true;
+				$scope.setChangesMade();
 				if (item.added)
 					item.added = 0;
 				else
 					item.added = 1;
-			};
-
-			// Function for selecting all terms in the expression list
-			var selectAllTerms = false;
-			$scope.selectAllTerms = function () {
-				var filtered = $scope.filter($scope.termList, $scope.termSearchField);
-
-				$scope.changesMade = true;
-
-				if (selectAllTerms) {
-					angular.forEach(filtered, function (term) {
-						term.added = 0;
-					});
-					selectAllTerms = !selectAllTerms;
-				} else {
-					angular.forEach(filtered, function (term) {
-						term.added = 1;
-					});
-					selectAllTerms = !selectAllTerms;
-				}
 			};
 
 			// Function to assign '1' to existing filters
@@ -468,6 +453,21 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 				return demoFilter;
 			}
 
+			// Function to toggle necessary changes when updating the sex
+			$scope.sexUpdate = function (sex) {
+
+				if (!$scope.demoFilter.sex) {
+					$scope.demoFilter.sex = sex.name;
+				} else if ($scope.demoFilter.sex == sex.name) {
+					$scope.demoFilter.sex = null; // Toggle off
+				} else {
+					$scope.demoFilter.sex = sex.name;
+				}
+
+				$scope.setChangesMade();
+
+			};
+
 			// Function to check necessary form fields are complete
 			$scope.checkForm = function () {
 				if ($scope.eduMat.name_EN && $scope.eduMat.name_FR && (($scope.eduMat.url_EN && $scope.eduMat.url_FR)
@@ -495,6 +495,50 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 
 			};
 
+			// Function to validate english share url
+			$scope.validShareURLEN = { status: null, message: null };
+			$scope.validateShareURLEN = function (url) {
+				if (!url) {
+					$scope.validShareURLEN.status = null;
+					$scope.setChangesMade();
+					return;
+				}
+				// regex to check pdf extension
+				var re = /(?:\.([^.]+))?$/;
+				if (re.exec(url)[1] != 'pdf') {
+					$scope.validShareURLEN.status = 'invalid';
+					$scope.validShareURLEN.message = 'URL must be a pdf';
+					$scope.setChangesMade();
+					return;
+				} else {
+					$scope.validShareURLEN.status = 'valid';
+					$scope.validShareURLEN.message = null;
+					$scope.setChangesMade();
+				}
+			}
+
+			// Function to validate french share url
+			$scope.validShareURLFR = { status: null, message: null };
+			$scope.validateShareURLFR = function (url) {
+				if (!url) {
+					$scope.validShareURLFR.status = null;
+					$scope.setChangesMade();
+					return;
+				}
+				// regex to check pdf extension
+				var re = /(?:\.([^.]+))?$/;
+				if (re.exec(url)[1] != 'pdf') {
+					$scope.validShareURLFR.status = 'invalid';
+					$scope.validShareURLFR.message = 'URL must be a pdf';
+					$scope.setChangesMade();
+					return;
+				} else {
+					$scope.validShareURLFR.status = 'valid';
+					$scope.validShareURLFR.message = null;
+					$scope.setChangesMade();
+				}
+			}
+
 			// Submit changes
 			$scope.updateEduMat = function () {
 
@@ -516,7 +560,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 					}
 
 					// Add filters to edu material
-					addFilters($scope.termList);
+					addFilters($scope.appointmentList);
 					addFilters($scope.dxFilterList);
 					addFilters($scope.doctorFilterList);
 					addFilters($scope.resourceFilterList);

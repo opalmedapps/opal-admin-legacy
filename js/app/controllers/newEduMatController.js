@@ -32,14 +32,14 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		};
 		
 		// Default boolean variables
-		$scope.title = {open:false, show:true};
-		$scope.type = {open:false, show:false};
-		$scope.phase = {open:false, show:false};
-		$scope.url = {open:false, show:false};
-		$scope.tocs = {open:false, show:false};
-		$scope.share_url = {open:false, show:false};
-		$scope.demo = {open:false, show:false};
-		$scope.terms = {open:false, show:false};
+		$scope.titleSection = {open:false, show:true};
+		$scope.typeSection = {open:false, show:false};
+		$scope.phaseSection = {open:false, show:false};
+		$scope.urlSection = {open:false, show:false};
+		$scope.tocsSection = {open:false, show:false};
+		$scope.shareUrlSection = {open:false, show:false};
+		$scope.demoSection = {open:false, show:false};
+		$scope.filterSection = {open:false, show:false};
 
 		// completed steps boolean object; used for progress bar
 		var steps = {
@@ -54,7 +54,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		$scope.filter = $filter('filter');
 
 		// Initialize search field variables
-		$scope.termSearchField = "";
+		$scope.appointmentSearchField = "";
 		$scope.dxSearchField = "";
 		$scope.doctorSearchField = "";
 		$scope.resourceSearchField = "";
@@ -124,15 +124,14 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 				max: 100
 			}
 		};
-		$scope.termList = [];
+		$scope.appointmentList = [];
 		$scope.dxFilterList = [];
 		$scope.doctorFilterList = [];
 		$scope.resourceFilterList = [];
 		$scope.patientFilterList = [];
 
 		// Initialize lists to hold the distinct edu material types
-		$scope.EduMatTypes_EN = [];
-		$scope.EduMatTypes_FR = [];
+		$scope.EduMatTypes = [];
 
 
 		/* Function for the "Processing..." dialog */
@@ -157,7 +156,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		// Call our API service to get each filter
 		filterCollectionService.getFilters().then(function (response) {
 
-			$scope.termList = response.data.expressions; // Assign value
+			$scope.appointmentList = response.data.appointments; // Assign value
 			$scope.dxFilterList = response.data.dx;
 			$scope.doctorFilterList = response.data.doctors;
 			$scope.resourceFilterList = response.data.resources;
@@ -176,8 +175,8 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		// Call our API to get the list of edu material types
 		educationalMaterialCollectionService.getEducationalMaterialTypes().then(function (response) {
 
-			$scope.EduMatTypes_EN = response.data.EN;
-			$scope.EduMatTypes_FR = response.data.FR;
+			$scope.EduMatTypes = response.data;
+
 		}).catch(function(response) {
 			console.error('Error occurred getting educational material types:', response.status, response.data);
 		});
@@ -192,11 +191,11 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		// Function to toggle necessary changes when updating titles
 		$scope.titleUpdate = function () {
 
-			$scope.title.open = true;
+			$scope.titleSection.open = true;
 
 			if ($scope.newEduMat.name_EN && $scope.newEduMat.name_FR) {
 
-				$scope.type.show = true;
+				$scope.typeSection.show = true;
 
 				// Toggle step completion
 				steps.title.completed = true;
@@ -217,23 +216,23 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		// Function to toggle necessary changes when updating the urls  
 		$scope.urlUpdate = function () {
 
-			$scope.url.open = true;
+			$scope.urlSection.open = true;
 
 			if ($scope.newEduMat.url_EN || $scope.newEduMat.url_FR) {
 				steps.tocs.completed = true; // Since it will be hidden
-				$scope.tocs.show = false;
+				$scope.tocsSection.show = false;
 			}
 
 			else {
-				$scope.tocs.show = true;
+				$scope.tocsSection.show = true;
 			}
 
 			if ($scope.newEduMat.url_EN && $scope.newEduMat.url_FR) {
 
 				// Toggle booleans
-				$scope.share_url.show = true;
-				$scope.demo.show = true;
-				$scope.terms.show = true;
+				$scope.shareUrlSection.show = true;
+				$scope.filterSection.show = true;
+				$scope.demoSection.show = true;
 
 				// Toggle step completion
 				steps.url.completed = true;
@@ -255,13 +254,34 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		};
 
 		// Function to toggle necessary changes when updating the types
-		$scope.typeUpdate = function () {
+		$scope.typeUpdate = function (type, language) {
 
-			$scope.type.open = true;
+			$scope.typeSection.open = true;
+
+			// Perform a string comparison to auto complete the other language field
+			type = type.toLowerCase(); 
+			for (var i=0; i < $scope.EduMatTypes.length; i++) {
+				if (language === 'EN') {
+					typeCompare = $scope.EduMatTypes[i].EN.toLowerCase();
+					if (type === typeCompare) {
+						// set the french to be the same
+						$scope.newEduMat.type_FR = $scope.EduMatTypes[i].FR;
+						break;
+					}
+				} 
+				else if (language === 'FR') {
+					typeCompare = $scope.EduMatTypes[i].FR.toLowerCase();
+					if (type === typeCompare) {
+						// set the english to be the same
+						$scope.newEduMat.type_EN = $scope.EduMatTypes[i].EN;
+						break;
+					}
+				}
+			}
 
 			if ($scope.newEduMat.type_EN && $scope.newEduMat.type_FR) {
 
-				$scope.phase.show = true;
+				$scope.phaseSection.show = true;
 
 				// Toggle step completion
 				steps.type.completed = true;
@@ -284,10 +304,10 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 
 			$scope.newEduMat.phase_in_tx = phase;
 
-			$scope.phase.open = true;
+			$scope.phaseSection.open = true;
 
-			$scope.url.show = true;
-			$scope.tocs.show = true;
+			$scope.urlSection.show = true;
+			$scope.tocsSection.show = true;
 
 			// Toggle boolean 
 			steps.phase.completed = true;
@@ -300,14 +320,14 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		// Function to toggle necessary changes when updating the share URL 
 		$scope.shareURLUpdate = function () {
 
-			$scope.share_url.open = true;
+			$scope.shareUrlSection.open = true;
 
 		};
 
 		// Function to toggle necessary changes when updating the sex
 		$scope.sexUpdate = function (sex) {
 
-			$scope.demo.open = true;
+			$scope.demoSection.open = true;
 
 			if (!$scope.demoFilter.sex) {
 				$scope.demoFilter.sex = sex.name;
@@ -322,7 +342,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		// Function to toggle necessary changes when updating the age 
 		$scope.ageUpdate = function () {
 
-			$scope.demo.open = true;
+			$scope.demoSection.open = true;
 			
 		};
 
@@ -330,7 +350,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		// Function to toggle necessary changes when updating the table of contents
 		$scope.tocUpdate = function () {
 
-			$scope.tocs.open = true;
+			$scope.tocsSection.open = true;
 
 			steps.tocs.completed = true;
 			$scope.tocsComplete = true;
@@ -340,12 +360,12 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 				$scope.tocsComplete = false;
 				steps.tocs.completed = false;
 
-				$scope.url.show = true;
+				$scope.urlSection.show = true;
 
 			} else {
 
 				steps.url.completed = true; // Since it will be hidden
-				$scope.url.show = false;
+				$scope.urlSection.show = false;
 
 				angular.forEach($scope.newEduMat.tocs, function (toc) {
 					if (!toc.name_EN || !toc.name_FR || !toc.url_EN
@@ -357,9 +377,9 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 				});
 
 				if ($scope.tocsComplete) {
-					$scope.share_url.show = true;
-					$scope.demo.show = true;
-					$scope.terms.show = true;
+					$scope.shareUrlSection.show = true;
+					$scope.filterSection.show = true;
+					$scope.demoSection.show = true;
 				}
 
 			}
@@ -411,7 +431,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 					}
 				}
 				// Add other filters to new edu material object
-				addFilters($scope.termList);
+				addFilters($scope.appointmentList);
 				addFilters($scope.dxFilterList);
 				addFilters($scope.doctorFilterList);
 				addFilters($scope.resourceFilterList);
@@ -447,27 +467,9 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 				item.added = 1;
 		};
 
-		// Function for selecting all terms in the expression list
-		var selectAllTerms = false;
-		$scope.selectAllTerms = function () {
-			var filtered = $scope.filter($scope.termList, $scope.termSearchField);
-
-			if (selectAllTerms) {
-				angular.forEach(filtered, function (term) {
-					term.added = 0;
-				});
-				selectAllTerms = !selectAllTerms;
-			} else {
-				angular.forEach(filtered, function (term) {
-					term.added = 1;
-				});
-				selectAllTerms = !selectAllTerms;
-			}
-		};
-
 		// Function to assign search fields when textbox changes
-		$scope.searchTerm = function (field) {
-			$scope.termSearchField = field;
+		$scope.searchAppontment = function (field) {
+			$scope.appointmentSearchField = field;
 		};
 		$scope.searchDiagnosis = function (field) {
 			$scope.dxSearchField = field;
@@ -483,9 +485,9 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 		};
 
 		// Function for search through the filters
-		$scope.searchTermsFilter = function (Filter) {
-			var keyword = new RegExp($scope.termSearchField, 'i');
-			return !$scope.termSearchField || keyword.test(Filter.name);
+		$scope.searchAppointmentFilter = function (Filter) {
+			var keyword = new RegExp($scope.appointmentSearchField, 'i');
+			return !$scope.appointmentSearchField || keyword.test(Filter.name);
 		};
 		$scope.searchDxFilter = function (Filter) {
 			var keyword = new RegExp($scope.dxSearchField, 'i');
@@ -545,6 +547,35 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 					width: ''
 				});
 			}
+		});
+
+		var fixMeMobile = $('.mobile-side-panel-menu').offset().top;
+		$(window).scroll(function() {
+		    var currentScroll = $(window).scrollTop();
+		    if (currentScroll >= fixMeMobile) {
+		        $('.mobile-side-panel-menu').css({
+		            position: 'fixed',
+		            top: '50px',
+		            width: '100%',
+		            zIndex: '100',
+		            background: '#6f5499',
+		            boxShadow: 'rgba(93, 93, 93, 0.6) 0px 3px 8px -3px'
+		          	
+		        });
+		        $('.mobile-summary .summary-title').css({
+		        	color: 'white'
+		        });
+		    } else {
+		        $('.mobile-side-panel-menu').css({
+		            position: 'static',
+		            width: '',
+		            background: '',
+		            boxShadow: ''
+		        });
+		         $('.mobile-summary .summary-title').css({
+		        	color: '#6f5499'
+		        });
+		    }
 		});
 
 

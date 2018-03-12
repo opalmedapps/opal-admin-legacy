@@ -12,8 +12,8 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 		};
 
 		// default boolean
-		$scope.type = {open: false, show: true};
-		$scope.title_message = {open: false, show: false};
+		$scope.typeSection = {open: false, show: true};
+		$scope.titleMessageSection = {open: false, show: false};
 
 		// completed steps boolean object; used for progress bar
 		var steps = {
@@ -69,11 +69,11 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 		// Function to toggle necessary changes when updating titles
 		$scope.titleMessageUpdate = function () {
 
-			$scope.title_message.open = true;
+			$scope.titleMessageSection.open = true;
 
 			if (!$scope.newNotification.name_EN && !$scope.newNotification.name_FR &&
 				!$scope.newNotification.description_EN && !$scope.newNotification.description_FR) {
-				$scope.title_message.open = false;
+				$scope.titleMessageSection.open = false;
 			}
 
 			if ($scope.newNotification.name_EN && $scope.newNotification.name_FR &&
@@ -100,11 +100,11 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 
 			$scope.newNotification.type = typeId;
 
-			$scope.type.open = true;
+			$scope.typeSection.open = true;
 
 			if ($scope.newNotification.type) {
 
-				$scope.title_message.show = true;
+				$scope.titleMessageSection.show = true;
 
 				// Toggle step completion
 				steps.type.completed = true;
@@ -158,6 +158,35 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 		        $('.summary-fix').css({
 		            position: 'static',
 		            width: ''
+		        });
+		    }
+		});
+
+		var fixMeMobile = $('.mobile-side-panel-menu').offset().top;
+		$(window).scroll(function() {
+		    var currentScroll = $(window).scrollTop();
+		    if (currentScroll >= fixMeMobile) {
+		        $('.mobile-side-panel-menu').css({
+		            position: 'fixed',
+		            top: '50px',
+		            width: '100%',
+		            zIndex: '100',
+		            background: '#6f5499',
+		            boxShadow: 'rgba(93, 93, 93, 0.6) 0px 3px 8px -3px'
+		          	
+		        });
+		        $('.mobile-summary .summary-title').css({
+		        	color: 'white'
+		        });
+		    } else {
+		        $('.mobile-side-panel-menu').css({
+		            position: 'static',
+		            width: '',
+		            background: '',
+		            boxShadow: ''
+		        });
+		         $('.mobile-summary .summary-title').css({
+		        	color: '#6f5499'
 		        });
 		    }
 		});

@@ -14,15 +14,15 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 		};
 
 		// default booleans
-		$scope.email = {open:false, show:false};
-		$scope.password = {open:false, show:false};
-		$scope.language = {open:false, show:false};
-		$scope.cellnum = {open:false, show:false};
-		$scope.security_question_1 = {open:false, show:false};
-		$scope.security_question_2 = {open:false, show:false};
-		$scope.security_question_3 = {open:false, show:false};
-		$scope.access_level = {open:false, show:false};
-		$scope.final = {open:false, show: false};
+		$scope.emailSection = {open:false, show:false};
+		$scope.passwordSection = {open:false, show:false};
+		$scope.languageSection = {open:false, show:false};
+		$scope.cellNumberSection = {open:false, show:false};
+		$scope.securityQuestion1Section = {open:false, show:false};
+		$scope.securityQuestion2Section = {open:false, show:false};
+		$scope.securityQuestion3Section = {open:false, show:false};
+		$scope.accessLevelSection = {open:false, show:false};
+		$scope.finalCheckSection = {open:false, show: false};
 
 		// completed registration steps in object notation
 		var defaultSteps = {
@@ -449,7 +449,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 		$scope.emailUpdate = function () {
 			if ($scope.validEmail.status == 'valid') {
 				steps.email.completed = true;
-				$scope.password.show = true;
+				$scope.passwordSection.show = true;
 			}
 			else
 				steps.email.completed = false;
@@ -461,7 +461,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 		$scope.passwordUpdate = function () {
 			if ($scope.validPassword.status == 'valid' && $scope.validConfirmPassword.status == 'valid') {
 				steps.password.completed = true;
-				$scope.language.show = true;
+				$scope.languageSection.show = true;
 			}
 			else
 				steps.password.completed = false;
@@ -473,10 +473,10 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 		$scope.languageUpdate = function () {
 			if ($scope.newPatient.language) {
 				steps.language.completed = true;
-				$scope.cellnum.show = true;
-				$scope.security_question_1.show = true;
-				$scope.security_question_2.show = true;
-				$scope.security_question_3.show = true;
+				$scope.cellNumberSection.show = true;
+				$scope.securityQuestion1Section.show = true;
+				$scope.securityQuestion2Section.show = true;
+				$scope.securityQuestion3Section.show = true;
 			}
 			else
 				steps.language.completed = false;
@@ -522,15 +522,15 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 		$scope.checkAllSecurityQuestions = function () {
 			if ($scope.validAnswer1.status == 'valid' && $scope.validAnswer2.status == 'valid' &&
 				$scope.validAnswer3.status == 'valid') {
-				$scope.access_level.show = true;
-				$scope.final.show = true;
+				$scope.accessLevelSection.show = true;
+				$scope.finalCheckSection.show = true;
 			}
 		}
 		// Function to toggle steps when updating the access level field
 		$scope.accessLevelUpdate = function () {
 			if ($scope.newPatient.accessLevel) {
 				steps.access.completed = true;
-				$scope.final.show = true;
+				$scope.finalCheckSection.show = true;
 			}
 			else
 				steps.access.completed = false;
@@ -729,6 +729,35 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 		        $('.summary-fix').css({
 		            position: 'static',
 		            width: ''
+		        });
+		    }
+		});
+
+		var fixMeMobile = $('.mobile-side-panel-menu').offset().top;
+		$(window).scroll(function() {
+		    var currentScroll = $(window).scrollTop();
+		    if (currentScroll >= fixMeMobile) {
+		        $('.mobile-side-panel-menu').css({
+		            position: 'fixed',
+		            top: '50px',
+		            width: '100%',
+		            zIndex: '100',
+		            background: '#6f5499',
+		            boxShadow: 'rgba(93, 93, 93, 0.6) 0px 3px 8px -3px'
+		          	
+		        });
+		        $('.mobile-summary .summary-title').css({
+		        	color: 'white'
+		        });
+		    } else {
+		        $('.mobile-side-panel-menu').css({
+		            position: 'static',
+		            width: '',
+		            background: '',
+		            boxShadow: ''
+		        });
+		         $('.mobile-summary .summary-title').css({
+		        	color: '#6f5499'
 		        });
 		    }
 		});
