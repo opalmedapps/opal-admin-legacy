@@ -12,8 +12,8 @@ angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', '
 		};
 
 		// Default boolean 
-		$scope.title_description = {open: false, show: true};
-		$scope.url = {open: false, show: false};
+		$scope.titleDescriptionSection = {open: false, show: true};
+		$scope.qrUrlSection = {open: false, show: false};
 
 		// completed steps boolean object; used for progress bar
 		var steps = {
@@ -65,17 +65,17 @@ angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', '
 		// Function to toggle necessary changes when updating title and description
 		$scope.titleDescriptionUpdate = function () {
 
-			$scope.title_description.open = true;
+			$scope.titleDescriptionSection.open = true;
 
 			if (!$scope.newHosMap.name_EN && !$scope.newHosMap.name_FR &&
 				!$scope.newHosMap.description_EN && !$scope.newHosMap.description_FR) {
-				$scope.title_description.open = false;
+				$scope.titleDescriptionSection.open = false;
 			}
 
 			if ($scope.newHosMap.name_EN && $scope.newHosMap.name_FR &&
 				$scope.newHosMap.description_EN && $scope.newHosMap.description_FR) {
 
-				$scope.url.show = true;
+				$scope.qrUrlSection.show = true;
 
 				// Toggle step completion
 				steps.title_description.completed = true;
@@ -98,7 +98,7 @@ angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', '
 		// Function to toggle necessary changes when updating qrid and URL
 		$scope.qridUpdate = function () {
 
-			$scope.url.open = true;
+			$scope.qrUrlSection.open = true;
 
 			if ($scope.newHosMap.qrid && $scope.newHosMap.qrcode && $scope.newHosMap.url) {
 				// Toggle step completion
@@ -186,6 +186,34 @@ angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', '
 		    }
 		});
 
+		var fixMeMobile = $('.mobile-side-panel-menu').offset().top;
+		$(window).scroll(function() {
+		    var currentScroll = $(window).scrollTop();
+		    if (currentScroll >= fixMeMobile) {
+		        $('.mobile-side-panel-menu').css({
+		            position: 'fixed',
+		            top: '50px',
+		            width: '100%',
+		            zIndex: '100',
+		            background: '#6f5499',
+		            boxShadow: 'rgba(93, 93, 93, 0.6) 0px 3px 8px -3px'
+		          	
+		        });
+		        $('.mobile-summary .summary-title').css({
+		        	color: 'white'
+		        });
+		    } else {
+		        $('.mobile-side-panel-menu').css({
+		            position: 'static',
+		            width: '',
+		            background: '',
+		            boxShadow: ''
+		        });
+		         $('.mobile-summary .summary-title').css({
+		        	color: '#6f5499'
+		        });
+		    }
+		});
 
 
 	});

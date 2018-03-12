@@ -190,8 +190,8 @@ class PatientCheckInPushNotification{
     /**
      *    (buildMessageForCheckInNotification($datetimestamp, $title, $description)
      *    Build the messages with title and a description
-     *    Description: Builds push notification message for checking in and repalce the string
-     *      $getDateTime with the date time stamp
+     *    Description: Builds push notification message for checking in and replace the string
+     *      $getDateTime with the time stamp
      *    Returns: Returns array with the push notification message to be sent
      **/
     private static function buildMessageForPushNotification($type, $language){
@@ -200,8 +200,14 @@ class PatientCheckInPushNotification{
         //======================================================
         $messageLabels = self::getNotificationMessage($type, $language);
 
+        $datetimestamp = "";
         // Get the date and time stamp of when the person checked in
-        $datetimestamp = date("Y-m-d h:i:s");
+        if ($language == "FR") {
+            $datetimestamp = date("H:i"); // "14:20"
+        }
+        else if ($language == "EN") {
+            $datetimestamp = date("g:i A"); // "3:14 AM"
+        }
 
         return array(
             "mtitle"=> $messageLabels["Name_".$language ],

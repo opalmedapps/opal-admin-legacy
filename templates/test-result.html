@@ -3,24 +3,24 @@
       <div class="clearfix">
         <div class="row">
           <!-- Load side menu -->
-          <div class="col-md-2">
+          <div id="side-panel-scrollbar" class="col-lg-2">
             <div ng-include="'templates/side-panel-menu.html'"></div>
           </div>
           <!-- Right side detail view -->
-          <div class="col-md-10 animated fadeIn">
+          <div class="col-lg-10 animated fadeIn">
             <div class="row main-title">
               <!-- Page title -->
-              <div class="col-md-8 title-content">
+              <div class="col-xs-12 col-md-8 title-content">
                 <span class="fa fa-heartbeat"></span>
                 <h1><strong>Test Results</strong></h1>
               </div>
               <!-- Breadcrumbs -->
               <div class="col-md-4 title-breadcrumbs">
-                <span><a href="#/">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Test Results</strong></span>
+                <span><a ui-sref="home">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Test Results</strong></span>
               </div>
             </div>
-						<div class="row clearfix" style="margin-bottom: 10px;">
-							<div class="col-md-8">
+						<div class="row clearfix operations">
+							<div class="save-add col-xs-12 col-sm-6 col-md-8">
                 <!-- Add button -->
 								<a style="width:100px;margin-right:20px;" href="" ng-click="goToAddTestResult()" class="btn btn-md btn-outline item-button">
 									<span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
@@ -33,7 +33,7 @@
 								</a>
               </div>
               <!-- Search field -->
-							<div class="col-md-4">
+							<div class="search col-xs-12 col-sm-6 col-md-4">
 								<div class="form-group has-feedback" style="margin-bottom: 0">
 								<input type="text" class="form-control" ng-model="filterValue" ng-change="filterTestResult(filterValue)" placeholder="Search...">
 									<span class="glyphicon glyphicon-search form-control-feedback"></span>
@@ -61,19 +61,28 @@
   <!-- Delete test result modal template -->
   <script type="text/ng-template" id="deleteTestResultModalContent.htm">
       <div class="modal-header">
-        <h2 class="modal-title">
-          <span class="glyphicon glyphicon-trash" style="font-size: 30px;"></span>
-          Delete Test Result: {{testResultToDelete.name_EN}} / {{testResultToDelete.name_FR}}
+        <h2 class="modal-title col-xs-12">
+          <span class="glyphicon glyphicon-trash"></span>
+          Delete Test Result 
         </h2>
+        <p class="modal-title-caption col-xs-12">
+          {{testResultToDelete.name_EN}} / {{testResultToDelete.name_FR}}
+        </p>
       </div>
       <div class="modal-body">
-        <div class="bs-callout bs-callout-danger">
-          <h4>Test Result Delete</h4>
-          <p class="deleteText">Are you sure you want to delete the Test Result "{{testResultToDelete.name_EN}}" ?</p>
-          <form method="post" ng-submit="deleteTestResult()">
-            <input class="btn btn-primary" type="submit" value="Delete">
-            <input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
-          </form>
+        <div class="alert alert-danger" role="alert">
+          <strong>Delete Test Result</strong><br>
+          <p>
+            Are you sure you want to delete the test result "{{testResultToDelete.name_EN}}" ?
+          </p>
+        </div>
+        <div class="row">
+          <div class="modal-buttons col-xs-12">
+            <form method="post" ng-submit="deleteTestResult()">      
+              <input class="btn btn-primary submit" type="submit" value="Delete">
+              <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+            </form>
+          </div>
         </div>
       </div>
     </script>
@@ -82,35 +91,41 @@
     <script type="text/ng-template" id="editTestResultModalContent.htm">
       <!-- Modal title -->
       <div class="modal-header">
-        <h2 class="modal-title">
-          <span class="glyphicon glyphicon-pencil" style="font-size: 30px;"></span>
-          Edit Test Result: {{testResult.name_EN}} / {{testResult.name_FR}}
-          <span style="float:right;">
-            <form method="post" ng-submit="updateTestResult()">
-              <input class="btn btn-primary" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
-              <input ng-click="cancel()" class="btn btn-danger" type="button" value="Cancel">
-            </form>
-          </span>
+        <h2 class="modal-title col-xs-12">
+          <span class="glyphicon glyphicon-pencil"></span>
+          Edit Test Result 
         </h2>
+        <p class="modal-title-caption col-xs-12">
+          {{testResult.name_EN}} / {{testResult.name_FR}}
+        </p>
+        <div class="modal-buttons col-xs-12">
+          <span> 
+            <form method="post" ng-submit="updateTestResult()">
+              <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
+              <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+            </form>
+          </span>     
+        </div>
       </div>
       <div class="modal-body">
         <uib-accordion>
 
           <!-- SECTION: Test names -->
-          <div uib-accordion-group is-open="statusTestResult.open">
+          <div uib-accordion-group is-open="testsSection.open">
             <uib-accordion-heading>
               <div>
-                <strong>Assigned Tests</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTestResult.open, 'glyphicon-chevron-right': !statusTestResult.open}"></i>
+                <strong>Assigned Tests</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': testsSection.open, 'glyphicon-chevron-right': !testsSection.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Currently assigned tests</h4>
-              <ul class="list-items-4col">
-                <li ng-repeat="selectedTest in testList | filter: {added: 1} : 1">
+             <div class="alert alert-info" role="alert">
+              <strong>Current Assigned Test(s)</strong><br>
+              <p>
+                <ul class="list-items">
+                  <li ng-repeat="selectedTest in testList | filter: {added: 1} : 1">
                   {{selectedTest.name}}
                 </li>
-              </ul>
-              <p>To add/remove tests, use the list below.</p>
+                </ul>
+              </p>
             </div>
             <div class="list-space">
               <div class="input-group">
@@ -128,25 +143,20 @@
           </div>
 
           <!-- SECTION: Titles -->
-          <div uib-accordion-group is-open="statusTitle.open">
+          <div uib-accordion-group is-open="titleSection.open">
             <uib-accordion-heading>
               <div>
-                <strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTitle.open, 'glyphicon-chevron-right': !statusTitle.open}"></i>
+                <strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Test Result Titles (EN / FR): {{testResult.name_EN}} / {{testResult.name_FR}}</h4>
-              To change the current title(s), enter the new title(s) in the text box(es) below.
-            </div>
             <div class="row">
-              <div class="col-md-5">
+              <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                 <div class="input-group">
                   <span class="input-group-addon">EN</span>
                   <input class="form-control" type="text" ng-model="testResult.name_EN" ng-change="setChangesMade()" placeholder="English Title" required="required">
                 </div>
               </div>
-              <div class="col-md-1"></div>
-              <div class="col-md-5">
+              <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                 <div class="input-group">
                   <span class="input-group-addon">FR</span>
                   <input class="form-control" type="text" ng-model="testResult.name_FR" ng-change="setChangesMade()" placeholder="Titre Français" required="required">
@@ -156,24 +166,22 @@
           </div>
 
           <!-- SECTION: Description -->
-          <div uib-accordion-group is-open="statusDescription.open">
+          <div uib-accordion-group is-open="descriptionSection.open">
             <uib-accordion-heading>
               <div>
-                <strong>Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusDescription.open, 'glyphicon-chevron-right': !statusDescription.open}"></i>
+                <strong>Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': descriptionSection.open, 'glyphicon-chevron-right': !descriptionSection.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Test Result Descriptions (EN / FR): {{testResult.description_EN}} / {{testResult.description_FR}}</h4>
-              To change the current description(s), enter the new description(s) in the text area(s) below.
-            </div>
             <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
+              <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                <div class="input-group">
+                  <span class="input-group-addon">EN</span>
                   <textarea class="form-control" rows="10" ng-model="testResult.description_EN" ng-change="setChangesMade()" placeholder="English Description" required="required"></textarea>
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="form-group">
+              <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                <div class="input-group">
+                  <span class="input-group-addon">FR</span>
                   <textarea class="form-control" rows="10" ng-model="testResult.description_FR" ng-change="setChangesMade()" placeholder="Description Francais" required="required"></textarea>
                 </div>
               </div>
@@ -181,25 +189,20 @@
           </div>
 
           <!-- SECTION: Test group -->
-          <div uib-accordion-group is-open="statusTestGroup.open">
+          <div uib-accordion-group is-open="testGroupSection.open">
             <uib-accordion-heading>
               <div>
-                <strong>Test Group</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusTestGroup.open, 'glyphicon-chevron-right': !statusTestGroup.open}"></i>
+                <strong>Test Group</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': testGroupSection.open, 'glyphicon-chevron-right': !testGroupSection.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Test Groups (EN / FR): {{testResult.group_EN}} / {{testResult.group_FR}}</h4>
-              To change the current group(s), enter the new group(s) in the text box(es) below.
-            </div>
             <div class="row">
-              <div class="col-md-5">
+              <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                 <div class="input-group">
                   <span class="input-group-addon">EN</span>
                   <input class="form-control" type="text" ng-model="testResult.group_EN" ng-change="setChangesMade()" typeahead-on-select="setChangesMade()" uib-typeahead="group for group in TestResultGroups_EN | filter:$viewValue" typeahead-min-length="0" placeholder="English" required="required">
                 </div>
               </div>
-              <div class="col-md-1"></div>
-              <div class="col-md-5">
+              <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                 <div class="input-group">
                   <span class="input-group-addon">FR</span>
                   <input class="form-control" type="text" ng-model="testResult.group_FR" ng-change="setChangesMade()" typeahead-on-select="setChangesMade()" uib-typeahead="group for group in TestResultGroups_FR | filter:$viewValue" typeahead-min-length="0" placeholder="Francais" required="required">
@@ -208,15 +211,19 @@
             </div>
           </div>
           <!-- SECTION: Educational material -->
-          <div uib-accordion-group is-open="statusEducationalMaterial.open">
+          <div uib-accordion-group is-open="educationalMaterialSection.open">
             <uib-accordion-heading>
               <div>
-                <strong>Attached Educational Material</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': statusEducationalMaterial.open, 'glyphicon-chevron-right': !statusEducationalMaterial.open}"></i>
+                <strong>Attached Educational Material</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': educationalMaterialSection.open, 'glyphicon-chevron-right': !educationalMaterialSection.open}"></i>
               </div>
             </uib-accordion-heading>
-            <div class="bs-callout bs-callout-info">
-              <h4>Current Educational Material (EN / FR): {{testResult.eduMat.name_EN}} / {{testResult.eduMat.name_FR}}</h4>
-              <p>To change the current educational material, use the list below.</p>
+            <div class="alert alert-info" role="alert">
+              <strong>Current Educational Material (EN / FR)</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                <span ng-if="testResult.eduMat">{{testResult.eduMat.name_EN}} / {{testResult.eduMat.name_FR}}</span>
+                <span ng-if="!testResult.eduMat">None</span>
+              </p>
             </div>
             <div class="list-space">
               <div class="input-group">
@@ -226,12 +233,49 @@
               <ul class="list-items">
                 <li ng-repeat="eduMat in eduMatList | filter: searchEduMatsFilter">
                   <label>
-                    <input type="radio" ng-model="testResult.eduMatSer" ng-change="eduMatUpdate()" ng-checked="testResult.eduMatSer == eduMat.serial" ng-value="eduMat.serial" /> {{eduMat.name_EN}}
+                    <input type="radio" ng-model="testResult.eduMatSer" ng-change="eduMatUpdate(eduMat)" ng-checked="testResult.eduMatSer == eduMat.serial" ng-value="eduMat.serial" /> {{eduMat.name_EN}}
                   </label>
                 </li>
               </ul>
             </div>
           </div>
+          <!-- SECTION: Additional links -->
+          <div uib-accordion-group is-open="additionalLinksSection.open">
+            <uib-accordion-heading>
+              <div>
+                <strong>Additional Links</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': additionalLinksSection.open, 'glyphicon-chevron-right': !additionalLinksSection.open}"></i>
+              </div>
+            </uib-accordion-heading>
+            <div class="row" ng-repeat="link in testResult.additional_links" style="margin-bottom:7px; border-bottom:1px solid #ddd;">
+              <div class="col-xs-12" style="margin:0 0 7px 0; padding:0 15px; font-size:30px;">
+                <span style="float:right; cursor:pointer;" ng-click="removeAdditionalLink($index)"><span class="glyphicon glyphicon-remove"></span></span>
+              </div>
+              <div class="col-xs-12 col-sm-6">
+                <div class="input-group" style="margin-bottom: 7px;">
+                  <span class="input-group-addon">Title EN</span>
+                  <input class="form-control" type="text" ng-model="link.name_EN" ng-change="setChangesMade()" placeholder="English Title" required="required">
+                </div>
+                <div class="input-group" style="margin-bottom: 7px;">
+                  <span class="input-group-addon">URL EN</span>
+                  <input class="form-control" type="text" ng-model="link.url_EN" ng-change="setChangesMade()" placeholder="English URL" required="required">
+                </div>
+              </div>  
+              <div class="col-xs-12 col-sm-6">           
+                <div class="input-group" style="margin-bottom: 7px;">
+                  <span class="input-group-addon">Titre FR</span>
+                  <input class="form-control" type="text" ng-model="link.name_FR" ng-change="setChangesMade()" placeholder="Titre Français" required="required">
+                </div>
+                <div class="input-group" style="margin-bottom: 7px;">
+                  <span class="input-group-addon">URL FR</span>
+                  <input class="form-control" type="text" ng-model="link.url_FR" ng-change="setChangesMade()" placeholder="URL Français" required="required">
+                </div>
+              </div>
+            </div>
+            <div class="table-buttons">
+              <button class="btn btn-primary" ng-click="addAdditionalLink()">Add another link</button>
+            </div>
+          </div>  
+
         </uib-accordion>
       </div>
     </script>

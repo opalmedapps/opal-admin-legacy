@@ -12,8 +12,8 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 		};
 
 		// default booleans
-		$scope.password = {open:false, show:false};
-		$scope.role = {open:false, show:false};
+		$scope.passwordSection = {open:false, show:false};
+		$scope.roleSection = {open:false, show:false};
 
 		// completed registration steps in object notation
 		var steps = {
@@ -146,7 +146,7 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 		$scope.usernameUpdate = function () {
 			if ($scope.validUsername.status == 'valid') {
 				steps.username.completed = true;
-				$scope.password.show = true;
+				$scope.passwordSection.show = true;
 			}
 			else
 				steps.username.completed = false;
@@ -159,7 +159,7 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 		$scope.passwordUpdate = function () {
 			if ($scope.validPassword.status == 'valid' && $scope.validConfirmPassword.status == 'valid') {
 				steps.password.completed = true;
-				$scope.role.show = true;
+				$scope.roleSection.show = true;
 			}
 			else
 				steps.password.completed = false;
@@ -170,7 +170,7 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 
 		// Function to toggle steps when updating the role field
 		$scope.roleUpdate = function () {
-			$scope.role.open = true;
+			$scope.roleSection.open = true;
 			if ($scope.newUser.role)
 				steps.role.completed = true;
 			else
@@ -223,6 +223,36 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 		        });
 		    }
 		});
+
+		var fixMeMobile = $('.mobile-side-panel-menu').offset().top;
+		$(window).scroll(function() {
+		    var currentScroll = $(window).scrollTop();
+		    if (currentScroll >= fixMeMobile) {
+		        $('.mobile-side-panel-menu').css({
+		            position: 'fixed',
+		            top: '50px',
+		            width: '100%',
+		            zIndex: '100',
+		            background: '#6f5499',
+		            boxShadow: 'rgba(93, 93, 93, 0.6) 0px 3px 8px -3px'
+		          	
+		        });
+		        $('.mobile-summary .summary-title').css({
+		        	color: 'white'
+		        });
+		    } else {
+		        $('.mobile-side-panel-menu').css({
+		            position: 'static',
+		            width: '',
+		            background: '',
+		            boxShadow: ''
+		        });
+		         $('.mobile-summary .summary-title').css({
+		        	color: '#6f5499'
+		        });
+		    }
+		});
+
 
 	});
 

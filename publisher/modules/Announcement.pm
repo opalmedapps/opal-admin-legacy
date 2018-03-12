@@ -178,15 +178,15 @@ sub publishAnnouncements
 				my $isNonPatientSpecificFilterDefined = 0;
 				my $isPatientSpecificFilterDefined = 0;
 
-                my @expressionNames = ();
+                my @aliasSerials = ();
 
                 my @diagnosisNames = Diagnosis::getPatientsDiagnosesFromOurDB($patientSer);
 
                 my @patientDoctors = PatientDoctor::getPatientsDoctorsFromOurDB($patientSer);
                     
-                # Fetch expression filters (if any)
-                my @expressionFilters =  $postFilters->getExpressionFilters();
-                if (@expressionFilters) {
+                # Fetch appointment filters (if any)
+                my @appointmentFilters =  $postFilters->getExpressionFilters();
+                if (@appointmentFilters) {
       
 					# toggle flag
 					$isNonPatientSpecificFilterDefined = 1;
@@ -194,20 +194,20 @@ sub publishAnnouncements
                     # Retrieve the patient appointment(s) if one (or more) lands within one day of today
                     my @patientAppointments = Appointment::getPatientsAppointmentsFromDateInOurDB($patientSer, $postPublishDate, 0);
 
-                    # we build all possible expression names, and diagnoses for each appointment found
+                    # we build all possible appointment names, and diagnoses for each appointment found
                     foreach my $appointment (@patientAppointments) {
 
                         my $expressionSer = $appointment->getApptAliasExpressionSer();
-                        my $expressionName = Alias::getExpressionNameFromOurDB($expressionSer);
-                        push(@expressionNames, $expressionName) unless grep{$_ == $expressionName} @expressionNames;
+                        my $aliasSer = Alias::getAliasFromOurDB($expressionSer);
+                        push(@aliasSerials, $aliasSer) unless grep{$_ == $aliasSer} @aliasSerials;
 
                     }
 
-                    # Finding the existence of the patient expressions in the expression filters
+                    # Finding the existence of the patient appointment in the appointment filters
                     # If there is an intersection, then patient is part of this publishing announcement
-                    if (!intersect(@expressionFilters, @expressionNames)) {
+                    if (!intersect(@appointmentFilters, @aliasSerials)) {
 						if (@patientFilters) {
-                        # if the patient failed to match the expression filter but there are patient filters
+                        # if the patient failed to match the appointment filter but there are patient filters
 							# then we flag to check later if this patient matches with the patient filters
 							$isPatientSpecificFilterDefined = 1;
 						}
@@ -288,7 +288,8 @@ sub publishAnnouncements
 					if ($isPatientSpecificFilterDefined or !$isNonPatientSpecificFilterDefined) {
 						# Finding the existence of the patient in the patient-specific filters
 						# If the patient does not exist, then continue to the next educational material
-						if (grep $patientId ne $_, @patientFilters) {next;}
+                        if ($patientId ~~ @patientFilters) {}
+                        else {next;}
 					}
 				}
 				

@@ -435,6 +435,7 @@ body {
 
 #page {
   /*max-width: 1500px;*/
+  padding-top: 55px;
   margin: 0 auto;
   position: relative;
   height: 100%; }
@@ -586,10 +587,10 @@ ul.no-list {
 .mainPatientModal .modal-dialog,
 .studyModal .modal-dialog,
 .customModal .modal-dialog {
-  width: 70% !important; }
+  width: 98% !important; }
 
 .editUserModal .modal-dialog {
-  width: 50% !important;
+  width: 98% !important;
 }
 
 .customModal .modal-content,
@@ -635,6 +636,7 @@ ul.no-list {
 .login-title {
   text-align: center;
   font-size: 18px;
+  font-weight: 700;
 }
 .login-register-block-main {
   margin-bottom: 20px;
@@ -678,19 +680,19 @@ ul.no-list {
 }
 
 /* Turn on custom 8px wide scrollbar */
-#side-panel-scroll::-webkit-scrollbar {
+#side-panel-scrollbar #side-panel-scroll::-webkit-scrollbar {
   width: 10px; /* 1px wider than Lion. */
   /* This is more usable for users trying to click it. */
   background-color: rgba(0,0,0,0);
   -webkit-border-radius: 100px;
 }
 /* hover effect for both scrollbar area, and scrollbar 'thumb' */
-#side-panel-scroll::-webkit-scrollbar:hover {
+#side-panel-scrollbar #side-panel-scroll::-webkit-scrollbar:hover {
   background-color: rgba(0, 0, 0, 0.09);
 }
  
 /* The scrollbar 'thumb' ...that marque oval shape in a scrollbar */
-#side-panel-scroll::-webkit-scrollbar-thumb:vertical {
+#side-panel-scrollbar #side-panel-scroll::-webkit-scrollbar-thumb:vertical {
   /* This is the EXACT color of Mac OS scrollbars. 
      Yes, I pulled out digital color meter */
   background: rgba(255,255,244,1);
@@ -699,9 +701,18 @@ ul.no-list {
   border: 2px solid rgba(0, 0, 0, 0);
   min-height: 10px; /*Prevent it from getting too small */
 }
-#side-panel-scroll::-webkit-scrollbar-thumb:vertical:active {
+#side-panel-scrollbar #side-panel-scroll::-webkit-scrollbar-thumb:vertical:active {
   background: rgba(255,255,244,1); /* Some darker color when you click it */
   -webkit-border-radius: 100px;
+}
+
+#side-panel-scrollbar #side-panel-scroll {
+  overflow-y: auto; 
+  max-height: 80vh;
+}
+
+#side-panel-scrollbar {
+  display: none;
 }
 
 #gradient {
@@ -719,8 +730,8 @@ ul.no-list {
 }
 
 .circle {
-  width: 140px;
-  height: 140px;
+  width: 110px;
+  height: 110px;
   background: #fff; 
   -moz-border-radius: 70px; 
   -webkit-border-radius: 70px; 
@@ -742,7 +753,7 @@ ul.no-list {
 
 .side-logo h1 {
   margin-top: -15px;
-  font-size: 35px;
+  font-size: 2vw;
 }
 
 .home-side-menu {
@@ -756,17 +767,19 @@ ul.no-list {
 }
 
 .main-title {
-  height: 60px;
+  /*height: 60px;*/
 }
 
 .main-title .title-content {
-  font-size: 50px;
+  font-size: 27px;
+  margin-bottom: 10px;
 }
 
 .main-title .title-content h1 {
   display: inline-block;
   vertical-align: middle;
   margin: 0;
+  font-size: 24px;
 }
 
 .main-title .title-content span {
@@ -781,6 +794,7 @@ ul.no-list {
   text-align: right;
   font-size: 15px;
   padding-top: 15px;
+  display: none;
 }
 
 .title-breadcrumbs .teflon {
@@ -912,7 +926,12 @@ ul.no-list {
   padding: 10px;
 }
 
-.side-panel-menu .panel-content {
+.mobile-side-panel-menu{
+  margin-left: -25px;
+}
+
+.side-panel-menu .panel-content, 
+.mobile-side-panel-menu .panel-content {
   padding: 3px;
   height: 100%;
   display: flex;
@@ -957,6 +976,22 @@ ul.no-list {
   color: #433061;
 }
 
+.greenText {
+  color: #5cb85c;
+}
+
+.redText {
+  color: #a94442;
+}
+
+.grayText {
+  color: #777;
+}
+
+.back-menu {
+  margin-top: 10px;
+}
+
 /*.grid-disabled-row .ui-grid-cell-contents{
   background-color: #a5a5a5 !important;
 }*/
@@ -967,9 +1002,25 @@ ul.no-list {
   box-shadow: rgba(0, 0, 0, 0.6) 0px 6px 6px -6px;
 }
 
+.mobile-side-panel-menu .panel-container {
+  margin-bottom: 0;
+  box-shadow: rgba(0, 0, 0, 0.6) 0px 6px 6px -6px;
+}
+
 .side-panel-title {
-  font-size: 17px;
   padding-left: 10px;
+  font-size: 17px;
+}
+
+#side-panel-scrollbar .side-panel-title,
+.side-panel-info-sm .side-panel-title {
+  font-size: 1vw;
+  padding-left: 10px;
+}
+
+.home-side-panel .side-panel-title,
+.mobile-side-panel-menu .side-panel-title {
+  font-size: 16px;
 }
 
 .option-panel-title {
@@ -1024,6 +1075,18 @@ ol, ul {
 .side-menu-title h2 {
   display: inline;
   font-weight: 700;
+}
+
+.mobile-summary {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.mobile-summary h2 {
+  display: inline;
+  font-weight: 700;
+}
+.mobile-summary .summary-title{
+  display: none;
 }
 
 .table-summary {
@@ -1180,6 +1243,7 @@ td.color-code h5 {
 .cp-description p {
   font-weight: 700;
   margin: 0 0 10px;
+  text-align: center;
 }
 
 .cp-header {
@@ -1289,6 +1353,216 @@ footer {
   margin-bottom: 10px;
 }
 
+.title-login {
+  text-align: center;
+}
+.title-login h1 {
+  font-size: 35px;
+}
+
+.home-menu {
+  display: none;
+}
+
+.home-menu .panel-description {
+  display: none;
+}
+
+.home-menu .panel-info {
+  height: 60px;
+}
+
+.home-menu .icon-home {
+  font-size: 50px;
+}
+
+.navbar-default {
+  background-color: #6f5499;
+  border-color: #3c2560;
+  width: 100%;
+}
+.navbar-default .navbar-brand {
+  color: #ecf0f1;
+}
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-brand:focus {
+  color: #fffff4;
+}
+.navbar-default .navbar-text {
+  color: #ecf0f1;
+  font-size: 18px;
+}
+.navbar-default .navbar-nav > li > a {
+  color: #ecf0f1;
+}
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+  color: #fffff4;
+}
+.navbar-default .navbar-nav > li > .dropdown-menu {
+  background-color: #6f5499;
+}
+.navbar-default .navbar-nav > li > .dropdown-menu > li > a {
+  color: #ecf0f1;
+}
+.navbar-default .navbar-nav > li > .dropdown-menu > li > a:hover,
+.navbar-default .navbar-nav > li > .dropdown-menu > li > a:focus {
+  color: #fffff4;
+  background-color: #3c2560;
+}
+.navbar-default .navbar-nav > li > .dropdown-menu > li.divider {
+  background-color: #3c2560;
+}
+.navbar-default .navbar-nav .open .dropdown-menu > .active > a,
+.navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
+.navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
+  color: #fffff4;
+  background-color: #3c2560;
+}
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+  color: #fffff4;
+  background-color: #3c2560;
+}
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+  color: #fffff4;
+  background-color: #3c2560;
+}
+.navbar-default .navbar-toggle {
+  border-color: #fff;
+}
+.navbar-default .navbar-toggle:hover,
+.navbar-default .navbar-toggle:focus {
+  background-color: #3c2560;
+}
+.navbar-default .navbar-toggle .icon-bar {
+  background-color: #ecf0f1;
+}
+.navbar-default .navbar-collapse,
+.navbar-default .navbar-form {
+  border-color: #ecf0f1;
+}
+.navbar-default .navbar-link {
+  color: #ecf0f1;
+}
+.navbar-default .navbar-link:hover {
+  color: #fffff4;
+}
+
+.navbar-default .navbar-brand > img {
+  height: 45px;
+  width: 45px;
+  margin-top: -12px;
+}
+
+@media (max-width: 767px) {
+  .navbar-default .navbar-nav .open .dropdown-menu > li > a {
+    color: #ecf0f1;
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
+  .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+    color: #fffff4;
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > a,
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
+    color: #fffff4;
+    background-color: #3c2560;
+  }
+}
+
+.side-navbar, .summary-fix {
+  display: none;
+}
+
+.modal-header .modal-title {
+  text-align: center;
+  font-weight: 700;
+}
+
+.modal-header .modal-title-caption {
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modal-buttons .submit {
+  float: left;
+  width: 120px;
+}
+
+.modal-buttons .cancel {
+  float: right;
+  width: 120px;
+}
+
+.modal-content-current-description {
+  display: none;
+}
+
+.form-horizontal .control-label {
+  text-align: left;
+}
+
+.operations {
+  
+}
+
+.operations .save-add {
+  margin-bottom: 10px;
+}
+
+.operations .search {
+  margin-bottom: 10px;
+}
+
+.home-logo {
+  display: none;
+}
+
+.home-menu .panel-content {
+ /* padding: 0;*/
+}
+
+
+
+.home-main .side-logo,
+.home-main .back-questionnaire {
+  display: none;
+}
+
+
+.home-side-panel .side-panel-scroll {
+  display: block;
+}
+
+.home-main .side-navbar {
+  display: block;
+}
+
+.app-version {
+  position: fixed;
+  right: 5px;
+  bottom: 5px;
+  font-size: 12px;
+}
+
+.no-calendar-header .picker-top-row,
+.no-calendar-header .picker-days-week-row {
+  display: none;
+}
+
+.btn-group {
+  width: 100%;
+}
+.btn-frequency-select {
+  width: 100%;
+}
+
 /* 
  * Custom Styles for ngGrid
  */
@@ -1315,13 +1589,66 @@ footer {
     font-size: 0.8em;
     line-height: 1.05em; }
 
+  .title-login h1 {
+    font-size: 45px;
+  }
+
+  .circle {
+    width: 140px;
+    height: 140px;
+  }
+
+  .home-menu {
+    display: block;
+  }
+
+  .home-menu .panel-description {
+    display: block;
+  }
   
+  .home-menu .panel-info {
+    height: 180px;
+  }
+
+  .home-menu .icon-home {
+    font-size: 50px;
+  }
+
+  .home-side-panel {
+    display: none;
+  }
 }
 
 @media only screen and (min-width:768px) {
 
   ul#standard-navigation {
     display: block }
+
+  .mobile-summary .summary-title{
+    display: block;
+  }
+  .mobile-side-panel-menu{
+    display: flex;
+    align-items: center;
+  }
+
+  .back-menu {
+    margin-top: 0;
+  }
+
+  .operations {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .modal-header .modal-title {
+    font-size: 2.1vw;
+  }
+
+  .modal-header .modal-title-caption {
+    font-size: 1.7vw;
+  }
 
   
 }
@@ -1334,10 +1661,107 @@ footer {
   #copyright {
     float: left; }
 
+}
 
+@media only screen and (min-width: 992px) {
+  .home-menu .panel-description {
+    font-size: 14px;
+  }
+
+  .home-menu .panel-title h1 {
+    font-size: 20px;
+  }
+
+  .home-menu .icon-home {
+    font-size: 40px;
+  }
 }
 
 @media only screen and (min-width:1200px) {
 
+  .flex {
+    display:flex;
+    align-items: flex-end;
+  }
+
+  .title-login {
+    text-align: right;
+  }
+  .title-login h1 {
+    font-size: 55px;
+  }
+
+  .navbar {
+    display: none;
+  }
+
+ .side-navbar, .summary-fix {
+    display: block;
+  }
+
+  #page {
+    padding-top: 0;
+  }
+
+  .patientModal .modal-dialog,
+  .mainPatientModal .modal-dialog,
+  .studyModal .modal-dialog,
+  .customModal .modal-dialog {
+    width: 70% !important; }
+
+  .editUserModal .modal-dialog {
+    width: 50% !important;
+  }
+
+  .mobile-side-panel-menu,
+  .mobile-summary {
+    display: none;
+  }
+
+  .right-color-picker {
+    display: none;
+  }
+
+  .home-logo {
+    display: block;
+  }
+
+  #side-panel-scrollbar {
+    display: block;
+  }
+
+  .home-menu .panel-description {
+    font-size: initial;
+  }
+
+  .home-menu .panel-title h1 {
+    font-size: 1.6vw;
+  }
+
+  .home-menu .icon-home {
+    font-size: 3vw;
+  }
+
+  .modal-header .modal-title {
+    font-size: 27px;
+  }
+
+  .modal-header .modal-title-caption {
+    font-size: 18px;
+  }
+
+  .modal-header .modal-buttons {
+    text-align: center;
+  }
+
+  .modal-buttons .submit,
+  .modal-buttons .cancel {
+    float: none;
+    width: 160px;
+  }
+
+  .questionnaire-main .side-logo {
+    display: block;
+  }
 
 }

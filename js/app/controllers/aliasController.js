@@ -4,8 +4,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 	/******************************************************************************
 	* Alias Page controller 
 	*******************************************************************************/
-	controller('aliasController', function ($scope, $uibModal, aliasCollectionService, educationalMaterialCollectionService, uiGridConstants, $state) {
-
+	controller('aliasController', function ($scope, $uibModal, $filter, aliasCollectionService, educationalMaterialCollectionService, uiGridConstants, $state) {
 
 		// Function to go to add alias page
 		$scope.goToAddAlias = function () {
@@ -78,23 +77,23 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 		$scope.gridOptions = {
 			data: 'aliasList',
 			columnDefs: [
-				{ field: 'name_EN', displayName: 'Alias (EN / FR)', cellTemplate: cellTemplateName, width: '30%' },
+				{ field: 'name_EN', displayName: 'Title (EN / FR)', cellTemplate: cellTemplateName, width: '30%' },
 				{
 					field: 'type', displayName: 'Type', width: '10%', filter: {
 						type: uiGridConstants.filter.SELECT,
 						selectOptions: [{ value: 'Appointment', label: 'Appointment' }, { value: 'Document', label: 'Document' }, { value: 'Task', label: 'Task' }]
 					}
 				},
-				{ field: 'update', displayName: 'Update', width: '5%', cellTemplate: checkboxCellTemplate, enableFiltering: false },
-				{ field: 'count', type: 'number', displayName: '# of terms', width: '5%', enableFiltering: false },
+				{ field: 'update', displayName: 'Publish Flag', width: '5%', cellTemplate: checkboxCellTemplate, enableFiltering: false },
+				{ field: 'count', type: 'number', displayName: '# of assigned codes', width: '5%', enableFiltering: false },
 				{
-					field: 'source_db.name', displayName: 'Source DB', width: '10%', filter: {
+					field: 'source_db.name', displayName: 'Clinical Database', width: '10%', filter: {
 						type: uiGridConstants.filter.SELECT,
 						selectOptions: [{ value: 'Aria', label: 'Aria' }, { value: 'MediVisit', label: 'MediVisit' }]
 					}
 				},
 				{ field: 'color', displayName: 'Color Tag', width: '10%', cellTemplate: cellTemplateColor, enableFiltering: false },
-				{ field: "lastupdated", displayName: 'Updated', width: '15%' },
+				{ field: "lastupdated", displayName: 'Last Updated', width: '15%' },
 				{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '15%' }
 			],
 			//useExternalFiltering: true,
@@ -230,6 +229,9 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 			$scope.emptyTerms = false; // alias terms field empty? 
 			$scope.nameMod = false; // name modified?
 			$scope.termsMod = false; // terms modified? 
+			$scope.selectAll = false;
+			$scope.showAssigned = false;
+			$scope.hideAssigned = false;
 
 			$scope.alias = {}; // initialize alias object
 			$scope.aliasModal = {}; // for deep copy
@@ -239,6 +241,9 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 
 			$scope.termFilter = null;
 			$scope.eduMatFilter = null;
+
+			// Responsible for "searching" in search bars
+			$scope.filter = $filter('filter');
 
 			// Call our API service to get the list of educational material
 			educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
@@ -250,12 +255,13 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 			// Function to assign termFilter when textbox is changing 
 			$scope.changeTermFilter = function (termFilter) {
 				$scope.termFilter = termFilter;
+				$scope.selectAll = false;
 			};
 
 			// Function for searching through expression names
 			$scope.searchTermsFilter = function (term) {
 				var keyword = new RegExp($scope.termFilter, 'i');
-				return !$scope.termFilter || keyword.test(term.name);
+				return (!$scope.termFilter || keyword.test(term.name)) && (!$scope.showAssigned || term.assigned) && (!$scope.hideAssigned || !term.assigned);
 			};
 
 			// Function to assign eduMatFilter when textbox is changing 
@@ -268,6 +274,24 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 				var keyword = new RegExp($scope.eduMatFilter, 'i');
 				return !$scope.eduMatFilter || keyword.test(edumat.name_EN);
 			};
+
+			// Function to enable "Show all" tab in term accordion
+			$scope.changeShowAssigned = function () {
+				$scope.showAssigned = true;
+				$scope.hideAssigned = false;
+			}
+
+			// Function to enable "Show only assigned" tab in term accordion
+			$scope.changeShowUnassigned = function () {
+				$scope.hideAssigned = true;
+				$scope.showAssigned = false;
+			}
+
+			// Function to enable "Show unassigned" tab in term accordion
+			$scope.changeShowAll = function () {
+				$scope.showAssigned = false;
+				$scope.hideAssigned = false;
+			}
 
 			/* Function for the "Processing" dialog */
 			var processingModal;
@@ -294,15 +318,6 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 				aliasCollectionService.getExpressions($scope.alias.source_db.serial, $scope.alias.type).then(function (response) {
 					$scope.termList = response.data; // Assign value
 
-					processingModal.close(); // hide modal
-					processingModal = null; // remove reference
-
-
-					// Set false for each term in termList
-					angular.forEach($scope.termList, function (term) {
-						term.added = false;
-					});
-
 					// Loop within current alias' expressions (terms) 
 					angular.forEach($scope.alias.terms, function (selectedTerm) {
 
@@ -312,22 +327,15 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 							var selectedTermName = selectedTerm.name;
 
 							if (selectedTermName == termId) { // If term is selected (from current alias)
-								term.added = true; // term added?
+								term.added = 1; // term added?
+								term.assigned = null; // remove self assigned alias
 							}
 						});
 
 					});
 
-
-					// Sort list
-					$scope.termList.sort(function (a, b) {
-						var nameA = a.id.toLowerCase(), nameB = b.id.toLowerCase();
-						if (nameA < nameB) // sort string ascending
-							return -1;
-						if (nameA > nameB)
-							return 1;
-						else return 0; // no sorting
-					});
+					processingModal.close(); // hide modal
+					processingModal = null; // remove reference
 
 
 				}).catch(function(response) {
@@ -359,7 +367,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 				// If originally added, remove it
 				if (term.added) {
 
-					term.added = false;
+					term.added = 0;
 
 					// Check if there are still terms added, if not, flag
 					if (!$scope.checkTermsAdded($scope.termList)) {
@@ -368,7 +376,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 
 				} else { // Originally not added, add it
 
-					term.added = true; // added parameter
+					term.added = 1; // added parameter
 
 					// Just in case it was originally true
 					// For sure we have a term
@@ -449,8 +457,11 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 
 					// Fill it with the added terms from termList
 					angular.forEach($scope.termList, function (term) {
-						if (term.added === true)
-							$scope.alias.terms.push(term.id);
+						// ignore already assigned expressions
+						if (!term.assigned) {
+							if (term.added)
+								$scope.alias.terms.push(term.id);
+						}
 					});
 
 					// Submit form
@@ -477,6 +488,51 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 				}
 			};
 
+			// Function to return boolean for # of added terms
+			$scope.checkTermsAdded = function (termList) {
+
+				var addedParam = false;
+				angular.forEach(termList, function (term) {
+					// ignore already assigned expressions
+					if (!term.assigned) {
+						if (term.added)
+							addedParam = true;
+					}
+				});
+				if (addedParam)
+					return true;
+				else
+					return false;
+			};
+
+			// Function for selecting all terms in the term list
+			$scope.selectAllFilteredTerms = function () {
+
+				var filtered = $scope.filter($scope.termList, $scope.searchTermsFilter);
+				
+				if ($scope.selectAll) { // was checked
+					angular.forEach(filtered, function (term) {
+						// ignore assigned diagnoses
+						if (!term.assigned)
+							term.added = 0;
+					});
+					$scope.selectAll = false; // toggle off
+
+				}
+				else { // was not checked
+					
+					angular.forEach(filtered, function (term) {
+						// ignore already assigned diagnoses
+						if (!term.assigned)
+							term.added = 1;
+					});
+
+					$scope.selectAll = true; // toggle on
+
+				}
+				$scope.changesMade = true;
+			};
+
 			// Function to close modal dialog
 			$scope.cancel = function () {
 				$uibModalInstance.dismiss('cancel');
@@ -494,20 +550,6 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 					return false;
 			};
 
-		};
-
-		// Function to return boolean for # of added terms
-		$scope.checkTermsAdded = function (termList) {
-
-			var addedParam = false;
-			angular.forEach(termList, function (term) {
-				if (term.added === true)
-					addedParam = true;
-			});
-			if (addedParam)
-				return true;
-			else
-				return false;
 		};
 
 		// Function for when the alias has been clicked for deletion

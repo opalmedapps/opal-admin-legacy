@@ -218,15 +218,15 @@ sub publishEducationalMaterials
             # Retrieve all patient's appointment(s) up until tomorrow
             my @patientAppointments = Appointment::getAllPatientsAppointmentsFromOurDB($patientSer);
 
-            my @expressionNames = ();
+            my @aliasSerials = ();
             my @diagnosisNames = ();
 
-            # we build all possible expression names, and diagnoses for each appointment found
+            # we build all possible appointment and diagnoses for each appointment found
             foreach my $appointment (@patientAppointments) {
 
                 my $expressionSer = $appointment->getApptAliasExpressionSer();
-                my $expressionName = Alias::getExpressionNameFromOurDB($expressionSer);
-                push(@expressionNames, $expressionName) unless grep{$_ eq $expressionName} @expressionNames;
+                my $aliasSer = Alias::getAliasFromOurDB($expressionSer);
+                push(@aliasSerials, $aliasSer) unless grep{$_ eq $aliasSer} @aliasSerials;
 
                 my $diagnosisSer = $appointment->getApptDiagnosisSer();
                 my $diagnosisName = Diagnosis::getDiagnosisNameFromOurDB($diagnosisSer);
@@ -236,22 +236,22 @@ sub publishEducationalMaterials
 
             my @patientDoctors = PatientDoctor::getPatientsDoctorsFromOurDB($patientSer);
                 
-            # Fetch expression filters (if any)
-            my @expressionFilters =  $eduMatFilters->getExpressionFilters();
-            if (@expressionFilters) {
+            # Fetch appointment filters (if any)
+            my @appointmentFilters =  $eduMatFilters->getAppointmentFilters();
+            if (@appointmentFilters) {
 
 				# toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
-                # Finding the existence of the patient expressions in the expression filters
+                # Finding the existence of the patient appointment in the appointment filters
                 # If there is an intersection, then patient is part of this publishing educational material
-                if (!intersect(@expressionFilters, @expressionNames)) {
+                if (!intersect(@appointmentFilters, @aliasSerials)) {
                    if (@patientFilters) {
-                        # if the patient failed to match the expression filter but there are patient filters
+                        # if the patient failed to match the appointment filter but there are patient filters
                         # then we flag to check later if this patient matches with the patient filters
                         $isPatientSpecificFilterDefined = 1;
                     }
-                    # else no patient filters were defined and failed to match the expression filter
+                    # else no patient filters were defined and failed to match the appointment filter
                     # move on to the next educational material
                     else{next;}
                 } 
@@ -310,7 +310,8 @@ sub publishEducationalMaterials
                 if ($isPatientSpecificFilterDefined or !$isNonPatientSpecificFilterDefined) {
     				# Finding the existence of the patient in the patient-specific filters
     				# If the patient does not exist, then continue to the next educational material
-    				if (grep $patientId ne $_, @patientFilters) {next;}
+                    if ($patientId ~~ @patientFilters) {}
+                    else {next;}
                 }
 			}
 
