@@ -16,6 +16,7 @@
 	 public function __construct( $data = array() ) {
 		 if( isset( $data->username ) ) $this->username = stripslashes( strip_tags( $data->username ) );
 		 if( isset( $data->password ) ) $this->password = stripslashes( strip_tags( $data->password ) );
+		 if( isset( $data->cypher ) ) $this->cypher = stripslashes( strip_tags( $data->cypher ) );
 	 }
 	 
 	 public function storeFormValues( $params ) {
@@ -31,6 +32,7 @@
      */
 	 public function userLogin() {
 		 $success = false;
+		 $d = new Encrypt;
 		 try{
 			$con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD ); 
 			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -38,7 +40,7 @@
 			
 			$stmt = $con->prepare( $sql );
 			$stmt->bindValue( "username", $this->username, PDO::PARAM_STR );
-			$stmt->bindValue( "password", hash("sha256", $this->password . $this->salt), PDO::PARAM_STR );
+			$stmt->bindValue( "password", hash("sha256", $d->encodeString( $this->password, $this->cypher ) . $this->salt), PDO::PARAM_STR );
 			$stmt->execute();
 			
 			$valid = $stmt->fetchColumn();
@@ -76,6 +78,8 @@
 	 	$oldPassword 	= $userDetails['oldPassword'];
 	 	$userSer		= $userDetails['user']['id'];
 	 	$newPassword	= $userDetails['password'];
+	 	$cypher 			= $userDetails['cypher'];
+		$d = new Encrypt;
 	 	try {
 	 		$con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD ); 
 			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -85,7 +89,7 @@
 
 				$stmt = $con->prepare( $sql );
 				$stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
-				$stmt->bindValue( "password", hash("sha256", $oldPassword . $this->salt), PDO::PARAM_STR );
+				$stmt->bindValue( "password", hash("sha256", $d->encodeString( $oldPassword, $cypher ) . $this->salt), PDO::PARAM_STR );
 				$stmt->execute();
 				
 				$valid = $stmt->fetchColumn();
@@ -100,7 +104,7 @@
 
 			$stmt = $con->prepare( $sql );
 			$stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
-			$stmt->bindValue( "password", hash("sha256", $newPassword . $this->salt), PDO::PARAM_STR );
+			$stmt->bindValue( "password", hash("sha256", $d->encodeString( $newPassword, $cypher ) . $this->salt), PDO::PARAM_STR );
 			$stmt->execute();
 
 			$response['value'] = 1; // Success
@@ -170,6 +174,8 @@
 		$username 		= $userDetails['username'];
 		$password 		= $userDetails['password'];
 		$roleSer 		= $userDetails['role']['serial'];
+		$cypher 		= $userDetails['cypher'];
+		$d = new Encrypt;
 		try {
 			$con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -177,7 +183,7 @@
 			
 			$stmt = $con->prepare( $sql );
 			$stmt->bindValue( "username", $username, PDO::PARAM_STR );
-			$stmt->bindValue( "password", hash("sha256", $password . $this->salt), PDO::PARAM_STR );
+			$stmt->bindValue( "password", hash("sha256", $d->encodeString( $password, $cypher ) . $this->salt), PDO::PARAM_STR );
 			$stmt->execute();
 
 			$userSer = $con->lastInsertId();

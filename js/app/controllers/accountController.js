@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.accountController', ['ui.bootstrap']).
 	/******************************************************************************
 	* Controller for the account page
 	*******************************************************************************/
-	controller('accountController', function ($scope, $rootScope, Session) {
+	controller('accountController', function ($scope, $rootScope, Session, Encrypt) {
 
 		// Set current user 
 		$scope.currentUser = Session.retrieveObject('user');
@@ -121,11 +121,21 @@ angular.module('opalAdmin.controllers.accountController', ['ui.bootstrap']).
 					return;
 				}
 
+				// duplicate user
+				var user = jQuery.extend(true, {}, $scope.account);
+				// one-time pad using current time and rng
+				var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103; 
+				// encode passwords before request
+				user.password = Encrypt.encode(user.password, cypher);
+				user.oldPassword = Encrypt.encode(user.oldPassword, cypher);
+				user.confirmPassword = Encrypt.encode(user.confirmPassword, cypher);
+				user.cypher = cypher;
+
 				// submit form 
 				$.ajax({
 					type: "POST",
 					url: "php/user/update.password.php",
-					data: $scope.account,
+					data: user,
 					success: function (response) {
 						response = JSON.parse(response);
 						if (response.value == 1) {

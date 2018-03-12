@@ -611,6 +611,7 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 						$scope.newPatient.uid = userData.uid;
 						$scope.newPatient.SSN = $scope.validSSN.SSN;
 						$scope.newPatient.password = CryptoJS.SHA512($scope.newPatient.password).toString();
+						$scope.newPatient.confirmPassword = CryptoJS.SHA512($scope.newPatient.confirmPassword).toString();
 						$scope.newPatient.securityQuestion1.answer = CryptoJS.SHA512($scope.newPatient.securityQuestion1.answer.toUpperCase()).toString();
 						$scope.newPatient.securityQuestion2.answer = CryptoJS.SHA512($scope.newPatient.securityQuestion2.answer.toUpperCase()).toString();
 						$scope.newPatient.securityQuestion3.answer = CryptoJS.SHA512($scope.newPatient.securityQuestion3.answer.toUpperCase()).toString();
@@ -698,7 +699,15 @@ angular.module('opalAdmin.controllers.patientRegistrationController', ['ngAnimat
 
 			$scope.confirmRegistration = function (credentials) {
 				if ($scope.loginFormComplete()) {
-					AuthService.confirm(credentials).then(function () {
+
+					// one-time pad using current time and rng
+					var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103; 
+					var userCreds = jQuery.extend(true, {}, credentials);
+					// encode password before request
+					userCreds.password = Encrypt.encode(credentials.password, cypher);
+					userCreds.cypher = cypher;
+
+					AuthService.confirm(userCreds).then(function () {
 						$uibModalInstance.close();
 					}, function () {
 						$scope.bannerMessage = $filter('translate')('STATUS_USERNAME_PASSWORD_INCORRECT');
