@@ -132,6 +132,248 @@
 					</div>
 				</div>
       </div>
+
+      <!-- SECTION: Body -->
+      <div uib-accordion-group is-open="introSection.open">
+        <uib-accordion-heading>
+          <div>
+            <strong>Introduction Text </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': introSection.open, 'glyphicon-chevron-right': !introSection.open}"></i>
+          </div>
+        </uib-accordion-heading>
+        <div class="row">
+          <div class="col-xs-12 col-lg-8">
+            <div style="text-align:center;">
+              <span style="font-size:20px;">HTML (English)</span>
+            </div>
+            <div class="form-group">
+              <div text-angular ng-model="legacyQuestionnaire.intro_EN" ng-change="setChangesMade()"></div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-lg-4">
+            <div style="text-align:center;">
+              <span style="font-size:20px;">iPhone 4 Rendered</span>
+            </div>
+            <div class="render-html-iphone4"> 
+              <iframe frameborder="0" height="100%" width="100%" srcdoc="{{legacyQuestionnaire.intro_EN | deliberatelyTrustAsHtml}}"></iframe>
+            </div>
+          </div>    
+        </div>
+        <div class="row">
+          <div style="min-height: 15px;"></div><hr>
+        </div>
+        <div class="row">  
+          <div class="col-xs-12 col-lg-8">
+            <div style="text-align:center;">
+              <span style="font-size:20px;">HTML (Français) </span>
+            </div>
+            <div class="form-group">
+              <div text-angular ng-model="legacyQuestionnaire.intro_FR" ng-change="setChangesMade()"></div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-lg-4">
+            <div style="text-align:center;">
+              <span style="font-size:20px;">iPhone 4 Rendered</span>
+            </div>
+            <div class="render-html-iphone4"> 
+              <iframe frameborder="0" height="100%" width="100%" srcdoc="{{legacyQuestionnaire.intro_FR | deliberatelyTrustAsHtml}}"></iframe>
+            </div>
+          </div>    
+        </div>
+      </div>
+
+
+      <!-- SECTION: Publish Frequency -->
+      <div uib-accordion-group is-open="frequencySection.open">
+        <uib-accordion-heading>
+          <div>
+            <strong>Publish Frequency </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': frequencySection.open, 'glyphicon-chevron-right': !frequencySection.open}"></i>
+          </div>
+        </uib-accordion-heading>
+        <div class="alert alert-info" role="alert">
+          <div class="row">
+            <div class="col-xs-12 col-sm-4">
+              <strong>Repeat</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                <span ng-if="!showFrequency">N/A</span>
+                <span ng-if="frequencySelected.id != 'custom' && showFrequency">{{frequencySelected.name}}</span>
+                <span ng-if="frequencySelected.id == 'custom'">
+                  Every 
+                  <span ng-if="customFrequency.meta_value != 1">{{customFrequency.meta_value}}</span>
+                  {{customFrequency.unit.name}} 
+                  <span ng-if="selectedDaysInWeek.length">On {{selectedDaysInWeekText}}</span>
+                  <span ng-if="selectedMonthsInYear.length">in {{selectedMonthsInYearText}} </span>
+                  <span ng-if="selectedDatesInMonth.length">on the {{selectedDatesInMonthText}} of
+                    <span ng-if="selectedMonthsInYear.length > 1">each</span>
+                    <span ng-if="selectedMonthsInYear.length < 2">the</span>
+                  month</span>
+                  <span ng-if="selectedWeekNumberInMonth.id && selectedSingleDayInWeek.id">on the {{selectedWeekNumberInMonthText}} {{selectedSingleDayInWeekText}} of 
+                  <span ng-if="selectedMonthsInYear.length > 1">each</span>
+                  <span ng-if="selectedMonthsInYear.length < 2">the</span>
+                    month</span>
+                </span>
+              </p>
+            </div>
+            <div class="col-xs-12 col-sm-4">
+
+              <strong>Repeat Start</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                <span ng-if="legacyQuestionnaire.occurrence.start_date">
+                  {{legacyQuestionnaire.occurrence.start_date | date:'fullDate' }}
+                </span>
+                <span ng-if="!legacyQuestionnaire.occurrence.start_date">N/A</span>
+              </p>
+            </div>
+            <div class="col-xs-12 col-sm-4">
+
+              <strong>Repeat End</strong><br>
+              <p>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                  <span ng-if="legacyQuestionnaire.occurrence.end_date">
+                    {{legacyQuestionnaire.occurrence.end_date | date:'fullDate' }}
+                  </span>
+                  <span ng-if="!legacyQuestionnaire.occurrence.end_date">Never</span>
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="row" style="margin-bottom:10px;">
+          <div class="col-xs-12">
+            <button class="btn btn-success" ng-if="!showFrequency" ng-click="addFrequencyFilter()">
+              <span style="font-size: 17px;" class="fa fa-plus"></span>
+              <span style="font-size: 20px;"><strong>Add</strong></span>
+            </button>
+            <button class="btn btn-danger" ng-if="showFrequency" ng-click="removeFrequencyFilter()">
+              <span style="font-size: 17px;" class="glyphicon glyphicon-minus"></span>
+              <span style="font-size: 20px;"><strong>Remove</strong></span>
+            </button>
+          </div>
+        </div>
+       
+        <div class="row" style="margin-bottom:10px;" ng-if="showFrequency">
+          <div class="col-xs-12 col-sm-4">
+            <div class="form-horizontal">
+              <div class="form-group">
+                <label class="control-label col-xs-12">
+                  Repeat 
+                </label>
+                <div class="col-xs-8">
+                  <select class="form-control" ng-options="presetFrequency as presetFrequency.name for presetFrequency in presetFrequencies track by presetFrequency.id" ng-model="frequencySelected" ng-change="selectFrequency(frequencySelected)">
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-4">  
+            <div class="form-horizontal">
+              <div class="form-group">
+                <label class="control-label col-xs-12">
+                  Repeat Start
+                </label>
+                <div class="col-xs-12 col-lg-9">
+                  <div class="input-group">
+                    <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="legacyQuestionnaire.occurrence.start_date" ng-change="setChangesMade()" is-open="popupStart.opened"datepicker-options="dateOptionsStart" ng-required="true" close-text="Close" />
+                    <span class="input-group-btn">
+                      <button class="btn btn-default" ng-click="openStart($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-4">  
+            <div class="form-horizontal">
+              <div class="form-group">
+                <label class="control-label col-xs-12">
+                  Repeat End
+                </label>
+                <div ng-if="!addEndDate" class="col-xs-12 col-lg-9">
+                  <button class="btn btn-default" ng-click="toggleEndDate()">
+                    <span class="fa fa-plus"></span>
+                    <span><strong>Add End Date</strong></span>
+                  </button>
+                </div>
+                <div class="col-xs-12 col-lg-9" style="margin-bottom:10px;">
+                  <div class="input-group">
+                    <input ng-if="addEndDate" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="legacyQuestionnaire.occurrence.end_date" ng-change="setChangesMade()" is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true" close-text="Close" />
+                    <span ng-if="addEndDate" class="input-group-btn">
+                      <button class="btn btn-default" ng-click="openEnd($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                  </div>
+                </div>
+                <div class="col-xs-12">
+                  <button class="btn btn-default" ng-if="addEndDate" ng-click="toggleEndDate()">
+                    <span class="glyphicon glyphicon-minus"></span>
+                    <span><strong>Remove End Date</strong></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-12 col-sm-4" ng-if="frequencySelected.id == 'custom'">
+            <div class="form-horizontal">
+              <div class="form-group">
+                <label class="control-label col-xs-12">
+                  Repeat Interval
+                </label>
+                <div class="col-xs-3">
+                  <input class="form-control" ng-model="customFrequency.meta_value" ng-change="setChangesMade()" type="number" max="59" min="1">
+                </div>
+                <div class="col-xs-6">
+                  <select class="form-control" ng-options="unit as unit.name for unit in frequencyUnits track by unit.id" ng-model="customFrequency.unit" ng-change="selectRepeatInterval(customFrequency.unit)">
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xs-12 col-sm-4" ng-if="frequencySelected.id == 'custom' && customFrequency.unit.id != 'day'">
+            <div class="form-horizontal">
+              <div class="form-group">
+                <label class="control-label col-xs-12">
+                  <span ng-if="customFrequency.unit.id == 'week'">Repeat On Day(s)</span>
+                  <span ng-if="customFrequency.unit.id == 'month' || customFrequency.unit.id == 'year'">Repeat Options</span>
+                </label>
+                <div class="col-xs-8" style="margin-bottom: 10px;" ng-if="customFrequency.unit.id == 'week'">
+                  <div ng-dropdown-multiselect="" options="daysInWeek" selected-model="selectedDaysInWeek" extra-settings="weekDropdownSettings" events="weekDropdownEvents"></div>
+                </div>
+                <div ng-if="customFrequency.unit.id == 'year'"class="col-xs-10" style="margin-bottom: 10px;">
+                  <div ng-dropdown-multiselect="" options="monthsInYear" selected-model="selectedMonthsInYear" extra-settings="monthDropdownSettings" events="monthDropdownEvents"></div>
+                </div>
+                <div ng-if="customFrequency.unit.id == 'month'" class="col-xs-12" style="margin-bottom: 10px;">
+                  <div class="btn-group btn-group-justified" role="group">
+                    <div class="btn-group" role="group">
+                      <button type="button" class="btn btn-default" ng-class="{active: repeatSub == 'onDate'}" ng-click="setRepeatSub('onDate')">On Date</button>
+                    </div>
+                    <div class="btn-group" role="group">
+                      <button type="button" class="btn btn-default" ng-class="{active: repeatSub == 'onWeek'}" ng-click="setRepeatSub('onWeek')">On Week</button>
+                    </div>
+                  </div>
+                </div>
+                <div ng-if="repeatSub == 'onDate' && customFrequency.unit.id == 'month'" class="no-calendar-header col-xs-12" style="margin-bottom: 10px;">
+                  <multiple-date-picker day-click="setChangesMade()" ng-model="selectedDatesInMonth" month="staticMonth"></multiple-date-picker>
+                </div>
+                <div ng-if="repeatSub == 'onWeek' || customFrequency.unit.id == 'year'" class="col-xs-4" style="margin-bottom: 10px;">
+                  <select class="form-control" ng-options="week as week.name for week in weekNumbersInMonth track by week.id" ng-model="selectedWeekNumberInMonth" ng-change="selectWeekInMonth(selectedWeekNumberInMonth)" >
+                  </select>
+                </div>
+                <div ng-if="repeatSub == 'onWeek' || customFrequency.unit.id == 'year'" class="col-xs-6" style="margin-bottom: 10px;">
+                  <select class="form-control" ng-options="day as day.name for day in daysInWeek track by day.id" ng-model="selectedSingleDayInWeek" ng-change="selectDayInWeek(selectedSingleDayInWeek, customFrequency.unit.id)">
+                    <option value="" selected="selected">---</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+
+      </div>
       
       <!-- SECTION: Patient filter -->
       <div uib-accordion-group is-open="patientFilterSection.open">

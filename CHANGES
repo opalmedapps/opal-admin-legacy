@@ -1,3 +1,25 @@
+Version 0.16.0.0:
+ -     --- Added functionality to change youtube links         -- Embed can only display in the app so added function to change youtube urls         into proper embed urls
+ -     --- Register patient in QuestionnaireDB when registering a new patient in opalAdmin
+ -     --- Fixed bug where new step didn't show after choosing an alias type     --- Fixed syntax in educational material URL field placeholders     --- Fixed missing educational material section when adding an alias
+ -     --- Added introduction text HTML field
+ - Merge branch 'frequencyFeature' into develop
+ -     --- Added appointment status filter to new legacy questionnaire page
+ -     --- Removed "repeat once" option from frequency filter         -- By default, it will only publish once so it's redundant     --- Added conditional logic for recurring filters         -- If appointment, status, checkin, or frequency filters are defined,         it will flag to check if the questionnaire has been published today (to         publish according to recurring schedule, but no more than once a day). If not,         it will check it has been published for all time (to publish only once forever).
+ -     --- Trigger update on changing repeat interval
+ -     --- Reverted auto-increment optimization in commit: 66ed1b5f961799023b7085c71461a5ea3629791b         -- Turns out auto-increment still augments even after update         (See: https://stackoverflow.com/questions/23516958/on-duplicate-key-auto-increment-issue-mysql)         -- Optimized by removing FrequencyEventsSerNum in database since it will never be used.         Only metas set will display in table instead of the '*' wildcard for unused meta keys         -- Reverted scripts that were manipulating '*' wildcards
+ -     --- Fixed crash on settings when switching from custom freuqncy to preset frequency
+ -     --- Optimized frequency filter         -- To avoid auto increment primary key to potentially increase to a very large number         after every update to the legacy questionnaire (because it would delete everything         and put the new settings in the FrequencyEvents table), all settings are "flushed"         (i.e. all metas are wildcarded '*') and new settings are updated in the database.         This avoids having new FrequencyEventsSerNum values for every update.         This is a tradeoff between having low FrequencyEventsSerNum values with 9 static allocated         rows and potentially high FrequencyEventsSerNum with allocated rows corresponding to the         settings made (min:0, max:5 rows)         -- MetaKey's now have a pipe delimeter to identify the type of meta key and associate the         metakey to the corresponding legacy questionnaire (note the 'lqc' = LegacyQuestionnaireControl         -> underscore serial number of the legacy questionnaire control)
+ -     --- Finished publisher logic for frequency filter     --- Will optimize metas
+ -     --- Fixed crashes     --- Almost completed the publisher of legacy questionnaires based on frequency filters
+ -     --- Started publisher logic for frequency filter         -- Will retrieve loegacy questionnaires that fall under the defined frequency intervals
+ -     --- Added update functionality to frequency filter         -- Updates can now successfully be updated in the database
+ -     --- Able to retrieve frequency settings from the database
+ -     --- Testing
+ -     --- Further developments to filter
+ -     --- Added frequency interval for publishing legacy questionnaires
+ - Merge branch 'release-0.15.0.0' into develop
+
 Version 0.15.0.0:
  -     --- Fixed failed publishing issue         -- When more than one patient filter is defined, the logic would fail to see an         existance of a patient in the filter list even though it is there. Marked down as         a coding error. Changed logic to check if it does exist. The else contains the next statement.
  -     --- Added checkin and appointment status filters to legacy questionnaires
