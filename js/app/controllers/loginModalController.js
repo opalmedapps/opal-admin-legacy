@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.loginModalController', ['ngAnimate', 'ui.b
 	/******************************************************************************
 	* Login controller 
 	*******************************************************************************/
-	controller('loginModalController', function ($scope, $rootScope, $state, AUTH_EVENTS, AuthService, $uibModalInstance) {
+	controller('loginModalController', function ($scope, $rootScope, $state, AUTH_EVENTS, AuthService, $uibModalInstance, Encrypt) {
 
 		// Initialize login object
 		$scope.credentials = {
@@ -58,7 +58,7 @@ angular.module('opalAdmin.controllers.loginModalController', ['ngAnimate', 'ui.b
 				// encode password before request
 				loginCreds.password = Encrypt.encode(credentials.password, cypher);
 				loginCreds.cypher = cypher;
-				
+
 				AuthService.login(credentials).then(function (user) {
 					$rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
 					$rootScope.setSiteLanguage(user); 
