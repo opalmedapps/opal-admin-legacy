@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
 	/******************************************************************************
 	* Controller for the users page
 	*******************************************************************************/
-	controller('userController', function ($scope, $uibModal, $filter, $sce, $state, userCollectionService) {
+	controller('userController', function ($scope, $uibModal, $filter, $sce, $state, userCollectionService, Encrypt) {
 
 		// Function to go to register new user
 		$scope.goToAddUser = function () {
@@ -286,11 +286,21 @@ angular.module('opalAdmin.controllers.userController', ['ui.bootstrap', 'ui.grid
 			// Submit changes
 			$scope.updateUser = function () {
 				if ($scope.checkForm()) {
+
+					// duplicate user
+					var user = jQuery.extend(true, {}, $scope.user);
+					// one-time pad using current time and rng
+					var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103; 
+					// encode passwords before request
+					user.password = Encrypt.encode(user.password, cypher);
+					user.confirmPassword = Encrypt.encode(user.confirmPassword, cypher);
+					user.cypher = cypher;
+
 					// submit 
 					$.ajax({
 						type: "POST",
 						url: "php/user/update.user.php",
-						data: $scope.user,
+						data: user,
 						success: function (response) {
 							response = JSON.parse(response);
 							if (response.value) {

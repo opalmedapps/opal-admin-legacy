@@ -51,6 +51,14 @@ angular.module('opalAdmin.controllers.loginModalController', ['ngAnimate', 'ui.b
 
 		$scope.submitLogin = function (credentials) {
 			if ($scope.loginFormComplete()) {
+
+				// one-time pad using current time and rng
+				var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103; 
+				var loginCreds = jQuery.extend(true, {}, credentials);
+				// encode password before request
+				loginCreds.password = Encrypt.encode(credentials.password, cypher);
+				loginCreds.cypher = cypher;
+				
 				AuthService.login(credentials).then(function (user) {
 					$rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
 					$rootScope.setSiteLanguage(user); 

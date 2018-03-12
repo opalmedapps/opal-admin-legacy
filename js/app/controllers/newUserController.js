@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 	/******************************************************************************
 	* Controller for user registration
 	*******************************************************************************/
-	controller('newUserController', function ($scope, userCollectionService, $state) {
+	controller('newUserController', function ($scope, userCollectionService, $state, Encrypt) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -195,11 +195,19 @@ angular.module('opalAdmin.controllers.newUserController', ['ui.bootstrap', 'ui.g
 
 			if ($scope.checkRegistrationForm()) {
 
+				// duplicate new user
+				var user = jQuery.extend(true, {}, $scope.newUser);
+				// one-time pad using current time and rng
+				var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103; 
+				// encode passwords before request
+				user.password = Encrypt.encode(user.password, cypher);
+				user.confirmPassword = Encrypt.encode(user.confirmPassword, cypher);
+				user.cypher = cypher;
 				// submit form
 				$.ajax({
 					type: "POST",
 					url: 'php/user/insert.user.php',
-					data: $scope.newUser,
+					data: user,
 					success: function () {
 						$state.go('users');
 					}
