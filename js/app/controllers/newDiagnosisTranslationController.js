@@ -11,13 +11,12 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 		};
 
 		// Default boolean variables
-		$scope.selectAll = false; // select All button checked?
 		$scope.showAssigned = false;
 		$scope.hideAssigned = false;
 
-		$scope.diagnoses = {open:false, show: true};
-		$scope.title_description = {open:false, show:false};
-		$scope.edumat = {open:false, show:false};
+		$scope.diagnosesSection = {open:false, show: true};
+		$scope.titleDescriptionSection = {open:false, show:false};
+		$scope.educationalMaterialSection = {open:false, show:false};
 
 		// completed steps booleans - used for progress bar
 		var steps = {
@@ -141,7 +140,7 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 				// Check if there are still diagnoses added, if not, flag
 				if (!$scope.checkDiagnosesAdded($scope.diagnosisList)) {
 
-					$scope.diagnoses.open = false;
+					$scope.diagnosesSection.open = false;
 
 					// Toggle boolean
 					steps.diagnoses.completed = false;
@@ -155,15 +154,15 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 				}
 
 			}
-			else { // Orignally not added, add it
+			else { // Originally not added, add it
 
 				diagnosis.added = 1;
 
 				// Boolean
 				steps.diagnoses.completed = true;
 
-				$scope.diagnoses.open = true;
-				$scope.title_description.show = true;
+				$scope.diagnosesSection.open = true;
+				$scope.titleDescriptionSection.show = true;
 
 				// Count the number of steps completed
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -178,14 +177,14 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 		// Function to toggle necessary changes when updating title and description
 		$scope.titleDescriptionUpdate = function () {
 
-			$scope.title_description.open = true;
+			$scope.titleDescriptionSection.open = true;
 
 			if ($scope.newDiagnosisTranslation.name_EN && $scope.newDiagnosisTranslation.name_FR &&
 				$scope.newDiagnosisTranslation.description_EN && $scope.newDiagnosisTranslation.description_FR) {
 
 				// Toggle step completion
 				steps.title_description.completed = true;
-				$scope.edumat.show = true;
+				$scope.educationalMaterialSection.show = true;
 
 				// Count the number of completed steps
 				$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -205,7 +204,7 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 		$scope.eduMatUpdate = function () {
 
 			// Toggle booleans
-			$scope.edumat.open = true;
+			$scope.educationalMaterialSection.open = true;
 		}
 
 		// Function to submit the new diagnosis translation
@@ -300,7 +299,7 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 					
 					// Toggle boolean
 					steps.diagnoses.completed = false;
-					$scope.diagnoses.open = false;
+					$scope.diagnosesSection.open = false;
 
 					// Count the number of completed steps
 					$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -326,14 +325,14 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 					
 					// Toggle boolean
 					steps.diagnoses.completed = false;
-					$scope.diagnoses.open = false;
+					$scope.diagnosesSection.open = false;
 
 				}
 				else {
 					// Boolean
 					steps.diagnoses.completed = true;
-					$scope.diagnoses.open = true;
-					$scope.title_description.show = true;
+					$scope.diagnosesSection.open = true;
+					$scope.titleDescriptionSection.show = true;
 				}
 
 				// Count the number of steps completed
