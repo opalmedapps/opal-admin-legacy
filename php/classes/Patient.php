@@ -475,6 +475,23 @@ class Patient {
             $query = $host_db_link->prepare( $sql );
             $query->execute();
 
+            $questionnaires_db_link = new PDO( QUESTIONNAIRE_DB_DSN, QUESTIONNAIRE_DB_USERNAME, QUESTIONNAIRE_DB_PASSWORD );
+            $questionnaires_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            $sql = "
+                INSERT INTO 
+                    Patient (
+                        PatientName,
+                        PatientId
+                    )
+                VALUES (
+                    \"$firstname $lastname\",
+                    '$id'
+                )
+            ";
+
+            $query = $questionnaires_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+            $query->execute();
 
         } catch( PDOException $e) {
             return $e->getMessage();
