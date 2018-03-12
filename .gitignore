@@ -33,6 +33,3 @@ node_modules/**
 
 # ignore idea for PhpStorm
 .idea
-
-# ignore bower install error
-.bowerrc
