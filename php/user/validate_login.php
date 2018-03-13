@@ -21,7 +21,8 @@
 				'id'		=> $usr->userid,
 				'username'	=> $usr->username,
 				'role'		=> $usr->role,
-				'language' 	=> $usr->language
+				'language' 	=> $usr->language,
+				'sessionid' => $usr->sessionid
 			)
 		);
 

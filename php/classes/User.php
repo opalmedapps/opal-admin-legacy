@@ -10,6 +10,7 @@
 	 public $role = null;
 	 public $language = null;
 	 public $userid = null;
+	 public $sessionid = null;
 	 public $salt = "Zo4rU5Z1YyKJAASY0PT6EUg7BBYdlEhPaNLuxAwU8lqu1ElzHv0Ri7EM6irpx5w";
 	 
 	 /* Class constructor*/ 
@@ -49,6 +50,7 @@
 				$userDetails = $this->getUserDetails($valid);
 				$this->role = $userDetails['role']['name'];
 				$this->language = $userDetails['language'];
+				$this->sessionid = $this->makeSessionId();
 				$success = true;
 			}
 			
@@ -59,6 +61,22 @@
 			 return $success;
 		 }
 	 }
+
+	 /**
+     *
+     * Sets a session id
+     *
+     * @return string $sessionid : session id
+     */
+     public function makeSessionId($length = 20) {
+     	$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	    $charactersLength = strlen($characters);
+	    $randomString = '';
+	    for ($i = 0; $i < $length; $i++) {
+	        $randomString .= $characters[rand(0, $charactersLength - 1)];
+	    }
+	    return $randomString;
+     }
 
 	/**
      *

@@ -8,15 +8,20 @@ angular.module('opalAdmin.controllers.applicationController', ['ui.bootstrap', '
 		$uibModal, Session, loginModal, AUTH_EVENTS, USER_ROLES, AuthService, $translate, applicationCollectionService) {
 
 		// Set current user 
-		$rootScope.currentUser = null;
+		$rootScope.currentUser = Session.retrieveObject('user');
 
 		$rootScope.siteLanguage = null;
 
 		// Set the site language
 		$rootScope.setSiteLanguage = function (user) {
-			$rootScope.siteLanguage = user.language;
-			$translate.use(user.language.toLowerCase());
+			if (!user) 
+				$rootScope.siteLanguage = 'EN';
+			else {
+				$rootScope.siteLanguage = user.language;
+			}
+			$translate.use($rootScope.siteLanguage.toLowerCase());
 		};
+		$rootScope.setSiteLanguage($rootScope.currentUser);
 
 		$scope.userRoles = USER_ROLES;
 		$scope.isAuthorized = AuthService.isAuthorized;

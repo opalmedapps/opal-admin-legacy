@@ -4,8 +4,7 @@
 angular.module('opalAdmin.services', [])
 
 	.service('Session', function ($cookies) {
-		this.create = function (session_id, user) {
-			$cookies.put('session_id', session_id);
+		this.create = function (user) {
 			$cookies.putObject('user', user);
 		};
 		this.retrieve = function (data) {
@@ -15,7 +14,6 @@ angular.module('opalAdmin.services', [])
 			return $cookies.getObject(data);
 		};
 		this.destroy = function () {
-			$cookies.remove('session_id');
 			$cookies.remove('user');
 		};
 	})

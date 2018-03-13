@@ -93,7 +93,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 					}
 				},
 				{ field: 'color', displayName: 'Color Tag', width: '10%', cellTemplate: cellTemplateColor, enableFiltering: false },
-				{ field: "lastupdated", displayName: 'Last Updated', width: '15%' },
+				{ field: "lastupdated", displayName: 'Last Updated', width: '15%', sort: {direction: uiGridConstants.DESC, priority: 0}},
 				{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '15%' }
 			],
 			//useExternalFiltering: true,
