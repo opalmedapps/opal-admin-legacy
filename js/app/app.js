@@ -50,7 +50,7 @@ angular.module('opalAdmin', [
 				.post('php/user/validate_login.php', credentials)
 				.then(function (response) {
 					if (response.data.user) {
-						Session.create('123abc', response.data.user);
+						Session.create(response.data.user);
 						return response.data.user;
 					}
 					else { return $q.reject(response); }

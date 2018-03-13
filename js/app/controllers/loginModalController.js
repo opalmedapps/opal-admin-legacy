@@ -61,6 +61,7 @@ angular.module('opalAdmin.controllers.loginModalController', ['ngAnimate', 'ui.b
 
 				AuthService.login(loginCreds).then(function (user) {
 					$rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
+					$rootScope.currentUser = user;
 					$rootScope.setSiteLanguage(user); 
 					$uibModalInstance.close();
 				}, function () {
