@@ -162,6 +162,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 			else {
 				edumat.publish = 1; // set publish to "true"
 			}
+			edumat.changed = 1; // flag change to entity
 		};
 
 		// Function to submit changes when publish flags have been modified

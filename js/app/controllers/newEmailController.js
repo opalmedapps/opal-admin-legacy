@@ -10,7 +10,7 @@ angular.module('opalAdmin.controllers.newEmailController', ['ngAnimate', 'ngSani
 	/******************************************************************************
 	* Add Email Template Page controller 
 	*******************************************************************************/
-	controller('newEmailController', function ($scope, $filter, $state, $sce, $uibModal, emailCollectionService) {
+	controller('newEmailController', function ($scope, $filter, $state, $sce, $uibModal, emailCollectionService, Session) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -18,9 +18,9 @@ angular.module('opalAdmin.controllers.newEmailController', ['ngAnimate', 'ngSani
 		};
 
 		// default boolean
-		$scope.typeSection = {open: false, show: true};
-		$scope.titleSection = {open: false, show: false};
-		$scope.bodySection = {open: false, show: false};
+		$scope.typeSection = { open: false, show: true };
+		$scope.titleSection = { open: false, show: false };
+		$scope.bodySection = { open: false, show: false };
 
 		// completed steps boolean object; used for progress bar
 		var steps = {
@@ -69,7 +69,7 @@ angular.module('opalAdmin.controllers.newEmailController', ['ngAnimate', 'ngSani
 		$scope.emailTypes = [];
 		emailCollectionService.getEmailTypes().then(function (response) {
 			$scope.emailTypes = response.data;
-		}).catch(function(response) {
+		}).catch(function (response) {
 			console.error('Error occurred getting email types:', response.status, response.data);
 		});
 
@@ -99,7 +99,7 @@ angular.module('opalAdmin.controllers.newEmailController', ['ngAnimate', 'ngSani
 
 		// Function to toggle necessary changes when updating the email body
 		$scope.bodyUpdate = function () {
-			
+
 			$scope.bodySection.open = true;
 
 			if ($scope.newEmail.body_EN && $scope.newEmail.body_FR) {
@@ -140,6 +140,9 @@ angular.module('opalAdmin.controllers.newEmailController', ['ngAnimate', 'ngSani
 		$scope.submitEmailTemplate = function () {
 			if ($scope.checkForm()) {
 
+				// Log who created email
+				var currentUser = Session.retrieveObject('user');
+				$scope.newEmail.user = currentUser;
 				// Submit 
 				$.ajax({
 					type: "POST",
@@ -161,49 +164,49 @@ angular.module('opalAdmin.controllers.newEmailController', ['ngAnimate', 'ngSani
 		};
 
 		var fixmeTop = $('.summary-fix').offset().top;
-		$(window).scroll(function() {
-		    var currentScroll = $(window).scrollTop();
-		    if (currentScroll >= fixmeTop) {
-		        $('.summary-fix').css({
-		            position: 'fixed',
-		            top: '0',
-		          	width: '15%'
-		        });
-		    } else {
-		        $('.summary-fix').css({
-		            position: 'static',
-		            width: ''
-		        });
-		    }
+		$(window).scroll(function () {
+			var currentScroll = $(window).scrollTop();
+			if (currentScroll >= fixmeTop) {
+				$('.summary-fix').css({
+					position: 'fixed',
+					top: '0',
+					width: '15%'
+				});
+			} else {
+				$('.summary-fix').css({
+					position: 'static',
+					width: ''
+				});
+			}
 		});
 
 		var fixMeMobile = $('.mobile-side-panel-menu').offset().top;
-		$(window).scroll(function() {
-		    var currentScroll = $(window).scrollTop();
-		    if (currentScroll >= fixMeMobile) {
-		        $('.mobile-side-panel-menu').css({
-		            position: 'fixed',
-		            top: '50px',
-		            width: '100%',
-		            zIndex: '100',
-		            background: '#6f5499',
-		            boxShadow: 'rgba(93, 93, 93, 0.6) 0px 3px 8px -3px'
-		          	
-		        });
-		        $('.mobile-summary .summary-title').css({
-		        	color: 'white'
-		        });
-		    } else {
-		        $('.mobile-side-panel-menu').css({
-		            position: 'static',
-		            width: '',
-		            background: '',
-		            boxShadow: ''
-		        });
-		         $('.mobile-summary .summary-title').css({
-		        	color: '#6f5499'
-		        });
-		    }
+		$(window).scroll(function () {
+			var currentScroll = $(window).scrollTop();
+			if (currentScroll >= fixMeMobile) {
+				$('.mobile-side-panel-menu').css({
+					position: 'fixed',
+					top: '50px',
+					width: '100%',
+					zIndex: '100',
+					background: '#6f5499',
+					boxShadow: 'rgba(93, 93, 93, 0.6) 0px 3px 8px -3px'
+
+				});
+				$('.mobile-summary .summary-title').css({
+					color: 'white'
+				});
+			} else {
+				$('.mobile-side-panel-menu').css({
+					position: 'static',
+					width: '',
+					background: '',
+					boxShadow: ''
+				});
+				$('.mobile-summary .summary-title').css({
+					color: '#6f5499'
+				});
+			}
 		});
 
 	});

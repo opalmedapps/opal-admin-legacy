@@ -170,6 +170,8 @@
 		$body_EN 		= $emailDetails['body_EN'];
 		$body_FR 		= $emailDetails['body_FR'];
 		$type 			= $emailDetails['type'];
+		$userSer 		= $emailDetails['user']['id'];
+		$sessionId 		= $emailDetails['user']['sessionid'];
 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -182,7 +184,9 @@
 						Body_EN,
 						Body_FR,
 						EmailTypeSerNum,
-						DateAdded
+						DateAdded,
+						LastUpdatedBy,
+						SessionId
 					)
 				VALUES (
 					\"$subject_EN\",
@@ -190,7 +194,9 @@
 					\"$body_EN\",
 					\"$body_FR\",
 					'$type',
-					NOW()
+					NOW(),
+					'$userSer',
+					'$sessionId'
 				)
 			";
 			$query = $host_db_link->prepare( $sql );
@@ -215,6 +221,8 @@
 		$body_EN 		= $emailDetails['body_EN'];
 		$body_FR 		= $emailDetails['body_FR'];
 		$serial 		= $emailDetails['serial'];
+		$userSer 		= $emailDetails['user']['id'];
+		$sessionId 		= $emailDetails['user']['sessionid'];
 
 		$response = array(
             'value'     => 0,
@@ -231,7 +239,9 @@
 					EmailControl.Subject_EN 		= \"$subject_EN\",
 					EmailControl.Subject_FR 		= \"$subject_FR\",
 					EmailControl.Body_EN 			= \"$body_EN\",
-					EmailControl.Body_FR 		 	= \"$body_FR\"
+					EmailControl.Body_FR 		 	= \"$body_FR\",
+					EmailControl.LastUpdatedBy 		= '$userSer',
+					EmailControl.SessionId 			= '$sessionId'
 				WHERE
 					EmailControl.EmailControlSerNum = $serial
 			";
@@ -254,14 +264,18 @@
 	* Deletes an email template from the database 
 	*
 	* @param integer $serial : the email control serial number
+	* @param object $user : the current user in session
 	* @return array $response : response
 	*/
-	public function deleteEmail ($serial) {
+	public function deleteEmail ($serial, $user) {
 
 		$response = array(
             'value'     => 0,
             'message'   => ''
-        );
+		);
+		
+		$userSer = $user['id'];
+		$sessionId = $user['sessionid'];
 
         try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -273,6 +287,19 @@
 					EmailControl.EmailControlSerNum = $serial 
 			";
 			$query = $host_db_link->prepare( $sql );
+			$query->execute();
+			
+			$sql = "
+                UPDATE EmailControlMH
+                SET 
+                    EmailControlMH.LastUpdatedBy = '$userSer',
+                    EmailControlMH.SessionId = '$sessionId'
+                WHERE
+                    EmailControlMH.EmailControlSerNum = $serial
+                ORDER BY EmailControlMH.RevSerNum DESC 
+                LIMIT 1
+            ";
+            $query = $host_db_link->prepare( $sql );
             $query->execute();
 
             $response['value'] = 1;
