@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 	/******************************************************************************
 	* New Educational Material Page controller 
 	*******************************************************************************/
-	controller('newEduMatController', function ($scope, $filter, $state, $sce, $uibModal, educationalMaterialCollectionService, filterCollectionService) {
+	controller('newEduMatController', function ($scope, $filter, $state, $sce, $uibModal, educationalMaterialCollectionService, filterCollectionService, Session) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -436,6 +436,10 @@ angular.module('opalAdmin.controllers.newEduMatController', ['ngAnimate', 'ngSan
 				addFilters($scope.doctorFilterList);
 				addFilters($scope.resourceFilterList);
 				addFilters($scope.patientFilterList);
+
+				// Log who created educational material
+				var currentUser = Session.retrieveObject('user');
+				$scope.newEduMat.user = currentUser;
 
 				// Submit
 				$.ajax({

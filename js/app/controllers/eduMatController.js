@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 	/******************************************************************************
 	* Educational Material Page controller 
 	*******************************************************************************/
-	controller('eduMatController', function ($scope, $filter, $sce, $uibModal, $state, educationalMaterialCollectionService, filterCollectionService, uiGridConstants) {
+	controller('eduMatController', function ($scope, $filter, $sce, $uibModal, $state, educationalMaterialCollectionService, filterCollectionService, uiGridConstants, Session) {
 
 
 		// Function to go to add educational material page
@@ -168,11 +168,16 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 		$scope.submitPublishFlags = function () {
 			if ($scope.changesMade) {
 				angular.forEach($scope.eduMatList, function (edumat) {
-					$scope.eduMatPublishes.publishList.push({
-						serial: edumat.serial,
-						publish: edumat.publish
-					});
+					if (edumat.changed) {
+						$scope.eduMatPublishes.publishList.push({
+							serial: edumat.serial,
+							publish: edumat.publish
+						});
+					}
 				});
+				// Log who updated publish flags
+				var currentUser = Session.retrieveObject('user');
+				$scope.eduMatPublishes.user = currentUser;
 				// Submit form
 				$.ajax({
 					type: "POST",
@@ -198,6 +203,7 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 						}
 						$scope.showBanner();
 						$scope.changesMade = false;
+						$scope.eduMatPublishes.publishList = [];
 					}
 				});
 			}
@@ -566,6 +572,10 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 					addFilters($scope.resourceFilterList);
 					addFilters($scope.patientFilterList);
 
+					// Log who updated educational material
+					var currentUser = Session.retrieveObject('user');
+					$scope.eduMat.user = currentUser;
+
 					// Submit form
 					$.ajax({
 						type: "POST",
@@ -725,6 +735,10 @@ angular.module('opalAdmin.controllers.eduMatController', ['ngAnimate', 'ngSaniti
 
 			// Submit delete
 			$scope.deleteEducationalMaterial = function () {
+				// Log who deleted educational material
+				var currentUser = Session.retrieveObject('user');
+				$scope.eduMatToDelete.user = currentUser;
+
 				$.ajax({
 					type: "POST",
 					url: "php/educational-material/delete.educational_material.php",

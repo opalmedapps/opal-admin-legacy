@@ -173,19 +173,19 @@ angular.module('opalAdmin.controllers.diagnosisTranslationController', ['ngAnima
 			$scope.changeShowAssigned = function () {
 				$scope.showAssigned = true;
 				$scope.hideAssigned = false;
-			}
+			};
 
 			// Function to enable "Show only assigned" tab in diagnoses accordion
 			$scope.changeShowUnassigned = function () {
 				$scope.hideAssigned = true;
 				$scope.showAssigned = false;
-			}
+			};
 
 			// Function to enable "Show only unassigned" tab in diagnoses accordion
 			$scope.changeShowAll = function () {
 				$scope.showAssigned = false;
 				$scope.hideAssigned = false;
-			}
+			};
 
 			// Function to assign eduMatFilter when textbox is changing 
 			$scope.changeEduMatFilter = function (eduMatFilter) {
@@ -244,10 +244,10 @@ angular.module('opalAdmin.controllers.diagnosisTranslationController', ['ngAnima
 			// Function to assign '1' to existing diagnosis
 			function checkAdded(diagnosisList) {
 				angular.forEach($scope.diagnosisTranslation.diagnoses, function (selectedDiagnosis) {
-					var selectedDiagnosis = selectedDiagnosis.sourceuid;
+					var selectedDiagnosisSourceUID = selectedDiagnosis.sourceuid;
 					angular.forEach(diagnosisList, function (diagnosis) {
 						var sourceuid = diagnosis.sourceuid;
-						if (sourceuid == selectedDiagnosis) {
+						if (sourceuid == selectedDiagnosisSourceUID) {
 							diagnosis.added = 1;
 							diagnosis.assigned = null; // remove self assigned diagnoses
 						}
@@ -262,7 +262,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslationController', ['ngAnima
 			$scope.checkForm = function () { 
 				if ($scope.diagnosisTranslation.name_EN && $scope.diagnosisTranslation.name_FR && $scope.diagnosisTranslation.description_EN 
 					&& $scope.diagnosisTranslation.description_FR && $scope.checkDiagnosesAdded($scope.diagnosisList) && $scope.changesMade) {
-						return true;
+					return true;
 				}
 				else return false;
 			};

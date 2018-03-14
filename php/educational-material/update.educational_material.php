@@ -18,7 +18,8 @@
         'phase_serial'      => $_POST['phase_serial'],
         'filters'           => $_POST['filters'],
         'tocs' 		        => $_POST['tocs'],
-        'serial'            => $_POST['serial']
+		'serial'            => $_POST['serial'],
+		'user'				=> $_POST['user']
     );
 
     // Call function
