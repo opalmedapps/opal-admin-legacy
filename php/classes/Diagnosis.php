@@ -262,7 +262,9 @@ class Diagnosis {
 		$description_EN		= $diagnosisTranslationDetails['description_EN'];
 		$description_FR		= $diagnosisTranslationDetails['description_FR'];
 		$diagnoses 			= $diagnosisTranslationDetails['diagnoses'];
-		$eduMatSer 			= 0;
+		$userSer 			= $diagnosisTranslationDetails['user']['id'];
+		$sessionId			= $diagnosisTranslationDetails['user']['sessionid'];
+		$eduMatSer 			= 'NULL';
 		if ( is_array($diagnosisTranslationDetails['edumat']) && isset($diagnosisTranslationDetails['edumat']['serial']) ) {
             $eduMatSer = $diagnosisTranslationDetails['edumat']['serial'];
         }
@@ -277,15 +279,19 @@ class Diagnosis {
 						Description_EN,
 						Description_FR,
 						EducationalMaterialControlSerNum,
-						DateAdded
+						DateAdded,
+						LastUpdatedBy,
+						SessionId
 					)
 				VALUES (
 					\"$name_EN\",
 					\"$name_FR\",
 					\"$description_EN\",
 					\"$description_FR\",
-					'$eduMatSer',
-					NOW()
+					$eduMatSer,
+					NOW(),
+					'$userSer',
+					'$sessionId'
 				)
 			";
 			$query = $host_db_link->prepare( $sql );
@@ -437,7 +443,9 @@ class Diagnosis {
 		$description_EN		= $diagnosisTranslationDetails['description_EN'];
 		$description_FR		= $diagnosisTranslationDetails['description_FR'];
 		$diagnoses 			= $diagnosisTranslationDetails['diagnoses'];
-		$eduMatSer 			= $diagnosisTranslationDetails['edumatser'];
+		$eduMatSer 			= $diagnosisTranslationDetails['edumatser'] ? $diagnosisTranslationDetails['edumatser'] : 'NULL';
+		$userSer			= $diagnosisTranslationDetails['user']['id'];
+		$sessionId 			= $diagnosisTranslationDetails['user']['sessionid'];
 		
 		$existingDiagnoses = array();
 
@@ -456,7 +464,9 @@ class Diagnosis {
 					DiagnosisTranslation.Name_FR 	 	= \"$name_FR\",
 					DiagnosisTranslation.Description_EN = \"$description_EN\",
 					DiagnosisTranslation.Description_FR = \"$description_FR\",
-					DiagnosisTranslation.EducationalMaterialControlSerNum = '$eduMatSer'
+					DiagnosisTranslation.EducationalMaterialControlSerNum = $eduMatSer,
+					DiagnosisTranslation.LastUpdatedBy 	= '$userSer',
+					DiagnosisTranslation.SessionId 		= '$sessionId'
 				WHERE
 					DiagnosisTranslation.DiagnosisTranslationSerNum = $serial 
 			";
@@ -537,15 +547,17 @@ class Diagnosis {
      * Removes a diagnosis translation from the database
      *
      * @param integer $diagnosisTranslationSer : the serial number of the diagnosis translation
+     * @param object $user : the session user
      * @return array $response : response
      */
-    public function deleteDiagnosisTranslation ($diagnosisTranslationSer) {
+    public function deleteDiagnosisTranslation ($diagnosisTranslationSer, $user) {
 
         $response = array(
             'value'     => 0,
             'message'   => ''
         );
-
+		$userSer    = $user['id'];
+        $sessionId  = $user['sessionid'];
 	    try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -566,6 +578,19 @@ class Diagnosis {
             ";
 
 	        $query = $host_db_link->prepare( $sql );
+            $query->execute();
+
+            $sql = "
+                UPDATE DiagnosisTranslationMH
+                SET 
+                    DiagnosisTranslationMH.LastUpdatedBy = '$userSer',
+                    DiagnosisTranslationMH.SessionId = '$sessionId'
+                WHERE
+                    DiagnosisTranslationMH.DiagnosisTranslationSerNum = $diagnosisTranslationSer
+                ORDER BY DiagnosisTranslationMH.RevSerNum DESC 
+                LIMIT 1
+            ";
+            $query = $host_db_link->prepare( $sql );
             $query->execute();
 
             $response['value'] = 1;
