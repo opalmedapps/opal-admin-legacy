@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 	/******************************************************************************
 	* Alias Page controller 
 	*******************************************************************************/
-	controller('aliasController', function ($scope, $uibModal, $filter, aliasCollectionService, educationalMaterialCollectionService, uiGridConstants, $state) {
+	controller('aliasController', function ($scope, $uibModal, $filter, aliasCollectionService, educationalMaterialCollectionService, uiGridConstants, $state, Session) {
 
 		// Function to go to add alias page
 		$scope.goToAddAlias = function () {
@@ -149,6 +149,8 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 			else {
 				alias.update = 1; // set update to "false"
 			}
+			// flag parameter that changed
+			alias.changed = 1;
 		};
 
 		// Function to submit changes when update checkboxes have been modified
@@ -156,11 +158,16 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 
 			if ($scope.changesMade) {
 				angular.forEach($scope.aliasList, function (alias) {
-					$scope.aliasUpdates.updateList.push({
-						serial: alias.serial,
-						update: alias.update
-					});
+					if (alias.changed) {
+						$scope.aliasUpdates.updateList.push({
+							serial: alias.serial,
+							update: alias.update
+						});
+					}
 				});
+				// Log who updated alias
+				var currentUser = Session.retrieveObject('user');
+				$scope.aliasUpdates.user = currentUser;
 				// Submit form
 				$.ajax({
 					type: "POST",
@@ -171,6 +178,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 						aliasCollectionService.getAliases().then(function (response) {
 							// Assign value
 							$scope.aliasList = response.data;
+
 						}).catch(function(response) {
 							console.error('Error occurred getting alias list:', response.status, response.data);
 						});
@@ -187,6 +195,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 
 						$scope.showBanner();
 						$scope.changesMade = false;
+						$scope.aliasUpdates.updateList = [];
 					}
 				});
 			}
@@ -464,6 +473,10 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 						}
 					});
 
+					// Log who updated alias
+					var currentUser = Session.retrieveObject('user');
+					$scope.alias.user = currentUser;
+
 					// Submit form
 					$.ajax({
 						type: "POST",
@@ -585,6 +598,11 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 
 			// Submit delete
 			$scope.deleteAlias = function () {
+
+				// Log who updated alias
+				var currentUser = Session.retrieveObject('user');
+				$scope.aliasToDelete.user = currentUser;
+
 				$.ajax({
 					type: "POST",
 					url: "php/alias/delete.alias.php",

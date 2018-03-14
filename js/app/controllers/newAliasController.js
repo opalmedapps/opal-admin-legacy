@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 	/******************************************************************************
 	* Add Alias Page controller 
 	*******************************************************************************/
-	controller('newAliasController', function ($scope, $filter, $uibModal, aliasCollectionService, $state, educationalMaterialCollectionService) {
+	controller('newAliasController', function ($scope, $filter, $uibModal, aliasCollectionService, $state, educationalMaterialCollectionService, Session) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -337,6 +337,10 @@ angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.boo
 							$scope.newAlias.terms.push(term.id);
 					}
 				});
+
+				// Log who created this alias
+				var currentUser = Session.retrieveObject('user');
+				$scope.newAlias.user = currentUser;
 
 				// Submit form
 				$.ajax({

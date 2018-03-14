@@ -7,6 +7,7 @@
 
 	// Retrieve FORM params
 	$aliasUpdates	= $_POST['updateList'];
+	$user = $_POST['user'];
 	
 	// Construct array
 	$aliasList = array();
@@ -16,7 +17,7 @@
 	}
 
 	// Call function
-    $response = $aliasObject->updateAliasPublishFlags($aliasList);
+    $response = $aliasObject->updateAliasPublishFlags($aliasList, $user);
     print json_encode($response); // Return response
 
 ?>

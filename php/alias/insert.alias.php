@@ -14,7 +14,8 @@
         'color'             => $_POST['color'],
         'edumat'            => $_POST['eduMat'],
         'source_db'         => $_POST['source_db'],
-		'terms' 	        => $_POST['terms']
+		'terms' 	        => $_POST['terms'],
+		'user'				=> $_POST['user']
 	);
 
 	$aliasObject = new Alias; // Object
