@@ -10,15 +10,18 @@ class EduMaterial {
      * Updates the publish flags in the database
      *
      * @param array $eduMatList : the list of educational materials
+	 * @param object $user : the current user in session
      * @return array $response : response
      */    
-    public function updatePublishFlags( $eduMatList ) {
+    public function updatePublishFlags( $eduMatList, $user ) {
 
         // Initialize response array
         $response = array(
             'value'     => 0,
             'message'   => ''
-        );
+		);
+		$userSer = $user['id'];
+		$sessionId = $user['sessionid'];
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -32,7 +35,9 @@ class EduMaterial {
 					UPDATE 
 						EducationalMaterialControl 	
 					SET 
-						EducationalMaterialControl.PublishFlag = $eduMatPublish 
+						EducationalMaterialControl.PublishFlag = $eduMatPublish,
+						EducationalMaterialControl.LastUpdatedBy = $userSer,
+						EducationalMaterialControl.SessionId = '$sessionId'
 					WHERE 
 						EducationalMaterialControl.EducationalMaterialControlSerNum = $eduMatSer
 				";
@@ -450,7 +455,8 @@ class EduMaterial {
                     'phase_EN'          => $phaseName_EN,
                     'phase_FR'          => $phaseName_FR,
                     'parentFlag'        => $parentFlag,
-                    'publish'           => $publish,
+					'publish'           => $publish,
+					'changed'			=> 0,
                     'lastupdated'       => $lastUpdated,
                     'rating'            => $rating,
                     'filters'           => $filters,
@@ -485,7 +491,9 @@ class EduMaterial {
         $type_FR        = $eduMatDetails['type_FR'];
         $phaseSer       = $eduMatDetails['phase_in_tx']['serial'];
         $tocs           = $eduMatDetails['tocs'];
-        $filters        = $eduMatDetails['filters'];
+		$filters        = $eduMatDetails['filters'];
+		$userSer 		= $eduMatDetails['user']['id'];
+		$sessionId 		= $eduMatDetails['user']['sessionid'];
 
         $urlExt_EN          = '';
         $urlExt_FR          = '';
@@ -573,7 +581,9 @@ class EduMaterial {
                         EducationalMaterialType_FR,
                         PhaseInTreatmentSerNum,
                         DateAdded,
-                        LastPublished
+						LastPublished,
+						LastUpdatedBy,
+						SessionId
                     )
                 SELECT DISTINCT
                     \"$name_EN\",
@@ -588,7 +598,9 @@ class EduMaterial {
                     \"$type_FR\",
                     '$phaseSer',
                     NOW(),
-                    NOW()
+					NOW(),
+					'$userSer',
+					'$sessionId'
                 FROM 
                     AllowableExtension dummy 
                 LEFT JOIN AllowableExtension ae_en
@@ -661,7 +673,9 @@ class EduMaterial {
                                 PhaseInTreatmentSerNum,
                                 ParentFlag,
                                 DateAdded,
-                                LastPublished
+								LastPublished,
+								LastUpdatedBy,
+								SessionId
                             )
                         SELECT 
                             \"$tocType_EN\",
@@ -675,7 +689,9 @@ class EduMaterial {
                             '$phaseSer',
                             0,
                             NOW(),
-                            NOW()
+							NOW(),
+							'$userSer',
+							'$sessionId'
                         FROM 
                             AllowableExtension ae_en,
                             AllowableExtension ae_fr
@@ -735,7 +751,10 @@ class EduMaterial {
         $eduMatSer          = $eduMatDetails['serial'];
         $filters            = $eduMatDetails['filters'];
         $tocs               = $eduMatDetails['tocs'];
-        $phaseSer           = $eduMatDetails['phase_serial'];
+		$phaseSer           = $eduMatDetails['phase_serial'];
+		$userSer 			= $eduMatDetails['user']['id'];
+		$sessionId 			= $eduMatDetails['user']['sessionid'];
+
         $urlExt_EN          = null;
         $urlExt_FR          = null;
 		$existingFilters	= array();
@@ -815,14 +834,16 @@ class EduMaterial {
                     AllowableExtension ae_en,
                     AllowableExtension ae_fr
                 SET
-                    EducationalMaterialControl.Name_EN     = \"$name_EN\",
-                    EducationalMaterialControl.Name_FR     = \"$name_FR\",
-                    EducationalMaterialControl.URL_EN      = \"$url_EN\",
-                    EducationalMaterialControl.URL_FR      = \"$url_FR\",
-                    EducationalMaterialControl.URLType_EN  = ae_en.Type,
-                    EducationalMaterialControl.URLType_FR  = ae_fr.Type,
-                    EducationalMaterialControl.ShareURL_EN = \"$shareURL_EN\",
-                    EducationalMaterialControl.ShareURL_FR = \"$shareURL_FR\"
+                    EducationalMaterialControl.Name_EN     		= \"$name_EN\",
+                    EducationalMaterialControl.Name_FR     		= \"$name_FR\",
+                    EducationalMaterialControl.URL_EN      		= \"$url_EN\",
+                    EducationalMaterialControl.URL_FR      		= \"$url_FR\",
+                    EducationalMaterialControl.URLType_EN  		= ae_en.Type,
+                    EducationalMaterialControl.URLType_FR  		= ae_fr.Type,
+                    EducationalMaterialControl.ShareURL_EN 		= \"$shareURL_EN\",
+					EducationalMaterialControl.ShareURL_FR 		= \"$shareURL_FR\",
+					EducationalMaterialControl.LastUpdatedBy	= '$userSer',
+					EducationalMaterialControl.SessionId		= '$sessionId'
                 WHERE
                     EducationalMaterialControl.EducationalMaterialControlSerNum = $eduMatSer
                 AND ae_en.Name = '$urlExt_EN'
@@ -1033,9 +1054,10 @@ class EduMaterial {
      * Deletes educational material from the database
      *
      * @param integer $eduMatSer : the educational material serial
+	 * @param object $user : the current user in session
      * @return array $response : response
      */
-    public function deleteEducationalMaterial ( $eduMatSer ){
+    public function deleteEducationalMaterial ( $eduMatSer, $user ){
 
         $response = array(
             'value'     => 0,
@@ -1094,6 +1116,19 @@ class EduMaterial {
                     EducationalMaterialTOC
                 WHERE
                     EducationalMaterialTOC.ParentSerNum    = $eduMatSer
+            ";
+            $query = $host_db_link->prepare( $sql );
+			$query->execute();
+			
+			$sql = "
+                UPDATE EducationalMaterialControlMH
+                SET 
+                    EducationalMaterialControlMH.LastUpdatedBy = '$userSer',
+                    EducationalMaterialControlMH.SessionId = '$sessionId'
+                WHERE
+                    EducationalMaterialControlMH.EducationalMaterialControlSerNum = $eduMatSer
+                ORDER BY EducationalMaterialControlMH.RevSerNum DESC 
+                LIMIT 1
             ";
             $query = $host_db_link->prepare( $sql );
             $query->execute();

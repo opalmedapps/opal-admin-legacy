@@ -7,6 +7,7 @@
 
 	// Retrieve FORM params
 	$eduMatPublishes	= $_POST['publishList'];
+	$user 				= $_POST['user'];
 	
 	// Construct array
 	$eduMatList = array();
@@ -16,7 +17,7 @@
 	}
 
 	// Call function
-    $response = $eduMatObject->updatePublishFlags($eduMatList);
+    $response = $eduMatObject->updatePublishFlags($eduMatList, $user);
     print json_encode($response); // Return response
 ?>
 

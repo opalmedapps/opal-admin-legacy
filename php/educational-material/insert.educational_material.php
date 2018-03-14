@@ -15,7 +15,9 @@
         'type_FR'           => $_POST['type_FR'],
         'phase_in_tx'       => $_POST['phase_in_tx'],
         'filters'           => $_POST['filters'],
- 		'tocs' 		        => $_POST['tocs']
+		'tocs' 		        => $_POST['tocs'],
+		'user'				=> $_POST['user']
+		 
 	);
 
 	$eduMat = new EduMaterial; // Object
