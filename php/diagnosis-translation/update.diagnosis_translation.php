@@ -13,7 +13,8 @@
 		'description_FR'    => $_POST['description_FR'],
 		'edumatser'         => $_POST['eduMatSer'],
         'serial'            => $_POST['serial'],
-        'diagnoses'         => $_POST['diagnoses']
+        'diagnoses'         => $_POST['diagnoses'],
+        'user'				=> $_POST['user']
 	);
 
 	 // Call function
