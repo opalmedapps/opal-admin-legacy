@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 	/******************************************************************************
 	* Add Diagnosis Translation Page controller 
 	*******************************************************************************/
-	controller('newDiagnosisTranslationController', function ($scope, $filter, $uibModal, diagnosisCollectionService, $state, educationalMaterialCollectionService) {
+	controller('newDiagnosisTranslationController', function ($scope, $filter, $uibModal, diagnosisCollectionService, $state, educationalMaterialCollectionService, Session) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -219,6 +219,10 @@ angular.module('opalAdmin.controllers.newDiagnosisTranslationController', ['ngAn
 							$scope.newDiagnosisTranslation.diagnoses.push(diagnosis);
 					}
 				});
+
+				// Log who created diagnosis translation
+				var currentUser = Session.retrieveObject('user');
+				$scope.newDiagnosisTranslation.user = currentUser;
 
 				// Submit form
 				$.ajax({

@@ -231,6 +231,7 @@ class Alias {
      * Updates Alias publish flags in our database
      *
      * @param array $aliasList : a list of aliases
+     * @param object $user : the session user
      * @return array $response : response
      */
     public function updateAliasPublishFlags( $aliasList, $user ) {
@@ -566,7 +567,7 @@ class Alias {
 		$aliasTerms	    = $aliasDetails['terms'];
         $userSer        = $aliasDetails['user']['id'];
         $sessionId      = $aliasDetails['user']['sessionid'];
-        $aliasEduMatSer = 0;
+        $aliasEduMatSer = 'NULL';
         if ( is_array($aliasDetails['edumat']) && isset($aliasDetails['edumat']['serial']) ) {
             $aliasEduMatSer = $aliasDetails['edumat']['serial'];
         }
@@ -641,6 +642,7 @@ class Alias {
      * Deletes an alias from the database
      *
      * @param integer $aliasSer : the alias serial number
+     * @param object $user : the session user
      * @return array $response : response
      */
     public function deleteAlias( $aliasSer, $user ) {
@@ -714,7 +716,7 @@ class Alias {
 		$aliasDesc_FR	= $aliasDetails['description_FR'];
 		$aliasSer	    = $aliasDetails['serial'];
         $aliasTerms	    = $aliasDetails['terms'];
-        $aliasEduMatSer = $aliasDetails['edumatser'];
+        $aliasEduMatSer = $aliasDetails['edumatser'] ? $aliasDetails['edumatser'] : 'NULL';
       
         $aliasColorTag  = $aliasDetails['color'];
 
@@ -740,7 +742,7 @@ class Alias {
 					Alias.AliasName_FR 		                = \"$aliasName_FR\", 
 					Alias.AliasDescription_EN	            = \"$aliasDesc_EN\",
                     Alias.AliasDescription_FR	            = \"$aliasDesc_FR\",
-                    Alias.EducationalMaterialControlSerNum  = '$aliasEduMatSer',
+                    Alias.EducationalMaterialControlSerNum  = $aliasEduMatSer,
                     Alias.ColorTag                          = '$aliasColorTag',
                     Alias.LastUpdatedBy                     = '$userSer',
                     Alias.SessionId                         = '$sessionId'

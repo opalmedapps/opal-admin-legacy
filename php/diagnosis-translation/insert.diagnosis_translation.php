@@ -10,7 +10,8 @@
         'description_EN'    => $_POST['description_EN'],
 		'description_FR'    => $_POST['description_FR'],
 		'edumat'            => $_POST['eduMat'],
-        'diagnoses'         => $_POST['diagnoses']
+        'diagnoses'         => $_POST['diagnoses'],
+        'user'				=> $_POST['user']
 	);
 
 	$Diagnosis = new Diagnosis; // Object

@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslationController', ['ngAnima
 	/******************************************************************************
 	* Diagnosis Translation Page controller 
 	*******************************************************************************/
-	controller('diagnosisTranslationController', function ($scope, $filter, $uibModal, diagnosisCollectionService, educationalMaterialCollectionService, uiGridConstants, $state) {
+	controller('diagnosisTranslationController', function ($scope, $filter, $uibModal, diagnosisCollectionService, educationalMaterialCollectionService, uiGridConstants, $state, Session) {
 
 		// Function to go to add diagnosis page
 		$scope.goToAddDiagnosisTranslation = function () {
@@ -358,6 +358,9 @@ angular.module('opalAdmin.controllers.diagnosisTranslationController', ['ngAnima
 							}
 						}
 					});
+					// Log who updated diagnosis translation
+					var currentUser = Session.retrieveObject('user');
+					$scope.diagnosisTranslation.user = currentUser;
 					// Submit form
 					$.ajax({
 						type: "POST",
@@ -420,6 +423,9 @@ angular.module('opalAdmin.controllers.diagnosisTranslationController', ['ngAnima
 
 			// Submit delete
 			$scope.deleteDiagnosisTranslation = function () {
+				// Log who deleted diagnosis translation
+				var currentUser = Session.retrieveObject('user');
+				$scope.diagnosisTranslationToDelete.user = currentUser;
 				$.ajax({
 					type: "POST",
 					url: "php/diagnosis-translation/delete.diagnosis_translation.php",
