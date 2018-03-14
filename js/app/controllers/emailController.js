@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 	/******************************************************************************
 	* Controller for the email page
 	*******************************************************************************/
-	controller('emailController', function ($scope, $uibModal, $filter, $state, $sce, emailCollectionService) {
+	controller('emailController', function ($scope, $uibModal, $filter, $state, $sce, emailCollectionService, Session) {
 
 		// Function to go to add email page
 		$scope.goToAddEmail = function () {
@@ -167,6 +167,9 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 			// Submit changes
 			$scope.updateEmail = function () {
 				if ($scope.checkForm()) {
+					// Log who updated email
+					var currentUser = Session.retrieveObject('user');
+					$scope.email.user = currentUser;
 					// Submit form
 					$.ajax({
 						type: "POST",
@@ -228,6 +231,9 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 		var DeleteEmailModalInstanceCtrl = function ($scope, $uibModalInstance) {
 			// Submit delete
 			$scope.deleteEmail = function () {
+				// Log who deleted email
+				var currentUser = Session.retrieveObject('user');
+				$scope.emailToDelete.user = currentUser;
 				$.ajax({
 					type: "POST",
 					url: "php/email/delete.email.php",
