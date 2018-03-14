@@ -5,7 +5,8 @@ angular.module('opalAdmin.controllers.applicationController', ['ui.bootstrap', '
 	* Top level application controller
 	*******************************************************************************/
 	controller('applicationController', function ($scope, $rootScope, $state, Idle, Keepalive,
-		$uibModal, Session, loginModal, AUTH_EVENTS, USER_ROLES, AuthService, $translate, applicationCollectionService) {
+		$uibModal, Session, loginModal, AUTH_EVENTS, USER_ROLES, AuthService, $translate, 
+		applicationCollectionService, LogoutService) {
 
 		// Set current user 
 		$rootScope.currentUser = Session.retrieveObject('user');
@@ -69,6 +70,7 @@ angular.module('opalAdmin.controllers.applicationController', ['ui.bootstrap', '
 		$scope.$on('IdleTimeout', function () {
 			closeIdleModal(); // close idle modal
 
+			LogoutService.logLogout(); // send logout report to backend
 			Session.destroy(); // destroy session 
 
 			if ((pagesToIgnore.indexOf($state.current.name) === -1) && !$scope.inAuthLoginModal) {

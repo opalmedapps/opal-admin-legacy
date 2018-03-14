@@ -51,6 +51,8 @@
 				$this->role = $userDetails['role']['name'];
 				$this->language = $userDetails['language'];
 				$this->sessionid = $this->makeSessionId();
+
+				$this->logActivity($this->userid, $this->sessionid, 'Login');
 				$success = true;
 			}
 			
@@ -61,6 +63,60 @@
 			 return $success;
 		 }
 	 }
+
+	  /**
+	  *
+	  * Logs out a user
+	  *
+	  * @param $user : user object
+	  * @return $response : response
+	  */
+	public function userLogout($user) {
+		$userser = $user['userser'];
+		$sessionid = $user['sessionid'];
+		$response = $this->logActivity($userser, $sessionid, 'Logout');
+		return $response;
+	}
+
+	 /**
+	  *
+	  * Logs when a user logs in or logs out
+	  *
+	  * @return $response : response
+	  */
+	public function logActivity($userser, $sessionid, $activity) {
+		$response = array (
+	 		'value'		=> 0,
+ 			'message'	=> ''
+ 		);
+ 		try{
+			$con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD ); 
+			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$sql = "
+				INSERT INTO 
+					OAActivityLog (
+						Activity,
+						OAUserSerNum,
+						SessionId,
+						DateAdded
+					)
+				VALUES (
+					'$activity',
+					'$userser',
+					'$sessionid',
+					NOW()
+				)
+			";
+			$query = $con->prepare($sql);
+			$query->execute();
+			$response['value'] = 1; // success
+			return $response;
+
+		}catch (PDOException $e) {
+			 $response['message'] = $e->getMessage();
+			 return $response;
+		 }
+	}
 
 	 /**
      *
