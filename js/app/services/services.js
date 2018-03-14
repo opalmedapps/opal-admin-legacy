@@ -31,8 +31,13 @@ angular.module('opalAdmin.services', [])
 
 	})
 
-	.service('LogoutService', function (Session, $state) {
+	.service('LogoutService', function (Session, $state, $http) {
+		this.logLogout = function () {
+			var user = Session.retrieveObject('user')
+			$http.post('php/user/logout.php', user );
+		};
 		this.logout = function () {
+			this.logLogout();
 			Session.destroy();
 			$state.go('login');
 		};
