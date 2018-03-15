@@ -150,6 +150,9 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 			
 			// Submit delete
 			$scope.deleteQuestionnaire = function () {
+				// Log who deleted questionnaire
+				var currentUser = Session.retrieveObject('user');
+				$scope.questionnaireToDelete.user = currentUser;
 				$.ajax({
 					type: "POST",
 					url: "php/questionnaire/delete.questionnaire.php",
@@ -680,6 +683,10 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 					addFilters($scope.patientFilterList);
 
 					addTags($scope.tagList); // Add tags to questionnaire object
+
+					// Log who updated questionnaire
+					var currentUser = Session.retrieveObject('user');
+					$scope.questionnaire.user = currentUser;
 					// ajax POST
 					$.ajax({
 						type: "POST",

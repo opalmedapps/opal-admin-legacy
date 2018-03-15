@@ -11,13 +11,16 @@ class TestResult {
      * Updates the publish flag(s) in the database
      *
      * @param array $testResultList : a list of test results
+     * @param object $user : the current user in session
      * @return array $response : response
      */
-    public function updatePublishFlags( $testResultList ) {
+    public function updatePublishFlags( $testResultList, $user ) {
         $response = array(
             'value'     => 0,
             'message'   => ''
         );
+        $userSer = $user['id'];
+        $sessionId = $user['sessionid'];
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -28,7 +31,9 @@ class TestResult {
                     UPDATE
                         TestResultControl
                     SET
-                        TestResultControl.PublishFlag = $publishFlag
+                        TestResultControl.PublishFlag = $publishFlag,
+                        TestResultControl.LastUpdatedBy = $userSer,
+                        TestResultControl.SessionId = '$sessionId'
                     WHERE
                         TestResultControl.TestResultControlSerNum = $serial
                 ";
@@ -321,7 +326,9 @@ class TestResult {
         $group_FR           = $testResultDetails['group_FR'];
         $tests              = $testResultDetails['tests'];
         $additionalLinks    = $testResultDetails['additional_links'];
-        $eduMatSer          = 0;
+        $userSer            = $testResultDetails['user']['id'];
+        $sessionId          = $testResultDetails['user']['sessionid'];
+        $eduMatSer          = 'NULL';
         if ( is_array($testResultDetails['edumat']) && isset($testResultDetails['edumat']['serial']) ) {
             $eduMatSer = $testResultDetails['edumat']['serial'];
         }
@@ -340,7 +347,9 @@ class TestResult {
                         Group_FR,
                         EducationalMaterialControlSerNum,
                         DateAdded,
-                        LastPublished
+                        LastPublished,
+                        LastUpdatedBy,
+                        SessionId
                     )
                 VALUES (
                     \"$name_EN\",
@@ -349,9 +358,11 @@ class TestResult {
                     \"$description_FR\",
                     \"$group_EN\",
                     \"$group_FR\",
-                    '$eduMatSer',
+                    $eduMatSer,
                     NOW(),
-                    NOW()
+                    NOW(),
+                    $userSer,
+                    '$sessionId'
                 )
             ";
 			$query = $host_db_link->prepare( $sql );
@@ -534,6 +545,7 @@ class TestResult {
                     'group_EN'          => $group_EN,
                     'group_FR'          => $group_FR,
                     'publish'           => $publishFlag,
+                    'changed'           => 0,
                     'eduMatSer'         => $eduMatSer,
                     'eduMat'            => $eduMat,
                     'tests'             => $tests,
@@ -567,8 +579,10 @@ class TestResult {
         $group_FR           = $testResultDetails['group_FR'];
         $serial             = $testResultDetails['serial'];
         $tests              = $testResultDetails['tests'];
-        $eduMatSer          = $testResultDetails['edumatser'];
+        $eduMatSer          = $testResultDetails['edumatser'] ? $testResultDetails['edumatser'] : 'NULL';
         $additionalLinks    = $testResultDetails['additional_links'];
+        $userSer            = $testResultDetails['user']['id'];
+        $sessionId          = $testResultDetails['user']['sessionid'];
 
         $existingTests      = array();
 
@@ -589,7 +603,9 @@ class TestResult {
                     TestResultControl.Description_FR    = \"$description_FR\",
                     TestResultControl.Group_EN          = \"$group_EN\",
                     TestResultControl.Group_FR          = \"$group_FR\",
-                    TestResultControl.EducationalMaterialControlSerNum = '$eduMatSer'
+                    TestResultControl.EducationalMaterialControlSerNum = $eduMatSer,
+                    TestResultControl.LastUpdatedBy     = $userSer,
+                    TestResultControl.SessionId         = '$sessionId'
                 WHERE
                     TestResultControl.TestResultControlSerNum = $serial
             ";
@@ -708,14 +724,18 @@ class TestResult {
      * Removes a test result from the database
      *
      * @param integer $testResultSer : the serial number of the test result
+     * @param object $user : the current user in session
      * @return array $response : response
      */
-    public function deleteTestResult ($testResultSer) {
+    public function deleteTestResult ($testResultSer, $user) {
 
         $response = array(
             'value'     => 0,
             'message'   => ''
         );
+
+        $userSer = $user['id'];
+        $sessionId = $user['sessionid'];
 
 	    try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -748,6 +768,20 @@ class TestResult {
 
 	        $query = $host_db_link->prepare( $sql );
             $query->execute();
+
+            $sql = "
+                UPDATE TestResultControlMH
+                SET 
+                    TestResultControlMH.LastUpdatedBy = '$userSer',
+                    TestResultControlMH.SessionId = '$sessionId'
+                WHERE
+                    TestResultControlMH.TestResultControlSerNum = $testResultSer
+                ORDER BY TestResultControlMH.RevSerNum DESC 
+                LIMIT 1
+            ";
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
+    
 
             $response['value'] = 1;
             return $response;

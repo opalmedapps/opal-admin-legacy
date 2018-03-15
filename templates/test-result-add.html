@@ -71,7 +71,7 @@
                   </div>
                 </div>
                 <!-- SECTION: Title & Description -->
-                <div uib-accordion-group is-open="titleDescription.open" class="panel-container summary-box animated" ng-class="{fadeInUp: titleDescription.show}" is-disabled="!newTestResult.name_EN && !newTestResult.name_FR && !newTestResult.description_EN && !newTestResult.description_FR" ng-if="titleDescription.show">
+                <div uib-accordion-group is-open="titleDescriptionSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: titleDescriptionSection.show}" is-disabled="!newTestResult.name_EN && !newTestResult.name_FR && !newTestResult.description_EN && !newTestResult.description_FR" ng-if="titleDescriptionSection.show">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
@@ -81,7 +81,7 @@
                         <strong>Title & Description</strong>
                       </div>
                       <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleDescription.open, 'glyphicon-chevron-right': !titleDescription.open}" ng-if="newTestResult.name_EN || newTestResult.name_FR || newTestResult.description_EN || newTestResult.description_FR"></i>
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleDescriptionSection.open, 'glyphicon-chevron-right': !titleDescriptionSection.open}" ng-if="newTestResult.name_EN || newTestResult.name_FR || newTestResult.description_EN || newTestResult.description_FR"></i>
                       </div>
                     </div>
                   </uib-accordion-heading>
@@ -279,7 +279,7 @@
               </div>
             </div>
             <!-- SECTION: Title & Description -->
-            <div class="row animated" ng-class="{fadeInUp: titleDescription.show}" ng-if="titleDescription.show">
+            <div class="row animated" ng-class="{fadeInUp: titleDescriptionSection.show}" ng-if="titleDescriptionSection.show">
               <div class="col-xs-12 side-menu-title">
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -289,7 +289,7 @@
                 </div>  
               </div>
             </div>   
-            <div class="row animated" ng-class="{fadeInUp: titleDescription.show}" ng-if="titleDescription.show">
+            <div class="row animated" ng-class="{fadeInUp: titleDescriptionSection.show}" ng-if="titleDescriptionSection.show">
               <div class="col-xs-12">
                 <p style="margin-bottom: 10px;">
                   <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -297,7 +297,7 @@
                 </p>
               </div>
             </div>  
-            <div class="row animated" ng-class="{fadeInUp: titleDescription.show}" ng-if="titleDescription.show"> 
+            <div class="row animated" ng-class="{fadeInUp: titleDescriptionSection.show}" ng-if="titleDescriptionSection.show"> 
               <div class="col-xs-12 col-md-6">
                 <div class="panel" ng-class="(newTestResult.name_EN && newTestResult.description_EN) ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>English</strong>

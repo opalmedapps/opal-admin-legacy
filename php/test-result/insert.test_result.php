@@ -13,7 +13,8 @@
         'group_FR'          => $_POST['group_FR'],
         'edumat'            => $_POST['eduMat'],
         'tests'             => $_POST['tests'],
-        'additional_links'  => $_POST['additional_links']
+        'additional_links'  => $_POST['additional_links'],
+        'user'              => $_POST['user']
     );
 
     $testResult = new TestResult; // Object

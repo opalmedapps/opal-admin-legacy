@@ -10,7 +10,7 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 	/******************************************************************************
 	* Add Post Page controller 
 	*******************************************************************************/
-	controller('newPostController', function ($scope, $filter, $state, $sce, $uibModal, aliasCollectionService, filterCollectionService) {
+	controller('newPostController', function ($scope, $filter, $state, $sce, $uibModal, aliasCollectionService, filterCollectionService, Session) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -249,6 +249,9 @@ angular.module('opalAdmin.controllers.newPostController', ['ngAnimate', 'ngSanit
 					$scope.newPost.publish_date = String(moment($scope.newPost.publish_date).format("YYYY-MM-DD")) + " " +
 						String(moment($scope.newPost.publish_time).format("HH:mm"));
 				}
+				// Log who updated post 
+				var currentUser = Session.retrieveObject('user');
+				$scope.newPost.user = currentUser;
 				// Submit 
 				$.ajax({
 					type: "POST",

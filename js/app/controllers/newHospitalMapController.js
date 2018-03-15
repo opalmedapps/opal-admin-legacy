@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', '
 	/******************************************************************************
 	* New Hospital Map Page controller 
 	*******************************************************************************/
-	controller('newHospitalMapController', function ($scope, $filter, $state, $sce, $uibModal, hospitalMapCollectionService) {
+	controller('newHospitalMapController', function ($scope, $filter, $state, $sce, $uibModal, hospitalMapCollectionService, Session) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -149,6 +149,9 @@ angular.module('opalAdmin.controllers.newHospitalMapController', ['ngAnimate', '
 		// Function to submit the new hospital map
 		$scope.submitHosMap = function () {
 			if ($scope.checkForm()) {
+				// Log who created hospital map
+				var currentUser = Session.retrieveObject('user');
+				$scope.newHosMap.user = currentUser;
 				// Submit
 				$.ajax({
 					type: "POST",

@@ -7,7 +7,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 		};
 	}).
 	
-	controller('legacyQuestionnaireController', function ($sce, $scope, $state, $filter, $timeout, $uibModal, legacyQuestionnaireCollectionService, filterCollectionService, uiGridConstants, FrequencyFilterService) {
+	controller('legacyQuestionnaireController', function ($sce, $scope, $state, $filter, $timeout, $uibModal, legacyQuestionnaireCollectionService, filterCollectionService, uiGridConstants, FrequencyFilterService, Session) {
 
 		$scope.goToAddLegacyQuestionnaire = function () {
 			$state.go('legacy-questionnaire-add');
@@ -135,6 +135,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			else {
 				legacyQuestionnaire.publish = 1; // set publish to "true"
 			}
+			legacyQuestionnaire.changed = 1;
 		};
 
 
@@ -142,11 +143,16 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 		$scope.submitPublishFlags = function () {
 			if ($scope.changesMade) {
 				angular.forEach($scope.legacyQuestionnaireList, function (legacyQuestionnaire) {
-					$scope.legacyQuestionnairePublishFlags.flagList.push({
-						serial: legacyQuestionnaire.serial,
-						publish: legacyQuestionnaire.publish
-					});
+					if (legacyQuestionnaire.changed) {
+						$scope.legacyQuestionnairePublishFlags.flagList.push({
+							serial: legacyQuestionnaire.serial,
+							publish: legacyQuestionnaire.publish
+						});
+					}
 				});
+				// Log who updated legacy questionnaire flags
+				var currentUser = Session.retrieveObject('user');
+				$scope.legacyQuestionnairePublishFlags.user = currentUser;
 				// Submit form
 				$.ajax({
 					type: "POST",
@@ -165,9 +171,6 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 						if (response.value) {
 							$scope.setBannerClass('success');
 							$scope.bannerMessage = "Flag(s) Successfully Saved!";
-							$scope.legacyQuestionnairePublishFlags = {
-								flagList: []
-							};
 						}
 						else {
 							$scope.setBannerClass('danger');
@@ -175,6 +178,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 						}
 						$scope.showBanner();
 						$scope.changesMade = false;
+						$scope.legacyQuestionnairePublishFlags.flagList = [];
 
 					}
 				});
@@ -209,6 +213,9 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 			
 			// Submit delete
 			$scope.deleteLegacyQuestionnaire = function () {
+				// Log who deleted legacy questionnaire
+				var currentUser = Session.retrieveObject('user');
+				$scope.legacyQuestionnaireToDelete.user = currentUser;
 				$.ajax({
 					type: "POST",
 					url: "php/legacy-questionnaire/delete.legacy_questionnaire.php",
@@ -1108,6 +1115,10 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 							$scope.legacyQuestionnaire.occurrence.frequency.additionalMeta = [];
 						}
 					}
+
+					// Log who updated legacy questionnaire
+					var currentUser = Session.retrieveObject('user');
+					$scope.legacyQuestionnaire.user = currentUser;
 
 					// ajax POST
 					$.ajax({

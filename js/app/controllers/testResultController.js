@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 	/******************************************************************************
 	* Test Result Page controller 
 	*******************************************************************************/
-	controller('testResultController', function ($scope, $filter, $sce, $state, $uibModal, testResultCollectionService, educationalMaterialCollectionService) {
+	controller('testResultController', function ($scope, $filter, $sce, $state, $uibModal, testResultCollectionService, educationalMaterialCollectionService, Session) {
 
 		// Function to go to add test result page
 		$scope.goToAddTestResult = function () {
@@ -131,17 +131,23 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 			else {
 				testResult.publish = 1; // set publish to "true"
 			}
+			testResult.changed = 1; // flag change
 		};
 
 		// Function to submit changes when publish flags have been modified
 		$scope.submitPublishFlags = function () {
 			if ($scope.changesMade) {
 				angular.forEach($scope.testList, function (testResult) {
-					$scope.testResultPublishes.publishList.push({
-						serial: testResult.serial,
-						publish: testResult.publish
-					});
+					if (testResult.changed) {
+						$scope.testResultPublishes.publishList.push({
+							serial: testResult.serial,
+							publish: testResult.publish
+						});
+					}
 				});
+				// Log who updated test result publish flag
+				var currentUser = Session.retrieveObject('user');
+				$scope.testResultPublishes.user = currentUser;
 				// Submit form
 				$.ajax({
 					type: "POST",
@@ -167,6 +173,7 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 						}
 						$scope.showBanner();
 						$scope.changesMade = false;
+						$scope.testResultPublishes.publishList = [];
 					}
 				});
 			}
@@ -418,6 +425,10 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 							$scope.testResult.tests.push(test.name);
 					});
 
+					// Log who updated test result 
+					var currentUser = Session.retrieveObject('user');
+					$scope.testResult.user = currentUser;
+
 					// Submit form
 					$.ajax({
 						type: "POST",
@@ -480,6 +491,9 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 
 			// Submit delete
 			$scope.deleteTestResult = function () {
+				// Log who deleted test result 
+				var currentUser = Session.retrieveObject('user');
+				$scope.testResultToDelete.user = currentUser;
 				$.ajax({
 					type: "POST",
 					url: "php/test-result/delete.test_result.php",

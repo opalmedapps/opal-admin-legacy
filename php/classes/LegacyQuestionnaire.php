@@ -11,15 +11,18 @@ class LegacyQuestionnaire {
      * Updates the legacy questionnaire publish flags in the database
      *
      * @param array $legacyQuestionnaireList : the list of legacy questionnaires
+     * @param object $user : the current user in session
      * @return array $response : response
      */    
-    public function updateLegacyQuestionnairePublishFlags( $legacyQuestionnaireList ) {
+    public function updateLegacyQuestionnairePublishFlags( $legacyQuestionnaireList, $user ) {
 
         $response = array(
             'value'     => 0,
             'message'   => ''
         );
 
+        $userSer = $user['id'];
+        $sessionId = $user['sessionid'];
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -30,7 +33,9 @@ class LegacyQuestionnaire {
 					UPDATE 
 						QuestionnaireControl 	
 					SET 
-						QuestionnaireControl.PublishFlag = $legacyQuestionnairePublish
+						QuestionnaireControl.PublishFlag = $legacyQuestionnairePublish,
+                        QuestionnaireControl.LastUpdatedBy = $userSer,
+                        QuestionnaireControl.SessionId = '$sessionId'
 					WHERE 
 						QuestionnaireControl.QuestionnaireControlSerNum = $legacyQuestionnaireSer
 				";
@@ -192,6 +197,7 @@ class LegacyQuestionnaire {
 					'serial' 		    => $questionnaireControlSer, 
                     'db_serial'			=> $questionnaireDBSer, 
                     'publish'          	=> $questionnairePublish,
+                    'changed'           => 0,
                     'expression'        => $questionnaireExpression,
 					'filters' 		    => $questionnaireFilters,
                     'occurrence'        => $occurrenceArray
@@ -380,6 +386,9 @@ class LegacyQuestionnaire {
 		$questionnaireFilters	= $legacyQuestionnaireDetails['filters'];
         $questionnaireOccurrence    = $legacyQuestionnaireDetails['occurrence'];
 
+        $userSer                = $legacyQuestionnaireDetails['user']['id'];
+        $sessionId              = $legacyQuestionnaireDetails['user']['sessionid'];
+
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -391,7 +400,9 @@ class LegacyQuestionnaire {
                         QuestionnaireName_FR,
                         Intro_EN,
                         Intro_FR,
-                        DateAdded
+                        DateAdded,
+                        LastUpdatedBy,
+                        SessionId
 					) 
 				VALUES (
                     '$questionnaireDBSer',
@@ -399,7 +410,9 @@ class LegacyQuestionnaire {
 					\"$questionnaireName_FR\",
                     \"$questionnaireIntro_EN\",
                     \"$questionnaireIntro_FR\",
-                    NOW()
+                    NOW(),
+                    '$userSer',
+                    '$sessionId'
 				)
 			";
 			$query = $host_db_link->prepare( $sql );
@@ -558,15 +571,18 @@ class LegacyQuestionnaire {
      * Deletes a legacy questionnaire from the database
      *
      * @param integer $questionnaireSer : the questionnaire control serial number
+     * @param object $user : the current user in session
      * @return array : response
      */        
-    public function deleteLegacyQuestionnaire( $questionnaireSer ) {
+    public function deleteLegacyQuestionnaire( $questionnaireSer, $user ) {
 
         $response = array(
             'value'     => 0,
             'message'   => ''
         );
 
+        $userSer = $user['id'];
+        $sessionId = $user['sessionid'];
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -601,6 +617,19 @@ class LegacyQuestionnaire {
 
             $query = $host_db_link->prepare( $sql );
             $query->execute();
+
+            $sql = "
+                UPDATE QuestionnaireControlMH
+                SET 
+                    QuestionnaireControlMH.LastUpdatedBy = '$userSer',
+                    QuestionnaireControlMH.SessionId = '$sessionId'
+                WHERE
+                    QuestionnaireControlMH.QuestionnaireControlSerNum = $questionnaireSer
+                ORDER BY QuestionnaireControlMH.RevSerNum DESC 
+                LIMIT 1
+            ";
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
 		
             $response['value'] = 1;
             return $response;
@@ -627,6 +656,9 @@ class LegacyQuestionnaire {
 		$questionnaireFilters	    = $legacyQuestionnaireDetails['filters'];
         $questionnaireOccurrence    = $legacyQuestionnaireDetails['occurrence'];
 
+        $userSer                    = $legacyQuestionnaireDetails['user']['id'];
+        $sessionId                  = $legacyQuestionnaireDetails['user']['sessionid'];
+
         $existingFilters	= array();
 
         $response = array(
@@ -644,7 +676,9 @@ class LegacyQuestionnaire {
 					QuestionnaireControl.QuestionnaireName_EN 		= \"$questionnaireName_EN\", 
 					QuestionnaireControl.QuestionnaireName_FR 		= \"$questionnaireName_FR\",
                     QuestionnaireControl.Intro_EN                   = \"$questionnaireIntro_EN\",
-                    QuestionnaireControl.Intro_FR                   = \"$questionnaireIntro_FR\"
+                    QuestionnaireControl.Intro_FR                   = \"$questionnaireIntro_FR\",
+                    QuestionnaireControl.LastUpdatedBy              = '$userSer',
+                    QuestionnaireControl.SessionId                  = '$sessionId'
 				WHERE 
 					QuestionnaireControl.QuestionnaireControlSerNum = $questionnaireSer
 			";
