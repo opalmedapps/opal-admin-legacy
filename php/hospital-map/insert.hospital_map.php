@@ -10,7 +10,8 @@
         'description_EN'    => $_POST['description_EN'],
         'description_FR'    => $_POST['description_FR'],
         'url'               => $_POST['url'],
-        'qrid'              => $_POST['qrid']
+        'qrid'              => $_POST['qrid'],
+        'user'              => $_POST['user']
     );
 
     $hosMap = new HospitalMap; // Object

@@ -544,6 +544,10 @@ angular.module('opalAdmin.controllers.newQuestionnaireController', ['ngAnimate',
 				addFilters($scope.doctorFilterList);
 				addFilters($scope.resourceFilterList);
 				addFilters($scope.patientFilterList);
+
+				// Log who created questionnaire
+				var currentUser = Session.retrieveObject('user');
+				$scope.newQuestionnaire.user = currentUser;
 				// Submit 
 				$.ajax({
 					type: "POST",

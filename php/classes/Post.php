@@ -11,15 +11,18 @@ class Post {
      * Updates the post flags in the database
      *
      * @param array $postList : the list of posts
+     * @param object $user : the current user in session
      * @return array $response : response
      */    
-    public function updatePostFlags( $postList ) {
+    public function updatePostFlags( $postList, $user ) {
 
         $response = array(
             'value'     => 0,
             'message'   => ''
         );
 
+        $userSer    = $user['id'];
+        $sessionId  = $user['sessionid'];
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -32,7 +35,9 @@ class Post {
 						PostControl 	
 					SET 
 						PostControl.PublishFlag = $postPublish,
-						PostControl.Disabled = $postDisabled
+						PostControl.Disabled = $postDisabled,
+                        PostControl.LastUpdatedBy = $userSer,
+                        PostControl.SessionId = '$sessionId'
 					WHERE 
 						PostControl.PostControlSerNum = $postSer
 				";
@@ -128,6 +133,7 @@ class Post {
                     'type'			    => $postType, 
                     'publish'          	=> $postPublish,
                     'disabled' 			=> $postDisabled,
+                    'changed'           => 0,
 					'body_EN' 	        => $postBody_EN, 
                     'body_FR' 	        => $postBody_FR,
                     'publish_date'      => $postPublishDate,
@@ -258,6 +264,8 @@ class Post {
         $postType	    = $postDetails['type'];
         $postPublishDate= $postDetails['publish_date'];
 		$postFilters	= $postDetails['filters'];
+        $userSer        = $postDetails['user']['id'];
+        $sessionId      = $postDetails['user']['sessionid'];
 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -271,7 +279,9 @@ class Post {
                         Body_FR,
                         PostType,
                         PublishDate,
-                        DateAdded
+                        DateAdded,
+                        LastUpdatedBy,
+                        SessionId
 					) 
 				VALUES (
 					\"$postName_EN\", 
@@ -280,7 +290,9 @@ class Post {
 					\"$postBody_FR\", 
                     '$postType', 
                     '$postPublishDate',
-                    NOW()
+                    NOW(),
+                    '$userSer',
+                    '$sessionId'
 				)
 			";
 			$query = $host_db_link->prepare( $sql );
@@ -325,15 +337,17 @@ class Post {
      * Deletes a post from the database
      *
      * @param integer $postSer : the post serial number
+     * @param object $user : the current user in session
      * @return array : response
      */        
-    public function deletePost( $postSer ) {
+    public function deletePost( $postSer, $user ) {
 
         $response = array(
             'value'     => 0,
             'message'   => ''
         );
-
+        $userSer    = $user['id'];
+        $sessionId  = $user['sessionid'];
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -357,6 +371,20 @@ class Post {
 			
 			$query = $host_db_link->prepare( $sql );
 			$query->execute();
+
+            $sql = "
+                UPDATE PostControlMH
+                SET 
+                    PostControlMH.LastUpdatedBy = '$userSer',
+                    PostControlMH.SessionId = '$sessionId'
+                WHERE
+                    PostControlMH.PostControlSerNum = $postSer
+                ORDER BY PostControlMH.RevSerNum DESC 
+                LIMIT 1
+            ";
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
+
 		
             $response['value'] = 1;
             return $response;
@@ -382,6 +410,8 @@ class Post {
         $postSer	        = $postDetails['serial'];
         $postPublishDate    = $postDetails['publish_date'];
 		$postFilters	    = $postDetails['filters'];
+        $userSer            = $postDetails['user']['id'];
+        $sessionId          = $postDetails['user']['sessionid'];
 
         $existingFilters	= array();
 
@@ -401,7 +431,9 @@ class Post {
 					PostControl.PostName_FR 		= \"$postName_FR\", 
 					PostControl.Body_EN	            = \"$postBody_EN\",
                     PostControl.Body_FR	            = \"$postBody_FR\",
-                    PostControl.PublishDate         = '$postPublishDate'
+                    PostControl.PublishDate         = '$postPublishDate',
+                    PostControl.LastUpdatedBy       = '$userSer',
+                    PostControl.SessionId           = '$sessionId'
 				WHERE 
 					PostControl.PostControlSerNum = $postSer
 			";

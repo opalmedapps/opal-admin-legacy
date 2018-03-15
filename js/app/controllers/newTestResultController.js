@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 	/******************************************************************************
 	* Add Test Result Page controller 
 	*******************************************************************************/
-	controller('newTestResultController', function ($scope, $filter, $sce, $state, $uibModal, testResultCollectionService, educationalMaterialCollectionService) {
+	controller('newTestResultController', function ($scope, $filter, $sce, $state, $uibModal, testResultCollectionService, educationalMaterialCollectionService, Session) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -302,6 +302,10 @@ angular.module('opalAdmin.controllers.newTestResultController', ['ngAnimate', 'n
 					if (test.added)
 						$scope.newTestResult.tests.push(test);
 				});
+
+				// Log who created test result 
+				var currentUser = Session.retrieveObject('user');
+				$scope.newTestResult.user = currentUser;
 
 				// Submit form
 				$.ajax({

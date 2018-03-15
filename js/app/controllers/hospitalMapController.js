@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.hospitalMapController', ['ngAnimate', 'ngS
 	/******************************************************************************
 	* Hospital Map Page controller 
 	*******************************************************************************/
-	controller('hospitalMapController', function ($scope, $filter, $sce, $state, $uibModal, hospitalMapCollectionService) {
+	controller('hospitalMapController', function ($scope, $filter, $sce, $state, $uibModal, hospitalMapCollectionService, Session) {
 
 		// Function to go to add hospital map page
 		$scope.goToAddHospitalMap = function () {
@@ -205,6 +205,9 @@ angular.module('opalAdmin.controllers.hospitalMapController', ['ngAnimate', 'ngS
 			// Submit changes
 			$scope.updateHosMap = function () {
 				if ($scope.checkForm()) {
+					// Log who updated hospital map
+					var currentUser = Session.retrieveObject('user');
+					$scope.hosMap.user = currentUser;
 					// Submit form
 					$.ajax({
 						type: "POST",
@@ -259,6 +262,9 @@ angular.module('opalAdmin.controllers.hospitalMapController', ['ngAnimate', 'ngS
 
 			// Submit delete
 			$scope.deleteHospitalMap = function () {
+				// Log who deleted hospital map
+				var currentUser = Session.retrieveObject('user');
+				$scope.hosMapToDelete.user = currentUser;
 				$.ajax({
 					type: "POST",
 					url: "php/hospital-map/delete.hospital_map.php",

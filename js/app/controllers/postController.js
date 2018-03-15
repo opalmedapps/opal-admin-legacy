@@ -10,7 +10,7 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 	/******************************************************************************
 	* Post Page controller 
 	*******************************************************************************/
-	controller('postController', function ($scope, $filter, $sce, $state, $uibModal, postCollectionService, filterCollectionService, uiGridConstants) {
+	controller('postController', function ($scope, $filter, $sce, $state, $uibModal, postCollectionService, filterCollectionService, uiGridConstants, Session) {
 
 		// Function to go to add post page
 		$scope.goToAddPost = function () {
@@ -156,6 +156,8 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 			else {
 				post.publish = 1; // set publish to "true"
 			}
+
+			post.changed = 1; // flag change to this post
 		};
 
 		// Function for when the post checkbox has been modified
@@ -172,18 +174,25 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 			else {
 				post.disabled = 1; // set disabled to "true"
 			}
+
+			post.changed = 1; // flag change to this post
 		};
 
 		// Function to submit changes when flags have been modified
 		$scope.submitFlags = function () {
 			if ($scope.changesMade) {
 				angular.forEach($scope.postList, function (post) {
-					$scope.postFlags.flagList.push({
-						serial: post.serial,
-						publish: post.publish,
-						disabled: post.disabled
-					});
+					if (post.changed) {
+						$scope.postFlags.flagList.push({
+							serial: post.serial,
+							publish: post.publish,
+							disabled: post.disabled
+						});
+					}
 				});
+				// Log who updated post flags
+				var currentUser = Session.retrieveObject('user');
+				$scope.postFlags.user = currentUser;
 				// Submit form
 				$.ajax({
 					type: "POST",
@@ -212,6 +221,7 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 						}
 						$scope.showBanner();
 						$scope.changesMade = false;
+						$scope.postFlags.flagList = [];
 
 					}
 				});
@@ -428,6 +438,10 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 						$scope.post.publish_date = String(moment($scope.post.publish_date).format("YYYY-MM-DD")) + " " +
 							String(moment($scope.post.publish_time).format("HH:mm"));
 					}
+
+					// Log who updated post 
+					var currentUser = Session.retrieveObject('user');
+					$scope.post.user = currentUser;
 					// Submit form
 					$.ajax({
 						type: "POST",
@@ -544,6 +558,9 @@ angular.module('opalAdmin.controllers.postController', ['ngAnimate', 'ngSanitize
 
 			// Submit delete
 			$scope.deletePost = function () {
+				// Log who updated post 
+				var currentUser = Session.retrieveObject('user');
+				$scope.postToDelete.user = currentUser;
 				$.ajax({
 					type: "POST",
 					url: "php/post/delete.post.php",

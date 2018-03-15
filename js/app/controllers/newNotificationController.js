@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 	/******************************************************************************
 	* Controller for the Add Notification page
 	*******************************************************************************/
-	controller('newNotificationController', function ($scope, $uibModal, $state, $filter, $sce, notificationCollectionService) {
+	controller('newNotificationController', function ($scope, $uibModal, $state, $filter, $sce, notificationCollectionService, Session) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -125,6 +125,9 @@ angular.module('opalAdmin.controllers.newNotificationController', ['ngAnimate', 
 		// Function to submit the new notification
 		$scope.submitNotification = function () {
 			if ($scope.checkForm()) {
+				// Log who created notification
+				var currentUser = Session.retrieveObject('user');
+				$scope.newNotification.user = currentUser;
 				// Submit
 				$.ajax({
 					type: "POST",
