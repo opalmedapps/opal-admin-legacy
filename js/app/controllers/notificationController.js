@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
 	/******************************************************************************
 	* Controller for the notification page
 	*******************************************************************************/
-	controller('notificationController', function ($scope, $uibModal, $filter, $state, $sce, notificationCollectionService) {
+	controller('notificationController', function ($scope, $uibModal, $filter, $state, $sce, notificationCollectionService, Session) {
 
 		// Function to go to add notification page
 		$scope.goToAddNotification = function () {
@@ -168,6 +168,9 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
 			// Submit changes
 			$scope.updateNotification = function () {
 				if ($scope.checkForm()) {
+					// Log who updated notification
+					var currentUser = Session.retrieveObject('user');
+					$scope.notification.user = currentUser;
 					// Submit form
 					$.ajax({
 						type: "POST",
@@ -229,6 +232,9 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
 
 			// Submit delete
 			$scope.deleteNotification = function () {
+				// Log who deleted notification
+				var currentUser = Session.retrieveObject('user');
+				$scope.notificationToDelete.user = currentUser;
 				$.ajax({
 					type: "POST",
 					url: "php/notification/delete.notification.php",

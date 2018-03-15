@@ -16,7 +16,8 @@
         'edumatser'         => $_POST['eduMatSer'],
         'serial'            => $_POST['serial'],
         'tests'             => $_POST['tests'],
-        'additional_links'  => $_POST['additional_links']
+        'additional_links'  => $_POST['additional_links'],
+        'user'              => $_POST['user']
     );
 
     // Call function

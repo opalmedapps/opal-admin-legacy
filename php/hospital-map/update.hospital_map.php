@@ -11,7 +11,8 @@
         'description_FR'    => $_POST['description_FR'],
         'url'               => $_POST['url'],
         'qrid'              => $_POST['qrid'],
-        'serial'            => $_POST['serial']
+        'serial'            => $_POST['serial'],
+        'user'              => $_POST['user']
     );
 
     $hosMap = new HospitalMap;

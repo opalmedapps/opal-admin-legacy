@@ -7,8 +7,9 @@
 
 	// Retrieve FORM param
 	$serial = $_POST['serial'];
+	$user 	= $_POST['user'];
 
 	// Call function
-	$hosMap->deleteHospitalMap($serial);
+	$hosMap->deleteHospitalMap($serial, $user);
 
 ?>

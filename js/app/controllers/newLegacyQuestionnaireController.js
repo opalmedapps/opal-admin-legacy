@@ -10,7 +10,7 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 	/******************************************************************************
 	* New Legacy Questionnaire Page controller 
 	*******************************************************************************/
-	controller('newLegacyQuestionnaireController', function($scope, $filter, $uibModal, $sce, legacyQuestionnaireCollectionService, $state, filterCollectionService, FrequencyFilterService) {
+	controller('newLegacyQuestionnaireController', function($scope, $filter, $uibModal, $sce, legacyQuestionnaireCollectionService, $state, filterCollectionService, FrequencyFilterService, Session) {
        
        // Function to go to previous page
 		$scope.goBack = function () {
@@ -928,6 +928,10 @@ angular.module('opalAdmin.controllers.newLegacyQuestionnaireController', ['ngAni
 						$scope.newLegacyQuestionnaire.occurrence.frequency.additionalMeta = [];
 					}
 				}
+
+				// Log who created legacy questionnaire
+				var currentUser = Session.retrieveObject('user');
+				$scope.newLegacyQuestionnaire.user = currentUser;
 
 				// Submit 
 				$.ajax({

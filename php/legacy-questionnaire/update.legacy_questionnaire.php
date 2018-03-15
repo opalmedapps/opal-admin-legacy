@@ -11,7 +11,8 @@
         'intro_FR'          => str_replace(array('"', "'"), '\"', $_POST['intro_FR']),
         'filters'           => $_POST['filters'],
         'serial' 			=> $_POST['serial'],
-        'occurrence'		=> $_POST['occurrence']
+        'occurrence'		=> $_POST['occurrence'],
+        'user'				=> $_POST['user']
 	);
 
 	$legacyQuestionnaire = new LegacyQuestionnaire; // Object
