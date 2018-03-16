@@ -517,7 +517,19 @@
 	            	oa.Username,
 	            	oaa.DateAdded as LoginTime, 
 	            	oaa2.DateAdded as LogoutTime, 
-	            	oaa.SessionId 
+	            	oaa.SessionId,
+	            	CONCAT (
+	            		IF(MOD(HOUR(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 24) > 0,
+	            			CONCAT(MOD(HOUR(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 24), 'h'),
+	            			''
+	            		),
+	            		IF(MINUTE(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)) > 0,
+	            			CONCAT(MINUTE(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 'm'),
+	            			''
+	            		),
+	            		SECOND(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 's'
+	            	) as SessionDuration
+
 	            FROM 
 	            	OAUser oa,
 	            	OAActivityLog oaa 
@@ -541,7 +553,8 @@
                     'username'              => $data[1],
                     'login'                 => $data[2],
                     'logout'				=> $data[3],
-                    'sessionid'             => $data[4]
+                    'sessionid'             => $data[4],
+                    'session_duration'		=> $data[5]
                 );
 
                 array_push($userActivityList, $userDetails);

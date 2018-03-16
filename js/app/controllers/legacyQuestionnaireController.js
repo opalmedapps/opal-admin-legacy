@@ -67,7 +67,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaireController', ['ngAnimat
 		'- <strong><a href="" ng-click="grid.appScope.deleteLegacyQuestionnaire(row.entity)">Delete</a></strong></div>';
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 		'ng-click="grid.appScope.editLegacyQuestionnaire(row.entity)">' +
-		'<a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></div>';
+		'<strong><a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></strong></div>';
 		var cellTemplatePublish = '<div style="text-align: center; cursor: pointer;" ' +
 		'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
 		'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +

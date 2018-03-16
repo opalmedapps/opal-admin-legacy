@@ -19,10 +19,9 @@ angular.module('opalAdmin.controllers.testResultController', ['ngAnimate', 'ui.b
 		// Templates for the table
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editTestResult(row.entity)"> ' +
-			'<a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></div>';
-		var cellTemplateGroupName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
-			'ng-click="grid.appScope.editTestResult(row.entity)"> ' +
-			'<a href="">{{row.entity.group_EN}} / {{row.entity.group_FR}}</a></div>';
+			'<strong><a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></strong></div>';
+		var cellTemplateGroupName = '<div class="ui-grid-cell-contents" >' +
+			'{{row.entity.group_EN}} / {{row.entity.group_FR}}</div>';
 		var checkboxCellTemplate = '<div style="text-align: center; cursor: pointer;" ' +
 			'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
 			'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +

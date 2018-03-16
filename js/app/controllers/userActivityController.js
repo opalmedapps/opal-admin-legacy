@@ -50,9 +50,10 @@ angular.module('opalAdmin.controllers.userActivityController', ['ngAnimate', 'ui
 		$scope.gridOptions = {
 			data: 'userActivityList',
 			columnDefs: [
-				{ field: 'username', displayName: 'User', width: '50%' },
-				{ field: 'login', displayName: 'Login Time', width: '25%' },
-				{ field: 'logout', displayName: 'Logout Time', width: '25%' }
+				{ field: 'username', displayName: 'User', width: '45%' },
+				{ field: 'login', displayName: 'Login Time', width: '20%' },
+				{ field: 'logout', displayName: 'Logout Time', width: '20%' },
+				{ field: 'session_duration', displayName: 'Session Duration', width: '15%'}
 			],
 			enableFiltering: true,
 			enableColumnResizing: true,

@@ -38,7 +38,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslationController', ['ngAnima
 		// Templates for alias table
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents"' +
 			'ng-click="grid.appScope.editDiagnosisTranslation(row.entity)">' +
-			'<a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></div>';
+			'<strong><a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></strong></div>';
 
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
 			'<strong><a href="" ng-click="grid.appScope.editDiagnosisTranslation(row.entity)">Edit</a></strong> ' +
