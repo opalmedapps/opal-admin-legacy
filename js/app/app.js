@@ -92,8 +92,8 @@ angular.module('opalAdmin', [
 		$stateProvider
 			.state('login', { url: '/', templateUrl: 'templates/login.html', controller: 'loginController', data: { requireLogin: false } })
 			.state('home', { url: '/home', templateUrl: 'templates/home.html', controller: 'homeController', data: { authorizedRoles: [USER_ROLES.all], requireLogin: true } })
-			.state('alias', { url: '/alias', templateUrl: "templates/alias.html", controller: "aliasController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
-			.state('alias-add', { url: '/alias/add', templateUrl: "templates/alias-add.html", controller: "newAliasController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+			.state('alias', { url: '/alias', templateUrl: "templates/alias/main.alias.html", controller: "alias.main", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+			.state('alias-add', { url: '/alias/add', templateUrl: "templates/alias/add.alias.html", controller: "alias.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('post', { url: '/post', templateUrl: "templates/post.html", controller: "postController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('post-add', { url: '/post/add', templateUrl: "templates/post-add.html", controller: "newPostController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('educational-material', { url: '/educational-material', templateUrl: "templates/educational-material.html", controller: "eduMatController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
