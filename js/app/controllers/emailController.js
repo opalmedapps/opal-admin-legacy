@@ -21,7 +21,7 @@ angular.module('opalAdmin.controllers.emailController', ['ngAnimate', 'ngSanitiz
 		// Templates for the table
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents"' +
 			'ng-click="grid.appScope.editEmail(row.entity)">' +
-			'<a href="">{{row.entity.subject_EN}} / {{row.entity.subject_FR}}</a></div>';
+			'<strong><a href="">{{row.entity.subject_EN}} / {{row.entity.subject_FR}}</a></strong></div>';
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
 			'<strong><a href="" ng-click="grid.appScope.editEmail(row.entity)">Edit</a></strong> ' +
 			'- <strong><a href="" ng-click="grid.appScope.deleteEmail(row.entity)">Delete</a></strong></div>';

@@ -73,7 +73,7 @@ angular.module('opalAdmin.controllers.questionnaireController', ['ngAnimate', 'n
 			'- <strong><a href="" ng-click="grid.appScope.deleteQuestionnaire(row.entity)">Delete</a></strong></div>';
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editQuestionnaire(row.entity)">' +
-			'<a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></div>';
+			'<strong><a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></strong></div>';
 		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Public</p></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Private</p></div>';
 		var cellTemplatePublish = '<div class="ui-grid-cell-contents" ng-show="row.entity.publish == 0"><p>No</p></div>' +
