@@ -1,9 +1,9 @@
-angular.module('opalAdmin.controllers.newAliasController', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.bootstrap.materialPicker']).
+angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.bootstrap.materialPicker']).
 
 	/******************************************************************************
 	* Add Alias Page controller 
 	*******************************************************************************/
-	controller('newAliasController', function ($scope, $filter, $uibModal, aliasCollectionService, $state, educationalMaterialCollectionService, Session) {
+	controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionService, $state, educationalMaterialCollectionService, Session) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
