@@ -124,6 +124,7 @@ angular.module('opalAdmin', [
 			.state('legacy-questionnaire-add', { url: '/legacy-questionnaire/add', templateUrl: "templates/legacy-questionnaire-add.html", controller: "newLegacyQuestionnaireController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('diagnosis-translation', { url: '/diagnosis-translation', templateUrl: "templates/diagnosis-translation.html", controller: "diagnosisTranslationController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('diagnosis-translation-add', { url: '/diagnosis-translation/add', templateUrl: "templates/diagnosis-translation-add.html", controller: "newDiagnosisTranslationController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+			.state('user-activity', { url: '/user-activity', templateUrl: "templates/user-activity.html", controller: "userActivityController", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('protected-route', { url: '/protected', resolve: { auth: function resolveAuthentication(AuthResolver) { return AuthResolver.resolve(); } } });
 	}])
 

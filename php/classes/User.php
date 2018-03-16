@@ -124,7 +124,7 @@
      *
      * @return string $sessionid : session id
      */
-     public function makeSessionId($length = 20) {
+     public function makeSessionId($length = 10) {
      	$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 	    $charactersLength = strlen($characters);
 	    $randomString = '';
@@ -498,6 +498,61 @@
 	 		return $roles;
 	 	}
 	 }
+
+    /**
+     *
+     * Gets a list of user activities
+     *
+     * @return array $userActivityList : the list of user activities
+     */
+    public function getUserActivities() {
+        $userActivityList = array();
+         try {
+
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
+	            SELECT DISTINCT 
+	            	oaa.OAUserSerNum,
+	            	oa.Username,
+	            	oaa.DateAdded as LoginTime, 
+	            	oaa2.DateAdded as LogoutTime, 
+	            	oaa.SessionId 
+	            FROM 
+	            	OAUser oa,
+	            	OAActivityLog oaa 
+	            LEFT JOIN 
+	            	OAActivityLog oaa2 
+	            ON oaa.SessionId = oaa2.SessionId  
+	            AND oaa2.Activity = 'Logout' 
+	            WHERE 
+	            	oaa.`Activity` 	= 'Login'
+	            AND oa.OAUserSerNum = oaa.OAUserSerNum
+
+                ORDER BY oaa.DateAdded DESC
+            ";
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $userDetails = array(
+                    'serial'                => $data[0],
+                    'username'              => $data[1],
+                    'login'                 => $data[2],
+                    'logout'				=> $data[3],
+                    'sessionid'             => $data[4]
+                );
+
+                array_push($userActivityList, $userDetails);
+            }
+
+            return $userActivityList;
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return $userActivityList;
+        }
+    }
  }
  
 ?>

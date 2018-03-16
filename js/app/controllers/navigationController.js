@@ -93,6 +93,10 @@ angular.module('opalAdmin.controllers.navigationController', ['ui.bootstrap']).
 		$scope.goToDiagnosisTranslation = function () {
 			$state.go('diagnosis-translation');
 		};
+		// Function to go to user activity page
+		$scope.goToUserActivity = function () {
+			$state.go('user-activity');
+		};
 
 		// Function to close the navbar on selection of a menu page
 		$scope.closeNav = function () {
@@ -111,7 +115,7 @@ angular.module('opalAdmin.controllers.navigationController', ['ui.bootstrap']).
 		// Function to set dropdown active for administration menu
 		$scope.currentActiveAdministration = function () {
 			var adminstrationPages = ['diagnosis-translation','cron','patients','patients-register',
-			'patient-activity','users'];
+			'patient-activity','users','user-activity'];
 			if (adminstrationPages.indexOf($state.current.name) !== -1) {
 				return true;
 			}
