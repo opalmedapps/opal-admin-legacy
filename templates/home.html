@@ -23,7 +23,7 @@
 						<div class="row">
 							<div class="col-xs-12">
 								<div class="home-side-menu" style="margin-top:20px; margin-bottom:20px">
-									<span class="fa fa-dot-circle-o"></span>
+									<span class="fas fa-dot-circle"></span>
 									<span class="title">Publishing Tools</span>
 								</div>
 							</div>
@@ -93,7 +93,7 @@
 									<div class="panel-info" >
 										<div class="panel-content">
 											<div class="icon-home clearfix">
-												<span  class="fa fa-map" aria-hidden="true"></span>
+												<span  class="fa fa-map fa-sm" aria-hidden="true"></span>
 											</div>
 											<div class="panel-title">  
 												<h1>Hospital Maps</h1>
@@ -150,7 +150,7 @@
 									<div class="panel-info" >
 										<div class="panel-content">
 											<div class="icon-home clearfix">
-												<span  class="fa fa-pencil-square-o" aria-hidden="true"></span>     
+												<span  class="fas fa-edit fa-sm" aria-hidden="true"></span>     
 											</div>
 											<div class="panel-title">  
 												<h1>Questionnaires</h1>
@@ -169,7 +169,7 @@
 									<div class="panel-info" >
 										<div class="panel-content">
 											<div class="icon-home clearfix">
-												<span  class="fa fa-envelope" aria-hidden="true"></span>     
+												<span  class="fa fa-envelope fa-sm" aria-hidden="true"></span>     
 											</div>
 											<div class="panel-title">  
 												<h1>Email</h1>
@@ -188,7 +188,7 @@
 									<div class="panel-info" >
 										<div class="panel-content">
 											<div class="icon-home clearfix">
-												<span  class="fa fa-pencil-square" aria-hidden="true"></span>     
+												<span class="fas fa-pen-square fa-sm" aria-hidden="true"></span>     
 											</div>
 											<div class="panel-title">  
 												<h1>Legacy Questionnaires</h1>
@@ -209,7 +209,7 @@
         		<div class="row">
           		<div class="col-xs-12">
 								<div class="home-side-menu" style="margin-top:20px; margin-bottom:20px">
-									<span class="fa fa-dot-circle-o"></span>
+									<span class="fas fa-dot-circle"></span>
 									<span class="title">Administration</span>
 								</div>
           		</div>
@@ -222,7 +222,7 @@
 									<div class="panel-info" >
 										<div class="panel-content">
 											<div class="icon-home clearfix">
-												<span  class="fa fa-stethoscope" aria-hidden="true"></span>
+												<span class="fa fa-stethoscope fa-sm" aria-hidden="true"></span>
 											</div>
 											<div class="panel-title">  
 												<h1>Diagnosis Translation</h1>
@@ -292,13 +292,13 @@
 								</div>
               </div>
               
-              <!-- SECTION: Patient registration -->
+              <!-- SECTION: Patient activity -->
 							<div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin])">
 								<div class="panel-container animated" ng-class="{pulse: hoverPatActivityMenu}" ng-mouseenter="hoverPatActivityMenu=true" ng-mouseleave="hoverPatActivityMenu=false" style="cursor:pointer;" ng-click="goToPatientActivity()">
 									<div class="panel-info" >
 										<div class="panel-content">
 											<div class="icon-home clearfix">
-												<span  class="fa fa-hourglass-half" aria-hidden="true"></span>
+												<span  class="fa fa-hourglass-half fa-sm" aria-hidden="true"></span>
 											</div>
 											<div class="panel-title">  
 												<h1>Patient Activity</h1>
@@ -329,6 +329,26 @@
 									</div>
 								</div>
 							</div>
+
+							<!-- SECTION: User activity -->
+							<div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin])">
+								<div class="panel-container animated" ng-class="{pulse: hoverUserActivityMenu}" ng-mouseenter="hoverUserActivityMenu=true" ng-mouseleave="hoverUserActivityMenu=false" style="cursor:pointer;" ng-click="goToUserActivity()">
+									<div class="panel-info" >
+										<div class="panel-content">
+											<div class="icon-home clearfix">
+												<span  class="fa fa-file-alt fa-sm" aria-hidden="true"></span>
+											</div>
+											<div class="panel-title">  
+												<h1>User Activity</h1>
+											</div>  
+											<div class="panel-description">
+												<p>List of user sessions, login/logout time, and activity.</p>
+											</div>
+										</div>
+									</div>
+								</div>
+              </div>
+
 						</div>
           </div>
 
@@ -337,7 +357,7 @@
 						<div class="row">
 							<div class="col-xs-12">
 								<div class="home-side-menu" style="margin-top:20px; margin-bottom:20px">
-									<span class="fa fa-dot-circle-o"></span>
+									<span class="fas fa-dot-circle"></span>
 									<span class="title">Profile</span>
 								</div>
 							</div>
