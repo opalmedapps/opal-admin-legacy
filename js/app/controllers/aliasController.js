@@ -38,7 +38,7 @@ angular.module('opalAdmin.controllers.aliasController', ['ngAnimate', 'ui.bootst
 		// Templates for alias table
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents"' +
 			'ng-click="grid.appScope.editAlias(row.entity)">' +
-			'<a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></div>';
+			'<strong><a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></strong></div>';
 		var checkboxCellTemplate = '<div style="text-align: center; cursor: pointer;" ' +
 			'ng-click="grid.appScope.checkAliasUpdate(row.entity)" ' +
 			'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +

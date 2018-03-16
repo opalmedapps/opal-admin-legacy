@@ -21,7 +21,7 @@ angular.module('opalAdmin.controllers.notificationController', ['ngAnimate', 'ng
 		// Templates for the table
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents"' +
 			'ng-click="grid.appScope.editNotification(row.entity)">' +
-			'<a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></div>';
+			'<strong><a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></strong></div>';
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
 			'<strong><a href="" ng-click="grid.appScope.editNotification(row.entity)">Edit</a></strong> ' +
 			'- <strong><a href="" ng-click="grid.appScope.deleteNotification(row.entity)">Delete</a></strong></div>';

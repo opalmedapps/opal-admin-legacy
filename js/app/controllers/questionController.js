@@ -33,18 +33,15 @@ angular.module('opalAdmin.controllers.questionController', ['ngAnimate', 'ngSani
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
 			'<strong><a href="" ng-click="grid.appScope.editQuestion(row.entity)">Edit</a></strong> ' +
 			'- <strong><a href="" ng-click="grid.appScope.deleteQuestion(row.entity)">Delete</a></strong></div>';
-		var cellTemplateGroupName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
-			'ng-click="grid.appScope.editQuestion(row.entity)">' +
-			'<a href="">{{row.entity.group_name_EN}} / {{row.entity.group_name_FR}}</a></div>';
+		var cellTemplateGroupName = '<div class="ui-grid-cell-contents"> ' +
+			'{{row.entity.group_name_EN}} / {{row.entity.group_name_FR}}</div>';
 		var cellTemplateText = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editQuestion(row.entity)">' +
-			'<a href="">{{row.entity.text_EN}} / {{row.entity.text_FR}}</a></div>';
-		var cellTemplateLib = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
-			'ng-click="grid.appScope.editQuestion(row.entity)">' +
-			'<a href="">{{row.entity.library_name_EN}} / {{row.entity.library_name_FR}}</a></div>';
-		var cellTemplateAt = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
-			'ng-click="grid.appScope.editQuestion(row.entity)">' +
-			'<a href="">{{row.entity.answertype_name_EN}} / {{row.entity.answertype_name_FR}}</a></div>';
+			'<strong><a href="">{{row.entity.text_EN}} / {{row.entity.text_FR}}</a></strong></div>';
+		var cellTemplateLib = '<div class="ui-grid-cell-contents"> ' +
+			'{{row.entity.library_name_EN}} / {{row.entity.library_name_FR}}</div>';
+		var cellTemplateAt = '<div class="ui-grid-cell-contents"> ' +
+			'{{row.entity.answertype_name_EN}} / {{row.entity.answertype_name_FR}}</div>';
 		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Public</p></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Private</p></div>';
 
