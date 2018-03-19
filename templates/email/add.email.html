@@ -1,0 +1,343 @@
+  <div id="main">
+    <div id="top">
+      <div class="clearfix">
+        <div class="row">
+          <!-- Left side detail view -->
+          <div class="col-lg-2">
+            <!-- Logo -->
+            <div class="side-navbar" ng-controller="navigation">
+              <div class="row side-logo" ng-click="goToHome()">
+                <div class="col-md-12">
+                  <div class="logo">
+                    <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+                  </div>
+                  <h1 class="animated fadeIn">opal <strong>ADMIN</strong></h1>
+                </div>
+              </div>   
+            </div> 
+            <div class="summary-fix">
+              <!-- Back button --> 
+  						<div class="row side-panel-menu">
+  							<div class="col-xs-12 col-sm-5 col-lg-12">
+  								<div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+  									<div class="side-panel-info-sm">
+  										<div class="panel-content">
+  											<span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+  											<h6 class="side-panel-title" style="display:inline-block;margin:0;font-size:14px;"><strong>Back to Emails</strong></h6>
+  										</div>
+  									</div>
+  								</div>
+  							</div>
+                <!-- Summary -->
+                <div class="side-menu-title col-lg-12">
+                  <div class="horz-line" style="height: 16px; text-align: center">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <h2>Summary</h2>
+                    </span>  
+                  </div>  
+                </div>
+                <div class="col-lg-12">
+                  <div class="progress progress-striped active">
+                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <uib-accordion class="side-navbar">
+                <!-- SECTION: Type -->
+                <div uib-accordion-group is-open="typeSection.open" class="panel-container summary-box" is-disabled="!newEmail.type">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items:center">
+                      <div class="col-md-2">
+                        <span ng-if="newEmail.type" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Type</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i ng-if="newEmail.type" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':typeSection.open, 'glyphicon-chevron-right': !typeSection.open}"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-show="newEmail.type.name" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newEmail.type.name}}
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Title -->
+                <div uib-accordion-group is-open="titleSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: titleSection.show}" is-disabled="!newEmail.subject_EN && !newEmail.subject_FR" ng-if="titleSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newEmail.subject_EN && newEmail.subject_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Title</strong> 
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}" ng-if="newEmail.subject_EN || newEmail.subject_FR"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newEmail.subject_EN" class="description">
+                    <p>
+                      <strong>EN</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newEmail.subject_EN}}
+                    </p>
+                  </div>
+                  <div ng-if="newEmail.subject_FR" class="description">
+                    <p>
+                      <strong>FR</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newEmail.subject_FR}}
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Body -->
+                <div uib-accordion-group is-open="bodySection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: bodySection.show}" is-disabled="!newEmail.body_EN && !newEmail.body_FR" ng-if="bodySection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newEmail.body_EN && $newEmail.body_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Body</strong> 
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': bodySection.open, 'glyphicon-chevron-right': !bodySection.open}" ng-if="newEmail.body_EN || newEmail.body_FR"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newEmail.body_EN || newEmail.body_FR" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      See rendered output on the right
+                    </p>
+                  </div>
+                </div>
+              </uib-accordion>
+              <!-- Submit button -->
+              <div class="panel-container">
+                <a href="" ng-click="submitEmailTemplate()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                  <span style="font-size: 20px;"><strong>Submit Email</strong></span>
+                </a>
+              </div>
+            </div>
+          </div>
+          <!-- Right side details view -->
+          <div class="col-xs-12 col-lg-10 animated fadeInRight">
+            <div class="row main-title">
+              <!-- Page title -->
+              <div class="col-xs-12 col-md-8 title-content">
+                <span class="glyphicon glyphicon-plus"></span>
+                <h1><strong>Add Email Template</strong></h1>
+              </div>
+              <!-- Breadcrumbs -->
+              <div class="col-md-4 title-breadcrumbs"> 
+                <span>
+                  <span><a ui-sref="home">Home</a></span>
+                  <span class="teflon glyphicon glyphicon-menu-right"></span> 
+                  <span><a ui-sref="email">Email</a></span>
+                  <span class="teflon glyphicon glyphicon-menu-right"></span> 
+                  <span><strong>Add Email Template</strong></span>
+                </span>
+              </div>
+            </div> 
+            <div class="row mobile-side-panel-menu">
+              <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
+                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                  <div class="side-panel-info-sm">
+                    <div class="panel-content">
+                      <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                      <h6 class="side-panel-title"><strong>Back to Emails</strong></h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkForm()">
+                <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
+                  <span style="padding: 0 10px;">
+                    <h2>Step {{numOfCompletedSteps}} of {{stepTotal}} Completed</h2>
+                  </span>  
+                </div>  
+                <div class="progress progress-striped active">
+                  <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                  </div>
+                </div>
+              </div>
+              <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkForm()">
+                <div class="panel-container">
+                  <a href="" ng-click="submitEmailTemplate()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                    <span style="font-size: 20px;"><strong>Submit Email</strong></span>
+                  </a>
+                </div>
+              </div> 
+            </div>
+
+            <div class="section-content">
+              <!-- SECTION: Type -->
+              <div class="row">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Type</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span style="color:#d9534f"><strong>Required field:</strong></span>
+                    Please select the email type.
+                  </p>
+                </div>
+              </div>    
+              <div class="row">
+                <div ng-repeat="type in emailTypes" class="col-xs-12 col-sm-4 col-md-3"> 
+                  <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: newEmail.type.serial == type.serial}" ng-click="typeUpdate(type)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                    <div class="panel-info" ng-class="{active: newEmail.type.serial == type.serial}">
+                      <div class="panel-content" style="text-align:center">
+                        <span style="font-size:30px;" class="fa fa-envelope"></span>
+                        <div class="option-panel-title">{{type.name}}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> 
+              <!-- SECTION: Title -->
+  						<div class="row animated" ng-class="{fadeInUp: titleSection.show}" ng-if="titleSection.show">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Title</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row animated" ng-class="{fadeInUp: titleSection.show}" ng-if="titleSection.show">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span style="color:#d9534f"><strong>Required field:</strong></span>
+                    Please assign an english and french title.
+                  </p>
+                </div>
+              </div>  
+              <div class="row aniamted" ng-class="{fadeInUp: titleSection.show}" ng-if="titleSection.show">
+                <div class="col-xs-12 col-md-6">
+                  <div class="panel" ng-class="(newEmail.subject_EN) ? 'panel-success': 'panel-danger'">
+                    <div class="panel-heading"><strong>English</strong>
+                      <span ng-hide="newEmail.subject_EN" style="float:right"><em>Incomplete</em></span>
+                      <span ng-show="newEmail.subject_EN" style="float:right"><em>Complete</em></span>
+                    </div>
+                    <div class="panel-body form-horizontal">
+                      <div class="form-group">
+                        <label class="control-label col-xs-12 col-lg-2">
+                          Subject
+                        </label>
+                        <div class="col-xs-12 col-lg-10">
+                          <input class="form-control" type="text" ng-model="newEmail.subject_EN" ng-change="titleUpdate()" placeholder="English Title" required="required">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>          
+                <div class="col-xs-12 col-md-6">
+                  <div class="panel" ng-class="(newEmail.subject_FR) ? 'panel-success': 'panel-danger'">
+                    <div class="panel-heading"><strong>Français</strong>
+                      <span ng-hide="newEmail.subject_FR" style="float:right"><em>Incomplete</em></span>
+                      <span ng-show="newEmail.subject_FR" style="float:right"><em>Complete</em></span>
+                    </div>
+                    <div class="panel-body form-horizontal">
+                      <div class="form-group">
+                        <label class="control-label col-xs-12 col-lg-2">
+                          Sujet
+                        </label>
+                        <div class="col-xs-12 col-lg-10">
+                          <input class="form-control" type="text" ng-model="newEmail.subject_FR" ng-change="titleUpdate()" placeholder="Titre Français" required="required">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>        
+              </div>
+              <!-- SECTION: Body -->
+  						<div class="row animated" ng-class="{fadeInUp: bodySection.show}" ng-if="bodySection.show">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Body</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row animated" ng-class="{fadeInUp: bodySection.show}" ng-if="bodySection.show">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 5px;">
+                    <span style="color:#d9534f"><strong>Required field:</strong></span>
+                    Please assign the message content in both english and in french.
+                  </p>
+                </div>
+              </div>  
+              <div class="row animated" ng-class="{fadeInUp: bodySection.show}" ng-if="bodySection.show">
+                <div class="col-xs-12 col-md-9">
+                  <div class="panel" ng-class="(newEmail.body_EN) ? 'panel-success': 'panel-danger'">
+                    <div class="panel-heading"><strong>English</strong>
+                      <span ng-hide="newEmail.body_EN" style="float:right"><em>Incomplete</em></span>
+                      <span ng-show="newEmail.body_EN" style="float:right"><em>Complete</em></span>
+                    </div>
+                    <div class="panel-body">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <div text-angular ng-model="newEmail.body_EN" ng-change="bodyUpdate()"></div>
+                          </div> 
+                        </div>  
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>           
+              <div class="row animated" ng-class="{fadeInUp: bodySection.show}" ng-if="bodySection.show">
+                <div class="col-xs-12 col-md-9">
+                  <div class="panel" ng-class="(newEmail.body_FR) ? 'panel-success': 'panel-danger'">
+                    <div class="panel-heading"><strong>Français</strong>
+                      <span ng-hide="newEmail.body_FR" style="float:right"><em>Incomplete</em></span>
+                      <span ng-show="newEmail.body_FR" style="float:right"><em>Complete</em></span>
+                    </div>
+                    <div class="panel-body">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <div text-angular ng-model="newEmail.body_FR" ng-change="bodyUpdate()"></div>
+                          </div> 
+                        </div>  
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>           
+              <!-- END SECTION -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- "Processing" modal template -->
+<script type="text/ng-template" id="processingModal.htm">
+  <div class="modal-header">
+    <h1> Processing...</h1>
+  </div>
+  <div class="modal-body">
+    <div class="progress progress-striped active">
+      <div class="progress-bar" style="width: 100%"></div>        
+    </div>
+  </div>
+</script>
+
