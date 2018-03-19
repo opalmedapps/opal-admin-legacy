@@ -59,44 +59,84 @@
 
 	<!-- Controller -->
  	<script type="text/javascript" src="js/app/controllers/controllers.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/applicationController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/navigationController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/homeController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/alias/main.alias.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/application.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/navigation.js"></script>
+
+ 	<script type="text/javascript" src="js/app/controllers/alias/alias.js"></script>
  	<script type="text/javascript" src="js/app/controllers/alias/add.alias.js"></script>
  	<script type="text/javascript" src="js/app/controllers/alias/edit.alias.js"></script>
  	<script type="text/javascript" src="js/app/controllers/alias/delete.alias.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/postController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/newPostController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/newEduMatController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/eduMatController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/hospitalMapController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/newHospitalMapController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/notificationController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/newNotificationController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/patientController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/patientRegistrationController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/testResultController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/newTestResultController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/cronController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/loginController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/loginModalController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/patientActivityController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/accountController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/userController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/newUserController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/installationController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/emailController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/newEmailController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/questionnaireController.js"></script>
-	<script type="text/javascript" src="js/app/controllers/newQuestionnaireController.js"></script>
-	<script type="text/javascript" src="js/app/controllers/questionController.js"></script>
-	<script type="text/javascript" src="js/app/controllers/newQuestionController.js"></script>
-	<script type="text/javascript" src="js/app/controllers/newLegacyQuestionnaireController.js"></script>
-	<script type="text/javascript" src="js/app/controllers/legacyQuestionnaireController.js"></script>
-	<script type="text/javascript" src="js/app/controllers/diagnosisTranslationController.js"></script>
-	<script type="text/javascript" src="js/app/controllers/newDiagnosisTranslationController.js"></script>
- 	<script type="text/javascript" src="js/app/controllers/userActivityController.js"></script>
+
+ 	<script type="text/javascript" src="js/app/controllers/post/post.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/post/add.post.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/post/edit.post.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/post/delete.post.js"></script>
+
+ 	<script type="text/javascript" src="js/app/controllers/educational-material/educationalMaterial.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/educational-material/add.educationalMaterial.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/educational-material/edit.educationalMaterial.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/educational-material/delete.educationalMaterial.js"></script>
+
+ 	<script type="text/javascript" src="js/app/controllers/hospital-map/hospitalMap.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/hospital-map/add.hospitalMap.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/hospital-map/edit.hospitalMap.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/hospital-map/delete.hospitalMap.js"></script>
+
+ 	<script type="text/javascript" src="js/app/controllers/notification/notification.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/notification/add.notification.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/notification/edit.notification.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/notification/delete.notification.js"></script>
+
+ 	<script type="text/javascript" src="js/app/controllers/patient/patient.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/patient/block.patient.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/patient/edit.patient.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/patient/patientRegistration.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/patient/confirm.patientRegistration.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/patient/patientActivity.js"></script>
+
+ 	<script type="text/javascript" src="js/app/controllers/test-result/testResult.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/test-result/add.testResult.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/test-result/edit.testResult.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/test-result/delete.testResult.js"></script>
+
+ 	<script type="text/javascript" src="js/app/controllers/cron/cron.js"></script>
+
+ 	<script type="text/javascript" src="js/app/controllers/login/login.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/login/loginModal.js"></script>
+
+ 	<script type="text/javascript" src="js/app/controllers/user/account.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/user/user.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/user/add.user.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/user/edit.user.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/user/delete.user.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/user/userActivity.js"></script>
+
+ 	<script type="text/javascript" src="js/app/controllers/install/installation.js"></script>
+
+ 	<script type="text/javascript" src="js/app/controllers/email/email.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/email/add.email.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/email/edit.email.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/email/delete.email.js"></script>
+
+ 	<script type="text/javascript" src="js/app/controllers/questionnaire/questionnaire.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/questionnaire/add.questionnaire.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/questionnaire/edit.questionnaire.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/questionnaire/delete.questionnaire.js"></script>
+
+	<script type="text/javascript" src="js/app/controllers/question/question.js"></script>
+	<script type="text/javascript" src="js/app/controllers/question/add.question.js"></script>
+	<script type="text/javascript" src="js/app/controllers/question/edit.question.js"></script>
+	<script type="text/javascript" src="js/app/controllers/question/delete.question.js"></script>
+
+	<script type="text/javascript" src="js/app/controllers/legacy-questionnaire/legacyQuestionnaire.js"></script>
+	<script type="text/javascript" src="js/app/controllers/legacy-questionnaire/add.legacyQuestionnaire.js"></script>
+	<script type="text/javascript" src="js/app/controllers/legacy-questionnaire/edit.legacyQuestionnaire.js"></script>
+	<script type="text/javascript" src="js/app/controllers/legacy-questionnaire/delete.legacyQuestionnaire.js"></script>
+
+	<script type="text/javascript" src="js/app/controllers/diagnosis/diagnosisTranslation.js"></script>
+	<script type="text/javascript" src="js/app/controllers/diagnosis/add.diagnosisTranslation.js"></script>
+	<script type="text/javascript" src="js/app/controllers/diagnosis/edit.diagnosisTranslation.js"></script>
+	<script type="text/javascript" src="js/app/controllers/diagnosis/delete.diagnosisTranslation.js"></script>
 
 	<!-- Collection -->
  	<script type="text/javascript" src="js/app/collections/collections.js"></script>
@@ -133,7 +173,7 @@
 	<link rel="shortcut icon" type="image/png" href="favicon.png"/>
 
 </head>
-<body ng-app="opalAdmin" ng-controller="applicationController">
+<body ng-app="opalAdmin" ng-controller="application">
 	<div ng-include="'templates/navbar-menu.html'" ></div>
 	<div id="page">
 		<div ui-view style="position: relative; height: inherit;"></div>

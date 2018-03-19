@@ -78,7 +78,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		$scope.showProcessingModal = function () {
 
 			processingModal = $uibModal.open({
-				templateUrl: 'processingModal.htm',
+				templateUrl: 'templates/processingModal.html',
 				backdrop: 'static',
 				keyboard: false,
 			});

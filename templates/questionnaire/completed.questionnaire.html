@@ -1,0 +1,35 @@
+<div id="main">
+	<div id="top">
+		<div class="clearfix">
+			<div class="row">
+        <!-- Load side menu -->
+				<div id="side-panel-scrollbar" class="col-lg-2">
+					<div ng-include="'templates/questionnaire/questionnaire-side-menu.html'"></div>
+				</div>
+        <!-- Right side view -->
+				<div class="col-lg-10 animated fadeIn">
+					<div class="row main-title">
+            <!-- Page title -->
+						<div class="col-xs-12 col-md-6 title-content">
+							<span class="fa fa-check"></span>
+							<h1><strong>View Completed Questionnaire</strong></h1>
+						</div>
+            <!-- Breadcrumbs -->
+						<div class="col-md-6 title-breadcrumbs">
+							<span>
+								<a ui-sref="home">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <a ui-sref="questionnaire-menu">Questionnaire</a>	<span class="glyphicon glyphicon-menu-right teflon"></span> <strong>View Completed Questionnaire</strong></span>
+						</div>
+					</div>
+					<div class="none-to-display-container">
+						<div class="jumbotron content col-xs-12" style="background-color: transparent;">
+							<h1 class="icon"><span class="fa fa-pencil-square-o"></span></h1>
+							<p>There are no completed questionnaires</p>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
