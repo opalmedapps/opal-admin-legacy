@@ -1,0 +1,34 @@
+<div class="form-box animated" ng-class="{'pulse': !formLoaded}">
+  <p class="login-title">
+    <span>{{ 'PATIENT_REGISTRATION_CONFIRM_TEXT' | translate }} </span>
+  </p>  
+  <div id="block-system-main" class="login-register-block-main">
+    <div class="login-content clearfix">
+      <form ng-submit="confirmRegistration(credentials)" method="post">
+        <div class="row clearfix" style="margin-top:20px; margin-bottom:20px;">
+          <div class="col-md-12">
+            <label>{{ 'USERNAME' | translate }}</label>
+            <div class="input-group">
+              <span class="input-group-addon">U</span>
+              <input type="text" class="form-control" required="required" ng-model="credentials.username">    
+            </div>
+          </div>
+        </div>
+        <div class="row" style="margin-bottom:20px;">    
+          <div class="col-md-12">
+            <label>{{ 'PASSWORD' | translate }}</label>
+            <div class="input-group">
+              <span class="input-group-addon">P</span>
+              <input type="password" class="form-control" required="required" ng-model="credentials.password">    
+            </div>
+          </div>
+        </div>  
+        <div class="table-buttons" style="text-align:right">
+          <input class="btn btn-success" ng-class="{'disabled': !loginFormComplete()}" type="submit" value="Confirm">
+          <input ng-click="cancel()" class="btn btn-danger" type="button" value="{{ 'CANCEL' | translate }}">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="bannerMessage alert-success">{{bannerMessage}}</div>
