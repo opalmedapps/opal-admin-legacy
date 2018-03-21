@@ -1,3 +1,11 @@
+Version 0.16.0.1:
+ - --- Fixes single quotes in clinical codes that were causing query strings to escape and crash
+ - Merge branch 'release-0.16.0.0' into preproduction
+ - Merge branch 'release-0.15.0.0' into preproduction
+ - Merge branch 'release-0.14.1' into preproduction
+ - Merge branch 'release-0.13.0'
+ - Merge branch 'hotfix-0.12.8'
+
 Version 0.16.0.0:
  -     --- Added functionality to change youtube links         -- Embed can only display in the app so added function to change youtube urls         into proper embed urls
  -     --- Register patient in QuestionnaireDB when registering a new patient in opalAdmin
