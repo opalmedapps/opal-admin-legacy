@@ -481,8 +481,8 @@ sub getDocsFromSourceDB
 		            }
         		
 	        		$docInfo_sql .= "
-						(RTRIM(note_typ.note_typ_desc)   = '$expressionName'
-		        		AND	visit_note.trans_log_mtstamp	> '$lasttransfer')
+						(REPLACE(RTRIM(note_typ.note_typ_desc), '''', '')   = '$expressionName'
+		        		AND	visit_note.trans_log_mtstamp					> '$lasttransfer')
 	    		    ";
 					$counter++;
 	        		# concat "UNION" until we've reached the last query
