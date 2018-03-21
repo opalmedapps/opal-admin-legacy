@@ -259,7 +259,7 @@ sub getAliasExpressionsFromOurDB
 	my $expressionInfo_sql = "
 		SELECT DISTINCT
 			AliasExpression.AliasExpressionSerNum,
-			AliasExpression.ExpressionName,
+			REPLACE(AliasExpression.ExpressionName, '''', ''),
 			AliasExpression.LastTransferred
 		FROM 
 			Alias,
