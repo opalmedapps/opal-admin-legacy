@@ -440,8 +440,8 @@ sub getApptsFromSourceDB
 
 		            # concatenate query
 	        		$apptInfo_sql .= "
-						(vva.Expression1             = '$expressionName'
-			        	AND sa.HstryDateTime	 	> '$lasttransfer') 
+						(REPLACE(vva.Expression1, '''', '')    	= '$expressionName'
+			        	AND sa.HstryDateTime	 				> '$lasttransfer') 
 	        		";
 	        		$counter++;
 	        		# concat "UNION" until we've reached the last query
