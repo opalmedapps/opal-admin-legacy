@@ -21,8 +21,8 @@ angular.module('opalAdmin.services', [])
 	.service('loginModal', function ($uibModal) {
 		return function () {
 			var modalInstance = $uibModal.open({
-				templateUrl: 'templates/login-form.html',
-				controller: 'loginModalController',
+				templateUrl: 'templates/login/login-form.html',
+				controller: 'loginModal',
 				backdrop: 'static',
 			});
 
