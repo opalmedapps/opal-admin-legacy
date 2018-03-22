@@ -263,7 +263,7 @@ sub getDiagnosesFromSourceDB
 	    		AND dx.DiagnosisSer 	= pmdx.DiagnosisSer
 		    	AND	pt.SSN 				LIKE '$patientSSN%'
 			    AND	dx.Description 		NOT LIKE '%ERROR%'
-    			--AND	dx.HstryDateTime    > '$lastTransfer'
+    			AND	dx.HstryDateTime    > '$lastTransfer'
 	    		AND dx.DateStamp		> '1970-01-01 00:00:00'
 		    ";
     		# prepare query
