@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.alias.delete', [])
 
-	.controller('alias.delete', function ($scope, $uibModalInstance) {
+	.controller('alias.delete', function ($scope, $uibModalInstance, Session) {
 		// Submit delete
 		$scope.deleteAlias = function () {
 

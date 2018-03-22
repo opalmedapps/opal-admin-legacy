@@ -83,15 +83,19 @@
       </uib-accordion-heading>
       <div class="row">
         <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+          <div style="text-align:center; margin-bottom: 10px;">
+            <span style="font-size:20px;">HTML (English)</span>
+          </div>
           <div class="input-group">
-            <span class="input-group-addon">EN</span>
-            <textarea class="form-control" rows="10" ng-model="testResult.description_EN" ng-change="setChangesMade()" placeholder="English Description" required="required"></textarea>
+            <div text-angular ng-model="testResult.description_EN" ng-change="setChangesMade()" placeholder="English Description" required="required" ta-toolbar="toolbar"></div>
           </div>
         </div>
         <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+          <div style="text-align:center; margin-bottom: 10px;">
+            <span style="font-size:20px;">HTML (Français)</span>
+          </div>
           <div class="input-group">
-            <span class="input-group-addon">FR</span>
-            <textarea class="form-control" rows="10" ng-model="testResult.description_FR" ng-change="setChangesMade()" placeholder="Description Francais" required="required"></textarea>
+            <div text-angular ng-model="testResult.description_FR" ng-change="setChangesMade()" placeholder="Description Français" required="required" ta-toolbar="toolbar"></div>
           </div>
         </div>
       </div>

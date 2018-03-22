@@ -174,6 +174,11 @@ angular.module('opalAdmin.controllers.post.edit', ['ngAnimate', 'ngSanitize', 'u
 		$scope.updatePost = function () {
 
 			if ($scope.checkForm()) {
+				// For some reason the HTML text fields add a zero-width-space
+				// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
+				$scope.post.body_EN = $scope.post.body_EN.replace(/\u200B/g,'');
+				$scope.post.body_FR = $scope.post.body_FR.replace(/\u200B/g,'');
+
 				$scope.post.filters = []; // Empty filters
 				// Add filters to post
 				addFilters($scope.appointmentList);

@@ -803,6 +803,11 @@ angular.module('opalAdmin.controllers.legacyQuestionnaire.edit', ['ngAnimate', '
 
 			if ($scope.checkForm()) {
 
+				// For some reason the HTML text fields add a zero-width-space
+				// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
+				$scope.legacyQuestionnaire.intro_EN = $scope.legacyQuestionnaire.intro_EN.replace(/\u200B/g,'');
+				$scope.legacyQuestionnaire.intro_FR = $scope.legacyQuestionnaire.intro_FR.replace(/\u200B/g,'');
+
 				// Initialize filter
 				$scope.legacyQuestionnaire.filters = [];
 

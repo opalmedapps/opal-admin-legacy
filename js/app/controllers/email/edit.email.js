@@ -46,6 +46,11 @@ angular.module('opalAdmin.controllers.email.edit', ['ngAnimate', 'ngSanitize', '
 		// Submit changes
 		$scope.updateEmail = function () {
 			if ($scope.checkForm()) {
+				// For some reason the HTML text fields add a zero-width-space
+				// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
+				$scope.email.body_EN = $scope.email.body_EN.replace(/\u200B/g,'');
+				$scope.email.body_FR = $scope.email.body_FR.replace(/\u200B/g,'');
+
 				// Log who updated email
 				var currentUser = Session.retrieveObject('user');
 				$scope.email.user = currentUser;

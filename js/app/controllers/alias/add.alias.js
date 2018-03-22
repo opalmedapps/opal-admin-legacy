@@ -23,6 +23,14 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 		$scope.showAssigned = false;
 		$scope.hideAssigned = false;
 
+		// Default toolbar for wysiwyg
+		$scope.toolbar = [ 
+			['h1', 'h2', 'h3', 'p'],
+      		['bold', 'italics', 'underline', 'ul', 'ol'],
+      		['justifyLeft', 'justifyCenter', 'indent', 'outdent'],
+      		['html', 'insertLink']
+      	];
+
 		// completed steps in object notation
 		var steps = {
 			source: { completed: false },
@@ -328,6 +336,11 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 		$scope.submitAlias = function () {
 
 			if ($scope.checkForm()) {
+
+				// For some reason the HTML text fields add a zero-width-space
+				// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
+				$scope.newAlias.description_EN = $scope.newAlias.description_EN.replace(/\u200B/g,'');
+				$scope.newAlias.description_FR = $scope.newAlias.description_FR.replace(/\u200B/g,'');
 
 				// Fill it with the added terms from termList
 				angular.forEach($scope.termList, function (term) {

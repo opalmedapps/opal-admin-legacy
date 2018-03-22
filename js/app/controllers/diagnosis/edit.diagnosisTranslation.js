@@ -9,6 +9,14 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.edit', ['ngAnimate', 
 		$scope.showAssigned = false;
 		$scope.hideAssigned = false;
 
+		// Default toolbar for wysiwyg
+		$scope.toolbar = [ 
+			['h1', 'h2', 'h3', 'p'],
+      		['bold', 'italics', 'underline', 'ul', 'ol'],
+      		['justifyLeft', 'justifyCenter', 'indent', 'outdent'],
+      		['html', 'insertLink']
+      	];
+
 		// Responsible for "searching" in search bars
 		$scope.filter = $filter('filter');
 
@@ -219,6 +227,11 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.edit', ['ngAnimate', 
 		$scope.updateDiagnosisTranslation = function() {
 
 			if ($scope.checkForm()) {
+
+				// For some reason the HTML text fields add a zero-width-space
+				// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
+				$scope.diagnosisTranslation.description_EN = $scope.diagnosisTranslation.description_EN.replace(/\u200B/g,'');
+				$scope.diagnosisTranslation.description_FR = $scope.diagnosisTranslation.description_FR.replace(/\u200B/g,'');
 
 				$scope.diagnosisTranslation.diagnoses = [];
 				// Fill in the diagnoses from diagnosisList

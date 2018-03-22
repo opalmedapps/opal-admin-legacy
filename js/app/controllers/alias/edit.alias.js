@@ -13,6 +13,14 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		$scope.showAssigned = false;
 		$scope.hideAssigned = false;
 
+		// Default toolbar for wysiwyg
+		$scope.toolbar = [ 
+			['h1', 'h2', 'h3', 'p'],
+      		['bold', 'italics', 'underline', 'ul', 'ol'],
+      		['justifyLeft', 'justifyCenter', 'indent', 'outdent'],
+      		['html', 'insertLink']
+      	];
+
 		$scope.alias = {}; // initialize alias object
 		$scope.aliasModal = {}; // for deep copy
 		$scope.termList = []; // initialize list for unassigned expressions in our DB
@@ -232,6 +240,12 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		$scope.updateAlias = function () {
 
 			if ($scope.checkForm()) {
+
+				// For some reason the HTML text fields add a zero-width-space
+				// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
+				$scope.alias.description_EN = $scope.alias.description_EN.replace(/\u200B/g,'');
+				$scope.alias.description_FR = $scope.alias.description_FR.replace(/\u200B/g,'');
+
 				// Empty alias terms list
 				$scope.alias.terms = [];
 
