@@ -598,7 +598,7 @@ class Alias {
 					\"$aliasName_EN\",
 					\"$aliasDesc_FR\", 
                     \"$aliasDesc_EN\", 
-                    '$aliasEduMatSer',
+                    $aliasEduMatSer,
                     '$sourceDBSer',
                     '$aliasType', 
                     '$aliasColorTag',

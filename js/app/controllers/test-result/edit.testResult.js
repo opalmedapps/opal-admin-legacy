@@ -5,6 +5,14 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 		// Default Boolean
 		$scope.changesMade = false; // changes been made?
 
+		// Default toolbar for wysiwyg
+		$scope.toolbar = [ 
+			['h1', 'h2', 'h3', 'p'],
+      		['bold', 'italics', 'underline', 'ul', 'ol'],
+      		['justifyLeft', 'justifyCenter', 'indent', 'outdent'],
+      		['html', 'insertLink']
+      	];
+
 		// Responsible for "searching" in search bars
 		$scope.filter = $filter('filter');
 
@@ -208,6 +216,11 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 		$scope.updateTestResult = function () {
 
 			if ($scope.checkForm()) {
+
+				// For some reason the HTML text fields add a zero-width-space
+				// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
+				$scope.testResult.description_EN = $scope.testResult.description_EN.replace(/\u200B/g,'');
+				$scope.testResult.description_FR = $scope.testResult.description_FR.replace(/\u200B/g,'');
 
 				$scope.testResult.tests = [];
 				// Fill in the tests from testList

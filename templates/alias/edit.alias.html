@@ -86,20 +86,24 @@
     <div uib-accordion-group is-open="descriptionSection.open">
       <uib-accordion-heading>
         <div>
-          <strong>Plain-Text Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': descriptionSection.open, 'glyphicon-chevron-right': !descriptionSection.open}"></i>
+          <strong>Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': descriptionSection.open, 'glyphicon-chevron-right': !descriptionSection.open}"></i>
         </div>
       </uib-accordion-heading>
       <div class="row">
         <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-          <div class="input-group">
-            <span class="input-group-addon">EN</span>
-            <textarea class="form-control" rows="5" ng-model="alias.description_EN" ng-change="descriptionUpdate()" placeholder="English Description" required="required"></textarea>
+          <div style="text-align:center; margin-bottom: 10px;">
+            <span style="font-size:20px;">HTML (English)</span>
+          </div>
+          <div class="form-group">
+            <div text-angular ng-model="alias.description_EN" ng-change="descriptionUpdate()" placeholder="English Description" ta-toolbar="toolbar"></div>
           </div>
         </div>
         <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-          <div class="input-group">
-            <span class="input-group-addon">FR</span>
-            <textarea class="form-control" rows="5" ng-model="alias.description_FR" ng-change="descriptionUpdate()" placeholder="Description Francais" required="required"></textarea>
+          <div style="text-align:center; margin-bottom: 10px;">
+            <span style="font-size:20px;">HTML (Français)</span>
+          </div>
+          <div class="form-group">
+            <div text-angular ng-model="alias.description_FR" ng-change="descriptionUpdate()" placeholder="Description Français" ta-toolbar="toolbar"></div>
           </div>
         </div>
       </div>
