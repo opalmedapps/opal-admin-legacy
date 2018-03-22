@@ -211,7 +211,9 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 		};
 
-		$scope.eduMatUpdate = function () {
+		$scope.eduMatUpdate = function (eduMat) {
+
+			$scope.alias.eduMat = eduMat;
 
 			// Toggle boolean
 			$scope.changesMade = true;
