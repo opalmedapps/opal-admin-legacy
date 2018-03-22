@@ -11,6 +11,14 @@ angular.module('opalAdmin.controllers.hospitalMap.add', ['ngAnimate', 'ngSanitiz
 			window.history.back();
 		};
 
+		// Default toolbar for wysiwyg
+		$scope.toolbar = [ 
+			['h1', 'h2', 'h3', 'p'],
+      		['bold', 'italics', 'underline', 'ul', 'ol'],
+      		['justifyLeft', 'justifyCenter', 'indent', 'outdent'],
+      		['html', 'insertLink']
+      	];
+
 		// Default boolean 
 		$scope.titleDescriptionSection = {open: false, show: true};
 		$scope.qrUrlSection = {open: false, show: false};
@@ -149,6 +157,12 @@ angular.module('opalAdmin.controllers.hospitalMap.add', ['ngAnimate', 'ngSanitiz
 		// Function to submit the new hospital map
 		$scope.submitHosMap = function () {
 			if ($scope.checkForm()) {
+
+				// For some reason the HTML text fields add a zero-width-space
+				// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
+				$scope.newHosMap.description_EN = $scope.newHosMap.description_EN.replace(/\u200B/g,'');
+				$scope.newHosMap.description_FR = $scope.newHosMap.description_FR.replace(/\u200B/g,'');
+
 				// Log who created hospital map
 				var currentUser = Session.retrieveObject('user');
 				$scope.newHosMap.user = currentUser;

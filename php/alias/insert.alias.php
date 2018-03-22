@@ -7,8 +7,8 @@
 	$aliasArray	= array(
 		'name_EN' 	        => $_POST['name_EN'],
 		'name_FR' 	        => $_POST['name_FR'],
-		'description_EN'    => $_POST['description_EN'],
-		'description_FR'    => $_POST['description_FR'],
+		'description_EN'    => str_replace(array('"', "'"), '\"', $_POST['description_EN']),
+		'description_FR'    => str_replace(array('"', "'"), '\"', $_POST['description_FR']),
  		'serial' 	        => $_POST['serial'],
         'type' 		        => $_POST['type'],
         'color'             => $_POST['color'],
@@ -21,6 +21,6 @@
 	$aliasObject = new Alias; // Object
 
 	// Call function
-	$aliasObject->insertAlias($aliasArray);
+	print $aliasObject->insertAlias($aliasArray);
 	
 ?>

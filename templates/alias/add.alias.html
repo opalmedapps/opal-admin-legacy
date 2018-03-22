@@ -134,7 +134,7 @@
                       <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                       {{newAlias.name_EN}}
                     </p>
-                    <p ng-if="newAlias.description_EN" style="padding-left: 10px; font-size: 10px;"><em>{{newAlias.description_EN}}</em></p>  
+                    <p ng-if="newAlias.description_EN" style="padding-left: 10px; font-size: 10px;"><em>See rendered output for description</em></p>  
                   </div>
                   <div ng-if="newAlias.name_FR || newAlias.description_FR" class="description">
                     <p ng-if="newAlias.name_FR" style="margin-bottom:5px;">
@@ -142,7 +142,7 @@
                       <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                       {{newAlias.name_FR}}
                     </p>
-                    <p ng-if="newAlias.description_FR" style="padding-left: 10px; font-size: 10px;"><em>{{newAlias.description_FR}}</em></p>  
+                    <p ng-if="newAlias.description_FR" style="padding-left: 10px; font-size: 10px;"><em>See rendered output for description</em></p>  
                   </div>
                 </div>
 								<!-- SECTION: Educational material -->
@@ -414,7 +414,7 @@
                           Description
                         </label>
                         <div class="col-xs-12 col-lg-10">
-                          <textarea class="form-control" rows="5" ng-model="newAlias.description_EN" ng-change="titleDescriptionUpdate()" placeholder="English Description" required="required"></textarea>
+                          <div text-angular ng-model="newAlias.description_EN" ng-change="titleDescriptionUpdate()" placeholder="English Description" required="required" ta-toolbar="toolbar"></div>
                         </div>
                       </div>
                     </div>
@@ -440,7 +440,7 @@
                           Description
                         </label>
                         <div class="col-xs-12 col-lg-10">
-                          <textarea class="form-control" rows="5" ng-model="newAlias.description_FR" ng-change="titleDescriptionUpdate()" placeholder="Description Français" required="required"></textarea>
+                          <div text_angular ng-model="newAlias.description_FR" ng-change="titleDescriptionUpdate()" placeholder="Description Français" required="required" ta-toolbar="toolbar"></div>
                         </div>
                       </div>
                     </div>

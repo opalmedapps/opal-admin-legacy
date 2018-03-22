@@ -19,7 +19,7 @@
 <div class="modal-body">
 	<uib-accordion>
 
-		<!-- SECTION: Test names -->
+		<!-- SECTION: Diagnosis names -->
 		<div uib-accordion-group is-open="diagnosisSection.open">
 			<uib-accordion-heading>
 				<div>
@@ -94,15 +94,19 @@
 				</uib-accordion-heading>
 				<div class="row">
 					<div class="col-xs-12 col-sm-6">
+						<div style="text-align:center; margin-bottom: 10px;">
+            <span style="font-size:20px;">HTML (English)</span>
+          </div>
 						<div class="input-group">
-							<span class="input-group-addon">EN</span>
-							<textarea class="form-control" rows="5" ng-model="diagnosisTranslation.description_EN" ng-change="setChangesMade()" placeholder="English Description" required="required"></textarea>
+							<div text-angular ng-model="diagnosisTranslation.description_EN" ng-change="setChangesMade()" placeholder="English Description" required="required" ta-toolbar="toolbar"></div>
 						</div>
 					</div>
 					<div class="col-xs-12 col-sm-6">
+						<div style="text-align:center; margin-bottom: 10px;">
+            <span style="font-size:20px;">HTML (Français)</span>
+          </div>
 						<div class="input-group">
-							<span class="input-group-addon">FR</span>
-							<textarea class="form-control" rows="5" ng-model="diagnosisTranslation.description_FR" ng-change="setChangesMade()" placeholder="Description Francais" required="required"></textarea>
+							<div text-angular ng-model="diagnosisTranslation.description_FR" ng-change="setChangesMade()" placeholder="Description Français" required="required" ta-toolbar="toolbar"></div>
 						</div>
 					</div>
 				</div>

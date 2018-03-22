@@ -66,7 +66,7 @@
                       <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                       {{newHosMap.name_EN}}
                     </p>
-                    <p ng-if="newHosMap.description_EN" style="padding-left: 10px; font-size: 10px;"><em>{{newHosMap.description_EN}}</em></p>
+                    <p ng-if="newHosMap.description_EN" style="padding-left: 10px; font-size: 10px;"><em>See rendered output for description</em></p>
                   </div>
                   <div ng-if="newHosMap.name_FR || newHosMap.description_FR" class="description">
                     <p ng-if="newHosMap.name_FR" style="margin-bottom:5px;">
@@ -74,7 +74,7 @@
                       <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                       {{newHosMap.name_FR}}
                     </p>
-                    <p ng-if="newHosMap.description_FR" style="padding-left: 10px; font-size: 10px;"><em>{{newHosMap.description_FR}}</em></p>
+                    <p ng-if="newHosMap.description_FR" style="padding-left: 10px; font-size: 10px;"><em>See rendered output for description</em></p>
                   </div>
                 </div>
                 <!-- SECTION: QR code & Map URL -->
@@ -207,7 +207,7 @@
                           Description
                         </label>
                         <div class="col-xs-12 col-lg-10">
-                          <textarea class="form-control" rows="5" ng-model="newHosMap.description_EN" ng-change="titleDescriptionUpdate()" placeholder="English Description" required="required"></textarea>
+                          <div text-angular ng-model="newHosMap.description_EN" ng-change="titleDescriptionUpdate()" placeholder="English Description" required="required" ta-toolbar="toolbar"></div>
                         </div>
                       </div>
                     </div>
@@ -233,7 +233,7 @@
                           Description
                         </label>
                         <div class="col-xs-12 col-lg-10">
-                          <textarea class="form-control" rows="5" ng-model="newHosMap.description_FR" ng-change="titleDescriptionUpdate()" placeholder="Description Français" required="required"></textarea>
+                          <div text-angular ng-model="newHosMap.description_FR" ng-change="titleDescriptionUpdate()" placeholder="Description Français" required="required" ta-toolbar="toolbar"></div>
                         </div>
                       </div>
                     </div>
