@@ -402,4 +402,6 @@ sub getAliasFromOurDB
     return $aliasSer;
 
 }
+# To exit/return always true (for the module itself)
+1;	
 

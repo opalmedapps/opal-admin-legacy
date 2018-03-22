@@ -463,3 +463,5 @@ sub insertAnnouncementIntoOurDB
 }
 
 
+# To exit/return always true (for the module itself)
+1;	
