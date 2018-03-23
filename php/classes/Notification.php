@@ -24,9 +24,12 @@ class Notification {
                     nt.Name_FR,
                     nt.Description_EN,
                     nt.Description_FR,
-                    nt.NotificationType
+                    ntt.NotificationTypeId
                 FROM
-                    NotificationControl nt
+                    NotificationControl nt,
+                    NotificationTypes ntt
+                WHERE
+                    nt.NotificationTypeSerNum   = ntt.NotificationTypeSerNum
             ";
 		    $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
@@ -77,11 +80,13 @@ class Notification {
                     nt.Name_FR,
                     nt.Description_EN,
                     nt.Description_FR,
-                    nt.NotificationType
+                    ntt.NotificationTypeId
                 FROM
-                    NotificationControl nt
+                    NotificationControl nt,
+                    NotificationTypes ntt
                 WHERE
-                    nt.NotificationControlSerNum = $serial
+                    nt.NotificationControlSerNum    = $serial
+                AND ntt.NotificationTypeSerNum      = nt.NotificationTypeSerNum
             ";
 
 	        $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -125,21 +130,23 @@ class Notification {
             $sql = "
                 SELECT DISTINCT
                     ntt.NotificationTypeName,
-                    ntt.NotificationTypeId
+                    ntt.NotificationTypeId,
+                    ntt.NotificationTypeSerNum
                 FROM
                     NotificationTypes ntt
                 LEFT JOIN NotificationControl nt
-                ON nt.NotificationType = ntt.NotificationTypeId
+                ON nt.NotificationTypeSerNum = ntt.NotificationTypeSerNum
                 WHERE
-                    nt.NotificationType IS NULL
+                    nt.NotificationTypeSerNum IS NULL
             ";
 		    $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
                 $typeArray = array(
-                    'name'  => $data[0],
-                    'id'    => $data[1]
+                    'name'      => $data[0],
+                    'id'        => $data[1],
+                    'serial'    => $data[2]
                 );
 
                 array_push($types, $typeArray);
@@ -165,7 +172,7 @@ class Notification {
         $name_FR            = $notification['name_FR'];
         $description_EN     = $notification['description_EN'];
         $description_FR     = $notification['description_FR'];
-        $type               = $notification['type'];
+        $typeSer            = $notification['type']['serial'];
         $userSer            = $notification['user']['id'];
         $sessionId          = $notification['user']['sessionid'];
 
@@ -179,7 +186,7 @@ class Notification {
                         Name_FR,
                         Description_EN,
                         Description_FR,
-                        NotificationType,
+                        NotificationTypeSerNum,
                         DateAdded,
                         LastUpdatedBy,
                         SessionId
@@ -189,7 +196,7 @@ class Notification {
                     \"$name_FR\",
                     \"$description_EN\",
                     \"$description_FR\",
-                    '$type',
+                    '$typeSer',
                     NOW(),
                     '$userSer',
                     '$sessionId'

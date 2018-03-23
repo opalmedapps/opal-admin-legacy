@@ -96,9 +96,9 @@ angular.module('opalAdmin.controllers.notification.add', ['ngAnimate', 'ngSaniti
 		};
 
 		// Function to toggle necessary changes when updating type
-		$scope.typeUpdate = function (typeId) {
+		$scope.typeUpdate = function (type) {
 
-			$scope.newNotification.type = typeId;
+			$scope.newNotification.type = type;
 
 			$scope.typeSection.open = true;
 
