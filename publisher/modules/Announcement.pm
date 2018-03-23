@@ -193,7 +193,7 @@ sub publishAnnouncements
                 my @patientDoctors = PatientDoctor::getPatientsDoctorsFromOurDB($patientSer);
                     
                 # Fetch appointment filters (if any)
-                my @appointmentFilters =  $postFilters->getExpressionFilters();
+                my @appointmentFilters =  $postFilters->getAppoinmtmentFilters();
                 if (@appointmentFilters) {
 
 					print "Appointment filters exist for this announcement\n" if $verbose;
