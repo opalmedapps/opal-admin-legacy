@@ -63,7 +63,7 @@
                   <div ng-if="newNotification.type" class="description">
                     <p>
                       <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                      {{newNotification.type}}
+                      {{newNotification.type.name}}
                     </p>
                   </div>
                 </div>
@@ -179,8 +179,8 @@
               </div>    
               <div class="row">
                 <div ng-repeat="type in notificationTypes" class="col-xs-4 col-sm-3 col-lg-2"> 
-                  <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: newNotification.type == type.id}" ng-click="typeUpdate(type.id)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                    <div class="panel-info" ng-class="{active: newNotification.type == type.id}">
+                  <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: newNotification.type == type.id}" ng-click="typeUpdate(type)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                    <div class="panel-info" ng-class="{active: newNotification.type.id == type.id}">
                       <div class="panel-content" style="text-align:center">
                         <span style="font-size:30px;" class="glyphicon glyphicon-bell"></span>
                         <div class="option-panel-title">{{type.name}}</div>
