@@ -409,9 +409,13 @@ sub getDocsFromSourceDB
     # in order to search for the corresponding documents in the database
 	foreach my $Patient (@patientList) {
 
-		my $patientSer		    = $Patient->getPatientSer(); # get patient serial
-		my $patientSSN    		= $Patient->getPatientSSN();
-        my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
+		my $patientSer		    		= $Patient->getPatientSer(); # get patient serial
+		my $patientSSN    				= $Patient->getPatientSSN();
+        my $patientLastTransfer			= $Patient->getPatientLastTransfer(); # get last updated
+        my $patientRegistrationDate 	= $Patient->getPatientRegistrationDate(); 
+
+        my $formatted_PLU = Time::Piece->strptime($patientLastTransfer, "%Y-%m-%d %H:%M:%S");
+        my $formatted_reg = Time::Piece->strptime($patientRegistrationDate, "%Y-%m-%d %H:%M:%S");
 
         foreach my $Alias (@aliasList) {
 
@@ -475,9 +479,21 @@ sub getDocsFromSourceDB
 		            # get the diff in seconds
 		            my $date_diff = $formatted_PLU - $formatted_ELU;
 		            if ($date_diff < 0) {
-		                $lasttransfer = $patientLastTransfer;
+		            	my $reg_date_diff = $formatted_PLU - $formatted_reg;
+		            	if ($reg_date_diff < 0) {
+		            		$lasttransfer = $patientRegistrationDate;
+		            	}
+		            	else {
+			                $lasttransfer = $patientLastTransfer;
+		            	}
 		            } else {
-		                $lasttransfer = $expressionLastTransfer;
+		            	my $reg_date_diff = $formatted_ELU - $formatted_reg;
+		            	if ($reg_date_diff < 0) {
+		            		$lasttransfer = $patientRegistrationDate;
+		            	}
+		            	else {
+			                $lasttransfer = $expressionLastTransfer;
+		            	}
 		            }
         		
 	        		$docInfo_sql .= "
