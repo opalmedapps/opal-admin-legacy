@@ -47,7 +47,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.edit', ['ngAnimate', 
 		$scope.searchDiagnosesFilter = function (Filter) {
 			var keyword = new RegExp($scope.diagnosisFilter, 'i');
 			return ((!$scope.diagnosisFilter || keyword.test(Filter.name)) && (($scope.diagnosisCodeFilter == 'all') || ($scope.diagnosisCodeFilter == 'current' && Filter.added)
-					|| ($scope.diagnosisCodeFilter == 'other' && Filter.assigned) || ($scope.diagnosisCodeFilter == 'none' && !Filter.added && !Filter.assigned)));
+					|| ($scope.diagnosisCodeFilter == 'other' && Filter.assigned && !Filter.added) || ($scope.diagnosisCodeFilter == 'none' && !Filter.added && !Filter.assigned)));
 		};
 
 		$scope.diagnosisCodeFilter = 'all';
@@ -168,11 +168,8 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.edit', ['ngAnimate', 
 
 			var addedParam = false;
 			angular.forEach(diagnosisList, function (diagnosis) {
-				// ignore already assigned diagnoses
-				if (!diagnosis.assigned) {
-					if (diagnosis.added)
-						addedParam = true;
-				}
+				if (diagnosis.added)
+					addedParam = true;
 			});
 			if (addedParam)
 				return true;
@@ -191,9 +188,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.edit', ['ngAnimate', 
 			
 			if ($scope.selectAll) { // was checked
 				angular.forEach(filtered, function (diagnosis) {
-					// ignore assigned diagnoses
-					if (!diagnosis.assigned)
-						diagnosis.added = 0;
+					diagnosis.added = 0;
 				});
 				$scope.selectAll = false; // toggle off
 
@@ -201,9 +196,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.edit', ['ngAnimate', 
 			else { // was not checked
 				
 				angular.forEach(filtered, function (diagnosis) {
-					// ignore already assigned diagnoses
-					if (!diagnosis.assigned)
-						diagnosis.added = 1;
+					diagnosis.added = 1;
 				});
 
 				$scope.selectAll = true; // toggle on
@@ -225,11 +218,8 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.edit', ['ngAnimate', 
 				$scope.diagnosisTranslation.diagnoses = [];
 				// Fill in the diagnoses from diagnosisList
 				angular.forEach($scope.diagnosisList, function (diagnosis) {
-					// ignore already assigned diagnoses
-					if (!diagnosis.assigned) {
-						if(diagnosis.added) {
-							$scope.diagnosisTranslation.diagnoses.push(diagnosis);
-						}
+					if(diagnosis.added) {
+						$scope.diagnosisTranslation.diagnoses.push(diagnosis);
 					}
 				});
 				// Log who updated diagnosis translation
