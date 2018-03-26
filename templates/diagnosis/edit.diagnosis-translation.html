@@ -54,9 +54,10 @@
 				</div>
 				<ul class="list-items">
 					<li ng-repeat="diagnosis in diagnosisList | filter: searchDiagnosesFilter">
-						<label ng-class="{greenText: diagnosis.added, grayText: diagnosis.assigned}">
-							<input type="checkbox" ng-click="toggleDiagnosisSelection(diagnosis)" ng-checked="diagnosis.added" ng-disabled="diagnosis.assigned"/> {{diagnosis.name}}
-							<span ng-class="{redText: diagnosis.assigned}" ng-if="diagnosis.assigned"><em> --- Assigned to: {{diagnosis.assigned.name_EN}}</em></span>
+						<label ng-class="{greenText: diagnosis.added, grayText: diagnosis.assigned && !diagnosis.added}">
+							<input type="checkbox" ng-click="toggleDiagnosisSelection(diagnosis)" ng-checked="diagnosis.added" /> {{diagnosis.name}}
+							<span ng-class="{redText: diagnosis.assigned && !diagnosis.added}" ng-if="diagnosis.assigned && !diagnosis.added"><em> --- Assigned to: {{diagnosis.assigned.name_EN}}</em></span>
+							<span ng-class="{redText: diagnosis.assigned}" ng-if="diagnosis.assigned && diagnosis.added"><em> --- Will replace assignment from: {{diagnosis.assigned.name_EN}}</em></span>
 						</label>
 					</li>
 				</ul>

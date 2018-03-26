@@ -106,7 +106,7 @@
                   <div ng-if="checkTermsAdded(termList)" class="description">
                     <p>
                       <ul style="max-height: 100px; overflow-y: auto;">
-                        <li ng-repeat="term in termList | filter: {added: 1, assigned: null}">
+                        <li ng-repeat="term in termList | filter: {added: 1}">
                           {{term.id}}
                         </li>
                       </ul>
@@ -361,9 +361,10 @@
                         </div>
                         <ul class="list-items">
                           <li ng-repeat="term in termList | filter: searchTermsFilter">
-                            <label ng-class="{greenText: term.added, grayText: term.assigned}">
-                              <input type="checkbox" ng-click="toggleTermSelection(term)" ng-checked="term.added" ng-disabled="term.assigned"/> {{term.name}}
-                              <span ng-class="{redText: term.assigned}" ng-if="term.assigned"><em> --- Assigned to: {{term.assigned.name_EN}}</em></span>
+                            <label ng-class="{greenText: term.added, grayText: term.assigned && !term.added}">
+                              <input type="checkbox" ng-click="toggleTermSelection(term)" ng-checked="term.added" /> {{term.name}}
+                              <span ng-class="{redText: term.assigned && !term.added}" ng-if="term.assigned && !term.added"><em> --- Assigned to: {{term.assigned.name_EN}}</em></span>
+                              <span ng-class="{redText: term.assigned}" ng-if="term.assigned && term.added"><em> --- Will replace assignment from: {{term.assigned.name_EN}}</em></span>
                             </label>
                           </li>
                         </ul>
