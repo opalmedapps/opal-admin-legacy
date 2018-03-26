@@ -82,8 +82,8 @@ angular.module('opalAdmin.controllers.testResult.add', ['ngAnimate', 'ngSanitize
 		};
 
 		// Initialize lists to hold distinct test groups 
-		$scope.TestResultGroups_EN = [];
-		$scope.TestResultGroups_FR = [];
+		$scope.TestResultGroups = [];
+
 		// Initialize list that will hold educational materials
 		$scope.eduMatList = [];
 
@@ -117,8 +117,7 @@ angular.module('opalAdmin.controllers.testResult.add', ['ngAnimate', 'ngSanitize
 		// Call our API to get the list of test groups
 		testResultCollectionService.getTestResultGroups().then(function (response) {
 
-			$scope.TestResultGroups_EN = response.data.EN;
-			$scope.TestResultGroups_FR = response.data.FR;
+			$scope.TestResultGroups = response.data;
 
 		}).catch(function(response) {
 			console.error('Error occurred getting test result groups:', response.status, response.data);
@@ -165,10 +164,32 @@ angular.module('opalAdmin.controllers.testResult.add', ['ngAnimate', 'ngSanitize
 		};
 
 		// Function to toggle necessary changes when updating groups
-		$scope.groupUpdate = function () {
+		$scope.groupUpdate = function (type, language) {
 
 			$scope.testGroupSection.open = true; 
 
+			if (type) {
+				// Perform a string comparison to auto complete the other language field
+				type = type.toLowerCase(); 
+				for (var i=0; i < $scope.TestResultGroups.length; i++) {
+					if (language === 'EN') {
+						typeCompare = $scope.TestResultGroups[i].EN.toLowerCase();
+						if (type === typeCompare) {
+							// set the french to be the same
+							$scope.newTestResult.group_FR = $scope.TestResultGroups[i].FR;
+							break;
+						}
+					} 
+					else if (language === 'FR') {
+						typeCompare = $scope.TestResultGroups[i].FR.toLowerCase();
+						if (type === typeCompare) {
+							// set the english to be the same
+							$scope.newTestResult.group_EN = $scope.TestResultGroups[i].EN;
+							break;
+						}
+					}
+				}
+			}
 			if ($scope.newTestResult.group_EN && $scope.newTestResult.group_FR) {
 
 				$scope.educationalMaterialSection.show = true;
@@ -348,7 +369,8 @@ angular.module('opalAdmin.controllers.testResult.add', ['ngAnimate', 'ngSanitize
 		// Function for search through the test names
 		$scope.searchTestsFilter = function (Filter) {
 			var keyword = new RegExp($scope.testFilter, 'i');
-			return !$scope.testFilter || keyword.test(Filter.name);
+			return ((!$scope.testFilter || keyword.test(Filter.name)) && (($scope.testCodeFilter == 'all') || ($scope.testCodeFilter == 'current' && Filter.added)
+					|| ($scope.testCodeFilter == 'other' && Filter.assigned) || ($scope.testCodeFilter == 'none' && !Filter.added && !Filter.assigned)));
 		};
 
 		// Function to assign eduMateFilter when textbox is changing 
@@ -362,6 +384,11 @@ angular.module('opalAdmin.controllers.testResult.add', ['ngAnimate', 'ngSanitize
 			return !$scope.eduMatFilter || keyword.test(edumat.name_EN);
 		};
 
+		$scope.testCodeFilter = 'all';
+
+		$scope.setTestCodeFilter = function (filter) {
+			$scope.testCodeFilter = filter;
+		}
 
 		// Function to return boolean for form completion
 		$scope.checkForm = function () {

@@ -179,40 +179,26 @@ class TestResult {
      */
     public function getTestResultGroups () {
 
-        $groups = array (
-            'EN'    => array(),
-            'FR'    => array()
-        );
+        $groups = array();
         try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
-                    trc.Group_EN
+                    trc.Group_EN,
+                    trc.Group_FR
                 FROM
                     TestResultControl trc
-                ORDER BY
-                    trc.Group_EN
             ";
 			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                array_push($groups['EN'], $data[0]);
-            }
-            $sql = "
-                SELECT DISTINCT
-                    trc.Group_FR
-                FROM
-                    TestResultControl trc
-                ORDER BY
-                    trc.Group_FR
-            ";
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
-
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                array_push($groups['FR'], $data[0]);
+                $groupDetails = array(
+                    'EN'    => $data[0],
+                    'FR'    => $data[1]
+                );
+                array_push($groups, $groupDetails);
             }
 
             return $groups;
@@ -234,6 +220,9 @@ class TestResult {
 
         try {
 
+            // get already assigned expressions from our database
+            $assignedTests = $this->getAssignedTests();
+
             // ***********************************
             // ARIA
             // ***********************************
@@ -252,11 +241,18 @@ class TestResult {
 
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
+                    $testName = $data[0];
                     $testArray = array(
-                        'name'      => $data[0],
-                        'id'        => $data[0],
-                        'added'     => 0
+                        'name'      => $testName,
+                        'id'        => $testName,
+                        'added'     => 0,
+                        'assigned'  => null
                     );
+                    $assignedTest = $this->assignedSearch($testName, $assignedTests);
+                    if ($assignedTest) {
+                        $testArray['added'] = 0;
+                        $testArray['assigned'] = $assignedTest;
+                    }
                     array_push($testNames, $testArray);
                 }
 
@@ -307,6 +303,47 @@ class TestResult {
             echo $e->getMessage();
             return $testNames;
 		}
+    }
+
+    /**
+     *
+     * Gets a list of already assigned tests in our database
+     *
+     * @return array $tests : the list of tests
+     */
+    public function getAssignedTests () {
+        $tests = array();
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
+                SELECT DISTINCT 
+                    tre.ExpressionName,
+                    trc.Name_EN
+                FROM 
+                    TestResultExpression tre,
+                    TestResultControl trc
+                WHERE
+                    trc.TestResultControlSerNum = tre.TestResultControlSerNum
+            ";
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $testResultDetails = array(
+                    'id'     => $data[0],
+                    'name_EN'       => "$data[1]"
+                );
+                array_push($tests, $testResultDetails);
+            }
+
+            return $tests;
+
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return $tests;
+        }
     }
 
     /**
@@ -791,6 +828,28 @@ class TestResult {
 			return $response;
 		}
 	}
+
+    /**
+     *
+     * Checks if an expression has been assigned to an test
+     *
+     * @param string $id    : the needle id
+     * @param array $array  : the key-value haystack
+     * @return $assignedTest
+     */
+    public function assignedSearch($id, $array) {
+        $assignedTest = null;
+        if(empty($array) || !$id){
+            return $assignedTest;
+        }
+        foreach ($array as $key => $val) {
+            if ($val['id'] === $id) {
+                $assignedTest = $val;
+                return $assignedTest;
+            }
+        }
+        return $assignedTest;
+    }
 }
 
 ?>
