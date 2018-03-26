@@ -259,9 +259,10 @@
 	                      </label>
 	                    </div>
 											<div class="btn-group btn-group-justified">
-											  <a class="btn btn-default" ng-class="{'active' : !showAssigned && !hideAssigned}" ng-click="showAssigned = false; hideAssigned = false">Show all</a>
-											  <a class="btn btn-default" ng-class="{'active' : showAssigned}" ng-click="showAssigned = true; hideAssigned = false">Only show assigned</a>
-											  <a class="btn btn-default" ng-class="{'active' : hideAssigned}" ng-click="showAssigned = false; hideAssigned = true">Only show unassigned</a>
+											  <a class="btn btn-default" ng-class="{'active' : diagnosisCodeFilter == 'all'}" ng-click="setDiagnosisCodeFilter('all')">Show all</a>
+							          <a class="btn btn-default" ng-class="{'active' : diagnosisCodeFilter == 'current'}" ng-click="setDiagnosisCodeFilter('current')">Assigned to this Diagnosis</a>
+							          <a class="btn btn-default" ng-class="{'active' : diagnosisCodeFilter == 'other'}" ng-click="setDiagnosisCodeFilter('other')">Assigned to others</a>
+							          <a class="btn btn-default" ng-class="{'active' : diagnosisCodeFilter == 'none'}" ng-click="setDiagnosisCodeFilter('none')">Unassigned</a>
 											</div>
 											<ul class="list-items">
 												<li ng-repeat="diagnosis in diagnosisList | filter: searchDiagnosesFilter">

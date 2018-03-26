@@ -46,26 +46,15 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.edit', ['ngAnimate', 
 		// Function for search through the diagnoses
 		$scope.searchDiagnosesFilter = function (Filter) {
 			var keyword = new RegExp($scope.diagnosisFilter, 'i');
-			return (!$scope.diagnosisFilter || keyword.test(Filter.name)) && (!$scope.showAssigned || Filter.assigned) && (!$scope.hideAssigned || !Filter.assigned);
+			return ((!$scope.diagnosisFilter || keyword.test(Filter.name)) && (($scope.diagnosisCodeFilter == 'all') || ($scope.diagnosisCodeFilter == 'current' && Filter.added)
+					|| ($scope.diagnosisCodeFilter == 'other' && Filter.assigned) || ($scope.diagnosisCodeFilter == 'none' && !Filter.added && !Filter.assigned)));
 		};
 
-		// Function to enable "Show all" in diagnoses accordion
-		$scope.changeShowAssigned = function () {
-			$scope.showAssigned = true;
-			$scope.hideAssigned = false;
-		};
+		$scope.diagnosisCodeFilter = 'all';
 
-		// Function to enable "Show only assigned" tab in diagnoses accordion
-		$scope.changeShowUnassigned = function () {
-			$scope.hideAssigned = true;
-			$scope.showAssigned = false;
-		};
-
-		// Function to enable "Show only unassigned" tab in diagnoses accordion
-		$scope.changeShowAll = function () {
-			$scope.showAssigned = false;
-			$scope.hideAssigned = false;
-		};
+		$scope.setDiagnosisCodeFilter = function (filter) {
+			$scope.diagnosisCodeFilter = filter;
+		}
 
 		// Function to assign eduMatFilter when textbox is changing 
 		$scope.changeEduMatFilter = function (eduMatFilter) {

@@ -258,23 +258,25 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 
 			$scope.typeSection.open = true;
 
-			// Perform a string comparison to auto complete the other language field
-			type = type.toLowerCase(); 
-			for (var i=0; i < $scope.EduMatTypes.length; i++) {
-				if (language === 'EN') {
-					typeCompare = $scope.EduMatTypes[i].EN.toLowerCase();
-					if (type === typeCompare) {
-						// set the french to be the same
-						$scope.newEduMat.type_FR = $scope.EduMatTypes[i].FR;
-						break;
-					}
-				} 
-				else if (language === 'FR') {
-					typeCompare = $scope.EduMatTypes[i].FR.toLowerCase();
-					if (type === typeCompare) {
-						// set the english to be the same
-						$scope.newEduMat.type_EN = $scope.EduMatTypes[i].EN;
-						break;
+			if (type) {
+				// Perform a string comparison to auto complete the other language field
+				type = type.toLowerCase(); 
+				for (var i=0; i < $scope.EduMatTypes.length; i++) {
+					if (language === 'EN') {
+						typeCompare = $scope.EduMatTypes[i].EN.toLowerCase();
+						if (type === typeCompare) {
+							// set the french to be the same
+							$scope.newEduMat.type_FR = $scope.EduMatTypes[i].FR;
+							break;
+						}
+					} 
+					else if (language === 'FR') {
+						typeCompare = $scope.EduMatTypes[i].FR.toLowerCase();
+						if (type === typeCompare) {
+							// set the english to be the same
+							$scope.newEduMat.type_EN = $scope.EduMatTypes[i].EN;
+							break;
+						}
 					}
 				}
 			}
