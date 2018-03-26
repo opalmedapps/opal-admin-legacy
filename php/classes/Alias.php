@@ -590,7 +590,8 @@ class Alias {
                         ColorTag,
                         AliasUpdate,
                         LastUpdatedBy,
-                        SessionId
+                        SessionId,
+                        LastTransferred
 					) 
 				VALUES (
 					NULL, 
@@ -604,7 +605,8 @@ class Alias {
                     '$aliasColorTag',
                     '0',
                     '$userSer',
-                    '$sessionId'
+                    '$sessionId',
+                    NOW()
 				)
 			";
 			$query = $host_db_link->prepare( $sql );
@@ -618,11 +620,13 @@ class Alias {
                     INSERT INTO 
                         AliasExpression (
                             AliasSerNum,
-                            ExpressionName
+                            ExpressionName,
+                            LastTransferred
                         )
                     VALUE (
                         '$aliasSer',
-                        \"$aliasTerm\"
+                        \"$aliasTerm\",
+                        NOW()
                     )
                     ON DUPLICATE KEY UPDATE
                         AliasSerNum = '$aliasSer'
