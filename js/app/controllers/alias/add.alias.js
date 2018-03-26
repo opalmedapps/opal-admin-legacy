@@ -376,7 +376,9 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 		// Function for searching through the expression list
 		$scope.searchTermsFilter = function (term) {
 			var keyword = new RegExp($scope.termFilter, 'i');
-			return (!$scope.termFilter || keyword.test(term.name)) && (!$scope.showAssigned || term.assigned) && (!$scope.hideAssigned || !term.assigned);
+			return ((!$scope.termFilter || keyword.test(term.name)) 
+				&& (($scope.clinicalCodeFilter == 'all') || ($scope.clinicalCodeFilter == 'current' && term.added)
+					|| ($scope.clinicalCodeFilter == 'other' && term.assigned) || ($scope.clinicalCodeFilter == 'none' && !term.added && !term.assigned)));
 		};
 
 		// Function to assign eduMateFilter when textbox is changing 
@@ -390,22 +392,10 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 			return !$scope.eduMatFilter || keyword.test(edumat.name_EN);
 		};
 
-		// Function to enable "Show all" 
-		$scope.changeShowAssigned = function () {
-			$scope.showAssigned = true;
-			$scope.hideAssigned = false;
-		}
+		$scope.clinicalCodeFilter = 'all';
 
-		// Function to enable "Show only assigned" tab 
-		$scope.changeShowUnassigned = function () {
-			$scope.hideAssigned = true;
-			$scope.showAssigned = false;
-		}
-
-		// Function to enable "Show only unassigned" tab 
-		$scope.changeShowAll = function () {
-			$scope.showAssigned = false;
-			$scope.hideAssigned = false;
+		$scope.setClinicalCodeFilter = function (filter) {
+			$scope.clinicalCodeFilter = filter;
 		}
 
 		// Function for selecting all terms in the expression list

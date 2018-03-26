@@ -50,11 +50,11 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 			$scope.testFilter = field;
 		};
 
-
 		// Function for search through the test names
 		$scope.searchTestsFilter = function (Filter) {
 			var keyword = new RegExp($scope.testFilter, 'i');
-			return !$scope.testFilter || keyword.test(Filter.name);
+			return ((!$scope.testFilter || keyword.test(Filter.name)) && (($scope.testCodeFilter == 'all') || ($scope.testCodeFilter == 'current' && Filter.added)
+					|| ($scope.testCodeFilter == 'other' && Filter.assigned) || ($scope.testCodeFilter == 'none' && !Filter.added && !Filter.assigned)));
 		};
 
 		// Function to assign eduMatFilter when textbox is changing 
@@ -67,6 +67,12 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 			var keyword = new RegExp($scope.eduMatFilter, 'i');
 			return !$scope.eduMatFilter || keyword.test(edumat.name_EN);
 		};
+
+		$scope.testCodeFilter = 'all';
+
+		$scope.setTestCodeFilter = function (filter) {
+			$scope.testCodeFilter = filter;
+		}
 
 		/* Function for the "Processing" dialog */
 		var processingModal;
@@ -120,6 +126,7 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 					var name = test.name;
 					if (name == selectedName) {
 						test.added = 1;
+						test.assigned = null; // remove self assigned test
 					}
 				});
 			});
@@ -190,8 +197,11 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 
 			var addedParam = false;
 			angular.forEach(testList, function (test) {
-				if (test.added)
-					addedParam = true;
+				// ignore already assigned test
+				if (!test.assigned) {
+					if (test.added)
+						addedParam = true;
+				}
 			});
 			if (addedParam)
 				return true;
@@ -225,8 +235,11 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 				$scope.testResult.tests = [];
 				// Fill in the tests from testList
 				angular.forEach($scope.testList, function (test) {
-					if (test.added)
-						$scope.testResult.tests.push(test.name);
+					// ignore already assigned tests
+					if (!test.assigned) {
+						if (test.added)
+							$scope.testResult.tests.push(test.name);
+					}
 				});
 
 				// Log who updated test result 

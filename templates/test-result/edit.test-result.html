@@ -37,14 +37,21 @@
         </p>
       </div>
       <div class="list-space">
-        <div class="input-group">
+        <div class="input-group" style="padding-bottom: 10px;">
           <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
           <input class="form-control" type="text" ng-model="testFilter" ng-change="changeTestFilter(testFilter)" placeholder="Search Tests..."/>
         </div>
+        <div class="btn-group btn-group-justified">
+          <a class="btn btn-default" ng-class="{'active' : testCodeFilter == 'all'}" ng-click="setTestCodeFilter('all')">Show all</a>
+          <a class="btn btn-default" ng-class="{'active' : testCodeFilter == 'current'}" ng-click="setTestCodeFilter('current')">Assigned to this Test</a>
+          <a class="btn btn-default" ng-class="{'active' : testCodeFilter == 'other'}" ng-click="setTestCodeFilter('other')">Assigned to others</a>
+          <a class="btn btn-default" ng-class="{'active' : testCodeFilter == 'none'}" ng-click="setTestCodeFilter('none')">Unassigned</a>
+        </div>
         <ul class="list-items">
           <li ng-repeat="test in testList | filter: searchTestsFilter">
-            <label>
-              <input type="checkbox" ng-click="toggleTestSelection(test)" ng-checked="test.added" /> {{test.name}}
+            <label ng-class="{greenText: test.added, grayText: test.assigned}">
+              <input type="checkbox" ng-click="toggleTestSelection(test)" ng-checked="test.added" ng-disabled="test.assigned" /> {{test.name}}
+              <span ng-class="{redText: test.assigned}" ng-if="test.assigned"><em> --- Assigned to: {{test.assigned.name_EN}}</em></span>
             </label>
           </li>
         </ul>

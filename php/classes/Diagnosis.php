@@ -151,7 +151,7 @@ class Diagnosis {
 
                     $assignedDiagnosis = $this->assignedSearch($sourceUID, $assignedDiagnoses);
                     if ($assignedDiagnosis) {
-                    	$diagnosisDetails['added'] = 1;
+                    	$diagnosisDetails['added'] = 0;
                     	$diagnosisDetails['assigned'] = $assignedDiagnosis;
                     }
                     array_push($diagnoses, $diagnosisDetails);

@@ -57,7 +57,7 @@ class Alias {
 
                             $assignedExpression = $this->assignedSearch($termName, $assignedExpressions);
                             if ($assignedExpression) {
-                                $termArray['added'] = 1;
+                                $termArray['added'] = 0;
                                 $termArray['assigned'] = $assignedExpression;
                             }
 
@@ -92,7 +92,7 @@ class Alias {
 
                             $assignedExpression = $this->assignedSearch($termName, $assignedExpressions);
                             if ($assignedExpression) {
-                                $termArray['added'] = 1;
+                                $termArray['added'] = 0;
                                 $termArray['assigned'] = $assignedExpression;
                             }
         
@@ -139,7 +139,7 @@ class Alias {
 
                         $assignedExpression = $this->assignedSearch($termName, $assignedExpressions);
                         if ($assignedExpression) {
-                            $termArray['added'] = 1;
+                            $termArray['added'] = 0;
                             $termArray['assigned'] = $assignedExpression;
                         }
 
