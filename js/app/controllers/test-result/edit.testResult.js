@@ -54,7 +54,7 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 		$scope.searchTestsFilter = function (Filter) {
 			var keyword = new RegExp($scope.testFilter, 'i');
 			return ((!$scope.testFilter || keyword.test(Filter.name)) && (($scope.testCodeFilter == 'all') || ($scope.testCodeFilter == 'current' && Filter.added)
-					|| ($scope.testCodeFilter == 'other' && Filter.assigned) || ($scope.testCodeFilter == 'none' && !Filter.added && !Filter.assigned)));
+					|| ($scope.testCodeFilter == 'other' && Filter.assigned && !Filter.added) || ($scope.testCodeFilter == 'none' && !Filter.added && !Filter.assigned)));
 		};
 
 		// Function to assign eduMatFilter when textbox is changing 
@@ -197,11 +197,8 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 
 			var addedParam = false;
 			angular.forEach(testList, function (test) {
-				// ignore already assigned test
-				if (!test.assigned) {
-					if (test.added)
-						addedParam = true;
-				}
+				if (test.added)
+					addedParam = true;
 			});
 			if (addedParam)
 				return true;
@@ -235,11 +232,8 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 				$scope.testResult.tests = [];
 				// Fill in the tests from testList
 				angular.forEach($scope.testList, function (test) {
-					// ignore already assigned tests
-					if (!test.assigned) {
-						if (test.added)
-							$scope.testResult.tests.push(test.name);
-					}
+					if (test.added)
+						$scope.testResult.tests.push(test.name);
 				});
 
 				// Log who updated test result 

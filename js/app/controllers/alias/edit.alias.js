@@ -51,7 +51,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			var keyword = new RegExp($scope.termFilter, 'i');
 			return ((!$scope.termFilter || keyword.test(term.name)) 
 				&& (($scope.clinicalCodeFilter == 'all') || ($scope.clinicalCodeFilter == 'current' && term.added)
-					|| ($scope.clinicalCodeFilter == 'other' && term.assigned) || ($scope.clinicalCodeFilter == 'none' && !term.added && !term.assigned)));
+					|| ($scope.clinicalCodeFilter == 'other' && term.assigned && !term.added) || ($scope.clinicalCodeFilter == 'none' && !term.added && !term.assigned)));
 		};
 
 		// Function to assign eduMatFilter when textbox is changing 
@@ -243,11 +243,8 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 				// Fill it with the added terms from termList
 				angular.forEach($scope.termList, function (term) {
-					// ignore already assigned expressions
-					if (!term.assigned) {
-						if (term.added)
-							$scope.alias.terms.push(term.id);
-					}
+					if (term.added)
+						$scope.alias.terms.push(term.id);
 				});
 
 				// Log who updated alias
@@ -283,11 +280,8 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 			var addedParam = false;
 			angular.forEach(termList, function (term) {
-				// ignore already assigned expressions
-				if (!term.assigned) {
-					if (term.added)
-						addedParam = true;
-				}
+				if (term.added)
+					addedParam = true;
 			});
 			if (addedParam)
 				return true;
@@ -302,9 +296,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			
 			if ($scope.selectAll) { // was checked
 				angular.forEach(filtered, function (term) {
-					// ignore assigned diagnoses
-					if (!term.assigned)
-						term.added = 0;
+					term.added = 0;
 				});
 				$scope.selectAll = false; // toggle off
 
@@ -312,9 +304,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			else { // was not checked
 				
 				angular.forEach(filtered, function (term) {
-					// ignore already assigned diagnoses
-					if (!term.assigned)
-						term.added = 1;
+					term.added = 1;
 				});
 
 				$scope.selectAll = true; // toggle on

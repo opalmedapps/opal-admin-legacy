@@ -370,7 +370,7 @@ angular.module('opalAdmin.controllers.testResult.add', ['ngAnimate', 'ngSanitize
 		$scope.searchTestsFilter = function (Filter) {
 			var keyword = new RegExp($scope.testFilter, 'i');
 			return ((!$scope.testFilter || keyword.test(Filter.name)) && (($scope.testCodeFilter == 'all') || ($scope.testCodeFilter == 'current' && Filter.added)
-					|| ($scope.testCodeFilter == 'other' && Filter.assigned) || ($scope.testCodeFilter == 'none' && !Filter.added && !Filter.assigned)));
+					|| ($scope.testCodeFilter == 'other' && Filter.assigned && !Filter.added) || ($scope.testCodeFilter == 'none' && !Filter.added && !Filter.assigned)));
 		};
 
 		// Function to assign eduMateFilter when textbox is changing 

@@ -49,9 +49,10 @@
         </div>
         <ul class="list-items">
           <li ng-repeat="test in testList | filter: searchTestsFilter">
-            <label ng-class="{greenText: test.added, grayText: test.assigned}">
-              <input type="checkbox" ng-click="toggleTestSelection(test)" ng-checked="test.added" ng-disabled="test.assigned" /> {{test.name}}
-              <span ng-class="{redText: test.assigned}" ng-if="test.assigned"><em> --- Assigned to: {{test.assigned.name_EN}}</em></span>
+            <label ng-class="{greenText: test.added, grayText: test.assigned && !test.added}">
+              <input type="checkbox" ng-click="toggleTestSelection(test)" ng-checked="test.added" /> {{test.name}}
+              <span ng-class="{redText: test.assigned}" ng-if="test.assigned && !test.added"><em> --- Assigned to: {{test.assigned.name_EN}}</em></span>
+              <span ng-class="{redText: test.assigned}" ng-if="test.assigned && test.added"><em> --- Will replace assignment from: {{test.assigned.name_EN}}</em></span>
             </label>
           </li>
         </ul>
