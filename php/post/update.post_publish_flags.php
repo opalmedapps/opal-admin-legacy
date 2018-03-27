@@ -7,9 +7,10 @@
 
 	// Retrieve FORM params
 	$postFlags	= $_POST['flagList'];
+	$user 		= $_POST['user'];
 	
 	// Call function
-    $response = $postObject->updatePostFlags($postFlags);
+    $response = $postObject->updatePostFlags($postFlags, $user);
     print json_encode($response); // Return response
 ?>
 

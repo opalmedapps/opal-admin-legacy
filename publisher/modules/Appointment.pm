@@ -16,15 +16,20 @@ package Appointment; # Declare package name
 
 use Exporter; # To export subroutines and variables
 use Database; # Use our custom database module Database.pm
+use Date::Language; # To format date according to language
+use Date::Format qw(time2str); # To format date
+use DateTime::Format::Strptime;
 use Time::Piece; # To parse and convert date time
 use Storable qw(dclone); # for deep copies
 use POSIX;
+use String::Util 'trim';
 
 use Patient; # Our patient module
 use Alias; # Our alias module
 use Resource; # Resource.pm
 use Priority; # Priority.pm
 use Diagnosis; # Diagnosis.pm
+use PushNotification; # PushNotification.pm
 
 #---------------------------------------------------------------------------------
 # Connect to the database
@@ -1210,9 +1215,9 @@ sub updateDatabase
 	my $enddatetime		    = $appointment->getApptEndDateTime();
     my $priorityser         = $appointment->getApptPrioritySer();
     my $diagnosisser        = $appointment->getApptDiagnosisSer();
-	my $status		= $appointment->getApptStatus();
-	my $state		= $appointment->getApptState();
-	my $actualstartdate	= $appointment->getApptActualStartDate();
+	my $status				= $appointment->getApptStatus();
+	my $state				= $appointment->getApptState();
+	my $actualstartdate		= $appointment->getApptActualStartDate();
 	my $actualenddate		= $appointment->getApptActualEndDate();
 
 	my $update_sql = "
@@ -1288,6 +1293,47 @@ sub compareWith
 		print "Appointment Scheduled Start DateTime has change from '$OStartDateTime' to '$SStartDateTime'\n";
 		my $updatedSDT = $UpdatedAppt->setApptStartDateTime($SStartDateTime); # update start datetime
 		print "Will update database entry to '$updatedSDT'.\n";
+
+		# Section to notify patient on appointment change
+		$SStartDateTimeForm = Time::Piece->strptime($SStartDateTime, "%Y-%m-%d %H:%M:%S");
+		$OStartDateTimeForm = Time::Piece->strptime($OStartDateTime, "%Y-%m-%d %H:%M:%S");
+		# if difference is greater than an hour (in seconds)
+		if ( abs($SStartDateTimeForm - $OStartDateTimeForm) >= 3600 ) {
+			print "Sending push notification on appointment time change\n";
+
+			# parser
+			my $strp = DateTime::Format::Strptime->new(
+				pattern => "%Y-%m-%d %H:%M:%S",
+		        time_zone => 'America/New_York'
+			);
+			# formatter
+			my $timestamp = DateTime::Format::Strptime->new(
+		        pattern   => '%s',
+		        time_zone => 'America/New_York'
+		    );
+			$SStartDateTime = $timestamp->format_datetime($strp->parse_datetime($SStartDateTime)); # convert to timestamp
+			$OStartDateTime = $timestamp->format_datetime($strp->parse_datetime($OStartDateTime)); # convert to timestamp
+
+			$patientSer = $OriginalAppt->getApptPatientSer();
+			$appointmentSer = $OriginalAppt->getApptSer();
+			$langEN = Date::Language->new('English'); # for english dates
+			$langFR = Date::Language->new('French'); # for french dates
+			# create a hash for string replacement in notification message
+			# see for datetime formats: http://search.cpan.org/~gbarr/TimeDate-2.30/lib/Date/Format.pm#strftime
+			%replacementMap = (
+				"\\\$oldAppointmentDateEN"	=> $langEN->time2str("%A, %B %e, %Y", $OStartDateTime), 
+				"\\\$oldAppointmentTimeEN"	=> trim($langEN->time2str("%l:%M %p", $OStartDateTime)), # trim leading space in time
+				"\\\$newAppointmentDateEN"	=> $langEN->time2str("%A, %B %e, %Y", $SStartDateTime),
+				"\\\$newAppointmentTimeEN"	=> trim($langEN->time2str("%l:%M %p", $SStartDateTime)), # trim leading space in time
+				"\\\$oldAppointmentDateFR"	=> $langFR->time2str("%A %e %B %Y", $OStartDateTime),
+				"\\\$oldAppointmentTimeFR"	=> $langFR->time2str("%R", $OStartDateTime),
+				"\\\$newAppointmentDateFR"	=> $langFR->time2str("%A %e %B %Y", $SStartDateTime),
+				"\\\$newAppointmentTimeFR"	=> $langFR->time2str("%R", $SStartDateTime)
+			);
+            PushNotification::sendPushNotification($patientSer, $appointmentSer, 'AppointmentTimeChange', %replacementMap);
+
+		}
+
 	}
 	if ($SEndDateTime ne $OEndDateTime) {
 		print "Appointment Scheduled End DateTime has changed from '$OEndDateTime' to '$SEndDateTime'\n";
@@ -1308,6 +1354,35 @@ sub compareWith
 		print "Appointment Status has changed from '$OStatus' to '$SStatus'\n";
 		my $updatedStatus = $UpdatedAppt->setApptStatus($SStatus); # update status
 		print "Will update database entry to '$updatedStatus'.\n";
+
+		# Section to notify patient of cancelled appointment
+		# new status is cancelled and new state still active
+		if (index($SStatus, 'Cancelled') != -1 and index($SState, 'Active') != -1) {
+			print "Sending push notification on appointment cancellation\n";
+			# parser
+			my $strp = DateTime::Format::Strptime->new(
+				pattern => "%Y-%m-%d %H:%M:%S",
+		        time_zone => 'America/New_York'
+			);
+			# formatter
+			my $timestamp = DateTime::Format::Strptime->new(
+		        pattern   => '%s',
+		        time_zone => 'America/New_York'
+		    );
+			$SStartDateTime = $timestamp->format_datetime($strp->parse_datetime($SStartDateTime)); # convert to timestamp
+
+			$patientSer = $OriginalAppt->getApptPatientSer();
+			$appointmentSer = $OriginalAppt->getApptSer();
+			$langEN = Date::Language->new('English'); # for english dates
+			$langFR = Date::Language->new('French'); # for french dates
+			%replacementMap = (
+				"\\\$appointmentDateEN"	=> $langEN->time2str("%A, %B %e, %Y", $SStartDateTime), 
+				"\\\$appointmentTimeEN"	=> trim($langEN->time2str("%l:%M %p", $SStartDateTime)), # trim leading space in time
+				"\\\$appointmentDateFR"	=> $langFR->time2str("%A %e %B %Y", $SStartDateTime),
+				"\\\$appointmentTimeFR"	=> $langFR->time2str("%R", $SStartDateTime)
+			);
+            PushNotification::sendPushNotification($patientSer, $appointmentSer, 'AppointmentCancelled', %replacementMap);
+		}
 	}
     if ($SState ne $OState) {
 		print "Appointment State has changed from '$OState' to '$SState'\n";

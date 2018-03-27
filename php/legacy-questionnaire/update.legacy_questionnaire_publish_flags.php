@@ -7,9 +7,10 @@
 
 	// Retrieve FORM params
 	$legacyQuestionnairePublishFlags	= $_POST['flagList'];
+	$user 								= $_POST['user'];
 	
 	// Call function
-    $response = $legacyQuestionnaire->updatelegacyQuestionnairePublishFlags($legacyQuestionnairePublishFlags);
+    $response = $legacyQuestionnaire->updatelegacyQuestionnairePublishFlags($legacyQuestionnairePublishFlags, $user);
     print json_encode($response); // Return response
 
 ?>

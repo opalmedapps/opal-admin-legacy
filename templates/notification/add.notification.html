@@ -1,0 +1,283 @@
+  <div id="main">
+    <div id="top">
+      <div class="clearfix">
+        <div class="row">
+          <!-- Left side detail view -->
+          <div class="col-lg-2">
+            <!-- Logo -->
+            <div class="side-navbar" ng-controller="navigation">
+              <div class="row side-logo" ng-click="goToHome()">
+                <div class="col-md-12">
+                  <div class="logo">
+                    <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+                  </div>
+                  <h1 class="animated fadeIn">opal <strong>ADMIN</strong></h1>
+                </div>
+              </div>   
+            </div>  
+            <div class="summary-fix">
+              <!-- Back button -->
+  						<div class="row side-panel-menu">
+  							<div class="col-xs-12 col-sm-5 col-lg-12">
+  								<div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+  									<div class="side-panel-info-sm">
+  										<div class="panel-content">
+  											<span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+  											<h6 class="side-panel-title"><strong>Back to Notifications</strong></h6>
+  										</div>
+  									</div>
+  								</div>
+  							</div>
+                <!-- Summary -->
+                <div class="side-menu-title col-lg-12">
+                  <div class="horz-line" style="height: 16px; text-align: center">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <h2>Summary</h2>
+                    </span>  
+                  </div>  
+                </div>
+                <div class="col-lg-12">
+                  <div class="progress progress-striped active">
+                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <uib-accordion class="side-navbar">
+                <!-- SECTION: Type -->
+                <div uib-accordion-group is-open="typeSection.open" class="panel-container summary-box" is-disabled="!newNotification.type">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items:center">
+                      <div class="col-md-2">
+                        <span ng-if="newNotification.type" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Type</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i ng-if="newNotification.type" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': typeSection.open, 'glyphicon-chevron-right': !typeSection.open}"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newNotification.type" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newNotification.type.name}}
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Title & Message -->
+                <div uib-accordion-group is-open="titleMessageSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: titleMessageSection.show}" is-disabled="!newNotification.name_EN && !newNotification.name_FR && !newNotification.description_EN && !newNotification.description_FR" ng-if="titleMessageSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newNotification.name_EN && newNotification.name_FR && newNotification.description_EN && newNotification.description_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Title & Message</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleMessageSection.open, 'glyphicon-chevron-right': !titleMessageSection.open}" ng-if="newNotification.name_EN || newNotification.name_FR || newNotification.description_EN || newNotification.description_FR"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newNotification.name_EN || newNotification.description_EN" class="description">
+                    <p ng-if="newNotification.name_EN" style="margin-bottom:5px;">
+                      <strong>EN</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newNotification.name_EN}}
+                    </p>
+                    <p ng-if="newNotification.description_EN" style="padding-left: 10px; font-size: 10px;"><em>{{newNotification.description_EN}}</em></p>
+                  </div>
+                  <div ng-if="newNotification.name_FR || newNotification.description_FR" class="description">
+                    <p ng-if="newNotification.name_FR" style="margin-bottom:5px;">
+                      <strong>FR</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newNotification.name_FR}}
+                    </p>
+                    <p ng-if="newNotification.description_FR" style="padding-left: 10px; font-size: 10px;"><em>{{newNotification.description_FR}}</em></p>
+                  </div>
+                </div>
+              </uib-accordion>
+              <!-- Submit button -->
+              <div class="panel-container">
+                <a href="" ng-click="submitNotification()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                  <span style="font-size: 20px;"><strong>Submit Notification</strong></span>
+                </a>
+              </div>
+            </div>
+          </div>
+          <!-- Right side view -->
+          <div class="col-xs-12 col-lg-10 animated fadeInRight">
+            <div class="row main-title">
+              <!-- Page title -->
+              <div class="col-xs-12 col-md-8 title-content">
+                <span class="glyphicon glyphicon-plus"></span>
+                <h1><strong>Add Notification</strong></h1>
+              </div>
+              <!-- Breadcrumbs -->
+              <div class="col-md-4 title-breadcrumbs"> 
+                <span>
+                  <span><a ui-sref="home">Home</a></span>
+                  <span class="teflon glyphicon glyphicon-menu-right"></span> 
+                  <span><a ui-sref="notification">Notifications</a></span>
+                  <span class="teflon glyphicon glyphicon-menu-right"></span> 
+                  <span><strong>Add Notification</strong></span>
+                </span>
+              </div>
+            </div>  
+            <div class="row mobile-side-panel-menu">
+              <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
+                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                  <div class="side-panel-info-sm">
+                    <div class="panel-content">
+                      <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                      <h6 class="side-panel-title"><strong>Back to Notifications</strong></h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkForm()">
+                <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
+                  <span style="padding: 0 10px;">
+                    <h2>Step {{numOfCompletedSteps}} of {{stepTotal}} Completed</h2>
+                  </span>  
+                </div>  
+                <div class="progress progress-striped active">
+                  <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                  </div>
+                </div>
+              </div>
+              <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkForm()">
+                <div class="panel-container">
+                  <a href="" ng-click="submitNotification()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                    <span style="font-size: 20px;"><strong>Submit Notification</strong></span>
+                  </a>
+                </div>
+              </div> 
+            </div> 
+            <div class="section-content">
+              <!-- SECTION: Type -->
+              <div class="row">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Type</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span style="color:#d9534f"><strong>Required field:</strong></span>
+                    Please select the notification type.
+                  </p>
+                </div>
+              </div>    
+              <div class="row">
+                <div ng-repeat="type in notificationTypes" class="col-xs-4 col-sm-3 col-lg-2"> 
+                  <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: newNotification.type.id == type.id}" ng-click="typeUpdate(type)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                    <div class="panel-info" ng-class="{active: newNotification.type.id == type.id}">
+                      <div class="panel-content" style="text-align:center">
+                        <span style="font-size:30px;" class="glyphicon glyphicon-bell"></span>
+                        <div class="option-panel-title">{{type.name}}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> 
+              <!-- SECTION: Title & Message -->
+              <div class="row animated" ng-class="{fadeInUp: titleMessageSection.show}" ng-if="titleMessageSection.show">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Title & Message</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row animated" ng-class="{fadeInUp: titleMessageSection.show}" ng-if="titleMessageSection.show">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span style="color:#d9534f"><strong>Required field:</strong></span>
+                    Please assign an english and french title and message.
+                  </p>
+                </div>
+              </div>  
+              <div class="row animated" ng-class="{fadeInUp: titleMessageSection.show}" ng-if="titleMessageSection.show"> 
+                <div class="col-xs-12 col-md-6">
+                  <div class="panel" ng-class="(newNotification.name_EN && newNotification.description_EN) ? 'panel-success': 'panel-danger'">
+                    <div class="panel-heading"><strong>English</strong>
+                      <span ng-hide="newNotification.name_EN && newNotification.description_EN" style="float:right"><em>Incomplete</em></span>
+                      <span ng-show="newNotification.name_EN && newNotification.description_EN" style="float:right"><em>Complete</em></span>
+                    </div>
+                    <div class="panel-body form-horizontal">
+                      <div class="form-group">
+                        <label class="control-label col-xs-12 col-lg-2">
+                          Title
+                        </label>
+                        <div class="col-xs-12 col-lg-10">
+                          <input class="form-control" type="text" ng-model="newNotification.name_EN" ng-change="titleMessageUpdate()" placeholder="English Title" required="required">
+                        </div>
+                      </div>    
+                      <div class="form-group">
+                        <label class="control-label col-xs-12 col-lg-2">
+                          Message
+                        </label>
+                        <div class="col-xs-12 col-lg-10">
+                          <textarea class="form-control" rows="5" ng-model="newNotification.description_EN" ng-change="titleMessageUpdate()" placeholder="English Message" required="required"></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div> 
+                <div class="col-xs-12 col-md-6">
+                  <div class="panel" ng-class="(newNotification.name_FR && newNotification.description_FR) ? 'panel-success': 'panel-danger'">
+                    <div class="panel-heading"><strong>Français</strong>
+                      <span ng-hide="newNotification.name_FR && newNotification.description_FR" style="float:right"><em>Incomplete</em></span>
+                      <span ng-show="newNotification.name_FR && newNotification.description_FR" style="float:right"><em>Complete</em></span>
+                    </div>
+                    <div class="panel-body form-horizontal">
+                      <div class="form-group">
+                        <label class="control-label col-xs-12 col-lg-2">
+                          Titre
+                        </label>
+                        <div class="col-xs-12 col-lg-10">
+                          <input class="form-control" type="text" ng-model="newNotification.name_FR" ng-change="titleMessageUpdate()" placeholder="Titre Français" required="required">
+                        </div>
+                      </div>    
+                      <div class="form-group">
+                        <label class="control-label col-xs-12 col-lg-2">
+                          Message
+                        </label>
+                        <div class="col-xs-12 col-lg-10">
+                          <textarea class="form-control" rows="5" ng-model="newNotification.description_FR" ng-change="titleMessageUpdate()" placeholder="Message Français" required="required"></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>    
+              </div>
+              <!-- END SECTION -->      
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<!-- "Processing" modal template -->
+<script type="text/ng-template" id="processingModal.htm">
+  <div class="modal-header">
+    <h1> Processing...</h1>
+  </div>
+  <div class="modal-body">
+    <div class="progress progress-striped active">
+      <div class="progress-bar" style="width: 100%"></div>        
+    </div>
+  </div>
+</script>
+

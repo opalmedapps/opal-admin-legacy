@@ -136,10 +136,12 @@ sub getNotificationControlDetails
             END As Name
         FROM
             Patient,
-            NotificationControl
+            NotificationControl,
+            NotificationTypes
         WHERE
-            Patient.PatientSerNum           = '$patientser'
-        AND NotificationControl.NotificationType   = '$notificationtype'
+            Patient.PatientSerNum                       = '$patientser'
+        AND NotificationControl.NotificationTypeSerNum  = NotificationTypes.NotificationTypeSerNum
+        AND NotificationTypes.NotificationTypeId        = '$notificationtype'
     ";
 
     # prepare query

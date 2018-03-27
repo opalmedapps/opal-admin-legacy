@@ -12,7 +12,8 @@
         'body_EN'           => str_replace(array('"', "'"), '\"', $_POST['body_EN']),
         'body_FR'           => str_replace(array('"', "'"), '\"', $_POST['body_FR']),
  		'serial' 	        => $_POST['serial'],
- 		'type' 		        => $_POST['type']
+		'type' 		        => $_POST['type'],
+		'user'				=> $_POST['user']
 	);
 
 	// Call function

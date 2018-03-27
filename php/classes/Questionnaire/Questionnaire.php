@@ -57,6 +57,7 @@ class Questionnaire{
 	 				'name_FR'		=> $name_FR,
 	 				'private'		=> $private,
 	 				'publish'		=> $publish,
+	 				'changed'		=> 0,
 	 				'last_updated'	=> $last_updated,
 	 				'created_by'	=> $created_by,
 	 				'tags' 			=> array()
@@ -308,6 +309,8 @@ class Questionnaire{
 		$tags 					= $questionnaireDetails['tags'];
 		$questiongroups 		= $questionnaireDetails['questiongroups'];
 		$filters 				= $questionnaireDetails['filters'];
+		$userSer 				= $questionnaireDetails['user']['id'];
+		$sessionId 				= $questionnaireDetails['user']['sessionid'];
 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -321,15 +324,17 @@ class Questionnaire{
 						private,
 						publish,
 						last_updated_by,
-						created_by
+						created_by,
+						session_id
 					)
 				VALUES(
 					\"$name_EN\",
 					\"$name_FR\",
 					'$private',
 					'$publish',
-					'$last_updated_by',
-					'$created_by'
+					'$userSer',
+					'$created_by',
+					'$sessionId'
 				)
 			";
 
@@ -427,14 +432,17 @@ class Questionnaire{
      * Deletes a questionnaire 
      *
      * @param integer $questionnaire_serNum : the questionnaire serial number
+     * @param object $user : the current user in the session
      * @return array $response : response
      */
-	public function deleteQuestionnaire($questionnaire_serNum){
+	public function deleteQuestionnaire($questionnaire_serNum, $user){
 		$response = array(
             'value'     => 0,
             'message'   => ''
         );
 
+		$userSer = $user['id'];
+		$sessionId = $user['sessionid'];
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -485,6 +493,19 @@ class Questionnaire{
 			";
 			$query = $host_db_link->prepare( $sql4 );
 			$query->execute();
+
+			$sql = "
+                UPDATE QuestionnaireControlNewMH
+                SET 
+                    QuestionnaireControlNewMH.last_updated_by = '$userSer',
+                    QuestionnaireControlNewMH.session_id = '$sessionId'
+                WHERE
+                    QuestionnaireControlNewMH.questionnaire_serNum = $questionnaire_serNum
+                ORDER BY QuestionnaireControlNewMH.rev_serNum DESC 
+                LIMIT 1
+            ";
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
 
 			$response['value'] = 1; // Success
             return $response;
@@ -597,6 +618,8 @@ class Questionnaire{
 		$tags 				= $questionnaireDetails['tags'];
 		$questiongroups 	= $questionnaireDetails['groups'];
 		$filters 			= $questionnaireDetails['filters'];
+		$userSer 			= $questionnaireDetails['user']['id'];
+		$sessionId 			= $questionnaireDetails['user']['sessionid'];
 		$existingFilters 	= array();
 
 		$response = array(
@@ -616,7 +639,8 @@ class Questionnaire{
 					QuestionnaireControlNew.name_FR 		= \"$name_FR\",
 					QuestionnaireControlNew.private 		= '$private',
 					QuestionnaireControlNew.publish 		= '$publish',
-					QuestionnaireControlNew.last_updated_by = '$last_updated_by'
+					QuestionnaireControlNew.last_updated_by = '$userSer',
+					QuestionnaireControlNew.session_id 		= '$sessionId'
 				WHERE
 					QuestionnaireControlNew.serNum = $serNum
 			";
