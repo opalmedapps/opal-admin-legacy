@@ -1,3 +1,32 @@
+Version 0.17.0.0:
+ -     --- Added functionality to reassigned aliases, diagnosis translations, and test results         -- Selecting an already assigned code will warn user of reassignment and reassign upon submit
+ -     --- Added tab to show currently assigned codes for alias, test result, and diagnosis translation     --- Added tab filters to test results     --- Added auto complete for opposite language when selecting a test group
+ -     --- Added patient registration date to record         -- This will make sure no retrospective documents will get added         or at least we add documents since registration in case new clinical codes are added         to existing aliases
+ -     --- Added push notification upon appointment cancellation     --- Fixed style issue on add notification page
+ -     --- Added push notification on appointment change         -- time change must be greater than an hour         -- modified an existing notification code to use this functionality         -- changed notification type column to use serial instead of id for proper linking
+ -     --- Removed flag that got all diagnoses
+ -     --- Publisher provides staging info for diagnoses
+ -     --- Fixes issue where selected educational material doesn't show in summary
+ -     --- Downgraded font awesome from 5 to 4         -- textAngular still uses version 4 and migration file does not work         -- required fixing class names     --- Added rich-text to all previously plain-text description fields
+ - --- Started verbose print statements
+ - Merge branch 'hotfix-0.16.0.1' into develop
+ -     --- Fixed missing template reference after restruction
+ -     --- Redesigned template and controller structures         -- removed all instances of script injections on html pages and made it its own html template.         Eg: a template was injected for edit post on the post.html. Now it's its own template in edit.post.html         -- same goes with the controllers. Now every "edit" and "delete" functionality has its own controller         -- see directory tree for design but basically each feature has its own directory (alias, post, questionnaire, etc)         -- Now, edits, deletes, adds are fully separated
+ -     --- Starting to restructure directories and separate templates/controllers
+ -     --- Bolded the titles in content tables     --- Changed format of session duration in user activity
+ -     --- Upgraded fontawesome icons         -- Required changing some class names in template files     --- Added user activity log page         -- Login logout times
+ -     --- Added user logging to the following features         -- Modified content is now recorded in the database within a particular session.
+ - --- Added session and user tracking for manipulated email control
+ - --- Added user tracking for educational material control manipulation   -- Incomplete however, need to figure out how to handle table of contents logic
+ -     --- Added user logging for diagnosis translation         -- Modifications on this content is recorded in the database by who and session
+ -     --- Added logging of logins and logouts         -- Now each login and logout is recorded in the database with a sessionid     --- Added change logs for Alias events         -- Now changes to the alias pages are recorded in the database with a sessionid and         user who changed the entity
+ -     --- Added more sophisticated session logging         -- Session id now made per login in the backend (attached to user)         -- In cookies for now, but will log sessions in database
+ -     --- Same fix as previous commit
+ -     --- Added missing requires of the Encrypt service
+ -     --- Added password encryption between frontend/backend communication         -- All passwords are now encrypted before firing a POST request to the backend so that         passwords are illegible even if someone tries to look at request data
+ -     --- Included bowerrc to bypass SSL signing for bower installs     --- updated htaccess with some added security         -- Note that directory listing is already implemented
+ - Merge branch 'release-0.16.0.0' into develop
+
 Version 0.16.0.1:
  - --- Fixes single quotes in clinical codes that were causing query strings to escape and crash
  - Merge branch 'release-0.16.0.0' into preproduction
