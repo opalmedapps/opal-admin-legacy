@@ -390,7 +390,8 @@ class Patient {
                         SSN,
                         AccessLevel,
                         SessionId,
-						ConsentFormExpirationDate
+						ConsentFormExpirationDate,
+                        RegistrationDate
                     )
                 VALUES (
                     '$sourceuid',
@@ -406,7 +407,8 @@ class Patient {
                     '$SSN',
                     '$accessLevel',
                     'opalAdmin',
-					DATE_ADD(NOW(), INTERVAL 1 YEAR)
+					DATE_ADD(NOW(), INTERVAL 1 YEAR),
+                    NOW()
                 )
             ";
             $query = $host_db_link->prepare( $sql );

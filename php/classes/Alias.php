@@ -57,7 +57,7 @@ class Alias {
 
                             $assignedExpression = $this->assignedSearch($termName, $assignedExpressions);
                             if ($assignedExpression) {
-                                $termArray['added'] = 1;
+                                $termArray['added'] = 0;
                                 $termArray['assigned'] = $assignedExpression;
                             }
 
@@ -92,7 +92,7 @@ class Alias {
 
                             $assignedExpression = $this->assignedSearch($termName, $assignedExpressions);
                             if ($assignedExpression) {
-                                $termArray['added'] = 1;
+                                $termArray['added'] = 0;
                                 $termArray['assigned'] = $assignedExpression;
                             }
         
@@ -139,7 +139,7 @@ class Alias {
 
                         $assignedExpression = $this->assignedSearch($termName, $assignedExpressions);
                         if ($assignedExpression) {
-                            $termArray['added'] = 1;
+                            $termArray['added'] = 0;
                             $termArray['assigned'] = $assignedExpression;
                         }
 
@@ -231,15 +231,18 @@ class Alias {
      * Updates Alias publish flags in our database
      *
      * @param array $aliasList : a list of aliases
+     * @param object $user : the session user
      * @return array $response : response
      */
-    public function updateAliasPublishFlags( $aliasList ) {
+    public function updateAliasPublishFlags( $aliasList, $user ) {
 
         // Initialize a response array
         $response = array(
             'value'     => 0,
             'message'   => ''
         );
+        $userSer = $user['id'];
+        $sessionId = $user['sessionid'];
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -253,7 +256,9 @@ class Alias {
 					UPDATE 
 						Alias 	
 					SET 
-						Alias.AliasUpdate = $aliasUpdate 
+						Alias.AliasUpdate = $aliasUpdate, 
+                        Alias.LastUpdatedBy = $userSer,
+                        Alias.SessionId = '$sessionId'
 					WHERE 
 						Alias.AliasSerNum = $aliasSer
 				";
@@ -415,6 +420,7 @@ class Alias {
                     'type'			    => $aliasType, 
                     'color'             => $aliasColorTag,
                     'update'            => $aliasUpdate,
+                    'changed'           => 0,
                     'eduMatSer'         => $aliasEduMatSer,
                     'eduMat'            => $aliasEduMat,
 					'description_EN' 	=> $aliasDesc_EN, 
@@ -559,7 +565,9 @@ class Alias {
         $aliasType	    = $aliasDetails['type']['name'];
         $aliasColorTag  = $aliasDetails['color'];
 		$aliasTerms	    = $aliasDetails['terms'];
-        $aliasEduMatSer = 0;
+        $userSer        = $aliasDetails['user']['id'];
+        $sessionId      = $aliasDetails['user']['sessionid'];
+        $aliasEduMatSer = 'NULL';
         if ( is_array($aliasDetails['edumat']) && isset($aliasDetails['edumat']['serial']) ) {
             $aliasEduMatSer = $aliasDetails['edumat']['serial'];
         }
@@ -581,7 +589,9 @@ class Alias {
                         AliasType, 
                         ColorTag,
                         AliasUpdate,
-						LastUpdated
+                        LastUpdatedBy,
+                        SessionId,
+                        LastTransferred
 					) 
 				VALUES (
 					NULL, 
@@ -589,12 +599,14 @@ class Alias {
 					\"$aliasName_EN\",
 					\"$aliasDesc_FR\", 
                     \"$aliasDesc_EN\", 
-                    '$aliasEduMatSer',
+                    $aliasEduMatSer,
                     '$sourceDBSer',
                     '$aliasType', 
                     '$aliasColorTag',
                     '0',
-					NULL
+                    '$userSer',
+                    '$sessionId',
+                    NOW()
 				)
 			";
 			$query = $host_db_link->prepare( $sql );
@@ -608,11 +620,13 @@ class Alias {
                     INSERT INTO 
                         AliasExpression (
                             AliasSerNum,
-                            ExpressionName
+                            ExpressionName,
+                            LastTransferred
                         )
                     VALUE (
                         '$aliasSer',
-                        \"$aliasTerm\"
+                        \"$aliasTerm\",
+                        NOW()
                     )
                     ON DUPLICATE KEY UPDATE
                         AliasSerNum = '$aliasSer'
@@ -632,15 +646,19 @@ class Alias {
      * Deletes an alias from the database
      *
      * @param integer $aliasSer : the alias serial number
+     * @param object $user : the session user
      * @return array $response : response
      */
-    public function deleteAlias( $aliasSer ) {
+    public function deleteAlias( $aliasSer, $user ) {
 
         // Initialize a response array
         $response = array(
             'value'     => 0,
             'message'   => ''
         );
+
+        $userSer    = $user['id'];
+        $sessionId  = $user['sessionid'];
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -665,6 +683,18 @@ class Alias {
 			$query = $host_db_link->prepare( $sql );
 			$query->execute();
 
+            $sql = "
+                UPDATE AliasMH
+                SET 
+                    AliasMH.LastUpdatedBy = '$userSer',
+                    AliasMH.SessionId = '$sessionId'
+                WHERE
+                    AliasMH.AliasSerNum = $aliasSer
+                ORDER BY AliasMH.AliasRevSerNum DESC 
+                LIMIT 1
+            ";
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
 	
             $response['value'] = 1; // Success
             return $response;	
@@ -690,9 +720,12 @@ class Alias {
 		$aliasDesc_FR	= $aliasDetails['description_FR'];
 		$aliasSer	    = $aliasDetails['serial'];
         $aliasTerms	    = $aliasDetails['terms'];
-        $aliasEduMatSer = $aliasDetails['edumatser'];
+        $aliasEduMatSer = $aliasDetails['edumatser'] ? $aliasDetails['edumatser'] : 'NULL';
       
         $aliasColorTag  = $aliasDetails['color'];
+
+        $userSer        = $aliasDetails['user']['id'];
+        $sessionId      = $aliasDetails['user']['sessionid'];
 
         $existingTerms	= array();
 
@@ -713,8 +746,10 @@ class Alias {
 					Alias.AliasName_FR 		                = \"$aliasName_FR\", 
 					Alias.AliasDescription_EN	            = \"$aliasDesc_EN\",
                     Alias.AliasDescription_FR	            = \"$aliasDesc_FR\",
-                    Alias.EducationalMaterialControlSerNum  = '$aliasEduMatSer',
-                    Alias.ColorTag                          = '$aliasColorTag'
+                    Alias.EducationalMaterialControlSerNum  = $aliasEduMatSer,
+                    Alias.ColorTag                          = '$aliasColorTag',
+                    Alias.LastUpdatedBy                     = '$userSer',
+                    Alias.SessionId                         = '$sessionId'
 				WHERE 
 					Alias.AliasSerNum = $aliasSer
 			";

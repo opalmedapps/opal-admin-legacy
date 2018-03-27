@@ -11,7 +11,7 @@
 	
 	// Store FORM params
 	$usr->storeFormValues( $request );
-	
+
 	// Successful login
 	if( $usr->userLogin() ) {
 	
@@ -21,7 +21,8 @@
 				'id'		=> $usr->userid,
 				'username'	=> $usr->username,
 				'role'		=> $usr->role,
-				'language' 	=> $usr->language
+				'language' 	=> $usr->language,
+				'sessionid' => $usr->sessionid
 			)
 		);
 

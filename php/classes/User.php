@@ -10,12 +10,14 @@
 	 public $role = null;
 	 public $language = null;
 	 public $userid = null;
+	 public $sessionid = null;
 	 public $salt = "Zo4rU5Z1YyKJAASY0PT6EUg7BBYdlEhPaNLuxAwU8lqu1ElzHv0Ri7EM6irpx5w";
 	 
 	 /* Class constructor*/ 
 	 public function __construct( $data = array() ) {
 		 if( isset( $data->username ) ) $this->username = stripslashes( strip_tags( $data->username ) );
 		 if( isset( $data->password ) ) $this->password = stripslashes( strip_tags( $data->password ) );
+		 if( isset( $data->cypher ) ) $this->cypher = stripslashes( strip_tags( $data->cypher ) );
 	 }
 	 
 	 public function storeFormValues( $params ) {
@@ -31,6 +33,7 @@
      */
 	 public function userLogin() {
 		 $success = false;
+		 $d = new Encrypt;
 		 try{
 			$con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD ); 
 			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -38,7 +41,7 @@
 			
 			$stmt = $con->prepare( $sql );
 			$stmt->bindValue( "username", $this->username, PDO::PARAM_STR );
-			$stmt->bindValue( "password", hash("sha256", $this->password . $this->salt), PDO::PARAM_STR );
+			$stmt->bindValue( "password", hash("sha256", $d->encodeString( $this->password, $this->cypher ) . $this->salt), PDO::PARAM_STR );
 			$stmt->execute();
 			
 			$valid = $stmt->fetchColumn();
@@ -47,6 +50,9 @@
 				$userDetails = $this->getUserDetails($valid);
 				$this->role = $userDetails['role']['name'];
 				$this->language = $userDetails['language'];
+				$this->sessionid = $this->makeSessionId();
+
+				$this->logActivity($this->userid, $this->sessionid, 'Login');
 				$success = true;
 			}
 			
@@ -57,6 +63,76 @@
 			 return $success;
 		 }
 	 }
+
+	  /**
+	  *
+	  * Logs out a user
+	  *
+	  * @param $user : user object
+	  * @return $response : response
+	  */
+	public function userLogout($user) {
+		$userser = $user['userser'];
+		$sessionid = $user['sessionid'];
+		$response = $this->logActivity($userser, $sessionid, 'Logout');
+		return $response;
+	}
+
+	 /**
+	  *
+	  * Logs when a user logs in or logs out
+	  *
+	  * @return $response : response
+	  */
+	public function logActivity($userser, $sessionid, $activity) {
+		$response = array (
+	 		'value'		=> 0,
+ 			'message'	=> ''
+ 		);
+ 		try{
+			$con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD ); 
+			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			$sql = "
+				INSERT INTO 
+					OAActivityLog (
+						Activity,
+						OAUserSerNum,
+						SessionId,
+						DateAdded
+					)
+				VALUES (
+					'$activity',
+					'$userser',
+					'$sessionid',
+					NOW()
+				)
+			";
+			$query = $con->prepare($sql);
+			$query->execute();
+			$response['value'] = 1; // success
+			return $response;
+
+		}catch (PDOException $e) {
+			 $response['message'] = $e->getMessage();
+			 return $response;
+		 }
+	}
+
+	 /**
+     *
+     * Sets a session id
+     *
+     * @return string $sessionid : session id
+     */
+     public function makeSessionId($length = 10) {
+     	$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	    $charactersLength = strlen($characters);
+	    $randomString = '';
+	    for ($i = 0; $i < $length; $i++) {
+	        $randomString .= $characters[rand(0, $charactersLength - 1)];
+	    }
+	    return $randomString;
+     }
 
 	/**
      *
@@ -76,6 +152,8 @@
 	 	$oldPassword 	= $userDetails['oldPassword'];
 	 	$userSer		= $userDetails['user']['id'];
 	 	$newPassword	= $userDetails['password'];
+	 	$cypher 			= $userDetails['cypher'];
+		$d = new Encrypt;
 	 	try {
 	 		$con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD ); 
 			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -85,7 +163,7 @@
 
 				$stmt = $con->prepare( $sql );
 				$stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
-				$stmt->bindValue( "password", hash("sha256", $oldPassword . $this->salt), PDO::PARAM_STR );
+				$stmt->bindValue( "password", hash("sha256", $d->encodeString( $oldPassword, $cypher ) . $this->salt), PDO::PARAM_STR );
 				$stmt->execute();
 				
 				$valid = $stmt->fetchColumn();
@@ -100,7 +178,7 @@
 
 			$stmt = $con->prepare( $sql );
 			$stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
-			$stmt->bindValue( "password", hash("sha256", $newPassword . $this->salt), PDO::PARAM_STR );
+			$stmt->bindValue( "password", hash("sha256", $d->encodeString( $newPassword, $cypher ) . $this->salt), PDO::PARAM_STR );
 			$stmt->execute();
 
 			$response['value'] = 1; // Success
@@ -170,6 +248,8 @@
 		$username 		= $userDetails['username'];
 		$password 		= $userDetails['password'];
 		$roleSer 		= $userDetails['role']['serial'];
+		$cypher 		= $userDetails['cypher'];
+		$d = new Encrypt;
 		try {
 			$con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -177,7 +257,7 @@
 			
 			$stmt = $con->prepare( $sql );
 			$stmt->bindValue( "username", $username, PDO::PARAM_STR );
-			$stmt->bindValue( "password", hash("sha256", $password . $this->salt), PDO::PARAM_STR );
+			$stmt->bindValue( "password", hash("sha256", $d->encodeString( $password, $cypher ) . $this->salt), PDO::PARAM_STR );
 			$stmt->execute();
 
 			$userSer = $con->lastInsertId();
@@ -418,6 +498,74 @@
 	 		return $roles;
 	 	}
 	 }
+
+    /**
+     *
+     * Gets a list of user activities
+     *
+     * @return array $userActivityList : the list of user activities
+     */
+    public function getUserActivities() {
+        $userActivityList = array();
+         try {
+
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
+	            SELECT DISTINCT 
+	            	oaa.OAUserSerNum,
+	            	oa.Username,
+	            	oaa.DateAdded as LoginTime, 
+	            	oaa2.DateAdded as LogoutTime, 
+	            	oaa.SessionId,
+	            	CONCAT (
+	            		IF(MOD(HOUR(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 24) > 0,
+	            			CONCAT(MOD(HOUR(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 24), 'h'),
+	            			''
+	            		),
+	            		IF(MINUTE(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)) > 0,
+	            			CONCAT(MINUTE(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 'm'),
+	            			''
+	            		),
+	            		SECOND(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 's'
+	            	) as SessionDuration
+
+	            FROM 
+	            	OAUser oa,
+	            	OAActivityLog oaa 
+	            LEFT JOIN 
+	            	OAActivityLog oaa2 
+	            ON oaa.SessionId = oaa2.SessionId  
+	            AND oaa2.Activity = 'Logout' 
+	            WHERE 
+	            	oaa.`Activity` 	= 'Login'
+	            AND oa.OAUserSerNum = oaa.OAUserSerNum
+
+                ORDER BY oaa.DateAdded DESC
+            ";
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $userDetails = array(
+                    'serial'                => $data[0],
+                    'username'              => $data[1],
+                    'login'                 => $data[2],
+                    'logout'				=> $data[3],
+                    'sessionid'             => $data[4],
+                    'session_duration'		=> $data[5]
+                );
+
+                array_push($userActivityList, $userDetails);
+            }
+
+            return $userActivityList;
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return $userActivityList;
+        }
+    }
  }
  
 ?>

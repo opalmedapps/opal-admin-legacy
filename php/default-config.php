@@ -83,6 +83,7 @@
 	include_once( FRONTEND_ABS_PATH . "php/classes/LegacyQuestionnaire.php");
 	include_once( FRONTEND_ABS_PATH . "php/classes/Diagnosis.php");
 	include_once( FRONTEND_ABS_PATH . "php/classes/Application.php");
+	include_once( FRONTEND_ABS_PATH . "php/classes/Encrypt.php");
 
 	// Push Notification FCM and APN credentials.
     define( "API_KEY" , "API_KEY_HERE" );

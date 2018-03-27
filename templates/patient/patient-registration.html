@@ -1,0 +1,684 @@
+  <div id="main">
+    <div id="top">
+      <div class="clearfix">
+        <div class="row">
+          <!-- Left side view -->
+          <div class="col-lg-2">
+            <!-- Logo -->
+            <div class="side-navbar" ng-controller="navigation">
+              <div class="row side-logo" ng-click="goToHome()">
+                <div class="col-md-12">
+                  <div class="logo">
+                    <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+                  </div>
+                  <h1 class="animated fadeIn">opal <strong>ADMIN</strong></h1>
+                </div>
+              </div>   
+            </div>
+            <div class="summary-fix">
+              <!-- Back button -->
+  						<div class="row side-panel-menu">
+  							<div class="col-xs-12 col-sm-5 col-lg-12">
+  								<div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+  									<div class="side-panel-info-sm">
+  										<div class="panel-content">
+  											<span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+  											<h6 class="side-panel-title" ><strong>{{ 'GO_BACK' | translate }}</strong></h6>
+  										</div>
+  									</div>
+  								</div>
+  							</div>
+              </div>
+              <!-- Summary -->
+              <div ng-if="validPatientSearch == 'valid'" class="row">
+                <div class="side-menu-title col-lg-12">
+                  <div class="horz-line" style="height: 16px; text-align: center">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <h2>{{ 'SUMMARY' | translate }}</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>
+              <div ng-if="validPatientSearch == 'valid'" class="row">
+                <div class="col-lg-12"> 
+                  <div class="progress progress-striped active">
+                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <uib-accordion ng-if="validPatientSearch == 'valid'" class="side-navbar">
+
+                <!-- SECTION: Email --> 
+                <div uib-accordion-group is-open="emailSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: validPatientSearch == 'valid'}" is-disabled="!newPatient.email" ng-if="validPatientSearch == 'valid'">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="validEmail.status == 'valid'" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>{{ 'EMAIL' | translate }}</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+
+                <!-- SECTION: Password -->
+                <div uib-accordion-group is-open="passwordSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: passwordSection.show}" ng-if="passwordSection.show" is-disabled="!newPatient.password && !newPassword.confirmPassword">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="validPassword.status == 'valid' && validConfirmPassword.status == 'valid'" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>{{ 'PASSWORD' | translate }}</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+
+                <!-- SECTION: Language -->
+                <div uib-accordion-group is-open="languageSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: languageSection.show}" ng-if="languageSection.show" is-disabled="!newPatient.language">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newPatient.language" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>{{ 'LANGUAGE' | translate }}</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+
+                <!-- SECTION: Cellphone --> 
+                <div uib-accordion-group is-open="cellNumberSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: cellNumberSection.show}" ng-if="cellNumberSection.show" is-disabled="!newPatient.cellNum">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="validCellNum.status=='valid'" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>{{ 'CELLPHONE_NUMBER' | translate }}</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+
+                <!-- SECTION: Security question 1 -->
+                <div uib-accordion-group is-open="securityQuestion1Section.open" class="panel-container summary-box animated" ng-class="{fadeInUp: securityQuestion1Section.show}" ng-if="securityQuestion1Section.show" is-disabled="!newPatient.securityQuestion1.answer">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="validAnswer1.status == 'valid'" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>{{ 'SECURITY_QUESTION' | translate }} 1</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+
+                <!-- SECTION: Security question 2 -->
+                <div uib-accordion-group is-open="securityQuestion2Section.open" class="panel-container summary-box animated" ng-class="{fadeInUp: securityQuestion2Section.show}" ng-if="securityQuestion2Section.show" is-disabled="!newPatient.securityQuestion2.answer">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="validAnswer2.status == 'valid'" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>{{ 'SECURITY_QUESTION' | translate }} 2</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+
+                <!-- SECTION: Security question 3 -->
+                <div uib-accordion-group is-open="securityQuestion3Section.open" class="panel-container summary-box animated" ng-class="{fadeInUp: securityQuestion3Section.show}" ng-if="securityQuestion3Section.show" is-disabled="!newPatient.securityQuestion3.answer">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="validAnswer3.status == 'valid'" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>{{ 'SECURITY_QUESTION' | translate }} 3</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+
+                <!-- SECTION: Access level -->
+                <div uib-accordion-group is-open="accessLevelSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: accessLevelSection.show}" ng-if="accessLevelSection.show" is-disabled="!newPatient.accessLevel">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newPatient.accessLevel" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>{{ 'ACCESS_LEVEL_TITLE' | translate }}</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+
+                <!-- SECTION: Final checks --> 
+                <div uib-accordion-group is-open="finalCheckSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: finalCheckSection.show}" ng-if="finalCheckSection.show" is-disabled="!idCheck && !consentCheck && !disclaimerCheck && !slaCheck && !opalDocCheck">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="finalChecks" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>{{ 'FINAL_CHECKS_TITLE' | translate }}</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+              </uib-accordion>
+
+              <!-- Register button -->
+              <div class="panel-container">
+                <a href="" ng-click="registerPatient()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkRegistrationForm()" style="width: 100%;">
+                  <span style="font-size: 20px;"><strong>{{ 'REGISTER' | translate }}</strong></span>
+                </a>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Right side detaul view -->
+          <div class="col-xs-12 col-lg-10 animated fadeIn">
+            <div class="row main-title">
+              <!-- Page title -->
+              <div class="col-xs-12 col-md-8 title-content">
+                <span class="glyphicon glyphicon-list-alt"></span>
+                <h1><strong>{{ 'PATIENT_REGISTRATION_TITLE' | translate }}</strong></h1>
+              </div>
+              <!-- Breadcrumbs -->
+              <div class="col-md-4 title-breadcrumbs"> 
+                <span>
+                  <span><a ui-sref="home">Home</a></span> 
+                  <span class="glyphicon glyphicon-menu-right teflon"></span>
+                  <span><strong>{{ 'PATIENT_REGISTRATION_TITLE' | translate }}</strong></span>
+                </span>
+              </div>
+            </div>  
+            <div class="row mobile-side-panel-menu">
+              <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
+                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                  <div class="side-panel-info-sm">
+                    <div class="panel-content">
+                      <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                      <h6 class="side-panel-title" style="display:inline-block;margin:0;font-size:14px;"><strong>{{ 'GO_BACK' | translate }}</strong></h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkRegistrationForm()">
+                <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
+                  <span style="padding: 0 10px;">
+                    <h2>{{numOfCompletedSteps}} - {{stepTotal}} Complete</h2>
+                  </span>  
+                </div>  
+                <div class="progress progress-striped active">
+                  <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                  </div>
+                </div>
+              </div>
+              <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkRegistrationForm()">
+                <!-- Register button -->
+                <div class="panel-container">
+                  <a href="" ng-click="registerPatient()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkRegistrationForm()" style="width: 100%;">
+                    <span style="font-size: 20px;"><strong>{{ 'REGISTER' | translate }}</strong></span>
+                  </a>
+                </div>
+              </div> 
+            </div>  
+            <div class="section-content">
+
+              <!-- SECTION: Patient search -->
+              <div class="row">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>{{ 'PATIENT_REGISTRATION_SEARCH_HEADER' | translate }}</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;"  ng-bind-html="ssnHtmlInstruction">
+                  </p>
+                </div>
+              </div>
+              <div class="row" style="margin-bottom: 20px;">
+                <div class="col-xs-12 col-lg-9">
+                  <uib-accordion>
+                    <div uib-accordion-group is-open="accordionOpen">
+                      <uib-accordion-heading>
+                        <div>
+                          {{ 'MEDICARE_CARD_NUMBER' | translate }} & {{ 'MRN' | translate }} <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': accordionOpen, 'glyphicon-chevron-right': !accordionOpen}"></i>
+                        </div>
+                      </uib-accordion-heading>
+                      <div class="form-horizontal">
+                        <div class="form-group has-feedback" ng-class="{'has-success': validSSN.status == 'valid', 'has-error': validSSN.status == 'invalid', 'has-warning': validSSN.status == 'warning'}">
+                          <label class="control-label col-md-2">
+                            {{ 'MEDICARE_CARD_NUMBER' | translate }}
+                          </label>
+                          <div class="col-md-10">
+                            <input type="text" class="form-control" required="required" ng-change="validateSSN(validSSN.SSN)" ng-model="validSSN.SSN" placeholder="" maxlength="20">
+                            <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':validSSN.status=='valid', 'glyphicon-remove':validSSN.status=='invalid', 'glyphicon-warning-sign':validSSN.status=='warning'}" aria-hidden="true"></span>
+                          </div>
+                        </div>
+                        <div class="form-group has-feedback" ng-class="{'has-success': validPatientId.status == 'valid', 'has-error': validPatientId.status == 'invalid' || validPatientSearch == 'invalid', 'has-warning': validPatientId.status == 'warning' || validPatientSearch == 'warning'}">
+                          <label class="control-label col-xs-12 col-md-2">
+                            {{ 'MRN' | translate }}
+                          </label>
+                          <div class="col-xs-12 col-md-10">
+                            <input type="text" class="form-control" required="required" ng-change="validatePatientId(validPatientId.id)" ng-model="validPatientId.id" placeholder="" maxlength="20">
+                            <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':validPatientId.status=='valid', 'glyphicon-remove':validPatientId.status=='invalid' || validPatientSearch == 'invalid', 'glyphicon-warning-sign':validPatientId.status=='warning' || validPatientSearch == 'warning'}" aria-hidden="true"></span>
+                          </div>
+                        </div>
+                        <div class="form-group has-feedback" ng-class="{'has-success': validSSN.status == 'valid', 'has-error': validSSN.status == 'invalid', 'has-warning': validSSN.status == 'warning'}">
+                          <div class="col-xs-9 control-label" style="padding-top:18px;">
+                            <em ng-show="validSSN.status" ng-class="{'has-error': validSSN.status == 'invalid', 'has-success': validSSN.status == 'valid', 'has-warning': validSSN.status == 'warning'}" style="text-align:left; padding-left:10px;">
+                              {{validSSN.message}}
+                            </em>
+                          </div>
+                          <div class="col-xs-3">
+                            <div class="table-buttons" style="text-align: right">
+                              <button class="btn btn-primary" ng-class="{'disabled': !validSearchForm()}" ng-click="validatePatientSearch()">
+                                <span class="glyphicon glyphicon-search"></span> {{ 'SEARCH' | translate }}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>  
+                    </div>
+                  </uib-accordion>
+                </div>
+              </div>
+
+              <div ng-if="validPatientSearch == 'valid'">
+                <!-- SECTION: Patient details -->
+                <div class="animated" ng-class="{fadeInUp: validPatientSearch == 'valid'}" ng-if="validPatientSearch == 'valid'" style="margin-bottom:20px; color:#3c763d;">
+                  <h1><strong>--- Patient: <em>{{newPatient.data.lastname}}, {{newPatient.data.firstname}}</em></strong></h1>
+                </div>
+
+                <!-- SECTION: Email & password -->
+                <div class="row animated" ng-class="{fadeInUp: validPatientSearch == 'valid'}" ng-if="validPatientSearch == 'valid'">
+                  <div class="col-xs-12 side-menu-title">
+                    <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                      <span style="background-color:#e6edfa; padding: 0 10px;">
+                        <span class="fas fa-dot-circle"></span>
+                        <h2>{{ 'EMAIL' | translate }} & {{ 'PASSWORD' | translate }}</h2>
+                      </span>  
+                    </div>  
+                  </div>
+                </div>   
+                <div class="row animated" ng-class="{fadeInUp: validPatientSearch == 'valid'}" ng-if="validPatientSearch == 'valid'">
+                  <div class="col-xs-12">
+                    <p style="margin-bottom: 10px;">
+                      <span style="color:#d9534f"><strong>{{ 'REQUIRED_FIELD' | translate }}:</strong></span>
+                      {{ 'PATIENT_REGISTRATION_EMAIL_PASSWORD_DESCRIPTION' | translate }}
+                    </p>
+                  </div>
+                </div>  
+                <div class="row animated" ng-class="{fadeInUp: validPatientSearch == 'valid'}" ng-if="validPatientSearch == 'valid'"> 
+                  <div class="col-xs-12 col-md-10 col-lg-8">
+                    <div class="panel" ng-class="(validEmail.status == 'valid' && validPassword.status == 'valid' && validConfirmPassword.status == 'valid') ? 'panel-success': 'panel-danger'">
+                      <div class="panel-heading"><strong>{{ 'EMAIL' | translate }} & {{ 'PASSWORD' | translate }}</strong>
+                        <span ng-hide="validEmail.status == 'valid' && validPassword.status == 'valid' && validConfirmPassword.status == 'valid'" style="float:right"><em>{{ 'INCOMPLETE' | translate }}</em></span>
+                        <span ng-show="validEmail.status == 'valid' && validPassword.status == 'valid' && validConfirmPassword.status == 'valid'" style="float:right"><em>{{ 'COMPLETE' | translate }}</em></span>
+                      </div>
+                      <div class="panel-body form-horizontal">
+                        <div class="form-group has-feedback" ng-class="{'has-success': validEmail.status == 'valid', 'has-error': validEmail.status == 'invalid', 'has-warning': validEmail.status == 'warning'}">
+                          <label class="control-label col-md-2">
+                            {{ 'EMAIL' | translate }} 
+                          </label>
+                          <div class="col-md-7">
+                            <input type="text" class="form-control" required="required" ng-blur="validateEmail(newPatient.email)" ng-change="emailUpdate()" ng-model="newPatient.email" placeholder="example@example.com">
+                            <span ng-show="validEmail.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validEmail.status == 'valid', 'glyphicon-remove': validEmail.status == 'invalid', 'glyphicon-warning-sign': validEmail.status == 'warning'}" aria-hidden="true"></span>
+                          </div>
+                          <em class="control-label col-md-3" ng-show="validEmail.status == 'invalid' || validEmail.status == 'warning'" ng-class="{'has-success': validEmail.status == 'valid', 'has-error': validEmail.status == 'invalid', 'has-warning': validEmail.status == 'warning'}" style="text-align:left;">
+                            {{validEmail.message}}
+                          </em>
+                        </div>
+                        <div class="form-group has-feedback" ng-class="{'has-success': validPassword.status == 'valid', 'has-error': validPassword.status == 'invalid', 'has-warning': validPassword.status == 'warning'}">
+                          <label class="control-label col-md-2">
+                            {{ 'PASSWORD' | translate }} <br><em><small>(min: 6 characters)</small></em>
+                          </label>
+                          <div class="col-md-7">
+                            <input type="password" class="form-control" required="required" ng-blur="validatePassword(newPatient.password)" ng-change="passwordUpdate()" ng-model="newPatient.password">
+                            <span ng-show="validPassword.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validPassword.status == 'valid', 'glyphicon-remove': validPassword.status == 'invalid', 'glyphicon-warning-sign': validPassword.status == 'warning'}" aria-hidden="true"></span>
+                          </div>
+                          <em class="control-label col-md-3" ng-show="validPassword.status == 'invalid' || validPassword.status == 'warning'" ng-class="{'has-success': validPassword.status == 'valid', 'has-error': validPassword.status == 'invalid', 'has-warning': validPassword.status == 'warning'}" style="text-align:left">
+                            {{validPassword.message}}
+                          </em>
+                        </div>    
+                        <div class="form-group has-feedback" ng-class="{'has-success': validConfirmPassword.status == 'valid', 'has-error': validConfirmPassword.status == 'invalid', 'has-warning': validConfirmPassword.status == 'warning'}">
+                          <label class="control-label col-md-2">
+                            {{ 'CONFIRM_PASSWORD' | translate }}
+                          </label>
+                          <div class="col-md-7">
+                            <input type="password" class="form-control" required="required" ng-change="validateConfirmPassword(newPatient.confirmPassword)" ng-model="newPatient.confirmPassword" ng-disabled="newPatient.password.length < 6 || !newPatient.password">
+                            <span ng-show="validConfirmPassword.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validConfirmPassword.status == 'valid', 'glyphicon-remove': validConfirmPassword.status == 'invalid', 'glyphicon-warning-sign': validConfirmPassword.status == 'warning'}" aria-hidden="true"></span>
+                          </div>
+                          <em class="control-label col-md-3" ng-show="validConfirmPassword.status == 'invalid' || validConfirmPassword.status == 'warning'" ng-class="{'has-success': validConfirmPassword.status == 'valid', 'has-error': validConfirmPassword.status == 'invalid', 'has-warning': validConfirmPassword.status == 'warning'}" style="text-align:left">
+                            {{validConfirmPassword.message}}
+                          </em>
+                        </div>
+                      </div>
+                    </div>
+                  </div>          
+                </div>
+
+                <!-- SECTION: Language -->
+                <div class="row animated" ng-class="{fadeInUp: languageSection.show}" ng-if="languageSection.show">
+                  <div class="col-xs-12 side-menu-title">
+                    <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                      <span style="background-color:#e6edfa; padding: 0 10px;">
+                        <span class="fas fa-dot-circle"></span>
+                        <h2>{{ 'LANGUAGE' | translate }}</h2>
+                      </span>  
+                    </div>  
+                  </div>
+                </div>   
+                <div class="row animated" ng-class="{fadeInUp: languageSection.show}" ng-if="languageSection.show">
+                  <div class="col-xs-12">
+                    <p style="margin-bottom: 10px;">
+                      <span style="color:#d9534f"><strong>{{ 'REQUIRED_FIELD' | translate }}:</strong></span>
+                      {{ 'PATIENT_REGISTRATION_LANGUAGE_DESCRIPTION' | translate }}
+                    </p>
+                  </div>
+                </div>  
+                <div class="row animated" style="margin-bottom: 15px;" ng-class="{fadeInUp: languageSection.show}" ng-if="languageSection.show">
+                  <div class="col-xs-12 col-sm-9">
+                    <div class="row">
+                      <div class="col-md-5">
+                        <select ng-model="newPatient.language" ng-change="languageUpdate()" ng-options="language.id as language.name for language in languages" class="form-control">
+                          <option ng-hide="newPatient.language" value="">{{ 'SELECT_LANGUAGE' | translate }}</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>  
+                </div>
+
+                <!-- SECTION: Cellphone number -->
+                <div class="row animated" ng-class="{fadeInUp: cellNumberSection.show}" ng-if="cellNumberSection.show">
+                  <div class="col-xs-12 side-menu-title">
+                    <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                      <span style="background-color:#e6edfa; padding: 0 10px;">
+                        <span class="fas fa-dot-circle"></span>
+                        <h2>{{ 'CELLPHONE_NUMBER' | translate }}</h2>
+                      </span>  
+                    </div>  
+                  </div>
+                </div>   
+                <div class="row animated" ng-class="{fadeInUp: cellNumberSection.show}" ng-if="cellNumberSection.show">
+                  <div class="col-xs-12">
+                    <p style="margin-bottom: 10px;">
+                      <span><strong>{{ 'OPTIONAL_FIELD' | translate }}:</strong></span>
+                      {{ 'PATIENT_REGISTRATION_CELLPHONE_DESCRIPTION' | translate }}  
+                    </p>
+                  </div>
+                </div>   
+                <div class="row animated" ng-class="{fadeInUp: cellNumberSection.show}" ng-if="cellNumberSection.show">
+                  <div class="col-xs-12 col-sm-9 form-horizontal">
+                    <div class="form-group has-feedback" ng-class="{'has-success': validCellNum.status=='valid', 'has-error': validCellNum.status=='invalid'}">
+                      <div class="col-md-5">
+                        <input type="text" class="form-control" ng-model="newPatient.cellNum" ng-change="validateCellNum(newPatient.cellNum)" placeholder="1234567890" maxlength="10">
+                        <span ng-show="newPatient.cellNum" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':validCellNum.status=='valid', 'glyphicon-remove':validCellNum.status=='invalid'}" aria-hidden="true"></span>
+                      </div>
+                      <em class="control-label col-md-3" ng-show="validCellNum.status == 'invalid'" ng-class="{'has-error': validCellNum.status == 'invalid'}" style="text-align:left">
+                        {{validCellNum.message}}
+                      </em>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SECTION: Security questions -->
+                <div class="row animated" ng-class="{faceInUp: securityQuestion1Section.show}" ng-if="securityQuestion1Section.show">
+                  <div class="col-xs-12 side-menu-title">
+                    <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                      <span style="background-color:#e6edfa; padding: 0 10px;">
+                        <span class="fas fa-dot-circle"></span>
+                        <h2>{{ 'SECURITY_QUESTIONS' | translate }}</h2>
+                      </span>  
+                    </div>  
+                  </div>
+                </div>   
+                <div class="row animated" ng-class="{faceInUp: securityQuestion1Section.show}" ng-if="securityQuestion1Section.show">
+                  <div class="col-xs-12">
+                    <p style="margin-bottom: 10px;">
+                      <span style="color:#d9534f"><strong>{{ 'REQUIRED_FIELD' | translate }}:</strong></span>
+                      {{ 'PATIENT_REGISTRATION_SECURITY_QUESTION_DESCRIPTION' | translate }} 
+                    </p>
+                  </div>
+                </div>  
+                <div class="row animated" ng-class="{faceInUp: securityQuestion1Section.show}" ng-if="securityQuestion1Section.show"> 
+                  <div class="col-xs-12 col-md-8">
+                    <div class="panel" ng-class="validAnswer1.status == 'valid' ? 'panel-success': 'panel-danger'">
+                      <div class="panel-heading"><strong>{{ 'SECURITY_QUESTION' | translate }} 1</strong>
+                        <span ng-hide="validAnswer1.status == 'valid'" style="float:right"><em>{{ 'INCOMPLETE' | translate }}</em></span>
+                        <span ng-show="validAnswer1.status == 'valid'" style="float:right"><em>{{ 'COMPLETE' | translate }}</em></span>
+                      </div>
+                      <div class="panel-body form-horizontal">
+                        <div class="form-group has-feedback" ng-class="{'has-success': newPatient.securityQuestion1.serial}">
+                          <label class="control-label col-md-2">
+                            Question 1
+                          </label>
+                          <div class="col-md-7">
+                            <select ng-model="newPatient.securityQuestion1.serial" ng-change="securityQuestion1Update()" ng-options="securityQuestion.serial as securityQuestion.question for securityQuestion in securityQuestions | filter:filterFromQ2 | filter:filterFromQ3" class="form-control" >
+                              <option ng-hide="newPatient.securityQuestion1.serial" value="">{{ 'SELECT_QUESTION' | translate }} 1</option>
+                            </select>
+                          </div>
+                        </div>    
+                        <div class="form-group has-feedback" ng-class="{'has-success': validAnswer1.status == 'valid', 'has-error': validAnswer1.status == 'invalid'}">
+                          <label class="control-label col-md-2">
+                            {{ 'ANSWER' | translate }} 
+                          </label>
+                          <div class="col-md-7">
+                            <input type="text" class="form-control" required="required" ng-model="newPatient.securityQuestion1.answer" ng-disabled="!newPatient.securityQuestion1.serial" ng-change="validateAnswer1(newPatient.securityQuestion1.answer)" placeholder="">
+                            <span ng-show="newPatient.securityQuestion1.answer" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validAnswer1.status == 'valid', 'glyphicon-remove': validAnswer1.status == 'invalid'}" aria-hidden="true"></span>
+                          </div>
+                          <em class="col-md-3 control-label" ng-show="validAnswer1.status == 'invalid'" ng-class="{'has-error': validAnswer1.status == 'invalid'}" style="text-align:left;">
+                            {{validAnswer1.message}}
+                          </em>
+                        </div>
+                      </div>
+                    </div>
+                  </div>          
+                  <div class="col-xs-12 col-md-8">
+                    <div class="panel" ng-class="validAnswer2.status == 'valid' ? 'panel-success': 'panel-danger'">
+                      <div class="panel-heading"><strong>{{ 'SECURITY_QUESTION' | translate }} 2</strong>
+                        <span ng-hide="validAnswer2.status == 'valid'" style="float:right"><em>{{ 'INCOMPLETE' | translate }}</em></span>
+                        <span ng-show="validAnswer2.status == 'valid'" style="float:right"><em>{{ 'COMPLETE' | translate }}</em></span>
+                      </div>
+                      <div class="panel-body form-horizontal">
+                        <div class="form-group has-feedback" ng-class="{'has-success': newPatient.securityQuestion2.serial}">
+                          <label class="control-label col-md-2">
+                            Question 2
+                          </label>
+                          <div class="col-md-7">
+                            <select ng-model="newPatient.securityQuestion2.serial" ng-change="securityQuestion2Update()" ng-options="securityQuestion.serial as securityQuestion.question for securityQuestion in securityQuestions | filter:filterFromQ1 | filter:filterFromQ3" class="form-control" >
+                              <option ng-hide="newPatient.securityQuestion2.serial" value="">{{ 'SELECT_QUESTION' | translate }} 2</option>
+                            </select>
+                          </div>
+                        </div>    
+                        <div class="form-group has-feedback" ng-class="{'has-success': validAnswer2.status == 'valid', 'has-error': validAnswer2.status == 'invalid'}">
+                          <label class="control-label col-md-2">
+                            {{ 'ANSWER' | translate }}
+                          </label>
+                          <div class="col-md-7">
+                            <input type="text" class="form-control" required="required" ng-model="newPatient.securityQuestion2.answer" ng-disabled="!newPatient.securityQuestion2.serial" ng-change="validateAnswer2(newPatient.securityQuestion2.answer)" placeholder="">
+                            <span ng-show="newPatient.securityQuestion2.answer" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validAnswer2.status == 'valid', 'glyphicon-remove': validAnswer2.status == 'invalid'}" aria-hidden="true"></span>
+                          </div>
+                          <em class="col-md-3 control-label" ng-show="validAnswer2.status == 'invalid'" ng-class="{'has-error': validAnswer2.status == 'invalid'}" style="text-align:left;">
+                            {{validAnswer2.message}}
+                          </em>
+                        </div>
+                      </div>
+                    </div>
+                  </div> 
+                  <div class="col-xs-12 col-md-8">
+                    <div class="panel" ng-class="validAnswer3.status == 'valid' ? 'panel-success': 'panel-danger'">
+                      <div class="panel-heading"><strong>{{ 'SECURITY_QUESTION' | translate }} 3</strong>
+                        <span ng-hide="validAnswer3.status == 'valid'" style="float:right"><em>{{ 'INCOMPLETE' | translate }}</em></span>
+                        <span ng-show="validAnswer3.status == 'valid'" style="float:right"><em>{{ 'COMPLETE' | translate }}</em></span>
+                      </div>
+                      <div class="panel-body form-horizontal">
+                        <div class="form-group has-feedback" ng-class="{'has-success': newPatient.securityQuestion3.serial}">
+                          <label class="control-label col-md-2">
+                            Question 3
+                          </label>
+                          <div class="col-md-7">
+                            <select ng-model="newPatient.securityQuestion3.serial" ng-change="securityQuestion3Update()" ng-options="securityQuestion.serial as securityQuestion.question for securityQuestion in securityQuestions | filter:filterFromQ1 | filter:filterFromQ2" class="form-control" >
+                              <option ng-hide="newPatient.securityQuestion3.serial" value="">{{ 'SELECT_QUESTION' | translate }} 3</option>
+                            </select>
+                          </div>
+                        </div>    
+                        <div class="form-group has-feedback" ng-class="{'has-success': validAnswer3.status == 'valid', 'has-error': validAnswer3.status == 'invalid'}">
+                          <label class="control-label col-md-2">
+                            {{ 'ANSWER' | translate }}
+                          </label>
+                          <div class="col-md-7">
+                            <input type="text" class="form-control" required="required" ng-model="newPatient.securityQuestion3.answer" ng-disabled="!newPatient.securityQuestion3.serial" ng-change="validateAnswer3(newPatient.securityQuestion3.answer)" placeholder="">
+                            <span ng-show="newPatient.securityQuestion3.answer" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validAnswer3.status == 'valid', 'glyphicon-remove': validAnswer3.status == 'invalid'}" aria-hidden="true"></span>
+                          </div>
+                          <em class="col-md-3 control-label" ng-show="validAnswer3.status == 'invalid'" ng-class="{'has-error': validAnswer3.status == 'invalid'}" style="text-align:left;">
+                            {{validAnswer3.message}}
+                          </em>
+                        </div>
+                      </div>
+                    </div>
+                  </div>          
+                </div>
+
+                <!-- SECTION: Access level -->
+                <div class="row animated" ng-class="{fadeInUp: accessLevelSection.show}" ng-if="accessLevelSection.show">
+                  <div class="col-xs-12 side-menu-title">
+                    <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                      <span style="background-color:#e6edfa; padding: 0 10px;">
+                        <span class="fas fa-dot-circle"></span>
+                        <h2>{{ 'ACCESS_LEVEL_TITLE' | translate }}</h2>
+                      </span>  
+                    </div>  
+                  </div>
+                </div>   
+                <div class="row animated" ng-class="{fadeInUp: accessLevelSection.show}" ng-if="accessLevelSection.show">
+                  <div class="col-xs-12">
+                    <p style="margin-bottom: 10px;">
+                      <span style="color:#d9534f"><strong>{{ 'REQUIRED_FIELD' | translate }}:</strong></span>
+                      {{ 'ACCESS_LEVEL_DESCRIPTION' | translate }}
+                    </p>
+                  </div>
+                </div>  
+                <div class="row animated" style="margin-bottom: 15px;" ng-class="{fadeInUp: accessLevelSection.show}" ng-if="accessLevelSection.show">
+                  <div class="col-xs-12 col-md-12">
+                    <div class="row">
+                      <div class="col-md-5">
+                        <select ng-model="newPatient.accessLevel" ng-change="accessLevelUpdate()" ng-options="access.id as access.name for access in accessLevels" class="form-control">
+                          <option ng-hide="newPatient.accessLevel" value="">{{ 'SELECT_ACCESS_LEVEL' | translate }}</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>  
+                </div>
+
+                <!-- SECTION: Final checks -->
+  							<div class="row animated" ng-class="{fadeInUp: finalCheckSection.show}" ng-if="finalCheckSection.show">
+                  <div class="col-xs-12 side-menu-title">
+                    <div style="height: 10px; border-bottom: 1px solid #6f5499;">
+                      <span style="background-color:#e6edfa; padding: 0 10px;">
+                        <span class="fas fa-dot-circle"></span>
+                        <h2>{{ 'FINAL_CHECKS_TITLE' | translate }}</h2>
+                      </span>  
+                    </div>  
+                  </div>
+                </div>   
+                <div class="row animated" ng-class="{fadeInUp: finalCheckSection.show}" ng-if="finalCheckSection.show">
+                  <div class="col-xs-12">
+                    <p style="margin-bottom: 10px;">
+                      <span style="color:#d9534f"><strong>{{ 'REQUIRED_FIELD' | translate }}:</strong></span>
+                      {{ 'FINAL_CHECKS_DESCRIPTION' | translate }} 
+                    </p>
+                  </div>
+                </div> 
+
+  			  			<div class="row animated" ng-class="{fadeInUp: finalCheckSection.show}" ng-if="finalCheckSection.show">
+                  <div class="col-xs-12 col-sm-9 col-md-9 col-lg-6"> 
+  									<table class="table table-bordered table-condensed">
+  										<col width="15%">
+  										<col width="85%">
+  										<tr ng-class="{'danger': !idCheck, 'success': idCheck}">
+  											<td>
+  												<div style="text-align: center; cursor: pointer;" ng-click="idCheckUpdate()">
+  													<span class="glyphicon glyphicon-remove" style="color: #d9534f" ng-if="!idCheck"></span>
+  													<span class="glyphicon glyphicon-ok" style="color: #3c763d" ng-if="idCheck"></span>
+  												</div>
+  											</td>
+  											<th>{{ 'ID_CHECK_DESCRIPTION'  | translate }}</th>
+  										</tr>
+  										<tr ng-class="{'danger': !consentCheck, 'success': consentCheck}">
+  											<td>
+  												<div style="text-align: center; cursor: pointer;" ng-click="consentCheckUpdate()">
+  													<span class="glyphicon glyphicon-remove" style="color: #d9534f" ng-if="!consentCheck"></span>
+  													<span class="glyphicon glyphicon-ok" style="color: #3c763d" ng-if="consentCheck"></span>
+  												</div>
+  											</td>
+  											<th>{{ 'CONSENT_CHECK_DESCRIPTION'  | translate }}</th>
+  										</tr>
+
+  										<tr ng-class="{'danger': !disclaimerCheck, 'success': disclaimerCheck}">
+  											<td>
+  												<div style="text-align: center; cursor: pointer;" ng-click="disclaimerCheckUpdate()">
+  													<span class="glyphicon glyphicon-remove" style="color: #d9534f" ng-if="!disclaimerCheck"></span>
+  													<span class="glyphicon glyphicon-ok" style="color: #3c763d" ng-if="disclaimerCheck"></span>
+  												</div>
+  											</td>
+  											<th>{{ 'DISCLAIMER_CHECK_DESCRIPTION'  | translate }}</th>
+  										</tr>
+
+  										<tr ng-class="{'danger': !slaCheck, 'success': slaCheck}">
+  											<td>
+  												<div style="text-align: center; cursor: pointer;" ng-click="slaCheckUpdate()">
+  													<span class="glyphicon glyphicon-remove" style="color: #d9534f" ng-if="!slaCheck"></span>
+  													<span class="glyphicon glyphicon-ok" style="color: #3c763d" ng-if="slaCheck"></span>
+  												</div>
+  											</td>
+  											<th>{{ 'SLA_CHECK_DESCRIPTION'  | translate }}</th>
+  										</tr>
+
+  										<tr ng-class="{'danger': !opalDocCheck, 'success': opalDocCheck}">
+  											<td>
+  												<div style="text-align: center; cursor: pointer;" ng-click="opalDocCheckUpdate()">
+  													<span class="glyphicon glyphicon-remove" style="color: #d9534f" ng-if="!opalDocCheck"></span>
+  													<span class="glyphicon glyphicon-ok" style="color: #3c763d" ng-if="opalDocCheck"></span>
+  												</div>
+  											</td>
+  											<th>{{ 'OPAL_DOCUMENTATION_CHECK_DESCRIPTION'  | translate }}</th>
+  										</tr>
+  									</table>
+                  </div>
+  			  			</div>
+              </div>
+              <!-- END SECTION -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

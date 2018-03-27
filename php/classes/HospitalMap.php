@@ -55,6 +55,8 @@ class HospitalMap {
         $description_FR     = $hosMapDetails['description_FR'];
         $url                = $hosMapDetails['url'];
         $qrid               = $hosMapDetails['qrid'];
+        $userSer            = $hosMapDetails['user']['id'];
+        $sessionId          = $hosMapDetails['user']['sessionid'];
 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -70,7 +72,9 @@ class HospitalMap {
                         MapDescription_EN,
                         MapName_FR,
                         MapDescription_FR,
-                        DateAdded
+                        DateAdded,
+                        LastUpdatedBy,
+                        SessionId
                     )
                 VALUES (
                     \"$url\",
@@ -80,7 +84,9 @@ class HospitalMap {
                     \"$description_EN\",
                     \"$name_FR\",
                     \"$description_FR\",
-                    NOW()
+                    NOW(),
+                    '$userSer',
+                    '$sessionId'
                 )
             ";
 		    $query = $host_db_link->prepare( $sql );
@@ -230,7 +236,9 @@ class HospitalMap {
         $url                = $hosMapDetails['url'];
         $qrid               = $hosMapDetails['qrid'];
         $serial             = $hosMapDetails['serial'];
-
+        $userSer            = $hosMapDetails['user']['id'];
+        $sessionId          = $hosMapDetails['user']['sessionid'];
+ 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -245,7 +253,9 @@ class HospitalMap {
                     HospitalMap.MapName_EN          = \"$name_EN\",
                     HospitalMap.MapDescription_EN   = \"$description_EN\",
                     HospitalMap.MapName_FR          = \"$name_FR\",
-                    HospitalMap.MapDescription_FR   = \"$description_FR\"
+                    HospitalMap.MapDescription_FR   = \"$description_FR\",
+                    HospitalMap.LastUpdatedBy       = '$userSer',
+                    HospitalMap.SessionId           = '$sessionId'
                 WHERE
                     HospitalMap.HospitalMapSerNum   = $serial
             ";
@@ -263,9 +273,12 @@ class HospitalMap {
      * Deletes a hospital map from the database
      *
      * @param integer $serial : the hospital map serial number
+     * @param object $user : the current user in session
 	 * @return void
      */
-    public function deleteHospitalMap ($serial) {
+    public function deleteHospitalMap ($serial, $user) {
+        $userSer = $user['id'];
+        $sessionId = $user['sessionid'];
         try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -277,6 +290,19 @@ class HospitalMap {
             ";
 
 	        $query = $host_db_link->prepare( $sql );
+            $query->execute();
+
+            $sql = "
+                UPDATE HospitalMapMH
+                SET 
+                    HospitalMapMH.LastUpdatedBy = '$userSer',
+                    HospitalMapMH.SessionId = '$sessionId'
+                WHERE
+                    HospitalMapMH.HospitalMapSerNum = $serial
+                ORDER BY HospitalMapMH.RevSerNum DESC 
+                LIMIT 1
+            ";
+            $query = $host_db_link->prepare( $sql );
             $query->execute();
 
         } catch( PDOException $e) {

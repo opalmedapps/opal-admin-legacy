@@ -9,7 +9,8 @@
 		'subject_FR' 	    => $_POST['subject_FR'],
         'body_EN'           => str_replace(array('"', "'"), '\"', $_POST['body_EN']),
         'body_FR'           => str_replace(array('"', "'"), '\"', $_POST['body_FR']),
- 		'type' 		        => $_POST['type']['serial']
+		'type' 		        => $_POST['type']['serial'],
+		'user'				=> $_POST['user']
 	);
 
 	$emailObject = new Email; // Object
