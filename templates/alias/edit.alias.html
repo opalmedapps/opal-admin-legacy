@@ -29,7 +29,7 @@
         <strong>Current Assigned Code(s)</strong><br>
         <p>
           <ul class="list-items">
-            <li ng-repeat="selectedTerm in termList | filter: {added: 1, assigned: null}">
+            <li ng-repeat="selectedTerm in termList | filter: {added: 1}">
               {{selectedTerm.name}}
             </li>
           </ul>
