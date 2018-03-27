@@ -11,7 +11,8 @@
 		'password'			=> $_POST['password'],
 		'confirmPassword' 	=> $_POST['confirmPassword'],
 		'override'			=> true,
-		'role'				=> $_POST['role'] 
+		'role'				=> $_POST['role'],
+		'cypher'			=> $_POST['cypher']
 	);
 
 	// Call function to update password

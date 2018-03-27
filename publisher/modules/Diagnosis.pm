@@ -41,6 +41,8 @@ sub new
 		_datestamp	    => undef,
 		_description	=> undef,
         _code           => undef,
+        _stage 			=> undef,
+        _stagecriteria 	=> undef,
 	};
 
 	# bless associates an object with a class so Perl knows which package to search for
@@ -119,6 +121,26 @@ sub setDiagnosisCode
 	return $diagnosis->{_code};
 }
 
+#====================================================================================
+# Subroutine to set diagnosis stage
+#====================================================================================
+sub setDiagnosisStage
+{
+	my ($diagnosis, $stage) = @_; # diagnosis object with provided stage in arguments
+	$diagnosis->{_stage} = $stage; # set the stage
+	return $diagnosis->{_stage};
+}
+
+#====================================================================================
+# Subroutine to set diagnosis stage criteria
+#====================================================================================
+sub setDiagnosisStageCriteria
+{
+	my ($diagnosis, $stagecriteria) = @_; # diagnosis object with provided stage criteria in arguments
+	$diagnosis->{_stagecriteria} = $stagecriteria; # set the stage criteria
+	return $diagnosis->{_stagecriteria};
+}
+
 #======================================================================================
 # Subroutine to get the diagnosis serial
 #======================================================================================
@@ -183,6 +205,24 @@ sub getDiagnosisCode
 }
 
 #======================================================================================
+# Subroutine to get the diagnosis stage
+#======================================================================================
+sub getDiagnosisStage
+{
+	my ($diagnosis) = @_; # our diagnosis object
+	return $diagnosis->{_stage};
+}
+
+#======================================================================================
+# Subroutine to get the diagnosis stage criteria
+#======================================================================================
+sub getDiagnosisStageCriteria
+{
+	my ($diagnosis) = @_; # our diagnosis object
+	return $diagnosis->{_stagecriteria};
+}
+
+#======================================================================================
 # Subroutine to get all diagnoses from the ARIA db since last cron
 #======================================================================================
 sub getDiagnosesFromSourceDB
@@ -211,12 +251,16 @@ sub getDiagnosesFromSourceDB
 			    	dx.DiagnosisSer,
 				    CONVERT(VARCHAR, dx.DateStamp, 120),
     				RTRIM(REPLACE(REPLACE(dx.Description,'Malignant neoplasm','malignant neoplasm'),'malignant neoplasm','Ca')),
-                    dx.DiagnosisId
+                    dx.DiagnosisId,
+                    pmdx.SummaryStage,
+                    RTRIM(pmdx.StageCriteria)
 		    	FROM
 			    	variansystem.dbo.Diagnosis dx,
-				    variansystem.dbo.Patient pt
+				    variansystem.dbo.Patient pt,
+				    variansystem.dbo.PrmryDiagnosis pmdx
     			WHERE
 	    			dx.PatientSer		= pt.PatientSer
+	    		AND dx.DiagnosisSer 	= pmdx.DiagnosisSer
 		    	AND	pt.SSN 				LIKE '$patientSSN%'
 			    AND	dx.Description 		NOT LIKE '%ERROR%'
     			AND	dx.HstryDateTime    > '$lastTransfer'
@@ -239,6 +283,8 @@ sub getDiagnosesFromSourceDB
 		    	$datestamp		= $row->[1];
 			    $description	= $row->[2];
                 $code           = $row->[3];
+                $stage 			= $row->[4];
+                $stagecriteria 	= $row->[5];
     
 	    		# set diagnostic information
 		    	$diagnosis->setDiagnosisSourceUID($sourceuid);
@@ -246,6 +292,8 @@ sub getDiagnosesFromSourceDB
     			$diagnosis->setDiagnosisDescription($description);
 	    		$diagnosis->setDiagnosisPatientSer($patientSer);
                 $diagnosis->setDiagnosisCode($code);
+                $diagnosis->setDiagnosisStage($stage);
+                $diagnosis->setDiagnosisStageCriteria($stagecriteria);
                 $diagnosis->setDiagnosisSourceDatabaseSer($sourceDBSer);
     
 	    		push(@diagnosisList, $diagnosis);
@@ -490,7 +538,7 @@ sub inOurDatabase
 	my $ExistingDiagnosis = (); # data to be entered if diagnosis exists
 	
 	# Other diagnosis variables, if diagnosis exists
-	my ($ser, $patientser, $datestamp, $description, $code); 
+	my ($ser, $patientser, $datestamp, $description, $code, $stage, $stagecriteria); 
 
 	my $inDB_sql = "
 		SELECT DISTINCT
@@ -499,7 +547,9 @@ sub inOurDatabase
 			Diagnosis.CreationDate,
 			Diagnosis.Description_EN,
 			Diagnosis.PatientSerNum,
-            Diagnosis.DiagnosisCode
+            Diagnosis.DiagnosisCode,
+            Diagnosis.Stage,
+            Diagnosis.StageCriteria
 		FROM
 			Diagnosis
 		WHERE
@@ -523,6 +573,8 @@ sub inOurDatabase
 		$description		    = $data[3];
 		$patientser		        = $data[4];
         $code                   = $data[5];
+        $stage 					= $data[6];
+        $stagecriteria 			= $data[7];
 
 	}
 
@@ -537,6 +589,8 @@ sub inOurDatabase
 		$ExistingDiagnosis->setDiagnosisDescription($description);
 		$ExistingDiagnosis->setDiagnosisPatientSer($patientser);
 		$ExistingDiagnosis->setDiagnosisCode($code);
+		$ExistingDiagnosis->setDiagnosisStage($stage);
+		$ExistingDiagnosis->setDiagnosisStageCriteria($stagecriteria);
 
 
 		return $ExistingDiagnosis; # this is true (ie. diagnosis exists, return object)
@@ -558,6 +612,8 @@ sub insertDiagnosisIntoOurDB
 	my $datestamp		= $diagnosis->getDiagnosisDateStamp();
 	my $description		= $diagnosis->getDiagnosisDescription();
 	my $code	    	= $diagnosis->getDiagnosisCode();
+	my $stage 			= $diagnosis->getDiagnosisStage();
+	my $stagecriteria 	= $diagnosis->getDiagnosisStageCriteria();
 	
 	# Insert diagnosis
 	my $insert_sql = "
@@ -570,6 +626,8 @@ sub insertDiagnosisIntoOurDB
 				CreationDate,
                 DiagnosisCode,
 				Description_EN,
+				Stage,
+				StageCriteria,
 				LastUpdated
 			)
 		VALUES (
@@ -580,6 +638,8 @@ sub insertDiagnosisIntoOurDB
 			'$datestamp',
             '$code',
 			\"$description\",
+			\"$stage\",
+			\"$stagecriteria\",
 			NULL
 		)
 	";
@@ -613,6 +673,8 @@ sub updateDatabase
 	my $datestamp		= $diagnosis->getDiagnosisDateStamp();
 	my $description		= $diagnosis->getDiagnosisDescription();
     my $code            = $diagnosis->getDiagnosisCode();
+    my $stage 			= $diagnosis->getDiagnosisStage();
+	my $stagecriteria 	= $diagnosis->getDiagnosisStageCriteria();
  
 	my $update_sql = "
 		
@@ -621,7 +683,9 @@ sub updateDatabase
 		SET
 			CreationDate		= '$datestamp',
 			Description_EN		= \"$description\",
-            DiagnosisCode       = '$code'
+            DiagnosisCode       = '$code',
+            Stage 				= \"$stage\",
+            StageCriteria 		= \"$stagecriteria\"
 		WHERE
 			DiagnosisAriaSer	    = '$sourceuid'
         AND SourceDatabaseSerNum    = '$sourcedbser'
@@ -652,11 +716,15 @@ sub compareWith
 	my $Sdatestamp		= $SuspectDiagnosis->getDiagnosisDateStamp();
 	my $Sdescription	= $SuspectDiagnosis->getDiagnosisDescription();
 	my $Scode       	= $SuspectDiagnosis->getDiagnosisCode();
+	my $Sstage 			= $SuspectDiagnosis->getDiagnosisStage();
+	my $Sstagecriteria 	= $SuspectDiagnosis->getDiagnosisStageCriteria();
 
 	# Original Diagnosis...
 	my $Odatestamp		= $OriginalDiagnosis->getDiagnosisDateStamp();
 	my $Odescription	= $OriginalDiagnosis->getDiagnosisDescription();
 	my $Ocode       	= $OriginalDiagnosis->getDiagnosisCode();
+	my $Ostage 			= $OriginalDiagnosis->getDiagnosisStage();
+	my $Ostagecriteria 	= $OriginalDiagnosis->getDiagnosisStageCriteria();
 
 	# go through each parameter
 	if ($Sdatestamp ne $Odatestamp) {
@@ -676,6 +744,16 @@ sub compareWith
 		print "Diagnosis Code has changed from '$Ocode' to '$Scode'\n";
 		my $updatedCode = $UpdatedDiagnosis->setDiagnosisCode($Scode); # update diagnosis code
 		print "Will update database entry to '$updatedCode'.\n";
+	}
+	if ($Sstage ne $Ostage) {
+		print "Diagnosis Stage has changed from '$Ostage' to '$Sstage'\n";
+		my $updatedStage = $UpdatedDiagnosis->setDiagnosisStage($Sstage); # update diagnosis stage
+		print "Will update database entry to '$updatedStage'.\n";
+	}
+	if ($Sstagecriteria ne $Ostagecriteria) {
+		print "Diagnosis Stage Criteria has changed from '$Ostagecriteria' to '$Sstagecriteria'\n";
+		my $updatedStageCriteria = $UpdatedDiagnosis->setDiagnosisStageCriteria($Sstagecriteria); # update diagnosis stage criteria
+		print "Will update database entry to '$updatedStageCriteria'.\n";
 	}
 
 	return $UpdatedDiagnosis;

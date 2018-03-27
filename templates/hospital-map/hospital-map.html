@@ -1,0 +1,54 @@
+  <div id="main">
+    <div id="top">
+      <div class="clearfix">
+        <div class="row">
+          <!-- Load side menu -->
+          <div id="side-panel-scrollbar" class="col-lg-2">
+            <div ng-include="'templates/side-panel-menu.html'"></div>
+          </div>
+          <!-- Right side detail view -->
+          <div class="col-lg-10 animated fadeIn">
+            <div class="row main-title">
+              <!-- Page title -->
+              <div class="col-xs-12 col-md-9 title-content">
+                <span class="fa fa-map"></span>
+                <h1><strong>Hospital Maps</strong></h1>
+              </div>
+              <!-- Breadcrumbs -->
+              <div class="col-md-3 title-breadcrumbs"> 
+                <span><a ui-sref="home">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Hospital Maps</strong></span>
+              </div>
+            </div> 
+						<div class="row clearfix operations">
+              <!-- Add button -->
+							<div class="save-add col-xs-12 col-sm-6 col-md-8">
+								<a style="width:100px;margin-right:20px;" href="" ng-click="goToAddHospitalMap()" class="btn btn-md btn-outline item-button">
+									<span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
+									<span style="font-size: 20px;"><strong>Add</strong></span>
+								</a>
+              </div>
+              <!-- Search field -->
+							<div class="search col-xs-12 col-sm-6 col-md-4">
+								<div class="form-group has-feedback" style="margin-bottom: 0">
+								<input type="text" class="form-control" ng-model="filterValue" ng-change="filterHosMap(filterValue)" placeholder="Search...">
+									<span class="glyphicon glyphicon-search form-control-feedback"></span>
+								</div>
+							</div>
+            </div>
+            <!-- Load main table -->
+            <div class="panel-container" style="text-align:left">
+              <div class="panel-info">
+                <div class="panel-input">
+                  <div id="data-table">
+                    <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:75vh"></div>
+                  </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <div class="bannerMessage alert-success">{{bannerMessage}}</div>
+  </div>

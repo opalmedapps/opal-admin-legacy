@@ -14,7 +14,8 @@
         'publish_date'      => $_POST['publish_date'],
         'filters'           => $_POST['filters'],
  		'serial' 	        => $_POST['serial'],
- 		'type' 		        => $_POST['type']
+ 		'type' 		        => $_POST['type'],
+ 		'user'				=> $_POST['user']
 	);
 
 	// Call function

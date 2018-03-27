@@ -21,6 +21,8 @@ use Time::Piece; # To parse and convert date time
 #---------------------------------------------------------------------------------
 my $SQLDatabase		= $Database::targetDatabase;
 
+my $verbose = 0;
+
 #====================================================================================
 # Constructor for our Alias class 
 #====================================================================================
@@ -205,6 +207,7 @@ sub getAliasesMarkedForUpdate
 		AND SourceDatabase.Enabled 		= 1
 	";
 
+	print "$aliasInfo_sql\n" if $verbose;
     
 	# prepare query
 	my $query = $SQLDatabase->prepare($aliasInfo_sql)
@@ -269,6 +272,8 @@ sub getAliasExpressionsFromOurDB
 		AND AliasExpression.AliasSerNum	= Alias.AliasSerNum
 	";
 
+	print "$expressionInfo_sql\n" if $verbose;
+
 	# prepare query
 	my $query = $SQLDatabase->prepare($expressionInfo_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
@@ -309,7 +314,9 @@ sub setAliasLastTransferIntoOurDB
 		WHERE
 			AliasUpdate			= 1
 		AND Alias.AliasSerNum 	= AliasExpression.AliasSerNum
-		";
+	";
+
+	print "$update_sql\n" if $verbose;
 
 	# prepare query
 	my $query = $SQLDatabase->prepare($update_sql)
@@ -337,6 +344,8 @@ sub getExpressionNameFromOurDB
         WHERE
             ae.AliasExpressionSerNum = '$expressionSer'
     ";
+
+	print "$select_sql\n" if $verbose;
 
     # prepare query
 	my $query = $SQLDatabase->prepare($select_sql)
@@ -374,6 +383,8 @@ sub getAliasFromOurDB
             ae.AliasExpressionSerNum = '$expressionSer'
     ";
 
+	print "$select_sql\n" if $verbose;
+
     # prepare query
 	my $query = $SQLDatabase->prepare($select_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
@@ -391,4 +402,6 @@ sub getAliasFromOurDB
     return $aliasSer;
 
 }
+# To exit/return always true (for the module itself)
+1;	
 

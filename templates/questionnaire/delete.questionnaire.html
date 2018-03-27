@@ -1,0 +1,25 @@
+<div class="modal-header">
+	<h2 class="modal-title col-xs-12">
+		<span class="glyphicon glyphicon-trash"></span> 
+		Delete Questionnaire 
+	</h2>
+	<p class="modal-title-caption col-xs-12">
+		{{questionnaireToDelete.name_EN}} / {{questionnaireToDelete.name_FR}}
+	</p>
+</div>
+<div class="modal-body">
+	<div class="alert alert-danger" role="alert">
+    <strong>Delete Questionnaire</strong><br>
+    <p>
+      Are you sure you want to delete the questionnaire "{{questionnaireToDelete.name_EN}}" ?
+    </p>
+  </div>
+  <div class="row">
+    <div class="modal-buttons col-xs-12">
+      <form method="post" ng-submit="deleteQuestionnaire()">      
+        <input class="btn btn-primary submit" type="submit" value="Delete">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+      </form>
+    </div>
+  </div>
+</div>

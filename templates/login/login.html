@@ -1,0 +1,25 @@
+<div id="main" class="gradient-bg" style="height: 100%">
+  <div class="login-container">
+    <div class="col-xs-12 col-lg-10">
+      <div class="row flex">
+        <!-- Opal title -->
+        <div class="col-xs-12 col-md-offset-3 col-md-6 col-lg-6 col-lg-offset-2 title-login">
+          <h1 class="animated flipInX">
+            opal <strong>ADMIN</strong>
+          </h1>
+        </div>
+        <!-- Logo -->
+        <div class="col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3 col-lg-offset-0 col-lg-6">
+          <div class="circle animated form-box-shake" style="z-index:0; box-shadow:rgba(0, 0, 0, 0.6) 0px 3px 6px -3px;" ng-class="{'pulse': !formLoaded}"></div>
+          <div class="circle animated form-box-shake" ng-class="{'pulse': !formLoaded}" >
+            <img class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="100" width="100">
+          </div>
+          <!-- Load login form -->
+          <div ng-include="'templates/login/login-form.html'"></div>
+        </div>
+      </div>
+    </div>
+  </div>  
+  <div class="bannerMessage alert-success">{{bannerMessage}}</div>                       
+</div>
+      

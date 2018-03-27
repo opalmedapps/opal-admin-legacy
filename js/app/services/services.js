@@ -4,8 +4,7 @@
 angular.module('opalAdmin.services', [])
 
 	.service('Session', function ($cookies) {
-		this.create = function (session_id, user) {
-			$cookies.put('session_id', session_id);
+		this.create = function (user) {
 			$cookies.putObject('user', user);
 		};
 		this.retrieve = function (data) {
@@ -15,7 +14,6 @@ angular.module('opalAdmin.services', [])
 			return $cookies.getObject(data);
 		};
 		this.destroy = function () {
-			$cookies.remove('session_id');
 			$cookies.remove('user');
 		};
 	})
@@ -23,8 +21,8 @@ angular.module('opalAdmin.services', [])
 	.service('loginModal', function ($uibModal) {
 		return function () {
 			var modalInstance = $uibModal.open({
-				templateUrl: 'templates/login-form.html',
-				controller: 'loginModalController',
+				templateUrl: 'templates/login/login-form.html',
+				controller: 'loginModal',
 				backdrop: 'static',
 			});
 
@@ -33,11 +31,34 @@ angular.module('opalAdmin.services', [])
 
 	})
 
-	.service('LogoutService', function (Session, $state) {
+	.service('LogoutService', function (Session, $state, $http) {
+		this.logLogout = function () {
+			var user = Session.retrieveObject('user')
+			$http.post('php/user/logout.php', user );
+		};
 		this.logout = function () {
+			this.logLogout();
 			Session.destroy();
 			$state.go('login');
 		};
+	})
+
+	.service('Encrypt', function () {
+		this.encode = function (s, k) {
+			var enc = "";
+			var str = "";
+			// make sure that input is string
+			str = s.toString();
+			for (var i = 0; i < s.length; i++) {
+				// create block
+				var a = s.charCodeAt(i);
+				// bitwise XOR
+				var b = a ^ k;
+				enc = enc + String.fromCharCode(b);
+			}
+			// base 64 encode
+			return btoa(enc);
+		}
 	})
 
 	.service('FrequencyFilterService', function () {
