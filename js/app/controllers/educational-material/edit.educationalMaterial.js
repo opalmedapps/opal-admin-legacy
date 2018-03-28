@@ -37,6 +37,10 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 		$scope.resourceFilterList = [];
 		$scope.patientFilterList = [];
 
+		$scope.contentTypeList = []; 
+
+		
+
 		// Initialize lists to hold the distinct edu material types
 		$scope.EduMatTypes_EN = [];
 		$scope.EduMatTypes_FR = [];
@@ -138,6 +142,15 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 			// Assign demographic filters
 			checkDemographicFilters();
 
+			// Call our API to get the list of allowable educational material content type tags
+			educationalMaterialCollectionService.getAllowableContentTypes().then(function (response) {
+				$scope.contentTypeList = response.data;
+				// Assign content type 
+				checkContentTypes();
+			}).catch(function(response) {
+				console.error('Error occurred getting allowable content types: ', response.status, response.data);
+			});
+
 			// Call our API service to get each filter
 			filterCollectionService.getFilters().then(function (response) {
 
@@ -183,6 +196,21 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 			return filterList;
 		}
 
+		// Function to assign '1' to existing content types
+		function checkContentTypes() {
+			angular.forEach($scope.eduMat.content_types, function (selectedType){
+				var selectedTypeSer = selectedType.serial;
+				angular.forEach($scope.contentTypeList, function (type) {
+					var typeSer = type.serial;
+					if (typeSer == selectedTypeSer) {
+						type.added = 1;
+					}
+				});
+			});
+
+			return;
+		}
+
 		// Function to check demographic filters
 		function checkDemographicFilters() {
 			var demoFilter = {
@@ -222,7 +250,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 		// Function to check necessary form fields are complete
 		$scope.checkForm = function () {
 			if ($scope.eduMat.name_EN && $scope.eduMat.name_FR && (($scope.eduMat.url_EN && $scope.eduMat.url_FR)
-				|| $scope.tocsComplete) && $scope.changesMade) {
+				|| $scope.tocsComplete) && $scope.changesMade && $scope.checkTagsAdded($scope.contentTypeList)) {
 				return true;
 			}
 			else
@@ -244,6 +272,20 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 				});
 			}
 
+		};
+
+		// Function to return boolean for # of added content type tags
+		$scope.checkTagsAdded = function (contentTypeList) {
+
+			var addedParam = false;
+			angular.forEach(contentTypeList, function (contentType) {
+				if (contentType.added)
+					addedParam = true;
+			});
+			if (addedParam)
+				return true;
+			else
+				return false;
 		};
 
 		// Function to validate english share url
@@ -297,6 +339,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 
 				// Initialize filter
 				$scope.eduMat.filters = [];
+				$scope.eduMat.content_types = [];
 
 				// Add demographic filters, if defined
 				if ($scope.demoFilter.sex)
@@ -316,6 +359,9 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 				addFilters($scope.doctorFilterList);
 				addFilters($scope.resourceFilterList);
 				addFilters($scope.patientFilterList);
+
+				// Add content type tags to edu material
+				addContentTypes($scope.contentTypeList);
 
 				// Log who updated educational material
 				var currentUser = Session.retrieveObject('user');
@@ -376,6 +422,14 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 			angular.forEach(filterList, function (Filter) {
 				if (Filter.added)
 					$scope.eduMat.filters.push({ id: Filter.id, type: Filter.type });
+			});
+		}
+
+		// Function to return content types that have been checked
+		function addContentTypes(contentTypeList) {
+			angular.forEach(contentTypeList, function (contentType) {
+				if (contentType.added)
+					$scope.eduMat.content_types.push({ serial: contentType.serial });
 			});
 		}
 

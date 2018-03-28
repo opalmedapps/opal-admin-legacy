@@ -22,16 +22,24 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents"' +
 			'ng-click="grid.appScope.editEduMat(row.entity)"> ' +
 			'<strong><a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></strong></div>';
-		var checkboxCellTemplate = '<div style="text-align: center; cursor: pointer;" ' +
-			'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
-			'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
-			'ng-checked="grid.appScope.updatePublishFlag(row.entity.publish)" ng-model="row.entity.publish"></div>';
+		var checkboxCellTemplate = '<div class="ui-grid-cell-contents"> <div ng-if="grid.appScope.isTaggedEducationalMaterial(row.entity)" ' +
+			'style="text-align: center; cursor: pointer;" ng-click="grid.appScope.checkPublishFlag(row.entity)"> ' +
+			'<input style="margin: 4px;" type="checkbox" ' +
+			'ng-checked="grid.appScope.updatePublishFlag(row.entity.publish)" ng-model="row.entity.publish"></div></div>';
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
 			'<strong><a href="" ng-click="grid.appScope.editEduMat(row.entity)">Edit</a></strong> ' +
 			'- <strong><a href="" ng-click="grid.appScope.deleteEduMat(row.entity)">Delete</a></strong></div>';
 		var expandableRowTemplate = '<div ui-grid="row.entity.subGridOptions"></div>';
 		var ratingCellTemplate = '<div class="ui-grid-cell-contents" ng-show="row.entity.rating == -1">No rating</div>' +
 			'<div class="ui-grid-cell-contents" ng-hide="row.entity.rating == -1"><stars number="{{row.entity.rating}}"></stars> </div>';
+
+		var contentTypeColumnDefs = { 
+			field: 'content_types_text', displayName: 'Content Type', width: '10%', filter: {
+				condition: uiGridConstants.filter.CONTAINS,
+				type: uiGridConstants.filter.SELECT,
+				selectOptions: []
+			}
+		}
 
 		// Search engine for table
 		$scope.filterOptions = function (renderableRows) {
@@ -58,11 +66,12 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 				{ field: 'name_EN', displayName: 'Title (EN / FR)', cellTemplate: cellTemplateName, width: '25%' },
 				{ field: 'rating', name: 'Average Rating', cellTemplate: ratingCellTemplate, width: '10%', enableFiltering: false },
 				{ field: 'type_EN', displayName: 'Type (EN)', width: '15%' },
-				{ field: 'publish', displayName: 'Publish Flag', width: '10%', cellTemplate: checkboxCellTemplate, enableFiltering: false },
+				contentTypeColumnDefs,
+				{ field: 'publish', displayName: 'Publish Flag', width: '7%', cellTemplate: checkboxCellTemplate, enableFiltering: false },
 				{
-					field: 'phase_EN', displayName: 'Phase In Treatment (EN)', width: '10%', filter: {
+					field: 'phase_EN', displayName: 'Phase In Treatment (EN)', width: '10%', sortable:false, filter: {
 						type: uiGridConstants.filter.SELECT,
-						selectOptions: [{ value: 'Prior To Treatment', label: 'Prior To Treatment' }, { value: 'During Treatment', label: 'During Treatment' }, { value: 'After Treatment', label: 'After Treatment' }]
+						selectOptions: [{ "value": 'Prior To Treatment', label: 'Prior To Treatment' }, { value: 'During Treatment', label: 'During Treatment' }, { value: 'After Treatment', label: 'After Treatment' }]
 					}
 				},
 				{ field: 'lastupdated', displayName: 'Last Updated', width: '10%' },
@@ -87,6 +96,16 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 		$scope.eduMatPublishes = {
 			publishList: []
 		};
+
+		$scope.allowedContentTypes = [];
+
+		// Call our API to get the list of allowable educational material content type tags
+		educationalMaterialCollectionService.getAllowableContentTypes().then(function (response) {
+			contentTypeColumnDefs.filter.selectOptions = response.data;
+			$scope.allowedContentTypes = response.data;
+		}).catch(function(response) {
+			console.error('Error occurred getting allowable content types: ', response.status, response.data);
+		});
 
 		// Initialize an object for deleting material
 		$scope.eduMatToDelete = {};
@@ -164,6 +183,12 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 			}
 			edumat.changed = 1; // flag change to entity
 		};
+
+		// Function to return whether edumat is tagged as educational material or not 
+		// To show hide publish checkbox
+		$scope.isTaggedEducationalMaterial = function (edumat) {
+			return edumat.content_types_text.includes('Educational Material');
+		}
 
 		// Function to submit changes when publish flags have been modified
 		$scope.submitPublishFlags = function () {

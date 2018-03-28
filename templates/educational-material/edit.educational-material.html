@@ -42,6 +42,33 @@
         </div>
       </div>
     </div>
+    <!-- SECTION: Content Type Tags -->
+    <div uib-accordion-group is-open="contentTypeSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Content Type Tag </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': contentTypeSection.open, 'glyphicon-chevron-right': !contentTypeSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="alert alert-info" role="alert">
+        <strong>Current content type tags</strong><br>
+        <p>
+          <ul class="list-items" >
+            <li ng-repeat="contentType in contentTypeList | filter: {added: 1} : 1">
+              {{contentType.label}}
+            </li>
+          </ul>
+        </p>
+      </div>
+      <div class="list-space">
+        <ul class="list-items">
+          <li ng-repeat="contentType in contentTypeList">
+            <label>
+              <input type="checkbox" ng-click="selectItem(contentType)" ng-checked="contentType.added" /> {{contentType.label}}
+            </label>
+          </li>
+        </ul>
+      </div>
+    </div>
     <!-- SECTION: Single URL --> 
     <div uib-accordion-group is-open="urlSection.open" ng-show="!eduMat.tocs.length">
       <uib-accordion-heading>
