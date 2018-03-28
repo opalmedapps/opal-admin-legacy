@@ -178,6 +178,31 @@
                     </p>
                   </div>
                 </div>
+                <!-- SECTION: Content type tags -->
+                <div uib-accordion-group is-open="contentTypesSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:contentTypesSection.show}" is-disabled="!checkTagsAdded(allowedContentTypes)" ng-if="contentTypesSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkTagsAdded(allowedContentTypes)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Attached Content Type(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': contentTypesSection.open, 'glyphicon-chevron-right': !contentTypesSection.open}" ng-if="checkTagsAdded(allowedContentTypes)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkTagsAdded(allowedContentTypes)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="contentType in allowedContentTypes | filter: {added: 1} : 1">
+                          {{contentType.label}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
                 <!-- SECTION: Supporting PDF -->
                 <div uib-accordion-group is-open="shareUrlSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:shareUrlSection.open}" is-disabled="!newEduMat.share_url_EN && !newEduMat.share_url_FR" ng-if="shareUrlSection.show">
                   <uib-accordion-heading>
@@ -724,6 +749,46 @@
                       <div class="panel-content" style="text-align:center">
                         <span style="font-size:30px;" class="glyphicon glyphicon-plus"></span>
                         <div class="option-panel-title">Add</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- SECTION: Content type tags -->
+              <div class="row animated" ng-class="{fadeInUp:contentTypesSection.show}" ng-if="contentTypesSection.show">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Attach content type</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row animated" ng-class="{fadeInUp:contentTypesSection.show}" ng-if="contentTypesSection.show">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span><strong>Optional field:</strong></span>
+                    Select one or more content types to attach this educational material to. This will send the educational material to the appropriate content type.
+                  </p>
+                </div>
+              </div>  
+              <div class="row animated" ng-class="{fadeInUp: contentTypesSection.show}" ng-if="contentTypesSection.show"> 
+                <div class="col-xs-12 col-lg-9">
+                  <div class="panel" ng-class="checkTagsAdded(allowedContentTypes) ? 'panel-success': 'panel-danger'">
+                    <div class="panel-heading"><strong>Clinical Codes</strong>
+                      <span ng-hide="checkTagsAdded(allowedContentTypes)" style="float:right"><em>Incomplete</em></span>
+                      <span ng-show="checkTagsAdded(allowedContentTypes)" style="float:right"><em>Complete</em></span>
+                    </div>
+                    <div class="panel-body">
+                      <div class="list-space">
+                        <ul class="list-items">
+                          <li ng-repeat="contentType in allowedContentTypes">
+                            <label>
+                              <input type="checkbox" ng-click="contentTypeUpdate(contentType)" ng-checked="contentType.added" /> {{contentType.label}}
+                            </label>
+                          </li>
+                        </ul>
                       </div>
                     </div>
                   </div>

@@ -37,6 +37,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 		$scope.phaseSection = {open:false, show:false};
 		$scope.urlSection = {open:false, show:false};
 		$scope.tocsSection = {open:false, show:false};
+		$scope.contentTypesSection = {open:false, show:false};
 		$scope.shareUrlSection = {open:false, show:false};
 		$scope.demoSection = {open:false, show:false};
 		$scope.filterSection = {open:false, show:false};
@@ -47,7 +48,8 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 			url: { completed: false },
 			type: { completed: false },
 			phase: { completed: false },
-			tocs: { completed: false }
+			tocs: { completed: false },
+			content_types: {completed: false}
 		};
 
 		// Responsible for "searching" in search bars
@@ -64,7 +66,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 		$scope.numOfCompletedSteps = 0;
 
 		// Default total number of steps 
-		$scope.stepTotal = 5;
+		$scope.stepTotal = 6;
 
 		// Progress for progress bar on default steps and total
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -102,7 +104,8 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 			type_FR: "",
 			phase_in_tx: null,
 			tocs: [],
-			filters: []
+			filters: [],
+			content_types: []
 		};
 
 		// Initialize a list of sexes
@@ -133,6 +136,14 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 		// Initialize lists to hold the distinct edu material types
 		$scope.EduMatTypes = [];
 
+		$scope.allowedContentTypes = [];
+
+		// Call our API to get the list of allowable educational material content type tags
+		educationalMaterialCollectionService.getAllowableContentTypes().then(function (response) {
+			$scope.allowedContentTypes = response.data;
+		}).catch(function(response) {
+			console.error('Error occurred getting allowable content types: ', response.status, response.data);
+		});
 
 		/* Function for the "Processing..." dialog */
 		var processingModal;
@@ -229,10 +240,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 
 			if ($scope.newEduMat.url_EN && $scope.newEduMat.url_FR) {
 
-				// Toggle booleans
-				$scope.shareUrlSection.show = true;
-				$scope.filterSection.show = true;
-				$scope.demoSection.show = true;
+				$scope.contentTypesSection.show = true;
 
 				// Toggle step completion
 				steps.url.completed = true;
@@ -252,6 +260,49 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 			}
 		};
+
+		// Function to toggle necesary changes when updating content type tags
+		$scope.contentTypeUpdate = function (contentType) {
+
+			$scope.contentTypesSection.open = true;
+
+			// if originally added, remove it
+			if (contentType.added) {
+
+				contentType.added = 0;
+
+				// Check if there are still tags added, if not, flag
+				if (!$scope.checkTagsAdded($scope.allowedContentTypes)) {
+
+					// Toggle boolean
+					steps.content_types.completed = false;
+
+					$scope.contentTypesSection.open = false;
+
+					// Count the number of completed steps
+					$scope.numOfCompletedSteps = stepsCompleted(steps);
+					// Change progress bar
+					$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+				}
+			}
+
+			else {
+
+				contentType.added = 1;
+
+				// Toggle booleans
+				$scope.shareUrlSection.show = true;
+				$scope.filterSection.show = true;
+				$scope.demoSection.show = true;
+
+				steps.content_types.completed = true;
+
+				// Count the number of completed steps
+				$scope.numOfCompletedSteps = stepsCompleted(steps);
+				// Change progress bar
+				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+			}
+		}
 
 		// Function to toggle necessary changes when updating the types
 		$scope.typeUpdate = function (type, language) {
@@ -379,9 +430,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 				});
 
 				if ($scope.tocsComplete) {
-					$scope.shareUrlSection.show = true;
-					$scope.filterSection.show = true;
-					$scope.demoSection.show = true;
+					$scope.contentTypesSection.show = true;
 				}
 
 			}
@@ -438,6 +487,9 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 				addFilters($scope.doctorFilterList);
 				addFilters($scope.resourceFilterList);
 				addFilters($scope.patientFilterList);
+
+				// Add content type tags to edu material
+				addContentTypes($scope.allowedContentTypes);
 
 				// Log who created educational material
 				var currentUser = Session.retrieveObject('user');
@@ -520,6 +572,14 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 			});
 		}
 
+		// Function to return content types that have been checked
+		function addContentTypes(contentTypeList) {
+			angular.forEach(contentTypeList, function (contentType) {
+				if (contentType.added)
+					$scope.newEduMat.content_types.push({ serial: contentType.serial });
+			});
+		}
+
 		// Function to check if filters are added
 		$scope.checkFilters = function (filterList) {
 			var filtersAdded = false;
@@ -528,6 +588,20 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 					filtersAdded = true;
 			});
 			return filtersAdded;
+		};
+
+		// Function to return boolean for # of added content type tags
+		$scope.checkTagsAdded = function (contentTypeList) {
+
+			var addedParam = false;
+			angular.forEach(contentTypeList, function (contentType) {
+				if (contentType.added)
+					addedParam = true;
+			});
+			if (addedParam)
+				return true;
+			else
+				return false;
 		};
 
 		// Function to return boolean for form completion

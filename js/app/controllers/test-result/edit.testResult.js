@@ -38,13 +38,6 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 		$scope.testFilter = "";
 		$scope.eduMatFilter = null;
 
-		// Call our API service to get the list of educational material
-		educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
-			$scope.eduMatList = response.data; // Assign value
-		}).catch(function(response) {
-			console.error('Error occurred getting educational material list:', response.status, response.data);
-		});
-
 		// Function to assign search field when textbox changes
 		$scope.changeTestFilter = function (field) {
 			$scope.testFilter = field;
@@ -96,15 +89,20 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 			testResultCollectionService.getTestNames().then(function (response) {
 
 				$scope.testList = checkAdded(response.data);
-
-
-				processingModal.close(); // hide modal
-				processingModal = null; // remove reference
+				// Call our API service to get the list of educational material
+				educationalMaterialCollectionService.getEducationalMaterialsByType('test_result').then(function (response) {
+					$scope.eduMatList = response.data; // Assign value
+					processingModal.close(); // hide modal
+					processingModal = null; // remove reference
+				}).catch(function(response) {
+					console.error('Error occurred getting educational material list:', response.status, response.data);
+				});
 
 			}).catch(function(response) {
 				console.error('Error occurred getting test names:', response.status, response.data);
 			});
 
+			
 		}).catch(function(response) {
 			console.error('Error occurred getting test result details:', response.status, response.data);
 		});
@@ -144,9 +142,25 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 			else return false;
 		};
 
-		$scope.eduMatUpdate = function (eduMat) {
+		$scope.showTOCs = false;
+		$scope.toggleTOCDisplay = function () {
+			$scope.showTOCs = !$scope.showTOCs;
+		}
 
-			$scope.testResult.eduMat = eduMat;
+		$scope.eduMatUpdate = function (event, eduMat) {
+
+			if ($scope.testResult.eduMat) {
+				if ($scope.testResult.eduMat.serial == event.target.value) {
+					$scope.testResult.eduMatSer = null;
+					$scope.testResult.eduMat = null;
+				}
+				else {
+					$scope.testResult.eduMat = eduMat
+				}
+			}
+			else {
+				$scope.testResult.eduMat = eduMat
+			}
 			// Toggle boolean
 			$scope.setChangesMade();
 		};
