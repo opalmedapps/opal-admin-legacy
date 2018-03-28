@@ -33,13 +33,6 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		// Responsible for "searching" in search bars
 		$scope.filter = $filter('filter');
 
-		// Call our API service to get the list of educational material
-		educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
-			$scope.eduMatList = response.data; // Assign value
-		}).catch(function(response) {
-			console.error('Error occurred getting educational material list:', response.status, response.data);
-		});
-
 		// Function to assign termFilter when textbox is changing 
 		$scope.changeTermFilter = function (termFilter) {
 			$scope.termFilter = termFilter;
@@ -118,6 +111,24 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 			}).catch(function(response) {
 				console.error('Error occurred getting expression list:', response.status, response.data);
+			});
+
+			var contentType;
+			switch ($scope.alias.type) {
+				case 'Appointment':
+					contentType = 'appointment'
+					break;
+				case 'Document':
+					contentType = 'document'
+					break;
+				case 'Task':
+					contentType = 'task'
+			}
+			// Call our API service to get the list of educational material
+			educationalMaterialCollectionService.getEducationalMaterialsByType(contentType).then(function (response) {
+				$scope.eduMatList = response.data; // Assign value
+			}).catch(function(response) {
+				console.error('Error occurred getting educational material list:', response.status, response.data);
 			});
 
 			// Call our API service to get the list of existing color tags
@@ -201,9 +212,25 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 		};
 
-		$scope.eduMatUpdate = function (eduMat) {
+		$scope.showTOCs = false;
+		$scope.toggleTOCDisplay = function () {
+			$scope.showTOCs = !$scope.showTOCs;
+		}
 
-			$scope.alias.eduMat = eduMat;
+		$scope.eduMatUpdate = function (event, eduMat) {
+
+			if ($scope.alias.eduMat) {
+				if ($scope.alias.eduMat.serial == event.target.value) {
+					$scope.alias.eduMatSer = null;
+					$scope.alias.eduMat = null;
+				}
+				else {
+					$scope.alias.eduMat = eduMat
+				}
+			}
+			else {
+				$scope.alias.eduMat = eduMat
+			}
 
 			// Toggle boolean
 			$scope.changesMade = true;

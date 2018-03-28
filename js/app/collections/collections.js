@@ -107,6 +107,14 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
+		// Function to get the list of existing education materials for a particular content type
+		educationalMaterialAPI.getEducationalMaterialsByType = function (type) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/educational-material/get.educational_materials_by_type.php?callback=JSON_CALLBACK&type=" + type
+			});
+		};
+
 		// Function to get an educational material detail given a serial
 		educationalMaterialAPI.getEducationalMaterialDetails = function (serial) {
 			return $http({
@@ -136,6 +144,14 @@ angular.module('opalAdmin.collections', [])
 			return $http({
 				method: 'JSONP',
 				url: URLPATH + "api/educational-material/get.educational_material_parents.php?callback=JSON_CALLBACK"
+			});
+		};
+
+		// Function to get allable content types
+		educationalMaterialAPI.getAllowableContentTypes = function () {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/educational-material/get.allowable_content_types.php?callback=JSON_CALLBACK"
 			});
 		};
 

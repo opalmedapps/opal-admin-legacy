@@ -100,19 +100,18 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.add', ['ngAnimate', '
 			$('.form-box-right').addClass('fadeInRight');
 		};
 
-		// Call our API service to get the list of educational material
-		educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
-			$scope.eduMatList = response.data; // Assign value
-		}).catch(function(response) {
-			console.error('Error occurred getting educational materials:', response.status, response.data);
-		});
-
 		// Call our API to ge the list of diagnoses
 		diagnosisCollectionService.getDiagnoses().then(function (response) {
 			$scope.diagnosisList = response.data;
 
-			processingModal.close(); // hide modal
-			processingModal = null; // remove reference
+			// Call our API service to get the list of educational material
+			educationalMaterialCollectionService.getEducationalMaterialsByType('diagnosis_translation').then(function (response) {
+				$scope.eduMatList = response.data; // Assign value
+				processingModal.close(); // hide modal
+				processingModal = null; // remove reference
+			}).catch(function(response) {
+				console.error('Error occurred getting educational material list:', response.status, response.data);
+			});
 
 			$scope.formLoaded = true;
 			$scope.loadForm();
@@ -206,10 +205,24 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.add', ['ngAnimate', '
 		};
 
 		// Function to toggle necessary changes when updating educational material
-		$scope.eduMatUpdate = function () {
+		$scope.eduMatUpdate = function (event, eduMat) {
 
 			// Toggle booleans
 			$scope.educationalMaterialSection.open = true;
+
+			if ($scope.newDiagnosisTranslation.eduMat) {
+				if ($scope.newDiagnosisTranslation.eduMat.serial == event.target.value) {
+					$scope.newDiagnosisTranslation.eduMat = null;
+					$scope.newDiagnosisTranslation.eduMatSer = null;
+					$scope.educationalMaterialSection.open = false;
+				}
+				else {
+					$scope.newDiagnosisTranslation.eduMat = eduMat
+				}
+			}
+			else {
+				$scope.newDiagnosisTranslation.eduMat = eduMat
+			}
 		}
 
 		// Function to submit the new diagnosis translation

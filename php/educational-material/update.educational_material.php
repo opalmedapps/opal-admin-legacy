@@ -19,7 +19,8 @@
         'filters'           => $_POST['filters'],
         'tocs' 		        => $_POST['tocs'],
 		'serial'            => $_POST['serial'],
-		'user'				=> $_POST['user']
+		'user'				=> $_POST['user'],
+        'content_types'     => $_POST['content_types']
     );
 
     // Call function
