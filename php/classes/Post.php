@@ -415,6 +415,9 @@ class Post {
 
         $existingFilters	= array();
 
+        $detailsUpdated     = $postDetails['details_updated'];
+        $filtersUpdated     = $postDetails['filters_updated'];
+
         $response = array(
             'value'     => 0,
             'message'   => ''
@@ -423,98 +426,126 @@ class Post {
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-			$sql = "
-				UPDATE 
-					PostControl 
-				SET 
-					PostControl.PostName_EN 		= \"$postName_EN\", 
-					PostControl.PostName_FR 		= \"$postName_FR\", 
-					PostControl.Body_EN	            = \"$postBody_EN\",
-                    PostControl.Body_FR	            = \"$postBody_FR\",
-                    PostControl.PublishDate         = '$postPublishDate',
-                    PostControl.LastUpdatedBy       = '$userSer',
-                    PostControl.SessionId           = '$sessionId'
-				WHERE 
-					PostControl.PostControlSerNum = $postSer
-			";
 
-			$query = $host_db_link->prepare( $sql );
-			$query->execute();
+            if($detailsUpdated) {
 
-			$sql = "
-				SELECT DISTINCT 
-                    Filters.FilterType,
-                    Filters.FilterId
-				FROM 
-					Filters
-				WHERE 
-                    Filters.ControlTableSerNum       = $postSer
-                AND Filters.ControlTable             = 'PostControl'
-                AND Filters.FilterType              != ''
-                AND Filters.FilterId                != ''
-			";
+    			$sql = "
+    				UPDATE 
+    					PostControl 
+    				SET 
+    					PostControl.PostName_EN 		= \"$postName_EN\", 
+    					PostControl.PostName_FR 		= \"$postName_FR\", 
+    					PostControl.Body_EN	            = \"$postBody_EN\",
+                        PostControl.Body_FR	            = \"$postBody_FR\",
+                        PostControl.PublishDate         = '$postPublishDate',
+                        PostControl.LastUpdatedBy       = '$userSer',
+                        PostControl.SessionId           = '$sessionId'
+    				WHERE 
+    					PostControl.PostControlSerNum = $postSer
+    			";
 
-
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
-
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $filterArray = array(
-                    'type'  => $data[0],
-                    'id'    => $data[1]
-                );
-				array_push($existingFilters, $filterArray);
-			}
-
-            if (!empty($existingFilters)) {
-                // If old filters not in new, remove from DB
-	    		foreach ($existingFilters as $existingFilter) {
-                    $id     = $existingFilter['id'];
-                    $type   = $existingFilter['type'];
-                    if (!$this->nestedSearch($id, $type, $postFilters)) {
-					    $sql = "
-                            DELETE FROM 
-	    						Filters
-		    				WHERE
-                                Filters.FilterId            = \"$id\"
-                            AND Filters.FilterType          = '$type'
-                            AND Filters.ControlTableSerNum   = $postSer
-                            AND Filters.ControlTable         = 'PostControl'
-    					";
-    
-	    				$query = $host_db_link->prepare( $sql );
-		    			$query->execute();
-			    	}
-    			}   
+    			$query = $host_db_link->prepare( $sql );
+    			$query->execute();
             }
-            if (!empty($postFilters)) {
-                // If new filters, insert into DB
-    			foreach ($postFilters as $filter) {
-                    $id     = $filter['id'];
-                    $type   = $filter['type'];
-                    if (!$this->nestedSearch($id, $type, $existingFilters)) {
-                        $sql = "
-                            INSERT INTO 
-                                Filters (
-                                    ControlTable,
-                                    ControlTableSerNum,
-                                    FilterId,
-                                    FilterType,
-                                    DateAdded
+
+            if ($filtersUpdated) {
+
+    			$sql = "
+    				SELECT DISTINCT 
+                        Filters.FilterType,
+                        Filters.FilterId
+    				FROM 
+    					Filters
+    				WHERE 
+                        Filters.ControlTableSerNum       = $postSer
+                    AND Filters.ControlTable             = 'PostControl'
+                    AND Filters.FilterType              != ''
+                    AND Filters.FilterId                != ''
+    			";
+
+
+    			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+    			$query->execute();
+
+    			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $filterArray = array(
+                        'type'  => $data[0],
+                        'id'    => $data[1]
+                    );
+    				array_push($existingFilters, $filterArray);
+    			}
+
+                if (!empty($existingFilters)) {
+                    // If old filters not in new, remove from DB
+    	    		foreach ($existingFilters as $existingFilter) {
+                        $id     = $existingFilter['id'];
+                        $type   = $existingFilter['type'];
+                        if (!$this->nestedSearch($id, $type, $postFilters)) {
+    					    $sql = "
+                                DELETE FROM 
+    	    						Filters
+    		    				WHERE
+                                    Filters.FilterId            = \"$id\"
+                                AND Filters.FilterType          = '$type'
+                                AND Filters.ControlTableSerNum   = $postSer
+                                AND Filters.ControlTable         = 'PostControl'
+        					";
+        
+    	    				$query = $host_db_link->prepare( $sql );
+    		    			$query->execute();
+
+                             $sql = "
+                                UPDATE FiltersMH
+                                SET 
+                                    FiltersMH.LastUpdatedBy = '$userSer',
+                                    FiltersMH.SessionId = '$sessionId'
+                                WHERE
+                                    FiltersMH.FilterId              = \"$id\"
+                                AND FiltersMH.FilterType            = '$type'
+                                AND FiltersMH.ControlTableSerNum    = $postSer
+                                AND FiltersMH.ControlTable          = 'PostControl'
+                                ORDER BY FiltersMH.DateAdded DESC 
+                                LIMIT 1
+                            ";
+                            $query = $host_db_link->prepare( $sql );
+                            $query->execute();
+
+    			    	}
+        			}   
+                }
+                if (!empty($postFilters)) {
+                    // If new filters, insert into DB
+        			foreach ($postFilters as $filter) {
+                        $id     = $filter['id'];
+                        $type   = $filter['type'];
+                        if (!$this->nestedSearch($id, $type, $existingFilters)) {
+                            $sql = "
+                                INSERT INTO 
+                                    Filters (
+                                        ControlTable,
+                                        ControlTableSerNum,
+                                        FilterId,
+                                        FilterType,
+                                        DateAdded,
+                                        LastUpdatedBy,
+                                        SessionId
+                                    )
+                                VALUES (
+                                    'PostControl',
+                                    '$postSer',
+                                    \"$id\",
+                                    '$type',
+                                    NOW(),
+                                    '$userSer',
+                                    '$sessionId'
                                 )
-                            VALUES (
-                                'PostControl',
-                                '$postSer',
-                                \"$id\",
-                                '$type',
-                                NOW()
-                            )
-			    		";
-				    	$query = $host_db_link->prepare( $sql );
-					    $query->execute();
-    				}
-	    		}
+    			    		";
+    				    	$query = $host_db_link->prepare( $sql );
+    					    $query->execute();
+        				}
+    	    		}
+                }
             }
 
             $response['value'] = 1;
