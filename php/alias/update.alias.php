@@ -16,7 +16,9 @@
         'source_db'         => $_POST['source_db'],
         'color'             => $_POST['color'],
         'edumatser'            => $_POST['eduMatSer'],
-        'user'				=> $_POST['user']
+        'user'				=> $_POST['user'],
+        'details_updated'	=> $_POST['details_updated'],
+        'expressions_updated'	=> $_POST['expressions_updated']
 	);
 
 	// Call function
