@@ -69,11 +69,56 @@
       </div>
     </div>
 
-    <!-- SECTION: QR Code & Map URL -->
-    <div uib-accordion-group is-open="qrUrlSection.open">
+    <!-- SECTION: Map URLs -->
+    <div uib-accordion-group is-open="urlSection.open">
       <uib-accordion-heading>
         <div>
-          <strong>QR Identifier / Map URL</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': qrUrlSection.open, 'glyphicon-chevron-right': !qrUrlSection.open}"></i>
+          <strong>Map URLs</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': urlSection.open, 'glyphicon-chevron-right': !urlSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="alert alert-info" role="alert">
+        <strong>Map URL</strong><br>
+        <p>
+          <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+          <span><strong>EN</strong> -- {{hosMap.url_EN}}</span> 
+          <br>
+          <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+          <span><strong>FR</strong> -- {{hosMap.url_FR}}</span> 
+        </p>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-md-6">
+          <div class="input-group">
+            <span class="input-group-addon">EN</span>
+            <input class="form-control" type="text" ng-model="hosMap.url_EN" ng-change="setChangesMade()" placeholder="English Map URL" required="required">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button" ng-click="showMap(hosMap.url_EN, 'EN')">Show Map</button>
+            </span>
+          </div>
+          <div ng-show="hosMap.url_EN" style="text-align:center">
+            <img ng-src="{{mapURL_EN}}" style="width:200px;height:200px;">
+          </div>
+        </div>
+        <div class="col-xs-12 col-md-6">
+          <div class="input-group">
+            <span class="input-group-addon">FR</span>
+            <input class="form-control" type="text" ng-model="hosMap.url_FR" ng-change="setChangesMade()" placeholder="Map URL Français" required="required">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button" ng-click="showMap(hosMap.url_FR, 'FR')">Show Map</button>
+            </span>
+          </div>
+          <div ng-show="hosMap.url_FR" style="text-align:center">
+            <img ng-src="{{mapURL_FR}}" style="width:200px;height:200px;">
+          </div>
+        </div>
+      </div>
+    </div>
+
+     <!-- SECTION: QR Code -->
+    <div uib-accordion-group is-open="qrCodeSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>QR Identifier</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': qrCodeSection.open, 'glyphicon-chevron-right': !qrCodeSection.open}"></i>
         </div>
       </uib-accordion-heading>
       <div class="alert alert-info" role="alert">
@@ -81,12 +126,7 @@
         <p>
           <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
           <span>{{hosMap.qrid}}</span> 
-        </p> <br>
-        <strong>Map URL</strong><br>
-        <p>
-          <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-          <span>{{hosMap.url}}</span> 
-        </p>
+        </p> 
       </div>
       <div class="row">
         <div class="col-xs-12 col-md-6">
@@ -98,17 +138,6 @@
           </div>
           <div ng-show="hosMap.qrcode" style="text-align:center">
             <img ng-src="{{hosMap.qrcode}}" style="width:200px;height:200px;">
-          </div>
-        </div>
-        <div class="col-xs-12 col-md-6">
-          <div class="input-group">
-            <input class="form-control" type="text" ng-model="hosMap.url" ng-change="setChangesMade()" placeholder="Map URL" required="required">
-            <span class="input-group-btn">
-              <button class="btn btn-default" type="button" ng-click="showMap(hosMap.url)">Show Map</button>
-            </span>
-          </div>
-          <div ng-show="hosMap.url" style="text-align:center">
-            <img ng-src="{{mapURL}}" style="width:200px;height:200px;">
           </div>
         </div>
       </div>

@@ -21,11 +21,13 @@ angular.module('opalAdmin.controllers.hospitalMap.add', ['ngAnimate', 'ngSanitiz
 
 		// Default boolean 
 		$scope.titleDescriptionSection = {open: false, show: true};
-		$scope.qrUrlSection = {open: false, show: false};
+		$scope.urlSection = {open: false, show: false};
+		$scope.qrSection = {open: false, show: false};
 
 		// completed steps boolean object; used for progress bar
 		var steps = {
 			title_description: { completed: false },
+			url: { completed: false },
 			qrid: { completed: false }
 		};
 
@@ -33,7 +35,7 @@ angular.module('opalAdmin.controllers.hospitalMap.add', ['ngAnimate', 'ngSanitiz
 		$scope.numOfCompletedSteps = 0;
 
 		// Default total number of steps 
-		$scope.stepTotal = 2;
+		$scope.stepTotal = 3;
 
 		// Progress for progress bar on default steps and total
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -65,7 +67,8 @@ angular.module('opalAdmin.controllers.hospitalMap.add', ['ngAnimate', 'ngSanitiz
 			qrid: "",
 			qrcode: "",
 			qrpath: "",
-			url: ""
+			url_EN: "",
+			url_FR: ""
 		};
 
 		$scope.oldqrid = "";
@@ -83,7 +86,7 @@ angular.module('opalAdmin.controllers.hospitalMap.add', ['ngAnimate', 'ngSanitiz
 			if ($scope.newHosMap.name_EN && $scope.newHosMap.name_FR &&
 				$scope.newHosMap.description_EN && $scope.newHosMap.description_FR) {
 
-				$scope.qrUrlSection.show = true;
+				$scope.urlSection.show = true;
 
 				// Toggle step completion
 				steps.title_description.completed = true;
@@ -103,12 +106,37 @@ angular.module('opalAdmin.controllers.hospitalMap.add', ['ngAnimate', 'ngSanitiz
 			}
 		};
 
-		// Function to toggle necessary changes when updating qrid and URL
+		// Function to toggle necessary changes when updating URLs
+		$scope.urlUpdate = function () {
+
+			$scope.urlSection.open = true;
+
+			if ($scope.newHosMap.url_EN && $scope.newHosMap.url_FR) {
+
+				$scope.qrSection.show = true;
+
+				// Toggle step completion
+				steps.url.completed = true;
+				// Count the number of completed steps
+				$scope.numOfCompletedSteps = stepsCompleted(steps);
+				// Change progress bar
+				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+			} else {
+				// Toggle step completion
+				steps.url.completed = false;
+				// Count the number of completed steps
+				$scope.numOfCompletedSteps = stepsCompleted(steps);
+				// Change progress bar
+				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+			}
+		};
+
+		// Function to toggle necessary changes when updating qrid
 		$scope.qridUpdate = function () {
 
-			$scope.qrUrlSection.open = true;
+			$scope.qrSection.open = true;
 
-			if ($scope.newHosMap.qrid && $scope.newHosMap.qrcode && $scope.newHosMap.url) {
+			if ($scope.newHosMap.qrid && $scope.newHosMap.qrcode) {
 				// Toggle step completion
 				steps.qrid.completed = true;
 				// Count the number of completed steps
@@ -147,11 +175,19 @@ angular.module('opalAdmin.controllers.hospitalMap.add', ['ngAnimate', 'ngSanitiz
 		};
 
 		// Function to show map
-		$scope.showMapDisplay = false;
-		$scope.mapURL = "";
-		$scope.showMap = function (url) {
-			$scope.showMapDisplay = true;
-			$scope.mapURL = url;
+		$scope.showMapDisplay_EN = false;
+		$scope.showMapDisplay_FR = false;
+		$scope.mapURL_EN = "";
+		$scope.mapURL_FR = "";
+		$scope.showMap = function (url, language) {
+			if (language == 'EN') {
+				$scope.showMapDisplay_EN = true;
+				$scope.mapURL_EN = url;
+			} 
+			else if (language == 'FR') {
+				$scope.showMapDisplay_FR = true;
+				$scope.mapURL_FR = url;
+			}
 		};
 
 		// Function to submit the new hospital map

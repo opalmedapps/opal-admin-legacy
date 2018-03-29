@@ -9,7 +9,8 @@
         'name_FR'           => $_POST['name_FR'],
         'description_EN'    => str_replace(array('"', "'"), '\"', $_POST['description_EN']),
         'description_FR'    => str_replace(array('"', "'"), '\"', $_POST['description_FR']),
-        'url'               => $_POST['url'],
+        'url_EN'            => $_POST['url_EN'],
+        'url_FR'            => $_POST['url_FR'],
         'qrid'              => $_POST['qrid'],
         'user'              => $_POST['user']
     );
