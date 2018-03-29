@@ -48,8 +48,9 @@ angular.module('opalAdmin.controllers.hospitalMap', ['ngAnimate', 'ngSanitize', 
 			data: 'hosMapList',
 			columnDefs: [
 				{ field: 'name_EN', displayName: 'Name (EN / FR)', cellTemplate: cellTemplateName, width: '35%' },
-				{ field: 'qrid', displayName: 'QR Identifier', width: '15%' },
-				{ field: 'url', displayName: 'Map URL', width: '25%' },
+				{ field: 'qrid', displayName: 'QR Identifier', width: '10%' },
+				{ field: 'url_EN', displayName: 'Map URL EN', width: '15%' },
+				{ field: 'url_FR', displayName: 'Map URL FR', width: '15%' },
 				{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false, width: '25%' }
 			],
 			useExternalFiltering: true,
