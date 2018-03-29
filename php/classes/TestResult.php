@@ -40,6 +40,9 @@ class TestResult {
 	            $query = $host_db_link->prepare( $sql );
 				$query->execute();
             }
+
+            $this->sanitizeEmptyTestResults($user);
+
             $response['value'] = 1; // Success
             return $response;
 		} catch( PDOException $e) {
@@ -462,6 +465,8 @@ class TestResult {
                 }
             }
 
+            $this->sanitizeEmptyTestResults($testResultDetails['user']);
+
         } catch( PDOException $e) {
 			return $e->getMessage();
 		}
@@ -747,6 +752,8 @@ class TestResult {
                 }
             }
 
+            $this->sanitizeEmptyTestResults($testResultDetails['user']);
+
             $response['value'] = 1; // Success
             return $response;
 
@@ -828,6 +835,41 @@ class TestResult {
 			return $response;
 		}
 	}
+
+    /**
+     *
+     * Removes publish flag for test results without assigned tests
+     *
+     * @param object $user : the session user
+     * @return void
+     */
+    public function sanitizeEmptyTestResults($user) {
+        $userSer = $user['id'];
+        $sessionId = $user['sessionid'];
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
+                UPDATE 
+                    TestResultControl 
+                LEFT JOIN 
+                    TestResultExpression 
+                ON  TestResultControl.TestResultControlSerNum = TestResultExpression.TestResultControlSerNum
+                SET 
+                    TestResultControl.PublishFlag       = 0, 
+                    TestResultControl.LastUpdatedBy     = $userSer,
+                    TestResultControl.SessionId         = '$sessionId'
+                WHERE  
+                    TestResultExpression.TestResultControlSerNum IS NULL 
+            ";
+
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
+            return;
+        } catch( PDOException $e) {
+            return $e->getMessage(); // Fail
+        }
+    }
 
     /**
      *
