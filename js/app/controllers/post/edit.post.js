@@ -132,6 +132,7 @@ angular.module('opalAdmin.controllers.post.edit', ['ngAnimate', 'ngSanitize', 'u
 		// Function to toggle Item in a list on/off
 		$scope.selectItem = function (item) {
 			$scope.changesMade = true;
+			$scope.post.filters_updated = 1;
 			if (item.added)
 				item.added = 0;
 			else
@@ -169,6 +170,11 @@ angular.module('opalAdmin.controllers.post.edit', ['ngAnimate', 'ngSanitize', 'u
 		$scope.setChangesMade = function () {
 			$scope.changesMade = true;
 		};
+
+		$scope.detailsUpdated = function () {
+			$scope.post.details_updated = 1;
+			$scope.setChangesMade();
+		}
 
 		// Submit changes
 		$scope.updatePost = function () {
