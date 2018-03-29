@@ -267,6 +267,8 @@ class Alias {
 				$query->execute();
             }
 
+            $this->sanitizeEmptyAliases($user);
+
             $response['value'] = 1; // Success
             return $response;
 
@@ -275,6 +277,41 @@ class Alias {
 			return $response; // Fail
 		}
 	}
+
+    /**
+     *
+     * Removes publish flag for aliases without assigned terms
+     *
+     * @param object $user : the session user
+     * @return void
+     */
+    public function sanitizeEmptyAliases($user) {
+        $userSer = $user['id'];
+        $sessionId = $user['sessionid'];
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
+                UPDATE 
+                    Alias 
+                LEFT JOIN 
+                    AliasExpression 
+                ON  Alias.AliasSerNum = AliasExpression.AliasSerNum
+                SET 
+                    Alias.AliasUpdate       = 0, 
+                    Alias.LastUpdatedBy     = $userSer,
+                    Alias.SessionId         = '$sessionId'
+                WHERE  
+                    AliasExpression.AliasSerNum IS NULL 
+            ";
+
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
+            return;
+        } catch( PDOException $e) {
+            return $e->getMessage(); // Fail
+        }
+    }
 
     /**
      *
@@ -634,6 +671,8 @@ class Alias {
 				$query = $host_db_link->prepare( $sql );
 				$query->execute();
 			}
+
+            $this->sanitizeEmptyAliases($aliasDetails['user']);
 				
 	
 		} catch( PDOException $e) {
@@ -813,6 +852,8 @@ class Alias {
 					$query->execute();
 				}
             }
+
+            $this->sanitizeEmptyAliases($aliasDetails['user']);
 
             $response['value'] = 1; // Success
             return $response;
