@@ -53,7 +53,8 @@ class HospitalMap {
         $name_FR            = $hosMapDetails['name_FR'];
         $description_EN     = $hosMapDetails['description_EN'];
         $description_FR     = $hosMapDetails['description_FR'];
-        $url                = $hosMapDetails['url'];
+        $url_EN             = $hosMapDetails['url_EN'];
+        $url_FR             = $hosMapDetails['url_FR'];
         $qrid               = $hosMapDetails['qrid'];
         $userSer            = $hosMapDetails['user']['id'];
         $sessionId          = $hosMapDetails['user']['sessionid'];
@@ -66,6 +67,8 @@ class HospitalMap {
                 INSERT INTO
                     HospitalMap (
                         MapUrl,
+                        MapURL_EN,
+                        MapURL_FR,
                         QRMapAlias,
                         QRImageFileName,
                         MapName_EN,
@@ -77,7 +80,9 @@ class HospitalMap {
                         SessionId
                     )
                 VALUES (
-                    \"$url\",
+                    \"$url_EN\",
+                    \"$url_EN\",
+                    \"$url_FR\",
                     \"$qrid\",
                     \"$qrPath\",
                     \"$name_EN\",
@@ -111,7 +116,8 @@ class HospitalMap {
             $sql = "
                 SELECT DISTINCT
                     hm.HospitalMapSerNum,
-                    hm.MapUrl,
+                    hm.MapURL_EN,
+                    hm.MapURL_FR,
                     hm.QRMapAlias,
                     hm.MapName_EN,
                     hm.MapDescription_EN,
@@ -126,12 +132,13 @@ class HospitalMap {
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                 $serial             = $data[0];
-                $url                = $data[1];
-                $qrid               = $data[2];
-                $name_EN            = $data[3];
-                $description_EN     = $data[4];
-                $name_FR            = $data[5];
-                $description_FR     = $data[6];
+                $url_EN             = $data[1];
+                $url_FR             = $data[2];
+                $qrid               = $data[3];
+                $name_EN            = $data[4];
+                $description_EN     = $data[5];
+                $name_FR            = $data[6];
+                $description_FR     = $data[7];
                 $qr = $this->generateQRCode($qrid, null);
                 $qrcode = $qr['qrcode'];
                 $qrpath = $qr['qrpath'];
@@ -141,7 +148,8 @@ class HospitalMap {
                     'name_FR'           => $name_FR,
                     'description_EN'    => $description_EN,
                     'description_FR'    => $description_FR,
-                    'url'               => $url,
+                    'url_EN'            => $url_EN,
+                    'url_FR'            => $url_FR,
                     'qrid'              => $qrid,
                     'qrcode'            => $qrcode,
                     'qrpath'            => $qrpath,
@@ -174,7 +182,8 @@ class HospitalMap {
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
-                    hm.MapUrl,
+                    hm.MapURL_EN,
+                    hm.MapURL_FR,
                     hm.QRMapAlias,
                     hm.MapName_EN,
                     hm.MapDescription_EN,
@@ -191,12 +200,13 @@ class HospitalMap {
 
 			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
 
-            $url                = $data[0];
-            $qrid               = $data[1];
-            $name_EN            = $data[2];
-            $description_EN     = $data[3];
-            $name_FR            = $data[4];
-            $description_FR     = $data[5];
+            $url_EN             = $data[0];
+            $url_FR             = $data[1];
+            $qrid               = $data[2];
+            $name_EN            = $data[3];
+            $description_EN     = $data[4];
+            $name_FR            = $data[5];
+            $description_FR     = $data[6];
             $qr = $this->generateQRCode($qrid, null);
             $qrcode = $qr['qrcode'];
             $qrpath = $qr['qrpath'];
@@ -206,7 +216,8 @@ class HospitalMap {
                     'name_FR'           => $name_FR,
                     'description_EN'    => $description_EN,
                     'description_FR'    => $description_FR,
-                    'url'               => $url,
+                    'url_EN'            => $url_EN,
+                    'url_FR'            => $url_FR,
                     'qrid'              => $qrid,
                     'qrcode'            => $qrcode,
                     'qrpath'            => $qrpath,
@@ -233,7 +244,8 @@ class HospitalMap {
         $name_FR            = $hosMapDetails['name_FR'];
         $description_EN     = $hosMapDetails['description_EN'];
         $description_FR     = $hosMapDetails['description_FR'];
-        $url                = $hosMapDetails['url'];
+        $url_EN             = $hosMapDetails['url_EN'];
+        $url_FR             = $hosMapDetails['url_FR'];
         $qrid               = $hosMapDetails['qrid'];
         $serial             = $hosMapDetails['serial'];
         $userSer            = $hosMapDetails['user']['id'];
@@ -247,7 +259,8 @@ class HospitalMap {
                 UPDATE
                     HospitalMap
                 SET
-                    HospitalMap.MapUrl              = \"$url\",
+                    HospitalMap.MapURL_EN           = \"$url_EN\",
+                    HospitalMap.MapURL_FR           = \"$url_FR\",
                     HospitalMap.QRMapAlias          = \"$qrid\",
                     HospitalMap.QRImageFileName     = \"$qrPath\",
                     HospitalMap.MapName_EN          = \"$name_EN\",
