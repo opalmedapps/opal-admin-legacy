@@ -292,21 +292,38 @@ class Alias {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
-                UPDATE 
-                    Alias 
+                SELECT DISTINCT
+                    Alias.AliasSerNum
+                FROM 
+                    Alias
                 LEFT JOIN 
                     AliasExpression 
                 ON  Alias.AliasSerNum = AliasExpression.AliasSerNum
-                SET 
-                    Alias.AliasUpdate       = 0, 
-                    Alias.LastUpdatedBy     = $userSer,
-                    Alias.SessionId         = '$sessionId'
-                WHERE  
-                    AliasExpression.AliasSerNum IS NULL 
+                 WHERE  
+                    AliasExpression.AliasSerNum IS NULL
+                AND Alias.AliasUpdate != 0
             ";
-
             $query = $host_db_link->prepare( $sql );
             $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $aliasSer = $data[0];
+
+                $sql = "
+                    UPDATE 
+                        Alias 
+                    SET 
+                        Alias.AliasUpdate       = 0,
+                        Alias.LastUpdatedBy     = $userSer,
+                        Alias.SessionId         = '$sessionId'
+                    WHERE
+                        Alias.AliasSerNum       = $aliasSer
+                ";
+
+                $secondQuery = $host_db_link->prepare( $sql );
+                $secondQuery->execute();
+            }
             return;
         } catch( PDOException $e) {
             return $e->getMessage(); // Fail
@@ -658,15 +675,21 @@ class Alias {
                         AliasExpression (
                             AliasSerNum,
                             ExpressionName,
-                            LastTransferred
+                            LastTransferred,
+                            LastUpdatedBy,
+                            SessionId
                         )
                     VALUE (
                         '$aliasSer',
                         \"$aliasTerm\",
-                        NOW()
+                        NOW(),
+                        '$userSer',
+                        '$sessionId'
                     )
                     ON DUPLICATE KEY UPDATE
-                        AliasSerNum = '$aliasSer'
+                        AliasSerNum = '$aliasSer',
+                        LastUpdatedBy = '$userSer',
+                        SessionId = '$sessionId'
 				";
 				$query = $host_db_link->prepare( $sql );
 				$query->execute();
@@ -768,6 +791,9 @@ class Alias {
 
         $existingTerms	= array();
 
+        $detailsUpdated = $aliasDetails['details_updated'];
+        $expressionsUpdated = $aliasDetails['expressions_updated'];
+
         // Initialize a response array
         $response = array(
             'value'     => 0,
@@ -777,80 +803,105 @@ class Alias {
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-			$sql = "
-				UPDATE 
-					Alias 
-				SET 
-					Alias.AliasName_EN 		                = \"$aliasName_EN\", 
-					Alias.AliasName_FR 		                = \"$aliasName_FR\", 
-					Alias.AliasDescription_EN	            = \"$aliasDesc_EN\",
-                    Alias.AliasDescription_FR	            = \"$aliasDesc_FR\",
-                    Alias.EducationalMaterialControlSerNum  = $aliasEduMatSer,
-                    Alias.ColorTag                          = '$aliasColorTag',
-                    Alias.LastUpdatedBy                     = '$userSer',
-                    Alias.SessionId                         = '$sessionId'
-				WHERE 
-					Alias.AliasSerNum = $aliasSer
-			";
 
-			$query = $host_db_link->prepare( $sql );
-			$query->execute();
+            if ($detailsUpdated) {
+    			$sql = "
+    				UPDATE 
+    					Alias 
+    				SET 
+    					Alias.AliasName_EN 		                = \"$aliasName_EN\", 
+    					Alias.AliasName_FR 		                = \"$aliasName_FR\", 
+    					Alias.AliasDescription_EN	            = \"$aliasDesc_EN\",
+                        Alias.AliasDescription_FR	            = \"$aliasDesc_FR\",
+                        Alias.EducationalMaterialControlSerNum  = $aliasEduMatSer,
+                        Alias.ColorTag                          = '$aliasColorTag',
+                        Alias.LastUpdatedBy                     = '$userSer',
+                        Alias.SessionId                         = '$sessionId'
+    				WHERE 
+    					Alias.AliasSerNum = $aliasSer
+    			";
 
-			$sql = "
-				SELECT DISTINCT 
-					AliasExpression.ExpressionName 
-				FROM 
-					AliasExpression 
-				WHERE 
-					AliasExpression.AliasSerNum = $aliasSer
-			";
+    			$query = $host_db_link->prepare( $sql );
+    			$query->execute();
+            }
 
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
+            if ($expressionsUpdated) {
 
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+    			$sql = "
+    				SELECT DISTINCT 
+    					AliasExpression.ExpressionName 
+    				FROM 
+    					AliasExpression 
+    				WHERE 
+    					AliasExpression.AliasSerNum = $aliasSer
+    			";
 
-				array_push($existingTerms, $data[0]);
-			}
+    			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+    			$query->execute();
 
-            // This loop compares the old terms with the new
-            // If old terms not in new, then remove old
-			foreach ($existingTerms as $existingTermName) {
-				if (!in_array($existingTermName, $aliasTerms)) {
-					$sql = "
-                        DELETE FROM 
-							AliasExpression
-						WHERE
-                            AliasExpression.ExpressionName = \"$existingTermName\"
-                        AND AliasExpression.AliasSerNum = $aliasSer
-					";
+    			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-					$query = $host_db_link->prepare( $sql );
-					$query->execute();
-				}
-			}
+    				array_push($existingTerms, $data[0]);
+    			}
 
-            // If new terms, then insert
-			foreach ($aliasTerms as $term) {
-				if (!in_array($term, $existingTerms)) {
-                    $sql = "
-                        INSERT INTO 
-                            AliasExpression (
-                                AliasExpressionSerNum,
-                                AliasSerNum,
-                                ExpressionName
+                // This loop compares the old terms with the new
+                // If old terms not in new, then remove old
+    			foreach ($existingTerms as $existingTermName) {
+    				if (!in_array($existingTermName, $aliasTerms)) {
+    					$sql = "
+                            DELETE FROM 
+    							AliasExpression
+    						WHERE
+                                AliasExpression.ExpressionName = \"$existingTermName\"
+                            AND AliasExpression.AliasSerNum = $aliasSer
+    					";
+
+    					$query = $host_db_link->prepare( $sql );
+    					$query->execute();
+
+                        $sql = "
+                            UPDATE AliasExpressionMH
+                            SET 
+                                AliasExpressionMH.LastUpdatedBy = '$userSer',
+                                AliasExpressionMH.SessionId = '$sessionId'
+                            WHERE
+                                AliasExpressionMH.ExpressionName = \"$existingTermName\"
+                            ORDER BY AliasExpressionMH.RevSerNum DESC 
+                            LIMIT 1
+                        ";
+                        $query = $host_db_link->prepare( $sql );
+                        $query->execute();
+    				}
+    			}
+
+                // If new terms, then insert
+    			foreach ($aliasTerms as $term) {
+    				if (!in_array($term, $existingTerms)) {
+                        $sql = "
+                            INSERT INTO 
+                                AliasExpression (
+                                    AliasExpressionSerNum,
+                                    AliasSerNum,
+                                    ExpressionName,
+                                    LastUpdatedBy,
+                                    SessionId
+                                )
+                            VALUES (
+                                NULL,
+                                '$aliasSer',
+                                \"$term\",
+                                '$userSer',
+                                '$sessionId'
                             )
-                        VALUES (
-                            NULL,
-                            '$aliasSer',
-                            \"$term\"
-                        )
-                        ON DUPLICATE KEY UPDATE
-                            AliasSerNum = '$aliasSer'
-					";
-					$query = $host_db_link->prepare( $sql );
-					$query->execute();
-				}
+                            ON DUPLICATE KEY UPDATE
+                                AliasSerNum = '$aliasSer',
+                                LastUpdatedBy = '$userSer',
+                                SessionId = '$sessionId'
+    					";
+    					$query = $host_db_link->prepare( $sql );
+    					$query->execute();
+    				}
+                }
             }
 
             $this->sanitizeEmptyAliases($aliasDetails['user']);

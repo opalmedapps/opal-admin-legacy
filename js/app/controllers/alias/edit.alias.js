@@ -149,6 +149,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			// Toggle booleans
 			$scope.changesMade = true;
 			$scope.termsMod = true;
+			$scope.alias.expressions_updated = 1;
 
 			// Toggle boolean 
 			$scope.emptyTerms = false;
@@ -180,6 +181,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 			// Toggle booleans
 			$scope.changesMade = true;
+			$scope.alias.details_updated = 1;
 
 			if ($scope.alias.name_EN && $scope.alias.name_FR) { // if textbox field is not empty
 
@@ -198,6 +200,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 			// Toggle booleans
 			$scope.changesMade = true;
+			$scope.alias.details_updated = 1;
 
 			if ($scope.alias.description_EN && $scope.alias.description_FR) { // if textbox field is not empty
 
@@ -234,12 +237,14 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 			// Toggle boolean
 			$scope.changesMade = true;
+			$scope.alias.details_updated = 1;
 		};
 
 		$scope.colorUpdate = function (color) {
 
 			// Toggle boolean
 			$scope.changesMade = true;
+			$scope.alias.details_updated = 1;
 
 			if (color)
 				$scope.alias.color = color;
@@ -338,6 +343,8 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 			}
 			$scope.changesMade = true;
+			$scope.alias.expressions_updated = 1;
+
 		};
 
 		// Function to close modal dialog
