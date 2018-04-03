@@ -17,7 +17,10 @@
         'serial'            => $_POST['serial'],
         'tests'             => $_POST['tests'],
         'additional_links'  => $_POST['additional_links'],
-        'user'              => $_POST['user']
+        'user'              => $_POST['user'],
+        'details_updated'   => $_POST['details_updated'],
+        'test_names_updated'    => $_POST['test_names_updated'],
+        'additional_links_updated'  => $_POST['additional_links_updated']
     );
 
     // Call function

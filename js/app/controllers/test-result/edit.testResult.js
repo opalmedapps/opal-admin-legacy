@@ -110,6 +110,7 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 		// Function to toggle Item in a list on/off
 		$scope.selectItem = function (item) {
 			$scope.changesMade = true;
+			$scope.testResult.test_names_updated = 1;
 			if (item.added)
 				item.added = 0;
 			else
@@ -147,6 +148,16 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 			$scope.showTOCs = !$scope.showTOCs;
 		}
 
+		$scope.detailsUpdated = function () {
+			$scope.testResult.details_updated = 1;
+			$scope.setChangesMade();
+		}
+
+		$scope.additionalLinksUpdated = function () {
+			$scope.testResult.additional_links_updated = 1;
+			$scope.setChangesMade();
+		}
+
 		$scope.eduMatUpdate = function (event, eduMat) {
 
 			if ($scope.testResult.eduMat) {
@@ -163,6 +174,7 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 			}
 			// Toggle boolean
 			$scope.setChangesMade();
+			$scope.testResult.details_updated = 1;
 		};
 
 		// Function to add an additional link to the test result
@@ -175,6 +187,7 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 				serial: null
 			});
 			$scope.setChangesMade();
+			$scope.testResult.additional_links_updated = 1;
 		};
 
 		// Function to remove an additional link from the test result
@@ -185,12 +198,14 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 				$scope.testResult.additional_links = [];
 			}
 			$scope.setChangesMade();
+			$scope.testResult.additional_links_updated = 1;
 		};
 
 		// Function to add / remove a test
 		$scope.toggleTestSelection = function (test) {
 
 			$scope.setChangesMade();
+			$scope.testResult.test_names_updated = 1;
 
 			// If originally added, remove it
 			if (test.added) {
