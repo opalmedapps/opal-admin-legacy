@@ -312,14 +312,18 @@ class Post {
                             ControlTableSerNum,
                             FilterType,
                             FilterId,
-                            DateAdded
+                            DateAdded,
+                            LastUpdatedBy,
+                            SessionId
                         )
                     VALUE (
                         'PostControl',
                         '$postSer',
                         '$filterType',
                         \"$filterId\",
-                        NOW()
+                        NOW(),
+                        '$userSer',
+                        '$sessionId'
                     )
 				";
 				$query = $host_db_link->prepare( $sql );
