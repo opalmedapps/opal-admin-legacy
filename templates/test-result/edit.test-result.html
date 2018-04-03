@@ -70,13 +70,13 @@
         <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
           <div class="input-group">
             <span class="input-group-addon">EN</span>
-            <input class="form-control" type="text" ng-model="testResult.name_EN" ng-change="setChangesMade()" placeholder="English Title" required="required">
+            <input class="form-control" type="text" ng-model="testResult.name_EN" ng-change="detailsUpdated()" placeholder="English Title" required="required">
           </div>
         </div>
         <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
           <div class="input-group">
             <span class="input-group-addon">FR</span>
-            <input class="form-control" type="text" ng-model="testResult.name_FR" ng-change="setChangesMade()" placeholder="Titre Français" required="required">
+            <input class="form-control" type="text" ng-model="testResult.name_FR" ng-change="detailsUpdated()" placeholder="Titre Français" required="required">
           </div>
         </div>
       </div>
@@ -95,7 +95,7 @@
             <span style="font-size:20px;">HTML (English)</span>
           </div>
           <div class="input-group">
-            <div text-angular ng-model="testResult.description_EN" ng-change="setChangesMade()" placeholder="English Description" required="required" ta-toolbar="toolbar"></div>
+            <div text-angular ng-model="testResult.description_EN" ng-change="detailsUpdated()" placeholder="English Description" required="required" ta-toolbar="toolbar"></div>
           </div>
         </div>
         <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
@@ -103,7 +103,7 @@
             <span style="font-size:20px;">HTML (Français)</span>
           </div>
           <div class="input-group">
-            <div text-angular ng-model="testResult.description_FR" ng-change="setChangesMade()" placeholder="Description Français" required="required" ta-toolbar="toolbar"></div>
+            <div text-angular ng-model="testResult.description_FR" ng-change="detailsUpdated()" placeholder="Description Français" required="required" ta-toolbar="toolbar"></div>
           </div>
         </div>
       </div>
@@ -120,13 +120,13 @@
         <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
           <div class="input-group">
             <span class="input-group-addon">EN</span>
-            <input class="form-control" type="text" ng-model="testResult.group_EN" ng-change="setChangesMade()" typeahead-on-select="setChangesMade()" uib-typeahead="group for group in TestResultGroups_EN | filter:$viewValue" typeahead-min-length="0" placeholder="English" required="required">
+            <input class="form-control" type="text" ng-model="testResult.group_EN" ng-change="detailsUpdated()" typeahead-on-select="detailsUpdated()" uib-typeahead="group for group in TestResultGroups_EN | filter:$viewValue" typeahead-min-length="0" placeholder="English" required="required">
           </div>
         </div>
         <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
           <div class="input-group">
             <span class="input-group-addon">FR</span>
-            <input class="form-control" type="text" ng-model="testResult.group_FR" ng-change="setChangesMade()" typeahead-on-select="setChangesMade()" uib-typeahead="group for group in TestResultGroups_FR | filter:$viewValue" typeahead-min-length="0" placeholder="Francais" required="required">
+            <input class="form-control" type="text" ng-model="testResult.group_FR" ng-change="detailsUpdated()" typeahead-on-select="detailsUpdated()" uib-typeahead="group for group in TestResultGroups_FR | filter:$viewValue" typeahead-min-length="0" placeholder="Francais" required="required">
           </div>
         </div>
       </div>
@@ -192,21 +192,21 @@
         <div class="col-xs-12 col-sm-6">
           <div class="input-group" style="margin-bottom: 7px;">
             <span class="input-group-addon">Title EN</span>
-            <input class="form-control" type="text" ng-model="link.name_EN" ng-change="setChangesMade()" placeholder="English Title" required="required">
+            <input class="form-control" type="text" ng-model="link.name_EN" ng-change="additionalLinksUpdated()" placeholder="English Title" required="required">
           </div>
           <div class="input-group" style="margin-bottom: 7px;">
             <span class="input-group-addon">URL EN</span>
-            <input class="form-control" type="text" ng-model="link.url_EN" ng-change="setChangesMade()" placeholder="English URL" required="required">
+            <input class="form-control" type="text" ng-model="link.url_EN" ng-change="additionalLinksUpdated()" placeholder="English URL" required="required">
           </div>
         </div>  
         <div class="col-xs-12 col-sm-6">           
           <div class="input-group" style="margin-bottom: 7px;">
             <span class="input-group-addon">Titre FR</span>
-            <input class="form-control" type="text" ng-model="link.name_FR" ng-change="setChangesMade()" placeholder="Titre Français" required="required">
+            <input class="form-control" type="text" ng-model="link.name_FR" ng-change="additionalLinksUpdated()" placeholder="Titre Français" required="required">
           </div>
           <div class="input-group" style="margin-bottom: 7px;">
             <span class="input-group-addon">URL FR</span>
-            <input class="form-control" type="text" ng-model="link.url_FR" ng-change="setChangesMade()" placeholder="URL Français" required="required">
+            <input class="form-control" type="text" ng-model="link.url_FR" ng-change="additionalLinksUpdated()" placeholder="URL Français" required="required">
           </div>
         </div>
       </div>

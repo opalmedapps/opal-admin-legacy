@@ -419,15 +419,21 @@ class TestResult {
                         TestResultExpression (
                             TestResultControlSerNum,
                             ExpressionName,
-                            DateAdded
+                            DateAdded,
+                            LastUpdatedBy,
+                            SessionId
                         )
                     VALUES (
                         '$testResultSer',
                         \"$name\",
-                        NOW()
+                        NOW(),
+                        '$userSer',
+                        '$sessionId'
                     )
                     ON DUPLICATE KEY UPDATE 
-                        TestResultControlSerNum = '$testResultSer'
+                        TestResultControlSerNum = '$testResultSer',
+                        LastUpdatedBy = '$userSer',
+                        SessionId = '$sessionId'
                 ";
 	            $query = $host_db_link->prepare( $sql );
 				$query->execute();
@@ -628,6 +634,10 @@ class TestResult {
 
         $existingTests      = array();
 
+        $detailsUpdated     = $testResultDetails['details_updated'];
+        $testNamesUpdated   = $testResultDetails['test_names_updated'];
+        $additionalLinksUpdated     = $testResultDetails['additional_links_updated'];
+
         $response = array(
             'value'     => 0,
             'message'   => ''
@@ -635,120 +645,148 @@ class TestResult {
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                UPDATE
-                    TestResultControl
-                SET
-                    TestResultControl.Name_EN           = \"$name_EN\",
-                    TestResultControl.Name_FR           = \"$name_FR\",
-                    TestResultControl.Description_EN    = \"$description_EN\",
-                    TestResultControl.Description_FR    = \"$description_FR\",
-                    TestResultControl.Group_EN          = \"$group_EN\",
-                    TestResultControl.Group_FR          = \"$group_FR\",
-                    TestResultControl.EducationalMaterialControlSerNum = $eduMatSer,
-                    TestResultControl.LastUpdatedBy     = $userSer,
-                    TestResultControl.SessionId         = '$sessionId'
-                WHERE
-                    TestResultControl.TestResultControlSerNum = $serial
-            ";
+            
+            if ($detailsUpdated) {
+                $sql = "
+                    UPDATE
+                        TestResultControl
+                    SET
+                        TestResultControl.Name_EN           = \"$name_EN\",
+                        TestResultControl.Name_FR           = \"$name_FR\",
+                        TestResultControl.Description_EN    = \"$description_EN\",
+                        TestResultControl.Description_FR    = \"$description_FR\",
+                        TestResultControl.Group_EN          = \"$group_EN\",
+                        TestResultControl.Group_FR          = \"$group_FR\",
+                        TestResultControl.EducationalMaterialControlSerNum = $eduMatSer,
+                        TestResultControl.LastUpdatedBy     = $userSer,
+                        TestResultControl.SessionId         = '$sessionId'
+                    WHERE
+                        TestResultControl.TestResultControlSerNum = $serial
+                ";
 
-            $query = $host_db_link->prepare( $sql );
-			$query->execute();
-
-            $sql = "
-                SELECT DISTINCT
-                    tre.ExpressionName
-                FROM
-                    TestResultExpression tre
-                WHERE
-                    tre.TestResultControlSerNum = $serial
-            ";
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
-
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                array_push($existingTests, $data[0]);
+                $query = $host_db_link->prepare( $sql );
+    			$query->execute();
             }
 
-            // If old test names not in new test names, delete from database
-            foreach ($existingTests as $existingTestName) {
-                if (!in_array($existingTestName, $tests)) {
-                    $sql = "
-                        DELETE FROM
-                            TestResultExpression
-                        WHERE
-                            TestResultExpression.ExpressionName = \"$existingTestName\"
-                        AND TestResultExpression.TestResultControlSerNum = $serial
-                    ";
+            if (testNamesUpdated) {
 
-					$query = $host_db_link->prepare( $sql );
-					$query->execute();
-				}
-			}
+                $sql = "
+                    SELECT DISTINCT
+                        tre.ExpressionName
+                    FROM
+                        TestResultExpression tre
+                    WHERE
+                        tre.TestResultControlSerNum = $serial
+                ";
+    			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+    			$query->execute();
 
-            // If new test names, insert into database
-            foreach ($tests as $test) {
-                $testName = $test['name'];
-                if(!in_array($test, $existingTests)) {
-                    $sql = "
-                        INSERT INTO
-                            TestResultExpression (
-                                TestResultControlSerNum,
-                                ExpressionName
+    			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                    array_push($existingTests, $data[0]);
+                }
+
+                // If old test names not in new test names, delete from database
+                foreach ($existingTests as $existingTestName) {
+                    if (!in_array($existingTestName, $tests)) {
+                        $sql = "
+                            DELETE FROM
+                                TestResultExpression
+                            WHERE
+                                TestResultExpression.ExpressionName = \"$existingTestName\"
+                            AND TestResultExpression.TestResultControlSerNum = $serial
+                        ";
+
+    					$query = $host_db_link->prepare( $sql );
+    					$query->execute();
+
+                        $sql = "
+                            UPDATE TestResultExpressionMH
+                            SET 
+                                TestResultExpressionMH.LastUpdatedBy = '$userSer',
+                                TestResultExpressionMH.SessionId = '$sessionId'
+                            WHERE
+                                TestResultExpressionMH.ExpressionName = \"$existingTestName\"
+                            ORDER BY TestResultExpressionMH.RevSerNum DESC 
+                            LIMIT 1
+                        ";
+                        $query = $host_db_link->prepare( $sql );
+                        $query->execute();
+    				}
+    			}
+
+                // If new test names, insert into database
+                foreach ($tests as $test) {
+                    $testName = $test['name'];
+                    if(!in_array($test, $existingTests)) {
+                        $sql = "
+                            INSERT INTO
+                                TestResultExpression (
+                                    TestResultControlSerNum,
+                                    ExpressionName,
+                                    LastUpdatedBy,
+                                    SessionId
+                                )
+                            VALUES (
+                                '$serial',
+                                \"$test\",
+                                '$userSer',
+                                '$sessionId'
                             )
-                        VALUES (
-                            '$serial',
-                            \"$test\"
-                        )
-                        ON DUPLICATE KEY UPDATE
-                            TestResultControlSerNum = '$serial'
-                    ";
+                            ON DUPLICATE KEY UPDATE
+                                TestResultControlSerNum = '$serial',
+                                LastUpdatedBy = '$userSer',
+                                SessionId = '$sessionId'
+                        ";
 
-	                $query = $host_db_link->prepare( $sql );
-					$query->execute();
-				}
-			}
+    	                $query = $host_db_link->prepare( $sql );
+    					$query->execute();
+    				}
+    			}
+            }
 
-            // clear existing links
-            $sql = "
-                DELETE FROM 
-                    TestResultAdditionalLinks
-                WHERE
-                    TestResultAdditionalLinks.TestResultControlSerNum = '$serial'
-            ";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
+            if ($additionalLinksUpdated) {
 
-            if ($additionalLinks) {
-                // add new links
-                foreach ($additionalLinks as $link) {
-                    
-                    $linkName_EN        = $link['name_EN'];
-                    $linkName_FR        = $link['name_FR'];
-                    $linkURL_EN         = $link['url_EN'];
-                    $linkURL_FR         = $link['url_FR'];
+                // clear existing links
+                $sql = "
+                    DELETE FROM 
+                        TestResultAdditionalLinks
+                    WHERE
+                        TestResultAdditionalLinks.TestResultControlSerNum = '$serial'
+                ";
+                $query = $host_db_link->prepare( $sql );
+                $query->execute();
 
-                    $sql = "
-                        INSERT INTO 
-                            TestResultAdditionalLinks (
-                                TestResultControlSerNum,
-                                Name_EN,
-                                Name_FR,
-                                URL_EN,
-                                URL_FR,
-                                DateAdded
+                if ($additionalLinks) {
+                    // add new links
+                    foreach ($additionalLinks as $link) {
+                        
+                        $linkName_EN        = $link['name_EN'];
+                        $linkName_FR        = $link['name_FR'];
+                        $linkURL_EN         = $link['url_EN'];
+                        $linkURL_FR         = $link['url_FR'];
+
+                        $sql = "
+                            INSERT INTO 
+                                TestResultAdditionalLinks (
+                                    TestResultControlSerNum,
+                                    Name_EN,
+                                    Name_FR,
+                                    URL_EN,
+                                    URL_FR,
+                                    DateAdded
+                                )
+                            VALUES (
+                                '$serial',
+                                \"$linkName_EN\",
+                                \"$linkName_FR\",
+                                \"$linkURL_EN\",
+                                \"$linkURL_FR\",
+                                NOW()
                             )
-                        VALUES (
-                            '$serial',
-                            \"$linkName_EN\",
-                            \"$linkName_FR\",
-                            \"$linkURL_EN\",
-                            \"$linkURL_FR\",
-                            NOW()
-                        )
-                    ";
-                    $query = $host_db_link->prepare( $sql );
-                    $query->execute();
+                        ";
+                        $query = $host_db_link->prepare( $sql );
+                        $query->execute();
+                    }
                 }
             }
 
