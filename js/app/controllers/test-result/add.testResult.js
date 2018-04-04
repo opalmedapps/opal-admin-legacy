@@ -107,6 +107,13 @@ angular.module('opalAdmin.controllers.testResult.add', ['ngAnimate', 'ngSanitize
 			$('.form-box-right').addClass('fadeInRight');
 		};
 
+		// Call our API service to get the list of educational material
+		educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+			$scope.eduMatList = response.data; // Assign value
+		}).catch(function(response) {
+			console.error('Error occurred getting educational materials:', response.status, response.data);
+		});
+
 		// Call our API to get the list of test groups
 		testResultCollectionService.getTestResultGroups().then(function (response) {
 
@@ -121,14 +128,8 @@ angular.module('opalAdmin.controllers.testResult.add', ['ngAnimate', 'ngSanitize
 
 			$scope.testList = response.data;
 
-			// Call our API service to get the list of educational material
-			educationalMaterialCollectionService.getEducationalMaterialsByType('test_result').then(function (response) {
-				$scope.eduMatList = response.data; // Assign value
-				processingModal.close(); // hide modal
-				processingModal = null; // remove reference
-			}).catch(function(response) {
-				console.error('Error occurred getting educational material list:', response.status, response.data);
-			});
+			processingModal.close(); // hide modal
+			processingModal = null; // remove reference
 
 			$scope.formLoaded = true;
 			$scope.loadForm();
@@ -211,24 +212,10 @@ angular.module('opalAdmin.controllers.testResult.add', ['ngAnimate', 'ngSanitize
 		};
 
 		// Function to toggle necessary changes when updating educational material
-		$scope.eduMatUpdate = function (event, eduMat) {
+		$scope.eduMatUpdate = function () {
 
 			// Toggle booleans
 			$scope.educationalMaterialSection.open = true;
-
-			if ($scope.newTestResult.eduMat) {
-				if ($scope.newTestResult.eduMat.serial == event.target.value) {
-					$scope.newTestResult.eduMat = null;
-					$scope.newTestResult.eduMatSer = null;
-					$scope.educationalMaterialSection.open = false;
-				}
-				else {
-					$scope.newTestResult.eduMat = eduMat
-				}
-			}
-			else {
-				$scope.newTestResult.eduMat = eduMat
-			}
 		}
 
 		$scope.additionalLinksComplete = false;
