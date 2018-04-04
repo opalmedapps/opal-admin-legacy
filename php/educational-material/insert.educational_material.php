@@ -16,8 +16,7 @@
         'phase_in_tx'       => $_POST['phase_in_tx'],
         'filters'           => $_POST['filters'],
 		'tocs' 		        => $_POST['tocs'],
-		'user'				=> $_POST['user'],
-        'content_types'     => $_POST['content_types']
+		'user'				=> $_POST['user']
 		 
 	);
 
