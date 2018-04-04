@@ -499,7 +499,7 @@ class Post {
     	    				$query = $host_db_link->prepare( $sql );
     		    			$query->execute();
 
-                             $sql = "
+                            $sql = "
                                 UPDATE FiltersMH
                                 SET 
                                     FiltersMH.LastUpdatedBy = '$userSer',

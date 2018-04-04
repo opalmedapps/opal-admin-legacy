@@ -12,7 +12,9 @@
         'filters'           => $_POST['filters'],
         'serial' 			=> $_POST['serial'],
         'occurrence'		=> $_POST['occurrence'],
-        'user'				=> $_POST['user']
+        'user'				=> $_POST['user'],
+        'details_updated'	=> $_POST['details_updated'],
+        'filters_updated'	=> $_POST['filters_updated']
 	);
 
 	$legacyQuestionnaire = new LegacyQuestionnaire; // Object

@@ -31,13 +31,13 @@
         <div class="col-xs-12 col-sm-6 col-md-5" style="margin-bottom: 10px;">
           <div class="input-group">
             <span class="input-group-addon">EN</span>
-            <input class="form-control" type="text" ng-model="eduMat.name_EN" ng-change="setChangesMade()" placeholder="English Title" required="required">
+            <input class="form-control" type="text" ng-model="eduMat.name_EN" ng-change="detailsUpdated()" placeholder="English Title" required="required">
           </div>
         </div>
         <div class="col-xs-12 col-sm-6 col-md-offset-1 col-md-5" style="margin-bottom: 10px;">
           <div class="input-group">
             <span class="input-group-addon">FR</span>
-            <input class="form-control" type="text" ng-model="eduMat.name_FR" ng-change="setChangesMade()" placeholder="Titre Français" required="required">
+            <input class="form-control" type="text" ng-model="eduMat.name_FR" ng-change="detailsUpdated()" placeholder="Titre Français" required="required">
           </div>
         </div>
       </div>
@@ -93,13 +93,13 @@
         <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
           <div class="input-group">
             <span class="input-group-addon">EN</span>
-            <input class="form-control" type="text" ng-model="eduMat.url_EN" ng-change="setChangesMade()" placeholder="English URL" required="required">
+            <input class="form-control" type="text" ng-model="eduMat.url_EN" ng-change="detailsUpdated()" placeholder="English URL" required="required">
           </div>
         </div>
         <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
           <div class="input-group">
             <span class="input-group-addon">FR</span>
-            <input class="form-control" type="text" ng-model="eduMat.url_FR" ng-change="setChangesMade()" placeholder="URL Français" required="required">
+            <input class="form-control" type="text" ng-model="eduMat.url_FR" ng-change="detailsUpdated()" placeholder="URL Français" required="required">
           </div>
         </div>
       </div>
@@ -118,29 +118,29 @@
         <div class="col-xs-12 col-md-6">
           <div class="input-group" style="margin-bottom: 7px;">
             <span class="input-group-addon">Title EN</span>
-            <input class="form-control" type="text" ng-model="toc.name_EN" ng-change="setChangesMade()" placeholder="English Title" required="required">
+            <input class="form-control" type="text" ng-model="toc.name_EN" ng-change="validateTOCs()" placeholder="English Title" required="required">
           </div>
           <div class="input-group" style="margin-bottom: 7px;">
             <span class="input-group-addon">URL EN</span>
-            <input class="form-control" type="text" ng-model="toc.url_EN" ng-change="setChangesMade()" placeholder="English URL" required="required">
+            <input class="form-control" type="text" ng-model="toc.url_EN" ng-change="validateTOCs()" placeholder="English URL" required="required">
           </div>
           <div class="input-group" style="margin-bottom: 20px;">
             <span class="input-group-addon">Type EN</span>
-            <input class="form-control" type="text" ng-model="toc.type_EN" ng-change="setChangesMade()" typeahead-on-select="setChangesMade()" uib-typeahead="type for type in EduMatTypes_EN | filter:$viewValue" typeahead-min-length="0" placeholder="English Type" required="required"> 
+            <input class="form-control" type="text" ng-model="toc.type_EN" ng-change="validateTOCs()" typeahead-on-select="validateTOCs()" uib-typeahead="type for type in EduMatTypes_EN | filter:$viewValue" typeahead-min-length="0" placeholder="English Type" required="required"> 
           </div>
         </div>  
         <div class="col-xs-12 col-md-6">           
           <div class="input-group" style="margin-bottom: 7px;">
             <span class="input-group-addon">Titre FR</span>
-            <input class="form-control" type="text" ng-model="toc.name_FR" ng-change="setChangesMade()" placeholder="Titre Français" required="required">
+            <input class="form-control" type="text" ng-model="toc.name_FR" ng-change="validateTOCs()" placeholder="Titre Français" required="required">
           </div>
           <div class="input-group" style="margin-bottom: 7px;">
             <span class="input-group-addon">URL FR</span>
-            <input class="form-control" type="text" ng-model="toc.url_FR" ng-change="setChangesMade()" placeholder="URL Français" required="required">
+            <input class="form-control" type="text" ng-model="toc.url_FR" ng-change="validateTOCs()" placeholder="URL Français" required="required">
           </div>
           <div class="input-group" style="margin-bottom: 20px;">
             <span class="input-group-addon">Type FR</span>
-            <input class="form-control" type="text" ng-model="toc.type_FR" ng-change="setChangesMade()" typeahead-on-select="setChangesMade()" uib-typeahead="type for type in EduMatTypes_FR | filter:$viewValue" typeahead-min-length="0" placeholder="Type Francais" required="required"> 
+            <input class="form-control" type="text" ng-model="toc.type_FR" ng-change="validateTOCs()" typeahead-on-select="validateTOCs()" uib-typeahead="type for type in EduMatTypes_FR | filter:$viewValue" typeahead-min-length="0" placeholder="Type Francais" required="required"> 
            </div>
         </div>
       </div>
@@ -172,13 +172,13 @@
         <div class="col-xs-12 col-md-6" style="margin-bottom: 10px;">
           <div class="input-group">
             <span class="input-group-addon">EN</span>
-            <input class="form-control" type="text" ng-model="eduMat.share_url_EN" ng-change="setChangesMade()" placeholder="English URL" required="required">
+            <input class="form-control" type="text" ng-model="eduMat.share_url_EN" ng-change="detailsUpdated()" placeholder="English URL" required="required">
           </div>
         </div>
         <div class="col-xs-12 col-md-6" style="margin-bottom: 10px;">
           <div class="input-group">
             <span class="input-group-addon">FR</span>
-            <input class="form-control" type="text" ng-model="eduMat.share_url_FR" ng-change="setChangesMade()" placeholder="URL Français" required="required">
+            <input class="form-control" type="text" ng-model="eduMat.share_url_FR" ng-change="detailsUpdated()" placeholder="URL Français" required="required">
           </div>
         </div>
       </div>
@@ -265,13 +265,13 @@
             <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
               <div class="input-group">
                 <span class="input-group-addon">MIN</span>
-                <input class="form-control" ng-model="demoFilter.age.min" ng-change="setChangesMade()" type="number" ng-max="demoFilter.age.max" min="0">
+                <input class="form-control" ng-model="demoFilter.age.min" ng-change="ageUpdate()" type="number" ng-max="demoFilter.age.max" min="0">
               </div> 
             </div>
             <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
               <div class="input-group">
                 <span class="input-group-addon">MAX</span>
-                <input class="form-control" ng-model="demoFilter.age.max" ng-change="setChangesMade()" type="number" max="100" ng-min="demoFilter.age.min">
+                <input class="form-control" ng-model="demoFilter.age.max" ng-change="ageUpdate()" type="number" max="100" ng-min="demoFilter.age.min">
               </div> 
             </div>
           </div>

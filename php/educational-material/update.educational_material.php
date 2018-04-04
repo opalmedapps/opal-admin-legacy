@@ -20,7 +20,10 @@
         'tocs' 		        => $_POST['tocs'],
 		'serial'            => $_POST['serial'],
 		'user'				=> $_POST['user'],
-        'content_types'     => $_POST['content_types']
+        'content_types'     => $_POST['content_types'],
+        'details_updated'   => $_POST['details_updated'],
+        'filters_updated'   => $_POST['filters_updated'],
+        'tocs_updated'      => $_POST['tocs_updated']
     );
 
     // Call function

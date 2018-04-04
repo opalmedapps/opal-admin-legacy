@@ -152,6 +152,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.edit', ['ngAnimate', 
 
 			// Toggle boolean
 			$scope.changesMade = true;
+			$scope.diagnosisTranslation.details_updated = 1;
 		};
 
 		$scope.showTOCs = false;
@@ -163,6 +164,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.edit', ['ngAnimate', 
 		$scope.toggleDiagnosisSelection = function (diagnosis) {
 
 			$scope.changesMade = true;
+			$scope.diagnosisTranslation.codes_updated = 1;
 
 			// If originally added, remove it
 			if (diagnosis.added) {
@@ -196,6 +198,11 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.edit', ['ngAnimate', 
 			$scope.changesMade = true;
 		};
 
+		$scope.detailsUpdated = function () {
+			$scope.diagnosisTranslation.details_updated = 1;
+			$scope.setChangesMade();
+		}
+
 		// Function for selecting all codes in the diagnosis list
 		$scope.selectAllFilteredDiagnoses = function () {
 
@@ -218,6 +225,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.edit', ['ngAnimate', 
 
 			}
 			$scope.setChangesMade();
+			$scope.diagnosisTranslation.codes_updated = 1;
 		};
 
 		// Submit changes
