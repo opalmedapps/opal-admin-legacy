@@ -145,8 +145,6 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 			else return false;
 		};
 
-		$scope.eduMatUpdate = function (eduMat) {
-
 		$scope.detailsUpdated = function () {
 			$scope.testResult.details_updated = 1;
 			$scope.setChangesMade();
