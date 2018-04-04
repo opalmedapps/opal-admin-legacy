@@ -526,6 +526,7 @@ sub getApptsFromSourceDB
 
                 	my $expressionser = $Expression->{_ser};
                 	my $expressionName = $Expression->{_name};
+                	my $expressionDesc = $Expression->{_description};
                 	my $expressionLastTransfer = $Expression->{_lasttransfer};
                 	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
 
@@ -552,6 +553,7 @@ sub getApptsFromSourceDB
 	                    AND pt.SSN                  LIKE '$patientSSN%'
 	                    AND mval.LastUpdated        > '$lasttransfer'
 	                    AND mval.AppointmentCode    = '$expressionName'
+	                    AND mval.ResourceDescription = '$expressionDesc'
 	                ";
 	                $counter++;
 	        		# concat "UNION" until we've reached the last query

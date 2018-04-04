@@ -355,7 +355,7 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 				// Fill it with the added terms from termList
 				angular.forEach($scope.termList, function (term) {
 					if (term.added)
-						$scope.newAlias.terms.push(term.id);
+						$scope.newAlias.terms.push(term);
 				});
 
 				// Log who created this alias
