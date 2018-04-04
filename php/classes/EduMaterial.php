@@ -187,8 +187,6 @@ class EduMaterial {
             $shareURL_FR            = $data[10];
             $filters                = array();
             $tocs                   = array(); // Table of contents
-            $contentTypes           = array();
-            $contentTypesText       = array();
 
             $sql = "
                 SELECT DISTINCT 
@@ -265,30 +263,6 @@ class EduMaterial {
                 );    
                 array_push($tocs, $tocArray);
             }
-
-            $sql = "
-                SELECT DISTINCT 
-                    emct.ContentTypeSerNum,
-                    ct.TypeName
-                FROM 
-                    EducationalMaterialContentType emct,
-                    ContentTypes ct
-                WHERE   
-                    emct.EducationalMaterialControlSerNum = $eduMatSer
-                AND ct.ContentTypeSerNum = emct.ContentTypeSerNum
-            ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $details = array(
-                    'serial'    => $data[0]
-                );
-                array_push($contentTypes, $details);
-                array_push($contentTypesText, $data[1]);
-            }
         
             $eduMatDetails = array (
                 'name_EN'           => $name_EN,
@@ -305,9 +279,7 @@ class EduMaterial {
                 'phase_EN'          => $phaseName_EN,
                 'phase_FR'          => $phaseName_FR,
                 'filters'           => $filters,
-                'tocs'              => $tocs,
-                'content_types'     => $contentTypes,
-                'content_types_text'=> implode(', ', $contentTypesText) 
+                'tocs'              => $tocs
             );
             return $eduMatDetails;
 	    } catch (PDOException $e) {
@@ -373,8 +345,6 @@ class EduMaterial {
                 $rating                 = -1;
                 $filters                = array();
                 $tocs                   = array();
-                $contentTypes           = array();
-                $contentTypesText       = array();
 
                 if ($parentFlag == 1) {
                     $sql = "
@@ -471,31 +441,6 @@ class EduMaterial {
                     array_push($tocs, $tocArray);
                 }
 
-                $sql = "
-                    SELECT DISTINCT 
-                        emct.ContentTypeSerNum,
-                        ct.TypeName
-                    FROM 
-                        EducationalMaterialContentType emct,
-                        ContentTypes ct
-                    WHERE   
-                        emct.EducationalMaterialControlSerNum = $eduMatSer
-                    AND ct.ContentTypeSerNum = emct.ContentTypeSerNum
-                ";
-
-                $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $secondQuery->execute();
-
-                while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $details = array(
-                        'serial'    => $secondData[0]
-                    );
-                    array_push($contentTypes, $details);
-                    array_push($contentTypesText, $secondData[1]);
-                }
-            
-
                 $eduMatArray = array (
                     'name_EN'           => $name_EN,
                     'name_FR'           => $name_FR,
@@ -515,9 +460,7 @@ class EduMaterial {
                     'lastupdated'       => $lastUpdated,
                     'rating'            => $rating,
                     'filters'           => $filters,
-                    'tocs'              => $tocs,
-                    'content_types'     => $contentTypes,
-                    'content_types_text'=> implode(', ', $contentTypesText) 
+                    'tocs'              => $tocs
                 );
 
                 array_push($eduMatList, $eduMatArray);
@@ -528,231 +471,6 @@ class EduMaterial {
 			return $eduMatList;
 		}
 	}
-
-    /**
-     *
-     * Gets a list of educational materials by content type
-     *
-     * @param string $contentType : the content type
-     * @return array $eduMatList : the list of existing educational materials 
-     */                  
-    public function getEducationalMaterialsByType($contentType) {
-        $eduMatList = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT
-                    em.EducationalMaterialControlSerNum,
-                    em.EducationalMaterialType_EN,
-                    em.EducationalMaterialType_FR,
-                    em.Name_EN,
-                    em.Name_FR,
-                    em.URL_EN,
-                    em.URL_FR,
-                    phase.PhaseInTreatmentSerNum,
-                    phase.Name_EN,
-                    phase.Name_FR,
-                    em.PublishFlag,
-                    em.ParentFlag,
-                    em.ShareURL_EN,
-                    em.ShareURL_FR,
-                    em.LastUpdated
-                FROM
-                    EducationalMaterialControl em,
-                    PhaseInTreatment phase,
-                    EducationalMaterialContentType emct,
-                    ContentTypes ct
-                WHERE
-                    phase.PhaseInTreatmentSerNum            = em.PhaseInTreatmentSerNum
-                AND em.EducationalMaterialControlSerNum     = emct.EducationalMaterialControlSerNum
-                AND emct.ContentTypeSerNum                  = ct.ContentTypeSerNum
-                AND ct.TypeId                               = '$contentType'
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $eduMatSer              = intval($data[0]);
-                $type_EN                = $data[1];
-                $type_FR                = $data[2];
-                $name_EN                = $data[3];
-                $name_FR                = $data[4];
-                $url_EN                 = urldecode($data[5]);
-                $url_FR                 = urldecode($data[6]);
-                $phaseSer               = $data[7];
-                $phaseName_EN           = $data[8];
-                $phaseName_FR           = $data[9];
-                $publish                = $data[10];
-                $parentFlag             = $data[11];
-                $shareURL_EN            = $data[12];
-                $shareURL_FR            = $data[13];
-                $lastUpdated            = $data[14];
-                $rating                 = -1;
-                $filters                = array();
-                $tocs                   = array();
-                $contentTypes           = array();
-                $contentTypesText       = array();
-
-                if ($parentFlag == 1) {
-                    $sql = "
-                        SELECT
-                            AVG(emr.RatingValue) 
-                        FROM
-                            EducationalMaterialRating emr
-                        WHERE
-                            emr.EducationalMaterialControlSerNum = $eduMatSer
-                    ";
-                    $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                    $secondQuery->execute();
-        
-                    while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                        if ($secondData[0]) {
-                            $rating = $secondData[0];
-                        }
-                    }
-                }
-
-                $sql = "
-                    SELECT DISTINCT 
-                        Filters.FilterType,
-                        Filters.FilterId
-                    FROM
-                        EducationalMaterialControl em,
-                        Filters
-                    WHERE   
-                        em.EducationalMaterialControlSerNum     = $eduMatSer
-                    AND Filters.ControlTable                    = 'EducationalMaterialControl'
-                    AND Filters.ControlTableSerNum              = em.EducationalMaterialControlSerNum
-                    AND Filters.FilterType                      != ''
-                    AND Filters.FilterId                        != ''
-                ";
-                $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $secondQuery->execute();
-    
-                while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-    
-                    $filterType = $secondData[0];
-                    $filterId   = $secondData[1];
-                    $filterArray = array (
-                        'type'  => $filterType,
-                        'id'    => $filterId,
-                        'added' => 1
-                    );
-    
-                    array_push($filters, $filterArray);
-                }
-    
-                $sql = "
-                    SELECT DISTINCT
-                        em.EducationalMaterialControlSerNum,
-                        em.Name_EN,
-                        em.Name_FR,
-                        toc.OrderNum,
-                        em.EducationalMaterialType_EN,
-                        em.EducationalMaterialType_FR,
-                        em.URL_EN,
-                        em.URL_FR
-                    FROM
-                        EducationalMaterialTOC toc,
-                        EducationalMaterialControl em,
-                        EducationalMaterialContentType emct,
-                        ContentTypes ct
-                    WHERE
-                        toc.EducationalMaterialControlSerNum    = em.EducationalMaterialControlSerNum
-                    AND toc.ParentSerNum                        = $eduMatSer
-                    AND toc.ParentSerNum                        = emct.EducationalMaterialControlSerNum
-                    AND emct.ContentTypeSerNum                  = ct.ContentTypeSerNum
-                    AND ct.TypeId                               = '$contentType'
-                    ORDER BY
-                        toc.OrderNum
-                
-                ";
-                $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $secondQuery->execute();
-    
-                while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-    
-                    $tocSer         = $secondData[0];
-                    $tocName_EN     = $secondData[1];
-                    $tocName_FR     = $secondData[2];
-                    $tocOrder       = $secondData[3];
-                    $tocType_EN     = $secondData[4];
-                    $tocType_FR     = $secondData[5];
-                    $tocURL_EN      = urldecode($secondData[6]);
-                    $tocURL_FR      = urldecode($secondData[7]);
-                    $tocArray = array (
-                        'serial'        => $tocSer,
-                        'order'         => $tocOrder,
-                        'name_EN'       => $tocName_EN,
-                        'name_FR'       => $tocName_FR,
-                        'type_EN'       => $tocType_EN,
-                        'type_FR'       => $tocType_FR,
-                        'url_EN'        => $tocURL_EN,
-                        'url_FR'        => $tocURL_FR,
-                        'parent_serial' => $eduMatSer
-                    );
-                    array_push($tocs, $tocArray);
-                }
-
-                $sql = "
-                    SELECT DISTINCT 
-                        emct.ContentTypeSerNum,
-                        ct.TypeName
-                    FROM 
-                        EducationalMaterialContentType emct,
-                        ContentTypes ct
-                    WHERE   
-                        emct.EducationalMaterialControlSerNum = $eduMatSer
-                    AND ct.ContentTypeSerNum = emct.ContentTypeSerNum
-                ";
-
-                $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $secondQuery->execute();
-
-                while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $details = array(
-                        'serial'    => $secondData[0]
-                    );
-                    array_push($contentTypes, $details);
-                    array_push($contentTypesText, $secondData[1]);
-                }
-            
-
-                $eduMatArray = array (
-                    'name_EN'           => $name_EN,
-                    'name_FR'           => $name_FR,
-                    'serial'            => $eduMatSer,
-                    'type_EN'           => $type_EN,
-                    'type_FR'           => $type_FR,
-                    'url_EN'            => $url_EN,
-                    'url_FR'            => $url_FR,
-                    'share_url_EN'      => $shareURL_EN,
-                    'share_url_FR'      => $shareURL_FR,
-                    'phase_serial'      => $phaseSer,
-                    'phase_EN'          => $phaseName_EN,
-                    'phase_FR'          => $phaseName_FR,
-                    'parentFlag'        => $parentFlag,
-                    'publish'           => $publish,
-                    'changed'           => 0,
-                    'lastupdated'       => $lastUpdated,
-                    'rating'            => $rating,
-                    'filters'           => $filters,
-                    'tocs'              => $tocs,
-                    'content_types'     => $contentTypes,
-                    'content_types_text'=> implode(', ', $contentTypesText) 
-                );
-
-                array_push($eduMatList, $eduMatArray);
-            }
-            return $eduMatList;
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $eduMatList;
-        }
-    }
 
     /**
      *
@@ -776,7 +494,6 @@ class EduMaterial {
 		$filters        = $eduMatDetails['filters'];
 		$userSer 		= $eduMatDetails['user']['id'];
 		$sessionId 		= $eduMatDetails['user']['sessionid'];
-        $contentTypes   = $eduMatDetails['content_types'];
 
         $urlExt_EN          = '';
         $urlExt_FR          = '';
@@ -1010,26 +727,6 @@ class EduMaterial {
                 }
             }
 
-            foreach ($contentTypes as $contentType) {
-
-                $contentTypeSer = $contentType['serial'];
-                $sql = "
-                    INSERT INTO
-                        EducationalMaterialContentType (
-                            EducationalMaterialControlSerNum,
-                            ContentTypeSerNum,
-                            DateAdded
-                        )
-                    VALUES (
-                        '$eduMatSer',
-                        '$contentTypeSer',
-                        NOW()
-                    )
-                ";
-                $query = $host_db_link->prepare( $sql );
-                $query->execute();
-            }
-
             $response['value'] = 1; // Success
             return $response;
 
@@ -1061,7 +758,6 @@ class EduMaterial {
 		$phaseSer           = $eduMatDetails['phase_serial'];
 		$userSer 			= $eduMatDetails['user']['id'];
 		$sessionId 			= $eduMatDetails['user']['sessionid'];
-        $contentTypes       = $eduMatDetails['content_types'];
 
         $urlExt_EN          = null;
         $urlExt_FR          = null;
@@ -1408,35 +1104,6 @@ class EduMaterial {
 
             }
 
-            $sql = "
-                DELETE FROM
-                    EducationalMaterialContentType
-                WHERE
-                    EducationalMaterialContentType.EducationalMaterialControlSerNum = $eduMatSer
-            ";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-            foreach ($contentTypes as $contentType) {
-
-                $contentTypeSer = $contentType['serial'];
-                $sql = "
-                    INSERT INTO
-                        EducationalMaterialContentType (
-                            EducationalMaterialControlSerNum,
-                            ContentTypeSerNum,
-                            DateAdded
-                        )
-                    VALUES (
-                        '$eduMatSer',
-                        '$contentTypeSer',
-                        NOW()
-                    )
-                ";
-                $query = $host_db_link->prepare( $sql );
-                $query->execute();
-            }
-
             $response['value'] = 1; // Success
             return $response;
 
@@ -1517,18 +1184,18 @@ class EduMaterial {
             $query = $host_db_link->prepare( $sql );
 			$query->execute();
 			
-			// $sql = "
-   //              UPDATE EducationalMaterialControlMH
-   //              SET 
-   //                  EducationalMaterialControlMH.LastUpdatedBy = '$userSer',
-   //                  EducationalMaterialControlMH.SessionId = '$sessionId'
-   //              WHERE
-   //                  EducationalMaterialControlMH.EducationalMaterialControlSerNum = $eduMatSer
-   //              ORDER BY EducationalMaterialControlMH.RevSerNum DESC 
-   //              LIMIT 1
-   //          ";
-   //          $query = $host_db_link->prepare( $sql );
-   //          $query->execute();
+			$sql = "
+                UPDATE EducationalMaterialControlMH
+                SET 
+                    EducationalMaterialControlMH.LastUpdatedBy = '$userSer',
+                    EducationalMaterialControlMH.SessionId = '$sessionId'
+                WHERE
+                    EducationalMaterialControlMH.EducationalMaterialControlSerNum = $eduMatSer
+                ORDER BY EducationalMaterialControlMH.RevSerNum DESC 
+                LIMIT 1
+            ";
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
 
             $response['value'] = 1;
             return $response;
@@ -1538,42 +1205,6 @@ class EduMaterial {
 			return $response;
 		}
 	}
-
-    public function getAllowableContentTypes() {
-        $contentTypes = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT 
-                    emact.ContentTypeSerNum,
-                    ct.TypeName
-                FROM 
-                    EducationalMaterialAllowableContentTypes emact,
-                    ContentTypes ct 
-                WHERE 
-                    ct.ContentTypeSerNum = emact.ContentTypeSerNum
-            ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-    
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $details = array(
-                    'serial'    => $data[0],
-                    'value' => $data[1],
-                    'label' => $data[1],
-                    'added' => 0
-                );
-                array_push($contentTypes, $details);
-            }
-
-            return $contentTypes;
-        } catch( PDOException $e) {
-            echo $e->getMessage();
-            return $contentTypes; // Fail
-        }
-    }
 
     /**
      *

@@ -30,6 +30,13 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.edit', ['ngAnimate', 
 		$scope.diagnosisFilter = "";
 		$scope.eduMatFilter = null;
 
+		// Call our API service to get the list of educational material
+		educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+			$scope.eduMatList = response.data; // Assign value
+		}).catch(function(response) {
+			console.error('Error occurred getting educational material list:', response.status, response.data);
+		});
+
 		// Function to assign search field when textbox changes
 		$scope.changeDiagnosisFilter = function (field) {
 			$scope.diagnosisFilter = field;
@@ -83,14 +90,8 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.edit', ['ngAnimate', 
 
 				$scope.diagnosisList = checkAdded(response.data);
 
-				// Call our API service to get the list of educational material
-				educationalMaterialCollectionService.getEducationalMaterialsByType('diagnosis_translation').then(function (response) {
-					$scope.eduMatList = response.data; // Assign value
-					processingModal.close(); // hide modal
-					processingModal = null; // remove reference
-				}).catch(function(response) {
-					console.error('Error occurred getting educational material list:', response.status, response.data);
-				});
+				processingModal.close(); // hide modal
+				processingModal = null; // remove reference
 
 			}).catch(function(response) {
 				console.error('Error occurred getting diagnoses:', response.status, response.data);
@@ -135,30 +136,14 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.edit', ['ngAnimate', 
 			else return false;
 		};
 
-		$scope.eduMatUpdate = function (event, eduMat) {
+		$scope.eduMatUpdate = function (eduMat) {
 
-			if ($scope.diagnosisTranslation.eduMat) {
-				if ($scope.diagnosisTranslation.eduMat.serial == event.target.value) {
-					$scope.diagnosisTranslation.eduMatSer = null;
-					$scope.diagnosisTranslation.eduMat = null;
-				}
-				else {
-					$scope.diagnosisTranslation.eduMat = eduMat
-				}
-			}
-			else {
-				$scope.diagnosisTranslation.eduMat = eduMat
-			}
+			$scope.diagnosisTranslation.eduMat = eduMat;
 
 			// Toggle boolean
 			$scope.changesMade = true;
 			$scope.diagnosisTranslation.details_updated = 1;
 		};
-
-		$scope.showTOCs = false;
-		$scope.toggleTOCDisplay = function () {
-			$scope.showTOCs = !$scope.showTOCs;
-		}
 
 		// Function to add / remove a diagnosis
 		$scope.toggleDiagnosisSelection = function (diagnosis) {
