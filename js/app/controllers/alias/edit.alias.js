@@ -99,12 +99,15 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 				// Loop within current alias' expressions (terms) 
 				angular.forEach($scope.alias.terms, function (selectedTerm) {
 
+					var selectedTermName = selectedTerm.id;
+					var selectedTermDesc = selectedTerm.description;
 					// Loop within each of the existing terms
 					angular.forEach($scope.termList, function (term) {
-						var termId = term.id; // get the id name
-						var selectedTermName = selectedTerm.name;
+						var termName = term.id; // get the id name
+						var termDesc = term.description;
 
-						if (selectedTermName == termId) { // If term is selected (from current alias)
+
+						if (selectedTermName == termName && selectedTermDesc == termDesc) { // If term is selected (from current alias)
 							term.added = 1; // term added?
 							term.assigned = null; // remove self assigned alias
 						}
@@ -265,7 +268,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 				// Fill it with the added terms from termList
 				angular.forEach($scope.termList, function (term) {
 					if (term.added)
-						$scope.alias.terms.push(term.id);
+						$scope.alias.terms.push(term);
 				});
 
 				// Log who updated alias

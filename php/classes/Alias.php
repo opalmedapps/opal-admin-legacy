@@ -51,11 +51,12 @@ class Alias {
                             $termArray = array(
     				           	'name'      => $termName,
                                 'id'        => $termName, 
+                                'description' => $termName,
     			        	    'added'     => 0,
                                 'assigned'  => null
     		    	        );
 
-                            $assignedExpression = $this->assignedSearch($termName, $assignedExpressions);
+                            $assignedExpression = $this->assignedSearch($termName, $termName, $assignedExpressions);
                             if ($assignedExpression) {
                                 $termArray['added'] = 0;
                                 $termArray['assigned'] = $assignedExpression;
@@ -86,11 +87,12 @@ class Alias {
                             $termArray = array(
     				           	'name'      => $termName,
                                 'id'        => $termName,
+                                'description'   => $termName,
     			            	'added'     => 0,
                                 'assigned'  => null
         			        );
 
-                            $assignedExpression = $this->assignedSearch($termName, $assignedExpressions);
+                            $assignedExpression = $this->assignedSearch($termName, $termName, $assignedExpressions);
                             if ($assignedExpression) {
                                 $termArray['added'] = 0;
                                 $termArray['assigned'] = $assignedExpression;
@@ -133,11 +135,12 @@ class Alias {
                         $termArray = array(
     				       	'name'          => "$termName ($termDesc)",
                             'id'            => $termName,
+                            'description'   => $termDesc,
     			        	'added'         => 0,
                             'assigned'      => null
     			        );
 
-                        $assignedExpression = $this->assignedSearch($termName, $assignedExpressions);
+                        $assignedExpression = $this->assignedSearch($termName, $termDesc, $assignedExpressions);
                         if ($assignedExpression) {
                             $termArray['added'] = 0;
                             $termArray['assigned'] = $assignedExpression;
@@ -196,6 +199,7 @@ class Alias {
             $sql = "
                 SELECT DISTINCT 
                     ae.ExpressionName,
+                    ae.Description,
                     Alias.AliasName_EN
                 FROM
                     AliasExpression ae,
@@ -213,7 +217,8 @@ class Alias {
 
                 $expressionDetails = array (
                     'id'        => $data[0],
-                    'name_EN'   => "$data[1]"   
+                    'description'   => $data[1],
+                    'name_EN'   => "$data[2]"   
                 );
                 array_push($expressions, $expressionDetails);
             }
@@ -439,7 +444,8 @@ class Alias {
 
 				$sql = "
 					SELECT DISTINCT 
-						AliasExpression.ExpressionName 
+						AliasExpression.ExpressionName,
+                        AliasExpression.Description 
 					FROM 
 						Alias, 
 						AliasExpression 
@@ -454,8 +460,10 @@ class Alias {
 				while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
 					$termName = $secondData[0];
+                    $termDesc = $secondData[1];
 					$termArray = array(
-						'name' => $termName,
+						'id' => $termName,
+                        'description' => $termDesc,
 						'added'=> 1
 					);
 
@@ -553,7 +561,8 @@ class Alias {
 
 			$sql = "
 				SELECT DISTINCT 
-					AliasExpression.ExpressionName 
+					AliasExpression.ExpressionName,
+                    AliasExpression.Description 
 				FROM 	
 					AliasExpression 
 				WHERE 
@@ -566,8 +575,10 @@ class Alias {
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
 					$termName = $data[0];
+                    $termDesc = $data[1];
 					$termArray = array(
-						'name' => $termName,
+						'id' => $termName,
+                        'description' => $termDesc,
 						'added'=> 1
 					);
 
@@ -670,18 +681,22 @@ class Alias {
 
 			foreach ($aliasTerms as $aliasTerm) {
 
+                $termName = $aliasTerm['id'];
+                $termDesc = $aliasTerm['description'];
 				$sql = "
                     INSERT INTO 
                         AliasExpression (
                             AliasSerNum,
                             ExpressionName,
+                            Description,
                             LastTransferred,
                             LastUpdatedBy,
                             SessionId
                         )
                     VALUE (
                         '$aliasSer',
-                        \"$aliasTerm\",
+                        \"$termName\",
+                        \"$termDesc\",
                         NOW(),
                         '$userSer',
                         '$sessionId'
@@ -829,7 +844,8 @@ class Alias {
 
     			$sql = "
     				SELECT DISTINCT 
-    					AliasExpression.ExpressionName 
+    					AliasExpression.ExpressionName,
+                        AliasExpression.Description 
     				FROM 
     					AliasExpression 
     				WHERE 
@@ -841,20 +857,30 @@ class Alias {
 
     			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-    				array_push($existingTerms, $data[0]);
+                    $termArray = array(
+                        'id'          => $data[0],
+                        'description'   => $data[1]
+                    );
+                    array_push($existingTerms, $termArray);
+
     			}
 
                 // This loop compares the old terms with the new
                 // If old terms not in new, then remove old
-    			foreach ($existingTerms as $existingTermName) {
-    				if (!in_array($existingTermName, $aliasTerms)) {
+    			foreach ($existingTerms as $existingTerm) {
+                    $existingTermName = $existingTerm['id'];
+                    $existingTermDesc = $existingTerm['description'];
+    				if (!$this->nestedSearch($existingTermName, $existingTermDesc, $aliasTerms)) {
     					$sql = "
                             DELETE FROM 
     							AliasExpression
     						WHERE
                                 AliasExpression.ExpressionName = \"$existingTermName\"
+                            AND AliasExpression.Description = \"$existingTermDesc\"
                             AND AliasExpression.AliasSerNum = $aliasSer
     					";
+
+                        //echo $sql;
 
     					$query = $host_db_link->prepare( $sql );
     					$query->execute();
@@ -866,6 +892,7 @@ class Alias {
                                 AliasExpressionMH.SessionId = '$sessionId'
                             WHERE
                                 AliasExpressionMH.ExpressionName = \"$existingTermName\"
+                            AND AliasExpressionMH.Description = \"$existingTermDesc\"
                             ORDER BY AliasExpressionMH.RevSerNum DESC 
                             LIMIT 1
                         ";
@@ -876,20 +903,24 @@ class Alias {
 
                 // If new terms, then insert
     			foreach ($aliasTerms as $term) {
-    				if (!in_array($term, $existingTerms)) {
+                    $termName = $term['id'];
+                    $termDesc = $term['description'];
+    				if (!$this->nestedSearch($termName, $termDesc, $existingTerms)) {
                         $sql = "
                             INSERT INTO 
                                 AliasExpression (
                                     AliasExpressionSerNum,
                                     AliasSerNum,
                                     ExpressionName,
+                                    Description,
                                     LastUpdatedBy,
                                     SessionId
                                 )
                             VALUES (
                                 NULL,
                                 '$aliasSer',
-                                \"$term\",
+                                \"$termName\",
+                                \"$termDesc\",
                                 '$userSer',
                                 '$sessionId'
                             )
@@ -963,19 +994,41 @@ class Alias {
 
     /**
      *
+     * Does a nested search for match
+     *
+     * @param string $id    : the needle id
+     * @param string $description  : the needle description
+     * @param array $array  : the key-value haystack
+     * @return boolean
+     */
+    public function nestedSearch($id, $description, $array) {
+        if(empty($array) || !$id || !$description){
+            return 0;
+        }
+        foreach ($array as $key => $val) {
+            if ($val['id'] === $id and $val['description'] === $description) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     *
      * Checks if an expression has been assigned to an alias
      *
      * @param string $id    : the needle id
+     * @param string $description  : the needle description
      * @param array $array  : the key-value haystack
      * @return $assignedAlias
      */
-    public function assignedSearch($id, $array) {
+    public function assignedSearch($id, $description, $array) {
         $assignedAlias = null;
         if(empty($array) || !$id){
             return $assignedAlias;
         }
         foreach ($array as $key => $val) {
-            if ($val['id'] === $id) {
+            if ($val['id'] === $id and $val['description'] === $description) {
                 $assignedAlias = $val;
                 return $assignedAlias;
             }

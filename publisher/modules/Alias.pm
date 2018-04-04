@@ -263,6 +263,7 @@ sub getAliasExpressionsFromOurDB
 		SELECT DISTINCT
 			AliasExpression.AliasExpressionSerNum,
 			REPLACE(AliasExpression.ExpressionName, '''', ''),
+			REPLACE(AliasExpression.Description, '''', ''),
 			AliasExpression.LastTransferred
 		FROM 
 			Alias,
@@ -286,7 +287,8 @@ sub getAliasExpressionsFromOurDB
 		my $aliasExpression = {
 			_ser			=> $data[0],
 			_name			=> $data[1],
-			_lasttransfer 	=> $data[2]
+			_description 	=> $data[2],
+			_lasttransfer 	=> $data[3]
 		};
 		push(@expressions, $aliasExpression); # push in our list
 	}
