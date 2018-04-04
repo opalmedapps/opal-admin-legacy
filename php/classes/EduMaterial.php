@@ -910,14 +910,18 @@ class EduMaterial {
                                 ControlTableSerNum,
                                 FilterType,
                                 FilterId,
-                                DateAdded
+                                DateAdded,
+                                LastUpdatedBy,
+                                SessionId
                             )
                         VALUES (
                             'EducationalMaterialControl',
                             '$eduMatSer',
                             '$filterType',
                             \"$filterId\",
-                            NOW()
+                            NOW(),
+                            '$userSer',
+                            '$sessionId'
                         )
 		    		";
 			    	$query = $host_db_link->prepare( $sql );
@@ -1064,6 +1068,10 @@ class EduMaterial {
 		$existingFilters	= array();
         $existingTOCs       = array();
 
+        $detailsUpdated     = $eduMatDetails['details_updated'];
+        $tocsUpdated        = $eduMatDetails['tocs_updated'];
+        $filtersUpdated     = $eduMatDetails['filters_updated'];
+
         $response = array(
             'value'     => 0,
             'message'   => ''
@@ -1131,217 +1139,273 @@ class EduMaterial {
                 }
             }
 
-            // Update
-			$sql = "
-                UPDATE
-                    EducationalMaterialControl,
-                    AllowableExtension ae_en,
-                    AllowableExtension ae_fr
-                SET
-                    EducationalMaterialControl.Name_EN     		= \"$name_EN\",
-                    EducationalMaterialControl.Name_FR     		= \"$name_FR\",
-                    EducationalMaterialControl.URL_EN      		= \"$url_EN\",
-                    EducationalMaterialControl.URL_FR      		= \"$url_FR\",
-                    EducationalMaterialControl.URLType_EN  		= ae_en.Type,
-                    EducationalMaterialControl.URLType_FR  		= ae_fr.Type,
-                    EducationalMaterialControl.ShareURL_EN 		= \"$shareURL_EN\",
-					EducationalMaterialControl.ShareURL_FR 		= \"$shareURL_FR\",
-					EducationalMaterialControl.LastUpdatedBy	= '$userSer',
-					EducationalMaterialControl.SessionId		= '$sessionId'
-                WHERE
-                    EducationalMaterialControl.EducationalMaterialControlSerNum = $eduMatSer
-                AND ae_en.Name = '$urlExt_EN'
-                AND ae_fr.Name = '$urlExt_FR'
-            ";
-        
-			$query = $host_db_link->prepare( $sql );
-			$query->execute();
+            if ($detailsUpdated) {
 
-    
-            $sql = "
-		        SELECT DISTINCT 
-                    Filters.FilterType,
-                    Filters.FilterId
-    			FROM     
-    				Filters
-		    	WHERE 
-                    Filters.ControlTableSerNum       = $eduMatSer
-                AND Filters.ControlTable             = 'EducationalMaterialControl'
-                AND Filters.FilterType              != ''
-                AND Filters.FilterId                != ''
-		    ";
-
-		    $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-    		$query->execute();
-
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-    
-                $filterArray = array(
-                    'type'  => $data[0],
-                    'id'    => $data[1]
-                );
-                array_push($existingFilters, $filterArray);
-            }
-
-            if($existingFilters) { 
-
-                // If old filters not in new filter list, then remove
-    	    	foreach ($existingFilters as $existingFilter) {
-                    $id     = $existingFilter['id'];
-                    $type   = $existingFilter['type'];
-                    if (!$this->nestedSearch($id, $type, $filters)) {
-				    	$sql = "
-                            DELETE FROM 
-    					    	Filters
-    	    				WHERE
-                                Filters.FilterId            = \"$id\"
-                            AND Filters.FilterType          = '$type'
-                            AND Filters.ControlTableSerNum   = $eduMatSer
-                            AND Filters.ControlTable         = 'EducationalMaterialControl'
-		    		    ";  
-            
-	    	    		$query = $host_db_link->prepare( $sql );
-		    	    	$query->execute();
-                    }
+                if (!$tocs) {
+                    // Update
+        			$sql = "
+                        UPDATE
+                            EducationalMaterialControl,
+                            AllowableExtension ae_en,
+                            AllowableExtension ae_fr
+                        SET
+                            EducationalMaterialControl.Name_EN     		= \"$name_EN\",
+                            EducationalMaterialControl.Name_FR     		= \"$name_FR\",
+                            EducationalMaterialControl.URL_EN      		= \"$url_EN\",
+                            EducationalMaterialControl.URL_FR      		= \"$url_FR\",
+                            EducationalMaterialControl.URLType_EN  		= ae_en.Type,
+                            EducationalMaterialControl.URLType_FR  		= ae_fr.Type,
+                            EducationalMaterialControl.ShareURL_EN 		= \"$shareURL_EN\",
+        					EducationalMaterialControl.ShareURL_FR 		= \"$shareURL_FR\",
+        					EducationalMaterialControl.LastUpdatedBy	= '$userSer',
+        					EducationalMaterialControl.SessionId		= '$sessionId'
+                        WHERE
+                            EducationalMaterialControl.EducationalMaterialControlSerNum = $eduMatSer
+                        AND ae_en.Name = '$urlExt_EN'
+                        AND ae_fr.Name = '$urlExt_FR'
+                    ";
+                
+        			$query = $host_db_link->prepare( $sql );
+        			$query->execute();
                 }
-	    	}
-
-            if($filters) {
-
-                // If new filters (i.e. not in old list), then insert
-    			foreach ($filters as $filter) {
-                    $id     = $filter['id'];
-                    $type   = $filter['type'];
-                    if (!$this->nestedSearch($id, $type, $existingFilters)) {
-                        $sql = "
-                            INSERT INTO 
-                                Filters (
-                                    ControlTable,
-                                    ControlTableSerNum,
-                                    FilterId,
-                                    FilterType,
-                                    DateAdded
-                                )
-                            VALUES (
-                                'EducationalMaterialControl',
-                                '$eduMatSer',
-                                \"$id\",
-                                '$type',
-                                NOW()
-                            )
-	    	    		";
-		    	    	$query = $host_db_link->prepare( $sql );
-		    		    $query->execute();
-    			    }
-	    		}
+                else {
+                    // Update
+                    $sql = "
+                        UPDATE
+                            EducationalMaterialControl
+                        SET
+                            EducationalMaterialControl.Name_EN          = \"$name_EN\",
+                            EducationalMaterialControl.Name_FR          = \"$name_FR\",
+                            EducationalMaterialControl.URL_EN           = \"$url_EN\",
+                            EducationalMaterialControl.URL_FR           = \"$url_FR\",
+                            EducationalMaterialControl.ShareURL_EN      = \"$shareURL_EN\",
+                            EducationalMaterialControl.ShareURL_FR      = \"$shareURL_FR\",
+                            EducationalMaterialControl.LastUpdatedBy    = '$userSer',
+                            EducationalMaterialControl.SessionId        = '$sessionId'
+                        WHERE
+                            EducationalMaterialControl.EducationalMaterialControlSerNum = $eduMatSer
+                    ";
+                
+                    $query = $host_db_link->prepare( $sql );
+                    $query->execute();
+                }
             }
-            $sql = "
-                SELECT 
-                    em.EducationalMaterialControlSerNum 
-                FROM
-                    EducationalMaterialControl em,
-                    EducationalMaterialTOC toc
-                WHERE
-                    em.EducationalMaterialControlSerNum = toc.EducationalMaterialControlSerNum
-                AND toc.ParentSerNum                    = $eduMatSer
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
-    
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+            if ($filtersUpdated) {
+        
+                $sql = "
+    		        SELECT DISTINCT 
+                        Filters.FilterType,
+                        Filters.FilterId
+        			FROM     
+        				Filters
+    		    	WHERE 
+                        Filters.ControlTableSerNum       = $eduMatSer
+                    AND Filters.ControlTable             = 'EducationalMaterialControl'
+                    AND Filters.FilterType              != ''
+                    AND Filters.FilterId                != ''
+    		    ";
+
+    		    $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+        		$query->execute();
+
+    			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+        
+                    $filterArray = array(
+                        'type'  => $data[0],
+                        'id'    => $data[1]
+                    );
+                    array_push($existingFilters, $filterArray);
+                }
+
+                if($existingFilters) { 
+
+                    // If old filters not in new filter list, then remove
+        	    	foreach ($existingFilters as $existingFilter) {
+                        $id     = $existingFilter['id'];
+                        $type   = $existingFilter['type'];
+                        if (!$this->nestedSearch($id, $type, $filters)) {
+    				    	$sql = "
+                                DELETE FROM 
+        					    	Filters
+        	    				WHERE
+                                    Filters.FilterId            = \"$id\"
+                                AND Filters.FilterType          = '$type'
+                                AND Filters.ControlTableSerNum   = $eduMatSer
+                                AND Filters.ControlTable         = 'EducationalMaterialControl'
+    		    		    ";  
+                
+    	    	    		$query = $host_db_link->prepare( $sql );
+    		    	    	$query->execute();
+
+                             $sql = "
+                                UPDATE FiltersMH
+                                SET 
+                                    FiltersMH.LastUpdatedBy = '$userSer',
+                                    FiltersMH.SessionId = '$sessionId'
+                                WHERE
+                                    FiltersMH.FilterId              = \"$id\"
+                                AND FiltersMH.FilterType            = '$type'
+                                AND FiltersMH.ControlTableSerNum    = $eduMatSer
+                                AND FiltersMH.ControlTable          = 'EducationalMaterialControl'
+                                ORDER BY FiltersMH.DateAdded DESC 
+                                LIMIT 1
+                            ";
+                            $query = $host_db_link->prepare( $sql );
+                            $query->execute();
+                        }
+                    }
+    	    	}
+
+                if($filters) {
+
+                    // If new filters (i.e. not in old list), then insert
+        			foreach ($filters as $filter) {
+                        $id     = $filter['id'];
+                        $type   = $filter['type'];
+                        if (!$this->nestedSearch($id, $type, $existingFilters)) {
+                            $sql = "
+                                INSERT INTO 
+                                    Filters (
+                                        ControlTable,
+                                        ControlTableSerNum,
+                                        FilterId,
+                                        FilterType,
+                                        DateAdded,
+                                        LastUpdatedBy,
+                                        SessionId
+                                    )
+                                VALUES (
+                                    'EducationalMaterialControl',
+                                    '$eduMatSer',
+                                    \"$id\",
+                                    '$type',
+                                    NOW(),
+                                    '$userSer',
+                                    '$sessionId'
+                                )
+    	    	    		";
+    		    	    	$query = $host_db_link->prepare( $sql );
+    		    		    $query->execute();
+        			    }
+    	    		}
+                }
+            }
+
+            if ($tocsUpdated) {
+                $sql = "
+                    SELECT 
+                        em.EducationalMaterialControlSerNum 
+                    FROM
+                        EducationalMaterialControl em,
+                        EducationalMaterialTOC toc
+                    WHERE
+                        em.EducationalMaterialControlSerNum = toc.EducationalMaterialControlSerNum
+                    AND toc.ParentSerNum                    = $eduMatSer
+                ";
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+    			$query->execute();
+        
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $sql = "
+                        DELETE FROM
+                            EducationalMaterialControl
+                        WHERE
+                            EducationalMaterialControl.EducationalMaterialControlSerNum = $data[0]
+                    ";         
+                    $secondQuery = $host_db_link->prepare( $sql );
+                    $secondQuery->execute();
+                }
 
                 $sql = "
                     DELETE FROM
-                        EducationalMaterialControl
+                        EducationalMaterialTOC
                     WHERE
-                        EducationalMaterialControl.EducationalMaterialControlSerNum = $data[0]
-                ";         
-                $secondQuery = $host_db_link->prepare( $sql );
-                $secondQuery->execute();
-            }
+                        EducationalMaterialTOC.ParentSerNum = $eduMatSer
+                ";
+    	        $query = $host_db_link->prepare( $sql );
+                $query->execute();
 
-            $sql = "
-                DELETE FROM
-                    EducationalMaterialTOC
-                WHERE
-                    EducationalMaterialTOC.ParentSerNum = $eduMatSer
-            ";
-	        $query = $host_db_link->prepare( $sql );
-            $query->execute();
+                if($tocs) {
+                    foreach ($tocs as $toc) {
 
-            if($tocs) {
-                foreach ($tocs as $toc) {
+                        $tocOrder       = $toc['order'];
+                        $tocName_EN     = $toc['name_EN'];
+                        $tocName_FR     = $toc['name_FR'];
+                        $tocURL_EN      = $toc['url_EN'];
+                        $tocURL_FR      = $toc['url_FR'];
+                        $tocType_EN     = $toc['type_EN'];
+                        $tocType_FR     = $toc['type_FR'];
 
-                    $tocOrder       = $toc['order'];
-                    $tocName_EN     = $toc['name_EN'];
-                    $tocName_FR     = $toc['name_FR'];
-                    $tocURL_EN      = $toc['url_EN'];
-                    $tocURL_FR      = $toc['url_FR'];
-                    $tocType_EN     = $toc['type_EN'];
-                    $tocType_FR     = $toc['type_FR'];
+                        $toc['url_EN'] = $this->urlCheck($toc['url_EN']);
+                        $toc['url_FR'] = $this->urlCheck($toc['url_FR']);
 
-                    $toc['url_EN'] = $this->urlCheck($toc['url_EN']);
-                    $toc['url_FR'] = $this->urlCheck($toc['url_FR']);
-
-                    $tocExt_EN      = $this->extensionSearch($toc['url_EN']); 
-                    $tocExt_FR      = $this->extensionSearch($toc['url_FR']); 
-    
-                    $sql = "
-                        INSERT INTO
-                            EducationalMaterialControl (
-                                EducationalMaterialType_EN,
-                                EducationalMaterialType_FR,
-                                Name_EN,
-                                Name_FR,
-                                URL_EN,
-                                URL_FR,
-                                URLType_EN,
-                                URLType_FR,
-                                PhaseInTreatmentSerNum,
-                                ParentFlag,
-                                DateAdded
+                        $tocExt_EN      = $this->extensionSearch($toc['url_EN']); 
+                        $tocExt_FR      = $this->extensionSearch($toc['url_FR']); 
+        
+                        $sql = "
+                            INSERT INTO
+                                EducationalMaterialControl (
+                                    EducationalMaterialType_EN,
+                                    EducationalMaterialType_FR,
+                                    Name_EN,
+                                    Name_FR,
+                                    URL_EN,
+                                    URL_FR,
+                                    URLType_EN,
+                                    URLType_FR,
+                                    PhaseInTreatmentSerNum,
+                                    ParentFlag,
+                                    DateAdded,
+                                    LastUpdatedBy,
+                                    SessionId
+                                )
+                            SELECT 
+                                \"$tocType_EN\",
+                                \"$tocType_FR\",
+                                \"$tocName_EN\",
+                                \"$tocName_FR\",
+                                \"$tocURL_EN\",
+                                \"$tocURL_FR\",
+                                ae_en.Type,
+                                ae_fr.Type,
+                                '$phaseSer',
+                                0,
+                                NOW(),
+                                '$userSer',
+                                '$sessionId'
+                            FROM 
+                                AllowableExtension ae_en,
+                                AllowableExtension ae_fr
+                            WHERE
+                                ae_en.Name = '$tocExt_EN'
+                            AND ae_fr.Name = '$tocExt_FR'
+                        ";
+                        $query = $host_db_link->prepare( $sql );
+    	    			$query->execute();
+        
+    	    		    $tocSer = $host_db_link->lastInsertId();
+                        $sql = "
+                            INSERT INTO
+                                EducationalMaterialTOC (
+                                    EducationalMaterialControlSerNum,
+                                    OrderNum,
+                                    ParentSerNum,
+                                    DateAdded
+                                )
+                            VALUES (
+                                '$tocSer',
+                                '$tocOrder',
+                                '$eduMatSer',
+                                NOW()
                             )
-                        SELECT 
-                            \"$tocType_EN\",
-                            \"$tocType_FR\",
-                            \"$tocName_EN\",
-                            \"$tocName_FR\",
-                            \"$tocURL_EN\",
-                            \"$tocURL_FR\",
-                            ae_en.Type,
-                            ae_fr.Type,
-                            '$phaseSer',
-                            0,
-                            NOW()
-                        FROM 
-                            AllowableExtension ae_en,
-                            AllowableExtension ae_fr
-                        WHERE
-                            ae_en.Name = '$tocExt_EN'
-                        AND ae_fr.Name = '$tocExt_FR'
-                    ";
-                    $query = $host_db_link->prepare( $sql );
-	    			$query->execute();
-    
-	    		    $tocSer = $host_db_link->lastInsertId();
-                    $sql = "
-                        INSERT INTO
-                            EducationalMaterialTOC (
-                                EducationalMaterialControlSerNum,
-                                OrderNum,
-                                ParentSerNum,
-                                DateAdded
-                            )
-                        VALUES (
-                            '$tocSer',
-                            '$tocOrder',
-                            '$eduMatSer',
-                            NOW()
-                        )
-                    ";
-                    $query = $host_db_link->prepare( $sql );
-			    	$query->execute();
+                        ";
+                        $query = $host_db_link->prepare( $sql );
+    			    	$query->execute();
+                    }
                 }
+
             }
 
             $sql = "

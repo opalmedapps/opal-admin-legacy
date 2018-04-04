@@ -14,7 +14,9 @@
 		'edumatser'         => $_POST['eduMatSer'],
         'serial'            => $_POST['serial'],
         'diagnoses'         => $_POST['diagnoses'],
-        'user'				=> $_POST['user']
+        'user'				=> $_POST['user'],
+        'details_updated'	=> $_POST['details_updated'],
+        'codes_updated'		=> $_POST['codes_updated']
 	);
 
 	 // Call function
