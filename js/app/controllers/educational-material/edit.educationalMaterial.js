@@ -39,7 +39,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 
 		$scope.contentTypeList = []; 
 
-		
+		$scope.tocsComplete = true;
 
 		// Initialize lists to hold the distinct edu material types
 		$scope.EduMatTypes_EN = [];
@@ -173,11 +173,17 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 		// Function to toggle Item in a list on/off
 		$scope.selectItem = function (item) {
 			$scope.setChangesMade();
+			$scope.eduMat.filters_updated = 1;
 			if (item.added)
 				item.added = 0;
 			else
 				item.added = 1;
 		};
+
+		$scope.detailsUpdated = function () {
+			$scope.eduMat.details_updated = 1;
+			$scope.setChangesMade();
+		}
 
 		// Function to assign '1' to existing filters
 		function checkAdded(filterList) {
@@ -244,8 +250,16 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 			}
 
 			$scope.setChangesMade();
+			$scope.eduMat.filters_updated = 1;
 
 		};
+
+		// Function to toggle necessary changes when updating the age
+		$scope.ageUpdate = function () {
+
+			$scope.setChangesMade();
+			$scope.eduMat.filters_updated = 1;
+		}
 
 		// Function to check necessary form fields are complete
 		$scope.checkForm = function () {
@@ -259,20 +273,27 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 
 		$scope.setChangesMade = function () {
 			$scope.changesMade = true;
+		};
+
+		$scope.validateTOCs = function () {
+
+			$scope.setChangesMade();
 			$scope.tocsComplete = true;
+			$scope.eduMat.tocs_updated = 1;
 			if (!$scope.eduMat.tocs.length) {
 				$scope.tocsComplete = false;
+				$scope.eduMat.tocs_updated = 0;
 			}
 			else {
 				angular.forEach($scope.eduMat.tocs, function (toc) {
 					if (!toc.name_EN || !toc.name_FR || !toc.url_EN
 						|| !toc.url_FR || !toc.type_EN || !toc.type_FR) {
 						$scope.tocsComplete = false;
+					$scope.eduMat.tocs_updated = 0;
 					}
 				});
 			}
-
-		};
+		}
 
 		// Function to return boolean for # of added content type tags
 		$scope.checkTagsAdded = function (contentTypeList) {
@@ -404,7 +425,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 				order: newOrder,
 				serial: null
 			});
-			$scope.setChangesMade();
+			$scope.validateTOCs();
 		};
 
 		// Function to remove table of contents from eduMat object
@@ -414,7 +435,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 			for (var index = order - 1; index < $scope.eduMat.tocs.length; index++) {
 				$scope.eduMat.tocs[index].order -= 1;
 			}
-			$scope.setChangesMade();
+			$scope.validateTOCs();
 		};
 
 		// Function to return filters that have been checked

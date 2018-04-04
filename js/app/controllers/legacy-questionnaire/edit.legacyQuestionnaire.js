@@ -194,6 +194,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaire.edit', ['ngAnimate', '
 		// Function to toggle Item in a list on/off
 		$scope.selectItem = function (item) {
 			$scope.changesMade = true;
+			$scope.legacyQuestionnaire.filters_updated = 1;
 			if (item.added)
 				item.added = 0;
 			else
@@ -203,6 +204,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaire.edit', ['ngAnimate', '
 		// Function to toggle appointment status filter 
 		$scope.appointmentStatusUpdate = function (index) {
 			$scope.setChangesMade();
+			$scope.legacyQuestionnaire.filters_updated = 1;
 			angular.forEach($scope.appointmentStatusList, function (appointmentStatus, loopIndex) {
 				if (index == loopIndex) {
 					if (appointmentStatus.added) 
@@ -308,6 +310,46 @@ angular.module('opalAdmin.controllers.legacyQuestionnaire.edit', ['ngAnimate', '
 			} else {
 				return true;
 			}
+		}
+
+		// Initialize a list of sexes
+		$scope.sexes = [
+			{
+				name: 'Male',
+				icon: 'male'
+			}, {
+				name: 'Female',
+				icon: 'female'
+			}
+		];
+
+		// Function to toggle necessary changes when updating the sex
+		$scope.sexUpdate = function (sex) {
+
+			if (!$scope.demoFilter.sex) {
+				$scope.demoFilter.sex = sex.name;
+			} else if ($scope.demoFilter.sex == sex.name) {
+				$scope.demoFilter.sex = null; // Toggle off
+			} else {
+				$scope.demoFilter.sex = sex.name;
+			}
+
+			$scope.setChangesMade();
+			$scope.legacyQuestionnaire.filters_updated = 1;
+
+		};
+
+		// Function to toggle necessary changes when updating the age 
+		$scope.ageUpdate = function () {
+
+			$scope.setChangesMade();
+			$scope.legacyQuestionnaire.filters_updated = 1;
+
+		};
+
+		$scope.detailsUpdated = function () {
+			$scope.legacyQuestionnaire.details_updated = 1;
+			$scope.setChangesMade();
 		}
 
 		// Function to return filters that have been checked

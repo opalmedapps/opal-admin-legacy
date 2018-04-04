@@ -741,6 +741,22 @@ class LegacyQuestionnaire {
         
     	    				$query = $host_db_link->prepare( $sql );
     		    			$query->execute();
+
+                            $sql = "
+                                UPDATE FiltersMH
+                                SET 
+                                    FiltersMH.LastUpdatedBy = '$userSer',
+                                    FiltersMH.SessionId = '$sessionId'
+                                WHERE
+                                    FiltersMH.FilterId              = \"$id\"
+                                AND FiltersMH.FilterType            = '$type'
+                                AND FiltersMH.ControlTableSerNum    = $questionnaireSer
+                                AND FiltersMH.ControlTable          = 'LegacyQuestionnaireControl'
+                                ORDER BY FiltersMH.DateAdded DESC 
+                                LIMIT 1
+                            ";
+                            $query = $host_db_link->prepare( $sql );
+                            $query->execute();
     			    	}
         			}   
                 }
@@ -757,14 +773,18 @@ class LegacyQuestionnaire {
                                         ControlTableSerNum,
                                         FilterId,
                                         FilterType,
-                                        DateAdded
+                                        DateAdded,
+                                        LastUpdatedBy,
+                                        SessionId
                                     )
                                 VALUES (
                                     'LegacyQuestionnaireControl',
                                     '$questionnaireSer',
                                     \"$id\",
                                     '$type',
-                                    NOW()
+                                    NOW(),
+                                    '$userSer',
+                                    '$sessionId'
                                 )
     			    		";
     				    	$query = $host_db_link->prepare( $sql );
