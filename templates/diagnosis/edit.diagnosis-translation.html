@@ -124,9 +124,27 @@
           <div class="alert alert-info" role="alert">
             <strong>Current Educational Material (EN / FR)</strong><br>
             <p>
-              <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-              <span ng-if="diagnosisTranslation.eduMat">{{diagnosisTranslation.eduMat.name_EN}} / {{diagnosisTranslation.eduMat.name_FR}}</span>
-              <span ng-if="!diagnosisTranslation.eduMat">None</span>
+              <div>
+		            <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+		            <span ng-if="diagnosisTranslation.eduMat">
+		              <span ng-if="diagnosisTranslation.eduMat.tocs.length">
+		                <span style="cursor:pointer" ng-click="toggleTOCDisplay()">
+		                  <strong>{{diagnosisTranslation.eduMat.name_EN}} / {{diagnosisTranslation.eduMat.name_FR}}</strong>
+		                </span>
+		                <ul ng-if="showTOCs">
+		                  <li ng-repeat="toc in diagnosisTranslation.eduMat.tocs">
+		                    <strong><a target="_blank" href="{{toc.url_EN}}">{{toc.name_EN}}</a></strong> / <strong><a target="_blank" href="{{toc.url_FR}}">{{toc.name_FR}}</a></strong>
+		                  </li>
+		                </ul>
+		              </span>
+		              <span ng-if="!diagnosisTranslation.eduMat.tocs.length">
+		                <span>
+		                  <strong><a target="_blank" href="{{diagnosisTranslation.eduMat.url_EN}}">{{diagnosisTranslation.eduMat.name_EN}}</a> / <a target="_blank" href="{{diagnosisTranslation.eduMat.url_FR}}">{{diagnosisTranslation.eduMat.name_FR}}</a></strong>
+		                </span>
+		              </span>
+		            </span>
+		            <span ng-if="!diagnosisTranslation.eduMat">None</span>
+		          </div>
             </p>
           </div>
           <div class="list-space">
@@ -137,7 +155,7 @@
             <ul class="list-items">
               <li ng-repeat="eduMat in eduMatList | filter: searchEduMatsFilter">
                 <label>
-                  <input type="radio" ng-model="diagnosisTranslation.eduMatSer" ng-change="eduMatUpdate(eduMat)" ng-checked="diagnosisTranslation.eduMatSer == eduMat.serial" ng-value="eduMat.serial" /> {{eduMat.name_EN}}
+                  <input type="radio" ng-model="diagnosisTranslation.eduMatSer" ng-click="eduMatUpdate($event, eduMat)" value="{{eduMat.serial}}" /> {{eduMat.name_EN}}
                 </label>
               </li>
             </ul>

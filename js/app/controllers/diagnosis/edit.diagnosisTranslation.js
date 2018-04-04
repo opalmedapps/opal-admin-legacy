@@ -136,14 +136,31 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.edit', ['ngAnimate', 
 			else return false;
 		};
 
-		$scope.eduMatUpdate = function (eduMat) {
+		$scope.eduMatUpdate = function (event, eduMat) {
 
-			$scope.diagnosisTranslation.eduMat = eduMat;
+			if ($scope.diagnosisTranslation.eduMat) {
+				if ($scope.diagnosisTranslation.eduMat.serial == event.target.value) {
+					$scope.diagnosisTranslation.eduMat = null;
+					$scope.diagnosisTranslation.eduMatSer = null;
+				}
+				else {
+					$scope.diagnosisTranslation.eduMat = eduMat;
+				}
+			}
+			else {
+				$scope.diagnosisTranslation.eduMat = eduMat;
+			}
 
 			// Toggle boolean
 			$scope.changesMade = true;
 			$scope.diagnosisTranslation.details_updated = 1;
 		};
+
+		$scope.showTOCs = false;
+		$scope.toggleTOCDisplay = function () {
+			$scope.showTOCs = !$scope.showTOCs;
+		}
+
 
 		// Function to add / remove a diagnosis
 		$scope.toggleDiagnosisSelection = function (diagnosis) {
