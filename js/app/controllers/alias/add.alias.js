@@ -207,10 +207,24 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 		};
 
 		// Function to toggle necessary changes when updating educational material
-		$scope.eduMatUpdate = function () {
+		$scope.eduMatUpdate = function (event, eduMat) {
 
 			// Toggle booleans
 			$scope.educationalMaterialSection.open = true;
+
+			if ($scope.newAlias.eduMat) {
+				if ($scope.newAlias.eduMat.serial == event.target.value) {
+					$scope.newAlias.eduMat = null;
+					$scope.newAlias.eduMatSer = null;
+					$scope.educationalMaterialSection.open = false;
+				}
+				else {
+					$scope.newAlias.eduMat = eduMat;
+				}
+			}
+			else {
+				$scope.newAlias.eduMat = eduMat;
+			}
 		}
 
 		// Function to toggle necessary changes when updating alias type

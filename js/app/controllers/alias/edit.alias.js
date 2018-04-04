@@ -204,9 +204,25 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 		};
 
-		$scope.eduMatUpdate = function (eduMat) {
+		$scope.showTOCs = false;
+		$scope.toggleTOCDisplay = function () {
+			$scope.showTOCs = !$scope.showTOCs;
+		}
 
-			$scope.alias.eduMat = eduMat;
+		$scope.eduMatUpdate = function (event, eduMat) {
+
+			if ($scope.alias.eduMat) {
+				if ($scope.alias.eduMat.serial == event.target.value) {
+					$scope.alias.eduMat = null;
+					$scope.alias.eduMatSer = null;
+				}
+				else {
+					$scope.alias.eduMat = eduMat;
+				}
+			}
+			else {
+				$scope.alias.eduMat = eduMat;
+			}
 
 			// Toggle boolean
 			$scope.changesMade = true;

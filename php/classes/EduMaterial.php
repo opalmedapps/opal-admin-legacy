@@ -1184,18 +1184,18 @@ class EduMaterial {
             $query = $host_db_link->prepare( $sql );
 			$query->execute();
 			
-			$sql = "
-                UPDATE EducationalMaterialControlMH
-                SET 
-                    EducationalMaterialControlMH.LastUpdatedBy = '$userSer',
-                    EducationalMaterialControlMH.SessionId = '$sessionId'
-                WHERE
-                    EducationalMaterialControlMH.EducationalMaterialControlSerNum = $eduMatSer
-                ORDER BY EducationalMaterialControlMH.RevSerNum DESC 
-                LIMIT 1
-            ";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
+			// $sql = "
+   //              UPDATE EducationalMaterialControlMH
+   //              SET 
+   //                  EducationalMaterialControlMH.LastUpdatedBy = '$userSer',
+   //                  EducationalMaterialControlMH.SessionId = '$sessionId'
+   //              WHERE
+   //                  EducationalMaterialControlMH.EducationalMaterialControlSerNum = $eduMatSer
+   //              ORDER BY EducationalMaterialControlMH.RevSerNum DESC 
+   //              LIMIT 1
+   //          ";
+   //          $query = $host_db_link->prepare( $sql );
+   //          $query->execute();
 
             $response['value'] = 1;
             return $response;
