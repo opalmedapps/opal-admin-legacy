@@ -174,6 +174,11 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 			$scope.testResult.details_updated = 1;
 		};
 
+		$scope.showTOCs = false;
+		$scope.toggleTOCDisplay = function () {
+			$scope.showTOCs = !$scope.showTOCs;
+		}
+
 		// Function to add an additional link to the test result
 		$scope.addAdditionalLink = function () {
 			$scope.testResult.additional_links.push({
