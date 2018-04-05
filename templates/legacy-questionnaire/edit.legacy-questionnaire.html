@@ -288,11 +288,11 @@
     <div uib-accordion-group is-open="patientFilterSection.open">
       <uib-accordion-heading>
         <div>
-          <strong>Filter By Patient </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': patientFilterSection.open, 'glyphicon-chevron-right': !patientFilterSection.open}"></i>
+          <strong>Trigger to Send By Patient </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': patientFilterSection.open, 'glyphicon-chevron-right': !patientFilterSection.open}"></i>
         </div>
       </uib-accordion-heading>
       <div class="alert alert-info" role="alert">
-        <strong>Current Patient Filters</strong><br>
+        <strong>Current Patient Triggers</strong><br>
         <p>
           <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(patientFilterList)"></span>
           <span ng-if="allFilters(patientFilterList)">No filter</span>
@@ -322,17 +322,17 @@
     <div uib-accordion-group is-open="demographicFilterSection.open"> 
       <uib-accordion-heading>
         <div>
-          <strong>Filter By Demographics </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': demographicFilterSection.open, 'glyphicon-chevron-right': !demographicFilterSection.open}"></i>
+          <strong>Trigger to Send By Demographics </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': demographicFilterSection.open, 'glyphicon-chevron-right': !demographicFilterSection.open}"></i>
         </div>
       </uib-accordion-heading>
       <div class="alert alert-info" role="alert">
-        <strong>Current Sex Filter</strong><br>
+        <strong>Current Sex Trigger</strong><br>
         <p>
           <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
           <span ng-if="!demoFilter.sex">None</span>
           <span ng-if="demoFilter.sex">{{demoFilter.sex}}</span> 
         </p> <br>
-        <strong>Current Age Group Filter</strong><br>
+        <strong>Current Age Group Trigger</strong><br>
         <p>
           <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
           <span ng-if="!demoFilter.age">None</span>
@@ -383,11 +383,11 @@
     <div uib-accordion-group is-open="appointmentStatusFilterSection.open">
       <uib-accordion-heading>
         <div>
-          <strong>Filter By Appointment Status</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': appointmentStatusFilterSection.open, 'glyphicon-chevron-right': !appointmentStatusFilterSection.open}"></i>
+          <strong>Trigger to Send By Appointment Status</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': appointmentStatusFilterSection.open, 'glyphicon-chevron-right': !appointmentStatusFilterSection.open}"></i>
         </div>
       </uib-accordion-heading>
       <div class="alert alert-info" role="alert">
-        <strong>Current Appointment Status Filter</strong><br>
+        <strong>Current Appointment Status Triggers</strong><br>
         <p>
           <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
           <span ng-if="allFilters(appointmentStatusList)">No filter</span>
@@ -415,11 +415,11 @@
     <div uib-accordion-group is-open="appointmentFilterSection.open">
       <uib-accordion-heading>
         <div>
-          <strong>Filter By Appointment</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': appointmentFilterSection.open, 'glyphicon-chevron-right': !appointmentFilterSection.open}"></i>
+          <strong>Trigger to Send By Appointment</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': appointmentFilterSection.open, 'glyphicon-chevron-right': !appointmentFilterSection.open}"></i>
         </div>
       </uib-accordion-heading>
       <div class="alert alert-info" role="alert">
-        <strong>Current Appointment Filters</strong><br>
+        <strong>Current Appointment Triggers</strong><br>
         <p>
           <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(appointmentList)"></span>
           <span ng-if="allFilters(appointmentList)">No filter</span>
@@ -449,11 +449,11 @@
     <div uib-accordion-group is-open="diagnosisFilterSection.open">
       <uib-accordion-heading>
         <div>
-          <strong>Filter By Diagnosis </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': diagnosisFilterSection.open, 'glyphicon-chevron-right': !diagnosisFilterSection.open}"></i>
+          <strong>Trigger to Send By Diagnosis </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': diagnosisFilterSection.open, 'glyphicon-chevron-right': !diagnosisFilterSection.open}"></i>
         </div>
       </uib-accordion-heading>
       <div class="alert alert-info" role="alert">
-        <strong>Current Doctor Filters</strong><br>
+        <strong>Current Diagnosis Triggers</strong><br>
         <p>
           <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(dxFilterList)"></span>
           <span ng-if="allFilters(dxFilterList)">No filter</span>
@@ -483,11 +483,11 @@
     <div uib-accordion-group is-open="doctorFilterSection.open">
       <uib-accordion-heading>
         <div>
-          <strong>Filter By Doctor </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': doctorFilterSection.open, 'glyphicon-chevron-right': !doctorFilterSection.open}"></i>
+          <strong>Trigger to Send By Doctor </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': doctorFilterSection.open, 'glyphicon-chevron-right': !doctorFilterSection.open}"></i>
         </div>
       </uib-accordion-heading>
       <div class="alert alert-info" role="alert">
-        <strong>Current Doctor Filters</strong><br>
+        <strong>Current Doctor Triggers</strong><br>
         <p>
           <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(doctorFilterList)"></span>
           <span ng-if="allFilters(doctorFilterList)">No filter</span>
@@ -517,11 +517,11 @@
     <div uib-accordion-group is-open="resourceFilterSection.open">
       <uib-accordion-heading>
         <div>
-          <strong>Filter By Treatment Machine </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': resourceFilterSection.open, 'glyphicon-chevron-right': !resourceFilterSection.open}"></i>
+          <strong>Trigger to Send By Treatment Machine </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': resourceFilterSection.open, 'glyphicon-chevron-right': !resourceFilterSection.open}"></i>
         </div>
       </uib-accordion-heading>
       <div class="alert alert-info" role="alert">
-        <strong>Current Treatment Machine Filters</strong><br>
+        <strong>Current Treatment Machine Triggers</strong><br>
         <p>
           <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(resourceFilterList)"></span>
           <span ng-if="allFilters(resourceFilterList)">No filter</span>

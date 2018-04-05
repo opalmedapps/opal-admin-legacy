@@ -188,7 +188,7 @@
                         <span ng-if="checkFilters(patientFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                       </div>
                       <div class="col-md-8">
-                        <strong>Patient Filter(s)</strong>
+                        <strong>Patient Trigger(s)</strong>
                       </div>
                       <div class="col-md-2">
                         <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': filterSection.open, 'glyphicon-chevron-right': !filterSection.open}"
@@ -214,7 +214,7 @@
                         <span ng-if="demoFilter.sex || demoFilter.age.min != 0 || demoFilter.age.max != 100" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                       </div>
                       <div class="col-md-8">
-                        <strong>Demographic Filter(s)</strong>
+                        <strong>Demographic Trigger(s)</strong>
                       </div>
                       <div class="col-md-2">
                         <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':demoSection.open , 'glyphicon-chevron-right':!demoSection.open }" ng-if="demoFilter.sex || demoFilter.age.min != 0 || demoFilter.age.max != 100"></i>
@@ -244,7 +244,7 @@
                         <span ng-if="checkFilters(appointmentStatusList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                       </div>
                       <div class="col-md-8">
-                        <strong>Appointment Status Filter</strong>
+                        <strong>Appointment Status Trigger</strong>
                       </div>
                       <div class="col-md-2">
                         <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': filterSection.open, 'glyphicon-chevron-right': !filterSection.open}" ng-if="checkFilters(appointmentStatusList)"></i>
@@ -269,7 +269,7 @@
                         <span ng-if="checkFilters(appointmentList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                       </div>
                       <div class="col-md-8">
-                        <strong>Appointment Filter(s)</strong>
+                        <strong>Appointment Trigger(s)</strong>
                       </div>
                       <div class="col-md-2">
                         <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': filterSection.open, 'glyphicon-chevron-right': !filterSection.open}" ng-if="checkFilters(appointmentList)"></i>
@@ -294,7 +294,7 @@
                         <span ng-if="checkFilters(dxFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                       </div>
                       <div class="col-md-8">
-                        <strong>Diagnosis Filter(s)</strong>
+                        <strong>Diagnosis Trigger(s)</strong>
                       </div>
                       <div class="col-md-2">
                         <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': filterSection.open, 'glyphicon-chevron-right': !filterSection.open}" ng-if="checkFilters(dxFilterList)"></i>
@@ -319,7 +319,7 @@
                         <span ng-if="checkFilters(doctorFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                       </div>
                       <div class="col-md-8">
-                        <strong>Doctor Filter(s)</strong>
+                        <strong>Doctor Trigger(s)</strong>
                       </div>
                       <div class="col-md-2">
                         <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': filterSection.open, 'glyphicon-chevron-right': !filterSection.open}" ng-if="checkFilters(doctorFilterList)"></i>
@@ -344,7 +344,7 @@
                         <span ng-if="checkFilters(resourceFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                       </div>
                       <div class="col-md-8">
-                        <strong>Resource Filter(s)</strong>
+                        <strong>Treatment Machine Trigger(s)</strong>
                       </div>
                       <div class="col-md-2">
                         <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': filterSection.open, 'glyphicon-chevron-right': !filterSection.open}" ng-if="checkFilters(resourceFilterList)"></i>
@@ -767,7 +767,7 @@
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fas fa-dot-circle"></span>
-                    <h2>Patient Filters</h2>
+                    <h2>Trigger to Send By Patient</h2>
                   </span>  
                 </div>  
               </div>
@@ -776,7 +776,7 @@
               <div class="col-xs-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
-                  Select one of more patient filters below. This will target patients with these specific filters. Leave blank for no filters.
+                  Select one of more patient triggers below. This will target patients defined here. Leave blank for no trigger.
                 </p>
               </div>
             </div>  
@@ -811,7 +811,7 @@
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fas fa-dot-circle"></span>
-                    <h2>Demographic Filters</h2>
+                    <h2>Trigger to Send By Demographic</h2>
                   </span>  
                 </div>  
               </div>
@@ -820,7 +820,7 @@
               <div class="col-xs-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
-                  Please assign a demographic filter. Leave unmarked for no filter.
+                  Please assign a demographic trigger. Leave unmarked for no trigger.
                 </p>
               </div>
             </div>  
@@ -884,7 +884,7 @@
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fas fa-dot-circle"></span>
-                    <h2>Appointment Status Filter</h2>
+                    <h2>Trigger to Send By Appointment Status</h2>
                   </span>
                 </div>
               </div>
@@ -895,7 +895,7 @@
                   <span>
                     <strong>Optional field:</strong>
                   </span>
-                  Select an appointment status. This will target patients with appointments having this status on the day of the appointment. Using this filter with the appointment filter below will target statuses for specific appointments.
+                  Select an appointment status. This will target patients with appointments having this status on the day of the appointment. Using this trigger with the appointment trigger below will target statuses for specific appointments.
                 </p>
               </div>
             </div>
@@ -918,7 +918,7 @@
 								<div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
 									<span style="background-color:#e6edfa; padding: 0 10px;">
 										<span class="fas fa-dot-circle"></span>
-										<h2>Appointment Filters</h2>
+										<h2>Trigger to Send By Appointment</h2>
 									</span>
 								</div>
 							</div>
@@ -929,7 +929,7 @@
 									<span>
 										<strong>Optional field:</strong>
 									</span>
-									Select one of more appointment filters below. This will target patients with these specific appointments. Leave blank for no filters.
+									Select one of more appointment triggers below. This will target patients with these specific appointments. Leave blank for no trigger.
 								</p>
 							</div>
 						</div>
@@ -967,7 +967,7 @@
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fas fa-dot-circle"></span>
-                    <h2>Diagnosis Filters</h2>
+                    <h2>Trigger to Send By Diagnosis</h2>
                   </span>  
                 </div>  
               </div>
@@ -976,7 +976,7 @@
               <div class="col-xs-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
-                  Select one of more diagnosis filters below. This will target patients with these specific diagnoses. Leave blank for no filters.
+                  Select one of more diagnosis triggers below. This will target patients with these specific diagnoses. Leave blank for no trigger.
                 </p>
               </div>
             </div>  
@@ -1011,7 +1011,7 @@
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fas fa-dot-circle"></span>
-                    <h2>Doctor Filters</h2>
+                    <h2>Trigger to Send By Doctor</h2>
                   </span>  
                 </div>  
               </div>
@@ -1020,7 +1020,7 @@
               <div class="col-xs-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
-                  Select one of more doctor filters below. This will target patients with these specific doctors. Leave blank for no filters.
+                  Select one of more doctor triggers below. This will target patients with these specific doctors. Leave blank for no trigger.
                 </p>
               </div>
             </div>  
@@ -1055,7 +1055,7 @@
                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                   <span style="background-color:#e6edfa; padding: 0 10px;">
                     <span class="fas fa-dot-circle"></span>
-                    <h2>Resource Filters</h2>
+                    <h2>Trigger to Send By Treatment Machine</h2>
                   </span>  
                 </div>  
               </div>
@@ -1064,7 +1064,7 @@
               <div class="col-xs-12">
                 <p style="margin-bottom: 10px;">
                   <span><strong>Optional field:</strong></span>
-                  Select one of more resource filters below. This will target patients with these specific resources. Leave blank for no filters.
+                  Select one of more treatment machine triggers below. This will target patients with these specific treatment machines. Leave blank for no trigger.
                 </p>
               </div>
             </div>  
