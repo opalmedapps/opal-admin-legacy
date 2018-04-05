@@ -345,18 +345,43 @@ sub publishLegacyQuestionnaires
                 } 
             }
 
+            # Fetch resource filters (if any)
+            my @resourceFilters = $postFilters->getResourceFilters();
+            if (@resourceFilters) {
+
+                # toggle flag
+                $isNonPatientSpecificFilterDefined = 1;
+
+                # Finding the intersection of the patient resource(s) and the resource filters
+                # If there is an intersection, then patient is part of this publishing announcement
+                if (!intersect(@resourceFilters, @patientResources)) {
+                    if (@patientFilters) {
+                        # if the patient failed to match the resource filter but there are patient filters
+                        # then we flag to check later if this patient matches with the patient filters
+                        $isPatientSpecificFilterDefined = 1;
+                    }
+                    # else no patient filters were defined and failed to match the resource filter
+                    # move on to the next announcement
+                    else{
+                        next;
+                    }
+                }
+            }
+
 			# We look into whether any patient-specific filters have been defined 
 			# If we enter this if statement, then we check if that patient is in that list
-			if (@patientFilters) {
+			my $patientPassed = 0;
+            if (@patientFilters) {
 
                 # if the patient-specific flag was enabled then it means this patient failed
                 # one of the filters above 
                 # OR if the non patient specific flag was disabled then there were no filters defined above
                 # and this is the last test to see if this patient passes
-                if ($isPatientSpecificFilterDefined or !$isNonPatientSpecificFilterDefined) {
+                if ($isPatientSpecificFilterDefined eq 1 or $isNonPatientSpecificFilterDefined eq 0) {
     				# Finding the existence of the patient in the patient-specific filters
     				# If the patient does not exist, then continue to the next educational material
     				if ($patientId ~~ @patientFilters) {
+                        $patientPassed = 1;
                         if ($frequencyFilter) {
                             $recurringFlag = 1;
                         }
@@ -368,25 +393,28 @@ sub publishLegacyQuestionnaires
                 }
 			}
 
-            # If we've reached this point, we've passed all catches (filter restrictions). We make
-            # a questionnaire object, check if it exists already in the database. If it does 
-            # this means the questionnaire has already been publish to the patient. If it doesn't
-            # exist then we publish to the patient (insert into DB).
-			$questionnaire = new LegacyQuestionnaire();
+            if (isNonPatientSpecificFilterDefined eq 1 or ($isPatientSpecificFilterDefined eq 1 and $patientPassed eq 1)) {
 
-			# set the necessary values 
-			$questionnaire->setLegacyQuestionnaireControlSer($questionnaireControlSer);
-			$questionnaire->setLegacyQuestionnairePatientSer($patientSer);
+                # If we've reached this point, we've passed all catches (filter restrictions). We make
+                # a questionnaire object, check if it exists already in the database. If it does 
+                # this means the questionnaire has already been publish to the patient. If it doesn't
+                # exist then we publish to the patient (insert into DB).
+    			$questionnaire = new LegacyQuestionnaire();
 
-			if (!$questionnaire->inOurDatabase($recurringFlag)) { 
+    			# set the necessary values 
+    			$questionnaire->setLegacyQuestionnaireControlSer($questionnaireControlSer);
+    			$questionnaire->setLegacyQuestionnairePatientSer($patientSer);
 
-				$questionnaire = $questionnaire->insertLegacyQuestionnaireIntoOurDB();
+    			if (!$questionnaire->inOurDatabase($recurringFlag)) { 
 
-				# send push notification
-				my $questionnaireSer = $questionnaire->getLegacyQuestionnaireSer();
-				my $patientSer = $questionnaire->getLegacyQuestionnairePatientSer();
-				#PushNotification::sendPushNotification($patientSer, $questionnaireSer, 'LegacyQuestionnaire');
-			}
+    				$questionnaire = $questionnaire->insertLegacyQuestionnaireIntoOurDB();
+
+    				# send push notification
+    				my $questionnaireSer = $questionnaire->getLegacyQuestionnaireSer();
+    				my $patientSer = $questionnaire->getLegacyQuestionnairePatientSer();
+    				PushNotification::sendPushNotification($patientSer, $questionnaireSer, 'LegacyQuestionnaire');
+    			}
+            }
 
 		}
 
