@@ -273,25 +273,27 @@ sub publishPatientsForPatients
             }
 
 
-            # If we've reached this point, we've passed all catches (filter restrictions). We make
-            # an PatientsForPatients object, check if it exists already in the database. If it does 
-            # this means the PatientsForPatients has already been published to the patient. If it doesn't
-            # exist then we publish to the patient (insert into DB).
-            $patsforpats = new PatientsForPatients();
+            if (isNonPatientSpecificFilterDefined eq 1 or ($isPatientSpecificFilterDefined eq 1)) {
+                # If we've reached this point, we've passed all catches (filter restrictions). We make
+                # an PatientsForPatients object, check if it exists already in the database. If it does 
+                # this means the PatientsForPatients has already been published to the patient. If it doesn't
+                # exist then we publish to the patient (insert into DB).
+                $patsforpats = new PatientsForPatients();
 
-            # set the necessary values
-            $patsforpats->setPatsForPatsPatientSer($patientSer);
-            $patsforpats->setPatsForPatsPostControlSer($postControlSer);
+                # set the necessary values
+                $patsforpats->setPatsForPatsPatientSer($patientSer);
+                $patsforpats->setPatsForPatsPostControlSer($postControlSer);
 
-            if (!$patsforpats->inOurDatabase()) {
+                if (!$patsforpats->inOurDatabase()) {
 
-                $patsforpats = $patsforpats->insertPatsForPatsIntoOurDB();
+                    $patsforpats = $patsforpats->insertPatsForPatsIntoOurDB();
 
-                # send push notification
-                my $patsforpatsSer = $patsforpats->getPatsForPatsSer();
-                my $patientSer = $patsforpats->getPatsForPatsPatientSer();
-                PushNotification::sendPushNotification($patientSer, $patsforpatsSer, 'PatientsForPatients');
+                    # send push notification
+                    my $patsforpatsSer = $patsforpats->getPatsForPatsSer();
+                    my $patientSer = $patsforpats->getPatsForPatsPatientSer();
+                    PushNotification::sendPushNotification($patientSer, $patsforpatsSer, 'PatientsForPatients');
 
+                }
             }
 
         } # End forEach PostControl   

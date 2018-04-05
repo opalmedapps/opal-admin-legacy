@@ -294,6 +294,9 @@ sub publishAnnouncements
                 if (@resourceFilters) {
 
 					print "Treatment machine filters exist for this announcement\n" if $verbose;
+					# toggle flag
+					$isNonPatientSpecificFilterDefined = 1;
+
                     # Finding the intersection of the patient resource(s) and the resource filters
                     # If there is an intersection, then patient is part of this publishing announcement
                     if (!intersect(@resourceFilters, @patientResources)) {
@@ -315,16 +318,18 @@ sub publishAnnouncements
 
 				# We look into whether any patient-specific filters have been defined 
 				# If we enter this if statement, then we check if that patient is in that list
+				my $patientPassed = 0;
 				if (@patientFilters) {
 
 					# if the patient-specific flag was enabled then it means this patient failed
 					# one of the filters above 
 					# OR if the non patient specific flag was disabled then there were no filters defined above
 					# and this is the last test to see if this patient passes
-					if ($isPatientSpecificFilterDefined or !$isNonPatientSpecificFilterDefined) {
+					if ($isPatientSpecificFilterDefined eq 1 or $isNonPatientSpecificFilterDefined eq 0) {
 						# Finding the existence of the patient in the patient-specific filters
 						# If the patient does not exist, then continue to the next educational material
                         if ($patientId ~~ @patientFilters) {
+                        	$patientPassed = 1;
 							print "Patient is in patient filters\n" if $verbose;
 						}
                         else {
@@ -333,29 +338,32 @@ sub publishAnnouncements
 						}
 					}
 				}
+
+				if (isNonPatientSpecificFilterDefined eq 1 or ($isPatientSpecificFilterDefined eq 1 and $patientPassed eq 1)) {
 				
-                # If we've reached this point, we've passed all catches (filter restrictions). We make
-                # an announcement object, check if it exists already in the database. If it does 
-                # this means the announcement has already been published to the patient. If it doesn't
-                # exist then we publish to the patient (insert into DB).
-                $announcement = new Announcement();
+	                # If we've reached this point, we've passed all catches (filter restrictions). We make
+	                # an announcement object, check if it exists already in the database. If it does 
+	                # this means the announcement has already been published to the patient. If it doesn't
+	                # exist then we publish to the patient (insert into DB).
+	                $announcement = new Announcement();
 
-                # set the necessary values
-                $announcement->setAnnouncementPatientSer($patientSer);
-                $announcement->setAnnouncementPostControlSer($postControlSer);
+	                # set the necessary values
+	                $announcement->setAnnouncementPatientSer($patientSer);
+	                $announcement->setAnnouncementPostControlSer($postControlSer);
 
-                if (!$announcement->inOurDatabase()) {
-    
-					print "Announcement not in our database \n" if $verbose;
-                    $announcement = $announcement->insertAnnouncementIntoOurDB();
+	                if (!$announcement->inOurDatabase()) {
+	    
+						print "Announcement not in our database \n" if $verbose;
+	                    $announcement = $announcement->insertAnnouncementIntoOurDB();
 
-					print "Inserted announcement\n" if $verbose;
-                    # send push notification
-                    my $announcementSer = $announcement->getAnnouncementSer();
-                    my $patientSer = $announcement->getAnnouncementPatientSer();
-                    PushNotification::sendPushNotification($patientSer, $announcementSer, 'Announcement');
+						print "Inserted announcement\n" if $verbose;
+	                    # send push notification
+	                    my $announcementSer = $announcement->getAnnouncementSer();
+	                    my $patientSer = $announcement->getAnnouncementPatientSer();
+	                    PushNotification::sendPushNotification($patientSer, $announcementSer, 'Announcement');
 
-                }
+	                }
+	            }
             } # End if postPublishDate
 
         } # End forEach PostControl   
