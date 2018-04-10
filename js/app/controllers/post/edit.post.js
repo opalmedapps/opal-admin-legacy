@@ -196,8 +196,6 @@ angular.module('opalAdmin.controllers.post.edit', ['ngAnimate', 'ngSanitize', 'u
 				}
 			}
 
-			console.log(selectAll);
-
 		};
 
 		// Function to assign 1 to existing triggers

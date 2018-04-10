@@ -21,8 +21,8 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 			}
 		];
 
-		// Initialize to hold demographic filters
-		$scope.demoFilter = {
+		// Initialize to hold demographic triggers
+		$scope.demoTrigger = {
 			sex: null,
 			age: {
 				min: 0,
@@ -30,12 +30,20 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 			}
 		};
 
-		// Initialize lists to hold filters
-		$scope.appointmentList = [];
-		$scope.dxFilterList = [];
-		$scope.doctorFilterList = [];
-		$scope.resourceFilterList = [];
-		$scope.patientFilterList = [];
+		// Initialize lists to hold triggers
+		$scope.appointmentTriggerList = [];
+		$scope.dxTriggerList = [];
+		$scope.doctorTriggerList = [];
+		$scope.machineTriggerList = [];
+		$scope.patientTriggerList = [];
+
+		$scope.selectAll = {
+			appointment: {all:false, checked:false},
+			diagnosis: {all:false, checked:false},
+			doctor: {all:false, checked:false},
+			machine: {all:false, checked:false},
+			patient: {all:false, checked:false}
+		}
 
 		$scope.tocsComplete = true;
 
@@ -76,27 +84,32 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 		$scope.appointmentSearchField = "";
 		$scope.dxSearchField = "";
 		$scope.doctorSearchField = "";
-		$scope.resourceSearchField = "";
+		$scope.machineSearchField = "";
 		$scope.patientSearchField = "";
 
 		// Function to assign search fields when textbox changes
 		$scope.searchAppointment = function (field) {
 			$scope.appointmentSearchField = field;
+			$scope.selectAll.appointment.all = false;
 		};
 		$scope.searchDiagnosis = function (field) {
 			$scope.dxSearchField = field;
+			$scope.selectAll.diagnosis.all = false;
 		};
 		$scope.searchDoctor = function (field) {
 			$scope.doctorSearchField = field;
+			$scope.selectAll.doctor.all = false;
 		};
-		$scope.searchResource = function (field) {
-			$scope.resourceSearchField = field;
+		$scope.searchMachine = function (field) {
+			$scope.machineSearchField = field;
+			$scope.selectAll.machine.all = false;
 		};
 		$scope.searchPatient = function (field) {
 			$scope.patientSearchField = field;
+			$scope.selectAll.patient.all = false;
 		};
 
-		// Function for search through the filters
+		// Function for search through the triggers
 		$scope.searchAppointmentFilter = function (Filter) {
 			var keyword = new RegExp($scope.appointmentSearchField, 'i');
 			return !$scope.appointmentSearchField || keyword.test(Filter.name);
@@ -109,9 +122,9 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 			var keyword = new RegExp($scope.doctorSearchField, 'i');
 			return !$scope.doctorSearchField || keyword.test(Filter.name);
 		};
-		$scope.searchResourceFilter = function (Filter) {
-			var keyword = new RegExp($scope.resourceSearchField, 'i');
-			return !$scope.resourceSearchField || keyword.test(Filter.name);
+		$scope.searchMachineFilter = function (Filter) {
+			var keyword = new RegExp($scope.machineSearchField, 'i');
+			return !$scope.machineSearchField || keyword.test(Filter.name);
 		};
 		$scope.searchPatientFilter = function (Filter) {
 			var keyword = new RegExp($scope.patientSearchField, 'i');
@@ -137,36 +150,82 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 			// Assign value
 			$scope.eduMat = response.data;
 
-			// Assign demographic filters
-			checkDemographicFilters();
+			// Assign demographic triggers
+			checkDemographicTriggers();
 
 			// Call our API service to get each filter
 			filterCollectionService.getFilters().then(function (response) {
 
-				$scope.appointmentList = checkAdded(response.data.appointments); // Assign value
-				$scope.dxFilterList = checkAdded(response.data.dx);
-				$scope.doctorFilterList = checkAdded(response.data.doctors);
-				$scope.resourceFilterList = checkAdded(response.data.resources);
-				$scope.patientFilterList = checkAdded(response.data.patients);
+				$scope.appointmentTriggerList = checkAdded(response.data.appointments, $scope.selectAll.appointment); // Assign value
+				$scope.dxTriggerList = checkAdded(response.data.dx, $scope.selectAll.diagnosis);
+				$scope.doctorTriggerList = checkAdded(response.data.doctors, $scope.selectAll.doctor);
+				$scope.machineTriggerList = checkAdded(response.data.machines, $scope.selectAll.machine);
+				$scope.patientTriggerList = checkAdded(response.data.patients, $scope.selectAll.patient);
 
 				processingModal.close(); // hide modal
 				processingModal = null; // remove reference
 
 			}).catch(function(response) {
-				console.error('Error occurred getting filters:', response.status, response.data);
+				console.error('Error occurred getting triggers:', response.status, response.data);
 			});
 		}).catch(function(response) {
 			console.error('Error occurred getting educational material details:', response.status, response.data);
 		});
 
-		// Function to toggle Item in a list on/off
-		$scope.selectItem = function (item) {
+		// Function to toggle trigger in a list on/off
+		$scope.selectTrigger = function (trigger, selectAll) {
 			$scope.setChangesMade();
-			$scope.eduMat.filters_updated = 1;
-			if (item.added)
-				item.added = 0;
+			selectAll.all = false;
+			selectAll.checked = false;
+			$scope.eduMat_triggers_updated = 1;
+			if (trigger.added)
+				trigger.added = 0;
 			else
-				item.added = 1;
+				trigger.added = 1;
+		};
+
+		// Function for selecting all triggers in a trigger list
+		$scope.selectAllTriggers = function (triggerList,triggerFilter,selectAll) {
+
+			var filtered = $scope.filter(triggerList,triggerFilter);
+			$scope.eduMat.triggers_updated = 1;
+			$scope.changesMade = true;
+
+			if (filtered.length == triggerList.length) { // search field wasn't used
+				if (selectAll.checked) {
+					angular.forEach(filtered, function (trigger) {
+						trigger.added = 0;
+					});
+					selectAll.checked = false; // toggle off
+					selectAll.all = false;
+				}
+				else {
+					angular.forEach(filtered, function (trigger) {
+						trigger.added = 1;
+					});
+
+					selectAll.checked = true; // toggle on
+					selectAll.all = true;
+				}
+			}
+			else {
+				if (selectAll.checked) { // was checked
+					angular.forEach(filtered, function (trigger) {
+						trigger.added = 0;
+					});
+					selectAll.checked = false; // toggle off
+					selectAll.all = false;
+				}
+				else { // was not checked
+					angular.forEach(filtered, function (trigger) {
+						trigger.added = 1;
+					});
+
+					selectAll.checked = true; // toggle on
+
+				}
+			}
+
 		};
 
 		$scope.detailsUpdated = function () {
@@ -174,57 +233,65 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 			$scope.setChangesMade();
 		}
 
-		// Function to assign '1' to existing filters
-		function checkAdded(filterList) {
-			angular.forEach($scope.eduMat.filters, function (selectedFilter) {
-				var selectedFilterId = selectedFilter.id;
-				var selectedFilterType = selectedFilter.type;
-				angular.forEach(filterList, function (filter) {
-					var filterId = filter.id;
-					var filterType = filter.type;
-					if (filterId == selectedFilterId && filterType == selectedFilterType) {
-						filter.added = 1;
+		// Function to assign 1 to existing triggers
+		function checkAdded(triggerList, selectAll) {
+			angular.forEach($scope.eduMat.triggers, function (selectedTrigger) {
+				var selectedTriggerId = selectedTrigger.id;
+				var selectedTriggerType = selectedTrigger.type;
+				angular.forEach(triggerList, function (trigger) {
+					var triggerId = trigger.id;
+					var triggerType = trigger.type;
+					if (triggerType == selectedTriggerType) {
+						if (selectedTriggerId == 'ALL') {
+							selectAll.all = true;
+							selectAll.checked = true;
+							trigger.added = 1;
+						}
+						else if (triggerId == selectedTriggerId) {
+							trigger.added = 1;
+						}
 					}
 				});
 			});
 
-			return filterList;
+			return triggerList;
 		}
 
-		// Function to check demographic filters
-		function checkDemographicFilters() {
-			var demoFilter = {
+
+		// Function to check demographic triggers
+		function checkDemographicTriggers() {
+			var demoTrigger = {
 				sex: null,
 				age: {
 					min: 0,
 					max: 100
 				}
 			};
-			angular.forEach($scope.eduMat.filters, function (selectedFilter) {
-				if (selectedFilter.type == 'Sex')
-					$scope.demoFilter.sex = selectedFilter.id;
-				if (selectedFilter.type == 'Age') {
-					$scope.demoFilter.age.min = parseInt(selectedFilter.id.split(',')[0]);
-					$scope.demoFilter.age.max = parseInt(selectedFilter.id.split(',')[1]);
+			angular.forEach($scope.eduMat.triggers, function (selectedTrigger) {
+				if (selectedTrigger.type == 'Sex')
+					$scope.demoTrigger.sex = selectedTrigger.id;
+				if (selectedTrigger.type == 'Age') {
+					$scope.demoTrigger.age.min = parseInt(selectedTrigger.id.split(',')[0]);
+					$scope.demoTrigger.age.max = parseInt(selectedTrigger.id.split(',')[1]);
 				}
 			});
 
-			return demoFilter;
+			return demoTrigger;
 		}
 
 		// Function to toggle necessary changes when updating the sex
 		$scope.sexUpdate = function (sex) {
 
-			if (!$scope.demoFilter.sex) {
-				$scope.demoFilter.sex = sex.name;
-			} else if ($scope.demoFilter.sex == sex.name) {
-				$scope.demoFilter.sex = null; // Toggle off
+			if (!$scope.demoTrigger.sex) {
+				$scope.demoTrigger.sex = sex.name;
+			} else if ($scope.demoTrigger.sex == sex.name) {
+				$scope.demoTrigger.sex = null; // Toggle off
 			} else {
-				$scope.demoFilter.sex = sex.name;
+				$scope.demoTrigger.sex = sex.name;
 			}
 
 			$scope.setChangesMade();
-			$scope.eduMat.filters_updated = 1;
+			$scope.eduMat.triggers_updated = 1;
 
 		};
 
@@ -232,7 +299,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 		$scope.ageUpdate = function () {
 
 			$scope.setChangesMade();
-			$scope.eduMat.filters_updated = 1;
+			$scope.eduMat.triggers_updated = 1;
 		}
 
 		// Function to check necessary form fields are complete
@@ -319,27 +386,27 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 
 			if ($scope.checkForm()) {
 
-				// Initialize filter
-				$scope.eduMat.filters = [];
+				// Initialize trigger
+				$scope.eduMat.triggers = [];
 
-				// Add demographic filters, if defined
-				if ($scope.demoFilter.sex)
-					$scope.eduMat.filters.push({ id: $scope.demoFilter.sex, type: 'Sex' });
-				if ($scope.demoFilter.age.min >= 0 && $scope.demoFilter.age.max <= 100) { // i.e. not empty
-					if ($scope.demoFilter.age.min !== 0 || $scope.demoFilter.age.max != 100) { // Filters were changed
-						$scope.eduMat.filters.push({
-							id: String($scope.demoFilter.age.min).concat(',', String($scope.demoFilter.age.max)),
+				// Add demographic triggers, if defined
+				if ($scope.demoTrigger.sex)
+					$scope.eduMat.triggers.push({ id: $scope.demoTrigger.sex, type: 'Sex' });
+				if ($scope.demoTrigger.age.min >= 0 && $scope.demoTrigger.age.max <= 100) { // i.e. not empty
+					if ($scope.demoTrigger.age.min !== 0 || $scope.demoTrigger.age.max != 100) { // Triggers were changed
+						$scope.eduMat.triggers.push({
+							id: String($scope.demoTrigger.age.min).concat(',', String($scope.demoTrigger.age.max)),
 							type: 'Age'
 						});
 					}
 				}
 
-				// Add filters to edu material
-				addFilters($scope.appointmentList);
-				addFilters($scope.dxFilterList);
-				addFilters($scope.doctorFilterList);
-				addFilters($scope.resourceFilterList);
-				addFilters($scope.patientFilterList);
+				// Add trigger to edu material
+				addTriggers($scope.appointmentTriggerList, $scope.selectAll.appointment.all);
+				addTriggers($scope.dxTriggerList, $scope.selectAll.diagnosis.all);
+				addTriggers($scope.doctorTriggerList, $scope.selectAll.doctor.all);
+				addTriggers($scope.machineTriggerList, $scope.selectAll.machine.all);
+				addTriggers($scope.patientTriggerList, $scope.selectAll.patient.all);
 
 				// Log who updated educational material
 				var currentUser = Session.retrieveObject('user');
@@ -395,22 +462,28 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 			$scope.validateTOCs();
 		};
 
-		// Function to return filters that have been checked
-		function addFilters(filterList) {
-			angular.forEach(filterList, function (Filter) {
-				if (Filter.added)
-					$scope.eduMat.filters.push({ id: Filter.id, type: Filter.type });
-			});
+		// Function to return triggers that have been checked
+		function addTriggers(triggerList, selectAll) {
+			if (selectAll) {
+				$scope.eduMat.triggers.push({id: 'ALL', type: triggerList[0].type});
+			}
+			else {
+				angular.forEach(triggerList, function (trigger) {
+					if (trigger.added)
+						$scope.eduMat.triggers.push({ id: trigger.id, type: trigger.type });
+
+				});
+			}
 		}
 
-		// Function to check if all filters are added
-		$scope.allFilters = function (filterList) {
-			var allFiltersAdded = true;
-			angular.forEach(filterList, function (Filter) {
-				if (Filter.added)
-					allFiltersAdded = false;
+		// Function to check if triggers are added
+		$scope.checkTriggers = function (triggerList) {
+			var triggersAdded = false;
+			angular.forEach(triggerList, function (trigger) {
+				if (trigger.added)
+					triggersAdded = true;
 			});
-			return allFiltersAdded;
+			return triggersAdded;
 		};
 
 		// Function to accept/trust html (styles, classes, etc.)
