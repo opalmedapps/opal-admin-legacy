@@ -12,12 +12,12 @@
         'body_EN'           => filter_var($_POST['body_EN'], FILTER_SANITIZE_MAGIC_QUOTES),
         'body_FR'           => filter_var($_POST['body_FR'], FILTER_SANITIZE_MAGIC_QUOTES),
         'publish_date'      => $_POST['publish_date'],
-        'filters'           => $_POST['filters'],
+        'triggers'          => $_POST['triggers'],
  		'serial' 	        => $_POST['serial'],
  		'type' 		        => $_POST['type'],
  		'user'				=> $_POST['user'],
  		'details_updated'	=> $_POST['details_updated'],
- 		'filters_updated'	=> $_POST['filters_updated']
+ 		'triggers_updated'	=> $_POST['triggers_updated']
 	);
 
 	// Call function
