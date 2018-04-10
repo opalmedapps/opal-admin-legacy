@@ -33,3 +33,6 @@ node_modules/**
 
 # ignore idea for PhpStorm
 .idea
+
+# ignore uploaded file paths
+uploads/**
