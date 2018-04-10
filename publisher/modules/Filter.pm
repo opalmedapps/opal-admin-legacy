@@ -491,7 +491,7 @@ sub getResourceFiltersFromOurDB
         WHERE
             Filters.ControlTable         = '$controlTable'
         AND Filters.ControlTableSerNum   = '$controlSer'
-        AND Filters.FilterType           = 'Resource'
+        AND Filters.FilterType           = 'Machine'
     ";
 
     	# prepare query
