@@ -185,6 +185,7 @@ sub publishAnnouncements
 				# in the non-patient filters  
 				my $isNonPatientSpecificFilterDefined = 0;
 				my $isPatientSpecificFilterDefined = 0;
+				my $patientPassed = 0;
 
                 my @aliasSerials = ();
 
@@ -214,7 +215,7 @@ sub publishAnnouncements
                     }
 
                     # Finding the existence of the patient appointment in the appointment filters
-                    # If there is an intersection, then patient is part of this publishing announcement
+					# If there is an intersection, then patient is so far part of this publishing announcement
                     if (!intersect(@appointmentFilters, @aliasSerials)) {
 
 						print "Patient's appointments are not in filters\n" if $verbose;
@@ -244,7 +245,7 @@ sub publishAnnouncements
 					$isNonPatientSpecificFilterDefined = 1;
 
                     # Finding the intersection of the patient's diagnosis and the diagnosis filters
-                    # If there is an intersection, then patient is part of this publishing announcement
+					# If there is an intersection, then patient is so far part of this publishing announcement
                     if (!intersect(@diagnosisFilters, @diagnosisNames)) {
 						print "Patient's diagnoses are not in filters\n" if $verbose;
 						if (@patientFilters) {
@@ -271,7 +272,7 @@ sub publishAnnouncements
 					$isNonPatientSpecificFilterDefined = 1;
 
                     # Finding the intersection of the patient's doctor(s) and the doctor filters
-                    # If there is an intersection, then patient is part of this publishing announcement
+					# If there is an intersection, then patient is so far part of this publishing announcement
                     if (!intersect(	@doctorFilters, @patientDoctors)) {
 						print "Patient's doctors are not in filters\n" if $verbose;
 						if (@patientFilters) {
@@ -298,7 +299,7 @@ sub publishAnnouncements
 					$isNonPatientSpecificFilterDefined = 1;
 
                     # Finding the intersection of the patient resource(s) and the resource filters
-                    # If there is an intersection, then patient is part of this publishing announcement
+					# If there is an intersection, then patient is so far part of this publishing announcement
                     if (!intersect(@resourceFilters, @patientResources)) {
 						print "Patient's machine are not in filters\n" if $verbose;
 						if (@patientFilters) {
@@ -318,7 +319,6 @@ sub publishAnnouncements
 
 				# We look into whether any patient-specific filters have been defined 
 				# If we enter this if statement, then we check if that patient is in that list
-				my $patientPassed = 0;
 				if (@patientFilters) {
 
 					# if the patient-specific flag was enabled then it means this patient failed
@@ -339,7 +339,7 @@ sub publishAnnouncements
 					}
 				}
 
-				if (isNonPatientSpecificFilterDefined eq 1 or ($isPatientSpecificFilterDefined eq 1 and $patientPassed eq 1)) {
+	            if ($isNonPatientSpecificFilterDefined eq 1 or $isPatientSpecificFilterDefined eq 1 or ($isNonPatientSpecificFilterDefined eq 0 and $patientPassed eq 1)) {
 				
 	                # If we've reached this point, we've passed all catches (filter restrictions). We make
 	                # an announcement object, check if it exists already in the database. If it does 
