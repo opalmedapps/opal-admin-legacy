@@ -122,20 +122,21 @@
       </div>
     </div>
 
-    <!-- SECTION: Patient filter -->
-    <div uib-accordion-group is-open="patientFilterSection.open">
+    <!-- SECTION: Patient trigger -->
+    <div uib-accordion-group is-open="patientTriggerSection.open">
       <uib-accordion-heading>
         <div>
-          <strong>Trigger to Send By Patient </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': patientFilterSection.open, 'glyphicon-chevron-right': !patientFilterSection.open}"></i>
+          <strong>Trigger to Send By Patient </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': patientTriggerSection.open, 'glyphicon-chevron-right': !patientTriggerSection.open}"></i>
         </div>
       </uib-accordion-heading>
       <div class="alert alert-info" role="alert">
         <strong>Current Patient Triggers</strong><br>
         <p>
-          <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(patientFilterList)"></span>
-          <span ng-if="allFilters(patientFilterList)">No filter</span>
-          <ul class="list-items" ng-if="!allFilters(patientFilterList)">
-            <li ng-repeat="patient in patientFilterList | filter: {added: 1} : 1">
+          <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(patientTriggerList) || selectAll.patient.all"></span>
+          <span ng-if="!checkTriggers(patientTriggerList)">No trigger</span>
+          <span ng-if="checkTriggers(patientTriggerList) && selectAll.patient.all">All patients</span>
+          <ul class="list-items" ng-if="checkTriggers(patientTriggerList) && !selectAll.patient.all">
+            <li ng-repeat="patient in patientTriggerList | filter: {added: 1} : 1">
               {{patient.name}}
             </li>
           </ul>
@@ -146,30 +147,36 @@
           <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
           <input class="form-control" type="text" ng-model="patientSearchField" ng-change="searchPatient(patientSearchField)" placeholder="Search..."/>
         </div>
+        <div style="padding: 7px;">
+          <label>
+            <input type="checkbox" ng-click="selectAllTriggers(patientTriggerList, searchPatientFilter,selectAll.patient)" ng-checked="selectAll.patient.checked"> Select All
+          </label>
+        </div>
         <ul class="list-items">
-          <li ng-repeat="patient in patientFilterList | filter: searchPatientFilter">
+          <li ng-repeat="patient in patientTriggerList | filter: searchPatientFilter">
             <label>
-              <input type="checkbox" ng-click="selectItem(patient)" ng-checked="patient.added" /> {{patient.name}}
+              <input type="checkbox" ng-click="selectTrigger(patient, selectAll.patient)" ng-checked="patient.added" /> {{patient.name}}
             </label>
           </li>
         </ul>
       </div>
     </div>
 
-    <!-- SECTION: Appointment filter -->
-    <div uib-accordion-group is-open="appointmentFilterSection.open">
+    <!-- SECTION: Appointment trigger -->
+    <div uib-accordion-group is-open="appointmentTriggerSection.open">
       <uib-accordion-heading>
         <div>
-          <strong>Trigger to Send By Appointment</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': appointmentFilterSection.open, 'glyphicon-chevron-right': !appointmentFilterSection.open}"></i>
+          <strong>Trigger to Send By Appointment</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': appointmentTriggerSection.open, 'glyphicon-chevron-right': !appointmentTriggerSection.open}"></i>
         </div>
       </uib-accordion-heading>
       <div class="alert alert-info" role="alert">
         <strong>Current Appointment Triggers</strong><br>
         <p>
-          <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(appointmentList)"></span>
-          <span ng-if="allFilters(appointmentList)">No filter</span>
-          <ul class="list-items" ng-if="!allFilters(appointmentList)">
-            <li ng-repeat="selectedAppointment in appointmentList | filter: {added: 1} : 1" ng-hide="allFilters(appointmentList)">
+          <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(appointmentTriggerList) || selectAll.appointment.all"></span>
+          <span ng-if="!checkTriggers(appointmentTriggerList)">No trigger</span>
+          <span ng-if="checkTriggers(appointmentTriggerList) && selectAll.appointment.all">All appointments</span>
+          <ul class="list-items" ng-if="checkTriggers(appointmentTriggerList) && !selectAll.appointment.all">
+            <li ng-repeat="selectedAppointment in appointmentTriggerList | filter: {added: 1} : 1">
               {{selectedAppointment.name}}
             </li>
           </ul>
@@ -180,30 +187,36 @@
           <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
           <input class="form-control" type="text" ng-model="appointmentSearchField" ng-change="searchAppointment(appointmentSearchField)" placeholder="Search..."/>
         </div>
+        <div style="padding: 7px;">
+          <label>
+            <input type="checkbox" ng-click="selectAllTriggers(appointmentTriggerList, searchAppointmentFilter,selectAll.appointment)" ng-checked="selectAll.appointment.checked"> Select All
+          </label>
+        </div>
         <ul class="list-items">
-          <li ng-repeat="appointment in appointmentList | filter: searchAppointmentFilter">
+          <li ng-repeat="appointment in appointmentTriggerList | filter: searchAppointmentFilter">
             <label>
-              <input type="checkbox" ng-click="selectItem(appointment)" ng-checked="appointment.added" /> {{appointment.name}}
+              <input type="checkbox" ng-click="selectTrigger(appointment, selectAll.appointment)" ng-checked="appointment.added" /> {{appointment.name}}
             </label>
           </li>
         </ul>
       </div>
     </div>
 
-    <!-- SECTION: Diagnosis filter -->
-    <div uib-accordion-group is-open="diagnosisFilterSection.open">
+    <!-- SECTION: Diagnosis trigger -->
+    <div uib-accordion-group is-open="diagnosisTriggerSection.open">
       <uib-accordion-heading>
         <div>
-          <strong>Trigger to Send By Diagnosis </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': diagnosisFilterSection.open, 'glyphicon-chevron-right': !diagnosisFilterSection.open}"></i>
+          <strong>Trigger to Send By Diagnosis </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': diagnosisTriggerSection.open, 'glyphicon-chevron-right': !diagnosisTriggerSection.open}"></i>
         </div>
       </uib-accordion-heading>
       <div class="alert alert-info" role="alert">
         <strong>Current Diagnosis Triggers</strong><br>
         <p>
-          <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(dxFilterList)"></span>
-          <span ng-if="allFilters(dxFilterList)">No filter</span>
-          <ul class="list-items" ng-if="!allFilters(dxFilterList)">
-              <li ng-repeat="dx in dxFilterList | filter: {added: 1} : 1" ng-hide="allFilters(dxFilterList)">
+          <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(dxTriggerList) || selectAll.diagnosis.all"></span>
+          <span ng-if="!checkTriggers(dxTriggerList)">No trigger</span>
+          <span ng-if="checkTriggers(dxTriggerList) && selectAll.diagnosis.all">All diagnoses</span>
+          <ul class="list-items" ng-if="checkTriggers(dxTriggerList) && !selectAll.diagnosis.all">
+              <li ng-repeat="dx in dxTriggerList | filter: {added: 1} : 1">
               {{dx.name}}
             </li>
           </ul>
@@ -214,30 +227,36 @@
           <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
           <input class="form-control" type="text" ng-model="dxSearchField" ng-change="searchDiagnosis(dxSearchField)" placeholder="Search..."/>
         </div>
+        <div style="padding: 7px;">
+          <label>
+            <input type="checkbox" ng-click="selectAllTriggers(dxTriggerList, searchDxFilter,selectAll.diagnosis)" ng-checked="selectAll.diagnosis.checked"> Select All
+          </label>
+        </div>
         <ul class="list-items">
-          <li ng-repeat="dx in dxFilterList | filter: searchDxFilter">
+          <li ng-repeat="dx in dxTriggerList | filter: searchDxFilter">
             <label>
-              <input type="checkbox" ng-click="selectItem(dx)" ng-checked="dx.added" /> {{dx.name}}
+              <input type="checkbox" ng-click="selectTrigger(dx, selectAll.diagnosis)" ng-checked="dx.added" /> {{dx.name}}
             </label>
           </li>
         </ul>
       </div>
     </div>
 
-    <!-- SECTION: Doctor filter -->
-    <div uib-accordion-group is-open="doctorFilterSection.open">
+    <!-- SECTION: Doctor trigger -->
+    <div uib-accordion-group is-open="doctorTriggerSection.open">
       <uib-accordion-heading>
         <div>
-          <strong>Trigger to Send By Doctor </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': doctorFilterSection.open, 'glyphicon-chevron-right': !doctorFilterSection.open}"></i>
+          <strong>Trigger to Send By Doctor </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': doctorTriggerSection.open, 'glyphicon-chevron-right': !doctorTriggerSection.open}"></i>
         </div>
       </uib-accordion-heading>
       <div class="alert alert-info" role="alert">
         <strong>Current Doctor Triggers</strong><br>
         <p>
-          <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(doctorFilterList)"></span>
-          <span ng-if="allFilters(doctorFilterList)">No filter</span>
-          <ul class="list-items" ng-if="!allFilters(doctorFilterList)">
-              <li ng-repeat="doctor in doctorFilterList | filter: {added: 1} : 1" ng-hide="allFilters(doctorFilterList)">
+          <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(doctorTriggerList) || selectAll.doctor.all"></span>
+          <span ng-if="!checkTriggers(doctorTriggerList)">No trigger</span>
+          <span ng-if="checkTriggers(doctorTriggerList) && selectAll.doctor.all">All doctors</span>
+          <ul class="list-items" ng-if="checkTriggers(doctorTriggerList) && !selectAll.doctor.all">
+              <li ng-repeat="doctor in doctorTriggerList | filter: {added: 1} : 1">
               {{doctor.name}}
             </li>
           </ul>
@@ -248,31 +267,37 @@
           <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
           <input class="form-control" type="text" ng-model="doctorSearchField" ng-change="searchDoctor(doctorSearchField)" placeholder="Search..."/>
         </div>
+        <div style="padding: 7px;">
+          <label>
+            <input type="checkbox" ng-click="selectAllTriggers(doctorTriggerList, searchDoctorFilter,selectAll.doctor)" ng-checked="selectAll.doctor.checked"> Select All
+          </label>
+        </div>
         <ul class="list-items">
-          <li ng-repeat="doctor in doctorFilterList | filter: searchDoctorFilter">
+          <li ng-repeat="doctor in doctorTriggerList | filter: searchDoctorFilter">
             <label>
-              <input type="checkbox" ng-click="selectItem(doctor)" ng-checked="doctor.added" /> {{doctor.name}}
+              <input type="checkbox" ng-click="selectTrigger(doctor, selectAll.doctor)" ng-checked="doctor.added" /> {{doctor.name}}
             </label>
           </li>
         </ul>
       </div>
     </div>
 
-    <!-- SECTION: Resource Filter -->
-    <div uib-accordion-group is-open="resourceFilterSection.open">
+    <!-- SECTION: Machine Trigger -->
+    <div uib-accordion-group is-open="machineTriggerSection.open">
       <uib-accordion-heading>
         <div>
-          <strong>Trigger to Send By Treatment Machine </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': resourceFilterSection.open, 'glyphicon-chevron-right': !resourceFilterSection.open}"></i>
+          <strong>Trigger to Send By Treatment Machine </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': machineTriggerSection.open, 'glyphicon-chevron-right': !machineTriggerSection.open}"></i>
         </div>
       </uib-accordion-heading>
       <div class="alert alert-info" role="alert">
         <strong>Current Treatment Machine Triggers</strong><br>
         <p>
-          <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(resourceFilterList)"></span>
-          <span ng-if="allFilters(resourceFilterList)">No filter</span>
-          <ul class="list-items" ng-if="!allFilters(resourceFilterList)">
-              <li ng-repeat="resource in resourceFilterList | filter: {added: 1} : 1" ng-hide="allFilters(resourceFilterList)">
-              {{resource.name}}
+          <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(machineTriggerList) || selectAll.machine.all"></span>
+          <span ng-if="!checkTriggers(machineTriggerList)">No trigger</span>
+          <span ng-if="checkTriggers(machineTriggerList) && selectAll.machine.all">All treatment machines</span>
+          <ul class="list-items" ng-if="checkTriggers(machineTriggerList) && !selectAll.machine.all">
+              <li ng-repeat="machine in machineTriggerList | filter: {added: 1} : 1">
+              {{machine.name}}
             </li>
           </ul>
         </p>
@@ -280,12 +305,17 @@
       <div class="list-space">
         <div class="input-group">
           <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-          <input class="form-control" type="text" ng-model="resourceSearchField" ng-change="searchResource(resourceSearchField)" placeholder="Search..."/>
+          <input class="form-control" type="text" ng-model="machineSearchField" ng-change="searchMachine(machineSearchField)" placeholder="Search..."/>
+        </div>
+        <div style="padding: 7px;">
+          <label>
+            <input type="checkbox" ng-click="selectAllTriggers(machineTriggerList, searchMachineFilter,selectAll.machine)" ng-checked="selectAll.machine.checked"> Select All
+          </label>
         </div>
         <ul class="list-items">
-          <li ng-repeat="resource in resourceFilterList | filter: searchResourceFilter">
+          <li ng-repeat="machine in machineTriggerList | filter: searchMachineFilter">
             <label>
-              <input type="checkbox" ng-click="selectItem(resource)" ng-checked="resource.added" /> {{resource.name}}
+              <input type="checkbox" ng-click="selectTrigger(machine, selectAll.machine)" ng-checked="machine.added" /> {{machine.name}}
             </label>
           </li>
         </ul>
