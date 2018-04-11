@@ -169,8 +169,15 @@ sub publishAnnouncements
                 $postPublishDate = Time::Piece->strptime($postPublishDate, "%Y-%m-%d %H:%M:%S");
                 # Extract date part only
                 $postPublishDate = $postPublishDate->date;
+                #extract today's date
+                $nowDate = $now->date;
 
 				print "Publish date: $postPublishDate\n" if $verbose;
+				print "today's date: $nowDate\n" if $verbose;
+
+				if ($postPublishDate ne $nowDate) { # only publish on today's date
+					next;
+				}
 
 				# Fetch patient filters (if any)
 				my @patientFilters = $postFilters->getPatientFilters();
@@ -185,6 +192,7 @@ sub publishAnnouncements
 				# in the non-patient filters  
 				my $isNonPatientSpecificFilterDefined = 0;
 				my $isPatientSpecificFilterDefined = 0;
+				my $patientPassed = 0;
 
                 my @aliasSerials = ();
 
@@ -193,7 +201,7 @@ sub publishAnnouncements
                 my @patientDoctors = PatientDoctor::getPatientsDoctorsFromOurDB($patientSer);
                     
                 # Fetch appointment filters (if any)
-                my @appointmentFilters =  $postFilters->getAppoinmtmentFilters();
+                my @appointmentFilters =  $postFilters->getAppointmentFilters();
                 if (@appointmentFilters) {
 
 					print "Appointment filters exist for this announcement\n" if $verbose;
@@ -213,23 +221,28 @@ sub publishAnnouncements
 
                     }
 
-                    # Finding the existence of the patient appointment in the appointment filters
-                    # If there is an intersection, then patient is part of this publishing announcement
-                    if (!intersect(@appointmentFilters, @aliasSerials)) {
+                    # if all appointments were selected as triggers then patient passes
+	                # else do further checks 
+	                unless ('ALL' ~~ @appointmentFilters and @aliasSerials) {
 
-						print "Patient's appointments are not in filters\n" if $verbose;
-						if (@patientFilters) {
-                        	# if the patient failed to match the appointment filter but there are patient filters
-							# then we flag to check later if this patient matches with the patient filters
-							$isPatientSpecificFilterDefined = 1;
+	                    # Finding the existence of the patient appointment in the appointment filters
+						# If there is an intersection, then patient is so far part of this publishing announcement
+	                    if (!intersect(@appointmentFilters, @aliasSerials)) {
 
-							print "Patient filters exist\n" if $verbose;
-						}
-						# else no patient filters were defined and failed to match the expression filter
-						# move on to the next announcement
-						else{
-							print "Patient filters do not exist\n" if $verbose;
-							next;
+							print "Patient's appointments are not in filters\n" if $verbose;
+							if (@patientFilters) {
+	                        	# if the patient failed to match the appointment filter but there are patient filters
+								# then we flag to check later if this patient matches with the patient filters
+								$isPatientSpecificFilterDefined = 1;
+
+								print "Patient filters exist\n" if $verbose;
+							}
+							# else no patient filters were defined and failed to match the expression filter
+							# move on to the next announcement
+							else{
+								print "Patient filters do not exist\n" if $verbose;
+								next;
+							}
 						}
 					}
                 }
@@ -243,21 +256,25 @@ sub publishAnnouncements
 					# toggle flag
 					$isNonPatientSpecificFilterDefined = 1;
 
-                    # Finding the intersection of the patient's diagnosis and the diagnosis filters
-                    # If there is an intersection, then patient is part of this publishing announcement
-                    if (!intersect(@diagnosisFilters, @diagnosisNames)) {
-						print "Patient's diagnoses are not in filters\n" if $verbose;
-						if (@patientFilters) {
-							# if the patient failed to match the diagnosis filter but there are patient filters
-							# then we flag to check later if this patient matches with the patient filters
-							$isPatientSpecificFilterDefined = 1;
-							print "Patient filters exist\n" if $verbose;
-						}
-						# else no patient filters were defined and failed to match the diagnosis filter
-						# move on to the next announcement
-						else{
-							print "Patient filters do not exist\n" if $verbose;
-							next;
+					# if all diagnoses were selected as triggers then patient passes
+	                # else do further checks 
+	                unless ('ALL' ~~ @diagnosisFilters and @diagnosisNames) {
+	                    # Finding the intersection of the patient's diagnosis and the diagnosis filters
+						# If there is an intersection, then patient is so far part of this publishing announcement
+	                    if (!intersect(@diagnosisFilters, @diagnosisNames)) {
+							print "Patient's diagnoses are not in filters\n" if $verbose;
+							if (@patientFilters) {
+								# if the patient failed to match the diagnosis filter but there are patient filters
+								# then we flag to check later if this patient matches with the patient filters
+								$isPatientSpecificFilterDefined = 1;
+								print "Patient filters exist\n" if $verbose;
+							}
+							# else no patient filters were defined and failed to match the diagnosis filter
+							# move on to the next announcement
+							else{
+								print "Patient filters do not exist\n" if $verbose;
+								next;
+							}
 						}
 					}
                 }
@@ -270,21 +287,25 @@ sub publishAnnouncements
 					# toggle flag
 					$isNonPatientSpecificFilterDefined = 1;
 
-                    # Finding the intersection of the patient's doctor(s) and the doctor filters
-                    # If there is an intersection, then patient is part of this publishing announcement
-                    if (!intersect(	@doctorFilters, @patientDoctors)) {
-						print "Patient's doctors are not in filters\n" if $verbose;
-						if (@patientFilters) {
-							# if the patient failed to match the doctor filter but there are patient filters
-							# then we flag to check later if this patient matches with the patient filters
-							$isPatientSpecificFilterDefined = 1;
-							print "Patient filters exist\n" if $verbose;
-						}
-						# else no patient filters were defined and failed to match the doctor filter
-						# move on to the next announcement
-						else{
-							print "Patient filters do not exist\n" if $verbose;
-							next;
+					# if all doctors were selected as triggers then patient passes
+	                # else do further checks 
+	                unless ('ALL' ~~ @doctorFilters and @patientDoctors) {
+	                    # Finding the intersection of the patient's doctor(s) and the doctor filters
+						# If there is an intersection, then patient is so far part of this publishing announcement
+	                    if (!intersect(	@doctorFilters, @patientDoctors)) {
+							print "Patient's doctors are not in filters\n" if $verbose;
+							if (@patientFilters) {
+								# if the patient failed to match the doctor filter but there are patient filters
+								# then we flag to check later if this patient matches with the patient filters
+								$isPatientSpecificFilterDefined = 1;
+								print "Patient filters exist\n" if $verbose;
+							}
+							# else no patient filters were defined and failed to match the doctor filter
+							# move on to the next announcement
+							else{
+								print "Patient filters do not exist\n" if $verbose;
+								next;
+							}
 						}
 					}
                 }
@@ -294,21 +315,28 @@ sub publishAnnouncements
                 if (@resourceFilters) {
 
 					print "Treatment machine filters exist for this announcement\n" if $verbose;
-                    # Finding the intersection of the patient resource(s) and the resource filters
-                    # If there is an intersection, then patient is part of this publishing announcement
-                    if (!intersect(@resourceFilters, @patientResources)) {
-						print "Patient's machine are not in filters\n" if $verbose;
-						if (@patientFilters) {
-							# if the patient failed to match the resource filter but there are patient filters
-							# then we flag to check later if this patient matches with the patient filters
-							print "Patient filters exist\n" if $verbose;
-							$isPatientSpecificFilterDefined = 1;
-						}
-						# else no patient filters were defined and failed to match the resource filter
-						# move on to the next announcement
-						else{
-							print "Patient filters do not exist\n" if $verbose;
-							next;
+					# toggle flag
+					$isNonPatientSpecificFilterDefined = 1;
+
+					# if all resources were selected as triggers then patient passes
+	                # else do further checks 
+	                unless ('ALL' ~~ @resourceFilters and @patientResources) {
+	                    # Finding the intersection of the patient resource(s) and the resource filters
+						# If there is an intersection, then patient is so far part of this publishing announcement
+	                    if (!intersect(@resourceFilters, @patientResources)) {
+							print "Patient's machine are not in filters\n" if $verbose;
+							if (@patientFilters) {
+								# if the patient failed to match the resource filter but there are patient filters
+								# then we flag to check later if this patient matches with the patient filters
+								print "Patient filters exist\n" if $verbose;
+								$isPatientSpecificFilterDefined = 1;
+							}
+							# else no patient filters were defined and failed to match the resource filter
+							# move on to the next announcement
+							else{
+								print "Patient filters do not exist\n" if $verbose;
+								next;
+							}
 						}
 					}
                 }
@@ -321,10 +349,12 @@ sub publishAnnouncements
 					# one of the filters above 
 					# OR if the non patient specific flag was disabled then there were no filters defined above
 					# and this is the last test to see if this patient passes
-					if ($isPatientSpecificFilterDefined or !$isNonPatientSpecificFilterDefined) {
+					if ($isPatientSpecificFilterDefined eq 1 or $isNonPatientSpecificFilterDefined eq 0) {
 						# Finding the existence of the patient in the patient-specific filters
-						# If the patient does not exist, then continue to the next educational material
-                        if ($patientId ~~ @patientFilters) {
+						# If the patient exists, or all patients were selected as triggers, 
+	                    # then patient passes else move on to next patient
+                        if ($patientId ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
+                        	$patientPassed = 1;
 							print "Patient is in patient filters\n" if $verbose;
 						}
                         else {
@@ -333,29 +363,32 @@ sub publishAnnouncements
 						}
 					}
 				}
+
+	            if ($isNonPatientSpecificFilterDefined eq 1 or $isPatientSpecificFilterDefined eq 1 or ($isNonPatientSpecificFilterDefined eq 0 and $patientPassed eq 1)) {
 				
-                # If we've reached this point, we've passed all catches (filter restrictions). We make
-                # an announcement object, check if it exists already in the database. If it does 
-                # this means the announcement has already been published to the patient. If it doesn't
-                # exist then we publish to the patient (insert into DB).
-                $announcement = new Announcement();
+	                # If we've reached this point, we've passed all catches (filter restrictions). We make
+	                # an announcement object, check if it exists already in the database. If it does 
+	                # this means the announcement has already been published to the patient. If it doesn't
+	                # exist then we publish to the patient (insert into DB).
+	                $announcement = new Announcement();
 
-                # set the necessary values
-                $announcement->setAnnouncementPatientSer($patientSer);
-                $announcement->setAnnouncementPostControlSer($postControlSer);
+	                # set the necessary values
+	                $announcement->setAnnouncementPatientSer($patientSer);
+	                $announcement->setAnnouncementPostControlSer($postControlSer);
 
-                if (!$announcement->inOurDatabase()) {
-    
-					print "Announcement not in our database \n" if $verbose;
-                    $announcement = $announcement->insertAnnouncementIntoOurDB();
+	                if (!$announcement->inOurDatabase()) {
+	    
+						print "Announcement not in our database \n" if $verbose;
+	                    $announcement = $announcement->insertAnnouncementIntoOurDB();
 
-					print "Inserted announcement\n" if $verbose;
-                    # send push notification
-                    my $announcementSer = $announcement->getAnnouncementSer();
-                    my $patientSer = $announcement->getAnnouncementPatientSer();
-                    PushNotification::sendPushNotification($patientSer, $announcementSer, 'Announcement');
+						print "Inserted announcement\n" if $verbose;
+	                    # send push notification
+	                    my $announcementSer = $announcement->getAnnouncementSer();
+	                    my $patientSer = $announcement->getAnnouncementPatientSer();
+	                    PushNotification::sendPushNotification($patientSer, $announcementSer, 'Announcement');
 
-                }
+	                }
+	            }
             } # End if postPublishDate
 
         } # End forEach PostControl   

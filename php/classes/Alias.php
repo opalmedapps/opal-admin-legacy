@@ -51,11 +51,12 @@ class Alias {
                             $termArray = array(
     				           	'name'      => $termName,
                                 'id'        => $termName, 
+                                'description' => $termName,
     			        	    'added'     => 0,
                                 'assigned'  => null
     		    	        );
 
-                            $assignedExpression = $this->assignedSearch($termName, $assignedExpressions);
+                            $assignedExpression = $this->assignedSearch($termName, $termName, $assignedExpressions);
                             if ($assignedExpression) {
                                 $termArray['added'] = 0;
                                 $termArray['assigned'] = $assignedExpression;
@@ -86,11 +87,12 @@ class Alias {
                             $termArray = array(
     				           	'name'      => $termName,
                                 'id'        => $termName,
+                                'description'   => $termName,
     			            	'added'     => 0,
                                 'assigned'  => null
         			        );
 
-                            $assignedExpression = $this->assignedSearch($termName, $assignedExpressions);
+                            $assignedExpression = $this->assignedSearch($termName, $termName, $assignedExpressions);
                             if ($assignedExpression) {
                                 $termArray['added'] = 0;
                                 $termArray['assigned'] = $assignedExpression;
@@ -133,11 +135,12 @@ class Alias {
                         $termArray = array(
     				       	'name'          => "$termName ($termDesc)",
                             'id'            => $termName,
+                            'description'   => $termDesc,
     			        	'added'         => 0,
                             'assigned'      => null
     			        );
 
-                        $assignedExpression = $this->assignedSearch($termName, $assignedExpressions);
+                        $assignedExpression = $this->assignedSearch($termName, $termDesc, $assignedExpressions);
                         if ($assignedExpression) {
                             $termArray['added'] = 0;
                             $termArray['assigned'] = $assignedExpression;
@@ -196,6 +199,7 @@ class Alias {
             $sql = "
                 SELECT DISTINCT 
                     ae.ExpressionName,
+                    ae.Description,
                     Alias.AliasName_EN
                 FROM
                     AliasExpression ae,
@@ -213,7 +217,8 @@ class Alias {
 
                 $expressionDetails = array (
                     'id'        => $data[0],
-                    'name_EN'   => "$data[1]"   
+                    'description'   => $data[1],
+                    'name_EN'   => "$data[2]"   
                 );
                 array_push($expressions, $expressionDetails);
             }
@@ -267,6 +272,8 @@ class Alias {
 				$query->execute();
             }
 
+            $this->sanitizeEmptyAliases($user);
+
             $response['value'] = 1; // Success
             return $response;
 
@@ -275,6 +282,58 @@ class Alias {
 			return $response; // Fail
 		}
 	}
+
+    /**
+     *
+     * Removes publish flag for aliases without assigned terms
+     *
+     * @param object $user : the session user
+     * @return void
+     */
+    public function sanitizeEmptyAliases($user) {
+        $userSer = $user['id'];
+        $sessionId = $user['sessionid'];
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
+                SELECT DISTINCT
+                    Alias.AliasSerNum
+                FROM 
+                    Alias
+                LEFT JOIN 
+                    AliasExpression 
+                ON  Alias.AliasSerNum = AliasExpression.AliasSerNum
+                 WHERE  
+                    AliasExpression.AliasSerNum IS NULL
+                AND Alias.AliasUpdate != 0
+            ";
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $aliasSer = $data[0];
+
+                $sql = "
+                    UPDATE 
+                        Alias 
+                    SET 
+                        Alias.AliasUpdate       = 0,
+                        Alias.LastUpdatedBy     = $userSer,
+                        Alias.SessionId         = '$sessionId'
+                    WHERE
+                        Alias.AliasSerNum       = $aliasSer
+                ";
+
+                $secondQuery = $host_db_link->prepare( $sql );
+                $secondQuery->execute();
+            }
+            return;
+        } catch( PDOException $e) {
+            return $e->getMessage(); // Fail
+        }
+    }
 
     /**
      *
@@ -385,7 +444,8 @@ class Alias {
 
 				$sql = "
 					SELECT DISTINCT 
-						AliasExpression.ExpressionName 
+						AliasExpression.ExpressionName,
+                        AliasExpression.Description 
 					FROM 
 						Alias, 
 						AliasExpression 
@@ -400,8 +460,10 @@ class Alias {
 				while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
 					$termName = $secondData[0];
+                    $termDesc = $secondData[1];
 					$termArray = array(
-						'name' => $termName,
+						'id' => $termName,
+                        'description' => $termDesc,
 						'added'=> 1
 					);
 
@@ -499,7 +561,8 @@ class Alias {
 
 			$sql = "
 				SELECT DISTINCT 
-					AliasExpression.ExpressionName 
+					AliasExpression.ExpressionName,
+                    AliasExpression.Description 
 				FROM 	
 					AliasExpression 
 				WHERE 
@@ -512,8 +575,10 @@ class Alias {
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
 					$termName = $data[0];
+                    $termDesc = $data[1];
 					$termArray = array(
-						'name' => $termName,
+						'id' => $termName,
+                        'description' => $termDesc,
 						'added'=> 1
 					);
 
@@ -616,24 +681,36 @@ class Alias {
 
 			foreach ($aliasTerms as $aliasTerm) {
 
+                $termName = $aliasTerm['id'];
+                $termDesc = $aliasTerm['description'];
 				$sql = "
                     INSERT INTO 
                         AliasExpression (
                             AliasSerNum,
                             ExpressionName,
-                            LastTransferred
+                            Description,
+                            LastTransferred,
+                            LastUpdatedBy,
+                            SessionId
                         )
                     VALUE (
                         '$aliasSer',
-                        \"$aliasTerm\",
-                        NOW()
+                        \"$termName\",
+                        \"$termDesc\",
+                        NOW(),
+                        '$userSer',
+                        '$sessionId'
                     )
                     ON DUPLICATE KEY UPDATE
-                        AliasSerNum = '$aliasSer'
+                        AliasSerNum = '$aliasSer',
+                        LastUpdatedBy = '$userSer',
+                        SessionId = '$sessionId'
 				";
 				$query = $host_db_link->prepare( $sql );
 				$query->execute();
 			}
+
+            $this->sanitizeEmptyAliases($aliasDetails['user']);
 				
 	
 		} catch( PDOException $e) {
@@ -729,6 +806,9 @@ class Alias {
 
         $existingTerms	= array();
 
+        $detailsUpdated = $aliasDetails['details_updated'];
+        $expressionsUpdated = $aliasDetails['expressions_updated'];
+
         // Initialize a response array
         $response = array(
             'value'     => 0,
@@ -738,81 +818,124 @@ class Alias {
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-			$sql = "
-				UPDATE 
-					Alias 
-				SET 
-					Alias.AliasName_EN 		                = \"$aliasName_EN\", 
-					Alias.AliasName_FR 		                = \"$aliasName_FR\", 
-					Alias.AliasDescription_EN	            = \"$aliasDesc_EN\",
-                    Alias.AliasDescription_FR	            = \"$aliasDesc_FR\",
-                    Alias.EducationalMaterialControlSerNum  = $aliasEduMatSer,
-                    Alias.ColorTag                          = '$aliasColorTag',
-                    Alias.LastUpdatedBy                     = '$userSer',
-                    Alias.SessionId                         = '$sessionId'
-				WHERE 
-					Alias.AliasSerNum = $aliasSer
-			";
 
-			$query = $host_db_link->prepare( $sql );
-			$query->execute();
+            if ($detailsUpdated) {
+    			$sql = "
+    				UPDATE 
+    					Alias 
+    				SET 
+    					Alias.AliasName_EN 		                = \"$aliasName_EN\", 
+    					Alias.AliasName_FR 		                = \"$aliasName_FR\", 
+    					Alias.AliasDescription_EN	            = \"$aliasDesc_EN\",
+                        Alias.AliasDescription_FR	            = \"$aliasDesc_FR\",
+                        Alias.EducationalMaterialControlSerNum  = $aliasEduMatSer,
+                        Alias.ColorTag                          = '$aliasColorTag',
+                        Alias.LastUpdatedBy                     = '$userSer',
+                        Alias.SessionId                         = '$sessionId'
+    				WHERE 
+    					Alias.AliasSerNum = $aliasSer
+    			";
 
-			$sql = "
-				SELECT DISTINCT 
-					AliasExpression.ExpressionName 
-				FROM 
-					AliasExpression 
-				WHERE 
-					AliasExpression.AliasSerNum = $aliasSer
-			";
-
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
-
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-				array_push($existingTerms, $data[0]);
-			}
-
-            // This loop compares the old terms with the new
-            // If old terms not in new, then remove old
-			foreach ($existingTerms as $existingTermName) {
-				if (!in_array($existingTermName, $aliasTerms)) {
-					$sql = "
-                        DELETE FROM 
-							AliasExpression
-						WHERE
-                            AliasExpression.ExpressionName = \"$existingTermName\"
-                        AND AliasExpression.AliasSerNum = $aliasSer
-					";
-
-					$query = $host_db_link->prepare( $sql );
-					$query->execute();
-				}
-			}
-
-            // If new terms, then insert
-			foreach ($aliasTerms as $term) {
-				if (!in_array($term, $existingTerms)) {
-                    $sql = "
-                        INSERT INTO 
-                            AliasExpression (
-                                AliasExpressionSerNum,
-                                AliasSerNum,
-                                ExpressionName
-                            )
-                        VALUES (
-                            NULL,
-                            '$aliasSer',
-                            \"$term\"
-                        )
-                        ON DUPLICATE KEY UPDATE
-                            AliasSerNum = '$aliasSer'
-					";
-					$query = $host_db_link->prepare( $sql );
-					$query->execute();
-				}
+    			$query = $host_db_link->prepare( $sql );
+    			$query->execute();
             }
+
+            if ($expressionsUpdated) {
+
+    			$sql = "
+    				SELECT DISTINCT 
+    					AliasExpression.ExpressionName,
+                        AliasExpression.Description 
+    				FROM 
+    					AliasExpression 
+    				WHERE 
+    					AliasExpression.AliasSerNum = $aliasSer
+    			";
+
+    			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+    			$query->execute();
+
+    			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $termArray = array(
+                        'id'          => $data[0],
+                        'description'   => $data[1]
+                    );
+                    array_push($existingTerms, $termArray);
+
+    			}
+
+                // This loop compares the old terms with the new
+                // If old terms not in new, then remove old
+    			foreach ($existingTerms as $existingTerm) {
+                    $existingTermName = $existingTerm['id'];
+                    $existingTermDesc = $existingTerm['description'];
+    				if (!$this->nestedSearch($existingTermName, $existingTermDesc, $aliasTerms)) {
+    					$sql = "
+                            DELETE FROM 
+    							AliasExpression
+    						WHERE
+                                AliasExpression.ExpressionName = \"$existingTermName\"
+                            AND AliasExpression.Description = \"$existingTermDesc\"
+                            AND AliasExpression.AliasSerNum = $aliasSer
+    					";
+
+                        //echo $sql;
+
+    					$query = $host_db_link->prepare( $sql );
+    					$query->execute();
+
+                        $sql = "
+                            UPDATE AliasExpressionMH
+                            SET 
+                                AliasExpressionMH.LastUpdatedBy = '$userSer',
+                                AliasExpressionMH.SessionId = '$sessionId'
+                            WHERE
+                                AliasExpressionMH.ExpressionName = \"$existingTermName\"
+                            AND AliasExpressionMH.Description = \"$existingTermDesc\"
+                            ORDER BY AliasExpressionMH.RevSerNum DESC 
+                            LIMIT 1
+                        ";
+                        $query = $host_db_link->prepare( $sql );
+                        $query->execute();
+    				}
+    			}
+
+                // If new terms, then insert
+    			foreach ($aliasTerms as $term) {
+                    $termName = $term['id'];
+                    $termDesc = $term['description'];
+    				if (!$this->nestedSearch($termName, $termDesc, $existingTerms)) {
+                        $sql = "
+                            INSERT INTO 
+                                AliasExpression (
+                                    AliasExpressionSerNum,
+                                    AliasSerNum,
+                                    ExpressionName,
+                                    Description,
+                                    LastUpdatedBy,
+                                    SessionId
+                                )
+                            VALUES (
+                                NULL,
+                                '$aliasSer',
+                                \"$termName\",
+                                \"$termDesc\",
+                                '$userSer',
+                                '$sessionId'
+                            )
+                            ON DUPLICATE KEY UPDATE
+                                AliasSerNum = '$aliasSer',
+                                LastUpdatedBy = '$userSer',
+                                SessionId = '$sessionId'
+    					";
+    					$query = $host_db_link->prepare( $sql );
+    					$query->execute();
+    				}
+                }
+            }
+
+            $this->sanitizeEmptyAliases($aliasDetails['user']);
 
             $response['value'] = 1; // Success
             return $response;
@@ -871,19 +994,41 @@ class Alias {
 
     /**
      *
+     * Does a nested search for match
+     *
+     * @param string $id    : the needle id
+     * @param string $description  : the needle description
+     * @param array $array  : the key-value haystack
+     * @return boolean
+     */
+    public function nestedSearch($id, $description, $array) {
+        if(empty($array) || !$id || !$description){
+            return 0;
+        }
+        foreach ($array as $key => $val) {
+            if ($val['id'] === $id and $val['description'] === $description) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     *
      * Checks if an expression has been assigned to an alias
      *
      * @param string $id    : the needle id
+     * @param string $description  : the needle description
      * @param array $array  : the key-value haystack
      * @return $assignedAlias
      */
-    public function assignedSearch($id, $array) {
+    public function assignedSearch($id, $description, $array) {
         $assignedAlias = null;
         if(empty($array) || !$id){
             return $assignedAlias;
         }
         foreach ($array as $key => $val) {
-            if ($val['id'] === $id) {
+            if ($val['id'] === $id and $val['description'] === $description) {
                 $assignedAlias = $val;
                 return $assignedAlias;
             }

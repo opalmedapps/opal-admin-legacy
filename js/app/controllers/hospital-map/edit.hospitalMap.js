@@ -27,13 +27,15 @@ angular.module('opalAdmin.controllers.hospitalMap.edit', ['ngAnimate', 'ngSaniti
 		// Show processing dialog
 		$scope.showProcessingModal();
 
-		$scope.mapURL = "";
+		$scope.mapURL_EN = "";
+		$scope.mapURL_FR = "";
 
 		// Call our API to get the current map details
 		hospitalMapCollectionService.getHospitalMapDetails($scope.currentHosMap.serial).then(function (response) {
 			$scope.hosMap = response.data;
 			$scope.$parent.oldqrid = response.data.qrid;
-			$scope.mapURL = response.data.url;
+			$scope.mapURL_EN = response.data.url_EN;
+			$scope.mapURL_FR = response.data.url_FR;
 
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
@@ -62,16 +64,19 @@ angular.module('opalAdmin.controllers.hospitalMap.edit', ['ngAnimate', 'ngSaniti
 
 		};
 		// Function to show map
-		$scope.showMap = function (url) {
-			$scope.mapURL = url;
+		$scope.showMap = function (url, language) {
+			if (language == 'EN')
+				$scope.mapURL_EN = url;
+			else if (language == 'FR')
+				$scope.mapURL_FR = url;
 		};
 
 
 		// Function to check necessary form fields are complete
 		$scope.checkForm = function () {
 			if ($scope.hosMap.name_EN && $scope.hosMap.name_FR && $scope.hosMap.description_EN
-				&& $scope.hosMap.description_FR && $scope.hosMap.qrid && $scope.hosMap.qrcode && $scope.hosMap.url
-				&& $scope.changesMade) {
+				&& $scope.hosMap.description_FR && $scope.hosMap.qrid && $scope.hosMap.qrcode && $scope.hosMap.url_EN
+				&& $scope.hosMap.url_FR && $scope.changesMade) {
 				return true;
 			}
 			else
