@@ -183,21 +183,20 @@ sub publishTxTeamMessages
 				# toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
+                # Retrieve the patient appointment(s) if one (or more) lands within one day of today
+                my @patientAppointments = Appointment::getPatientsAppointmentsFromDateInOurDB($patientSer, $today_date, 1);
+
+                # we build all possible appointment and diagnoses for each appointment found
+                foreach my $appointment (@patientAppointments) {
+
+                    my $expressionSer = $appointment->getApptAliasExpressionSer();
+                    my $aliasSer = Alias::getAliasFromOurDB($expressionSer);
+                    push(@aliasSerials, $aliasSer) unless grep{$_ == $aliasSer} @aliasSerials;
+
+                }
                 # if all appointments were selected as triggers then patient passes
                 # else do further checks 
-                unless ('ALL' ~~ @appointmentFilters) {
-
-                    # Retrieve the patient appointment(s) if one (or more) lands within one day of today
-                    my @patientAppointments = Appointment::getPatientsAppointmentsFromDateInOurDB($patientSer, $today_date, 1);
-
-                    # we build all possible appointment and diagnoses for each appointment found
-                    foreach my $appointment (@patientAppointments) {
-
-                        my $expressionSer = $appointment->getApptAliasExpressionSer();
-                        my $aliasSer = Alias::getAliasFromOurDB($expressionSer);
-                        push(@aliasSerials, $aliasSer) unless grep{$_ == $aliasSer} @aliasSerials;
-
-                    }
+                unless ('ALL' ~~ @appointmentFilters and @aliasSerials) {
 
     				# Finding the existence of the patient appointments in the appointment filters
                     # If there is an intersection, then patient is so far part of this publishing tx team message
@@ -223,7 +222,7 @@ sub publishTxTeamMessages
 
                 # if all diagnoses were selected as triggers then patient passes
                 # else do further checks 
-                unless ('ALL' ~~ @diagnosisFilters) {
+                unless ('ALL' ~~ @diagnosisFilters and @diagnosisNames) {
                     # Finding the intersection of the patient's diagnosis and the diagnosis filters
                     # If there is an intersection, then patient is so far part of this publishing tx team message
                     if (!intersect(@diagnosisFilters, @diagnosisNames)) {
@@ -246,7 +245,7 @@ sub publishTxTeamMessages
 
                 # if all doctors were selected as triggers then patient passes
                 # else do further checks 
-                unless ('ALL' ~~ @doctorFilters) {
+                unless ('ALL' ~~ @doctorFilters and @patientDoctors) {
                     # Finding the intersection of the patient's doctor(s) and the doctor filters
                     # If there is an intersection, then patient is so far part of this publishing tx team message
                     if (!intersect(@doctorFilters, @patientDoctors)) {
@@ -271,7 +270,7 @@ sub publishTxTeamMessages
 
                 # if all resources were selected as triggers then patient passes
                 # else do further checks 
-                unless ('ALL' ~~ @resourceFilters) {
+                unless ('ALL' ~~ @resourceFilters and @patientResources) {
                     # Finding the intersection of the patient resource(s) and the resource filters
                     # If there is an intersection, then patient is so far part of this publishing tx team message
                     if (!intersect(@resourceFilters, @patientResources)) {
