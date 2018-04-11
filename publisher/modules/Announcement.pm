@@ -169,8 +169,15 @@ sub publishAnnouncements
                 $postPublishDate = Time::Piece->strptime($postPublishDate, "%Y-%m-%d %H:%M:%S");
                 # Extract date part only
                 $postPublishDate = $postPublishDate->date;
+                #extract today's date
+                $nowDate = $now->date;
 
 				print "Publish date: $postPublishDate\n" if $verbose;
+				print "today's date: $nowDate\n" if $verbose;
+
+				if ($postPublishDate ne $nowDate) { # only publish on today's date
+					next;
+				}
 
 				# Fetch patient filters (if any)
 				my @patientFilters = $postFilters->getPatientFilters();
@@ -202,20 +209,21 @@ sub publishAnnouncements
 					# toggle flag
 					$isNonPatientSpecificFilterDefined = 1;
 
-					# if all appointments were selected as triggers then patient passes
+                    # Retrieve the patient appointment(s) if one (or more) lands within one day of today
+                    my @patientAppointments = Appointment::getPatientsAppointmentsFromDateInOurDB($patientSer, $postPublishDate, 0);
+
+                    # we build all possible appointment names, and diagnoses for each appointment found
+                    foreach my $appointment (@patientAppointments) {
+
+                        my $expressionSer = $appointment->getApptAliasExpressionSer();
+                        my $aliasSer = Alias::getAliasFromOurDB($expressionSer);
+                        push(@aliasSerials, $aliasSer) unless grep{$_ == $aliasSer} @aliasSerials;
+
+                    }
+
+                    # if all appointments were selected as triggers then patient passes
 	                # else do further checks 
-	                unless ('ALL' ~~ @appointmentFilters) {
-	                    # Retrieve the patient appointment(s) if one (or more) lands within one day of today
-	                    my @patientAppointments = Appointment::getPatientsAppointmentsFromDateInOurDB($patientSer, $postPublishDate, 0);
-
-	                    # we build all possible appointment names, and diagnoses for each appointment found
-	                    foreach my $appointment (@patientAppointments) {
-
-	                        my $expressionSer = $appointment->getApptAliasExpressionSer();
-	                        my $aliasSer = Alias::getAliasFromOurDB($expressionSer);
-	                        push(@aliasSerials, $aliasSer) unless grep{$_ == $aliasSer} @aliasSerials;
-
-	                    }
+	                unless ('ALL' ~~ @appointmentFilters and @aliasSerials) {
 
 	                    # Finding the existence of the patient appointment in the appointment filters
 						# If there is an intersection, then patient is so far part of this publishing announcement
@@ -250,7 +258,7 @@ sub publishAnnouncements
 
 					# if all diagnoses were selected as triggers then patient passes
 	                # else do further checks 
-	                unless ('ALL' ~~ @diagnosisFilters) {
+	                unless ('ALL' ~~ @diagnosisFilters and @diagnosisNames) {
 	                    # Finding the intersection of the patient's diagnosis and the diagnosis filters
 						# If there is an intersection, then patient is so far part of this publishing announcement
 	                    if (!intersect(@diagnosisFilters, @diagnosisNames)) {
@@ -281,7 +289,7 @@ sub publishAnnouncements
 
 					# if all doctors were selected as triggers then patient passes
 	                # else do further checks 
-	                unless ('ALL' ~~ @doctorFilters) {
+	                unless ('ALL' ~~ @doctorFilters and @patientDoctors) {
 	                    # Finding the intersection of the patient's doctor(s) and the doctor filters
 						# If there is an intersection, then patient is so far part of this publishing announcement
 	                    if (!intersect(	@doctorFilters, @patientDoctors)) {
@@ -312,7 +320,7 @@ sub publishAnnouncements
 
 					# if all resources were selected as triggers then patient passes
 	                # else do further checks 
-	                unless ('ALL' ~~ @resourceFilters) {
+	                unless ('ALL' ~~ @resourceFilters and @patientResources) {
 	                    # Finding the intersection of the patient resource(s) and the resource filters
 						# If there is an intersection, then patient is so far part of this publishing announcement
 	                    if (!intersect(@resourceFilters, @patientResources)) {
