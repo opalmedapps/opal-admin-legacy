@@ -17,7 +17,7 @@ class Filter {
             'appointments'          => array(),
             'dx'                    => array(),
             'doctors'               => array(),
-			'resources'             => array(),
+			'machines'              => array(),
 			'patients'		        => array(),
             'appointmentStatuses'   => array()
         );
@@ -78,13 +78,13 @@ class Filter {
                 $query->execute();
                 
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                    $resourceArray = array(
+                    $machineArray = array(
                         'name'  => $data[1],
                         'id'    => $data[0],
-                        'type'  => 'Resource',
+                        'type'  => 'Machine',
                         'added' => 0
                     );
-                    array_push($filters['resources'], $resourceArray);
+                    array_push($filters['machines'], $machineArray);
                 }
 
             }
@@ -109,17 +109,17 @@ class Filter {
                 //     array_push($filters['doctors'], $doctorArray);
                 // }
 
-                $sql = "SELECT 'RESOURCE_QUERY_HERE'";
+                $sql = "SELECT 'MACHINE_QUERY_HERE'";
                 // $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
                 // $query->execute();
                 // while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                //     $resourceArray = array(
+                //     $machineArray = array(
                 //         'name'  => $data[0],
                 //         'id'    => $data[0],
-                //         'type'  => 'Resource',
+                //         'type'  => 'Machine',
                 //         'added' => 0
                 //     );
-                //     array_push($filters['resources'], $resourceArray);
+                //     array_push($filters['machines'], $machineArray);
                 // }
             }
 
@@ -143,17 +143,17 @@ class Filter {
                 //     array_push($filters['doctors'], $doctorArray);
                 // }
 
-                $sql = "SELECT 'RESOURCE_QUERY_HERE'";
+                $sql = "SELECT 'MACHINE_QUERY_HERE'";
                 // $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
                 // $query->execute();
                 // while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                //     $resourceArray = array(
+                //     $machineArray = array(
                 //         'name'  => $data[1],
                 //         'id'    => $data[0],
-                //         'type'  => 'Resource',
+                //         'type'  => 'Machine',
                 //         'added' => 0
                 //     );
-                //     array_push($filters['resources'], $resourceArray);
+                //     array_push($filters['machines'], $machineArray);
                 // }
 			}
 			
