@@ -212,10 +212,24 @@ angular.module('opalAdmin.controllers.testResult.add', ['ngAnimate', 'ngSanitize
 		};
 
 		// Function to toggle necessary changes when updating educational material
-		$scope.eduMatUpdate = function () {
+		$scope.eduMatUpdate = function (event, eduMat) {
 
 			// Toggle booleans
 			$scope.educationalMaterialSection.open = true;
+
+			if ($scope.newTestResult.eduMat) {
+				if ($scope.newTestResult.eduMat.serial == event.target.value) {
+					$scope.newTestResult.eduMat = null;
+					$scope.newTestResult.eduMatSer = null;
+					$scope.educationalMaterialSection.open = false;
+				}
+				else {
+					$scope.newTestResult.eduMat = eduMat;
+				}
+			}
+			else {
+				$scope.newTestResult.eduMat = eduMat;
+			}
 		}
 
 		$scope.additionalLinksComplete = false;

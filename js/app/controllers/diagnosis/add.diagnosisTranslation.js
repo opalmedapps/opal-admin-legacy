@@ -206,10 +206,24 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.add', ['ngAnimate', '
 		};
 
 		// Function to toggle necessary changes when updating educational material
-		$scope.eduMatUpdate = function () {
+		$scope.eduMatUpdate = function (event, eduMat) {
 
 			// Toggle booleans
 			$scope.educationalMaterialSection.open = true;
+
+			if ($scope.newDiagnosisTranslation.eduMat) {
+				if ($scope.newDiagnosisTranslation.eduMat.serial == event.target.value) {
+					$scope.newDiagnosisTranslation.eduMat = null;
+					$scope.newDiagnosisTranslation.eduMatSer = null;
+					$scope.educationalMaterialSection.open = false;
+				}
+				else {
+					$scope.newDiagnosisTranslation.eduMat = eduMat;
+				}
+			}
+			else {
+				$scope.newDiagnosisTranslation.eduMat = eduMat;
+			}
 		}
 
 		// Function to submit the new diagnosis translation

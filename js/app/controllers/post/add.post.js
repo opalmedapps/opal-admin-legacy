@@ -22,7 +22,14 @@ angular.module('opalAdmin.controllers.post.add', ['ngAnimate', 'ngSanitize', 'ui
 		$scope.titleSection = {open:false, show:false};
 		$scope.bodySection = {open:false, show:false};
 		$scope.publishSection = {open:false, show:false};
-		$scope.filterSection = {open:false, show:false};
+		$scope.triggerSection = {
+			show:false,
+			patient: {open:false},
+			appointment: {open:false},
+			doctor: {open:false},
+			machine: {open:false},
+			diagnosis: {open:false}
+		};
 
 		// completed steps boolean object; used for progress bar
 		var steps = {
@@ -39,7 +46,7 @@ angular.module('opalAdmin.controllers.post.add', ['ngAnimate', 'ngSanitize', 'ui
 		$scope.appointmentSearchField = null;
 		$scope.dxSearchField = null;
 		$scope.doctorSearchField = null;
-		$scope.resourceSearchField = null;
+		$scope.machineSearchField = null;
 		$scope.patientSearchField = null; 
 
 		// Default count of completed steps
@@ -76,15 +83,23 @@ angular.module('opalAdmin.controllers.post.add', ['ngAnimate', 'ngSanitize', 'ui
 			body_FR: null,
 			publish_date: null,
 			publish_time: null,
-			filters: []
+			triggers: []
 		};
 
-		// Initialize lists to hold filters
-		$scope.appointmentList = [];
-		$scope.dxFilterList = [];
-		$scope.doctorFilterList = [];
-		$scope.resourceFilterList = [];
-		$scope.patientFilterList = [];
+		// Initialize lists to hold triggers
+		$scope.appointmentTriggerList = [];
+		$scope.dxTriggerList = [];
+		$scope.doctorTriggerList = [];
+		$scope.machineTriggerList = [];
+		$scope.patientTriggerList = [];
+
+		$scope.selectAll = {
+			appointment: {all:false, checked:false},
+			diagnosis: {all:false, checked:false},
+			doctor: {all:false, checked:false},
+			machine: {all:false, checked:false},
+			patient: {all:false, checked:false}
+		}
 
 		/* Function for the "Processing..." dialog */
 		var processingModal;
@@ -106,14 +121,14 @@ angular.module('opalAdmin.controllers.post.add', ['ngAnimate', 'ngSanitize', 'ui
 		};
 
 
-		// Call our API service to get each filter
+		// Call our API service to get each trigger
 		filterCollectionService.getFilters().then(function (response) {
 
-			$scope.appointmentList = response.data.appointments; // Assign value
-			$scope.dxFilterList = response.data.dx;
-			$scope.doctorFilterList = response.data.doctors;
-			$scope.resourceFilterList = response.data.resources;
-			$scope.patientFilterList = response.data.patients;
+			$scope.appointmentTriggerList = response.data.appointments; // Assign value
+			$scope.dxTriggerList = response.data.dx;
+			$scope.doctorTriggerList = response.data.doctors;
+			$scope.machineTriggerList = response.data.machines;
+			$scope.patientTriggerList = response.data.patients;
 
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
@@ -122,7 +137,7 @@ angular.module('opalAdmin.controllers.post.add', ['ngAnimate', 'ngSanitize', 'ui
 			$scope.loadForm();
 
 		}).catch(function(response) {
-			console.error('Error occurred getting filter list:', response.status, response.data);
+			console.error('Error occurred getting triggers:', response.status, response.data);
 		});
 
 		// Function to toggle necessary changes when updating post name
@@ -160,7 +175,7 @@ angular.module('opalAdmin.controllers.post.add', ['ngAnimate', 'ngSanitize', 'ui
 				$scope.publishSection.show = true;
 
 				if ($scope.newPost.type.name != 'Announcement') {
-					$scope.filterSection.show = true;
+					$scope.triggerSection.show = true;
 				}
 				// Toggle boolean
 				steps.body.completed = true;
@@ -212,7 +227,7 @@ angular.module('opalAdmin.controllers.post.add', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.newPost.publish_date && $scope.newPost.publish_time) {
 
-				$scope.filterSection.show = true;
+				$scope.triggerSection.show = true;
 
 				// Toggle boolean
 				steps.publish_date.completed = true;
@@ -238,12 +253,12 @@ angular.module('opalAdmin.controllers.post.add', ['ngAnimate', 'ngSanitize', 'ui
 				$scope.newPost.body_EN = $scope.newPost.body_EN.replace(/\u200B/g,'');
 				$scope.newPost.body_FR = $scope.newPost.body_FR.replace(/\u200B/g,'');
 				
-				// Add filters to new post object
-				addFilters($scope.appointmentList);
-				addFilters($scope.dxFilterList);
-				addFilters($scope.doctorFilterList);
-				addFilters($scope.resourceFilterList);
-				addFilters($scope.patientFilterList);
+				// Add triggers to new post object
+				addTriggers($scope.appointmentTriggerList, $scope.selectAll.appointment.all);
+				addTriggers($scope.dxTriggerList, $scope.selectAll.diagnosis.all);
+				addTriggers($scope.doctorTriggerList, $scope.selectAll.doctor.all);
+				addTriggers($scope.machineTriggerList, $scope.selectAll.machine.all);
+				addTriggers($scope.patientTriggerList, $scope.selectAll.patient.all);
 				if ($scope.newPost.publish_date && $scope.newPost.publish_time) {
 					// Concat date and time
 					$scope.newPost.publish_date = String(moment($scope.newPost.publish_date).format("YYYY-MM-DD")) + " " +
@@ -264,32 +279,39 @@ angular.module('opalAdmin.controllers.post.add', ['ngAnimate', 'ngSanitize', 'ui
 			}
 		};
 
-		// Function to toggle Item in a list on/off
-		$scope.selectItem = function (item) {
-			if (item.added)
-				item.added = 0;
+		// Function to toggle trigger in a list on/off
+		$scope.selectTrigger = function (trigger, selectAll) {
+			selectAll.all = false;
+			selectAll.checked = false;
+			if (trigger.added)
+				trigger.added = 0;
 			else
-				item.added = 1;
+				trigger.added = 1;
 		};
 
 		// Function to assign search fields when textbox changes
 		$scope.searchAppointment = function (field) {
 			$scope.appointmentSearchField = field;
+			$scope.selectAll.appointment.all = false;
 		};
 		$scope.searchDiagnosis = function (field) {
 			$scope.dxSearchField = field;
+			$scope.selectAll.diagnosis.all = false;
 		};
 		$scope.searchDoctor = function (field) {
 			$scope.doctorSearchField = field;
+			$scope.selectAll.doctor.all = false;
 		};
-		$scope.searchResource = function (field) {
-			$scope.resourceSearchField = field;
+		$scope.searchMachine = function (field) {
+			$scope.machineSearchField = field;
+			$scope.selectAll.machine.all = false;
 		};
 		$scope.searchPatient = function (field) {
 			$scope.patientSearchField = field;
+			$scope.selectAll.patient.all = false;
 		};
 
-		// Function for search through the filters
+		// Function for search through the triggers
 		$scope.searchAppointmentFilter = function (Filter) {
 			var keyword = new RegExp($scope.appointmentSearchField, 'i');
 			return !$scope.appointmentSearchField || keyword.test(Filter.name);
@@ -302,13 +324,55 @@ angular.module('opalAdmin.controllers.post.add', ['ngAnimate', 'ngSanitize', 'ui
 			var keyword = new RegExp($scope.doctorSearchField, 'i');
 			return !$scope.doctorSearchField || keyword.test(Filter.name);
 		};
-		$scope.searchResourceFilter = function (Filter) {
-			var keyword = new RegExp($scope.resourceSearchField, 'i');
-			return !$scope.resourceSearchField || keyword.test(Filter.name);
+		$scope.searchMachineFilter = function (Filter) {
+			var keyword = new RegExp($scope.machineSearchField, 'i');
+			return !$scope.machineSearchField || keyword.test(Filter.name);
 		};
 		$scope.searchPatientFilter = function (Filter) {
 			var keyword = new RegExp($scope.patientSearchField, 'i');
 			return !$scope.patientSearchField || keyword.test(Filter.name);
+		};
+
+		// Function for selecting all triggers in a trigger list
+		$scope.selectAllTriggers = function (triggerList,triggerFilter,selectAll) {
+
+			var filtered = $scope.filter(triggerList,triggerFilter);
+			
+			if (filtered.length == triggerList.length) { // search field wasn't used
+				if (selectAll.checked) {
+					angular.forEach(filtered, function (trigger) {
+						trigger.added = 0;
+					});
+					selectAll.checked = false; // toggle off
+					selectAll.all = false;
+				}
+				else {
+					angular.forEach(filtered, function (trigger) {
+						trigger.added = 1;
+					});
+
+					selectAll.checked = true; // toggle on
+					selectAll.all = true;
+				}
+			}
+			else {
+				if (selectAll.checked) { // was checked
+					angular.forEach(filtered, function (trigger) {
+						trigger.added = 0;
+					});
+					selectAll.checked = false; // toggle off
+					selectAll.all = false;
+				}
+				else { // was not checked
+					angular.forEach(filtered, function (trigger) {
+						trigger.added = 1;
+					});
+
+					selectAll.checked = true; // toggle on
+
+				}
+			}
+
 		};
 
 		// Function to calculate / return step progress
@@ -329,22 +393,27 @@ angular.module('opalAdmin.controllers.post.add', ['ngAnimate', 'ngSanitize', 'ui
 			return numberOfTrues;
 		}
 
-		// Function to return filters that have been checked
-		function addFilters(filterList) {
-			angular.forEach(filterList, function (Filter) {
-				if (Filter.added)
-					$scope.newPost.filters.push({ id: Filter.id, type: Filter.type });
-			});
+		// Function to return triggers that have been checked
+		function addTriggers(triggerList, selectAll) {
+			if(selectAll) {
+				$scope.newPost.triggers.push({id: 'ALL', type: triggerList[0].type});
+			}
+			else {
+				angular.forEach(triggerList, function (trigger) {
+					if (trigger.added)
+						$scope.newPost.triggers.push({ id: trigger.id, type: trigger.type });
+				});
+			}
 		}
 
-		// Function to check if filters are added
-		$scope.checkFilters = function (filterList) {
-			var filtersAdded = false;
-			angular.forEach(filterList, function (Filter) {
-				if (Filter.added)
-					filtersAdded = true;
+		// Function to check if triggers are added
+		$scope.checkTriggers = function (triggerList) {
+			var triggersAdded = false;
+			angular.forEach(triggerList, function (trigger) {
+				if (trigger.added)
+					triggersAdded = true;
 			});
-			return filtersAdded;
+			return triggersAdded;
 		};
 
 		// Function to return boolean for form completion

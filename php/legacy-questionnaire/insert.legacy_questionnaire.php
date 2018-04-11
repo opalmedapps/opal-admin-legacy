@@ -7,10 +7,10 @@
 	$legacyQuestionnaireDetails	= array(
 		'name_EN' 	        => $_POST['name_EN'],
 		'name_FR' 	        => $_POST['name_FR'],
-		'intro_EN'          => str_replace(array('"', "'"), '\"', $_POST['intro_EN']),
-        'intro_FR'          => str_replace(array('"', "'"), '\"', $_POST['intro_FR']),
+		'intro_EN'          => filter_var($_POST['intro_EN'], FILTER_SANITIZE_MAGIC_QUOTES),
+        'intro_FR'          => filter_var($_POST['intro_FR'], FILTER_SANITIZE_MAGIC_QUOTES),
 		'expression' 	    => $_POST['legacy_questionnaire'],
-		'filters'			=> $_POST['filters'],
+		'triggers'			=> $_POST['triggers'],
         'occurrence'		=> $_POST['occurrence'],
         'user'				=> $_POST['user']
 	);

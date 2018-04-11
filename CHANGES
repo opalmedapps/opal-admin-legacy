@@ -1,3 +1,34 @@
+Version 0.18.0.0:
+ - Merge branch 'selectAllFeature' into develop
+ -     --- Improved trigger logic         -- Checking both the case that triggers are defined and that the patient has things         to compare in the first place (eg. has doctors). Before this check wasn't made and         would still send to patient if "ALL" is defined but a patient has no appointments today for example.     --- Fixed issue where educational material triggers weren't updating upon selecting an individual trigger     --- Changed publishing logic for educational material         -- Originally woud get all patient's appointments retrospectively. But should only check for         prospective appointments. So if new patient had new start before registration, it will not send         educational material for start of radiotherapy.         -- Patient diagnosis was based on patient appointments but if patient has none, then it would seem         patient doesn't have a diagnosis. So now getting diagnosis from Diagnosis call and not from appointments.         -- Above point same for legacy questionnaires
+ -     --- Added select all functionality to publisher         -- patient will automatically pass for a given trigger if "ALL" is selected for said trigger         Else, continue respective checks as usual
+ -     --- Fixed flawed logic in publishers for triggers         -- If only patient triggers were defined, it would not have passed even if the         patient was in the list of patient triggers
+ -     --- Added select all feature to legacy questionnaire module     --- Changed all instances of "filter" to "trigger"     --- Changed all instances of "resource" to "machine"
+ -     --- Added select all feature to educational material     --- Changed all instances of "filter" to "trigger"     --- Changed all instances of "resource" to "machine"
+ - Merge branch 'develop' into selectAllFeature
+ -     --- Ignore uploads directory         -- To be used by future feature
+ -     --- Added select all feature to post triggers         -- Selecting all triggers will add a "ALL" id to the database instead of adding every existing trigger. This         also helps in case there are new triggers added (avoiding static select alls). So if select all is selected         and a new patient is added for example, then that patient gets added to the list as well         -- Changed all instances of "filter" to "trigger" to make it more explicit that these are what triggers publishing     --- Changed instances of "resource" to "machine" to make it more explicit that the select list is for treatment machines
+ -     --- Commented out preparation for handling errors
+ -     --- Changed instances of "Filter" to "Trigger"         -- This will hopefully be clearer that selecting triggers means targeting patients         with specific criteria.
+ -     --- Added functionality to only publish content when filters are defined         -- If no filters are defined, nothing will be published. Soon there will be option         to trigger by all patients, doctors, etc.
+ -     --- Added description to alias expressions         -- Fix to get resource description from MediVisit appointments         -- requires data refactoring
+ -     --- Reimplimented changes that were removed by previous reversion         -- Hyperlinks and deselect educational material are now reimplemented
+ -     --- Fixed merge conflict
+ - Revert "    --- Educational material are now tagged to specific content types -- Only educational material tagged to content type in question will show up in list E.g. Tagging educational material to Appointments will only be a selectable option to attach material in appointments"
+ -     --- Optimized updated for diagnosis translation and educational material         -- database update commands only executed on content that was updated     --- Fixed issue where confirm registration was not using the password encryption
+ -     --- Starting optimization of legacy questionnaire updates
+ -     --- Optimized updates on test results         -- Database updates only executed on updated content and not on content that stayed         the same.
+ -     --- Optimized updates on posts         -- Updates only executed for only updated content
+ -     --- Optimized updates on aliases         -- Update commands only executed when content is really updated instead of updating everything.         E.g. if only expressions were changed, then only expressions will be updated and not         the details of the alias (like names for example). And vice-versa.
+ -     --- Added sanitization for test results         -- Test results without any codes assigned to them will automatically have their         publish flag turned off to avoid crashes
+ -     --- Added sanitize feature for rich-text fields         -- All single, double quotes, and backslashes are escaped
+ -     --- Added sanitize feature to aliases         -- Since reassignement of codes can be done, publish flags are turned off for aliases         that no longer have terms assigned the them. This avoids a crash for the for loop         in getting tasks/appointments/documents foreach expression
+ -     --- Added bilingual map uploads
+ -     --- Educational material are now tagged to specific content types         -- Only educational material tagged to content type in question will show up in list         E.g. Tagging educational material to Appointments will only be a selectable option to attach         material in appointments
+ -     --- Fixed display of current assigned clinical codes not updating upon selecting assigned codes
+ -     --- Disabled content sniffing
+ - Merge branch 'release-0.17.0.0' into develop
+
 Version 0.17.0.0:
  -     --- Added functionality to reassigned aliases, diagnosis translations, and test results         -- Selecting an already assigned code will warn user of reassignment and reassign upon submit
  -     --- Added tab to show currently assigned codes for alias, test result, and diagnosis translation     --- Added tab filters to test results     --- Added auto complete for opposite language when selecting a test group
