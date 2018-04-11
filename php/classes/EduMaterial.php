@@ -766,7 +766,7 @@ class EduMaterial {
 
         $detailsUpdated     = $eduMatDetails['details_updated'];
         $tocsUpdated        = $eduMatDetails['tocs_updated'];
-        $triggersUpdated     = $eduMatDetails['triggers_updated'];
+        $triggersUpdated    = $eduMatDetails['triggers_updated'];
 
         $response = array(
             'value'     => 0,

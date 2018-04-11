@@ -15,6 +15,7 @@ use Database; # Our custom database module
 use Time::Piece; # perl module
 use Array::Utils qw(:all);
 use POSIX; # perl module
+use Data::Dumper;
 
 use Patient; # Our custom patient module 
 use Filter; # Our custom filter module
@@ -212,7 +213,7 @@ sub publishLegacyQuestionnaires
             my @patientAppointments = Appointment::getTodaysPatientsAppointmentsFromOurDB($patientSer);
 
             my @aliasSerials = ();
-            my @diagnosisNames = ();
+            my @diagnosisNames = Diagnosis::getPatientsDiagnosesFromOurDB($patientSer);
             my @appointmentStatuses = ();
             my @checkins = ();
 
@@ -228,10 +229,6 @@ sub publishLegacyQuestionnaires
                 push(@aliasSerials, $aliasSer) unless grep{$_ eq $aliasSer} @aliasSerials;
                 push(@appointmentStatuses, $status) unless grep{$_ eq $status} @appointmentStatuses;
                 push(@checkins, $checkinFlag) unless grep{$_ eq $checkinFlag} @checkins;
-
-                my $diagnosisSer = $appointment->getApptDiagnosisSer();
-                my $diagnosisName = Diagnosis::getDiagnosisNameFromOurDB($diagnosisSer);
-                push(@diagnosisNames, $diagnosisName) unless grep{$_ eq $diagnosisName} @diagnosisNames;
 
             }
 
@@ -291,7 +288,7 @@ sub publishLegacyQuestionnaires
 
                 # if all appointments were selected as triggers then patient passes
                 # else do further checks 
-                unless ('ALL' ~~ @appointmentFilters) {
+                unless ('ALL' ~~ @appointmentFilters and @aliasSerials) {
                     # Finding the existence of the patient expressions in the appointment filters
                     # If there is an intersection, then patient is so far part of this publishing legacy questionnaire
                     if (!intersect(@appointmentFilters, @aliasSerials)) {
@@ -316,7 +313,7 @@ sub publishLegacyQuestionnaires
 
                 # if all diagnoses were selected as triggers then patient passes
                 # else do further checks 
-                unless ('ALL' ~~ @diagnosisFilters) {
+                unless ('ALL' ~~ @diagnosisFilters and @diagnosisNames) {
                     # Finding the intersection of the patient's diagnosis and the diagnosis filters
                     # If there is an intersection, then patient is so far part of this publishing legacy questionnaire
                     if (!intersect(@diagnosisFilters, @diagnosisNames)) {
@@ -339,9 +336,10 @@ sub publishLegacyQuestionnaires
                 # toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
+
                 # if all doctors were selected as triggers then patient passes
                 # else do further checks 
-                unless ('ALL' ~~ @doctorFilters) {
+                unless ('ALL' ~~ @doctorFilters and @patientDoctors) {
                     # Finding the intersection of the patient's doctor(s) and the doctor filters
                     # If there is an intersection, then patient is so far part of this publishing legacy questionnaire
                     if (!intersect(@doctorFilters, @patientDoctors)) {
@@ -358,7 +356,7 @@ sub publishLegacyQuestionnaires
             }
 
             # Fetch resource filters (if any)
-            my @resourceFilters = $postFilters->getResourceFilters();
+            my @resourceFilters = $questionnaireFilters->getResourceFilters();
             if (@resourceFilters) {
 
                 # toggle flag
@@ -366,7 +364,7 @@ sub publishLegacyQuestionnaires
 
                 # if all resources were selected as triggers then patient passes
                 # else do further checks 
-                unless ('ALL' ~~ @resourceFilters) {
+                unless ('ALL' ~~ @resourceFilters and @patientResources) {
                     # Finding the intersection of the patient resource(s) and the resource filters
                     # If there is an intersection, then patient is so far part of this publishing legacy questionnaire
                     if (!intersect(@resourceFilters, @patientResources)) {

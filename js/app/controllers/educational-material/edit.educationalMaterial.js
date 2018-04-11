@@ -177,11 +177,12 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 			$scope.setChangesMade();
 			selectAll.all = false;
 			selectAll.checked = false;
-			$scope.eduMat_triggers_updated = 1;
+			$scope.eduMat.triggers_updated = 1;
 			if (trigger.added)
 				trigger.added = 0;
 			else
 				trigger.added = 1;
+
 		};
 
 		// Function for selecting all triggers in a trigger list
@@ -464,6 +465,8 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 
 		// Function to return triggers that have been checked
 		function addTriggers(triggerList, selectAll) {
+			console.log(selectAll);
+
 			if (selectAll) {
 				$scope.eduMat.triggers.push({id: 'ALL', type: triggerList[0].type});
 			}

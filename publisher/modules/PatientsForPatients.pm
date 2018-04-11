@@ -178,26 +178,27 @@ sub publishPatientsForPatients
             my @patientDoctors = PatientDoctor::getPatientsDoctorsFromOurDB($patientSer);
                 
             # Fetch expression filters (if any)
-            my @expressionFilters =  $postFilters->getExpressionFilters();
+            my @expressionFilters =  $postFilters->getAppointmentFilters();
             if (@expressionFilters) {
   
 				# toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
+               
+                # Retrieve the patient appointment(s) if one (or more) lands within one day of today
+                my @patientAppointments = Appointment::getPatientsAppointmentsFromDateInOurDB($patientSer, $postPublishDate, 0);
 
-                # if all appointments were selected as triggers then patient passes
+                # we build all possible expression names, and diagnoses for each appointment found
+                foreach my $appointment (@patientAppointments) {
+
+                    my $expressionSer = $appointment->getApptAliasExpressionSer();
+                    my $expressionName = Alias::getExpressionNameFromOurDB($expressionSer);
+                    push(@expressionNames, $expressionName) unless grep{$_ == $expressionName} @expressionNames;
+
+                }
+
+                 # if all appointments were selected as triggers then patient passes
                 # else do further checks 
-                unless ('ALL' ~~ @appointmentFilters) {
-                    # Retrieve the patient appointment(s) if one (or more) lands within one day of today
-                    my @patientAppointments = Appointment::getPatientsAppointmentsFromDateInOurDB($patientSer, $postPublishDate, 0);
-
-                    # we build all possible expression names, and diagnoses for each appointment found
-                    foreach my $appointment (@patientAppointments) {
-
-                        my $expressionSer = $appointment->getApptAliasExpressionSer();
-                        my $expressionName = Alias::getExpressionNameFromOurDB($expressionSer);
-                        push(@expressionNames, $expressionName) unless grep{$_ == $expressionName} @expressionNames;
-
-                    }
+                unless ('ALL' ~~ @appointmentFilters and @expressionNames) {
 
                     # Finding the existence of the patient expressions in the expression filters
                     # If there is an intersection, then patient is so far part of this publishing P4P
@@ -223,7 +224,7 @@ sub publishPatientsForPatients
 
                 # if all diagnoses were selected as triggers then patient passes
                 # else do further checks 
-                unless ('ALL' ~~ @diagnosisFilters) {
+                unless ('ALL' ~~ @diagnosisFilters and @diagnosisNames) {
                     # Finding the intersection of the patient's diagnosis and the diagnosis filters
                     # If there is an intersection, then patient is so far part of this publishing P4P
                     if (!intersect(@diagnosisFilters, @diagnosisNames)) {
@@ -248,7 +249,7 @@ sub publishPatientsForPatients
 
                 # if all doctors were selected as triggers then patient passes
                 # else do further checks 
-                unless ('ALL' ~~ @doctorFilters) {
+                unless ('ALL' ~~ @doctorFilters and @patientDoctors) {
                     # Finding the intersection of the patient's doctor(s) and the doctor filters
                     # If there is an intersection, then patient is so far part of this publishing P4P
                     if (!intersect(@doctorFilters, @patientDoctors)) {
@@ -273,7 +274,7 @@ sub publishPatientsForPatients
 
                 # if all resources were selected as triggers then patient passes
                 # else do further checks 
-                unless ('ALL' ~~ @resourceFilters) {
+                unless ('ALL' ~~ @resourceFilters and @patientResources) {
                     # Finding the intersection of the patient's resource(s) and the resource filters
                     # If there is an intersection, then patient is so far part of this publishing P4P
                     if (!intersect(@resourcesFilters, @patientResources)) {
