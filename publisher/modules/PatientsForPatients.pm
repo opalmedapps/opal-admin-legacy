@@ -184,30 +184,34 @@ sub publishPatientsForPatients
 				# toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
-                # Retrieve the patient appointment(s) if one (or more) lands within one day of today
-                my @patientAppointments = Appointment::getPatientsAppointmentsFromDateInOurDB($patientSer, $postPublishDate, 0);
+                # if all appointments were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @appointmentFilters) {
+                    # Retrieve the patient appointment(s) if one (or more) lands within one day of today
+                    my @patientAppointments = Appointment::getPatientsAppointmentsFromDateInOurDB($patientSer, $postPublishDate, 0);
 
-                # we build all possible expression names, and diagnoses for each appointment found
-                foreach my $appointment (@patientAppointments) {
+                    # we build all possible expression names, and diagnoses for each appointment found
+                    foreach my $appointment (@patientAppointments) {
 
-                    my $expressionSer = $appointment->getApptAliasExpressionSer();
-                    my $expressionName = Alias::getExpressionNameFromOurDB($expressionSer);
-                    push(@expressionNames, $expressionName) unless grep{$_ == $expressionName} @expressionNames;
+                        my $expressionSer = $appointment->getApptAliasExpressionSer();
+                        my $expressionName = Alias::getExpressionNameFromOurDB($expressionSer);
+                        push(@expressionNames, $expressionName) unless grep{$_ == $expressionName} @expressionNames;
 
-                }
-
-                # Finding the existence of the patient expressions in the expression filters
-                # If there is an intersection, then patient is so far part of this publishing P4P
-                if (!intersect(@expressionFilters, @expressionNames)) {
-                   if (@patientFilters) {
-                        # if the patient failed to match the expression filter but there are patient filters
-                        # then we flag to check later if this patient matches with the patient filters
-                        $isPatientSpecificFilterDefined = 1;
                     }
-                    # else no patient filters were defined and failed to match the expression filter
-                    # move on to the next P4P
-                    else{next;}
-                } 
+
+                    # Finding the existence of the patient expressions in the expression filters
+                    # If there is an intersection, then patient is so far part of this publishing P4P
+                    if (!intersect(@expressionFilters, @expressionNames)) {
+                       if (@patientFilters) {
+                            # if the patient failed to match the expression filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the expression filter
+                        # move on to the next P4P
+                        else{next;}
+                    } 
+                }
             }
 
             # Fetch diagnosis filters (if any)
@@ -217,17 +221,21 @@ sub publishPatientsForPatients
                 # toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
-                # Finding the intersection of the patient's diagnosis and the diagnosis filters
-                # If there is an intersection, then patient is so far part of this publishing P4P
-                if (!intersect(@diagnosisFilters, @diagnosisNames)) {
-                    if (@patientFilters) {
-                        # if the patient failed to match the diagnosis filter but there are patient filters
-                        # then we flag to check later if this patient matches with the patient filters
-                        $isPatientSpecificFilterDefined = 1;
+                # if all diagnoses were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @diagnosisFilters) {
+                    # Finding the intersection of the patient's diagnosis and the diagnosis filters
+                    # If there is an intersection, then patient is so far part of this publishing P4P
+                    if (!intersect(@diagnosisFilters, @diagnosisNames)) {
+                        if (@patientFilters) {
+                            # if the patient failed to match the diagnosis filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the diagnosis filter
+                        # move on to the next P4P
+                        else{next;}
                     }
-                    # else no patient filters were defined and failed to match the diagnosis filter
-                    # move on to the next P4P
-                    else{next;}
                 }
             }
 
@@ -238,18 +246,22 @@ sub publishPatientsForPatients
                 # toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
-                # Finding the intersection of the patient's doctor(s) and the doctor filters
-                # If there is an intersection, then patient is so far part of this publishing P4P
-                if (!intersect(@doctorFilters, @patientDoctors)) {
-                    if (@patientFilters) {
-                        # if the patient failed to match the doctor filter but there are patient filters
-                        # then we flag to check later if this patient matches with the patient filters
-                        $isPatientSpecificFilterDefined = 1;
-                    }
-                    # else no patient filters were defined and failed to match the doctor filter
-                    # move on to the next P4P
-                    else{next;}
-                } 
+                # if all doctors were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @doctorFilters) {
+                    # Finding the intersection of the patient's doctor(s) and the doctor filters
+                    # If there is an intersection, then patient is so far part of this publishing P4P
+                    if (!intersect(@doctorFilters, @patientDoctors)) {
+                        if (@patientFilters) {
+                            # if the patient failed to match the doctor filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the doctor filter
+                        # move on to the next P4P
+                        else{next;}
+                    } 
+                }
             }
 
             # Fetch resource filters (if any)
@@ -259,18 +271,22 @@ sub publishPatientsForPatients
                 # toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
-                # Finding the intersection of the patient's resource(s) and the resource filters
-                # If there is an intersection, then patient is so far part of this publishing P4P
-                if (!intersect(@resourcesFilters, @patientResources)) {
-                    if (@patientFilters) {
-                        # if the patient failed to match the resource filter but there are patient filters
-                        # then we flag to check later if this patient matches with the patient filters
-                        $isPatientSpecificFilterDefined = 1;
-                    }
-                    # else no patient filters were defined and failed to match the resource filter
-                    # move on to the next P4P
-                    else{next;}
-                } 
+                # if all resources were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @resourceFilters) {
+                    # Finding the intersection of the patient's resource(s) and the resource filters
+                    # If there is an intersection, then patient is so far part of this publishing P4P
+                    if (!intersect(@resourcesFilters, @patientResources)) {
+                        if (@patientFilters) {
+                            # if the patient failed to match the resource filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the resource filter
+                        # move on to the next P4P
+                        else{next;}
+                    } 
+                }
             }
 
             # We look into whether any patient-specific filters have been defined 
@@ -283,8 +299,9 @@ sub publishPatientsForPatients
                 # and this is the last test to see if this patient passes
                 if ($isPatientSpecificFilterDefined eq 1 or $isNonPatientSpecificFilterDefined eq 0) {
                     # Finding the existence of the patient in the patient-specific filters
-                    # If the patient does not exist, then continue to the next p4p
-                    if ($patientId ~~ @patientFilters) {
+                    # If the patient exists, or all patients were selected as triggers, 
+                    # then patient passes else move on to next patient
+                    if ($patientId ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
                         $patientPassed = 1;
                     }
                     else {next;}
