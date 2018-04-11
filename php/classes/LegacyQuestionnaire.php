@@ -131,7 +131,7 @@ class LegacyQuestionnaire {
                 $questionnaireName_EN       = $data[2];
                 $questionnaireName_FR       = $data[3];
                 $questionnairePublish       = $data[4];
-                $questionnaireFilters       = array();
+                $questionnaireTriggers      = array();
 
                 $sql = "
                     SELECT DISTINCT
@@ -169,15 +169,15 @@ class LegacyQuestionnaire {
 
 				while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-					$filterType = $secondData[0];
-					$filterId   = $secondData[1];
-					$filterArray = array (
-						'type'  => $filterType,
-						'id'    => $filterId,
+					$triggerType = $secondData[0];
+					$triggerId   = $secondData[1];
+					$triggerArray = array (
+						'type'  => $triggerType,
+						'id'    => $triggerId,
 						'added' => 1
 					);
 
-					array_push($questionnaireFilters, $filterArray);
+					array_push($questionnaireTriggers, $triggerArray);
 				}
 
                 $occurrenceArray = array(
@@ -199,7 +199,7 @@ class LegacyQuestionnaire {
                     'publish'          	=> $questionnairePublish,
                     'changed'           => 0,
                     'expression'        => $questionnaireExpression,
-					'filters' 		    => $questionnaireFilters,
+					'triggers' 		    => $questionnaireTriggers,
                     'occurrence'        => $occurrenceArray
 				);
 
@@ -252,7 +252,7 @@ class LegacyQuestionnaire {
             $questionnaireIntro_EN      = $data[3];
             $questionnaireIntro_FR      = $data[4];
             $questionnairePublish       = $data[5];
-			$questionnaireFilters	    = array();
+			$questionnaireTriggers	    = array();
 
 			$sql = "
 				SELECT DISTINCT 
@@ -275,15 +275,15 @@ class LegacyQuestionnaire {
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-					$filterType = $data[0];
-					$filterId   = $data[1];
-					$filterArray = array (
-						'type'  => $filterType,
-						'id'    => $filterId,
+					$triggerType = $data[0];
+					$triggerId   = $data[1];
+					$triggerArray = array (
+						'type'  => $triggerType,
+						'id'    => $triggerId,
 						'added' => 1
 					);
 
-					array_push($questionnaireFilters, $filterArray);
+					array_push($questionnaireTriggers, $triggerArray);
 
 
             }
@@ -357,7 +357,7 @@ class LegacyQuestionnaire {
 				'serial' 		    => $legacyQuestionnaireSer, 
                 'publish'           => $questionnairePublish,
                 'db_serial'         => $questionnaireDBSer,
-				'filters' 		    => $questionnaireFilters,
+				'triggers' 		    => $questionnaireTriggers,
                 'occurrence'        => $occurrenceArray
             );
 		
@@ -383,7 +383,7 @@ class LegacyQuestionnaire {
         $questionnaireIntro_FR  = $legacyQuestionnaireDetails['intro_FR'];
         $questionnaireDBSer     = $legacyQuestionnaireDetails['expression']['serial'];
 
-		$questionnaireFilters	= $legacyQuestionnaireDetails['filters'];
+		$questionnaireTriggers	= $legacyQuestionnaireDetails['triggers'];
         $questionnaireOccurrence    = $legacyQuestionnaireDetails['occurrence'];
 
         $userSer                = $legacyQuestionnaireDetails['user']['id'];
@@ -420,11 +420,11 @@ class LegacyQuestionnaire {
 
 			$questionnaireSer = $host_db_link->lastInsertId();
 
-            if (!empty($questionnaireFilters)) {
-    			foreach ($questionnaireFilters as $filter) {
+            if (!empty($questionnaireTriggers)) {
+    			foreach ($questionnaireTriggers as $trigger) {
 
-                    $filterType = $filter['type'];
-                    $filterId   = $filter['id'];
+                    $triggerType = $trigger['type'];
+                    $triggerId   = $trigger['id'];
 
     				$sql = "
                         INSERT INTO 
@@ -433,14 +433,18 @@ class LegacyQuestionnaire {
                                 ControlTableSerNum,
                                 FilterType,
                                 FilterId,
-                                DateAdded
+                                DateAdded,
+                                LastUpdatedBy,
+                                SessionId
                             )
                         VALUE (
                             'LegacyQuestionnaireControl',
                             '$questionnaireSer',
-                            '$filterType',
-                            \"$filterId\",
-                            NOW()
+                            '$triggerType',
+                            \"$triggerId\",
+                            NOW(),
+                            '$userSer',
+                            '$sessionId'
                         )
     				";
     				$query = $host_db_link->prepare( $sql );
@@ -653,13 +657,16 @@ class LegacyQuestionnaire {
         $questionnaireIntro_EN      = $legacyQuestionnaireDetails['intro_EN'];
         $questionnaireIntro_FR      = $legacyQuestionnaireDetails['intro_FR'];
         $questionnaireSer	        = $legacyQuestionnaireDetails['serial'];
-		$questionnaireFilters	    = $legacyQuestionnaireDetails['filters'];
+		$questionnaireTriggers	    = $legacyQuestionnaireDetails['triggers'];
         $questionnaireOccurrence    = $legacyQuestionnaireDetails['occurrence'];
 
         $userSer                    = $legacyQuestionnaireDetails['user']['id'];
         $sessionId                  = $legacyQuestionnaireDetails['user']['sessionid'];
 
-        $existingFilters	= array();
+        $existingTriggers	= array();
+
+        $detailsUpdated             = $legacyQuestionnaireDetails['details_updated'];
+        $triggersUpdated             = $legacyQuestionnaireDetails['triggers_updated'];
 
         $response = array(
             'value'     => 0,
@@ -669,96 +676,122 @@ class LegacyQuestionnaire {
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-			$sql = "
-				UPDATE 
-					QuestionnaireControl 
-				SET 
-					QuestionnaireControl.QuestionnaireName_EN 		= \"$questionnaireName_EN\", 
-					QuestionnaireControl.QuestionnaireName_FR 		= \"$questionnaireName_FR\",
-                    QuestionnaireControl.Intro_EN                   = \"$questionnaireIntro_EN\",
-                    QuestionnaireControl.Intro_FR                   = \"$questionnaireIntro_FR\",
-                    QuestionnaireControl.LastUpdatedBy              = '$userSer',
-                    QuestionnaireControl.SessionId                  = '$sessionId'
-				WHERE 
-					QuestionnaireControl.QuestionnaireControlSerNum = $questionnaireSer
-			";
+			
+            if ($detailsUpdated) {
+                $sql = "
+    				UPDATE 
+    					QuestionnaireControl 
+    				SET 
+    					QuestionnaireControl.QuestionnaireName_EN 		= \"$questionnaireName_EN\", 
+    					QuestionnaireControl.QuestionnaireName_FR 		= \"$questionnaireName_FR\",
+                        QuestionnaireControl.Intro_EN                   = \"$questionnaireIntro_EN\",
+                        QuestionnaireControl.Intro_FR                   = \"$questionnaireIntro_FR\",
+                        QuestionnaireControl.LastUpdatedBy              = '$userSer',
+                        QuestionnaireControl.SessionId                  = '$sessionId'
+    				WHERE 
+    					QuestionnaireControl.QuestionnaireControlSerNum = $questionnaireSer
+    			";
 
-			$query = $host_db_link->prepare( $sql );
-			$query->execute();
-
-			$sql = "
-				SELECT DISTINCT 
-                    Filters.FilterType,
-                    Filters.FilterId
-				FROM 
-					Filters
-				WHERE 
-                    Filters.ControlTableSerNum       = $questionnaireSer
-                AND Filters.ControlTable             = 'LegacyQuestionnaireControl'
-                AND Filters.FilterType              != ''
-                AND Filters.FilterId                != ''
-			";
-
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
-
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $filterArray = array(
-                    'type'  => $data[0],
-                    'id'    => $data[1]
-                );
-				array_push($existingFilters, $filterArray);
-			}
-
-            if (!empty($existingFilters)) {
-                // If old filters not in new, remove from DB
-	    		foreach ($existingFilters as $existingFilter) {
-                    $id     = $existingFilter['id'];
-                    $type   = $existingFilter['type'];
-                    if (!$this->nestedSearch($id, $type, $questionnaireFilters)) {
-					    $sql = "
-                            DELETE FROM 
-	    						Filters
-		    				WHERE
-                                Filters.FilterId            = \"$id\"
-                            AND Filters.FilterType          = '$type'
-                            AND Filters.ControlTableSerNum   = $questionnaireSer
-                            AND Filters.ControlTable         = 'LegacyQuestionnaireControl'
-    					";
-    
-	    				$query = $host_db_link->prepare( $sql );
-		    			$query->execute();
-			    	}
-    			}   
+    			$query = $host_db_link->prepare( $sql );
+    			$query->execute();
             }
-            if (!empty($questionnaireFilters)) {
-                // If new filters, insert into DB
-    			foreach ($questionnaireFilters as $filter) {
-                    $id     = $filter['id'];
-                    $type   = $filter['type'];
-                    if (!$this->nestedSearch($id, $type, $existingFilters)) {
-                        $sql = "
-                            INSERT INTO 
-                                Filters (
-                                    ControlTable,
-                                    ControlTableSerNum,
-                                    FilterId,
-                                    FilterType,
-                                    DateAdded
+
+            if ($triggersUpdated) {
+
+    			$sql = "
+    				SELECT DISTINCT 
+                        Filters.FilterType,
+                        Filters.FilterId
+    				FROM 
+    					Filters
+    				WHERE 
+                        Filters.ControlTableSerNum       = $questionnaireSer
+                    AND Filters.ControlTable             = 'LegacyQuestionnaireControl'
+                    AND Filters.FilterType              != ''
+                    AND Filters.FilterId                != ''
+    			";
+
+    			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+    			$query->execute();
+
+    			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $triggerArray = array(
+                        'type'  => $data[0],
+                        'id'    => $data[1]
+                    );
+    				array_push($existingTriggers, $triggerArray);
+    			}
+
+                if (!empty($existingTriggers)) {
+                    // If old filters not in new, remove from DB
+    	    		foreach ($existingTriggers as $existingTrigger) {
+                        $id     = $existingTrigger['id'];
+                        $type   = $existingTrigger['type'];
+                        if (!$this->nestedSearch($id, $type, $questionnaireTriggers)) {
+    					    $sql = "
+                                DELETE FROM 
+    	    						Filters
+    		    				WHERE
+                                    Filters.FilterId            = \"$id\"
+                                AND Filters.FilterType          = '$type'
+                                AND Filters.ControlTableSerNum   = $questionnaireSer
+                                AND Filters.ControlTable         = 'LegacyQuestionnaireControl'
+        					";
+        
+    	    				$query = $host_db_link->prepare( $sql );
+    		    			$query->execute();
+
+                            $sql = "
+                                UPDATE FiltersMH
+                                SET 
+                                    FiltersMH.LastUpdatedBy = '$userSer',
+                                    FiltersMH.SessionId = '$sessionId'
+                                WHERE
+                                    FiltersMH.FilterId              = \"$id\"
+                                AND FiltersMH.FilterType            = '$type'
+                                AND FiltersMH.ControlTableSerNum    = $questionnaireSer
+                                AND FiltersMH.ControlTable          = 'LegacyQuestionnaireControl'
+                                ORDER BY FiltersMH.DateAdded DESC 
+                                LIMIT 1
+                            ";
+                            $query = $host_db_link->prepare( $sql );
+                            $query->execute();
+    			    	}
+        			}   
+                }
+                if (!empty($questionnaireTriggers)) {
+                    // If new filters, insert into DB
+        			foreach ($questionnaireTriggers as $trigger) {
+                        $id     = $trigger['id'];
+                        $type   = $trigger['type'];
+                        if (!$this->nestedSearch($id, $type, $existingTriggers)) {
+                            $sql = "
+                                INSERT INTO 
+                                    Filters (
+                                        ControlTable,
+                                        ControlTableSerNum,
+                                        FilterId,
+                                        FilterType,
+                                        DateAdded,
+                                        LastUpdatedBy,
+                                        SessionId
+                                    )
+                                VALUES (
+                                    'LegacyQuestionnaireControl',
+                                    '$questionnaireSer',
+                                    \"$id\",
+                                    '$type',
+                                    NOW(),
+                                    '$userSer',
+                                    '$sessionId'
                                 )
-                            VALUES (
-                                'LegacyQuestionnaireControl',
-                                '$questionnaireSer',
-                                \"$id\",
-                                '$type',
-                                NOW()
-                            )
-			    		";
-				    	$query = $host_db_link->prepare( $sql );
-					    $query->execute();
-    				}
-	    		}
+    			    		";
+    				    	$query = $host_db_link->prepare( $sql );
+    					    $query->execute();
+        				}
+    	    		}
+                }
             }
 
             if (!$questionnaireOccurrence['set']) {

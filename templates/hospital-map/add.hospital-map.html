@@ -77,18 +77,48 @@
                     <p ng-if="newHosMap.description_FR" style="padding-left: 10px; font-size: 10px;"><em>See rendered output for description</em></p>
                   </div>
                 </div>
-                <!-- SECTION: QR code & Map URL -->
-                <div uib-accordion-group is-open="qrUrlSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: qrUrlSection.show}" is-disabled="!newHosMap.qrid && !newHosMap.url" ng-if="qrUrlSection.show">
+                <!-- SECTION: Map URL -->
+                <div uib-accordion-group is-open="urlSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: urlSection.show}" is-disabled="!newHosMap.url_EN && !newHosMap.url_FR" ng-if="urlSection.show">
                   <uib-accordion-heading>
                     <div class="row" style="align-items: center">
                       <div class="col-md-2">
-                        <span ng-if="newHosMap.qrid && newHosMap.url" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                        <span ng-if="newHosMap.url_EN && newHosMap.url_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                       </div>
                       <div class="col-md-8">
-                        <strong>QR & Map URL</strong>
+                        <strong>Map URLs</strong>
                       </div>
                       <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': qrUrlSection.open, 'glyphicon-chevron-right': !qrUrlSection.open}" ng-if="newHosMap.qrid || newHosMap.url"></i>
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': urlSection.open, 'glyphicon-chevron-right': !urlSection.open}" ng-if="newHosMap.url_EN || newHosMap.url_FR"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newHosMap.url_EN" class="description">
+                    <p>
+                      <strong>EN</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newHosMap.url_EN}}
+                    </p>
+                  </div>
+                  <div ng-if="newHosMap.url_FR" class="description">
+                    <p>
+                      <strong>FR</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newHosMap.url_FR}}
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: QR code -->
+                <div uib-accordion-group is-open="qrSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: qrSection.show}" is-disabled="!newHosMap.qrid" ng-if="qrSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newHosMap.qrid" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>QR Identifier</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': qrSection.open, 'glyphicon-chevron-right': !qrSection.open}" ng-if="newHosMap.qrid"></i>
                       </div>
                     </div>
                   </uib-accordion-heading>
@@ -97,13 +127,6 @@
                       <strong>QR ID</strong>
                       <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                       {{newHosMap.qrid}}
-                    </p>
-                  </div>
-                  <div ng-if="newHosMap.url" class="description">
-                    <p>
-                      <strong>URL</strong>
-                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                      {{newHosMap.url}}
                     </p>
                   </div>
                 </div>
@@ -240,26 +263,101 @@
                   </div>
                 </div>          
               </div>
-              <!-- SECTION: QR Code & Map URL -->
-              <div class="row animated" ng-class="{fadeInUp: qrUrlSection.show}" ng-if="qrUrlSection.show">
+              <!-- SECTION: Map URL -->
+              <div class="row animated" ng-class="{fadeInUp: urlSection.show}" ng-if="urlSection.show">
                 <div class="col-xs-12 side-menu-title">
                   <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                     <span style="background-color:#e6edfa; padding: 0 10px;">
                       <span class="fas fa-dot-circle"></span>
-                      <h2>QR Identifier & Map URL</h2>
+                      <h2>Map URLs</h2>
                     </span>  
                   </div>  
                 </div>
               </div>   
-              <div class="row animated" ng-class="{fadeInUp: qrUrlSection.show}" ng-if="qrUrlSection.show">
+              <div class="row animated" ng-class="{fadeInUp: urlSection.show}" ng-if="urlSection.show">
                 <div class="col-xs-12">
                   <p style="margin-bottom: 10px;">
                     <span style="color:#d9534f"><strong>Required field:</strong></span>
-                    Please assign a unique identifier for this map and click <strong>Generate QR</strong>. Please specify the map location in the URL field. Click <strong>Show Map</strong> to generate map thumbnail.
+                    Please specify the map details in the URL fields. Click <strong>Show Map</strong> to generate map thumbnail.
                   </p>
                 </div>
               </div> 
-              <div class="row animated" ng-class="{fadeInUp: qrUrlSection.show}" ng-if="qrUrlSection.show"> 
+              <div class="row animated" ng-class="{fadeInUp: urlSection.show}" ng-if="urlSection.show"> 
+                <div class="col-xs-12 col-md-6">
+                  <div class="panel" ng-class="newHosMap.url_EN ? 'panel-success': 'panel-danger'">
+                    <div class="panel-heading"><strong>English Map URL</strong>
+                      <span ng-hide="newHosMap.url_EN" style="float:right"><em>Incomplete</em></span>
+                      <span ng-show="newHosMap.url_EN" style="float:right"><em>Complete</em></span>
+                    </div>
+                    <div class="panel-body">
+                      <div class="row" style="margin-bottom:10px;">
+                        <div class="col-xs-12">
+                          <div class="input-group">
+                            <input class="form-control" type="text" ng-model="newHosMap.url_EN" ng-change="urlUpdate()" placeholder="English URL" required="required">
+                            <span class="input-group-btn">
+                              <button class="btn btn-default" type="button" ng-click="showMap(newHosMap.url_EN, 'EN')">Show Map</button>
+                            </span>
+                          </div>
+                        </div>
+                      </div>    
+                      <div class="row">
+                        <div class="col-xs-12">
+                          <div ng-show="showMapDisplay_EN" style="text-align:center">
+                            <img ng-src="{{mapURL_EN}}" style="width:150px;height:150px;">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>          
+                <div class="col-xs-12 col-md-6">
+                  <div class="panel" ng-class="newHosMap.url_FR ? 'panel-success': 'panel-danger'">
+                    <div class="panel-heading"><strong>Map URL Français</strong>
+                      <span ng-hide="newHosMap.url_FR" style="float:right"><em>Incomplete</em></span>
+                      <span ng-show="newHosMap.url_FR" style="float:right"><em>Complete</em></span>
+                    </div>
+                    <div class="panel-body">
+                      <div class="row" style="margin-bottom:10px;">
+                        <div class="col-xs-12">
+                          <div class="input-group">
+                            <input class="form-control" type="text" ng-model="newHosMap.url_FR" ng-change="urlUpdate()" placeholder="URL Français" required="required">
+                            <span class="input-group-btn">
+                              <button class="btn btn-default" type="button" ng-click="showMap(newHosMap.url_FR, 'FR')">Show Map</button>
+                            </span>
+                          </div>
+                        </div>
+                      </div>    
+                      <div class="row">
+                        <div class="col-xs-12">
+                          <div ng-show="showMapDisplay_FR" style="text-align:center">
+                            <img ng-src="{{mapURL_FR}}" style="width:150px;height:150px;">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>   
+              </div>
+              <!-- SECTION: QR Code  -->
+              <div class="row animated" ng-class="{fadeInUp: qrSection.show}" ng-if="qrSection.show">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>QR Identifier</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row animated" ng-class="{fadeInUp: qrSection.show}" ng-if="qrSection.show">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span style="color:#d9534f"><strong>Required field:</strong></span>
+                    Please assign a unique identifier for this map and click <strong>Generate QR</strong>. 
+                  </p>
+                </div>
+              </div> 
+              <div class="row animated" ng-class="{fadeInUp: qrSection.show}" ng-if="qrSection.show"> 
                 <div class="col-xs-12 col-md-6">
                   <div class="panel" ng-class="(newHosMap.qrid && newHosMap.qrcode) ? 'panel-success': 'panel-danger'">
                     <div class="panel-heading"><strong>QR Identifier</strong>
@@ -287,33 +385,6 @@
                     </div>
                   </div>
                 </div>          
-                <div class="col-xs-12 col-md-6">
-                  <div class="panel" ng-class="newHosMap.url ? 'panel-success': 'panel-danger'">
-                    <div class="panel-heading"><strong>Map URL</strong>
-                      <span ng-hide="newHosMap.url" style="float:right"><em>Incomplete</em></span>
-                      <span ng-show="newHosMap.url" style="float:right"><em>Complete</em></span>
-                    </div>
-                    <div class="panel-body">
-                      <div class="row" style="margin-bottom:10px;">
-                        <div class="col-xs-12">
-                          <div class="input-group">
-                            <input class="form-control" type="text" ng-model="newHosMap.url" ng-change="qridUpdate()" placeholder="URL" required="required">
-                            <span class="input-group-btn">
-                              <button class="btn btn-default" type="button" ng-click="showMap(newHosMap.url)">Show Map</button>
-                            </span>
-                          </div>
-                        </div>
-                      </div>    
-                      <div class="row">
-                        <div class="col-xs-12">
-                          <div ng-show="showMapDisplay" style="text-align:center">
-                            <img ng-src="{{mapURL}}" style="width:150px;height:150px;">
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>   
               </div>
               <!-- END SECTION -->       
             </div>

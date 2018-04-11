@@ -489,7 +489,7 @@ sub getTestResultsFromSourceDB
 						}
 		            }
 
-			        print "query: $trInfo_sql\n";
+			        #print "query: $trInfo_sql\n";
 		            # prepare query
 			    	my $query = $sourceDatabase->prepare($trInfo_sql)
 				    	or die "Could not prepare query: " . $sourceDatabase->errstr;

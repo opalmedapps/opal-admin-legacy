@@ -312,17 +312,23 @@ class Diagnosis {
 							SourceUID,
 							DiagnosisCode,
 							Description,
-							DateAdded
+							DateAdded,
+							LastUpdatedBy,
+							SessionId
 						)
 					VALUES (
 						'$diagnosisTranslationSer',
 						'$sourceuid',
 						\"$code\",
 						\"$description\",
-						NOW()
+						NOW(),
+						'$userSer',
+						'$sessionId'
 					)
 					ON DUPLICATE KEY UPDATE
-						DiagnosisTranslationSerNum = '$diagnosisTranslationSer'
+						DiagnosisTranslationSerNum = '$diagnosisTranslationSer',
+						LastUpdatedBy = '$userSer',
+						SessionId = '$sessionId'
 				";
 				$query = $host_db_link->prepare( $sql );
 				$query->execute();
@@ -449,6 +455,9 @@ class Diagnosis {
 		
 		$existingDiagnoses = array();
 
+		$detailsUpdated 	= $diagnosisTranslationDetails['details_updated'];
+		$codesUpdated 		= $diagnosisTranslationDetails['codes_updated'];
+
 		$response = array(
             'value'     => 0,
             'message'   => ''
@@ -456,81 +465,108 @@ class Diagnosis {
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-			$sql = "
-				UPDATE
-					DiagnosisTranslation
-				SET
-					DiagnosisTranslation.Name_EN 		= \"$name_EN\",
-					DiagnosisTranslation.Name_FR 	 	= \"$name_FR\",
-					DiagnosisTranslation.Description_EN = \"$description_EN\",
-					DiagnosisTranslation.Description_FR = \"$description_FR\",
-					DiagnosisTranslation.EducationalMaterialControlSerNum = $eduMatSer,
-					DiagnosisTranslation.LastUpdatedBy 	= '$userSer',
-					DiagnosisTranslation.SessionId 		= '$sessionId'
-				WHERE
-					DiagnosisTranslation.DiagnosisTranslationSerNum = $serial 
-			";
-
-			$query = $host_db_link->prepare( $sql );
-			$query->execute();
-
-			$sql = "
-				SELECT DISTINCT
-					dxc.SourceUID
-				FROM
-					DiagnosisCode dxc
-				WHERE 
-					dxc.DiagnosisTranslationSerNum = $serial 
-			";
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
-
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                array_push($existingDiagnoses, $data[0]);
-			}
 			
-			// If old diagnosis codes not in new diagnosis codes, delete from database
-            foreach ($existingDiagnoses as $existingDiagnosis) {
-                if (!$this->nestedSearch($existingDiagnosis, $diagnoses)) {
-                    $sql = "
-                        DELETE FROM
-                            DiagnosisCode
-                        WHERE
-                            DiagnosisCode.SourceUID = \"$existingDiagnosis\"
-                        AND DiagnosisCode.DiagnosisTranslationSerNum = $serial
-                    ";
+			if ($detailsUpdated) {
+				$sql = "
+					UPDATE
+						DiagnosisTranslation
+					SET
+						DiagnosisTranslation.Name_EN 		= \"$name_EN\",
+						DiagnosisTranslation.Name_FR 	 	= \"$name_FR\",
+						DiagnosisTranslation.Description_EN = \"$description_EN\",
+						DiagnosisTranslation.Description_FR = \"$description_FR\",
+						DiagnosisTranslation.EducationalMaterialControlSerNum = $eduMatSer,
+						DiagnosisTranslation.LastUpdatedBy 	= '$userSer',
+						DiagnosisTranslation.SessionId 		= '$sessionId'
+					WHERE
+						DiagnosisTranslation.DiagnosisTranslationSerNum = $serial 
+				";
 
-					$query = $host_db_link->prepare( $sql );
-					$query->execute();
-				}
+				$query = $host_db_link->prepare( $sql );
+				$query->execute();
 			}
 
-			// If new diagnosis codes, insert into database
-            foreach ($diagnoses as $diagnosis) {
-            	$sourceuid 		= $diagnosis['sourceuid'];
-            	$code 			= $diagnosis['code'];
-            	$description 	= $diagnosis['description'];
-                if(!in_array($diagnosis, $existingDiagnoses)) {
-                    $sql = "
-                        INSERT INTO
-                            DiagnosisCode (
-                                DiagnosisTranslationSerNum,
-                                SourceUID,
-                                DiagnosisCode,
-                                Description
-                            )
-                        VALUES (
-                            '$serial',
-                            '$sourceuid',
-                            \"$code\",
-                            \"$description\"
-                        )
-                        ON DUPLICATE KEY UPDATE
-                            DiagnosisTranslationSerNum = '$serial'
-                    ";
+			if ($codesUpdated) {
 
-	                $query = $host_db_link->prepare( $sql );
-					$query->execute();
+				$sql = "
+					SELECT DISTINCT
+						dxc.SourceUID
+					FROM
+						DiagnosisCode dxc
+					WHERE 
+						dxc.DiagnosisTranslationSerNum = $serial 
+				";
+				$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				$query->execute();
+
+				while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+	                array_push($existingDiagnoses, $data[0]);
+				}
+				
+				// If old diagnosis codes not in new diagnosis codes, delete from database
+	            foreach ($existingDiagnoses as $existingDiagnosis) {
+	                if (!$this->nestedSearch($existingDiagnosis, $diagnoses)) {
+	                    $sql = "
+	                        DELETE FROM
+	                            DiagnosisCode
+	                        WHERE
+	                            DiagnosisCode.SourceUID = \"$existingDiagnosis\"
+	                        AND DiagnosisCode.DiagnosisTranslationSerNum = $serial
+	                    ";
+
+						$query = $host_db_link->prepare( $sql );
+						$query->execute();
+
+						$sql = "
+                            UPDATE DiagnosisCodeMH
+                            SET 
+                                DiagnosisCodeMH.LastUpdatedBy = '$userSer',
+                                DiagnosisCodeMH.SessionId = '$sessionId'
+                            WHERE
+                                DiagnosisCodeMH.SourceUID = \"$existingDiagnosis\"
+                            ORDER BY DiagnosisCodeMH.RevSerNum DESC 
+                            LIMIT 1
+                        ";
+                        $query = $host_db_link->prepare( $sql );
+                        $query->execute();
+					}
+				}
+
+				// If new diagnosis codes, insert into database
+	            foreach ($diagnoses as $diagnosis) {
+	            	$sourceuid 		= $diagnosis['sourceuid'];
+	            	$code 			= $diagnosis['code'];
+	            	$description 	= $diagnosis['description'];
+	                if(!in_array($sourceuid, $existingDiagnoses)) {
+	                    $sql = "
+	                        INSERT INTO
+	                            DiagnosisCode (
+	                                DiagnosisTranslationSerNum,
+	                                SourceUID,
+	                                DiagnosisCode,
+	                                Description,
+	                                DateAdded,
+	                                LastUpdatedBy,
+	                                SessionId
+	                            )
+	                        VALUES (
+	                            '$serial',
+	                            '$sourceuid',
+	                            \"$code\",
+	                            \"$description\",
+	                            NOW(),
+	                            '$userSer',
+	                            '$sessionId'
+	                        )
+	                        ON DUPLICATE KEY UPDATE
+	                            DiagnosisTranslationSerNum = '$serial',
+	                            LastUpdatedBy = '$userSer',
+	                            SessionId = '$sessionId'
+	                    ";
+
+		                $query = $host_db_link->prepare( $sql );
+						$query->execute();
+					}
 				}
 			}
             $response['value'] = 1; // Success
@@ -615,7 +651,7 @@ class Diagnosis {
             return 0;
         }
         foreach ($array as $key => $val) {
-            if ($val['id'] === $id) {
+            if ($val['sourceuid'] === $id) {
                 return 1;
             }
         }

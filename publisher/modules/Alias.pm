@@ -15,6 +15,7 @@ package Alias; # Declare package name
 use Exporter; # To export subroutines and variables
 use Database; # Use our custom database module Database.pm
 use Time::Piece; # To parse and convert date time
+use Try::Tiny;
 
 #---------------------------------------------------------------------------------
 # Connect to the database
@@ -188,58 +189,65 @@ sub getAliasesMarkedForUpdate
 	my ($ser, $type, $sourcedbser, $lasttransfer);
 	my @expressions;
 
-	#======================================================================================
-	# Retrieve the alias info
-	#======================================================================================
-	my $aliasInfo_sql = "
-		SELECT DISTINCT
-			Alias.AliasSerNum,
-			Alias.AliasType,
-			Alias.LastTransferred,
-            Alias.SourceDatabaseSerNum
-		FROM
-			Alias,
-			SourceDatabase
-		WHERE
-			Alias.AliasUpdate			= 1
-		AND	Alias.AliasType				= \"$aliasType\"
-		AND Alias.SourceDatabaseSerNum 	= SourceDatabase.SourceDatabaseSerNum
-		AND SourceDatabase.Enabled 		= 1
-	";
+	# eval {
+		#======================================================================================
+		# Retrieve the alias info
+		#======================================================================================
+		my $aliasInfo_sql = "
+			SELECT DISTINCT
+				Alias.AliasSerNum,
+				Alias.AliasType,
+				Alias.LastTransferred,
+	            Alias.SourceDatabaseSerNum
+			FROM
+				Alias,
+				SourceDatabase
+			WHERE
+				Alias.AliasUpdate			= 1
+			AND	Alias.AliasType				= \"$aliasType\"
+			AND Alias.SourceDatabaseSerNum 	= SourceDatabase.SourceDatabaseSerNum
+			AND SourceDatabase.Enabled 		= 1
+		";
 
-	print "$aliasInfo_sql\n" if $verbose;
-    
-	# prepare query
-	my $query = $SQLDatabase->prepare($aliasInfo_sql)
-		or die "Could not prepare query: " . $SQLDatabase->errstr;
+		print "$aliasInfo_sql\n" if $verbose;
+	    
+		# prepare query
+		my $query = $SQLDatabase->prepare($aliasInfo_sql)
+			or die "Could not prepare query: " . $SQLDatabase->errstr;
 
-	# execute query
-	$query->execute()
-		or die "Could not execute query: " . $query->errstr;
+		# execute query
+		$query->execute()
+			or die "Could not execute query: " . $query->errstr;
 
-	while (my @data = $query->fetchrow_array()) {
+		while (my @data = $query->fetchrow_array()) {
 
-		my $Alias = new Alias(); # alias object
+			my $Alias = new Alias(); # alias object
 
-		$ser		    = $data[0];
-		$type		    = $data[1];
-		$lasttransfer	= $data[2];
-        $sourcedbser    = $data[3];
+			$ser		    = $data[0];
+			$type		    = $data[1];
+			$lasttransfer	= $data[2];
+	        $sourcedbser    = $data[3];
 
-		# set alias information
-		$Alias->setAliasSer($ser);
-		$Alias->setAliasType($type);
-		$Alias->setAliasLastTransfer($lasttransfer);
-        $Alias->setAliasSourceDatabaseSer($sourcedbser);
+			# set alias information
+			$Alias->setAliasSer($ser);
+			$Alias->setAliasType($type);
+			$Alias->setAliasLastTransfer($lasttransfer);
+	        $Alias->setAliasSourceDatabaseSer($sourcedbser);
 
-		# get expressions for this alias
-		@expressions	= $Alias->getAliasExpressionsFromOurDB();
+			# get expressions for this alias
+			@expressions	= $Alias->getAliasExpressionsFromOurDB();
 
-		# finally, set expressions 
-		$Alias->setAliasExpressions(@expressions);
+			# finally, set expressions 
+			$Alias->setAliasExpressions(@expressions);
 
-		push(@aliasList, $Alias);
-	}
+			push(@aliasList, $Alias);
+		}
+	# 	1;
+	# }
+	# or do {
+	# 	my $error = $@ || 'Unknown failure in Alias';
+	# 	die "ERRRRORR: $error\n";
+	# };
 
 	return @aliasList;
 }
@@ -263,6 +271,7 @@ sub getAliasExpressionsFromOurDB
 		SELECT DISTINCT
 			AliasExpression.AliasExpressionSerNum,
 			REPLACE(AliasExpression.ExpressionName, '''', ''),
+			REPLACE(AliasExpression.Description, '''', ''),
 			AliasExpression.LastTransferred
 		FROM 
 			Alias,
@@ -286,7 +295,8 @@ sub getAliasExpressionsFromOurDB
 		my $aliasExpression = {
 			_ser			=> $data[0],
 			_name			=> $data[1],
-			_lasttransfer 	=> $data[2]
+			_description 	=> $data[2],
+			_lasttransfer 	=> $data[3]
 		};
 		push(@expressions, $aliasExpression); # push in our list
 	}

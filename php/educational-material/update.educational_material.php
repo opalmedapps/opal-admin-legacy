@@ -16,10 +16,14 @@
         'type_EN'           => $_POST['type_EN'],
         'type_FR'           => $_POST['type_FR'],
         'phase_serial'      => $_POST['phase_serial'],
-        'filters'           => $_POST['filters'],
+        'triggers'          => $_POST['triggers'],
         'tocs' 		        => $_POST['tocs'],
 		'serial'            => $_POST['serial'],
-		'user'				=> $_POST['user']
+		'user'				=> $_POST['user'],
+        'content_types'     => $_POST['content_types'],
+        'details_updated'   => $_POST['details_updated'],
+        'triggers_updated'  => $_POST['triggers_updated'],
+        'tocs_updated'      => $_POST['tocs_updated']
     );
 
     // Call function
