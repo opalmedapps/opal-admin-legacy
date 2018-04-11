@@ -93,7 +93,7 @@ class Post {
                 $postPublish           	= $data[6];
                 $postPublishDate        = $data[7];
                 $postDisabled 			= $data[8];
-                $postFilters            = array();
+                $postTriggers           = array();
 
 				$sql = "
 					SELECT DISTINCT 
@@ -115,15 +115,15 @@ class Post {
 
 				while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-					$filterType = $secondData[0];
-					$filterId   = $secondData[1];
-					$filterArray = array (
-						'type'  => $filterType,
-						'id'    => $filterId,
+					$triggerType = $secondData[0];
+					$triggerId   = $secondData[1];
+					$triggerArray = array (
+						'type'  => $triggerType,
+						'id'    => $triggerId,
 						'added' => 1
 					);
 
-					array_push($postFilters, $filterArray);
+					array_push($postTriggers, $triggerArray);
 				}
 
 				$postArray = array(
@@ -137,7 +137,7 @@ class Post {
 					'body_EN' 	        => $postBody_EN, 
                     'body_FR' 	        => $postBody_FR,
                     'publish_date'      => $postPublishDate,
-					'filters' 		    => $postFilters
+					'triggers' 		    => $postTriggers
 				);
 
 				array_push($postList, $postArray);
@@ -192,7 +192,7 @@ class Post {
             $postPublish       	= $data[5];
             $postPublishDate    = $data[6];
             $postDisabled		= $data[7];
-			$postFilters	    = array();
+			$postTriggers	    = array();
 
 			$sql = "
 				SELECT DISTINCT 
@@ -215,15 +215,15 @@ class Post {
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-					$filterType = $data[0];
-					$filterId   = $data[1];
-					$filterArray = array (
-						'type'  => $filterType,
-						'id'    => $filterId,
+					$triggerType = $data[0];
+					$triggerId   = $data[1];
+					$triggerArray = array (
+						'type'  => $triggerType,
+						'id'    => $triggerId,
 						'added' => 1
 					);
 
-					array_push($postFilters, $filterArray);
+					array_push($postTriggers, $triggerArray);
 
 
             }
@@ -238,7 +238,7 @@ class Post {
 				'body_EN' 	        => $postBody_EN, 
                 'body_FR' 	        => $postBody_FR,
                 'publish_date'      => $postPublishDate,
-				'filters' 		    => $postFilters
+				'triggers' 		    => $postTriggers
             );
 		
 			return $postDetails;
@@ -263,7 +263,7 @@ class Post {
 		$postBody_FR	= $postDetails['body_FR'];
         $postType	    = $postDetails['type'];
         $postPublishDate= $postDetails['publish_date'];
-		$postFilters	= $postDetails['filters'];
+		$postTriggers	= $postDetails['triggers'];
         $userSer        = $postDetails['user']['id'];
         $sessionId      = $postDetails['user']['sessionid'];
 
@@ -300,35 +300,37 @@ class Post {
 
 			$postSer = $host_db_link->lastInsertId();
 
-			foreach ($postFilters as $filter) {
+            if (!empty($postTriggers)) {
+    			foreach ($postTriggers as $filter) {
 
-                $filterType = $filter['type'];
-                $filterId   = $filter['id'];
+                    $filterType = $filter['type'];
+                    $filterId   = $filter['id'];
 
-				$sql = "
-                    INSERT INTO 
-                        Filters (
-                            ControlTable,
-                            ControlTableSerNum,
-                            FilterType,
-                            FilterId,
-                            DateAdded,
-                            LastUpdatedBy,
-                            SessionId
+    				$sql = "
+                        INSERT INTO 
+                            Filters (
+                                ControlTable,
+                                ControlTableSerNum,
+                                FilterType,
+                                FilterId,
+                                DateAdded,
+                                LastUpdatedBy,
+                                SessionId
+                            )
+                        VALUE (
+                            'PostControl',
+                            '$postSer',
+                            '$filterType',
+                            \"$filterId\",
+                            NOW(),
+                            '$userSer',
+                            '$sessionId'
                         )
-                    VALUE (
-                        'PostControl',
-                        '$postSer',
-                        '$filterType',
-                        \"$filterId\",
-                        NOW(),
-                        '$userSer',
-                        '$sessionId'
-                    )
-				";
-				$query = $host_db_link->prepare( $sql );
-				$query->execute();
-			}
+    				";
+    				$query = $host_db_link->prepare( $sql );
+    				$query->execute();
+    			}
+            }
 				
 	
 		} catch( PDOException $e) {
@@ -413,14 +415,14 @@ class Post {
 		$postBody_FR	    = $postDetails['body_FR'];
         $postSer	        = $postDetails['serial'];
         $postPublishDate    = $postDetails['publish_date'];
-		$postFilters	    = $postDetails['filters'];
+		$postTriggers	    = $postDetails['triggers'];
         $userSer            = $postDetails['user']['id'];
         $sessionId          = $postDetails['user']['sessionid'];
 
-        $existingFilters	= array();
+        $existingTriggers	= array();
 
         $detailsUpdated     = $postDetails['details_updated'];
-        $filtersUpdated     = $postDetails['filters_updated'];
+        $triggersUpdated     = $postDetails['triggers_updated'];
 
         $response = array(
             'value'     => 0,
@@ -452,7 +454,7 @@ class Post {
     			$query->execute();
             }
 
-            if ($filtersUpdated) {
+            if ($triggersUpdated) {
 
     			$sql = "
     				SELECT DISTINCT 
@@ -473,19 +475,19 @@ class Post {
 
     			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-                    $filterArray = array(
+                    $triggerArray = array(
                         'type'  => $data[0],
                         'id'    => $data[1]
                     );
-    				array_push($existingFilters, $filterArray);
+    				array_push($existingTriggers, $triggerArray);
     			}
 
-                if (!empty($existingFilters)) {
-                    // If old filters not in new, remove from DB
-    	    		foreach ($existingFilters as $existingFilter) {
-                        $id     = $existingFilter['id'];
-                        $type   = $existingFilter['type'];
-                        if (!$this->nestedSearch($id, $type, $postFilters)) {
+                if (!empty($existingTriggers)) {
+                    // If old triggers not in new, remove from DB
+    	    		foreach ($existingTriggers as $existingTrigger) {
+                        $id     = $existingTrigger['id'];
+                        $type   = $existingTrigger['type'];
+                        if (!$this->nestedSearch($id, $type, $postTriggers)) {
     					    $sql = "
                                 DELETE FROM 
     	    						Filters
@@ -518,12 +520,12 @@ class Post {
     			    	}
         			}   
                 }
-                if (!empty($postFilters)) {
-                    // If new filters, insert into DB
-        			foreach ($postFilters as $filter) {
-                        $id     = $filter['id'];
-                        $type   = $filter['type'];
-                        if (!$this->nestedSearch($id, $type, $existingFilters)) {
+                if (!empty($postTriggers)) {
+                    // If new triggers, insert into DB
+        			foreach ($postTriggers as $trigger) {
+                        $id     = $trigger['id'];
+                        $type   = $trigger['type'];
+                        if (!$this->nestedSearch($id, $type, $existingTriggers)) {
                             $sql = "
                                 INSERT INTO 
                                     Filters (

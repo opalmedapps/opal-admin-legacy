@@ -10,7 +10,7 @@
         'body_EN'           => filter_var($_POST['body_EN'], FILTER_SANITIZE_MAGIC_QUOTES),
         'body_FR'           => filter_var($_POST['body_FR'], FILTER_SANITIZE_MAGIC_QUOTES),
         'publish_date'      => $_POST['publish_date'],
-        'filters'           => $_POST['filters'],
+        'triggers'          => $_POST['triggers'],
  		'type' 		        => $_POST['type']['name'],
  		'user'				=> $_POST['user']
 	);

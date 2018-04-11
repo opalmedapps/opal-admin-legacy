@@ -185,7 +185,7 @@ class EduMaterial {
             $phaseName_FR           = $data[8];
             $shareURL_EN            = $data[9];
             $shareURL_FR            = $data[10];
-            $filters                = array();
+            $triggers               = array();
             $tocs                   = array(); // Table of contents
 
             $sql = "
@@ -207,15 +207,15 @@ class EduMaterial {
 
 	    	while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-		    	$filterType = $data[0];
-				$filterId   = $data[1];
-    			$filterArray = array (
-	    			'type'  => $filterType,
-	    			'id'    => $filterId,
+		    	$triggerType = $data[0];
+				$triggerId   = $data[1];
+    			$triggerArray = array (
+	    			'type'  => $triggerType,
+	    			'id'    => $triggerId,
 		    		'added' => 1
 				);
     
-	    		array_push($filters, $filterArray);
+	    		array_push($triggers, $triggerArray);
             }
 
             $sql = "
@@ -278,7 +278,7 @@ class EduMaterial {
                 'phase_serial'      => $phaseSer,
                 'phase_EN'          => $phaseName_EN,
                 'phase_FR'          => $phaseName_FR,
-                'filters'           => $filters,
+                'triggers'          => $triggers,
                 'tocs'              => $tocs
             );
             return $eduMatDetails;
@@ -343,7 +343,7 @@ class EduMaterial {
                 $shareURL_FR            = $data[13];
                 $lastUpdated            = $data[14];
                 $rating                 = -1;
-                $filters                = array();
+                $triggers               = array();
                 $tocs                   = array();
 
                 if ($parentFlag == 1) {
@@ -384,15 +384,15 @@ class EduMaterial {
     
 				while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
     
-    				$filterType = $secondData[0];
-                    $filterId   = $secondData[1];
-			    	$filterArray = array (
-						'type'  => $filterType,
-				    	'id'    => $filterId,
+    				$triggerType = $secondData[0];
+                    $triggerId   = $secondData[1];
+			    	$triggerArray = array (
+						'type'  => $triggerType,
+				    	'id'    => $triggerId,
 					    'added' => 1
     				);
     
-    				array_push($filters, $filterArray);
+    				array_push($triggers, $triggerArray);
                 }
     
                 $sql = "
@@ -459,7 +459,7 @@ class EduMaterial {
 					'changed'			=> 0,
                     'lastupdated'       => $lastUpdated,
                     'rating'            => $rating,
-                    'filters'           => $filters,
+                    'triggers'          => $triggers,
                     'tocs'              => $tocs
                 );
 
@@ -491,7 +491,7 @@ class EduMaterial {
         $type_FR        = $eduMatDetails['type_FR'];
         $phaseSer       = $eduMatDetails['phase_in_tx']['serial'];
         $tocs           = $eduMatDetails['tocs'];
-		$filters        = $eduMatDetails['filters'];
+		$triggers       = $eduMatDetails['triggers'];
 		$userSer 		= $eduMatDetails['user']['id'];
 		$sessionId 		= $eduMatDetails['user']['sessionid'];
 
@@ -614,11 +614,11 @@ class EduMaterial {
 
 			$eduMatSer = $host_db_link->lastInsertId();
 
-            if ($filters) {
-                foreach ($filters as $filter) {
+            if ($triggers) {
+                foreach ($triggers as $trigger) {
     
-                    $filterType = $filter['type'];
-                    $filterId   = $filter['id'];
+                    $triggerType = $trigger['type'];
+                    $triggerId   = $trigger['id'];
     
 	    			$sql = "
                         INSERT INTO 
@@ -634,8 +634,8 @@ class EduMaterial {
                         VALUES (
                             'EducationalMaterialControl',
                             '$eduMatSer',
-                            '$filterType',
-                            \"$filterId\",
+                            '$triggerType',
+                            \"$triggerId\",
                             NOW(),
                             '$userSer',
                             '$sessionId'
@@ -753,7 +753,7 @@ class EduMaterial {
         $shareURL_EN        = $eduMatDetails['share_url_EN'];
         $shareURL_FR        = $eduMatDetails['share_url_FR'];
         $eduMatSer          = $eduMatDetails['serial'];
-        $filters            = $eduMatDetails['filters'];
+        $triggers           = $eduMatDetails['triggers'];
         $tocs               = $eduMatDetails['tocs'];
 		$phaseSer           = $eduMatDetails['phase_serial'];
 		$userSer 			= $eduMatDetails['user']['id'];
@@ -761,12 +761,12 @@ class EduMaterial {
 
         $urlExt_EN          = null;
         $urlExt_FR          = null;
-		$existingFilters	= array();
+		$existingTriggers	= array();
         $existingTOCs       = array();
 
         $detailsUpdated     = $eduMatDetails['details_updated'];
         $tocsUpdated        = $eduMatDetails['tocs_updated'];
-        $filtersUpdated     = $eduMatDetails['filters_updated'];
+        $triggersUpdated    = $eduMatDetails['triggers_updated'];
 
         $response = array(
             'value'     => 0,
@@ -887,7 +887,7 @@ class EduMaterial {
                 }
             }
 
-            if ($filtersUpdated) {
+            if ($triggersUpdated) {
         
                 $sql = "
     		        SELECT DISTINCT 
@@ -907,20 +907,20 @@ class EduMaterial {
 
     			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
         
-                    $filterArray = array(
+                    $triggerArray = array(
                         'type'  => $data[0],
                         'id'    => $data[1]
                     );
-                    array_push($existingFilters, $filterArray);
+                    array_push($existingTriggers, $triggerArray);
                 }
 
-                if($existingFilters) { 
+                if($existingTriggers) { 
 
-                    // If old filters not in new filter list, then remove
-        	    	foreach ($existingFilters as $existingFilter) {
-                        $id     = $existingFilter['id'];
-                        $type   = $existingFilter['type'];
-                        if (!$this->nestedSearch($id, $type, $filters)) {
+                    // If old triggers not in new trigger list, then remove
+        	    	foreach ($existingTriggers as $existingTrigger) {
+                        $id     = $existingTrigger['id'];
+                        $type   = $existingTrigger['type'];
+                        if (!$this->nestedSearch($id, $type, $triggers)) {
     				    	$sql = "
                                 DELETE FROM 
         					    	Filters
@@ -953,13 +953,13 @@ class EduMaterial {
                     }
     	    	}
 
-                if($filters) {
+                if($triggers) {
 
-                    // If new filters (i.e. not in old list), then insert
-        			foreach ($filters as $filter) {
-                        $id     = $filter['id'];
-                        $type   = $filter['type'];
-                        if (!$this->nestedSearch($id, $type, $existingFilters)) {
+                    // If new triggers (i.e. not in old list), then insert
+        			foreach ($triggers as $trigger) {
+                        $id     = $trigger['id'];
+                        $type   = $trigger['type'];
+                        if (!$this->nestedSearch($id, $type, $existingTriggers)) {
                             $sql = "
                                 INSERT INTO 
                                     Filters (
