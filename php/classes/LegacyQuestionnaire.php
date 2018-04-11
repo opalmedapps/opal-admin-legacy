@@ -131,7 +131,7 @@ class LegacyQuestionnaire {
                 $questionnaireName_EN       = $data[2];
                 $questionnaireName_FR       = $data[3];
                 $questionnairePublish       = $data[4];
-                $questionnaireFilters       = array();
+                $questionnaireTriggers      = array();
 
                 $sql = "
                     SELECT DISTINCT
@@ -169,15 +169,15 @@ class LegacyQuestionnaire {
 
 				while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-					$filterType = $secondData[0];
-					$filterId   = $secondData[1];
-					$filterArray = array (
-						'type'  => $filterType,
-						'id'    => $filterId,
+					$triggerType = $secondData[0];
+					$triggerId   = $secondData[1];
+					$triggerArray = array (
+						'type'  => $triggerType,
+						'id'    => $triggerId,
 						'added' => 1
 					);
 
-					array_push($questionnaireFilters, $filterArray);
+					array_push($questionnaireTriggers, $triggerArray);
 				}
 
                 $occurrenceArray = array(
@@ -199,7 +199,7 @@ class LegacyQuestionnaire {
                     'publish'          	=> $questionnairePublish,
                     'changed'           => 0,
                     'expression'        => $questionnaireExpression,
-					'filters' 		    => $questionnaireFilters,
+					'triggers' 		    => $questionnaireTriggers,
                     'occurrence'        => $occurrenceArray
 				);
 
@@ -252,7 +252,7 @@ class LegacyQuestionnaire {
             $questionnaireIntro_EN      = $data[3];
             $questionnaireIntro_FR      = $data[4];
             $questionnairePublish       = $data[5];
-			$questionnaireFilters	    = array();
+			$questionnaireTriggers	    = array();
 
 			$sql = "
 				SELECT DISTINCT 
@@ -275,15 +275,15 @@ class LegacyQuestionnaire {
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-					$filterType = $data[0];
-					$filterId   = $data[1];
-					$filterArray = array (
-						'type'  => $filterType,
-						'id'    => $filterId,
+					$triggerType = $data[0];
+					$triggerId   = $data[1];
+					$triggerArray = array (
+						'type'  => $triggerType,
+						'id'    => $triggerId,
 						'added' => 1
 					);
 
-					array_push($questionnaireFilters, $filterArray);
+					array_push($questionnaireTriggers, $triggerArray);
 
 
             }
@@ -357,7 +357,7 @@ class LegacyQuestionnaire {
 				'serial' 		    => $legacyQuestionnaireSer, 
                 'publish'           => $questionnairePublish,
                 'db_serial'         => $questionnaireDBSer,
-				'filters' 		    => $questionnaireFilters,
+				'triggers' 		    => $questionnaireTriggers,
                 'occurrence'        => $occurrenceArray
             );
 		
@@ -383,7 +383,7 @@ class LegacyQuestionnaire {
         $questionnaireIntro_FR  = $legacyQuestionnaireDetails['intro_FR'];
         $questionnaireDBSer     = $legacyQuestionnaireDetails['expression']['serial'];
 
-		$questionnaireFilters	= $legacyQuestionnaireDetails['filters'];
+		$questionnaireTriggers	= $legacyQuestionnaireDetails['triggers'];
         $questionnaireOccurrence    = $legacyQuestionnaireDetails['occurrence'];
 
         $userSer                = $legacyQuestionnaireDetails['user']['id'];
@@ -420,11 +420,11 @@ class LegacyQuestionnaire {
 
 			$questionnaireSer = $host_db_link->lastInsertId();
 
-            if (!empty($questionnaireFilters)) {
-    			foreach ($questionnaireFilters as $filter) {
+            if (!empty($questionnaireTriggers)) {
+    			foreach ($questionnaireTriggers as $trigger) {
 
-                    $filterType = $filter['type'];
-                    $filterId   = $filter['id'];
+                    $triggerType = $trigger['type'];
+                    $triggerId   = $trigger['id'];
 
     				$sql = "
                         INSERT INTO 
@@ -440,8 +440,8 @@ class LegacyQuestionnaire {
                         VALUE (
                             'LegacyQuestionnaireControl',
                             '$questionnaireSer',
-                            '$filterType',
-                            \"$filterId\",
+                            '$triggerType',
+                            \"$triggerId\",
                             NOW(),
                             '$userSer',
                             '$sessionId'
@@ -657,16 +657,16 @@ class LegacyQuestionnaire {
         $questionnaireIntro_EN      = $legacyQuestionnaireDetails['intro_EN'];
         $questionnaireIntro_FR      = $legacyQuestionnaireDetails['intro_FR'];
         $questionnaireSer	        = $legacyQuestionnaireDetails['serial'];
-		$questionnaireFilters	    = $legacyQuestionnaireDetails['filters'];
+		$questionnaireTriggers	    = $legacyQuestionnaireDetails['triggers'];
         $questionnaireOccurrence    = $legacyQuestionnaireDetails['occurrence'];
 
         $userSer                    = $legacyQuestionnaireDetails['user']['id'];
         $sessionId                  = $legacyQuestionnaireDetails['user']['sessionid'];
 
-        $existingFilters	= array();
+        $existingTriggers	= array();
 
         $detailsUpdated             = $legacyQuestionnaireDetails['details_updated'];
-        $filtersUpdated             = $legacyQuestionnaireDetails['filters_updated'];
+        $triggersUpdated             = $legacyQuestionnaireDetails['triggers_updated'];
 
         $response = array(
             'value'     => 0,
@@ -696,7 +696,7 @@ class LegacyQuestionnaire {
     			$query->execute();
             }
 
-            if ($filtersUpdated) {
+            if ($triggersUpdated) {
 
     			$sql = "
     				SELECT DISTINCT 
@@ -716,19 +716,19 @@ class LegacyQuestionnaire {
 
     			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-                    $filterArray = array(
+                    $triggerArray = array(
                         'type'  => $data[0],
                         'id'    => $data[1]
                     );
-    				array_push($existingFilters, $filterArray);
+    				array_push($existingTriggers, $triggerArray);
     			}
 
-                if (!empty($existingFilters)) {
+                if (!empty($existingTriggers)) {
                     // If old filters not in new, remove from DB
-    	    		foreach ($existingFilters as $existingFilter) {
-                        $id     = $existingFilter['id'];
-                        $type   = $existingFilter['type'];
-                        if (!$this->nestedSearch($id, $type, $questionnaireFilters)) {
+    	    		foreach ($existingTriggers as $existingTrigger) {
+                        $id     = $existingTrigger['id'];
+                        $type   = $existingTrigger['type'];
+                        if (!$this->nestedSearch($id, $type, $questionnaireTriggers)) {
     					    $sql = "
                                 DELETE FROM 
     	    						Filters
@@ -760,12 +760,12 @@ class LegacyQuestionnaire {
     			    	}
         			}   
                 }
-                if (!empty($questionnaireFilters)) {
+                if (!empty($questionnaireTriggers)) {
                     // If new filters, insert into DB
-        			foreach ($questionnaireFilters as $filter) {
-                        $id     = $filter['id'];
-                        $type   = $filter['type'];
-                        if (!$this->nestedSearch($id, $type, $existingFilters)) {
+        			foreach ($questionnaireTriggers as $trigger) {
+                        $id     = $trigger['id'];
+                        $type   = $trigger['type'];
+                        if (!$this->nestedSearch($id, $type, $existingTriggers)) {
                             $sql = "
                                 INSERT INTO 
                                     Filters (
