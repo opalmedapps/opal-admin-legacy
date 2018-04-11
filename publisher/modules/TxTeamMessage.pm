@@ -183,29 +183,34 @@ sub publishTxTeamMessages
 				# toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
-                # Retrieve the patient appointment(s) if one (or more) lands within one day of today
-                my @patientAppointments = Appointment::getPatientsAppointmentsFromDateInOurDB($patientSer, $today_date, 1);
+                # if all appointments were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @appointmentFilters) {
 
-                # we build all possible appointment and diagnoses for each appointment found
-                foreach my $appointment (@patientAppointments) {
+                    # Retrieve the patient appointment(s) if one (or more) lands within one day of today
+                    my @patientAppointments = Appointment::getPatientsAppointmentsFromDateInOurDB($patientSer, $today_date, 1);
 
-                    my $expressionSer = $appointment->getApptAliasExpressionSer();
-                    my $aliasSer = Alias::getAliasFromOurDB($expressionSer);
-                    push(@aliasSerials, $aliasSer) unless grep{$_ == $aliasSer} @aliasSerials;
+                    # we build all possible appointment and diagnoses for each appointment found
+                    foreach my $appointment (@patientAppointments) {
 
-                }
+                        my $expressionSer = $appointment->getApptAliasExpressionSer();
+                        my $aliasSer = Alias::getAliasFromOurDB($expressionSer);
+                        push(@aliasSerials, $aliasSer) unless grep{$_ == $aliasSer} @aliasSerials;
 
-				# Finding the existence of the patient appointments in the appointment filters
-                # If there is an intersection, then patient is so far part of this publishing tx team message
-                if (!intersect(@appointmentFilters, @aliasSerials)) {
-                   if (@patientFilters) {
-                        # if the patient failed to match the appointment filter but there are patient filters
-                        # then we flag to check later if this patient matches with the patient filters
-                        $isPatientSpecificFilterDefined = 1;
                     }
-                    # else no patient filters were defined and failed to match the appointment filter
-                    # move on to the next treatment team message
-                    else{next;}
+
+    				# Finding the existence of the patient appointments in the appointment filters
+                    # If there is an intersection, then patient is so far part of this publishing tx team message
+                    if (!intersect(@appointmentFilters, @aliasSerials)) {
+                       if (@patientFilters) {
+                            # if the patient failed to match the appointment filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the appointment filter
+                        # move on to the next treatment team message
+                        else{next;}
+                    }
                 }
             }
 
@@ -216,13 +221,19 @@ sub publishTxTeamMessages
                 # toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
-                # Finding the intersection of the patient's diagnosis and the diagnosis filters
-                # If there is an intersection, then patient is so far part of this publishing tx team message
-                        $isPatientSpecificFilterDefined = 1;
+                # if all diagnoses were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @diagnosisFilters) {
+                    # Finding the intersection of the patient's diagnosis and the diagnosis filters
+                    # If there is an intersection, then patient is so far part of this publishing tx team message
+                    if (!intersect(@diagnosisFilters, @diagnosisNames)) {
+                        if (@patientFilters) {
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the diagnosis filter
+                        # move on to the next treatment team message
+                        else{next;}
                     }
-                    # else no patient filters were defined and failed to match the diagnosis filter
-                    # move on to the next treatment team message
-                    else{next;}
                 }
             }
 
@@ -233,17 +244,21 @@ sub publishTxTeamMessages
                 # toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
-                # Finding the intersection of the patient's doctor(s) and the doctor filters
-                # If there is an intersection, then patient is so far part of this publishing tx team message
-                if (!intersect(@doctorFilters, @patientDoctors)) {
-                    if (@patientFilters) {
-                        # if the patient failed to match the doctor filter but there are patient filters
-                        # then we flag to check later if this patient matches with the patient filters
-                        $isPatientSpecificFilterDefined = 1;
+                # if all doctors were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @doctorFilters) {
+                    # Finding the intersection of the patient's doctor(s) and the doctor filters
+                    # If there is an intersection, then patient is so far part of this publishing tx team message
+                    if (!intersect(@doctorFilters, @patientDoctors)) {
+                        if (@patientFilters) {
+                            # if the patient failed to match the doctor filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the doctor filter
+                        # move on to the next treatment team message
+                        else{next;}
                     }
-                    # else no patient filters were defined and failed to match the doctor filter
-                    # move on to the next treatment team message
-                    else{next;}
                 }
             }
 
@@ -254,18 +269,22 @@ sub publishTxTeamMessages
                 # toggle flag
                 $isNonPatientSpecificFilterDefined = 1;
 
-                # Finding the intersection of the patient resource(s) and the resource filters
-                # If there is an intersection, then patient is so far part of this publishing tx team message
-                if (!intersect(@resourceFilters, @patientResources)) {
-                    if (@patientFilters) {
-                        # if the patient failed to match the resource filter but there are patient filters
-                        # then we flag to check later if this patient matches with the patient filters
-                        $isPatientSpecificFilterDefined = 1;
-                    }
-                    # else no patient filters were defined and failed to match the resource filter
-                    # move on to the next tx team message
-                    else{
-                        next;
+                # if all resources were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @resourceFilters) {
+                    # Finding the intersection of the patient resource(s) and the resource filters
+                    # If there is an intersection, then patient is so far part of this publishing tx team message
+                    if (!intersect(@resourceFilters, @patientResources)) {
+                        if (@patientFilters) {
+                            # if the patient failed to match the resource filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the resource filter
+                        # move on to the next tx team message
+                        else{
+                            next;
+                        }
                     }
                 }
             }
@@ -280,8 +299,9 @@ sub publishTxTeamMessages
                 # and this is the last test to see if this patient passes
                 if ($isPatientSpecificFilterDefined eq 1 or $isNonPatientSpecificFilterDefined eq 0) {
     				# Finding the existence of the patient in the patient-specific filters
-    				# If the patient does not exist, then continue to the next tx team message
-                    if ($patientId ~~ @patientFilters) {
+    				# If the patient exists, or all patients were selected as triggers, 
+                    # then patient passes else move on to next patient
+                    if ($patientId ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
                         $patientPassed = 1;
                     }
                     else {next;}
