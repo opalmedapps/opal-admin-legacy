@@ -170,6 +170,7 @@ sub publishEducationalMaterials
 			# in the non-patient filters  
 			my $isNonPatientSpecificFilterDefined = 0;
             my $isPatientSpecificFilterDefined = 0;
+            my $patientPassed = 0;
 
             # Fetch sex filter (if any) 
             my $sexFilter =  $eduMatFilters->getSexFilter();
@@ -212,7 +213,6 @@ sub publishEducationalMaterials
                     # move on to the next educational material
                     else{next;}
                 }
-
             }
 
             # Retrieve all patient's appointment(s) up until tomorrow
@@ -244,7 +244,7 @@ sub publishEducationalMaterials
 				$isNonPatientSpecificFilterDefined = 1;
 
                 # Finding the existence of the patient appointment in the appointment filters
-                # If there is an intersection, then patient is part of this publishing educational material
+                # If there is an intersection, then patient is so far part of this publishing educational material
                 if (!intersect(@appointmentFilters, @aliasSerials)) {
                    if (@patientFilters) {
                         # if the patient failed to match the appointment filter but there are patient filters
@@ -265,7 +265,7 @@ sub publishEducationalMaterials
 				$isNonPatientSpecificFilterDefined = 1;
 
                 # Finding the intersection of the patient's diagnosis and the diagnosis filters
-                # If there is an intersection, then patient is part of this publishing educational material
+                # If there is an intersection, then patient is so far part of this publishing educational material
                 if (!intersect(@diagnosisFilters, @diagnosisNames)) {
                     if (@patientFilters) {
                         # if the patient failed to match the diagnosis filter but there are patient filters
@@ -286,7 +286,7 @@ sub publishEducationalMaterials
 				$isNonPatientSpecificFilterDefined = 1;
 
                 # Finding the intersection of the patient's doctor(s) and the doctor filters
-                # If there is an intersection, then patient is part of this publishing educational material
+                # If there is an intersection, then patient is so far part of this publishing educational material
                 if (!intersect(@doctorFilters, @patientDoctors)) {
                     if (@patientFilters) {
                         # if the patient failed to match the doctor filter but there are patient filters
@@ -307,7 +307,7 @@ sub publishEducationalMaterials
                 $isNonPatientSpecificFilterDefined = 1;
 
                 # Finding the intersection of the patient resource(s) and the resource filters
-                # If there is an intersection, then patient is part of this publishing announcement
+                # If there is an intersection, then patient is so far part of this publishing educational material
                 if (!intersect(@resourceFilters, @patientResources)) {
                     if (@patientFilters) {
                         # if the patient failed to match the resource filter but there are patient filters
@@ -324,7 +324,6 @@ sub publishEducationalMaterials
 
 			# We look into whether any patient-specific filters have been defined 
 			# If we enter this if statement, then we check if that patient is in that list
-			my $patientPassed = 0;
             if (@patientFilters) {
 
                 # if the patient-specific flag was enabled then it means this patient failed
@@ -341,7 +340,7 @@ sub publishEducationalMaterials
                 }
 			}
 
-            if (isNonPatientSpecificFilterDefined eq 1 or ($isPatientSpecificFilterDefined eq 1 and $patientPassed eq 1)) {
+            if ($isNonPatientSpecificFilterDefined eq 1 or $isPatientSpecificFilterDefined eq 1 or ($isNonPatientSpecificFilterDefined eq 0 and $patientPassed eq 1)) {
                 # If we've reached this point, we've passed all catches (filter restrictions). We make
                 # an educational material object, check if it exists already in the database. If it does 
                 # this means the edumat has already been publish to the patient. If it doesn't
