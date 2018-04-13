@@ -114,12 +114,12 @@ angular.module('opalAdmin', [
 			.state('email', { url: '/email', templateUrl: "templates/email/email.html", controller: "email", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('email-add', { url: '/email/add', templateUrl: "templates/email/add.email.html", controller: "email.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('install', { url: '/install', templateUrl: "templates/install/install.html", controller: "installation", data: { requireLogin: false, installAccess: INSTALL_ACCESS } })
-			.state('questionnaire-menu', { url: '/questionnaire/menu', templateUrl: "templates/questionnaire/questionnaire-main-menu.html", controller: "questionnaire", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
-			.state('questionnaire', { url: '/questionnaire', templateUrl: "templates/questionnaire/questionnaire.html", controller: "questionnaire", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
-			.state('questionnaire-add', { url: '/questionnaire/add', templateUrl: "templates/questionnaire/add.questionnaire.html", controller: "questionnaire.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
-			.state('questionnaire-question', { url: '/questionnaire/question', templateUrl: "templates/questionnaire/question.html", controller: "question", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
-      		.state('questionnaire-question-add', { url: '/questionnaire/question/add', templateUrl: "templates/questionnaire/add.question.html", controller: "question.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
-			.state('questionnaire-completed', { url: '/questionnaire/completed', templateUrl: "templates/questionnaire/completed.questionnaire.html", controller: "questionnaire", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+			.state('questionnaire-menu', { url: '/questionnaire/menu', templateUrl: "templates/questionnaire/questionnaire-main-menu.html", controller: "questionnaire", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: false } })
+			.state('questionnaire', { url: '/questionnaire', templateUrl: "templates/questionnaire/questionnaire.html", controller: "questionnaire", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: false } })
+			.state('questionnaire-add', { url: '/questionnaire/add', templateUrl: "templates/questionnaire/add.questionnaire.html", controller: "questionnaire.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: false } })
+			.state('questionnaire-question', { url: '/questionnaire/question', templateUrl: "templates/questionnaire/question.html", controller: "question", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: false } })
+      		.state('questionnaire-question-add', { url: '/questionnaire/question/add', templateUrl: "templates/questionnaire/add.question.html", controller: "question.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: false } })
+			.state('questionnaire-completed', { url: '/questionnaire/completed', templateUrl: "templates/questionnaire/completed.questionnaire.html", controller: "questionnaire", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: false } })
 			.state('legacy-questionnaire', { url: '/legacy-questionnaire', templateUrl: "templates/legacy-questionnaire/legacy-questionnaire.html", controller: "legacyQuestionnaire", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('legacy-questionnaire-add', { url: '/legacy-questionnaire/add', templateUrl: "templates/legacy-questionnaire/add.legacy-questionnaire.html", controller: "legacyQuestionnaire.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('diagnosis-translation', { url: '/diagnosis-translation', templateUrl: "templates/diagnosis/diagnosis-translation.html", controller: "diagnosisTranslation", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
@@ -169,6 +169,7 @@ angular.module('opalAdmin', [
 			var requireLogin = next.data.requireLogin;
 			var authorizedRoles = next.data.authorizedRoles;
 			var installAccess = next.data.installAccess;
+			var accessible = next.data.accessible;
 
 			if (!AuthService.isAuthorized(authorizedRoles) && requireLogin) {
 				event.preventDefault();
@@ -192,6 +193,13 @@ angular.module('opalAdmin', [
 				if (INSTALL_ACCESS === false) {
 					event.preventDefault();
 					$state.go('home');
+				}
+			}
+			if (accessible !== undefined) {
+				if (!accessible) {
+					event.preventDefault();
+					// user is not allowed
+					$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
 				}
 			}
 		});
