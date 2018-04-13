@@ -305,7 +305,7 @@ sub getPatientLocationsFromSourceDB
 					}
 
 					$plInfo_sql .= "
-						(vva.Expression1 		= '$expressionName'
+						(REPLACE(vva.Expression1, '''', '')    	= '$expressionName'
 						AND pl.HstryDateTime 	> '$lasttransfer' )
 					";
 					$counter++;
@@ -401,6 +401,7 @@ sub getPatientLocationsFromSourceDB
 
 					$plInfo_sql .= "
 						(mval.AppointmentCode 		= '$expressionName'
+	        			AND mval.ResourceDescription = '$expressionDesc'
 						AND pl.LastUpdated 			> '$lasttransfer')
 					";
 					$counter++;
@@ -601,7 +602,7 @@ sub getPatientLocationsMHFromSourceDB
 					}
 
 					$plInfo_sql .= "
-						(vva.Expression1 		= '$expressionName'
+						(REPLACE(vva.Expression1, '''', '')    	= '$expressionName'
 						AND plmh.HstryDateTime 	> '$lasttransfer' )
 					";
 					$counter++;
@@ -701,6 +702,7 @@ sub getPatientLocationsMHFromSourceDB
 
 					$plInfo_sql .= "
 						(mval.AppointmentCode 					= '$expressionName'
+	        			AND mval.ResourceDescription 			= '$expressionDesc'
 						AND plmh.DichargeThisLocationDateTime 	> '$lasttransfer')
 					";
 					$counter++;
