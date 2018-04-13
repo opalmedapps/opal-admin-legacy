@@ -489,9 +489,9 @@ print "Got Educational materials\n" if $verbose;
 # Publishing QUESTIONNAIRES
 #
 ##########################################################################################
-Questionnaire::publishQuestionnaires(@patientList);
+# Questionnaire::publishQuestionnaires(@patientList);
 
-print "Got Questionnaires\n" if $verbose;
+# print "Got Questionnaires\n" if $verbose;
 
 ##########################################################################################
 # 
