@@ -1,3 +1,8 @@
+Version 0.18.1.0:
+ -     --- Disabled questionnaires (for now)         -- Waiting for polished version
+ -     --- Improved query for Medivisit appointments         -- Investigation showed that the query loop for medivisit appointments lasted a very long time.         Query is now looped like the aria appointments with the expression in the loop and not the whole query itself.
+ - Merge branch 'release-0.18.0.0' into develop
+
 Version 0.18.0.0:
  - Merge branch 'selectAllFeature' into develop
  -     --- Improved trigger logic         -- Checking both the case that triggers are defined and that the patient has things         to compare in the first place (eg. has doctors). Before this check wasn't made and         would still send to patient if "ALL" is defined but a patient has no appointments today for example.     --- Fixed issue where educational material triggers weren't updating upon selecting an individual trigger     --- Changed publishing logic for educational material         -- Originally woud get all patient's appointments retrospectively. But should only check for         prospective appointments. So if new patient had new start before registration, it will not send         educational material for start of radiotherapy.         -- Patient diagnosis was based on patient appointments but if patient has none, then it would seem         patient doesn't have a diagnosis. So now getting diagnosis from Diagnosis call and not from appointments.         -- Above point same for legacy questionnaires

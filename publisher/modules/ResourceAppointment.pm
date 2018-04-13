@@ -225,7 +225,7 @@ sub getResourceAppointmentsFromSourceDB
 		            }
 
         			$raInfo_sql .= "
-						(vva.Expression1			    = '$expressionName'
+						(REPLACE(vva.Expression1, '''', '')    	= '$expressionName'
 		        		AND ra.HstryDateTime		> '$lasttransfer')
 	        
 	    		    ";
@@ -279,12 +279,24 @@ sub getResourceAppointmentsFromSourceDB
 
                 my $numOfExpressions = @expressions; 
                 my $counter = 0;
-                my $raInfo_sql = "";
+                my $raInfo_sql = "
+	                SELECT DISTINCT
+                        mval.AppointmentSerNum,
+                        mval.ClinicResourcesSerNum
+                    FROM
+                        MediVisitAppointmentList mval,
+                        Patient pt
+                    WHERE
+                        mval.PatientSerNum      = pt.PatientSerNum
+                    AND pt.SSN                  LIKE '$patientSSN%'
+                    AND (
+                ";
 
                 foreach my $Expression (@expressions) {
 
                 	my $expressionser = $Expression->{_ser};
                 	my $expressionName = $Expression->{_name};
+                	my $expressionDesc = $Expression->{_description};
                 	my $expressionLastTransfer = $Expression->{_lasttransfer};
                 	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
 
@@ -297,22 +309,18 @@ sub getResourceAppointmentsFromSourceDB
 		                $lasttransfer = $expressionLastTransfer;
 		            }
 	        		$raInfo_sql .= "
-	                    SELECT DISTINCT
-	                        mval.AppointmentSerNum,
-	                        mval.ClinicResourcesSerNum
-	                    FROM
-	                        MediVisitAppointmentList mval,
-	                        Patient pt
-	                    WHERE
-	                        mval.PatientSerNum      = pt.PatientSerNum
-	                    AND pt.SSN                  LIKE '$patientSSN%'
-	                    AND mval.LastUpdated        > '$lasttransfer'
-	                    AND mval.AppointmentCode    = '$expressionName'
+	                   (mval.AppointmentCode 	= '$expressionName'
+	        			AND mval.ResourceDescription = '$expressionDesc'
+	        			AND mval.LastUpdated	> '$lasttransfer')
 	                ";
 	                $counter++;
 	        		# concat "UNION" until we've reached the last query
 	        		if ($counter < $numOfExpressions) {
-	        			$raInfo_sql .= "UNION";
+	        			$raInfo_sql .= "OR";
+	        		}
+	        		# close bracket at end
+	        		else {
+	        			$raInfo_sql .= ")";
 	        		}
 	        	}
 
