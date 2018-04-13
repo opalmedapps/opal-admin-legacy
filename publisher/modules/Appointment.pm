@@ -520,7 +520,19 @@ sub getApptsFromSourceDB
                 my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
                 my $numOfExpressions = @expressions; 
                 my $counter = 0;
-                my $apptInfo_sql = "";
+                my $apptInfo_sql = "
+	                 SELECT DISTINCT
+                        mval.AppointmentSerNum,
+                        mval.ScheduledDateTime,
+                        mval.Status
+                    FROM
+                        MediVisitAppointmentList mval,
+                        Patient pt
+                    WHERE
+                        mval.PatientSerNum      = pt.PatientSerNum
+                    AND pt.SSN                  LIKE '$patientSSN%'
+                    AND (
+                ";
 
                 foreach my $Expression (@expressions) {
 
@@ -540,25 +552,19 @@ sub getApptsFromSourceDB
 		            }
 
 	        		$apptInfo_sql .= "
-	                    SELECT DISTINCT
-	                        mval.AppointmentSerNum,
-	                        mval.ScheduledDateTime,
-	                        mval.Status,
-	                        IF(1=1, '$expressionser', '$expressionser')
-	                    FROM
-	                        MediVisitAppointmentList mval,
-	                        Patient pt
-	                    WHERE
-	                        mval.PatientSerNum      = pt.PatientSerNum
-	                    AND pt.SSN                  LIKE '$patientSSN%'
-	                    AND mval.LastUpdated        > '$lasttransfer'
-	                    AND mval.AppointmentCode    = '$expressionName'
-	                    AND mval.ResourceDescription = '$expressionDesc'
-	                ";
+
+	        			(mval.AppointmentCode 	= '$expressionName'
+	        			AND mval.ResourceDescription = '$expressionDesc'
+	        			AND mval.LastUpdated	> '$lasttransfer')
+					";
 	                $counter++;
 	        		# concat "UNION" until we've reached the last query
 	        		if ($counter < $numOfExpressions) {
-	        			$apptInfo_sql .= "UNION";
+	        			$apptInfo_sql .= "OR";
+	        		}
+	        		# close bracket at end
+	        		else {
+	        			$apptInfo_sql .= ")";
 	        		}
 	        	}
 	                  		    
@@ -578,7 +584,6 @@ sub getApptsFromSourceDB
                     $startdatetime  = $row->[1];
                     $enddatetime    = $row->[1];
                     $status         = $row->[2];
-                    $expressionser 	= $row->[3];
 
                     $appointment->setApptPatientSer($patientSer);
                     $appointment->setApptSourceUID($sourceuid);
