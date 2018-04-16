@@ -33,6 +33,19 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		// Responsible for "searching" in search bars
 		$scope.filter = $filter('filter');
 
+		$scope.alertMessage = "";
+		$scope.hiddenAlert = true;
+		// Function to show alert 
+		$scope.showAlert = function (message) {
+			$scope.hiddenAlert = false;
+			$scope.alertMessage = message;
+			$(".alertMessage").slideDown();
+		};
+
+		$scope.hideAlert = function () {
+			$scope.hiddenAlert = true;
+		}
+
 		// Call our API service to get the list of educational material
 		educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
 			$scope.eduMatList = response.data; // Assign value
@@ -286,14 +299,16 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 						if (response.value) {
 							$scope.setBannerClass('success');
 							$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.alias.name_EN + "/ " + $scope.alias.name_FR + "\"!";
+
+							$uibModalInstance.close();
 						}
 						else {
-							$scope.setBannerClass('danger');
-							$scope.$parent.bannerMessage = response.message;
+							console.log(response);
+							$scope.showAlert('response');
+							$scope.$apply();
 						}
 
-						$scope.showBanner();
-						$uibModalInstance.close();
+						
 					}
 				});
 			}

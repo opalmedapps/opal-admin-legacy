@@ -937,7 +937,7 @@ class Alias {
 
             $this->sanitizeEmptyAliases($aliasDetails['user']);
 
-            $response['value'] = 1; // Success
+            //$response['value'] = 1; // Success
             return $response;
 		
 		} catch( PDOException $e) {

@@ -1353,6 +1353,10 @@ footer {
   margin-bottom: 10px;
 }
 
+.alertMessage {
+  display: none;  
+}
+
 .title-login {
   text-align: center;
 }
