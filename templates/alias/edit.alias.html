@@ -17,6 +17,13 @@
   </div>
 </div>
 <div class="modal-body">
+  <div ng-hide="hiddenAlert" class="alert alertMessage alert-danger alert-dismissible" role="alert">
+    <button type="button" class="close" ng-click="hideAlert()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <strong>Errors</strong><br>
+    <p>
+      {{alertMessage}}
+    </p>
+  </div>
   <uib-accordion>
     <!-- SECTION: Assigned expressions -->
     <div uib-accordion-group is-open="expressionSection.open">
@@ -193,4 +200,5 @@
       </div>      
     </div>
   </uib-accordion>
+
 </div>
