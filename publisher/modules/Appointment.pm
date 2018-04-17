@@ -524,7 +524,9 @@ sub getApptsFromSourceDB
 	                 SELECT DISTINCT
                         mval.AppointmentSerNum,
                         mval.ScheduledDateTime,
-                        mval.Status
+                        mval.Status,
+                        mval.AppointmentCode,
+                        mval.ResourceDescription
                     FROM
                         MediVisitAppointmentList mval,
                         Patient pt
@@ -584,6 +586,16 @@ sub getApptsFromSourceDB
                     $startdatetime  = $row->[1];
                     $enddatetime    = $row->[1];
                     $status         = $row->[2];
+                    $expressionname = $row->[3];
+                    $expressiondesc = $row->[4];
+
+                    my $expressionser;
+					foreach my $checkExpression (@expressions) {
+						if ($checkExpression->{_name} eq $expressionname and $checkExpression->{_description} eq $expressiondesc){ #match
+							$expressionser = $checkExpression->{_ser};
+							last; # break out of loop
+						}
+					}
 
                     $appointment->setApptPatientSer($patientSer);
                     $appointment->setApptSourceUID($sourceuid);

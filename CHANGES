@@ -1,3 +1,9 @@
+Version 0.18.1.1:
+ - Merge branch 'release-0.18.1.0' into preproduction
+ - Merge branch 'release-0.18.0.0' into preproduction
+ - Merge branch 'release-0.17.0.0' into preproduction
+ - Merge branch 'hotfix-0.16.0.1' into preproduction
+
 Version 0.18.1.0:
  -     --- Disabled questionnaires (for now)         -- Waiting for polished version
  -     --- Improved query for Medivisit appointments         -- Investigation showed that the query loop for medivisit appointments lasted a very long time.         Query is now looped like the aria appointments with the expression in the loop and not the whole query itself.
