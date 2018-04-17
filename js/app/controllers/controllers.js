@@ -21,6 +21,7 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.notification.add',
 	'opalAdmin.controllers.notification.edit',
 	'opalAdmin.controllers.notification.delete',
+	'opalAdmin.controllers.notification.log',
 	'opalAdmin.controllers.patient',
 	'opalAdmin.controllers.patient.block',
 	'opalAdmin.controllers.patient.edit',

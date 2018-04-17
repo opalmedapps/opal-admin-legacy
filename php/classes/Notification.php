@@ -312,6 +312,83 @@ class Notification {
 		}
 	}
 
+    /**
+     *
+     * Gets logs of a notification or notifications
+     *
+     * @param integer $serial : the notification serial number
+     * @return array $notificationDetails : the notification details
+     */
+    public function getNotificationLogs ($serial) {
+        $notificationLogs = array();
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            $sql = null;
+            if (!$serial) {
+
+
+            }
+            else {
+                $sql = "
+                    SELECT DISTINCT 
+                        ntmh.CronLogSerNum,
+                        COUNT(ntmh.CronLogSerNum),
+                        cl.CronDateTime,
+                        ntt.NotificationTypeName
+                    FROM
+                        NotificationMH ntmh,
+                        CronLog cl,
+                        NotificationControl ntc,
+                        NotificationTypes ntt
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = ntmh.CronLogSerNum
+                    AND ntmh.CronLogSerNum IS NOT NULL
+                    AND ntmh.NotificationControlSerNum = '$serial'
+                    AND ntmh.NotificationControlSerNum = ntc.NotificationControlSerNum
+                    AND ntc.NotificationTypeSerNum = ntt.NotificationTypeSerNum
+                    GROUP BY 
+                        ntmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC
+                ";
+            }
+
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            $notificationSeries = array();
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $seriesName = $data[3];
+                $notificationDetail = array (
+                    'x' => $data[2],
+                    'y' => intval($data[1]),
+                    'cron_serial' => $data[0]
+                );
+                if(!isset($notificationSeries[$seriesName])) {
+                    $notificationSeries[$seriesName] = array(
+                        'name'  => $seriesName,
+                        'data'  => array()
+                    );
+                }
+                array_push($notificationSeries[$seriesName]['data'], $notificationDetail);
+            }
+
+            foreach ($notificationSeries as $seriesName => $series) {
+                array_push($notificationLogs, $series);
+            }
+
+            return $notificationLogs;
+
+        } catch( PDOException $e) {
+            echo $e->getMessage();
+            return $notificationLogs;
+        }
+    }
 }
 
 ?>

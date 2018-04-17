@@ -1,0 +1,24 @@
+<!-- Modal title -->
+<div class="modal-header">
+  <div class="col-xs-6">
+    <h2 class="modal-title col-xs-12">
+      <span class="fa fa-area-chart"></span> 
+      Notification Logs 
+    </h2>
+    <p class="modal-title-caption col-xs-12">
+      {{currentNotification.name_EN}} / {{currentNotification.name_FR}}
+    </p>
+  </div>
+  <div class="modal-buttons col-xs-6">
+    <span> 
+      <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Close">
+    </span>
+  </div>
+</div>
+<div class="modal-body">
+  <div class="panel-container">
+    <div class="panel-info">
+      <highchart id="chart1" config="chartConfig"></highchart>
+    </div>
+  </div>
+</div>
