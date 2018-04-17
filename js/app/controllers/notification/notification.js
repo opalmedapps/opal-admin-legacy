@@ -23,7 +23,8 @@ angular.module('opalAdmin.controllers.notification', ['ngAnimate', 'ngSanitize',
 			'ng-click="grid.appScope.editNotification(row.entity)">' +
 			'<strong><a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></strong></div>';
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editNotification(row.entity)">Edit</a></strong> ' +
+			'<strong><a href="" ng-click="grid.appScope.showNotificationLog(row.entity)">Logs</a></strong> ' +
+			'- <strong><a href="" ng-click="grid.appScope.editNotification(row.entity)">Edit</a></strong> ' +
 			'- <strong><a href="" ng-click="grid.appScope.deleteNotification(row.entity)">Delete</a></strong></div>';
 
 		// Search engine for table
@@ -95,6 +96,19 @@ angular.module('opalAdmin.controllers.notification', ['ngAnimate', 'ngSanitize',
 
 		// Initialize a scope variable for a selected notification
 		$scope.currentNotification = {};
+
+		// Function for when the notification has been clicked for viewing logs
+		$scope.showNotificationLog = function (notification) {
+
+			$scope.currentNotification = notification;
+			var modalInstance = $uibModal.open({
+				templateUrl: 'templates/notification/log.notification.html',
+				controller: 'notification.log',
+				scope: $scope,
+				windowClass: 'customModal',
+				backdrop: 'static',
+			});
+		};
 
 		// Function for when the notification has been clicked for editing
 		$scope.editNotification = function (notification) {

@@ -1483,12 +1483,12 @@ footer {
 }
 
 .modal-header .modal-title {
-  text-align: center;
+  /*text-align: center;*/
   font-weight: 700;
 }
 
 .modal-header .modal-title-caption {
-  text-align: center;
+  /*text-align: center;*/
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1746,6 +1746,11 @@ footer {
     font-size: 3vw;
   }
 
+  .modal-header {
+    display: flex;
+    align-items: center;
+  }
+
   .modal-header .modal-title {
     font-size: 27px;
   }
@@ -1755,7 +1760,7 @@ footer {
   }
 
   .modal-header .modal-buttons {
-    text-align: center;
+    text-align: right;
   }
 
   .modal-buttons .submit,
