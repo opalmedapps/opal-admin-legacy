@@ -204,12 +204,25 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// Function to get notification logs given a serial
-		notificationAPI.getNotificationLogs = function (serial) {
+		notificationAPI.getNotificationChartLogs = function (serial) {
 			return $http({
 				method: 'JSONP',
-				url: URLPATH + "api/notification/get.notification_logs.php?callback=JSON_CALLBACK&serial=" + serial
+				url: URLPATH + "api/notification/get.notification_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial
 			});
 		};
+
+		// Function to get notification log list details given an array of serial numbers
+		notificationAPI.getNotificationListLogs = function (serials) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/notification/get.notification_list_logs.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					serials: JSON.stringify(serials)
+				}
+			});
+		}
+
 
 		return notificationAPI;
 	})

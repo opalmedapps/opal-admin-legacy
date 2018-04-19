@@ -9,7 +9,7 @@
 	$notification = new Notification; // Object
 
 	// Call function
-	$notificationLogs = $notification->getNotificationLogs($serial);
+	$notificationLogs = $notification->getNotificationChartLogs($serial);
 
 	// Callback to http request
 	print $callback.'('.json_encode($notificationLogs).')';
