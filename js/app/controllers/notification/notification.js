@@ -105,7 +105,7 @@ angular.module('opalAdmin.controllers.notification', ['ngAnimate', 'ngSanitize',
 				templateUrl: 'templates/notification/log.notification.html',
 				controller: 'notification.log',
 				scope: $scope,
-				windowClass: 'customModal',
+				windowClass: 'logModal',
 				backdrop: 'static',
 			});
 		};
