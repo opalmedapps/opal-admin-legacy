@@ -1,5 +1,5 @@
 <?php
-	/* To get logs on a particular notification */
+	/* To get list logs on a particular notification */
 	include_once('notification.inc');
 
 	// Retrieve FORM params

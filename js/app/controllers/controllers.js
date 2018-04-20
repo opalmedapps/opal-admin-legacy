@@ -5,6 +5,7 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.alias.add',
 	'opalAdmin.controllers.alias.edit',
 	'opalAdmin.controllers.alias.delete',
+	'opalAdmin.controllers.alias.log',
 	'opalAdmin.controllers.post',
 	'opalAdmin.controllers.post.add',
 	'opalAdmin.controllers.post.edit',

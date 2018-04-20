@@ -67,6 +67,27 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
+		// Function to get alias chart logs given a serial
+		aliasAPI.getAliasChartLogs = function (serial, type) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/alias/get.alias_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial + '&type=' + type
+			});
+		};
+
+		// Function to get alias log list details given an array of serial numbers
+		aliasAPI.getAliasListLogs = function (serials, type) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/alias/get.alias_list_logs.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					serials: JSON.stringify(serials),
+					type: type
+				}
+			});
+		}
+
 		return aliasAPI;
 	})
 
@@ -221,8 +242,7 @@ angular.module('opalAdmin.collections', [])
 					serials: JSON.stringify(serials)
 				}
 			});
-		}
-
+		};
 
 		return notificationAPI;
 	})

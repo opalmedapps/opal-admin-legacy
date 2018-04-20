@@ -44,7 +44,8 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 			'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
 			'ng-checked="grid.appScope.updateVal(row.entity.update)" ng-model="row.entity.update"></div>';
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editAlias(row.entity)">Edit</a></strong> ' +
+			'<strong><a href="" ng-click="grid.appScope.showAliasLog(row.entity)">Logs</a></strong> ' +
+			'- <strong><a href="" ng-click="grid.appScope.editAlias(row.entity)">Edit</a></strong> ' +
 			'- <strong><a href="" ng-click="grid.appScope.deleteAlias(row.entity)">Delete</a></strong></div>';
 		var cellTemplateColor = '<div class="color-palette-sm" style="margin-top: 7px; margin-left: auto; margin-right: auto" ' +
 			'ng-style="{\'background-color\': row.entity.color}"></div>';
@@ -199,6 +200,19 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 					}
 				});
 			}
+		};
+
+		// Function for when the alias has been clicked for viewing logs
+		$scope.showAliasLog = function (alias) {
+
+			$scope.currentAlias = alias;
+			var modalInstance = $uibModal.open({
+				templateUrl: 'templates/alias/log.alias.html',
+				controller: 'alias.log',
+				scope: $scope,
+				windowClass: 'logModal',
+				backdrop: 'static',
+			});
 		};
 
 		// Function for when the alias has been clicked for editing
