@@ -390,9 +390,9 @@ class Notification {
         }
     }
 
-     /**
+    /**
      *
-     * Gets list logs of notifications during one of many cron sessions
+     * Gets list logs of notifications during one or many cron sessions
      *
      * @param array $serials : a list of cron log serial numbers
      * @return array $notificationLogs : the notification logs for table view
