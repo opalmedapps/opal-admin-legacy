@@ -181,6 +181,27 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
+		// Function to get edcuational material chart logs given a serial
+		educationalMaterialAPI.getEducationalMaterialChartLogs = function (serial) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/educational-material/get.educational_material_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial
+			});
+		};
+
+		// Function to get edcuational material log list details given an array of serial numbers
+		educationalMaterialAPI.getEducationalMaterialListLogs = function (serials) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/educational-material/get.educational_material_list_logs.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					serials: JSON.stringify(serials),
+					type: type
+				}
+			});
+		}
+
 		return educationalMaterialAPI;
 	})
 
