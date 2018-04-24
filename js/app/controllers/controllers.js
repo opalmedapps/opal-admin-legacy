@@ -10,6 +10,7 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.post.add',
 	'opalAdmin.controllers.post.edit',
 	'opalAdmin.controllers.post.delete',
+	'opalAdmin.controllers.post.log',
 	'opalAdmin.controllers.educationalMaterial',
 	'opalAdmin.controllers.educationalMaterial.add',
 	'opalAdmin.controllers.educationalMaterial.edit',

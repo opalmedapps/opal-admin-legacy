@@ -52,7 +52,8 @@ angular.module('opalAdmin.controllers.post', ['ngAnimate', 'ngSanitize', 'ui.boo
 			'class="ui-grid-cell-contents"><input style="margin:4px;" type="checkbox" ' +
 			'ng-checked="grid.appScope.updateFlag(row.entity.disabled)" ng-model="row.entity.disabled"></div>';
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editPost(row.entity)">Edit</a></strong> ' +
+			'<strong><a href="" ng-click="grid.appScope.showPostLog(row.entity)">Logs</a></strong> ' +
+			'- <strong><a href="" ng-click="grid.appScope.editPost(row.entity)">Edit</a></strong> ' +
 			'- <strong><a href="" ng-click="grid.appScope.deletePost(row.entity)">Delete</a></strong></div>';
 		var rowTemplate = '<div ng-class="{\'grid-disabled-row\':row.entity.disabled==1}"> ' +
 			'<div ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" ' +
@@ -230,6 +231,19 @@ angular.module('opalAdmin.controllers.post', ['ngAnimate', 'ngSanitize', 'ui.boo
 
 		// Initialize a scope variable for a selected post
 		$scope.currentPost = {};
+
+		// Function for when the post has been clicked for viewing logs
+		$scope.showPostLog = function (post) {
+
+			$scope.currentPost = post;
+			var modalInstance = $uibModal.open({
+				templateUrl: 'templates/post/log.post.html',
+				controller: 'post.log',
+				scope: $scope,
+				windowClass: 'logModal',
+				backdrop: 'static',
+			});
+		};
 
 		// Function for when the post has been clicked for editing
 		// We open a modal

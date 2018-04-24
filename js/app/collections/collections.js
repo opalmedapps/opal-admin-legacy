@@ -112,6 +112,27 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
+		// Function to get post chart logs given a serial
+		postAPI.getPostChartLogs = function (serial, type) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/post/get.post_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial + '&type=' + type
+			});
+		};
+
+		// Function to get post log list details given an array of serial numbers
+		postAPI.getPostListLogs = function (serials, type) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/post/get.post_list_logs.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					serials: JSON.stringify(serials),
+					type: type
+				}
+			});
+		}
+
 		return postAPI;
 	})
 
