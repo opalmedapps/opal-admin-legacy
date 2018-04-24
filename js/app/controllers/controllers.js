@@ -15,6 +15,7 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.educationalMaterial.add',
 	'opalAdmin.controllers.educationalMaterial.edit',
 	'opalAdmin.controllers.educationalMaterial.delete',
+	'opalAdmin.controllers.educationalMaterial.log',
 	'opalAdmin.controllers.hospitalMap',
 	'opalAdmin.controllers.hospitalMap.add',
 	'opalAdmin.controllers.hospitalMap.edit',

@@ -27,7 +27,8 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 			'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
 			'ng-checked="grid.appScope.updatePublishFlag(row.entity.publish)" ng-model="row.entity.publish"></div>';
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editEduMat(row.entity)">Edit</a></strong> ' +
+			'<strong><a href="" ng-click="grid.appScope.showEduMatLog(row.entity)">Logs</a></strong> ' +
+			'- <strong><a href="" ng-click="grid.appScope.editEduMat(row.entity)">Edit</a></strong> ' +
 			'- <strong><a href="" ng-click="grid.appScope.deleteEduMat(row.entity)">Delete</a></strong></div>';
 		var expandableRowTemplate = '<div ui-grid="row.entity.subGridOptions"></div>';
 		var ratingCellTemplate = '<div class="ui-grid-cell-contents" ng-show="row.entity.rating == -1">No rating</div>' +
@@ -212,6 +213,19 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 
 		// Initialize a scope variable for a selected educational material
 		$scope.currentEduMat = {};
+
+		// Function for when the educational material has been clicked for viewing logs
+		$scope.showEduMatLog = function (educationalMaterial) {
+
+			$scope.currentEduMat = educationalMaterial;
+			var modalInstance = $uibModal.open({
+				templateUrl: 'templates/educational-material/log.educational-material.html',
+				controller: 'educationalMaterial.log',
+				scope: $scope,
+				windowClass: 'logModal',
+				backdrop: 'static',
+			});
+		};
 
 		// Function for when the edu material has been clicked for editing
 		// We open a modal
