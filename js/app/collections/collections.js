@@ -516,6 +516,26 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
+		// Function to get email chart logs given a serial
+		emailAPI.getEmailChartLogs = function (serial) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/email/get.email_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial
+			});
+		};
+
+		// Function to get email log list details given an array of serial numbers
+		emailAPI.getEmailListLogs = function (serials) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/email/get.email_list_logs.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					serials: JSON.stringify(serials),
+				}
+			});
+		}
+
 		return emailAPI;
 	})
 

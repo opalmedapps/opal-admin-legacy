@@ -23,7 +23,8 @@ angular.module('opalAdmin.controllers.email', ['ngAnimate', 'ngSanitize', 'ui.bo
 			'ng-click="grid.appScope.editEmail(row.entity)">' +
 			'<strong><a href="">{{row.entity.subject_EN}} / {{row.entity.subject_FR}}</a></strong></div>';
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editEmail(row.entity)">Edit</a></strong> ' +
+			'<strong><a href="" ng-click="grid.appScope.showEmailLog(row.entity)">Logs</a></strong> ' +
+			'- <strong><a href="" ng-click="grid.appScope.editEmail(row.entity)">Edit</a></strong> ' +
 			'- <strong><a href="" ng-click="grid.appScope.deleteEmail(row.entity)">Delete</a></strong></div>';
 
 		// Search engine for table
@@ -94,6 +95,19 @@ angular.module('opalAdmin.controllers.email', ['ngAnimate', 'ngSanitize', 'ui.bo
 
 		// Initialize a scope variable for a selected email
 		$scope.currentEmail = {};
+
+		// Function for when the email has been clicked for viewing logs
+		$scope.showEmailLog = function (email) {
+
+			$scope.currentEmail = email;
+			var modalInstance = $uibModal.open({
+				templateUrl: 'templates/email/log.email.html',
+				controller: 'email.log',
+				scope: $scope,
+				windowClass: 'logModal',
+				backdrop: 'static',
+			});
+		};
 
 		// Function for when the email has been clicked for editing
 		$scope.editEmail = function (email) {
