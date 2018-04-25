@@ -34,6 +34,7 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.testResult.add',
 	'opalAdmin.controllers.testResult.edit',
 	'opalAdmin.controllers.testResult.delete',
+	'opalAdmin.controllers.testResult.log',
 	'opalAdmin.controllers.cron',
 	'opalAdmin.controllers.login',
 	'opalAdmin.controllers.loginModal',

@@ -27,7 +27,8 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
 			'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
 			'ng-checked="grid.appScope.updatePublishFlag(row.entity.publish)" ng-model="row.entity.publish"></div>';
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editTestResult(row.entity)">Edit</a></strong> ' +
+			'<strong><a href="" ng-click="grid.appScope.showTestResultLog(row.entity)">Logs</a></strong> ' +
+			'- <strong><a href="" ng-click="grid.appScope.editTestResult(row.entity)">Edit</a></strong> ' +
 			'- <strong><a href="" ng-click="grid.appScope.deleteTestResult(row.entity)">Delete</a></strong></div>';
 
 		// Search engine for table
@@ -180,6 +181,19 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
 
 		// Initialize a scope variable for a selected test result
 		$scope.currentTestResult = {};
+
+		// Function for when the test result has been clicked for viewing logs
+		$scope.showTestResultLog = function (testResult) {
+
+			$scope.currentTestResult = testResult;
+			var modalInstance = $uibModal.open({
+				templateUrl: 'templates/test-result/log.test-result.html',
+				controller: 'testResult.log',
+				scope: $scope,
+				windowClass: 'logModal',
+				backdrop: 'static',
+			});
+		};
 
 		// Function for when the test result has been clicked for editing
 		// We open a modal
