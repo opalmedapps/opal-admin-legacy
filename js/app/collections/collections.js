@@ -652,6 +652,26 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
+		// Function to get legacy questionnaire chart logs given a serial
+		legacyQuestionnaireAPI.getLegacyQuestionnaireChartLogs = function (serial) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/legacy-questionnaire/get.legacy_questionnaire_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial
+			});
+		};
+
+		// Function to get legacy questionnaire log list details given an array of serial numbers
+		legacyQuestionnaireAPI.getLegacyQuestionnaireListLogs = function (serials) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/legacy-questionnaire/get.legacy_questionnaire_list_logs.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					serials: JSON.stringify(serials),
+				}
+			});
+		}
+
 		return legacyQuestionnaireAPI;
 	})
 
