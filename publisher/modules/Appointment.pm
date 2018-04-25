@@ -377,7 +377,7 @@ sub getApptCronLogSer
 #======================================================================================
 sub getApptsFromSourceDB
 {
-	my (@patientList, $cronLogSer) = @_; # patient list and cron log serial from args
+	my ($cronLogSer, @patientList) = @_; # patient list and cron log serial from args
 
 	my @apptList = (); # initialize a list for appointment objects
 

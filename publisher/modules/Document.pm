@@ -410,7 +410,7 @@ sub getDocCronLogSer
 #======================================================================================
 sub getDocsFromSourceDB
 {
-	my (@patientList, $cronLogSer) = @_; # a list of patients and cron log serial from args
+	my ($cronLogSer, @patientList) = @_; # a list of patients and cron log serial from args
 
 	my @docList = (); # initialize a list for document objects
 
