@@ -1482,6 +1482,14 @@ footer {
   font-weight: 700;
 }
 
+.modal-header {
+    text-align: center;
+}
+
+.modal-header .modal-buttons {
+    margin-top: 10px;
+}
+
 .modal-header .modal-title-caption {
   /*text-align: center;*/
   white-space: nowrap;
@@ -1490,12 +1498,10 @@ footer {
 }
 
 .modal-buttons .submit {
-  float: left;
   width: 120px;
 }
 
 .modal-buttons .cancel {
-  float: right;
   width: 120px;
 }
 
@@ -1674,6 +1680,18 @@ footer {
   .home-menu .icon-home {
     font-size: 40px;
   }
+
+  .modal-header {
+    text-align: inherit;
+    display: flex;
+    align-items: center;
+  }
+
+  .modal-header .modal-buttons {
+    text-align: right;
+    margin-top: 0;
+  }
+
 }
 
 @media only screen and (min-width:1200px) {
@@ -1710,7 +1728,6 @@ footer {
 
   .logModal .modal-dialog {
     width: 60% !important; }
-  }
 
   .editUserModal .modal-dialog {
     width: 50% !important;
@@ -1745,11 +1762,6 @@ footer {
     font-size: 3vw;
   }
 
-  .modal-header {
-    display: flex;
-    align-items: center;
-  }
-
   .modal-header .modal-title {
     font-size: 27px;
   }
@@ -1758,13 +1770,8 @@ footer {
     font-size: 18px;
   }
 
-  .modal-header .modal-buttons {
-    text-align: right;
-  }
-
   .modal-buttons .submit,
   .modal-buttons .cancel {
-    float: none;
     width: 160px;
   }
 
