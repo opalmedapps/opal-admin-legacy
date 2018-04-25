@@ -407,7 +407,7 @@ sub getTestResultCronLogSer
 #======================================================================================
 sub getTestResultsFromSourceDB
 {
-	my (@patientList, $cronLogSer) = @_; # a list of patients and cron log serial from args
+	my ($cronLogSer, @patientList) = @_; # a list of patients and cron log serial from args
 
     my @TRList = (); # a list for test result objects
 

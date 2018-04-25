@@ -310,7 +310,7 @@ sub getTaskCronLogSer
 #======================================================================================
 sub getTasksFromSourceDB
 {
-	my (@patientList, $cronLogSer) = @_; # a list of patients and cron log serial from args 
+	my ($cronLogSer, @patientList) = @_; # a list of patients and cron log serial from args 
 
 	my @taskList = (); # initialize a list for task objects
 
