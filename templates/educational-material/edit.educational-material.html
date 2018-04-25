@@ -1,14 +1,15 @@
 <!-- Modal title -->
 <div class="modal-header">
-  <h2 class="modal-title col-xs-12">
-    <span class="glyphicon glyphicon-pencil"></span> 
-      Edit Educational Material 
-    <span style="float:right;"> 
-  </h2>
-  <p class="modal-title-caption col-xs-12">
-    {{eduMat.name_EN}} / {{eduMat.name_FR}}
-  </p>
-  <div class="modal-buttons col-xs-12">
+  <div class="col-xs-12 col-md-6">
+    <h2 class="modal-title">
+      <span class="glyphicon glyphicon-pencil"></span> 
+        Edit Educational Material 
+    </h2>
+    <p class="modal-title-caption">
+      {{eduMat.name_EN}} / {{eduMat.name_FR}}
+    </p>
+  </div>
+  <div class="modal-buttons col-xs-12 col-md-6">
     <span> 
       <form method="post" ng-submit="updateEduMat()">
         <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
