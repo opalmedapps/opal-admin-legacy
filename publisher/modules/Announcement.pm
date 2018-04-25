@@ -153,7 +153,7 @@ sub getAnnouncementCronLogSer
 #======================================================================================
 sub publishAnnouncements
 {
-    my (@patientList, $cronLogSer) = @_; # patient list and cron log serial from args
+    my ($cronLogSer, @patientList) = @_; # patient list and cron log serial from args
 
     my $today_date = strftime("%Y-%m-%d", localtime(time));
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");

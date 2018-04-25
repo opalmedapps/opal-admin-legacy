@@ -72,7 +72,7 @@ my $verbose = 1;
 #=========================================================================================
 # Retrieve all patients that are marked for update
 #=========================================================================================
-@registeredPatients = Patient::getPatientsMarkedForUpdate(); 
+@registeredPatients = Patient::getPatientsMarkedForUpdate($cronLogSer); 
 
 print "Got patients\n" if $verbose;
 #=========================================================================================
@@ -226,7 +226,7 @@ print "Got priority\n" if $verbose;
 # Data Retrieval TASKS - get list of patients with tasks updated since last update
 #
 ##########################################################################################
-@TaskList = Task::getTasksFromSourceDB(@patientList, $cronLogSer);
+@TaskList = Task::getTasksFromSourceDB($cronLogSer, @patientList);
 
 #=========================================================================================
 # Loop over each task. Various functions are done.
@@ -261,7 +261,7 @@ print "Got tasks\n" if $verbose;
 # Data Retrieval APPOINTMENTS - get list of patients with appointments updated since last update
 #
 ##########################################################################################
-@ApptList = Appointment::getApptsFromSourceDB(@patientList, $cronLogSer);
+@ApptList = Appointment::getApptsFromSourceDB($cronLogSer, @patientList);
 
 #=========================================================================================
 # Loop over each patient. Various functions are done.
@@ -404,7 +404,7 @@ print "Got PL MHs\n" if $verbose;
 # Data Retrieval DOCUMENTS - get list of patients with documents updated since last update
 #
 ##########################################################################################
-@DocList = Document::getDocsFromSourceDB(@patientList, $cronLogSer);
+@DocList = Document::getDocsFromSourceDB($cronLogSer, @patientList);
 
 # Transfer and log patient documents
 Document::transferPatientDocuments(@DocList);
@@ -418,7 +418,7 @@ print "Got documents\n" if $verbose;
 # Data Retrieval TESTRESULTS - get list of patients with test results updated since last update
 #
 ##########################################################################################
-@TRList = TestResult::getTestResultsFromSourceDB(@patientList, $cronLogSer);
+@TRList = TestResult::getTestResultsFromSourceDB($cronLogSer, @patientList);
 
 #=========================================================================================
 # Loop over each test result. Various functions are done.
@@ -453,7 +453,7 @@ print "Got test results\n" if $verbose;
 # Publishing ANNOUNCEMENTS 
 #
 ##########################################################################################
-Announcement::publishAnnouncements(@patientList, $cronLogSer);
+Announcement::publishAnnouncements($cronLogSer, @patientList);
 
 print "Got announcements\n" if $verbose;
 
@@ -462,7 +462,7 @@ print "Got announcements\n" if $verbose;
 # Publishing TREATMENT TEAM MESSAGES
 #
 ##########################################################################################
-TxTeamMessage::publishTxTeamMessages(@patientList, $cronLogSer);
+TxTeamMessage::publishTxTeamMessages($cronLogSer, @patientList);
 
 print "Got TTM\n" if $verbose;
 
@@ -471,7 +471,7 @@ print "Got TTM\n" if $verbose;
 # Publishing PATIENTS FOR PATIENTS
 #
 ##########################################################################################
-PatientsForPatients::publishPatientsForPatients(@patientList, $cronLogSer);
+PatientsForPatients::publishPatientsForPatients($cronLogSer, @patientList);
 
 print "Got P4P\n";
 
@@ -480,7 +480,7 @@ print "Got P4P\n";
 # Publishing EDUCATIONAL MATERIALS
 #
 ##########################################################################################
-EducationalMaterial::publishEducationalMaterials(@patientList, $cronLogSer);
+EducationalMaterial::publishEducationalMaterials($cronLogSer, @patientList);
 
 print "Got Educational materials\n" if $verbose;
 
@@ -498,7 +498,7 @@ print "Got Educational materials\n" if $verbose;
 # Publishing LEGACY QUESTIONNAIRES
 #
 ##########################################################################################
-LegacyQuestionnaire::publishLegacyQuestionnaires(@patientList, $cronLogSer);
+LegacyQuestionnaire::publishLegacyQuestionnaires($cronLogSer, @patientList);
 
 print "Got Legacy Questionnaires\n" if $verbose;
 

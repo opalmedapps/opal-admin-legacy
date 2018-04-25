@@ -150,7 +150,7 @@ sub getLegacyQuestionnaireCronLogSer
 #====================================================================================
 sub publishLegacyQuestionnaires
 {
-	my (@patientList, $cronLogSer) = @_; # patient list and cron log serial from args
+	my ($cronLogSer, @patientList) = @_; # patient list and cron log serial from args
 
 	# Retrieve all the legacy questionnaire controls
 	my @legacyQuestionnaireControls = getLegacyQuestionnaireControlsMarkedForPublish(); 

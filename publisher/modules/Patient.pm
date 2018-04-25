@@ -54,7 +54,8 @@ sub new
         _deathdate 			=> undef,
 		_email 				=> undef,
 		_firebaseuid		=> undef,
-		_registrationdate	=> undef, 		
+		_registrationdate	=> undef,
+		_cronlogser			=> undef, 		
 	};
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
@@ -234,6 +235,16 @@ sub setPatientRegistrationDate
 }
 
 #======================================================================================
+# Subroutine to set the patient cron log serial
+#======================================================================================
+sub setPatientCronLogSer
+{
+	my ($patient, $cronlogser) = @_; # patient object with provided serial in arguments
+	$patient->{_cronlogser} = $cronlogser; # set the serial
+	return $patient->{_cronlogser};
+}
+
+#======================================================================================
 # Subroutine to get the patient serial
 #======================================================================================
 sub getPatientSer
@@ -384,6 +395,15 @@ sub getPatientRegistrationDate
 {
     my ($patient) = @_; # our patient object
     return $patient->{_registrationdate};
+}
+
+#======================================================================================
+# Subroutine to get the patient cron log serial
+#======================================================================================
+sub getPatientCronLogSer
+{
+	my ($patient) = @_; # our patient object
+	return $patient->{_cronlogser};
 }
 
 #======================================================================================
@@ -585,6 +605,8 @@ sub getPatientInfoFromSourceDBs
 #======================================================================================
 sub getPatientsMarkedForUpdate
 {
+    my ($cronLogSer) = @_; # cron log serial in args
+	
 	my @patientList = (); # initialize list of patient objects
 	my ($lasttransfer, $ssn, $registrationdate);
 	
@@ -622,6 +644,7 @@ sub getPatientsMarkedForUpdate
 		$Patient->setPatientLastTransfer($lasttransfer);
         $Patient->setPatientSSN($ssn);
         $Patient->setPatientRegistrationDate($registrationdate);
+		$Patient->setPatientCronLogSer($cronLogSer);
 
 		push(@patientList, $Patient);
 	}
@@ -1044,8 +1067,10 @@ sub compareWith
 			blockPatient($UpdatedPatient, "Patient passed 13 years of age");
 			my $patientser = $UpdatedPatient->getPatientSer();
 			my $patientemail = $UpdatedPatient->getPatientEmail();
+			my $cronlogser = $UpdatedPatient->getPatientCronLogSer();
 			my $email = Email::getEmailControlDetails($patientser, "PaedPatientBlock");
 			$email->setEmailToAddress($patientemail);
+			$email->setEmailCronLogSer($cronlogser);
 			$email->sendEmail($patientser);
 		}
 	}
