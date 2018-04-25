@@ -62,6 +62,7 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.legacyQuestionnaire.add',
 	'opalAdmin.controllers.legacyQuestionnaire.edit',
 	'opalAdmin.controllers.legacyQuestionnaire.delete',
+	'opalAdmin.controllers.legacyQuestionnaire.log',
 	'opalAdmin.controllers.diagnosisTranslation',
 	'opalAdmin.controllers.diagnosisTranslation.add',
 	'opalAdmin.controllers.diagnosisTranslation.edit',

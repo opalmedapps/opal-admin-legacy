@@ -56,7 +56,8 @@ angular.module('opalAdmin.controllers.legacyQuestionnaire', ['ngAnimate', 'ngSan
 		// Table
 		// Templates
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-		'<strong><a href="" ng-click="grid.appScope.editLegacyQuestionnaire(row.entity)">Edit</a></strong> ' +
+		'<strong><a href="" ng-click="grid.appScope.showLegacyQuestionnaireLog(row.entity)">Logs</a></strong> ' +
+		'- <strong><a href="" ng-click="grid.appScope.editLegacyQuestionnaire(row.entity)">Edit</a></strong> ' +
 		'- <strong><a href="" ng-click="grid.appScope.deleteLegacyQuestionnaire(row.entity)">Delete</a></strong></div>';
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 		'ng-click="grid.appScope.editLegacyQuestionnaire(row.entity)">' +
@@ -204,6 +205,19 @@ angular.module('opalAdmin.controllers.legacyQuestionnaire', ['ngAnimate', 'ngSan
 
 		// Initialize a scope variable for a selected legacy questionnaire
 		$scope.currentLegacyQuestionnaire = {};
+
+		// Function for when the legacy questionnaire has been clicked for viewing logs
+		$scope.showLegacyQuestionnaireLog = function (legacyQuestionnaire) {
+
+			$scope.currentLegacyQuestionnaire = legacyQuestionnaire;
+			var modalInstance = $uibModal.open({
+				templateUrl: 'templates/legacy-questionnaire/log.legacy-questionnaire.html',
+				controller: 'legacyQuestionnaire.log',
+				scope: $scope,
+				windowClass: 'logModal',
+				backdrop: 'static',
+			});
+		};
 
 		// Function to edit legacy questionnaire
 		$scope.editLegacyQuestionnaire = function (legacyQuestionnaire) {

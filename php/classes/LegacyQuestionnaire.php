@@ -958,6 +958,140 @@ class LegacyQuestionnaire {
 		}
     }
 
+     /**
+     *
+     * Gets chart logs of a legacy questionnaire or questionnaires
+     *
+     * @param integer $serial : the legacy questionnaire serial number
+     * @return array $legacyQuestionnaireLogs : the legacy questionnaire logs for highcharts
+     */
+    public function getLegacyQuestionnaireChartLogs ($serial) {
+        $legacyQuestionnaireLogs = array();
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            $sql = null;
+            // get all logs for all legacy questionnaires
+            if (!$serial) {
+
+
+            }
+            // get logs for specific legacy questionnaire
+            else {
+                $sql = "
+                    SELECT DISTINCT
+                        lqmh.CronLogSerNum,
+                        COUNT(lqmh.CronLogSerNum),
+                        cl.CronDateTime
+                    FROM
+                        QuestionnaireMH lqmh,
+                        CronLog cl
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = lqmh.CronLogSerNum
+                    AND lqmh.CronLogSerNum IS NOT NULL
+                    AND lqmh.QuestionnaireControlSerNum = $serial
+                    GROUP BY
+                        lqmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC 
+                ";
+
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                $legacyQuestionnaireSeries = array();
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $seriesName = 'Legacy Questionnaire';
+                    $legacyQuestionnaireDetail = array (
+                        'x' => $data[2],
+                        'y' => intval($data[1]),
+                        'cron_serial' => $data[0]
+                    );
+                    if(!isset($legacyQuestionnaireSeries[$seriesName])) {
+                        $legacyQuestionnaireSeries[$seriesName] = array(
+                            'name'  => $seriesName,
+                            'data'  => array()
+                        );
+                    }
+                    array_push($legacyQuestionnaireSeries[$seriesName]['data'], $legacyQuestionnaireDetail);
+                }
+
+                foreach ($legacyQuestionnaireSeries as $seriesName => $series) {
+                    array_push($legacyQuestionnaireLogs, $series);
+                }
+            }
+            return $legacyQuestionnaireLogs;
+
+        } catch( PDOException $e) {
+            echo $e->getMessage();
+            return $legacyQuestionnaireLogs;
+        }
+    }
+
+    /**
+     *
+     * Gets list logs of legacy questionnaires during one or many cron sessions
+     *
+     * @param array $serials : a list of cron log serial numbers
+     * @return array $legacyQuestionnaireLogs : the legacy questionnaire logs for table view
+     */
+    public function getLegacyQuestionnaireListLogs ($serials) {
+        $legacyQuestionnaireLogs = array();
+        $serials = implode(',', $serials);
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
+                SELECT DISTINCT
+                    qc.QuestionnaireName_EN,
+                    lqmh.QuestionnaireControlSerNum,
+                    lqmh.QuestionnaireRevSerNum,
+                    lqmh.CronLogSerNum,
+                    lqmh.PatientSerNum,
+                    lqmh.PatientQuestionnaireDBSerNum,
+                    lqmh.CompletedFlag,
+                    lqmh.CompletionDate,
+                    lqmh.DateAdded,
+                    lqmh.ModificationAction
+                FROM
+                    QuestionnaireMH lqmh,
+                    QuestionnaireControl qc
+                WHERE
+                    lqmh.QuestionnaireControlSerNum     = qc.QuestionnaireControlSerNum
+                AND lqmh.CronLogSerNum                  IN ($serials)
+            "; 
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $logDetails = array (
+                   'control_name'           => $data[0],
+                   'control_serial'         => $data[1],
+                   'revision'               => $data[2],
+                   'cron_serial'            => $data[3],
+                   'patient_serial'         => $data[4],
+                   'pt_questionnaire_db'    => $data[5],
+                   'completed'              => $data[6],
+                   'completion_date'        => $data[7],
+                   'date_added'             => $data[8],
+                   'mod_action'             => $data[9]
+                );
+                array_push($legacyQuestionnaireLogs, $logDetails);
+            }
+
+            return $legacyQuestionnaireLogs;
+
+        } catch( PDOException $e) {
+            echo $e->getMessage();
+            return $legacyQuestionnaireLogs;
+        }
+    } 
+
 	/**
      *
      * Does a nested search for match
