@@ -398,6 +398,26 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
+		// Function to get test result chart logs given a serial
+		testResultAPI.getTestResultChartLogs = function (serial) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/test-result/get.test_result_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial
+			});
+		};
+
+		// Function to get test result log list details given an array of serial numbers
+		testResultAPI.getTestResultListLogs = function (serials) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/test-result/get.test_result_list_logs.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					serials: JSON.stringify(serials),
+				}
+			});
+		}
+
 		return testResultAPI;
 	})
 
