@@ -58,6 +58,7 @@ sub new
         _actualstartdate    => undef,
         _actualenddate      => undef,
         _checkin 			=> undef,
+        _cronlogser			=> undef,
 	};
 
 	# bless associates an object with a class so Perl knows which package to search for
@@ -218,6 +219,16 @@ sub setApptCheckin
 }
 
 #====================================================================================
+# Subroutine to set the Appointment Cron Log Serial
+#====================================================================================
+sub setApptCronLogSer
+{
+	my ($appointment, $cronlogser) = @_; # appt object with provided serial in arguments
+	$appointment->{_cronlogser} = $cronlogser; # set the ser
+	return $appointment->{_cronlogser};
+}
+
+#====================================================================================
 # Subroutine to get the Appointment Serial
 #====================================================================================
 sub getApptSer
@@ -352,12 +363,21 @@ sub getApptCheckin
 	return $appointment->{_checkin};
 }
 
+#====================================================================================
+# Subroutine to get the Appointment Cron Log Serial
+#====================================================================================
+sub getApptCronLogSer
+{
+	my ($appointment) = @_; # our appt object
+	return $appointment->{_cronlogser};
+}
+
 #======================================================================================
 # Subroutine to get our appointment info from the ARIA db for automatic cron
 #======================================================================================
 sub getApptsFromSourceDB
 {
-	my (@patientList) = @_; # patient list from args
+	my (@patientList, $cronLogSer) = @_; # patient list and cron log serial from args
 
 	my @apptList = (); # initialize a list for appointment objects
 
@@ -505,6 +525,7 @@ sub getApptsFromSourceDB
 	    		    $appointment->setApptState($state);
 		    	    $appointment->setApptActualStartDate($actualstartdate); 
 			        $appointment->setApptActualEndDate($actualenddate);
+			        $appointment->setApptCronLogSer($cronLogSer);
     
 	        		push(@apptList, $appointment);
     	    	}
@@ -605,6 +626,7 @@ sub getApptsFromSourceDB
                     $appointment->setApptEndDateTime($enddatetime);
                     $appointment->setApptStatus($status);
                     $appointment->setApptState('Active'); # Set default for WRM
+			        $appointment->setApptCronLogSer($cronLogSer);
 
                     push(@apptList, $appointment);
                 }
@@ -1072,7 +1094,7 @@ sub inOurDatabase
 	# Other appt variables, if appt exists
 	my ($ser, $patientser, $aliasexpressionser, $startdatetime, $enddatetime);
     my ($priorityser, $diagnosisser, $sourcedbser);
-    my ($status, $state, $actualstartdate, $actualenddate);
+    my ($status, $state, $actualstartdate, $actualenddate, $cronlogser);
 
 	my $inDB_sql = "
 		SELECT DISTINCT
@@ -1088,7 +1110,8 @@ sub inOurDatabase
             Appointment.Status,
             Appointment.State,
             Appointment.ActualStartDate,
-            Appointment.ActualEndDate
+            Appointment.ActualEndDate,
+            Appointment.CronLogSerNum
 		FROM
 			Appointment
 		WHERE
@@ -1119,6 +1142,7 @@ sub inOurDatabase
         $state              = $data[10];
         $actualstartdate    = $data[11];
         $actualenddate      = $data[12];
+        $cronlogser 		= $data[13];
 	}
 
 	if ($ApptSourceUIDInDB) {
@@ -1138,6 +1162,7 @@ sub inOurDatabase
 		$ExistingAppt->setApptState($state); # set the appt state
 		$ExistingAppt->setApptActualStartDate($actualstartdate); # set the appt start datetime
 		$ExistingAppt->setApptActualEndDate($actualenddate); # set the appt end datetime
+		$ExistingAppt->setApptCronLogSer($cronlogser); # set the cron log serial
 
 		return $ExistingAppt; # this is true (ie. appt exists, return object)
 	}
@@ -1164,12 +1189,14 @@ sub insertApptIntoOurDB
 	my $state		        = $appointment->getApptState();
 	my $actualstartdate	    = $appointment->getApptActualStartDate();
 	my $actualenddate		= $appointment->getApptActualEndDate();
+	my $cronlogser 			= $appointment->getApptCronLogSer();
 
 	my $insert_sql = "
 		INSERT INTO 
 			Appointment (
 				AppointmentSerNum,
 				PatientSerNum,
+				CronLogSerNum,
                 SourceDatabaseSerNum,
 				AppointmentAriaSer,
 				AliasExpressionSerNum,
@@ -1187,6 +1214,7 @@ sub insertApptIntoOurDB
 		VALUES (
 			NULL,
 			'$patientser',
+			'$cronlogser',
             '$sourcedbser',
 			'$sourceuid',
 			'$aliasexpressionser',
@@ -1238,6 +1266,7 @@ sub updateDatabase
 	my $state				= $appointment->getApptState();
 	my $actualstartdate		= $appointment->getApptActualStartDate();
 	my $actualenddate		= $appointment->getApptActualEndDate();
+	my $cronlogser 			= $appointment->getApptCronLogSer();
 
 	my $update_sql = "
 
@@ -1253,7 +1282,8 @@ sub updateDatabase
             ActualEndDate           = '$actualenddate',
             PrioritySerNum          = '$priorityser',
             DiagnosisSerNum         = '$diagnosisser',
-            ReadStatus              = 0
+            ReadStatus              = 0,
+            CronLogSerNum 			= '$cronlogser'
 		WHERE
 			AppointmentAriaSer	    = '$sourceuid'
         AND SourceDatabaseSerNum    = '$sourcedbser'
@@ -1289,6 +1319,7 @@ sub compareWith
 	my $SState		        = $SuspectAppt->getApptState();
 	my $SActualStartDate	= $SuspectAppt->getApptActualStartDate();
     my $SActualEndDate	    = $SuspectAppt->getApptActualEndDate();
+    my $SCronLogSer		    = $SuspectAppt->getApptCronLogSer();
 
 	# Original Appointment...
 	my $OAliasExpressionSer	= $OriginalAppt->getApptAliasExpressionSer();
@@ -1300,6 +1331,7 @@ sub compareWith
 	my $OState		        = $OriginalAppt->getApptState();
 	my $OActualStartDate	= $OriginalAppt->getApptActualStartDate();
 	my $OActualEndDate	    = $OriginalAppt->getApptActualEndDate();
+	my $OCronLogSer		    = $OriginalAppt->getApptCronLogSer();
 
 	# go through each parameter
 	
@@ -1417,6 +1449,11 @@ sub compareWith
 		print "Appointment Actual Scheduled End Date has changed from '$OActualEndDate' to '$SActualEndDate'\n";
 		my $updatedEDT = $UpdatedAppt->setApptActualEndDate($SActualEndDate); # update end datetime
 		print "Will update database entry to '$updatedEDT'.\n";
+	}
+	 if ($SCronLogSer ne $OCronLogSer) {
+		print "Appointment Cron Log Serial has changed from '$OCronLogSer' to '$SCronLogSer'\n";
+		my $updatedCronLogSer = $UpdatedAppt->setApptCronLogSer($SCronLogSer); # update serial
+		print "Will update database entry to '$updatedCronLogSer'.\n";
 	}
 
 
