@@ -49,6 +49,7 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.email.add',
 	'opalAdmin.controllers.email.edit',
 	'opalAdmin.controllers.email.delete',
+	'opalAdmin.controllers.email.log',
 	'opalAdmin.controllers.questionnaire',
 	'opalAdmin.controllers.questionnaire.add',
 	'opalAdmin.controllers.questionnaire.edit',
