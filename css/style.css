@@ -1308,6 +1308,55 @@ img {
   vertical-align: middle;
 }
 
+.list-logs {
+  margin-bottom: 10px;
+}
+
+.list-logs .btn {
+    padding: 8px 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    box-shadow: rgba(71, 71, 71, 0.6) 0px 3px 12px -5px;
+    -webkit-transition: all .3s ease-out;
+    -moz-transition: all .3s ease-out;
+    -ms-transition: all .3s ease-out;
+    -o-transition: all .3s ease-out;
+    transition: all .3s ease-out;
+}
+ 
+.list-logs .btn:focus,
+.list-logs .btn:active:focus,
+.list-logs .btn.active:focus {
+    outline: 0 none;
+}
+ 
+.list-logs .btn-default {
+    background: #fffff4;
+    color: #563d7c;
+    font-size: 16px;
+}
+
+.list-logs .btn-default:hover {
+  background: #563d7c;
+  color: #fffff4;
+}
+
+.list-logs .btn-default.disabled:focus,
+.list-logs .btn-default.disabled:hover {
+  background: #fffff4;
+  color: #563d7c;
+}
+ 
+.list-logs .btn-default:active,
+.list-logs .btn-default.active,
+.list-logs .btn-default.active:focus,
+.list-logs .btn-default.active:hover,
+.list-logs .open > .dropdown-toggle.btn-default {
+    background: #563d7c;
+    color: #fffff4;
+}
+
+
 /* 
  * FOOTER 
  */
@@ -1644,7 +1693,6 @@ footer {
   .operations {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
   }
 
   .modal-header .modal-title {

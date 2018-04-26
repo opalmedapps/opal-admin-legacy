@@ -4,8 +4,8 @@
 
 	// Retrieve FORM params
 	$callback = $_GET['callback'];
-	$serial = $_GET['serial'];
-	$type = $_GET['type'];
+	$serial = ( $_GET['serial'] === 'undefined' ) ? null : $_GET['serial'];
+	$type = ( $_GET['type'] === 'undefined' ) ? null : $_GET['type'];
 
 	$alias = new Alias; // Object
 

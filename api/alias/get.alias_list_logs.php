@@ -5,7 +5,7 @@
 	// Retrieve FORM params
 	$callback = $_GET['callback'];
 	$serials = json_decode($_GET['serials']);
-	$type = $_GET['type'];
+	$type = ( $_GET['type'] === 'undefined' ) ? null : $_GET['type'];
 	
 
 	$alias = new Alias; // Object
