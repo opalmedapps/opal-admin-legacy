@@ -974,7 +974,52 @@ class LegacyQuestionnaire {
             $sql = null;
             // get all logs for all legacy questionnaires
             if (!$serial) {
+                $sql = "
+                    SELECT DISTINCT
+                        lqmh.CronLogSerNum,
+                        COUNT(lqmh.CronLogSerNum),
+                        cl.CronDateTime,
+                        qc.QuestionnaireName_EN
+                    FROM
+                        QuestionnaireMH lqmh,
+                        CronLog cl,
+                        QuestionnaireControl qc
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = lqmh.CronLogSerNum
+                    AND lqmh.CronLogSerNum IS NOT NULL
+                    AND lqmh.QuestionnaireControlSerNum = qc.QuestionnaireControlSerNum
+                    GROUP BY
+                        lqmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC 
+                ";
 
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                $legacyQuestionnaireSeries = array();
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $seriesName = $data[3];
+                    $legacyQuestionnaireDetail = array (
+                        'x' => $data[2],
+                        'y' => intval($data[1]),
+                        'cron_serial' => $data[0]
+                    );
+                    if(!isset($legacyQuestionnaireSeries[$seriesName])) {
+                        $legacyQuestionnaireSeries[$seriesName] = array(
+                            'name'  => $seriesName,
+                            'data'  => array()
+                        );
+                    }
+                    array_push($legacyQuestionnaireSeries[$seriesName]['data'], $legacyQuestionnaireDetail);
+                }
+
+                foreach ($legacyQuestionnaireSeries as $seriesName => $series) {
+                    array_push($legacyQuestionnaireLogs, $series);
+                }
 
             }
             // get logs for specific legacy questionnaire

@@ -328,7 +328,29 @@
 
             $sql = null;
             if (!$serial) {
-
+            	 $sql = "
+                    SELECT DISTINCT 
+                        emmh.CronLogSerNum,
+                        COUNT(emmh.CronLogSerNum),
+                        cl.CronDateTime,
+                        emt.EmailTypeName
+                    FROM
+                        EmailLogMH emmh,
+                        CronLog cl,
+                        EmailControl emc,
+                        EmailType emt
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = emmh.CronLogSerNum
+                    AND emmh.CronLogSerNum IS NOT NULL
+                    AND emmh.EmailControlSerNum = emc.EmailControlSerNum
+                    AND emc.EmailTypeSerNum = emt.EmailTypeSerNum
+                    GROUP BY 
+                        emmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC
+                ";
 
             }
             else {

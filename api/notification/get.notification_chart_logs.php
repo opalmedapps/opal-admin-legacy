@@ -4,7 +4,7 @@
 
 	// Retrieve FORM params
 	$callback = $_GET['callback'];
-	$serial = $_GET['serial'];
+	$serial = ( $_GET['serial'] === 'undefined' ) ? null : $_GET['serial'];
 
 	$notification = new Notification; // Object
 

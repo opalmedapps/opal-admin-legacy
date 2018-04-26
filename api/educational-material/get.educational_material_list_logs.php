@@ -5,12 +5,11 @@
 	// Retrieve FORM params
 	$callback = $_GET['callback'];
 	$serials = json_decode($_GET['serials']);
-	
 
 	$eduMat = new EduMaterial; // Object
 
 	// Call function
-	$educationalMaterialLogs = $eduMat->getEducationalMaterialListLogs($serials, $type);
+	$educationalMaterialLogs = $eduMat->getEducationalMaterialListLogs($serials);
 
 	// // Callback to http request
 	print $callback.'('.json_encode($educationalMaterialLogs).')';

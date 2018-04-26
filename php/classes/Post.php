@@ -579,8 +579,140 @@ class Post {
             $sql = null;
             // get all logs for all aliases
             if (!$serial and !$type) {
+                $postSeries = array();
 
+                /* ANNOUNCEMENTS */
+                $sql = "
+                    SELECT DISTINCT
+                        anmh.CronLogSerNum,
+                        COUNT(anmh.CronLogSerNum),
+                        cl.CronDateTime,
+                        pc.PostName_EN
+                    FROM
+                        AnnouncementMH anmh,
+                        CronLog cl,
+                        PostControl pc
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = anmh.CronLogSerNum
+                    AND anmh.CronLogSerNum IS NOT NULL
+                    AND anmh.PostControlSerNum = pc.PostControlSerNum
+                    GROUP BY
+                        anmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC
+                ";
 
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $seriesName = $data[3];
+                    $postDetail = array (
+                        'x' => $data[2],
+                        'y' => intval($data[1]),
+                        'cron_serial' => $data[0]
+                    );
+                    if(!isset($postSeries[$seriesName])) {
+                        $postSeries[$seriesName] = array(
+                            'name'  => $seriesName,
+                            'data'  => array()
+                        );
+                    }
+                    array_push($postSeries[$seriesName]['data'], $postDetail);
+                }
+
+                /* TX TEAM MESSAGES */
+                $sql = "
+                    SELECT DISTINCT
+                        ttmmh.CronLogSerNum,
+                        COUNT(ttmmh.CronLogSerNum),
+                        cl.CronDateTime,
+                        pc.PostName_EN
+                    FROM
+                        TxTeamMessageMH ttmmh,
+                        CronLog cl,
+                        PostControl pc
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = ttmmh.CronLogSerNum
+                    AND ttmmh.CronLogSerNum IS NOT NULL
+                    AND ttmmh.PostControlSerNum = pc.PostControlSerNum
+                    GROUP BY
+                        ttmmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC
+                ";
+
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $seriesName = $data[3];
+                    $postDetail = array (
+                        'x' => $data[2],
+                        'y' => intval($data[1]),
+                        'cron_serial' => $data[0]
+                    );
+                    if(!isset($postSeries[$seriesName])) {
+                        $postSeries[$seriesName] = array(
+                            'name'  => $seriesName,
+                            'data'  => array()
+                        );
+                    }
+                    array_push($postSeries[$seriesName]['data'], $postDetail);
+                }
+
+                /* P4P */
+                $sql = "
+                    SELECT DISTINCT
+                        pfpmh.CronLogSerNum,
+                        COUNT(pfpmh.CronLogSerNum),
+                        cl.CronDateTime,
+                        pc.PostName_EN
+                    FROM
+                        PatientsForPatientsMH pfpmh,
+                        CronLog cl,
+                        PostControl pc
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = pfpmh.CronLogSerNum
+                    AND pfpmh.CronLogSerNum IS NOT NULL
+                    AND pfpmh.PostControlSerNum = pc.PostControlSerNum
+                    GROUP BY
+                        pfpmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC
+                ";
+
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $seriesName = $data[3];
+                    $postDetail = array (
+                        'x' => $data[2],
+                        'y' => intval($data[1]),
+                        'cron_serial' => $data[0]
+                    );
+                    if(!isset($postSeries[$seriesName])) {
+                        $postSeries[$seriesName] = array(
+                            'name'  => $seriesName,
+                            'data'  => array()
+                        );
+                    }
+                    array_push($postSeries[$seriesName]['data'], $postDetail);
+                }
+
+                foreach ($postSeries as $seriesName => $series) {
+                    array_push($postLogs, $series);
+                }
             }
             // get logs for specific alias
             else {
@@ -699,7 +831,7 @@ class Post {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "";
-            if ($type == 'Announcement') {
+            if (!$type) {
                 $sql = "
                     SELECT DISTINCT
                         pc.PostName_EN,
@@ -708,7 +840,8 @@ class Post {
                         anmh.PatientSerNum,
                         anmh.DateAdded,
                         anmh.ReadStatus,
-                        anmh.ModificationAction
+                        anmh.ModificationAction,
+                        pc.PostType
                     FROM
                         AnnouncementMH anmh,
                         PostControl pc 
@@ -716,9 +849,26 @@ class Post {
                         pc.PostControlSerNum = anmh.PostControlSerNum
                     AND anmh.CronLogSerNum IN ($serials)
                 ";
-            } 
-            else if ($type == "Treatment Team Message") {
-                 $sql = "
+
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $logDetails = array(
+                        'post_control_name'     => $data[0],
+                        'revision'              => $data[1],
+                        'cron_serial'           => $data[2],
+                        'patient_serial'        => $data[3],
+                        'date_added'            => $data[4],
+                        'read_status'           => $data[5],
+                        'mod_action'            => $data[6],
+                        'type'                  => $data[7]
+                    );
+                    array_push($postLogs, $logDetails);
+                }
+
+                $sql = "
                     SELECT DISTINCT
                         pc.PostName_EN,
                         ttmmh.TxTeamMessageRevSerNum,
@@ -726,7 +876,8 @@ class Post {
                         ttmmh.PatientSerNum,
                         ttmmh.DateAdded,
                         ttmmh.ReadStatus,
-                        ttmmh.ModificationAction
+                        ttmmh.ModificationAction,
+                        pc.PostType
                     FROM
                         TxTeamMessageMH ttmmh,
                         PostControl pc 
@@ -734,9 +885,26 @@ class Post {
                         pc.PostControlSerNum = ttmmh.PostControlSerNum
                     AND ttmmh.CronLogSerNum IN ($serials)
                 ";
-            }
-            else if ($type == "Patients for Patients") {
-                 $sql = "
+
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $logDetails = array(
+                        'post_control_name'     => $data[0],
+                        'revision'              => $data[1],
+                        'cron_serial'           => $data[2],
+                        'patient_serial'        => $data[3],
+                        'date_added'            => $data[4],
+                        'read_status'           => $data[5],
+                        'mod_action'            => $data[6],
+                        'type'                  => $data[7]
+                    );
+                    array_push($postLogs, $logDetails);
+                }
+
+                $sql = "
                     SELECT DISTINCT
                         pc.PostName_EN,
                         pfpmh.PatientsForPatientsRevSerNum,
@@ -752,23 +920,98 @@ class Post {
                         pc.PostControlSerNum = pfpmh.PostControlSerNum
                     AND pfpmh.CronLogSerNum IN ($serials)
                 ";
+
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $logDetails = array(
+                        'post_control_name'     => $data[0],
+                        'revision'              => $data[1],
+                        'cron_serial'           => $data[2],
+                        'patient_serial'        => $data[3],
+                        'date_added'            => $data[4],
+                        'read_status'           => $data[5],
+                        'mod_action'            => $data[6],
+                        'type'                  => $data[7]
+                    );
+                    array_push($postLogs, $logDetails);
+                }
+
             }
-            
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
+            else {
+                if ($type == 'Announcement') {
+                    $sql = "
+                        SELECT DISTINCT
+                            pc.PostName_EN,
+                            anmh.AnnouncementRevSerNum,
+                            anmh.CronLogSerNum,
+                            anmh.PatientSerNum,
+                            anmh.DateAdded,
+                            anmh.ReadStatus,
+                            anmh.ModificationAction
+                        FROM
+                            AnnouncementMH anmh,
+                            PostControl pc 
+                        WHERE
+                            pc.PostControlSerNum = anmh.PostControlSerNum
+                        AND anmh.CronLogSerNum IN ($serials)
+                    ";
+                } 
+                else if ($type == "Treatment Team Message") {
+                    $sql = "
+                        SELECT DISTINCT
+                            pc.PostName_EN,
+                            ttmmh.TxTeamMessageRevSerNum,
+                            ttmmh.CronLogSerNum,
+                            ttmmh.PatientSerNum,
+                            ttmmh.DateAdded,
+                            ttmmh.ReadStatus,
+                            ttmmh.ModificationAction
+                        FROM
+                            TxTeamMessageMH ttmmh,
+                            PostControl pc 
+                        WHERE
+                            pc.PostControlSerNum = ttmmh.PostControlSerNum
+                        AND ttmmh.CronLogSerNum IN ($serials)
+                    ";
+                }
+                else if ($type == "Patients for Patients") {
+                    $sql = "
+                        SELECT DISTINCT
+                            pc.PostName_EN,
+                            pfpmh.PatientsForPatientsRevSerNum,
+                            pfpmh.CronLogSerNum,
+                            pfpmh.PatientSerNum,
+                            pfpmh.DateAdded,
+                            pfpmh.ReadStatus,
+                            pfpmh.ModificationAction
+                        FROM
+                            PatientsForPatientsMH pfpmh,
+                            PostControl pc 
+                        WHERE
+                            pc.PostControlSerNum = pfpmh.PostControlSerNum
+                        AND pfpmh.CronLogSerNum IN ($serials)
+                    ";
+                }
+                
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
 
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-                $logDetails = array(
-                    'post_control_name'     => $data[0],
-                    'revision'              => $data[1],
-                    'cron_serial'           => $data[2],
-                    'patient_serial'        => $data[3],
-                    'date_added'            => $data[4],
-                    'read_status'           => $data[5],
-                    'mod_action'            => $data[6]
-                );
-                array_push($postLogs, $logDetails);
+                    $logDetails = array(
+                        'post_control_name'     => $data[0],
+                        'revision'              => $data[1],
+                        'cron_serial'           => $data[2],
+                        'patient_serial'        => $data[3],
+                        'date_added'            => $data[4],
+                        'read_status'           => $data[5],
+                        'mod_action'            => $data[6]
+                    );
+                    array_push($postLogs, $logDetails);
+                }
             }
 
             return $postLogs;
