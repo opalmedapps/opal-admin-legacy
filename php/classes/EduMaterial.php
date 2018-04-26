@@ -1222,7 +1222,52 @@ class EduMaterial {
             $sql = null;
             // get all logs for all aliases
             if (!$serial) {
+                $sql = "
+                    SELECT DISTINCT
+                        emmh.CronLogSerNum,
+                        COUNT(emmh.CronLogSerNum),
+                        cl.CronDateTime,
+                        emc.Name_EN
+                    FROM
+                        EducationalMaterialMH emmh,
+                        CronLog cl,
+                        EducationalMaterialControl emc
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = emmh.CronLogSerNum
+                    AND emmh.CronLogSerNum IS NOT NULL
+                    AND emmh.EducationalMaterialControlSerNum = emc.EducationalMaterialControlSerNum
+                    GROUP BY
+                        emmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC 
+                ";
 
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                $eduMatSeries = array();
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $seriesName = $data[3];
+                    $educationalMaterialDetail = array (
+                        'x' => $data[2],
+                        'y' => intval($data[1]),
+                        'cron_serial' => $data[0]
+                    );
+                    if(!isset($eduMatSeries[$seriesName])) {
+                        $eduMatSeries[$seriesName] = array(
+                            'name'  => $seriesName,
+                            'data'  => array()
+                        );
+                    }
+                    array_push($eduMatSeries[$seriesName]['data'], $educationalMaterialDetail);
+                }
+
+                foreach ($eduMatSeries as $seriesName => $series) {
+                    array_push($educationalMaterialLogs, $series);
+                }
 
             }
             // get logs for specific alias

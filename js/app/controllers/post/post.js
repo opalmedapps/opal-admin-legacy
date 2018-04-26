@@ -39,6 +39,8 @@ angular.module('opalAdmin.controllers.post', ['ngAnimate', 'ngSanitize', 'ui.boo
 
 		$scope.changesMade = false;
 
+		$scope.detailView = "list";
+
 		// Templates for post table
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editPost(row.entity)">' +
@@ -122,14 +124,6 @@ angular.module('opalAdmin.controllers.post', ['ngAnimate', 'ngSanitize', 'ui.boo
 
 		// Initialize an object for deleting post
 		$scope.postToDelete = {};
-
-		// Call our API to get the list of existing posts
-		postCollectionService.getPosts().then(function (response) {
-			// Assign value
-			$scope.postList = response.data;
-		}).catch(function(response) {
-			console.error('Error occurred getting posts:', response.status, response.data);
-		});
 
 		// When this function is called, we set the post flags to checked 
 		// or unchecked based on value in the argument
@@ -227,6 +221,153 @@ angular.module('opalAdmin.controllers.post', ['ngAnimate', 'ngSanitize', 'ui.boo
 					}
 				});
 			}
+		};
+
+		$scope.switchDetailView = function (view) {
+			// only switch when there's no changes that have been made
+			if (!$scope.changesMade) {
+				$scope.detailView = view;
+			}
+		}
+
+		$scope.$watch('detailView', function (view) {
+			if (view == 'list') {
+				// Call our API to get the list of existing posts
+				postCollectionService.getPosts().then(function (response) {
+					// Assign value
+					$scope.postList = response.data;
+				}).catch(function(response) {
+					console.error('Error occurred getting posts:', response.status, response.data);
+				});
+				if ($scope.postListLogs.length) {
+					$scope.postListLogs = [];
+					$scope.gridApiLog.grid.refresh();
+				}
+			}	
+			else if (view == 'chart') {
+				// Call our API to get post logs
+				postCollectionService.getPostChartLogs().then(function (response) {
+					$scope.postChartLogs = $scope.chartConfig.series = response.data;
+					angular.forEach($scope.postChartLogs, function(serie) {
+						angular.forEach(serie.data, function(log) {
+							log.x = new Date(log.x);
+						});
+					});
+				}).catch(function(response) {
+					console.error('Error occurred getting post logs:', response.status, response.data);
+				});
+			}	
+		}, true);
+
+		var chartConfig = $scope.chartConfig = { 
+		    chart: {
+		        type: 'spline',
+		        zoomType: 'x',
+		        className: 'logChart'
+		    },
+		    title: {
+		        text: 'All post logs'
+		    },
+		    subtitle: {
+		        text: 'Highlight the plot area to zoom in and show detailed data'
+		    },
+		    xAxis: {
+		        type: 'datetime',
+		        title: {
+		            text: 'Datetime sent'
+		        },
+		        events: {
+		        	setExtremes: function (selection) {
+		        		if (selection.min !== undefined && selection.max !== undefined) {
+		        			var cronSerials = new Set();
+		        			var allSeries = selection.target.series; // get all series
+		     				angular.forEach(allSeries, function (series) {
+		     					// check if series is visible (i.e. not disabled via the legend)
+		     					if (series.visible) {
+		     						var points = series.points;
+		     						angular.forEach(points, function (point) {
+		     							timeInMilliSeconds = point.x.getTime();
+		     							if (timeInMilliSeconds >= selection.min && timeInMilliSeconds <= selection.max) {
+		     								if (!cronSerials.has(point.cron_serial)) {
+		     									cronSerials.add(point.cron_serial);
+		     								}
+		     							}
+		     						});
+		     					}
+		     				});
+		     				// convert set to array 
+		     				cronSerials = Array.from(cronSerials);
+		     				postCollectionService.getPostListLogs(cronSerials, $scope.currentPost.type).then(function(response){ 
+	        					$scope.postListLogs = response.data;
+	        				});
+		        		}
+		        		else {
+		        			$scope.postListLogs = [];
+	        				$scope.gridApiLog.grid.refresh();
+
+		        		}
+		        	}
+		        }
+		    },
+		    yAxis: {
+		        title: {
+		            text: 'Number of posts published'
+		        },
+		        tickInterval: 1,
+		        min: 0
+		    },
+		    tooltip: {
+		        headerFormat: '<b>{series.name}</b><br>',
+		        pointFormat: '{point.x:%e. %b}: {point.y:.2f} m'
+		    },
+		    plotOptions: {
+		        spline: {
+		            marker: {
+		                enabled: true
+		            }
+		        },
+		        series: {
+		        	allowPointSelect: true,
+		        	point: {
+		        		events: {
+		        			select: function(point) {
+		        				var cronLogSerNum = [point.target.cron_serial];
+		        				postCollectionService.getPostListLogs(cronLogSerNum, $scope.currentPost.type).then(function(response){ 
+		        					$scope.postListLogs = response.data;
+		        				});
+		        			},
+		        			unselect: function (point) {
+		        				$scope.postListLogs = [];
+		        				$scope.gridApiLog.grid.refresh();
+
+		        			}
+		        		}
+		        	}
+		        }
+			},
+		    series: []
+		};
+
+		$scope.postListLogs = [];
+		// Table options for post logs
+		$scope.gridLogOptions = {
+			data: 'postListLogs',
+			columnDefs: [
+				{ field: 'post_control_name', displayName: 'Post' },
+				{ field: 'type', displayName: 'Type' },
+				{ field: 'revision', displayName: 'Revision No.' },
+				{ field: 'cron_serial', displayName: 'CronLogSer' },
+				{ field: 'patient_serial', displayName: 'PatientSer' },
+				{ field: 'read_status', displayName: 'Read Status' },
+				{ field: 'date_added', displayName: 'Datetime Sent' },
+				{ field: 'mod_action', displayName: 'Action' }
+			],
+			rowHeight: 30,
+			useExternalFiltering: true,
+			enableColumnResizing: true,
+			onRegisterApi: function (gridApi) {
+				$scope.gridApiLog = gridApi;
+			},
 		};
 
 		// Initialize a scope variable for a selected post

@@ -18,6 +18,8 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 			$scope.gridApi.grid.refresh();
 		};
 
+		$scope.detailView = "list";
+
 		// Templates for the table
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents"' +
 			'ng-click="grid.appScope.editEduMat(row.entity)"> ' +
@@ -91,29 +93,6 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 
 		// Initialize an object for deleting material
 		$scope.eduMatToDelete = {};
-
-		// Call our API to get the list of existing material
-		educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
-
-			var educationalMaterials = response.data;
-			// Assign value
-			for (var i = 0; i < educationalMaterials.length; i++) {
-				if (educationalMaterials[i].parentFlag == 1) {
-					educationalMaterials[i].subGridOptions = {
-						columnDefs: [
-							{ field: 'name_EN', displayName: 'Name (EN)', width: '355' },
-							{ field: 'type_EN', displayName: 'Type (EN)', width: '145' }
-						],
-						data: educationalMaterials[i].tocs
-					};
-					$scope.eduMatList.push(educationalMaterials[i]);
-				}
-			}
-
-		}).catch(function(response) {
-			console.error('Error occurred getting educational material list:', response.status, response.data);
-		});
-
 
 		$scope.bannerMessage = "";
 		// Function to show page banner 
@@ -209,6 +188,166 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 					}
 				});
 			}
+		};
+
+		$scope.switchDetailView = function (view) {
+			// only switch when there's no changes that have been made
+			if (!$scope.changesMade) {
+				$scope.detailView = view;
+			}
+		}
+
+		$scope.$watch('detailView', function (view) {
+			if (view == 'list') {
+				// Call our API to get the list of existing material
+				educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+
+					var educationalMaterials = response.data;
+					// Assign value
+					for (var i = 0; i < educationalMaterials.length; i++) {
+						if (educationalMaterials[i].parentFlag == 1) {
+							educationalMaterials[i].subGridOptions = {
+								columnDefs: [
+									{ field: 'name_EN', displayName: 'Name (EN)', width: '355' },
+									{ field: 'type_EN', displayName: 'Type (EN)', width: '145' }
+								],
+								data: educationalMaterials[i].tocs
+							};
+							$scope.eduMatList.push(educationalMaterials[i]);
+						}
+					}
+
+				}).catch(function(response) {
+					console.error('Error occurred getting educational material list:', response.status, response.data);
+				});
+				if ($scope.educationalMaterialListLogs.length) {
+					$scope.educationalMaterialListLogs = [];
+					$scope.gridApiLog.grid.refresh();
+				}
+			}	
+			else if (view == 'chart') {
+				// Call our API to get educational material logs
+				educationalMaterialCollectionService.getEducationalMaterialChartLogs().then(function (response) {
+					$scope.educationalMaterialChartLogs = $scope.chartConfig.series = response.data;
+					angular.forEach($scope.educationalMaterialChartLogs, function(serie) {
+						angular.forEach(serie.data, function(log) {
+							log.x = new Date(log.x);
+						});
+					});
+				}).catch(function(response) {
+					console.error('Error occurred getting educational material logs:', response.status, response.data);
+				});
+			}	
+		}, true);
+
+		var chartConfig = $scope.chartConfig = { 
+		    chart: {
+		        type: 'spline',
+		        zoomType: 'x',
+		        className: 'logChart'
+		    },
+		    title: {
+		        text: 'All educational material logs'
+		    },
+		    subtitle: {
+		        text: 'Highlight the plot area to zoom in and show detailed data'
+		    },
+		    xAxis: {
+		        type: 'datetime',
+		        title: {
+		            text: 'Datetime sent'
+		        },
+		        events: {
+		        	setExtremes: function (selection) {
+		        		if (selection.min !== undefined && selection.max !== undefined) {
+		        			var cronSerials = new Set();
+		        			var allSeries = selection.target.series; // get all series
+		     				angular.forEach(allSeries, function (series) {
+		     					// check if series is visible (i.e. not disabled via the legend)
+		     					if (series.visible) {
+		     						var points = series.points;
+		     						angular.forEach(points, function (point) {
+		     							timeInMilliSeconds = point.x.getTime();
+		     							if (timeInMilliSeconds >= selection.min && timeInMilliSeconds <= selection.max) {
+		     								if (!cronSerials.has(point.cron_serial)) {
+		     									cronSerials.add(point.cron_serial);
+		     								}
+		     							}
+		     						});
+		     					}
+		     				});
+		     				// convert set to array 
+		     				cronSerials = Array.from(cronSerials);
+		     				educationalMaterialCollectionService.getEducationalMaterialListLogs(cronSerials).then(function(response){ 
+	        					$scope.educationalMaterialListLogs = response.data;
+	        				});
+		        		}
+		        		else {
+		        			$scope.educationalMaterialListLogs = [];
+	        				$scope.gridApiLog.grid.refresh();
+
+		        		}
+		        	}
+		        }
+		    },
+		    yAxis: {
+		        title: {
+		            text: 'Number of posts published'
+		        },
+		        tickInterval: 1,
+		        min: 0
+		    },
+		    tooltip: {
+		        headerFormat: '<b>{series.name}</b><br>',
+		        pointFormat: '{point.x:%e. %b}: {point.y:.2f} m'
+		    },
+		    plotOptions: {
+		        spline: {
+		            marker: {
+		                enabled: true
+		            }
+		        },
+		        series: {
+		        	allowPointSelect: true,
+		        	point: {
+		        		events: {
+		        			select: function(point) {
+		        				var cronLogSerNum = [point.target.cron_serial];
+		        				educationalMaterialCollectionService.getEducationalMaterialListLogs(cronLogSerNum).then(function(response){ 
+		        					$scope.educationalMaterialListLogs = response.data;
+		        				});
+		        			},
+		        			unselect: function (point) {
+		        				$scope.educationalMaterialListLogs = [];
+		        				$scope.gridApiLog.grid.refresh();
+
+		        			}
+		        		}
+		        	}
+		        }
+			},
+		    series: []
+		};
+
+		$scope.educationalMaterialListLogs = [];
+		// Table options for educational material logs
+		$scope.gridLogOptions = {
+			data: 'educationalMaterialListLogs',
+			columnDefs: [
+				{ field: 'material_name', displayName: 'Name' },
+				{ field: 'revision', displayName: 'Revision No.' },
+				{ field: 'cron_serial', displayName: 'CronLogSer' },
+				{ field: 'patient_serial', displayName: 'PatientSer' },
+				{ field: 'read_status', displayName: 'Read Status' },
+				{ field: 'date_added', displayName: 'Datetime Sent' },
+				{ field: 'mod_action', displayName: 'Action' }
+			],
+			rowHeight: 30,
+			useExternalFiltering: true,
+			enableColumnResizing: true,
+			onRegisterApi: function (gridApi) {
+				$scope.gridApiLog = gridApi;
+			},
 		};
 
 		// Initialize a scope variable for a selected educational material
