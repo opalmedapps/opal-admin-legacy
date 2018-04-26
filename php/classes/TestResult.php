@@ -926,6 +926,54 @@ class TestResult {
             // get all logs for all test results
             if (!$serial) {
 
+                $sql = "
+                    SELECT DISTINCT
+                        trmh.CronLogSerNum,
+                        COUNT(trmh.CronLogSerNum),
+                        cl.CronDateTime,
+                        trc.Name_EN
+                    FROM
+                        TestResultMH trmh,
+                        TestResultExpression tre,
+                        CronLog cl,
+                        TestResultControl trc
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = trmh.CronLogSerNum
+                    AND trmh.CronLogSerNum IS NOT NULL
+                    AND trmh.TestResultExpressionSerNum = tre.TestResultExpressionSerNum
+                    AND tre.TestResultControlSerNum = trc.TestResultControlSerNum
+                    GROUP BY
+                        trmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC 
+                ";
+
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                $testResultSeries = array();
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $seriesName = $data[3];
+                    $testResultDetail = array (
+                        'x' => $data[2],
+                        'y' => intval($data[1]),
+                        'cron_serial' => $data[0]
+                    );
+                    if(!isset($testResultSeries[$seriesName])) {
+                        $testResultSeries[$seriesName] = array(
+                            'name'  => $seriesName,
+                            'data'  => array()
+                        );
+                    }
+                    array_push($testResultSeries[$seriesName]['data'], $testResultDetail);
+                }
+
+                foreach ($testResultSeries as $seriesName => $series) {
+                    array_push($testResultLogs, $series);
+                }
 
             }
             // get logs for specific test results

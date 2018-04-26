@@ -34,7 +34,6 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 		$scope.currentAlias = {};
 
 		$scope.detailView = "list";
-		var firstChartView = false;
 
 		$scope.changesMade = false;
 

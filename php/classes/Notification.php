@@ -327,8 +327,29 @@ class Notification {
 
             $sql = null;
             if (!$serial) {
-
-
+                $sql = "
+                    SELECT DISTINCT 
+                        ntmh.CronLogSerNum,
+                        COUNT(ntmh.CronLogSerNum),
+                        cl.CronDateTime,
+                        ntt.NotificationTypeName
+                    FROM
+                        NotificationMH ntmh,
+                        CronLog cl,
+                        NotificationControl ntc,
+                        NotificationTypes ntt
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = ntmh.CronLogSerNum
+                    AND ntmh.CronLogSerNum IS NOT NULL
+                    AND ntmh.NotificationControlSerNum = ntc.NotificationControlSerNum
+                    AND ntc.NotificationTypeSerNum = ntt.NotificationTypeSerNum
+                    GROUP BY 
+                        ntmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC
+                ";
             }
             else {
                 $sql = "
