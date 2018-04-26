@@ -1006,10 +1006,151 @@ class Alias {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-            $sql = null;
             // get all logs for all aliases
             if (!$serial and !$type) {
+                $aliasSeries = array();
 
+                /* APPOINTMENTS */
+                $sql = "
+                    SELECT DISTINCT
+                        al.AliasName_EN,
+                        apmh.CronLogSerNum,
+                        COUNT(apmh.CronLogSerNum),
+                        cl.CronDateTime
+                    FROM 
+                        Alias al,
+                        AliasExpression ae,
+                        AppointmentMH apmh,
+                        CronLog cl
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = apmh.CronLogSerNum
+                    AND apmh.CronLogSerNum IS NOT NULL
+                    AND apmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
+                    AND ae.AliasSerNum = al.AliasSerNum
+                    GROUP BY 
+                        al.AliasName_EN,
+                        apmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC 
+                ";
+
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $seriesName = $data[0];
+                    $aliasDetail = array (
+                        'x' => $data[3],
+                        'y' => intval($data[2]),
+                        'cron_serial' => $data[1]
+                    );
+                    if(!isset($aliasSeries[$seriesName])) {
+                        $aliasSeries[$seriesName] = array(
+                            'name'  => $seriesName,
+                            'data'  => array()
+                        );
+                    }
+                    array_push($aliasSeries[$seriesName]['data'], $aliasDetail);
+                }
+
+                /* DOCUMENTS */
+                $sql = "
+                    SELECT DISTINCT
+                        al.AliasName_EN,
+                        docmh.CronLogSerNum,
+                        COUNT(docmh.CronLogSerNum),
+                        cl.CronDateTime
+                    FROM 
+                        Alias al,
+                        AliasExpression ae,
+                        DocumentMH docmh,
+                        CronLog cl
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = docmh.CronLogSerNum
+                    AND docmh.CronLogSerNum IS NOT NULL
+                    AND docmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
+                    AND ae.AliasSerNum = al.AliasSerNum
+                    GROUP BY 
+                        al.AliasName_EN,
+                        docmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC 
+                ";
+
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $seriesName = $data[0];
+                    $aliasDetail = array (
+                        'x' => $data[3],
+                        'y' => intval($data[2]),
+                        'cron_serial' => $data[1]
+                    );
+                    if(!isset($aliasSeries[$seriesName])) {
+                        $aliasSeries[$seriesName] = array(
+                            'name'  => $seriesName,
+                            'data'  => array()
+                        );
+                    }
+                    array_push($aliasSeries[$seriesName]['data'], $aliasDetail);
+                }
+
+                /* TASKS */
+                $sql = "
+                    SELECT DISTINCT
+                        al.AliasName_EN,
+                        tmh.CronLogSerNum,
+                        COUNT(tmh.CronLogSerNum),
+                        cl.CronDateTime
+                    FROM 
+                        Alias al,
+                        AliasExpression ae,
+                        TaskMH tmh,
+                        CronLog cl
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = tmh.CronLogSerNum
+                    AND tmh.CronLogSerNum IS NOT NULL
+                    AND tmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
+                    AND ae.AliasSerNum = al.AliasSerNum
+                    GROUP BY 
+                        al.AliasName_EN,
+                        tmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC 
+                ";
+
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $seriesName = $data[0];
+                    $aliasDetail = array (
+                        'x' => $data[3],
+                        'y' => intval($data[2]),
+                        'cron_serial' => $data[1]
+                    );
+                    if(!isset($aliasSeries[$seriesName])) {
+                        $aliasSeries[$seriesName] = array(
+                            'name'  => $seriesName,
+                            'data'  => array()
+                        );
+                    }
+                    array_push($aliasSeries[$seriesName]['data'], $aliasDetail);
+                }
+
+                foreach ($aliasSeries as $seriesName => $series) {
+                    array_push($aliasLogs, $series);
+                }
 
             }
             // get logs for specific alias
@@ -1134,7 +1275,142 @@ class Alias {
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            if ($type == 'Appointment') {
+            if (!$type) {
+                $sql = "
+                    SELECT DISTINCT 
+                        al.AliasType,
+                        ae.ExpressionName,
+                        ae.Description,
+                        apmh.AppointmentRevSerNum,
+                        apmh.CronLogSerNum,
+                        apmh.PatientSerNum,
+                        sd.SourceDatabaseName,
+                        apmh.AppointmentAriaSer,
+                        apmh.DateAdded,
+                        apmh.ReadStatus,
+                        apmh.ModificationAction
+                    FROM
+                        AppointmentMH apmh,
+                        AliasExpression ae,
+                        SourceDatabase sd,
+                        Alias al
+                    WHERE
+                        apmh.AliasExpressionSerNum  = ae.AliasExpressionSerNum
+                    AND ae.AliasSerNum              = al.AliasSerNum
+                    AND apmh.SourceDatabaseSerNum   = sd.SourceDatabaseSerNum
+                    AND apmh.CronLogSerNum          IN ($serials)
+                ";
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $logDetails = array (
+                        'type'                      => $data[0],
+                        'expression_name'           => $data[1],
+                        'expression_description'    => $data[2],
+                        'revision'                  => $data[3],
+                        'cron_serial'               => $data[4],
+                        'patient_serial'            => $data[5],
+                        'source_db'                 => $data[6],
+                        'source_uid'                => $data[7],
+                        'date_added'                => $data[8],
+                        'read_status'               => $data[9],
+                        'mod_action'                => $data[10]
+                    );
+                    array_push($aliasLogs, $logDetails);
+                }
+
+                $sql = "
+                    SELECT DISTINCT 
+                        al.AliasType,
+                        ae.ExpressionName,
+                        ae.Description,
+                        docmh.DocumentRevSerNum,
+                        docmh.CronLogSerNum,
+                        docmh.PatientSerNum,
+                        sd.SourceDatabaseName,
+                        docmh.DocumentId,
+                        docmh.DateAdded,
+                        docmh.ReadStatus,
+                        docmh.ModificationAction
+                    FROM
+                        DocumentMH docmh,
+                        AliasExpression ae,
+                        SourceDatabase sd,
+                        Alias al
+                    WHERE
+                        docmh.AliasExpressionSerNum     = ae.AliasExpressionSerNum
+                    AND ae.AliasSerNum                  = al.AliasSerNum
+                    AND docmh.SourceDatabaseSerNum      = sd.SourceDatabaseSerNum
+                    AND docmh.CronLogSerNum             IN ($serials)
+                ";
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $logDetails = array (
+                        'type'                      => $data[0],
+                        'expression_name'           => $data[1],
+                        'expression_description'    => $data[2],
+                        'revision'                  => $data[3],
+                        'cron_serial'               => $data[4],
+                        'patient_serial'            => $data[5],
+                        'source_db'                 => $data[6],
+                        'source_uid'                => $data[7],
+                        'date_added'                => $data[8],
+                        'read_status'               => $data[9],
+                        'mod_action'                => $data[10]
+                    );
+                    array_push($aliasLogs, $logDetails);
+                }
+
+                $sql = "
+                    SELECT DISTINCT 
+                        al.AliasType,
+                        ae.ExpressionName,
+                        ae.Description,
+                        tmh.TaskRevSerNum,
+                        tmh.CronLogSerNum,
+                        tmh.PatientSerNum,
+                        sd.SourceDatabaseName,
+                        tmh.TaskAriaSer,
+                        tmh.DateAdded,
+                        tmh.ModificationAction
+                    FROM
+                        TaskMH tmh,
+                        AliasExpression ae,
+                        SourceDatabase sd,
+                        Alias al
+                    WHERE
+                        tmh.AliasExpressionSerNum   = ae.AliasExpressionSerNum
+                    AND ae.AliasSerNum              = al.AliasSerNum
+                    AND tmh.SourceDatabaseSerNum    = sd.SourceDatabaseSerNum
+                    AND tmh.CronLogSerNum           IN ($serials)
+                ";
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $logDetails = array (
+                        'type'                      => $data[0],
+                        'expression_name'           => $data[1],
+                        'expression_description'    => $data[2],
+                        'revision'                  => $data[3],
+                        'cron_serial'               => $data[4],
+                        'patient_serial'            => $data[5],
+                        'source_db'                 => $data[6],
+                        'source_uid'                => $data[7],
+                        'date_added'                => $data[8],
+                        'read_status'               => 'N/A',
+                        'mod_action'                => $data[9]
+                    );
+                    array_push($aliasLogs, $logDetails);
+                }
+            }
+            else if ($type == 'Appointment') {
                 $sql = "
                     SELECT DISTINCT
                         ae.ExpressionName,
@@ -1275,7 +1551,7 @@ class Alias {
                     SELECT DISTINCT
                         ae.ExpressionName,
                         ae.Description,
-                        tmh.DocumentRevSerNum,
+                        tmh.TaskRevSerNum,
                         tmh.CronLogSerNum,
                         tmh.PatientSerNum,
                         sd.SourceDatabaseName,

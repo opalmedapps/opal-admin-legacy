@@ -115,7 +115,7 @@ angular.module('opalAdmin.controllers.alias.log', ['ngAnimate', 'ngSanitize', 'u
 			data: 'aliasListLogs',
 			columnDefs: [
 				{ field: 'expression_name', displayName: 'Clinical Code' },
-				{ field: 'expression_resource', displayName: 'Resource Description'},
+				{ field: 'expression_description', displayName: 'Resource Description'},
 				{ field: 'revision', displayName: 'Revision No.' },
 				{ field: 'cron_serial', displayName: 'CronLogSer' },
 				{ field: 'patient_serial', displayName: 'PatientSer' },
