@@ -228,7 +228,474 @@ class Cron {
 			return $e->getMessage();
 		}
 	}
+
+	/**
+     *
+     * Gets chart cron logs
+     *
+     * @return array $cronLogs : the cron logs for highcharts
+     */
+    public function getCronChartLogs () {
+        $cronLogs = array();
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			
+			// Go through each content type
+			
+			/* Appointments */
+			$appointmentSeries = array (
+				'name'	=> 'Appointment',
+				'data' 	=> array()
+			);
+
+			$sql = "
+				SELECT DISTINCT 
+                    apmh.CronLogSerNum,
+                    COUNT(apmh.CronLogSerNum),
+                    cl.CronDateTime
+                FROM
+                    AppointmentMH apmh,
+                    CronLog cl
+                WHERE
+                    cl.CronStatus = 'Started'
+                AND cl.CronLogSerNum = apmh.CronLogSerNum
+                AND apmh.CronLogSerNum IS NOT NULL
+                GROUP BY
+                    apmh.CronLogSerNum,
+                    cl.CronDateTime
+                ORDER BY 
+                    cl.CronDateTime ASC 
+			";
+
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $aliasDetail = array (
+                    'x' => $data[2],
+                    'y' => intval($data[1]),
+                    'cron_serial' => $data[0]
+                );
+                array_push($appointmentSeries['data'], $aliasDetail);
+            }
+
+            /* Documents */
+			$documentSeries = array (
+				'name'	=> 'Document',
+				'data' 	=> array()
+			);
+
+			$sql = "
+				SELECT DISTINCT 
+                    docmh.CronLogSerNum,
+                    COUNT(docmh.CronLogSerNum),
+                    cl.CronDateTime
+                FROM
+                    DocumentMH docmh,
+                    CronLog cl
+                WHERE
+                    cl.CronStatus = 'Started'
+                AND cl.CronLogSerNum = docmh.CronLogSerNum
+                AND docmh.CronLogSerNum IS NOT NULL
+                GROUP BY
+                    docmh.CronLogSerNum,
+                    cl.CronDateTime
+                ORDER BY 
+                    cl.CronDateTime ASC 
+			";
+
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $aliasDetail = array (
+                    'x' => $data[2],
+                    'y' => intval($data[1]),
+                    'cron_serial' => $data[0]
+                );
+                array_push($documentSeries['data'], $aliasDetail);
+            }
+
+            /* Tasks */
+			$taskSeries = array (
+				'name'	=> 'Task',
+				'data' 	=> array()
+			);
+
+			$sql = "
+				SELECT DISTINCT 
+                    tmh.CronLogSerNum,
+                    COUNT(tmh.CronLogSerNum),
+                    cl.CronDateTime
+                FROM
+                    TaskMH tmh,
+                    CronLog cl
+                WHERE
+                    cl.CronStatus = 'Started'
+                AND cl.CronLogSerNum = tmh.CronLogSerNum
+                AND tmh.CronLogSerNum IS NOT NULL
+                GROUP BY
+                    tmh.CronLogSerNum,
+                    cl.CronDateTime
+                ORDER BY 
+                    cl.CronDateTime ASC 
+			";
+
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $aliasDetail = array (
+                    'x' => $data[2],
+                    'y' => intval($data[1]),
+                    'cron_serial' => $data[0]
+                );
+                array_push($taskSeries['data'], $aliasDetail);
+            }
+
+            /* Announcements */
+			$announcementSeries = array (
+				'name'	=> 'Announcement',
+				'data' 	=> array()
+			);
+
+			$sql = "
+				SELECT DISTINCT
+                    anmh.CronLogSerNum,
+                    COUNT(anmh.CronLogSerNum),
+                    cl.CronDateTime
+                FROM
+                    AnnouncementMH anmh,
+                    CronLog cl
+                WHERE
+                    cl.CronStatus = 'Started'
+                AND cl.CronLogSerNum = anmh.CronLogSerNum
+                AND anmh.CronLogSerNum IS NOT NULL
+                GROUP BY
+                    anmh.CronLogSerNum,
+                    cl.CronDateTime
+                ORDER BY 
+                    cl.CronDateTime ASC  
+			";
+
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $postDetail = array (
+                    'x' => $data[2],
+                    'y' => intval($data[1]),
+                    'cron_serial' => $data[0]
+                );
+                array_push($announcementSeries['data'], $postDetail);
+            }
+
+            /* Treatment Team Messages */
+			$txTeamMessageSeries = array (
+				'name'	=> 'Treatment Team Message',
+				'data' 	=> array()
+			);
+
+			$sql = "
+				SELECT DISTINCT
+                    ttmmh.CronLogSerNum,
+                    COUNT(ttmmh.CronLogSerNum),
+                    cl.CronDateTime
+                FROM
+                    TxTeamMessageMH ttmmh,
+                    CronLog cl
+                WHERE
+                    cl.CronStatus = 'Started'
+                AND cl.CronLogSerNum = ttmmh.CronLogSerNum
+                AND ttmmh.CronLogSerNum IS NOT NULL
+                GROUP BY
+                    ttmmh.CronLogSerNum,
+                    cl.CronDateTime
+                ORDER BY 
+                    cl.CronDateTime ASC  
+			";
+
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $postDetail = array (
+                    'x' => $data[2],
+                    'y' => intval($data[1]),
+                    'cron_serial' => $data[0]
+                );
+                array_push($txTeamMessageSeries['data'], $postDetail);
+            }
+
+            /* Patents for patients */
+			$pfpSeries = array (
+				'name'	=> 'Patients for Patients',
+				'data' 	=> array()
+			);
+
+			$sql = "
+				SELECT DISTINCT
+                    pfpmh.CronLogSerNum,
+                    COUNT(pfpmh.CronLogSerNum),
+                    cl.CronDateTime
+                FROM
+                    PatientsForPatientsMH pfpmh,
+                    CronLog cl
+                WHERE
+                    cl.CronStatus = 'Started'
+                AND cl.CronLogSerNum = pfpmh.CronLogSerNum
+                AND pfpmh.CronLogSerNum IS NOT NULL
+                GROUP BY
+                    pfpmh.CronLogSerNum,
+                    cl.CronDateTime
+                ORDER BY 
+                    cl.CronDateTime ASC  
+			";
+
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $postDetail = array (
+                    'x' => $data[2],
+                    'y' => intval($data[1]),
+                    'cron_serial' => $data[0]
+                );
+                array_push($pfpSeries['data'], $postDetail);
+            }
+
+            /* Educational Material */
+			$educationalMaterialSeries = array (
+				'name'	=> 'Educational Material',
+				'data' 	=> array()
+			);
+
+			$sql = "
+				SELECT DISTINCT
+	                emmh.CronLogSerNum,
+	                COUNT(emmh.CronLogSerNum),
+	                cl.CronDateTime
+	            FROM
+	                EducationalMaterialMH emmh,
+	                CronLog cl
+	            WHERE
+	                cl.CronStatus = 'Started'
+	            AND cl.CronLogSerNum = emmh.CronLogSerNum
+	            AND emmh.CronLogSerNum IS NOT NULL
+	            GROUP BY
+	                emmh.CronLogSerNum,
+	                cl.CronDateTime
+	            ORDER BY 
+	                cl.CronDateTime ASC   
+			";
+
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $educationalMaterialDetail = array (
+                    'x' => $data[2],
+                    'y' => intval($data[1]),
+                    'cron_serial' => $data[0]
+                );
+                array_push($educationalMaterialSeries['data'], $educationalMaterialDetail);
+            }
+
+            /* Notifications */
+			$notificationSeries = array (
+				'name'	=> 'Notification',
+				'data' 	=> array()
+			);
+
+			$sql = "
+				SELECT DISTINCT 
+                    ntmh.CronLogSerNum,
+                    COUNT(ntmh.CronLogSerNum),
+                    cl.CronDateTime
+                FROM
+                    NotificationMH ntmh,
+                    CronLog cl
+                WHERE
+                    cl.CronStatus = 'Started'
+                AND cl.CronLogSerNum = ntmh.CronLogSerNum
+                AND ntmh.CronLogSerNum IS NOT NULL
+                GROUP BY 
+                    ntmh.CronLogSerNum,
+                    cl.CronDateTime
+                ORDER BY 
+                    cl.CronDateTime ASC   
+			";
+
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $notificationDetail = array (
+                    'x' => $data[2],
+                    'y' => intval($data[1]),
+                    'cron_serial' => $data[0]
+                );
+                array_push($notificationSeries['data'], $notificationDetail);
+            }
+
+            /* Test results */
+			$testResultSeries = array (
+				'name'	=> 'Test Result',
+				'data' 	=> array()
+			);
+
+			$sql = "
+				SELECT DISTINCT
+                    trmh.CronLogSerNum,
+                    COUNT(trmh.CronLogSerNum),
+                    cl.CronDateTime
+                FROM
+                    TestResultMH trmh,
+                    CronLog cl
+                WHERE
+                    cl.CronStatus = 'Started'
+                AND cl.CronLogSerNum = trmh.CronLogSerNum
+                AND trmh.CronLogSerNum IS NOT NULL
+                GROUP BY
+                    trmh.CronLogSerNum,
+                    cl.CronDateTime
+                ORDER BY 
+                    cl.CronDateTime ASC  
+			";
+
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $testResultDetail = array (
+                    'x' => $data[2],
+                    'y' => intval($data[1]),
+                    'cron_serial' => $data[0]
+                );
+                array_push($testResultSeries['data'], $testResultDetail);
+            }
+
+            /* Email */
+			$emailSeries = array (
+				'name'	=> 'Email',
+				'data' 	=> array()
+			);
+
+			$sql = "
+				SELECT DISTINCT 
+                    emmh.CronLogSerNum,
+                    COUNT(emmh.CronLogSerNum),
+                    cl.CronDateTime
+                FROM
+                    EmailLogMH emmh,
+                    CronLog cl
+                WHERE
+                    cl.CronStatus = 'Started'
+                AND cl.CronLogSerNum = emmh.CronLogSerNum
+                AND emmh.CronLogSerNum IS NOT NULL
+                GROUP BY 
+                    emmh.CronLogSerNum,
+                    cl.CronDateTime
+                ORDER BY 
+                    cl.CronDateTime ASC 
+			";
+
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $emailDetail = array (
+                    'x' => $data[2],
+                    'y' => intval($data[1]),
+                    'cron_serial' => $data[0]
+                );
+                array_push($emailSeries['data'], $emailDetail);
+            }
+
+            /* Email */
+			$legacyQuestionnaireSeries = array (
+				'name'	=> 'Legacy Questionnaire',
+				'data' 	=> array()
+			);
+
+			$sql = "
+				SELECT DISTINCT
+                    lqmh.CronLogSerNum,
+                    COUNT(lqmh.CronLogSerNum),
+                    cl.CronDateTime
+                FROM
+                    QuestionnaireMH lqmh,
+                    CronLog cl
+                WHERE
+                    cl.CronStatus = 'Started'
+                AND cl.CronLogSerNum = lqmh.CronLogSerNum
+                AND lqmh.CronLogSerNum IS NOT NULL
+                GROUP BY
+                    lqmh.CronLogSerNum,
+                    cl.CronDateTime
+                ORDER BY 
+                    cl.CronDateTime ASC  
+			";
+
+			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $legacyQuestionnaireDetail = array (
+                    'x' => $data[2],
+                    'y' => intval($data[1]),
+                    'cron_serial' => $data[0]
+                );
+                array_push($legacyQuestionnaireSeries['data'], $legacyQuestionnaireDetail);
+            }
+
+            // push all conter
+            array_push($cronLogs, $appointmentSeries, $documentSeries, $taskSeries, $announcementSeries, $txTeamMessageSeries,
+            	$pfpSeries, $educationalMaterialSeries, $notificationSeries, $testResultSeries, $emailSeries, $legacyQuestionnaireSeries);
+
+            return $cronLogs;
+        } catch( PDOException $e) {
+			echo $e->getMessage();
+			return $cronLogs;
+		}
+    }
+
+    /**
+     *
+     * Gets list logs of content during one or many cron sessions
+     *
+     * @param array $contents : a list of each content with their cron serials
+     * @return array $cronLogs : the cron logs for table view
+     */
+    public function getCronListLogs ($contents) {
+    	$cronLogs = array();
+
+   		$cronLogs['appointment'] = (!empty($contents['Appointment'])) ? Alias::getAliasListLogs($contents['Appointment'], 'Appointment') : array();
+   		$cronLogs['document'] = (!empty($contents['Document'])) ? Alias::getAliasListLogs($contents['Document'], 'Document') : array();
+   		$cronLogs['task'] = (!empty($contents['Task'])) ? Alias::getAliasListLogs($contents['Task'], 'Task') : array();
+   		$cronLogs['announcement'] = (!empty($contents['Announcement'])) ? Post::getPostListLogs($contents['Announcement'], 'Announcement') : array();
+   		$cronLogs['txTeamMessage'] = (!empty($contents['Treatment Team Message'])) ? Post::getPostListLogs($contents['Treatment Team Message'], 'Treatment Team Message') : array();
+   		$cronLogs['pfp'] = (!empty($contents['Patients for Patients'])) ? Post::getPostListLogs($contents['Patients for Patients'], 'Patients for Patients') : array();
+   		$cronLogs['educationalMaterial'] = (!empty($contents['Educational Material'])) ? EduMaterial::getEducationalMaterialListLogs($contents['Educational Material']) : array();
+   		$cronLogs['email'] = (!empty($contents['Email'])) ? Email::getEmailListLogs($contents['Email']) : array();
+   		$cronLogs['legacyQuestionnaire'] = (!empty($contents['Legacy Questionnaire'])) ? LegacyQuestionnaire::getLegacyQuestionnaireListLogs($contents['Legacy Questionnaire']) : array();
+   		$cronLogs['notification'] = (!empty($contents['Notification'])) ? Notification::getNotificationListLogs($contents['Notification']) : array();
+   		$cronLogs['testResult'] = (!empty($contents['Test Result'])) ? TestResult::getTestResultListLogs($contents['Test Result']) : array();
+
+   		return $cronLogs;
+    }
 }
 ?>
 

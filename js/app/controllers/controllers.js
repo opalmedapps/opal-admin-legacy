@@ -36,6 +36,7 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.testResult.delete',
 	'opalAdmin.controllers.testResult.log',
 	'opalAdmin.controllers.cron',
+	'opalAdmin.controllers.cron.log',
 	'opalAdmin.controllers.login',
 	'opalAdmin.controllers.loginModal',
 	'opalAdmin.controllers.patientActivity',
