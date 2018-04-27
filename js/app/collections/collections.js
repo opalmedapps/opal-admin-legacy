@@ -435,6 +435,26 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
+		// Function to get the cron logs for highcharts
+		cronAPI.getCronChartLogs = function () {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/cron/get.cron_chart_logs.php?callback=JSON_CALLBACK"
+			});
+		};
+
+		// Function to get selected cron logs
+		cronAPI.getSelectedCronListLogs = function (contents) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/cron/get.cron_list_logs.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					contents: JSON.stringify(contents),
+				}
+			});
+		};
+
 		return cronAPI;
 	})
 
