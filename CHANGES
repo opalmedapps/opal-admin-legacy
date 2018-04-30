@@ -1,3 +1,27 @@
+Version 0.18.2.0:
+ - Merge branch 'contentLogFeature' into develop
+ -     --- Changed cron title in menus
+ -     --- Added cron logs to display all content publishing
+ -     --- Added all logs
+ -     --- Added all logs to aliases
+ - -- Logs for all content starting template
+ - --- Fixed issue with missing reference arguments in subroutines   -- Apparently scalar variables should be passed first before arrays
+ -     --- Added actual cron logging to publisher
+ -     --- Fixed formatting of modal headers
+ -     --- Added individual logs to legacy questionnaires
+ -     --- Added individual logs for emails
+ -     --- Added individual logs to test results
+ -     --- Added individual logs for educational material
+ -     --- Added individual logs to posts
+ -     --- Added individual logging for aliases     --- Changed variable naming for notification logs
+ -     --- Completed logs for individual notification types
+ - Merge branch 'develop' into contentLogFeature
+ - Merge branch 'hotfix-0.18.1.1' into develop
+ -     --- Fixes issue of missing expression serial for medivisit appointments
+ -     --- Added backend logic for notification logs
+ -     --- Adding error logs
+ - Merge branch 'release-0.18.1.0' into develop
+
 Version 0.18.1.1:
  - Merge branch 'release-0.18.1.0' into preproduction
  - Merge branch 'release-0.18.0.0' into preproduction
