@@ -1,0 +1,41 @@
+<!-- Modal title -->
+<div class="modal-header">
+  <div class="col-xs-12 col-md-6">
+    <h2 class="modal-title">
+      <span class="fa fa-area-chart"></span> 
+      {{currentPost.type}} Logs 
+    </h2>
+    <p class="modal-title-caption">
+      {{currentPost.name_EN}} / {{currentPost.name_FR}}
+    </p>
+  </div>
+  <div class="modal-buttons col-xs-12 col-md-6">
+    <span> 
+      <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Close">
+    </span>
+  </div>
+</div>
+<div class="modal-body">
+  <div class="panel-container" ng-if="!postChartLogs.length">
+    <div class="panel-info">
+      <div class="jumbotron content" style="background-color: transparent; margin-bottom:0">
+        <p style="font-size:45px;">No data available</p>
+      </div>
+    </div>
+  </div>
+  <div class="panel-container" ng-if="postChartLogs.length">
+    <div class="panel-info">
+      <highchart id="chart1" config="chartConfig"></highchart>
+    </div>
+  </div>
+  <div class="panel-container" ng-if="postListLogs.length > 0">
+    <div class="panel-info">
+      <div class="panel-input">
+        <div id="data-table">
+          <div class="gridStyle" ui-grid="gridLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (postListLogs.length*gridLogOptions.rowHeight)+32+'px'}"></div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

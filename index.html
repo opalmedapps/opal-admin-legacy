@@ -23,9 +23,10 @@
 	<script src="bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
 	<script src="bower_components/angular-multiple-date-picker/dist/multipleDatePicker.js"></script>
 	<script src="bower_components/angularjs-dropdown-multiselect/dist/angularjs-dropdown-multiselect.min.js"></script>
-
 	<script src="bower_components/ng-idle/angular-idle.js"></script>
 	<script src="bower_components/moment/moment.js"></script>
+	<script src="bower_components/moment-timezone/builds/moment-timezone.min.js"></script>
+	<script src="bower_components/moment-timezone/builds/moment-timezone-with-data.min.js"></script>
 	<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
 	<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 	<script src="bower_components/rangy/rangy-core.js"></script>
@@ -44,6 +45,9 @@
 	<script src="bower_components/cryptojslib/components/mode-cfb-min.js"></script>
 	<script src="bower_components/cryptojslib/components/x64-core.js"></script>
 	<script src="bower_components/cryptojslib/components/sha512.js"></script>
+	<script src="bower_components/highcharts/highcharts.js"></script>
+	<script src="bower_components/highcharts-ng/dist/highcharts-ng.min.js"></script>
+
 
 	<script src="node_modules/angular-ui-grid/ui-grid.min.js"></script>
 	
@@ -68,16 +72,19 @@
  	<script type="text/javascript" src="js/app/controllers/alias/add.alias.js"></script>
  	<script type="text/javascript" src="js/app/controllers/alias/edit.alias.js"></script>
  	<script type="text/javascript" src="js/app/controllers/alias/delete.alias.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/alias/log.alias.js"></script>
 
  	<script type="text/javascript" src="js/app/controllers/post/post.js"></script>
  	<script type="text/javascript" src="js/app/controllers/post/add.post.js"></script>
  	<script type="text/javascript" src="js/app/controllers/post/edit.post.js"></script>
  	<script type="text/javascript" src="js/app/controllers/post/delete.post.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/post/log.post.js"></script>
 
  	<script type="text/javascript" src="js/app/controllers/educational-material/educationalMaterial.js"></script>
  	<script type="text/javascript" src="js/app/controllers/educational-material/add.educationalMaterial.js"></script>
  	<script type="text/javascript" src="js/app/controllers/educational-material/edit.educationalMaterial.js"></script>
  	<script type="text/javascript" src="js/app/controllers/educational-material/delete.educationalMaterial.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/educational-material/log.educationalMaterial.js"></script>
 
  	<script type="text/javascript" src="js/app/controllers/hospital-map/hospitalMap.js"></script>
  	<script type="text/javascript" src="js/app/controllers/hospital-map/add.hospitalMap.js"></script>
@@ -88,6 +95,7 @@
  	<script type="text/javascript" src="js/app/controllers/notification/add.notification.js"></script>
  	<script type="text/javascript" src="js/app/controllers/notification/edit.notification.js"></script>
  	<script type="text/javascript" src="js/app/controllers/notification/delete.notification.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/notification/log.notification.js"></script>
 
  	<script type="text/javascript" src="js/app/controllers/patient/patient.js"></script>
  	<script type="text/javascript" src="js/app/controllers/patient/block.patient.js"></script>
@@ -100,8 +108,10 @@
  	<script type="text/javascript" src="js/app/controllers/test-result/add.testResult.js"></script>
  	<script type="text/javascript" src="js/app/controllers/test-result/edit.testResult.js"></script>
  	<script type="text/javascript" src="js/app/controllers/test-result/delete.testResult.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/test-result/log.testResult.js"></script>
 
  	<script type="text/javascript" src="js/app/controllers/cron/cron.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/cron/log.cron.js"></script>
 
  	<script type="text/javascript" src="js/app/controllers/login/login.js"></script>
  	<script type="text/javascript" src="js/app/controllers/login/loginModal.js"></script>
@@ -119,6 +129,7 @@
  	<script type="text/javascript" src="js/app/controllers/email/add.email.js"></script>
  	<script type="text/javascript" src="js/app/controllers/email/edit.email.js"></script>
  	<script type="text/javascript" src="js/app/controllers/email/delete.email.js"></script>
+ 	<script type="text/javascript" src="js/app/controllers/email/log.email.js"></script>
 
  	<script type="text/javascript" src="js/app/controllers/questionnaire/questionnaire.js"></script>
  	<script type="text/javascript" src="js/app/controllers/questionnaire/add.questionnaire.js"></script>
@@ -134,6 +145,7 @@
 	<script type="text/javascript" src="js/app/controllers/legacy-questionnaire/add.legacyQuestionnaire.js"></script>
 	<script type="text/javascript" src="js/app/controllers/legacy-questionnaire/edit.legacyQuestionnaire.js"></script>
 	<script type="text/javascript" src="js/app/controllers/legacy-questionnaire/delete.legacyQuestionnaire.js"></script>
+	<script type="text/javascript" src="js/app/controllers/legacy-questionnaire/log.legacyQuestionnaire.js"></script>
 
 	<script type="text/javascript" src="js/app/controllers/diagnosis/diagnosisTranslation.js"></script>
 	<script type="text/javascript" src="js/app/controllers/diagnosis/add.diagnosisTranslation.js"></script>
@@ -169,6 +181,7 @@
 	<link media="all" type="text/css" rel="stylesheet" href="css/lib/docs.min.css">
 	<link media="all" type="text/css" rel="stylesheet" href="bower_components/textAngular/dist/textAngular.css">
 	<link media="all" type="text/css" rel="stylesheet" href="css/lib/ui.bootstrap.materialPicker.css">
+	<link media="all" type="text/css" rel="stylesheet" href="bower_components/highcharts-ng/dist/highcharts-ng.css">
 
 	<link media="all" type="text/css" rel="stylesheet" href="css/style.css">
 

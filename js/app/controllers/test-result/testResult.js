@@ -16,6 +16,8 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
 			$scope.gridApi.grid.refresh();
 		};
 
+		$scope.detailView = "list";
+		
 		// Templates for the table
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editTestResult(row.entity)"> ' +
@@ -27,7 +29,8 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
 			'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
 			'ng-checked="grid.appScope.updatePublishFlag(row.entity.publish)" ng-model="row.entity.publish"></div>';
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editTestResult(row.entity)">Edit</a></strong> ' +
+			'<strong><a href="" ng-click="grid.appScope.showTestResultLog(row.entity)">Logs</a></strong> ' +
+			'- <strong><a href="" ng-click="grid.appScope.editTestResult(row.entity)">Edit</a></strong> ' +
 			'- <strong><a href="" ng-click="grid.appScope.deleteTestResult(row.entity)">Delete</a></strong></div>';
 
 		// Search engine for table
@@ -74,14 +77,6 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
 
 		// Initialize an object for deleting a test result
 		$scope.testResultToDelete = {};
-
-		// Call our API to get the list of existing test results
-		testResultCollectionService.getExistingTestResults().then(function (response) {
-
-			$scope.testList = response.data;
-		}).catch(function(response) {
-			console.error('Error occurred getting test results:', response.status, response.data);
-		});
 
 		$scope.bannerMessage = "";
 		// Function to show page banner 
@@ -178,8 +173,180 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
 			}
 		};
 
+		$scope.switchDetailView = function (view) {
+			// only switch when there's no changes that have been made
+			if (!$scope.changesMade) {
+				$scope.detailView = view;
+			}
+		}
+
+		$scope.$watch('detailView', function (view) {
+			if (view == 'list') {
+				// Call our API to get the list of existing test results
+				testResultCollectionService.getExistingTestResults().then(function (response) {
+
+					$scope.testList = response.data;
+				}).catch(function(response) {
+					console.error('Error occurred getting test results:', response.status, response.data);
+				});
+
+				if ($scope.testResultListLogs.length) {
+					$scope.testResultListLogs = [];
+					$scope.gridApiLog.grid.refresh();
+				}
+			}	
+			else if (view == 'chart') {
+				// Call our API to get alias logs
+				testResultCollectionService.getTestResultChartLogs().then(function (response) {
+					$scope.testResultChartLogs = $scope.chartConfig.series = response.data;
+					angular.forEach($scope.testResultChartLogs, function(serie) {
+						angular.forEach(serie.data, function(log) {
+							log.x = new Date(log.x);
+						});
+					});
+				}).catch(function(response) {
+					console.error('Error occurred getting test result logs: ', response.status, response.data);
+				});
+			}	
+		}, true);
+
+		var chartConfig = $scope.chartConfig = { 
+		    chart: {
+		        type: 'spline',
+		        zoomType: 'x',
+		        className: 'logChart'
+		    },
+		    title: {
+		        text: 'All test result logs'
+		    },
+		    subtitle: {
+		        text: 'Highlight the plot area to zoom in and show detailed data'
+		    },
+		    xAxis: {
+		        type: 'datetime',
+		        title: {
+		            text: 'Datetime sent'
+		        },
+		        events: {
+		        	setExtremes: function (selection) {
+		        		if (selection.min !== undefined && selection.max !== undefined) {
+		        			var cronSerials = new Set();
+		        			var allSeries = selection.target.series; // get all series
+		     				angular.forEach(allSeries, function (series) {
+		     					// check if series is visible (i.e. not disabled via the legend)
+		     					if (series.visible) {
+		     						var points = series.points;
+		     						angular.forEach(points, function (point) {
+		     							timeInMilliSeconds = point.x.getTime();
+		     							if (timeInMilliSeconds >= selection.min && timeInMilliSeconds <= selection.max) {
+		     								if (!cronSerials.has(point.cron_serial)) {
+		     									cronSerials.add(point.cron_serial);
+		     								}
+		     							}
+		     						});
+		     					}
+		     				});
+		     				// convert set to array 
+		     				cronSerials = Array.from(cronSerials);
+		     				testResultCollectionService.getTestResultListLogs(cronSerials).then(function(response){ 
+	        					$scope.testResultListLogs = response.data;
+	        				});
+		        		}
+		        		else {
+		        			$scope.testResultListLogs = [];
+	        				$scope.gridApiLog.grid.refresh();
+
+		        		}
+		        	}
+		        }
+		    },
+		    yAxis: {
+		        title: {
+		            text: 'Number of test results published'
+		        },
+		        tickInterval: 1,
+		        min: 0
+		    },
+		    tooltip: {
+		        headerFormat: '<b>{series.name}</b><br>',
+		        pointFormat: '{point.x:%e. %b}: {point.y:.2f} m'
+		    },
+
+		    plotOptions: {
+		        spline: {
+		            marker: {
+		                enabled: true
+		            }
+		        },
+		        series: {
+		        	allowPointSelect: true,
+		        	point: {
+		        		events: {
+		        			select: function(point) {
+		        				var cronLogSerNum = [point.target.cron_serial];
+		        				testResultCollectionService.getTestResultListLogs(cronLogSerNum).then(function(response){ 
+		        					$scope.testResultListLogs = response.data;
+		        				});
+		        			},
+		        			unselect: function (point) {
+		        				$scope.testResultListLogs = [];
+		        				$scope.gridApiLog.grid.refresh();
+
+		        			}
+		        		}
+		        	}
+		        }
+			},
+
+		    series: []
+		};
+
+		$scope.testResultListLogs = [];
+		// Table options for test result logs
+		$scope.gridLogOptions = {
+			data: 'testResultListLogs',
+			columnDefs: [
+				{ field: 'expression_name', displayName: 'Test Name' },
+				{ field: 'revision', displayName: 'Revision No.' },
+				{ field: 'cron_serial', displayName: 'CronLogSer' },
+				{ field: 'patient_serial', displayName: 'PatientSer' },
+				{ field: 'source_db', displayName: 'Database' },
+				{ field: 'source_uid', displayName: 'Clinical UID' },
+				{ field: 'abnormal_flag', displayName: 'Abnormal Flag' },
+				{ field: 'test_date', displayName: 'Test Date' },
+				{ field: 'max_norm', displayName: 'Max Norm' },
+				{ field: 'min_norm', displayName: 'Min Norm' },
+				{ field: 'test_value', displayName: 'Test Value' },
+				{ field: 'unit', displayName: 'Unit' },
+				{ field: 'valid', displayName: 'Valid' },
+				{ field: 'read_status', displayName: 'Read Status' },
+				{ field: 'date_added', displayName: 'Datetime Sent' },
+				{ field: 'mod_action', displayName: 'Action' }
+			],
+			rowHeight: 30,
+			useExternalFiltering: true,
+			enableColumnResizing: true,
+			onRegisterApi: function (gridApi) {
+				$scope.gridApiLog = gridApi;
+			},
+		};
+
+
 		// Initialize a scope variable for a selected test result
 		$scope.currentTestResult = {};
+
+		// Function for when the test result has been clicked for viewing logs
+		$scope.showTestResultLog = function (testResult) {
+
+			$scope.currentTestResult = testResult;
+			var modalInstance = $uibModal.open({
+				templateUrl: 'templates/test-result/log.test-result.html',
+				controller: 'testResult.log',
+				scope: $scope,
+				windowClass: 'logModal',
+				backdrop: 'static',
+			});
+		};
 
 		// Function for when the test result has been clicked for editing
 		// We open a modal

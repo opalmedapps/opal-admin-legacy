@@ -33,6 +33,7 @@ sub new
 		_body				=> undef,
 		_type				=> undef,
 		_status				=> undef,
+		_cronlogser			=> undef,
 	};
 
 	# bless associates an object with a class so Perl knows which package to search for
@@ -112,6 +113,16 @@ sub setEmailStatus
 }
 
 #====================================================================================
+# Subroutine to set the Email Cron Log Serial
+#====================================================================================
+sub setEmailCronLogSer
+{
+    my ($email, $cronlogser) = @_; # email object with provided serial in args
+    $email->{_cronlogser} = $cronlogser; # set the ser
+    return $email->{_cronlogser};
+}
+
+#====================================================================================
 # Subroutine to get the Email Control Serial
 #====================================================================================
 sub getEmailControlSer
@@ -172,6 +183,15 @@ sub getEmailStatus
 {
 	my ($email) = @_; # our email object
 	return $email->{_status};
+}
+
+#====================================================================================
+# Subroutine to get the Email Cron Log Serial
+#====================================================================================
+sub getEmailCronLogSer
+{
+	my ($email) = @_; # our email object
+	return $email->{_cronlogser};
 }
 
 #====================================================================================
@@ -271,17 +291,20 @@ sub insertEmailLogIntoOurDB
 	# Retrieve necessary details 
 	my $controlser = $email->getEmailControlSer();
 	my $status = $email->getEmailStatus();
+	my $cronlogser = $email->getEmailCronLogSer();
 
 	my $insert_sql = "
 		INSERT INTO 
 			EmailLog (
 				PatientSerNum,
+				CronLogSerNum,
 				EmailControlSerNum,
 				Status,
 				DateAdded
 			)
 		VALUES (
 			'$patientser',
+			'$cronlogser',
 			'$controlser',
 			'$status',
 			NOW()
