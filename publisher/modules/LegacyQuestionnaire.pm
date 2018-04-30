@@ -41,6 +41,7 @@ sub new
 		_patientser 				=> undef,
 		_questionnairecontrolser 	=> undef,
 		_filters 					=> undef,
+        _cronlogser                 => undef,
 	}; 
 
 	# bless associates an object with a class so Perl knows which package to search for
@@ -90,6 +91,16 @@ sub setLegacyQuestionnaireFilters
 }
 
 #====================================================================================
+# Subroutine to set the Legacy Questionnaire Cron Log Serial
+#====================================================================================
+sub setLegacyQuestionnaireCronLogSer
+{
+    my ($questionnaire, $cronlogser) = @_; # questionnaire object with provided serial in args
+    $questionnaire->{_cronlogser} = $cronlogser; # set the questionnaire ser
+    return $questionnaire->{_cronlogser};
+}
+
+#====================================================================================
 # Subroutine to get the Legacy Questionnaire Serial
 #====================================================================================
 sub getLegacyQuestionnaireSer
@@ -126,11 +137,20 @@ sub getLegacyQuestionnaireFilters
 }
 
 #====================================================================================
+# Subroutine to get the Legacy Questionnaire Cron Log Serial
+#====================================================================================
+sub getLegacyQuestionnaireCronLogSer
+{
+    my ($questionnaire) = @_; # our questionnaire object
+    return $questionnaire->{_cronlogser};
+}
+
+#====================================================================================
 # Subroutine to publish legacy questionnaires
 #====================================================================================
 sub publishLegacyQuestionnaires
 {
-	my (@patientList) = @_; # patient list from args
+	my ($cronLogSer, @patientList) = @_; # patient list and cron log serial from args
 
 	# Retrieve all the legacy questionnaire controls
 	my @legacyQuestionnaireControls = getLegacyQuestionnaireControlsMarkedForPublish(); 
@@ -417,7 +437,8 @@ sub publishLegacyQuestionnaires
 
     			# set the necessary values 
     			$questionnaire->setLegacyQuestionnaireControlSer($questionnaireControlSer);
-    			$questionnaire->setLegacyQuestionnairePatientSer($patientSer);
+                $questionnaire->setLegacyQuestionnairePatientSer($patientSer);
+    			$questionnaire->setLegacyQuestionnaireCronLogSer($cronLogSer);
 
     			if (!$questionnaire->inOurDatabase($recurringFlag)) { 
 
@@ -451,9 +472,12 @@ sub inOurDatabase
 	my $serInDB = 0; # false by default. Will be true if questionnaire exists
 	my $ExistingLegacyQuestionnaire = (); # data to be entered if questionnaire exists 
 
+    my ($cronlogser);
+
 	my $inDB_sql = "
 		SELECT DISTINCT
-			Questionnaire.QuestionnaireSerNum
+			Questionnaire.QuestionnaireSerNum,
+            Questionnaire.CronLogSerNum
 		FROM
 			Questionnaire
 		WHERE
@@ -477,6 +501,7 @@ sub inOurDatabase
 	while (my @data = $query->fetchrow_array()) {
 
 		$serInDB = $data[0];
+        $cronlogser = $data[1];
 	}
 
 	if ($serInDB) {
@@ -486,7 +511,8 @@ sub inOurDatabase
 		# set params
 		$ExistingLegacyQuestionnaire->setLegacyQuestionnaireSer($serInDB);
 		$ExistingLegacyQuestionnaire->setLegacyQuestionnairePatientSer($patientser);
-		$ExistingLegacyQuestionnaire->setLegacyQuestionnaireControlSer($questionnaireControlSer);
+        $ExistingLegacyQuestionnaire->setLegacyQuestionnaireControlSer($questionnaireControlSer);
+		$ExistingLegacyQuestionnaire->setLegacyQuestionnaireCronLogSer($cronlogser);
 
 		return $ExistingLegacyQuestionnaire; # this is true (i.e. questionnaire exists. return object)
 	}
@@ -501,18 +527,21 @@ sub insertLegacyQuestionnaireIntoOurDB
 {
 	my ($questionnaire) = @_; # our questionnaire object
 
-	my $patientser  			= $questionnaire->getLegacyQuestionnairePatientSer();
-	my $questionnaireControlSer = $questionnaire->getLegacyQuestionnaireControlSer();
+	my $patientser  			    = $questionnaire->getLegacyQuestionnairePatientSer();
+    my $questionnaireControlSer     = $questionnaire->getLegacyQuestionnaireControlSer();
+	my $cronlogser                  = $questionnaire->getLegacyQuestionnaireCronLogSer();
 
 	my $insert_sql = "
 		INSERT INTO 
 			Questionnaire (
 				PatientSerNum,
+                CronLogSerNum,
 				QuestionnaireControlSerNum,
 				DateAdded
 			)
 		VALUES (
 			'$patientser',
+            '$cronlogser',
 			'$questionnaireControlSer',
 			NOW()
 		)

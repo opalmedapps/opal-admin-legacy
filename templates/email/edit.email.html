@@ -1,13 +1,15 @@
 <!-- Modal title -->
 <div class="modal-header">
-  <h2 class="modal-title col-xs-12">
-    <span class="glyphicon glyphicon-pencil"></span> 
-    Edit Email 
-  </h2>
-  <p class="modal-title-caption col-xs-12">
-    {{email.subject_EN}} / {{email.subject_FR}}
-  </p>
-  <div class="modal-buttons col-xs-12">
+  <div class="col-xs-12 col-md-6">
+    <h2 class="modal-title">
+      <span class="glyphicon glyphicon-pencil"></span> 
+      Edit Email 
+    </h2>
+    <p class="modal-title-caption">
+      {{email.subject_EN}} / {{email.subject_FR}}
+    </p>
+  </div>
+  <div class="modal-buttons col-xs-12 col-md-6">
     <span> 
       <form method="post" ng-submit="updateEmail()">
         <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">

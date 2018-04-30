@@ -1,13 +1,15 @@
 <!-- Modal title -->
 <div class="modal-header">
-  <h2 class="modal-title col-xs-12">
-    <span class="glyphicon glyphicon-pencil"></span> 
-    Edit User
-  </h2>
-  <p class="modal-title-caption col-xs-12">
-    {{user.username}} 
-  </p>
-  <div class="modal-buttons col-xs-12">
+  <div class="col-xs-12 col-md-6">
+    <h2 class="modal-title">
+      <span class="glyphicon glyphicon-pencil"></span> 
+      Edit User
+    </h2>
+    <p class="modal-title-caption">
+      {{user.username}} 
+    </p>
+  </div>
+  <div class="modal-buttons col-xs-12 col-md-6">
     <span> 
       <form method="post" ng-submit="updateUser()">
         <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
