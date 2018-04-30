@@ -1092,9 +1092,9 @@ class TestResult {
                    'test_value'             => $data[10],
                    'unit'                   => $data[11],
                    'valid'                  => $data[12],
-                   'date_added'             => $data[16],
-                   'read_status'            => $data[17],
-                   'mod_action'             => $data[18]
+                   'date_added'             => $data[13],
+                   'read_status'            => $data[14],
+                   'mod_action'             => $data[15]
                 );
                 array_push($testResultLogs, $logDetails);
             }
