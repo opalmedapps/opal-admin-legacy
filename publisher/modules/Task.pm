@@ -48,7 +48,8 @@ sub new
 		_creationdate		=> undef,
 		_status			    => undef,
         _state              => undef,
-		_completiondate		=> undef,    
+		_completiondate		=> undef,  
+		_cronlogser 		=> undef,  
 	};
 
 	# bless associates an object with a class so Perl knows which package to search for
@@ -178,6 +179,16 @@ sub setTaskDiagnosisSer
 }
 
 #====================================================================================
+# Subroutine to set the task cron log serial
+#====================================================================================
+sub setTaskCronLogSer
+{
+	my ($task, $cronlogser) = @_; # task object with provided serial in arguments
+	$task->{_cronlogser} = $cronlogser; # set the ser
+	return $task->{_cronlogser};
+}
+
+#====================================================================================
 # Subroutine to get the Task ser
 #====================================================================================
 sub getTaskSer
@@ -285,12 +296,21 @@ sub getTaskDiagnosisSer
 	return $task->{_diagnosisser};
 }
 
+#====================================================================================
+# Subroutine to get the Task cron log ser
+#====================================================================================
+sub getTaskCronLogSer
+{
+	my ($task) = @_; # our task object
+	return $task->{_cronlogser};
+}
+
 #======================================================================================
 # Subroutine to get tasks from the source db
 #======================================================================================
 sub getTasksFromSourceDB
 {
-	my (@patientList) = @_; # a list of patients from args 
+	my ($cronLogSer, @patientList) = @_; # a list of patients and cron log serial from args 
 
 	my @taskList = (); # initialize a list for task objects
 
@@ -439,6 +459,7 @@ sub getTasksFromSourceDB
     			    $task->setTaskStatus($status); # assign status
 	    		    $task->setTaskCompletionDate($completiondate); # assign completion date
 		    	    $task->setTaskState($state); # assign state
+		    	    $task->setTaskCronLogSer($cronLogSer); # assign cron log serail
 
         			push(@taskList, $task);
 		    		
@@ -583,7 +604,7 @@ sub inOurDatabase
 
 	# Other task variable, if task exists
 	my ($ser, $patientser, $aliasexpressionser, $duedatetime, $priorityser, $diagnosisser);
-    my ($creationdate, $status, $state, $completiondate);
+    my ($creationdate, $status, $state, $completiondate, $cronlogser);
 
 	my $inDB_sql = "
 		SELECT
@@ -597,7 +618,8 @@ sub inOurDatabase
             Task.CreationDate,
             Task.Status,
             Task.State,
-            Task.CompletionDate
+            Task.CompletionDate,
+            Task.CronLogSerNum
 		FROM
 			Task
 		WHERE
@@ -625,6 +647,7 @@ sub inOurDatabase
         $status             = $data[8];
         $state              = $data[9];
         $completiondate     = $data[10];
+        $cronlogser 		= $data[11];
 	}
 
 	if ($TaskSourceUIDInDB) {
@@ -643,6 +666,7 @@ sub inOurDatabase
 		$ExistingTask->setTaskCreationDate($creationdate); # set the creation date
 		$ExistingTask->setTaskCompletionDate($completiondate); # set the completion date
 		$ExistingTask->setTaskState($state); # set the state
+		$ExistingTask->setTaskCronLogSer($cronlogser); # set the cron log serial
 
 		return $ExistingTask; # this is true (ie. task exists, return object)
 	}
@@ -668,11 +692,13 @@ sub insertTaskIntoOurDB
 	my $status		        = $task->getTaskStatus();
 	my $completiondate	    = $task->getTaskCompletionDate();
 	my $state		        = $task->getTaskState();
+	my $cronlogser		    = $task->getTaskCronLogSer();
 
 	my $insert_sql = "
 		INSERT INTO 
 			Task (
 				PatientSerNum,
+				CronLogSerNum,
                 SourceDatabaseSerNum,
 				TaskAriaSer,
 				AliasExpressionSerNum,
@@ -687,6 +713,7 @@ sub insertTaskIntoOurDB
 			)
 		VALUES (
 			'$patientser',
+			'$cronlogser',
             '$sourcedbser',
 			'$sourceuid',
 			'$aliasexpressionser',
@@ -735,6 +762,7 @@ sub updateDatabase
 	my $status		        = $task->getTaskStatus();
 	my $completiondate	    = $task->getTaskCompletionDate();
 	my $state		        = $task->getTaskState();
+	my $cronlogser		    = $task->getTaskCronLogSer();
 
 	my $update_sql = "
 		
@@ -748,7 +776,8 @@ sub updateDatabase
 			CreationDate		    = '$creationdate',
 			CompletionDate		    = '$completiondate',           
             PrioritySerNum          = '$priorityser',
-            DiagnosisSerNum         = '$diagnosisser'
+            DiagnosisSerNum         = '$diagnosisser',
+            CronLogSerNum 			= '$cronlogser'
 		WHERE
 			TaskAriaSer		        = '$sourceuid'
         AND SourceDatabaseSerNum    = '$sourcedbser'
@@ -783,6 +812,7 @@ sub compareWith
 	my $Sstatus		        = $SuspectTask->getTaskStatus();
 	my $Scompletiondate	    = $SuspectTask->getTaskCompletionDate();
 	my $Sstate		        = $SuspectTask->getTaskState();
+	my $Scronlogser		    = $SuspectTask->getTaskCronLogSer();
 
 	# Original Task...
 	my $Oduedatetime	    = $OriginalTask->getTaskDueDateTime();
@@ -793,6 +823,7 @@ sub compareWith
 	my $Ostatus		        = $OriginalTask->getTaskStatus();
 	my $Ocompletiondate	    = $OriginalTask->getTaskCompletionDate();
 	my $Ostate	    	    = $OriginalTask->getTaskState();
+	my $Ocronlogser	    	= $OriginalTask->getTaskCronLogSer();
 
 	# go through each parameter
 	if ($Sduedatetime ne $Oduedatetime) {
@@ -842,6 +873,12 @@ sub compareWith
 		print "Task Completion Date has changed from '$Ocompletiondate' to '$Scompletiondate'\n";
 		my $updatedCompletionDate = $UpdatedTask->setTaskCompletionDate($Scompletiondate); # update 
 		print "Will update database entry to '$updatedCompletionDate'.\n";
+	}
+	if ($Scronlogser ne $Ocronlogser) {
+
+		print "Task Cron Log serial has changed from '$Ocronlogser' to '$Scronlogser'\n";
+		my $updatedCronLogSer = $UpdatedTask->setTaskCronLogSer($Scronlogser); # update 
+		print "Will update database entry to '$updatedCronLogSer'.\n";
 	}
 
 	return $UpdatedTask;
