@@ -566,6 +566,581 @@
             return $userActivityList;
         }
     }
+
+    /**
+     *
+     * Gets logs of a user's activity
+     *
+     * @param integer $userSer : user serial 
+     * @return array $userLogs : the logs of user activities
+     */
+    public function getUserActivityLogs($userSer) {
+        $userLogs = array(
+        	'isData' 				=> 0,
+        	'login'					=> array(),
+        	'alias'					=> array(),
+        	'aliasExpression'		=> array(),
+        	'diagnosisTranslation'	=> array(),
+        	'diagnosisCode'			=> array(),
+        	'email'					=> array(),
+        	'trigger'				=> array(),
+        	'hospitalMap'			=> array(),
+        	'post'					=> array(),
+        	'notification'			=> array(),
+        	'legacyQuestionnaire'	=> array(),
+        	'testResult'			=> array(),
+        	'testResultExpression'	=> array()
+        );	
+         try {
+
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            /* Logins */
+            $sql = "
+	            SELECT DISTINCT 
+	            	oaa.OAUserSerNum,
+	            	oaa.DateAdded as LoginTime, 
+	            	oaa2.DateAdded as LogoutTime, 
+	            	oaa.SessionId,
+	            	CONCAT (
+	            		IF(MOD(HOUR(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 24) > 0,
+	            			CONCAT(MOD(HOUR(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 24), 'h'),
+	            			''
+	            		),
+	            		IF(MINUTE(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)) > 0,
+	            			CONCAT(MINUTE(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 'm'),
+	            			''
+	            		),
+	            		SECOND(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 's'
+	            	) as SessionDuration
+
+	            FROM 
+	            	OAUser oa,
+	            	OAActivityLog oaa 
+	            LEFT JOIN 
+	            	OAActivityLog oaa2 
+	            ON oaa.SessionId = oaa2.SessionId  
+	            AND oaa2.Activity = 'Logout' 
+	            WHERE 
+	            	oaa.`Activity` 	= 'Login'
+	            AND oa.OAUserSerNum = oaa.OAUserSerNum
+	            AND oa.OAUserSerNum = '$userSer'
+
+                ORDER BY oaa.DateAdded DESC
+            ";
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $loginDetails = array(
+                    'serial'                => $data[0],
+                    'login'                 => $data[1],
+                    'logout'				=> $data[2],
+                    'sessionid'             => $data[3],
+                    'session_duration'		=> $data[4]
+                );
+
+                array_push($userLogs['login'], $loginDetails);
+            }
+
+            /* Alias */
+            $sql = "
+            	SELECT DISTINCT 
+            		almh.AliasSerNum,
+            		almh.AliasRevSerNum,
+            		almh.SessionId,
+            		almh.AliasType,
+            		almh.AliasUpdate,
+            		almh.AliasName_EN,
+            		almh.AliasName_FR,
+            		almh.AliasDescription_EN,
+            		almh.AliasDescription_FR,
+            		almh.EducationalMaterialControlSerNum,
+            		almh.SourceDatabaseSerNum,
+            		almh.ColorTag,
+            		almh.ModificationAction,
+            		almh.DateAdded
+            	FROM
+            		AliasMH almh
+            	WHERE
+            		almh.LastUpdatedBy = $userSer
+            	ORDER BY 
+            		almh.DateAdded DESC
+            ";
+
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+            	$aliasDetails = array(
+            		'serial'			=> $data[0],
+            		'revision'			=> $data[1],
+            		'sessionid'			=> $data[2],
+            		'type'				=> $data[3],
+            		'update'			=> $data[4],
+            		'name_EN'			=> $data[5],
+            		'name_FR'			=> $data[6],
+            		'description_EN'	=> $data[7],
+            		'description_FR'	=> $data[8],
+            		'educational_material'	=> $data[9],
+            		'source_db'				=> $data[10],
+            		'color'					=> $data[11],
+            		'mod_action'			=> $data[12],
+            		'date_added'			=> $data[13]
+            	);
+
+                array_push($userLogs['alias'], $aliasDetails);
+            }
+
+            /* Alias Expression */
+            $sql = "
+            	SELECT DISTINCT 
+            		aemh.AliasSerNum,
+            		aemh.RevSerNum,
+            		aemh.SessionId,
+            		aemh.ExpressionName,
+            		aemh.Description,
+            		aemh.ModificationAction,
+            		aemh.DateAdded
+            	FROM
+            		AliasExpressionMH aemh
+            	WHERE
+            		aemh.LastUpdatedBy = $userSer
+            	ORDER BY 
+            		aemh.DateAdded DESC
+            ";
+
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+            	$aliasExpressionDetails = array(
+            		'serial'			=> $data[0],
+            		'revision'			=> $data[1],
+            		'sessionid'			=> $data[2],
+            		'expression'		=> $data[3],
+            		'resource_description'	=> $data[4],
+            		'mod_action'			=> $data[5],
+            		'date_added'			=> $data[6]
+            	);
+
+                array_push($userLogs['aliasExpression'], $aliasExpressionDetails);
+            }
+
+            /* Diagnosis Translation*/
+            $sql = "
+            	SELECT DISTINCT
+            		dtmh.DiagnosisTranslationSerNum,
+            		dtmh.RevSerNum,
+            		dtmh.SessionId,
+            		dtmh.EducationalMaterialControlSerNum,
+            		dtmh.Name_EN,
+            		dtmh.Name_FR,
+            		dtmh.Description_EN,
+            		dtmh.Description_FR,
+            		dtmh.ModificationAction,
+            		dtmh.DateAdded
+            	FROM
+            		DiagnosisTranslationMH dtmh
+            	WHERE
+            		dtmh.LastUpdatedBy = $userSer
+            	ORDER BY
+            		dtmh.DateAdded DESC
+
+            ";
+
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+            	$diagnosisTranslationDetails = array (
+            		'serial'				=> $data[0],
+            		'revision'				=> $data[1],
+            		'sessionid'				=> $data[2],
+            		'educational_material'	=> $data[3],
+            		'name_EN'				=> $data[4],
+            		'name_FR'				=> $data[5],
+            		'description_EN'		=> $data[6],
+            		'description_FR'		=> $data[7],
+            		'mod_action'			=> $data[8],
+            		'date_added'			=> $data[9]
+            	);
+                array_push($userLogs['diagnosisTranslation'], $diagnosisTranslationDetails);
+            }
+
+            /* Diagnosis Code */
+	        $sql = "
+	        	SELECT DISTINCT 
+	        		dcmh.DiagnosisTranslationSerNum,
+	        		dcmh.RevSerNum,
+	        		dcmh.SessionId,
+	        		dcmh.SourceUID,
+	        		dcmh.DiagnosisCode,
+	        		dcmh.Description,
+	        		dcmh.ModificationAction,
+	        		dcmh.DateAdded
+	        	FROM 
+	        		DiagnosisCodeMH dcmh
+	        	WHERE
+	        		dcmh.LastUpdatedBy = $userSer
+	        	ORDER BY
+	        		dcmh.DateAdded DESC
+	        ";
+
+	        $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+            	$diagnosisCodeDetails = array(
+            		'serial'		=> $data[0],
+            		'revision'		=> $data[1],
+            		'sessionid'		=> $data[2],
+            		'sourceuid'		=> $data[3],
+            		'code'			=> $data[4],
+            		'description'	=> $data[5],
+            		'mod_action'	=> $data[6],
+            		'date_added'	=> $data[7]
+            	);
+
+                array_push($userLogs['diagnosisCode'], $diagnosisCodeDetails);
+            }
+
+            /* Email */
+            $sql = "
+            	SELECT DISTINCT
+            		ecmh.EmailControlSerNum,
+            		ecmh.RevSerNum,
+            		ecmh.SessionId,
+            		ecmh.Subject_EN,
+            		ecmh.Subject_FR,
+            		ecmh.Body_EN,
+            		ecmh.Body_FR,
+            		ecmh.ModificationAction,
+            		ecmh.DateAdded
+            	FROM
+            		EmailControlMH ecmh
+            	WHERE
+            		ecmh.LastUpdatedBy = $userSer
+            	ORDER BY
+            		ecmh.DateAdded DESC
+           	";
+           	$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+            	$emailDetails = array (
+            		'serial'		=> $data[0],
+            		'revision'		=> $data[1],
+            		'sessionid'		=> $data[2],
+            		'subject_EN'	=> $data[3],
+            		'subject_FR'	=> $data[4],
+            		'body_EN'		=> $data[5],
+            		'body_FR'		=> $data[6],
+            		'mod_action'	=> $data[7],
+            		'date_added'	=> $data[8]
+            	);
+                array_push($userLogs['email'], $emailDetails);
+            }
+
+            /* Trigger */
+            $sql = "
+            	SELECT DISTINCT
+            		fmh.ControlTableSerNum,
+            		fmh.ControlTable,
+            		fmh.SessionId,
+            		fmh.FilterType,
+            		fmh.FilterId,
+            		fmh.ModificationAction,
+            		fmh.DateAdded
+            	FROM
+            		FiltersMH fmh
+            	WHERE
+            		fmh.LastUpdatedBy = $userSer
+            	ORDER BY 
+            		fmh.DateAdded DESC
+            ";
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+            	$triggerDetails = array(
+            		'control_serial'		=> $data[0],
+            		'control_table'			=> $data[1],
+            		'sessionid'				=> $data[2],
+            		'type'					=> $data[3],
+            		'filterid'				=> $data[4],
+            		'mod_action'			=> $data[5],
+            		'date_added'			=> $data[6]
+            	);
+
+                array_push($userLogs['trigger'], $triggerDetails);
+            }
+
+            /* Hospital Map */
+            $sql = "
+            	SELECT DISTINCT
+            		hmmh.HospitalMapSerNum,
+            		hmmh.RevSerNum,
+            		hmmh.SessionId,
+            		hmmh.MapURL_EN,
+            		hmmh.MapURL_FR,
+            		hmmh.QRMapAlias,
+            		hmmh.MapName_EN,
+            		hmmh.MapName_FR,
+            		hmmh.MapDescription_EN,
+            		hmmh.MapDescription_FR,
+            		hmmh.ModificationAction,
+            		hmmh.DateAdded
+            	FROM
+            		HospitalMapMH hmmh
+            	WHERE
+            		hmmh.LastUpdatedBy = $userSer
+            	ORDER BY
+            		hmmh.DateAdded DESC
+            ";
+
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+            	$hospitalMapDetails = array(
+            		'serial'			=> $data[0],
+            		'revision'			=> $data[1],
+            		'sessionid'			=> $data[2],
+            		'url_EN'			=> $data[3],
+            		'url_FR'			=> $data[4],
+            		'qrcode'			=> $data[5],
+            		'name_EN'			=> $data[6],
+            		'name_FR'			=> $data[7],
+            		'description_EN'	=> $data[8],
+            		'description_FR'	=> $data[9],
+            		'mod_action'		=> $data[10],
+            		'date_added'		=> $data[11]
+            	);
+                array_push($userLogs['hospitalMap'], $hospitalMapDetails);
+            }
+
+            /* Posts */
+            $sql = "
+            	SELECT DISTINCT
+            		pcmh.PostControlSerNum,
+            		pcmh.RevSerNum,
+            		pcmh.SessionId,
+            		pcmh.PostType,
+            		pcmh.PublishFlag,
+            		pcmh.Disabled,
+            		pcmh.PublishDate,
+            		pcmh.PostName_EN,
+            		pcmh.PostName_FR,
+            		pcmh.Body_EN,
+            		pcmh.Body_FR,
+            		pcmh.ModificationAction,
+            		pcmh.DateAdded
+            	FROM
+            		PostControlMH pcmh
+            	WHERE
+            		pcmh.LastUpdatedBy = $userSer
+            	ORDER BY
+            		pcmh.DateAdded DESC
+            ";
+
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+            	$postDetails = array(
+            		'control_serial'		=> $data[0],
+            		'revision'				=> $data[1],
+            		'sessionid'				=> $data[2],
+            		'type'					=> $data[3],
+            		'publish'				=> $data[4],
+            		'disabled'				=> $data[5],
+            		'publish_date'			=> $data[6],
+            		'name_EN'				=> $data[7],
+            		'name_FR'				=> $data[8],
+            		'body_EN'				=> $data[9],
+            		'body_FR'				=> $data[10],
+            		'mod_action'			=> $data[11],
+            		'date_added'			=> $data[12]
+            	);
+                array_push($userLogs['post'], $postDetails);
+
+            }
+
+            /* Notification */
+            $sql = "
+            	SELECT DISTINCT
+            		ncmh.NotificationControlSerNum,
+            		ncmh.RevSerNum,
+            		ncmh.SessionId,
+            		ncmh.NotificationTypeSerNum,
+            		ncmh.Name_EN,
+            		ncmh.Name_FR,
+            		ncmh.Description_EN,
+            		ncmh.Description_FR,
+            		ncmh.ModificationAction,
+            		ncmh.DateAdded
+            	FROM
+            		NotificationControlMH ncmh
+            	WHERE
+            		ncmh.LastUpdatedBy = $userSer
+            	ORDER BY
+            		ncmh.DateAdded DESC
+            ";
+
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+            	$notificationDetails = array(
+            		'control_serial'		=> $data[0],
+            		'revision'				=> $data[1],
+            		'sessionid'				=> $data[2],
+            		'type'					=> $data[3],
+            		'name_EN'				=> $data[4],
+            		'name_FR'				=> $data[5],
+            		'description_EN'		=> $data[6],
+            		'description_FR'		=> $data[7],
+            		'mod_action'			=> $data[8],
+            		'date_added'			=> $data[9]
+            	);
+                array_push($userLogs['notification'], $notificationDetails);
+
+            }
+
+            /* Legacy Questionnaires */
+            $sql = "
+            	SELECT DISTINCT
+            		qcmh.QuestionnaireControlSerNum,
+            		qcmh.RevSerNum,
+            		qcmh.SessionId,
+            		qcmh.QuestionnaireDBSerNum,
+            		qcmh.QuestionnaireName_EN,
+            		qcmh.QuestionnaireName_FR,
+            		qcmh.Intro_EN,
+            		qcmh.Intro_FR,
+            		qcmh.PublishFlag,
+            		qcmh.ModificationAction,
+            		qcmh.DateAdded
+            	FROM
+            		QuestionnaireControlMH qcmh
+            	WHERE
+            		qcmh.LastUpdatedBy = $userSer
+            	ORDER BY 
+            		qcmh.DateAdded DESC
+            ";
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+            	$legacyQuestionnaireDetails = array (
+            		'control_serial'	=> $data[0],
+            		'revision'			=> $data[1],
+            		'sessionid'			=> $data[2],
+            		'db_serial'			=> $data[3],
+            		'name_EN'			=> $data[4],
+            		'name_FR'			=> $data[5],
+            		'intro_EN'			=> $data[6],
+            		'intro_FR'			=> $data[7],
+            		'publish'			=> $data[8],
+            		'mod_action'		=> $data[9],
+            		'date_added'		=> $data[10]
+            	);
+                array_push($userLogs['legacyQuestionnaire'], $legacyQuestionnaireDetails);
+            }
+
+            /* Test Result */
+            $sql = "
+            	SELECT DISTINCT
+            		trcmh.TestResultControlSerNum,
+            		trcmh.RevSerNum,
+            		trcmh.SessionId,
+            		trcmh.SourceDatabaseSerNum,
+            		trcmh.EducationalMaterialControlSerNum,
+            		trcmh.Name_EN,
+            		trcmh.Name_FR,
+            		trcmh.Description_EN,
+            		trcmh.Description_FR,
+            		trcmh.Group_EN,
+            		trcmh.Group_FR,
+            		trcmh.PublishFlag,
+            		trcmh.ModificationAction,
+            		trcmh.DateAdded
+            	FROM
+            		TestResultControlMH trcmh 
+            	WHERE
+            		trcmh.LastUpdatedBy = $userSer
+            	ORDER BY 
+            		trcmh.DateAdded DESC
+            ";
+
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+            	$testResultDetails = array(
+            		'control_serial'			=> $data[0],
+            		'revision'					=> $data[1],
+            		'sessionid'					=> $data[2],
+            		'source_db'					=> $data[3],
+            		'educational_material'		=> $data[4],
+            		'name_EN'					=> $data[5],
+            		'name_FR'					=> $data[6],
+            		'description_EN'			=> $data[7],
+            		'description_FR'			=> $data[8],
+            		'group_EN'					=> $data[9],
+            		'group_FR'					=> $data[10],
+            		'publish'					=> $data[11],
+            		'mod_action'				=> $data[12],
+            		'date_added'				=> $data[13]
+            	);
+                array_push($userLogs['testResult'], $testResultDetails);
+            }
+
+            /* Test Result Expressions */
+            $sql = "
+            	SELECT DISTINCT
+            		tremh.TestResultControlSerNum,
+            		tremh.RevSerNum,
+            		tremh.SessionId,
+            		tremh.ExpressionName,
+            		tremh.ModificationAction,
+            		tremh.DateAdded
+            	FROM
+            		TestResultExpressionMH tremh
+            	WHERE
+            		tremh.LastUpdatedBy = $userSer
+            	ORDER BY
+            		tremh.DateAdded DESC
+            ";
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+            	$testResultExpressionDetails = array (
+            		'control_serial'	=> $data[0],
+            		'revision'			=> $data[1],
+            		'sessionid'			=> $data[2],
+            		'expression'		=> $data[3],
+            		'mod_action'		=> $data[4],
+            		'date_added'		=> $data[5]
+            	);
+                array_push($userLogs['testResultExpression'], $testResultExpressionDetails);
+            }
+
+            return $userLogs;
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return $userLogs;
+        }
+
+
+    }
  }
  
 ?>

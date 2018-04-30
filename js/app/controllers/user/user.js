@@ -32,7 +32,8 @@ angular.module('opalAdmin.controllers.user', ['ui.bootstrap', 'ui.grid']).
 
 		// Templates for the users table
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editUser(row.entity)">Edit</a></strong> ' +
+			'<strong><a href="" ng-click="grid.appScope.showActivityLog(row.entity)">Activity</a></strong> ' +
+			'- <strong><a href="" ng-click="grid.appScope.editUser(row.entity)">Edit</a></strong> ' +
 			'- <strong><a href="" ng-click="grid.appScope.deleteUser(row.entity)">Delete</a></strong></div>';
 
 		// user table search textbox param
@@ -107,6 +108,19 @@ angular.module('opalAdmin.controllers.user', ['ui.bootstrap', 'ui.grid']).
 				}).catch(function(response) {
 					console.error('Error occurred getting user list:', response.status, response.data);
 				});
+			});
+		};
+
+		// Function for when the user has been clicked for viewing activity logs
+		$scope.showActivityLog = function (user) {
+
+			$scope.currentUser = user;
+			var modalInstance = $uibModal.open({
+				templateUrl: 'templates/user/log.user.html',
+				controller: 'user.log',
+				scope: $scope,
+				windowClass: 'logModal',
+				backdrop: 'static',
 			});
 		};
 
