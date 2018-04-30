@@ -1,13 +1,15 @@
 <!-- Modal title -->
 <div class="modal-header">
-  <h2 class="modal-title col-xs-12">
-    <span class="glyphicon glyphicon-pencil"></span> 
-    Edit {{alias.type}}
-  </h2>
-  <p class="modal-title-caption col-xs-12">
-    {{alias.name_EN}} / {{alias.name_FR}}
-  </p>
-  <div class="modal-buttons col-xs-12">
+  <div class="col-xs-12 col-md-6">
+    <h2 class="modal-title">
+      <span class="glyphicon glyphicon-pencil"></span> 
+      Edit {{alias.type}}
+    </h2>
+    <p class="modal-title-caption">
+      {{alias.name_EN}} / {{alias.name_FR}}
+    </p>
+  </div>
+  <div class="modal-buttons col-xs-12 col-md-6">
     <span> 
       <form method="post" ng-submit="updateAlias()">
         <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
@@ -17,6 +19,13 @@
   </div>
 </div>
 <div class="modal-body">
+  <div ng-hide="hiddenAlert" class="alert alertMessage alert-danger alert-dismissible" role="alert">
+    <button type="button" class="close" ng-click="hideAlert()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <strong>Errors</strong><br>
+    <p>
+      {{alertMessage}}
+    </p>
+  </div>
   <uib-accordion>
     <!-- SECTION: Assigned expressions -->
     <div uib-accordion-group is-open="expressionSection.open">
@@ -193,4 +202,5 @@
       </div>      
     </div>
   </uib-accordion>
+
 </div>

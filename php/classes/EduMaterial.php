@@ -1208,6 +1208,181 @@ class EduMaterial {
 
     /**
      *
+     * Gets chart logs of an educational material or materials
+     *
+     * @param integer $serial : the educational material serial number
+     * @return array $educationalMaterialLogs : the educational material logs for highcharts
+     */
+    public function getEducationalMaterialChartLogs ($serial) {
+        $educationalMaterialLogs = array();
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            $sql = null;
+            // get all logs for all aliases
+            if (!$serial) {
+                $sql = "
+                    SELECT DISTINCT
+                        emmh.CronLogSerNum,
+                        COUNT(emmh.CronLogSerNum),
+                        cl.CronDateTime,
+                        emc.Name_EN
+                    FROM
+                        EducationalMaterialMH emmh,
+                        CronLog cl,
+                        EducationalMaterialControl emc
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = emmh.CronLogSerNum
+                    AND emmh.CronLogSerNum IS NOT NULL
+                    AND emmh.EducationalMaterialControlSerNum = emc.EducationalMaterialControlSerNum
+                    GROUP BY
+                        emmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC 
+                ";
+
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                $eduMatSeries = array();
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $seriesName = $data[3];
+                    $educationalMaterialDetail = array (
+                        'x' => $data[2],
+                        'y' => intval($data[1]),
+                        'cron_serial' => $data[0]
+                    );
+                    if(!isset($eduMatSeries[$seriesName])) {
+                        $eduMatSeries[$seriesName] = array(
+                            'name'  => $seriesName,
+                            'data'  => array()
+                        );
+                    }
+                    array_push($eduMatSeries[$seriesName]['data'], $educationalMaterialDetail);
+                }
+
+                foreach ($eduMatSeries as $seriesName => $series) {
+                    array_push($educationalMaterialLogs, $series);
+                }
+
+            }
+            // get logs for specific alias
+            else {
+                $sql = "
+                    SELECT DISTINCT
+                        emmh.CronLogSerNum,
+                        COUNT(emmh.CronLogSerNum),
+                        cl.CronDateTime
+                    FROM
+                        EducationalMaterialMH emmh,
+                        CronLog cl
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = emmh.CronLogSerNum
+                    AND emmh.CronLogSerNum IS NOT NULL
+                    AND emmh.EducationalMaterialControlSerNum = $serial
+                    GROUP BY
+                        emmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC 
+                ";
+
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                $eduMatSeries = array();
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $seriesName = 'Educational Material';
+                    $educationalMaterialDetail = array (
+                        'x' => $data[2],
+                        'y' => intval($data[1]),
+                        'cron_serial' => $data[0]
+                    );
+                    if(!isset($eduMatSeries[$seriesName])) {
+                        $eduMatSeries[$seriesName] = array(
+                            'name'  => $seriesName,
+                            'data'  => array()
+                        );
+                    }
+                    array_push($eduMatSeries[$seriesName]['data'], $educationalMaterialDetail);
+                }
+
+                foreach ($eduMatSeries as $seriesName => $series) {
+                    array_push($educationalMaterialLogs, $series);
+                }
+            }
+            return $educationalMaterialLogs;
+
+        } catch( PDOException $e) {
+            echo $e->getMessage();
+            return $educationalMaterialLogs;
+        }
+    }
+
+     /**
+     *
+     * Gets list logs of educational material during one or many cron sessions
+     *
+     * @param array $serials : a list of cron log serial numbers
+     * @return array $educationalMaterialLogs : the educational material logs for table view
+     */
+    public function getEducationalMaterialListLogs ($serials) {
+        $educationalMaterialLogs = array();
+        $serials = implode(',', $serials);
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
+                SELECT DISTINCT
+                    emc.Name_EN,
+                    emmh.EducationalMaterialRevSerNum,
+                    emmh.CronLogSerNum,
+                    emmh.PatientSerNum,
+                    emmh.DateAdded,
+                    emmh.ReadStatus,
+                    emmh.ModificationAction
+                FROM
+                    EducationalMaterialMH emmh,
+                    EducationalMaterialControl emc
+                WHERE
+                    emc.EducationalMaterialControlSerNum = emmh.EducationalMaterialControlSerNum
+                AND emmh.CronLogSerNum IN ($serials)
+            ";
+
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $logDetails = array (
+                    'material_name'         => $data[0],
+                    'revision'              => $data[1],
+                    'cron_serial'           => $data[2],
+                    'patient_serial'        => $data[3],
+                    'date_added'            => $data[4],
+                    'read_status'           => $data[5],
+                    'mod_action'            => $data[6]
+                );
+                array_push($educationalMaterialLogs, $logDetails);
+
+            }
+
+            return $educationalMaterialLogs;
+
+        } catch( PDOException $e) {
+            echo $e->getMessage();
+            return $educationalMaterialLogs;
+        }
+    }  
+
+    /**
+     *
      * Does a nested search for match
      *
      * @param string $id    : the needle id

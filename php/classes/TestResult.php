@@ -911,6 +911,205 @@ class TestResult {
 
     /**
      *
+     * Gets chart logs of a test result or results
+     *
+     * @param integer $serial : the test result serial number
+     * @return array $testResultLogs : the test result logs for highcharts
+     */
+    public function getTestResultChartLogs ($serial) {
+        $testResultLogs = array();
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            $sql = null;
+            // get all logs for all test results
+            if (!$serial) {
+
+                $sql = "
+                    SELECT DISTINCT
+                        trmh.CronLogSerNum,
+                        COUNT(trmh.CronLogSerNum),
+                        cl.CronDateTime,
+                        trc.Name_EN
+                    FROM
+                        TestResultMH trmh,
+                        TestResultExpression tre,
+                        CronLog cl,
+                        TestResultControl trc
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = trmh.CronLogSerNum
+                    AND trmh.CronLogSerNum IS NOT NULL
+                    AND trmh.TestResultExpressionSerNum = tre.TestResultExpressionSerNum
+                    AND tre.TestResultControlSerNum = trc.TestResultControlSerNum
+                    GROUP BY
+                        trmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC 
+                ";
+
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                $testResultSeries = array();
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $seriesName = $data[3];
+                    $testResultDetail = array (
+                        'x' => $data[2],
+                        'y' => intval($data[1]),
+                        'cron_serial' => $data[0]
+                    );
+                    if(!isset($testResultSeries[$seriesName])) {
+                        $testResultSeries[$seriesName] = array(
+                            'name'  => $seriesName,
+                            'data'  => array()
+                        );
+                    }
+                    array_push($testResultSeries[$seriesName]['data'], $testResultDetail);
+                }
+
+                foreach ($testResultSeries as $seriesName => $series) {
+                    array_push($testResultLogs, $series);
+                }
+
+            }
+            // get logs for specific test results
+            else {
+                $sql = "
+                    SELECT DISTINCT
+                        trmh.CronLogSerNum,
+                        COUNT(trmh.CronLogSerNum),
+                        cl.CronDateTime
+                    FROM
+                        TestResultMH trmh,
+                        TestResultExpression tre,
+                        CronLog cl
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = trmh.CronLogSerNum
+                    AND trmh.CronLogSerNum IS NOT NULL
+                    AND trmh.TestResultExpressionSerNum = tre.TestResultExpressionSerNum
+                    AND tre.TestResultControlSerNum = $serial
+                    GROUP BY
+                        trmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC 
+                ";
+
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                $testResultSeries = array();
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $seriesName = 'Test Result';
+                    $testResultDetail = array (
+                        'x' => $data[2],
+                        'y' => intval($data[1]),
+                        'cron_serial' => $data[0]
+                    );
+                    if(!isset($testResultSeries[$seriesName])) {
+                        $testResultSeries[$seriesName] = array(
+                            'name'  => $seriesName,
+                            'data'  => array()
+                        );
+                    }
+                    array_push($testResultSeries[$seriesName]['data'], $testResultDetail);
+                }
+
+                foreach ($testResultSeries as $seriesName => $series) {
+                    array_push($testResultLogs, $series);
+                }
+            }
+            return $testResultLogs;
+
+        } catch( PDOException $e) {
+            echo $e->getMessage();
+            return $testResultLogs;
+        }
+    }
+
+     /**
+     *
+     * Gets list logs of test results during one or many cron sessions
+     *
+     * @param array $serials : a list of cron log serial numbers
+     * @return array $testResultLogs : the test result logs for table view
+     */
+    public function getTestResultListLogs ($serials) {
+        $testResultLogs = array();
+        $serials = implode(',', $serials);
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
+                SELECT DISTINCT
+                    tre.ExpressionName,
+                    trmh.TestResultRevSerNum,
+                    trmh.CronLogSerNum,
+                    trmh.PatientSerNum,
+                    sd.SourceDatabaseName,
+                    trmh.TestResultAriaSer,
+                    trmh.AbnormalFlag,
+                    trmh.TestDate,
+                    trmh.MaxNorm,
+                    trmh.MinNorm,
+                    trmh.TestValue,
+                    trmh.UnitDescription,
+                    trmh.ValidEntry,
+                    trmh.DateAdded,
+                    trmh.ReadStatus,
+                    trmh.ModificationAction
+                FROM
+                    TestResultMH trmh,
+                    TestResultExpression tre,
+                    SourceDatabase sd
+                WHERE
+                    trmh.TestResultExpressionSerNum     = tre.TestResultExpressionSerNum
+                AND trmh.SourceDatabaseSerNum           = sd.SourceDatabaseSerNum
+                AND trmh.CronLogSerNum                  IN ($serials)
+            "; 
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $logDetails = array (
+                   'expression_name'        => $data[0],
+                   'revision'               => $data[1],
+                   'cron_serial'            => $data[2],
+                   'patient_serial'         => $data[3],
+                   'source_db'              => $data[4],
+                   'source_uid'             => $data[5],
+                   'abnormal_flag'          => $data[6],
+                   'test_date'              => $data[7],
+                   'max_norm'               => $data[8],
+                   'min_norm'               => $data[9],
+                   'test_value'             => $data[10],
+                   'unit'                   => $data[11],
+                   'valid'                  => $data[12],
+                   'date_added'             => $data[16],
+                   'read_status'            => $data[17],
+                   'mod_action'             => $data[18]
+                );
+                array_push($testResultLogs, $logDetails);
+            }
+
+            return $testResultLogs;
+
+        } catch( PDOException $e) {
+            echo $e->getMessage();
+            return $testResultLogs;
+        }
+    }  
+
+
+    /**
+     *
      * Checks if an expression has been assigned to an test
      *
      * @param string $id    : the needle id
