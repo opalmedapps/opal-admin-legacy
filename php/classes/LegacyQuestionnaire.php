@@ -65,6 +65,9 @@ class LegacyQuestionnaire {
             $questionnaires_db_link = new PDO( QUESTIONNAIRE_DB_DSN, QUESTIONNAIRE_DB_USERNAME, QUESTIONNAIRE_DB_PASSWORD );
             $questionnaires_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
             $sql = "
                 SELECT DISTINCT 
                     Questionnaire.QuestionnaireSerNum,
@@ -81,12 +84,30 @@ class LegacyQuestionnaire {
                 $expressionSer  = $data[0];
                 $expressionName = $data[1];
 
-                $expressionDetails = array(
-                    'serial'    => $expressionSer,
-                    'name'      => $expressionName
-                );
+                $sql = "
+                    SELECT DISTINCT
+                        qc.QuestionnaireControlSerNum
+                    FROM
+                        QuestionnaireControl qc 
+                    WHERE 
+                        qc.QuestionnaireDBSerNum = $expressionSer
+                ";
 
-                array_push($expressionList, $expressionDetails);
+                $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $secondQuery->execute();
+
+                $secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
+
+                $exists = $secondData[0];
+
+                if (!$exists) {
+                    $expressionDetails = array(
+                        'serial'    => $expressionSer,
+                        'name'      => $expressionName
+                    );
+
+                    array_push($expressionList, $expressionDetails);
+                }
             } 
             return $expressionList;
         } catch (PDOException $e) {
