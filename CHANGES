@@ -1,3 +1,11 @@
+Version 0.18.3.0:
+ -     --- Removed console log statement
+ -     --- Fixed missing metadata from test results log
+ -     --- Added user activity logs
+ -     --- Last transferred date set based on alias type         -- Appointments set to beginning of time, others set to NOW
+ -     --- Added one-to-one legacy questionnaire setup         -- Now, once a legacy questionnaire has been referenced and set, it is removed from         the "new questionnaires" list
+ - Merge branch 'release-0.18.2.0' into develop
+
 Version 0.18.2.0:
  - Merge branch 'contentLogFeature' into develop
  -     --- Changed cron title in menus
