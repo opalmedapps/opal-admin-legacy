@@ -252,7 +252,6 @@ angular.module('opalAdmin.controllers.cron', ['ngAnimate', 'ui.bootstrap', 'high
 			// After update
 			modalInstance.closed.then(function () {
 				$scope.contentNames = [];
-				console.log($scope.chartConfig);
 				var chartObj = chartConfig.getChartObj();
 				chartObj.xAxis[0].setExtremes(undefined, undefined, true);
 			});
