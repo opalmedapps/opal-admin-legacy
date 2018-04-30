@@ -583,27 +583,21 @@ ul.no-list {
   list-style: none;
   margin: 0; }
 
-.patientModal .modal-dialog,
-.mainPatientModal .modal-dialog,
-.studyModal .modal-dialog,
-.customModal .modal-dialog {
-  width: 98% !important; }
-
 .editUserModal .modal-dialog {
   width: 98% !important;
 }
 
 .customModal .modal-content,
+.logModal .modal-content,
 .editUserModal .modal-content {
     background-color: #e6edfa;
 }
 
-.transition {
-  -webkit-transition: all .2s ease-in-out;
-  -moz-transition: all .2s ease-in-out;
-  -ms-transition: all .2s ease-in-out;
-  -o-transition: all .2s ease-in-out;
-  transition: all .2s ease-in-out; }
+/* distance between stacked modals*/
+/* The first modal translateZ value*/
+.container {
+  margin: 5em auto;
+}
 
 #main {
   position: relative;
@@ -1313,6 +1307,56 @@ img {
   display: table-cell;
   vertical-align: middle;
 }
+
+.list-logs {
+  margin-bottom: 10px;
+}
+
+.list-logs .btn {
+    padding: 8px 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    box-shadow: rgba(71, 71, 71, 0.6) 0px 3px 12px -5px;
+    -webkit-transition: all .3s ease-out;
+    -moz-transition: all .3s ease-out;
+    -ms-transition: all .3s ease-out;
+    -o-transition: all .3s ease-out;
+    transition: all .3s ease-out;
+}
+ 
+.list-logs .btn:focus,
+.list-logs .btn:active:focus,
+.list-logs .btn.active:focus {
+    outline: 0 none;
+}
+ 
+.list-logs .btn-default {
+    background: #fffff4;
+    color: #563d7c;
+    font-size: 16px;
+}
+
+.list-logs .btn-default:hover {
+  background: #563d7c;
+  color: #fffff4;
+}
+
+.list-logs .btn-default.disabled:focus,
+.list-logs .btn-default.disabled:hover {
+  background: #fffff4;
+  color: #563d7c;
+}
+ 
+.list-logs .btn-default:active,
+.list-logs .btn-default.active,
+.list-logs .btn-default.active:focus,
+.list-logs .btn-default.active:hover,
+.list-logs .open > .dropdown-toggle.btn-default {
+    background: #563d7c;
+    color: #fffff4;
+}
+
+
 /* 
  * FOOTER 
  */
@@ -1351,6 +1395,10 @@ footer {
   line-height: 50px;
   font-weight: bold;
   margin-bottom: 10px;
+}
+
+.alertMessage {
+  display: none;  
 }
 
 .title-login {
@@ -1479,24 +1527,30 @@ footer {
 }
 
 .modal-header .modal-title {
-  text-align: center;
+  /*text-align: center;*/
   font-weight: 700;
 }
 
+.modal-header {
+    text-align: center;
+}
+
+.modal-header .modal-buttons {
+    margin-top: 10px;
+}
+
 .modal-header .modal-title-caption {
-  text-align: center;
+  /*text-align: center;*/
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .modal-buttons .submit {
-  float: left;
   width: 120px;
 }
 
 .modal-buttons .cancel {
-  float: right;
   width: 120px;
 }
 
@@ -1639,7 +1693,6 @@ footer {
   .operations {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
   }
 
   .modal-header .modal-title {
@@ -1675,6 +1728,18 @@ footer {
   .home-menu .icon-home {
     font-size: 40px;
   }
+
+  .modal-header {
+    text-align: inherit;
+    display: flex;
+    align-items: center;
+  }
+
+  .modal-header .modal-buttons {
+    text-align: right;
+    margin-top: 0;
+  }
+
 }
 
 @media only screen and (min-width:1200px) {
@@ -1708,6 +1773,9 @@ footer {
   .studyModal .modal-dialog,
   .customModal .modal-dialog {
     width: 70% !important; }
+
+  .logModal .modal-dialog {
+    width: 60% !important; }
 
   .editUserModal .modal-dialog {
     width: 50% !important;
@@ -1750,13 +1818,8 @@ footer {
     font-size: 18px;
   }
 
-  .modal-header .modal-buttons {
-    text-align: center;
-  }
-
   .modal-buttons .submit,
   .modal-buttons .cancel {
-    float: none;
     width: 160px;
   }
 
