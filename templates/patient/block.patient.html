@@ -1,14 +1,16 @@
 <div class="modal-header">
-  <h2 class="modal-title col-xs-12">
-    <span class="fa fa-address-card"></span> 
-    <span ng-if="currentPatient.disabled">Block</span>
-		<span ng-if="!currentPatient.disabled">Unblock</span>  
-		Patient 
-  </h2>
-  <p class="modal-title-caption col-xs-12">
-    {{currentPatient.name}} 
-  </p>
-  <div class="modal-buttons col-xs-12">
+  <div class="col-xs-12 col-md-6">
+    <h2 class="modal-title">
+      <span class="fa fa-address-card"></span> 
+      <span ng-if="currentPatient.disabled">Block</span>
+  		<span ng-if="!currentPatient.disabled">Unblock</span>  
+  		Patient 
+    </h2>
+    <p class="modal-title-caption">
+      {{currentPatient.name}} 
+    </p>
+  </div>
+  <div class="modal-buttons col-xs-12 col-md-6">
     <span> 
       <form method="post" ng-submit="submitToggle()">
         <button class="btn btn-primary submit" ng-class="{'disabled': !currentPatient.reason}" type="submit">
