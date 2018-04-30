@@ -206,7 +206,7 @@ class Alias {
                     Alias
                 WHERE
                     ae.AliasSerNum = Alias.AliasSerNum
-                AND Alias.AliasType = '$expressionType'
+                -- AND Alias.AliasType = '$expressionType'
                 AND Alias.SourceDatabaseSerNum = '$sourceDBSer'
             ";
 
@@ -638,6 +638,11 @@ class Alias {
         }
         $sourceDBSer    = $aliasDetails['source_db']['serial'];
 
+        $lastTransferred = 'NOW()';
+        if ($aliasType == 'Appointment') {
+            $lastTransferred = "'2000-01-01 00:00:00'";
+        }
+
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -671,7 +676,7 @@ class Alias {
                     '0',
                     '$userSer',
                     '$sessionId',
-                    NOW()
+                    $lastTransferred
 				)
 			";
 			$query = $host_db_link->prepare( $sql );
@@ -697,7 +702,7 @@ class Alias {
                         '$aliasSer',
                         \"$termName\",
                         \"$termDesc\",
-                        NOW(),
+                        $lastTransferred,
                         '$userSer',
                         '$sessionId'
                     )

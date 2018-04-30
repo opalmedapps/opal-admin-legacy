@@ -503,6 +503,14 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
+		// Function to get user logs given a serial
+		userAPI.getUserActivityLogs = function (userser) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/user/get.user_activity_logs.php?callback=JSON_CALLBACK&userser=" + userser
+			});
+		};
+
 		return userAPI;
 
 	})
