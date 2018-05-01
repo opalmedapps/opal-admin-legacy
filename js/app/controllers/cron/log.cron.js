@@ -34,7 +34,7 @@ angular.module('opalAdmin.controllers.cron.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.cronListLogs.appointment.length) {
 				$scope.gridAppointmentLogOptions = angular.copy(gridAliasLogOptions);
-				$scope.gridAppointmentLogOptions.data = 'cronListLogs.appointment';
+				$scope.gridAppointmentLogOptions.data = $scope.cronListLogs.appointment;
 				// insert fields after source uid
 				var statusField = { field: 'status', displayName: 'Status' };
 				var stateField = { field: 'state', displayName: 'State' };
@@ -52,7 +52,7 @@ angular.module('opalAdmin.controllers.cron.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.cronListLogs.document.length) {
 				$scope.gridDocumentLogOptions = angular.copy(gridAliasLogOptions);
-				$scope.gridDocumentLogOptions.data = 'cronListLogs.document';
+				$scope.gridDocumentLogOptions.data = $scope.cronListLogs.document;
 				// insert fields after source uid
 				var createdByField = { field: 'created_by', displayName: 'Created By' };
 				var createdTimeField = {field: 'created_time', displayName: 'Created Time' };
@@ -74,7 +74,7 @@ angular.module('opalAdmin.controllers.cron.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.cronListLogs.task.length) {
 				$scope.gridTaskLogOptions = angular.copy(gridAliasLogOptions);
-				$scope.gridTaskLogOptions.data = 'cronListLogs.task';
+				$scope.gridTaskLogOptions.data = $scope.cronListLogs.task;
 				// insert fields after source uid
 				var statusField = { field: 'status', displayName: 'Status' };
 				var stateField = { field: 'state', displayName: 'State' };
@@ -88,7 +88,7 @@ angular.module('opalAdmin.controllers.cron.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.cronListLogs.announcement.length) {
 				$scope.gridAnnouncementLogOptions = {
-					data: 'cronListLogs.announcement',
+					data: $scope.cronListLogs.announcement,
 					columnDefs: [
 						{ field: 'post_control_name', displayName: 'Post' },
 						{ field: 'revision', displayName: 'Revision No.' },
@@ -106,7 +106,7 @@ angular.module('opalAdmin.controllers.cron.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.cronListLogs.txTeamMessage.length) {
 				$scope.gridTxTeamMessageLogOptions = {
-					data: 'cronListLogs.txTeamMessage',
+					data: $scope.cronListLogs.txTeamMessage,
 					columnDefs: [
 						{ field: 'post_control_name', displayName: 'Post' },
 						{ field: 'revision', displayName: 'Revision No.' },
@@ -124,7 +124,7 @@ angular.module('opalAdmin.controllers.cron.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.cronListLogs.pfp.length) {
 				$scope.gridPFPLogOptions = {
-					data: 'cronListLogs.pfp',
+					data: $scope.cronListLogs.pfp,
 					columnDefs: [
 						{ field: 'post_control_name', displayName: 'Post' },
 						{ field: 'revision', displayName: 'Revision No.' },
@@ -142,7 +142,7 @@ angular.module('opalAdmin.controllers.cron.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.cronListLogs.educationalMaterial.length) {
 				$scope.gridEducationalMaterialLogOptions = {
-					data: 'cronListLogs.educationalMaterial',
+					data: $scope.cronListLogs.educationalMaterial,
 					columnDefs: [
 						{ field: 'material_name', displayName: 'Name' },
 						{ field: 'revision', displayName: 'Revision No.' },
@@ -160,7 +160,7 @@ angular.module('opalAdmin.controllers.cron.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.cronListLogs.email.length) {
 				$scope.gridEmailLogOptions = {
-					data: 'cronListLogs.email',
+					data: $scope.cronListLogs.email,
 					columnDefs: [
 						{ field: 'control_serial', displayName: 'ControlSer' },
 						{ field: 'revision', displayName: 'Revision No.' },
@@ -178,7 +178,7 @@ angular.module('opalAdmin.controllers.cron.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.cronListLogs.legacyQuestionnaire.length) {
 				$scope.gridLegacyQuestionnaireLogOptions = {
-					data: 'cronListLogs.legacyQuestionnaire',
+					data: $scope.cronListLogs.legacyQuestionnaire,
 					columnDefs: [
 						{ field: 'control_name', displayName: 'Questionnaire' },
 						{ field: 'revision', displayName: 'Revision No.' },
@@ -198,7 +198,7 @@ angular.module('opalAdmin.controllers.cron.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.cronListLogs.notification.length) {
 				$scope.gridNotificationLogOptions = {
-					data: 'cronListLogs.notification',
+					data: $scope.cronListLogs.notification,
 					columnDefs: [
 						{ field: 'control_serial', displayName: 'ControlSer' },
 						{ field: 'revision', displayName: 'Revision No.' },
@@ -218,7 +218,7 @@ angular.module('opalAdmin.controllers.cron.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.cronListLogs.testResult.length) {
 				$scope.gridTestResultLogOptions = {
-					data: 'cronListLogs.testResult',
+					data: $scope.cronListLogs.testResult,
 					columnDefs: [
 						{ field: 'expression_name', displayName: 'Test Name' },
 						{ field: 'revision', displayName: 'Revision No.' },

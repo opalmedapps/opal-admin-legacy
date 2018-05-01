@@ -29,7 +29,7 @@ angular.module('opalAdmin.controllers.user.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.userListLogs.login.length) {
 				$scope.gridLoginLogOptions = {
-					data: 'userListLogs.login',
+					data: $scope.userListLogs.login,
 					columnDefs: [
 						{ field: 'sessionid', displayName: 'Session Id' },
 						{ field: 'login', displayName: 'Login Time' },
@@ -43,7 +43,7 @@ angular.module('opalAdmin.controllers.user.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.userListLogs.alias.length) {
 				$scope.gridAliasLogOptions = {
-					data: 'userListLogs.alias',
+					data: $scope.userListLogs.alias,
 					columnDefs: [
 						{ field: 'serial', displayName: 'Serial' },
 						{ field: 'revision', displayName: 'Revision No.' },
@@ -67,7 +67,7 @@ angular.module('opalAdmin.controllers.user.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.userListLogs.aliasExpression.length) {
 				$scope.gridAliasExpressionLogOptions = {
-					data: 'userListLogs.aliasExpression',
+					data: $scope.userListLogs.aliasExpression,
 					columnDefs: [
 						{ field: 'serial', displayName: 'Alias Serial' },
 						{ field: 'revision', displayName: 'Revision No.' },
@@ -84,7 +84,7 @@ angular.module('opalAdmin.controllers.user.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.userListLogs.diagnosisTranslation.length) {
 				$scope.gridDiagnosisTranslationLogOptions = {
-					data: 'userListLogs.diagnosisTranslation',
+					data: $scope.userListLogs.diagnosisTranslation,
 					columnDefs: [
 						{ field: 'serial', displayName: 'Diagnosis Translation Serial' },
 						{ field: 'revision', displayName: 'Revision No.' },
@@ -104,7 +104,7 @@ angular.module('opalAdmin.controllers.user.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.userListLogs.diagnosisCode.length) {
 				$scope.gridDiagnosisCodeLogOptions = {
-					data: 'userListLogs.diagnosisCode',
+					data: $scope.userListLogs.diagnosisCode,
 					columnDefs: [
 						{ field: 'serial', displayName: 'Diagnosis Translation Serial' },
 						{ field: 'revision', displayName: 'Revision No.' },
@@ -122,7 +122,7 @@ angular.module('opalAdmin.controllers.user.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.userListLogs.email.length) {
 				$scope.gridEmailLogOptions = {
-					data: 'userListLogs.email',
+					data: $scope.userListLogs.email,
 					columnDefs: [
 						{ field: 'serial', displayName: 'Email Control Serial' },
 						{ field: 'revision', displayName: 'Revision No.' },
@@ -141,7 +141,7 @@ angular.module('opalAdmin.controllers.user.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.userListLogs.trigger.length) {
 				$scope.gridTriggerLogOptions = {
-					data: 'userListLogs.trigger',
+					data: $scope.userListLogs.trigger,
 					columnDefs: [
 						{ field: 'control_serial', displayName: 'Control Serial' },
 						{ field: 'control_table', displayName: 'Control Table' },
@@ -158,7 +158,7 @@ angular.module('opalAdmin.controllers.user.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.userListLogs.hospitalMap.length) {
 				$scope.gridHospitalMapLogOptions = {
-					data: 'userListLogs.hospitalMap',
+					data: $scope.userListLogs.hospitalMap,
 					columnDefs: [
 						{ field: 'serial', displayName: 'Serial' },
 						{ field: 'revision', displayName: 'Revision No.' },
@@ -179,7 +179,7 @@ angular.module('opalAdmin.controllers.user.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.userListLogs.post.length) {
 				$scope.gridPostLogOptions = {
-					data: 'userListLogs.post',
+					data: $scope.userListLogs.post,
 					columnDefs: [
 						{ field: 'control_serial', displayName: 'Control Serial' },
 						{ field: 'revision', displayName: 'Revision No.' },
@@ -202,7 +202,7 @@ angular.module('opalAdmin.controllers.user.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.userListLogs.notification.length) {
 				$scope.gridNotificationLogOptions = {
-					data: 'userListLogs.notification',
+					data: $scope.userListLogs.notification,
 					columnDefs: [
 						{ field: 'control_serial', displayName: 'Control Serial' },
 						{ field: 'revision', displayName: 'Revision No.' },
@@ -222,7 +222,7 @@ angular.module('opalAdmin.controllers.user.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.userListLogs.legacyQuestionnaire.length) {
 				$scope.gridLegacyQuestionnaireLogOptions = {
-					data: 'userListLogs.legacyQuestionnaire',
+					data: $scope.userListLogs.legacyQuestionnaire,
 					columnDefs: [
 						{ field: 'control_serial', displayName: 'Control Serial' },
 						{ field: 'revision', displayName: 'Revision No.' },
@@ -243,7 +243,7 @@ angular.module('opalAdmin.controllers.user.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.userListLogs.testResult.length) {
 				$scope.gridTestResultLogOptions = {
-					data: 'userListLogs.testResult',
+					data: $scope.userListLogs.testResult,
 					columnDefs: [
 						{ field: 'control_serial', displayName: 'Control Serial' },
 						{ field: 'revision', displayName: 'Revision No.' },
@@ -267,7 +267,7 @@ angular.module('opalAdmin.controllers.user.log', ['ngAnimate', 'ngSanitize', 'ui
 
 			if ($scope.userListLogs.testResultExpression.length) {
 				$scope.gridTestResultExpressionLogOptions = {
-					data: 'userListLogs.testResultExpression',
+					data: $scope.userListLogs.testResultExpression,
 					columnDefs: [
 						{ field: 'control_serial', displayName: 'Control Serial' },
 						{ field: 'revision', displayName: 'Revision No.' },
