@@ -23,6 +23,7 @@ use Time::Piece; # To parse and convert date time
 use Storable qw(dclone); # for deep copies
 use POSIX;
 use String::Util 'trim';
+use Data::Dumper;
 
 use Patient; # Our patient module
 use Alias; # Our alias module
@@ -409,8 +410,33 @@ sub getApptsFromSourceDB
             if ($sourceDBSer eq 1) {
 
                 my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
-                my $numOfExpressions = @expressions; 
-                my $counter = 0;
+            	
+            	# Hash to hold a string of expressions per distinct last transferred date
+            	# i.e. keys are transfer date, values are expressions with that last transfer date
+            	# i.e we are grouping expressions under each transfer date
+            	my $expressionHash = {};
+
+            	# Create hash
+            	foreach my $Expression (@expressions) {
+
+	            	my $expressionName = $Expression->{_name};
+	            	my $expressionLastTransfer = $Expression->{_lasttransfer};
+
+	            	# append expression (surrounded by single quotes) to array
+	            	if (exists $expressionHash{$expressionLastTransfer}) {
+	            		push(@{$expressionHash{$expressionLastTransfer}}, "'$expressionName'");
+	            	} else {
+	            		# start a new array 
+	            		$expressionHash{$expressionLastTransfer} = ["'$expressionName'"];
+	            	}
+
+	            }
+
+	            # Convert arrays to comma-separated string
+	            foreach my $lastTransferDate (keys %expressionHash) {
+	            	$expressionHash{$lastTransferDate} = join ',', @{$expressionHash{$lastTransferDate}};
+	            }
+
                 my $apptInfo_sql = "
 					WITH vva AS (
 						SELECT DISTINCT 
@@ -427,7 +453,7 @@ sub getApptsFromSourceDB
 						sa.ObjectStatus,
 						CONVERT(VARCHAR, sa.ActualStartDate, 120),
 						CONVERT(VARCHAR, sa.ActualEndDate, 120),
-						vva.Expression1
+						REPLACE(vva.Expression1, '''', '')
 					FROM 
 						variansystem.dbo.Patient pt, 
 						variansystem.dbo.ScheduledActivity sa, 
@@ -441,17 +467,18 @@ sub getApptsFromSourceDB
 					AND ai.ActivitySer 			    = act.ActivitySer 
 					AND act.ActivityCode 		    = vva.LookupValue 
 					AND pt.PatientSer 				= sa.PatientSer 
-					AND pt.SSN				        LIKE '$patientSSN%'
+					AND RTRIM(pt.SSN)		        = '$patientSSN'
 					AND att.ActivityInstanceSer 	= sa.ActivityInstanceSer
 					AND att.ResourceSer 		    = re.ResourceSer
 					AND (
 				";
 
-                foreach my $Expression (@expressions) {
+				my $numOfExpressions = keys %expressionHash; 
+                my $counter = 0;
+				# loop through each transfer date
+	            foreach my $lastTransferDate (keys %expressionHash) {
 
-                	my $expressionser = $Expression->{_ser};
-                	my $expressionName = $Expression->{_name};
-                	my $expressionLastTransfer = $Expression->{_lasttransfer};
+                	my $expressionLastTransfer = $lastTransferDate;
                 	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
 
                 	# compare last updates to find the earliest date 
@@ -465,7 +492,7 @@ sub getApptsFromSourceDB
 
 		            # concatenate query
 	        		$apptInfo_sql .= "
-						(REPLACE(vva.Expression1, '''', '')    	= '$expressionName'
+						(REPLACE(vva.Expression1, '''', '')    	IN ($expressionHash{$lastTransferDate})
 			        	AND sa.HstryDateTime	 				> '$lasttransfer') 
 	        		";
 	        		$counter++;
@@ -530,6 +557,9 @@ sub getApptsFromSourceDB
 	        		push(@apptList, $appointment);
     	    	}
 
+    	    	# empty hash
+    	    	for (keys %expressionHash) { delete $expressionHash{$_}; }
+
                 $sourceDatabase->disconnect();
             }
 
@@ -539,8 +569,34 @@ sub getApptsFromSourceDB
             if ($sourceDBSer eq 2) {
 
                 my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-                my $numOfExpressions = @expressions; 
-                my $counter = 0;
+            	
+            	# Hash to hold a string of expressions per distinct last lastTransferDateferred date
+            	# i.e. keys are lastTransferDatefer date, values are expressions with that last lastTransferDate date
+            	# i.e we are grouping expressions under each lastTransferDatefer date
+            	my $expressionHash = {};
+
+            	# Create hash
+            	foreach my $Expression (@expressions) {
+
+	            	my $expressionName = $Expression->{_name};
+                	my $expressionDesc = $Expression->{_description};
+	            	my $expressionLastTransfer = $Expression->{_lasttransfer};
+
+	            	# append expression (surrounded by single quotes) to array
+	            	if (exists $expressionHash{$expressionLastTransfer}) {
+	            		push(@{$expressionHash{$expressionLastTransfer}}, "('$expressionName', '$expressionDesc')");
+	            	} else {
+	            		# start a new array 
+	            		$expressionHash{$expressionLastTransfer} = ["('$expressionName', '$expressionDesc')"];
+	            	}
+
+	            }
+
+	            # Convert arrays to comma-separated string
+	            foreach my $lastTransferDate (keys %expressionHash) {
+	            	$expressionHash{$lastTransferDate} = join ',', @{$expressionHash{$lastTransferDate}};
+	            }
+
                 my $apptInfo_sql = "
 	                 SELECT DISTINCT
                         mval.AppointmentSerNum,
@@ -553,16 +609,16 @@ sub getApptsFromSourceDB
                         Patient pt
                     WHERE
                         mval.PatientSerNum      = pt.PatientSerNum
-                    AND pt.SSN                  LIKE '$patientSSN%'
+                    AND RTRIM(pt.SSN)           = '$patientSSN'
                     AND (
                 ";
 
-                foreach my $Expression (@expressions) {
+                my $numOfExpressions = keys %expressionHash; 
+                my $counter = 0;
+				# loop through each transfer date
+	            foreach my $lastTransferDate (keys %expressionHash) {
 
-                	my $expressionser = $Expression->{_ser};
-                	my $expressionName = $Expression->{_name};
-                	my $expressionDesc = $Expression->{_description};
-                	my $expressionLastTransfer = $Expression->{_lasttransfer};
+                	my $expressionLastTransfer = $lastTransferDate;
                 	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
 
                 	# compare last updates to find the earliest date 
@@ -574,10 +630,9 @@ sub getApptsFromSourceDB
 		                $lasttransfer = $expressionLastTransfer;
 		            }
 
+		            # concatenate query
 	        		$apptInfo_sql .= "
-
-	        			(mval.AppointmentCode 	= '$expressionName'
-	        			AND mval.ResourceDescription = '$expressionDesc'
+	        			((mval.AppointmentCode, mval.ResourceDescription) IN ($expressionHash{$lastTransferDate})
 	        			AND mval.LastUpdated	> '$lasttransfer')
 					";
 	                $counter++;
@@ -590,7 +645,8 @@ sub getApptsFromSourceDB
 	        			$apptInfo_sql .= ")";
 	        		}
 	        	}
-	                  		    
+	                  
+	            #print "$apptInfo_sql\n";		    
                 my $query = $sourceDatabase->prepare($apptInfo_sql)
 	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;
 
@@ -630,6 +686,9 @@ sub getApptsFromSourceDB
 
                     push(@apptList, $appointment);
                 }
+
+                # empty hash
+    	    	for (keys %expressionHash) { delete $expressionHash{$_}; }
 
                 $sourceDatabase->disconnect();
             }
