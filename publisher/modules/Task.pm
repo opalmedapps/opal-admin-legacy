@@ -379,7 +379,7 @@ sub getTasksFromSourceDB
 					AND ActivityInstance.ActivitySer 			    = Activity.ActivitySer
 					AND Activity.ActivityCode 				        = vva.LookupValue
 					AND Patient.PatientSer 				            = NonScheduledActivity.PatientSer     
-					AND	Patient.SSN				            		LIKE '$patientSSN%'
+					AND	RTRIM(Patient.SSN)			            	= '$patientSSN'
 					AND (
 				";
 
