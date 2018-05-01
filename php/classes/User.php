@@ -643,6 +643,7 @@
                 );
 
                 array_push($userLogs['login'], $loginDetails);
+                $userLogs['isData'] = 1;
             }
 
             /* Alias */
@@ -693,6 +694,7 @@
             	);
 
                 array_push($userLogs['alias'], $aliasDetails);
+                $userLogs['isData'] = 1;
             }
 
             /* Alias Expression */
@@ -729,6 +731,7 @@
             	);
 
                 array_push($userLogs['aliasExpression'], $aliasExpressionDetails);
+                $userLogs['isData'] = 1;
             }
 
             /* Diagnosis Translation*/
@@ -771,6 +774,7 @@
             		'date_added'			=> $data[9]
             	);
                 array_push($userLogs['diagnosisTranslation'], $diagnosisTranslationDetails);
+                $userLogs['isData'] = 1;
             }
 
             /* Diagnosis Code */
@@ -808,6 +812,7 @@
             	);
 
                 array_push($userLogs['diagnosisCode'], $diagnosisCodeDetails);
+                $userLogs['isData'] = 1;
             }
 
             /* Email */
@@ -845,6 +850,7 @@
             		'date_added'	=> $data[8]
             	);
                 array_push($userLogs['email'], $emailDetails);
+                $userLogs['isData'] = 1;
             }
 
             /* Trigger */
@@ -879,6 +885,7 @@
             	);
 
                 array_push($userLogs['trigger'], $triggerDetails);
+                $userLogs['isData'] = 1;
             }
 
             /* Hospital Map */
@@ -887,8 +894,7 @@
             		hmmh.HospitalMapSerNum,
             		hmmh.RevSerNum,
             		hmmh.SessionId,
-            		hmmh.MapURL_EN,
-            		hmmh.MapURL_FR,
+            		hmmh.MapUrl,
             		hmmh.QRMapAlias,
             		hmmh.MapName_EN,
             		hmmh.MapName_FR,
@@ -912,17 +918,17 @@
             		'serial'			=> $data[0],
             		'revision'			=> $data[1],
             		'sessionid'			=> $data[2],
-            		'url_EN'			=> $data[3],
-            		'url_FR'			=> $data[4],
-            		'qrcode'			=> $data[5],
-            		'name_EN'			=> $data[6],
-            		'name_FR'			=> $data[7],
-            		'description_EN'	=> $data[8],
-            		'description_FR'	=> $data[9],
-            		'mod_action'		=> $data[10],
-            		'date_added'		=> $data[11]
+            		'url'				=> $data[3],
+            		'qrcode'			=> $data[4],
+            		'name_EN'			=> $data[5],
+            		'name_FR'			=> $data[6],
+            		'description_EN'	=> $data[7],
+            		'description_FR'	=> $data[8],
+            		'mod_action'		=> $data[9],
+            		'date_added'		=> $data[10]
             	);
                 array_push($userLogs['hospitalMap'], $hospitalMapDetails);
+                $userLogs['isData'] = 1;
             }
 
             /* Posts */
@@ -969,6 +975,7 @@
             		'date_added'			=> $data[12]
             	);
                 array_push($userLogs['post'], $postDetails);
+                $userLogs['isData'] = 1;
 
             }
 
@@ -1010,6 +1017,7 @@
             		'date_added'			=> $data[9]
             	);
                 array_push($userLogs['notification'], $notificationDetails);
+                $userLogs['isData'] = 1;
 
             }
 
@@ -1052,6 +1060,7 @@
             		'date_added'		=> $data[10]
             	);
                 array_push($userLogs['legacyQuestionnaire'], $legacyQuestionnaireDetails);
+                $userLogs['isData'] = 1;
             }
 
             /* Test Result */
@@ -1100,6 +1109,7 @@
             		'date_added'				=> $data[13]
             	);
                 array_push($userLogs['testResult'], $testResultDetails);
+                $userLogs['isData'] = 1;
             }
 
             /* Test Result Expressions */
@@ -1131,6 +1141,7 @@
             		'date_added'		=> $data[5]
             	);
                 array_push($userLogs['testResultExpression'], $testResultExpressionDetails);
+                $userLogs['isData'] = 1;
             }
 
             return $userLogs;
