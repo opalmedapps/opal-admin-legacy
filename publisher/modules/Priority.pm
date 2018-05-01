@@ -201,7 +201,7 @@ sub getPrioritiesFromSourceDB
 	            AND ai.ActivitySer 			    = act.ActivitySer
     	        AND act.ActivityCode 			= vva.LookupValue
 	    	   	AND pt.PatientSer 				= nsa.PatientSer
-                AND pt.SSN               		LIKE '$patientSSN%'  
+                AND RTRIM(pt.SSN)          		= '$patientSSN'  
 			    AND nsa.ObjectStatus 		    != 'Deleted' 
     			AND vva.Expression1			    IN ('SGAS_P1','SGAS_P2','SGAS_P3','SGAS_P4')
 	    		AND	nsa.HstryDateTime		    > '$lastTransfer'
