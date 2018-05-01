@@ -482,7 +482,7 @@ sub getDocsFromSourceDB
 					WHERE
 						pt.pt_id 			            = visit_note.pt_id
 					AND pt.patient_ser			        = Patient.PatientSer
-					AND Patient.SSN 		       	 	LIKE '$patientSSN%'
+					AND RTRIM(Patient.SSN)       	 	= '$patientSSN'
 					AND visit_note.note_typ		        = note_typ.note_typ
 					AND visit_note.appr_flag		    = 'A'
 					AND (

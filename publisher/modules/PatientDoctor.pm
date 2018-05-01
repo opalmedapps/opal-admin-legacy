@@ -174,7 +174,7 @@ sub getPatientDoctorsFromSourceDB
 		    		variansystem.dbo.Patient pt
 			    WHERE
 			    	pt.PatientSer 		= pd.PatientSer
-    			AND	pt.SSN	    		LIKE '$patientSSN%'
+    			AND	RTRIM(pt.SSN)	    = '$patientSSN'
 	    		AND	dr.ResourceSer	    = pd.ResourceSer
 		    	AND	pd.HstryDateTime	> '$lastTransfer'
     		";  
