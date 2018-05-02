@@ -1,3 +1,7 @@
+Version 0.18.4.1:
+ - Merge branch 'release-0.18.4.0' into preproduction
+ - Merge branch 'hotfix-0.18.3.2' into preproduction
+
 Version 0.18.4.0:
  -     --- Significantly reduced publisher execution time         -- Optimized queries to group expressions based on their respective last transferred time.         Best case (which is most cases), all expressions have the same last transferred date.         Intermediate case, when new expressions have been added to the alias so there will be         two groups (1. existing expressions have last transfered of 5 mins ago, 2. new expressions         have last transferred at the beginning of time). Each group will have their "IN" clause as         a concatenation of expressions with their respective last transferred.         -- Changed "LIKE" clause for exact "=" for checking patient SSN. This significantly reduced         query execution time.         -- This has been tested for when all expressions have been aliased! Reduced time from > 3 mins         to ~ 16 seconds!
  - Merge branch 'hotfix-0.18.3.2' into develop
