@@ -495,14 +495,6 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
-		// API to get user activity list 
-		userAPI.getUserActivities = function () {
-			return $http({
-				method: 'JSONP',
-				url: URLPATH + "api/user/get.user_activities.php?callback=JSON_CALLBACK"
-			});
-		};
-
 		// Function to get user logs given a serial
 		userAPI.getUserActivityLogs = function (userser) {
 			return $http({
