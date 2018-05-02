@@ -89,6 +89,36 @@
                 </div>
               </div> 
 						</div>  
+
+            <!-- SECTION: Language -->
+            <div class="row">
+              <div class="col-xs-12 side-menu-title">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fa fa-dot-circle-o"></span>
+                    <h2>Language</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12">
+                <p style="margin-bottom: 10px;">
+                  Change the language for opalAdmin.
+                </p>
+              </div>
+            </div>
+            <div class="row animated" style="margin-bottom: 15px;">
+              <div class="col-xs-12 col-sm-7">
+                <div class="row">
+                  <div class="col-md-5">
+                    <select ng-model="currentUser.language" ng-change="updateLanguage(currentUser)" ng-options="language.id as language.name for language in languages" class="form-control">
+                    </select>
+                  </div>
+                </div>
+              </div>  
+            </div>
+
 						<!-- END SECTION  -->
           </div>       
         </div>
