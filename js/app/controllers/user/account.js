@@ -9,6 +9,15 @@ angular.module('opalAdmin.controllers.account', ['ui.bootstrap']).
 		// Set current user 
 		$scope.currentUser = Session.retrieveObject('user');
 
+		// Initialize a list of languages available
+		$scope.languages = [{
+			name: 'English',
+			id: 'EN'
+		}, {
+			name: 'French',
+			id: 'FR'
+		}];
+
 		$scope.bannerMessage = "";
 		// Function to show page banner 
 		$scope.showBanner = function () {
@@ -141,7 +150,7 @@ angular.module('opalAdmin.controllers.account', ['ui.bootstrap']).
 						if (response.value == 1) {
 							$scope.flushAccount();
 							$scope.setBannerClass('success');
-							$scope.bannerMessage = "Password successfully changed!";
+							$scope.bannerMessage = "Password successfully changed";
 							$scope.showBanner();
 							$scope.$apply();
 						} else {
@@ -166,6 +175,30 @@ angular.module('opalAdmin.controllers.account', ['ui.bootstrap']).
 				});
 
 			}
+		};
+
+		// Function when language changes 
+		$scope.updateLanguage = function (user) {
+			// submit form 
+			$.ajax({
+				type: "POST",
+				url: "php/user/update.language.php",
+				data: user,
+				success: function (response) {
+					response = JSON.parse(response);
+					if (response.value == 1) {
+						$scope.setBannerClass('success');
+						$scope.bannerMessage = "Language successfully changed";
+						$scope.showBanner();
+						Session.update(user); // change language in cookies
+					} else {
+						$scope.setBannerClass('danger');
+						$scope.bannerMessage = response.error.message;
+						$scope.showBanner();
+					}
+					$scope.$apply();
+				}
+			});
 		};
 
 

@@ -190,6 +190,46 @@
 			 return $response;
 		}
 	 }
+
+	 /**
+     *
+     * Updates a user's language
+     *
+     * @param array $userDetails  : the user details
+     * @return array $response : response
+     */
+	public function updateLanguage($userDetails) {
+	 	$response = array (
+	 		'value'		=> 0,
+	 		'error'		=> array(
+	 			'code'		=> '',
+	 			'message'	=> ''
+	 		)
+	 	);
+	 	$language 	= $userDetails['language'];
+	 	$userSer	= $userDetails['id'];
+
+	 	try {
+	 		$con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD ); 
+			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+			$sql = "UPDATE OAUser SET OAUser.Language = :language WHERE OAUser.OAUserSerNum = :ser";
+
+			$stmt = $con->prepare( $sql );
+			$stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
+			$stmt->bindValue( "language", $language, PDO::PARAM_STR );
+			$stmt->execute();
+
+			$response['value'] = 1; // Success
+			return $response;
+
+	 	} catch (PDOException $e) {
+			 $response['error']['code'] = 'db-catch';
+			 $response['error']['message'] = $e->getMessage();
+			 return $response;
+		}
+	}
+
 	 
 	 /**
      *
@@ -210,6 +250,7 @@
 	 	$newPassword 		= $userDetails['password'];
 	 	$confirmPassword 	= $userDetails['confirmPassword'];
 	 	$roleSer 			= $userDetails['role']['serial'];
+	 	$language 			= $userDetails['language'];
 
 	 	try {
 
@@ -225,6 +266,10 @@
 
 			$sql = "UPDATE OAUserRole SET OAUserRole.RoleSerNum = $roleSer WHERE OAUserRole.OAUserSerNum = $userSer";
 
+			$stmt = $con->prepare( $sql );
+			$stmt->execute();
+
+			$sql = "UPDATE OAUser SET OAUser.Language = '$language' WHERE OAUser.OAUserSerNum = $userSer";
 			$stmt = $con->prepare( $sql );
 			$stmt->execute();
 
@@ -248,16 +293,18 @@
 		$username 		= $userDetails['username'];
 		$password 		= $userDetails['password'];
 		$roleSer 		= $userDetails['role']['serial'];
+		$language 		= $userDetails['language'];
 		$cypher 		= $userDetails['cypher'];
 		$d = new Encrypt;
 		try {
 			$con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-			$sql = "INSERT INTO OAUser(Username, Password, DateAdded) VALUES(:username, :password, NOW())";
+			$sql = "INSERT INTO OAUser(Username, Password, Language, DateAdded) VALUES(:username, :password, :language, NOW())";
 			
 			$stmt = $con->prepare( $sql );
 			$stmt->bindValue( "username", $username, PDO::PARAM_STR );
 			$stmt->bindValue( "password", hash("sha256", $d->encodeString( $password, $cypher ) . $this->salt), PDO::PARAM_STR );
+			$stmt->bindValue( "language", $language, PDO::PARAM_STR );
 			$stmt->execute();
 
 			$userSer = $con->lastInsertId();

@@ -14,19 +14,30 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 		// default booleans
 		$scope.passwordSection = {open:false, show:false};
 		$scope.roleSection = {open:false, show:false};
+		$scope.languageSection = {open:false, show:false};
+
+		// Initialize a list of languages available
+		$scope.languages = [{
+			name: 'English',
+			id: 'EN'
+		}, {
+			name: 'French',
+			id: 'FR'
+		}];
 
 		// completed registration steps in object notation
 		var steps = {
 			username: { completed: false },
 			password: { completed: false },
-			role: { completed: false }
+			role: { completed: false },
+			language: { completed: false }
 		};
 
 		// Default count of completed steps
 		$scope.numOfCompletedSteps = 0;
 
 		// Default total number of steps 
-		$scope.stepTotal = 3;
+		$scope.stepTotal = 4;
 
 		// Progress bar based on default completed steps and total
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -54,7 +65,8 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 			username: null,
 			password: null,
 			confirmPassword: null,
-			role: null
+			role: null,
+			language: null
 		};
 
 		// Call our API service to get the list of possible roles
@@ -171,10 +183,25 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 		// Function to toggle steps when updating the role field
 		$scope.roleUpdate = function () {
 			$scope.roleSection.open = true;
-			if ($scope.newUser.role)
+			if ($scope.newUser.role) {
 				steps.role.completed = true;
+				$scope.languageSection.show = true;
+			}
 			else
 				steps.role.completed = false;
+
+			$scope.numOfCompletedSteps = stepsCompleted(steps);
+			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+
+		};
+
+		// Function to toggle steps when updating the language field
+		$scope.languageUpdate = function () {
+			$scope.languageSection.open = true;
+			if ($scope.newUser.language)
+				steps.language.completed = true;
+			else
+				steps.language.completed = false;
 
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
