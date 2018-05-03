@@ -7,8 +7,6 @@
 #
 # We use our custom Perl Modules to help us with getting information and 
 # setting them into the appropriate place. 
-use File::Basename;
-use lib dirname($0) . '/modules'; # specify where are modules are -- $0 = this script's location
 
 #-----------------------------------------------------------------------
 # Packages/Modules
@@ -16,10 +14,141 @@ use lib dirname($0) . '/modules'; # specify where are modules are -- $0 = this s
 use Time::Piece;
 use POSIX;
 use Storable qw(dclone);
+use File::Basename;
+use JSON;
+
+#-----------------------------------------------------------------------
+# Monitor this script's execution
+#-----------------------------------------------------------------------
+$log_file = dirname($0) . '/logs/monitor_log.json';
+my $json_log;
+if (-e $log_file) { # file exists
+	{
+	  local $/; # Enable 'slurp' mode
+	  open my $file_handler, "<", $log_file;
+	  $json_log = <$file_handler>;
+	  close $file_handler;
+	}
+	$json_log = decode_json($json_log); # get json
+
+	my $pid = $json_log->{'pid'}; # process id
+	# check if process if in file is running
+	system("ps -p $pid > /dev/null 2>&1");
+
+	if ($? eq 0) { # this script is already running
+
+		my $run_count = $json_log->{'run'}->{'count'}; # get execution count
+		$run_count++;
+		$json_log->{'run'}->{'count'} = $run_count; # to set back in file
+
+		if ($run_count % 10 eq 9) { # trigger every 10 times
+
+			# email error 
+
+			# set last emailed date
+			$json_log->{'run'}->{'last_emailed'} = strftime("%Y-%m-%d %H:%M:%S", localtime(time)); # now
+
+		}
+		
+		# write back to file	
+		writeToLogFile($log_file, $json_log);
+
+		exit 0;
+	}
+	else { # new process 
+
+		my $pid = $$;
+
+		my $start_flag = $json_log->{'start'}; # get start flag from file
+		if ($start_flag ne 0) { # script has been crashing
+			
+			$json_log->{'pid'} = $pid; # set pid
+
+			my $crash_count = $json_log->{'crash'}->{'count'}; # get crash count
+			$crash_count++;
+			$json_log->{'crash'}->{'count'} = $crash_count;
+
+			if ($crash_count eq 10) { # email crash report after 10 crashes
+
+				# email error
+
+				# set last emailed date
+				$json_log->{'crash'}->{'last_emailed'} = strftime("%Y-%m-%d %H:%M:%S", localtime(time)); # now
+			}
+			elsif ($crash_count > 10) { # stop completly after 10 crashes
+				exit 0;
+			}
+
+		}
+		else { # clean new process
+			
+			# to write new log
+			$json_log = {
+				'pid'	=> $pid,
+				'start'	=> 0,
+				'run'	=> {
+					'count'	=> 0,
+					'last_emailed' 	=> 0
+				},
+				'crash'	=> {
+					'count'	=> 0,
+					'last_emailed'	=> 0
+				}
+			};
+		}
+
+		writeToLogFile($log_file, $json_log);
+	}
+}
+else { # log file DNE 
+
+	# to write new process
+	my $pid = $$;
+	$json_log = {
+		'pid'	=> $pid,
+		'start'	=> 0,
+		'run'	=> {
+			'count'	=> 0,
+			'last_emailed' 	=> 0
+		},
+		'crash'	=> {
+			'count'	=> 0,
+			'last_emailed'	=> 0
+		}
+	};
+
+	# write new file
+	writeToLogFile($log_file, $json_log);
+	
+}
+
+# set start flag to signify script execution
+$json_log->{'start'} = 1;
+writeToLogFile($log_file, $json_log);
+
+#====================================================================================
+# Helper Subroutine to log json content to a file
+#====================================================================================
+sub writeToLogFile
+{
+	my ($log_file, $json_log) = @_; # log file and contents from args
+	open my $file_handler, ">", $log_file;
+	print $file_handler encode_json($json_log);
+	close $file_handler;
+
+	return;
+}
+
+#####################################################################################################
+# 
+# START EXECUTION
+#
+#####################################################################################################
 
 #-----------------------------------------------------------------------
 # Custom Modules
 #-----------------------------------------------------------------------
+use lib dirname($0) . '/modules'; # specify where are modules are -- $0 = this script's location
 use Configs; 
 use Database; 
 use Patient; 
@@ -74,7 +203,8 @@ my $verbose = 1;
 #=========================================================================================
 @registeredPatients = Patient::getPatientsMarkedForUpdate($cronLogSer); 
 
-print "Got patients\n" if $verbose;
+print "Got patient list\n" if $verbose;
+
 #=========================================================================================
 # Loop over each patient. 
 #=========================================================================================
@@ -117,12 +247,17 @@ foreach my $Patient (@registeredPatients) {
     }
 }
 
+print "Finished patient list\n" if $verbose;
+
 ##########################################################################################
 # 
 # Data Retrieval PATIENTDOCTORS - get list of patient-doctor info updated since last update
 #
 ##########################################################################################
 @PDList = PatientDoctor::getPatientDoctorsFromSourceDB(@patientList);
+
+print "Got patient doctor list\n" if $verbose;
+
 #=========================================================================================
 # Loop over each PD. Various functions are done.
 #=========================================================================================
@@ -149,13 +284,15 @@ foreach my $PatientDoctor (@PDList) {
 	}
 }
 
-print "Got PDs\n" if $verbose;
+print "Finished patient doctor list\n" if $verbose;
+
 ##########################################################################################
 # 
 # Data Retrieval DIAGNOSES - get list of diagnosis info updated since last update
 #
 ##########################################################################################
 @DiagnosisList = Diagnosis::getDiagnosesFromSourceDB(@patientList);
+print "Got diagnosis list\n" if $verbose;
 
 #=========================================================================================
 # Loop over each diagnosis. Various functions are done.
@@ -183,7 +320,7 @@ foreach my $Diagnosis (@DiagnosisList) {
 	}
 }
 
-print "Got diagnosis\n" if $verbose;
+print "Finished diagnosis list\n" if $verbose;
 
 ##########################################################################################
 # 
@@ -191,6 +328,7 @@ print "Got diagnosis\n" if $verbose;
 #
 ##########################################################################################
 @PriorityList = Priority::getPrioritiesFromSourceDB(@patientList);
+print "Got priority list\n" if $verbose;
 
 #=========================================================================================
 # Loop over each priority. Various functions are done.
@@ -218,8 +356,7 @@ foreach my $Priority (@PriorityList) {
 	}
 }
 
-print "Got priority\n" if $verbose;
-
+print "Finished priority list\n" if $verbose;
 
 ##########################################################################################
 # 
@@ -227,6 +364,7 @@ print "Got priority\n" if $verbose;
 #
 ##########################################################################################
 @TaskList = Task::getTasksFromSourceDB($cronLogSer, @patientList);
+print "Got task list\n" if $verbose;
 
 #=========================================================================================
 # Loop over each task. Various functions are done.
@@ -255,13 +393,15 @@ foreach my $Task (@TaskList) {
 
 }
 
-print "Got tasks\n" if $verbose;
+print "Finished task list\n" if $verbose;
+
 ##########################################################################################
 # 
 # Data Retrieval APPOINTMENTS - get list of patients with appointments updated since last update
 #
 ##########################################################################################
 @ApptList = Appointment::getApptsFromSourceDB($cronLogSer, @patientList);
+print "Got appointment list\n" if $verbose;
 
 #=========================================================================================
 # Loop over each patient. Various functions are done.
@@ -289,7 +429,8 @@ foreach my $Appointment (@ApptList) {
 	}	
 }
 
-print "Got appointments\n" if $verbose;
+print "Finished appointment list\n" if $verbose;
+
 ##########################################################################################
 # 
 # Data Retrieval RESOURCEAPPOINTMENT - get list of resourceappt info updated since last update
@@ -297,7 +438,8 @@ print "Got appointments\n" if $verbose;
 ##########################################################################################
 @RAList = ResourceAppointment::getResourceAppointmentsFromSourceDB(@patientList);
 
-print "RA List\n" if $verbose;
+print "Got resource appointment list\n" if $verbose;
+
 #=========================================================================================
 # Loop over each RA. Various functions are done.
 #=========================================================================================
@@ -323,9 +465,7 @@ foreach my $ResourceAppointment (@RAList) {
 		$ResourceAppointment->insertResourceAppointmentIntoOurDB();
 	}
 }
-
-
-print "Got RAs\n" if $verbose;
+print "Finished resource appointment list\n" if $verbose;
 
 ##########################################################################################
 # 
@@ -334,7 +474,8 @@ print "Got RAs\n" if $verbose;
 ##########################################################################################
 @PLList = PatientLocation::getPatientLocationsFromSourceDB(@patientList);
 
-print "PL List\n" if $verbose;
+print "Got patient location list\n" if $verbose;
+
 #=========================================================================================
 # Loop over each PL. Various functions are done.
 #=========================================================================================
@@ -361,7 +502,7 @@ foreach my $PatientLocation (@PLList) {
 	}
 }
 
-print "Got PLs\n" if $verbose;
+print "Finished patient location list\n" if $verbose;
 
 ##########################################################################################
 # 
@@ -370,7 +511,8 @@ print "Got PLs\n" if $verbose;
 ##########################################################################################
 @PLMHList = PatientLocation::getPatientLocationsMHFromSourceDB(@patientList);
 
-print "PL List\n" if $verbose;
+print "Got patient location MH list\n" if $verbose;
+
 #=========================================================================================
 # Loop over each PL MH. Various functions are done.
 #=========================================================================================
@@ -397,7 +539,7 @@ foreach my $PatientLocation (@PLMHList) {
 	}
 }
 
-print "Got PL MHs\n" if $verbose;
+print "Finished patient location MH list\n" if $verbose;
 
 ##########################################################################################
 # 
@@ -405,13 +547,12 @@ print "Got PL MHs\n" if $verbose;
 #
 ##########################################################################################
 @DocList = Document::getDocsFromSourceDB($cronLogSer, @patientList);
+print "Got document list\n" if $verbose;
 
 # Transfer and log patient documents
 Document::transferPatientDocuments(@DocList);
 
-
-print "Got documents\n" if $verbose;
-
+print "Finished document list\n" if $verbose;
 
 ##########################################################################################
 # 
@@ -419,6 +560,7 @@ print "Got documents\n" if $verbose;
 #
 ##########################################################################################
 @TRList = TestResult::getTestResultsFromSourceDB($cronLogSer, @patientList);
+print "Got test result list\n" if $verbose;
 
 #=========================================================================================
 # Loop over each test result. Various functions are done.
@@ -446,8 +588,8 @@ foreach my $TestResult (@TRList) {
 	}	
 		
 }
+print "Finished test result list\n" if $verbose;
 
-print "Got test results\n" if $verbose;
 ##########################################################################################
 # 
 # Publishing ANNOUNCEMENTS 
@@ -455,7 +597,7 @@ print "Got test results\n" if $verbose;
 ##########################################################################################
 Announcement::publishAnnouncements($cronLogSer, @patientList);
 
-print "Got announcements\n" if $verbose;
+print "Finished announcements\n" if $verbose;
 
 ##########################################################################################
 # 
@@ -464,7 +606,7 @@ print "Got announcements\n" if $verbose;
 ##########################################################################################
 TxTeamMessage::publishTxTeamMessages($cronLogSer, @patientList);
 
-print "Got TTM\n" if $verbose;
+print "Finished treatment team messages\n" if $verbose;
 
 ##########################################################################################
 # 
@@ -473,7 +615,7 @@ print "Got TTM\n" if $verbose;
 ##########################################################################################
 PatientsForPatients::publishPatientsForPatients($cronLogSer, @patientList);
 
-print "Got P4P\n";
+print "Finished patients for patients\n";
 
 ##########################################################################################
 # 
@@ -482,7 +624,7 @@ print "Got P4P\n";
 ##########################################################################################
 EducationalMaterial::publishEducationalMaterials($cronLogSer, @patientList);
 
-print "Got Educational materials\n" if $verbose;
+print "Finished Educational materials\n" if $verbose;
 
 ##########################################################################################
 # 
@@ -491,7 +633,7 @@ print "Got Educational materials\n" if $verbose;
 ##########################################################################################
 # Questionnaire::publishQuestionnaires(@patientList);
 
-# print "Got Questionnaires\n" if $verbose;
+# print "Finished Questionnaires\n" if $verbose;
 
 ##########################################################################################
 # 
@@ -500,7 +642,7 @@ print "Got Educational materials\n" if $verbose;
 ##########################################################################################
 LegacyQuestionnaire::publishLegacyQuestionnaires($cronLogSer, @patientList);
 
-print "Got Legacy Questionnaires\n" if $verbose;
+print "Finished Legacy Questionnaires\n" if $verbose;
 
 # Once everything is complete, we update the "last transferred" field for all controls
 # Patient control
@@ -514,12 +656,15 @@ EducationalMaterialControl::setEduMatControlLastPublishedIntoOurDB($start_dateti
 # Test result control
 TestResultControl::setTestResultLastPublishedIntoOurDB($start_datetime);
 
-
 # Get the current time
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 
 # Log that the script is finished in the cronlog
 Cron::setCronLog("Completed", $current_datetime);
 
-# Update the "Next Cron"
-Cron::setNextCron();
+# success restart flag and counter for next run
+$json_log->{'start'} = 0;
+$json_log->{'run'}->{'count'} = 0;
+$json_log->{'crash'}->{'count'} = 0;
+
+writeToLogFile($log_file, $json_log);
