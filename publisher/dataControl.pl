@@ -20,12 +20,12 @@ use JSON;
 #-----------------------------------------------------------------------
 # Monitor this script's execution
 #-----------------------------------------------------------------------
-$log_file = dirname($0) . '/logs/monitor_log.json';
+$monitor_log = dirname($0) . '/logs/monitor_log.json';
 my $json_log;
-if (-e $log_file) { # file exists
+if (-e $monitor_log) { # file exists
 	{
 	  local $/; # Enable 'slurp' mode
-	  open my $file_handler, "<", $log_file;
+	  open my $file_handler, "<", $monitor_log;
 	  $json_log = <$file_handler>;
 	  close $file_handler;
 	}
@@ -51,7 +51,7 @@ if (-e $log_file) { # file exists
 		}
 		
 		# write back to file	
-		writeToLogFile($log_file, $json_log);
+		writeToLogFile($monitor_log, encode_json($json_log), ">");
 
 		exit 0;
 	}
@@ -97,7 +97,7 @@ if (-e $log_file) { # file exists
 			};
 		}
 
-		writeToLogFile($log_file, $json_log);
+		writeToLogFile($monitor_log, encode_json($json_log), ">");
 	}
 }
 else { # log file DNE 
@@ -118,22 +118,22 @@ else { # log file DNE
 	};
 
 	# write new file
-	writeToLogFile($log_file, $json_log);
+	writeToLogFile($monitor_log, encode_json($json_log), ">");
 	
 }
 
 # set start flag to signify script execution
 $json_log->{'start'} = 1;
-writeToLogFile($log_file, $json_log);
+writeToLogFile($monitor_log, encode_json($json_log), ">");
 
 #====================================================================================
 # Helper Subroutine to log json content to a file
 #====================================================================================
 sub writeToLogFile
 {
-	my ($log_file, $json_log) = @_; # log file and contents from args
-	open my $file_handler, ">", $log_file;
-	print $file_handler encode_json($json_log);
+	my ($monitor_log, $contents, $writeOption) = @_; # args
+	open my $file_handler, $writeOption, $monitor_log;
+	print $file_handler $contents;
 	close $file_handler;
 
 	return;
@@ -667,4 +667,4 @@ $json_log->{'start'} = 0;
 $json_log->{'run'}->{'count'} = 0;
 $json_log->{'crash'}->{'count'} = 0;
 
-writeToLogFile($log_file, $json_log);
+writeToLogFile($monitor_log, encode_json($json_log), ">");
