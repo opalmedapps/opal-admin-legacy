@@ -13,6 +13,10 @@ angular.module('opalAdmin.services', [])
 		this.retrieveObject = function (data) {
 			return $cookies.getObject(data);
 		};
+		this.update = function (user) {
+			this.destroy();
+			this.create(user);
+		}
 		this.destroy = function () {
 			$cookies.remove('user');
 		};

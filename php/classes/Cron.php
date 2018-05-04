@@ -112,7 +112,7 @@ class Cron {
 			$min = $timePieces[1];
 
 			// Our cron jobs 
-			$cronjob_perl = "$min $hour $day $month * ".BACKEND_ABS_PATH."dataControl.pl >/dev/null 2>&1";
+			$cronjob_perl = "$min $hour $day $month * ".BACKEND_ABS_PATH."dataControl.pl &>> ".BACKEND_ABS_PATH."logs/executions.log";
 			$cronjob_php = "$min $hour $day $month * /usr/bin/php ".FRONTEND_ABS_PATH."php/cron/update.crontab.php $cronSer >/dev/null 2>&1";
 
 			$cronjobs = array($cronjob_perl,$cronjob_php);
@@ -199,10 +199,10 @@ class Cron {
 
 			// Repeat Options
 			if ($repeatUnits == "Minutes") { // Minute cron
-				$cronjob_perl = "*/$repeatInterval * * * * ".BACKEND_ABS_PATH."dataControl.pl >/dev/null 2>&1";
+				$cronjob_perl = "*/$repeatInterval * * * * ".BACKEND_ABS_PATH."dataControl.pl &>> ".BACKEND_ABS_PATH."logs/executions.log";
 			}
 			if ($repeatUnits == "Hours") { // Hourly cron
-				$cronjob_perl = "$min */$repeatInterval * * * ".BACKEND_ABS_PATH."dataControl.pl >/dev/null 2>&1";
+				$cronjob_perl = "$min */$repeatInterval * * * ".BACKEND_ABS_PATH."dataControl.pl &>> ".BACKEND_ABS_PATH."logs/executions.log";
 			}
 
 			$cronjobs = array($cronjob_perl);
