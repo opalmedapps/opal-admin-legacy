@@ -8,6 +8,15 @@ angular.module('opalAdmin.controllers.user.edit', ['ui.bootstrap', 'ui.grid']).
 
 		$scope.user = {};
 
+		// Initialize a list of languages available
+		$scope.languages = [{
+			name: 'English',
+			id: 'EN'
+		}, {
+			name: 'French',
+			id: 'FR'
+		}];
+
 		/* Function for the "Processing" dialog */
 		var processingModal;
 		$scope.showProcessingModal = function () {
@@ -106,6 +115,12 @@ angular.module('opalAdmin.controllers.user.edit', ['ui.bootstrap', 'ui.grid']).
 			$scope.changesMade = true;
 		};
 
+		// Function that triggers when the language field is updated
+		$scope.languageUpdate = function () {
+
+			$scope.changesMade = true;
+		};
+
 		// Function to check for form completion
 		$scope.checkForm = function () {
 			if (($scope.changesMade && !$scope.passwordChange) ||
@@ -121,12 +136,14 @@ angular.module('opalAdmin.controllers.user.edit', ['ui.bootstrap', 'ui.grid']).
 
 				// duplicate user
 				var user = jQuery.extend(true, {}, $scope.user);
-				// one-time pad using current time and rng
-				var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103; 
-				// encode passwords before request
-				user.password = Encrypt.encode(user.password, cypher);
-				user.confirmPassword = Encrypt.encode(user.confirmPassword, cypher);
-				user.cypher = cypher;
+				if (user.password && user.confirmPassword) {
+					// one-time pad using current time and rng
+					var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103; 
+					// encode passwords before request
+					user.password = Encrypt.encode(user.password, cypher);
+					user.confirmPassword = Encrypt.encode(user.confirmPassword, cypher);
+					user.cypher = cypher;
+				}
 
 				// submit 
 				$.ajax({

@@ -75,5 +75,25 @@
         </div>  
       </div>
     </div> 
+
+    <!-- SECTION: Language -->
+    <div uib-accordion-group is-open="languageSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Change Language</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': languageSection.open, 'glyphicon-chevron-right': !languageSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="row">
+        <div class="col-xs-12 col-sm-10">
+          <div class="row">
+            <div class="col-sm-6">
+              <select ng-model="user.language" ng-change="languageUpdate()" ng-options="language.id as language.name for language in languages" class="form-control">
+              </select>
+            </div>
+          </div>
+        </div>  
+      </div>
+    </div> 
+
   </uib-accordion>
 </div>

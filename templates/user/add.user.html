@@ -96,6 +96,28 @@
                     </p>
                   </div>
                 </div>
+                <!-- SECTION: Language -->
+                <div uib-accordion-group is-open="languageSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:languageSection.show}" ng-if="languageSection.show" is-disabled="!newUser.language">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newUser.language" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Language</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': languageSection.open, 'glyphicon-chevron-right': !languageSection.open}" ng-if="newUser.language"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newUser.language" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newUser.language}}
+                    </p>
+                  </div>
+                </div>
               </uib-accordion>
               <!-- Submit button -->
               <div class="panel-container">
@@ -249,6 +271,36 @@
                     <div class="col-xs-12 col-sm-6">
                       <select ng-model="newUser.role" ng-change="roleUpdate()" ng-options="role as role.name for role in roles" class="form-control">
                         <option ng-hide="newUser.role" value="">Select Role</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>  
+              </div>
+              <!-- SECTION: Language -->
+              <div class="row animated" ng-class="{fadeInUp: languageSection.show}" ng-if="languageSection.show">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Language</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row animated" ng-class="{fadeInUp: languageSection.show}" ng-if="languageSection.show">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span style="color:#d9534f"><strong>Required field:</strong></span>
+                    Please assign a language to the new user.
+                  </p>
+                </div>
+              </div>  
+              <div class="row animated" ng-class="{fadeInUp: languageSection.show}" ng-if="languageSection.show" style="margin-bottom: 15px;">
+                <div class="col-xs-12 col-sm-8">
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-6">
+                      <select ng-model="newUser.language" ng-change="languageUpdate()" ng-options="language.id as language.name for language in languages" class="form-control">
+                        <option ng-hide="newUser.language" value="">Select Language</option>
                       </select>
                     </div>
                   </div>
