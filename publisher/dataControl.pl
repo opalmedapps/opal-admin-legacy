@@ -16,11 +16,18 @@ use POSIX;
 use Storable qw(dclone);
 use File::Basename;
 use JSON;
+use MIME::Lite;
 
 #-----------------------------------------------------------------------
 # Monitor this script's execution
+# - What this section does is 
+# 	1. Checks for hanging jobs
+# 	2. Checks for crash reports
+# Both recorded in monitor_log.json
 #-----------------------------------------------------------------------
+$execution_log = dirname($0) . '/logs/executions.log';
 $monitor_log = dirname($0) . '/logs/monitor_log.json';
+
 my $json_log;
 if (-e $monitor_log) { # file exists
 	{
@@ -32,7 +39,7 @@ if (-e $monitor_log) { # file exists
 	$json_log = decode_json($json_log); # get json
 
 	my $pid = $json_log->{'pid'}; # process id
-	# check if process if in file is running
+	# check if process in file is running
 	system("ps -p $pid > /dev/null 2>&1");
 
 	if ($? eq 0) { # this script is already running
@@ -41,9 +48,33 @@ if (-e $monitor_log) { # file exists
 		$run_count++;
 		$json_log->{'run'}->{'count'} = $run_count; # to set back in file
 
-		if ($run_count % 10 eq 9) { # trigger every 10 times
+		if ($run_count % 10 eq 9) { # email execution report every 10 times
+
+			unless(-e $execution_log) {
+			    # Create the file if it doesn't exist
+			    open my $file_handler, ">", $execution_log;
+			    close $file_handler;
+			}
+			open(my $file_handler, "<", $execution_log);
+			my @lines = reverse <$file_handler>; # read file from tail
+			my @logs;
+			my $count = 0;
+			foreach $line (@lines) {
+				push (@logs, "$line<br>");
+				$count++;
+				if ($count > 50) { last; } # only read last 50 lines
+			}
 
 			# email error 
+			my $mime = MIME::Lite->new(
+				'From'		=> "opal\@muhc.mcgill.ca",
+				'To'		=> "ackeem.berry\@gmail.com",
+				'Subject'	=> "Potential hanging script - Opal dataControl.pl",
+				'Type'		=> 'text/html',
+				'Data'		=> \@logs,
+			);
+
+			my $response = $mime->send('smtp', '172.25.123.208');
 
 			# set last emailed date
 			$json_log->{'run'}->{'last_emailed'} = strftime("%Y-%m-%d %H:%M:%S", localtime(time)); # now
@@ -53,11 +84,11 @@ if (-e $monitor_log) { # file exists
 		# write back to file	
 		writeToLogFile($monitor_log, encode_json($json_log), ">");
 
-		exit 0;
+		exit 0; # quit this script since already running on another process
 	}
 	else { # new process 
 
-		my $pid = $$;
+		my $pid = $$; # get process id
 
 		my $start_flag = $json_log->{'start'}; # get start flag from file
 		if ($start_flag ne 0) { # script has been crashing
@@ -66,23 +97,45 @@ if (-e $monitor_log) { # file exists
 
 			my $crash_count = $json_log->{'crash'}->{'count'}; # get crash count
 			$crash_count++;
-			$json_log->{'crash'}->{'count'} = $crash_count;
+			$json_log->{'crash'}->{'count'} = $crash_count; # to set crash count back to file
 
-			if ($crash_count eq 10) { # email crash report after 10 crashes
+			if ($crash_count % 10 eq 9) { # email crash report after 10 crashes
 
-				# email error
+				unless(-e $execution_log) {
+				    #Create the file if it doesn't exist
+				    open my $file_handler, ">", $execution_log;
+				    close $file_handler;
+				}
+				open(my $file_handler, "<", $execution_log);
+				my @lines = reverse <$file_handler>; # read file from tail
+				my @logs;
+				my $count = 0;
+				foreach $line (@lines) {
+					push (@logs, "$line<br>");
+					$count++;
+					if ($count > 50) { last; } # only get last 50 lines
+				}
+
+				# email error 
+				my $mime = MIME::Lite->new(
+					'From'		=> "opal\@muhc.mcgill.ca",
+					'To'		=> "ackeem.berry\@gmail.com",
+					'Subject'	=> "Script crash - Opal dataControl.pl",
+					'Type'		=> 'text/html',
+					'Data'		=> \@logs,
+				);
+
+				my $response = $mime->send('smtp', '172.25.123.208');
 
 				# set last emailed date
 				$json_log->{'crash'}->{'last_emailed'} = strftime("%Y-%m-%d %H:%M:%S", localtime(time)); # now
 			}
-			elsif ($crash_count > 10) { # stop completly after 10 crashes
-				exit 0;
-			}
+			
 
 		}
 		else { # clean new process
 			
-			# to write new log
+			# flush/new log
 			$json_log = {
 				'pid'	=> $pid,
 				'start'	=> 0,
@@ -141,7 +194,7 @@ sub writeToLogFile
 
 #####################################################################################################
 # 
-# START EXECUTION
+# START PROGRAM EXECUTION
 #
 #####################################################################################################
 
