@@ -1,0 +1,7 @@
+CREATE TABLE `Role` (
+  `RoleSerNum` int(11) NOT NULL AUTO_INCREMENT,
+  `RoleName` varchar(100) NOT NULL,
+  `DateAdded` datetime NOT NULL,
+  `LastUpdated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`RoleSerNum`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
