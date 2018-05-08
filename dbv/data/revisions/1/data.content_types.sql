@@ -1,0 +1,15 @@
+INSERT INTO `ContentTypes` (`ContentTypeSerNum`, `TypeId`, `TypeName`, `DateAdded`, `LastUpdated`) VALUES
+(1, 'appointment', 'Appointment', '2018-03-27 15:56:26', '2018-03-27 19:56:26'),
+(2, 'task', 'Task', '2018-03-27 15:56:26', '2018-03-27 19:56:26'),
+(3, 'document', 'Document', '2018-03-27 16:01:11', '2018-03-27 20:01:11'),
+(4, 'announcement', 'Announcement', '2018-03-27 16:01:11', '2018-03-27 20:01:11'),
+(5, 'treatment_team_message', 'Treatment Team Message', '2018-03-27 16:01:11', '2018-03-27 20:01:11'),
+(6, 'patients_for_patients', 'Patients For Patients', '2018-03-27 16:01:11', '2018-03-27 20:01:11'),
+(7, 'educational_material', 'Educational Material', '2018-03-27 16:01:11', '2018-03-27 20:01:11'),
+(8, 'hospital_map', 'Hospital Map', '2018-03-27 16:01:11', '2018-03-27 20:01:11'),
+(9, 'notification', 'Notification', '2018-03-27 16:01:11', '2018-03-27 20:01:11'),
+(10, 'test_result', 'Test Result', '2018-03-27 16:01:11', '2018-03-27 20:01:11'),
+(11, 'questionnaire', 'Questionnaire', '2018-03-27 16:01:11', '2018-03-27 20:01:11'),
+(12, 'email', 'Email', '2018-03-27 16:01:11', '2018-03-27 20:01:11'),
+(13, 'legacy_questionnaire', 'Legacy Questionnaire', '2018-03-27 16:01:11', '2018-03-27 20:01:11'),
+(14, 'diagnosis_translation', 'Diagnosis Translation', '2018-03-27 16:01:11', '2018-03-27 20:01:11');
