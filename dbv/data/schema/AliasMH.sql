@@ -1,0 +1,23 @@
+CREATE TABLE `AliasMH` (
+  `AliasSerNum` int(11) NOT NULL,
+  `AliasRevSerNum` int(11) NOT NULL AUTO_INCREMENT,
+  `AliasType` varchar(25) NOT NULL,
+  `AliasUpdate` int(11) NOT NULL,
+  `AliasName_FR` varchar(100) NOT NULL,
+  `AliasName_EN` varchar(100) NOT NULL,
+  `AliasDescription_FR` text NOT NULL,
+  `AliasDescription_EN` text NOT NULL,
+  `EducationalMaterialControlSerNum` int(11) DEFAULT NULL,
+  `SourceDatabaseSerNum` int(11) NOT NULL DEFAULT '1',
+  `ColorTag` varchar(25) NOT NULL DEFAULT '#777777',
+  `LastTransferred` datetime NOT NULL DEFAULT '2000-01-01 00:00:00',
+  `LastUpdatedBy` int(11) DEFAULT NULL,
+  `SessionId` varchar(255) DEFAULT NULL,
+  `ModificationAction` varchar(25) NOT NULL,
+  `DateAdded` datetime NOT NULL,
+  PRIMARY KEY (`AliasSerNum`,`AliasRevSerNum`),
+  KEY `SourceDatabaseSerNum` (`SourceDatabaseSerNum`),
+  KEY `EducationalMaterialControlSerNum` (`EducationalMaterialControlSerNum`),
+  KEY `LastUpdatedBy` (`LastUpdatedBy`),
+  KEY `AliasUpdate` (`AliasUpdate`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1
