@@ -9,5 +9,6 @@ CREATE TABLE `TestResultExpressionMH` (
   `SessionId` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`ExpressionName`,`RevSerNum`),
   KEY `TestResultControlSerNum` (`TestResultControlSerNum`),
-  KEY `LastUpdatedBy` (`LastUpdatedBy`)
+  KEY `LastUpdatedBy` (`LastUpdatedBy`),
+  KEY `ExpressionName` (`ExpressionName`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1

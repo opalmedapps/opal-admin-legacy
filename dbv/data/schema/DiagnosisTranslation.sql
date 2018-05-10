@@ -4,8 +4,8 @@ CREATE TABLE `DiagnosisTranslation` (
   `EducationalMaterialControlSerNum` int(11) DEFAULT NULL,
   `Name_EN` varchar(2056) NOT NULL,
   `Name_FR` varchar(2056) NOT NULL,
-  `Description_EN` varchar(2056) NOT NULL,
-  `Description_FR` varchar(2056) NOT NULL,
+  `Description_EN` text NOT NULL,
+  `Description_FR` text NOT NULL,
   `DiagnosisCode` varchar(100) NOT NULL,
   `DateAdded` datetime NOT NULL,
   `LastUpdatedBy` int(11) DEFAULT NULL,
@@ -15,6 +15,6 @@ CREATE TABLE `DiagnosisTranslation` (
   KEY `DiagnosisCode` (`DiagnosisCode`),
   KEY `EducationalMaterialControlSerNum` (`EducationalMaterialControlSerNum`),
   KEY `LastUpdatedBy` (`LastUpdatedBy`),
-  CONSTRAINT `DiagnosisTranslation_ibfk_2` FOREIGN KEY (`LastUpdatedBy`) REFERENCES `OAUser` (`OAUserSerNum`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `DiagnosisTranslation_ibfk_1` FOREIGN KEY (`EducationalMaterialControlSerNum`) REFERENCES `EducationalMaterialControl` (`EducationalMaterialControlSerNum`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `DiagnosisTranslation_ibfk_1` FOREIGN KEY (`EducationalMaterialControlSerNum`) REFERENCES `EducationalMaterialControl` (`EducationalMaterialControlSerNum`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `DiagnosisTranslation_ibfk_2` FOREIGN KEY (`LastUpdatedBy`) REFERENCES `OAUser` (`OAUserSerNum`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1

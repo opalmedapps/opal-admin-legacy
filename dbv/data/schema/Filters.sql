@@ -8,7 +8,7 @@ CREATE TABLE `Filters` (
   `LastUpdatedBy` int(11) DEFAULT NULL,
   `SessionId` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`FilterSerNum`),
-  KEY `FilterTableSerNum` (`ControlTableSerNum`),
   KEY `LastUpdatedBy` (`LastUpdatedBy`),
+  KEY `ControlTableSerNum` (`ControlTableSerNum`),
   CONSTRAINT `Filters_ibfk_1` FOREIGN KEY (`LastUpdatedBy`) REFERENCES `OAUser` (`OAUserSerNum`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1

@@ -18,6 +18,7 @@ CREATE TABLE `Alias` (
   KEY `SourceDatabaseSerNum` (`SourceDatabaseSerNum`),
   KEY `LastUpdatedBy` (`LastUpdatedBy`),
   KEY `EducationalMaterialControlSerNum` (`EducationalMaterialControlSerNum`),
+  KEY `AliasUpdate` (`AliasUpdate`),
   CONSTRAINT `Alias_ibfk_1` FOREIGN KEY (`SourceDatabaseSerNum`) REFERENCES `SourceDatabase` (`SourceDatabaseSerNum`) ON UPDATE CASCADE,
   CONSTRAINT `Alias_ibfk_2` FOREIGN KEY (`LastUpdatedBy`) REFERENCES `OAUser` (`OAUserSerNum`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `Alias_ibfk_3` FOREIGN KEY (`EducationalMaterialControlSerNum`) REFERENCES `EducationalMaterialControl` (`EducationalMaterialControlSerNum`) ON DELETE SET NULL ON UPDATE CASCADE

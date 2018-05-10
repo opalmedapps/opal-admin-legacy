@@ -26,5 +26,6 @@ CREATE TABLE `TestResultMH` (
   KEY `TestResultAriaSer` (`TestResultAriaSer`),
   KEY `SourceDatabaseSerNum` (`SourceDatabaseSerNum`),
   KEY `TestResultExpressionSerNum` (`TestResultExpressionSerNum`),
-  KEY `CronLogSerNum` (`CronLogSerNum`)
+  KEY `CronLogSerNum` (`CronLogSerNum`),
+  KEY `TestResultGroupSerNum` (`TestResultGroupSerNum`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1

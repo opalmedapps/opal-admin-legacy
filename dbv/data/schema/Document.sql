@@ -19,7 +19,7 @@ CREATE TABLE `Document` (
   `TransferStatus` varchar(10) NOT NULL,
   `TransferLog` varchar(1000) NOT NULL,
   `ReadStatus` int(11) NOT NULL,
-  `SessionId` text NOT NULL,
+  `SessionId` varchar(255) NOT NULL,
   `DateAdded` datetime NOT NULL,
   `LastUpdated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`DocumentSerNum`),
@@ -30,8 +30,8 @@ CREATE TABLE `Document` (
   KEY `CreatedBySerNum` (`CreatedBySerNum`),
   KEY `SourceDatabaseSerNum` (`SourceDatabaseSerNum`),
   KEY `CronLogSerNum` (`CronLogSerNum`),
-  CONSTRAINT `Document_ibfk_4` FOREIGN KEY (`SourceDatabaseSerNum`) REFERENCES `SourceDatabase` (`SourceDatabaseSerNum`) ON UPDATE CASCADE,
   CONSTRAINT `Document_ibfk_1` FOREIGN KEY (`PatientSerNum`) REFERENCES `Patient` (`PatientSerNum`) ON UPDATE CASCADE,
   CONSTRAINT `Document_ibfk_2` FOREIGN KEY (`AliasExpressionSerNum`) REFERENCES `AliasExpression` (`AliasExpressionSerNum`) ON UPDATE CASCADE,
-  CONSTRAINT `Document_ibfk_3` FOREIGN KEY (`CronLogSerNum`) REFERENCES `CronLog` (`CronLogSerNum`) ON UPDATE CASCADE
+  CONSTRAINT `Document_ibfk_3` FOREIGN KEY (`CronLogSerNum`) REFERENCES `CronLog` (`CronLogSerNum`) ON UPDATE CASCADE,
+  CONSTRAINT `Document_ibfk_4` FOREIGN KEY (`SourceDatabaseSerNum`) REFERENCES `SourceDatabase` (`SourceDatabaseSerNum`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1

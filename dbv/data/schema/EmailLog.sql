@@ -9,6 +9,8 @@ CREATE TABLE `EmailLog` (
   PRIMARY KEY (`EmailLogSerNum`),
   KEY `EmailControlSerNum` (`EmailControlSerNum`),
   KEY `CronLogSerNum` (`CronLogSerNum`),
-  CONSTRAINT `EmailLog_ibfk_2` FOREIGN KEY (`CronLogSerNum`) REFERENCES `CronLog` (`CronLogSerNum`) ON UPDATE CASCADE,
-  CONSTRAINT `EmailLog_ibfk_1` FOREIGN KEY (`EmailControlSerNum`) REFERENCES `EmailControl` (`EmailControlSerNum`) ON UPDATE CASCADE
+  KEY `PatientSerNum` (`PatientSerNum`),
+  CONSTRAINT `EmailLog_ibfk_3` FOREIGN KEY (`PatientSerNum`) REFERENCES `Patient` (`PatientSerNum`) ON UPDATE CASCADE,
+  CONSTRAINT `EmailLog_ibfk_1` FOREIGN KEY (`EmailControlSerNum`) REFERENCES `EmailControl` (`EmailControlSerNum`) ON UPDATE CASCADE,
+  CONSTRAINT `EmailLog_ibfk_2` FOREIGN KEY (`CronLogSerNum`) REFERENCES `CronLog` (`CronLogSerNum`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
