@@ -16,15 +16,21 @@ package Appointment; # Declare package name
 
 use Exporter; # To export subroutines and variables
 use Database; # Use our custom database module Database.pm
+use Date::Language; # To format date according to language
+use Date::Format qw(time2str); # To format date
+use DateTime::Format::Strptime;
 use Time::Piece; # To parse and convert date time
 use Storable qw(dclone); # for deep copies
 use POSIX;
+use String::Util 'trim';
+use Data::Dumper;
 
 use Patient; # Our patient module
 use Alias; # Our alias module
 use Resource; # Resource.pm
 use Priority; # Priority.pm
 use Diagnosis; # Diagnosis.pm
+use PushNotification; # PushNotification.pm
 
 #---------------------------------------------------------------------------------
 # Connect to the database
@@ -53,6 +59,7 @@ sub new
         _actualstartdate    => undef,
         _actualenddate      => undef,
         _checkin 			=> undef,
+        _cronlogser			=> undef,
 	};
 
 	# bless associates an object with a class so Perl knows which package to search for
@@ -213,6 +220,16 @@ sub setApptCheckin
 }
 
 #====================================================================================
+# Subroutine to set the Appointment Cron Log Serial
+#====================================================================================
+sub setApptCronLogSer
+{
+	my ($appointment, $cronlogser) = @_; # appt object with provided serial in arguments
+	$appointment->{_cronlogser} = $cronlogser; # set the ser
+	return $appointment->{_cronlogser};
+}
+
+#====================================================================================
 # Subroutine to get the Appointment Serial
 #====================================================================================
 sub getApptSer
@@ -347,12 +364,21 @@ sub getApptCheckin
 	return $appointment->{_checkin};
 }
 
+#====================================================================================
+# Subroutine to get the Appointment Cron Log Serial
+#====================================================================================
+sub getApptCronLogSer
+{
+	my ($appointment) = @_; # our appt object
+	return $appointment->{_cronlogser};
+}
+
 #======================================================================================
 # Subroutine to get our appointment info from the ARIA db for automatic cron
 #======================================================================================
 sub getApptsFromSourceDB
 {
-	my (@patientList) = @_; # patient list from args
+	my ($cronLogSer, @patientList) = @_; # patient list and cron log serial from args
 
 	my @apptList = (); # initialize a list for appointment objects
 
@@ -384,8 +410,33 @@ sub getApptsFromSourceDB
             if ($sourceDBSer eq 1) {
 
                 my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
-                my $numOfExpressions = @expressions; 
-                my $counter = 0;
+            	
+            	# Hash to hold a string of expressions per distinct last transferred date
+            	# i.e. keys are transfer date, values are expressions with that last transfer date
+            	# i.e we are grouping expressions under each transfer date
+            	my $expressionHash = {};
+
+            	# Create hash
+            	foreach my $Expression (@expressions) {
+
+	            	my $expressionName = $Expression->{_name};
+	            	my $expressionLastTransfer = $Expression->{_lasttransfer};
+
+	            	# append expression (surrounded by single quotes) to array
+	            	if (exists $expressionHash{$expressionLastTransfer}) {
+	            		push(@{$expressionHash{$expressionLastTransfer}}, "'$expressionName'");
+	            	} else {
+	            		# start a new array 
+	            		$expressionHash{$expressionLastTransfer} = ["'$expressionName'"];
+	            	}
+
+	            }
+
+	            # Convert arrays to comma-separated string
+	            foreach my $lastTransferDate (keys %expressionHash) {
+	            	$expressionHash{$lastTransferDate} = join ',', @{$expressionHash{$lastTransferDate}};
+	            }
+
                 my $apptInfo_sql = "
 					WITH vva AS (
 						SELECT DISTINCT 
@@ -402,7 +453,7 @@ sub getApptsFromSourceDB
 						sa.ObjectStatus,
 						CONVERT(VARCHAR, sa.ActualStartDate, 120),
 						CONVERT(VARCHAR, sa.ActualEndDate, 120),
-						vva.Expression1
+						REPLACE(vva.Expression1, '''', '')
 					FROM 
 						variansystem.dbo.Patient pt, 
 						variansystem.dbo.ScheduledActivity sa, 
@@ -416,17 +467,18 @@ sub getApptsFromSourceDB
 					AND ai.ActivitySer 			    = act.ActivitySer 
 					AND act.ActivityCode 		    = vva.LookupValue 
 					AND pt.PatientSer 				= sa.PatientSer 
-					AND pt.SSN				        LIKE '$patientSSN%'
+					AND RTRIM(pt.SSN)		        = '$patientSSN'
 					AND att.ActivityInstanceSer 	= sa.ActivityInstanceSer
 					AND att.ResourceSer 		    = re.ResourceSer
 					AND (
 				";
 
-                foreach my $Expression (@expressions) {
+				my $numOfExpressions = keys %expressionHash; 
+                my $counter = 0;
+				# loop through each transfer date
+	            foreach my $lastTransferDate (keys %expressionHash) {
 
-                	my $expressionser = $Expression->{_ser};
-                	my $expressionName = $Expression->{_name};
-                	my $expressionLastTransfer = $Expression->{_lasttransfer};
+                	my $expressionLastTransfer = $lastTransferDate;
                 	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
 
                 	# compare last updates to find the earliest date 
@@ -440,7 +492,7 @@ sub getApptsFromSourceDB
 
 		            # concatenate query
 	        		$apptInfo_sql .= "
-						(REPLACE(vva.Expression1, '''', '')    	= '$expressionName'
+						(REPLACE(vva.Expression1, '''', '')    	IN ($expressionHash{$lastTransferDate})
 			        	AND sa.HstryDateTime	 				> '$lasttransfer') 
 	        		";
 	        		$counter++;
@@ -500,9 +552,13 @@ sub getApptsFromSourceDB
 	    		    $appointment->setApptState($state);
 		    	    $appointment->setApptActualStartDate($actualstartdate); 
 			        $appointment->setApptActualEndDate($actualenddate);
+			        $appointment->setApptCronLogSer($cronLogSer);
     
 	        		push(@apptList, $appointment);
     	    	}
+
+    	    	# empty hash
+    	    	for (keys %expressionHash) { delete $expressionHash{$_}; }
 
                 $sourceDatabase->disconnect();
             }
@@ -513,15 +569,56 @@ sub getApptsFromSourceDB
             if ($sourceDBSer eq 2) {
 
                 my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-                my $numOfExpressions = @expressions; 
+            	
+            	# Hash to hold a string of expressions per distinct last lastTransferDateferred date
+            	# i.e. keys are lastTransferDatefer date, values are expressions with that last lastTransferDate date
+            	# i.e we are grouping expressions under each lastTransferDatefer date
+            	my $expressionHash = {};
+
+            	# Create hash
+            	foreach my $Expression (@expressions) {
+
+	            	my $expressionName = $Expression->{_name};
+                	my $expressionDesc = $Expression->{_description};
+	            	my $expressionLastTransfer = $Expression->{_lasttransfer};
+
+	            	# append expression (surrounded by single quotes) to array
+	            	if (exists $expressionHash{$expressionLastTransfer}) {
+	            		push(@{$expressionHash{$expressionLastTransfer}}, "('$expressionName', '$expressionDesc')");
+	            	} else {
+	            		# start a new array 
+	            		$expressionHash{$expressionLastTransfer} = ["('$expressionName', '$expressionDesc')"];
+	            	}
+
+	            }
+
+	            # Convert arrays to comma-separated string
+	            foreach my $lastTransferDate (keys %expressionHash) {
+	            	$expressionHash{$lastTransferDate} = join ',', @{$expressionHash{$lastTransferDate}};
+	            }
+
+                my $apptInfo_sql = "
+	                 SELECT DISTINCT
+                        mval.AppointmentSerNum,
+                        mval.ScheduledDateTime,
+                        mval.Status,
+                        mval.AppointmentCode,
+                        mval.ResourceDescription
+                    FROM
+                        MediVisitAppointmentList mval,
+                        Patient pt
+                    WHERE
+                        mval.PatientSerNum      = pt.PatientSerNum
+                    AND RTRIM(pt.SSN)           = '$patientSSN'
+                    AND (
+                ";
+
+                my $numOfExpressions = keys %expressionHash; 
                 my $counter = 0;
-                my $apptInfo_sql = "";
+				# loop through each transfer date
+	            foreach my $lastTransferDate (keys %expressionHash) {
 
-                foreach my $Expression (@expressions) {
-
-                	my $expressionser = $Expression->{_ser};
-                	my $expressionName = $Expression->{_name};
-                	my $expressionLastTransfer = $Expression->{_lasttransfer};
+                	my $expressionLastTransfer = $lastTransferDate;
                 	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
 
                 	# compare last updates to find the earliest date 
@@ -533,28 +630,23 @@ sub getApptsFromSourceDB
 		                $lasttransfer = $expressionLastTransfer;
 		            }
 
+		            # concatenate query
 	        		$apptInfo_sql .= "
-	                    SELECT DISTINCT
-	                        mval.AppointmentSerNum,
-	                        mval.ScheduledDateTime,
-	                        mval.Status,
-	                        IF(1=1, '$expressionser', '$expressionser')
-	                    FROM
-	                        MediVisitAppointmentList mval,
-	                        Patient pt
-	                    WHERE
-	                        mval.PatientSerNum      = pt.PatientSerNum
-	                    AND pt.SSN                  LIKE '$patientSSN%'
-	                    AND mval.LastUpdated        > '$lasttransfer'
-	                    AND mval.AppointmentCode    = '$expressionName'
-	                ";
+	        			((mval.AppointmentCode, mval.ResourceDescription) IN ($expressionHash{$lastTransferDate})
+	        			AND mval.LastUpdated	> '$lasttransfer')
+					";
 	                $counter++;
 	        		# concat "UNION" until we've reached the last query
 	        		if ($counter < $numOfExpressions) {
-	        			$apptInfo_sql .= "UNION";
+	        			$apptInfo_sql .= "OR";
+	        		}
+	        		# close bracket at end
+	        		else {
+	        			$apptInfo_sql .= ")";
 	        		}
 	        	}
-	                  		    
+	                  
+	            #print "$apptInfo_sql\n";		    
                 my $query = $sourceDatabase->prepare($apptInfo_sql)
 	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;
 
@@ -571,7 +663,16 @@ sub getApptsFromSourceDB
                     $startdatetime  = $row->[1];
                     $enddatetime    = $row->[1];
                     $status         = $row->[2];
-                    $expressionser 	= $row->[3];
+                    $expressionname = $row->[3];
+                    $expressiondesc = $row->[4];
+
+                    my $expressionser;
+					foreach my $checkExpression (@expressions) {
+						if ($checkExpression->{_name} eq $expressionname and $checkExpression->{_description} eq $expressiondesc){ #match
+							$expressionser = $checkExpression->{_ser};
+							last; # break out of loop
+						}
+					}
 
                     $appointment->setApptPatientSer($patientSer);
                     $appointment->setApptSourceUID($sourceuid);
@@ -581,9 +682,13 @@ sub getApptsFromSourceDB
                     $appointment->setApptEndDateTime($enddatetime);
                     $appointment->setApptStatus($status);
                     $appointment->setApptState('Active'); # Set default for WRM
+			        $appointment->setApptCronLogSer($cronLogSer);
 
                     push(@apptList, $appointment);
                 }
+
+                # empty hash
+    	    	for (keys %expressionHash) { delete $expressionHash{$_}; }
 
                 $sourceDatabase->disconnect();
             }
@@ -1048,7 +1153,7 @@ sub inOurDatabase
 	# Other appt variables, if appt exists
 	my ($ser, $patientser, $aliasexpressionser, $startdatetime, $enddatetime);
     my ($priorityser, $diagnosisser, $sourcedbser);
-    my ($status, $state, $actualstartdate, $actualenddate);
+    my ($status, $state, $actualstartdate, $actualenddate, $cronlogser);
 
 	my $inDB_sql = "
 		SELECT DISTINCT
@@ -1064,7 +1169,8 @@ sub inOurDatabase
             Appointment.Status,
             Appointment.State,
             Appointment.ActualStartDate,
-            Appointment.ActualEndDate
+            Appointment.ActualEndDate,
+            Appointment.CronLogSerNum
 		FROM
 			Appointment
 		WHERE
@@ -1095,6 +1201,7 @@ sub inOurDatabase
         $state              = $data[10];
         $actualstartdate    = $data[11];
         $actualenddate      = $data[12];
+        $cronlogser 		= $data[13];
 	}
 
 	if ($ApptSourceUIDInDB) {
@@ -1114,6 +1221,7 @@ sub inOurDatabase
 		$ExistingAppt->setApptState($state); # set the appt state
 		$ExistingAppt->setApptActualStartDate($actualstartdate); # set the appt start datetime
 		$ExistingAppt->setApptActualEndDate($actualenddate); # set the appt end datetime
+		$ExistingAppt->setApptCronLogSer($cronlogser); # set the cron log serial
 
 		return $ExistingAppt; # this is true (ie. appt exists, return object)
 	}
@@ -1140,12 +1248,14 @@ sub insertApptIntoOurDB
 	my $state		        = $appointment->getApptState();
 	my $actualstartdate	    = $appointment->getApptActualStartDate();
 	my $actualenddate		= $appointment->getApptActualEndDate();
+	my $cronlogser 			= $appointment->getApptCronLogSer();
 
 	my $insert_sql = "
 		INSERT INTO 
 			Appointment (
 				AppointmentSerNum,
 				PatientSerNum,
+				CronLogSerNum,
                 SourceDatabaseSerNum,
 				AppointmentAriaSer,
 				AliasExpressionSerNum,
@@ -1163,6 +1273,7 @@ sub insertApptIntoOurDB
 		VALUES (
 			NULL,
 			'$patientser',
+			'$cronlogser',
             '$sourcedbser',
 			'$sourceuid',
 			'$aliasexpressionser',
@@ -1210,10 +1321,11 @@ sub updateDatabase
 	my $enddatetime		    = $appointment->getApptEndDateTime();
     my $priorityser         = $appointment->getApptPrioritySer();
     my $diagnosisser        = $appointment->getApptDiagnosisSer();
-	my $status		= $appointment->getApptStatus();
-	my $state		= $appointment->getApptState();
-	my $actualstartdate	= $appointment->getApptActualStartDate();
+	my $status				= $appointment->getApptStatus();
+	my $state				= $appointment->getApptState();
+	my $actualstartdate		= $appointment->getApptActualStartDate();
 	my $actualenddate		= $appointment->getApptActualEndDate();
+	my $cronlogser 			= $appointment->getApptCronLogSer();
 
 	my $update_sql = "
 
@@ -1229,7 +1341,8 @@ sub updateDatabase
             ActualEndDate           = '$actualenddate',
             PrioritySerNum          = '$priorityser',
             DiagnosisSerNum         = '$diagnosisser',
-            ReadStatus              = 0
+            ReadStatus              = 0,
+            CronLogSerNum 			= '$cronlogser'
 		WHERE
 			AppointmentAriaSer	    = '$sourceuid'
         AND SourceDatabaseSerNum    = '$sourcedbser'
@@ -1265,6 +1378,7 @@ sub compareWith
 	my $SState		        = $SuspectAppt->getApptState();
 	my $SActualStartDate	= $SuspectAppt->getApptActualStartDate();
     my $SActualEndDate	    = $SuspectAppt->getApptActualEndDate();
+    my $SCronLogSer		    = $SuspectAppt->getApptCronLogSer();
 
 	# Original Appointment...
 	my $OAliasExpressionSer	= $OriginalAppt->getApptAliasExpressionSer();
@@ -1276,6 +1390,7 @@ sub compareWith
 	my $OState		        = $OriginalAppt->getApptState();
 	my $OActualStartDate	= $OriginalAppt->getApptActualStartDate();
 	my $OActualEndDate	    = $OriginalAppt->getApptActualEndDate();
+	my $OCronLogSer		    = $OriginalAppt->getApptCronLogSer();
 
 	# go through each parameter
 	
@@ -1288,6 +1403,47 @@ sub compareWith
 		print "Appointment Scheduled Start DateTime has change from '$OStartDateTime' to '$SStartDateTime'\n";
 		my $updatedSDT = $UpdatedAppt->setApptStartDateTime($SStartDateTime); # update start datetime
 		print "Will update database entry to '$updatedSDT'.\n";
+
+		# Section to notify patient on appointment change
+		$SStartDateTimeForm = Time::Piece->strptime($SStartDateTime, "%Y-%m-%d %H:%M:%S");
+		$OStartDateTimeForm = Time::Piece->strptime($OStartDateTime, "%Y-%m-%d %H:%M:%S");
+		# if difference is greater than an hour (in seconds)
+		if ( abs($SStartDateTimeForm - $OStartDateTimeForm) >= 3600 ) {
+			print "Sending push notification on appointment time change\n";
+
+			# parser
+			my $strp = DateTime::Format::Strptime->new(
+				pattern => "%Y-%m-%d %H:%M:%S",
+		        time_zone => 'America/New_York'
+			);
+			# formatter
+			my $timestamp = DateTime::Format::Strptime->new(
+		        pattern   => '%s',
+		        time_zone => 'America/New_York'
+		    );
+			$SStartDateTime = $timestamp->format_datetime($strp->parse_datetime($SStartDateTime)); # convert to timestamp
+			$OStartDateTime = $timestamp->format_datetime($strp->parse_datetime($OStartDateTime)); # convert to timestamp
+
+			$patientSer = $OriginalAppt->getApptPatientSer();
+			$appointmentSer = $OriginalAppt->getApptSer();
+			$langEN = Date::Language->new('English'); # for english dates
+			$langFR = Date::Language->new('French'); # for french dates
+			# create a hash for string replacement in notification message
+			# see for datetime formats: http://search.cpan.org/~gbarr/TimeDate-2.30/lib/Date/Format.pm#strftime
+			%replacementMap = (
+				"\\\$oldAppointmentDateEN"	=> $langEN->time2str("%A, %B %e, %Y", $OStartDateTime), 
+				"\\\$oldAppointmentTimeEN"	=> trim($langEN->time2str("%l:%M %p", $OStartDateTime)), # trim leading space in time
+				"\\\$newAppointmentDateEN"	=> $langEN->time2str("%A, %B %e, %Y", $SStartDateTime),
+				"\\\$newAppointmentTimeEN"	=> trim($langEN->time2str("%l:%M %p", $SStartDateTime)), # trim leading space in time
+				"\\\$oldAppointmentDateFR"	=> $langFR->time2str("%A %e %B %Y", $OStartDateTime),
+				"\\\$oldAppointmentTimeFR"	=> $langFR->time2str("%R", $OStartDateTime),
+				"\\\$newAppointmentDateFR"	=> $langFR->time2str("%A %e %B %Y", $SStartDateTime),
+				"\\\$newAppointmentTimeFR"	=> $langFR->time2str("%R", $SStartDateTime)
+			);
+            PushNotification::sendPushNotification($patientSer, $appointmentSer, 'AppointmentTimeChange', %replacementMap);
+
+		}
+
 	}
 	if ($SEndDateTime ne $OEndDateTime) {
 		print "Appointment Scheduled End DateTime has changed from '$OEndDateTime' to '$SEndDateTime'\n";
@@ -1308,6 +1464,35 @@ sub compareWith
 		print "Appointment Status has changed from '$OStatus' to '$SStatus'\n";
 		my $updatedStatus = $UpdatedAppt->setApptStatus($SStatus); # update status
 		print "Will update database entry to '$updatedStatus'.\n";
+
+		# Section to notify patient of cancelled appointment
+		# new status is cancelled and new state still active
+		if (index($SStatus, 'Cancelled') != -1 and index($SState, 'Active') != -1) {
+			print "Sending push notification on appointment cancellation\n";
+			# parser
+			my $strp = DateTime::Format::Strptime->new(
+				pattern => "%Y-%m-%d %H:%M:%S",
+		        time_zone => 'America/New_York'
+			);
+			# formatter
+			my $timestamp = DateTime::Format::Strptime->new(
+		        pattern   => '%s',
+		        time_zone => 'America/New_York'
+		    );
+			$SStartDateTime = $timestamp->format_datetime($strp->parse_datetime($SStartDateTime)); # convert to timestamp
+
+			$patientSer = $OriginalAppt->getApptPatientSer();
+			$appointmentSer = $OriginalAppt->getApptSer();
+			$langEN = Date::Language->new('English'); # for english dates
+			$langFR = Date::Language->new('French'); # for french dates
+			%replacementMap = (
+				"\\\$appointmentDateEN"	=> $langEN->time2str("%A, %B %e, %Y", $SStartDateTime), 
+				"\\\$appointmentTimeEN"	=> trim($langEN->time2str("%l:%M %p", $SStartDateTime)), # trim leading space in time
+				"\\\$appointmentDateFR"	=> $langFR->time2str("%A %e %B %Y", $SStartDateTime),
+				"\\\$appointmentTimeFR"	=> $langFR->time2str("%R", $SStartDateTime)
+			);
+            PushNotification::sendPushNotification($patientSer, $appointmentSer, 'AppointmentCancelled', %replacementMap);
+		}
 	}
     if ($SState ne $OState) {
 		print "Appointment State has changed from '$OState' to '$SState'\n";
@@ -1323,6 +1508,11 @@ sub compareWith
 		print "Appointment Actual Scheduled End Date has changed from '$OActualEndDate' to '$SActualEndDate'\n";
 		my $updatedEDT = $UpdatedAppt->setApptActualEndDate($SActualEndDate); # update end datetime
 		print "Will update database entry to '$updatedEDT'.\n";
+	}
+	 if ($SCronLogSer ne $OCronLogSer) {
+		print "Appointment Cron Log Serial has changed from '$OCronLogSer' to '$SCronLogSer'\n";
+		my $updatedCronLogSer = $UpdatedAppt->setApptCronLogSer($SCronLogSer); # update serial
+		print "Will update database entry to '$updatedCronLogSer'.\n";
 	}
 
 

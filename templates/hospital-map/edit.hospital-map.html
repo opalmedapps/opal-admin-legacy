@@ -1,0 +1,148 @@
+<!-- Modal title -->
+<div class="modal-header">
+  <div class="col-xs-12 col-md-6">
+    <h2 class="modal-title">
+      <span class="glyphicon glyphicon-pencil"></span> 
+      Edit Hospital Map 
+    </h2>
+    <p class="modal-title-caption">
+      {{hosMap.name_EN}} / {{hosMap.name_FR}}
+    </p>
+  </div>
+  <div class="modal-buttons col-xs-12 col-md-6">
+    <span> 
+      <form method="post" ng-submit="updateHosMap()">
+        <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+      </form>
+    </span>
+  </div>
+</div>
+<div class="modal-body">
+  <uib-accordion>
+    
+    <!-- SECTION: Title -->
+    <div uib-accordion-group is-open="titleSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Titles</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-6" style="margin-bottom: 10px;">
+          <div class="input-group">
+            <span class="input-group-addon">EN</span>
+            <input class="form-control" type="text" ng-model="hosMap.name_EN" ng-change="setChangesMade()" placeholder="English Title" required="required">
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6">
+          <div class="input-group">
+            <span class="input-group-addon">FR</span>
+            <input class="form-control" type="text" ng-model="hosMap.name_FR" ng-change="setChangesMade()" placeholder="Titre Français" required="required">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION: Description -->
+    <div uib-accordion-group is-open="descriptionSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': descriptionSection.open, 'glyphicon-chevron-right': !descriptionSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="row">
+        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+          <div style="text-align:center; margin-bottom: 10px;">
+            <span style="font-size:20px;">HTML (English)</span>
+          </div>
+          <div class="form-group">
+            <div text-angular ng-model="hosMap.description_EN" ng-change="setChangesMade()" placeholder="English Description" required="required" ta-toolbar="toolbar"></div>
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+          <div style="text-align:center; margin-bottom: 10px;">
+            <span style="font-size:20px;">HTML (Français)</span>
+          </div>
+          <div class="form-group">
+            <div text-angular ng-model="hosMap.description_FR" ng-change="setChangesMade()" placeholder="Description Français" required="required" ta-toolbar="toolbar"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION: Map URLs -->
+    <div uib-accordion-group is-open="urlSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Map URLs</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': urlSection.open, 'glyphicon-chevron-right': !urlSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="alert alert-info" role="alert">
+        <strong>Map URL</strong><br>
+        <p>
+          <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+          <span><strong>EN</strong> -- {{hosMap.url_EN}}</span> 
+          <br>
+          <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+          <span><strong>FR</strong> -- {{hosMap.url_FR}}</span> 
+        </p>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-md-6">
+          <div class="input-group">
+            <span class="input-group-addon">EN</span>
+            <input class="form-control" type="text" ng-model="hosMap.url_EN" ng-change="setChangesMade()" placeholder="English Map URL" required="required">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button" ng-click="showMap(hosMap.url_EN, 'EN')">Show Map</button>
+            </span>
+          </div>
+          <div ng-show="hosMap.url_EN" style="text-align:center">
+            <img ng-src="{{mapURL_EN}}" style="width:200px;height:200px;">
+          </div>
+        </div>
+        <div class="col-xs-12 col-md-6">
+          <div class="input-group">
+            <span class="input-group-addon">FR</span>
+            <input class="form-control" type="text" ng-model="hosMap.url_FR" ng-change="setChangesMade()" placeholder="Map URL Français" required="required">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button" ng-click="showMap(hosMap.url_FR, 'FR')">Show Map</button>
+            </span>
+          </div>
+          <div ng-show="hosMap.url_FR" style="text-align:center">
+            <img ng-src="{{mapURL_FR}}" style="width:200px;height:200px;">
+          </div>
+        </div>
+      </div>
+    </div>
+
+     <!-- SECTION: QR Code -->
+    <div uib-accordion-group is-open="qrCodeSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>QR Identifier</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': qrCodeSection.open, 'glyphicon-chevron-right': !qrCodeSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="alert alert-info" role="alert">
+        <strong>QR Identifier</strong><br>
+        <p>
+          <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+          <span>{{hosMap.qrid}}</span> 
+        </p> 
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-md-6">
+          <div class="input-group">
+            <input class="form-control" type="text" ng-model="hosMap.qrid" ng-change="setChangesMade()" placeholder="QR Identifier" required="required">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button" ng-click="generateQRCode(hosMap.qrid)">Generate QR</button>
+            </span>
+          </div>
+          <div ng-show="hosMap.qrcode" style="text-align:center">
+            <img ng-src="{{hosMap.qrcode}}" style="width:200px;height:200px;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </uib-accordion>
+</div>

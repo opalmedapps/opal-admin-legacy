@@ -6,7 +6,9 @@
 	$userArray = array(
 		'username'		=> $_POST['username'],
 		'password'		=> $_POST['password'],
-		'role'			=> $_POST['role']
+		'role'			=> $_POST['role'],
+		'language'			=> $_POST['language'],
+		'cypher'		=> $_POST['cypher']
 	);
 
 	$userObj = new Users; // Object

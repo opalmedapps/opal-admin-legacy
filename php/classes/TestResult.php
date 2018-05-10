@@ -11,13 +11,16 @@ class TestResult {
      * Updates the publish flag(s) in the database
      *
      * @param array $testResultList : a list of test results
+     * @param object $user : the current user in session
      * @return array $response : response
      */
-    public function updatePublishFlags( $testResultList ) {
+    public function updatePublishFlags( $testResultList, $user ) {
         $response = array(
             'value'     => 0,
             'message'   => ''
         );
+        $userSer = $user['id'];
+        $sessionId = $user['sessionid'];
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -28,13 +31,18 @@ class TestResult {
                     UPDATE
                         TestResultControl
                     SET
-                        TestResultControl.PublishFlag = $publishFlag
+                        TestResultControl.PublishFlag = $publishFlag,
+                        TestResultControl.LastUpdatedBy = $userSer,
+                        TestResultControl.SessionId = '$sessionId'
                     WHERE
                         TestResultControl.TestResultControlSerNum = $serial
                 ";
 	            $query = $host_db_link->prepare( $sql );
 				$query->execute();
             }
+
+            $this->sanitizeEmptyTestResults($user);
+
             $response['value'] = 1; // Success
             return $response;
 		} catch( PDOException $e) {
@@ -174,40 +182,26 @@ class TestResult {
      */
     public function getTestResultGroups () {
 
-        $groups = array (
-            'EN'    => array(),
-            'FR'    => array()
-        );
+        $groups = array();
         try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
-                    trc.Group_EN
+                    trc.Group_EN,
+                    trc.Group_FR
                 FROM
                     TestResultControl trc
-                ORDER BY
-                    trc.Group_EN
             ";
 			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                array_push($groups['EN'], $data[0]);
-            }
-            $sql = "
-                SELECT DISTINCT
-                    trc.Group_FR
-                FROM
-                    TestResultControl trc
-                ORDER BY
-                    trc.Group_FR
-            ";
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
-
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                array_push($groups['FR'], $data[0]);
+                $groupDetails = array(
+                    'EN'    => $data[0],
+                    'FR'    => $data[1]
+                );
+                array_push($groups, $groupDetails);
             }
 
             return $groups;
@@ -229,6 +223,9 @@ class TestResult {
 
         try {
 
+            // get already assigned expressions from our database
+            $assignedTests = $this->getAssignedTests();
+
             // ***********************************
             // ARIA
             // ***********************************
@@ -247,11 +244,18 @@ class TestResult {
 
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
+                    $testName = $data[0];
                     $testArray = array(
-                        'name'      => $data[0],
-                        'id'        => $data[0],
-                        'added'     => 0
+                        'name'      => $testName,
+                        'id'        => $testName,
+                        'added'     => 0,
+                        'assigned'  => null
                     );
+                    $assignedTest = $this->assignedSearch($testName, $assignedTests);
+                    if ($assignedTest) {
+                        $testArray['added'] = 0;
+                        $testArray['assigned'] = $assignedTest;
+                    }
                     array_push($testNames, $testArray);
                 }
 
@@ -306,6 +310,47 @@ class TestResult {
 
     /**
      *
+     * Gets a list of already assigned tests in our database
+     *
+     * @return array $tests : the list of tests
+     */
+    public function getAssignedTests () {
+        $tests = array();
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
+                SELECT DISTINCT 
+                    tre.ExpressionName,
+                    trc.Name_EN
+                FROM 
+                    TestResultExpression tre,
+                    TestResultControl trc
+                WHERE
+                    trc.TestResultControlSerNum = tre.TestResultControlSerNum
+            ";
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $testResultDetails = array(
+                    'id'     => $data[0],
+                    'name_EN'       => "$data[1]"
+                );
+                array_push($tests, $testResultDetails);
+            }
+
+            return $tests;
+
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return $tests;
+        }
+    }
+
+    /**
+     *
      * Inserts a test result into the database
      *
      * @param array $testResultDetails : the test result details
@@ -321,7 +366,9 @@ class TestResult {
         $group_FR           = $testResultDetails['group_FR'];
         $tests              = $testResultDetails['tests'];
         $additionalLinks    = $testResultDetails['additional_links'];
-        $eduMatSer          = 0;
+        $userSer            = $testResultDetails['user']['id'];
+        $sessionId          = $testResultDetails['user']['sessionid'];
+        $eduMatSer          = 'NULL';
         if ( is_array($testResultDetails['edumat']) && isset($testResultDetails['edumat']['serial']) ) {
             $eduMatSer = $testResultDetails['edumat']['serial'];
         }
@@ -340,7 +387,9 @@ class TestResult {
                         Group_FR,
                         EducationalMaterialControlSerNum,
                         DateAdded,
-                        LastPublished
+                        LastPublished,
+                        LastUpdatedBy,
+                        SessionId
                     )
                 VALUES (
                     \"$name_EN\",
@@ -349,9 +398,11 @@ class TestResult {
                     \"$description_FR\",
                     \"$group_EN\",
                     \"$group_FR\",
-                    '$eduMatSer',
+                    $eduMatSer,
                     NOW(),
-                    NOW()
+                    NOW(),
+                    $userSer,
+                    '$sessionId'
                 )
             ";
 			$query = $host_db_link->prepare( $sql );
@@ -368,15 +419,21 @@ class TestResult {
                         TestResultExpression (
                             TestResultControlSerNum,
                             ExpressionName,
-                            DateAdded
+                            DateAdded,
+                            LastUpdatedBy,
+                            SessionId
                         )
                     VALUES (
                         '$testResultSer',
                         \"$name\",
-                        NOW()
+                        NOW(),
+                        '$userSer',
+                        '$sessionId'
                     )
                     ON DUPLICATE KEY UPDATE 
-                        TestResultControlSerNum = '$testResultSer'
+                        TestResultControlSerNum = '$testResultSer',
+                        LastUpdatedBy = '$userSer',
+                        SessionId = '$sessionId'
                 ";
 	            $query = $host_db_link->prepare( $sql );
 				$query->execute();
@@ -413,6 +470,8 @@ class TestResult {
                     $query->execute();
                 }
             }
+
+            $this->sanitizeEmptyTestResults($testResultDetails['user']);
 
         } catch( PDOException $e) {
 			return $e->getMessage();
@@ -534,6 +593,7 @@ class TestResult {
                     'group_EN'          => $group_EN,
                     'group_FR'          => $group_FR,
                     'publish'           => $publishFlag,
+                    'changed'           => 0,
                     'eduMatSer'         => $eduMatSer,
                     'eduMat'            => $eduMat,
                     'tests'             => $tests,
@@ -567,10 +627,16 @@ class TestResult {
         $group_FR           = $testResultDetails['group_FR'];
         $serial             = $testResultDetails['serial'];
         $tests              = $testResultDetails['tests'];
-        $eduMatSer          = $testResultDetails['edumatser'];
+        $eduMatSer          = $testResultDetails['edumatser'] ? $testResultDetails['edumatser'] : 'NULL';
         $additionalLinks    = $testResultDetails['additional_links'];
+        $userSer            = $testResultDetails['user']['id'];
+        $sessionId          = $testResultDetails['user']['sessionid'];
 
         $existingTests      = array();
+
+        $detailsUpdated     = $testResultDetails['details_updated'];
+        $testNamesUpdated   = $testResultDetails['test_names_updated'];
+        $additionalLinksUpdated     = $testResultDetails['additional_links_updated'];
 
         $response = array(
             'value'     => 0,
@@ -579,120 +645,152 @@ class TestResult {
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                UPDATE
-                    TestResultControl
-                SET
-                    TestResultControl.Name_EN           = \"$name_EN\",
-                    TestResultControl.Name_FR           = \"$name_FR\",
-                    TestResultControl.Description_EN    = \"$description_EN\",
-                    TestResultControl.Description_FR    = \"$description_FR\",
-                    TestResultControl.Group_EN          = \"$group_EN\",
-                    TestResultControl.Group_FR          = \"$group_FR\",
-                    TestResultControl.EducationalMaterialControlSerNum = '$eduMatSer'
-                WHERE
-                    TestResultControl.TestResultControlSerNum = $serial
-            ";
+            
+            if ($detailsUpdated) {
+                $sql = "
+                    UPDATE
+                        TestResultControl
+                    SET
+                        TestResultControl.Name_EN           = \"$name_EN\",
+                        TestResultControl.Name_FR           = \"$name_FR\",
+                        TestResultControl.Description_EN    = \"$description_EN\",
+                        TestResultControl.Description_FR    = \"$description_FR\",
+                        TestResultControl.Group_EN          = \"$group_EN\",
+                        TestResultControl.Group_FR          = \"$group_FR\",
+                        TestResultControl.EducationalMaterialControlSerNum = $eduMatSer,
+                        TestResultControl.LastUpdatedBy     = $userSer,
+                        TestResultControl.SessionId         = '$sessionId'
+                    WHERE
+                        TestResultControl.TestResultControlSerNum = $serial
+                ";
 
-            $query = $host_db_link->prepare( $sql );
-			$query->execute();
-
-            $sql = "
-                SELECT DISTINCT
-                    tre.ExpressionName
-                FROM
-                    TestResultExpression tre
-                WHERE
-                    tre.TestResultControlSerNum = $serial
-            ";
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
-
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                array_push($existingTests, $data[0]);
+                $query = $host_db_link->prepare( $sql );
+    			$query->execute();
             }
 
-            // If old test names not in new test names, delete from database
-            foreach ($existingTests as $existingTestName) {
-                if (!in_array($existingTestName, $tests)) {
-                    $sql = "
-                        DELETE FROM
-                            TestResultExpression
-                        WHERE
-                            TestResultExpression.ExpressionName = \"$existingTestName\"
-                        AND TestResultExpression.TestResultControlSerNum = $serial
-                    ";
+            if (testNamesUpdated) {
 
-					$query = $host_db_link->prepare( $sql );
-					$query->execute();
-				}
-			}
+                $sql = "
+                    SELECT DISTINCT
+                        tre.ExpressionName
+                    FROM
+                        TestResultExpression tre
+                    WHERE
+                        tre.TestResultControlSerNum = $serial
+                ";
+    			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+    			$query->execute();
 
-            // If new test names, insert into database
-            foreach ($tests as $test) {
-                $testName = $test['name'];
-                if(!in_array($test, $existingTests)) {
-                    $sql = "
-                        INSERT INTO
-                            TestResultExpression (
-                                TestResultControlSerNum,
-                                ExpressionName
+    			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                    array_push($existingTests, $data[0]);
+                }
+
+                // If old test names not in new test names, delete from database
+                foreach ($existingTests as $existingTestName) {
+                    if (!in_array($existingTestName, $tests)) {
+                        $sql = "
+                            DELETE FROM
+                                TestResultExpression
+                            WHERE
+                                TestResultExpression.ExpressionName = \"$existingTestName\"
+                            AND TestResultExpression.TestResultControlSerNum = $serial
+                        ";
+
+    					$query = $host_db_link->prepare( $sql );
+    					$query->execute();
+
+                        $sql = "
+                            UPDATE TestResultExpressionMH
+                            SET 
+                                TestResultExpressionMH.LastUpdatedBy = '$userSer',
+                                TestResultExpressionMH.SessionId = '$sessionId'
+                            WHERE
+                                TestResultExpressionMH.ExpressionName = \"$existingTestName\"
+                            ORDER BY TestResultExpressionMH.RevSerNum DESC 
+                            LIMIT 1
+                        ";
+                        $query = $host_db_link->prepare( $sql );
+                        $query->execute();
+    				}
+    			}
+
+                // If new test names, insert into database
+                foreach ($tests as $test) {
+                    $testName = $test['name'];
+                    if(!in_array($test, $existingTests)) {
+                        $sql = "
+                            INSERT INTO
+                                TestResultExpression (
+                                    TestResultControlSerNum,
+                                    ExpressionName,
+                                    LastUpdatedBy,
+                                    SessionId
+                                )
+                            VALUES (
+                                '$serial',
+                                \"$test\",
+                                '$userSer',
+                                '$sessionId'
                             )
-                        VALUES (
-                            '$serial',
-                            \"$test\"
-                        )
-                        ON DUPLICATE KEY UPDATE
-                            TestResultControlSerNum = '$serial'
-                    ";
+                            ON DUPLICATE KEY UPDATE
+                                TestResultControlSerNum = '$serial',
+                                LastUpdatedBy = '$userSer',
+                                SessionId = '$sessionId'
+                        ";
 
-	                $query = $host_db_link->prepare( $sql );
-					$query->execute();
-				}
-			}
+    	                $query = $host_db_link->prepare( $sql );
+    					$query->execute();
+    				}
+    			}
+            }
 
-            // clear existing links
-            $sql = "
-                DELETE FROM 
-                    TestResultAdditionalLinks
-                WHERE
-                    TestResultAdditionalLinks.TestResultControlSerNum = '$serial'
-            ";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
+            if ($additionalLinksUpdated) {
 
-            if ($additionalLinks) {
-                // add new links
-                foreach ($additionalLinks as $link) {
-                    
-                    $linkName_EN        = $link['name_EN'];
-                    $linkName_FR        = $link['name_FR'];
-                    $linkURL_EN         = $link['url_EN'];
-                    $linkURL_FR         = $link['url_FR'];
+                // clear existing links
+                $sql = "
+                    DELETE FROM 
+                        TestResultAdditionalLinks
+                    WHERE
+                        TestResultAdditionalLinks.TestResultControlSerNum = '$serial'
+                ";
+                $query = $host_db_link->prepare( $sql );
+                $query->execute();
 
-                    $sql = "
-                        INSERT INTO 
-                            TestResultAdditionalLinks (
-                                TestResultControlSerNum,
-                                Name_EN,
-                                Name_FR,
-                                URL_EN,
-                                URL_FR,
-                                DateAdded
+                if ($additionalLinks) {
+                    // add new links
+                    foreach ($additionalLinks as $link) {
+                        
+                        $linkName_EN        = $link['name_EN'];
+                        $linkName_FR        = $link['name_FR'];
+                        $linkURL_EN         = $link['url_EN'];
+                        $linkURL_FR         = $link['url_FR'];
+
+                        $sql = "
+                            INSERT INTO 
+                                TestResultAdditionalLinks (
+                                    TestResultControlSerNum,
+                                    Name_EN,
+                                    Name_FR,
+                                    URL_EN,
+                                    URL_FR,
+                                    DateAdded
+                                )
+                            VALUES (
+                                '$serial',
+                                \"$linkName_EN\",
+                                \"$linkName_FR\",
+                                \"$linkURL_EN\",
+                                \"$linkURL_FR\",
+                                NOW()
                             )
-                        VALUES (
-                            '$serial',
-                            \"$linkName_EN\",
-                            \"$linkName_FR\",
-                            \"$linkURL_EN\",
-                            \"$linkURL_FR\",
-                            NOW()
-                        )
-                    ";
-                    $query = $host_db_link->prepare( $sql );
-                    $query->execute();
+                        ";
+                        $query = $host_db_link->prepare( $sql );
+                        $query->execute();
+                    }
                 }
             }
+
+            $this->sanitizeEmptyTestResults($testResultDetails['user']);
 
             $response['value'] = 1; // Success
             return $response;
@@ -708,14 +806,18 @@ class TestResult {
      * Removes a test result from the database
      *
      * @param integer $testResultSer : the serial number of the test result
+     * @param object $user : the current user in session
      * @return array $response : response
      */
-    public function deleteTestResult ($testResultSer) {
+    public function deleteTestResult ($testResultSer, $user) {
 
         $response = array(
             'value'     => 0,
             'message'   => ''
         );
+
+        $userSer = $user['id'];
+        $sessionId = $user['sessionid'];
 
 	    try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -749,6 +851,20 @@ class TestResult {
 	        $query = $host_db_link->prepare( $sql );
             $query->execute();
 
+            $sql = "
+                UPDATE TestResultControlMH
+                SET 
+                    TestResultControlMH.LastUpdatedBy = '$userSer',
+                    TestResultControlMH.SessionId = '$sessionId'
+                WHERE
+                    TestResultControlMH.TestResultControlSerNum = $testResultSer
+                ORDER BY TestResultControlMH.RevSerNum DESC 
+                LIMIT 1
+            ";
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
+    
+
             $response['value'] = 1;
             return $response;
 
@@ -757,6 +873,262 @@ class TestResult {
 			return $response;
 		}
 	}
+
+    /**
+     *
+     * Removes publish flag for test results without assigned tests
+     *
+     * @param object $user : the session user
+     * @return void
+     */
+    public function sanitizeEmptyTestResults($user) {
+        $userSer = $user['id'];
+        $sessionId = $user['sessionid'];
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
+                UPDATE 
+                    TestResultControl 
+                LEFT JOIN 
+                    TestResultExpression 
+                ON  TestResultControl.TestResultControlSerNum = TestResultExpression.TestResultControlSerNum
+                SET 
+                    TestResultControl.PublishFlag       = 0, 
+                    TestResultControl.LastUpdatedBy     = $userSer,
+                    TestResultControl.SessionId         = '$sessionId'
+                WHERE  
+                    TestResultExpression.TestResultControlSerNum IS NULL 
+            ";
+
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
+            return;
+        } catch( PDOException $e) {
+            return $e->getMessage(); // Fail
+        }
+    }
+
+    /**
+     *
+     * Gets chart logs of a test result or results
+     *
+     * @param integer $serial : the test result serial number
+     * @return array $testResultLogs : the test result logs for highcharts
+     */
+    public function getTestResultChartLogs ($serial) {
+        $testResultLogs = array();
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            $sql = null;
+            // get all logs for all test results
+            if (!$serial) {
+
+                $sql = "
+                    SELECT DISTINCT
+                        trmh.CronLogSerNum,
+                        COUNT(trmh.CronLogSerNum),
+                        cl.CronDateTime,
+                        trc.Name_EN
+                    FROM
+                        TestResultMH trmh,
+                        TestResultExpression tre,
+                        CronLog cl,
+                        TestResultControl trc
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = trmh.CronLogSerNum
+                    AND trmh.CronLogSerNum IS NOT NULL
+                    AND trmh.TestResultExpressionSerNum = tre.TestResultExpressionSerNum
+                    AND tre.TestResultControlSerNum = trc.TestResultControlSerNum
+                    GROUP BY
+                        trmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC 
+                ";
+
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                $testResultSeries = array();
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $seriesName = $data[3];
+                    $testResultDetail = array (
+                        'x' => $data[2],
+                        'y' => intval($data[1]),
+                        'cron_serial' => $data[0]
+                    );
+                    if(!isset($testResultSeries[$seriesName])) {
+                        $testResultSeries[$seriesName] = array(
+                            'name'  => $seriesName,
+                            'data'  => array()
+                        );
+                    }
+                    array_push($testResultSeries[$seriesName]['data'], $testResultDetail);
+                }
+
+                foreach ($testResultSeries as $seriesName => $series) {
+                    array_push($testResultLogs, $series);
+                }
+
+            }
+            // get logs for specific test results
+            else {
+                $sql = "
+                    SELECT DISTINCT
+                        trmh.CronLogSerNum,
+                        COUNT(trmh.CronLogSerNum),
+                        cl.CronDateTime
+                    FROM
+                        TestResultMH trmh,
+                        TestResultExpression tre,
+                        CronLog cl
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = trmh.CronLogSerNum
+                    AND trmh.CronLogSerNum IS NOT NULL
+                    AND trmh.TestResultExpressionSerNum = tre.TestResultExpressionSerNum
+                    AND tre.TestResultControlSerNum = $serial
+                    GROUP BY
+                        trmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC 
+                ";
+
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                $testResultSeries = array();
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $seriesName = 'Test Result';
+                    $testResultDetail = array (
+                        'x' => $data[2],
+                        'y' => intval($data[1]),
+                        'cron_serial' => $data[0]
+                    );
+                    if(!isset($testResultSeries[$seriesName])) {
+                        $testResultSeries[$seriesName] = array(
+                            'name'  => $seriesName,
+                            'data'  => array()
+                        );
+                    }
+                    array_push($testResultSeries[$seriesName]['data'], $testResultDetail);
+                }
+
+                foreach ($testResultSeries as $seriesName => $series) {
+                    array_push($testResultLogs, $series);
+                }
+            }
+            return $testResultLogs;
+
+        } catch( PDOException $e) {
+            echo $e->getMessage();
+            return $testResultLogs;
+        }
+    }
+
+     /**
+     *
+     * Gets list logs of test results during one or many cron sessions
+     *
+     * @param array $serials : a list of cron log serial numbers
+     * @return array $testResultLogs : the test result logs for table view
+     */
+    public function getTestResultListLogs ($serials) {
+        $testResultLogs = array();
+        $serials = implode(',', $serials);
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
+                SELECT DISTINCT
+                    tre.ExpressionName,
+                    trmh.TestResultRevSerNum,
+                    trmh.CronLogSerNum,
+                    trmh.PatientSerNum,
+                    sd.SourceDatabaseName,
+                    trmh.TestResultAriaSer,
+                    trmh.AbnormalFlag,
+                    trmh.TestDate,
+                    trmh.MaxNorm,
+                    trmh.MinNorm,
+                    trmh.TestValue,
+                    trmh.UnitDescription,
+                    trmh.ValidEntry,
+                    trmh.DateAdded,
+                    trmh.ReadStatus,
+                    trmh.ModificationAction
+                FROM
+                    TestResultMH trmh,
+                    TestResultExpression tre,
+                    SourceDatabase sd
+                WHERE
+                    trmh.TestResultExpressionSerNum     = tre.TestResultExpressionSerNum
+                AND trmh.SourceDatabaseSerNum           = sd.SourceDatabaseSerNum
+                AND trmh.CronLogSerNum                  IN ($serials)
+            "; 
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $logDetails = array (
+                   'expression_name'        => $data[0],
+                   'revision'               => $data[1],
+                   'cron_serial'            => $data[2],
+                   'patient_serial'         => $data[3],
+                   'source_db'              => $data[4],
+                   'source_uid'             => $data[5],
+                   'abnormal_flag'          => $data[6],
+                   'test_date'              => $data[7],
+                   'max_norm'               => $data[8],
+                   'min_norm'               => $data[9],
+                   'test_value'             => $data[10],
+                   'unit'                   => $data[11],
+                   'valid'                  => $data[12],
+                   'date_added'             => $data[13],
+                   'read_status'            => $data[14],
+                   'mod_action'             => $data[15]
+                );
+                array_push($testResultLogs, $logDetails);
+            }
+
+            return $testResultLogs;
+
+        } catch( PDOException $e) {
+            echo $e->getMessage();
+            return $testResultLogs;
+        }
+    }  
+
+
+    /**
+     *
+     * Checks if an expression has been assigned to an test
+     *
+     * @param string $id    : the needle id
+     * @param array $array  : the key-value haystack
+     * @return $assignedTest
+     */
+    public function assignedSearch($id, $array) {
+        $assignedTest = null;
+        if(empty($array) || !$id){
+            return $assignedTest;
+        }
+        foreach ($array as $key => $val) {
+            if ($val['id'] === $id) {
+                $assignedTest = $val;
+                return $assignedTest;
+            }
+        }
+        return $assignedTest;
+    }
 }
 
 ?>

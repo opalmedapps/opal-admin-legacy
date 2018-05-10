@@ -1,0 +1,118 @@
+  <div id="main">
+    <div id="top">
+      <div class="clearfix">
+        <div class="row">
+          <!-- Load side menu -->
+          <div id="side-panel-scrollbar" class="col-lg-2">
+            <div ng-include="'templates/side-panel-menu.html'"></div>
+          </div>
+          <!-- Right side details view -->
+          <div class="col-lg-10 animated fadeIn">
+            <div class="row main-title">
+              <!-- Page title -->
+              <div class="col-xs-12 col-md-8 title-content">
+                <span class="glyphicon glyphicon-time"></span>
+                <h1><strong>Cron</strong></h1>
+              </div>
+              <!-- Breadcrumbs -->
+              <div class="col-md-4 title-breadcrumbs"> 
+                <span><a ui-sref="home">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Cron</strong></span>
+              </div>
+            </div>  
+            <!-- SECTION: Cron date & time -->   
+            <div class="row">
+              <div class="col-xs-12 col-md-6">
+                <div class="row">
+                  <div class="col-xs-12 side-menu-title">
+                    <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                      <span style="background-color:#e6edfa; padding-right: 10px">
+                        <span class="fas fa-dot-circle"></span>
+                        <h2>Cron Date & Time</h2>
+                      </span>  
+                    </div>  
+                  </div>
+                </div>
+                <div class="row" style="margin-bottom: 15px;">
+                  <div class="col-xs-12">
+                    <p style="margin-bottom: 10px;">
+                      Use this field to manually set the next cron date and time. To turn off cron, set a date and time in the past.
+                    </p>
+                  </div>
+                </div> 
+                <div class="row" style="margin-bottom: 15px;">
+                  <div class="col-xs-12 col-sm-10">
+                    <div class="row">
+                      <div class="col-xs-12 col-sm-6" style="padding-top: 10px;margin-bottom:20px;">
+                        <p class="input-group">
+                          <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="cronDetailsMod.nextCronDate" is-open="opened" min="minDate" ng-change="setChangesMade()" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+                          <span class="input-group-btn">
+                            <button class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                          </span>
+                        </p>
+                      </div>
+                      <div class="col-xs-3 col-sm-3" style="margin-top: -24px;">
+                        <div>
+                          <div uib-timepicker ng-model="cronDetailsMod.nextCronTime" ng-change="setChangesMade()" minute-step="5" show-meridian="false"></div>
+                        </div>
+                      </div>
+                      <div class="col-xs-6 col-sm-3">
+                      	<div class="panel-buttons">
+                      		<input class="btn btn-primary" type="button" value="Save Changes" ng-class="{'disabled': !checkForm()}" ng-click="submitCronChange()">
+                    		</div>
+                    	</div>
+                    </div>
+                  </div>      
+                </div>  
+              </div>
+              <div class="col-xs-12 col-md-6">
+                <!-- SECTION: Repeat interval -->
+                <div class="row">
+                  <div class="col-xs-12 side-menu-title">
+                    <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                      <span style="background-color:#e6edfa; padding-right: 10px">
+                        <span class="fas fa-dot-circle"></span>
+                        <h2>Repeat Interval</h2>
+                      </span>  
+                    </div>  
+                  </div>
+                </div>
+                <div class="row ">
+                  <div class="col-xs-12">
+                    <p style="margin-bottom: 10px;">
+                      Use this field to set the cron repeat interval. Current repeat interval: <strong>{{cronDetails.repeatInterval}} {{cronDetails.repeatUnits}}</strong>
+                    </p>
+                  </div>
+                </div> 
+                <div class="row ">
+                  <div class="col-xs-12">
+                    <div class="row">
+                      <div class="col-xs-12 col-sm-5" style="margin-bottom:10px;">
+                        <select ng-model="cronDetailsMod.repeatUnits" ng-change="setChangesMade()" ng-options="unit for unit in repeatUnits" class="form-control" ></select>
+                      </div>
+                      <div class="col-xs-3 col-sm-3" style="margin-bottom:10px;">
+                        <div>
+                          <input class="form-control" ng-model="cronDetailsMod.repeatInterval" ng-change="setChangesMade()" type="number" max="59" min="1" required="required">
+                        </div>
+                      </div>
+                      <div class="col-xs-6 col-sm-3" style="margin-bottom:10px;">
+                      	<div>
+                      		<input class="btn btn-primary" type="button" value="Save Changes" ng-class="{'disabled': !checkForm()}" ng-click="submitCronChange()">
+                    		</div>
+                    	</div>
+                    </div>
+                  </div>      
+                </div>
+              <!-- END SECTION -->
+              </div>
+            </div>
+            <div class="panel-container">
+              <div class="panel-info">
+                <highchart id="chart1" config="chartConfig" style="height: 65vh"></highchart>
+              </div>
+            </div>         
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bannerMessage alert-success">{{bannerMessage}}</div>
+  </div>

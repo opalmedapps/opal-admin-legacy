@@ -1,0 +1,36 @@
+<div class="modal-header">
+  <div class="col-xs-12 col-md-6">
+    <h2 class="modal-title">
+      <span class="fa fa-address-card"></span> 
+      <span ng-if="currentPatient.disabled">Block</span>
+  		<span ng-if="!currentPatient.disabled">Unblock</span>  
+  		Patient 
+    </h2>
+    <p class="modal-title-caption">
+      {{currentPatient.name}} 
+    </p>
+  </div>
+  <div class="modal-buttons col-xs-12 col-md-6">
+    <span> 
+      <form method="post" ng-submit="submitToggle()">
+        <button class="btn btn-primary submit" ng-class="{'disabled': !currentPatient.reason}" type="submit">
+          <span ng-if="currentPatient.disabled">Block</span>
+          <span ng-if="!currentPatient.disabled">Unblock</span>
+        </button>
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+      </form>
+    </span>     
+  </div>
+</div>
+<div class="modal-body">
+	<div class="form-horizontal">
+		<div class="form-group has-feedback">
+			<label class="control-label col-xs-12 col-md-2">
+				Reason
+			</label>
+			<div class="col-xs-12 col-md-7">
+				<textarea class="form-control" rows="5" ng-model="currentPatient.reason" placeholder="Reason" required="required"></textarea>
+			</div>
+		</div>
+	</div>
+</div>

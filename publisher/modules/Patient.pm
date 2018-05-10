@@ -38,22 +38,24 @@ sub new
 {
 	my $class = shift;
 	my $patient = {
-		_ser		    => undef,
-		_sourceuid	    => undef,
-        _id             => undef,
-        _id2            => undef,
-        _firstname      => undef,
-        _lastname       => undef,
-        _sex            => undef,
-        _dob            => undef,
-        _age            => undef,
-        _picture        => undef,
-        _ssn            => undef,
-		_lasttransfer	=> undef,
-        _accesslevel    => undef,
-        _deathdate 		=> undef,
-		_email 			=> undef,
-		_firebaseuid	=> undef, 		
+		_ser		    	=> undef,
+		_sourceuid	    	=> undef,
+        _id             	=> undef,
+        _id2            	=> undef,
+        _firstname      	=> undef,
+        _lastname       	=> undef,
+        _sex            	=> undef,
+        _dob            	=> undef,
+        _age            	=> undef,
+        _picture        	=> undef,
+        _ssn            	=> undef,
+		_lasttransfer		=> undef,
+        _accesslevel    	=> undef,
+        _deathdate 			=> undef,
+		_email 				=> undef,
+		_firebaseuid		=> undef,
+		_registrationdate	=> undef,
+		_cronlogser			=> undef, 		
 	};
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
@@ -198,7 +200,7 @@ sub setPatientAccessLevel
 sub setPatientDeathDate
 {
     my ($patient, $deathdate) = @_; # patient object with provided date in arguments
-    $patient->{_deathdate} = $deathdate; # set the level
+    $patient->{_deathdate} = $deathdate; # set the date
     return $patient->{_deathdate};
 }
 
@@ -220,6 +222,26 @@ sub setPatientFirebaseUID
 	my ($patient, $firebaseuid) = @_; # patient object with provided uid in arguments 
 	$patient->{_firebaseuid} = $firebaseuid; # set the uid
 	return $patient->{_firebaseuid};
+}
+
+#======================================================================================
+# Subroutine to set the patient registration date
+#======================================================================================
+sub setPatientRegistrationDate
+{
+    my ($patient, $registrationdate) = @_; # patient object with provided date in arguments
+    $patient->{_registrationdate} = $registrationdate; # set the date
+    return $patient->{_registrationdate};
+}
+
+#======================================================================================
+# Subroutine to set the patient cron log serial
+#======================================================================================
+sub setPatientCronLogSer
+{
+	my ($patient, $cronlogser) = @_; # patient object with provided serial in arguments
+	$patient->{_cronlogser} = $cronlogser; # set the serial
+	return $patient->{_cronlogser};
 }
 
 #======================================================================================
@@ -367,6 +389,24 @@ sub getPatientFirebaseUID
 }
 
 #======================================================================================
+# Subroutine to get the patient registration date
+#======================================================================================
+sub getPatientRegistrationDate
+{
+    my ($patient) = @_; # our patient object
+    return $patient->{_registrationdate};
+}
+
+#======================================================================================
+# Subroutine to get the patient cron log serial
+#======================================================================================
+sub getPatientCronLogSer
+{
+	my ($patient) = @_; # our patient object
+	return $patient->{_cronlogser};
+}
+
+#======================================================================================
 # Subroutine to get all patient info from source dbs
 #======================================================================================
 sub getPatientInfoFromSourceDBs 
@@ -377,6 +417,7 @@ sub getPatientInfoFromSourceDBs
 
     my $patientSSN      = $Patient->getPatientSSN(); # retrieve the ssn
     my $lastTransfer    = $Patient->getPatientLastTransfer();
+    my $registrationDate 	= $Patient->getPatientRegistrationDate();
 
     ######################################
     # ARIA
@@ -409,7 +450,7 @@ sub getPatientInfoFromSourceDBs
 	        LEFT JOIN variansystem.dbo.PatientParticular ppt 
 	        ON ppt.PatientSer 		= pt.PatientSer
 	        WHERE
-	            pt.SSN              LIKE '$patientSSN%'
+	            RTRIM(pt.SSN)              = '$patientSSN'
 	    ";
 
 		# prepare query
@@ -442,6 +483,7 @@ sub getPatientInfoFromSourceDBs
 	        # set the information
 	        $sourcePatient->setPatientSSN($patientSSN);
 	        $sourcePatient->setPatientLastTransfer($lastTransfer);
+	        $sourcePatient->setPatientRegistrationDate($registrationDate);
 
 	        $sourcePatient->setPatientSourceUID($sourceuid);
 	        $sourcePatient->setPatientFirstName($firstname);
@@ -563,14 +605,17 @@ sub getPatientInfoFromSourceDBs
 #======================================================================================
 sub getPatientsMarkedForUpdate
 {
+    my ($cronLogSer) = @_; # cron log serial in args
+	
 	my @patientList = (); # initialize list of patient objects
-	my ($lasttransfer, $ssn);
+	my ($lasttransfer, $ssn, $registrationdate);
 	
 	# Query
 	my $patients_sql = "
 		SELECT DISTINCT
 			PatientControl.LastTransferred,
-            Patient.SSN
+            Patient.SSN,
+            Patient.RegistrationDate
 		FROM
 			PatientControl,
             Patient
@@ -591,12 +636,15 @@ sub getPatientsMarkedForUpdate
 
 		my $Patient = new Patient(); # patient object
 
-		$lasttransfer	= $data[0];
-        $ssn            = $data[1];
+		$lasttransfer		= $data[0];
+        $ssn            	= $data[1];
+        $registrationdate 	= $data[2];
 
 		# set patient information
 		$Patient->setPatientLastTransfer($lasttransfer);
         $Patient->setPatientSSN($ssn);
+        $Patient->setPatientRegistrationDate($registrationdate);
+		$Patient->setPatientCronLogSer($cronLogSer);
 
 		push(@patientList, $Patient);
 	}
@@ -741,8 +789,9 @@ sub inOurDatabase
 {
     my ($patient) = @_; # our patient object
 
-    my $ssn             = $patient->getPatientSSN();
-    my $lastTransfer    = $patient->getPatientLastTransfer();
+    my $ssn             	= $patient->getPatientSSN();
+    my $lastTransfer    	= $patient->getPatientLastTransfer();
+    my $registrationDate 	= $patient->getPatientRegistrationDate();
 
 
     my $PatientSSNInDB = 0; # false by default. Will be true if patient exists
@@ -816,6 +865,7 @@ sub inOurDatabase
         $ExistingPatient->setPatientAge($age);
         $ExistingPatient->setPatientPicture($picture);
         $ExistingPatient->setPatientLastTransfer($lastTransfer);
+        $ExistingPatient->setPatientRegistrationDate($registrationDate);
         $ExistingPatient->setPatientSSN($PatientSSNInDB);
         $ExistingPatient->setPatientDeathDate($deathdate);
 		$ExistingPatient->setPatientEmail($email);
@@ -1017,8 +1067,10 @@ sub compareWith
 			blockPatient($UpdatedPatient, "Patient passed 13 years of age");
 			my $patientser = $UpdatedPatient->getPatientSer();
 			my $patientemail = $UpdatedPatient->getPatientEmail();
+			my $cronlogser = $UpdatedPatient->getPatientCronLogSer();
 			my $email = Email::getEmailControlDetails($patientser, "PaedPatientBlock");
 			$email->setEmailToAddress($patientemail);
+			$email->setEmailCronLogSer($cronlogser);
 			$email->sendEmail($patientser);
 		}
 	}

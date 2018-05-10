@@ -7,9 +7,10 @@
 	$emailArray	= array(
 		'subject_EN' 	    => $_POST['subject_EN'],
 		'subject_FR' 	    => $_POST['subject_FR'],
-        'body_EN'           => str_replace(array('"', "'"), '\"', $_POST['body_EN']),
-        'body_FR'           => str_replace(array('"', "'"), '\"', $_POST['body_FR']),
- 		'type' 		        => $_POST['type']['serial']
+        'body_EN'           => filter_var($_POST['body_EN'], FILTER_SANITIZE_MAGIC_QUOTES),
+        'body_FR'           => filter_var($_POST['body_FR'], FILTER_SANITIZE_MAGIC_QUOTES),
+		'type' 		        => $_POST['type']['serial'],
+		'user'				=> $_POST['user']
 	);
 
 	$emailObject = new Email; // Object

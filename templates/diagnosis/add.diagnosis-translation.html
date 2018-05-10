@@ -1,0 +1,435 @@
+<div id="main">
+	<div id="top">
+		<div class="clearfix">
+			<div class="row">
+				<!-- Left side detail view -->
+				<div class="col-lg-2">
+					<!-- Logo -->
+					<div class="side-navbar" ng-controller="navigation">
+						<div class="row side-logo" ng-click="goToHome()">
+							<div class="col-md-12">
+								<div class="logo">
+									<img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+								</div>
+								<h1 class="animated fadeIn">opal
+									<strong>ADMIN</strong>
+									<span style="font-size: 20px;" ng-if="devMode">DEV</span>
+								</h1>
+							</div>
+						</div>
+					</div>
+					<div class="summary-fix">
+						<!-- Back button -->
+						<div class="row side-panel-menu">
+							<div class="col-xs-12 col-sm-5 col-lg-12">
+								<div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false"
+								 style="cursor:pointer;" ng-click="goBack()">
+									<div class="side-panel-info-sm">
+										<div class="panel-content">
+											<span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+											<h6 class="side-panel-title" style="display:inline-block;margin:0;font-size:14px;">
+												<strong>Back to Diagnosis Translation</strong>
+											</h6>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- Summary -->
+							<div class="side-menu-title col-lg-12">
+								<div class="horz-line" style="height: 16px; text-align: center">
+									<span style="background-color:#e6edfa; padding: 0 10px;">
+										<h2>Summary</h2>
+									</span>
+								</div>
+							</div>
+							<div class="col-lg-12">
+								<div class="progress progress-striped active">
+									<div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}"
+									 aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+									</div>
+								</div>
+							</div>
+						</div>
+						<uib-accordion class="side-navbar">
+							<!-- SECTION: Diagnosis codes -->
+							<div uib-accordion-group is-open="diagnosesSection.open" class="panel-container summary-box" is-disabled="!checkDiagnosesAdded(diagnosisList)">
+								<uib-accordion-heading>
+									<div class="row" style="align-items:center">
+										<div class="col-md-2">
+											<span ng-if="checkDiagnosesAdded(diagnosisList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+										</div>
+										<div class="col-md-8">
+											<strong>Diagnosis Code(s)</strong>
+										</div>
+										<div class="col-md-2">
+											<i ng-if="checkDiagnosesAdded(diagnosisList)" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': diagnosesSection.open, 'glyphicon-chevron-right': !diagnosesSection.open}"></i>
+										</div>
+									</div>
+								</uib-accordion-heading>
+								<div ng-if="checkDiagnosesAdded(diagnosisList)" class="description">
+									<p style="margin-top: 5px;">
+										<ul style="max-height: 100px; overflow-y: auto;">
+											<li ng-repeat="diagnosis in diagnosisList | filter: {added: 1} ">
+												{{diagnosis.name}}
+											</li>
+										</ul>
+									</p>
+								</div>
+							</div>
+							<!-- SECTION: Title & description -->
+							<div uib-accordion-group is-open="titleDescriptionSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: titleDescriptionSection.show}"
+							 ng-if="titleDescriptionSection.show" is-disabled="!newDiagnosisTranslation.name_EN && !newDiagnosisTranslation.name_FR && !newDiagnosisTranslation.description_EN && !newDiagnosisTranslation.description_FR">
+								<uib-accordion-heading>
+									<div class="row" style="align-items: center">
+										<div class="col-md-2">
+											<span ng-if="newDiagnosisTranslation.name_EN && newDiagnosisTranslation.name_FR && newDiagnosisTranslation.description_EN && newDiagnosisTranslation.description_FR" style="color:#5cb85c"
+											 class="glyphicon glyphicon-ok"></span>
+										</div>
+										<div class="col-md-8">
+											<strong>Title & Description</strong>
+										</div>
+										<div class="col-md-2">
+											<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleDescriptionSection.open, 'glyphicon-chevron-right': !titleDescriptionSection.open}"
+											 ng-if="newDiagnosisTranslation.name_EN || newDiagnosisTranslation.name_FR || newDiagnosisTranslation.description_EN || newDiagnosisTranslation.description_FR"></i>
+										</div>
+									</div>
+								</uib-accordion-heading>
+								<div ng-if="newDiagnosisTranslation.name_EN || newDiagnosisTranslation.description_EN" class="description">
+									<p ng-if="newDiagnosisTranslation.name_EN" style="margin-bottom:5px;">
+										<strong>EN</strong>
+										<span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+										{{newDiagnosisTranslation.name_EN}}
+									</p>
+									<p ng-if="newDiagnosisTranslation.description_EN" style="padding-left: 10px; font-size: 10px;">
+										<em>See rendered output for description</em>
+									</p>
+								</div>
+								<div ng-if="newDiagnosisTranslation.name_FR || newDiagnosisTranslation.description_FR" class="description">
+									<p ng-if="newDiagnosisTranslation.name_FR" style="margin-bottom:5px;">
+										<strong>FR</strong>
+										<span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+										{{newDiagnosisTranslation.name_FR}}
+									</p>
+									<p ng-if="newDiagnosisTranslation.description_FR" style="padding-left: 10px; font-size: 10px;">
+										<em>See rendered output for description</em>
+									</p>
+								</div>
+							</div>
+							<!-- SECTION: Educational material -->
+							<div uib-accordion-group is-open="educationalMaterialSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: educationalMaterialSection.show}"
+							 is-disabled="!newDiagnosisTranslation.eduMat" ng-if="educationalMaterialSection.show">
+								<uib-accordion-heading>
+									<div class="row" style="align-items: center">
+										<div class="col-md-2">
+											<span ng-if="newDiagnosisTranslation.eduMat" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+										</div>
+										<div class="col-md-8">
+											<strong>Educational Material</strong>
+										</div>
+										<div class="col-md-2">
+											<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': educationalMaterialSection.open, 'glyphicon-chevron-right': !educationalMaterialSection.open}"
+											 ng-if="newDiagnosisTranslation.eduMat"></i>
+										</div>
+									</div>
+								</uib-accordion-heading>
+								<div ng-if="newDiagnosisTranslation.eduMat" class="description">
+									<p>
+										<span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+										{{newDiagnosisTranslation.eduMat.name_EN}}
+									</p>
+								</div>
+							</div>
+						</uib-accordion>
+						<!-- Submit button -->
+						<div class="panel-container">
+							<a href="" ng-click="submitDiagnosisTranslation()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}"
+							 ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+								<span style="font-size: 20px;">
+									<strong>Submit Diagnosis</strong>
+								</span>
+							</a>
+						</div>
+					</div>
+				</div>
+				<!-- Right side view -->
+				<div class="col-xs-12 col-lg-10 animated fadeInRight">
+					<div class="row main-title">
+						<!-- Page title -->
+						<div class="col-xs-12 col-md-8 title-content">
+							<span class="glyphicon glyphicon-plus"></span>
+							<h1>
+								<strong>Add Diagnosis Translation</strong>
+							</h1>
+						</div>
+						<!-- Breadcrumbs -->
+						<div class="col-md-4 title-breadcrumbs">
+							<span>
+								<span>
+									<a ui-sref="home">Home</a>
+								</span>
+								<span class="teflon glyphicon glyphicon-menu-right"></span>
+								<span>
+									<a ui-sref="diagnosis-translation">Diagnosis Translations</a>
+								</span>
+								<span class="teflon glyphicon glyphicon-menu-right"></span>
+								<span>
+									<strong>Add Diagnosis Translation</strong>
+								</span>
+							</span>
+						</div>
+					</div>
+
+					<div class="row mobile-side-panel-menu">
+            <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
+              <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                <div class="side-panel-info-sm">
+                  <div class="panel-content">
+                    <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                    <h6 class="side-panel-title"><strong>Back to Diagnosis Translation</strong></h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkForm()">
+              <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
+                <span style="padding: 0 10px;">
+                  <h2>Step {{numOfCompletedSteps}} of {{stepTotal}} Completed</h2>
+                </span>  
+              </div>  
+              <div class="progress progress-striped active">
+                <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                </div>
+              </div>
+            </div>
+            <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkForm()">
+              <div class="panel-container">
+                <a href="" ng-click="submitDiagnosisTranslation()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                  <span style="font-size: 20px;"><strong>Submit Diagnosis</strong></span>
+                </a>
+              </div>
+            </div> 
+          </div>
+
+          <div class="section-content">
+						<!-- SECTION: Diagnosis Translation -->
+						<div class="row">
+							<div class="col-xs-12 side-menu-title">
+								<div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+									<span style="background-color:#e6edfa; padding: 0 10px;">
+										<span class="fas fa-dot-circle"></span>
+										<h2>Diagnosis Translation</h2>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-12">
+								<p style="margin-bottom: 10px;">
+									<span style="color:#d9534f">
+										<strong>Required field:</strong>
+									</span>
+									Please add one or more diagnosis codes to categorize and rename.
+								</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-12 col-lg-9">
+								<div class="panel" ng-class="checkDiagnosesAdded(diagnosisList) ? 'panel-success': 'panel-danger'">
+									<div class="panel-heading">
+										<strong>Diagnosis List</strong>
+										<span ng-hide="checkDiagnosesAdded(diagnosisList)" style="float:right">
+											<em>Incomplete</em>
+										</span>
+										<span ng-show="checkDiagnosesAdded(diagnosisList)" style="float:right">
+											<em>Complete</em>
+										</span>
+									</div>
+									<div class="panel-body">
+										<div class="list-space">
+											<div class="input-group">
+												<span class="input-group-addon">
+													<span class="glyphicon glyphicon-search"></span>
+												</span>
+												<input class="form-control" type="text" ng-model="diagnosisFilter" ng-change="changeDiagnosisFilter(diagnosisFilter)" placeholder="Search diagnosis..."
+												/>
+											</div>
+											<div style="padding: 10px;">
+	                      <label>
+	                        <input type="checkbox" ng-click="selectAllFilteredDiagnoses()" ng-checked="selectAll"> Select All
+	                      </label>
+	                    </div>
+											<div class="btn-group btn-group-justified">
+											  <a class="btn btn-default" ng-class="{'active' : diagnosisCodeFilter == 'all'}" ng-click="setDiagnosisCodeFilter('all')">Show all</a>
+							          <a class="btn btn-default" ng-class="{'active' : diagnosisCodeFilter == 'current'}" ng-click="setDiagnosisCodeFilter('current')">Assigned to this Diagnosis</a>
+							          <a class="btn btn-default" ng-class="{'active' : diagnosisCodeFilter == 'other'}" ng-click="setDiagnosisCodeFilter('other')">Assigned to others</a>
+							          <a class="btn btn-default" ng-class="{'active' : diagnosisCodeFilter == 'none'}" ng-click="setDiagnosisCodeFilter('none')">Unassigned</a>
+											</div>
+											<ul class="list-items">
+												<li ng-repeat="diagnosis in diagnosisList | filter: searchDiagnosesFilter">
+													<label ng-class="{greenText: diagnosis.added, grayText: diagnosis.assigned && !diagnosis.added}">
+														<input type="checkbox" ng-click="toggleDiagnosisSelection(diagnosis)" ng-checked="diagnosis.added" /> {{diagnosis.name}} 
+														<span ng-class="{redText: diagnosis.assigned && !diagnosis.added}" ng-if="diagnosis.assigned && !diagnosis.added"><em> --- Assigned to: {{diagnosis.assigned.name_EN}}</em></span>
+														<span ng-class="{redText: diagnosis.assigned}" ng-if="diagnosis.assigned && diagnosis.added"><em> --- Will replace assignment from: {{diagnosis.assigned.name_EN}}</em></span>
+													</label>
+												</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- SECTION: Title & Description -->
+						<div class="row animated" ng-class="{fadeInUp: titleDescriptionSection.show}" ng-if="titleDescriptionSection.show">
+							<div class="col-xs-12 side-menu-title">
+								<div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+									<span style="background-color:#e6edfa; padding: 0 10px;">
+										<span class="fas fa-dot-circle"></span>
+										<h2>Title & Description</h2>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="row animated" ng-class="{fadeInUp: titleDescriptionSection.show}" ng-if="titleDescriptionSection.show">
+							<div class="col-xs-12">
+								<p style="margin-bottom: 10px;">
+									<span style="color:#d9534f">
+										<strong>Required field:</strong>
+									</span>
+									Please assign an english and french title and description.
+								</p>
+							</div>
+						</div>
+						<div class="row animated" ng-class="{fadeInUp: titleDescriptionSection.show}" ng-if="titleDescriptionSection.show">
+							<div class="col-xs-12 col-md-6">
+								<div class="panel" ng-class="(newDiagnosisTranslation.name_EN && newDiagnosisTranslation.description_EN) ? 'panel-success': 'panel-danger'">
+									<div class="panel-heading">
+										<strong>English</strong>
+										<span ng-hide="newDiagnosisTranslation.name_EN && newDiagnosisTranslation.description_EN" style="float:right">
+											<em>Incomplete</em>
+										</span>
+										<span ng-show="newDiagnosisTranslation.name_EN && newDiagnosisTranslation.description_EN" style="float:right">
+											<em>Complete</em>
+										</span>
+									</div>
+									<div class="panel-body form-horizontal">
+										<div class="form-group">
+											<label class="control-label col-xs-12 col-lg-2">
+												Title
+											</label>
+											<div class="col-xs-12 col-lg-10">
+												<input class="form-control" type="text" ng-model="newDiagnosisTranslation.name_EN" ng-change="titleDescriptionUpdate()" placeholder="English Title"
+												 required="required">
+											</div>
+										</div>
+										<div class="row">
+											<label class="control-label col-xs-12 col-lg-2">
+												Description
+											</label>
+											<div class="col-xs-12 col-lg-10">
+												<div text-angular ng-model="newDiagnosisTranslation.description_EN" ng-change="titleDescriptionUpdate()"
+												 placeholder="English Description" required="required" ta-toolbar="toolbar"></div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-12 col-md-6">
+								<div class="panel" ng-class="(newDiagnosisTranslation.name_FR && newDiagnosisTranslation.description_FR) ? 'panel-success': 'panel-danger'">
+									<div class="panel-heading">
+										<strong>Français</strong>
+										<span ng-hide="newDiagnosisTranslation.name_FR && newDiagnosisTranslation.description_FR" style="float:right">
+											<em>Incomplete</em>
+										</span>
+										<span ng-show="newDiagnosisTranslation.name_FR && newDiagnosisTranslation.description_FR" style="float:right">
+											<em>Complete</em>
+										</span>
+									</div>
+									<div class="panel-body form-horizontal">
+										<div class="form-group">
+											<label class="control-label col-xs-12 col-lg-2">
+												Titre
+											</label>
+											<div class="col-md-10">
+												<input class="form-control" type="text" ng-model="newDiagnosisTranslation.name_FR" ng-change="titleDescriptionUpdate()" placeholder="Titre Français"
+												 required="required">
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="control-label col-xs-12 col-lg-2">
+												Description
+											</label>
+											<div class="col-md-10">
+												<div text-angular ng-model="newDiagnosisTranslation.description_FR" ng-change="titleDescriptionUpdate()"
+												 placeholder="Description Français" required="required" ta-toolbar="toolbar"></div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- SECTION: Educational material -->
+						<div class="row animated" ng-class="{fadeInUp: educationalMaterialSection.show}" ng-if="educationalMaterialSection.show">
+							<div class="col-xs-12 side-menu-title">
+								<div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+									<span style="background-color:#e6edfa; padding: 0 10px;">
+										<span class="fas fa-dot-circle"></span>
+										<h2>Educational Material</h2>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="row animated" ng-class="{fadeInUp: educationalMaterialSection.show}" ng-if="educationalMaterialSection.show">
+							<div class="col-xs-12">
+								<p style="margin-bottom: 10px;">
+									<span>
+										<strong>Optional field:</strong>
+									</span>
+									Assigning an educational material will provide a rich-text description of the diagnosis.
+								</p>
+							</div>
+						</div>
+						<div class="row animated" ng-class="{fadeInUp: educationalMaterialSection.show}" ng-if="educationalMaterialSection.show">
+							<div class="col-xs-12 col-lg-8">
+								<div class="panel-container">
+									<div class="panel-info">
+										<div class="panel-content">
+											<div class="panel-input">
+												<div class="list-space">
+													<div class="input-group">
+														<span class="input-group-addon">
+															<span class="glyphicon glyphicon-search"></span>
+														</span>
+														<input class="form-control" type="text" ng-model="eduMatFilter" ng-change="changeEduMatFilter(eduMatFilter)" placeholder="Search Educational Material"
+														/>
+													</div>
+													<ul class="list-items">
+														<li ng-repeat="eduMat in eduMatList | filter: searchEduMatsFilter">
+															<label>
+																<input type="radio" ng-model="newDiagnosisTranslation.eduMatSer" ng-click="eduMatUpdate($event, eduMat)" value="{{eduMat.serial}}" /> {{eduMat.name_EN}}
+															</label>
+														</li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- END SECTION -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/ng-template" id="processingModal.htm">
+	<div class="modal-header">
+		<h1> Processing...</h1>
+	</div>
+	<div class="modal-body">
+		<div class="progress progress-striped active">
+			<div class="progress-bar" style="width: 100%"></div>        
+		</div>
+	</div>
+</script>

@@ -7,9 +7,10 @@
 
 	// Retrieve FORM param
 	$serial = $_POST['serial'];
+	$user = $_POST['user'];
 
 	// Call function
-    $response = $email->deleteEmail($serial);
+    $response = $email->deleteEmail($serial, $user);
 
     print json_encode($response); // Return response
 

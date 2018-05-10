@@ -194,7 +194,7 @@ sub getPushNotificationSendLog
 #====================================================================================
 sub sendPushNotification
 {
-    my ($patientser, $reftablerowser, $notificationtype) = @_; # args
+    my ($patientser, $reftablerowser, $notificationtype, %dynamicKeys) = @_; # args
 
     # retrieve notification parameters
     my $notification        = NotificationControl::getNotificationControlDetails($patientser, $notificationtype);
@@ -203,6 +203,11 @@ sub sendPushNotification
     my $message             = $notification->getNotificationControlDescription();
 
     my ($sendstatus, $sendlog); # initialize
+
+    # loop through potential wildcard keys to execute a string replace
+    for my $key (keys %dynamicKeys) {
+        $message =~ s/$key/$dynamicKeys{$key}/g;
+    }
 
     # get a list of the patient's device information
     my @PTDIDs  = getPatientDeviceIdentifiers($patientser);

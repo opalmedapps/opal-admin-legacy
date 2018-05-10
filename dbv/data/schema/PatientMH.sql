@@ -1,0 +1,23 @@
+CREATE TABLE `PatientMH` (
+  `PatientSerNum` int(11) NOT NULL,
+  `PatientRevSerNum` int(11) NOT NULL AUTO_INCREMENT,
+  `SessionId` text,
+  `PatientAriaSer` int(11) NOT NULL,
+  `PatientId` varchar(50) NOT NULL,
+  `PatientId2` varchar(50) NOT NULL,
+  `FirstName` varchar(50) NOT NULL,
+  `LastName` varchar(50) NOT NULL,
+  `Alias` varchar(100) DEFAULT NULL,
+  `Sex` varchar(25) NOT NULL,
+  `DateOfBirth` datetime NOT NULL,
+  `TelNum` bigint(11) DEFAULT NULL,
+  `EnableSMS` tinyint(4) NOT NULL,
+  `Email` varchar(50) NOT NULL,
+  `Language` enum('EN','FR','SN') NOT NULL,
+  `SSN` text NOT NULL,
+  `AccessLevel` enum('1','2','3') NOT NULL,
+  `RegistrationDate` datetime NOT NULL,
+  `ModificationAction` varchar(25) NOT NULL,
+  `LastUpdated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`PatientSerNum`,`PatientRevSerNum`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1

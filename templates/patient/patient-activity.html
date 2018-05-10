@@ -1,0 +1,43 @@
+  <div id="main">
+    <div id="top"> 
+      <div class="clearfix">
+        <div class="row">
+          <!-- Load side menu -->
+          <div id="side-panel-scrollbar" class="col-lg-2">
+            <div ng-include="'templates/side-panel-menu.html'"></div>
+          </div>
+          <!-- Right side detail view -->
+          <div class="col-lg-10 animated fadeIn">
+            <div class="row main-title">
+              <!-- Page title -->
+              <div class="col-xs-12 col-md-8 title-content">
+                <span class="fa fa-hourglass-half"></span>
+                <h1><strong>Patient Activity</strong></h1>
+              </div>
+              <!-- Breadcrumbs -->
+              <div class="col-md-4 title-breadcrumbs"> 
+                <span><a ui-sref="home">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Patient Activity</strong></span>
+              </div>
+            </div>  
+            <!-- Load main table -->
+            <div class="panel-container" style="text-align:left">
+              <div class="panel-info">
+                <div class="panel-input">
+                  <div id="data-table">
+                    <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:75vh">
+                      <div class="grid-msg-overlay" ng-hide="gridOptions.data.length && !loading">
+                        <div class="msg">
+                          <span>Loading Data...</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+   <div class="bannerMessage alert-success">{{bannerMessage}}</div>
+  </div>

@@ -1,0 +1,820 @@
+ <div id="main">
+    <div id="top">
+      <div class="clearfix">
+        <div class="row">
+          <!-- Left side view -->
+          <div class="col-lg-2">
+            <!-- Logo -->
+            <div class="side-navbar" ng-controller="navigation">
+              <div class="row side-logo" ng-click="goToHome()">
+                <div class="col-md-12">
+                  <div class="logo">
+                    <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+                  </div>
+                  <h1 class="animated fadeIn">opal <strong>ADMIN</strong></h1>
+                </div>
+              </div>   
+            </div>
+            <div class="summary-fix"> 
+              <!-- Back button -->
+  						<div class="row side-panel-menu">
+  							<div class="col-xs-12 col-sm-5 col-lg-12">
+  								<div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+  									<div class="side-panel-info-sm">
+  										<div class="panel-content">
+  											<span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+  											<h6 class="side-panel-title"><strong>Back to Posts</strong></h6>
+  										</div>
+  									</div>
+  								</div>
+  							</div>
+                <!-- Summary -->
+                <div class="side-menu-title col-lg-12">
+                  <div class="horz-line" style="height: 16px; text-align: center">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <h2>Summary</h2>
+                    </span>  
+                  </div>  
+                </div>
+                <div class="col-lg-12"> 
+                  <div class="progress progress-striped active">
+                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <uib-accordion class="side-navbar">
+                <!-- SECTION: Type -->
+                <div uib-accordion-group is-open="typeSection.open" class="panel-container summary-box" is-disabled="!newPost.type">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items:center">
+                      <div class="col-md-2">
+                        <span ng-if="newPost.type" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Type</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i ng-if="newPost.type" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':typeSection.open, 'glyphicon-chevron-right':!typeSection.open}"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newPost.type" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newPost.type.name}}
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Title -->
+                <div uib-accordion-group is-open="titleSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: titleSection.show}" ng-if="titleSection.show" is-disabled="!newPost.name_EN && !newPost.name_FR">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newPost.name_EN && newPost.name_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Title</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':titleSection.open, 'glyphicon-chevron-right':!titleSection.open}" ng-if="newPost.name_EN || newPost.name_FR"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newPost.name_EN" class="description">
+                    <p style="margin-bottom:5px;">
+                      <strong>EN</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newPost.name_EN}}
+                    </p>
+                  </div>
+                  <div ng-if="newPost.name_FR" class="description">
+                    <p style="margin-bottom:5px;">
+                      <strong>FR</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newPost.name_FR}}
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Body -->
+                <div uib-accordion-group is-open="bodySection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:bodySection.show}" ng-if="bodySection.show" is-disabled="!newPost.body_EN && !newPost.body_FR">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newPost.body_EN && newPost.body_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Body/Content</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': bodySection.open, 'glyphicon-chevron-right': !bodySection.open}" ng-if="newPost.body_EN || newPost.body.FR"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newPost.body_EN || newPost.body_FR" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      See rendered output on the right
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Publish date -->
+                <div uib-accordion-group is-open="publishSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: publishSection.show}" is-disabled="!newPost.publish_date && !newPost.publish_time" ng-if="publishSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newPost.publish_date && newPost.publish_time" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Publish Date</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': publishSection.open, 'glyphicon-chevron-right': !publishSection.open}" ng-if="newPost.publish_date || newPost.publish_time"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newPost.publish_date && newPost.publish_time" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newPost.publish_date | date:'fullDate'}} at {{newPost.publish_time | date:'HH:mm'}}
+                    </p>
+                  </div> 
+                </div>
+                <!-- SECTION: Patient triggers -->
+                 <div uib-accordion-group is-open="triggerSection.patient.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(patientTriggerList)" ng-if="triggerSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkTriggers(patientTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Patient Trigger(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.patient.open, 'glyphicon-chevron-right': !triggerSection.patient.open}" ng-if="checkTriggers(patientTriggerList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkTriggers(patientTriggerList) && !selectAll.patient.all" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="patient in patientTriggerList | filter: {added: 1} : 1">
+                          {{patient.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                  <div ng-if="selectAll.patient.all" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                        Send to all patients
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Appointment triggers -->
+                <div uib-accordion-group is-open="triggerSection.appointment.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(appointmentTriggerList)" ng-if="triggerSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkTriggers(appointmentTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Appointment Trigger(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.appointment.open, 'glyphicon-chevron-right': !triggerSection.appointment.open}" ng-if="checkTriggers(appointmentTriggerList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkTriggers(appointmentTriggerList) && !selectAll.appointment.all" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="appointment in appointmentTriggerList | filter: {added: 1} : 1">
+                          {{appointment.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                  <div ng-if="selectAll.appointment.all" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                        All appointments
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Diagnosis triggers -->
+                <div uib-accordion-group is-open="triggerSection.diagnosis.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(dxTriggerList)" ng-if="triggerSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkTriggers(dxTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Diagnosis Trigger(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.diagnosis.open, 'glyphicon-chevron-right': !triggerSection.diagnosis.open}" ng-if="checkTriggers(dxTriggerList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkTriggers(dxTriggerList) && !selectAll.diagnosis.all" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="dx in dxTriggerList | filter: {added: 1} : 1">
+                          {{dx.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                  <div ng-if="selectAll.diagnosis.all" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                        All Diagnoses
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Doctor triggers -->
+                <div uib-accordion-group is-open="triggerSection.doctor.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(doctorTriggerList)" ng-if="triggerSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkTriggers(doctorTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Doctor Trigger(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.doctor.open, 'glyphicon-chevron-right': !triggerSection.doctor.open}" ng-if="checkTriggers(doctorTriggerList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkTriggers(doctorTriggerList) && !selectAll.doctor.all" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="doctor in doctorTriggerList | filter: {added: 1} : 1">
+                          {{doctor.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                  <div ng-if="selectAll.doctor.all" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                        All Doctors
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Treatment Machine triggers -->
+                <div uib-accordion-group is-open="triggerSection.machine.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(machineTriggerList)" ng-if="triggerSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkTriggers(machineTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Treatment Machine Trigger(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.machine.open, 'glyphicon-chevron-right': !triggerSection.machine.open}" ng-if="checkTriggers(machineTriggerList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkTriggers(machineTriggerList) && !selectAll.machine.all" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="machine in machineTriggerList | filter: {added: 1} : 1">
+                          {{machine.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                  <div ng-if="selectAll.machine.all" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                        All Treatment Machines
+                    </p>
+                  </div>
+                </div>
+              </uib-accordion>
+              <!-- Submit button -->
+              <div class="panel-container">
+                <a href="" ng-click="submitPost()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                  <span style="font-size: 20px;"><strong>Submit Post</strong></span>
+                </a>
+              </div>
+            </div>
+          </div>
+          <!-- Right side detail view -->
+          <div class="col-xs-12 col-lg-10 animated fadeInRight">
+            <div class="row main-title">
+              <!-- Page title -->
+              <div class="col-xs-12 col-md-9 title-content">
+                <span class="glyphicon glyphicon-plus"></span>
+                <h1><strong>Add Post</strong></h1>
+              </div>
+              <!-- Breadcrumbs -->
+              <div class="col-md-3 title-breadcrumbs"> 
+                <span>
+                  <span><a ui-sref="home">Home</a></span>
+                  <span class="teflon glyphicon glyphicon-menu-right"></span> 
+                  <span><a ui-sref="post">Posts</a></span>
+                  <span class="teflon glyphicon glyphicon-menu-right"></span> 
+                  <span><strong>Add Post</strong></span>
+                </span>
+              </div>
+            </div>
+            <div class="row mobile-side-panel-menu">
+              <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
+                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                  <div class="side-panel-info-sm">
+                    <div class="panel-content">
+                      <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                      <h6 class="side-panel-title"><strong>Back to Posts</strong></h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkForm()">
+                <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
+                  <span style="padding: 0 10px;">
+                    <h2>Step {{numOfCompletedSteps}} of {{stepTotal}} Completed</h2>
+                  </span>  
+                </div>  
+                <div class="progress progress-striped active">
+                  <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                  </div>
+                </div>
+              </div>
+              <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkForm()">
+                <div class="panel-container">
+                  <a href="" ng-click="submitPost()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                    <span style="font-size: 20px;"><strong>Submit Post</strong></span>
+                  </a>
+                </div>
+              </div> 
+            </div> 
+            <div class="section-content">   
+              <!-- SECTION: Type -->
+              <div class="row">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Type</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span style="color:#d9534f"><strong>Required field:</strong></span>
+                    Please select the type of post.
+                  </p>
+                </div>
+              </div>    
+              <div class="row">
+                <div ng-repeat="type in postTypes" class="col-xs-4 col-lg-3 item-panel-select"> 
+                  <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: newPost.type.name == type.name}" ng-click="typeUpdate(type)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                    <div class="panel-info" ng-class="{active: newPost.type.name == type.name}">
+                      <div class="panel-content" style="text-align:center">
+                        <span style="font-size:30px;" class="fa fa-{{type.icon}}"></span>
+                        <div class="option-panel-title">{{type.name}}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>    
+              <!-- SECTION: Title -->
+              <div class="row animated" ng-class="{fadeInUp:titleSection.show}" ng-if="titleSection.show">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fa fa-dot-circle-o"></span>
+                      <h2>Title</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row animated" ng-class="{fadeInUp:titleSection.show}" ng-if="titleSection.show">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span style="color:#d9534f"><strong>Required field:</strong></span>
+                    Please assign an english and french title.
+                  </p>
+                </div>
+              </div>  
+              <div class="row animated" ng-class="{fadeInUp:titleSection.show}" ng-if="titleSection.show">
+                <div class="col-xs-12 col-md-6">
+                  <div class="panel" ng-class="(newPost.name_EN) ? 'panel-success': 'panel-danger'">
+                    <div class="panel-heading"><strong>English</strong>
+                      <span ng-hide="newPost.name_EN" style="float:right"><em>Incomplete</em></span>
+                      <span ng-show="newPost.name_EN" style="float:right"><em>Complete</em></span>
+                    </div>
+                    <div class="panel-body form-horizontal">
+                      <div class="form-group">
+                        <label class="control-label col-xs-12 col-lg-2">
+                          Title
+                        </label>
+                        <div class="col-xs-12 col-lg-10">
+                          <input class="form-control" type="text" ng-model="newPost.name_EN" ng-change="titleUpdate()" placeholder="English Title" required="required">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>          
+                <div class="col-xs-12 col-md-6">
+                  <div class="panel" ng-class="(newPost.name_FR) ? 'panel-success': 'panel-danger'">
+                    <div class="panel-heading"><strong>Français</strong>
+                      <span ng-hide="newPost.name_FR" style="float:right"><em>Incomplete</em></span>
+                      <span ng-show="newPost.name_FR" style="float:right"><em>Complete</em></span>
+                    </div>
+                    <div class="panel-body form-horizontal">
+                      <div class="form-group">
+                        <label class="control-label col-xs-12 col-lg-2">
+                          Titre
+                        </label>
+                        <div class="col-xs-12 col-lg-10">
+                          <input class="form-control" type="text" ng-model="newPost.name_FR" ng-change="titleUpdate()" placeholder="Titre Français" required="required">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>        
+              </div>
+              <!-- SECTION: Body -->
+              <div class="row animated" ng-class="{fadeInUp: bodySection.show}" ng-if="bodySection.show">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom:2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Body/Content</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row animated" ng-class="{fadeInUp: bodySection.show}" ng-if="bodySection.show">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 5px;">
+                    <span style="color:#d9534f"><strong>Required field:</strong></span>
+                    Please assign the post content in both english and in french.
+                  </p>
+                  <p style="margin-bottom: 5px;">
+                    <span style="color:#d9534f"><strong>HTML exceptions</strong></span><br>
+                    <ul style="margin-left: 15px; margin-bottom: 10px;">
+                      <li>Add <strong>img-responsive</strong> class to img tags. Ex: 
+                        <code data-lang="html">&lt;img class="img-responsive"&gt;</code> 
+                      </li>
+                      <li>No <strong>absolute</strong> measurements! Ie. 
+                        <code data-lang="html">&lt;span style="width:200px"&gt;</code>
+                      </li>
+                    </ul>
+                  </p>
+                </div>
+              </div>  
+              <div class="row animated" ng-class="{fadeInUp: bodySection.show}" ng-if="bodySection.show">
+                <div class="col-xs-12">
+                  <div class="panel" ng-class="(newPost.body_EN) ? 'panel-success': 'panel-danger'">
+                    <div class="panel-heading"><strong>English</strong>
+                      <span ng-hide="newPost.body_EN" style="float:right"><em>Incomplete</em></span>
+                      <span ng-show="newPost.body_EN" style="float:right"><em>Complete</em></span>
+                    </div>
+                    <div class="panel-body">
+                      <div class="row">
+                        <div class="col-xs-12 col-md-8">
+                          <div class="form-group">
+                            <div text-angular ng-model="newPost.body_EN" ng-change="bodyUpdate()"></div>
+                          </div> 
+                        </div>  
+                        <div class="col-xs-12 col-md-4">
+                          <div style="text-align:center;">
+                            <span style="font-size:20px;">iPhone 4 Rendered</span>
+                          </div>
+                          <div class="render-html-iphone4"> 
+                            <iframe height="100%" width="100%" srcdoc="{{newPost.body_EN | deliberatelyTrustAsHtml}}" frameborder="0"></iframe>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>           
+              <div class="row animated" ng-class="{fadeInUp: bodySection.show}" ng-if="bodySection.show">
+                <div class="col-xs-12">
+                  <div class="panel" ng-class="(newPost.body_FR) ? 'panel-success': 'panel-danger'">
+                    <div class="panel-heading"><strong>Français</strong>
+                      <span ng-hide="newPost.body_FR" style="float:right"><em>Incomplete</em></span>
+                      <span ng-show="newPost.body_FR" style="float:right"><em>Complete</em></span>
+                    </div>
+                    <div class="panel-body">
+                      <div class="row">
+                        <div class="col-xs-12 col-md-8">
+                          <div class="form-group">
+                            <div text-angular ng-model="newPost.body_FR" ng-change="bodyUpdate()"></div>
+                          </div> 
+                        </div>  
+                        <div class="col-xs-12 col-md-4">
+                          <div style="text-align:center;">
+                            <span style="font-size:20px;">iPhone 4 Rendered</span>
+                          </div>
+                          <div class="render-html-iphone4"> 
+                            <iframe height="100%" width="100%" srcdoc="{{newPost.body_FR | deliberatelyTrustAsHtml}}" frameborder="0"></iframe>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>  
+              <!-- SECTION: Publish date -->         
+              <div class="row animated" ng-class="{fadeInUp: publishSection.show}" ng-if="publishSection.show">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Publish Date</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row animated" ng-class="{fadeInUp: publishSection.show}" ng-if="publishSection.show">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span ng-hide="newPost.type.name =='Announcement'"><strong>Optional field:</strong></span>
+                    <span ng-show="newPost.type.name =='Announcement'" style="color:#d9534f"><strong>Required field:</strong></span>
+                    Please select the publish date. 
+                  </p>
+                </div>
+              </div>    
+              <div class="row animated" ng-class="{fadeInUp: publishSection.show}" ng-if="publishSection.show" style="margin-bottom: 15px;">
+                <div class="col-xs-12">
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-7 col-md-4" style="padding-top: 10px;margin-bottom:20px;">
+                      <p class="input-group">
+                        <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newPost.publish_date" ng-change="publishDateUpdate()" is-open="popup.opened" min="minDate" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+                        <span class="input-group-btn">
+                          <button class="btn btn-default" ng-click="open()"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                      </p>
+                    </div>
+                    <div class="col-xs-12 col-sm-5 col-md-4" style="margin-top: -24px;">
+                      <div>
+                        <div uib-timepicker ng-model="newPost.publish_time" ng-change="publishDateUpdate()" minute-step="5" show-meridian="false"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>      
+              </div>    
+              <!-- SECTION: Patient triggers -->
+              <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Trigger to Send By Patient</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span><strong>Optional field:</strong></span>
+                    Select one of more patient triggers below. This will target patients selected here. Press select all to send to all patients. Leave blank for no trigger. 
+                  </p>
+                </div>
+              </div>  
+              <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                <div class="col-xs-12 col-lg-8">
+                  <div class="panel-container">
+                    <div class="panel-info">
+                      <div class="panel-content">
+                        <div class="panel-input">  
+                          <div class="list-space">
+                            <div class="input-group">
+                              <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                              <input class="form-control" type="text" ng-model="patientSearchField" ng-change="searchPatient(patientSearchField)" placeholder="Search..."/>
+                            </div>
+                            <div style="padding: 10px;">
+                              <label>
+                                <input type="checkbox" ng-click="selectAllTriggers(patientTriggerList, searchPatientFilter, selectAll.patient)" ng-checked="selectAll.patient.checked"> Select All
+                              </label>
+                            </div>
+                            <ul class="list-items">
+                              <li ng-repeat="patient in patientTriggerList | filter: searchPatientFilter">
+                                <label>
+                                  <input type="checkbox" ng-click="selectTrigger(patient, selectAll.patient)" ng-checked="patient.added" /> {{patient.name}}
+                                </label>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>  
+              <!-- SECTION: Appointment triggers -->
+              <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Trigger to Send By Appointment</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span><strong>Optional field:</strong></span>
+                    Select one of more appointment triggers below. This will target patients with these specific appointments. Press select all to trigger on all appointments. Leave blank for no trigger.
+                  </p>
+                </div>
+              </div>  
+              <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                <div class="col-xs-12 col-lg-8">
+                  <div class="panel-container">
+                    <div class="panel-info">
+                      <div class="panel-content">
+                        <div class="panel-input">  
+                          <div class="list-space">
+                            <div class="input-group">
+                              <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                              <input class="form-control" type="text" ng-model="appointmentSearchField" ng-change="searchAppointment(appointmentSearchField)" placeholder="Search..."/>
+                            </div>
+                            <div style="padding: 10px;">
+                              <label>
+                                <input type="checkbox" ng-click="selectAllTriggers(appointmentTriggerList, searchAppointmentFilter, selectAll.appointment)" ng-checked="selectAll.appointment.checked"> Select All
+                              </label>
+                            </div>
+                            <ul class="list-items">
+                              <li ng-repeat="appointment in appointmentTriggerList | filter: searchAppointmentFilter">
+                                <label>
+                                  <input type="checkbox" ng-click="selectTrigger(appointment, selectAll.appointment)" ng-checked="appointment.added" /> {{appointment.name}}
+                                </label>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- SECTION: Diagnosis trigger -->
+              <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Trigger to Send By Diagnosis</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span><strong>Optional field:</strong></span>
+                    Select one of more diagnosis triggers below. This will target patients with these specific diagnoses. Press select all to trigger on all diagnoses. Leave blank for no trigger.
+                  </p>
+                </div>
+              </div>  
+              <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                <div class="col-xs-12 col-lg-8">
+                  <div class="panel-container">
+                    <div class="panel-info">
+                      <div class="panel-content">
+                        <div class="panel-input">  
+                          <div class="list-space">
+                            <div class="input-group">
+                              <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                              <input class="form-control" type="text" ng-model="dxSearchField" ng-change="searchDiagnosis(dxSearchField)" placeholder="Search Diagnosis"/>
+                            </div>
+                            <div style="padding: 10px;">
+                              <label>
+                                <input type="checkbox" ng-click="selectAllTriggers(dxTriggerList, searchDxFilter, selectAll.diagnosis)" ng-checked="selectAll.diagnosis.checked"> Select All
+                              </label>
+                            </div>
+                            <ul class="list-items">
+                              <li ng-repeat="diagnosis in dxTriggerList | filter: searchDxFilter">
+                                <label>
+                                  <input type="checkbox" ng-click="selectTrigger(diagnosis, selectAll.diagnosis)" ng-checked="diagnosis.added" /> {{diagnosis.name}}
+                                </label>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- SECTION: Doctor triggers -->
+              <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Trigger to Send By Doctor</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span><strong>Optional field:</strong></span>
+                    Select one of more doctor triggers below. This will target patients with these specific doctors. Press select all to trigger on all doctors. Leave blank for no triggers.
+                  </p>
+                </div>
+              </div>  
+              <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                <div class="col-xs-12 col-lg-8">
+                  <div class="panel-container">
+                    <div class="panel-info">
+                      <div class="panel-content">
+                        <div class="panel-input">  
+                          <div class="list-space">
+                            <div class="input-group">
+                              <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                              <input class="form-control" type="text" ng-model="doctorSearchField" ng-change="searchDoctor(doctorSearchField)" placeholder="Search Doctor"/>
+                            </div>
+                            <div style="padding: 10px;">
+                              <label>
+                                <input type="checkbox" ng-click="selectAllTriggers(doctorTriggerList, searchDoctorFilter, selectAll.doctor)" ng-checked="selectAll.doctor.checked"> Select All
+                              </label>
+                            </div>
+                            <ul class="list-items">
+                              <li ng-repeat="doctor in doctorTriggerList | filter: searchDoctorFilter">
+                                <label>
+                                  <input type="checkbox" ng-click="selectTrigger(doctor, selectAll.doctor)" ng-checked="doctor.added" /> {{doctor.name}}
+                                </label>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- SECTION: Treatment machine triggers -->
+              <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Trigger to Send By Treatment Machine</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span><strong>Optional field:</strong></span>
+                    Select one of more machine triggers below. This will target patients with these specific treatment machines. Press select all to trigger on all treatment machines. Leave blank for no trigger.
+                  </p>
+                </div>
+              </div>  
+              <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                <div class="col-xs-12 col-lg-8">
+                  <div class="panel-container">
+                    <div class="panel-info">
+                      <div class="panel-content">
+                        <div class="panel-input">  
+                          <div class="list-space">
+                            <div class="input-group">
+                              <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                              <input class="form-control" type="text" ng-model="machineSearchField" ng-change="searchMachine(machineSearchField)" placeholder="Search Machine"/>
+                            </div>
+                            <div style="padding: 10px;">
+                              <label>
+                                <input type="checkbox" ng-click="selectAllTriggers(machineTriggerList, searchMachineFilter, selectAll.machine)" ng-checked="selectAll.machine.checked"> Select All
+                              </label>
+                            </div>
+                            <ul class="list-items">
+                              <li ng-repeat="machine in machineTriggerList | filter: searchMachineFilter">
+                                <label>
+                                  <input type="checkbox" ng-click="selectTrigger(machine, selectAll.machine)" ng-checked="machine.added" /> {{machine.name}}
+                                </label>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- END SECTION -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+

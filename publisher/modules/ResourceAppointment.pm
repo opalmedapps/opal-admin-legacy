@@ -160,7 +160,7 @@ sub getResourceAppointmentsFromSourceDB
 
         my $patientSer          = $Patient->getPatientSer(); 
 		my $patientSSN          = $Patient->getPatientSSN(); # get patient ssn
-		my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last transfer
+		my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last lastTransferDatefer
 
 		my $formatted_PLU = Time::Piece->strptime($patientLastTransfer, "%Y-%m-%d %H:%M:%S");
 
@@ -176,8 +176,33 @@ sub getResourceAppointmentsFromSourceDB
             if ($sourceDBSer eq 1) {
 
                 my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-                my $numOfExpressions = @expressions; 
-                my $counter = 0;
+
+            	# Hash to hold a string of expressions per distinct last lastTransferDateferred date
+            	# i.e. keys are lastTransferDatefer date, values are expressions with that last lastTransferDatefer date
+            	# i.e we are grouping expressions under each lastTransferDatefer date
+            	my $expressionHash = {};
+
+            	# Create hash
+            	foreach my $Expression (@expressions) {
+
+	            	my $expressionName = $Expression->{_name};
+	            	my $expressionLastTransfer = $Expression->{_lasttransfer};
+
+	            	# append expression (surrounded by single quotes) to array
+	            	if (exists $expressionHash{$expressionLastTransfer}) {
+	            		push(@{$expressionHash{$expressionLastTransfer}}, "'$expressionName'");
+	            	} else {
+	            		# start a new array 
+	            		$expressionHash{$expressionLastTransfer} = ["'$expressionName'"];
+	            	}
+
+	            }
+
+	            # Convert arrays to comma-separated string
+	            foreach my $lastTransferDate (keys %expressionHash) {
+	            	$expressionHash{$lastTransferDate} = join ',', @{$expressionHash{$lastTransferDate}};
+	            }
+
                 my $raInfo_sql = "
 					WITH vva AS (
 						SELECT DISTINCT 
@@ -201,18 +226,19 @@ sub getResourceAppointmentsFromSourceDB
 					WHERE
 						sa.ActivityInstanceSer		= ai.ActivityInstanceSer
 					AND sa.PatientSer               = pt.PatientSer
-					AND pt.SSN                      LIKE '$patientSSN%'
+					AND RTRIM(pt.SSN)               = '$patientSSN'
 					AND ai.ActivitySer			    = Activity.ActivitySer
 					AND	Activity.ActivityCode		= vva.LookupValue
 					AND	sa.ScheduledActivitySer		= ra.ScheduledActivitySer
 					AND (
 				";
 
-                foreach my $Expression (@expressions) {
+				my $numOfExpressions = keys %expressionHash; 
+                my $counter = 0;
+				# loop through each transfer date
+	            foreach my $lastTransferDate (keys %expressionHash) {
 
-                	my $expressionser = $Expression->{_ser};
-                	my $expressionName = $Expression->{_name};
-                	my $expressionLastTransfer = $Expression->{_lasttransfer};
+                	my $expressionLastTransfer = $lastTransferDate;
                 	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
 
                 	# compare last updates to find the earliest date 
@@ -224,8 +250,9 @@ sub getResourceAppointmentsFromSourceDB
 		                $lasttransfer = $expressionLastTransfer;
 		            }
 
+		            # concatenate query
         			$raInfo_sql .= "
-						(vva.Expression1			    = '$expressionName'
+						(REPLACE(vva.Expression1, '''', '')    	IN ($expressionHash{$lastTransferDate})
 		        		AND ra.HstryDateTime		> '$lasttransfer')
 	        
 	    		    ";
@@ -239,6 +266,7 @@ sub getResourceAppointmentsFromSourceDB
 						$raInfo_sql .= ")";
 					}
 	        	}
+
                 #print "$raInfo_sql\n";	
 		        # prepare query
     		    my $query = $sourceDatabase->prepare($raInfo_sql)
@@ -251,7 +279,7 @@ sub getResourceAppointmentsFromSourceDB
         		# Fetched all data, instead of fetching each row
         		my $data = $query->fetchall_arrayref();
 		        foreach my $row (@$data) {
-			    
+
     			    my $resappt = new ResourceAppointment(); # new RA object
 
     	    		$resourceser			= Resource::reassignResource($row->[0], $sourceDBSer);
@@ -267,6 +295,9 @@ sub getResourceAppointmentsFromSourceDB
     	    		push(@resapptList, $resappt);
                 }
 
+                # empty hash
+    	    	for (keys %expressionHash) { delete $expressionHash{$_}; }
+
                 $sourceDatabase->disconnect();
             }
 
@@ -277,15 +308,53 @@ sub getResourceAppointmentsFromSourceDB
   
                 my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
 
-                my $numOfExpressions = @expressions; 
+                # Hash to hold a string of expressions per distinct last lastTransferDateferred date
+            	# i.e. keys are lastTransferDatefer date, values are expressions with that last lastTransferDate date
+            	# i.e we are grouping expressions under each lastTransferDatefer date
+            	my $expressionHash = {};
+
+            	# Create hash
+            	foreach my $Expression (@expressions) {
+
+	            	my $expressionName = $Expression->{_name};
+                	my $expressionDesc = $Expression->{_description};
+	            	my $expressionLastTransfer = $Expression->{_lasttransfer};
+
+	            	# append expression (surrounded by single quotes) to array
+	            	if (exists $expressionHash{$expressionLastTransfer}) {
+	            		push(@{$expressionHash{$expressionLastTransfer}}, "('$expressionName', '$expressionDesc')");
+	            	} else {
+	            		# start a new array 
+	            		$expressionHash{$expressionLastTransfer} = ["('$expressionName', '$expressionDesc')"];
+	            	}
+
+	            }
+
+	            # Convert arrays to comma-separated string
+	            foreach my $lastTransferDate (keys %expressionHash) {
+	            	$expressionHash{$lastTransferDate} = join ',', @{$expressionHash{$lastTransferDate}};
+	            }
+
+                my $raInfo_sql = "
+	                SELECT DISTINCT
+                        mval.AppointmentSerNum,
+                        mval.ClinicResourcesSerNum
+                    FROM
+                        MediVisitAppointmentList mval,
+                        Patient pt
+                    WHERE
+                        mval.PatientSerNum      = pt.PatientSerNum
+                    AND RTRIM(pt.SSN)           = '$patientSSN'
+                    AND (
+                ";
+
+                my $numOfExpressions = keys %expressionHash; 
                 my $counter = 0;
-                my $raInfo_sql = "";
 
-                foreach my $Expression (@expressions) {
+                # loop through each transfer date
+	            foreach my $lastTransferDate (keys %expressionHash) {
 
-                	my $expressionser = $Expression->{_ser};
-                	my $expressionName = $Expression->{_name};
-                	my $expressionLastTransfer = $Expression->{_lasttransfer};
+                	my $expressionLastTransfer = $lastTransferDate;
                 	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
 
                 	# compare last updates to find the earliest date 
@@ -297,22 +366,17 @@ sub getResourceAppointmentsFromSourceDB
 		                $lasttransfer = $expressionLastTransfer;
 		            }
 	        		$raInfo_sql .= "
-	                    SELECT DISTINCT
-	                        mval.AppointmentSerNum,
-	                        mval.ClinicResourcesSerNum
-	                    FROM
-	                        MediVisitAppointmentList mval,
-	                        Patient pt
-	                    WHERE
-	                        mval.PatientSerNum      = pt.PatientSerNum
-	                    AND pt.SSN                  LIKE '$patientSSN%'
-	                    AND mval.LastUpdated        > '$lasttransfer'
-	                    AND mval.AppointmentCode    = '$expressionName'
+	                   ((mval.AppointmentCode, mval.ResourceDescription) IN ($expressionHash{$lastTransferDate})
+	        			AND mval.LastUpdated	> '$lasttransfer')
 	                ";
 	                $counter++;
 	        		# concat "UNION" until we've reached the last query
 	        		if ($counter < $numOfExpressions) {
-	        			$raInfo_sql .= "UNION";
+	        			$raInfo_sql .= "OR";
+	        		}
+	        		# close bracket at end
+	        		else {
+	        			$raInfo_sql .= ")";
 	        		}
 	        	}
 
@@ -342,6 +406,9 @@ sub getResourceAppointmentsFromSourceDB
 
     	    		push(@resapptList, $resappt);
                 }
+
+                # empty hash
+    	    	for (keys %expressionHash) { delete $expressionHash{$_}; }
 
                 $sourceDatabase->disconnect();
             }
