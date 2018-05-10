@@ -11,5 +11,6 @@ CREATE TABLE `NotificationControlMH` (
   `ModificationAction` varchar(25) NOT NULL,
   `SessionId` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`NotificationControlSerNum`,`RevSerNum`),
-  KEY `LastUpdatedBy` (`LastUpdatedBy`)
+  KEY `LastUpdatedBy` (`LastUpdatedBy`),
+  KEY `NotificationTypeSerNum` (`NotificationTypeSerNum`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1

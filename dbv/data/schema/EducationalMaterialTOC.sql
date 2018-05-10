@@ -6,5 +6,7 @@ CREATE TABLE `EducationalMaterialTOC` (
   `DateAdded` datetime NOT NULL,
   `LastUpdated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`EducationalMaterialTOCSerNum`),
-  KEY `EducationalMaterialSerNum` (`EducationalMaterialControlSerNum`)
+  KEY `EducationalMaterialControlSerNum` (`EducationalMaterialControlSerNum`),
+  KEY `OrderNum` (`OrderNum`),
+  KEY `ParentSerNum` (`ParentSerNum`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1

@@ -8,7 +8,7 @@ CREATE TABLE `FiltersMH` (
   `DateAdded` datetime NOT NULL,
   `LastUpdatedBy` int(11) DEFAULT NULL,
   `SessionId` varchar(255) DEFAULT NULL,
-  KEY `FilterTableSerNum` (`ControlTableSerNum`),
   KEY `FilterSerNum` (`FilterSerNum`),
-  KEY `LastUpdatedBy` (`LastUpdatedBy`)
+  KEY `LastUpdatedBy` (`LastUpdatedBy`),
+  KEY `ControlTableSerNum` (`ControlTableSerNum`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1

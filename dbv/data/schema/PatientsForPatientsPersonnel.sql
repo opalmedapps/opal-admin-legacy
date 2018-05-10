@@ -1,8 +1,8 @@
 CREATE TABLE `PatientsForPatientsPersonnel` (
   `PatientsForPatientsPersonnelSerNum` int(11) NOT NULL AUTO_INCREMENT,
   `FirstName` varchar(255) NOT NULL,
-  `LastName` int(11) NOT NULL,
-  `Email` varchar(100) DEFAULT NULL,
+  `LastName` varchar(255) NOT NULL,
+  `Email` varchar(255) DEFAULT NULL,
   `Bio_EN` text NOT NULL,
   `Bio_FR` text NOT NULL,
   `ProfileImage` varchar(255) NOT NULL,

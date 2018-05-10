@@ -11,5 +11,6 @@ CREATE TABLE `AnnouncementMH` (
   PRIMARY KEY (`AnnouncementSerNum`,`AnnouncementRevSerNum`),
   KEY `PatientSerNum` (`PatientSerNum`),
   KEY `PostControlSerNum` (`PostControlSerNum`),
-  KEY `CronLogSerNum` (`CronLogSerNum`)
+  KEY `CronLogSerNum` (`CronLogSerNum`),
+  KEY `ReadStatus` (`ReadStatus`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1

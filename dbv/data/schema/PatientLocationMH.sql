@@ -17,5 +17,6 @@ CREATE TABLE `PatientLocationMH` (
   KEY `RevCount` (`RevCount`),
   KEY `CheckedInFlag` (`CheckedInFlag`),
   KEY `VenueSerNum` (`VenueSerNum`),
+  CONSTRAINT `PatientLocationMH_ibfk_2` FOREIGN KEY (`SourceDatabaseSerNum`) REFERENCES `SourceDatabase` (`SourceDatabaseSerNum`) ON UPDATE CASCADE,
   CONSTRAINT `PatientLocationMH_ibfk_1` FOREIGN KEY (`AppointmentSerNum`) REFERENCES `Appointment` (`AppointmentSerNum`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1

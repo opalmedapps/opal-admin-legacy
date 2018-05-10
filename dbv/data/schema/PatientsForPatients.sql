@@ -8,8 +8,8 @@ CREATE TABLE `PatientsForPatients` (
   `LastUpdated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`PatientsForPatientsSerNum`),
   KEY `PatientSerNum` (`PatientSerNum`),
-  KEY `PostSerNum` (`PostControlSerNum`),
   KEY `CronLogSerNum` (`CronLogSerNum`),
+  KEY `PostControlSerNum` (`PostControlSerNum`),
   CONSTRAINT `PatientsForPatients_ibfk_3` FOREIGN KEY (`PostControlSerNum`) REFERENCES `PostControl` (`PostControlSerNum`) ON UPDATE CASCADE,
   CONSTRAINT `PatientsForPatients_ibfk_1` FOREIGN KEY (`CronLogSerNum`) REFERENCES `CronLog` (`CronLogSerNum`) ON UPDATE CASCADE,
   CONSTRAINT `PatientsForPatients_ibfk_2` FOREIGN KEY (`PatientSerNum`) REFERENCES `Patient` (`PatientSerNum`) ON UPDATE CASCADE

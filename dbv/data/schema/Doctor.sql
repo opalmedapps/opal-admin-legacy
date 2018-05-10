@@ -14,5 +14,7 @@ CREATE TABLE `Doctor` (
   `LastUpdated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`DoctorSerNum`),
   KEY `DoctorAriaSer` (`DoctorAriaSer`),
-  KEY `SourceDatabaseSerNum` (`SourceDatabaseSerNum`)
+  KEY `SourceDatabaseSerNum` (`SourceDatabaseSerNum`),
+  KEY `ResourceSerNum` (`ResourceSerNum`),
+  CONSTRAINT `Doctor_ibfk_1` FOREIGN KEY (`SourceDatabaseSerNum`) REFERENCES `SourceDatabase` (`SourceDatabaseSerNum`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1

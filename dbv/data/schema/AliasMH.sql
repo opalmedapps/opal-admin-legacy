@@ -18,5 +18,6 @@ CREATE TABLE `AliasMH` (
   PRIMARY KEY (`AliasSerNum`,`AliasRevSerNum`),
   KEY `SourceDatabaseSerNum` (`SourceDatabaseSerNum`),
   KEY `EducationalMaterialControlSerNum` (`EducationalMaterialControlSerNum`),
-  KEY `LastUpdatedBy` (`LastUpdatedBy`)
+  KEY `LastUpdatedBy` (`LastUpdatedBy`),
+  KEY `AliasUpdate` (`AliasUpdate`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1
