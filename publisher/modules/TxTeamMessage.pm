@@ -42,6 +42,7 @@ sub new
         _patientser     => undef,
         _postcontrolser => undef,
         _readstatus     => undef,
+        _cronlogser     => undef,
     };
 
     # bless associates an object with a class so Perl knows which package to search for
@@ -91,6 +92,16 @@ sub setTTMReadStatus
 }
 
 #====================================================================================
+# Subroutine to set the Treatment Team Message Cron Log Serial
+#====================================================================================
+sub setTTMCronLogSer
+{
+    my ($ttm, $cronlogser) = @_; # ttm object with provided serial in args
+    $ttm->{_cronlogser} = $cronlogser; # set the ttm ser
+    return $ttm->{_cronlogser};
+}
+
+#====================================================================================
 # Subroutine to get the Treatment Team Message Serial
 #====================================================================================
 sub getTTMSer
@@ -126,12 +137,21 @@ sub getTTMReadStatus
 	return $ttm->{_readstatus};
 }
 
+#====================================================================================
+# Subroutine to get the Treatment Team Message Cron Log Serial
+#====================================================================================
+sub getTTMCronLogSer
+{
+    my ($ttm) = @_; # our ttm object
+    return $ttm->{_cronlogser};
+}
+
 #======================================================================================
 # Subroutine to publish tx team message
 #======================================================================================
 sub publishTxTeamMessages
 {
-    my (@patientList) = @_; # patient list from args
+    my ($cronLogSer, @patientList) = @_; # patient list and cron log serial from args
 
     my $today_date = strftime("%Y-%m-%d", localtime(time));
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
@@ -168,6 +188,7 @@ sub publishTxTeamMessages
 			# in the non-patient filters  
 			my $isNonPatientSpecificFilterDefined = 0;
             my $isPatientSpecificFilterDefined = 0;
+            my $patientPassed = 0;
 
             my @aliasSerials = ();
 
@@ -193,19 +214,23 @@ sub publishTxTeamMessages
                     push(@aliasSerials, $aliasSer) unless grep{$_ == $aliasSer} @aliasSerials;
 
                 }
+                # if all appointments were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @appointmentFilters and @aliasSerials) {
 
-				# Finding the existence of the patient appointments in the appointment filters
-                # If there is an intersection, then patient is part of this publishing treatment team message
-                if (!intersect(@appointmentFilters, @aliasSerials)) {
-                   if (@patientFilters) {
-                        # if the patient failed to match the appointment filter but there are patient filters
-                        # then we flag to check later if this patient matches with the patient filters
-                        $isPatientSpecificFilterDefined = 1;
+    				# Finding the existence of the patient appointments in the appointment filters
+                    # If there is an intersection, then patient is so far part of this publishing tx team message
+                    if (!intersect(@appointmentFilters, @aliasSerials)) {
+                       if (@patientFilters) {
+                            # if the patient failed to match the appointment filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the appointment filter
+                        # move on to the next treatment team message
+                        else{next;}
                     }
-                    # else no patient filters were defined and failed to match the appointment filter
-                    # move on to the next treatment team message
-                    else{next;}
-                } 
+                }
             }
 
             # Fetch diagnosis filters (if any)
@@ -215,17 +240,19 @@ sub publishTxTeamMessages
                 # toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
-                # Finding the intersection of the patient's diagnosis and the diagnosis filters
-                # If there is an intersection, then patient is part of this publishing treatment team message
-                if (!intersect(@diagnosisFilters, @diagnosisNames)) {
-                    if (@patientFilters) {
-                        # if the patient failed to match the diagnosis filter but there are patient filters
-                        # then we flag to check later if this patient matches with the patient filters
-                        $isPatientSpecificFilterDefined = 1;
+                # if all diagnoses were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @diagnosisFilters and @diagnosisNames) {
+                    # Finding the intersection of the patient's diagnosis and the diagnosis filters
+                    # If there is an intersection, then patient is so far part of this publishing tx team message
+                    if (!intersect(@diagnosisFilters, @diagnosisNames)) {
+                        if (@patientFilters) {
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the diagnosis filter
+                        # move on to the next treatment team message
+                        else{next;}
                     }
-                    # else no patient filters were defined and failed to match the diagnosis filter
-                    # move on to the next treatment team message
-                    else{next;}
                 }
             }
 
@@ -236,56 +263,94 @@ sub publishTxTeamMessages
                 # toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
-                # Finding the intersection of the patient's doctor(s) and the doctor filters
-                # If there is an intersection, then patient is part of this publishing treatment team message
-                if (!intersect(@doctorFilters, @patientDoctors)) {
-                    if (@patientFilters) {
-                        # if the patient failed to match the doctor filter but there are patient filters
-                        # then we flag to check later if this patient matches with the patient filters
-                        $isPatientSpecificFilterDefined = 1;
+                # if all doctors were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @doctorFilters and @patientDoctors) {
+                    # Finding the intersection of the patient's doctor(s) and the doctor filters
+                    # If there is an intersection, then patient is so far part of this publishing tx team message
+                    if (!intersect(@doctorFilters, @patientDoctors)) {
+                        if (@patientFilters) {
+                            # if the patient failed to match the doctor filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the doctor filter
+                        # move on to the next treatment team message
+                        else{next;}
                     }
-                    # else no patient filters were defined and failed to match the doctor filter
-                    # move on to the next treatment team message
-                    else{next;}
-                }  
+                }
+            }
+
+            # Fetch resource filters (if any)
+            my @resourceFilters = $postFilters->getResourceFilters();
+            if (@resourceFilters) {
+
+                # toggle flag
+                $isNonPatientSpecificFilterDefined = 1;
+
+                # if all resources were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @resourceFilters and @patientResources) {
+                    # Finding the intersection of the patient resource(s) and the resource filters
+                    # If there is an intersection, then patient is so far part of this publishing tx team message
+                    if (!intersect(@resourceFilters, @patientResources)) {
+                        if (@patientFilters) {
+                            # if the patient failed to match the resource filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the resource filter
+                        # move on to the next tx team message
+                        else{
+                            next;
+                        }
+                    }
+                }
             }
 
 			# We look into whether any patient-specific filters have been defined 
 			# If we enter this if statement, then we check if that patient is in that list
-			if (@patientFilters) {
+            if (@patientFilters) {
 
                 # if the patient-specific flag was enabled then it means this patient failed
                 # one of the filters above 
                 # OR if the non patient specific flag was disabled then there were no filters defined above
                 # and this is the last test to see if this patient passes
-                if ($isPatientSpecificFilterDefined or !$isNonPatientSpecificFilterDefined) {
+                if ($isPatientSpecificFilterDefined eq 1 or $isNonPatientSpecificFilterDefined eq 0) {
     				# Finding the existence of the patient in the patient-specific filters
-    				# If the patient does not exist, then continue to the next educational material
-                    if ($patientId ~~ @patientFilters) {}
+    				# If the patient exists, or all patients were selected as triggers, 
+                    # then patient passes else move on to next patient
+                    if ($patientId ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
+                        $patientPassed = 1;
+                    }
                     else {next;}
                 }
 			}
 
-            # If we've reached this point, we've passed all catches (filter restrictions). We make
-            # a tx team message object, check if it exists already in the database. If it does 
-            # this means the message has already been publish to the patient. If it doesn't
-            # exist then we publish to the patient (insert into DB).
-            $txTeamMessage = new TxTeamMessage();
+            if ($isNonPatientSpecificFilterDefined eq 1 or $isPatientSpecificFilterDefined eq 1 or ($isNonPatientSpecificFilterDefined eq 0 and $patientPassed eq 1)) {
 
-            # set the necessary values
-            $txTeamMessage->setTTMPatientSer($patientSer);
-            $txTeamMessage->setTTMPostControlSer($postControlSer);
+                # If we've reached this point, we've passed all catches (filter restrictions). We make
+                # a tx team message object, check if it exists already in the database. If it does 
+                # this means the message has already been publish to the patient. If it doesn't
+                # exist then we publish to the patient (insert into DB).
+                $txTeamMessage = new TxTeamMessage();
 
-            if (!$txTeamMessage->inOurDatabase()) {
-    
-                $txTeamMessage = $txTeamMessage->insertTxTeamMessageIntoOurDB();
+                # set the necessary values
+                $txTeamMessage->setTTMPatientSer($patientSer);
+                $txTeamMessage->setTTMPostControlSer($postControlSer);
+                $txTeamMessage->setTTMCronLogSer($cronLogSer);
 
-                # send push notification
-                my $txTeamMessageSer = $txTeamMessage->getTTMSer();
-                my $patientSer = $txTeamMessage->getTTMPatientSer();
-                PushNotification::sendPushNotification($patientSer, $txTeamMessageSer, 'TxTeamMessage');
+                if (!$txTeamMessage->inOurDatabase()) {
+        
+                    $txTeamMessage = $txTeamMessage->insertTxTeamMessageIntoOurDB();
+
+                    # send push notification
+                    my $txTeamMessageSer = $txTeamMessage->getTTMSer();
+                    my $patientSer = $txTeamMessage->getTTMPatientSer();
+                    PushNotification::sendPushNotification($patientSer, $txTeamMessageSer, 'TxTeamMessage');
 
 
+                }
             }
 
         } # End forEach PostControl   
@@ -309,12 +374,13 @@ sub inOurDatabase
     my $ExistingTTM = (); # data to be entered if ttm exists
 
     # Other variables, if ttm exists
-    my ($readstatus);
+    my ($readstatus, $cronlogser);
 
     my $inDB_sql = "
         SELECT
             ttm.TxTeamMessageSerNum,
-            ttm.ReadStatus
+            ttm.ReadStatus,
+            ttm.CronLogSerNum
         FROM   
             TxTeamMessage ttm
         WHERE
@@ -334,6 +400,7 @@ sub inOurDatabase
 
         $serInDB    = $data[0];
         $readstatus = $data[1];
+        $cronlogser = $data[2];
     }
 
     if ($serInDB) {
@@ -345,6 +412,7 @@ sub inOurDatabase
         $ExistingTTM->setTTMPatientSer($patientser);
         $ExistingTTM->setTTMPostControlSer($postcontrolser);
         $ExistingTTM->setTTMReadStatus($readstatus);
+        $ExistingTTM->setTTMCronLogSer($cronlogser);
 
         return $ExistingTTM; # this is true (ie. ttm exists. return object)
 
@@ -363,16 +431,19 @@ sub insertTxTeamMessageIntoOurDB
 
     my $patientser      = $txTeamMessage->getTTMPatientSer();
     my $postcontrolser  = $txTeamMessage->getTTMPostControlSer();
+    my $cronlogser      = $txTeamMessage->getTTMCronLogSer();
 
     my $insert_sql = "
         INSERT INTO 
             TxTeamMessage (
                 PatientSerNum,
+                CronLogSerNum,
                 PostControlSerNum,
                 DateAdded
             )
         VALUES (
             '$patientser',
+            '$cronlogser',
             '$postcontrolser',
             NOW()
         )

@@ -1,0 +1,511 @@
+  <div id="main">
+    <div id="top">
+      <div class="clearfix">
+        <div class="row">
+
+          <!-- side bar: summary -->
+          <div class="col-lg-2">
+            <!-- Home logo-->
+            <div class="side-navbar" ng-controller="navigation">
+              <div class="row side-logo" ng-click="goToHome()">
+                <div class="col-md-12">
+                  <div class="logo">
+                    <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+                  </div>
+                  <h1 class="animated fadeIn">opal <strong>ADMIN</strong></h1>
+                </div>
+              </div>
+						</div>
+            
+            <div class="summary-fix">
+              <!-- Back button -->
+  						<div class="row side-panel-menu">
+  							<div class="col-xs-12 col-sm-5 col-lg-12">
+  								<div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+  									<div class="side-panel-info-sm">
+  										<div class="panel-content">
+  											<span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+  											<h6 class="side-panel-title" style="display:inline-block;margin:0;font-size:14px;"><strong>Back to Manage Questions</strong></h6>
+  										</div>
+  									</div>
+  								</div>
+  							</div>
+                <!-- Summary -->
+                <div class="side-menu-title col-lg-12">
+                  <div class="horz-line" style="height: 10px; text-align: center">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <h2>Summary</h2>
+                    </span>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <div class="progress progress-striped active">
+                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <uib-accordion class="side-navbar">
+
+                <!-- SECTION: Question Text -->
+                <div uib-accordion-group is-open="titleSection.open" class="panel-container summary-box" is-disabled="!newQuestion.text_EN && !newQuestion.text_FR">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newQuestion.text_EN && newQuestion.text_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8"> 
+                        <strong>Question</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i ng-if="newQuestion.text_EN || newQuestion.text_FR" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newQuestion.text_EN" class="description">
+                    <p style="margin-botton:5px">
+                      <strong>EN</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newQuestion.text_EN}}
+                    </p>
+                  </div>
+                  <div ng-if="newQuestion.text_FR" class="description">
+                    <p style="margin-botton:5px">
+                      <strong>FR</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newQuestion.text_FR}}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- SECTION: Answer type -->
+                <div uib-accordion-group is-open="answerTypeSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show" is-disabled="!newQuestion.answertype_serNum">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newQuestion.answertype_serNum" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Answer Type</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': answerTypeSection.open, 'glyphicon-chevron-right': !answerTypeSection.open}" ng-if="newQuestion.answertype_serNum"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newQuestion.answertype_serNum" class="description">
+                    <p style="margin-bottom:5px;">
+                      {{selectedAt.category_EN}}
+                    </p>
+                    <p style="margin-bottom:5px;">
+                      <strong>EN</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{selectedAt.name_EN}}
+                    </p>
+                  </div>
+                  <div ng-if="newQuestion.answertype_serNum" class="description">
+                    <p style="margin-bottom:5px;">
+                      <strong>FR</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{selectedAt.name_FR}}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- SECTION: Question group -->
+                <div uib-accordion-group is-open="questionGroupSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: questionGroupSection.show}" ng-if="questionGroupSection.show" is-disabled="!newQuestion.questiongroup_serNum">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newQuestion.questiongroup_serNum" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Question Group</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': questionGroupSection.open, 'glyphicon-chevron-right': !questionGroupSection.open}" ng-if="newQuestion.questiongroup_serNum"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-show="newQuestion.questiongroup_serNum" class="description">
+                    <p style="margin-bottom:5px;">
+                      <strong>EN</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{selectedGroup.name_EN}}
+                    </p> 
+                  </div>
+                  <div ng-show="newQuestion.questiongroup_serNum" class="description">
+                    <p style="margin-bottom:5px;">
+                      <strong>FR</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{selectedGroup.name_FR}}
+                    </p>
+                  </div>
+                </div>
+              </uib-accordion>
+                     
+              <!-- Submit button --> 
+              <div class="panel-container">
+                <a href="" ng-click="submitQuestion()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                  <span style="font-size: 20px;"><strong>Submit Question</strong></span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right side detail view -->
+          <div class="col-xs-12 col-lg-10 animated fadeInRight">
+            <div class="row main-title">
+              <!-- Page title -->
+              <div class="col-xs-12 col-md-6 title-content">
+                <span class="fa fa-plus"></span>
+                <h1><strong>Add Question</strong></h1>
+              </div>
+              <!-- Breadcrumbs -->
+              <div class="col-md-6 title-breadcrumbs">
+                <span>
+                  <a ui-sref="home">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <a ui-sref="questionnaire-menu">Questionnaires</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <a ui-sref="questionnaire-question">Manage</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Add Question</strong></span>
+                </div>
+              </div>
+
+              <div class="row mobile-side-panel-menu">
+                <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
+                  <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                    <div class="side-panel-info-sm">
+                      <div class="panel-content">
+                        <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                        <h6 class="side-panel-title"><strong>Back to Manage Questions</strong></h6>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkForm()">
+                  <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
+                    <span style="padding: 0 10px;">
+                      <h2>Step {{numOfCompletedSteps}} of {{stepTotal}} Completed</h2>
+                    </span>  
+                  </div>  
+                  <div class="progress progress-striped active">
+                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                    </div>
+                  </div>
+                </div>
+                <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkForm()">
+                  <div class="panel-container">
+                    <a href="" ng-click="submitQuestion()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                      <span style="font-size: 20px;"><strong>Submit Question</strong></span>
+                    </a>
+                  </div>
+                </div> 
+              </div> 
+
+              <div class="section-content">
+                <!-- SECTION: Question text -->
+                <div class="row">
+                  <div class="col-xs-12 side-menu-title">
+                    <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                      <span style="background-color:#e6edfa; padding: 0 10px;">
+                        <span class="fas fa-dot-circle"></span>
+                        <h2>Question</h2>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-12">
+                    <p style="margin-bottom: 5px;">
+                      <span style="color:#d9534f"><strong>Required field:</strong></span>
+                      Please assign the question content in both english and in french.
+                    </p>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-12 col-md-6">
+                    <div class="panel" ng-class="(newQuestion.text_EN) ? 'panel-success': 'panel-danger'">
+                      <div class="panel-heading"><strong>English</strong>
+                        <span ng-hide="newQuestion.text_EN" style="float:right"><em>Incomplete</em></span>
+                        <span ng-show="newQuestion.text_EN" style="float:right"><em>Complete</em></span>
+                      </div>
+                      <div class="panel-body">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <textarea class="form-control" rows="2" ng-model="newQuestion.text_EN" ng-change="updateQuestionText()"></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-xs-12 col-md-6">
+                    <div class="panel" ng-class="(newQuestion.text_FR) ? 'panel-success': 'panel-danger'">
+                      <div class="panel-heading"><strong>Français</strong>
+                        <span ng-hide="newQuestion.text_FR" style="float:right"><em>Incomplete</em></span>
+                        <span ng-show="newQuestion.text_FR" style="float:right"><em>Complete</em></span>
+                      </div>
+                      <div class="panel-body">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <textarea class="form-control" rows="2" ng-model="newQuestion.text_FR" ng-change="updateQuestionText()"></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SECTION: Answer Type -->
+                <div class="row animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show">
+                  <div class="col-xs-12 side-menu-title">
+                    <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                      <span style="background-color:#e6edfa; padding: 0 10px;">
+                        <span class="fas fa-dot-circle"></span>
+                        <h2>Answer Type</h2>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show">
+                  <div class="col-xs-12 col-md-6">
+                    <p style="margin-bottom: 10px;">
+                      <span style="color:#d9534f"><strong>Required field:</strong></span>
+                      Please choose an answer type where to add this question.
+                    </p>
+                    <div class="row animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show">
+                      <div class="col-xs-12">
+                        <div class="panel" ng-class="newQuestion.answertype_serNum ? 'panel-success': 'panel-danger'">
+                          <div class="panel-heading"><strong>Answer Type</strong>
+                            <span ng-hide="newQuestion.answertype_serNum" style="float:right"><em>Incomplete</em></span>
+                            <span ng-show="newQuestion.answertype_serNum" style="float:right"><em>Complete</em></span>
+                          </div>
+                          <div class="panel-body">
+                            <div class="input-group">
+                              <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                              <input class="form-control" type="text" ng-model="atEntered" ng-change="searchAt(atEntered)" placeholder="Search Answer Type"/>
+                            </div> 
+                            <ul class="list-items">
+                              <li ng-repeat="at in atFilterList | filter: searchAtFilter">
+                                <label>
+                                  <input type="radio" name="{{at.name_EN}}" value="{{at.serNum}}" ng-model="newQuestion.answertype_serNum" ng-change="updateAt(at)"/> {{at.name_EN}} ({{at.category_EN}})
+                                </label>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-xs-12 col-md-6">
+                    <p style="margin-bottom: 10px;">
+                      <span style="font-size: 20px;"><strong>Preview </strong></span><span style="font-size: 15px;">(available only when both title and answer type are filled)</span>
+                    </p>
+
+                    <!-- Preview -->
+                    <div class="col-xs-12" ng-show="newQuestion.text_EN && newQuestion.text_FR && newQuestion.answertype_serNum">
+                      <h2>Question: {{newQuestion.text_EN}} / {{newQuestion.text_FR}} ({{selectedAt.category_EN}})</h2>
+
+                      <!-- Show category -->
+                      <div ng-if="selectedAt.category_EN === 'Multiple Choice' || selectedAt.category_EN === 'Linear Scale'">
+                        <div ng-repeat="option in selectedAt.options">
+                          <label><input type="radio" name="option"/> {{option.text_EN}} / {{option.text_FR}}</label>
+                        </div>
+                      </div>
+
+                      <div ng-if="selectedAt.category_EN === 'Checkboxes'">
+                        <div ng-repeat="option in selectedAt.options">
+                          <label><input type="checkbox" name="option"/> {{option.text_EN}} / {{option.text_FR}}</label>
+                        </div>
+                      </div>
+
+                      <div ng-if="selectedAt.category_EN === 'Short Answer'">
+                        <textarea style="width:80%" rows="10" placeholder="Please enter your answer."></textarea>
+                      </div>
+
+                      <div ng-if="selectedAt.category_EN === 'Date'">
+                        <label>Enter your date: <input type="date"/></label>
+                      </div>
+
+                      <div ng-if="selectedAt.category_EN === 'Time'">
+                        <label>Enter your time: <input type="time"/></label>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="row animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show">
+                  <div class="col-xs-12 col-md-8">
+                    <p style="margin-bottom: 10px; margin-top: 10px;">
+                      <span style="font-size: 20px;" class="fa fa-question-circle"></span>
+                      <span style="font-size: 15px;"> Can't find answer type? Create a new one here:</span>
+                    </p>
+                  </div>
+                  <div class="col-xs-12">
+                    <div class="panel-container">
+                      <form name="newAtForm">
+                        <div class="col-md-2" style="margin-top:15px; margin-bottom:5px; font-size:20px;">
+                          <label>Private:  <input type="checkbox" ng-model="newAnswerType.private" ng-true-value="1" ng-false-value="0"></label>
+                        </div>
+
+                        <div class="col-xs-12 col-md-8">
+                          <select class="form-control" name="atCategory" style="width:60%;" ng-model="atCategory" ng-options="atCat.category_EN for atCat in atCatList" required>
+                            <option value="">-- select an answer category --</option>
+                          </select>
+                        </div>
+
+                        <!-- Add multiple choice options -->
+                        <div class="col-xs-12 col-md-8" ng-show="atCategory.category_EN === 'Multiple Choice'">
+                          <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in newAnswerType.options">
+                            <input class="form-control" style="width:20%" type="number" placeholder="Position" ng-model="option.position" required/>
+                            <input class="form-control" style="width:40%" type="text" placeholder="Text (EN)" ng-model="option.text_EN" required/>
+                            <input class="form-control" style="width:40%" type="text" placeholder="Text (FR)" ng-model="option.text_FR" required/>
+                            <span class="input-group-btn"><button class="btn btn-default" ng-click="deleteOptions(option)"><span class="fa fa-minus"></span> Delete</button></span>
+                          </div>
+                          <button type="button" class="btn btn-default" style="float: left; margin-top:5px;" ng-click="addOptions()"><span class="fa fa-plus"></span> Add option</button>
+                        </div>
+
+                        <!-- Add Linear scale options -->
+                        <div class="col-xs-12 col-md-8" ng-show="atCategory.category_EN === 'Linear Scale'">
+                          <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in newAnswerType.options">
+                            <input class="form-control" style="width:20%" type="number" min="1" placeholder="Position" ng-model="option.position" required/>
+                            <input class="form-control" style="width:40%" type="text" placeholder="Scale (EN)" ng-model="option.text_EN" required/>
+                            <input class="form-control" style="width:40%" type="text" placeholder="Scale (FR)" ng-model="option.text_FR" required/>
+                            <span class="input-group-btn"><button class="btn btn-default" ng-click="deleteOptions(option)"><span class="fa fa-minus"></span> Delete</button></span>
+                          </div>
+                          <button type="button" class="btn btn-default" style="float: left; margin-top:5px;" ng-click="addOptions()"><span class="fa fa-plus"></span> Add option</button>
+                        </div>
+
+                        <div class="col-xs-12 col-md-8">
+                          <div class="input-group" style="margin-top:10px; margin-bottom:10px;">
+                            <input class="form-control" style="width:50%" type="text" ng-model="newAnswerType.name_EN" placeholder="New Answer Type (EN)" ng-disabled="!atCategory" required/>
+                            <input class="form-control" style="width:50%" type="text" ng-model="newAnswerType.name_FR" placeholder="New Answer Type (FR)" ng-disabled="!atCategory" required/>
+                            <span class="input-group-btn"><button class="btn btn-default" type="submit" ng-click="addNewAt(atCategory)" ng-disabled="newAtForm.$invalid">Add</button></span>
+                          </div>
+                        </div>
+
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SECTION: Question grouping -->
+                <div class="row animated" ng-class="{fadeInUp: questionGroupSection.show}" ng-if="questionGroupSection.show" style="margin-top: 10px;">
+                  <div class="col-xs-12 side-menu-title">
+                    <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                      <span style="background-color:#e6edfa; padding: 0 10px;">
+                        <span class="fas fa-dot-circle"></span>
+                        <h2>Question grouping</h2>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row animated" ng-class="{fadeInUp: questionGroupSection.show}" ng-if="questionGroupSection.show">
+                  <div class="col-xs-12">
+                    <p style="margin-bottom: 10px;">
+                      <span style="color:#d9534f"><strong>Required field:</strong></span>
+                      Please choose a question group where to add this question.
+                    </p>
+                  </div>
+                </div>
+                <div class="row animated" ng-class="{fadeInUp: questionGroupSection.show}" ng-if="questionGroupSection.show">
+                  <div class="col-xs-12 col-md-8">
+                    <div class="panel" ng-class="newQuestion.questiongroup_serNum ? 'panel-success': 'panel-danger'">
+                      <div class="panel-heading"><strong>Question Group</strong>
+                        <span ng-hide="newQuestion.questiongroup_serNum" style="float:right"><em>Incomplete</em></span>
+                        <span ng-show="newQuestion.questiongroup_serNum" style="float:right"><em>Complete</em></span>
+                      </div>
+                      <div class="panel-body">
+
+                        <div class="list-space">
+                          <div class="input-group">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                            <input class="form-control" type="text" ng-model="groupEntered" ng-change="searchGroup(groupEntered)" placeholder="Search Question Group"/>
+                          </div>
+                          <ul class="list-items">
+                            <li ng-repeat="group in groupFilterList| filter: searchGroupFilter">
+                              <label>
+                                <input type="radio" name="{{group.name_EN}}" value="{{group.serNum}}" ng-model="newQuestion.questiongroup_serNum" ng-change="updateGroup(group)" /> {{group.name_EN}}
+                              </label>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Add new Library/Category/Group -->
+                <div class="row animated" ng-class="{fadeInUp: questionGroupSection.show}" ng-if="questionGroupSection.show">
+                  <div class="col-xs-12">
+                    <p style="margin-bottom: 10px; margin-top: 10px;">
+                      <span style="font-size: 20px;" class="fa fa-question-circle"></span>
+                      <span style="font-size: 15px">Can't find question group? Create a new one here:</span> 
+                      <br><span style="font-size: 15px;" class="fa fa-asterisk"></span>
+                      Please note that question groups <-> categories < libraries, you must specify the corresponding categories and libraries. 
+                    </p>
+                  </div>
+
+                  <div class="col-md-7">
+                    <div class="panel-container">
+                      <form name="newGroupForm">
+                        <div class="col-md-6">
+                          <select class="form-control" name="library" ng-model="librarySelected" ng-options="lib.name_EN for lib in libFilterList track by lib.serNum" required>
+                            <option value="">-- select a library --</option>
+                          </select>
+                        </div>
+
+                        <div class="col-md-5">
+                          <p style="margin-bottom: 10px; margin-top: 10px; font-size: 15px;">
+                           <span style="font-size: 15px;" class="fa fa-angle-double-right"></span> 
+                           - or create a new library -
+                           <span style="font-size: 15px;" class="fa fa-angle-double-right"></span>
+                         </p>
+                       </div>
+
+                       <div class="col-md-6">
+                         <select class="form-control" name="category" ng-disabled="!librarySelected" ng-model="categorySelected" ng-options="cat.category_EN for cat in librarySelected.categories" required>
+                          <option value="">-- select a category --</option>
+                        </select>
+                      </div>
+
+                      <div class="col-md-5">
+                        <p style="margin-bottom: 10px; margin-top: 10px; font-size: 15px;">
+                         <span style="font-size: 15px;" class="fa fa-angle-double-right"></span>
+                         - or enter a new category -
+                         <span style="font-size: 15px;" class="fa fa-angle-double-right"></span>
+                       </p>
+                     </div>
+
+                     <div class="col-md-12">
+                      <div class="input-group">
+                        <input class="form-control" style="width:50%" type="text" ng-model="newGroup.name_EN" placeholder="New Question Group (EN)" ng-disabled="!librarySelected && !categorySelected && !(newGroup.category_EN && newGroup.category_FR)" required/>
+                        <input class="form-control" style="width:50%" type="text" ng-model="newGroup.name_FR" placeholder="New Question Group (FR)" ng-disabled="!librarySelected && !categorySelected && !(newGroup.category_FR && newGroup.category_EN)" required/>
+                        <span class="input-group-btn"><button class="btn btn-default" type="submit" ng-click="addNewGroup(librarySelected.serNum, categorySelected)" ng-disabled="newGroupForm.$invalid">Add</button></span>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <form name="newLibForm">
+                  <div class="input-group">
+                    <input class="form-control" style="width:50%" type="text" ng-model="newLibrary.name_EN" placeholder="New Library (EN)" ng-disabled="librarySelected" required/>
+                    <input class="form-control" style="width:50%" type="text" ng-model="newLibrary.name_FR" placeholder="New Library (FR)" ng-disabled="librarySelected" required/>
+                    <span class="input-group-btn"><button class="btn btn-default" type="submit" ng-click="addNewLib()" ng-disabled="newLibForm.$invalid">Add</button></span>
+                  </div>
+                </form>
+              </div>
+
+              <div class="col-md-4">
+                <form name="newCatForm">
+                  <div class="input-group">
+                    <input class="form-control" style="width:50%" type="text" ng-model="newCat.category_EN" placeholder="New Category (EN)" ng-disabled="categorySelected || !librarySelected" required/>
+                    <input class="form-control" style="width:50%" type="text" ng-model="newCat.category_FR" placeholder="New Category (FR)" ng-disabled="categorySelected || !librarySelected" required/>
+                    <span class="input-group-btn"><button class="btn btn-default" type="submit" ng-click="addNewCat(librarySelected.categories)" ng-disabled="newCatForm.$invalid">Add</button></span>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

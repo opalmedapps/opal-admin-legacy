@@ -1,0 +1,982 @@
+  <div id="main">
+    <div id="top">
+      <div class="clearfix">
+        <div class="row">
+
+          <!-- side bar: summary -->
+          <div class="col-lg-2">
+            <!-- Home logo-->
+            <div class="side-navbar" ng-controller="navigation">
+              <div class="row side-logo" ng-click="goToHome()">
+                <div class="col-md-12">
+                  <div class="logo">
+                    <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+                  </div>
+                  <h1 class="animated fadeIn">opal <strong>ADMIN</strong></h1>
+                </div>
+              </div>
+            </div>
+            <div class="summary-fix">
+              <!-- Back button -->
+  						<div class="row side-panel-menu">
+  							<div class="col-xs-12 col-sm-5 col-lg-12">
+  								<div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+  									<div class="side-panel-info-sm">
+  										<div class="panel-content">
+  											<span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+  											<h6 class="side-panel-title" style="display:inline-block;margin:0;font-size:14px;"><strong>Back to Manage Questionnaires</strong></h6>
+  										</div>
+  									</div>
+  								</div>
+  							</div>
+                <!-- Summary -->
+                <div class="col-lg-12 side-menu-title">
+                  <div class="horz-line" style="height: 10px; text-align: center">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <h2>Summary</h2>
+                    </span>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <div class="progress progress-striped active">
+                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <uib-accordion class="side-navbar">
+                <!-- SECTION: Title -->
+                <div uib-accordion-group is-open="titleSection.open" class="panel-container summary-box" is-disabled="!newQuestionnaire.name_EN && !newQuestionnaire.name_FR">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newQuestionnaire.name_EN && newQuestionnaire.name_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Title</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i ng-if="newQuestionnaire.name_EN || newQuestionnaire.name_FR" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newQuestionnaire.name_EN" class="description">
+                    <p style="margin-bottom:5px;">
+                      <strong>EN</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newQuestionnaire.name_EN}}
+                    </p>
+                  </div>
+                  <div ng-if="newQuestionnaire.name_FR" class="description">
+                    <p style="margin-bottom:5px;">
+                      <strong>FR</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newQuestionnaire.name_FR}}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- SECTION: Privacy -->
+                <div uib-accordion-group is-open="privacySection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: privacySection.show}" ng-if="privacySection.show" is-disabled="newQuestionnaire.private != 0 && newQuestionnaire.private != 1">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newQuestionnaire.private == 0 || newQuestionnaire.private == 1" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Privacy</strong>
+                      </div> 
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': privacySection.open, 'glyphicon-chevron-right': !privacySection.open}" ng-if="newQuestionnaire.private == 0 || newQuestionnaire.private == 1"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newQuestionnaire.private == 0 || newQuestionnaire.private == 1" class="description">
+                    <p style="margin-bottom:5px;">
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      <span ng-if="newQuestionnaire.private == 0">Public</span>
+                      <span ng-if="newQuestionnaire.private == 1">Private</span>
+                    </p>
+                  </div>
+                </div>
+
+                <!-- SECTION: Questions -->
+                <div uib-accordion-group is-open="questionsSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: questionsSection.show}" ng-if="questionsSection.show" is-disabled="!newQuestionnaire.groups.length">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newQuestionnaire.groups.length" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Questions</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': questionsSection.open, 'glyphicon-chevron-right': !questionsSection.open}" ng-if="newQuestionnaire.groups.length"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newQuestionnaire.groups.length" class="description">
+                    <p style="margin-bottom:5px;">
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      Total {{newQuestionnaire.groups.length}} groups were selected.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- SECTION: Tags -->
+                <div uib-accordion-group is-open="tagsSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:tagsSection.show}" ng-if="tagsSection.show" is-disabled="!checkTags(tagList)">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkTags(tagList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Tags</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tagsSection.open, 'glyphicon-chevron-right': !tagsSection.open}" ng-if="checkTags(tagList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkTags(tagList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="tag in tagList | filter: {added: 1} : 1">
+                          {{tag.name_EN}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
+
+                <!-- SECTION: Patient Filters -->
+                <div uib-accordion-group is-open="filterSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:filterSection.show}" is-disabled="!checkFilters(patientFilterList)" ng-if="filterSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkFilters(patientFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Patient Trigger(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': filterSection.open, 'glyphicon-chevron-right': !filterSection.open}" ng-if="checkFilters(patientFilterList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkFilters(patientFilterList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="Filter in patientFilterList | filter: {added: 1} : 1">
+                          {{Filter.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
+                
+                <!-- SECTION: Demographic filters -->
+                <div uib-accordion-group is-open="filterSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:filterSection.open}" is-disabled="!demoFilter.sex && demoFilter.age.min == 0 && demoFilter.age.max == 100" ng-if="filterSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="demoFilter.sex || demoFilter.age.min != 0 || demoFilter.age.max != 100" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Demographic Trigger(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':filterSection.open, 'glyphicon-chevron-right':!filterSection.open}" ng-if="demoFilter.sex || demoFilter.age.min != 0 || demoFilter.age.max != 100"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="demoFilter.sex" class="description">
+                    <p>
+                      <strong>Sex</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{demoFilter.sex}}
+                    </p>
+                  </div>
+                  <div ng-if="demoFilter.age.min != 0 || demoFilter.age.max != 100" class="description">
+                    <p>
+                      <strong>Age Group</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{demoFilter.age.min}} to {{demoFilter.age.max}} 
+                    </p>
+                  </div>
+                </div>
+
+                <!-- SECTION: Appointment filters -->
+                <div uib-accordion-group is-open="filterSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:filterSection.show}" is-disabled="!checkFilters(appointmentList)" ng-if="filterSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkFilters(appointmentList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Appointment/Task Trigger(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': filterSection.open, 'glyphicon-chevron-right': !filterSection.open}" ng-if="checkFilters(appointmentList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkFilters(appointmentList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="appointment in appointmentList | filter: {added: 1} : 1">
+                          {{appointment.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
+
+                <!-- SECTION: Diagnosis Filters -->
+                <div uib-accordion-group is-open="filterSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:filterSection.show}" is-disabled="!checkFilters(dxFilterList)" ng-if="filterSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkFilters(dxFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Diagnosis Trigger(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': filterSection.open, 'glyphicon-chevron-right': !filterSection.open}" ng-if="checkFilters(dxFilterList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkFilters(dxFilterList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="Filter in dxFilterList | filter: {added: 1} : 1">
+                          {{Filter.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
+
+                <!-- SECTION: Doctor filters -->
+                <div uib-accordion-group is-open="filterSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:filterSection.show}" is-disabled="!checkFilters(doctorFilterList)" ng-if="filterSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkFilters(doctorFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Doctor Trigger(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': filterSection.open, 'glyphicon-chevron-right': !filterSection.open}" ng-if="checkFilters(doctorFilterList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkFilters(doctorFilterList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="Filter in doctorFilterList | filter: {added: 1} : 1">
+                          {{Filter.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
+
+                <!-- SECTION: Treatment Machine filters -->
+                <div uib-accordion-group is-open="filterSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:filterSection.show}" is-disabled="!checkFilters(resourceFilterList)" ng-if="filterSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="checkFilters(resourceFilterList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Treatment Machine Trigger(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': filterSection.open, 'glyphicon-chevron-right': !filterSection.open}" ng-if="checkFilters(resourceFilterList)"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkFilters(resourceFilterList)" class="description">
+                    <p>
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="Filter in resourceFilterList | filter: {added: 1} : 1">
+                          {{Filter.name}}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
+              </uib-accordion>
+
+              <!-- Submit button -->
+               <div class="panel-container">
+                <a href="" ng-click="submitQuestionnaire()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                  <span style="font-size: 20px;"><strong>Submit Questionnaire</strong></span>
+                </a>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Right side display -->
+          <div class="col-xs-12 col-lg-10 animated fadeInRight">
+            <div class="row main-title">
+              <!-- Page title -->
+              <div class="col-xs-12 col-md-6 title-content">
+                <span class="fa fa-plus"></span>
+                <h1><strong>Add Questionnaire</strong></h1>
+              </div>
+              <!-- Breadcrumbs -->
+              <div class="col-md-6 title-breadcrumbs">
+                <span>
+                  <a ui-sref="home">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span>
+                  <a ui-sref="questionnaire-menu">Questionnaires</a>
+                  <span class="glyphicon glyphicon-menu-right teflon"></span>
+                  <a ui-sref="questionnaire">Manage</a>
+                  <span class="glyphicon glyphicon-menu-right teflon"></span>
+                  <strong>Add Questionnaire</strong>
+                </span>
+              </div>
+            </div>
+            <div class="row mobile-side-panel-menu">
+              <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
+                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                  <div class="side-panel-info-sm">
+                    <div class="panel-content">
+                      <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                      <h6 class="side-panel-title"><strong>Back to Manage Questionnaires</strong></h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkForm()">
+                <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
+                  <span style="padding: 0 10px;">
+                    <h2>Step {{numOfCompletedSteps}} of {{stepTotal}} Completed</h2>
+                  </span>  
+                </div>  
+                <div class="progress progress-striped active">
+                  <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                  </div>
+                </div>
+              </div>
+              <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkForm()">
+                <div class="panel-container">
+                  <a href="" ng-click="submitQuestionnaire()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                    <span style="font-size: 20px;"><strong>Submit Questionnaire</strong></span>
+                  </a>
+                </div>
+              </div> 
+            </div>
+
+            <div class="section-content">
+              <!-- SECTION: Title -->
+              <div class="row">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Title</h2>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span style="color:#d9534f"><strong>Required field:</strong></span>
+                    Please assign an english and french title.
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12 col-md-6">
+                  <div class="panel" ng-class="(newQuestionnaire.name_EN) ? 'panel-success': 'panel-danger'">
+                    <div class="panel-heading"><strong>English</strong>
+                      <span ng-hide="newQuestionnaire.name_EN" style="float:right"><em>Incomplete</em></span>
+                      <span ng-show="newQuestionnaire.name_EN" style="float:right"><em>Complete</em></span>
+                    </div>
+                    <div class="panel-body form-horizontal">
+                      <div class="form-group">
+                        <label class="control-label col-xs-12 col-lg-2">
+                          Title
+                        </label>
+                        <div class="col-xs-12 col-lg-10">
+                          <input class="form-control" type="text" ng-model="newQuestionnaire.name_EN" ng-change="titleUpdate()" placeholder="English Title" required="required">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xs-12 col-md-6">
+                  <div class="panel" ng-class="(newQuestionnaire.name_FR) ? 'panel-success': 'panel-danger'">
+                    <div class="panel-heading"><strong>Français</strong>
+                      <span ng-hide="newQuestionnaire.name_FR" style="float:right"><em>Incomplete</em></span>
+                      <span ng-show="newQuestionnaire.name_FR" style="float:right"><em>Complete</em></span>
+                    </div>
+                    <div class="panel-body form-horizontal">
+                      <div class="form-group">
+                        <label class="control-label col-xs-12 col-lg-2">
+                          Titre
+                        </label>
+                        <div class="col-xs-12 col-lg-10">
+                          <input class="form-control" type="text" ng-model="newQuestionnaire.name_FR" ng-change="titleUpdate()" placeholder="Titre Français" required="required">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- SECTION: Privacy -->
+              <div class="row animated" ng-class="{fadeInUp: privacySection.show}" ng-if="privacySection.show">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Privacy</h2>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="row animated" ng-class="{fadeInUp: privacySection.show}" ng-if="privacySection.show">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span style="color:#d9534f"><strong>Required field:</strong></span>
+                    Please indicate whether this questionnaire is private or public. If it is private, then the questionnaire will only be accessed by you; if it is public, it will by accessed by any user.
+                  </p>
+                </div>
+              </div>
+              <div class="row animated" ng-class="{fadeInUp: privacySection.show}" ng-if="privacySection.show">
+                <div class="col-xs-12 col-sm-6 col-md-3">
+                  <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hoverB, active: newQuestionnaire.private == 1}" ng-click="privacyUpdate(1)" ng-mouseenter="hoverB=true" ng-mouseleave="hoverB=false">
+                    <div class="panel-info" ng-class="{active: newQuestionnaire.private == 1}">
+                      <div class="panel-content" style="text-align:center">
+                        <span style="font-size:30px;" class="fa fa-lock"></span>
+                        <div class="option-panel-title">Private</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-3">
+                  <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hoverC, active: newQuestionnaire.private == 0}" ng-click="privacyUpdate(0)" ng-mouseenter="hoverC=true" ng-mouseleave="hoverC=false">
+                    <div class="panel-info" ng-class="{active: newQuestionnaire.private == 0}">
+                      <div class="panel-content" style="text-align:center">
+                        <span style="font-size:30px;" class="fa fa-unlock-alt"></span>
+                        <div class="option-panel-title">Public</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- SECTION: Add Question group -->
+              <div class="row animated" ng-class="{fadeInUp: questionsSection.show}" ng-if="questionsSection.show">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Add Questions</h2>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="row animated" ng-class="{fadeInUp: questionsSection.show}" ng-if="questionsSection.show">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span style="color:#d9534f"><strong>Required field:</strong></span>
+                    Please choose the questions you want to be included into this questionnaire.
+                  </p>
+                </div>
+              </div>
+
+
+              <div class="row animated" ng-class="{fadeInUp: questionsSection.show}" ng-if="questionsSection.show">
+                <div class="col-xs-12">
+                  <!-- question group table -->
+                  <div class="col-xs-12 col-md-8">
+                    <div class="panel" ng-class="newQuestionnaire.groups.length ? 'panel-success': 'panel-danger'">
+                      <div class="panel-heading"><strong>Questions</strong>
+                        <span ng-hide="newQuestionnaire.groups.length" style="float:right"><em>Incomplete</em></span>
+                        <span ng-show="newQuestionnaire.groups.length" style="float:right"><em>Complete</em></span>
+                      </div>
+                      <div class="panel-body">
+                        <div id="data-table">
+                          <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns ui-grid-selection style="height:75vh"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Preview -->
+                  <div class="col-xs-12 col-md-4" style="text-align:right">
+                    <div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
+                      <span style="background-color: #e6edfa; padding: 0 10px; font-size:16px;">
+                        Selected questions preview</span>
+                      </div>
+                      <div class="previewContainer"> 
+                        <div class="previewContent">
+                          <div ng-repeat="selectedGroupObj in selectedGroups"><h4 style="font-weight:bold;">{{selectedGroupObj.entity.name_EN}} / {{selectedGroupObj.entity.name_FR}}:</h4>
+                            <div ng-repeat="question in selectedGroupObj.entity.questions">
+                              <p>{{question.text_EN}} / {{question.text_FR}} 
+                                <span style="color:#d9534f">( Question type: {{question.answertype_category_EN}} - {{question.answertype_name_EN}} / {{question.answertype_name_FR}} )</span> 
+                              </p>
+
+                              <!-- Answer type preview -->
+                              <div ng-if="question.answertype_category_EN == 'Multiple Choice'">
+                                <div ng-repeat="option in question.options">
+                                  <label><input type="radio"> {{option.text_EN}} / {{option.text_FR}}</label>
+                                </div>
+                              </div>
+
+                              <div ng-if="question.answertype_category_EN == 'Checkboxes'">
+                                <div ng-repeat="option in question.options">
+                                  <label><input type="checkbox"> {{option.text_EN}} / {{option.text_FR}}</label>
+                                </div>
+                              </div>
+
+                              <div ng-if="question.answertype_category_EN == 'Linear Scale'">
+                                <div ng-repeat="option in question.options">
+                                  <label><input type="radio"> {{option.text_EN}} / {{option.text_FR}}</label>
+                                </div>
+                              </div>
+
+                              <div ng-if="question.answertype_category_EN == 'Date'">
+                                <label>Date:<input type="date"></label>
+                              </div>
+
+                              <div ng-if="question.answertype_category_EN == 'Time'">
+                                <label>Time:<input type="time"></label>
+                              </div>
+
+                              <div ng-if="question.answertype_category_EN == 'Short Answer'">
+                                <textarea rows="3" cols="50">Type in your answer.</textarea>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Selected groups: change position -->
+                  <div class="col-xs-12 col-md-8" ng-show="newQuestionnaire.groups.length">
+                    <div class="panel-container">
+                      <div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
+                        <span style="background-color: #e6edfa; padding: 0 10px; font-size:16px;"> Edit selected question groups </span>
+                      </div>
+                      <div class="panel-info">
+                        <table style="width:100%;">
+                          <tr style="font-size:16px;">
+                            <td>Position</td>
+                            <td>Question Group</td>
+                            <td>Required/Optional(default: required)</td>
+                          </tr>
+                          <tr>
+                          </tr>
+                          <tr ng-repeat="group in newQuestionnaire.groups">
+                            <td>
+                              <label><input type="number" min="1" max="{{newQuestionnaire.groups.length}}" ng-model="group.position" placeholder={{group.position}}></label>
+                            </td>
+                            <td>
+                              {{group.name_EN}} / {{group.name_FR}}
+                            </td>
+                            <td>
+                              <select name="groupOptional" ng-model="group.optional" required>
+                                <option value=0 selected>Required</option>
+                                <option value=1>Optional</option>
+                              </select>
+                            </td>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SECTION: Add Tags-check boxes -->
+                <div class="row animated" ng-class="{fadeInUp: tagsSection.show}" ng-if="tagsSection.show">
+                  <div class="col-xs-12 side-menu-title">
+                    <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                      <span style="background-color:#e6edfa; padding: 0 10px;">
+                        <span class="fas fa-dot-circle"></span>
+                        <h2>Add Tags</h2>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row animated" ng-class="{fadeInUp: tagsSection.show}" ng-if="tagsSection.show">
+                  <div class="col-xs-12">
+                    <p style="margin-bottom: 10px; margin-top: 10px; margin-bottom: 10px;">
+                      <span style="color:#d9534f"><strong>Required field:</strong></span>
+                      Please select the tags(could be more than one) that you want to be associated to this questionnaire.
+                    </p>
+                  </div>
+                </div>
+                <div class="row animated" ng-class="{fadeInUp: tagsSection.show}" ng-if="tagsSection.show">
+                  <div class="col-xs-12 col-md-8">
+                    <div class="panel-container">
+                      <div class="panel-info">
+                        <div class="panel-content">
+                          <div class="panel-input">  
+                            <div class="list-space">
+                              <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                <input class="form-control" type="text" ng-model="tagFilter" ng-change="searchTag(tagFilter)" placeholder="Search Tag"/>
+                              </div>
+                              <ul class="list-items">
+                                <li ng-repeat="tag in tagList | filter: searchTagFilter">
+                                  <label><input type="checkbox" ng-click="selectTag(tag)" ng-checked="tag.added"/> {{tag.name_EN}}</label>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- new tag -->
+                <div class="row animated" ng-class="{fadeInUp: tagsSection.show}" ng-if="tagsSection.show">
+                  <div class="col-xs-12">
+                    <p style="margin-bottom: 10px; margin-top: 10px;">
+                      <span style="font-size: 20px;" class="fa fa-question-circle"></span>
+                      <span style="font-size: 15px">Can't find tag? Create a new one here:</span> 
+                    </p>
+                  </div>
+                  <div class="col-xs-12 col-md-8">
+                    <form name="newTagForm">
+                      <div class="input-group">
+                        <label>
+                          Level: 
+                          <input class="form-control" type="number" min="1" ng-model="newTag.level" required/>
+                        </label>
+                      </div>
+                      <div class="input-group" style="margin-top:10px; margin-bottom:10px;">
+                        <input class="form-control" style="width:50%;" type="text" ng-model="newTag.name_EN" placeholder="New Tag (EN)" required/>
+                        <input class="form-control" style="width:50%;" type="text" ng-model="newTag.name_FR" placeholder="New Tag (FR)" required/>
+                        <span class="input-group-btn"><button class="btn btn-default" type="submit" ng-click="addNewTag()" ng-disabled="newTagForm.$invalid">Add</button></span>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                <!-- SECTION: Patient Filter -->
+                <div class="row animated" ng-class="{fadeInUp:filterSection.show}" ng-if="filterSection.show">
+                  <div class="col-xs-12 side-menu-title">
+                    <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                      <span style="background-color:#e6edfa; padding: 0 10px;">
+                        <span class="fas fa-dot-circle"></span>
+                        <h2>Trigger to Send By Patient</h2>
+                      </span>  
+                    </div>  
+                  </div>
+                </div>   
+                <div class="row animated" ng-class="{fadeInUp:filterSection.show}" ng-if="filterSection.show">
+                  <div class="col-xs-12">
+                    <p style="margin-bottom: 10px;">
+                      <span><strong>Optional field:</strong></span>
+                      Select one of more patient trigger below. This will target patients select here. Leave blank for no trigger.
+                    </p>
+                  </div>
+                </div>  
+                <div class="row animated" ng-class="{fadeInUp:filterSection.show}" ng-if="filterSection.show">
+                  <div class="col-xs-12 col-md-8">
+                    <div class="panel-container">
+                      <div class="panel-info">
+                        <div class="panel-content">
+                          <div class="panel-input">  
+                            <div class="list-space">
+                              <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                <input class="form-control" type="text" ng-model="patientSearchField" ng-change="searchPatient(patientSearchField)" placeholder="Search Patient"/>
+                              </div>
+                              <ul class="list-items">
+                                <li ng-repeat="Filter in patientFilterList | filter: searchPatientFilter">
+                                  <label>
+                                    <input type="checkbox" ng-click="selectItem(Filter)" ng-checked="Filter.added" /> {{Filter.name}}
+                                  </label>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SECTION: Demographic filters -->
+                <div class="row animated" ng-class="{fadeInUp:filterSection.show}" ng-if="filterSection.show">
+                  <div class="col-xs-12 side-menu-title">
+                    <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                      <span style="background-color:#e6edfa; padding: 0 10px;">
+                        <span class="fas fa-dot-circle"></span>
+                        <h2>Trigger to Send By Demographic</h2>
+                      </span>  
+                    </div>  
+                  </div>
+                </div>   
+                <div class="row animated" ng-class="{fadeInUp:filterSection.show}" ng-if="filterSection.show">
+                  <div class="col-xs-12">
+                    <p style="margin-bottom: 10px;">
+                      <span><strong>Optional field:</strong></span>
+                      Please assign a demographic trigger. Leave unmarked for no trigger.
+                    </p>
+                  </div>
+                </div>  
+                <div class="row animated" ng-class="{fadeInUp:filterSection.show}" ng-if="filterSection.show">
+                  <div class="col-xs-12 col-md-6">
+                    <div class="row">
+                      <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Sex</h2>
+                    </div>
+                    <div class="row">
+                      <div ng-repeat="sex in sexes" class="col-xs-12 col-sm-6">
+                        <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: demoFilter.sex == sex.name}" ng-click="sexUpdate(sex)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                          <div class="panel-info" ng-class="{active: demoFilter.sex == sex.name}">
+                            <div class="panel-content" style="text-align:center">
+                              <span style="font-size:30px;" class="fa fa-{{sex.icon}}"></span>
+                              <div class="option-panel-title">{{sex.name}}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-xs-12 col-md-6">
+                    <div class="row">
+                      <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Age Group</h2>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                        <div class="panel">
+                          <div class="panel-body form-horizontal">
+                            <div class="form-group">
+                              <label class="control-label col-xs-12 col-lg-2">
+                                MIN
+                              </label>
+                              <div class="col-xs-12 col-lg-10">
+                                <input class="form-control" ng-model="demoFilter.age.min" type="number" ng-change="ageUpdate()" ng-max="demoFilter.age.max" min="0">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>          
+                      <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                        <div class="panel">
+                          <div class="panel-body form-horizontal">
+                            <div class="form-group">
+                              <label class="control-label col-xs-12 col-lg-2">
+                                MAX
+                              </label>
+                              <div class="col-xs-12 col-lg-10">
+                                <input class="form-control" ng-model="demoFilter.age.max" type="number" ng-change="ageUpdate()" max="100" ng-min="demoFilter.age.min">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>  
+                    </div>
+                  </div>      
+                </div>  
+
+                <!-- SECTION: Appointment filters -->
+                <div class="row animated" ng-class="{fadeInUp:filterSection.show}" ng-if="filterSection.show">
+                  <div class="col-xs-12 side-menu-title">
+                    <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                      <span style="background-color:#e6edfa; padding: 0 10px;">
+                        <span class="fas fa-dot-circle"></span>
+                        <h2>Trigger to Send By Appointment</h2>
+                      </span>  
+                    </div>  
+                  </div>
+                </div>   
+                <div class="row animated" ng-class="{fadeInUp:filterSection.show}" ng-if="filterSection.show">
+                  <div class="col-xs-12">
+                    <p style="margin-bottom: 10px;">
+                      <span><strong>Optional field:</strong></span>
+                      Select one of more appointment triggers below. This will target patients with these specific appointments. Leave blank for no trigger.
+                    </p>
+                  </div>
+                </div>  
+                <div class="row animated" ng-class="{fadeInUp:filterSection.show}" ng-if="filterSection.show">
+                  <div class="col-xs-12 col-md-8">
+                    <div class="panel-container">
+                      <div class="panel-info">
+                        <div class="panel-content">
+                          <div class="panel-input">  
+                            <div class="list-space">
+                              <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                <input class="form-control" type="text" ng-model="appointmentSearchField" ng-change="searchAppointment(appointmentSearchField)" placeholder="Search..."/>
+                              </div>
+                              <ul class="list-items">
+                                <li ng-repeat="appointment in appointmentList | filter: searchAppointmentFilter">
+                                  <label>
+                                    <input type="checkbox" ng-click="selectItem(appointment)" ng-checked="appointment.added" /> {{appointment.name}}
+                                  </label>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SECTION: Diagnosis Filter -->
+                <div class="row animated" ng-class="{fadeInUp:filterSection.show}" ng-if="filterSection.show">
+                  <div class="col-xs-12 side-menu-title">
+                    <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                      <span style="background-color:#e6edfa; padding: 0 10px;">
+                        <span class="fas fa-dot-circle"></span>
+                        <h2>Trigger to Send By Diagnosis</h2>
+                      </span>  
+                    </div>  
+                  </div>
+                </div>   
+                <div class="row animated" ng-class="{fadeInUp:filterSection.show}" ng-if="filterSection.show">
+                  <div class="col-xs-12">
+                    <p style="margin-bottom: 10px;">
+                      <span><strong>Optional field:</strong></span>
+                      Select one of more diagnosis triggers below. This will target patients with these specific diagnoses. Leave blank for no trigger.
+                    </p>
+                  </div>
+                </div>  
+                <div class="row animated" ng-class="{fadeInUp:filterSection.show}" ng-if="filterSection.show">
+                  <div class="col-xs-12 col-md-8">
+                    <div class="panel-container">
+                      <div class="panel-info">
+                        <div class="panel-content">
+                          <div class="panel-input">  
+                            <div class="list-space">
+                              <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                <input class="form-control" type="text" ng-model="dxSearchField" ng-change="searchDiagnosis(dxSearchField)" placeholder="Search Diagnosis"/>
+                              </div>
+                              <ul class="list-items">
+                                <li ng-repeat="Filter in dxFilterList | filter: searchDxFilter">
+                                  <label>
+                                    <input type="checkbox" ng-click="selectItem(Filter)" ng-checked="Filter.added" /> {{Filter.name}}
+                                  </label>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SECTION: Doctor Filters -->
+                <div class="row animated" ng-class="{fadeInUp:filterSection.show}" ng-if="filterSection.show">
+                  <div class="col-xs-12 side-menu-title">
+                    <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                      <span style="background-color:#e6edfa; padding: 0 10px;">
+                        <span class="fas fa-dot-circle"></span>
+                        <h2>Trigger to Send By Doctor</h2>
+                      </span>  
+                    </div>  
+                  </div>
+                </div>   
+                <div class="row animated" ng-class="{fadeInUp:filterSection.show}" ng-if="filterSection.show">
+                  <div class="col-xs-12">
+                    <p style="margin-bottom: 10px;">
+                      <span><strong>Optional field:</strong></span>
+                      Select one of more doctor triggers below. This will target patients with these specific doctors. Leave blank for no trigger.
+                    </p>
+                  </div>
+                </div>  
+                <div class="row animated" ng-class="{fadeInUp:filterSection.show}" ng-if="filterSection.show">
+                  <div class="col-xs-12 col-md-8">
+                    <div class="panel-container">
+                      <div class="panel-info">
+                        <div class="panel-content">
+                          <div class="panel-input">  
+                            <div class="list-space">
+                              <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                <input class="form-control" type="text" ng-model="doctorSearchField" ng-change="searchDoctor(doctorSearchField)" placeholder="Search Doctor"/>
+                              </div>
+                              <ul class="list-items">
+                                <li ng-repeat="Filter in doctorFilterList | filter: searchDoctorFilter">
+                                  <label>
+                                    <input type="checkbox" ng-click="selectItem(Filter)" ng-checked="Filter.added" /> {{Filter.name}}
+                                  </label>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SECTION: Treatment machine filters -->
+                <div class="row animated" ng-class="{fadeInUp:filterSection.show}" ng-if="filterSection.show">
+                  <div class="col-xs-12 side-menu-title">
+                    <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                      <span style="background-color:#e6edfa; padding: 0 10px;">
+                        <span class="fa fa-dot-circle-o"></span>
+                        <h2>Trigger to Send By Treatment Machine</h2>
+                      </span>  
+                    </div>  
+                  </div>
+                </div>   
+                <div class="row animated" ng-class="{fadeInUp:filterSection.show}" ng-if="filterSection.show">
+                  <div class="col-xs-12">
+                    <p style="margin-bottom: 10px;">
+                      <span><strong>Optional field:</strong></span>
+                      Select one of more machine triggers below. This will target patients with these specific treatment machines. Leave blank for no trigger.
+                    </p>
+                  </div>
+                </div>  
+                <div class="row animated" ng-class="{fadeInUp:filterSection.show}" ng-if="filterSection.show">
+                  <div class="col-xs-12 col-md-8">
+                    <div class="panel-container">
+                      <div class="panel-info">
+                        <div class="panel-content">
+                          <div class="panel-input">  
+                            <div class="list-space">
+                              <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                <input class="form-control" type="text" ng-model="resourceSearchField" ng-change="searchResource(resourceSearchField)" placeholder="Search Resource"/>
+                              </div>
+                              <ul class="list-items">
+                                <li ng-repeat="Filter in resourceFilterList | filter: searchResourceFilter">
+                                  <label>
+                                    <input type="checkbox" ng-click="selectItem(Filter)" ng-checked="Filter.added" /> {{Filter.name}}
+                                  </label>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- END SECTION -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+      
+<!-- "Processing" modal template -->
+<script type="text/ng-template" id="processingModal.htm">
+  <div class="modal-header">
+    <h1> Processing...</h1>
+  </div>
+  <div class="modal-body">
+    <div class="progress progress-striped active">
+      <div class="progress-bar" style="width: 100%"></div>        
+    </div>
+  </div>
+</script>

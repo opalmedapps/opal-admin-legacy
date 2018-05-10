@@ -1,0 +1,27 @@
+<div class="modal-header">
+  <div class="col-xs-12">
+  	<h2 class="modal-title">
+  		<span class="glyphicon glyphicon-trash"></span> 
+  		Delete Legacy Questionnaire 
+  	</h2>
+  	<p class="modal-title-caption">
+  		{{legacyQuestionnaireToDelete.name_EN}} / {{legacyQuestionnaireToDelete.name_FR}}
+  	</p>
+  </div>
+</div>
+<div class="modal-body">
+	<div class="alert alert-danger" role="alert">
+    <strong>Delete Legacy Questionnaire</strong><br>
+    <p>
+      Are you sure you want to delete the legacy questionnaire "{{legacyQuestionnaireToDelete.name_EN}}" ?
+    </p>
+  </div>
+  <div class="row">
+    <div class="modal-buttons col-xs-12">
+      <form method="post" ng-submit="deleteLegacyQuestionnaire()">			
+        <input class="btn btn-primary submit" type="submit" value="Delete">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+      </form>
+    </div>
+  </div>
+</div>

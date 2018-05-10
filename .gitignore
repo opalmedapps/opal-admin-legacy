@@ -34,5 +34,8 @@ node_modules/**
 # ignore idea for PhpStorm
 .idea
 
-# ignore bower install error
-.bowerrc
+# ignore uploaded file paths
+uploads/**
+
+# ignore log files
+publisher/logs/**

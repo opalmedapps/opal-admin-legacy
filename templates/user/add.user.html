@@ -1,0 +1,314 @@
+  <div id="main">
+    <div id="top">
+      <div class="clearfix">
+        <div class="row">
+          <!-- Left side detail view -->
+          <div class="col-lg-2">
+            <!-- Logo -->
+            <div class="side-navbar" ng-controller="navigation">
+              <div class="row side-logo" ng-click="goToHome()">
+                <div class="col-md-12">
+                  <div class="logo">
+                    <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+                  </div>
+                  <h1 class="animated fadeIn">opal <strong>ADMIN</strong></h1>
+                </div>
+              </div>   
+            </div>  
+            <div class="summary-fix">
+              <!-- Back button -->
+  						<div class="row side-panel-menu">
+  							<div class="col-xs-12 col-sm-5 col-lg-12">
+  								<div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+  									<div class="side-panel-info-sm">
+  										<div class="panel-content">
+  											<span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+  											<h6 class="side-panel-title" style="display:inline-block;margin:0;font-size:14px;"><strong>Back to Users</strong></h6>
+  										</div>
+  									</div>
+  								</div>
+  							</div>
+                <!-- Summary -->
+                <div class="side-menu-title col-lg-12">
+                  <div class="horz-line" style="height: 16px; text-align: center">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <h2>Summary</h2>
+                    </span>  
+                  </div>  
+                </div>
+                <div class="col-lg-12">
+                  <div class="progress progress-striped active">
+                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <uib-accordion class="side-navbar">
+                <!-- SECTION: Username -->
+                <div uib-accordion-group is-open="usernameSection.open" class="panel-container summary-box" is-disabled="!newUser.username">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="validUsername.status == 'valid'" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Username</strong>
+                      </div>
+                      <div class="col-md-2">
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+                <!-- SECTION: Password -->
+                <div uib-accordion-group is-open="passwordSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: passwordSection.show}" ng-if="passwordSection.show" is-disabled="!newUser.password && !newUser.confirmPassword">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="validPassword.status == 'valid' && validConfirmPassword.status == 'valid'" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Password</strong>
+                      </div>
+                      <div class="col-md-2"></div>
+                    </div>
+                  </uib-accordion-heading>
+                </div>
+                <!-- SECTION: Role -->
+                <div uib-accordion-group is-open="roleSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:roleSection.show}" ng-if="roleSection.show" is-disabled="!newUser.role">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newUser.role" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Role</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': roleSection.open, 'glyphicon-chevron-right': !roleSection.open}" ng-if="newUser.role"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newUser.role" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newUser.role.name}}
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Language -->
+                <div uib-accordion-group is-open="languageSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:languageSection.show}" ng-if="languageSection.show" is-disabled="!newUser.language">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newUser.language" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Language</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': languageSection.open, 'glyphicon-chevron-right': !languageSection.open}" ng-if="newUser.language"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newUser.language" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newUser.language}}
+                    </p>
+                  </div>
+                </div>
+              </uib-accordion>
+              <!-- Submit button -->
+              <div class="panel-container">
+                <a href="" ng-click="registerUser()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkRegistrationForm()" style="width: 100%;">
+                  <span style="font-size: 20px;"><strong>Register User</strong></span>
+                </a>
+              </div>
+            </div>
+          </div>
+          <!-- Right side detail view -->
+          <div class="col-xs-12 col-lg-10 animated fadeIn">
+            <div class="row main-title">
+              <!-- Page title -->
+              <div class="col-xs-12 col-md-6 title-content">
+                <span class="glyphicon glyphicon-list-alt"></span>
+                <h1><strong>User Registration</strong></h1>
+              </div>
+              <!-- Breadcrumbs -->
+              <div class="col-md-6 title-breadcrumbs"> 
+                <span>
+                  <span><a ui-sref="home">Home</a></span> 
+                  <span class="glyphicon glyphicon-menu-right teflon"></span> 
+                  <span><a ui-sref="users">Users</a></span>
+                  <span class="glyphicon glyphicon-menu-right teflon"></span>
+                  <span><strong>User Registration</strong></span>
+                </span>
+              </div>
+            </div>
+
+            <div class="row mobile-side-panel-menu">
+              <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
+                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                  <div class="side-panel-info-sm">
+                    <div class="panel-content">
+                      <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                      <h6 class="side-panel-title"><strong>Back to Users</strong></h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkRegistrationForm()">
+                <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
+                  <span style="padding: 0 10px;">
+                    <h2>Step {{numOfCompletedSteps}} of {{stepTotal}} Completed</h2>
+                  </span>  
+                </div>  
+                <div class="progress progress-striped active">
+                  <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                  </div>
+                </div>
+              </div>
+              <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkRegistrationForm()">
+                <div class="panel-container">
+                  <a href="" ng-click="registerUser()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkRegistrationForm()" style="width: 100%;">
+                    <span style="font-size: 20px;"><strong>Register User</strong></span>
+                  </a>
+                </div>
+              </div> 
+            </div>
+
+            <div class="section-content">
+              <!-- SECTION: Username & Password -->
+              <div class="row">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Username & Password</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span style="color:#d9534f"><strong>Required fields:</strong></span>
+                    Please add a valid username and password.
+                  </p>
+                </div>
+              </div>  
+              <div class="row"> 
+                <div class="col-xs-12 col-md-9">
+                  <div class="panel" ng-class="(validUsername.status == 'valid' && validPassword.status == 'valid' && validConfirmPassword.status == 'valid') ? 'panel-success': 'panel-danger'">
+                    <div class="panel-heading"><strong>Username & Password</strong>
+                      <span ng-hide="validUsername.status == 'valid' && validPassword.status == 'valid' && validConfirmPassword.status == 'valid'" style="float:right"><em>Incomplete</em></span>
+                      <span ng-show="validUsername.status == 'valid' && validPassword.status == 'valid' && validConfirmPassword.status == 'valid'" style="float:right"><em>Complete</em></span>
+                    </div>
+                    <div class="panel-body form-horizontal">
+                      <div class="form-group has-feedback" ng-class="{'has-success': validUsername.status == 'valid', 'has-error': validUsername.status == 'invalid', 'has-warning': validUsername.status == 'warning'}">
+                        <label class="control-label col-md-2">
+                          Username
+                        </label>
+                        <div class="col-xs-12 col-md-7">
+                          <input type="text" class="form-control" required="required" ng-blur="validateUsername(newUser.username)" ng-change="usernameUpdate()" ng-model="newUser.username">
+                          <span ng-show="validUsername.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validUsername.status == 'valid', 'glyphicon-remove': validUsername.status == 'invalid', 'glyphicon-warning-sign': validUsername.status == 'warning'}" aria-hidden="true"></span>
+                        </div>
+                        <em class="control-label col-xs-12 col-md-3" ng-show="validUsername.status == 'invalid' || validUsername.status == 'warning'" ng-class="{'has-success': validUsername.status == 'valid', 'has-error': validUsername.status == 'invalid', 'has-warning': validUsername.status == 'warning'}" style="text-align:left;">
+                          {{validUsername.message}}
+                        </em>
+                      </div>
+                      <div class="form-group has-feedback" ng-class="{'has-success': validPassword.status == 'valid', 'has-error': validPassword.status == 'invalid', 'has-warning': validPassword.status == 'warning'}">
+                        <label class="control-label col-xs-12 col-md-2">
+                          Password <br><em><small>(min: 6 characters)</small></em>
+                        </label>
+                        <div class="col-xs-12 col-md-7">
+                          <input type="password" class="form-control" required="required" ng-blur="validatePassword(newUser.password)" ng-change="passwordUpdate()" ng-model="newUser.password">
+                          <span ng-show="validPassword.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validPassword.status == 'valid', 'glyphicon-remove': validPassword.status == 'invalid', 'glyphicon-warning-sign': validPassword.status == 'warning'}" aria-hidden="true"></span>
+                        </div>
+                        <em class="control-label col-xs-12 col-md-3" ng-show="validPassword.status == 'invalid' || validPassword.status == 'warning'" ng-class="{'has-success': validPassword.status == 'valid', 'has-error': validPassword.status == 'invalid', 'has-warning': validPassword.status == 'warning'}" style="text-align:left">
+                          {{validPassword.message}}
+                        </em>
+                      </div>    
+                      <div class="form-group has-feedback" ng-class="{'has-success': validConfirmPassword.status == 'valid', 'has-error': validConfirmPassword.status == 'invalid', 'has-warning': validConfirmPassword.status == 'warning'}">
+                        <label class="control-label col-xs-12 col-md-2">
+                          Re-type Password
+                        </label>
+                        <div class="col-xs-12 col-md-7">
+                          <input type="password" class="form-control" required="required" ng-change="validateConfirmPassword(newUser.confirmPassword)" ng-model="newUser.confirmPassword" ng-disabled="newUser.password.length < 6 || !newUser.password">
+                          <span ng-show="validConfirmPassword.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validConfirmPassword.status == 'valid', 'glyphicon-remove': validConfirmPassword.status == 'invalid', 'glyphicon-warning-sign': validConfirmPassword.status == 'warning'}" aria-hidden="true"></span>
+                        </div>
+                        <em class="control-label col-xs-12 col-md-3" ng-show="validConfirmPassword.status == 'invalid' || validConfirmPassword.status == 'warning'" ng-class="{'has-success': validConfirmPassword.status == 'valid', 'has-error': validConfirmPassword.status == 'invalid', 'has-warning': validConfirmPassword.status == 'warning'}" style="text-align:left">
+                          {{validConfirmPassword.message}}
+                        </em>
+                      </div>
+                    </div>
+                  </div>
+                </div>          
+              </div>
+              <!-- SECTION: Role -->
+              <div class="row animated" ng-class="{fadeInUp: roleSection.show}" ng-if="roleSection.show">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Role</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row animated" ng-class="{fadeInUp: roleSection.show}" ng-if="roleSection.show">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span style="color:#d9534f"><strong>Required field:</strong></span>
+                    Please assign a role to the new user.
+                  </p>
+                </div>
+              </div>  
+              <div class="row animated" ng-class="{fadeInUp: roleSection.show}" ng-if="roleSection.show" style="margin-bottom: 15px;">
+                <div class="col-xs-12 col-sm-8">
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-6">
+                      <select ng-model="newUser.role" ng-change="roleUpdate()" ng-options="role as role.name for role in roles" class="form-control">
+                        <option ng-hide="newUser.role" value="">Select Role</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>  
+              </div>
+              <!-- SECTION: Language -->
+              <div class="row animated" ng-class="{fadeInUp: languageSection.show}" ng-if="languageSection.show">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Language</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row animated" ng-class="{fadeInUp: languageSection.show}" ng-if="languageSection.show">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span style="color:#d9534f"><strong>Required field:</strong></span>
+                    Please assign a language to the new user.
+                  </p>
+                </div>
+              </div>  
+              <div class="row animated" ng-class="{fadeInUp: languageSection.show}" ng-if="languageSection.show" style="margin-bottom: 15px;">
+                <div class="col-xs-12 col-sm-8">
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-6">
+                      <select ng-model="newUser.language" ng-change="languageUpdate()" ng-options="language.id as language.name for language in languages" class="form-control">
+                        <option ng-hide="newUser.language" value="">Select Language</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>  
+              </div>
+              <!-- END SECTION -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

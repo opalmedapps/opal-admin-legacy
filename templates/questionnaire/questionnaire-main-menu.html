@@ -1,0 +1,102 @@
+<div id="main">
+	<div id="top" class="home-main questionnaire-main">
+		<div class="clearfix">
+      <!-- Load side menu -->
+			<div class="row">
+				<!-- Load side menu -->
+        <div class="home-side-panel col-xs-12">
+          <div ng-include="'templates/questionnaire/questionnaire-side-menu.html'"></div>
+        </div>
+				<div id="side-panel-scrollbar" class="col-lg-2">
+      		<div ng-include="'templates/side-panel-menu.html'"></div>
+    		</div>
+        <!-- Right side view -->
+    		<div class="col-lg-10 animated fadeIn home-menu">
+          <div class="row main-title">
+            <!-- Page title -->
+            <div class="col-xs-12 col-md-9 title-content">
+              <span class="fa fa-pencil-square-o"></span>
+              <h1><strong>Questionnaires</strong></h1>
+            </div>
+            <!-- Breadcrumbs -->
+            <div class="col-md-3 title-breadcrumbs"> 
+              <span><a ui-sref="home">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Questionnaires</strong></span>
+            </div>
+          </div> 
+
+          <!-- Panel Menu -->
+          <div class="row" style="text-align:left;">
+          	<div class="col-xs-12 side-menu-title">
+              <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                <span style="background-color:#e6edfa; padding: 0 10px;">
+                  <span class="glyphicon glyphicon-menu-down"></span>
+                  <h2>Questionnaire Tools</h2>
+                </span>  
+	          	</div>  
+	          </div>
+	        </div>
+
+
+	        <div class="row">
+          	<!-- Questionnaire -->
+          	<div class="col-xs-12 col-sm-6 col-md-4">
+          		<div class="panel-container animated" ng-class="{pulse: hoverManageQuestionnaires}" ng-mouseenter="hoverManageQuestionnaires=true" ng-mouseleave="hoverManageQuestionnaires=false" style="cursor:pointer;" ng-click="goToQuestionnaire()">
+								<div class="panel-info">
+									<div class="panel-content">
+										<div class="icon-home clearfix">
+											<span class="fa fa-pencil fa-sm" aria-hidden="true"></span>
+										</div>
+										<div class="panel-title">  
+											<h1>Manage Questionnaires</h1>
+										</div>  
+										<div class="panel-description">
+											<p>Create, view, update and delete questionnaires.</p>
+										</div>
+									</div>
+								</div>
+							</div>
+          	</div>
+
+          	<!-- View/Edit Question Bank -->
+          	<div class="col-xs-12 col-sm-6 col-md-4">
+          		<div class="panel-container animated" ng-class="{pulse: hoverQuestionBank}" ng-mouseenter="hoverQuestionBank=true" ng-mouseleave="hoverQuestionBank=false" style="cursor:pointer;" ng-click="goToQuestionnaireQuestionBank()">
+								<div class="panel-info">
+									<div class="panel-content">
+										<div class="icon-home clearfix">
+											<span class="fa fa-search fa-sm" aria-hidden="true"></span>
+										</div>
+										<div class="panel-title">  
+											<h1>Manage Question Bank</h1>
+										</div>  
+										<div class="panel-description">
+											<p>View and edit all the questions stored in the question bank.</p>
+										</div>
+									</div>
+								</div>
+							</div>
+          	</div>
+
+          	<!-- View Completed Questionnaire -->
+          	<div class="col-xs-12 col-sm-6 col-md-4">
+          		<div class="panel-container animated" ng-class="{pulse: hoverCompletedQuestionnaire}" ng-mouseenter="hoverCompletedQuestionnaire=true" ng-mouseleave="hoverCompletedQuestionnaire=false" style="cursor:pointer;" ng-click="goToQuestionnaireCompleted()">
+								<div class="panel-info">
+									<div class="panel-content">
+										<div class="icon-home clearfix">
+											<span class="fa fa-check fa-sm" aria-hidden="true"></span>
+										</div>
+										<div class="panel-title">  
+											<h1>Completed Questionnaires</h1>
+										</div>  
+										<div class="panel-description">
+											<p>View the completed questionnaires.</p>
+										</div>
+									</div>
+								</div>
+							</div>
+          	</div>
+          </div>
+    		</div>
+			</div>
+		</div>
+	</div>
+</div>

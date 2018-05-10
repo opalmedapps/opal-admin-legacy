@@ -1,0 +1,152 @@
+<!-- Modal title -->
+<div class="modal-header">
+  <div class="col-xs-12 col-md-6">
+    <h2 class="modal-title">
+      <span class="fa fa-area-chart"></span> 
+      Cron Logs
+    </h2>
+    <p class="modal-title-caption">
+      Between <strong>{{minSelection}}</strong> and <strong>{{maxSelection}}</strong>
+    </p>
+  </div>
+  <div class="modal-buttons col-xs-12 col-md-6">
+    <span> 
+      <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+    </span>
+  </div>
+</div>
+<div class="modal-body">
+  <uib-accordion>
+    <!-- SECTION: Appointment Logs -->
+    <div uib-accordion-group is-open="appointmentLogSection.open" ng-if="cronListLogs.appointment.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Appointments</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': appointmentLogSection.open, 'glyphicon-chevron-right': !appointmentLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridAppointmentLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (cronListLogs.appointment.length*gridAppointmentLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Document Logs -->
+    <div uib-accordion-group is-open="documentLogSection.open" ng-if="cronListLogs.document.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Documents</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': documentLogSection.open, 'glyphicon-chevron-right': !documentLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridDocumentLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (cronListLogs.document.length*gridDocumentLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Task Logs -->
+    <div uib-accordion-group is-open="taskLogSection.open" ng-if="cronListLogs.task.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Tasks</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': taskLogSection.open, 'glyphicon-chevron-right': !taskLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridTaskLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (cronListLogs.task.length*gridTaskLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Announcement Logs -->
+    <div uib-accordion-group is-open="announcementLogSection.open" ng-if="cronListLogs.announcement.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Announcements</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': announcementLogSection.open, 'glyphicon-chevron-right': !announcementLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridAnnouncementLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (cronListLogs.announcement.length*gridAnnouncementLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Tx Team Message Logs -->
+    <div uib-accordion-group is-open="txTeamMessageLogSection.open" ng-if="cronListLogs.txTeamMessage.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Treatment Team Messages</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': txTeamMessageLogSection.open, 'glyphicon-chevron-right': !txTeamMessageLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridTxTeamMessageLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (cronListLogs.txTeamMessage.length*gridTxTeamMessageLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Patients for Patients Logs -->
+    <div uib-accordion-group is-open="pfpLogSection.open" ng-if="cronListLogs.pfp.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Patients For Patients</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': pfpLogSection.open, 'glyphicon-chevron-right': !pfpLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridPFPLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (cronListLogs.pfp.length*gridPFPLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Educational Material Logs -->
+    <div uib-accordion-group is-open="educationalMaterialLogSection.open" ng-if="cronListLogs.educationalMaterial.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Educational Material</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': educationalMaterialLogSection.open, 'glyphicon-chevron-right': !educationalMaterialLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridEducationalMaterialLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (cronListLogs.educationalMaterial.length*gridEducationalMaterialLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Email Logs -->
+    <div uib-accordion-group is-open="emailLogSection.open" ng-if="cronListLogs.email.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Email</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': emailLogSection.open, 'glyphicon-chevron-right': !emailLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridEmailLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (cronListLogs.email.length*gridEmailLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Legacy Questionnaire Logs -->
+    <div uib-accordion-group is-open="legacyQuestionnaireLogSection.open" ng-if="cronListLogs.legacyQuestionnaire.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Legacy Questionnaires</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': legacyQuestionnaireLogSection.open, 'glyphicon-chevron-right': !legacyQuestionnaireLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridLegacyQuestionnaireLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (cronListLogs.legacyQuestionnaire.length*gridLegacyQuestionnaireLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Notiifcation Logs -->
+    <div uib-accordion-group is-open="notificationLogSection.open" ng-if="cronListLogs.notification.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Notifications</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': notificationLogSection.open, 'glyphicon-chevron-right': !notificationLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridNotificationLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (cronListLogs.notification.length*gridNotificationLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Test Result Logs -->
+    <div uib-accordion-group is-open="testResultLogSection.open" ng-if="cronListLogs.testResult.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Test Result</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': testResultLogSection.open, 'glyphicon-chevron-right': !testResultLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridTestResultLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (cronListLogs.testResult.length*gridTestResultLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+  </uib-accordion>
+</div>

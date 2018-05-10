@@ -1,0 +1,106 @@
+<!-- Modal title -->
+<div class="modal-header">
+	<h2 class="modal-title col-xs-12">
+		<span class="glyphicon glyphicon-pencil"></span> 
+		Edit Question 
+	</h2>
+	<p class="modal-title-caption col-xs-12">
+		{{question.text_EN}} / {{question.text_EN}}
+	</p>
+	<div class="modal-buttons col-xs-12">
+    <span> 
+      <form method="post" ng-submit="updateQuestion()">
+        <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+      </form>
+    </span>     
+  </div>
+</div>
+<div class="modal-body">
+	<uib-accordion>
+    <!-- SECTION: Title -->
+		<div uib-accordion-group is-open="titleSection.open">
+			<uib-accordion-heading>
+				<div>
+					<strong>Titles</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+				</div>
+			</uib-accordion-heading>
+			<div class="row">
+				<div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+					<div class="input-group">
+						<span class="input-group-addon">EN</span>
+						<textarea class="form-control" rows="2" ng-model="question.text_EN" placeholder="English Title" ng-change="setChangesMade()"></textarea>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+					<div class="input-group">
+						<span class="input-group-addon">FR</span>
+						<textarea class="form-control" rows="2" ng-model="question.text_EN" placeholder="Titre Français" ng-change="setChangesMade()"></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+
+    <!-- SECTION: Answer type -->
+		<div uib-accordion-group is-open="answerTypeSection.open">
+			<uib-accordion-heading>
+				<div>
+					<strong>Answer Type</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': answerTypeSection.open, 'glyphicon-chevron-right': !answerTypeSection.open}"></i>
+				</div>
+			</uib-accordion-heading>
+			<div class="alert alert-info" role="alert">
+        <strong>Current Answer Type</strong><br>
+        <p>
+          <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+          <span>{{question.answertype_name_EN}} / {{question.answertype_name_FR}}</span>
+        </p>
+      </div>
+			<div class="list-space">
+				<div class="input-group">
+					<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+					<input class="form-control" type="text" ng-model="atEntered" ng-change="searchAt(atEntered)" placeholder="Search Answer Type"
+					/>
+				</div>
+				<ul class="list-items">
+					<li ng-repeat="at in atFilterList | filter: searchAtFilter">
+						<label>
+							<input type="radio" name="{{at.name_EN}}" value="{{at.serNum}}" ng-model="question.answertype_serNum" ng-change="updateAt(at)"/> {{at.name_EN}} ({{at.category_EN}})
+						</label>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+    <!-- SECTION: Question group -->
+		<div uib-accordion-group is-open="questionGroupSection.open">
+			<uib-accordion-heading>
+				<div>
+					<strong>Question Group</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': questionGroupSection.open, 'glyphicon-chevron-right': !questionGroupSection.open}"></i>
+				</div>
+			</uib-accordion-heading>
+			<div class="alert alert-info" role="alert">
+        <strong>Current Answer Type</strong><br>
+        <p>
+          <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+          <span ng-if="!groupSelected_name_EN">{{question.group_name_EN}} / {{question.group_name_FR}}</span>
+          <span ng-if="question.questiongroup_serNum">{{groupSelected_name_EN}} / {{groupSelected_name_FR}}</span>
+        </p>
+      </div>
+			<div class="list-space">
+				<div class="input-group">
+					<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+					<input class="form-control" type="text" ng-model="groupEntered" ng-change="searchGroup(groupEntered)" placeholder="Search Question Group"
+					/>
+				</div>
+				<ul class="list-items">
+					<li ng-repeat="group in groupFilterList | filter: searchGroupFilter">
+						<label>
+							<input type="radio" name="{{group.name_EN}}" value="{{group.serNum}}" ng-model="question.questiongroup_serNum" ng-change="updateGroup(group)"/> {{group.name_EN}}
+						</label>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+	</uib-accordion>
+</div>

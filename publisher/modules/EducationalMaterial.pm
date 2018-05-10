@@ -42,6 +42,7 @@ sub new
         _patientser         => undef,
         _edumatcontrolser   => undef,
         _readstatus         => undef,
+        _cronlogser         => undef,
     };
 
     # bless associates an object with a class so Perl knows which package to search for
@@ -91,6 +92,16 @@ sub setEduMatReadStatus
 }
 
 #====================================================================================
+# Subroutine to set the Educational Material Cron Log Serial
+#====================================================================================
+sub setEduMatCronLogSer
+{
+    my ($edumat, $cronlogser) = @_; # edumat object with provided serial in args
+    $edumat->{_cronlogser} = $cronlogser; # set the edumat ser
+    return $edumat->{_cronlogser};
+}
+
+#====================================================================================
 # Subroutine to get the Educational Material Serial
 #====================================================================================
 sub getEduMatSer
@@ -126,12 +137,21 @@ sub getEduMatReadStatus
 	return $edumat->{_readstatus};
 }
 
+#====================================================================================
+# Subroutine to get the Educational Material Cron Log Serial
+#====================================================================================
+sub getEduMatCronLogSer
+{
+    my ($edumat) = @_; # our edumat object
+    return $edumat->{_cronlogser};
+}
+
 #======================================================================================
 # Subroutine to publish educational materials
 #======================================================================================
 sub publishEducationalMaterials
 {
-    my (@patientList) = @_; # patient list from args
+    my ($cronLogSer, @patientList) = @_; # patient list and cron log serial from args
 
     my $today_date = strftime("%Y-%m-%d", localtime(time));
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
@@ -170,6 +190,7 @@ sub publishEducationalMaterials
 			# in the non-patient filters  
 			my $isNonPatientSpecificFilterDefined = 0;
             my $isPatientSpecificFilterDefined = 0;
+            my $patientPassed = 0;
 
             # Fetch sex filter (if any) 
             my $sexFilter =  $eduMatFilters->getSexFilter();
@@ -212,27 +233,11 @@ sub publishEducationalMaterials
                     # move on to the next educational material
                     else{next;}
                 }
-
             }
-
-            # Retrieve all patient's appointment(s) up until tomorrow
-            my @patientAppointments = Appointment::getAllPatientsAppointmentsFromOurDB($patientSer);
 
             my @aliasSerials = ();
-            my @diagnosisNames = ();
 
-            # we build all possible appointment and diagnoses for each appointment found
-            foreach my $appointment (@patientAppointments) {
-
-                my $expressionSer = $appointment->getApptAliasExpressionSer();
-                my $aliasSer = Alias::getAliasFromOurDB($expressionSer);
-                push(@aliasSerials, $aliasSer) unless grep{$_ eq $aliasSer} @aliasSerials;
-
-                my $diagnosisSer = $appointment->getApptDiagnosisSer();
-                my $diagnosisName = Diagnosis::getDiagnosisNameFromOurDB($diagnosisSer);
-                push(@diagnosisNames, $diagnosisName) unless grep{$_ eq $diagnosisName} @diagnosisNames;
-
-            }
+            my @diagnosisNames = Diagnosis::getPatientsDiagnosesFromOurDB($patientSer);
 
             my @patientDoctors = PatientDoctor::getPatientsDoctorsFromOurDB($patientSer);
                 
@@ -243,18 +248,34 @@ sub publishEducationalMaterials
 				# toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
-                # Finding the existence of the patient appointment in the appointment filters
-                # If there is an intersection, then patient is part of this publishing educational material
-                if (!intersect(@appointmentFilters, @aliasSerials)) {
-                   if (@patientFilters) {
-                        # if the patient failed to match the appointment filter but there are patient filters
-                        # then we flag to check later if this patient matches with the patient filters
-                        $isPatientSpecificFilterDefined = 1;
-                    }
-                    # else no patient filters were defined and failed to match the appointment filter
-                    # move on to the next educational material
-                    else{next;}
-                } 
+                # Retrieve the patient appointment(s) if one (or more) lands within one day of today
+                my @patientAppointments = Appointment::getPatientsAppointmentsFromDateInOurDB($patientSer, $today_date, 1);
+
+                # we build all possible appointment and diagnoses for each appointment found
+                foreach my $appointment (@patientAppointments) {
+
+                    my $expressionSer = $appointment->getApptAliasExpressionSer();
+                    my $aliasSer = Alias::getAliasFromOurDB($expressionSer);
+                    push(@aliasSerials, $aliasSer) unless grep{$_ == $aliasSer} @aliasSerials;
+
+                }
+
+                # if all appointments were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @appointmentFilters and @aliasSerials) {
+                    # Finding the existence of the patient appointment in the appointment filters
+                    # If there is an intersection, then patient is so far part of this publishing educational material
+                    if (!intersect(@appointmentFilters, @aliasSerials)) {
+                       if (@patientFilters) {
+                            # if the patient failed to match the appointment filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the appointment filter
+                        # move on to the next educational material
+                        else{next;}
+                    } 
+                }
             }
 
             # Fetch diagnosis filters (if any)
@@ -264,17 +285,21 @@ sub publishEducationalMaterials
 				# toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
-                # Finding the intersection of the patient's diagnosis and the diagnosis filters
-                # If there is an intersection, then patient is part of this publishing educational material
-                if (!intersect(@diagnosisFilters, @diagnosisNames)) {
-                    if (@patientFilters) {
-                        # if the patient failed to match the diagnosis filter but there are patient filters
-                        # then we flag to check later if this patient matches with the patient filters
-                        $isPatientSpecificFilterDefined = 1;
+                # if all diagnoses were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @diagnosisFilters and @diagnosisNames) {
+                    # Finding the intersection of the patient's diagnosis and the diagnosis filters
+                    # If there is an intersection, then patient is so far part of this publishing educational material
+                    if (!intersect(@diagnosisFilters, @diagnosisNames)) {
+                        if (@patientFilters) {
+                            # if the patient failed to match the diagnosis filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the diagnosis filter
+                        # move on to the next educational material
+                        else{next;}
                     }
-                    # else no patient filters were defined and failed to match the diagnosis filter
-                    # move on to the next educational material
-                    else{next;}
                 }
             }
 
@@ -285,57 +310,93 @@ sub publishEducationalMaterials
 				# toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
-                # Finding the intersection of the patient's doctor(s) and the doctor filters
-                # If there is an intersection, then patient is part of this publishing educational material
-                if (!intersect(@doctorFilters, @patientDoctors)) {
-                    if (@patientFilters) {
-                        # if the patient failed to match the doctor filter but there are patient filters
-                        # then we flag to check later if this patient matches with the patient filters
-                        $isPatientSpecificFilterDefined = 1;
+                # if all doctors were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @doctorFilters and @patientDoctors) {
+                    # Finding the intersection of the patient's doctor(s) and the doctor filters
+                    # If there is an intersection, then patient is so far part of this publishing educational material
+                    if (!intersect(@doctorFilters, @patientDoctors)) {
+                        if (@patientFilters) {
+                            # if the patient failed to match the doctor filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the doctor filter
+                        # move on to the next educational material
+                        else{next;}
+                    } 
+                }
+            }
+
+            # Fetch resource filters (if any)
+            my @resourceFilters = $eduMatFilters->getResourceFilters();
+            if (@resourceFilters) {
+
+                # toggle flag
+                $isNonPatientSpecificFilterDefined = 1;
+
+                # if all resources were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @resourceFilters and @patientResources) {
+                    # Finding the intersection of the patient resource(s) and the resource filters
+                    # If there is an intersection, then patient is so far part of this publishing educational material
+                    if (!intersect(@resourceFilters, @patientResources)) {
+                        if (@patientFilters) {
+                            # if the patient failed to match the resource filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the resource filter
+                        # move on to the next announcement
+                        else{
+                            next;
+                        }
                     }
-                    # else no patient filters were defined and failed to match the doctor filter
-                    # move on to the next educational material
-                    else{next;}
-                } 
+                }
             }
 
 			# We look into whether any patient-specific filters have been defined 
 			# If we enter this if statement, then we check if that patient is in that list
-			if (@patientFilters) {
+            if (@patientFilters) {
 
                 # if the patient-specific flag was enabled then it means this patient failed
                 # one of the filters above 
                 # OR if the non patient specific flag was disabled then there were no filters defined above
                 # and this is the last test to see if this patient passes
-                if ($isPatientSpecificFilterDefined or !$isNonPatientSpecificFilterDefined) {
+                if ($isPatientSpecificFilterDefined eq 1 or $isNonPatientSpecificFilterDefined eq 0) {
     				# Finding the existence of the patient in the patient-specific filters
-    				# If the patient does not exist, then continue to the next educational material
-                    if ($patientId ~~ @patientFilters) {}
+    				# If the patient exists, or all patients were selected as triggers, 
+                    # then patient passes else move on to next patient
+                    if ($patientId ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
+                        $patientPassed = 1;
+                    }
                     else {next;}
                 }
 			}
 
-            # If we've reached this point, we've passed all catches (filter restrictions). We make
-            # an educational material object, check if it exists already in the database. If it does 
-            # this means the edumat has already been publish to the patient. If it doesn't
-            # exist then we publish to the patient (insert into DB).
-            $eduMat = new EducationalMaterial();
+            if ($isNonPatientSpecificFilterDefined eq 1 or $isPatientSpecificFilterDefined eq 1 or ($isNonPatientSpecificFilterDefined eq 0 and $patientPassed eq 1)) {
+                # If we've reached this point, we've passed all catches (filter restrictions). We make
+                # an educational material object, check if it exists already in the database. If it does 
+                # this means the edumat has already been publish to the patient. If it doesn't
+                # exist then we publish to the patient (insert into DB).
+                $eduMat = new EducationalMaterial();
 
-            # set the necessary values
-            $eduMat->setEduMatPatientSer($patientSer);
-            $eduMat->setEduMatControlSer($eduMatControlSer);
+                # set the necessary values
+                $eduMat->setEduMatPatientSer($patientSer);
+                $eduMat->setEduMatControlSer($eduMatControlSer);
+                $eduMat->setEduMatCronLogSer($cronLogSer);
 
-            if (!$eduMat->inOurDatabase()) {
-    
-                $eduMat = $eduMat->insertEducationalMaterialIntoOurDB();
-    
-                # send push notification
-                my $eduMatSer = $eduMat->getEduMatSer();
-                my $patientSer = $eduMat->getEduMatPatientSer();
-                PushNotification::sendPushNotification($patientSer, $eduMatSer, 'EducationalMaterial');
+                if (!$eduMat->inOurDatabase()) {
+        
+                    $eduMat = $eduMat->insertEducationalMaterialIntoOurDB();
+        
+                    # send push notification
+                    my $eduMatSer = $eduMat->getEduMatSer();
+                    my $patientSer = $eduMat->getEduMatPatientSer();
+                    PushNotification::sendPushNotification($patientSer, $eduMatSer, 'EducationalMaterial');
 
+                }
             }
-
         } # End forEach Educational Material Control   
 
     } # End forEach Patient
@@ -357,12 +418,13 @@ sub inOurDatabase
     my $ExistingEduMat = (); # data to be entered if edumat exists
 
     # Other variables, if edumat exists
-    my ($readstatus);
+    my ($readstatus, $cronlogser);
 
     my $inDB_sql = "
         SELECT
             em.EducationalMaterialSerNum,
-            em.ReadStatus
+            em.ReadStatus,
+            em.CronLogSerNum
         FROM
             EducationalMaterial em
         WHERE
@@ -382,6 +444,7 @@ sub inOurDatabase
 
         $serInDB    = $data[0];
         $readstatus = $data[1];
+        $cronlogser = $data[2];
     }
 
     if ($serInDB) {
@@ -393,6 +456,7 @@ sub inOurDatabase
         $ExistingEduMat->setEduMatPatientSer($patientser);
         $ExistingEduMat->setEduMatControlSer($edumatcontrolser);
         $ExistingEduMat->setEduMatReadStatus($readstatus);
+        $ExistingEduMat->setEduMatCronLogSer($cronlogser);
 
         return $ExistingEduMat; # this is true (ie. edumat exists. return object)
     }
@@ -409,16 +473,19 @@ sub insertEducationalMaterialIntoOurDB
 
     my $patientser          = $edumat->getEduMatPatientSer();
     my $edumatcontrolser    = $edumat->getEduMatControlSer();
+    my $cronlogser          = $edumat->getEduMatCronLogSer();
 
     my $insert_sql = "
         INSERT INTO 
             EducationalMaterial (
                 PatientSerNum,
+                CronLogSerNum,
                 EducationalMaterialControlSerNum,
                 DateAdded
             )
         VALUES (
             '$patientser',
+            '$cronlogser',
             '$edumatcontrolser',
             NOW()
         )

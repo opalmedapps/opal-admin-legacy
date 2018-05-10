@@ -11,15 +11,18 @@ class LegacyQuestionnaire {
      * Updates the legacy questionnaire publish flags in the database
      *
      * @param array $legacyQuestionnaireList : the list of legacy questionnaires
+     * @param object $user : the current user in session
      * @return array $response : response
      */    
-    public function updateLegacyQuestionnairePublishFlags( $legacyQuestionnaireList ) {
+    public function updateLegacyQuestionnairePublishFlags( $legacyQuestionnaireList, $user ) {
 
         $response = array(
             'value'     => 0,
             'message'   => ''
         );
 
+        $userSer = $user['id'];
+        $sessionId = $user['sessionid'];
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -30,7 +33,9 @@ class LegacyQuestionnaire {
 					UPDATE 
 						QuestionnaireControl 	
 					SET 
-						QuestionnaireControl.PublishFlag = $legacyQuestionnairePublish
+						QuestionnaireControl.PublishFlag = $legacyQuestionnairePublish,
+                        QuestionnaireControl.LastUpdatedBy = $userSer,
+                        QuestionnaireControl.SessionId = '$sessionId'
 					WHERE 
 						QuestionnaireControl.QuestionnaireControlSerNum = $legacyQuestionnaireSer
 				";
@@ -60,6 +65,9 @@ class LegacyQuestionnaire {
             $questionnaires_db_link = new PDO( QUESTIONNAIRE_DB_DSN, QUESTIONNAIRE_DB_USERNAME, QUESTIONNAIRE_DB_PASSWORD );
             $questionnaires_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
             $sql = "
                 SELECT DISTINCT 
                     Questionnaire.QuestionnaireSerNum,
@@ -76,12 +84,30 @@ class LegacyQuestionnaire {
                 $expressionSer  = $data[0];
                 $expressionName = $data[1];
 
-                $expressionDetails = array(
-                    'serial'    => $expressionSer,
-                    'name'      => $expressionName
-                );
+                $sql = "
+                    SELECT DISTINCT
+                        qc.QuestionnaireControlSerNum
+                    FROM
+                        QuestionnaireControl qc 
+                    WHERE 
+                        qc.QuestionnaireDBSerNum = $expressionSer
+                ";
 
-                array_push($expressionList, $expressionDetails);
+                $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $secondQuery->execute();
+
+                $secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
+
+                $exists = $secondData[0];
+
+                if (!$exists) {
+                    $expressionDetails = array(
+                        'serial'    => $expressionSer,
+                        'name'      => $expressionName
+                    );
+
+                    array_push($expressionList, $expressionDetails);
+                }
             } 
             return $expressionList;
         } catch (PDOException $e) {
@@ -126,7 +152,7 @@ class LegacyQuestionnaire {
                 $questionnaireName_EN       = $data[2];
                 $questionnaireName_FR       = $data[3];
                 $questionnairePublish       = $data[4];
-                $questionnaireFilters       = array();
+                $questionnaireTriggers      = array();
 
                 $sql = "
                     SELECT DISTINCT
@@ -164,15 +190,15 @@ class LegacyQuestionnaire {
 
 				while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-					$filterType = $secondData[0];
-					$filterId   = $secondData[1];
-					$filterArray = array (
-						'type'  => $filterType,
-						'id'    => $filterId,
+					$triggerType = $secondData[0];
+					$triggerId   = $secondData[1];
+					$triggerArray = array (
+						'type'  => $triggerType,
+						'id'    => $triggerId,
 						'added' => 1
 					);
 
-					array_push($questionnaireFilters, $filterArray);
+					array_push($questionnaireTriggers, $triggerArray);
 				}
 
                 $occurrenceArray = array(
@@ -192,8 +218,9 @@ class LegacyQuestionnaire {
 					'serial' 		    => $questionnaireControlSer, 
                     'db_serial'			=> $questionnaireDBSer, 
                     'publish'          	=> $questionnairePublish,
+                    'changed'           => 0,
                     'expression'        => $questionnaireExpression,
-					'filters' 		    => $questionnaireFilters,
+					'triggers' 		    => $questionnaireTriggers,
                     'occurrence'        => $occurrenceArray
 				);
 
@@ -246,7 +273,7 @@ class LegacyQuestionnaire {
             $questionnaireIntro_EN      = $data[3];
             $questionnaireIntro_FR      = $data[4];
             $questionnairePublish       = $data[5];
-			$questionnaireFilters	    = array();
+			$questionnaireTriggers	    = array();
 
 			$sql = "
 				SELECT DISTINCT 
@@ -269,15 +296,15 @@ class LegacyQuestionnaire {
 
 			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-					$filterType = $data[0];
-					$filterId   = $data[1];
-					$filterArray = array (
-						'type'  => $filterType,
-						'id'    => $filterId,
+					$triggerType = $data[0];
+					$triggerId   = $data[1];
+					$triggerArray = array (
+						'type'  => $triggerType,
+						'id'    => $triggerId,
 						'added' => 1
 					);
 
-					array_push($questionnaireFilters, $filterArray);
+					array_push($questionnaireTriggers, $triggerArray);
 
 
             }
@@ -351,7 +378,7 @@ class LegacyQuestionnaire {
 				'serial' 		    => $legacyQuestionnaireSer, 
                 'publish'           => $questionnairePublish,
                 'db_serial'         => $questionnaireDBSer,
-				'filters' 		    => $questionnaireFilters,
+				'triggers' 		    => $questionnaireTriggers,
                 'occurrence'        => $occurrenceArray
             );
 		
@@ -377,8 +404,11 @@ class LegacyQuestionnaire {
         $questionnaireIntro_FR  = $legacyQuestionnaireDetails['intro_FR'];
         $questionnaireDBSer     = $legacyQuestionnaireDetails['expression']['serial'];
 
-		$questionnaireFilters	= $legacyQuestionnaireDetails['filters'];
+		$questionnaireTriggers	= $legacyQuestionnaireDetails['triggers'];
         $questionnaireOccurrence    = $legacyQuestionnaireDetails['occurrence'];
+
+        $userSer                = $legacyQuestionnaireDetails['user']['id'];
+        $sessionId              = $legacyQuestionnaireDetails['user']['sessionid'];
 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -391,7 +421,9 @@ class LegacyQuestionnaire {
                         QuestionnaireName_FR,
                         Intro_EN,
                         Intro_FR,
-                        DateAdded
+                        DateAdded,
+                        LastUpdatedBy,
+                        SessionId
 					) 
 				VALUES (
                     '$questionnaireDBSer',
@@ -399,7 +431,9 @@ class LegacyQuestionnaire {
 					\"$questionnaireName_FR\",
                     \"$questionnaireIntro_EN\",
                     \"$questionnaireIntro_FR\",
-                    NOW()
+                    NOW(),
+                    '$userSer',
+                    '$sessionId'
 				)
 			";
 			$query = $host_db_link->prepare( $sql );
@@ -407,11 +441,11 @@ class LegacyQuestionnaire {
 
 			$questionnaireSer = $host_db_link->lastInsertId();
 
-            if (!empty($questionnaireFilters)) {
-    			foreach ($questionnaireFilters as $filter) {
+            if (!empty($questionnaireTriggers)) {
+    			foreach ($questionnaireTriggers as $trigger) {
 
-                    $filterType = $filter['type'];
-                    $filterId   = $filter['id'];
+                    $triggerType = $trigger['type'];
+                    $triggerId   = $trigger['id'];
 
     				$sql = "
                         INSERT INTO 
@@ -420,14 +454,18 @@ class LegacyQuestionnaire {
                                 ControlTableSerNum,
                                 FilterType,
                                 FilterId,
-                                DateAdded
+                                DateAdded,
+                                LastUpdatedBy,
+                                SessionId
                             )
                         VALUE (
                             'LegacyQuestionnaireControl',
                             '$questionnaireSer',
-                            '$filterType',
-                            \"$filterId\",
-                            NOW()
+                            '$triggerType',
+                            \"$triggerId\",
+                            NOW(),
+                            '$userSer',
+                            '$sessionId'
                         )
     				";
     				$query = $host_db_link->prepare( $sql );
@@ -558,15 +596,18 @@ class LegacyQuestionnaire {
      * Deletes a legacy questionnaire from the database
      *
      * @param integer $questionnaireSer : the questionnaire control serial number
+     * @param object $user : the current user in session
      * @return array : response
      */        
-    public function deleteLegacyQuestionnaire( $questionnaireSer ) {
+    public function deleteLegacyQuestionnaire( $questionnaireSer, $user ) {
 
         $response = array(
             'value'     => 0,
             'message'   => ''
         );
 
+        $userSer = $user['id'];
+        $sessionId = $user['sessionid'];
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -601,6 +642,19 @@ class LegacyQuestionnaire {
 
             $query = $host_db_link->prepare( $sql );
             $query->execute();
+
+            $sql = "
+                UPDATE QuestionnaireControlMH
+                SET 
+                    QuestionnaireControlMH.LastUpdatedBy = '$userSer',
+                    QuestionnaireControlMH.SessionId = '$sessionId'
+                WHERE
+                    QuestionnaireControlMH.QuestionnaireControlSerNum = $questionnaireSer
+                ORDER BY QuestionnaireControlMH.RevSerNum DESC 
+                LIMIT 1
+            ";
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
 		
             $response['value'] = 1;
             return $response;
@@ -624,10 +678,16 @@ class LegacyQuestionnaire {
         $questionnaireIntro_EN      = $legacyQuestionnaireDetails['intro_EN'];
         $questionnaireIntro_FR      = $legacyQuestionnaireDetails['intro_FR'];
         $questionnaireSer	        = $legacyQuestionnaireDetails['serial'];
-		$questionnaireFilters	    = $legacyQuestionnaireDetails['filters'];
+		$questionnaireTriggers	    = $legacyQuestionnaireDetails['triggers'];
         $questionnaireOccurrence    = $legacyQuestionnaireDetails['occurrence'];
 
-        $existingFilters	= array();
+        $userSer                    = $legacyQuestionnaireDetails['user']['id'];
+        $sessionId                  = $legacyQuestionnaireDetails['user']['sessionid'];
+
+        $existingTriggers	= array();
+
+        $detailsUpdated             = $legacyQuestionnaireDetails['details_updated'];
+        $triggersUpdated             = $legacyQuestionnaireDetails['triggers_updated'];
 
         $response = array(
             'value'     => 0,
@@ -637,94 +697,122 @@ class LegacyQuestionnaire {
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-			$sql = "
-				UPDATE 
-					QuestionnaireControl 
-				SET 
-					QuestionnaireControl.QuestionnaireName_EN 		= \"$questionnaireName_EN\", 
-					QuestionnaireControl.QuestionnaireName_FR 		= \"$questionnaireName_FR\",
-                    QuestionnaireControl.Intro_EN                   = \"$questionnaireIntro_EN\",
-                    QuestionnaireControl.Intro_FR                   = \"$questionnaireIntro_FR\"
-				WHERE 
-					QuestionnaireControl.QuestionnaireControlSerNum = $questionnaireSer
-			";
+			
+            if ($detailsUpdated) {
+                $sql = "
+    				UPDATE 
+    					QuestionnaireControl 
+    				SET 
+    					QuestionnaireControl.QuestionnaireName_EN 		= \"$questionnaireName_EN\", 
+    					QuestionnaireControl.QuestionnaireName_FR 		= \"$questionnaireName_FR\",
+                        QuestionnaireControl.Intro_EN                   = \"$questionnaireIntro_EN\",
+                        QuestionnaireControl.Intro_FR                   = \"$questionnaireIntro_FR\",
+                        QuestionnaireControl.LastUpdatedBy              = '$userSer',
+                        QuestionnaireControl.SessionId                  = '$sessionId'
+    				WHERE 
+    					QuestionnaireControl.QuestionnaireControlSerNum = $questionnaireSer
+    			";
 
-			$query = $host_db_link->prepare( $sql );
-			$query->execute();
-
-			$sql = "
-				SELECT DISTINCT 
-                    Filters.FilterType,
-                    Filters.FilterId
-				FROM 
-					Filters
-				WHERE 
-                    Filters.ControlTableSerNum       = $questionnaireSer
-                AND Filters.ControlTable             = 'LegacyQuestionnaireControl'
-                AND Filters.FilterType              != ''
-                AND Filters.FilterId                != ''
-			";
-
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
-
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $filterArray = array(
-                    'type'  => $data[0],
-                    'id'    => $data[1]
-                );
-				array_push($existingFilters, $filterArray);
-			}
-
-            if (!empty($existingFilters)) {
-                // If old filters not in new, remove from DB
-	    		foreach ($existingFilters as $existingFilter) {
-                    $id     = $existingFilter['id'];
-                    $type   = $existingFilter['type'];
-                    if (!$this->nestedSearch($id, $type, $questionnaireFilters)) {
-					    $sql = "
-                            DELETE FROM 
-	    						Filters
-		    				WHERE
-                                Filters.FilterId            = \"$id\"
-                            AND Filters.FilterType          = '$type'
-                            AND Filters.ControlTableSerNum   = $questionnaireSer
-                            AND Filters.ControlTable         = 'LegacyQuestionnaireControl'
-    					";
-    
-	    				$query = $host_db_link->prepare( $sql );
-		    			$query->execute();
-			    	}
-    			}   
+    			$query = $host_db_link->prepare( $sql );
+    			$query->execute();
             }
-            if (!empty($questionnaireFilters)) {
-                // If new filters, insert into DB
-    			foreach ($questionnaireFilters as $filter) {
-                    $id     = $filter['id'];
-                    $type   = $filter['type'];
-                    if (!$this->nestedSearch($id, $type, $existingFilters)) {
-                        $sql = "
-                            INSERT INTO 
-                                Filters (
-                                    ControlTable,
-                                    ControlTableSerNum,
-                                    FilterId,
-                                    FilterType,
-                                    DateAdded
+
+            if ($triggersUpdated) {
+
+    			$sql = "
+    				SELECT DISTINCT 
+                        Filters.FilterType,
+                        Filters.FilterId
+    				FROM 
+    					Filters
+    				WHERE 
+                        Filters.ControlTableSerNum       = $questionnaireSer
+                    AND Filters.ControlTable             = 'LegacyQuestionnaireControl'
+                    AND Filters.FilterType              != ''
+                    AND Filters.FilterId                != ''
+    			";
+
+    			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+    			$query->execute();
+
+    			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $triggerArray = array(
+                        'type'  => $data[0],
+                        'id'    => $data[1]
+                    );
+    				array_push($existingTriggers, $triggerArray);
+    			}
+
+                if (!empty($existingTriggers)) {
+                    // If old filters not in new, remove from DB
+    	    		foreach ($existingTriggers as $existingTrigger) {
+                        $id     = $existingTrigger['id'];
+                        $type   = $existingTrigger['type'];
+                        if (!$this->nestedSearch($id, $type, $questionnaireTriggers)) {
+    					    $sql = "
+                                DELETE FROM 
+    	    						Filters
+    		    				WHERE
+                                    Filters.FilterId            = \"$id\"
+                                AND Filters.FilterType          = '$type'
+                                AND Filters.ControlTableSerNum   = $questionnaireSer
+                                AND Filters.ControlTable         = 'LegacyQuestionnaireControl'
+        					";
+        
+    	    				$query = $host_db_link->prepare( $sql );
+    		    			$query->execute();
+
+                            $sql = "
+                                UPDATE FiltersMH
+                                SET 
+                                    FiltersMH.LastUpdatedBy = '$userSer',
+                                    FiltersMH.SessionId = '$sessionId'
+                                WHERE
+                                    FiltersMH.FilterId              = \"$id\"
+                                AND FiltersMH.FilterType            = '$type'
+                                AND FiltersMH.ControlTableSerNum    = $questionnaireSer
+                                AND FiltersMH.ControlTable          = 'LegacyQuestionnaireControl'
+                                ORDER BY FiltersMH.DateAdded DESC 
+                                LIMIT 1
+                            ";
+                            $query = $host_db_link->prepare( $sql );
+                            $query->execute();
+    			    	}
+        			}   
+                }
+                if (!empty($questionnaireTriggers)) {
+                    // If new filters, insert into DB
+        			foreach ($questionnaireTriggers as $trigger) {
+                        $id     = $trigger['id'];
+                        $type   = $trigger['type'];
+                        if (!$this->nestedSearch($id, $type, $existingTriggers)) {
+                            $sql = "
+                                INSERT INTO 
+                                    Filters (
+                                        ControlTable,
+                                        ControlTableSerNum,
+                                        FilterId,
+                                        FilterType,
+                                        DateAdded,
+                                        LastUpdatedBy,
+                                        SessionId
+                                    )
+                                VALUES (
+                                    'LegacyQuestionnaireControl',
+                                    '$questionnaireSer',
+                                    \"$id\",
+                                    '$type',
+                                    NOW(),
+                                    '$userSer',
+                                    '$sessionId'
                                 )
-                            VALUES (
-                                'LegacyQuestionnaireControl',
-                                '$questionnaireSer',
-                                \"$id\",
-                                '$type',
-                                NOW()
-                            )
-			    		";
-				    	$query = $host_db_link->prepare( $sql );
-					    $query->execute();
-    				}
-	    		}
+    			    		";
+    				    	$query = $host_db_link->prepare( $sql );
+    					    $query->execute();
+        				}
+    	    		}
+                }
             }
 
             if (!$questionnaireOccurrence['set']) {
@@ -890,6 +978,185 @@ class LegacyQuestionnaire {
 			return $response;
 		}
     }
+
+     /**
+     *
+     * Gets chart logs of a legacy questionnaire or questionnaires
+     *
+     * @param integer $serial : the legacy questionnaire serial number
+     * @return array $legacyQuestionnaireLogs : the legacy questionnaire logs for highcharts
+     */
+    public function getLegacyQuestionnaireChartLogs ($serial) {
+        $legacyQuestionnaireLogs = array();
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            $sql = null;
+            // get all logs for all legacy questionnaires
+            if (!$serial) {
+                $sql = "
+                    SELECT DISTINCT
+                        lqmh.CronLogSerNum,
+                        COUNT(lqmh.CronLogSerNum),
+                        cl.CronDateTime,
+                        qc.QuestionnaireName_EN
+                    FROM
+                        QuestionnaireMH lqmh,
+                        CronLog cl,
+                        QuestionnaireControl qc
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = lqmh.CronLogSerNum
+                    AND lqmh.CronLogSerNum IS NOT NULL
+                    AND lqmh.QuestionnaireControlSerNum = qc.QuestionnaireControlSerNum
+                    GROUP BY
+                        lqmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC 
+                ";
+
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                $legacyQuestionnaireSeries = array();
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $seriesName = $data[3];
+                    $legacyQuestionnaireDetail = array (
+                        'x' => $data[2],
+                        'y' => intval($data[1]),
+                        'cron_serial' => $data[0]
+                    );
+                    if(!isset($legacyQuestionnaireSeries[$seriesName])) {
+                        $legacyQuestionnaireSeries[$seriesName] = array(
+                            'name'  => $seriesName,
+                            'data'  => array()
+                        );
+                    }
+                    array_push($legacyQuestionnaireSeries[$seriesName]['data'], $legacyQuestionnaireDetail);
+                }
+
+                foreach ($legacyQuestionnaireSeries as $seriesName => $series) {
+                    array_push($legacyQuestionnaireLogs, $series);
+                }
+
+            }
+            // get logs for specific legacy questionnaire
+            else {
+                $sql = "
+                    SELECT DISTINCT
+                        lqmh.CronLogSerNum,
+                        COUNT(lqmh.CronLogSerNum),
+                        cl.CronDateTime
+                    FROM
+                        QuestionnaireMH lqmh,
+                        CronLog cl
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = lqmh.CronLogSerNum
+                    AND lqmh.CronLogSerNum IS NOT NULL
+                    AND lqmh.QuestionnaireControlSerNum = $serial
+                    GROUP BY
+                        lqmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC 
+                ";
+
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                $legacyQuestionnaireSeries = array();
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $seriesName = 'Legacy Questionnaire';
+                    $legacyQuestionnaireDetail = array (
+                        'x' => $data[2],
+                        'y' => intval($data[1]),
+                        'cron_serial' => $data[0]
+                    );
+                    if(!isset($legacyQuestionnaireSeries[$seriesName])) {
+                        $legacyQuestionnaireSeries[$seriesName] = array(
+                            'name'  => $seriesName,
+                            'data'  => array()
+                        );
+                    }
+                    array_push($legacyQuestionnaireSeries[$seriesName]['data'], $legacyQuestionnaireDetail);
+                }
+
+                foreach ($legacyQuestionnaireSeries as $seriesName => $series) {
+                    array_push($legacyQuestionnaireLogs, $series);
+                }
+            }
+            return $legacyQuestionnaireLogs;
+
+        } catch( PDOException $e) {
+            echo $e->getMessage();
+            return $legacyQuestionnaireLogs;
+        }
+    }
+
+    /**
+     *
+     * Gets list logs of legacy questionnaires during one or many cron sessions
+     *
+     * @param array $serials : a list of cron log serial numbers
+     * @return array $legacyQuestionnaireLogs : the legacy questionnaire logs for table view
+     */
+    public function getLegacyQuestionnaireListLogs ($serials) {
+        $legacyQuestionnaireLogs = array();
+        $serials = implode(',', $serials);
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
+                SELECT DISTINCT
+                    qc.QuestionnaireName_EN,
+                    lqmh.QuestionnaireControlSerNum,
+                    lqmh.QuestionnaireRevSerNum,
+                    lqmh.CronLogSerNum,
+                    lqmh.PatientSerNum,
+                    lqmh.PatientQuestionnaireDBSerNum,
+                    lqmh.CompletedFlag,
+                    lqmh.CompletionDate,
+                    lqmh.DateAdded,
+                    lqmh.ModificationAction
+                FROM
+                    QuestionnaireMH lqmh,
+                    QuestionnaireControl qc
+                WHERE
+                    lqmh.QuestionnaireControlSerNum     = qc.QuestionnaireControlSerNum
+                AND lqmh.CronLogSerNum                  IN ($serials)
+            "; 
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $logDetails = array (
+                   'control_name'           => $data[0],
+                   'control_serial'         => $data[1],
+                   'revision'               => $data[2],
+                   'cron_serial'            => $data[3],
+                   'patient_serial'         => $data[4],
+                   'pt_questionnaire_db'    => $data[5],
+                   'completed'              => $data[6],
+                   'completion_date'        => $data[7],
+                   'date_added'             => $data[8],
+                   'mod_action'             => $data[9]
+                );
+                array_push($legacyQuestionnaireLogs, $logDetails);
+            }
+
+            return $legacyQuestionnaireLogs;
+
+        } catch( PDOException $e) {
+            echo $e->getMessage();
+            return $legacyQuestionnaireLogs;
+        }
+    } 
 
 	/**
      *

@@ -1,0 +1,75 @@
+<div class="side-navbar" ng-controller="navigation">
+
+  <!-- Logo -->
+	<div class="row side-logo" ng-click="goToHome()">
+    <div class="col-md-12">
+      <div class="logo">
+        <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+      </div>
+      <h1>opal <strong>ADMIN</strong></h1>
+    </div>
+  </div>
+
+  <!-- Back button -->
+	<div class="row side-panel-menu back-questionnaire">
+		<div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">
+			<div class="panel-container animated" ng-class="{pulse: hoverC, active: currentPage == 'questionnaire-create'}" ng-mouseenter="hoverC=true" ng-mouseleave="hoverC=false" style="cursor:pointer;" ng-click="goToQuestionnaireMainMenu()">
+				<div class="side-panel-info-sm" ng-class="{active: currentPage == 'questionnaire-create'}">
+					<div class="panel-content">
+						<span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+						<h6 class="side-panel-title" style="display:inline-block;margin:0"><strong>Back to Questionnaires</strong></h6>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+  <!-- Menu title -->
+  <div class="row">
+		<div class="side-menu-title">
+			<div style="height: 10px; border-bottom: 1px solid #6f5499;">
+				<span style="background-color:#e6edfa; padding: 0 10px;">
+					<span class="glyphicon glyphicon-triangle-bottom"></span>
+					<h2>Questionnaire Tools</h2>
+				</span>  
+			</div>  
+		</div>
+  </div> 
+
+  <div class="row side-panel-menu">
+    <!-- Manage questionnaire -->
+    <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">   
+      <div class="panel-container animated" ng-class="{pulse: hoverManageQuestionnaires, active: currentPage == 'questionnaire'}" ng-mouseenter="hoverManageQuestionnaires=true" ng-mouseleave="hoverManageQuestionnaires=false" style="cursor:pointer;" ng-click="goToQuestionnaire()">
+        <div class="side-panel-info-sm" ng-class="{active: currentPage == 'questionnaire'}">
+          <div class="panel-content">
+            <span style="font-size: 23px;vertical-align:middle" class="fa fa-pencil" aria-hidden="true"></span>
+            <h6 class="side-panel-title" style="display:inline-block;margin:0"><strong>Manage Questionnaires</strong></h6>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Manage questions -->
+    <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">   
+      <div class="panel-container animated" ng-class="{pulse: hoverManageQuestions, active: currentPage == 'questionnaire/question'}" ng-mouseenter="hoverManageQuestions=true" ng-mouseleave="hoverManageQuestions=false" style="cursor:pointer;" ng-click="goToQuestionnaireQuestionBank()">
+        <div class="side-panel-info-sm" ng-class="{active: currentPage == 'questionnaire/question'}">
+          <div class="panel-content">
+            <span style="font-size: 23px;vertical-align:middle" class="fa fa-search" aria-hidden="true"></span>
+            <h6 class="side-panel-title" style="display:inline-block;margin:0"><strong>Manage Questions</strong></h6>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Completed questionnaires -->
+    <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">   
+      <div class="panel-container animated" ng-class="{pulse: hoverCompletedQuestionnaires, active: currentPage == 'questionnaire/completed'}" ng-mouseenter="hoverCompletedQuestionnaires=true" ng-mouseleave="hoverCompletedQuestionnaires=false" style="cursor:pointer;" ng-click="goToQuestionnaireCompleted()">
+        <div class="side-panel-info-sm" ng-class="{active: currentPage == 'questionnaire/completed'}">
+          <div class="panel-content">
+            <span style="font-size: 23px;vertical-align:middle" class="fa fa-check" aria-hidden="true"></span>
+            <h6 class="side-panel-title" style="display:inline-block;margin:0"><strong>Completed Questionnaires</strong></h6>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

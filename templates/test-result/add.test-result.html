@@ -1,0 +1,565 @@
+  <div id="main">
+    <div id="top">
+      <div class="clearfix">
+        <div class="row">
+          <!-- Left side view -->
+          <div class="col-lg-2">
+            <!-- Logo -->
+            <div class="side-navbar" ng-controller="navigation">
+              <div class="row side-logo" ng-click="goToHome()">
+                <div class="col-md-12">
+                  <div class="logo">
+                    <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+                  </div>
+                  <h1 class="animated fadeIn">opal <strong>ADMIN</strong></h1>
+                </div>
+              </div>   
+            </div>  
+            <div class="summary-fix">
+              <!-- Back button -->
+  						<div class="row side-panel-menu">
+  							<div class="col-xs-12 col-sm-5 col-lg-12">
+  								<div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+  									<div class="side-panel-info-sm">
+  										<div class="panel-content">
+  											<span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+  											<h6 class="side-panel-title"><strong>Back to Test Results</strong></h6>
+  										</div>
+  									</div>
+  								</div>
+  							</div>
+                <!-- Summary -->
+                <div class="side-menu-title col-lg-12">
+                  <div class="horz-line" style="height: 16px; text-align: center">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <h2>Summary</h2>
+                    </span>  
+                  </div>  
+                </div>
+                <div class="col-lg-12">
+                  <div class="progress progress-striped active">
+                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <uib-accordion class="side-navbar">
+                <!-- SECTION: Tests -->
+                <div uib-accordion-group is-open="testsSection.open" class="panel-container summary-box" is-disabled="!checkTestsAdded(testList)">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items:center">
+                      <div class="col-md-2">
+                        <span ng-if="checkTestsAdded(testList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Test(s)</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i ng-if="checkTestsAdded(testList)" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': testsSection.open, 'glyphicon-chevron-right': !testsSection.open}"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="checkTestsAdded(testList)" class="description">
+                    <p style="margin-top: 5px;">
+                      <ul style="max-height: 100px; overflow-y: auto;">
+                        <li ng-repeat="test in testList | filter: {added: 1} : 1">
+                          {{test.name}} 
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Title & Description -->
+                <div uib-accordion-group is-open="titleDescriptionSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: titleDescriptionSection.show}" is-disabled="!newTestResult.name_EN && !newTestResult.name_FR && !newTestResult.description_EN && !newTestResult.description_FR" ng-if="titleDescriptionSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newTestResult.name_EN && newTestResult.name_FR && newTestResult.description_EN && newTestResult.description_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Title & Description</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleDescriptionSection.open, 'glyphicon-chevron-right': !titleDescriptionSection.open}" ng-if="newTestResult.name_EN || newTestResult.name_FR || newTestResult.description_EN || newTestResult.description_FR"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newTestResult.name_EN || newTestResult.description_EN" class="description">
+                    <p ng-if="newTestResult.name_EN" style="margin-bottom:5px;">
+                      <strong>EN</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newTestResult.name_EN}}
+                    </p>
+                    <p ng-if="newTestResult.description_EN" style="padding-left:10px; font-size:10px;"><em>See rendered output for description</em></p>
+                  </div>
+                  <div ng-if="newTestResult.name_FR || newTestResult.description_FR" class="description">
+                    <p ng-if="newTestResult.name_FR" style="margin-bottom:5px;">
+                      <strong>FR</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newTestResult.name_FR}}
+                    </p>
+                    <p ng-if="newTestResult.description_FR" style="padding-left:10px; font-size:10px;"><em>See rendered output for description</em></p>
+                  </div>
+                </div>
+                <!-- SECTION: Test group -->
+                <div uib-accordion-group is-open="testGroupSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: testGroupSection.show}" is-disabled="!newTestResult.group_EN && !newTestResult.group_FR" ng-if="testGroupSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newTestResult.group_EN && newTestResult.group_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Group</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': testGroupSection.open, 'glyphicon-chevron-right': !testGroupSection.open}" ng-if="newTestResult.group_EN || newTestResult.group_FR"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newTestResult.group_EN" class="description">
+                    <p>
+                      <strong>EN</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span> 
+                      {{newTestResult.group_EN}}
+                    </p>
+                  </div>
+                  <div ng-if="newTestResult.group_FR" class="description">
+                    <p>
+                      <strong>FR</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span> 
+                      {{newTestResult.group_FR}}
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Educational material -->
+                <div uib-accordion-group is-open="educationalMaterialSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: educationalMaterialSection.show}" is-disabled="!newTestResult.eduMat" ng-if="educationalMaterialSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newTestResult.eduMat" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Educational Material</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': educationalMaterialSection.open, 'glyphicon-chevron-right': !educationalMaterialSection.open}" ng-if="newTestResult.eduMat"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading> 
+                  <div ng-if="newTestResult.eduMat" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newTestResult.eduMat.name_EN}}
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Additional Links -->
+                <div uib-accordion-group is-open="additionalLinksSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:additionalLinksSection.show}" is-disabled="!newTestResult.additional_links.length" ng-if="additionalLinksSection.show">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="additionalLinksComplete" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Additional Links</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':additionalLinksSection.open, 'glyphicon-chevron-right':!additionalLinksSection.open}" ng-if="newTestResult.additional_links.length"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newTestResult.additional_links.length" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newTestResult.additional_links.length}} Item(s)
+                    </p>
+                  </div>
+                </div>
+              </uib-accordion>
+              <!-- Submit button -->
+              <div class="panel-container">
+                <a href="" ng-click="submitTestResult()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                  <span style="font-size: 20px;"><strong>Submit Test Result</strong></span>
+                </a>
+              </div>
+            </div>
+          </div>
+          <!-- Right side view -->
+          <div class="col-xs-12 col-lg-10 animated fadeInRight">
+            <div class="row main-title">
+              <!-- Page title -->
+              <div class="col-xs-12 col-md-8 title-content">
+                <span class="glyphicon glyphicon-plus"></span>
+                <h1><strong>Add Test Result</strong></h1>
+              </div>
+              <!-- Breadcrumbs -->
+              <div class="col-md-4 title-breadcrumbs"> 
+                <span>
+                  <span><a ui-sref="home">Home</a></span>
+                  <span class="teflon glyphicon glyphicon-menu-right"></span> 
+                  <span><a ui-sref="test-result">Test Results</a></span>
+                  <span class="teflon glyphicon glyphicon-menu-right"></span> 
+                  <span><strong>Add Test Result</strong></span>
+                </span>
+              </div>
+            </div>
+            <div class="row mobile-side-panel-menu">
+              <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
+                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                  <div class="side-panel-info-sm">
+                    <div class="panel-content">
+                      <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                      <h6 class="side-panel-title"><strong>Back to Test Results</strong></h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkForm()">
+                <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
+                  <span style="padding: 0 10px;">
+                    <h2>Step {{numOfCompletedSteps}} of {{stepTotal}} Completed</h2>
+                  </span>  
+                </div>  
+                <div class="progress progress-striped active">
+                  <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                  </div>
+                </div>
+              </div>
+              <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkForm()">
+                <div class="panel-container">
+                  <a href="" ng-click="submitTestResult()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                    <span style="font-size: 20px;"><strong>Submit Test Result</strong></span>
+                  </a>
+                </div>
+              </div> 
+            </div>
+            <!-- SECTION: Tests --> 
+            <div class="row">
+              <div class="col-xs-12 side-menu-title">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fas fa-dot-circle"></span>
+                    <h2>Tests</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>   
+            <div class="row">
+              <div class="col-xs-12">
+                <p style="margin-bottom: 10px;">
+                  <span style="color:#d9534f"><strong>Required field:</strong></span>
+                  Please add one or more tests to categorize and TestResult.
+                </p>
+              </div>
+            </div>  
+            <div class="row"> 
+              <div class="col-xs-12 col-lg-9">
+                <div class="panel" ng-class="checkTestsAdded(testList) ? 'panel-success': 'panel-danger'">
+                  <div class="panel-heading"><strong>Test List</strong>
+                    <span ng-hide="checkTestsAdded(testList)" style="float:right"><em>Incomplete</em></span>
+                    <span ng-show="checkTestsAdded(testList)" style="float:right"><em>Complete</em></span>
+                  </div>
+                  <div class="panel-body">
+                    <div class="list-space">
+                      <div class="input-group" style="padding-bottom: 10px;">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                        <input class="form-control" type="text" ng-model="testFilter" ng-change="changeTestFilter(testFilter)" placeholder="Search Tests"/>
+                      </div>
+                       <div class="btn-group btn-group-justified">
+                        <a class="btn btn-default" ng-class="{'active' : testCodeFilter == 'all'}" ng-click="setTestCodeFilter('all')">Show all</a>
+                        <a class="btn btn-default" ng-class="{'active' : testCodeFilter == 'current'}" ng-click="setTestCodeFilter('current')">Assigned to this Test</a>
+                        <a class="btn btn-default" ng-class="{'active' : testCodeFilter == 'other'}" ng-click="setTestCodeFilter('other')">Assigned to others</a>
+                        <a class="btn btn-default" ng-class="{'active' : testCodeFilter == 'none'}" ng-click="setTestCodeFilter('none')">Unassigned</a>
+                      </div>
+                      <ul class="list-items">
+                        <li ng-repeat="test in testList | filter: searchTestsFilter">
+                          <label ng-class="{greenText: test.added, grayText: test.assigned && !test.added}">
+                            <input type="checkbox" ng-click="toggleTestSelection(test)" ng-checked="test.added" /> {{test.name}}
+                            <span ng-class="{redText: test.assigned}" ng-if="test.assigned && !test.added"><em> --- Assigned to: {{test.assigned.name_EN}}</em></span>
+                            <span ng-class="{redText: test.assigned}" ng-if="test.assigned && test.added"><em> --- Will replace assignment from: {{test.assigned.name_EN}}</em></span>
+                          </label>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- SECTION: Title & Description -->
+            <div class="row animated" ng-class="{fadeInUp: titleDescriptionSection.show}" ng-if="titleDescriptionSection.show">
+              <div class="col-xs-12 side-menu-title">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fas fa-dot-circle"></span>
+                    <h2>Title & Description</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>   
+            <div class="row animated" ng-class="{fadeInUp: titleDescriptionSection.show}" ng-if="titleDescriptionSection.show">
+              <div class="col-xs-12">
+                <p style="margin-bottom: 10px;">
+                  <span style="color:#d9534f"><strong>Required field:</strong></span>
+                  Please assign an english and french title and description.
+                </p>
+              </div>
+            </div>  
+            <div class="row animated" ng-class="{fadeInUp: titleDescriptionSection.show}" ng-if="titleDescriptionSection.show"> 
+              <div class="col-xs-12 col-md-6">
+                <div class="panel" ng-class="(newTestResult.name_EN && newTestResult.description_EN) ? 'panel-success': 'panel-danger'">
+                  <div class="panel-heading"><strong>English</strong>
+                    <span ng-hide="newTestResult.name_EN && newTestResult.description_EN" style="float:right"><em>Incomplete</em></span>
+                    <span ng-show="newTestResult.name_EN && newTestResult.description_EN" style="float:right"><em>Complete</em></span>
+                  </div>
+                  <div class="panel-body form-horizontal">
+                    <div class="form-group">
+                      <label class="control-label col-xs-12 col-lg-2">
+                        Title
+                      </label>
+                      <div class="col-xs-12 col-lg-10">
+                        <input class="form-control" type="text" ng-model="newTestResult.name_EN" ng-change="titleDescriptionUpdate()" placeholder="English Title" required="required">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label col-xs-12 col-lg-2">
+                        Description
+                      </label>
+                      <div class="col-xs-12 col-lg-10">
+                        <div text-angular ng-model="newTestResult.description_EN" ng-change="titleDescriptionUpdate()" placeholder="English Description" required="required" ta-toolbar="toolbar"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>          
+              <div class="col-xs-12 col-md-6">
+                <div class="panel" ng-class="(newTestResult.name_FR && newTestResult.description_FR) ? 'panel-success': 'panel-danger'">
+                  <div class="panel-heading"><strong>Français</strong>
+                    <span ng-hide="newTestResult.name_FR && newTestResult.description_FR" style="float:right"><em>Incomplete</em></span>
+                    <span ng-show="newTestResult.name_FR && newTestResult.description_FR" style="float:right"><em>Complete</em></span>
+                  </div>
+                  <div class="panel-body form-horizontal">
+                    <div class="form-group">
+                      <label class="control-label col-xs-12 col-lg-2">
+                        Titre
+                      </label>
+                      <div class="col-xs-12 col-lg-10">
+                        <input class="form-control" type="text" ng-model="newTestResult.name_FR" ng-change="titleDescriptionUpdate()" placeholder="Titre Français" required="required">
+                      </div>
+                    </div> 
+                    <div class="form-group">
+                      <label class="control-label col-xs-12 col-lg-2">
+                        Description
+                      </label>
+                      <div class="col-xs-12 col-lg-10">
+                        <div text-angular ng-model="newTestResult.description_FR" ng-change="titleDescriptionUpdate()" placeholder="Description Français" required="required" ta-toolbar="toolbar"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- SECTION: Test group -->
+            <div class="row animated" ng-class="{fadeInUp: testGroupSection.show}" ng-if="testGroupSection.show">
+              <div class="col-xs-12 side-menu-title">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fas fa-dot-circle"></span>
+                    <h2>Test Group</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>   
+            <div class="row animated" ng-class="{fadeInUp: testGroupSection.show}" ng-if="testGroupSection.show">
+              <div class="col-xs-12">
+                <p style="margin-bottom: 10px;">
+                  <span style="color:#d9534f"><strong>Required field:</strong></span>
+                  Please assign an english and french test group.
+                </p>
+              </div>
+            </div>  
+            <div class="row animated" ng-class="{fadeInUp: testGroupSection.show}" ng-if="testGroupSection.show"> 
+              <div class="col-xs-12 col-md-6">
+                <div class="panel" ng-class="(newTestResult.group_EN) ? 'panel-success': 'panel-danger'">
+                  <div class="panel-heading"><strong>English</strong>
+                    <span ng-hide="newTestResult.group_EN" style="float:right"><em>Incomplete</em></span>
+                    <span ng-show="newTestResult.group_EN" style="float:right"><em>Complete</em></span>
+                  </div>
+                  <div class="panel-body form-horizontal">
+                    <div class="form-group">
+                      <label class="control-label col-xs-12 col-lg-2">
+                        Test Group
+                      </label>
+                      <div class="col-xs-12 col-lg-10">
+                        <input class="form-control" type="text" ng-model="newTestResult.group_EN" ng-change="groupUpdate(newTestResult.group_EN, 'EN')" typeahead-on-select="groupUpdate(newTestResult.group_EN, 'EN')" uib-typeahead="group.EN as group.EN for group in TestResultGroups | filter:{EN:$viewValue}" typeahead-min-length="0" placeholder="English" required="required"> 
+                      </div>
+                    </div>  
+                  </div>  
+                </div>
+              </div>          
+              <div class="col-xs-12 col-md-6">
+                <div class="panel" ng-class="(newTestResult.group_FR) ? 'panel-success': 'panel-danger'">
+                  <div class="panel-heading"><strong>Français</strong>
+                    <span ng-hide="newTestResult.group_FR" style="float:right"><em>Incomplete</em></span>
+                    <span ng-show="newTestResult.group_FR" style="float:right"><em>Complete</em></span>
+                  </div>
+                  <div class="panel-body form-horizontal">
+                    <div class="form-group">
+                      <label class="control-label col-xs-12 col-lg-2">
+                        Groupe d'Essai
+                      </label>
+                      <div class="col-xs-12 col-lg-10">
+                        <input class="form-control" type="text" ng-model="newTestResult.group_FR" ng-change="groupUpdate(newTestResult.group_FR, 'FR')" typeahead-on-select="groupUpdate(newTestResult.group_FR, 'FR')" uib-typeahead="group.FR as group.FR for group in TestResultGroups | filter:{FR:$viewValue}" typeahead-min-length="0" placeholder="Francais" required="required"> 
+                      </div>
+                    </div>    
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- SECTION: Educational material -->
+            <div class="row animated" ng-class="{fadeInUp: educationalMaterialSection.show}" ng-if="educationalMaterialSection.show">
+              <div class="col-xs-12 side-menu-title">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fas fa-dot-circle"></span>
+                    <h2>Educational Material</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>
+            <div class="row animated" ng-class="{fadeInUp: educationalMaterialSection.show}" ng-if="educationalMaterialSection.show">
+              <div class="col-xs-12">
+                <p style="margin-bottom: 10px;">
+                  <span><strong>Optional field:</strong></span>
+                  Assigning an educational material will provide a rich-text description of the test result.
+                </p>
+              </div>
+            </div>
+            <div class="row animated" ng-class="{fadeInUp: educationalMaterialSection.show}" ng-if="educationalMaterialSection.show"> 
+              <div class="col-xs-12 col-lg-8">
+                <div class="panel-container">
+                  <div class="panel-info">
+                    <div class="panel-content">
+                      <div class="panel-input">  
+                        <div class="list-space">
+                          <div class="input-group">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                            <input class="form-control" type="text" ng-model="eduMatFilter" ng-change="changeEduMatFilter(eduMatFilter)" placeholder="Search Educational Material"/>
+                          </div>
+                          <ul class="list-items">
+                            <li ng-repeat="eduMat in eduMatList | filter: searchEduMatsFilter">
+                              <label>
+                                <input type="radio" ng-model="newTestResult.eduMatSer" ng-click="eduMatUpdate($event, eduMat)" value="{{eduMat.serial}}" /> {{eduMat.name_EN}}
+                              </label>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- SECTION: Additional Links -->
+            <div class="row animated" ng-class="{fadeInUp:additionalLinksSection.show}" ng-if="additionalLinksSection.show">
+              <div class="col-xs-12 side-menu-title">
+                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                  <span style="background-color:#e6edfa; padding: 0 10px;">
+                    <span class="fas fa-dot-circle"></span>
+                    <h2>Additional Links</h2>
+                  </span>  
+                </div>  
+              </div>
+            </div>   
+            <div class="row animated" ng-class="{fadeInUp:additionalLinksSection.show}" ng-if="additionalLinksSection.show">
+              <div class="col-xs-12">
+                <p style="margin-bottom: 10px;">
+                  <span style="color:#d9534f"><strong>Optional field:</strong></span>
+                  Please provide additional links for more information on this test result.
+                </p>
+              </div>
+            </div> 
+            <div class="row" ng-repeat="link in newTestResult.additional_links" style="margin-bottom: 7px;">
+              <div class="col-xs-12 col-md-6">
+                <div class="panel" ng-class="(link.name_EN && link.url_EN) ? 'panel-success' : 'panel-danger'">
+                  <div class="panel-heading"><strong>English</strong>
+                    <span style="float:right; cursor:pointer; margin-left:10px;" ng-click="removeAdditionalLink($index)" class="glyphicon glyphicon-remove"></span></span>
+                    <span ng-hide="link.name_EN && link.url_EN" style="float:right;"><em>Incomplete</em></span>
+                    <span ng-show="link.name_EN && link.url_EN" style="float:right;"><em>Complete</em></span>
+                  </div>
+                  <div class="panel-body form-horizontal">
+                    <div class="form-group">
+                      <label class="control-label col-xs-12 col-lg-2">
+                        Title
+                      </label>
+                      <div class="col-xs-12 col-lg-10">
+                        <input class="form-control" type="text" ng-change="additionalLinkUpdate()" ng-model="link.name_EN" placeholder="English Title" required="required">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label col-xs-12 col-lg-2">
+                        URL
+                      </label>
+                      <div class="col-xs-12 col-lg-10">
+                        <input class="form-control" type="text" ng-change="additionalLinkUpdate()" ng-model="link.url_EN" placeholder="English URL" required="required">
+                      </div>
+                    </div>  
+                  </div>
+                </div>
+              </div>
+              <div class="col-xs-12 col-md-6">
+                <div class="panel" ng-class="(link.name_FR && link.url_FR) ? 'panel-success' : 'panel-danger'">
+                  <div class="panel-heading"><strong>Français</strong>
+                    <span style="float:right; cursor:pointer; margin-left:10px;" ng-click="removeAdditionalLink($index)" class="glyphicon glyphicon-remove"></span></span>
+                    <span ng-hide="link.name_FR && link.url_FR" style="float:right;"><em>Incomplete</em></span>
+                    <span ng-show="link.name_FR && link.url_FR" style="float:right;"><em>Complete</em></span>
+                  </div>
+                  <div class="panel-body form-horizontal">
+                    <div class="form-group">
+                      <label class="control-label col-xs-12 col-lg-2">
+                        Titre
+                      </label>
+                      <div class="col-xs-12 col-lg-10">
+                        <input class="form-control" type="text" ng-change="additionalLinkUpdate()" ng-model="link.name_FR" placeholder="Title Français" required="required">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label col-xs-12 col-lg-2">
+                        URL
+                      </label>
+                      <div class="col-xs-12 col-lg-10">
+                        <input class="form-control" type="text" ng-change="additionalLinkUpdate()" ng-model="link.url_FR" placeholder="URL Français" required="required">
+                      </div>
+                    </div>  
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row animated" ng-class="{fadeInUp:additionalLinksSection.show}" ng-if="additionalLinksSection.show">
+              <div class="col-xs-4 col-sm-3 col-md-2 ">
+                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hoverJ}" ng-click="addAdditionalLink()" ng-mouseenter="hoverJ=true" ng-mouseleave="hoverJ=false">
+                  <div class="panel-info">
+                    <div class="panel-content" style="text-align:center">
+                      <span style="font-size:30px;" class="glyphicon glyphicon-plus"></span>
+                      <div class="option-panel-title">Add</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- END SECTION -->
+          </div>
+        </div>
+      </div>
+    </div>
+<script type="text/ng-template" id="processingModal.htm">
+  <div class="modal-header">
+    <h1> Processing...</h1>
+  </div>
+  <div class="modal-body">
+    <div class="progress progress-striped active">
+      <div class="progress-bar" style="width: 100%"></div>        
+    </div>
+  </div>
+</script>
+

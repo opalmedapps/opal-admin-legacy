@@ -1,0 +1,102 @@
+  <div id="main">
+    <div id="top">
+      <div class="clearfix">
+        <div class="row">
+          <!-- Load side menu -->
+          <div id="side-panel-scrollbar" class="col-lg-2">
+            <div ng-include="'templates/side-panel-menu.html'"></div>
+          </div>
+          <!-- Right side detail view -->
+          <div class="col-lg-10 animated fadeIn">
+            <div class="row main-title">
+              <!-- Page title -->
+              <div class="col-xs-12 col-md-8 title-content">
+                <span class="fa fa-heartbeat"></span>
+                <h1><strong>Test Results</strong></h1>
+              </div>
+              <!-- Breadcrumbs -->
+              <div class="col-md-4 title-breadcrumbs">
+                <span><a ui-sref="home">Home</a> <span class="glyphicon glyphicon-menu-right teflon"></span> <strong>Test Results</strong></span>
+              </div>
+            </div>
+						<div class="row clearfix operations">
+							<div class="save-add col-xs-12 col-sm-6 col-md-8 col-lg-9">
+                <!-- Add button -->
+								<a style="width:100px;margin-right:20px;" href="" ng-click="goToAddTestResult()" class="btn btn-md btn-outline item-button">
+									<span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
+									<span style="font-size: 20px;"><strong>Add</strong></span>
+                </a>
+                <!-- Save changes button -->
+								<a href="" ng-click="submitPublishFlags()" class="btn btn-md item-button-success animated" ng-if="changesMade" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false">
+									<span style="font-size: 17px;" class="glyphicon glyphicon-ok"></span>
+									<span style="font-size: 20px;"><strong>Save Changes</strong></span>
+								</a>
+              </div>
+              <!-- Search field -->
+							<div class="search col-xs-12 col-sm-6 col-md-4 col-lg-3">
+								<div class="form-group has-feedback" style="margin-bottom: 0">
+								<input type="text" class="form-control" ng-model="filterValue" ng-change="filterTestResult(filterValue)" placeholder="Search...">
+									<span class="glyphicon glyphicon-search form-control-feedback"></span>
+								</div>
+							</div>
+            </div>
+            <div class="row list-logs">
+              <div class="col-xs-12 col-sm-offset-2 col-sm-8 col-lg-offset-4 col-lg-4">
+                <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                  <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default" ng-click="switchDetailView('list')" ng-class="{'active': detailView == 'list', 'disabled': changesMade}">
+                      <i class="fa fa-list"></i> List
+                    </button>
+                  </div>
+                  <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default" ng-click="switchDetailView('chart')" ng-class="{'active': detailView == 'chart', 'disabled': changesMade}">
+                      <i class="fa fa-area-chart"></i> Logs
+                    </button>
+                  </div>
+                </div> 
+              </div>
+            </div>
+            <div>
+              <div ng-if="detailView == 'list'">
+                <!-- Load main table -->
+                <div class="panel-container" style="text-align:left;">
+                  <div class="panel-info">
+                    <div class="panel-input">
+                      <div id="data-table">
+                        <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns style="height:75vh"></div>
+                      </div>
+                    </div>
+                  </div>            
+                </div>
+              </div>
+              <div ng-if="detailView == 'chart'">
+                <!-- Load chart -->
+                <div class="panel-container" ng-if="!testResultChartLogs.length">
+                  <div class="panel-info">
+                    <div class="jumbotron content" style="background-color: transparent; margin-bottom:0">
+                      <p style="font-size:45px;">No data available</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel-container" ng-if="testResultChartLogs.length">
+                  <div class="panel-info">
+                    <highchart id="chart1" config="chartConfig"></highchart>
+                  </div>
+                </div>
+                <div class="panel-container" ng-if="testResultListLogs.length > 0">
+                  <div class="panel-info">
+                    <div class="panel-input">
+                      <div id="data-table">
+                        <div class="gridStyle" ui-grid="gridLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (testResultListLogs.length*gridLogOptions.rowHeight)+32+'px'}"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <div class="bannerMessage alert-success">{{bannerMessage}}</div>
+  </div>

@@ -1,0 +1,99 @@
+<!-- Modal title -->
+<div class="modal-header">
+  <div class="col-xs-12 col-md-6">
+    <h2 class="modal-title">
+      <span class="glyphicon glyphicon-pencil"></span> 
+      Edit User
+    </h2>
+    <p class="modal-title-caption">
+      {{user.username}} 
+    </p>
+  </div>
+  <div class="modal-buttons col-xs-12 col-md-6">
+    <span> 
+      <form method="post" ng-submit="updateUser()">
+        <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+      </form>
+    </span>     
+  </div>
+</div>
+<div class="modal-body">
+  <uib-accordion>
+
+    <!-- SECTION: Password -->
+    <div uib-accordion-group is-open="passwordSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Change Password</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': passwordSection.open, 'glyphicon-chevron-right': !passwordSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="form-horizontal">
+        <div class="form-group has-feedback" ng-class="{'has-success': validPassword.status == 'valid', 'has-error': validPassword.status == 'invalid', 'has-warning': validPassword.status == 'warning'}">
+          <label class="control-label col-xs-12 col-md-2">
+            Password <br><em><small>(min: 6 characters)</small></em>
+          </label>
+          <div class="col-xs-12 col-md-7">
+            <input type="password" class="form-control" ng-change="validatePassword(user.password)" ng-model="user.password">
+            <span ng-show="validPassword.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validPassword.status == 'valid', 'glyphicon-remove': validPassword.status == 'invalid', 'glyphicon-warning-sign': validPassword.status == 'warning'}" aria-hidden="true"></span>
+          </div>
+          <em class="control-label col-xs-12 col-md-3" ng-show="validPassword.status == 'invalid' || validPassword.status == 'warning'" ng-class="{'has-success': validPassword.status == 'valid', 'has-error': validPassword.status == 'invalid', 'has-warning': validPassword.status == 'warning'}" style="text-align:left">
+            {{validPassword.message}}
+          </em>
+        </div>
+        <div class="form-group has-feedback" ng-class="{'has-success': validConfirmPassword.status == 'valid', 'has-error': validConfirmPassword.status == 'invalid', 'has-warning': validConfirmPassword.status == 'warning'}">
+          <label class="control-label col-xs-12 col-md-2">
+            Re-type Password
+          </label>
+          <div class="col-xs-12 col-md-7">
+            <input type="password" class="form-control" required="required" ng-change="validateConfirmPassword(user.confirmPassword)" ng-model="user.confirmPassword" ng-disabled="user.password.length < 6 || !user.password">
+            <span ng-show="validConfirmPassword.status" class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok': validConfirmPassword.status == 'valid', 'glyphicon-remove': validConfirmPassword.status == 'invalid', 'glyphicon-warning-sign': validConfirmPassword.status == 'warning'}" aria-hidden="true"></span>
+          </div>
+          <em class="control-label col-xs-12 col-md-3" ng-show="validConfirmPassword.status == 'invalid' || validConfirmPassword.status == 'warning'" ng-class="{'has-success': validConfirmPassword.status == 'valid', 'has-error': validConfirmPassword.status == 'invalid', 'has-warning': validConfirmPassword.status == 'warning'}" style="text-align:left">
+            {{validConfirmPassword.message}}
+          </em>
+        </div>    
+      </div>
+    </div>
+
+    <!-- SECTION: Role -->
+    <div uib-accordion-group is-open="roleSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Change Role </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': roleSection.open, 'glyphicon-chevron-right': !roleSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="row">
+        <div class="col-xs-12 col-sm-10">
+          <div class="row">
+            <div class="col-sm-6">
+              <select ng-model="user.role.serial" ng-change="roleUpdate()" ng-options="role.serial as role.name for role in roles" class="form-control">
+                <option ng-hide="user.role" value="">Select Role</option>
+              </select>
+            </div>
+          </div>
+        </div>  
+      </div>
+    </div> 
+
+    <!-- SECTION: Language -->
+    <div uib-accordion-group is-open="languageSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Change Language</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': languageSection.open, 'glyphicon-chevron-right': !languageSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="row">
+        <div class="col-xs-12 col-sm-10">
+          <div class="row">
+            <div class="col-sm-6">
+              <select ng-model="user.language" ng-change="languageUpdate()" ng-options="language.id as language.name for language in languages" class="form-control">
+              </select>
+            </div>
+          </div>
+        </div>  
+      </div>
+    </div> 
+
+  </uib-accordion>
+</div>
