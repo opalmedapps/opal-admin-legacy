@@ -5,5 +5,6 @@ CREATE TABLE `OAActivityLog` (
   `SessionId` varchar(255) NOT NULL,
   `DateAdded` datetime NOT NULL,
   PRIMARY KEY (`ActivitySerNum`),
-  KEY `OAUserSerNum` (`OAUserSerNum`)
+  KEY `OAUserSerNum` (`OAUserSerNum`),
+  CONSTRAINT `OAActivityLog_ibfk_1` FOREIGN KEY (`OAUserSerNum`) REFERENCES `OAUser` (`OAUserSerNum`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1

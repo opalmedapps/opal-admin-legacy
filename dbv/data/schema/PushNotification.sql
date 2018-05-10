@@ -13,5 +13,7 @@ CREATE TABLE `PushNotification` (
   KEY `PatientSerNum` (`PatientSerNum`),
   KEY `NotificationControlSerNum` (`NotificationControlSerNum`),
   KEY `RefTableRowSerNum` (`RefTableRowSerNum`),
-  CONSTRAINT `PushNotification_ibfk_1` FOREIGN KEY (`PatientDeviceIdentifierSerNum`) REFERENCES `PatientDeviceIdentifier` (`PatientDeviceIdentifierSerNum`) ON UPDATE CASCADE
+  CONSTRAINT `PushNotification_ibfk_3` FOREIGN KEY (`NotificationControlSerNum`) REFERENCES `NotificationControl` (`NotificationControlSerNum`) ON UPDATE CASCADE,
+  CONSTRAINT `PushNotification_ibfk_1` FOREIGN KEY (`PatientDeviceIdentifierSerNum`) REFERENCES `PatientDeviceIdentifier` (`PatientDeviceIdentifierSerNum`) ON UPDATE CASCADE,
+  CONSTRAINT `PushNotification_ibfk_2` FOREIGN KEY (`PatientSerNum`) REFERENCES `Patient` (`PatientSerNum`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1

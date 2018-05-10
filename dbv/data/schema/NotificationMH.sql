@@ -10,5 +10,8 @@ CREATE TABLE `NotificationMH` (
   `ModificationAction` varchar(25) NOT NULL,
   `LastUpdated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`NotificationSerNum`,`NotificationRevSerNum`),
-  KEY `CronLogSerNum` (`CronLogSerNum`)
+  KEY `CronLogSerNum` (`CronLogSerNum`),
+  KEY `PatientSerNum` (`PatientSerNum`),
+  KEY `NotificationControlSerNum` (`NotificationControlSerNum`),
+  KEY `RefTableRowSerNum` (`RefTableRowSerNum`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1

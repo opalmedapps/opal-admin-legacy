@@ -2,7 +2,7 @@ CREATE TABLE `DocumentMH` (
   `DocumentSerNum` int(11) NOT NULL,
   `DocumentRevSerNum` int(11) NOT NULL AUTO_INCREMENT,
   `CronLogSerNum` int(11) DEFAULT NULL,
-  `SessionId` text,
+  `SessionId` varchar(255) DEFAULT NULL,
   `PatientSerNum` int(11) NOT NULL,
   `SourceDatabaseSerNum` int(11) NOT NULL,
   `DocumentId` varchar(100) NOT NULL,
@@ -26,5 +26,10 @@ CREATE TABLE `DocumentMH` (
   `LastUpdated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`DocumentSerNum`,`DocumentRevSerNum`),
   KEY `SourceDatabaseSerNum` (`SourceDatabaseSerNum`),
-  KEY `CronLogSerNum` (`CronLogSerNum`)
+  KEY `CronLogSerNum` (`CronLogSerNum`),
+  KEY `PatientSerNum` (`PatientSerNum`),
+  KEY `AliasExpressionSerNum` (`AliasExpressionSerNum`),
+  KEY `ApprovedBySerNum` (`ApprovedBySerNum`),
+  KEY `AuthoredBySerNum` (`AuthoredBySerNum`),
+  KEY `CreatedBySerNum` (`CreatedBySerNum`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1

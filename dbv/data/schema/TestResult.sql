@@ -26,6 +26,7 @@ CREATE TABLE `TestResult` (
   KEY `SourceDatabaseSerNum` (`SourceDatabaseSerNum`),
   KEY `TestResultExpressionSerNum` (`TestResultExpressionSerNum`),
   KEY `CronLogSerNum` (`CronLogSerNum`),
+  KEY `TestResultGroupSerNum` (`TestResultGroupSerNum`),
   CONSTRAINT `TestResult_ibfk_2` FOREIGN KEY (`CronLogSerNum`) REFERENCES `CronLog` (`CronLogSerNum`) ON UPDATE CASCADE,
   CONSTRAINT `TestResult_ibfk_1` FOREIGN KEY (`PatientSerNum`) REFERENCES `Patient` (`PatientSerNum`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1

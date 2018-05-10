@@ -15,5 +15,6 @@ CREATE TABLE `DoctorMH` (
   `ModificationAction` varchar(25) NOT NULL,
   `LastUpdated` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`DoctorSerNum`,`DoctorRevSerNum`),
-  KEY `SourceDatabaseSerNum` (`SourceDatabaseSerNum`)
+  KEY `SourceDatabaseSerNum` (`SourceDatabaseSerNum`),
+  KEY `ResourceSerNum` (`ResourceSerNum`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1

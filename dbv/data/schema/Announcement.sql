@@ -8,8 +8,9 @@ CREATE TABLE `Announcement` (
   `LastUpdated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`AnnouncementSerNum`),
   KEY `PatientSerNum` (`PatientSerNum`),
-  KEY `PostSerNum` (`PostControlSerNum`),
   KEY `CronLogSerNum` (`CronLogSerNum`),
+  KEY `PostControlSerNum` (`PostControlSerNum`),
+  KEY `ReadStatus` (`ReadStatus`),
   CONSTRAINT `Announcement_ibfk_3` FOREIGN KEY (`CronLogSerNum`) REFERENCES `CronLog` (`CronLogSerNum`) ON UPDATE CASCADE,
   CONSTRAINT `Announcement_ibfk_1` FOREIGN KEY (`PatientSerNum`) REFERENCES `Patient` (`PatientSerNum`) ON UPDATE CASCADE,
   CONSTRAINT `Announcement_ibfk_2` FOREIGN KEY (`PostControlSerNum`) REFERENCES `PostControl` (`PostControlSerNum`) ON UPDATE CASCADE
