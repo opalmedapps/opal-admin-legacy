@@ -1,3 +1,148 @@
+Version 0.18.6.1:
+ -     --- Removed sql files that are not needed in production     --- Updated git ignore to keep config file for dbv
+ - Merge branch 'release-0.18.6.0' into preproduction
+ - Merge branch 'release-0.18.5.0' into preproduction
+ - Merge branch 'hotfix-0.18.4.1' into preproduction
+
+Version 0.18.6.0:
+ -     --- Updated indexes and removed tables from tracking
+ -     --- Added triggers and revisions
+ -     --- Added database versioning package
+ - Merge branch 'release-0.18.5.0' into develop
+
+Version 0.18.5.0:
+ -     --- Added email feature to script failures         -- Will now send emails if script crashes or on multiple processes     --- Cron executions are piped to a file
+ -     --- Added logging to file for each execution
+ -     --- Added monitoring section for logging script executions
+ -     --- Added modification of user language
+ -     --- Removed user activity module
+ - Merge branch 'hotfix-0.18.4.1' into develop
+ -     --- Fixed misnamed variable name
+ - Merge branch 'release-0.18.4.0' into develop
+
+Version 0.18.4.1:
+ - Merge branch 'release-0.18.4.0' into preproduction
+ - Merge branch 'hotfix-0.18.3.2' into preproduction
+
+Version 0.18.4.0:
+ -     --- Significantly reduced publisher execution time         -- Optimized queries to group expressions based on their respective last transferred time.         Best case (which is most cases), all expressions have the same last transferred date.         Intermediate case, when new expressions have been added to the alias so there will be         two groups (1. existing expressions have last transfered of 5 mins ago, 2. new expressions         have last transferred at the beginning of time). Each group will have their "IN" clause as         a concatenation of expressions with their respective last transferred.         -- Changed "LIKE" clause for exact "=" for checking patient SSN. This significantly reduced         query execution time.         -- This has been tested for when all expressions have been aliased! Reduced time from > 3 mins         to ~ 16 seconds!
+ - Merge branch 'hotfix-0.18.3.2' into develop
+ -     --- Fixed blank tables for ui-grid in accordions
+ - Merge branch 'hotfix-0.18.3.1' into develop
+ - Merge branch 'release-0.18.3.0' into develop
+
+Version 0.18.3.2:
+ - Merge branch 'hotfix-0.18.3.1' into preproduction
+
+Version 0.18.3.1:
+ -     --- Fixed improper variable names     --- Fixed missing table column names
+ - Merge branch 'release-0.18.3.0' into preproduction
+ - Merge branch 'release-0.18.2.0' into preproduction
+ - Merge branch 'hotfix-0.18.1.1' into preproduction
+
+Version 0.18.3.0:
+ -     --- Removed console log statement
+ -     --- Fixed missing metadata from test results log
+ -     --- Added user activity logs
+ -     --- Last transferred date set based on alias type         -- Appointments set to beginning of time, others set to NOW
+ -     --- Added one-to-one legacy questionnaire setup         -- Now, once a legacy questionnaire has been referenced and set, it is removed from         the "new questionnaires" list
+ - Merge branch 'release-0.18.2.0' into develop
+
+Version 0.18.2.0:
+ - Merge branch 'contentLogFeature' into develop
+ -     --- Changed cron title in menus
+ -     --- Added cron logs to display all content publishing
+ -     --- Added all logs
+ -     --- Added all logs to aliases
+ - -- Logs for all content starting template
+ - --- Fixed issue with missing reference arguments in subroutines   -- Apparently scalar variables should be passed first before arrays
+ -     --- Added actual cron logging to publisher
+ -     --- Fixed formatting of modal headers
+ -     --- Added individual logs to legacy questionnaires
+ -     --- Added individual logs for emails
+ -     --- Added individual logs to test results
+ -     --- Added individual logs for educational material
+ -     --- Added individual logs to posts
+ -     --- Added individual logging for aliases     --- Changed variable naming for notification logs
+ -     --- Completed logs for individual notification types
+ - Merge branch 'develop' into contentLogFeature
+ - Merge branch 'hotfix-0.18.1.1' into develop
+ -     --- Fixes issue of missing expression serial for medivisit appointments
+ -     --- Added backend logic for notification logs
+ -     --- Adding error logs
+ - Merge branch 'release-0.18.1.0' into develop
+
+Version 0.18.1.1:
+ - Merge branch 'release-0.18.1.0' into preproduction
+ - Merge branch 'release-0.18.0.0' into preproduction
+ - Merge branch 'release-0.17.0.0' into preproduction
+ - Merge branch 'hotfix-0.16.0.1' into preproduction
+
+Version 0.18.1.0:
+ -     --- Disabled questionnaires (for now)         -- Waiting for polished version
+ -     --- Improved query for Medivisit appointments         -- Investigation showed that the query loop for medivisit appointments lasted a very long time.         Query is now looped like the aria appointments with the expression in the loop and not the whole query itself.
+ - Merge branch 'release-0.18.0.0' into develop
+
+Version 0.18.0.0:
+ - Merge branch 'selectAllFeature' into develop
+ -     --- Improved trigger logic         -- Checking both the case that triggers are defined and that the patient has things         to compare in the first place (eg. has doctors). Before this check wasn't made and         would still send to patient if "ALL" is defined but a patient has no appointments today for example.     --- Fixed issue where educational material triggers weren't updating upon selecting an individual trigger     --- Changed publishing logic for educational material         -- Originally woud get all patient's appointments retrospectively. But should only check for         prospective appointments. So if new patient had new start before registration, it will not send         educational material for start of radiotherapy.         -- Patient diagnosis was based on patient appointments but if patient has none, then it would seem         patient doesn't have a diagnosis. So now getting diagnosis from Diagnosis call and not from appointments.         -- Above point same for legacy questionnaires
+ -     --- Added select all functionality to publisher         -- patient will automatically pass for a given trigger if "ALL" is selected for said trigger         Else, continue respective checks as usual
+ -     --- Fixed flawed logic in publishers for triggers         -- If only patient triggers were defined, it would not have passed even if the         patient was in the list of patient triggers
+ -     --- Added select all feature to legacy questionnaire module     --- Changed all instances of "filter" to "trigger"     --- Changed all instances of "resource" to "machine"
+ -     --- Added select all feature to educational material     --- Changed all instances of "filter" to "trigger"     --- Changed all instances of "resource" to "machine"
+ - Merge branch 'develop' into selectAllFeature
+ -     --- Ignore uploads directory         -- To be used by future feature
+ -     --- Added select all feature to post triggers         -- Selecting all triggers will add a "ALL" id to the database instead of adding every existing trigger. This         also helps in case there are new triggers added (avoiding static select alls). So if select all is selected         and a new patient is added for example, then that patient gets added to the list as well         -- Changed all instances of "filter" to "trigger" to make it more explicit that these are what triggers publishing     --- Changed instances of "resource" to "machine" to make it more explicit that the select list is for treatment machines
+ -     --- Commented out preparation for handling errors
+ -     --- Changed instances of "Filter" to "Trigger"         -- This will hopefully be clearer that selecting triggers means targeting patients         with specific criteria.
+ -     --- Added functionality to only publish content when filters are defined         -- If no filters are defined, nothing will be published. Soon there will be option         to trigger by all patients, doctors, etc.
+ -     --- Added description to alias expressions         -- Fix to get resource description from MediVisit appointments         -- requires data refactoring
+ -     --- Reimplimented changes that were removed by previous reversion         -- Hyperlinks and deselect educational material are now reimplemented
+ -     --- Fixed merge conflict
+ - Revert "    --- Educational material are now tagged to specific content types -- Only educational material tagged to content type in question will show up in list E.g. Tagging educational material to Appointments will only be a selectable option to attach material in appointments"
+ -     --- Optimized updated for diagnosis translation and educational material         -- database update commands only executed on content that was updated     --- Fixed issue where confirm registration was not using the password encryption
+ -     --- Starting optimization of legacy questionnaire updates
+ -     --- Optimized updates on test results         -- Database updates only executed on updated content and not on content that stayed         the same.
+ -     --- Optimized updates on posts         -- Updates only executed for only updated content
+ -     --- Optimized updates on aliases         -- Update commands only executed when content is really updated instead of updating everything.         E.g. if only expressions were changed, then only expressions will be updated and not         the details of the alias (like names for example). And vice-versa.
+ -     --- Added sanitization for test results         -- Test results without any codes assigned to them will automatically have their         publish flag turned off to avoid crashes
+ -     --- Added sanitize feature for rich-text fields         -- All single, double quotes, and backslashes are escaped
+ -     --- Added sanitize feature to aliases         -- Since reassignement of codes can be done, publish flags are turned off for aliases         that no longer have terms assigned the them. This avoids a crash for the for loop         in getting tasks/appointments/documents foreach expression
+ -     --- Added bilingual map uploads
+ -     --- Educational material are now tagged to specific content types         -- Only educational material tagged to content type in question will show up in list         E.g. Tagging educational material to Appointments will only be a selectable option to attach         material in appointments
+ -     --- Fixed display of current assigned clinical codes not updating upon selecting assigned codes
+ -     --- Disabled content sniffing
+ - Merge branch 'release-0.17.0.0' into develop
+
+Version 0.17.0.0:
+ -     --- Added functionality to reassigned aliases, diagnosis translations, and test results         -- Selecting an already assigned code will warn user of reassignment and reassign upon submit
+ -     --- Added tab to show currently assigned codes for alias, test result, and diagnosis translation     --- Added tab filters to test results     --- Added auto complete for opposite language when selecting a test group
+ -     --- Added patient registration date to record         -- This will make sure no retrospective documents will get added         or at least we add documents since registration in case new clinical codes are added         to existing aliases
+ -     --- Added push notification upon appointment cancellation     --- Fixed style issue on add notification page
+ -     --- Added push notification on appointment change         -- time change must be greater than an hour         -- modified an existing notification code to use this functionality         -- changed notification type column to use serial instead of id for proper linking
+ -     --- Removed flag that got all diagnoses
+ -     --- Publisher provides staging info for diagnoses
+ -     --- Fixes issue where selected educational material doesn't show in summary
+ -     --- Downgraded font awesome from 5 to 4         -- textAngular still uses version 4 and migration file does not work         -- required fixing class names     --- Added rich-text to all previously plain-text description fields
+ - --- Started verbose print statements
+ - Merge branch 'hotfix-0.16.0.1' into develop
+ -     --- Fixed missing template reference after restruction
+ -     --- Redesigned template and controller structures         -- removed all instances of script injections on html pages and made it its own html template.         Eg: a template was injected for edit post on the post.html. Now it's its own template in edit.post.html         -- same goes with the controllers. Now every "edit" and "delete" functionality has its own controller         -- see directory tree for design but basically each feature has its own directory (alias, post, questionnaire, etc)         -- Now, edits, deletes, adds are fully separated
+ -     --- Starting to restructure directories and separate templates/controllers
+ -     --- Bolded the titles in content tables     --- Changed format of session duration in user activity
+ -     --- Upgraded fontawesome icons         -- Required changing some class names in template files     --- Added user activity log page         -- Login logout times
+ -     --- Added user logging to the following features         -- Modified content is now recorded in the database within a particular session.
+ - --- Added session and user tracking for manipulated email control
+ - --- Added user tracking for educational material control manipulation   -- Incomplete however, need to figure out how to handle table of contents logic
+ -     --- Added user logging for diagnosis translation         -- Modifications on this content is recorded in the database by who and session
+ -     --- Added logging of logins and logouts         -- Now each login and logout is recorded in the database with a sessionid     --- Added change logs for Alias events         -- Now changes to the alias pages are recorded in the database with a sessionid and         user who changed the entity
+ -     --- Added more sophisticated session logging         -- Session id now made per login in the backend (attached to user)         -- In cookies for now, but will log sessions in database
+ -     --- Same fix as previous commit
+ -     --- Added missing requires of the Encrypt service
+ -     --- Added password encryption between frontend/backend communication         -- All passwords are now encrypted before firing a POST request to the backend so that         passwords are illegible even if someone tries to look at request data
+ -     --- Included bowerrc to bypass SSL signing for bower installs     --- updated htaccess with some added security         -- Note that directory listing is already implemented
+ - Merge branch 'release-0.16.0.0' into develop
+
 Version 0.16.0.1:
  - --- Fixes single quotes in clinical codes that were causing query strings to escape and crash
  - Merge branch 'release-0.16.0.0' into preproduction

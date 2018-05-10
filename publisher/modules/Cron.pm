@@ -28,13 +28,11 @@ sub setCronLog
     my $insert_sql = "
         INSERT INTO
             CronLog (
-                CronLogSerNum,
                 CronSerNum,
                 CronStatus,
                 CronDateTime
             )
         VALUES (
-            NULL,
             '1',
             '$status',
             '$datetime'
@@ -47,6 +45,11 @@ sub setCronLog
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
+
+        # get cron log serial
+    my $logSer = $SQLDatabase->last_insert_id(undef, undef, undef, undef);
+
+    return $logSer;
 
 }
 

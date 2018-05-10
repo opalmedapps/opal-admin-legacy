@@ -1,0 +1,67 @@
+<!-- Modal title -->
+<div class="modal-header">
+  <div class="col-xs-12 col-md-6">
+    <h2 class="modal-title">
+      <span class="glyphicon glyphicon-pencil"></span> 
+      Edit Notification 
+    </h2>
+    <p class="modal-title-caption">
+      {{notification.name_EN}} / {{notification.name_FR}}
+    </p>
+  </div>
+  <div class="modal-buttons col-xs-12 col-md-6">
+    <span> 
+      <form method="post" ng-submit="updateNotification()">
+        <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+      </form>
+    </span>
+  </div>
+</div>
+<div class="modal-body">
+  <uib-accordion>
+    <!-- SECTION: Titles -->
+    <div uib-accordion-group is-open="titleSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Titles</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="row">
+        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+          <div class="input-group">
+            <span class="input-group-addon">EN</span>
+            <input class="form-control" type="text" ng-model="notification.name_EN" ng-change="setChangesMade()" placeholder="English Title" required="required">
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+          <div class="input-group">
+            <span class="input-group-addon">FR</span>
+            <input class="form-control" type="text" ng-model="notification.name_FR" ng-change="setChangesMade()" placeholder="Titre Français" required="required">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION: Message -->
+    <div uib-accordion-group is-open="messageSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Messages</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': messageSection.open, 'glyphicon-chevron-right': !messageSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="row">
+        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+          <div class="form-group">
+            <textarea class="form-control" rows="5" ng-model="notification.description_EN" ng-change="setChangesMade()" placeholder="English Message" required="required"></textarea>
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+          <div class="form-group">
+            <textarea class="form-control" rows="5" ng-model="notification.description_FR" ng-change="setChangesMade()" placeholder="Message Français" required="required"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </uib-accordion>
+</div>

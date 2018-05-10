@@ -1,0 +1,66 @@
+<!-- Modal title -->
+<div class="modal-header">
+  <div class="col-xs-12 col-md-6">
+    <h2 class="modal-title">
+      <span class="glyphicon glyphicon-pencil"></span> 
+      Edit Email 
+    </h2>
+    <p class="modal-title-caption">
+      {{email.subject_EN}} / {{email.subject_FR}}
+    </p>
+  </div>
+  <div class="modal-buttons col-xs-12 col-md-6">
+    <span> 
+      <form method="post" ng-submit="updateEmail()">
+        <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+      </form>
+    </span>     
+  </div>
+</div>
+<div class="modal-body">
+  <uib-accordion>
+    <!-- SECTION: Subject -->
+    <div uib-accordion-group is-open="subjectSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Subjects</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': subjectSection.open, 'glyphicon-chevron-right': !subjectSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="row">
+        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+          <div class="input-group">
+            <span class="input-group-addon">EN</span>
+            <input class="form-control" type="text" ng-model="email.subject_EN" ng-change="setChangesMade()" placeholder="English Title" required="required">
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+          <div class="input-group">
+            <span class="input-group-addon">FR</span>
+            <input class="form-control" type="text" ng-model="email.subject_FR" ng-change="setChangesMade()" placeholder="Titre Français" required="required">
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- SECTION: Message -->
+    <div uib-accordion-group is-open="messageSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Messages</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': messageSection.open, 'glyphicon-chevron-right': !messageSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="row">
+        <div class="col-xs-12 col-sm-6">
+          <div class="form-group">
+            <div text-angular ng-model="email.body_EN" ng-change="setChangesMade()"></div>
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-6">
+          <div class="form-group">
+            <div text-angular ng-model="email.body_FR" ng-change="setChangesMade()"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </uib-accordion>
+</div>

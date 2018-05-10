@@ -67,6 +67,27 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
+		// Function to get alias chart logs given a serial
+		aliasAPI.getAliasChartLogs = function (serial, type) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/alias/get.alias_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial + '&type=' + type
+			});
+		};
+
+		// Function to get alias log list details given an array of serial numbers
+		aliasAPI.getAliasListLogs = function (serials, type) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/alias/get.alias_list_logs.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					serials: JSON.stringify(serials),
+					type: type
+				}
+			});
+		}
+
 		return aliasAPI;
 	})
 
@@ -90,6 +111,27 @@ angular.module('opalAdmin.collections', [])
 				url: URLPATH + "api/post/get.post_details.php?callback=JSON_CALLBACK&serial=" + serial
 			});
 		};
+
+		// Function to get post chart logs given a serial
+		postAPI.getPostChartLogs = function (serial, type) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/post/get.post_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial + '&type=' + type
+			});
+		};
+
+		// Function to get post log list details given an array of serial numbers
+		postAPI.getPostListLogs = function (serials, type) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/post/get.post_list_logs.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					serials: JSON.stringify(serials),
+					type: type
+				}
+			});
+		}
 
 		return postAPI;
 	})
@@ -138,6 +180,27 @@ angular.module('opalAdmin.collections', [])
 				url: URLPATH + "api/educational-material/get.educational_material_parents.php?callback=JSON_CALLBACK"
 			});
 		};
+
+		// Function to get edcuational material chart logs given a serial
+		educationalMaterialAPI.getEducationalMaterialChartLogs = function (serial) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/educational-material/get.educational_material_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial
+			});
+		};
+
+		// Function to get edcuational material log list details given an array of serial numbers
+		educationalMaterialAPI.getEducationalMaterialListLogs = function (serials) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/educational-material/get.educational_material_list_logs.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					serials: JSON.stringify(serials),
+					type: type
+				}
+			});
+		}
 
 		return educationalMaterialAPI;
 	})
@@ -200,6 +263,26 @@ angular.module('opalAdmin.collections', [])
 			return $http({
 				method: 'JSONP',
 				url: URLPATH + "api/notification/get.notification_types.php?callback=JSON_CALLBACK"
+			});
+		};
+
+		// Function to get notification logs given a serial
+		notificationAPI.getNotificationChartLogs = function (serial) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/notification/get.notification_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial
+			});
+		};
+
+		// Function to get notification log list details given an array of serial numbers
+		notificationAPI.getNotificationListLogs = function (serials) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/notification/get.notification_list_logs.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					serials: JSON.stringify(serials)
+				}
 			});
 		};
 
@@ -315,6 +398,26 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
+		// Function to get test result chart logs given a serial
+		testResultAPI.getTestResultChartLogs = function (serial) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/test-result/get.test_result_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial
+			});
+		};
+
+		// Function to get test result log list details given an array of serial numbers
+		testResultAPI.getTestResultListLogs = function (serials) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/test-result/get.test_result_list_logs.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					serials: JSON.stringify(serials),
+				}
+			});
+		}
+
 		return testResultAPI;
 	})
 
@@ -329,6 +432,26 @@ angular.module('opalAdmin.collections', [])
 			return $http({
 				method: 'JSONP',
 				url: URLPATH + "api/cron/get.cron_details.php?callback=JSON_CALLBACK"
+			});
+		};
+
+		// Function to get the cron logs for highcharts
+		cronAPI.getCronChartLogs = function () {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/cron/get.cron_chart_logs.php?callback=JSON_CALLBACK"
+			});
+		};
+
+		// Function to get selected cron logs
+		cronAPI.getSelectedCronListLogs = function (contents) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/cron/get.cron_list_logs.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					contents: JSON.stringify(contents),
+				}
 			});
 		};
 
@@ -372,6 +495,14 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
+		// Function to get user logs given a serial
+		userAPI.getUserActivityLogs = function (userser) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/user/get.user_activity_logs.php?callback=JSON_CALLBACK&userser=" + userser
+			});
+		};
+
 		return userAPI;
 
 	})
@@ -404,6 +535,26 @@ angular.module('opalAdmin.collections', [])
 				url: URLPATH + "api/email/get.email_types.php?callback=JSON_CALLBACK"
 			});
 		};
+
+		// Function to get email chart logs given a serial
+		emailAPI.getEmailChartLogs = function (serial) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/email/get.email_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial
+			});
+		};
+
+		// Function to get email log list details given an array of serial numbers
+		emailAPI.getEmailListLogs = function (serials) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/email/get.email_list_logs.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					serials: JSON.stringify(serials),
+				}
+			});
+		}
 
 		return emailAPI;
 	})
@@ -520,6 +671,26 @@ angular.module('opalAdmin.collections', [])
 				url: URLPATH + "api/legacy-questionnaire/get.legacy_questionnaire_expressions.php?callback=JSON_CALLBACK"
 			});
 		};
+
+		// Function to get legacy questionnaire chart logs given a serial
+		legacyQuestionnaireAPI.getLegacyQuestionnaireChartLogs = function (serial) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/legacy-questionnaire/get.legacy_questionnaire_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial
+			});
+		};
+
+		// Function to get legacy questionnaire log list details given an array of serial numbers
+		legacyQuestionnaireAPI.getLegacyQuestionnaireListLogs = function (serials) {
+			return $http({
+				method: 'JSONP',
+				url: URLPATH + "api/legacy-questionnaire/get.legacy_questionnaire_list_logs.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					serials: JSON.stringify(serials),
+				}
+			});
+		}
 
 		return legacyQuestionnaireAPI;
 	})

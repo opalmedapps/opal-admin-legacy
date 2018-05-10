@@ -1,0 +1,221 @@
+<!-- Modal title -->
+<div class="modal-header">
+  <div class="col-xs-12 col-md-6">
+    <h2 class="modal-title">
+      <span class="glyphicon glyphicon-pencil"></span>
+      Edit Test Result 
+    </h2>
+    <p class="modal-title-caption">
+      {{testResult.name_EN}} / {{testResult.name_FR}}
+    </p>
+  </div>
+  <div class="modal-buttons col-xs-12 col-md-6">
+    <span> 
+      <form method="post" ng-submit="updateTestResult()">
+        <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+      </form>
+    </span>     
+  </div>
+</div>
+<div class="modal-body">
+  <uib-accordion>
+
+    <!-- SECTION: Test names -->
+    <div uib-accordion-group is-open="testsSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Assigned Tests</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': testsSection.open, 'glyphicon-chevron-right': !testsSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+       <div class="alert alert-info" role="alert">
+        <strong>Current Assigned Test(s)</strong><br>
+        <p>
+          <ul class="list-items">
+            <li ng-repeat="selectedTest in testList | filter: {added: 1} : 1">
+            {{selectedTest.name}}
+          </li>
+          </ul>
+        </p>
+      </div>
+      <div class="list-space">
+        <div class="input-group" style="padding-bottom: 10px;">
+          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+          <input class="form-control" type="text" ng-model="testFilter" ng-change="changeTestFilter(testFilter)" placeholder="Search Tests..."/>
+        </div>
+        <div class="btn-group btn-group-justified">
+          <a class="btn btn-default" ng-class="{'active' : testCodeFilter == 'all'}" ng-click="setTestCodeFilter('all')">Show all</a>
+          <a class="btn btn-default" ng-class="{'active' : testCodeFilter == 'current'}" ng-click="setTestCodeFilter('current')">Assigned to this Test</a>
+          <a class="btn btn-default" ng-class="{'active' : testCodeFilter == 'other'}" ng-click="setTestCodeFilter('other')">Assigned to others</a>
+          <a class="btn btn-default" ng-class="{'active' : testCodeFilter == 'none'}" ng-click="setTestCodeFilter('none')">Unassigned</a>
+        </div>
+        <ul class="list-items">
+          <li ng-repeat="test in testList | filter: searchTestsFilter">
+            <label ng-class="{greenText: test.added, grayText: test.assigned && !test.added}">
+              <input type="checkbox" ng-click="toggleTestSelection(test)" ng-checked="test.added" /> {{test.name}}
+              <span ng-class="{redText: test.assigned}" ng-if="test.assigned && !test.added"><em> --- Assigned to: {{test.assigned.name_EN}}</em></span>
+              <span ng-class="{redText: test.assigned}" ng-if="test.assigned && test.added"><em> --- Will replace assignment from: {{test.assigned.name_EN}}</em></span>
+            </label>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SECTION: Titles -->
+    <div uib-accordion-group is-open="titleSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="row">
+        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+          <div class="input-group">
+            <span class="input-group-addon">EN</span>
+            <input class="form-control" type="text" ng-model="testResult.name_EN" ng-change="detailsUpdated()" placeholder="English Title" required="required">
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+          <div class="input-group">
+            <span class="input-group-addon">FR</span>
+            <input class="form-control" type="text" ng-model="testResult.name_FR" ng-change="detailsUpdated()" placeholder="Titre Français" required="required">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION: Description -->
+    <div uib-accordion-group is-open="descriptionSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': descriptionSection.open, 'glyphicon-chevron-right': !descriptionSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="row">
+        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+          <div style="text-align:center; margin-bottom: 10px;">
+            <span style="font-size:20px;">HTML (English)</span>
+          </div>
+          <div class="input-group">
+            <div text-angular ng-model="testResult.description_EN" ng-change="detailsUpdated()" placeholder="English Description" required="required" ta-toolbar="toolbar"></div>
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+          <div style="text-align:center; margin-bottom: 10px;">
+            <span style="font-size:20px;">HTML (Français)</span>
+          </div>
+          <div class="input-group">
+            <div text-angular ng-model="testResult.description_FR" ng-change="detailsUpdated()" placeholder="Description Français" required="required" ta-toolbar="toolbar"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION: Test group -->
+    <div uib-accordion-group is-open="testGroupSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Test Group</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': testGroupSection.open, 'glyphicon-chevron-right': !testGroupSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="row">
+        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+          <div class="input-group">
+            <span class="input-group-addon">EN</span>
+            <input class="form-control" type="text" ng-model="testResult.group_EN" ng-change="detailsUpdated()" typeahead-on-select="detailsUpdated()" uib-typeahead="group for group in TestResultGroups_EN | filter:$viewValue" typeahead-min-length="0" placeholder="English" required="required">
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+          <div class="input-group">
+            <span class="input-group-addon">FR</span>
+            <input class="form-control" type="text" ng-model="testResult.group_FR" ng-change="detailsUpdated()" typeahead-on-select="detailsUpdated()" uib-typeahead="group for group in TestResultGroups_FR | filter:$viewValue" typeahead-min-length="0" placeholder="Francais" required="required">
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- SECTION: Educational material -->
+    <div uib-accordion-group is-open="educationalMaterialSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Attached Educational Material</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': educationalMaterialSection.open, 'glyphicon-chevron-right': !educationalMaterialSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="alert alert-info" role="alert">
+        <strong>Current Educational Material (EN / FR)</strong><br>
+        <p>
+         <div>
+            <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+            <span ng-if="testResult.eduMat">
+              <span ng-if="testResult.eduMat.tocs.length">
+                <span style="cursor:pointer" ng-click="toggleTOCDisplay()">
+                  <strong>{{testResult.eduMat.name_EN}} / {{testResult.eduMat.name_FR}}</strong>
+                </span>
+                <ul ng-if="showTOCs">
+                  <li ng-repeat="toc in testResult.eduMat.tocs">
+                    <strong><a target="_blank" href="{{toc.url_EN}}">{{toc.name_EN}}</a></strong> / <strong><a target="_blank" href="{{toc.url_FR}}">{{toc.name_FR}}</a></strong>
+                  </li>
+                </ul>
+              </span>
+              <span ng-if="!testResult.eduMat.tocs.length">
+                <span>
+                  <strong><a target="_blank" href="{{testResult.eduMat.url_EN}}">{{testResult.eduMat.name_EN}}</a> / <a target="_blank" href="{{testResult.eduMat.url_FR}}">{{testResult.eduMat.name_FR}}</a></strong>
+                </span>
+              </span>
+            </span>
+            <span ng-if="!testResult.eduMat">None</span>
+          </div>
+        </p>
+      </div>
+      <div class="list-space">
+        <div class="input-group">
+          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+          <input class="form-control" type="text" ng-model="eduMatFilter" ng-change="changeEduMatFilter(eduMatFilter)" placeholder="Search Educational Material..."/>
+        </div>
+        <ul class="list-items">
+          <li ng-repeat="eduMat in eduMatList | filter: searchEduMatsFilter">
+            <label>
+              <input type="radio" ng-model="testResult.eduMatSer" ng-click="eduMatUpdate($event, eduMat)" value="{{eduMat.serial}}" /> {{eduMat.name_EN}}
+            </label>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <!-- SECTION: Additional links -->
+    <div uib-accordion-group is-open="additionalLinksSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Additional Links</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': additionalLinksSection.open, 'glyphicon-chevron-right': !additionalLinksSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="row" ng-repeat="link in testResult.additional_links" style="margin-bottom:7px; border-bottom:1px solid #ddd;">
+        <div class="col-xs-12" style="margin:0 0 7px 0; padding:0 15px; font-size:30px;">
+          <span style="float:right; cursor:pointer;" ng-click="removeAdditionalLink($index)"><span class="glyphicon glyphicon-remove"></span></span>
+        </div>
+        <div class="col-xs-12 col-sm-6">
+          <div class="input-group" style="margin-bottom: 7px;">
+            <span class="input-group-addon">Title EN</span>
+            <input class="form-control" type="text" ng-model="link.name_EN" ng-change="additionalLinksUpdated()" placeholder="English Title" required="required">
+          </div>
+          <div class="input-group" style="margin-bottom: 7px;">
+            <span class="input-group-addon">URL EN</span>
+            <input class="form-control" type="text" ng-model="link.url_EN" ng-change="additionalLinksUpdated()" placeholder="English URL" required="required">
+          </div>
+        </div>  
+        <div class="col-xs-12 col-sm-6">           
+          <div class="input-group" style="margin-bottom: 7px;">
+            <span class="input-group-addon">Titre FR</span>
+            <input class="form-control" type="text" ng-model="link.name_FR" ng-change="additionalLinksUpdated()" placeholder="Titre Français" required="required">
+          </div>
+          <div class="input-group" style="margin-bottom: 7px;">
+            <span class="input-group-addon">URL FR</span>
+            <input class="form-control" type="text" ng-model="link.url_FR" ng-change="additionalLinksUpdated()" placeholder="URL Français" required="required">
+          </div>
+        </div>
+      </div>
+      <div class="table-buttons">
+        <button class="btn btn-primary" ng-click="addAdditionalLink()">Add another link</button>
+      </div>
+    </div>  
+
+  </uib-accordion>
+</div>

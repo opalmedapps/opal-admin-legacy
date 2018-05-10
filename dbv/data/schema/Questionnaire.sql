@@ -1,0 +1,20 @@
+CREATE TABLE `Questionnaire` (
+  `QuestionnaireSerNum` int(11) NOT NULL AUTO_INCREMENT,
+  `CronLogSerNum` int(11) DEFAULT NULL,
+  `QuestionnaireControlSerNum` int(11) NOT NULL,
+  `PatientSerNum` int(11) NOT NULL,
+  `DateAdded` datetime NOT NULL,
+  `PatientQuestionnaireDBSerNum` int(11) DEFAULT NULL,
+  `CompletedFlag` tinyint(4) NOT NULL,
+  `CompletionDate` datetime DEFAULT NULL,
+  `SessionId` text NOT NULL,
+  `LastUpdated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`QuestionnaireSerNum`),
+  KEY `QuestionnaireControlSerNum` (`QuestionnaireControlSerNum`),
+  KEY `PatientSerNum` (`PatientSerNum`),
+  KEY `CronLogSerNum` (`CronLogSerNum`),
+  KEY `PatientQuestionnaireDBSerNum` (`PatientQuestionnaireDBSerNum`),
+  CONSTRAINT `Questionnaire_ibfk_3` FOREIGN KEY (`CronLogSerNum`) REFERENCES `CronLog` (`CronLogSerNum`) ON UPDATE CASCADE,
+  CONSTRAINT `Questionnaire_ibfk_1` FOREIGN KEY (`PatientSerNum`) REFERENCES `Patient` (`PatientSerNum`) ON UPDATE CASCADE,
+  CONSTRAINT `Questionnaire_ibfk_2` FOREIGN KEY (`QuestionnaireControlSerNum`) REFERENCES `QuestionnaireControl` (`QuestionnaireControlSerNum`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1

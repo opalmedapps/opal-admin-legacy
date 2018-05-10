@@ -1,0 +1,27 @@
+<div class="modal-header">
+  <div class="col-xs-12">
+    <h2 class="modal-title ">
+      <span class="glyphicon glyphicon-trash"></span> 
+        Delete Educational Material 
+    </h2>
+    <p class="modal-title-caption ">
+      {{eduMatToDelete.name_EN}} / {{eduMatToDelete.name_FR}}
+    </p>
+  </div>
+</div>
+<div class="modal-body">
+   <div class="alert alert-danger" role="alert">
+    <strong>Delete Educational Material</strong><br>
+    <p>
+      Are you sure you want to delete the educational material "{{eduMatToDelete.name_EN}}" ?
+    </p>
+  </div>
+  <div class="row">
+    <div class="modal-buttons col-xs-12">
+      <form method="post" ng-submit="deleteEducationalMaterial()">      
+        <input class="btn btn-primary submit" type="submit" value="Delete">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+      </form>
+    </div>
+  </div>
+</div>

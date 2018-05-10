@@ -42,6 +42,7 @@ sub new
         _patientser     => undef,
         _postcontrolser => undef,
         _readstatus     => undef,
+        _cronlogser     => undef,
     };
 
     # bless associates an object with a class so Perl knows which package to search for
@@ -91,6 +92,16 @@ sub setPatsForPatsReadStatus
 }
 
 #====================================================================================
+# Subroutine to set the PatsForPats Cron Log Serial
+#====================================================================================
+sub setPatsForPatsCronLogSer
+{
+    my ($patsforpats, $cronlogser) = @_; # patsforpats object with provided serial in args
+    $patsforpats->{_cronlogser} = $cronlogser; # set the patsforpats ser
+    return $patsforpats->{_cronlogser};
+}
+
+#====================================================================================
 # Subroutine to get the PatsForPats Serial
 #====================================================================================
 sub getPatsForPatsSer
@@ -126,12 +137,21 @@ sub getPatsForPatsReadStatus
 	return $patsforpats->{_readstatus};
 }
 
+#====================================================================================
+# Subroutine to get the PatsForPats Cron Log Serial
+#====================================================================================
+sub getPatsForPatsCronLogSer
+{
+    my ($patsforpats) = @_; # our patsforpats object
+    return $patsforpats->{_cronlogser};
+}
+
 #======================================================================================
 # Subroutine to publish patsforpats
 #======================================================================================
 sub publishPatientsForPatients
 {
-    my (@patientList) = @_; # patient list from args
+    my ($cronLogSer, @patientList) = @_; # patient list and cron log serial from args
 
     my $today_date = strftime("%Y-%m-%d", localtime(time));
     my $now = Time::Piece->strptime(strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "%Y-%m-%d %H:%M:%S");
@@ -169,6 +189,7 @@ sub publishPatientsForPatients
 			# in the non-patient filters  
 			my $isNonPatientSpecificFilterDefined = 0;
             my $isPatientSpecificFilterDefined = 0;
+            my $patientPassed = 0;
 
             my @expressionNames = ();
 
@@ -177,12 +198,12 @@ sub publishPatientsForPatients
             my @patientDoctors = PatientDoctor::getPatientsDoctorsFromOurDB($patientSer);
                 
             # Fetch expression filters (if any)
-            my @expressionFilters =  $postFilters->getExpressionFilters();
+            my @expressionFilters =  $postFilters->getAppointmentFilters();
             if (@expressionFilters) {
   
 				# toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
-
+               
                 # Retrieve the patient appointment(s) if one (or more) lands within one day of today
                 my @patientAppointments = Appointment::getPatientsAppointmentsFromDateInOurDB($patientSer, $postPublishDate, 0);
 
@@ -195,18 +216,23 @@ sub publishPatientsForPatients
 
                 }
 
-                # Finding the existence of the patient expressions in the expression filters
-                # If there is an intersection, then patient is part of this publishing P4P
-                if (!intersect(@expressionFilters, @expressionNames)) {
-                   if (@patientFilters) {
-                        # if the patient failed to match the expression filter but there are patient filters
-                        # then we flag to check later if this patient matches with the patient filters
-                        $isPatientSpecificFilterDefined = 1;
-                    }
-                    # else no patient filters were defined and failed to match the expression filter
-                    # move on to the next P4P
-                    else{next;}
-                } 
+                 # if all appointments were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @appointmentFilters and @expressionNames) {
+
+                    # Finding the existence of the patient expressions in the expression filters
+                    # If there is an intersection, then patient is so far part of this publishing P4P
+                    if (!intersect(@expressionFilters, @expressionNames)) {
+                       if (@patientFilters) {
+                            # if the patient failed to match the expression filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the expression filter
+                        # move on to the next P4P
+                        else{next;}
+                    } 
+                }
             }
 
             # Fetch diagnosis filters (if any)
@@ -216,17 +242,21 @@ sub publishPatientsForPatients
                 # toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
-                # Finding the intersection of the patient's diagnosis and the diagnosis filters
-                # If there is an intersection, then patient is part of this publishing P4P
-                if (!intersect(@diagnosisFilters, @diagnosisNames)) {
-                    if (@patientFilters) {
-                        # if the patient failed to match the diagnosis filter but there are patient filters
-                        # then we flag to check later if this patient matches with the patient filters
-                        $isPatientSpecificFilterDefined = 1;
+                # if all diagnoses were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @diagnosisFilters and @diagnosisNames) {
+                    # Finding the intersection of the patient's diagnosis and the diagnosis filters
+                    # If there is an intersection, then patient is so far part of this publishing P4P
+                    if (!intersect(@diagnosisFilters, @diagnosisNames)) {
+                        if (@patientFilters) {
+                            # if the patient failed to match the diagnosis filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the diagnosis filter
+                        # move on to the next P4P
+                        else{next;}
                     }
-                    # else no patient filters were defined and failed to match the diagnosis filter
-                    # move on to the next P4P
-                    else{next;}
                 }
             }
 
@@ -237,18 +267,22 @@ sub publishPatientsForPatients
                 # toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
-                # Finding the intersection of the patient's doctor(s) and the doctor filters
-                # If there is an intersection, then patient is part of this publishing P4P
-                if (!intersect(@doctorFilters, @patientDoctors)) {
-                    if (@patientFilters) {
-                        # if the patient failed to match the doctor filter but there are patient filters
-                        # then we flag to check later if this patient matches with the patient filters
-                        $isPatientSpecificFilterDefined = 1;
-                    }
-                    # else no patient filters were defined and failed to match the doctor filter
-                    # move on to the next P4P
-                    else{next;}
-                } 
+                # if all doctors were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @doctorFilters and @patientDoctors) {
+                    # Finding the intersection of the patient's doctor(s) and the doctor filters
+                    # If there is an intersection, then patient is so far part of this publishing P4P
+                    if (!intersect(@doctorFilters, @patientDoctors)) {
+                        if (@patientFilters) {
+                            # if the patient failed to match the doctor filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the doctor filter
+                        # move on to the next P4P
+                        else{next;}
+                    } 
+                }
             }
 
             # Fetch resource filters (if any)
@@ -258,40 +292,65 @@ sub publishPatientsForPatients
                 # toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
-                # Finding the intersection of the patient's resource(s) and the resource filters
-                # If there is an intersection, then patient is part of this publishing educational material
-                if (!intersect(@resourcesFilters, @patientResources)) {
-                    if (@patientFilters) {
-                        # if the patient failed to match the resource filter but there are patient filters
-                        # then we flag to check later if this patient matches with the patient filters
-                        $isPatientSpecificFilterDefined = 1;
-                    }
-                    # else no patient filters were defined and failed to match the resource filter
-                    # move on to the next P4P
-                    else{next;}
-                } 
+                # if all resources were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @resourceFilters and @patientResources) {
+                    # Finding the intersection of the patient's resource(s) and the resource filters
+                    # If there is an intersection, then patient is so far part of this publishing P4P
+                    if (!intersect(@resourcesFilters, @patientResources)) {
+                        if (@patientFilters) {
+                            # if the patient failed to match the resource filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the resource filter
+                        # move on to the next P4P
+                        else{next;}
+                    } 
+                }
             }
 
+            # We look into whether any patient-specific filters have been defined 
+            # If we enter this if statement, then we check if that patient is in that list
+            if (@patientFilters) {
 
-            # If we've reached this point, we've passed all catches (filter restrictions). We make
-            # an PatientsForPatients object, check if it exists already in the database. If it does 
-            # this means the PatientsForPatients has already been published to the patient. If it doesn't
-            # exist then we publish to the patient (insert into DB).
-            $patsforpats = new PatientsForPatients();
+                # if the patient-specific flag was enabled then it means this patient failed
+                # one of the filters above 
+                # OR if the non patient specific flag was disabled then there were no filters defined above
+                # and this is the last test to see if this patient passes
+                if ($isPatientSpecificFilterDefined eq 1 or $isNonPatientSpecificFilterDefined eq 0) {
+                    # Finding the existence of the patient in the patient-specific filters
+                    # If the patient exists, or all patients were selected as triggers, 
+                    # then patient passes else move on to next patient
+                    if ($patientId ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
+                        $patientPassed = 1;
+                    }
+                    else {next;}
+                }
+            }
 
-            # set the necessary values
-            $patsforpats->setPatsForPatsPatientSer($patientSer);
-            $patsforpats->setPatsForPatsPostControlSer($postControlSer);
+            if ($isNonPatientSpecificFilterDefined eq 1 or $isPatientSpecificFilterDefined eq 1 or ($isNonPatientSpecificFilterDefined eq 0 and $patientPassed eq 1)) {
+                # If we've reached this point, we've passed all catches (filter restrictions). We make
+                # an PatientsForPatients object, check if it exists already in the database. If it does 
+                # this means the PatientsForPatients has already been published to the patient. If it doesn't
+                # exist then we publish to the patient (insert into DB).
+                $patsforpats = new PatientsForPatients();
 
-            if (!$patsforpats->inOurDatabase()) {
+                # set the necessary values
+                $patsforpats->setPatsForPatsPatientSer($patientSer);
+                $patsforpats->setPatsForPatsPostControlSer($postControlSer);
+                $patsforpats->setPatsForPatsCronLogSer($cronLogSer);
 
-                $patsforpats = $patsforpats->insertPatsForPatsIntoOurDB();
+                if (!$patsforpats->inOurDatabase()) {
 
-                # send push notification
-                my $patsforpatsSer = $patsforpats->getPatsForPatsSer();
-                my $patientSer = $patsforpats->getPatsForPatsPatientSer();
-                PushNotification::sendPushNotification($patientSer, $patsforpatsSer, 'PatientsForPatients');
+                    $patsforpats = $patsforpats->insertPatsForPatsIntoOurDB();
 
+                    # send push notification
+                    my $patsforpatsSer = $patsforpats->getPatsForPatsSer();
+                    my $patientSer = $patsforpats->getPatsForPatsPatientSer();
+                    PushNotification::sendPushNotification($patientSer, $patsforpatsSer, 'PatientsForPatients');
+
+                }
             }
 
         } # End forEach PostControl   
@@ -314,12 +373,13 @@ sub inOurDatabase
     my $ExistingPatsForPats = (); # data to be entered if patsforpats exists
 
     # Other variables, if patsforpats exists
-    my ($readstatus);
+    my ($readstatus, $cronlogser);
 
     my $inDB_sql = "
         SELECT
             pfp.PatientsForPatientsSerNum,
-            pfp.ReadStatus
+            pfp.ReadStatus,
+            pfp.CronLogSerNum
         FROM
             PatientsForPatients pfp
         WHERE
@@ -339,6 +399,7 @@ sub inOurDatabase
 
         $serInDB    = $data[0];
         $readstatus = $data[1];
+        $cronlogser = $data[2];
     }
 
     if ($serInDB) {
@@ -350,6 +411,7 @@ sub inOurDatabase
         $ExistingPatsForPats->setPatsForPatsPatientSer($patientser);
         $ExistingPatsForPats->setPatsForPatsPostControlSer($postcontrolser); 
         $ExistingPatsForPats->setPatsForPatsReadStatus($readstatus);
+        $ExistingPatsForPats->setPatsForPatsCronLogSer($cronLogSer);
 
         return $ExistingPatsForPats; # this is true (ie. patsforpats exists, return object)
     }
@@ -366,16 +428,19 @@ sub insertPatsForPatsIntoOurDB
 
     my $patientser      = $patsforpats->getPatsForPatsPatientSer();
     my $postcontrolser  = $patsforpats->getPatsForPatsPostControlSer();
+    my $cronlogser      = $patsforpats->getPatsForPatsCronLogSer();
 
     my $insert_sql = "
         INSERT INTO
             PatientsForPatients (
                 PatientSerNum,
+                CronLogSerNum,
                 PostControlSerNum,
                 DateAdded
             )
         VALUES (
             '$patientser',
+            '$cronlogser',
             '$postcontrolser',
             NOW()
         )

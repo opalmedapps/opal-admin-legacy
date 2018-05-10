@@ -170,6 +170,8 @@
 		$body_EN 		= $emailDetails['body_EN'];
 		$body_FR 		= $emailDetails['body_FR'];
 		$type 			= $emailDetails['type'];
+		$userSer 		= $emailDetails['user']['id'];
+		$sessionId 		= $emailDetails['user']['sessionid'];
 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -182,7 +184,9 @@
 						Body_EN,
 						Body_FR,
 						EmailTypeSerNum,
-						DateAdded
+						DateAdded,
+						LastUpdatedBy,
+						SessionId
 					)
 				VALUES (
 					\"$subject_EN\",
@@ -190,7 +194,9 @@
 					\"$body_EN\",
 					\"$body_FR\",
 					'$type',
-					NOW()
+					NOW(),
+					'$userSer',
+					'$sessionId'
 				)
 			";
 			$query = $host_db_link->prepare( $sql );
@@ -215,6 +221,8 @@
 		$body_EN 		= $emailDetails['body_EN'];
 		$body_FR 		= $emailDetails['body_FR'];
 		$serial 		= $emailDetails['serial'];
+		$userSer 		= $emailDetails['user']['id'];
+		$sessionId 		= $emailDetails['user']['sessionid'];
 
 		$response = array(
             'value'     => 0,
@@ -231,7 +239,9 @@
 					EmailControl.Subject_EN 		= \"$subject_EN\",
 					EmailControl.Subject_FR 		= \"$subject_FR\",
 					EmailControl.Body_EN 			= \"$body_EN\",
-					EmailControl.Body_FR 		 	= \"$body_FR\"
+					EmailControl.Body_FR 		 	= \"$body_FR\",
+					EmailControl.LastUpdatedBy 		= '$userSer',
+					EmailControl.SessionId 			= '$sessionId'
 				WHERE
 					EmailControl.EmailControlSerNum = $serial
 			";
@@ -254,14 +264,18 @@
 	* Deletes an email template from the database 
 	*
 	* @param integer $serial : the email control serial number
+	* @param object $user : the current user in session
 	* @return array $response : response
 	*/
-	public function deleteEmail ($serial) {
+	public function deleteEmail ($serial, $user) {
 
 		$response = array(
             'value'     => 0,
             'message'   => ''
-        );
+		);
+		
+		$userSer = $user['id'];
+		$sessionId = $user['sessionid'];
 
         try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -273,6 +287,19 @@
 					EmailControl.EmailControlSerNum = $serial 
 			";
 			$query = $host_db_link->prepare( $sql );
+			$query->execute();
+			
+			$sql = "
+                UPDATE EmailControlMH
+                SET 
+                    EmailControlMH.LastUpdatedBy = '$userSer',
+                    EmailControlMH.SessionId = '$sessionId'
+                WHERE
+                    EmailControlMH.EmailControlSerNum = $serial
+                ORDER BY EmailControlMH.RevSerNum DESC 
+                LIMIT 1
+            ";
+            $query = $host_db_link->prepare( $sql );
             $query->execute();
 
             $response['value'] = 1;
@@ -285,6 +312,165 @@
 
 
 	}
+
+	/**
+     *
+     * Gets chart logs of a email or emails
+     *
+     * @param integer $serial : the email serial number
+     * @return array $emailLogs : the email logs for highcharts
+     */
+    public function getEmailChartLogs ($serial) {
+        $emailLogs = array();
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            $sql = null;
+            if (!$serial) {
+            	 $sql = "
+                    SELECT DISTINCT 
+                        emmh.CronLogSerNum,
+                        COUNT(emmh.CronLogSerNum),
+                        cl.CronDateTime,
+                        emt.EmailTypeName
+                    FROM
+                        EmailLogMH emmh,
+                        CronLog cl,
+                        EmailControl emc,
+                        EmailType emt
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = emmh.CronLogSerNum
+                    AND emmh.CronLogSerNum IS NOT NULL
+                    AND emmh.EmailControlSerNum = emc.EmailControlSerNum
+                    AND emc.EmailTypeSerNum = emt.EmailTypeSerNum
+                    GROUP BY 
+                        emmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC
+                ";
+
+            }
+            else {
+                $sql = "
+                    SELECT DISTINCT 
+                        emmh.CronLogSerNum,
+                        COUNT(emmh.CronLogSerNum),
+                        cl.CronDateTime,
+                        emt.EmailTypeName
+                    FROM
+                        EmailLogMH emmh,
+                        CronLog cl,
+                        EmailControl emc,
+                        EmailType emt
+                    WHERE
+                        cl.CronStatus = 'Started'
+                    AND cl.CronLogSerNum = emmh.CronLogSerNum
+                    AND emmh.CronLogSerNum IS NOT NULL
+                    AND emmh.EmailControlSerNum = '$serial'
+                    AND emmh.EmailControlSerNum = emc.EmailControlSerNum
+                    AND emc.EmailTypeSerNum = emt.EmailTypeSerNum
+                    GROUP BY 
+                        emmh.CronLogSerNum,
+                        cl.CronDateTime
+                    ORDER BY 
+                        cl.CronDateTime ASC
+                ";
+            }
+
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            $emailSeries = array();
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $seriesName = $data[3];
+                $emailDetail = array (
+                    'x' => $data[2],
+                    'y' => intval($data[1]),
+                    'cron_serial' => $data[0]
+                );
+                if(!isset($emailSeries[$seriesName])) {
+                    $emailSeries[$seriesName] = array(
+                        'name'  => $seriesName,
+                        'data'  => array()
+                    );
+                }
+                array_push($emailSeries[$seriesName]['data'], $emailDetail);
+            }
+
+            foreach ($emailSeries as $seriesName => $series) {
+                array_push($emailLogs, $series);
+            }
+
+            return $emailLogs;
+
+        } catch( PDOException $e) {
+            echo $e->getMessage();
+            return $emailLogs;
+        }
+    }
+
+    /**
+     *
+     * Gets list logs of emails during one or many cron sessions
+     *
+     * @param array $serials : a list of cron log serial numbers
+     * @return array $emailLogs : the email logs for table view
+     */
+    public function getEmailListLogs ($serials) {
+        $emailLogs = array();
+        $serials = implode(',', $serials);
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
+                SELECT DISTINCT
+                    emmh.EmailControlSerNum,
+                    emmh.EmailRevSerNum,
+                    emmh.CronLogSerNum,
+                    emmh.PatientSerNum,
+                    emt.EmailTypeName,
+                    emmh.DateAdded,
+                    emmh.ModificationAction
+                FROM
+                    EmailLogMH emmh,
+                    EmailControl emc,
+                    EmailType emt
+                WHERE
+                    emmh.EmailControlSerNum  = emc.EmailControlSerNum
+                AND emc.EmailTypeSerNum      = emt.EmailTypeSerNum 
+                AND emmh.CronLogSerNum              IN ($serials)
+            ";
+
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                $logDetails = array (
+                    'control_serial'        => $data[0],
+                    'revision'              => $data[1],
+                    'cron_serial'           => $data[2],
+                    'patient_serial'        => $data[3],
+                    'type'                  => $data[4],
+                    'date_added'            => $data[5],
+                    'mod_action'            => $data[6]
+                );
+
+                array_push($emailLogs, $logDetails);
+            }
+
+            return $emailLogs;
+
+        } catch( PDOException $e) {
+            echo $e->getMessage();
+            return $emailLogs;
+        }
+    }
+
 
 
 }

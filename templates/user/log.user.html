@@ -1,0 +1,185 @@
+<!-- Modal title -->
+<div class="modal-header">
+  <div class="col-xs-12 col-md-6">
+    <h2 class="modal-title">
+      <span class="fa fa-area-chart"></span> 
+      User Logs
+    </h2>
+    <p class="modal-title-caption">
+      {{currentUser.username}}
+    </p>
+  </div>
+  <div class="modal-buttons col-xs-12 col-md-6">
+    <span> 
+      <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+    </span>
+  </div>
+</div>
+<div class="modal-body">
+  <uib-accordion>
+
+    <!-- SECTION: Login Logs -->
+    <div uib-accordion-group is-open="loginsSection.open" ng-if="userListLogs.login.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Login Sessions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': loginsSection.open, 'glyphicon-chevron-right': !loginsSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridLoginLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (userListLogs.login.length*gridLoginLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Alias Logs -->
+    <div uib-accordion-group is-open="aliasLogSection.open" ng-if="userListLogs.alias.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Alias Changes</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': aliasLogSection.open, 'glyphicon-chevron-right': !aliasLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridAliasLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (userListLogs.alias.length*gridAliasLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Alias Expression Logs -->
+    <div uib-accordion-group is-open="aliasExpressionLogSection.open" ng-if="userListLogs.aliasExpresssion.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Alias Expression Changes</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': aliasExpressionLogSection.open, 'glyphicon-chevron-right': !aliasExpressionLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridAliasExpressionLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (userListLogs.aliasExpresssion.length*gridAliasExpressionLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Diagnosis Translation Logs -->
+    <div uib-accordion-group is-open="diagnosisTranslationLogSection.open" ng-if="userListLogs.diagnosisTranslation.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Diagnosis Translation Changes</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': diagnosisTranslationLogSection.open, 'glyphicon-chevron-right': !diagnosisTranslationLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridDiagnosisTranslationLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (userListLogs.diagnosisTranslation.length*gridDiagnosisTranslationLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Diagnosis Code Logs -->
+    <div uib-accordion-group is-open="diagnosisCodeLogSection.open" ng-if="userListLogs.diagnosisCode.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Diagnosis Code Changes</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': diagnosisCodeLogSection.open, 'glyphicon-chevron-right': !diagnosisCodeLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridDiagnosisCodeLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (userListLogs.diagnosisCode.length*gridDiagnosisCodeLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Email Logs -->
+    <div uib-accordion-group is-open="emailLogSection.open" ng-if="userListLogs.email.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Email Changes</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': emailLogSection.open, 'glyphicon-chevron-right': !emailLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridEmailLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (userListLogs.email.length*gridEmailLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Trigger Logs -->
+    <div uib-accordion-group is-open="triggerLogSection.open" ng-if="userListLogs.trigger.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Trigger Changes</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerLogSection.open, 'glyphicon-chevron-right': !triggerLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridTriggerLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (userListLogs.trigger.length*gridTriggerLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Hospital Map Logs -->
+    <div uib-accordion-group is-open="hospitalMapLogSection.open" ng-if="userListLogs.hospitalMap.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Hospital Map Changes</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': hospitalMapLogSection.open, 'glyphicon-chevron-right': !hospitalMapLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridHospitalMapLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (userListLogs.hospitalMap.length*gridHospitalMapLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Post Logs -->
+    <div uib-accordion-group is-open="postLogSection.open" ng-if="userListLogs.post.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Post Changes</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': postLogSection.open, 'glyphicon-chevron-right': !postLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridPostLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (userListLogs.post.length*gridPostLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+     <!-- SECTION: Notification Logs -->
+    <div uib-accordion-group is-open="notificationLogSection.open" ng-if="userListLogs.notification.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Notification Changes</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': notificationLogSection.open, 'glyphicon-chevron-right': !notificationLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridNotificationLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (userListLogs.notification.length*gridNotificationLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Legacy Questionnaire Logs -->
+    <div uib-accordion-group is-open="legacyQuestionnaireLogSection.open" ng-if="userListLogs.legacyQuestionnaire.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Legacy Questionnaire Changes</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': legacyQuestionnaireLogSection.open, 'glyphicon-chevron-right': !legacyQuestionnaireLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridLegacyQuestionnaireLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (userListLogs.legacyQuestionnaire.length*gridLegacyQuestionnaireLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Test Result Logs -->
+    <div uib-accordion-group is-open="testResultLogSection.open" ng-if="userListLogs.testResult.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Test Result Changes</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': testResultLogSection.open, 'glyphicon-chevron-right': !testResultLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridTestResultLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (userListLogs.testResult.length*gridTestResultLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: Test Result Expression Logs -->
+    <div uib-accordion-group is-open="testResultExpressionLogSection.open" ng-if="userListLogs.testResultExpression.length">
+      <uib-accordion-heading>
+        <div>
+          <strong>Test Result Expression Changes</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': testResultExpressionLogSection.open, 'glyphicon-chevron-right': !testResultExpressionLogSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div id="data-table">
+        <div class="gridStyle" ui-grid="gridTestResultExpressionLogOptions"  ui-grid-resize-columns ui-grid-auto-resize style="min-height: 20vh; max-height:35vh" ng-style="{height: (userListLogs.testResultExpression.length*gridTestResultExpressionLogOptions.rowHeight)+32+'px'}"></div>
+      </div>
+    </div>
+    
+  </uib-accordion>
+  <div class="panel-container" ng-if="userListLogs.isData == 0">
+    <div class="panel-info">
+      <div class="jumbotron content" style="background-color: transparent; margin-bottom:0">
+        <p style="font-size:45px;">No data available</p>
+      </div>
+    </div>
+  </div>
+</div>

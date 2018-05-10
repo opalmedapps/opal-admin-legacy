@@ -1,0 +1,497 @@
+<!-- Modal title -->
+<div class="modal-header">
+	<h2 class="modal-title col-xs-12">
+		<span class="glyphicon glyphicon-pencil"></span> 
+		Edit Questionnaire
+	</h2>
+	<p class="modal-title-caption col-xs-12">
+	 	{{questionnaire.name_EN}} / {{questionnaire.name_FR}}
+	</p>
+	<div class="modal-buttons col-xs-12">
+    <span> 
+      <form method="post" ng-submit="updateQuestionnaire()">
+        <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+      </form>
+    </span>
+  </div>
+</div>
+<div class="modal-body">
+	<uib-accordion>
+
+    <!-- SECTION: Titles -->
+		<div uib-accordion-group is-open="titleSection.open">
+			<uib-accordion-heading>
+				<div>
+					<strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+				</div>
+			</uib-accordion-heading>
+			<div class="row">
+				<div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+					<div class="input-group">
+						<span class="input-group-addon">EN</span>
+						<textarea class="form-control" rows="1" ng-model="questionnaire.name_EN" placeholder="English Title" ng-change="setChangesMade()"></textarea>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+					<div class="input-group">
+						<span class="input-group-addon">FR</span>
+						<textarea class="form-control" rows="1" ng-model="questionnaire.name_FR" placeholder="Titre Français" ng-change="setChangesMade()"></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+
+    <!-- SECTION: Privacy -->
+		<div uib-accordion-group is-open="privacySection.open">
+			<uib-accordion-heading>
+				<div>
+					<strong>Privacy </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': privacySection.open, 'glyphicon-chevron-right': !privacySection.open}"></i>
+				</div>
+			</uib-accordion-heading>
+			<div class="row">
+				<div class="col-xs-12 col-sm-6 col-md-3">
+					<div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hoverB, active: questionnaire.private == 1}"
+					 ng-click="privacyUpdate(1)" ng-mouseenter="hoverB=true" ng-mouseleave="hoverB=false">
+						<div class="panel-info" ng-class="{active: questionnaire.private == 1}">
+							<div class="panel-content" style="text-align:center">
+								<span style="font-size:30px;" class="fa fa-lock"></span>
+								<div class="option-panel-title">Private</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-6 col-md-3">
+					<div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hoverC, active: questionnaire.private == 0}"
+					 ng-click="privacyUpdate(0)" ng-mouseenter="hoverC=true" ng-mouseleave="hoverC=false">
+						<div class="panel-info" ng-class="{active: questionnaire.private == 0}">
+							<div class="panel-content" style="text-align:center">
+								<span style="font-size:30px;" class="fa fa-unlock-alt"></span>
+								<div class="option-panel-title">Public</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+    <!-- SECTION: Question group -->
+		<div uib-accordion-group is-open="questionGroupSection.open">
+			<uib-accordion-heading>
+				<div>
+					<strong>Question Group </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': questionGroupSection.open, 'glyphicon-chevron-right': !questionGroupSection.open}"></i>
+				</div>
+			</uib-accordion-heading>
+			<div class="alert alert-info" role="alert">
+        <strong>Current Question Groups</strong><br>
+        <p>
+          <ul class="list-items">
+            <li ng-repeat="group in questionnaire.groups">
+							{{group.name_EN}}
+						</li>
+          </ul>
+        </p>
+      </div>
+			<div class="row">
+				<div class="panel-container" style="margin:20px;">
+					<h4 style="text-align:left;">Edit current question groups: </h4>
+					<div class="panel-info">
+						<table style="width:100%;">
+							<tr style="font-size:16px;">
+								<td>Current Position</td>
+								<td>Change Position</td>
+								<td>Question Group</td>
+								<td>Required/Optional</td>
+							</tr>
+							<tr>
+							</tr>
+							<tr ng-repeat="group in questionnaire.groups">
+								<td>
+									{{group.position}}
+								</td>
+								<td>
+									<label><input type="number" min="1" ng-model="group.position" ng-change="setChangesMade()"></label>
+								</td>
+								<td>
+									{{group.name_EN}} / {{group.name_FR}}
+								</td>
+								<td>
+									<select name="groupOptional" ng-model="group.optional" ng-change="setChangesMade()" required>
+                    <option value=0 selected>Required</option>
+                    <option value=1>Optional</option>
+                  </select>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<h4 style="text-align:left; margin-left:20px" ;>Add new question groups: </h4>
+				<!-- Selected groups: change position -->
+				<div class="col-md-12" ng-show="newgroups.length">
+					<div class="panel-container" style="margin:10px;">
+						<div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
+							<span style="background-color: #fff; padding: 0 10px; font-size:16px;"> Edit selected question groups </span>
+						</div>
+						<div class="panel-info">
+							<table style="width:100%;">
+								<tr style="font-size:16px;">
+									<td>Current Position</td>
+									<td>Change Position</td>
+									<td>Question Group</td>
+									<td>Required/Optional(default: required)</td>
+								</tr>
+								<tr>
+								</tr>
+								<tr ng-repeat="newgroup in newgroups">
+									<td>
+										{{newgroup.position}}
+									</td>
+									<td>
+										<label><input type="number" min="1" ng-model="newgroup.position"></label>
+									</td>
+									<td>
+										{{newgroup.name_EN}} / {{newgroup.name_FR}}
+									</td>
+									<td>
+										<select name="groupOption" ng-model="newgroup.optional" required>
+                      <option value=0 selected>Required</option>
+                      <option value=1>Optional</option>
+                    </select>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12">
+					<!-- question group table -->
+					<div class="col-md-8">
+						<div class="panel-container" style="text-align:left;">
+							<div class="panel-info">
+								<div class="panel-input">
+									<div id="data-table">
+										<div class="gridStyle" ui-grid="gridGroups" ui-grid-resize-columns ui-grid-selection style="height:75vh"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Preview -->
+					<div class="col-md-4" style="text-align:right">
+						<div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
+							<span style="background-color: #fff; padding: 0 10px; font-size:16px;">
+                Selected questions preview</span>
+						</div>
+						<div class="previewContainer">
+							<div class="previewContent">
+								<div ng-repeat="selectedGroupObj in selectedGroups">
+									<h4 style="font-weight:bold;">{{selectedGroupObj.entity.name_EN}} / {{selectedGroupObj.entity.name_FR}}:</h4>
+									<div ng-repeat="question in selectedGroupObj.entity.questions">
+										<p>{{question.text_EN}} / {{question.text_FR}}
+											<span style="color:#d9534f">( Question type: {{question.answertype_category_EN}} - {{question.answertype_name_EN}} / {{question.answertype_name_FR}} )</span>
+										</p>
+
+										<!-- Answer type preview -->
+										<div ng-if="question.answertype_category_EN == 'Multiple Choice'">
+											<div ng-repeat="option in question.options">
+												<label><input type="radio"> {{option.text_EN}} / {{option.text_FR}}</label>
+											</div>
+										</div>
+
+										<div ng-if="question.answertype_category_EN == 'Checkboxes'">
+											<div ng-repeat="option in question.options">
+												<label><input type="checkbox"> {{option.text_EN}} / {{option.text_FR}}</label>
+											</div>
+										</div>
+
+										<div ng-if="question.answertype_category_EN == 'Linear Scale'">
+											<div ng-repeat="option in question.options">
+												<label><input type="radio"> {{option.text_EN}} / {{option.text_FR}}</label>
+											</div>
+										</div>
+
+										<div ng-if="question.answertype_category_EN == 'Date'">
+											<label>Date:<input type="date"></label>
+										</div>
+
+										<div ng-if="question.answertype_category_EN == 'Time'">
+											<label>Time:<input type="time"></label>
+										</div>
+
+										<div ng-if="question.answertype_category_EN == 'Short Answer'">
+											<textarea rows="3" cols="50">Type in your answer.</textarea>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+    <!-- SECTION: Tags -->
+		<div uib-accordion-group is-open="tagsSection.open">
+			<uib-accordion-heading>
+				<div>
+					<strong>Tag </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tagsSection.open, 'glyphicon-chevron-right': !tagsSection.open}"></i>
+				</div>
+			</uib-accordion-heading>
+			<div class="alert alert-info" role="alert">
+        <strong>Current Tags</strong><br>
+        <p>
+          <ul class="list-items">
+            <li ng-repeat="tag in tagList | filter: {added: 1} : 1" ng-hide="allTags(tagList)">
+							{{tag.name_EN}}
+						</li>
+          </ul>
+        </p>
+      </div>
+			<div class="list-space">
+				<div class="input-group">
+					<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+					<input class="form-control" type="text" ng-model="tagFilter" ng-change="searchTag(tagFilter)" placeholder="Search Tag" />
+				</div>
+				<ul class="list-items">
+					<li ng-repeat="tag in tagList | filter: searchTagFilter">
+						<label><input type="checkbox" ng-click="selectTag(tag)" ng-checked="tag.added"/> {{tag.name_EN}}</label>
+					</li>
+				</ul>
+			</div>
+    </div>
+    
+   	<!-- SECTION: Patient filter -->
+    <div uib-accordion-group is-open="patientFilterSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Trigger to Send By Patient </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': patientFilterSection.open, 'glyphicon-chevron-right': !patientFilterSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="alert alert-info" role="alert">
+        <strong>Current Patient Triggers</strong><br>
+        <p>
+          <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(patientFilterList)"></span>
+          <span ng-if="allFilters(patientFilterList)">No filter</span>
+          <ul class="list-items" ng-if="!allFilters(patientFilterList)">
+            <li ng-repeat="patient in patientFilterList | filter: {added: 1} : 1">
+              {{patient.name}}
+            </li>
+          </ul>
+        </p>
+      </div>
+      <div class="list-space">
+        <div class="input-group">
+          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+          <input class="form-control" type="text" ng-model="patientSearchField" ng-change="searchPatient(patientSearchField)" placeholder="Search..."/>
+        </div>
+        <ul class="list-items">
+          <li ng-repeat="patient in patientFilterList | filter: searchPatientFilter">
+            <label>
+              <input type="checkbox" ng-click="selectItem(patient)" ng-checked="patient.added" /> {{patient.name}}
+            </label>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SECTION: Demographic filters -->
+		<div uib-accordion-group is-open="demographicFilterSection.open"> 
+			<uib-accordion-heading>
+				<div>
+					<strong>Trigger to Send By Demographics </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': demographicFilterSection.open, 'glyphicon-chevron-right': !demographicFilterSection.open}"></i>
+				</div>
+			</uib-accordion-heading>
+			<div class="alert alert-info" role="alert">
+        <strong>Current Sex Triggers</strong><br>
+        <p>
+          <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+          <span ng-if="!demoFilter.sex">None</span>
+          <span ng-if="demoFilter.sex">{{demoFilter.sex}}</span> 
+        </p> <br>
+        <strong>Current Age Group Triggers</strong><br>
+        <p>
+          <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+          <span ng-if="!demoFilter.age">None</span>
+          <span ng-if="demoFilter.age">{{demoFilter.age.min}} to {{demoFilter.age.max}}</span>
+        </p>
+      </div>
+			<div class="row">
+				<div class="col-xs-12 col-md-6">
+					<div class="row">
+						<h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Sex</h2>
+					</div>
+					<div class="row">
+						<div ng-repeat="sex in sexes" class="col-xs-12 col-sm-6">
+							<div class="panel-container animated" style="cursor:pointer" ng-class="{pulse: hover, active: demoFilter.sex == sex.name}" ng-click="sexUpdate(sex)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                <div class="panel-info" ng-class="{active: demoFilter.sex == sex.name}">
+                  <div class="panel-content" style="text-align:center">
+                    <span style="font-size:30px;" class="fa fa-{{sex.icon}}"></span>
+                    <div class="option-panel-title">{{sex.name}}</div>
+                  </div>
+                </div>
+              </div> 
+            </div>
+          </div>
+        </div>
+				<div class="col-xs-12 col-md-6">
+					<div class="row">
+						<h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Age Group</h2>
+					</div>
+					<div class="row">
+						<div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+							<div class="input-group">
+								<span class="input-group-addon">MIN</span>
+								<input class="form-control" ng-model="demoFilter.age.min" ng-change="setChangesMade()" type="number" ng-max="demoFilter.age.max" min="0">
+							</div> 
+						</div>
+						<div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+							<div class="input-group">
+								<span class="input-group-addon">MAX</span>
+								<input class="form-control" ng-model="demoFilter.age.max" ng-change="setChangesMade()" type="number" max="100" ng-min="demoFilter.age.min">
+							</div> 
+						</div>
+					</div>
+				</div>
+			</div>
+    </div> 
+    
+   	<!-- SECTION: Appointment filter -->
+    <div uib-accordion-group is-open="appointmentFilterSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Trigger to Send By Appointment</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': appointmentFilterSection.open, 'glyphicon-chevron-right': !appointmentFilterSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="alert alert-info" role="alert">
+        <strong>Current Appointment Triggers</strong><br>
+        <p>
+          <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(appointmentList)"></span>
+          <span ng-if="allFilters(appointmentList)">No filter</span>
+          <ul class="list-items" ng-if="!allFilters(appointmentList)">
+            <li ng-repeat="selectedAppointment in appointmentList | filter: {added: 1} : 1" ng-hide="allFilters(appointmentList)">
+              {{selectedAppointment.name}}
+            </li>
+          </ul>
+        </p>
+      </div>
+      <div class="list-space">
+        <div class="input-group">
+          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+          <input class="form-control" type="text" ng-model="appointmentSearchField" ng-change="searchAppointment(appointmentSearchField)" placeholder="Search..."/>
+        </div>
+        <ul class="list-items">
+          <li ng-repeat="appointment in appointmentList | filter: searchAppointmentFilter">
+            <label>
+              <input type="checkbox" ng-click="selectItem(appointment)" ng-checked="appointment.added" /> {{appointment.name}}
+            </label>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SECTION: Diagnosis filter -->
+    <div uib-accordion-group is-open="diagnosisFilterSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Trigger to Send By Diagnosis </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': diagnosisFilterSection.open, 'glyphicon-chevron-right': !diagnosisFilterSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="alert alert-info" role="alert">
+        <strong>Current Diagnosis Triggers</strong><br>
+        <p>
+          <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(dxFilterList)"></span>
+          <span ng-if="allFilters(dxFilterList)">No filter</span>
+          <ul class="list-items" ng-if="!allFilters(dxFilterList)">
+              <li ng-repeat="dx in dxFilterList | filter: {added: 1} : 1" ng-hide="allFilters(dxFilterList)">
+              {{dx.name}}
+            </li>
+          </ul>
+        </p>
+      </div>
+      <div class="list-space">
+        <div class="input-group">
+          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+          <input class="form-control" type="text" ng-model="dxSearchField" ng-change="searchDiagnosis(dxSearchField)" placeholder="Search..."/>
+        </div>
+        <ul class="list-items">
+          <li ng-repeat="dx in dxFilterList | filter: searchDxFilter">
+            <label>
+              <input type="checkbox" ng-click="selectItem(dx)" ng-checked="dx.added" /> {{dx.name}}
+            </label>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SECTION: Doctor filter -->
+    <div uib-accordion-group is-open="doctorFilterSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Trigger to Send By Doctor </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': doctorFilterSection.open, 'glyphicon-chevron-right': !doctorFilterSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="alert alert-info" role="alert">
+        <strong>Current Doctor Triggers</strong><br>
+        <p>
+          <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(doctorFilterList)"></span>
+          <span ng-if="allFilters(doctorFilterList)">No filter</span>
+          <ul class="list-items" ng-if="!allFilters(doctorFilterList)">
+              <li ng-repeat="doctor in doctorFilterList | filter: {added: 1} : 1" ng-hide="allFilters(doctorFilterList)">
+              {{doctor.name}}
+            </li>
+          </ul>
+        </p>
+      </div>
+      <div class="list-space">
+        <div class="input-group">
+          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+          <input class="form-control" type="text" ng-model="doctorSearchField" ng-change="searchDoctor(doctorSearchField)" placeholder="Search..."/>
+        </div>
+        <ul class="list-items">
+          <li ng-repeat="doctor in doctorFilterList | filter: searchDoctorFilter">
+            <label>
+              <input type="checkbox" ng-click="selectItem(doctor)" ng-checked="doctor.added" /> {{doctor.name}}
+            </label>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SECTION: Resource Filter -->
+    <div uib-accordion-group is-open="resourceFilterSection.open">
+      <uib-accordion-heading>
+        <div>
+          <strong>Trigger to Send By Treatment Machine </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': resourceFilterSection.open, 'glyphicon-chevron-right': !resourceFilterSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="alert alert-info" role="alert">
+        <strong>Current Treatment Machine Triggers</strong><br>
+        <p>
+          <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="allFilters(resourceFilterList)"></span>
+          <span ng-if="allFilters(resourceFilterList)">No filter</span>
+          <ul class="list-items" ng-if="!allFilters(resourceFilterList)">
+              <li ng-repeat="resource in resourceFilterList | filter: {added: 1} : 1" ng-hide="allFilters(resourceFilterList)">
+              {{resource.name}}
+            </li>
+          </ul>
+        </p>
+      </div>
+      <div class="list-space">
+        <div class="input-group">
+          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+          <input class="form-control" type="text" ng-model="resourceSearchField" ng-change="searchResource(resourceSearchField)" placeholder="Search..."/>
+        </div>
+        <ul class="list-items">
+          <li ng-repeat="resource in resourceFilterList | filter: searchResourceFilter">
+            <label>
+              <input type="checkbox" ng-click="selectItem(resource)" ng-checked="resource.added" /> {{resource.name}}
+            </label>
+          </li>
+        </ul>
+      </div>
+		</div>
+
+	</uib-accordion>
+</div>

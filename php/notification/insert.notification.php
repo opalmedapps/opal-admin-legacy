@@ -9,7 +9,8 @@
         'name_FR'               => $_POST['name_FR'],
         'description_EN'        => $_POST['description_EN'],
         'description_FR'        => $_POST['description_FR'],
-        'type'                  => $_POST['type']
+        'type'                  => $_POST['type'],
+        'user'                  => $_POST['user']
     );
 
     $notificationObj = new Notification; // Object

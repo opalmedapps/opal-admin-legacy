@@ -54,6 +54,7 @@ sub new
 		_fileloc		    => undef,
 		_transferstatus		=> undef,
 		_log			    => undef,
+		_cronlogser 		=> undef,
 	};
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
@@ -232,6 +233,16 @@ sub setDocLog
 }
 
 #====================================================================================
+# Subroutine to set the document cron log serial
+#====================================================================================
+sub setDocCronLogSer
+{
+	my ($document, $cronlogser) = @_; # doc object with provided serial in arguments
+	$document->{_cronlogser} = $cronlogser; # set the ser
+	return $document->{_cronlogser};
+}
+
+#====================================================================================
 # Subroutine to get the document ser
 #====================================================================================
 sub getDocSer
@@ -385,12 +396,21 @@ sub getDocLog
 	return $document->{_log};
 }
 
+#====================================================================================
+# Subroutine to get the document cron log ser
+#====================================================================================
+sub getDocCronLogSer
+{
+	my ($document) = @_; # our document object
+	return $document->{_cronlogser};
+}
+
 #======================================================================================
 # Subroutine to get documents from the source database
 #======================================================================================
 sub getDocsFromSourceDB
 {
-	my (@patientList) = @_; # a list of patients from args
+	my ($cronLogSer, @patientList) = @_; # a list of patients and cron log serial from args
 
 	my @docList = (); # initialize a list for document objects
 
@@ -409,9 +429,13 @@ sub getDocsFromSourceDB
     # in order to search for the corresponding documents in the database
 	foreach my $Patient (@patientList) {
 
-		my $patientSer		    = $Patient->getPatientSer(); # get patient serial
-		my $patientSSN    		= $Patient->getPatientSSN();
-        my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
+		my $patientSer		    		= $Patient->getPatientSer(); # get patient serial
+		my $patientSSN    				= $Patient->getPatientSSN();
+        my $patientLastTransfer			= $Patient->getPatientLastTransfer(); # get last updated
+        my $patientRegistrationDate 	= $Patient->getPatientRegistrationDate(); 
+
+        my $formatted_PLU = Time::Piece->strptime($patientLastTransfer, "%Y-%m-%d %H:%M:%S");
+        my $formatted_reg = Time::Piece->strptime($patientRegistrationDate, "%Y-%m-%d %H:%M:%S");
 
         foreach my $Alias (@aliasList) {
 
@@ -458,7 +482,7 @@ sub getDocsFromSourceDB
 					WHERE
 						pt.pt_id 			            = visit_note.pt_id
 					AND pt.patient_ser			        = Patient.PatientSer
-					AND Patient.SSN 		       	 	LIKE '$patientSSN%'
+					AND RTRIM(Patient.SSN)       	 	= '$patientSSN'
 					AND visit_note.note_typ		        = note_typ.note_typ
 					AND visit_note.appr_flag		    = 'A'
 					AND (
@@ -475,9 +499,21 @@ sub getDocsFromSourceDB
 		            # get the diff in seconds
 		            my $date_diff = $formatted_PLU - $formatted_ELU;
 		            if ($date_diff < 0) {
-		                $lasttransfer = $patientLastTransfer;
+		            	my $reg_date_diff = $formatted_PLU - $formatted_reg;
+		            	if ($reg_date_diff < 0) {
+		            		$lasttransfer = $patientRegistrationDate;
+		            	}
+		            	else {
+			                $lasttransfer = $patientLastTransfer;
+		            	}
 		            } else {
-		                $lasttransfer = $expressionLastTransfer;
+		            	my $reg_date_diff = $formatted_ELU - $formatted_reg;
+		            	if ($reg_date_diff < 0) {
+		            		$lasttransfer = $patientRegistrationDate;
+		            	}
+		            	else {
+			                $lasttransfer = $expressionLastTransfer;
+		            	}
 		            }
         		
 	        		$docInfo_sql .= "
@@ -548,6 +584,7 @@ sub getDocsFromSourceDB
 	    		    $document->setDocDateOfService($dos);
 		        	$document->setDocCreatedBy($createdby);
 			        $document->setDocCreatedTimeStamp($createdts);
+			        $document->setDocCronLogSer($cronLogSer);
 	
     			    push(@docList, $document);
         		}
@@ -688,7 +725,7 @@ sub inOurDatabase
 
 	# Other document variables, if it exists
 	my ($ser, $revised, $validentry, $errtxt, $fileloc, $transferstatus, $aliasexpressionser, $log, $patientser);
-	my ($apprvby, $apprvts, $authoredby, $dos, $createdby, $createdts);
+	my ($apprvby, $apprvts, $authoredby, $dos, $createdby, $createdts, $cronlogser);
 	
 	my $inDB_sql = "
 		SELECT
@@ -707,7 +744,8 @@ sub inOurDatabase
 			Document.AuthoredBySerNum,
 			Document.DateOfService,
        		Document.CreatedBySerNum,
-			Document.CreatedTimeStamp
+			Document.CreatedTimeStamp,
+			Document.CronLogSerNum
 		FROM
 			Document
 		WHERE
@@ -741,6 +779,7 @@ sub inOurDatabase
         $dos            	= $data[13];
         $createdby      	= $data[14];
         $createdts      	= $data[15];
+        $cronlogser 		= $data[16];
 	}
 
 	if ($DocSourceUIDInDB) {
@@ -764,6 +803,7 @@ sub inOurDatabase
 		$ExistingDoc->setDocDateOfService($dos);		
 		$ExistingDoc->setDocCreatedBy($createdby);
 		$ExistingDoc->setDocCreatedTimeStamp($createdts);
+		$ExistingDoc->setDocCronLogSer($cronlogser);
 
 		return $ExistingDoc; # this is true (ie. document exists, return object)
 	}
@@ -1185,11 +1225,13 @@ sub insertDocIntoOurDB
 	my $dateofservice		= $document->getDocDateOfService();
 	my $createdby			= $document->getDocCreatedBy();
 	my $createdtimestamp	= $document->getDocCreatedTimeStamp();
+	my $cronlogser			= $document->getDocCronLogSer();
 
 	my $insert_sql = "
 		INSERT INTO 
 			Document (
 				DocumentSerNum, 
+				CronLogSerNum,
 				PatientSerNum,
                 SourceDatabaseSerNum,
 				DocumentId, 
@@ -1212,6 +1254,7 @@ sub insertDocIntoOurDB
 			)
 		VALUES (
 			NULL,
+			'$cronlogser',
 			'$patientser',
             '$sourcedbser',
 			'$sourceuid',
@@ -1274,12 +1317,14 @@ sub updateDatabase
 	my $dateofservice		= $document->getDocDateOfService();
 	my $createdby			= $document->getDocCreatedBy();
 	my $createdtimestamp	= $document->getDocCreatedTimeStamp();
+	my $cronlogser			= $document->getDocCronLogSer();
 
 	my $update_sql = "
 		UPDATE
 			Document
 		SET 
 			PatientSerNum		    = '$patientser',
+			CronLogSerNum 			= '$cronlogser',
 			Revised		 	        = '$revised',
 			ValidEntry		        = '$validentry',
 			ErrorReasonText		    = '$errtxt',
@@ -1288,10 +1333,10 @@ sub updateDatabase
 			AliasExpressionSerNum	= '$expressionser',
 			ApprovedBySerNum	    = '$approvedby',
 			ApprovedTimeStamp	    = '$approvedtimestamp',
- 			AuthoredBySerNum	= '$authoredby',
-			DateOfService		= '$dateofservice',
-   			CreatedBySerNum		= '$createdby',
-			CreatedTimeStamp	= '$createdtimestamp',        
+ 			AuthoredBySerNum		= '$authoredby',
+			DateOfService			= '$dateofservice',
+   			CreatedBySerNum			= '$createdby',
+			CreatedTimeStamp		= '$createdtimestamp',        
 			TransferLog		        = '$log',
             ReadStatus              = 0
 		WHERE
@@ -1332,7 +1377,8 @@ sub compareWith
 	my $Sauthoredby			= $SuspectDoc->getDocAuthoredBy();
 	my $Sdateofservice		= $SuspectDoc->getDocDateOfService();
 	my $Screatedby			= $SuspectDoc->getDocCreatedBy();
-	my $Screatedtimestamp		= $SuspectDoc->getDocCreatedTimeStamp();
+	my $Screatedtimestamp	= $SuspectDoc->getDocCreatedTimeStamp();
+	my $Scronlogser			= $SuspectDoc->getDocCronLogSer();
 
 	# Original document...	
 	my $Orevised			= $OriginalDoc->getDocRevised();
@@ -1348,6 +1394,7 @@ sub compareWith
 	my $Odateofservice		= $OriginalDoc->getDocDateOfService();
 	my $Ocreatedby			= $OriginalDoc->getDocCreatedBy();
 	my $Ocreatedtimestamp	= $OriginalDoc->getDocCreatedTimeStamp();
+	my $Ocronlogser			= $OriginalDoc->getDocCronLogSer();
 
 	# go through each parameter
 	if ($Srevised ne $Orevised) {
@@ -1427,6 +1474,12 @@ sub compareWith
 		print "Document Transfer Log has changed from '$Olog' to '$Slog'\n";
 		my $updatedLog = $UpdatedDoc->setDocLog($Slog); # update
 		print "Will update database entry to '$updatedLog'.\n";
+	}
+	if ($Scronlogser ne $Ocronlogser) {
+
+		print "Document Cron Log Serial has changed from '$Ocronlogser' to '$Scronlogser'\n";
+		my $updatedCronLogSer = $UpdatedDoc->setDocCronLogSer($Scronlogser); # update
+		print "Will update database entry to '$updatedCronLogSer'.\n";
 	}
 
 	return $UpdatedDoc;

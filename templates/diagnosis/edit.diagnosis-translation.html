@@ -1,0 +1,167 @@
+<!-- Modal title -->
+<div class="modal-header">
+  <div class="col-xs-12 col-md-6">
+		<h2 class="modal-title">
+			<span class="glyphicon glyphicon-pencil"></span>
+			Edit Diagnosis Translation 
+		</h2>
+		<p class="modal-title-caption">
+			{{diagnosisTranslation.name_EN}} / {{diagnosisTranslation.name_FR}}
+		</p>
+	</div>
+	<div class="modal-buttons col-xs-12 col-md-6">
+    <span> 
+      <form method="post" ng-submit="updateDiagnosisTranslation()">
+        <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
+          <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+      </form>
+    </span>     
+  </div>
+</div>
+<div class="modal-body">
+	<uib-accordion>
+
+		<!-- SECTION: Diagnosis names -->
+		<div uib-accordion-group is-open="diagnosisSection.open">
+			<uib-accordion-heading>
+				<div>
+					<strong>Assigned Diagnoses</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': diagnosisSection.open, 'glyphicon-chevron-right': !diagnosisSection.open}"></i>
+				</div>
+			</uib-accordion-heading>
+			<div class="alert alert-info" role="alert">
+        <strong>Currently assigned diagnoses</strong><br>
+        <p>
+          <ul class="list-items">
+            <li ng-repeat="selectedDiagnosis in diagnosisList | filter: {added: 1, assigned: null}">
+							{{selectedDiagnosis.name}}
+						</li>
+          </ul>
+        </p>
+      </div>
+			<div class="list-space">
+				<div class="input-group">
+					<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+					<input class="form-control" type="text" ng-model="diagnosisFilter" ng-change="changeDiagnosisFilter(diagnosisFilter)" placeholder="Search Diagnoses..."/>
+				</div>
+				<div style="padding: 10px;">
+          <label>
+            <input type="checkbox" ng-click="selectAllFilteredDiagnoses()" ng-checked="selectAll"> Select All
+          </label>
+        </div>
+				<div class="btn-group btn-group-justified">
+				  <a class="btn btn-default" ng-class="{'active' : diagnosisCodeFilter == 'all'}" ng-click="setDiagnosisCodeFilter('all')">Show all</a>
+          <a class="btn btn-default" ng-class="{'active' : diagnosisCodeFilter == 'current'}" ng-click="setDiagnosisCodeFilter('current')">Assigned to this Diagnosis</a>
+          <a class="btn btn-default" ng-class="{'active' : diagnosisCodeFilter == 'other'}" ng-click="setDiagnosisCodeFilter('other')">Assigned to others</a>
+          <a class="btn btn-default" ng-class="{'active' : diagnosisCodeFilter == 'none'}" ng-click="setDiagnosisCodeFilter('none')">Unassigned</a>
+				</div>
+				<ul class="list-items">
+					<li ng-repeat="diagnosis in diagnosisList | filter: searchDiagnosesFilter">
+						<label ng-class="{greenText: diagnosis.added, grayText: diagnosis.assigned && !diagnosis.added}">
+							<input type="checkbox" ng-click="toggleDiagnosisSelection(diagnosis)" ng-checked="diagnosis.added" /> {{diagnosis.name}}
+							<span ng-class="{redText: diagnosis.assigned && !diagnosis.added}" ng-if="diagnosis.assigned && !diagnosis.added"><em> --- Assigned to: {{diagnosis.assigned.name_EN}}</em></span>
+							<span ng-class="{redText: diagnosis.assigned}" ng-if="diagnosis.assigned && diagnosis.added"><em> --- Will replace assignment from: {{diagnosis.assigned.name_EN}}</em></span>
+						</label>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<!-- SECTION: Titles -->
+		<div uib-accordion-group is-open="titleSection.open">
+				<uib-accordion-heading>
+					<div>
+						<strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="row">
+					<div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+						<div class="input-group">
+							<span class="input-group-addon">EN</span>
+							<input class="form-control" type="text" ng-model="diagnosisTranslation.name_EN" ng-change="detailsUpdated()" placeholder="English Title" required="required">
+						</div>
+					</div>
+					<div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+						<div class="input-group">
+							<span class="input-group-addon">FR</span>
+							<input class="form-control" type="text" ng-model="diagnosisTranslation.name_FR" ng-change="detailsUpdated()" placeholder="Titre Français" required="required">
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- SECTION: Description -->
+			<div uib-accordion-group is-open="descriptionSection.open">
+				<uib-accordion-heading>
+					<div>
+						<strong>Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': descriptionSection.open, 'glyphicon-chevron-right': !descriptionSection.open}"></i>
+					</div>
+				</uib-accordion-heading>
+				<div class="row">
+					<div class="col-xs-12 col-sm-6">
+						<div style="text-align:center; margin-bottom: 10px;">
+            <span style="font-size:20px;">HTML (English)</span>
+          </div>
+						<div class="input-group">
+							<div text-angular ng-model="diagnosisTranslation.description_EN" ng-change="detailsUpdated()" placeholder="English Description" required="required" ta-toolbar="toolbar"></div>
+						</div>
+					</div>
+					<div class="col-xs-12 col-sm-6">
+						<div style="text-align:center; margin-bottom: 10px;">
+            <span style="font-size:20px;">HTML (Français)</span>
+          </div>
+						<div class="input-group">
+							<div text-angular ng-model="diagnosisTranslation.description_FR" ng-change="detailsUpdated()" placeholder="Description Français" required="required" ta-toolbar="toolbar"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- SECTION: Educational material -->
+			<div uib-accordion-group is-open="educationalMaterialSection.open">
+          <uib-accordion-heading>
+            <div>
+              <strong>Attached Educational Material</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': educationalMaterialSection.open, 'glyphicon-chevron-right': !educationalMaterialSection.open}"></i>
+            </div>
+          </uib-accordion-heading>
+          <div class="alert alert-info" role="alert">
+            <strong>Current Educational Material (EN / FR)</strong><br>
+            <p>
+              <div>
+		            <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+		            <span ng-if="diagnosisTranslation.eduMat">
+		              <span ng-if="diagnosisTranslation.eduMat.tocs.length">
+		                <span style="cursor:pointer" ng-click="toggleTOCDisplay()">
+		                  <strong>{{diagnosisTranslation.eduMat.name_EN}} / {{diagnosisTranslation.eduMat.name_FR}}</strong>
+		                </span>
+		                <ul ng-if="showTOCs">
+		                  <li ng-repeat="toc in diagnosisTranslation.eduMat.tocs">
+		                    <strong><a target="_blank" href="{{toc.url_EN}}">{{toc.name_EN}}</a></strong> / <strong><a target="_blank" href="{{toc.url_FR}}">{{toc.name_FR}}</a></strong>
+		                  </li>
+		                </ul>
+		              </span>
+		              <span ng-if="!diagnosisTranslation.eduMat.tocs.length">
+		                <span>
+		                  <strong><a target="_blank" href="{{diagnosisTranslation.eduMat.url_EN}}">{{diagnosisTranslation.eduMat.name_EN}}</a> / <a target="_blank" href="{{diagnosisTranslation.eduMat.url_FR}}">{{diagnosisTranslation.eduMat.name_FR}}</a></strong>
+		                </span>
+		              </span>
+		            </span>
+		            <span ng-if="!diagnosisTranslation.eduMat">None</span>
+		          </div>
+            </p>
+          </div>
+          <div class="list-space">
+            <div class="input-group">
+              <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+              <input class="form-control" type="text" ng-model="eduMatFilter" ng-change="changeEduMatFilter(eduMatFilter)" placeholder="Search Educational Material..."/>
+            </div>
+            <ul class="list-items">
+              <li ng-repeat="eduMat in eduMatList | filter: searchEduMatsFilter">
+                <label>
+                  <input type="radio" ng-model="diagnosisTranslation.eduMatSer" ng-click="eduMatUpdate($event, eduMat)" value="{{eduMat.serial}}" /> {{eduMat.name_EN}}
+                </label>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </uib-accordion>
+    </div>

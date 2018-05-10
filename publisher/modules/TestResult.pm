@@ -52,6 +52,7 @@ sub new
         _testvaluestring    		=> undef,
         _unitdesc           		=> undef,
         _validentry         		=> undef,
+        _cronlogser 				=> undef,
     };
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
@@ -230,6 +231,16 @@ sub setTestResultValidEntry
 }
 
 #====================================================================================
+# Subroutine to set the testresult cron log serial
+#====================================================================================
+sub setTestResultCronLogSer
+{
+	my ($testresult, $cronlogser) = @_; # object with provided serial in arguments
+	$testresult->{_cronlogser} = $cronlogser; # set the ser
+	return $testresult->{_cronlogser};
+}
+
+#====================================================================================
 # Subroutine to get the testresult ser
 #====================================================================================
 sub getTestResultSer
@@ -382,12 +393,21 @@ sub getTestResultValidEntry
 	return $testresult->{_validentry};
 }
 
+#====================================================================================
+# Subroutine to get the testresult cron log ser
+#====================================================================================
+sub getTestResultCronLogSer
+{
+	my ($testresult) = @_; # our testresult object
+	return $testresult->{_cronlogser};
+}
+
 #======================================================================================
 # Subroutine to get test results from the ARIA db for automatic cron
 #======================================================================================
 sub getTestResultsFromSourceDB
 {
-	my (@patientList) = @_; # a list of patients from args
+	my ($cronLogSer, @patientList) = @_; # a list of patients and cron log serial from args
 
     my @TRList = (); # a list for test result objects
 
@@ -451,7 +471,7 @@ sub getTestResultsFromSourceDB
 		                WHERE
 		                    tr.pt_id                = pt.pt_id
 		                AND pt.patient_ser          = Patient.PatientSer
-		                AND Patient.SSN      		LIKE '$patientSSN%'
+		                AND RTRIM(Patient.SSN) 		= '$patientSSN'
 						AND tr.valid_entry_ind 		= 'Y'
 						AND (
 		            ";
@@ -489,7 +509,7 @@ sub getTestResultsFromSourceDB
 						}
 		            }
 
-			        print "query: $trInfo_sql\n";
+			        #print "query: $trInfo_sql\n";
 		            # prepare query
 			    	my $query = $sourceDatabase->prepare($trInfo_sql)
 				    	or die "Could not prepare query: " . $sourceDatabase->errstr;
@@ -547,6 +567,7 @@ sub getTestResultsFromSourceDB
 		                $testresult->setTestResultTestValueString($testvaluestring);
 		                $testresult->setTestResultUnitDesc($unitdesc);
 		                $testresult->setTestResultValidEntry($validentry);
+		                $testresult->setTestResultCronLogSer($cronLogSer);
 	           
 		                push(@TRList, $testresult);
 		            }
@@ -645,7 +666,7 @@ sub inOurDatabase
 
     # Other variables, if it exists
     my ($ser, $patientser, $expressionser, $name, $facname, $abnormalflag, $testdate, $maxnorm, $minnorm);
-    my ($apprvflag, $testvalue, $testvaluestring, $unitdesc, $validentry);
+    my ($apprvflag, $testvalue, $testvaluestring, $unitdesc, $validentry, $cronlogser);
 
     my $inDB_sql = "
         SELECT
@@ -663,7 +684,8 @@ sub inOurDatabase
             tr.TestValueString,
             tr.UnitDescription,
             tr.ValidEntry,
-            tr.TestResultExpressionSerNum
+            tr.TestResultExpressionSerNum,
+            tr.CronLogSerNum
         FROM
             TestResult AS tr
         WHERE
@@ -696,6 +718,7 @@ sub inOurDatabase
         $unitdesc           = $data[12];
         $validentry         = $data[13];
         $expressionser 		= $data[14];
+        $cronlogser 		= $data[15];
     }
 
     if ($TRSourceUIDInDB) {
@@ -718,6 +741,7 @@ sub inOurDatabase
         $ExistingTR->setTestResultTestValueString($testvaluestring);
         $ExistingTR->setTestResultUnitDesc($unitdesc);
         $ExistingTR->setTestResultValidEntry($validentry);
+        $ExistingTR->setTestResultCronLogSer($cronlogser);
 
         return $ExistingTR; # this is true (ie. TR exists)
     }
@@ -747,11 +771,13 @@ sub insertTestResultIntoOurDB
     my $testvaluestring         = $testresult->getTestResultTestValueString();
     my $unitdesc                = $testresult->getTestResultUnitDesc();
     my $validentry              = $testresult->getTestResultValidEntry();
+    my $cronlogser              = $testresult->getTestResultCronLogSer();
 
     my $insert_sql = "
         INSERT INTO 
             TestResult (
                 PatientSerNum,
+                CronLogSerNum,
                 SourceDatabaseSerNum,
                 TestResultAriaSer,
                 TestResultExpressionSerNum,
@@ -770,6 +796,7 @@ sub insertTestResultIntoOurDB
             )
         VALUES (
             '$patientser',
+            '$cronlogser',
             '$sourcedbser',
             '$sourceuid',
             '$expressionser',
@@ -828,12 +855,14 @@ sub updateDatabase
     my $testvaluestring         = $testresult->getTestResultTestValueString();
     my $unitdesc                = $testresult->getTestResultUnitDesc();
     my $validentry              = $testresult->getTestResultValidEntry();
+    my $cronlogser              = $testresult->getTestResultCronLogSer();
 
     my $update_sql = "
         UPDATE
             TestResult
         SET
         	TestResultExpressionSerNum	= '$expressionser',
+        	CronLogSerNum 				= '$cronlogser',
             ComponentName           	= \"$name\",
             FacComponentName        	= \"$facname\",
             AbnormalFlag            	= '$abnormalflag',
@@ -884,6 +913,7 @@ sub compareWith
     my $Stestvaluestring    = $SuspectTR->getTestResultTestValueString();
     my $Sunitdesc           = $SuspectTR->getTestResultUnitDesc();
     my $Svalidentry         = $SuspectTR->getTestResultValidEntry();
+    my $Scronlogser         = $SuspectTR->getTestResultCronLogSer();
 
     # Original TR
     my $Oexpressionser 		= $OriginalTR->getTestResultExpressionSer();
@@ -898,6 +928,7 @@ sub compareWith
     my $Otestvaluestring    = $OriginalTR->getTestResultTestValueString();
     my $Ounitdesc           = $OriginalTR->getTestResultUnitDesc();
     my $Ovalidentry         = $OriginalTR->getTestResultValidEntry();
+    my $Ocronlogser         = $OriginalTR->getTestResultCronLogSer();
 
     # go through each param
     if ($Sexpressionser ne $Oexpressionser) {
@@ -959,6 +990,11 @@ sub compareWith
         print "Test Result valid entry has changed from '$Ovalidentry' to '$Svalidentry'\n";
         my $updatedValidEntry = $UpdatedTR->setTestResultValidEntry($Svalidentry); # update
         print "Will updated database entry to '$updatedValidEntry'.\n";
+    }
+    if ($Scronlogser ne $Ocronlogser) {
+        print "Test Result cron log serial has changed from '$Ocronlogser' to '$Scronlogser'\n";
+        my $updatedCronLogSer = $UpdatedTR->setTestResultCronLogSer($Scronlogser); # update
+        print "Will updated database entry to '$updatedCronLogSer'.\n";
     }
 
     return $UpdatedTR;

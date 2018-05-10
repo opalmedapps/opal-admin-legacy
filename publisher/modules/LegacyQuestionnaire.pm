@@ -15,6 +15,7 @@ use Database; # Our custom database module
 use Time::Piece; # perl module
 use Array::Utils qw(:all);
 use POSIX; # perl module
+use Data::Dumper;
 
 use Patient; # Our custom patient module 
 use Filter; # Our custom filter module
@@ -40,6 +41,7 @@ sub new
 		_patientser 				=> undef,
 		_questionnairecontrolser 	=> undef,
 		_filters 					=> undef,
+        _cronlogser                 => undef,
 	}; 
 
 	# bless associates an object with a class so Perl knows which package to search for
@@ -89,6 +91,16 @@ sub setLegacyQuestionnaireFilters
 }
 
 #====================================================================================
+# Subroutine to set the Legacy Questionnaire Cron Log Serial
+#====================================================================================
+sub setLegacyQuestionnaireCronLogSer
+{
+    my ($questionnaire, $cronlogser) = @_; # questionnaire object with provided serial in args
+    $questionnaire->{_cronlogser} = $cronlogser; # set the questionnaire ser
+    return $questionnaire->{_cronlogser};
+}
+
+#====================================================================================
 # Subroutine to get the Legacy Questionnaire Serial
 #====================================================================================
 sub getLegacyQuestionnaireSer
@@ -125,11 +137,20 @@ sub getLegacyQuestionnaireFilters
 }
 
 #====================================================================================
+# Subroutine to get the Legacy Questionnaire Cron Log Serial
+#====================================================================================
+sub getLegacyQuestionnaireCronLogSer
+{
+    my ($questionnaire) = @_; # our questionnaire object
+    return $questionnaire->{_cronlogser};
+}
+
+#====================================================================================
 # Subroutine to publish legacy questionnaires
 #====================================================================================
 sub publishLegacyQuestionnaires
 {
-	my (@patientList) = @_; # patient list from args
+	my ($cronLogSer, @patientList) = @_; # patient list and cron log serial from args
 
 	# Retrieve all the legacy questionnaire controls
 	my @legacyQuestionnaireControls = getLegacyQuestionnaireControlsMarkedForPublish(); 
@@ -157,6 +178,7 @@ sub publishLegacyQuestionnaires
 			# in the non-patient filters  
 			my $isNonPatientSpecificFilterDefined = 0;
             my $isPatientSpecificFilterDefined = 0;
+            my $patientPassed = 0;
             # We flag whether this legacy questionnaire is a recurring event for recurring filters 
             # (appointment, appointment status, checkin status, frequency events)
             # If there are recurring filters, then we flag = 1. This will allow publishing the same
@@ -205,14 +227,13 @@ sub publishLegacyQuestionnaires
                     # move on to the next questionnaire
                     else{next;}
                 }
-
             }
 
 			# Retrieve all today's appointment(s)
             my @patientAppointments = Appointment::getTodaysPatientsAppointmentsFromOurDB($patientSer);
 
             my @aliasSerials = ();
-            my @diagnosisNames = ();
+            my @diagnosisNames = Diagnosis::getPatientsDiagnosesFromOurDB($patientSer);
             my @appointmentStatuses = ();
             my @checkins = ();
 
@@ -229,10 +250,6 @@ sub publishLegacyQuestionnaires
                 push(@appointmentStatuses, $status) unless grep{$_ eq $status} @appointmentStatuses;
                 push(@checkins, $checkinFlag) unless grep{$_ eq $checkinFlag} @checkins;
 
-                my $diagnosisSer = $appointment->getApptDiagnosisSer();
-                my $diagnosisName = Diagnosis::getDiagnosisNameFromOurDB($diagnosisSer);
-                push(@diagnosisNames, $diagnosisName) unless grep{$_ eq $diagnosisName} @diagnosisNames;
-
             }
 
             my @patientDoctors = PatientDoctor::getPatientsDoctorsFromOurDB($patientSer);
@@ -246,7 +263,7 @@ sub publishLegacyQuestionnaires
                 $recurringFlag = 1;
 
                 # Finding the existence of the patient checkin in the checkin filters
-                # If there is an intersection, then patient is part of this publishing questionnaire
+                # If there is an intersection, then patient is so far part of this publishing legacy questionnaire
                 if (!intersect(@checkinFilter, @checkins)) {
                    if (@patientFilters) {
                         # if the patient failed to match the checkin filter but there are patient filters
@@ -268,7 +285,7 @@ sub publishLegacyQuestionnaires
                 $recurringFlag = 1;
 
                 # Finding the existence of the patient status in the status filters
-                # If there is an intersection, then patient is part of this publishing questionnaire
+                # If there is an intersection, then patient is so far part of this publishing legacy questionnaire
                 if (!intersect(@appointmentStatusFilters, @appointmentStatuses)) {
                    if (@patientFilters) {
                         # if the patient failed to match the status filter but there are patient filters
@@ -289,18 +306,22 @@ sub publishLegacyQuestionnaires
 				$isNonPatientSpecificFilterDefined = 1;
                 $recurringFlag = 1;
 
-                # Finding the existence of the patient expressions in the appointment filters
-                # If there is an intersection, then patient is part of this publishing questionnaire
-                if (!intersect(@appointmentFilters, @aliasSerials)) {
-                   if (@patientFilters) {
-                        # if the patient failed to match the appointment filter but there are patient filters
-                        # then we flag to check later if this patient matches with the patient filters
-                        $isPatientSpecificFilterDefined = 1;
-                    }
-                    # else no patient filters were defined and failed to match the appointment filter
-                    # move on to the next questionnaire
-                    else{next;}
-                } 
+                # if all appointments were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @appointmentFilters and @aliasSerials) {
+                    # Finding the existence of the patient expressions in the appointment filters
+                    # If there is an intersection, then patient is so far part of this publishing legacy questionnaire
+                    if (!intersect(@appointmentFilters, @aliasSerials)) {
+                       if (@patientFilters) {
+                            # if the patient failed to match the appointment filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the appointment filter
+                        # move on to the next questionnaire
+                        else{next;}
+                    } 
+                }
             }
 
             # Fetch diagnosis filters (if any)
@@ -310,17 +331,21 @@ sub publishLegacyQuestionnaires
                 # toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
-                # Finding the intersection of the patient's diagnosis and the diagnosis filters
-                # If there is an intersection, then patient is part of this publishing questionnaire
-                if (!intersect(@diagnosisFilters, @diagnosisNames)) {
-                    if (@patientFilters) {
-                        # if the patient failed to match the diagnosis filter but there are patient filters
-                        # then we flag to check later if this patient matches with the patient filters
-                        $isPatientSpecificFilterDefined = 1;
+                # if all diagnoses were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @diagnosisFilters and @diagnosisNames) {
+                    # Finding the intersection of the patient's diagnosis and the diagnosis filters
+                    # If there is an intersection, then patient is so far part of this publishing legacy questionnaire
+                    if (!intersect(@diagnosisFilters, @diagnosisNames)) {
+                        if (@patientFilters) {
+                            # if the patient failed to match the diagnosis filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the diagnosis filter
+                        # move on to the next questionnaire
+                        else{next;}
                     }
-                    # else no patient filters were defined and failed to match the diagnosis filter
-                    # move on to the next questionnaire
-                    else{next;}
                 }
             }
 
@@ -331,32 +356,66 @@ sub publishLegacyQuestionnaires
                 # toggle flag
 				$isNonPatientSpecificFilterDefined = 1;
 
-                # Finding the intersection of the patient's doctor(s) and the doctor filters
-                # If there is an intersection, then patient is part of this publishing questionnaire
-                if (!intersect(@doctorFilters, @patientDoctors)) {
-                    if (@patientFilters) {
-                        # if the patient failed to match the doctor filter but there are patient filters
-                        # then we flag to check later if this patient matches with the patient filters
-                        $isPatientSpecificFilterDefined = 1;
+
+                # if all doctors were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @doctorFilters and @patientDoctors) {
+                    # Finding the intersection of the patient's doctor(s) and the doctor filters
+                    # If there is an intersection, then patient is so far part of this publishing legacy questionnaire
+                    if (!intersect(@doctorFilters, @patientDoctors)) {
+                        if (@patientFilters) {
+                            # if the patient failed to match the doctor filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the doctor filter
+                        # move on to the next questionnaire
+                        else{next;}
+                    } 
+                }
+            }
+
+            # Fetch resource filters (if any)
+            my @resourceFilters = $questionnaireFilters->getResourceFilters();
+            if (@resourceFilters) {
+
+                # toggle flag
+                $isNonPatientSpecificFilterDefined = 1;
+
+                # if all resources were selected as triggers then patient passes
+                # else do further checks 
+                unless ('ALL' ~~ @resourceFilters and @patientResources) {
+                    # Finding the intersection of the patient resource(s) and the resource filters
+                    # If there is an intersection, then patient is so far part of this publishing legacy questionnaire
+                    if (!intersect(@resourceFilters, @patientResources)) {
+                        if (@patientFilters) {
+                            # if the patient failed to match the resource filter but there are patient filters
+                            # then we flag to check later if this patient matches with the patient filters
+                            $isPatientSpecificFilterDefined = 1;
+                        }
+                        # else no patient filters were defined and failed to match the resource filter
+                        # move on to the next announcement
+                        else{
+                            next;
+                        }
                     }
-                    # else no patient filters were defined and failed to match the doctor filter
-                    # move on to the next questionnaire
-                    else{next;}
-                } 
+                }
             }
 
 			# We look into whether any patient-specific filters have been defined 
 			# If we enter this if statement, then we check if that patient is in that list
-			if (@patientFilters) {
+            if (@patientFilters) {
 
                 # if the patient-specific flag was enabled then it means this patient failed
                 # one of the filters above 
                 # OR if the non patient specific flag was disabled then there were no filters defined above
                 # and this is the last test to see if this patient passes
-                if ($isPatientSpecificFilterDefined or !$isNonPatientSpecificFilterDefined) {
+                if ($isPatientSpecificFilterDefined eq 1 or $isNonPatientSpecificFilterDefined eq 0) {
     				# Finding the existence of the patient in the patient-specific filters
-    				# If the patient does not exist, then continue to the next educational material
-    				if ($patientId ~~ @patientFilters) {
+    				# If the patient exists, or all patients were selected as triggers, 
+                    # then patient passes else move on to next patient
+    				if ($patientId ~~ @patientFilters or 'ALL' ~~ @patientFilters) {
+                        $patientPassed = 1;
                         if ($frequencyFilter) {
                             $recurringFlag = 1;
                         }
@@ -368,25 +427,29 @@ sub publishLegacyQuestionnaires
                 }
 			}
 
-            # If we've reached this point, we've passed all catches (filter restrictions). We make
-            # a questionnaire object, check if it exists already in the database. If it does 
-            # this means the questionnaire has already been publish to the patient. If it doesn't
-            # exist then we publish to the patient (insert into DB).
-			$questionnaire = new LegacyQuestionnaire();
+            if ($isNonPatientSpecificFilterDefined eq 1 or $isPatientSpecificFilterDefined eq 1 or ($isNonPatientSpecificFilterDefined eq 0 and $patientPassed eq 1)) {
 
-			# set the necessary values 
-			$questionnaire->setLegacyQuestionnaireControlSer($questionnaireControlSer);
-			$questionnaire->setLegacyQuestionnairePatientSer($patientSer);
+                # If we've reached this point, we've passed all catches (filter restrictions). We make
+                # a questionnaire object, check if it exists already in the database. If it does 
+                # this means the questionnaire has already been publish to the patient. If it doesn't
+                # exist then we publish to the patient (insert into DB).
+    			$questionnaire = new LegacyQuestionnaire();
 
-			if (!$questionnaire->inOurDatabase($recurringFlag)) { 
+    			# set the necessary values 
+    			$questionnaire->setLegacyQuestionnaireControlSer($questionnaireControlSer);
+                $questionnaire->setLegacyQuestionnairePatientSer($patientSer);
+    			$questionnaire->setLegacyQuestionnaireCronLogSer($cronLogSer);
 
-				$questionnaire = $questionnaire->insertLegacyQuestionnaireIntoOurDB();
+    			if (!$questionnaire->inOurDatabase($recurringFlag)) { 
 
-				# send push notification
-				my $questionnaireSer = $questionnaire->getLegacyQuestionnaireSer();
-				my $patientSer = $questionnaire->getLegacyQuestionnairePatientSer();
-				#PushNotification::sendPushNotification($patientSer, $questionnaireSer, 'LegacyQuestionnaire');
-			}
+    				$questionnaire = $questionnaire->insertLegacyQuestionnaireIntoOurDB();
+
+    				# send push notification
+    				my $questionnaireSer = $questionnaire->getLegacyQuestionnaireSer();
+    				my $patientSer = $questionnaire->getLegacyQuestionnairePatientSer();
+    				PushNotification::sendPushNotification($patientSer, $questionnaireSer, 'LegacyQuestionnaire');
+    			}
+            }
 
 		}
 
@@ -409,9 +472,12 @@ sub inOurDatabase
 	my $serInDB = 0; # false by default. Will be true if questionnaire exists
 	my $ExistingLegacyQuestionnaire = (); # data to be entered if questionnaire exists 
 
+    my ($cronlogser);
+
 	my $inDB_sql = "
 		SELECT DISTINCT
-			Questionnaire.QuestionnaireSerNum
+			Questionnaire.QuestionnaireSerNum,
+            Questionnaire.CronLogSerNum
 		FROM
 			Questionnaire
 		WHERE
@@ -435,6 +501,7 @@ sub inOurDatabase
 	while (my @data = $query->fetchrow_array()) {
 
 		$serInDB = $data[0];
+        $cronlogser = $data[1];
 	}
 
 	if ($serInDB) {
@@ -444,7 +511,8 @@ sub inOurDatabase
 		# set params
 		$ExistingLegacyQuestionnaire->setLegacyQuestionnaireSer($serInDB);
 		$ExistingLegacyQuestionnaire->setLegacyQuestionnairePatientSer($patientser);
-		$ExistingLegacyQuestionnaire->setLegacyQuestionnaireControlSer($questionnaireControlSer);
+        $ExistingLegacyQuestionnaire->setLegacyQuestionnaireControlSer($questionnaireControlSer);
+		$ExistingLegacyQuestionnaire->setLegacyQuestionnaireCronLogSer($cronlogser);
 
 		return $ExistingLegacyQuestionnaire; # this is true (i.e. questionnaire exists. return object)
 	}
@@ -459,18 +527,21 @@ sub insertLegacyQuestionnaireIntoOurDB
 {
 	my ($questionnaire) = @_; # our questionnaire object
 
-	my $patientser  			= $questionnaire->getLegacyQuestionnairePatientSer();
-	my $questionnaireControlSer = $questionnaire->getLegacyQuestionnaireControlSer();
+	my $patientser  			    = $questionnaire->getLegacyQuestionnairePatientSer();
+    my $questionnaireControlSer     = $questionnaire->getLegacyQuestionnaireControlSer();
+	my $cronlogser                  = $questionnaire->getLegacyQuestionnaireCronLogSer();
 
 	my $insert_sql = "
 		INSERT INTO 
 			Questionnaire (
 				PatientSerNum,
+                CronLogSerNum,
 				QuestionnaireControlSerNum,
 				DateAdded
 			)
 		VALUES (
 			'$patientser',
+            '$cronlogser',
 			'$questionnaireControlSer',
 			NOW()
 		)
