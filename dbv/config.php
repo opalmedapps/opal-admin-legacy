@@ -4,7 +4,7 @@ $pathname 	= __DIR__;
 $abspath 	= str_replace('dbv', '', $pathname);
 
 include_once($abspath . 'php/config.php');
-	
+
 /**
  * Your database authentication information goes here
  * @see http://dbv.vizuina.com/documentation/
