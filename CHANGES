@@ -1,3 +1,9 @@
+Version 0.18.6.1:
+ -     --- Removed sql files that are not needed in production     --- Updated git ignore to keep config file for dbv
+ - Merge branch 'release-0.18.6.0' into preproduction
+ - Merge branch 'release-0.18.5.0' into preproduction
+ - Merge branch 'hotfix-0.18.4.1' into preproduction
+
 Version 0.18.6.0:
  -     --- Updated indexes and removed tables from tracking
  -     --- Added triggers and revisions
