@@ -1,0 +1,22 @@
+CREATE TABLE `PatientLocationMH` (
+  `PatientLocationMHSerNum` int(11) NOT NULL AUTO_INCREMENT,
+  `SourceDatabaseSerNum` int(11) NOT NULL,
+  `SourceUID` int(11) NOT NULL,
+  `AppointmentSerNum` int(11) NOT NULL,
+  `RevCount` int(11) NOT NULL,
+  `CheckedInFlag` tinyint(4) NOT NULL,
+  `ArrivalDateTime` datetime NOT NULL,
+  `VenueSerNum` int(11) NOT NULL,
+  `HstryDateTime` datetime NOT NULL,
+  `DateAdded` datetime NOT NULL,
+  `LastUpdated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`PatientLocationMHSerNum`),
+  KEY `SourceDatabaseSerNum` (`SourceDatabaseSerNum`),
+  KEY `SourceUID` (`SourceUID`),
+  KEY `AppointmentSerNum` (`AppointmentSerNum`),
+  KEY `RevCount` (`RevCount`),
+  KEY `CheckedInFlag` (`CheckedInFlag`),
+  KEY `VenueSerNum` (`VenueSerNum`),
+  CONSTRAINT `PatientLocationMH_ibfk_2` FOREIGN KEY (`SourceDatabaseSerNum`) REFERENCES `SourceDatabase` (`SourceDatabaseSerNum`) ON UPDATE CASCADE,
+  CONSTRAINT `PatientLocationMH_ibfk_1` FOREIGN KEY (`AppointmentSerNum`) REFERENCES `Appointment` (`AppointmentSerNum`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
