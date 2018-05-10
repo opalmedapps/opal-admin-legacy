@@ -1,3 +1,9 @@
+Version 0.18.6.0:
+ -     --- Updated indexes and removed tables from tracking
+ -     --- Added triggers and revisions
+ -     --- Added database versioning package
+ - Merge branch 'release-0.18.5.0' into develop
+
 Version 0.18.5.0:
  -     --- Added email feature to script failures         -- Will now send emails if script crashes or on multiple processes     --- Cron executions are piped to a file
  -     --- Added logging to file for each execution
