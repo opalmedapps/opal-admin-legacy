@@ -1,3 +1,22 @@
+Version 0.18.6.2:
+ -     --- Disabled content nosniff         -- Caused errors in production and wouldn't get any data. Something to do with         XXS
+ - Merge branch 'preproduction'
+ - Merge branch 'hotfix-0.18.6.1' into preproduction
+ - Merge branch 'preproduction'
+ - Merge branch 'master' of http://gitlab.com/akimosupremo/opalAdmin
+ - Merge branch 'preproduction'
+ - Merge branch 'release-0.14.0'
+ - Merge branch 'master' of http://gitlab.com/akimosupremo/opalAdmin
+ - Merge branch 'master' of http://gitlab.com/akimosupremo/opalAdmin
+ - Merge branch 'master' of http://gitlab.com/akimosupremo/opalAdmin
+ - Merge branch 'master' of http://gitlab.com/akimosupremo/opalAdmin
+ - Merge branch 'master' of http://gitlab.com/akimosupremo/opalAdmin
+ - Merge branch 'master' of http://gitlab.com/akimosupremo/opalAdmin
+ - Merge branch 'master' of http://gitlab.com/akimosupremo/opalAdmin
+ - Merge branch 'master' of http://gitlab.com/akimosupremo/opalAdmin
+ - Merge branch 'master' of http://gitlab.com/akimosupremo/opalAdmin
+ - commit
+
 Version 0.18.6.1:
  -     --- Removed sql files that are not needed in production     --- Updated git ignore to keep config file for dbv
  - Merge branch 'release-0.18.6.0' into preproduction
