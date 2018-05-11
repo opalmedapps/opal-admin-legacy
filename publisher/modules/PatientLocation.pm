@@ -307,7 +307,7 @@ sub getPatientLocationsFromSourceDB
 					WHERE
 						sa.ActivityInstanceSer 			= ai.ActivityInstanceSer
 					AND	sa.PatientSer 					= pt.PatientSer
-					AND	RTRIM(pt.SSN)					= '$patientSSN'
+					AND	LEFT(LTRIM(pt.SSN), 12)			= '$patientSSN'
 					AND	ai.ActivitySer					= act.ActivitySer
 					AND	act.ActivityCode 				= vva.LookupValue
 					AND	sa.ScheduledActivitySer 		= pl.ScheduledActivitySer
@@ -433,7 +433,7 @@ sub getPatientLocationsFromSourceDB
 						Venue
 					WHERE
 						mval.PatientSerNum 			= pt.PatientSerNum
-					AND	RTRIM(pt.SSN)				= '$patientSSN'
+					AND	LEFT(LTRIM(pt.SSN), 12)		= '$patientSSN'
 					AND mval.AppointmentSerNum		= pl.AppointmentSerNum
 					AND Venue.VenueId 				= pl.CheckinVenueName
 					AND (
@@ -664,7 +664,7 @@ sub getPatientLocationsMHFromSourceDB
 					WHERE
 						sa.ActivityInstanceSer 			= ai.ActivityInstanceSer
 					AND	sa.PatientSer 					= pt.PatientSer
-					AND	RTRIM(pt.SSN)					= '$patientSSN'
+					AND	LEFT(LTRIM(pt.SSN), 12)			= '$patientSSN'
 					AND	ai.ActivitySer					= act.ActivitySer
 					AND	act.ActivityCode 				= vva.LookupValue
 					AND	sa.ScheduledActivitySer 		= plmh.ScheduledActivitySer
@@ -793,7 +793,7 @@ sub getPatientLocationsMHFromSourceDB
 						Venue
 					WHERE
 						mval.PatientSerNum 			= pt.PatientSerNum
-					AND	RTRIM(pt.SSN)				= '$patientSSN'
+					AND	LEFT(LTRIM(pt.SSN), 12)		= '$patientSSN'
 					AND mval.AppointmentSerNum		= plmh.AppointmentSerNum
 					AND plmh.CheckinVenueName  		= Venue.VenueId
 					AND (
