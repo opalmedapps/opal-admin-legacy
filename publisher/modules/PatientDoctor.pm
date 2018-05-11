@@ -173,10 +173,10 @@ sub getPatientDoctorsFromSourceDB
 		    		variansystem.dbo.PatientDoctor pd,
 		    		variansystem.dbo.Patient pt
 			    WHERE
-			    	pt.PatientSer 		= pd.PatientSer
-    			AND	RTRIM(pt.SSN)	    = '$patientSSN'
-	    		AND	dr.ResourceSer	    = pd.ResourceSer
-		    	AND	pd.HstryDateTime	> '$lastTransfer'
+			    	pt.PatientSer 			= pd.PatientSer
+    			AND	LEFT(LTRIM(pt.SSN), 12)	= '$patientSSN'
+	    		AND	dr.ResourceSer	    	= pd.ResourceSer
+		    	AND	pd.HstryDateTime		> '$lastTransfer'
     		";  
     
 	    	# prepare query
