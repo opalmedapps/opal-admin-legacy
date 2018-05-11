@@ -471,7 +471,7 @@ sub getTestResultsFromSourceDB
 		                WHERE
 		                    tr.pt_id                = pt.pt_id
 		                AND pt.patient_ser          = Patient.PatientSer
-		                AND RTRIM(Patient.SSN) 		= '$patientSSN'
+		                AND LEFT(LTRIM(pt.SSN), 12) 	= '$patientSSN'
 						AND tr.valid_entry_ind 		= 'Y'
 						AND (
 		            ";
