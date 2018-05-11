@@ -53,7 +53,7 @@ Options +FollowSymLinks
 # Add headers to all responses.
 <IfModule mod_headers.c>
   # Disable content sniffing, since it's an attack vector.
-  Header always set X-Content-Type-Options nosniff
+  # Header always set X-Content-Type-Options nosniff
 </IfModule>
 
 # Disallow script execution
