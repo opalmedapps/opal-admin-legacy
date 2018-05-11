@@ -226,7 +226,7 @@ sub getResourceAppointmentsFromSourceDB
 					WHERE
 						sa.ActivityInstanceSer		= ai.ActivityInstanceSer
 					AND sa.PatientSer               = pt.PatientSer
-					AND RTRIM(pt.SSN)               = '$patientSSN'
+					AND LEFT(LTRIM(pt.SSN), 12)      = '$patientSSN'
 					AND ai.ActivitySer			    = Activity.ActivitySer
 					AND	Activity.ActivityCode		= vva.LookupValue
 					AND	sa.ScheduledActivitySer		= ra.ScheduledActivitySer
@@ -344,7 +344,7 @@ sub getResourceAppointmentsFromSourceDB
                         Patient pt
                     WHERE
                         mval.PatientSerNum      = pt.PatientSerNum
-                    AND RTRIM(pt.SSN)           = '$patientSSN'
+                    AND LEFT(LTRIM(pt.SSN), 12)  = '$patientSSN'
                     AND (
                 ";
 
