@@ -1,3 +1,7 @@
+Version 0.18.6.4:
+ - Merge branch 'hotfix-0.18.6.3'
+ -     --- Fixed issue of missing patients in publisher         -- Forgot patient SSN had expiration date so "=" clause wasn't finding SSN in Aria         -- Publisher back to taking long. Optimization needed
+
 Version 0.18.6.3:
  - Merge branch 'hotfix-0.18.6.2'
 
