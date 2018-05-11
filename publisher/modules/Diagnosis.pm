@@ -259,12 +259,12 @@ sub getDiagnosesFromSourceDB
 				    variansystem.dbo.Patient pt,
 				    variansystem.dbo.PrmryDiagnosis pmdx
     			WHERE
-	    			dx.PatientSer		= pt.PatientSer
-	    		AND dx.DiagnosisSer 	= pmdx.DiagnosisSer
-		    	AND	RTRIM(pt.SSN)		= '$patientSSN'
-			    AND	dx.Description 		NOT LIKE '%ERROR%'
-    			AND	dx.HstryDateTime    > '$lastTransfer'
-	    		AND dx.DateStamp		> '1970-01-01 00:00:00'
+	    			dx.PatientSer			= pt.PatientSer
+	    		AND dx.DiagnosisSer 		= pmdx.DiagnosisSer
+		    	AND	LEFT(LTRIM(pt.SSN), 12)	= '$patientSSN'
+			    AND	dx.Description 			NOT LIKE '%ERROR%'
+    			AND	dx.HstryDateTime    	> '$lastTransfer'
+	    		AND dx.DateStamp			> '1970-01-01 00:00:00'
 		    ";
     		# prepare query
 	    	my $query = $sourceDatabase->prepare($diagInfo_sql)

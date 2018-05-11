@@ -467,7 +467,7 @@ sub getApptsFromSourceDB
 					AND ai.ActivitySer 			    = act.ActivitySer 
 					AND act.ActivityCode 		    = vva.LookupValue 
 					AND pt.PatientSer 				= sa.PatientSer 
-					AND RTRIM(pt.SSN)		        = '$patientSSN'
+					AND LEFT(LTRIM(pt.SSN), 12)		= '$patientSSN'
 					AND att.ActivityInstanceSer 	= sa.ActivityInstanceSer
 					AND att.ResourceSer 		    = re.ResourceSer
 					AND (
@@ -609,7 +609,7 @@ sub getApptsFromSourceDB
                         Patient pt
                     WHERE
                         mval.PatientSerNum      = pt.PatientSerNum
-                    AND RTRIM(pt.SSN)           = '$patientSSN'
+                    AND LEFT(LTRIM(pt.SSN), 12)  = '$patientSSN'
                     AND (
                 ";
 
