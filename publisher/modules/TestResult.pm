@@ -469,10 +469,10 @@ sub getTestResultsFromSourceDB
 		                    varianenm.dbo.pt pt,
 		                    variansystem.dbo.Patient Patient
 		                WHERE
-		                    tr.pt_id                = pt.pt_id
-		                AND pt.patient_ser          = Patient.PatientSer
-		                AND LEFT(LTRIM(pt.SSN), 12) 	= '$patientSSN'
-						AND tr.valid_entry_ind 		= 'Y'
+		                    tr.pt_id                		= pt.pt_id
+		                AND pt.patient_ser          		= Patient.PatientSer
+		                AND LEFT(LTRIM(Patient.SSN), 12) 	= '$patientSSN'
+						AND tr.valid_entry_ind 				= 'Y'
 						AND (
 		            ";
 
