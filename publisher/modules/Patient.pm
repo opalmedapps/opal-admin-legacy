@@ -450,7 +450,7 @@ sub getPatientInfoFromSourceDBs
 	        LEFT JOIN variansystem.dbo.PatientParticular ppt 
 	        ON ppt.PatientSer 		= pt.PatientSer
 	        WHERE
-	            RTRIM(pt.SSN)              = '$patientSSN'
+	            LEFT(LTRIM(pt.SSN), 12)   = '$patientSSN'
 	    ";
 
 		# prepare query
