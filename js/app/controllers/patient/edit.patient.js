@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.patient.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-	controller('patient.edit', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, patientCollectionService) {
+	controller('patient.edit', function ($rootScope, $scope, $filter, $sce, $state, $uibModal, $uibModalInstance, patientCollectionService) {
 
 		// Default booleans
 		$scope.changesMade = false;
@@ -121,8 +121,9 @@ angular.module('opalAdmin.controllers.patient.edit', ['ngAnimate', 'ngSanitize',
 				var patient = jQuery.extend(true, {}, $scope.patient);
 
 				// Authenticate user using username and old password
-				FB.auth().signInWithEmailAndPassword(patient.email, patient.oldPassword)
+				firebase.auth().signInWithEmailAndPassword(patient.email, patient.oldPassword)
 					.then(function (firebaseUser) {
+
 						// On successful login, update password in Firebase
 						firebaseUser.updatePassword(patient.password)
 							.then(function (){

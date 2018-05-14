@@ -1,5 +1,5 @@
 # ignore configurations
-js/config.js
+js/config.json
 php/config.php
 publisher/modules/Configs.pm
 
