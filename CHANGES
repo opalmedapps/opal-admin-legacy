@@ -1,3 +1,12 @@
+Version 0.18.7.1:
+ - Merge branch 'preproduction'
+ - Merge branch 'release-0.18.7.0' into preproduction
+ -     --- Fixed missing references from new config
+ - Merge branch 'hotfix-0.18.6.4' into preproduction
+ - Merge branch 'hotfix-0.18.6.4'
+ - Merge branch 'hotfix-0.18.6.3' into preproduction
+ - Merge branch 'hotfix-0.18.6.2' into preproduction
+
 Version 0.18.7.0:
  -     --- Optimized config for javascript/node         -- Javascript config has been converted to json. Removed global variables that         were once used for paths. Only firebase configs remain in this file. Will probably         switch to using one config file across all programming languages.         -- Removes issue where firebase configs were pointing to the wrong database when         merging branches
  -     ---Optimized publisher queries         -- Removed references to views and used actual tables with indices         -- Optimized patient location MH to use the results from the patient location table

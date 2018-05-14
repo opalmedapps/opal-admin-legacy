@@ -575,7 +575,7 @@ sub getPatientLocationsFromSourceDB
 #====================================================================================
 sub getPatientLocationsMHFromSourceDB
 {
-	my (@patientList, @PLList) = @_; # a list of patients and patient locations
+	my ($patientList, $PLList) = @_; # a list of patients and patient locations
 
 	my @patientLocationMHList = (); # initialize a list for PL objects
 
@@ -584,7 +584,7 @@ sub getPatientLocationsMHFromSourceDB
 
 	my @aliasList = Alias::getAliasesMarkedForUpdate('Appointment');
 
-	foreach my $Patient (@patientList) {
+	foreach my $Patient (@$patientList) {
 
 		my $patientSer 				= $Patient->getPatientSer();
 		my $patientSSN 				= $Patient->getPatientSSN();
@@ -593,7 +593,7 @@ sub getPatientLocationsMHFromSourceDB
 		# reformat patient last transfer date 
 		my $formatted_PLU = Time::Piece->strptime($patientLastTransfer, "%Y-%m-%d %H:%M:%S");
 
-		foreach my $patientLocation (@PLList) {
+		foreach my $patientLocation (@$PLList) {
 
 			my $sourceDBSer 		= $patientLocation->getPatientLocationSourceDatabaseSer();
 			my $sourceuid 			= $patientLocation->getPatientLocationSourceUID();
