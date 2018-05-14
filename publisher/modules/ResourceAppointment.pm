@@ -204,32 +204,25 @@ sub getResourceAppointmentsFromSourceDB
 	            }
 
                 my $raInfo_sql = "
-					WITH vva AS (
-						SELECT DISTINCT 
-							Expression.Expression1,
-							Expression.LookupValue
-						FROM
-							variansystem.dbo.vv_ActivityLng Expression
-					)
 					SELECT DISTINCT
-						ra.ResourceSer,
-						ra.ScheduledActivitySer,
-						ra.ExclusiveFlag,
-						ra.PrimaryFlag
+						att.ResourceSer,
+						sa.ScheduledActivitySer,
+						att.ExclusiveFlag,
+						att.PrimaryFlag
 					FROM
 						variansystem.dbo.Patient pt,
-						variansystem.dbo.ResourceActivity ra,
+						variansystem.dbo.Attendee att,
 						variansystem.dbo.ScheduledActivity sa,
 						variansystem.dbo.ActivityInstance ai,
 						variansystem.dbo.Activity Activity,
-						vva
+						variansystem.dbo.LookupTable lt
 					WHERE
 						sa.ActivityInstanceSer		= ai.ActivityInstanceSer
 					AND sa.PatientSer               = pt.PatientSer
 					AND LEFT(LTRIM(pt.SSN), 12)      = '$patientSSN'
 					AND ai.ActivitySer			    = Activity.ActivitySer
-					AND	Activity.ActivityCode		= vva.LookupValue
-					AND	sa.ScheduledActivitySer		= ra.ScheduledActivitySer
+					AND	Activity.ActivityCode		= lt.LookupValue
+					AND	ai.ActivityInstanceSer		= att.ActivityInstanceSer
 					AND (
 				";
 
@@ -252,8 +245,8 @@ sub getResourceAppointmentsFromSourceDB
 
 		            # concatenate query
         			$raInfo_sql .= "
-						(REPLACE(vva.Expression1, '''', '')    	IN ($expressionHash{$lastTransferDate})
-		        		AND ra.HstryDateTime		> '$lasttransfer')
+						(REPLACE(lt.Expression1, '''', '')    	IN ($expressionHash{$lastTransferDate})
+		        		AND att.HstryDateTime		> '$lasttransfer')
 	        
 	    		    ";
 	    		    $counter++;
@@ -267,7 +260,7 @@ sub getResourceAppointmentsFromSourceDB
 					}
 	        	}
 
-                #print "$raInfo_sql\n";	
+                # print "$raInfo_sql\n";	
 		        # prepare query
     		    my $query = $sourceDatabase->prepare($raInfo_sql)
 	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;
