@@ -562,7 +562,7 @@ print "Finished patient location list\n" if $verbose;
 # Data Retrieval PATIENTLOCATIONMH - get list of PL MH info updated since last update
 #
 ##########################################################################################
-@PLMHList = PatientLocation::getPatientLocationsMHFromSourceDB(@patientList, @PLList);
+@PLMHList = PatientLocation::getPatientLocationsMHFromSourceDB(\@patientList, \@PLList);
 
 print "Got patient location MH list\n" if $verbose;
 
