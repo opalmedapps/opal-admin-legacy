@@ -438,13 +438,6 @@ sub getApptsFromSourceDB
 	            }
 
                 my $apptInfo_sql = "
-					WITH vva AS (
-						SELECT DISTINCT 
-							Expression.Expression1,
-							Expression.LookupValue
-						FROM
-							variansystem.dbo.vv_ActivityLng Expression
-					)
 					SELECT DISTINCT
 						sa.ScheduledActivitySer,
 						CONVERT(VARCHAR, sa.ScheduledStartTime, 120),
@@ -459,17 +452,13 @@ sub getApptsFromSourceDB
 						variansystem.dbo.ScheduledActivity sa, 
 						variansystem.dbo.ActivityInstance ai, 
 						variansystem.dbo.Activity act, 
-						vva, 
-						variansystem.dbo.Resource re,
-						variansystem.dbo.Attendee att
+						variansystem.dbo.LookupTable vva
 					WHERE 
 						sa.ActivityInstanceSer 		= ai.ActivityInstanceSer 
 					AND ai.ActivitySer 			    = act.ActivitySer 
 					AND act.ActivityCode 		    = vva.LookupValue 
 					AND pt.PatientSer 				= sa.PatientSer 
 					AND LEFT(LTRIM(pt.SSN), 12)		= '$patientSSN'
-					AND att.ActivityInstanceSer 	= sa.ActivityInstanceSer
-					AND att.ResourceSer 		    = re.ResourceSer
 					AND (
 				";
 
@@ -506,7 +495,7 @@ sub getApptsFromSourceDB
 					}
 	        	}
 				
-                #print "$apptInfo_sql\n";
+                print "$apptInfo_sql\n";
 		        # prepare query
     		    my $query = $sourceDatabase->prepare($apptInfo_sql)
 	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;
