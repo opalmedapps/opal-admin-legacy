@@ -113,7 +113,6 @@ angular.module('opalAdmin', [
 			.state('user-register', { url: '/users/add', templateUrl: "templates/user/add.user.html", controller: "user.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('email', { url: '/email', templateUrl: "templates/email/email.html", controller: "email", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('email-add', { url: '/email/add', templateUrl: "templates/email/add.email.html", controller: "email.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
-			.state('install', { url: '/install', templateUrl: "templates/install/install.html", controller: "installation", data: { requireLogin: false, installAccess: INSTALL_ACCESS } })
 			.state('questionnaire-menu', { url: '/questionnaire/menu', templateUrl: "templates/questionnaire/questionnaire-main-menu.html", controller: "questionnaire", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: false } })
 			.state('questionnaire', { url: '/questionnaire', templateUrl: "templates/questionnaire/questionnaire.html", controller: "questionnaire", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: false } })
 			.state('questionnaire-add', { url: '/questionnaire/add', templateUrl: "templates/questionnaire/add.questionnaire.html", controller: "questionnaire.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: false } })
@@ -180,19 +179,6 @@ angular.module('opalAdmin', [
 				} else {
 					// user is not logged in
 					$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
-				}
-			}
-			if (INSTALL_ACCESS !== undefined && next.name != 'install') {
-				
-				if (INSTALL_ACCESS === true) {
-					event.preventDefault();
-					$state.go('install');
-				}
-			}
-			if (INSTALL_ACCESS !== undefined && next.name == 'install') {
-				if (INSTALL_ACCESS === false) {
-					event.preventDefault();
-					$state.go('home');
 				}
 			}
 			if (accessible !== undefined) {
