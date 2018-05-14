@@ -1,3 +1,13 @@
+Version 0.18.7.0:
+ -     --- Optimized config for javascript/node         -- Javascript config has been converted to json. Removed global variables that         were once used for paths. Only firebase configs remain in this file. Will probably         switch to using one config file across all programming languages.         -- Removes issue where firebase configs were pointing to the wrong database when         merging branches
+ -     ---Optimized publisher queries         -- Removed references to views and used actual tables with indices         -- Optimized patient location MH to use the results from the patient location table
+ - Merge branch 'hotfix-0.18.6.4' into develop
+ -     --- Fixed wrong table name
+ - Merge branch 'hotfix-0.18.6.3' into develop
+ - Merge branch 'hotfix-0.18.6.2' into develop
+ - Merge branch 'hotfix-0.18.6.1' into develop
+ - Merge branch 'release-0.18.6.0' into develop
+
 Version 0.18.6.4:
  - Merge branch 'hotfix-0.18.6.3'
  -     --- Fixed issue of missing patients in publisher         -- Forgot patient SSN had expiration date so "=" clause wasn't finding SSN in Aria         -- Publisher back to taking long. Optimization needed
