@@ -339,7 +339,7 @@ sub getPatientLocationsFromSourceDB
 					}
 				}
 
-				print "$plInfo_sql\n";
+				# print "$plInfo_sql\n";
 				# prepare query
 				my $query = $sourceDatabase->prepare($plInfo_sql)
 					or die "Could not prepare PL query: " . $sourceDatabase->errstr;
@@ -465,7 +465,7 @@ sub getPatientLocationsFromSourceDB
 						$plInfo_sql .= ")";
 					}
 	        	}
-                #print "$plInfo_sql\n";	
+                # print "$plInfo_sql\n";	
 		        # prepare query
     		    my $query = $sourceDatabase->prepare($plInfo_sql)
 	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;
@@ -625,7 +625,7 @@ sub getPatientLocationsMHFromSourceDB
 					AND plmh.PatientLocationSer 		= '$sourceuid'
 				";
 
-				print "$plInfo_sql\n";
+				# print "$plInfo_sql\n";
 				# prepare query
 				my $query = $sourceDatabase->prepare($plInfo_sql)
 					or die "Could not prepare PL query: " . $sourceDatabase->errstr;
@@ -693,7 +693,7 @@ sub getPatientLocationsMHFromSourceDB
 					AND pl.PatientLocationSerNum 	= '$sourceuid'
 				";
 
-                print "$plInfo_sql\n";	
+                # print "$plInfo_sql\n";	
 		        # prepare query
     		    my $query = $sourceDatabase->prepare($plInfo_sql)
 	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;
