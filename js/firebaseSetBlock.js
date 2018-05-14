@@ -2,8 +2,8 @@ var admin = require("firebase-admin");
 var config = require("./config.json");
 
 admin.initializeApp({
-	credential: admin.credential.cert(serviceAccount),
-	databaseURL: config.databaseURL
+	credential: admin.credential.cert(config.serviceAccount),
+	databaseURL: config.firebaseConfig.databaseURL
 });
 
 // Command line example: `node firebaseSetBlock.js --blocked=0 --uid=123456
