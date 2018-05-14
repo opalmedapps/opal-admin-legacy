@@ -495,7 +495,7 @@ sub getApptsFromSourceDB
 					}
 	        	}
 				
-                print "$apptInfo_sql\n";
+                # print "$apptInfo_sql\n";
 		        # prepare query
     		    my $query = $sourceDatabase->prepare($apptInfo_sql)
 	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;

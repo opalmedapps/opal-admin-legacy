@@ -13,6 +13,11 @@ angular.module('opalAdmin.controllers.patientRegistration', ['ngAnimate', 'ngSan
 			window.history.back();
 		};
 
+		// Initialize firebase object
+		if (!firebase.apps.length) {
+			firebase.initializeApp($rootScope.firebaseConfig);
+		}
+
 		// default booleans
 		$scope.emailSection = {open:false, show:false};
 		$scope.passwordSection = {open:false, show:false};
@@ -605,7 +610,7 @@ angular.module('opalAdmin.controllers.patientRegistration', ['ngAnimate', 'ngSan
 				// After proper credentials, proceed with registration
 				modalInstance.result.then(function () {
 
-					FB.auth().createUserWithEmailAndPassword($scope.newPatient.email, $scope.newPatient.password).then(function (userData) {
+					firebase.auth().createUserWithEmailAndPassword($scope.newPatient.email, $scope.newPatient.password).then(function (userData) {
 
 						// on success, register to our database
 						$scope.newPatient.uid = userData.uid;
