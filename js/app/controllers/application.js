@@ -13,6 +13,18 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 		$rootScope.siteLanguage = null;
 
+		$rootScope.firebaseConfig = null;
+
+		// Call our collection service to get firebase configs
+		applicationCollectionService.getConfigs().then(function (response) {
+			// Assign value
+			$rootScope.firebaseConfig = response.data.firebaseConfig;
+			// initialize firebase variable
+			if (!firebase.apps.length) {
+				firebase.initializeApp($rootScope.firebaseConfig);
+			}
+		});
+
 		// Set the site language
 		$rootScope.setSiteLanguage = function (user) {
 			if (!user) 
