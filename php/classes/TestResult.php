@@ -716,7 +716,6 @@ class TestResult {
 
                 // If new test names, insert into database
                 foreach ($tests as $test) {
-                    $testName = $test['name'];
                     if(!in_array($test, $existingTests)) {
                         $sql = "
                             INSERT INTO
