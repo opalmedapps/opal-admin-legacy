@@ -1,3 +1,9 @@
+Version 0.18.9.0:
+ -     --- Added email type in database revision     --- Fixed dev implentations that weren't meant to be in production     --- Fixed crash for test results
+ -     --- Removed migration files since we track from dbv
+ -     --- Cleanup of files and tracking
+ - Merge branch 'release-0.18.8.0' into develop
+
 Version 0.18.8.0:
  -     --- Removed unused files     --- Updated security questions database logging
  - Merge branch 'hotfix-0.18.7.1' into develop
