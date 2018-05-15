@@ -299,11 +299,10 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 						if (response.value) {
 							$scope.setBannerClass('success');
 							$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.alias.name_EN + "/ " + $scope.alias.name_FR + "\"!";
-
+							$scope.showBanner();
 							$uibModalInstance.close();
 						}
 						else {
-							console.log(response);
 							$scope.showAlert('response');
 							$scope.$apply();
 						}
