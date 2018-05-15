@@ -5,10 +5,18 @@ publisher/modules/Configs.pm
 
 # ignore clinical documents
 publisher/clinical/documents/**
+# except readme
+!publisher/clinical/documents/README.md
+
+# ignore doctor uploads
+publisher/clinical/doctors/**
+# except readme
+!publisher/clinical/doctors/README.md
 
 # ignore certificates
 publisher/php/certificates/**
-js/firebaseServiceAccountKey.json
+# except readme
+!publisher/php/certificates/README.md
 
 # ignore swap files
 *.swp
@@ -39,3 +47,5 @@ uploads/**
 
 # ignore log files
 publisher/logs/**
+# except readme
+!publisher/logs/README.md
