@@ -597,6 +597,7 @@ sub getPatientLocationsMHFromSourceDB
 
 			my $sourceDBSer 		= $patientLocation->getPatientLocationSourceDatabaseSer();
 			my $sourceuid 			= $patientLocation->getPatientLocationSourceUID();
+			my $appointmentser 		= $patientLocation->getPatientLocationAppointmentSer();
 
 			######################################
 		    # ARIA
@@ -607,7 +608,6 @@ sub getPatientLocationsMHFromSourceDB
 
 				my $plInfo_sql = "
 					SELECT DISTINCT
-						sa.ScheduledActivitySer,
 						plmh.PatientLocationSer,
 						plmh.PatientLocationRevCount,
 						plmh.CheckedInFlag,
@@ -641,13 +641,12 @@ sub getPatientLocationsMHFromSourceDB
 
 					my $patientlocationMH = new PatientLocation(); # new PL object
 
-					$appointmentser 		= Appointment::reassignAppointment($row->[0], $sourceDBSer, $aliasSer, $patientSer);
-					$sourceuid 				= $row->[1];
-					$revcount 				= $row->[2];
-					$checkedinflag 			= $row->[3];
-					$arrivaldatetime 		= $row->[4];
-					$venueser 				= Venue::reassignVenue($row->[5], $sourceDBSer);
-					$hstrydatetime 			= $row->[6];
+					$sourceuid 				= $row->[0];
+					$revcount 				= $row->[1];
+					$checkedinflag 			= $row->[2];
+					$arrivaldatetime 		= $row->[3];
+					$venueser 				= Venue::reassignVenue($row->[4], $sourceDBSer);
+					$hstrydatetime 			= $row->[5];
 
 					$patientlocationMH->setPatientLocationAppointmentSer($appointmentser);
 					$patientlocationMH->setPatientLocationSourceDatabaseSer($sourceDBSer);
@@ -672,7 +671,6 @@ sub getPatientLocationsMHFromSourceDB
 
 				my $plInfo_sql = "
 					SELECT DISTINCT
-						mval.AppointmentSerNum,
 						plmh.PatientLocationSerNum,
 						plmh.PatientLocationRevCount,
 						'1' as CheckedInFlag,
@@ -708,13 +706,12 @@ sub getPatientLocationsMHFromSourceDB
 
 					my $patientlocationMH = new PatientLocation(); # new PL object
 
-					$appointmentser 		= Appointment::reassignAppointment($row->[0], $sourceDBSer, $aliasSer, $patientSer);
-					$sourceuid 				= $row->[1];
-					$revcount 				= $row->[2];
-					$checkedinflag 			= $row->[3];
-					$arrivaldatetime 		= $row->[4];
-					$venueser 				= Venue::reassignVenue($row->[5], $sourceDBSer);
-					$hstrydatetime 			= $row->[6];
+					$sourceuid 				= $row->[0];
+					$revcount 				= $row->[1];
+					$checkedinflag 			= $row->[2];
+					$arrivaldatetime 		= $row->[3];
+					$venueser 				= Venue::reassignVenue($row->[4], $sourceDBSer);
+					$hstrydatetime 			= $row->[5];
 
 					$patientlocationMH->setPatientLocationAppointmentSer($appointmentser);
 					$patientlocationMH->setPatientLocationSourceDatabaseSer($sourceDBSer);
