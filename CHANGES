@@ -1,3 +1,10 @@
+Version 0.18.9.2:
+ - Merge branch 'hotfix-0.18.9.1'
+ -     --- Fixed crash in patient location MH
+ - Merge branch 'hotfix-0.18.9.1'
+ -     --- Fixed mising definers
+ - Merge branch 'hotfix-0.18.9.1'
+
 Version 0.18.9.1:
  -     --- Removed definer reference from triggers
  - Merge branch 'preproduction'
