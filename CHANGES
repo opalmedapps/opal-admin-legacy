@@ -1,3 +1,12 @@
+Version 0.18.9.1:
+ -     --- Removed definer reference from triggers
+ - Merge branch 'preproduction'
+ - Merge branch 'release-0.18.9.0' into preproduction
+ - Merge branch 'preproduction'
+ - Merge branch 'release-0.18.8.0' into preproduction
+ - Merge branch 'hotfix-0.18.7.1' into preproduction
+ - Merge branch 'hotfix-0.18.7.1'
+
 Version 0.18.9.0:
  -     --- Added email type in database revision     --- Fixed dev implentations that weren't meant to be in production     --- Fixed crash for test results
  -     --- Removed migration files since we track from dbv
