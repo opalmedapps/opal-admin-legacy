@@ -166,30 +166,33 @@ sub getResourceAppointmentsFromSourceDB
 		my $expressionHash = {};
 		my $expressionDict = {};
 		foreach my $Alias (@aliasList) {
+			my $aliasSourceDBSer 	= $Alias->getAliasSourceDatabaseSer();
 			my $aliasSer 			= $Alias->getAliasSer();
 			my @expressions         = $Alias->getAliasExpressions(); 
 
-	        if (!exists $expressionHash{$sourceDBSer}) {
-	        	$expressionHash{$sourceDBSer} = {}; # intialize key value
-	        }
+			if ($sourceDBSer eq $aliasSourceDBSer) {
+		        if (!exists $expressionHash{$sourceDBSer}) {
+		        	$expressionHash{$sourceDBSer} = {}; # intialize key value
+		        }
 
-	        foreach my $Expression (@expressions) {
+		        foreach my $Expression (@expressions) {
 
-	        	my $expressionSer = $Expression->{_ser};
-	        	my $expressionName = $Expression->{_name};
-	        	my $expressionLastTransfer = $Expression->{_lasttransfer};
+		        	my $expressionSer = $Expression->{_ser};
+		        	my $expressionName = $Expression->{_name};
+		        	my $expressionLastTransfer = $Expression->{_lasttransfer};
 
-	        	# append expression (surrounded by single quotes) to string
-	        	if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
-	        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",'$expressionName'";
-	        	} else {
-	        		# start a new string 
-	        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "'$expressionName'";
-	        	}
+		        	# append expression (surrounded by single quotes) to string
+		        	if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
+		        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",'$expressionName'";
+		        	} else {
+		        		# start a new string 
+		        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "'$expressionName'";
+		        	}
 
-	        	$expressionDict{$expressionName} = $aliasSer;
+		        	$expressionDict{$expressionName} = $aliasSer;
 
-	        }
+		        }
+		    }
 
 		}
 
@@ -249,7 +252,7 @@ sub getResourceAppointmentsFromSourceDB
 
             # concatenate query
     		$raInfo_sql .= "
-				(REPLACE(lt.Expression1, '''', '')    	IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
+				(lt.Expression1   						IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
 	        	AND att.HstryDateTime	 				> (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
     		";
     		$counter++;
@@ -262,7 +265,7 @@ sub getResourceAppointmentsFromSourceDB
 				$raInfo_sql .= ")";
 			}
     	}
-    	#print "$raInfo_sql\n"
+    	print "$raInfo_sql\n";
     	# prepare query
 	    my $query = $sourceDatabase->prepare($raInfo_sql)
 		    or die "Could not prepare query: " . $sourceDatabase->errstr;
@@ -309,31 +312,34 @@ sub getResourceAppointmentsFromSourceDB
         my $expressionHash = {};
 		my $expressionDict = {};
 		foreach my $Alias (@aliasList) {
+			my $aliasSourceDBSer 	= $Alias->getAliasSourceDatabaseSer();
 			my $aliasSer 			= $Alias->getAliasSer();
 			my @expressions         = $Alias->getAliasExpressions(); 
 
-	        if (!exists $expressionHash{$sourceDBSer}) {
-	        	$expressionHash{$sourceDBSer} = {}; # intialize key value
-	        }
+			if ($sourceDBSer eq $aliasSourceDBSer) {
+		        if (!exists $expressionHash{$sourceDBSer}) {
+		        	$expressionHash{$sourceDBSer} = {}; # intialize key value
+		        }
 
-	        foreach my $Expression (@expressions) {
+		        foreach my $Expression (@expressions) {
 
-	        	my $expressionSer = $Expression->{_ser};
-	        	my $expressionName = $Expression->{_name};
-	        	my $expressionDesc = $Expression->{_description};
-	        	my $expressionLastTransfer = $Expression->{_lasttransfer};
+		        	my $expressionSer = $Expression->{_ser};
+		        	my $expressionName = $Expression->{_name};
+		        	my $expressionDesc = $Expression->{_description};
+		        	my $expressionLastTransfer = $Expression->{_lasttransfer};
 
-	        	# append expression (surrounded by single quotes) to string
-	        	if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
-	        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",('$expressionName','$expressionDesc')";
-	        	} else {
-	        		# start a new string 
-	        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "('$expressionName','$expressionDesc')";
-	        	}
+		        	# append expression (surrounded by single quotes) to string
+		        	if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
+		        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",('$expressionName','$expressionDesc')";
+		        	} else {
+		        		# start a new string 
+		        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "('$expressionName','$expressionDesc')";
+		        	}
 
-	        	$expressionDict{$expressionName}{$expressionDesc} = $aliasSer;
+		        	$expressionDict{$expressionName}{$expressionDesc} = $aliasSer;
 
-	        }
+		        }
+		    }
 
 		}
 
@@ -392,6 +398,7 @@ sub getResourceAppointmentsFromSourceDB
 				$raInfo_sql .= ")";
 			}
     	}
+    	print "$raInfo_sql\n";
 
     	# prepare query
 	    my $query = $sourceDatabase->prepare($raInfo_sql)
@@ -439,30 +446,33 @@ sub getResourceAppointmentsFromSourceDB
   #       my $expressionHash = {};
 		# my $expressionDict = {};
 		# foreach my $Alias (@aliasList) {
+			# my $aliasSourceDBSer 	= $Alias->getAliasSourceDatabaseSer();
 		# 	my @expressions         = $Alias->getAliasExpressions(); 
 
-	 #        if (!exists $expressionHash{$sourceDBSer}) {
-	 #        	$expressionHash{$sourceDBSer} = {}; # intialize key value
-	 #        }
+			# if ($sourceDBSer eq $aliasSourceDBSer) {
+		 #        if (!exists $expressionHash{$sourceDBSer}) {
+		 #        	$expressionHash{$sourceDBSer} = {}; # intialize key value
+		 #        }
 
-	 #        foreach my $Expression (@expressions) {
+		 #        foreach my $Expression (@expressions) {
 
-	 #        	my $expressionSer = $Expression->{_ser};
-	 #        	my $expressionName = $Expression->{_name};
-	 #        	my $expressionDesc = $Expression->{_description};
-	 #        	my $expressionLastTransfer = $Expression->{_lasttransfer};
+		 #        	my $expressionSer = $Expression->{_ser};
+		 #        	my $expressionName = $Expression->{_name};
+		 #        	my $expressionDesc = $Expression->{_description};
+		 #        	my $expressionLastTransfer = $Expression->{_lasttransfer};
 
-	 #        	# append expression (surrounded by single quotes) to string
-	 #        	if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
-	 #        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",('$expressionName','$expressionDesc')";
-	 #        	} else {
-	 #        		# start a new string 
-	 #        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "('$expressionName','$expressionDesc')";
-	 #        	}
+		 #        	# append expression (surrounded by single quotes) to string
+		 #        	if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
+		 #        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",('$expressionName','$expressionDesc')";
+		 #        	} else {
+		 #        		# start a new string 
+		 #        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "('$expressionName','$expressionDesc')";
+		 #        	}
 
-	 #        	$expressionDict{$expressionName}{$expressionDesc} = $expressionSer;
+		 #        	$expressionDict{$expressionName}{$expressionDesc} = $expressionSer;
 
-	 #        }
+		 #        }
+	 			# }
 
 		# }
 
