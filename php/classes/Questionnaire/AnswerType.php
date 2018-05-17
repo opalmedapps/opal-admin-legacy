@@ -218,7 +218,7 @@ class AnswerType {
 				$category_EN = $data[0];
 				$category_FR = $data[1];
 
-				$nswerTypeCategorytArray = array(
+				$answerTypeCategoryArray = array(
 					'category_EN'	=> $category_EN,
 					'category_FR'	=> $category_FR
 				);
