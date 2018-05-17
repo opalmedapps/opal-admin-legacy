@@ -1,3 +1,15 @@
+Version 0.18.10.0:
+ -     --- Changed cron settings to only output errors to logs
+ -     --- Improved log email         -- Now displaying ip address and script location for better debugging
+ -     --- Optimized queries some more
+ -     --- Removed print statement and exit statements from testing
+ -     --- Re-enabled new questionnaire system     --- Fixed bug in question form
+ -     --- Optimized queries         -- Removed for loops
+ - Merge branch 'hotfix-0.18.9.2' into develop
+ -     --- Added UTF-8 for medivisit database connection         -- There were missing codes that had accents
+ - Merge branch 'hotfix-0.18.9.1' into develop
+ - Merge branch 'release-0.18.9.0' into develop
+
 Version 0.18.9.2:
  - Merge branch 'hotfix-0.18.9.1'
  -     --- Fixed crash in patient location MH
