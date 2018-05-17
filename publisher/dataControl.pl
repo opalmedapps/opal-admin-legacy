@@ -301,7 +301,7 @@ foreach my $Patient (@registeredPatients) {
 }
 
 print "Finished patient list\n" if $verbose;
-
+=pod
 ##########################################################################################
 # 
 # Data Retrieval PATIENTDOCTORS - get list of patient-doctor info updated since last update
@@ -447,7 +447,7 @@ foreach my $Task (@TaskList) {
 }
 
 print "Finished task list\n" if $verbose;
-
+=cut
 ##########################################################################################
 # 
 # Data Retrieval APPOINTMENTS - get list of patients with appointments updated since last update
@@ -455,7 +455,6 @@ print "Finished task list\n" if $verbose;
 ##########################################################################################
 @ApptList = Appointment::getApptsFromSourceDB($cronLogSer, @patientList);
 print "Got appointment list\n" if $verbose;
-
 #=========================================================================================
 # Loop over each patient. Various functions are done.
 #=========================================================================================
@@ -593,6 +592,7 @@ foreach my $PatientLocation (@PLMHList) {
 }
 
 print "Finished patient location MH list\n" if $verbose;
+exit;
 
 ##########################################################################################
 # 
