@@ -484,7 +484,7 @@ sub getPatientLocationsFromSourceDB
 			}
     	}
 
-    	print "$plInfo_sql\n";	
+    	#print "$plInfo_sql\n";	
         # prepare query
 	    my $query = $sourceDatabase->prepare($plInfo_sql)
 		    or die "Could not prepare query: " . $sourceDatabase->errstr;
