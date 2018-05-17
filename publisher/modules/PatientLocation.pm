@@ -234,337 +234,351 @@ sub getPatientLocationsFromSourceDB
 
 	my @aliasList = Alias::getAliasesMarkedForUpdate('Appointment');
 
-	foreach my $Patient (@patientList) {
+ 	######################################
+    # ARIA
+    ######################################
+    my $sourceDBSer = 1;
+	{
+        my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
 
-		my $patientSer 				= $Patient->getPatientSer();
-		my $patientSSN 				= $Patient->getPatientSSN();
-		my $patientLastTransfer		= $Patient->getPatientLastTransfer();
-
-		# reformat patient last transfer date 
-		my $formatted_PLU = Time::Piece->strptime($patientLastTransfer, "%Y-%m-%d %H:%M:%S");
-
+		my $expressionHash = {};
+		my $expressionDict = {};
 		foreach my $Alias (@aliasList) {
-
+			my $aliasSourceDBSer 	= $Alias->getAliasSourceDatabaseSer();
 			my $aliasSer 			= $Alias->getAliasSer();
-			my $sourceDBSer 		= $Alias->getAliasSourceDatabaseSer();
-			my @expressions 		= $Alias->getAliasExpressions(); 
+			my @expressions         = $Alias->getAliasExpressions(); 
 
-			######################################
-		    # ARIA
-		    ######################################
-			if ($sourceDBSer eq 1) {
+			if ($sourceDBSer eq $aliasSourceDBSer) {
+		        if (!exists $expressionHash{$sourceDBSer}) {
+		        	$expressionHash{$sourceDBSer} = {}; # intialize key value
+		        }
 
-				my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-				
-				# Hash to hold a string of expressions per distinct last transferred date
-            	# i.e. keys are transfer date, values are expressions with that last transfer date
-            	# i.e we are grouping expressions under each transfer date
-				my $expressionHash = {};
+		        foreach my $Expression (@expressions) {
 
-            	# Create hash
-            	foreach my $Expression (@expressions) {
+		        	my $expressionSer = $Expression->{_ser};
+		        	my $expressionName = $Expression->{_name};
+		        	my $expressionLastTransfer = $Expression->{_lasttransfer};
 
-	            	my $expressionName = $Expression->{_name};
-	            	my $expressionLastTransfer = $Expression->{_lasttransfer};
+		        	# append expression (surrounded by single quotes) to string
+		        	if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
+		        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",'$expressionName'";
+		        	} else {
+		        		# start a new string 
+		        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "'$expressionName'";
+		        	}
 
-	            	# append expression (surrounded by single quotes) to array
-	            	if (exists $expressionHash{$expressionLastTransfer}) {
-	            		push(@{$expressionHash{$expressionLastTransfer}}, "'$expressionName'");
-	            	} else {
-	            		# start a new array 
-	            		$expressionHash{$expressionLastTransfer} = ["'$expressionName'"];
-	            	}
+		        	$expressionDict{$expressionName} = $aliasSer;
 
-	            }
-
-	            # Convert arrays to comma-separated string
-	            foreach my $lastTransferDate (keys %expressionHash) {
-	            	$expressionHash{$lastTransferDate} = join ',', @{$expressionHash{$lastTransferDate}};
-	            }
-                
-				my $plInfo_sql = "
-					SELECT DISTINCT
-						sa.ScheduledActivitySer,
-						pl.PatientLocationSer,
-						pl.PatientLocationRevCount,
-						pl.CheckedInFlag,
-						CONVERT(VARCHAR, pl.ArrivalDateTime, 120),
-						pl.ResourceSer
-					FROM
-						variansystem.dbo.Patient pt,
-						variansystem.dbo.ScheduledActivity sa,
-						variansystem.dbo.PatientLocation pl,
-						variansystem.dbo.ActivityInstance ai,
-						variansystem.dbo.Activity act,
-						variansystem.dbo.LookupTable vva
-					WHERE
-						sa.ActivityInstanceSer 			= ai.ActivityInstanceSer
-					AND	sa.PatientSer 					= pt.PatientSer
-					AND	LEFT(LTRIM(pt.SSN), 12)			= '$patientSSN'
-					AND	ai.ActivitySer					= act.ActivitySer
-					AND	act.ActivityCode 				= vva.LookupValue
-					AND	sa.ScheduledActivitySer 		= pl.ScheduledActivitySer
-					AND (
-				";
-
-				my $numOfExpressions = keys %expressionHash; 
-				my $counter = 0;
-				# loop through each transfer date
-	            foreach my $lastTransferDate (keys %expressionHash) {
-
-                	my $expressionLastTransfer = $lastTransferDate;
-					my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
-
-					# compare the last updates to find the earliest date 
-					my $date_diff = $formatted_PLU - $formatted_ELU;
-					if ($date_diff < 0) {
-						$lasttransfer = $patientLastTransfer;
-					} else {
-						$lasttransfer = $expressionLastTransfer;
-					}
-
-		            # concatenate query
-					$plInfo_sql .= "
-						(REPLACE(vva.Expression1, '''', '')    	IN ($expressionHash{$lastTransferDate})
-						AND pl.HstryDateTime 	> '$lasttransfer' )
-					";
-					$counter++;
-					# concat UNION until we've reached the last expression
-					if ($counter < $numOfExpressions) {
-						$plInfo_sql .= "OR";
-					}
-					# close bracket at the end
-					else {
-						$plInfo_sql .= ")";
-					}
-				}
-
-				# print "$plInfo_sql\n";
-				# prepare query
-				my $query = $sourceDatabase->prepare($plInfo_sql)
-					or die "Could not prepare PL query: " . $sourceDatabase->errstr;
-
-				# execute query
-	        	$query->execute()
-		        	or die "Could not execute query: " . $query->errstr;
-    
-        		# Fetched all data, instead of fetching each row
-        		my $data = $query->fetchall_arrayref();
-		        foreach my $row (@$data) {
-
-					my $patientlocation = new PatientLocation(); # new PL object
-
-					$appointmentser 		= Appointment::reassignAppointment($row->[0], $sourceDBSer, $aliasSer, $patientSer);
-					$sourceuid 				= $row->[1];
-					$revcount 				= $row->[2];
-					$checkedinflag 			= $row->[3];
-					$arrivaldatetime 		= $row->[4];
-					$venueser 				= Venue::reassignVenue($row->[5], $sourceDBSer);
-
-					$patientlocation->setPatientLocationAppointmentSer($appointmentser);
-					$patientlocation->setPatientLocationSourceDatabaseSer($sourceDBSer);
-					$patientlocation->setPatientLocationSourceUID($sourceuid);
-					$patientlocation->setPatientLocationRevisionCount($revcount);
-					$patientlocation->setPatientLocationCheckedInFlag($checkedinflag);
-					$patientlocation->setPatientLocationArrivalDateTime($arrivaldatetime);
-					$patientlocation->setPatientLocationVenueSer($venueser);
-
-					push(@patientLocationList, $patientlocation);
-				}
-
-				# empty hash
-    	    	for (keys %expressionHash) { delete $expressionHash{$_}; }
-
-				$sourceDatabase->disconnect();
-			}
-
-			######################################
-		    # MediVisit
-		    ######################################
-			if ($sourceDBSer eq 2) {
-
-				my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-				
-				# Hash to hold a string of expressions per distinct last lastTransferDateferred date
-            	# i.e. keys are lastTransferDatefer date, values are expressions with that last lastTransferDate date
-            	# i.e we are grouping expressions under each lastTransferDatefer date
-            	my $expressionHash = {};
-
-        		# Create hash
-            	foreach my $Expression (@expressions) {
-
-	            	my $expressionName = $Expression->{_name};
-                	my $expressionDesc = $Expression->{_description};
-	            	my $expressionLastTransfer = $Expression->{_lasttransfer};
-
-	            	# append expression (surrounded by single quotes) to array
-	            	if (exists $expressionHash{$expressionLastTransfer}) {
-	            		push(@{$expressionHash{$expressionLastTransfer}}, "('$expressionName', '$expressionDesc')");
-	            	} else {
-	            		# start a new array 
-	            		$expressionHash{$expressionLastTransfer} = ["('$expressionName', '$expressionDesc')"];
-	            	}
-
-	            }
-
-	            # Convert arrays to comma-separated string
-	            foreach my $lastTransferDate (keys %expressionHash) {
-	            	$expressionHash{$lastTransferDate} = join ',', @{$expressionHash{$lastTransferDate}};
-	            }
-				
-				my $plInfo_sql = "
-					SELECT DISTINCT
-						mval.AppointmentSerNum,
-						pl.PatientLocationSerNum,
-						pl.PatientLocationRevCount,
-						'1' as CheckedInFlag,
-						pl.ArrivalDateTime,
-						Venue.ResourceSer
-					FROM
-						Patient pt,
-						MediVisitAppointmentList mval,
-						PatientLocation pl,
-						Venue
-					WHERE
-						mval.PatientSerNum 			= pt.PatientSerNum
-					AND	LEFT(LTRIM(pt.SSN), 12)		= '$patientSSN'
-					AND mval.AppointmentSerNum		= pl.AppointmentSerNum
-					AND Venue.VenueId 				= pl.CheckinVenueName
-					AND (
-				";
-
-				my $numOfExpressions = keys %expressionHash; 
-                my $counter = 0;
-				# loop through each transfer date
-	            foreach my $lastTransferDate (keys %expressionHash) {
-
-                	my $expressionLastTransfer = $Expression->{_lasttransfer};
-                	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
-
-                	# compare last updates to find the earliest date 
-		            # get the diff in seconds
-		            my $date_diff = $formatted_PLU - $formatted_ELU;
-		            if ($date_diff < 0) {
-		                $lasttransfer = $patientLastTransfer;
-		            } else {
-		                $lasttransfer = $expressionLastTransfer;
-		            }
-
-		            # concatenate query
-					$plInfo_sql .= "
-						((mval.AppointmentCode, mval.ResourceDescription) IN ($expressionHash{$lastTransferDate})
-	        			AND mval.LastUpdated	> '$lasttransfer')
-					";
-					$counter++;
-					# concat "UNION" until we've reached the last query
-	        		if ($counter < $numOfExpressions) {
-	        			$plInfo_sql .= "OR";
-	        		}
-					# close bracket at end
-					else {
-						$plInfo_sql .= ")";
-					}
-	        	}
-                # print "$plInfo_sql\n";	
-		        # prepare query
-    		    my $query = $sourceDatabase->prepare($plInfo_sql)
-	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;
-
-        		# execute query
-	        	$query->execute()
-		        	or die "Could not execute query: " . $query->errstr;
-    
-        		# Fetched all data, instead of fetching each row
-        		my $data = $query->fetchall_arrayref();
-		        foreach my $row (@$data) {
-
-					my $patientlocation = new PatientLocation(); # new PL object
-
-					$appointmentser 		= Appointment::reassignAppointment($row->[0], $sourceDBSer, $aliasSer, $patientSer);
-					$sourceuid 				= $row->[1];
-					$revcount 				= $row->[2];
-					$checkedinflag 			= $row->[3];
-					$arrivaldatetime 		= $row->[4];
-					$venueser 				= Venue::reassignVenue($row->[5], $sourceDBSer);
-
-					$patientlocation->setPatientLocationAppointmentSer($appointmentser);
-					$patientlocation->setPatientLocationSourceDatabaseSer($sourceDBSer);
-					$patientlocation->setPatientLocationSourceUID($sourceuid);
-					$patientlocation->setPatientLocationRevisionCount($revcount);
-					$patientlocation->setPatientLocationCheckedInFlag($checkedinflag);
-					$patientlocation->setPatientLocationArrivalDateTime($arrivaldatetime);
-					$patientlocation->setPatientLocationVenueSer($venueser);
-
-					push(@patientLocationList, $patientlocation);
-				}
-
-				# empty hash
-    	    	for (keys %expressionHash) { delete $expressionHash{$_}; }
-
-				$sourceDatabase->disconnect();
-
-			}
-
-			######################################
-		    # MOSAIQ
-		    ######################################
-            if ($sourceDBSer eq 3) {
-  
-                my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-
-                my $numOfExpressions = @expressions; 
-                my $counter = 0;
-                my $plInfo_sql = "";
-
-                foreach my $Expression (@expressions) {
-
-                	my $expressionser = $Expression->{_ser};
-                	my $expressionName = $Expression->{_name};
-                	my $expressionLastTransfer = $Expression->{_lasttransfer};
-                	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
-
-                	# compare last updates to find the earliest date 
-		            # get the diff in seconds
-		            my $date_diff = $formatted_PLU - $formatted_ELU;
-		            if ($date_diff < 0) {
-		                $lasttransfer = $patientLastTransfer;
-		            } else {
-		                $lasttransfer = $expressionLastTransfer;
-		            }
-
-	        		$plInfo_sql .= "SELECT 'QUERY_HERE' ";
-
-	        		$counter++;
-	        		# concat "UNION" until we've reached the last query
-	        		if ($counter < $numOfExpressions) {
-	        			$plInfo_sql .= "UNION";
-	        		}
-	        	}
-
-		        # prepare query
-    		    my $query = $sourceDatabase->prepare($plInfo_sql)
-	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;
-
-        		# execute query
-	        	$query->execute()
-		        	or die "Could not execute query: " . $query->errstr;
-    
-        		# Fetched all data, instead of fetching each row
-        		my $data = $query->fetchall_arrayref();
-		        foreach my $row (@$data) {
-			    
-    			    #my $patientlocation = new PatientLocation(); # uncomment to use
-                
-                	# use setters to set appropriate PL information from query
-
-                	#push(@patientLocationList, $patientlocation);
-                }
-
-                $sourceDatabase->disconnect();
-            }
+		        }
+		    }
 
 		}
+
+        my $patientInfo_sql = "
+	    	WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
+	    ";
+	    my $numOfPatients = @patientList;
+	    my $counter = 0;
+	    foreach my $Patient (@patientList) {
+	    	my $patientSer 			= $Patient->getPatientSer();
+	    	my $patientSSN          = $Patient->getPatientSSN(); # get ssn
+			my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
+
+			$patientInfo_sql .= "
+				SELECT '$patientSSN', '$patientLastTransfer', '$patientSer'
+			";
+
+			$counter++;
+			if ( $counter < $numOfPatients ) {
+				$patientInfo_sql .= "UNION";
+			}
+		}
+		$patientInfo_sql .= ")";
+
+		my $plInfo_sql = $patientInfo_sql . 
+			"
+				SELECT DISTINCT
+					sa.ScheduledActivitySer,
+					pl.PatientLocationSer,
+					pl.PatientLocationRevCount,
+					pl.CheckedInFlag,
+					CONVERT(VARCHAR, pl.ArrivalDateTime, 120),
+					pl.ResourceSer,
+					PatientInfo.PatientSerNum,
+					lt.Expression1
+				FROM
+					variansystem.dbo.Patient pt,
+					variansystem.dbo.ScheduledActivity sa,
+					variansystem.dbo.PatientLocation pl,
+					variansystem.dbo.ActivityInstance ai,
+					variansystem.dbo.Activity act,
+					variansystem.dbo.LookupTable lt,
+					PatientInfo
+				WHERE
+					sa.ActivityInstanceSer 			= ai.ActivityInstanceSer
+				AND	sa.PatientSer 					= pt.PatientSer
+				AND	LEFT(LTRIM(pt.SSN), 12)			= PatientInfo.SSN
+				AND	ai.ActivitySer					= act.ActivitySer
+				AND	act.ActivityCode 				= lt.LookupValue
+				AND	sa.ScheduledActivitySer 		= pl.ScheduledActivitySer
+				AND (
+			";
+		my $numOfExpressions = keys %{$expressionHash{$sourceDBSer}}; 
+        my $counter = 0;
+		# loop through each transfer date
+        foreach my $lastTransferDate (keys %{$expressionHash{$sourceDBSer}}) {
+
+            # concatenate query
+    		$plInfo_sql .= "
+				(REPLACE(lt.Expression1, '''', '')    	IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
+	        	AND pl.HstryDateTime	 				> (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
+    		";
+    		$counter++;
+    		# concat "UNION" until we've reached the last query
+    		if ($counter < $numOfExpressions) {
+    			$plInfo_sql .= "OR";
+    		}
+			# close bracket at end
+			else {
+				$plInfo_sql .= ")";
+			}
+    	}
+    	# print "$plInfo_sql\n";
+		# prepare query
+		my $query = $sourceDatabase->prepare($plInfo_sql)
+			or die "Could not prepare PL query: " . $sourceDatabase->errstr;
+
+		# execute query
+    	$query->execute()
+        	or die "Could not execute query: " . $query->errstr;
+
+		# Fetched all data, instead of fetching each row
+		my $data = $query->fetchall_arrayref();
+        foreach my $row (@$data) {
+
+			my $patientlocation = new PatientLocation(); # new PL object
+
+			my $patientSer 			= $row->[6];
+			my $expressionName 		= $row->[7];
+
+			$appointmentser 		= Appointment::reassignAppointment($row->[0], $sourceDBSer, $expressionDict{$expressionName}, $patientSer);
+			$sourceuid 				= $row->[1];
+			$revcount 				= $row->[2];
+			$checkedinflag 			= $row->[3];
+			$arrivaldatetime 		= $row->[4];
+			$venueser 				= Venue::reassignVenue($row->[5], $sourceDBSer);
+
+			$patientlocation->setPatientLocationAppointmentSer($appointmentser);
+			$patientlocation->setPatientLocationSourceDatabaseSer($sourceDBSer);
+			$patientlocation->setPatientLocationSourceUID($sourceuid);
+			$patientlocation->setPatientLocationRevisionCount($revcount);
+			$patientlocation->setPatientLocationCheckedInFlag($checkedinflag);
+			$patientlocation->setPatientLocationArrivalDateTime($arrivaldatetime);
+			$patientlocation->setPatientLocationVenueSer($venueser);
+
+			push(@patientLocationList, $patientlocation);
+		}
+
+		# empty hash
+    	for (keys %{$expressionHash{$sourceDBSer}}) { delete $expressionHash{$sourceDBSer}{$_}; }
+
+		$sourceDatabase->disconnect();
 	}
+
+	######################################
+    # MediVisit
+    ######################################
+    my $sourceDBSer = 2;
+	{
+        my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
+
+        my $expressionHash = {};
+		my $expressionDict = {};
+		foreach my $Alias (@aliasList) {
+			my $aliasSourceDBSer 	= $Alias->getAliasSourceDatabaseSer();
+			my $aliasSer 			= $Alias->getAliasSer();
+			my @expressions         = $Alias->getAliasExpressions(); 
+
+			if ($sourceDBSer eq $aliasSourceDBSer) {
+		        if (!exists $expressionHash{$sourceDBSer}) {
+		        	$expressionHash{$sourceDBSer} = {}; # intialize key value
+		        }
+
+		        foreach my $Expression (@expressions) {
+
+		        	my $expressionSer = $Expression->{_ser};
+		        	my $expressionName = $Expression->{_name};
+		        	my $expressionDesc = $Expression->{_description};
+		        	my $expressionLastTransfer = $Expression->{_lasttransfer};
+
+		        	# append expression (surrounded by single quotes) to string
+		        	if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
+		        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",('$expressionName','$expressionDesc')";
+		        	} else {
+		        		# start a new string 
+		        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "('$expressionName','$expressionDesc')";
+		        	}
+
+		        	$expressionDict{$expressionName}{$expressionDesc} = $aliasSer;
+
+		        }
+
+		    }
+
+		}
+
+        my $patientInfo_sql = "";
+	    my $numOfPatients = @patientList;
+	    my $counter = 0;
+	    foreach my $Patient (@patientList) {
+	    	my $patientSer 			= $Patient->getPatientSer();
+	    	my $patientSSN          = $Patient->getPatientSSN(); # get ssn
+			my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
+
+			$patientInfo_sql .= "
+				SELECT '$patientSSN' as SSN, '$patientLastTransfer' as LastTransfer, '$patientSer' as PatientSerNum
+			";
+
+			$counter++;
+			if ( $counter < $numOfPatients ) {
+				$patientInfo_sql .= "UNION";
+			}
+		}
+
+		my $plInfo_sql = "
+			SELECT DISTINCT
+				mval.AppointmentSerNum,
+				pl.PatientLocationSerNum,
+				pl.PatientLocationRevCount,
+				'1' as CheckedInFlag,
+				pl.ArrivalDateTime,
+				Venue.ResourceSer,
+				pi.PatientSerNum,
+				mval.AppointmentCode,
+				mval.ResourceDescription
+			FROM
+				MediVisitAppointmentList mval,
+				PatientLocation pl,
+				Venue,
+				Patient pt
+			JOIN ($patientInfo_sql) pi
+            ON 	LEFT(LTRIM(pt.SSN), 12)  = pi.SSN	
+			WHERE
+				mval.PatientSerNum 			= pt.PatientSerNum
+			AND mval.AppointmentSerNum		= pl.AppointmentSerNum
+			AND Venue.VenueId 				= pl.CheckinVenueName
+			AND (
+		";
+
+		my $numOfExpressions = keys %{$expressionHash{$sourceDBSer}}; 
+        my $counter = 0;
+		# loop through each transfer date
+        foreach my $lastTransferDate (keys %{$expressionHash{$sourceDBSer}}) {
+
+            # concatenate query
+    		$plInfo_sql .= "
+    			((mval.AppointmentCode, mval.ResourceDescription) IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
+    			AND mval.LastUpdated	> (SELECT IF ('$lastTransferDate' > pi.LastTransfer, pi.LastTransfer, '$lastTransferDate')))
+			";
+    		$counter++;
+    		# concat "UNION" until we've reached the last query
+    		if ($counter < $numOfExpressions) {
+    			$plInfo_sql .= "OR";
+    		}
+			# close bracket at end
+			else {
+				$plInfo_sql .= ")";
+			}
+    	}
+
+    	#print "$plInfo_sql\n";	
+        # prepare query
+	    my $query = $sourceDatabase->prepare($plInfo_sql)
+		    or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+		# execute query
+    	$query->execute()
+        	or die "Could not execute query: " . $query->errstr;
+
+		# Fetched all data, instead of fetching each row
+		my $data = $query->fetchall_arrayref();
+        foreach my $row (@$data) {
+
+			my $patientlocation = new PatientLocation(); # new PL object
+
+			my $patientSer 			= $row->[6];
+			my $expressionName 		= $row->[7];
+			my $expressionDesc 		= $row->[8];
+			$appointmentser 		= Appointment::reassignAppointment($row->[0], $sourceDBSer, $aliasSer, $patientSer);
+			$sourceuid 				= $row->[1];
+			$revcount 				= $row->[2];
+			$checkedinflag 			= $row->[3];
+			$arrivaldatetime 		= $row->[4];
+			$venueser 				= Venue::reassignVenue($row->[5], $sourceDBSer);
+
+			$patientlocation->setPatientLocationAppointmentSer($appointmentser);
+			$patientlocation->setPatientLocationSourceDatabaseSer($sourceDBSer);
+			$patientlocation->setPatientLocationSourceUID($sourceuid);
+			$patientlocation->setPatientLocationRevisionCount($revcount);
+			$patientlocation->setPatientLocationCheckedInFlag($checkedinflag);
+			$patientlocation->setPatientLocationArrivalDateTime($arrivaldatetime);
+			$patientlocation->setPatientLocationVenueSer($venueser);
+
+			push(@patientLocationList, $patientlocation);
+		}
+
+		# empty hash
+    	for (keys %{$expressionHash{$sourceDBSer}}) { delete $expressionHash{$sourceDBSer}{$_}; }
+
+		$sourceDatabase->disconnect();
+
+	}
+
+	 ######################################
+    # MOSAIQ
+    ######################################
+    my $sourceDBSer = 3;
+	# {
+  #       my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
+
+  #       my $expressionHash = {};
+		# my $expressionDict = {};
+		# foreach my $Alias (@aliasList) {
+			# my $aliasSourceDBSer 	= $Alias->getAliasSourceDatabaseSer();
+		# 	my @expressions         = $Alias->getAliasExpressions(); 
+
+			# if ($sourceDBSer eq $aliasSourceDBSer) {
+		 #        if (!exists $expressionHash{$sourceDBSer}) {
+		 #        	$expressionHash{$sourceDBSer} = {}; # intialize key value
+		 #        }
+
+		 #        foreach my $Expression (@expressions) {
+
+		 #        	my $expressionSer = $Expression->{_ser};
+		 #        	my $expressionName = $Expression->{_name};
+		 #        	my $expressionDesc = $Expression->{_description};
+		 #        	my $expressionLastTransfer = $Expression->{_lasttransfer};
+
+		 #        	# append expression (surrounded by single quotes) to string
+		 #        	if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
+		 #        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",('$expressionName','$expressionDesc')";
+		 #        	} else {
+		 #        		# start a new string 
+		 #        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "('$expressionName','$expressionDesc')";
+		 #        	}
+
+		 #        	$expressionDict{$expressionName}{$expressionDesc} = $expressionSer;
+
+		 #        }
+				# }
+
+		# }
+
+		# patient and appointment query here
+        # $sourceDatabase->disconnect();
+
+	# }
+
 
 	return @patientLocationList;
 
@@ -581,8 +595,6 @@ sub getPatientLocationsMHFromSourceDB
 
 	my ($appointmentser, $sourceuid, $revcount, $checkedinflag, $arrivaldatetime, $venueser, $hstrydatetime); # for query results
 	my $lasttransfer;
-
-	my @aliasList = Alias::getAliasesMarkedForUpdate('Appointment');
 
 	foreach my $Patient (@$patientList) {
 
