@@ -17,6 +17,8 @@ use Storable qw(dclone);
 use File::Basename;
 use JSON;
 use MIME::Lite;
+use Net::Address::IP::Local;
+use Cwd 'abs_path';
 
 #-----------------------------------------------------------------------
 # Monitor this script's execution
@@ -28,6 +30,8 @@ use MIME::Lite;
 $execution_log = dirname($0) . '/logs/executions.log';
 $monitor_log = dirname($0) . '/logs/monitor_log.json';
 
+my $this_script = abs_path($0);
+my $ip_address = Net::Address::IP::Local->public;
 my $json_log;
 if (-e $monitor_log) { # file exists
 	{
@@ -58,6 +62,7 @@ if (-e $monitor_log) { # file exists
 			open(my $file_handler, "<", $execution_log);
 			my @lines = reverse <$file_handler>; # read file from tail
 			my @logs;
+			push (@logs, "IP: <strong>$ip_address</strong> at <strong>" . $this_script . "</strong><br>"); # push first line 
 			my $count = 0;
 			foreach $line (@lines) {
 				push (@logs, "$line<br>");
@@ -109,6 +114,7 @@ if (-e $monitor_log) { # file exists
 				open(my $file_handler, "<", $execution_log);
 				my @lines = reverse <$file_handler>; # read file from tail
 				my @logs;
+				push (@logs, "IP: <strong>$ip_address</strong> at <strong>" . $this_script . "</strong><br>"); # push first line 
 				my $count = 0;
 				foreach $line (@lines) {
 					push (@logs, "$line<br>");
