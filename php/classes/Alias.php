@@ -528,7 +528,8 @@ class Alias {
                     Alias.EducationalMaterialControlSerNum,
                     Alias.SourceDatabaseSerNum,
                     SourceDatabase.SourceDatabaseName, 
-                    Alias.ColorTag
+                    Alias.ColorTag,
+                    Alias.HospitalMapSerNum
 				FROM 
                     Alias, 
                     SourceDatabase
@@ -555,9 +556,13 @@ class Alias {
                 'name'      => $data[8]
             );
             $aliasColorTag  = $data[9];
+            $hospitalMapSer = $data[10];
 
             $aliasEduMat    = "";
+            $hospitalMap    = "";
 			$aliasTerms	    = array();
+
+            $checkinDetails = $this->getCheckinDetails($aliasSer, $aliasType);
 
 			$sql = "
 				SELECT DISTINCT 
@@ -585,9 +590,14 @@ class Alias {
 					array_push($aliasTerms, $termArray);
 			}
 
-            if ($aliasEduMatSer != 0) {
+            if ($aliasEduMatSer) {
                 $eduMatObj = new EduMaterial();
                 $aliasEduMat = $eduMatObj->getEducationalMaterialDetails($aliasEduMatSer);
+            }
+
+            if ($hospitalMapSer) {
+                $hospitalMapObj = new HospitalMap();
+                $hospitalMap = $hospitalMapObj->getHospitalMapDetails($hospitalMapSer);
             }
                          
 			$aliasDetails = array(
@@ -603,7 +613,10 @@ class Alias {
                 'description_FR' 	=> $aliasDesc_FR, 
                 'source_db'         => $sourceDatabase,
 				'count' 		    => count($aliasTerms), 
-				'terms' 		    => $aliasTerms
+				'terms' 		    => $aliasTerms,
+                'checkin_details'   => $checkinDetails,
+                'hospitalMapSer'    => $hospitalMapSer,
+                'hospitalMap'       => $hospitalMap
 			);
 		
             return $aliasDetails;
@@ -632,11 +645,16 @@ class Alias {
 		$aliasTerms	    = $aliasDetails['terms'];
         $userSer        = $aliasDetails['user']['id'];
         $sessionId      = $aliasDetails['user']['sessionid'];
+        $checkinDetails = isset($aliasDetails['checkin_details']) ? $aliasDetails['checkin_details'] : null;
         $aliasEduMatSer = 'NULL';
         if ( is_array($aliasDetails['edumat']) && isset($aliasDetails['edumat']['serial']) ) {
             $aliasEduMatSer = $aliasDetails['edumat']['serial'];
         }
         $sourceDBSer    = $aliasDetails['source_db']['serial'];
+        $hospitalMapSer = 'NULL';
+        if ( is_array($aliasDetails['hospitalMap']) && isset($aliasDetails['hospitalMap']['serial']) ) {
+            $hospitalMapSer = $aliasDetails['hospitalMap']['serial'];
+        }
 
         $lastTransferred = 'NOW()';
         if ($aliasType == 'Appointment') {
@@ -655,6 +673,7 @@ class Alias {
 						AliasDescription_FR,
                         AliasDescription_EN, 
                         EducationalMaterialControlSerNum,
+                        HospitalMapSerNum,
                         SourceDatabaseSerNum,
                         AliasType, 
                         ColorTag,
@@ -670,6 +689,7 @@ class Alias {
 					\"$aliasDesc_FR\", 
                     \"$aliasDesc_EN\", 
                     $aliasEduMatSer,
+                    $hospitalMapSer,
                     '$sourceDBSer',
                     '$aliasType', 
                     '$aliasColorTag',
@@ -716,6 +736,36 @@ class Alias {
 			}
 
             $this->sanitizeEmptyAliases($aliasDetails['user']);
+
+            if ($checkinDetails and $aliasType == 'Appointment') {
+                $checkinPossible =  $checkinDetails['checkin_possible'];
+                $instruction_EN     $checkinDetails['instruction_EN'];
+                $instruction_FR     $checkinDetails['instruction_FR'];
+
+                $sql = "
+                    INSERT INTO 
+                        AppointmentCheckin (
+                            AliasSerNum,
+                            CheckinPossible,
+                            CheckinInstruction_EN,
+                            CheckinInstruction_FR,
+                            DateAdded,
+                            LastUpdatedBy,
+                            SessionId
+                        )
+                    VALUE (
+                        '$aliasSer',
+                        '$checkinPossible',
+                        \"$instruction_EN\",
+                        \"$instruction_FR\",
+                        NOW(),
+                        '$userSer',
+                        '$sessionId'
+                    )
+                ";
+                $query = $host_db_link->prepare( $sql );
+                $query->execute();
+            }
 				
 	
 		} catch( PDOException $e) {
@@ -803,6 +853,8 @@ class Alias {
 		$aliasSer	    = $aliasDetails['serial'];
         $aliasTerms	    = $aliasDetails['terms'];
         $aliasEduMatSer = $aliasDetails['edumatser'] ? $aliasDetails['edumatser'] : 'NULL';
+        $hospitalMapSer = $aliasDetails['hospitalMapSer'] ? $aliasDetails['hospitalMapSer'] : 'NULL';
+        $checkinDetails = $aliasDetails['checkin_details'] ? $aliasDetails['checkin_details'] : null;
       
         $aliasColorTag  = $aliasDetails['color'];
 
@@ -813,6 +865,7 @@ class Alias {
 
         $detailsUpdated = $aliasDetails['details_updated'];
         $expressionsUpdated = $aliasDetails['expressions_updated'];
+        $checkinDetailsUpdated = $aliasDetails['checkin_details_updated'];
 
         // Initialize a response array
         $response = array(
@@ -834,6 +887,7 @@ class Alias {
     					Alias.AliasDescription_EN	            = \"$aliasDesc_EN\",
                         Alias.AliasDescription_FR	            = \"$aliasDesc_FR\",
                         Alias.EducationalMaterialControlSerNum  = $aliasEduMatSer,
+                        Alias.HospitalMapSerNum                 = $hospitalMapSer,
                         Alias.ColorTag                          = '$aliasColorTag',
                         Alias.LastUpdatedBy                     = '$userSer',
                         Alias.SessionId                         = '$sessionId'
@@ -843,6 +897,25 @@ class Alias {
 
     			$query = $host_db_link->prepare( $sql );
     			$query->execute();
+            }
+
+            if ($checkinDetailsUpdated) {
+                $checkinPossible = $checkinDetails['checkin_possible'];
+                $instruction_EN = $checkinDetails['instruction_EN'];
+                $instruction_FR = $checkinDetails['instruction_FR'];
+
+                $sql = "
+                    UPDATE
+                        AppointmentCheckin
+                    SET
+                        AppointmentCheckin.CheckinPossible          = '$checkinPossible',
+                        AppointmentCheckin.CheckinInstruction_EN    = \"$instruction_EN\",
+                        AppointmentCheckin.CheckinInstruction_FR    = \"$instruction_FR\",
+                        AppointmentCheckin.LastUpdatedBy            = '$userSer',
+                        AppointmentCheckin.SessionId                = '$sessionId'
+                    WHERE 
+                        AppointmentCheckin.AliasSerNum = $aliasSer
+                ";
             }
 
             if ($expressionsUpdated) {
@@ -996,6 +1069,56 @@ class Alias {
 			return $sourceDBList;
 		}
 	}
+
+    /**
+     *
+     * Gets appointment checkin details
+     *
+     * @param integer $serial : the alias serial number
+     * @param string $type : the alias type
+     * @return array $checkinDetails : the checkin details
+     */
+    public function getCheckinDetails ($serial, $type) {
+
+        $checkinDetails = array();
+        if ($type != 'Appointment') {
+            return $checkinDetails;
+        }
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
+                SELECT DISTINCT 
+                    ac.CheckinPossible,
+                    ac.CheckinInstruction_EN,
+                    ac.CheckinInstruction_FR
+                FROM 
+                    AppointmentCheckin ac
+                WHERE
+                    ac.AliasSerNum = $serial
+            ";
+
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
+
+            $checkinPossible    = $data[0];
+            $instruction_EN     = $data[1];
+            $instruction_FR     = $data[2];
+
+            $checkinDetails = array(
+                'checkin_possible'  => $checkinPossible,
+                'instruction_EN'    => $instruction_EN,
+                'instruction_FR'    => $instruction_FR
+            );
+
+            return $checkinDetails;
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return $checkinDetails;
+        }
+    }
 
     /**
      *
