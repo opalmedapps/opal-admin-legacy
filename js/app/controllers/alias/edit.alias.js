@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.alias.edit', [])
 
-	.controller('alias.edit', function ($scope, $uibModal, $uibModalInstance, $filter, aliasCollectionService, educationalMaterialCollectionService, Session) {
+	.controller('alias.edit', function ($scope, $uibModal, $uibModalInstance, $filter, aliasCollectionService, educationalMaterialCollectionService, Session, hospitalMapCollectionService) {
 
 		// Default Booleans
 		$scope.changesMade = false; // changes have been made? 
@@ -26,6 +26,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		$scope.termList = []; // initialize list for unassigned expressions in our DB
 		$scope.eduMatList = [];
 		$scope.existingColorTags = [];
+		$scope.hospitalMapList = [];
 
 		$scope.termFilter = null;
 		$scope.eduMatFilter = null;
@@ -53,6 +54,13 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			console.error('Error occurred getting educational material list:', response.status, response.data);
 		});
 
+		// Call our API to get the list of existing hospital maps
+		hospitalMapCollectionService.getHospitalMaps().then(function (response) {
+			$scope.hosMapList = response.data;
+		}).catch(function(response) {
+			console.error('Error occurred getting hospital map list:', response.status, response.data);
+		});
+
 		// Function to assign termFilter when textbox is changing 
 		$scope.changeTermFilter = function (termFilter) {
 			$scope.termFilter = termFilter;
@@ -76,6 +84,17 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		$scope.searchEduMatsFilter = function (edumat) {
 			var keyword = new RegExp($scope.eduMatFilter, 'i');
 			return !$scope.eduMatFilter || keyword.test(edumat.name_EN);
+		};
+
+		// Function to assign hospitalMapFilter when textbox is changing 
+		$scope.changeHospitalMapFilter = function (hospitalMapFilter) {
+			$scope.hospitalMapFilter = hospitalMapFilter;
+		};
+
+		// Function for searching through the hospital map list
+		$scope.searchHospitalMapsFilter = function (hospitalMap) {
+			var keyword = new RegExp($scope.hospitalMapFilter, 'i');
+			return !$scope.hospitalMapFilter || keyword.test(hospitalMap.name_EN);
 		};
 
 		$scope.clinicalCodeFilter = 'all';
@@ -103,7 +122,6 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			// Assign value
 			$scope.alias = response.data;
 			$scope.aliasModal = jQuery.extend(true, {}, $scope.alias); // deep copy
-
 
 			// Call our API service to get the list of alias expressions
 			aliasCollectionService.getExpressions($scope.alias.source_db.serial, $scope.alias.type).then(function (response) {
