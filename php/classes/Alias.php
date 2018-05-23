@@ -739,8 +739,8 @@ class Alias {
 
             if ($checkinDetails and $aliasType == 'Appointment') {
                 $checkinPossible =  $checkinDetails['checkin_possible'];
-                $instruction_EN     $checkinDetails['instruction_EN'];
-                $instruction_FR     $checkinDetails['instruction_FR'];
+                $instruction_EN  =  $checkinDetails['instruction_EN'];
+                $instruction_FR  =  $checkinDetails['instruction_FR'];
 
                 $sql = "
                     INSERT INTO 
@@ -916,6 +916,9 @@ class Alias {
                     WHERE 
                         AppointmentCheckin.AliasSerNum = $aliasSer
                 ";
+
+                $query = $host_db_link->prepare( $sql );
+                $query->execute();
             }
 
             if ($expressionsUpdated) {

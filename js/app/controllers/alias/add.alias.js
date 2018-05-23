@@ -40,7 +40,7 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 			type: { completed: false },
 			color: { completed: false },
 			terms: { completed: false },
-			checkin; { completed: false }
+			checkin: { completed: false }
 		};
 
 		$scope.filter = $filter('filter');
@@ -88,7 +88,7 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 		// Initialize list that will hold educational materials
 		$scope.eduMatList = [];
 		// Initialize list that will hold hospital maps
-		$scope.hosMapList = [];
+		$scope.hospitalMapList = [];
 
 		// Initialize list that will hold source databases
 		$scope.sourceDBList = [];
@@ -127,7 +127,7 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 
 		// Call our API to get the list of existing hospital maps
 		hospitalMapCollectionService.getHospitalMaps().then(function (response) {
-			$scope.hosMapList = response.data;
+			$scope.hospitalMapList = response.data;
 		}).catch(function(response) {
 			console.error('Error occurred getting hospital map list:', response.status, response.data);
 		});
@@ -194,9 +194,15 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 			if ($scope.newAlias.name_EN && $scope.newAlias.name_FR &&
 			$scope.newAlias.description_EN && $scope.newAlias.description_FR) { // if textboxes are not empty
 
-				// Toggle boolean
-				$scope.educationalMaterialSection.show = true;
-				$scope.colorSection.show = true;
+				if ($scope.newAlias.type.name == 'Appointment') {
+					$scope.checkinSection.show = true;
+					$scope.hospitalMapSection.show = true; 
+				}
+				else {
+					// Toggle boolean
+					$scope.educationalMaterialSection.show = true;
+					$scope.colorSection.show = true;
+				}
 
 				steps.title_description.completed = true;
 
@@ -245,13 +251,13 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 		$scope.hospitalMapUpdate = function (event, hospitalMap) {
 
 			// Toggle booleans
-			$scope.educationalMaterialSection.open = true;
+			$scope.hospitalMapSection.open = true;
 
 			if ($scope.newAlias.hospitalMap) {
 				if ($scope.newAlias.hospitalMap.serial == event.target.value) {
 					$scope.newAlias.hospitalMap = null;
 					$scope.newAlias.hospitalMapSer = null;
-					$scope.educationalMaterialSection.open = false;
+					$scope.hospitalMapSection.open = false;
 				}
 				else {
 					$scope.newAlias.hospitalMap = hospitalMap;
@@ -306,8 +312,20 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 				});
 			}
 
-			if (type != "Appointment") {
+			if (type.name != "Appointment") {
 				steps.checkin.completed = true;
+			}
+			else {
+				if ($scope.newAlias.name_EN && $scope.newAlias.name_FR &&
+				$scope.newAlias.description_EN && $scope.newAlias.description_FR) { // if textboxes are not empty
+
+					$scope.checkinSection.show = true;
+					$scope.hospitalMapSection.show = true; 
+				}
+				if (!$scope.newAlias.checkin_details.instruction_EN || !$scope.newAlias.checkin_details.instruction_FR || $scope.newAlias.checkin_details.checkin_possible == null) {
+					steps.checkin.completed = false;
+
+				}
 			}
 
 			// Count the number of completed steps
@@ -339,12 +357,20 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 			// Toggle booleans
 			$scope.checkinSection.open = true;
 
-			if (!$scope.newAlias.checkin_details.instruction_EN && !$scope.newAlias.checkin_details.instruction_FR) {
+			if (!$scope.newAlias.checkin_details.instruction_EN && !$scope.newAlias.checkin_details.instruction_FR
+				&& $scope.newAlias.checkin_details.checkin_possible == null) {
 				$scope.checkinSection.open = false;
 			}
 
-			if ($scope.newAlias.checkin_details.instruction_EN && $scope.newAlias.checkin_details.instruction_FR) {
+			if ($scope.newAlias.checkin_details.instruction_EN && $scope.newAlias.checkin_details.instruction_FR
+				&& $scope.newAlias.checkin_details.checkin_possible != null) {
+				
+				// Toggle boolean
+				$scope.educationalMaterialSection.show = true;
+				$scope.colorSection.show = true;
+
 				steps.checkin.completed = true;
+
 			}
 
 			else {
