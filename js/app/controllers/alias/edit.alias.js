@@ -56,7 +56,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 		// Call our API to get the list of existing hospital maps
 		hospitalMapCollectionService.getHospitalMaps().then(function (response) {
-			$scope.hosMapList = response.data;
+			$scope.hospitalMapList = response.data;
 		}).catch(function(response) {
 			console.error('Error occurred getting hospital map list:', response.status, response.data);
 		});
@@ -238,6 +238,23 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 		};
 
+		// Function that triggers when the checkin instructions are updated
+		$scope.checkinInstructionsUpdate = function () {
+
+			$scope.changesMade = true;
+			$scope.alias.checkin_details_updated = 1;
+		}
+
+		// Function that triggers when the checkin possible option is updated
+		$scope.checkinPossibleUpdate = function (flag) {
+
+			$scope.changesMade = true;
+			$scope.alias.checkin_details_updated = 1;
+
+			$scope.alias.checkin_details.checkin_possible = flag;
+		}
+
+		// Function to show/hide educational material table of contents when link is clicked
 		$scope.showTOCs = false;
 		$scope.toggleTOCDisplay = function () {
 			$scope.showTOCs = !$scope.showTOCs;
@@ -256,6 +273,26 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			}
 			else {
 				$scope.alias.eduMat = eduMat;
+			}
+
+			// Toggle boolean
+			$scope.changesMade = true;
+			$scope.alias.details_updated = 1;
+		};
+
+		$scope.hospitalMapUpdate = function (event, hospitalMap) {
+
+			if ($scope.alias.hospitalMap) {
+				if ($scope.alias.hospitalMap.serial == event.target.value) {
+					$scope.alias.hospitalMap = null;
+					$scope.alias.hospitalMapSer = null;
+				}
+				else {
+					$scope.alias.hospitalMap = hospitalMap;
+				}
+			}
+			else {
+				$scope.alias.hospitalMap = hospitalMap;
 			}
 
 			// Toggle boolean
@@ -292,6 +329,11 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 				// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
 				$scope.alias.description_EN = $scope.alias.description_EN.replace(/\u200B/g,'');
 				$scope.alias.description_FR = $scope.alias.description_FR.replace(/\u200B/g,'');
+
+				if ($scope.alias.checkin_details_updated) {
+					$scope.alias.checkin_details.instruction_EN = $scope.alias.checkin_details.instruction_EN.replace(/\u200B/g,'');
+					$scope.alias.checkin_details.instruction_FR = $scope.alias.checkin_details.instruction_FR.replace(/\u200B/g,'');
+				}
 
 				// Empty alias terms list
 				$scope.alias.terms = [];
@@ -379,9 +421,10 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		// Function to return boolean for form completion
 		$scope.checkForm = function () {
 
-			if ($scope.alias.name_EN && $scope.alias.name_FR && $scope.alias.description_EN
+			if (($scope.alias.name_EN && $scope.alias.name_FR && $scope.alias.description_EN
 				&& $scope.alias.description_FR && $scope.alias.type && $scope.checkTermsAdded($scope.termList)
-				&& $scope.changesMade) {
+				&& $scope.changesMade) && ($scope.alias.type != 'Appointment' || ($scope.alias.type == 'Appointment' &&
+					$scope.alias.checkin_details.instruction_EN && $scope.alias.checkin_details.instruction_FR ))) {
 				return true;
 			}
 			else
