@@ -273,12 +273,13 @@ class OpalCheckin{
 				$opalDatabaseName = OPAL_DB_NAME;
 
         $sql = "Select PMH.AppointmentSerNum
-                From PatientLocationMH PMH, Patient P, MediVisitAppointmentList MVA, $opalDatabaseName.Appointment A
+                From PatientLocation PMH, Patient P, MediVisitAppointmentList MVA, $opalDatabaseName.Appointment A
                 Where P.PatientSerNum = MVA.PatientSerNum
                     And P.PatientId = " . $patientId . "
                     And MVA.AppointmentSerNum = PMH.AppointmentSerNum
 										and A.Checkin = 0
-                    And DATE_FORMAT(ArrivalDateTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d');";
+                    And DATE_FORMAT(ArrivalDateTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d')
+										and DATE_FORMAT(A.ScheduledStartTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d');";
 
 // YM 2018-05-25 - Replace with new query
 /*				$sql = "Select PMH.AppointmentSerNum
