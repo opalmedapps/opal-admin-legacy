@@ -1,3 +1,12 @@
+Version 0.18.11.0:
+ - Merge branch 'checkinFeature' into develop
+ - Merge branch 'HotFix-0.18.10.1' into develop
+ - Merge branch 'HotFix-0.18.10.1' of https://gitlab.com/akimosupremo/opalAdmin into HotFix-0.18.10.1
+ - Modified getCheckedInMediAppointments
+ -     --- Finished checkin details         -- For appointment type aliases, there is now input on check-in instructions with a provided         flag for whether or not an appointment is checkinable or not
+ -     --- Adding checkin detail support to appointment aliases
+ - Merge branch 'release-0.18.10.0' into develop
+
 Version 0.18.10.1:
  - Fix Medivisit Check-In logic
  - Merge branch 'preproduction'
