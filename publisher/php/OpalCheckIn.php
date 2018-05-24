@@ -46,7 +46,7 @@ class OpalCheckin{
 		// DATABASE CONFIGURATION
 		//===============================================
 
-        // Create DB connection 
+        // Create DB connection
         $conn = new mysqli(OPAL_DB_HOST, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, OPAL_DB_NAME);
 
         //
@@ -65,7 +65,7 @@ class OpalCheckin{
             if ($patientSerNum->num_rows > 0) {
                 foreach ($success as $app) {
                     // Checkin the patient in our Database
-                    $sql = "UPDATE Appointment 
+                    $sql = "UPDATE Appointment
                             SET Appointment.Checkin = 1
                             WHERE Appointment.AppointmentSerNum = " . $app;
                     $conn->query($sql);
@@ -75,9 +75,9 @@ class OpalCheckin{
                 // SEND NOTIFICATION TO PATIENT ABOUT CHECKIN STATUS
                 //========================================================
                 $patientSerNum = $patientSerNum->fetch_row();
-				
+
                 $patientSerNum = $patientSerNum[0];
-				
+
                 PatientCheckInPushNotification::sendPatientCheckInNotification($patientSerNum, $success);
 
                 // Return responses
@@ -113,7 +113,7 @@ class OpalCheckin{
 
             // Push appointmentSerNums to success array
             $success = array_merge($success, $validAriaAppointments);
-			
+
         }
 
         //If medivisit appointments exist...
@@ -127,7 +127,7 @@ class OpalCheckin{
             // Push appointmentSerNums to success array
             $success = array_merge($success, $validMediAppointments);
         }
-		
+
 
         return self::SuccessResponse($success);
     }
@@ -203,7 +203,7 @@ class OpalCheckin{
         try{
             $ext_appts = ($location == 'Aria') ?  self::getCheckedInAriaAppointments($patientId) : self::getCheckedInMediAppointments($patientId);
             $ext_appts = $ext_appts['data'];
-						
+
         } catch (Exception $e) {
             return self::ErrorResponse($e);
         }
@@ -214,8 +214,8 @@ class OpalCheckin{
                 $success[] = $apt['AppointmentSerNum'];
             }
         }
-		
-		
+
+
         return self::SuccessResponse($success);
     }
 
@@ -244,7 +244,7 @@ class OpalCheckin{
                   From variansystem.dbo.Patient, variansystem.dbo.ScheduledActivity
                   Where Patient.PatientSer = ScheduledActivity.PatientSer
                     AND Patient.PatientId = '" . $patientId . "'
-                    AND left(convert(varchar, ScheduledActivity.ScheduledStartTime, 120), 10) = left(convert(varchar, getdate() - 0, 120), 10) 
+                    AND left(convert(varchar, ScheduledActivity.ScheduledStartTime, 120), 10) = left(convert(varchar, getdate() - 0, 120), 10)
                   )
                 AND CheckedInFlag = 1";
 
@@ -270,14 +270,26 @@ class OpalCheckin{
         $conn = new mysqli(WRM_DB_HOST, WRM_DB_USERNAME, WRM_DB_PASSWORD, WRM_DB_NAME);
 
         // Gets the list of Schedule Aria Appointments that have successfully checked in
+				$opalDatabaseName = OPAL_DB_NAME;
+
         $sql = "Select PMH.AppointmentSerNum
+                From PatientLocation PMH, Patient P, MediVisitAppointmentList MVA, $opalDatabaseName.Appointment A
+                Where P.PatientSerNum = MVA.PatientSerNum
+                    And P.PatientId = " . $patientId . "
+                    And MVA.AppointmentSerNum = PMH.AppointmentSerNum
+										and A.Checkin = 0
+                    And DATE_FORMAT(ArrivalDateTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d')
+										and DATE_FORMAT(A.ScheduledStartTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d');";
+
+// YM 2018-05-25 - Replace with new query
+/*				$sql = "Select PMH.AppointmentSerNum
                 From PatientLocationMH PMH, Patient P, MediVisitAppointmentList MVA
                 Where P.PatientSerNum = MVA.PatientSerNum
                     And P.PatientId = " . $patientId . "
                     And MVA.AppointmentSerNum = PMH.AppointmentSerNum
                     And CheckinVenueName like '%Waiting Room%'
                     And DATE_FORMAT(ArrivalDateTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d');";
-
+*/
         try{
             $resultMedi = $conn->query($sql);
 
@@ -304,5 +316,3 @@ class OpalCheckin{
 
 }
 ?>
-
-
