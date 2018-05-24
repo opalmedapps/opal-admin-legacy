@@ -15,7 +15,9 @@
         'edumat'            => $_POST['eduMat'],
         'source_db'         => $_POST['source_db'],
 		'terms' 	        => $_POST['terms'],
-		'user'				=> $_POST['user']
+		'user'				=> $_POST['user'],
+		'checkin_details'	=> $_POST['checkin_details'],
+		'hospitalMap'		=> $_POST['hospitalMap']
 	);
 
 	$aliasObject = new Alias; // Object

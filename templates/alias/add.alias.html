@@ -145,6 +145,66 @@
                     <p ng-if="newAlias.description_FR" style="padding-left: 10px; font-size: 10px;"><em>See rendered output for description</em></p>  
                   </div>
                 </div>
+                <!-- SECTION: Checkin Details -->
+                <div uib-accordion-group is-open="checkinSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: checkinSection.show}" ng-if="checkinSection.show && newAlias.type.name == 'Appointment'" is-disabled="newAlias.checkin_details.checkin_possible == null && !newAlias.checkin_details.instruction_EN && !newAlias.checkin_details.instruction_FR">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newAlias.checkin_details.checkin_possible != null && newAlias.checkin_details.instruction_EN && newAlias.checkin_details.instruction_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Checkin Details</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': checkinSection.open, 'glyphicon-chevron-right': !checkinSection.open}" ng-if="newAlias.checkin_details.checkin_possible != null || newAlias.checkin_details.instruction_EN || newAlias.checkin_details.instruction_FR"></i>
+                      </div> 
+                    </div>
+                  </uib-accordion-heading>
+                  <div ng-if="newAlias.checkin_details.checkin_possible != null" class="description">
+                    <p>
+                      <strong>Checkin possible</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      <span ng-if="newAlias.checkin_details.checkin_possible == 1">Yes</span>
+                      <span ng-if="newAlias.checkin_details.checkin_possible == 0">No</span>
+                    </p>
+                  </div>
+                  <div ng-if="newAlias.checkin_details.instruction_EN" class="description">
+                    <p style="margin-bottom:5px;">
+                      <strong>EN Instructions</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      <em>See rendered output</em>  
+                    </p>
+                  </div>
+                  <div ng-if="newAlias.checkin_details.instruction_FR" class="description">
+                    <p style="margin-bottom:5px;">
+                      <strong>FR Instructions</strong>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      <em>See rendered output</em>
+                    </p>
+                  </div>
+                </div>
+                <!-- SECTION: Hospital map -->
+                <div uib-accordion-group is-open="hospitalMapSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: hospitalMapSection.show}" is-disabled="!newAlias.hospitalMap" ng-if="hospitalMapSection.show && newAlias.type.name == 'Appointment'">
+                  <uib-accordion-heading>
+                    <div class="row" style="align-items: center">
+                      <div class="col-md-2">
+                        <span ng-if="newAlias.hospitalMap" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                      </div>
+                      <div class="col-md-8">
+                        <strong>Hospital Map</strong>
+                      </div>
+                      <div class="col-md-2">
+                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': hospitalMapSection.open, 'glyphicon-chevron-right': !hospitalMapSection.open}" ng-if="newAlias.hospitalMap"></i>
+                      </div>
+                    </div>
+                  </uib-accordion-heading> 
+                  <div ng-if="newAlias.hospitalMap" class="description">
+                    <p>
+                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                      {{newAlias.hospitalMap.name_EN}}
+                    </p>
+                  </div>
+                </div>
 								<!-- SECTION: Educational material -->
                 <div uib-accordion-group is-open="educationalMaterialSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: educationalMaterialSection.show}" is-disabled="!newAlias.eduMat" ng-if="educationalMaterialSection.show">
                   <uib-accordion-heading>
@@ -449,6 +509,136 @@
                   </div>
                 </div>          
   						</div>
+              <!-- SECTION: Checkin instructions -->        
+              <div class="row animated" ng-class="{fadeInUp: checkinSection.show}" ng-if="checkinSection.show && newAlias.type.name == 'Appointment'">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Checkin Details</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row animated" ng-class="{fadeInUp: checkinSection.show}" ng-if="checkinSection.show && newAlias.type.name == 'Appointment'">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span style="color:#d9534f"><strong>Required field:</strong></span>
+                    Please indicate whether check-in is possible or not for this appointment and provide the check-in instructions.
+                  </p>
+                </div>
+              </div>  
+              <div class="row animated" ng-class="{fadeInUp: checkinSection.show}" ng-if="checkinSection.show && newAlias.type.name == 'Appointment'"> 
+                <div class="col-xs-12">
+                  <div class="col-xs-12 col-md-6">
+                    <div class="row">
+                      <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Check-in possible?</h2>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-12 col-sm-6">
+                        <div class="panel-container animated" style="cursor:pointer" ng-class="{pulse: hoverYesOption, active: newAlias.checkin_details.checkin_possible == 1 }" ng-click="newAlias.checkin_details.checkin_possible = 1; checkinDetailsUpdate()" ng-mouseenter="hoverYesOption=true" ng-mouseleave="hoverYesOption=false">
+                          <div class="panel-info" ng-class="{active: newAlias.checkin_details.checkin_possible == 1}">
+                            <div class="panel-content" style="text-align:center">
+                              <span style="font-size:30px;" class="glyphicon glyphicon-ok"></span>
+                              <div class="option-panel-title">Yes</div>
+                            </div>
+                          </div>
+                        </div> 
+                      </div>
+                      <div class="col-xs-12 col-sm-6">
+                        <div class="panel-container animated" style="cursor:pointer" ng-class="{pulse: hoverNoOption, active: newAlias.checkin_details.checkin_possible == 0 }" ng-click="newAlias.checkin_details.checkin_possible = 0; checkinDetailsUpdate()" ng-mouseenter="hoverNoOption=true" ng-mouseleave="hoverNoOption=false">
+                          <div class="panel-info" ng-class="{active: newAlias.checkin_details.checkin_possible == 0}">
+                            <div class="panel-content" style="text-align:center">
+                              <span style="font-size:30px;" class="glyphicon glyphicon-remove"></span>
+                              <div class="option-panel-title">No</div>
+                            </div>
+                          </div>
+                        </div> 
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xs-12 col-md-6 col-lg-6">
+                  <div class="panel" ng-class="(newAlias.checkin_details.instruction_EN) ? 'panel-success': 'panel-danger'">
+                    <div class="panel-heading"><strong>English</strong>
+                      <span ng-hide="newAlias.checkin_details.instruction_EN" style="float:right"><em>Incomplete</em></span>
+                      <span ng-show="newAlias.checkin_details.instruction_EN" style="float:right"><em>Complete</em></span>
+                    </div>
+                    <div class="panel-body form-horizontal">
+                      <div class="form-group">
+                        <label class="control-label col-xs-12 col-lg-2">
+                          Checkin Instructions
+                        </label>
+                        <div class="col-xs-12 col-lg-10">
+                          <div text-angular ng-model="newAlias.checkin_details.instruction_EN" ng-change="checkinDetailsUpdate()" placeholder="English Instructions" required="required" ta-toolbar="toolbar"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>          
+                <div class="col-xs-12 col-md-6 col-lg-6">
+                  <div class="panel" ng-class="(newAlias.checkin_details.instruction_FR) ? 'panel-success': 'panel-danger'">
+                    <div class="panel-heading"><strong>Français</strong>
+                      <span ng-hide="newAlias.checkin_details.instruction_FR" style="float:right"><em>Incomplete</em></span>
+                      <span ng-show="newAlias.checkin_details.instruction_FR" style="float:right"><em>Complete</em></span>
+                    </div>
+                    <div class="panel-body form-horizontal">
+                      <div class="form-group">
+                        <label class="control-label col-xs-12 col-lg-2">
+                          Instructions
+                        </label>
+                        <div class="col-xs-12 col-lg-10">
+                          <div text_angular ng-model="newAlias.checkin_details.instruction_FR" ng-change="checkinDetailsUpdate()" placeholder="Instruction Français" required="required" ta-toolbar="toolbar"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>          
+              </div>
+              <!-- SECTION: Hospital Map -->
+              <div class="row animated" ng-class="{fadeInUp: hospitalMapSection.show}" ng-if="hospitalMapSection.show && newAlias.type.name == 'Appointment'">
+                <div class="col-xs-12 side-menu-title">
+                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                      <span class="fas fa-dot-circle"></span>
+                      <h2>Hospital Map</h2>
+                    </span>  
+                  </div>  
+                </div>
+              </div>   
+              <div class="row animated" ng-class="{fadeInUp: hospitalMapSection.show}" ng-if="hospitalMapSection.show && newAlias.type.name == 'Appointment'">
+                <div class="col-xs-12">
+                  <p style="margin-bottom: 10px;">
+                    <span><strong>Optional field:</strong></span>
+                    Assigning a hospital map will provide a map display for the appointment.
+                  </p>
+                </div>
+              </div>  
+              <div class="row animated" ng-class="{fadeInUp: hospitalMapSection.show}" ng-if="hospitalMapSection.show && newAlias.type.name == 'Appointment'"> 
+                <div class="col-xs-12 col-lg-8">
+                  <div class="panel-container">
+                    <div class="panel-info">
+                      <div class="panel-content">
+                        <div class="panel-input">  
+                          <div class="list-space">
+                            <div class="input-group">
+                              <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                              <input class="form-control" type="text" ng-model="hospitalMapFilter" ng-change="changeHospitalMapFilter(hospitalMapFilter)" placeholder="Search Hospital Map"/>
+                            </div>
+                            <ul class="list-items">
+                              <li ng-repeat="hospitalMap in hospitalMapList | filter: searchHospitalMapsFilter">
+                                <label>
+                                  <input type="radio" ng-model="newAlias.hospitalMapSer" ng-click="hospitalMapUpdate($event, hospitalMap)" value="{{hospitalMap.serial}}" /> {{hospitalMap.name_EN}}
+                                </label>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
   						<!-- SECTION: Educational material -->
               <div class="row animated" ng-class="{fadeInUp: educationalMaterialSection.show}" ng-if="educationalMaterialSection.show">
                 <div class="col-xs-12 side-menu-title">

@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 	/******************************************************************************
 	* Add Alias Page controller 
 	*******************************************************************************/
-	controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionService, $state, educationalMaterialCollectionService, Session) {
+	controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionService, $state, educationalMaterialCollectionService, Session, hospitalMapCollectionService) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -19,6 +19,8 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 		$scope.typeSection = {open:false, show:false};
 		$scope.colorSection = {open:false, show:false};
 		$scope.clinicalCodeSection = {open:false, show:false};
+		$scope.hospitalMapSection = {open:false, show:false};
+		$scope.checkinSection = {open: false, show:false};
 
 		$scope.showAssigned = false;
 		$scope.hideAssigned = false;
@@ -37,7 +39,8 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 			title_description: { completed: false },
 			type: { completed: false },
 			color: { completed: false },
-			terms: { completed: false }
+			terms: { completed: false },
+			checkin: { completed: false }
 		};
 
 		$scope.filter = $filter('filter');
@@ -46,7 +49,7 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 		$scope.numOfCompletedSteps = 0;
 
 		// Default total number of steps
-		$scope.stepTotal = 5;
+		$scope.stepTotal = 6;
 
 		// Progress bar based on default completed steps and total
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -73,15 +76,19 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 			description_FR: null,
 			type: null,
 			eduMat: null,
+			hospitalMap: null,
 			source_db: null,
 			color: '',
-			terms: []
+			terms: [],
+			checkin_details: ''
 		};
 
 		// Initialize list that will hold unassigned terms
 		$scope.termList = [];
 		// Initialize list that will hold educational materials
 		$scope.eduMatList = [];
+		// Initialize list that will hold hospital maps
+		$scope.hospitalMapList = [];
 
 		// Initialize list that will hold source databases
 		$scope.sourceDBList = [];
@@ -116,6 +123,13 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 			$scope.sourceDBList = response.data; // Assign value
 		}).catch(function(response) {
 			console.error('Error occurred getting source database list:', response.status, response.data);
+		});
+
+		// Call our API to get the list of existing hospital maps
+		hospitalMapCollectionService.getHospitalMaps().then(function (response) {
+			$scope.hospitalMapList = response.data;
+		}).catch(function(response) {
+			console.error('Error occurred getting hospital map list:', response.status, response.data);
 		});
 
 		// Function to toggle necessary changes when updating the source database buttons
@@ -180,9 +194,15 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 			if ($scope.newAlias.name_EN && $scope.newAlias.name_FR &&
 			$scope.newAlias.description_EN && $scope.newAlias.description_FR) { // if textboxes are not empty
 
-				// Toggle boolean
-				$scope.educationalMaterialSection.show = true;
-				$scope.colorSection.show = true;
+				if ($scope.newAlias.type.name == 'Appointment') {
+					$scope.checkinSection.show = true;
+					$scope.hospitalMapSection.show = true; 
+				}
+				else {
+					// Toggle boolean
+					$scope.educationalMaterialSection.show = true;
+					$scope.colorSection.show = true;
+				}
 
 				steps.title_description.completed = true;
 
@@ -227,6 +247,27 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 			}
 		}
 
+		// Function to toggle necessary changes when updating hospital map
+		$scope.hospitalMapUpdate = function (event, hospitalMap) {
+
+			// Toggle booleans
+			$scope.hospitalMapSection.open = true;
+
+			if ($scope.newAlias.hospitalMap) {
+				if ($scope.newAlias.hospitalMap.serial == event.target.value) {
+					$scope.newAlias.hospitalMap = null;
+					$scope.newAlias.hospitalMapSer = null;
+					$scope.hospitalMapSection.open = false;
+				}
+				else {
+					$scope.newAlias.hospitalMap = hospitalMap;
+				}
+			}
+			else {
+				$scope.newAlias.hospitalMap = hospitalMap;
+			}
+		}
+
 		// Function to toggle necessary changes when updating alias type
 		$scope.typeUpdate = function (type) {
 
@@ -234,7 +275,6 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 				return;
 
 			$scope.typeSection.open = true;
-			$scope.clinicalCodeSection.show = true;
 
 			// Set the name
 			$scope.newAlias.type = type;
@@ -242,6 +282,7 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 			// Toggle boolean
 			steps.type.completed = true;
 
+			$scope.clinicalCodeSection.show = true;
 			// If terms were assigned previously, we reset that step.
 			if ($scope.termList) {
 				// Set false for each term in termList
@@ -271,6 +312,22 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 				});
 			}
 
+			if (type.name != "Appointment") {
+				steps.checkin.completed = true;
+			}
+			else {
+				if ($scope.newAlias.name_EN && $scope.newAlias.name_FR &&
+				$scope.newAlias.description_EN && $scope.newAlias.description_FR) { // if textboxes are not empty
+
+					$scope.checkinSection.show = true;
+					$scope.hospitalMapSection.show = true; 
+				}
+				if (!$scope.newAlias.checkin_details.instruction_EN || !$scope.newAlias.checkin_details.instruction_FR || $scope.newAlias.checkin_details.checkin_possible == null) {
+					steps.checkin.completed = false;
+
+				}
+			}
+
 			// Count the number of completed steps
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 
@@ -285,6 +342,40 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 			$scope.colorSection.open = true;
 
 			steps.color.completed = true;
+
+			// Count the number of completed steps
+			$scope.numOfCompletedSteps = stepsCompleted(steps);
+
+			// Change progress bar
+			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+
+		}
+
+		// Function to toggle necessary changes when checkin details
+		$scope.checkinDetailsUpdate = function () {
+
+			// Toggle booleans
+			$scope.checkinSection.open = true;
+
+			if (!$scope.newAlias.checkin_details.instruction_EN && !$scope.newAlias.checkin_details.instruction_FR
+				&& $scope.newAlias.checkin_details.checkin_possible == null) {
+				$scope.checkinSection.open = false;
+			}
+
+			if ($scope.newAlias.checkin_details.instruction_EN && $scope.newAlias.checkin_details.instruction_FR
+				&& $scope.newAlias.checkin_details.checkin_possible != null) {
+				
+				// Toggle boolean
+				$scope.educationalMaterialSection.show = true;
+				$scope.colorSection.show = true;
+
+				steps.checkin.completed = true;
+
+			}
+
+			else {
+				steps.checkin.completed = false;
+			}
 
 			// Count the number of completed steps
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -340,8 +431,6 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 
 		};
 
-
-
 		// Submit new alias
 		$scope.submitAlias = function () {
 
@@ -357,6 +446,11 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 					if (term.added)
 						$scope.newAlias.terms.push(term);
 				});
+
+				if ($scope.newAlias.type == "Appointment") {
+					$scope.newAlias.checkin_details.instruction_EN = $scope.newAlias.checkin_details.instruction_EN.replace(/\u200B/g,'');
+					$scope.newAlias.checkin_details.instruction_FR = $scope.newAlias.checkin_details.instruction_FR.replace(/\u200B/g,'');
+				}
 
 				// Log who created this alias
 				var currentUser = Session.retrieveObject('user');
@@ -397,6 +491,17 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 		$scope.searchEduMatsFilter = function (edumat) {
 			var keyword = new RegExp($scope.eduMatFilter, 'i');
 			return !$scope.eduMatFilter || keyword.test(edumat.name_EN);
+		};
+
+		// Function to assign hospitalMapFilter when textbox is changing 
+		$scope.changeHospitalMapFilter = function (hospitalMapFilter) {
+			$scope.hospitalMapFilter = hospitalMapFilter;
+		};
+
+		// Function for searching through the hospital map list
+		$scope.searchHospitalMapsFilter = function (hospitalMap) {
+			var keyword = new RegExp($scope.hospitalMapFilter, 'i');
+			return !$scope.hospitalMapFilter || keyword.test(hospitalMap.name_EN);
 		};
 
 		$scope.clinicalCodeFilter = 'all';
