@@ -830,6 +830,9 @@ sub insertTestResultIntoOurDB
 	# Set the serial object
 	$testresult->setTestResultSer($ser);
 
+	# Send push notification
+    PushNotification::sendPushNotification($patientser, $ser, 'NewLabResult');
+
 	return $testresult;
 }
 
