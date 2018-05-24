@@ -1,3 +1,11 @@
+Version 0.18.10.1:
+ - Fix Medivisit Check-In logic
+ - Merge branch 'preproduction'
+ - Merge branch 'release-0.18.10.0' into preproduction
+ - Merge branch 'hotfix-0.18.9.2' into preproduction
+ - Merge branch 'hotfix-0.18.9.2'
+ - Merge branch 'hotfix-0.18.9.1' into preproduction
+
 Version 0.18.10.0:
  -     --- Changed cron settings to only output errors to logs
  -     --- Improved log email         -- Now displaying ip address and script location for better debugging
