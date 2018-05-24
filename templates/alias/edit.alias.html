@@ -119,6 +119,94 @@
         </div>
       </div>
     </div>
+    <!-- SECTION: Checkin Details -->
+    <div uib-accordion-group is-open="checkinSection.open" ng-if="alias.type == 'Appointment'">
+      <uib-accordion-heading>
+        <div>
+          <strong>Checkin Details</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': checkinSection.open, 'glyphicon-chevron-right': !checkinSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="row">
+        <div class="col-xs-12 col-md-6">
+          <div class="row">
+            <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Checkin Possible?</h2>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-sm-6">
+              <div class="panel-container animated" style="cursor:pointer" ng-class="{pulse: hoverYesOption, active: alias.checkin_details.checkin_possible == 1 }" ng-click="checkinPossibleUpdate(1)" ng-mouseenter="hoverYesOption=true" ng-mouseleave="hoverYesOption=false">
+                <div class="panel-info" ng-class="{active: alias.checkin_details.checkin_possible == 1}">
+                  <div class="panel-content" style="text-align:center">
+                    <span style="font-size:30px;" class="glyphicon glyphicon-ok"></span>
+                    <div class="option-panel-title">Yes</div>
+                  </div>
+                </div>
+              </div> 
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              <div class="panel-container animated" style="cursor:pointer" ng-class="{pulse: hoverNoOption, active: alias.checkin_details.checkin_possible == 0 }" ng-click="checkinPossibleUpdate(0)" ng-mouseenter="hoverNoOption=true" ng-mouseleave="hoverNoOption=false">
+                <div class="panel-info" ng-class="{active: alias.checkin_details.checkin_possible == 0}">
+                  <div class="panel-content" style="text-align:center">
+                    <span style="font-size:30px;" class="glyphicon glyphicon-remove"></span>
+                    <div class="option-panel-title">No</div>
+                  </div>
+                </div>
+              </div> 
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+          <div style="text-align:center; margin-bottom: 10px;">
+            <span style="font-size:20px;">Checkin Instructions (English)</span>
+          </div>
+          <div class="form-group">
+            <div text-angular ng-model="alias.checkin_details.instruction_EN" ng-change="checkinInstructionsUpdate()" placeholder="English Description" ta-toolbar="toolbar"></div>
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+          <div style="text-align:center; margin-bottom: 10px;">
+            <span style="font-size:20px;">Checkin Instructions (Français)</span>
+          </div>
+          <div class="form-group">
+            <div text-angular ng-model="alias.checkin_details.instruction_FR" ng-change="checkinInstructionsUpdate()" placeholder="Description Français" ta-toolbar="toolbar"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- SECTION: Hospital Map -->
+    <div uib-accordion-group is-open="hospitalMapSection.open" ng-if="alias.type == 'Appointment'">
+      <uib-accordion-heading>
+        <div>
+          <strong>Attached Hospital Map</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': hospitalMapSection.open, 'glyphicon-chevron-right': !hospitalMapSection.open}"></i>
+        </div>
+      </uib-accordion-heading>
+      <div class="alert alert-info" role="alert">
+        <strong>Current Hospital Map (EN / FR)</strong><br>
+        <p>
+          <div>
+            <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+            <span ng-if="alias.hospitalMap">
+              <strong>{{alias.hospitalMap.name_EN}} / {{alias.hospitalMap.name_FR}}</strong>
+            </span>
+            <span ng-if="!alias.hospitalMap">None</span>
+          </div>
+        </p>
+      </div>
+      <div class="list-space">
+        <div class="input-group">
+          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+          <input class="form-control" type="text" ng-model="hospitalMapFilter" ng-change="changeHospitalMapFilter(hospitalMapFilter)" placeholder="Search Hospital Map..."/>
+        </div>
+        <ul class="list-items">
+          <li ng-repeat="hospitalMap in hospitalMapList | filter: searchHospitalMapsFilter">
+            <label>
+              <input type="radio" ng-model="alias.hospitalMapSer" ng-click="hospitalMapUpdate($event,hospitalMap)" value="{{hospitalMap.serial}}" /> {{hospitalMap.name_EN}}
+            </label>
+          </li>
+        </ul>
+      </div>
+    </div>
     <!-- SECTION: Educational material -->
     <div uib-accordion-group is-open="educationalMaterialSection.open">
       <uib-accordion-heading>
@@ -181,7 +269,7 @@
                 Choose an icon color
               </p>
             </div>  
-            <div class="cp-main">
+            <div class="cp-main" ng-if="alias.color">
               <material-picker ng-model="alias.color" ng-click="colorUpdate()" format="'hex'" size="20" hover-model="hoverColor"></material-picker>
             </div> 
           </div>
