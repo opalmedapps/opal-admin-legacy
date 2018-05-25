@@ -237,6 +237,7 @@ sub sendPushNotification
                 \"$sendlog\"
             )
         ";
+        #print "$insert_sql\n";
         # prepare query
 	    my $query = $SQLDatabase->prepare($insert_sql)
 		    or die "Could not prepare query: " . $SQLDatabase->errstr;
@@ -302,6 +303,8 @@ sub sendPushNotification
                 \"$sendlog\"
             )
         ";
+
+        #print "$insert_sql\n";
         # prepare query
 	    my $query = $SQLDatabase->prepare($insert_sql)
 		    or die "Could not prepare query: " . $SQLDatabase->errstr;
