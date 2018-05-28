@@ -18,7 +18,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 		// Call our collection service to get firebase configs
 		applicationCollectionService.getConfigs().then(function (response) {
 			// Assign value
-			$rootScope.firebaseConfig = response.data.firebaseConfig;
+			$rootScope.firebaseConfig = response.data.firebaseConfig.database;
 			// initialize firebase variable
 			if (!firebase.apps.length) {
 				firebase.initializeApp($rootScope.firebaseConfig);

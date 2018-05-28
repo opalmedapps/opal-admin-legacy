@@ -4,26 +4,26 @@
 # for installation use. If copies already exist, it will 
 # prompt the user to confirm overwrite.
 
-JS_CONFIG=0
+JSON_CONFIG=0
 PHP_CONFIG=0
 PERL_CONFIG=0
 
-# JS
-if [ -f js/config.js ]; then
-    JS_CONFIG=1
-    echo "js/config.js file already exists"
+# JSON
+if [ -f js/config.json ]; then
+    JSON_CONFIG=1
+    echo "js/config.json file already exists"
     while true; do
-        read -p "Are you sure you want to overwrite js/config.js? [y/n]: " RESPONSE
+        read -p "Are you sure you want to overwrite js/config.json? [y/n]: " RESPONSE
         case $RESPONSE in
-            [Yy]* ) cp ./js/default-config.js ./js/config.js; echo "Overwritten"; break;;
+            [Yy]* ) cp ./js/default-config.json ./js/config.json; echo "Overwritten"; break;;
             [Nn]* ) break;;
             * ) echo "Please answer yes or no.";;
         esac
     done
 fi
-if [ $JS_CONFIG = 0 ]; then 
-    cp ./js/default-config.js ./js/config.js
-    echo "Copied JS config file."
+if [ $JSON_CONFIG = 0 ]; then 
+    cp ./js/default-config.json ./js/config.json
+    echo "Copied JSON config file."
 fi
 
 # PHP
