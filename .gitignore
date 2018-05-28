@@ -1,6 +1,4 @@
 # ignore configurations
-js/config.json
-php/config.php
 publisher/modules/Configs.pm
 
 # ignore clinical documents
@@ -26,9 +24,6 @@ publisher/php/certificates/**
 
 # ignore QR Images
 images/hospital-maps/qrCodes/**
-
-# ignore version control script
-bumpversion.sh
 
 # ignore bower/node components
 bower_components
