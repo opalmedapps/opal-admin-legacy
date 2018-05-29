@@ -1,5 +1,5 @@
-# ignore configurations
-publisher/modules/Configs.pm
+# ignore configuration file
+config.json
 
 # ignore clinical documents
 publisher/clinical/documents/**
