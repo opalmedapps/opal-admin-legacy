@@ -2,7 +2,7 @@
 
 # works with a file called VERSION in the current directory,
 # the contents of which should be a semantic version number
-# such as "1.2.3"
+# such as "1.2.3.4"
 
 # this script will display the current version, automatically
 # suggest a "minor" version update, and ask for input to use
