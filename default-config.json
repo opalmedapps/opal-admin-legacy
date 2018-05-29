@@ -1,58 +1,97 @@
 {
-	"version": "0.0.1",
-	"buildType": "production",
-	"databases": {
+	"_comment": "Configuration file used throughout opalAdmin",
+	
+	"databaseConfig": {
+		"_comment": "Define database credentials here",
+
 		"opal": {
-			"host": "",
-			"port": "",
-			"name": "",
-			"username": "",
-			"password": "" 
+			"host": "OPAL_DB_HOST_HERE",
+			"port": "OPAL_DB_PORT_HERE",
+			"name": "OPAL_DB_NAME_HERE",
+			"username": "OPAL_DB_USERNAME_HERE",
+			"password": "OPAL_DB_PASSWORD_HERE" 
 		},
 		"questionnaire": {
-			"host": "",
-			"port": "",
-			"name": "",
-			"username": "",
-			"password": ""
+			"host": "QUESTIONNAIRE_DB_HOST_HERE",
+			"port": "QUESTIONNAIRE_DB_PORT_HERE",
+			"name": "QUESTIONNAIRE_DB_NAME_HERE",
+			"username": "QUESTIONNAIRE_DB_USERNAME_HERE",
+			"password": "QUESTIONNAIRE_DB_PASSWORD_HERE"
 		},
 		"aria": {
-			"host": "",
-			"port": "",
-			"username": "",
-			"password": ""
+			"host": "ARIA_DB_HOST_HERE",
+			"port": "ARIA_DB_PORT_HERE",
+			"username": "ARIA_DB_USERNAME_HERE",
+			"password": "ARIA_DB_PASSWORD_HERE"
 		},
 		"wrm": {
-			"host": "",
-			"port": "",
-			"username": "",
-			"password": ""
+			"host": "WRM_DB_HOST_HERE",
+			"port": "WRM_DB_PORT_HERE",
+			"username": "WRM_DB_USERNAME_HERE",
+			"password": "WRM_DB_PASSWORD_HERE"
 		},
 		"mosaiq": {
-			"host": "",
-			"port": "",
-			"username": "",
-			"password": ""
+			"host": "MOSAIQ_DB_HOST_HERE",
+			"port": "MOSAIQ_DB_PORT_HERE",
+			"username": "MOSAIQ_DB_USERNAME_HERE",
+			"password": "MOSAIQ_DB_PASSWORD_HERE"
 		}
 	},
 	"pushNotificationConfig": {
-		"apiKey": "",
-		"certificate" : {
-			"password": "",
-			"file": ""
+		"_comment": "Push notification FCM and APN credentials",
+
+		"andriod": {
+			"_comment": "API access key from Google API's Console",
+
+			"apiKey": "ANDROID_API_HERE"
+		},
+		"apple": {
+			"_comment": "Apple certificate private key passphrase and PEM file",
+			
+			"certificate" : {
+				"password": "APPLE_CERTIFICATE_PASSWORD_HERE",
+				"filename": "APPLE_CERTIFICATE_FILENAME_HERE"
+			}
 		}
 	},
 	"firebaseConfig": {
-		"apiKey": "",
-		"authDomain": "",
-		"databaseURL": "",
-		"projectId": "",
-		"storageBucket": "",
-		"massagingSenderId": ""
+		"database": {
+			"_comment": "API/database configs found in firebase",
+
+			"apiKey": "FIREBASE_DB_API_KEY_HERE",
+			"authDomain": "FIREBASE_DB_AUTH_DOMAIN_HERE",
+			"databaseURL": "FIREBASE_DB_URL_HERE",
+			"projectId": "FIREBASE_DB_PROJECT_ID_HERE",
+			"storageBucket": "FIREBASE_DB_STORAGE_BUCKET_HERE",
+			"messagingSenderId": "FIREBASE_DB_SENDER_ID_HERE"
+		},
+		"serviceAccount": {
+			"_comment": "Firebase service account info. Found in Settings > Service Accounts",
+
+			"type": "FIREBASE_DB_TYPE_HERE",
+		  	"project_id": "FIREBASE_DB_PROJECT_ID_HERE",
+		  	"private_key_id": "FIREBASE_DB_PRIVATE_KEY_ID_HERE",
+		  	"private_key": "FIREBASE_DB_PRIVATE_KEY_HERE",
+		  	"client_email": "FIREBASE_DB_CLIENT_EMAIL_HERE",
+		  	"client_id": "FIREBASE_DB_CLIENT_ID_HERE",
+		  	"auth_uri": "FIREBASE_DB_AUTH_URI_HERE",
+		  	"token_uri": "FIREBASE_DB_TOKEN_URI_HERE",
+		  	"auth_provider_x509_cert_url": "FIREBASE_DB_AUTH_PROVIDER_HERE",
+		  	"client_x509_cert_url": "FIREBASE_DB_CLIENT_X509_HERE"
+		}
+		
 	},
-	"clinicalDocuments": {
-		"aria": "",
-		"mosaiq": ""
+	"pathConfig": {
+		"_comment": "Leading slash REQUIRED!",
+
+		"abs_path": "ABS_PATH_HERE",
+		"relative_url": "RELATIVE_URL_HERE"
+	},
+	"clinicalDocumentPathConfig": {
+		"_comment": "Define where clinical documents are located. Has to be mounted. NO LEADING SLASH",
+
+		"aria": "CLINICAL_PATH_ARIA_HERE",
+		"mosaiq": "CLINICAL_PATH_MOSAIQ_HERE"
 	}
 
 }
