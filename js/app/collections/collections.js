@@ -15,7 +15,7 @@ angular.module('opalAdmin.collections', [])
 		applicationAPI.getConfigs = function () {
 			return $http({
 				method: 'GET',
-				url: "js/config.json"
+				url: "config.json"
 			});
 		}
 
