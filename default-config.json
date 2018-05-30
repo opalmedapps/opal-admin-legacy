@@ -1,6 +1,6 @@
 {
 	"_comment": "Configuration file used throughout opalAdmin",
-	
+
 	"databaseConfig": {
 		"_comment": "Define database credentials here",
 
@@ -9,33 +9,37 @@
 			"port": "OPAL_DB_PORT_HERE",
 			"name": "OPAL_DB_NAME_HERE",
 			"username": "OPAL_DB_USERNAME_HERE",
-			"password": "OPAL_DB_PASSWORD_HERE" 
+			"password": "OPAL_DB_PASSWORD_HERE"
 		},
 		"questionnaire": {
 			"host": "QUESTIONNAIRE_DB_HOST_HERE",
 			"port": "QUESTIONNAIRE_DB_PORT_HERE",
 			"name": "QUESTIONNAIRE_DB_NAME_HERE",
 			"username": "QUESTIONNAIRE_DB_USERNAME_HERE",
-			"password": "QUESTIONNAIRE_DB_PASSWORD_HERE"
+			"password": "QUESTIONNAIRE_DB_PASSWORD_HERE",
+			"enabled": 0
 		},
 		"aria": {
 			"host": "ARIA_DB_HOST_HERE",
 			"port": "ARIA_DB_PORT_HERE",
 			"username": "ARIA_DB_USERNAME_HERE",
-			"password": "ARIA_DB_PASSWORD_HERE"
+			"password": "ARIA_DB_PASSWORD_HERE",
+			"enabled": 0
 		},
 		"wrm": {
 			"host": "WRM_DB_HOST_HERE",
 			"port": "WRM_DB_PORT_HERE",
 			"name": "WRM_DB_NAME_HERE",
 			"username": "WRM_DB_USERNAME_HERE",
-			"password": "WRM_DB_PASSWORD_HERE"
+			"password": "WRM_DB_PASSWORD_HERE",
+			"enabled": 0
 		},
 		"mosaiq": {
 			"host": "MOSAIQ_DB_HOST_HERE",
 			"port": "MOSAIQ_DB_PORT_HERE",
 			"username": "MOSAIQ_DB_USERNAME_HERE",
-			"password": "MOSAIQ_DB_PASSWORD_HERE"
+			"password": "MOSAIQ_DB_PASSWORD_HERE",
+			"enabled": 0
 		}
 	},
 	"pushNotificationConfig": {
@@ -48,7 +52,7 @@
 		},
 		"apple": {
 			"_comment": "Apple certificate private key passphrase and PEM file",
-			
+
 			"certificate" : {
 				"password": "APPLE_CERTIFICATE_PASSWORD_HERE",
 				"filename": "APPLE_CERTIFICATE_FILENAME_HERE"
@@ -80,7 +84,7 @@
 		  	"auth_provider_x509_cert_url": "FIREBASE_DB_AUTH_PROVIDER_HERE",
 		  	"client_x509_cert_url": "FIREBASE_DB_CLIENT_X509_HERE"
 		}
-		
+
 	},
 	"pathConfig": {
 		"_comment": "Leading slash REQUIRED!",

@@ -1,8 +1,8 @@
-// Angular Module 
+// Angular Module
 // To collect various data using JSONP (JavaScript Object Notation with Padding), a safer (than JSON) cross-domain ajax call
 // Most pages on the site require information from either our database or clinical databases so we create an "API service" (Application
-// Programming Interface) for each page with functions to collect relevant data. 
-// Each function calls a PHP script (located in api directory) and encodes the data in JSON because the callback will not work otherwise. 
+// Programming Interface) for each page with functions to collect relevant data.
+// Each function calls a PHP script (located in api directory) and encodes the data in JSON because the callback will not work otherwise.
 
 angular.module('opalAdmin.collections', [])
 
@@ -24,6 +24,14 @@ angular.module('opalAdmin.collections', [])
 			return $http({
 				method: 'JSONP',
 				url: "api/application/get.application_build.php?callback=JSON_CALLBACK"
+			});
+		};
+
+		// Function to get source databases
+		applicationAPI.getSourceDatabases = function () {
+			return $http({
+				method: 'JSONP',
+				url: "api/application/get.source_databases.php?callback=JSON_CALLBACK"
 			});
 		};
 
@@ -104,7 +112,7 @@ angular.module('opalAdmin.collections', [])
 
 		var postAPI = {};
 
-		// Function to get the list of posts 
+		// Function to get the list of posts
 		postAPI.getPosts = function () {
 			return $http({
 				method: 'JSONP',
@@ -165,7 +173,7 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
-		// Function to get distinct educational material types 
+		// Function to get distinct educational material types
 		educationalMaterialAPI.getEducationalMaterialTypes = function () {
 			return $http({
 				method: 'JSONP',
@@ -173,7 +181,7 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
-		// Function to get phases in treatment 
+		// Function to get phases in treatment
 		educationalMaterialAPI.getPhasesInTreatment = function () {
 			return $http({
 				method: 'JSONP',
@@ -266,7 +274,7 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
-		// Function to get distinct notification types 
+		// Function to get distinct notification types
 		notificationAPI.getNotificationTypes = function () {
 			return $http({
 				method: 'JSONP',
@@ -334,7 +342,7 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
-		// API to get patient activity list 
+		// API to get patient activity list
 		patientAPI.getPatientActivities = function () {
 			return $http({
 				method: 'JSONP',
@@ -358,7 +366,7 @@ angular.module('opalAdmin.collections', [])
 
 		var filterAPI = {};
 
-		// Function to get all filters 
+		// Function to get all filters
 		filterAPI.getFilters = function () {
 			return $http({
 				method: 'JSONP',
@@ -495,7 +503,7 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
-		// Function to get the list of existing roles 
+		// Function to get the list of existing roles
 		userAPI.getRoles = function () {
 			return $http({
 				method: 'JSONP',
@@ -536,7 +544,7 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
-		// Function to get distinct email types 
+		// Function to get distinct email types
 		emailAPI.getEmailTypes = function () {
 			return $http({
 				method: 'JSONP',
@@ -751,4 +759,3 @@ angular.module('opalAdmin.collections', [])
 
 		return installAPI;
 	});
-
