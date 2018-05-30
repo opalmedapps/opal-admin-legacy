@@ -6,7 +6,7 @@ OpalAdmin is the administrative tool for managing and tagging personal health in
 
 For opalAdmin to work, a Linux-based operating system with a local web server, MySQL, PHP (> 5.3, < 7), and perl are required.
 
-## Installing
+## Basic Installation
 
 These instructions will get you a copy of the project up and running on your local machine. 
 
@@ -75,29 +75,28 @@ On the DBV page, run all revisions by selecting all revisions and clicking *Run 
 
 ### Step 9
 
-## Configuring the opalAdmin installation
+Visit the opalAdmin site:
 
-Navigate to the URL of your opalAdmin site and run the install page (for example http://yourdomain/main.html/#/install, where **_yourdomain_** is the path of your opalAdmin site). Follow the instructions on the page.
+http://youdomain/opalAdmin/
 
-### Step 1 : Setting up the Opal database
+Username: admin -- Password: 123456
 
-Complete the form and press "Test Connection" to set up an Opal database. **Note:** This must be a MySQL database. 
+## Configuring the clinical databases
 
-### Step 2 : Choose the clinical database(s)
+This project comes with pre-defined [ARIA](https://www.varian.com/oncology/products/software/information-systems/aria-ois-radiation-oncology) queries and WRM queries to get various oncology data.  
+The following steps will allow a connection between the Opal database and the clinical database. Note that you must be able to access these clinical databases using some sort of basic authentication. 
 
-This project comes with pre-defined ARIA queries. Other clinical database queries must be inputted according to your database information. Fill out the appropriate clinical database forms and press "Test Connection" to pass to the next step. 
+### Step 1 
 
-### Step 3 : Submit credentials
+Open the **config.json** file using your favourite editor and replace the default ARIA or WRM credentials. Set the **enabled** flag to **1** for databases that will be used. 
 
-Once the Opal database and clinical database(s) have been configured, press "Submit Configurations" to install the given credentials into the configuration files. This process takes some time. 
+### Step 2
 
-### Step 4 : Add a site administrator
+Refresh opalAdmin on the browser.
 
-Fill out the form to add a site administrator.
+### Step 3
 
-### Step 5 : Visit the site
-
-Once everything is complete, click "Visit Site" on the left-hand site to log in to the opalAdmin site.
+You should be able to access data. Visit Tasks/Appts/Docs page and click on the "+ Add" button on the top. You should be able to see the enabled clinical databases listed in "Source Database" section as well as a generated list of clinical codes after selecting a type.  
 
 ## Editing Modules
 
