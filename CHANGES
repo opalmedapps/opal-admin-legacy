@@ -1,3 +1,11 @@
+Version 0.18.14.0:
+ - 	--- Added enabled flag to config file 		-- When database configs (other than OpalDB) are turned on/off then interface will update the Opal database accordingly 		to set on/off
+ - Merge branch 'sqlFeature' into develop
+ - 	--- Optimized database versioning scripts for initial setup
+ - Merge branch 'hotfix-0.18.13.1' into develop
+ -     --- Added missing WRM database name to config file
+ - Merge branch 'release-0.18.13.0' into develop
+
 Version 0.18.13.1:
  - Merge branch 'preproduction'
  - Merge branch 'release-0.18.13.0' into preproduction
