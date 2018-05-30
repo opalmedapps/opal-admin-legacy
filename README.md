@@ -2,27 +2,36 @@
 
 OpalAdmin is the administrative tool for managing and tagging personal health information that is published to Opal. 
 
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine. 
-
-### Prerequisites
+## Prerequisites
 
 For opalAdmin to work, a Linux-based operating system with a local web server, MySQL, PHP (> 5.3, < 7), and perl are required.
 
-### Installing
+## Installing
+
+These instructions will get you a copy of the project up and running on your local machine. 
+
+### Step 1 
 
 On your server, navigate into your web server directory (i.e. the "localhost" directory that is accessible via an internet browser). 
+
+### Step 2
 
 Clone this project from Gitlab
 
 ```
-git clone https://gitlab.com/akimosupremo/opalAdmin-dev.git
+git clone https://gitlab.com/akimosupremo/opalAdmin.git
 ```
 
-### 3rd-Party Libraries
 
-Installing 3rd-party libraries require both [NodeJS](https://nodejs.org/en/download/) and [Bower](https://bower.io/#install-bower) to be installed on your server. To install the 3rd-party libraries, navigate to the project directory and execute:
+### Step 3
+
+Installing 3rd-party libraries require both [NodeJS](https://nodejs.org/en/download/) and [Bower](https://bower.io/#install-bower) to be installed on your server. To install the 3rd-party libraries, navigate to the project directory and issue the install commands:
+
+```
+cd opalAdmin
+```
+
+then
 
 ```
 bower install 
@@ -34,22 +43,37 @@ and
 npm install
 ```
 
-## Managing Configuration Files
+### Step 4
 
-In order for opalAdmin to work, you must create a copy of the existing default configuration files. 
-This project consists of a JavaScript, a Perl, and a PHP default configuration file located in:
-
-* js/default-config.js
-* php/default-config.php
-* publisher/modules/default-Configs.pm
-
-To create a copy of these default files, run the executable bash script located in the project's root:
-
+Setup the configuration file by running the executable bash script located in the project's root:
 
 ```
 bash ./makeconfigs.sh
 ```
-**NOTE:** opalAdmin **will not work** if copies of the configuration files do not exist.
+
+This will copy **./default-config.json** to **./config.json** and set preliminary configurations.
+
+### Step 5
+
+Create an empty Opal database using your favourite tool. **Note:** Keep track of the database name.
+
+### Step 6
+
+Open the **config.json** file using your favourite editor and replace the default Opal credentials with your local credentials.
+
+### Step 7
+
+Visit opalAdmin's database version control page in your web browser at:
+
+http://yourdomain/opalAdmin/dbv
+
+Username: dbv -- Password: dbv
+
+### Step 8
+
+On the DBV page, run all revisions by selecting all revisions and clicking *Run selected revisions*
+
+### Step 9
 
 ## Configuring the opalAdmin installation
 
