@@ -1,3 +1,10 @@
+Version 0.18.13.1:
+ - Merge branch 'preproduction'
+ - Merge branch 'release-0.18.13.0' into preproduction
+ - Merge branch 'release-0.18.12.0' into preproduction
+ - Merge branch 'hotfix-0.18.11.1' into preproduction
+ - Merge branch 'HotFix-0.18.10.1'
+
 Version 0.18.13.0:
  -     --- Fully removed all programming default config files         -- Now there is one central config     --- Cleaned up packages
  -     --- Starting one config file
