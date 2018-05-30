@@ -27,6 +27,7 @@
 		"wrm": {
 			"host": "WRM_DB_HOST_HERE",
 			"port": "WRM_DB_PORT_HERE",
+			"name": "WRM_DB_NAME_HERE",
 			"username": "WRM_DB_USERNAME_HERE",
 			"password": "WRM_DB_PASSWORD_HERE"
 		},
