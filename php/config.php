@@ -102,6 +102,6 @@
     // Push Notification FCM and APN credientials.
     define( "API_KEY" , $config['pushNotificationConfig']['android']['apiKey'] );
     define( "CERTIFICATE_PASSWORD" , $config['pushNotificationConfig']['apple']['certificate']['password'] );
-    define( "CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php/certificates/' . $config['pushNotificationConfig']['certificate']['filename'] );
+    define( "CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php/certificates/' . $config['pushNotificationConfig']['apple']['certificate']['filename'] );
 
 ?>
