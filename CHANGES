@@ -1,3 +1,8 @@
+Version 0.18.14.2:
+ -     --- Added viewport meta tag for better scalability on mobile devices     --- Added help location of firebase configs
+ - Merge branch 'hotfix-0.18.14.1'
+ -     --- Added missing key that caused push notifications not to work
+
 Version 0.18.14.1:
 
 
