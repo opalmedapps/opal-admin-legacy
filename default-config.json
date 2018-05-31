@@ -61,7 +61,7 @@
 	},
 	"firebaseConfig": {
 		"database": {
-			"_comment": "API/database configs found in firebase",
+			"_comment": "API/database configs found in firebase. Found in Authentication > WEB SETUP (right upper side)",
 
 			"apiKey": "FIREBASE_DB_API_KEY_HERE",
 			"authDomain": "FIREBASE_DB_AUTH_DOMAIN_HERE",
