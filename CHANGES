@@ -1,3 +1,12 @@
+Version 0.18.15.0:
+ -     --- Fixed up comments
+ - Merge branch 'hotfix-0.18.14.2' into develop
+ - Merge branch 'hotfix-0.18.14.1' into develop
+ - Merge branch 'develop' of https://gitlab.com/akimosupremo/opalAdmin into develop
+ - Merge branch 'release-0.18.14.0' into develop
+ - Readme
+ - Editing readme file
+
 Version 0.18.14.2:
  -     --- Added viewport meta tag for better scalability on mobile devices     --- Added help location of firebase configs
  - Merge branch 'hotfix-0.18.14.1'
