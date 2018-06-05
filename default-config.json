@@ -93,7 +93,7 @@
 		"relative_url": "RELATIVE_URL_HERE"
 	},
 	"clinicalDocumentPathConfig": {
-		"_comment": "Define where clinical documents are located. Has to be mounted. NO LEADING SLASH",
+		"_comment": "Define where clinical documents are located. Has to be mounted. Leading slash REQUIRED!",
 
 		"aria": "CLINICAL_PATH_ARIA_HERE",
 		"mosaiq": "CLINICAL_PATH_MOSAIQ_HERE"
