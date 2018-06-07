@@ -212,8 +212,7 @@ angular.module('opalAdmin.collections', [])
 				url: "api/educational-material/get.educational_material_list_logs.php",
 				params: {
 					callback: 'JSON_CALLBACK',
-					serials: JSON.stringify(serials),
-					type: type
+					serials: JSON.stringify(serials)
 				}
 			});
 		}
