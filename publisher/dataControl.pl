@@ -3,10 +3,10 @@
 # A.Joseph 07-Aug-2015 ++ File: dataControl.pl
 #---------------------------------------------------------------------------------
 # Perl script that acts as a cronjob for populating the MySQL database with selected
-# information. This script is called from the crontab.  
+# information. This script is called from the crontab.
 #
-# We use our custom Perl Modules to help us with getting information and 
-# setting them into the appropriate place. 
+# We use our custom Perl Modules to help us with getting information and
+# setting them into the appropriate place.
 
 #-----------------------------------------------------------------------
 # Packages/Modules
@@ -22,7 +22,7 @@ use Cwd 'abs_path';
 
 #-----------------------------------------------------------------------
 # Monitor this script's execution
-# - What this section does is 
+# - What this section does is
 # 	1. Checks for hanging jobs
 # 	2. Checks for crash reports
 # Both recorded in monitor_log.json
@@ -62,7 +62,7 @@ if (-e $monitor_log) { # file exists
 			open(my $file_handler, "<", $execution_log);
 			my @lines = reverse <$file_handler>; # read file from tail
 			my @logs;
-			push (@logs, "IP: <strong>$ip_address</strong> at <strong>" . $this_script . "</strong><br>"); # push first line 
+			push (@logs, "IP: <strong>$ip_address</strong> at <strong>" . $this_script . "</strong><br>"); # push first line
 			my $count = 0;
 			foreach $line (@lines) {
 				push (@logs, "$line<br>");
@@ -70,10 +70,11 @@ if (-e $monitor_log) { # file exists
 				if ($count > 50) { last; } # only read last 50 lines
 			}
 
-			# email error 
+			# email error
 			my $mime = MIME::Lite->new(
 				'From'		=> "opal\@muhc.mcgill.ca",
 				'To'		=> "ackeem.berry\@gmail.com",
+				'Cc'			=> "yickmo\@gmail.com",
 				'Subject'	=> "Potential hanging script - Opal dataControl.pl",
 				'Type'		=> 'text/html',
 				'Data'		=> \@logs,
@@ -85,19 +86,19 @@ if (-e $monitor_log) { # file exists
 			$json_log->{'run'}->{'last_emailed'} = strftime("%Y-%m-%d %H:%M:%S", localtime(time)); # now
 
 		}
-		
-		# write back to file	
+
+		# write back to file
 		writeToLogFile($monitor_log, encode_json($json_log), ">");
 
 		exit 0; # quit this script since already running on another process
 	}
-	else { # new process 
+	else { # new process
 
 		my $pid = $$; # get process id
 
 		my $start_flag = $json_log->{'start'}; # get start flag from file
 		if ($start_flag ne 0) { # script has been crashing
-			
+
 			$json_log->{'pid'} = $pid; # set pid
 
 			my $crash_count = $json_log->{'crash'}->{'count'}; # get crash count
@@ -114,7 +115,7 @@ if (-e $monitor_log) { # file exists
 				open(my $file_handler, "<", $execution_log);
 				my @lines = reverse <$file_handler>; # read file from tail
 				my @logs;
-				push (@logs, "IP: <strong>$ip_address</strong> at <strong>" . $this_script . "</strong><br>"); # push first line 
+				push (@logs, "IP: <strong>$ip_address</strong> at <strong>" . $this_script . "</strong><br>"); # push first line
 				my $count = 0;
 				foreach $line (@lines) {
 					push (@logs, "$line<br>");
@@ -122,10 +123,11 @@ if (-e $monitor_log) { # file exists
 					if ($count > 50) { last; } # only get last 50 lines
 				}
 
-				# email error 
+				# email error
 				my $mime = MIME::Lite->new(
 					'From'		=> "opal\@muhc.mcgill.ca",
 					'To'		=> "ackeem.berry\@gmail.com",
+					'Cc'			=> "yickmo\@gmail.com",
 					'Subject'	=> "Script crash - Opal dataControl.pl",
 					'Type'		=> 'text/html',
 					'Data'		=> \@logs,
@@ -136,11 +138,11 @@ if (-e $monitor_log) { # file exists
 				# set last emailed date
 				$json_log->{'crash'}->{'last_emailed'} = strftime("%Y-%m-%d %H:%M:%S", localtime(time)); # now
 			}
-			
+
 
 		}
 		else { # clean new process
-			
+
 			# flush/new log
 			$json_log = {
 				'pid'	=> $pid,
@@ -159,7 +161,7 @@ if (-e $monitor_log) { # file exists
 		writeToLogFile($monitor_log, encode_json($json_log), ">");
 	}
 }
-else { # log file DNE 
+else { # log file DNE
 
 	# to write new process
 	my $pid = $$;
@@ -178,7 +180,7 @@ else { # log file DNE
 
 	# write new file
 	writeToLogFile($monitor_log, encode_json($json_log), ">");
-	
+
 }
 
 # set start flag to signify script execution
@@ -199,7 +201,7 @@ sub writeToLogFile
 }
 
 #####################################################################################################
-# 
+#
 # START PROGRAM EXECUTION
 #
 #####################################################################################################
@@ -208,29 +210,29 @@ sub writeToLogFile
 # Custom Modules
 #-----------------------------------------------------------------------
 use lib dirname($0) . '/modules'; # specify where are modules are -- $0 = this script's location
-use Configs; 
-use Database; 
-use Patient; 
-use Task; 
-use Appointment; 
-use ResourceAppointment; 
-use Document; 
-use Alias; 
-use Doctor; 
-use Diagnosis; 
-use PatientDoctor; 
-use TestResult; 
+use Configs;
+use Database;
+use Patient;
+use Task;
+use Appointment;
+use ResourceAppointment;
+use Document;
+use Alias;
+use Doctor;
+use Diagnosis;
+use PatientDoctor;
+use TestResult;
 use TestResultControl;
-use Cron; 
-use PostControl; 
-use Announcement; 
-use TxTeamMessage; 
+use Cron;
+use PostControl;
+use Announcement;
+use TxTeamMessage;
 use PatientsForPatients; # custom PatientsForPatients.pm
-use EducationalMaterialControl; 
-use EducationalMaterial; 
-use Priority; 
-use PatientLocation; 
-use Questionnaire; 
+use EducationalMaterialControl;
+use EducationalMaterial;
+use Priority;
+use PatientLocation;
+use Questionnaire;
 use LegacyQuestionnaire;
 
 # Get the current time (for last-updates/logs)
@@ -242,11 +244,11 @@ my $cronLogSer = Cron::setCronLog("Started", $start_datetime);
 #-----------------------------------------------------------------------
 # Parameter initialization
 #-----------------------------------------------------------------------
-my @registeredPatients = (); 
-my @patientList = (); 
-my @PDList = (); 
-my @TaskList = (); 
-my @ApptList = (); 
+my @registeredPatients = ();
+my @patientList = ();
+my @PDList = ();
+my @TaskList = ();
+my @ApptList = ();
 my @DocList = ();
 my @DiagnosisList = ();
 my @PriorityList = ();
@@ -260,12 +262,12 @@ my $verbose = 1;
 #=========================================================================================
 # Retrieve all patients that are marked for update
 #=========================================================================================
-@registeredPatients = Patient::getPatientsMarkedForUpdate($cronLogSer); 
+@registeredPatients = Patient::getPatientsMarkedForUpdate($cronLogSer);
 
 print "Got patient list\n" if $verbose;
 
 #=========================================================================================
-# Loop over each patient. 
+# Loop over each patient.
 #=========================================================================================
 foreach my $Patient (@registeredPatients) {
 
@@ -291,15 +293,15 @@ foreach my $Patient (@registeredPatients) {
 				$UpdatedPatient->updateDatabase();
 			}
 
-            # push to patient list 
+            # push to patient list
             push(@patientList, $UpdatedPatient);
 
-        } else { # patient DNE 
+        } else { # patient DNE
 
     		# insert Patient into our database
 	    	$SourcePatient = $SourcePatient->insertPatientIntoOurDB();
 
-            # push to patient list 
+            # push to patient list
             push(@patientList, $SourcePatient);
 
 	    }
@@ -308,7 +310,7 @@ foreach my $Patient (@registeredPatients) {
 
 print "Finished patient list\n" if $verbose;
 ##########################################################################################
-# 
+#
 # Data Retrieval PATIENTDOCTORS - get list of patient-doctor info updated since last update
 #
 ##########################################################################################
@@ -326,7 +328,7 @@ foreach my $PatientDoctor (@PDList) {
 
 	if ($PDExists) { # patientdoctor exists
 
-		my $ExistingPD = dclone($PDExists); # reassign variable	
+		my $ExistingPD = dclone($PDExists); # reassign variable
 
 		# compare our retrieve PatientDoctor with existing PD
 		# update is done on the original (existing) PD
@@ -335,7 +337,7 @@ foreach my $PatientDoctor (@PDList) {
 		# after updating our PatientDoctor object, update the database
 		$UpdatedPD->updateDatabase();
 
-	} else { # patient doctor DNE 
+	} else { # patient doctor DNE
 
 		# insert PatientDoctor into our database
 		$PatientDoctor->insertPatientDoctorIntoOurDB();
@@ -345,7 +347,7 @@ foreach my $PatientDoctor (@PDList) {
 print "Finished patient doctor list\n" if $verbose;
 
 ##########################################################################################
-# 
+#
 # Data Retrieval DIAGNOSES - get list of diagnosis info updated since last update
 #
 ##########################################################################################
@@ -362,7 +364,7 @@ foreach my $Diagnosis (@DiagnosisList) {
 
 	if ($DiagnosisExists) { # diagnosis exists
 
-		my $ExistingDiagnosis = dclone($DiagnosisExists); # reassign variable	
+		my $ExistingDiagnosis = dclone($DiagnosisExists); # reassign variable
 
 		# compare our retrieve Diagnosis with existing Diagnosis
 		# update is done on the original (existing) Diagnosis
@@ -371,8 +373,8 @@ foreach my $Diagnosis (@DiagnosisList) {
 		# after updating our Diagnosis object, update the database
 		$UpdatedDiagnosis->updateDatabase();
 
-	} else { # diagnosis DNE 
-				
+	} else { # diagnosis DNE
+
 		# insert Diagnosis into our database
 		$Diagnosis->insertDiagnosisIntoOurDB();
 	}
@@ -381,7 +383,7 @@ foreach my $Diagnosis (@DiagnosisList) {
 print "Finished diagnosis list\n" if $verbose;
 
 ##########################################################################################
-# 
+#
 # Data Retrieval PRIORITIES - get list of priority info updated since last update
 #
 ##########################################################################################
@@ -398,7 +400,7 @@ foreach my $Priority (@PriorityList) {
 
 	if ($PriorityExists) { # priority exists
 
-		my $ExistingPriority = dclone($PriorityExists); # reassign variable	
+		my $ExistingPriority = dclone($PriorityExists); # reassign variable
 
 		# compare our retrieve Priority with existing Priority
 		# update is done on the original (existing) Priority
@@ -407,8 +409,8 @@ foreach my $Priority (@PriorityList) {
 		# after updating our Priority object, update the database
 		$UpdatedPriority->updateDatabase();
 
-	} else { # priority DNE 
-				
+	} else { # priority DNE
+
 		# insert Priority into our database
 		$Priority->insertPriorityIntoOurDB();
 	}
@@ -417,7 +419,7 @@ foreach my $Priority (@PriorityList) {
 print "Finished priority list\n" if $verbose;
 
 ##########################################################################################
-# 
+#
 # Data Retrieval TASKS - get list of patients with tasks updated since last update
 #
 ##########################################################################################
@@ -434,7 +436,7 @@ foreach my $Task (@TaskList) {
 
 	if ($TaskExists) { # task exists
 
-		my $ExistingTask = dclone($TaskExists); # reassign variable	
+		my $ExistingTask = dclone($TaskExists); # reassign variable
 
 		# compare our retrieve Task with existing Task
 		# update is done on the original (existing) Task
@@ -443,17 +445,17 @@ foreach my $Task (@TaskList) {
 		# after updating our Task object, update the database
 		$UpdatedTask->updateDatabase();
 
-	} else { # task DNE 
-				
+	} else { # task DNE
+
 		# insert Task into our database
 		$Task = $Task->insertTaskIntoOurDB();
-	}	
+	}
 
 }
 
 print "Finished task list\n" if $verbose;
 ##########################################################################################
-# 
+#
 # Data Retrieval APPOINTMENTS - get list of patients with appointments updated since last update
 #
 ##########################################################################################
@@ -469,7 +471,7 @@ foreach my $Appointment (@ApptList) {
 
 	if ($AppointmentExists) { # appointment exists
 
-		my $ExistingAppointment = dclone($AppointmentExists); # reassign variable	
+		my $ExistingAppointment = dclone($AppointmentExists); # reassign variable
 
 		# compare our retrieve Appointment with existing Appointment
 		# update is done on the original (existing) Appointment
@@ -478,17 +480,17 @@ foreach my $Appointment (@ApptList) {
 		# after updating our Appointment object, update the database
 		$UpdatedAppointment->updateDatabase();
 
-	} else { # appointment DNE 
-				
+	} else { # appointment DNE
+
 		# insert Appointment into our database
 		$Appointment = $Appointment->insertApptIntoOurDB();
-	}	
+	}
 }
 
 print "Finished appointment list\n" if $verbose;
 
 ##########################################################################################
-# 
+#
 # Data Retrieval RESOURCEAPPOINTMENT - get list of resourceappt info updated since last update
 #
 ##########################################################################################
@@ -506,7 +508,7 @@ foreach my $ResourceAppointment (@RAList) {
 
 	if ($RAExists) { # RA exists
 
-		my $ExistingRA = dclone($RAExists); # reassign variable	
+		my $ExistingRA = dclone($RAExists); # reassign variable
 
 		# compare our retrieve RA with existing RA
 		# update is done on the original (existing) RA
@@ -515,8 +517,8 @@ foreach my $ResourceAppointment (@RAList) {
 		# after updating our RA object, update the database
 		$UpdatedRA->updateDatabase();
 
-	} else { # RA DNE 
-				
+	} else { # RA DNE
+
 		# insert RA into our database
 		$ResourceAppointment->insertResourceAppointmentIntoOurDB();
 	}
@@ -524,7 +526,7 @@ foreach my $ResourceAppointment (@RAList) {
 print "Finished resource appointment list\n" if $verbose;
 
 ##########################################################################################
-# 
+#
 # Data Retrieval PATIENTLOCATION - get list of PL info updated since last update
 #
 ##########################################################################################
@@ -537,11 +539,11 @@ print "Got patient location list\n" if $verbose;
 #=========================================================================================
 foreach my $PatientLocation (@PLList) {
 
-	# check if PL exists in our database 
+	# check if PL exists in our database
 	my $PLExists = $PatientLocation->inOurDatabase();
 
 	if ($PLExists) { # PL exists
-	
+
 		my $ExistingPL = dclone($PLExists); # reassign variable
 
 		# compare our retrieved PL with the existing PL
@@ -552,8 +554,8 @@ foreach my $PatientLocation (@PLList) {
 		$UpdatedPL->updateDatabase();
 
 	} else { #PL DNE
-	
-		# insert PL into our database 
+
+		# insert PL into our database
 		$PatientLocation->insertPatientLocationIntoOurDB();
 	}
 }
@@ -561,7 +563,7 @@ foreach my $PatientLocation (@PLList) {
 print "Finished patient location list\n" if $verbose;
 
 ##########################################################################################
-# 
+#
 # Data Retrieval PATIENTLOCATIONMH - get list of PL MH info updated since last update
 #
 ##########################################################################################
@@ -574,11 +576,11 @@ print "Got patient location MH list\n" if $verbose;
 #=========================================================================================
 foreach my $PatientLocation (@PLMHList) {
 
-	# check if PL exists in our database 
+	# check if PL exists in our database
 	my $PLExists = $PatientLocation->inOurDatabaseMH();
 
 	if ($PLExists) { # PL exists
-	
+
 		my $ExistingPL = dclone($PLExists); # reassign variable
 
 		# compare our retrieved PL with the existing PL
@@ -589,8 +591,8 @@ foreach my $PatientLocation (@PLMHList) {
 		$UpdatedPL->updateDatabaseMH();
 
 	} else { #PL DNE
-	
-		# insert PL into our database 
+
+		# insert PL into our database
 		$PatientLocation->insertPatientLocationMHIntoOurDB();
 	}
 }
@@ -598,7 +600,7 @@ foreach my $PatientLocation (@PLMHList) {
 print "Finished patient location MH list\n" if $verbose;
 
 ##########################################################################################
-# 
+#
 # Data Retrieval DOCUMENTS - get list of patients with documents updated since last update
 #
 ##########################################################################################
@@ -611,7 +613,7 @@ Document::transferPatientDocuments(@DocList);
 print "Finished document list\n" if $verbose;
 
 ##########################################################################################
-# 
+#
 # Data Retrieval TESTRESULTS - get list of patients with test results updated since last update
 #
 ##########################################################################################
@@ -628,7 +630,7 @@ foreach my $TestResult (@TRList) {
 
 	if ($TRExists) { # TR exists
 
-		my $ExistingTR = dclone($TRExists); # reassign variable	
+		my $ExistingTR = dclone($TRExists); # reassign variable
 
 		# compare our retrieve TR with existing TR
 		# update is done on the original (existing) TR
@@ -637,18 +639,18 @@ foreach my $TestResult (@TRList) {
 		# after updating our TR object, update the database
 		$UpdatedTR->updateDatabase();
 
-	} else { # TR DNE 
-				
+	} else { # TR DNE
+
 		# insert TR into our database
 		$TestResult->insertTestResultIntoOurDB();
-	}	
-		
+	}
+
 }
 print "Finished test result list\n" if $verbose;
 
 ##########################################################################################
-# 
-# Publishing ANNOUNCEMENTS 
+#
+# Publishing ANNOUNCEMENTS
 #
 ##########################################################################################
 Announcement::publishAnnouncements($cronLogSer, @patientList);
@@ -656,7 +658,7 @@ Announcement::publishAnnouncements($cronLogSer, @patientList);
 print "Finished announcements\n" if $verbose;
 
 ##########################################################################################
-# 
+#
 # Publishing TREATMENT TEAM MESSAGES
 #
 ##########################################################################################
@@ -665,7 +667,7 @@ TxTeamMessage::publishTxTeamMessages($cronLogSer, @patientList);
 print "Finished treatment team messages\n" if $verbose;
 
 ##########################################################################################
-# 
+#
 # Publishing PATIENTS FOR PATIENTS
 #
 ##########################################################################################
@@ -674,7 +676,7 @@ PatientsForPatients::publishPatientsForPatients($cronLogSer, @patientList);
 print "Finished patients for patients\n";
 
 ##########################################################################################
-# 
+#
 # Publishing EDUCATIONAL MATERIALS
 #
 ##########################################################################################
@@ -683,7 +685,7 @@ EducationalMaterial::publishEducationalMaterials($cronLogSer, @patientList);
 print "Finished Educational materials\n" if $verbose;
 
 ##########################################################################################
-# 
+#
 # Publishing QUESTIONNAIRES
 #
 ##########################################################################################
@@ -692,7 +694,7 @@ print "Finished Educational materials\n" if $verbose;
 # print "Finished Questionnaires\n" if $verbose;
 
 ##########################################################################################
-# 
+#
 # Publishing LEGACY QUESTIONNAIRES
 #
 ##########################################################################################
