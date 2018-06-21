@@ -45,7 +45,7 @@
 	"pushNotificationConfig": {
 		"_comment": "Push notification FCM and APN credentials",
 
-		"andriod": {
+		"android": {
 			"_comment": "API access key from Google API's Console",
 
 			"apiKey": "ANDROID_API_HERE"
