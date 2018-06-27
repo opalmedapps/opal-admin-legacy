@@ -615,8 +615,8 @@ sub getApptsFromSourceDB
                 mval.AppointmentSerNum,
                 mval.ScheduledDateTime,
                 mval.Status,
-                mval.AppointmentCode,
-                mval.ResourceDescription,
+                RTRIM(mval.AppointmentCode),
+                RTRIM(mval.ResourceDescription),
                 pi.PatientSerNum
             FROM
                 MediVisitAppointmentList mval,
