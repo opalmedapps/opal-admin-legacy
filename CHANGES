@@ -1,3 +1,24 @@
+Version 0.18.16.2:
+ - Merge branch 'hotfix-0.18.16.1'
+ - 	--- Fixes white space in appointment code causing alias expression serial to be null
+ - Merge branch 'master' of https://gitlab.com/akimosupremo/opalAdmin
+ - Merge branch 'hotfix-0.18.16.1'
+ - Merge branch 'preproduction'
+ - Update Version
+ - Merge branch 'develop'
+ - Merge branch 'develop' into preproduction
+ - Merge branch 'develop'
+ - Added CC to the dataContorl.pl when emailing
+ - Merge branch 'hotfix-0.18.15.2' into develop
+ - Merge branch 'hotfix-0.18.15.2' into preproduction
+ - Merge branch 'hotfix-0.18.15.2'
+ - Fixed spelling mistake in the default-config.json
+ - Version bump to 0.18.15.2
+ - Merge branch 'hotfix-0.18.15.1' into develop
+ - Merge branch 'hotfix-0.18.15.1' into preproduction
+ - Merge branch 'release-0.18.15.0' into develop
+
+Version 0.18.16.1:
 Version 0.18.15.2:
  - Merge branch 'hotfix-0.18.15.1'
  -     --- Removed undefined reference
