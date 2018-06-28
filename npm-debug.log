@@ -1,0 +1,137 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node', '/usr/bin/npm', 'install' ]
+2 info using npm@2.11.3
+3 info using node@v0.12.7
+4 verbose readDependencies loading dependencies from /var/www/devDocuments/opalAdmin/package.json
+5 verbose install where, deps [ '/var/www/devDocuments/opalAdmin',
+5 verbose install   [ 'angular-ui-grid',
+5 verbose install     'eslint',
+5 verbose install     'express',
+5 verbose install     'firebase',
+5 verbose install     'firebase-admin',
+5 verbose install     'validate-commit-message' ] ]
+6 verbose install where, peers [ '/var/www/devDocuments/opalAdmin', [] ]
+7 verbose installManyTop reading for lifecycle /var/www/devDocuments/opalAdmin/package.json
+8 info preinstall opaladmin@0.13.0
+9 verbose installManyTop reading scoped package data from /var/www/devDocuments/opalAdmin/node_modules/angular-file-upload/package.json
+10 verbose installManyTop reading scoped package data from /var/www/devDocuments/opalAdmin/node_modules/angular-ui-grid/package.json
+11 verbose installManyTop reading scoped package data from /var/www/devDocuments/opalAdmin/node_modules/eslint/package.json
+12 verbose installManyTop reading scoped package data from /var/www/devDocuments/opalAdmin/node_modules/express/package.json
+13 verbose installManyTop reading scoped package data from /var/www/devDocuments/opalAdmin/node_modules/firebase/package.json
+14 verbose installManyTop reading scoped package data from /var/www/devDocuments/opalAdmin/node_modules/firebase-admin/package.json
+15 verbose installManyTop reading scoped package data from /var/www/devDocuments/opalAdmin/node_modules/grunt/package.json
+16 verbose installManyTop reading scoped package data from /var/www/devDocuments/opalAdmin/node_modules/grunt-bump/package.json
+17 verbose installManyTop reading scoped package data from /var/www/devDocuments/opalAdmin/node_modules/grunt-contrib-jshint/package.json
+18 verbose installManyTop reading scoped package data from /var/www/devDocuments/opalAdmin/node_modules/grunt-contrib-watch/package.json
+19 verbose installManyTop reading scoped package data from /var/www/devDocuments/opalAdmin/node_modules/grunt-wiredep/package.json
+20 verbose installManyTop reading scoped package data from /var/www/devDocuments/opalAdmin/node_modules/gulp-bump/package.json
+21 verbose installManyTop reading scoped package data from /var/www/devDocuments/opalAdmin/node_modules/validate-commit-message/package.json
+22 info package.json angular-file-upload@2.5.0 No license field.
+23 info package.json firebase-admin@4.2.1 No repository field.
+24 info package.json firebase-admin@4.2.1 license should be a valid SPDX license expression
+25 info package.json grunt-wiredep@3.0.1 No license field.
+26 info package.json firebase@3.7.6 license should be a valid SPDX license expression
+27 verbose readDependencies loading dependencies from /var/www/devDocuments/opalAdmin/package.json
+28 verbose targetResolver reading package data from /var/www/devDocuments/opalAdmin/node_modules/angular-file-upload/package.json
+29 verbose targetResolver reading package data from /var/www/devDocuments/opalAdmin/node_modules/angular-ui-grid/package.json
+30 verbose targetResolver reading package data from /var/www/devDocuments/opalAdmin/node_modules/eslint/package.json
+31 verbose targetResolver reading package data from /var/www/devDocuments/opalAdmin/node_modules/express/package.json
+32 verbose targetResolver reading package data from /var/www/devDocuments/opalAdmin/node_modules/firebase/package.json
+33 verbose targetResolver reading package data from /var/www/devDocuments/opalAdmin/node_modules/firebase-admin/package.json
+34 verbose targetResolver reading package data from /var/www/devDocuments/opalAdmin/node_modules/grunt/package.json
+35 verbose targetResolver reading package data from /var/www/devDocuments/opalAdmin/node_modules/grunt-bump/package.json
+36 verbose targetResolver reading package data from /var/www/devDocuments/opalAdmin/node_modules/grunt-contrib-jshint/package.json
+37 verbose targetResolver reading package data from /var/www/devDocuments/opalAdmin/node_modules/grunt-contrib-watch/package.json
+38 verbose targetResolver reading package data from /var/www/devDocuments/opalAdmin/node_modules/grunt-wiredep/package.json
+39 verbose targetResolver reading package data from /var/www/devDocuments/opalAdmin/node_modules/gulp-bump/package.json
+40 verbose targetResolver reading package data from /var/www/devDocuments/opalAdmin/node_modules/validate-commit-message/package.json
+41 verbose targetResolver reading package data from /var/www/devDocuments/opalAdmin/node_modules/.bin/eslint/package.json
+42 verbose targetResolver reading package data from /var/www/devDocuments/opalAdmin/node_modules/.bin/grunt/package.json
+43 verbose targetResolver reading package data from /var/www/devDocuments/opalAdmin/node_modules/.bin/validate-commit-msg/package.json
+44 verbose already installed skipping angular-ui-grid@^4.0.2 /var/www/devDocuments/opalAdmin
+45 verbose already installed skipping express@^4.15.3 /var/www/devDocuments/opalAdmin
+46 verbose already installed skipping eslint@^3.18.0 /var/www/devDocuments/opalAdmin
+47 verbose already installed skipping firebase@^3.7.6 /var/www/devDocuments/opalAdmin
+48 verbose already installed skipping firebase-admin@^4.2.0 /var/www/devDocuments/opalAdmin
+49 verbose already installed skipping validate-commit-message@^3.0.1 /var/www/devDocuments/opalAdmin
+50 silly install resolved []
+51 info build /var/www/devDocuments/opalAdmin
+52 info linkStuff opaladmin@0.13.0
+53 silly linkStuff opaladmin@0.13.0 has /var/www/devDocuments as its parent node_modules
+54 verbose linkBins opaladmin@0.13.0
+55 verbose linkMans opaladmin@0.13.0
+56 verbose rebuildBundles opaladmin@0.13.0
+57 verbose rebuildBundles [ '.bin',
+57 verbose rebuildBundles   'angular-file-upload',
+57 verbose rebuildBundles   'angular-ui-grid',
+57 verbose rebuildBundles   'eslint',
+57 verbose rebuildBundles   'express',
+57 verbose rebuildBundles   'firebase',
+57 verbose rebuildBundles   'firebase-admin',
+57 verbose rebuildBundles   'grunt',
+57 verbose rebuildBundles   'grunt-bump',
+57 verbose rebuildBundles   'grunt-contrib-jshint',
+57 verbose rebuildBundles   'grunt-contrib-watch',
+57 verbose rebuildBundles   'grunt-wiredep',
+57 verbose rebuildBundles   'gulp-bump',
+57 verbose rebuildBundles   'validate-commit-message' ]
+58 verbose rebuild bundle /var/www/devDocuments/opalAdmin/node_modules/angular-file-upload
+59 info build /var/www/devDocuments/opalAdmin/node_modules/angular-file-upload
+60 info preinstall angular-file-upload@2.5.0
+61 info linkStuff angular-file-upload@2.5.0
+62 silly linkStuff angular-file-upload@2.5.0 has /var/www/devDocuments/opalAdmin/node_modules as its parent node_modules
+63 verbose linkBins angular-file-upload@2.5.0
+64 verbose linkMans angular-file-upload@2.5.0
+65 verbose rebuildBundles angular-file-upload@2.5.0
+66 info install angular-file-upload@2.5.0
+67 info postinstall angular-file-upload@2.5.0
+68 verbose rebuild bundle /var/www/devDocuments/opalAdmin/node_modules/grunt
+69 info build /var/www/devDocuments/opalAdmin/node_modules/grunt
+70 info preinstall grunt@1.0.1
+71 info linkStuff grunt@1.0.1
+72 silly linkStuff grunt@1.0.1 has /var/www/devDocuments/opalAdmin/node_modules as its parent node_modules
+73 verbose linkBins grunt@1.0.1
+74 verbose link bins [ { grunt: 'bin/grunt' },
+74 verbose link bins   '/var/www/devDocuments/opalAdmin/node_modules/.bin',
+74 verbose link bins   false ]
+75 verbose linkMans grunt@1.0.1
+76 verbose rebuildBundles grunt@1.0.1
+77 verbose rebuildBundles [ '.bin',
+77 verbose rebuildBundles   'coffee-script',
+77 verbose rebuildBundles   'dateformat',
+77 verbose rebuildBundles   'eventemitter2',
+77 verbose rebuildBundles   'exit',
+77 verbose rebuildBundles   'findup-sync',
+77 verbose rebuildBundles   'glob',
+77 verbose rebuildBundles   'grunt-cli',
+77 verbose rebuildBundles   'grunt-known-options',
+77 verbose rebuildBundles   'grunt-legacy-log',
+77 verbose rebuildBundles   'grunt-legacy-util',
+77 verbose rebuildBundles   'iconv-lite',
+77 verbose rebuildBundles   'js-yaml',
+77 verbose rebuildBundles   'minimatch',
+77 verbose rebuildBundles   'nopt',
+77 verbose rebuildBundles   'path-is-absolute',
+77 verbose rebuildBundles   'rimraf' ]
+78 silly gentlyRm /var/www/devDocuments/opalAdmin/node_modules/.bin/grunt is being purged
+79 verbose gentlyRm don't care about contents; nuking /var/www/devDocuments/opalAdmin/node_modules/.bin/grunt
+80 silly vacuum-fs purging /var/www/devDocuments/opalAdmin/node_modules/.bin/grunt
+81 silly vacuum-fs quitting because other entries in /var/www/devDocuments/opalAdmin/node_modules/.bin
+82 verbose stack Error: EPERM, chmod '/var/www/devDocuments/opalAdmin/node_modules/grunt/bin/grunt'
+82 verbose stack     at Error (native)
+83 verbose cwd /var/www/devDocuments/opalAdmin
+84 error Linux 3.2.0-43-generic
+85 error argv "/usr/bin/node" "/usr/bin/npm" "install"
+86 error node v0.12.7
+87 error npm  v2.11.3
+88 error path /var/www/devDocuments/opalAdmin/node_modules/grunt/bin/grunt
+89 error code EPERM
+90 error errno -1
+91 error Error: EPERM, chmod '/var/www/devDocuments/opalAdmin/node_modules/grunt/bin/grunt'
+91 error     at Error (native)
+91 error  { [Error: EPERM, chmod '/var/www/devDocuments/opalAdmin/node_modules/grunt/bin/grunt']
+91 error   errno: -1,
+91 error   code: 'EPERM',
+91 error   path: '/var/www/devDocuments/opalAdmin/node_modules/grunt/bin/grunt' }
+92 error Please try running this command again as root/Administrator.
+93 verbose exit [ -1, true ]
