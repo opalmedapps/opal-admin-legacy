@@ -2,12 +2,12 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 10-Aug-2015 ++ File: Document.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates a document class. This module calls a constructor to 
-# create a document object that contains document information stored as object 
+# Perl module that creates a document class. This module calls a constructor to
+# create a document object that contains document information stored as object
 # variables.
 #
 # There exists various subroutines to set doc information, get doc information
-# and compare doc information between two doc objects. 
+# and compare doc information between two doc objects.
 # There exists various subroutines that use the Database.pm module to update the
 # MySQL database and check if a document exists already in this database.
 
@@ -31,7 +31,7 @@ use PushNotification; # Custom PushNotification.pm
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our Docs class 
+# Constructor for our Docs class
 #====================================================================================
 sub new
 {
@@ -50,7 +50,7 @@ sub new
 		_authoredby		    => undef,
 		_dateofservice		=> undef,
 		_createdby		    => undef,
-		_createdtimestamp	=> undef,        
+		_createdtimestamp	=> undef,
 		_fileloc		    => undef,
 		_transferstatus		=> undef,
 		_log			    => undef,
@@ -58,7 +58,7 @@ sub new
 	};
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
-	bless $document, $class; 
+	bless $document, $class;
 	return $document;
 }
 
@@ -413,6 +413,10 @@ sub getDocsFromSourceDB
 	my ($cronLogSer, @patientList) = @_; # a list of patients and cron log serial from args
 
 	my @docList = (); # initialize a list for document objects
+	
+  if (scalar @patientList == 0) {
+          return @docList;
+  }
 
     my $verbose = 1;
 
@@ -432,7 +436,7 @@ sub getDocsFromSourceDB
 		my $patientSer		    		= $Patient->getPatientSer(); # get patient serial
 		my $patientSSN    				= $Patient->getPatientSSN();
         my $patientLastTransfer			= $Patient->getPatientLastTransfer(); # get last updated
-        my $patientRegistrationDate 	= $Patient->getPatientRegistrationDate(); 
+        my $patientRegistrationDate 	= $Patient->getPatientRegistrationDate();
 
         my $formatted_PLU = Time::Piece->strptime($patientLastTransfer, "%Y-%m-%d %H:%M:%S");
         my $formatted_reg = Time::Piece->strptime($patientRegistrationDate, "%Y-%m-%d %H:%M:%S");
@@ -441,7 +445,7 @@ sub getDocsFromSourceDB
 
             my $aliasSer            = $Alias->getAliasSer(); # get alias serial
             my $sourceDBSer         = $Alias->getAliasSourceDatabaseSer();
-            my @expressions         = $Alias->getAliasExpressions(); 
+            my @expressions         = $Alias->getAliasExpressions();
 
             ######################################
 		    # ARIA
@@ -449,11 +453,11 @@ sub getDocsFromSourceDB
             if ($sourceDBSer eq 1) {
 
                 my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-                my $numOfExpressions = @expressions; 
+                my $numOfExpressions = @expressions;
                 my $counter = 0;
                 my $docInfo_sql = "
 					WITH note_typ AS (
-						SELECT DISTINCT 
+						SELECT DISTINCT
 							Expression.note_typ,
 							Expression.note_typ_desc
 						FROM
@@ -474,7 +478,7 @@ sub getDocsFromSourceDB
 						visit_note.trans_log_userid,
 						CONVERT(VARCHAR, visit_note.trans_log_tstamp, 120),
 						RTRIM(note_typ.note_typ_desc)
-					FROM	
+					FROM
 						variansystem.dbo.Patient Patient,
 						varianenm.dbo.visit_note visit_note,
 						note_typ,
@@ -495,7 +499,7 @@ sub getDocsFromSourceDB
                 	my $expressionLastTransfer = $Expression->{_lasttransfer};
                 	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
 
-                	# compare last updates to find the earliest date 
+                	# compare last updates to find the earliest date
 		            # get the diff in seconds
 		            my $date_diff = $formatted_PLU - $formatted_ELU;
 		            if ($date_diff < 0) {
@@ -515,7 +519,7 @@ sub getDocsFromSourceDB
 			                $lasttransfer = $expressionLastTransfer;
 		            	}
 		            }
-        		
+
 	        		$docInfo_sql .= "
 						(REPLACE(RTRIM(note_typ.note_typ_desc), '''', '')   = '$expressionName'
 		        		AND	visit_note.trans_log_mtstamp					> '$lasttransfer')
@@ -537,11 +541,11 @@ sub getDocsFromSourceDB
     		    # execute query
     	    	$query->execute()
 	    	    	or die "Could not execute query: " . $query->errstr;
-    
+
                 my $data = $query->fetchall_arrayref();
 	        	foreach my $row (@$data) {
 
-		        	my $document = new Document(); 
+		        	my $document = new Document();
 
         			$pt_id			= $row->[0];
 	        		$visit_id		= $row->[1];
@@ -549,7 +553,7 @@ sub getDocsFromSourceDB
     			    # so visit_note_id from varian manual claims to be "unique" but it's not
         			# I combine pt_id, visit_id, note_id to generate a unique Id for this document
 	        		$sourceuid		= $pt_id . $visit_id . $note_id;
-    
+
 	        		$revised		= $row->[3];
 		        	$validentry		= $row->[4];
 			        $errtxt			= $row->[5];
@@ -561,7 +565,7 @@ sub getDocsFromSourceDB
                     $createdby      = Staff::reassignStaff($row->[11]);
                     $createdts      = $row->[12];
                     $expressionname 	= $row->[13];
-                    	
+
 					my $expressionser;
 					foreach my $checkExpression (@expressions) {
 						if ($checkExpression->{_name} eq $expressionname){ #match
@@ -569,7 +573,7 @@ sub getDocsFromSourceDB
 							last; # break out of loop
 						}
 					}
-    
+
         			$document->setDocSourceUID($sourceuid);
                     $document->setDocSourceDatabaseSer($sourceDBSer);
 	        		$document->setDocPatientSer($patientSer);
@@ -577,7 +581,7 @@ sub getDocsFromSourceDB
     	    		$document->setDocValidEntry($validentry);
         			$document->setDocErrorReasonText($errtxt);
 	        		$document->setDocFileLoc($fileloc);
-		        	$document->setDocAliasExpressionSer($expressionser);	
+		        	$document->setDocAliasExpressionSer($expressionser);
 	    	    	$document->setDocApprovedBy($apprvby);
     			    $document->setDocApprovedTimeStamp($apprvts);
     		    	$document->setDocAuthoredBy($authoredby);
@@ -585,7 +589,7 @@ sub getDocsFromSourceDB
 		        	$document->setDocCreatedBy($createdby);
 			        $document->setDocCreatedTimeStamp($createdts);
 			        $document->setDocCronLogSer($cronLogSer);
-	
+
     			    push(@docList, $document);
         		}
 
@@ -598,7 +602,7 @@ sub getDocsFromSourceDB
             if ($sourceDBSer eq 2) {
 
                 my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-                my $numOfExpressions = @expressions; 
+                my $numOfExpressions = @expressions;
                 my $counter = 0;
                 my $docInfo_sql = "";
 
@@ -609,7 +613,7 @@ sub getDocsFromSourceDB
                 	my $expressionLastTransfer = $Expression->{_lasttransfer};
                 	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
 
-                	# compare last updates to find the earliest date 
+                	# compare last updates to find the earliest date
 		            # get the diff in seconds
 		            my $date_diff = $formatted_PLU - $formatted_ELU;
 		            if ($date_diff < 0) {
@@ -617,7 +621,7 @@ sub getDocsFromSourceDB
 		            } else {
 		                $lasttransfer = $expressionLastTransfer;
 		            }
-        		
+
 	        		$docInfo_sql .= "SELECT 'QUERY_HERE' ";
 
 	        		$counter++;
@@ -633,7 +637,7 @@ sub getDocsFromSourceDB
     		    # execute query
     	    	$query->execute()
 	    	    	or die "Could not execute query: " . $query->errstr;
-    
+
                 my $data = $query->fetchall_arrayref();
 	        	foreach my $row (@$data) {
 
@@ -653,7 +657,7 @@ sub getDocsFromSourceDB
             if ($sourceDBSer eq 3) {
 
                 my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-                my $numOfExpressions = @expressions; 
+                my $numOfExpressions = @expressions;
                 my $counter = 0;
                 my $docInfo_sql = "";
 
@@ -664,7 +668,7 @@ sub getDocsFromSourceDB
                 	my $expressionLastTransfer = $Expression->{_lasttransfer};
                 	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
 
-                	# compare last updates to find the earliest date 
+                	# compare last updates to find the earliest date
 		            # get the diff in seconds
 		            my $date_diff = $formatted_PLU - $formatted_ELU;
 		            if ($date_diff < 0) {
@@ -672,7 +676,7 @@ sub getDocsFromSourceDB
 		            } else {
 		                $lasttransfer = $expressionLastTransfer;
 		            }
-        		
+
 	        		$docInfo_sql .= "SELECT 'QUERY_HERE' ";
 
 	        		$counter++;
@@ -688,7 +692,7 @@ sub getDocsFromSourceDB
     		    # execute query
     	    	$query->execute()
 	    	    	or die "Could not execute query: " . $query->errstr;
-    
+
                 my $data = $query->fetchall_arrayref();
 	        	foreach my $row (@$data) {
 
@@ -719,20 +723,20 @@ sub inOurDatabase
 
 	my $sourceUID   = $document->getDocSourceUID(); # retrieve document id
     my $sourceDBSer = $document->getDocSourceDatabaseSer();
-	
+
 	my $DocSourceUIDInDB = 0; # false by default. Will be true if document exists
 	my $ExistingDoc = (); # data to be entered if document exists
 
 	# Other document variables, if it exists
 	my ($ser, $revised, $validentry, $errtxt, $fileloc, $transferstatus, $aliasexpressionser, $log, $patientser);
 	my ($apprvby, $apprvts, $authoredby, $dos, $createdby, $createdts, $cronlogser);
-	
+
 	my $inDB_sql = "
 		SELECT
-			Document.PatientSerNum, 
+			Document.PatientSerNum,
 			Document.DocumentId,
 			Document.Revised,
-			Document.ValidEntry,	
+			Document.ValidEntry,
 			Document.ErrorReasonText,
 			Document.OriginalFileName,
 			Document.TransferStatus,
@@ -760,9 +764,9 @@ sub inOurDatabase
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
-	
+
 		$patientser		    = $data[0];
 		$DocSourceUIDInDB	= $data[1];
 		$revised		    = $data[2];
@@ -795,12 +799,12 @@ sub inOurDatabase
 		$ExistingDoc->setDocErrorReasonText($errtxt);
 		$ExistingDoc->setDocFileLoc($fileloc);
 		$ExistingDoc->setDocTransferStatus($transferstatus);
-		$ExistingDoc->setDocAliasExpressionSer($expressionser);	
+		$ExistingDoc->setDocAliasExpressionSer($expressionser);
 		$ExistingDoc->setDocLog($log);
 		$ExistingDoc->setDocApprovedBy($apprvby);
 		$ExistingDoc->setDocApprovedTimeStamp($apprvts);
 		$ExistingDoc->setDocAuthoredBy($authoredby);
-		$ExistingDoc->setDocDateOfService($dos);		
+		$ExistingDoc->setDocDateOfService($dos);
 		$ExistingDoc->setDocCreatedBy($createdby);
 		$ExistingDoc->setDocCreatedTimeStamp($createdts);
 		$ExistingDoc->setDocCronLogSer($cronlogser);
@@ -842,9 +846,9 @@ sub transferPatientDocuments
 		my $DocExists = $Document->inOurDatabase();
 
 		my $finalfileloc = $Document->getDocFileLoc(); # document file name
-	
+
 		# get directory where we store the .pdf files (converted from .doc)
-		my $localDir = $ftpObject->getFTPLocalDir(); 
+		my $localDir = $ftpObject->getFTPLocalDir();
 
         print "PDF: $localDir LOC: $finalfileloc\n" if $verbose;
 
@@ -857,9 +861,9 @@ sub transferPatientDocuments
 		my $sourcefile = "$clinicalDir/$finalfileloc"; # concatenate directory and file
 
         print "Source file: $sourcefile\n" if $verbose;
-		
+
 		my ($originalfileloc, $originalfilenum, $originalextension);
-	
+
  		# check if document file exists on Aria server harddrive
   		if (-e $sourcefile)
   		{
@@ -878,7 +882,7 @@ sub transferPatientDocuments
 
                 if ($validentry eq "N") { # errored out document
 
-            		# find when the document was last updated (if the document has been errored out 
+            		# find when the document was last updated (if the document has been errored out
             		# this info would correspond to the user who errored out said document)
             		my $lastModUser;
             		my $lastModTimeStamp;
@@ -888,7 +892,7 @@ sub transferPatientDocuments
 				    ######################################
 				    if (sourceDBSer eq 1) {
 	            		my $last_mod_sql = "
-				            SELECT 
+				            SELECT
 	            				CONVERT(VARCHAR, visit_note.trans_log_mtstamp, 120),
 				            	RTRIM(visit_note.trans_log_muserid)
 	            			FROM
@@ -906,7 +910,7 @@ sub transferPatientDocuments
 				            or die "Could not execute query: " . $query->errstr;
 
 	            		while (my @data = $query->fetchrow_array()) {
-				    
+
 	            			$lastModTimeStamp	= $data[0];
 	            			$lastModUser		= Staff::reassignStaff($data[1], $sourceDBSer);
 	            		}
@@ -954,7 +958,7 @@ sub transferPatientDocuments
 
                     # create an error file
                     my $sourceErrorFile = "$localDir/$finalfilenum.err";
-                    
+
                     #####################################
 					# Write error file information
 					#####################################
@@ -976,9 +980,9 @@ END
                     print $error $error_text;
                     close $error; # close handle
 
-					# Convert error file to .pdf 
+					# Convert error file to .pdf
 					system("$lowriter --headless --convert-to pdf --nologo --outdir $localDir $sourceErrorFile");
-                    $Document->setDocFileLoc("$finalfilenum.pdf"); # record that it has been changed 
+                    $Document->setDocFileLoc("$finalfilenum.pdf"); # record that it has been changed
 
                 }
 
@@ -990,18 +994,18 @@ END
     				# Convert .doc to .pdf if .doc
 	    			if ($finalextension eq "doc") {
 		    			system("$lowriter --headless --convert-to pdf --nologo --outdir $localDir $sourcefile");
-                    	$Document->setDocFileLoc("$finalfilenum.pdf"); # record that it has been changed 
+                    	$Document->setDocFileLoc("$finalfilenum.pdf"); # record that it has been changed
     				}
 	    			# if already pdf, just copy
 		    		if ($finalextension eq "pdf") {
 			    		system("cp $sourcefile $localDir/$finalfileloc");
 				    }
-  
+
                 }
 
                 # set transfer status to true
 	    		$Document->setDocTransferStatus("T");
-	
+
 	    		# log this transfer as a success
 		    	$Document->setDocLog("Transfer successful");
 
@@ -1009,7 +1013,7 @@ END
 				my $UpdatedDoc = $Document->compareWith($ExistingDoc);
 
 				# update document table
-				$UpdatedDoc->updateDatabase();	
+				$UpdatedDoc->updateDatabase();
 
                 # send push notification
                 my $docSer = $UpdatedDoc->getDocSer();
@@ -1019,18 +1023,18 @@ END
                 	# only send push notification for access level 3
                 	PushNotification::sendPushNotification($patientSer, $docSer, 'UpdDocument');
                 }
-                
+
 
 			} else { # document DNE in our database
-			
-				print "NEW DOCUMENT\n" if $verbose; 
+
+				print "NEW DOCUMENT\n" if $verbose;
 
                 # determine whether document is errored out or not
                 my $validentry = $Document->getDocValidEntry();
 
-                if ($validentry eq "N") { # errored out 
+                if ($validentry eq "N") { # errored out
 
-            		# find when the document was last updated (if the document has been errored out 
+            		# find when the document was last updated (if the document has been errored out
             		# this info would correspond to the user who errored out said document)
             		my $lastModUser;
             		my $lastModTimeStamp;
@@ -1041,7 +1045,7 @@ END
 				    if (sourceDBSer eq 1) {
 
 	            		my $last_mod_sql = "
-				            SELECT 
+				            SELECT
 	            				CONVERT(VARCHAR, visit_note.trans_log_mtstamp, 120),
 				            	RTRIM(visit_note.trans_log_muserid)
 	            			FROM
@@ -1059,7 +1063,7 @@ END
 				            or die "Could not execute query: " . $query->errstr;
 
 	            		while (my @data = $query->fetchrow_array()) {
-				    
+
 	            			$lastModTimeStamp	= $data[0];
 	            			$lastModUser		= Staff::reassignStaff($data[1], $sourceDBSer);
 	            		}
@@ -1107,7 +1111,7 @@ END
 
                     # create an error file
                     my $sourceErrorFile = "$localDir/$finalfilenum.err";
-                    
+
                     #####################################
 					# Write error file information
 					#####################################
@@ -1129,15 +1133,15 @@ END
                     print $error $error_text;
                     close $error; # close handle
 
-					# Convert error file to .pdf 
+					# Convert error file to .pdf
 					system("$lowriter --headless --convert-to pdf --nologo --outdir $localDir $sourceErrorFile");
-                    $Document->setDocFileLoc("$finalfilenum.pdf"); # record that it has been changed 
+                    $Document->setDocFileLoc("$finalfilenum.pdf"); # record that it has been changed
 
 
 
                 }
                 if ($validentry eq "Y") { # not errored out
-    
+
                     # Convert .doc to .pdf if .doc
     				if ($finalextension eq "doc") {
 	    				system("$lowriter --headless --convert-to pdf --nologo --outdir $localDir $sourcefile");
@@ -1148,13 +1152,13 @@ END
 			    		system("cp $sourcefile $localDir/$finalfileloc");
 			    	}
                 }
-  		
+
 				# set transfer status to true
 				$Document->setDocTransferStatus("T");
-	
+
 				# log this transfer as a success
 				$Document->setDocLog("Transfer successful");
-				
+
 				# insert Document log into our database
 				$Document = $Document->insertDocIntoOurDB();
 
@@ -1171,13 +1175,13 @@ END
 
 		# document file DNE
 		else
-		{	
+		{
 			# set the transfer status to false
 			$Document->setDocTransferStatus("F");
 			# log this as a type of error
 			$Document->setDocLog("No such file exists in the directory");
             # Change extension for database
-            $Document->setDocFileLoc("$finalfilenum.pdf"); # record that it has been changed 
+            $Document->setDocFileLoc("$finalfilenum.pdf"); # record that it has been changed
 
 			if ($DocExists) { # document log exists
 
@@ -1187,14 +1191,14 @@ END
 
 				# simply update document log
 				$UpdatedDoc->updateDatabase();
-			
+
 			} else { # document log DNE in our database
-	
+
 				# insert Document log into our database
 				$Document = $Document->insertDocIntoOurDB();
 			}
 
-		} # END else 
+		} # END else
 
         $sourceDatabase->disconnect();
 
@@ -1217,8 +1221,8 @@ sub insertDocIntoOurDB
 	my $errtxt			    = $document->getDocErrorReasonText();
 	my $fileloc			    = $document->getDocFileLoc();
 	my $transferstatus		= $document->getDocTransferStatus();
-	my $expressionser		= $document->getDocAliasExpressionSer();	
-	my $log				    = $document->getDocLog();	
+	my $expressionser		= $document->getDocAliasExpressionSer();
+	my $log				    = $document->getDocLog();
 	my $approvedby			= $document->getDocApprovedBy();
 	my $approvedtimestamp   = $document->getDocApprovedTimeStamp();
 	my $authoredby			= $document->getDocAuthoredBy();
@@ -1228,26 +1232,26 @@ sub insertDocIntoOurDB
 	my $cronlogser			= $document->getDocCronLogSer();
 
 	my $insert_sql = "
-		INSERT INTO 
+		INSERT INTO
 			Document (
-				DocumentSerNum, 
+				DocumentSerNum,
 				CronLogSerNum,
 				PatientSerNum,
                 SourceDatabaseSerNum,
-				DocumentId, 
+				DocumentId,
 				ApprovedBySerNum,
 				ApprovedTimeStamp,
                 AuthoredBySerNum,
                 DateOfService,
-				AliasExpressionSerNum, 
-				Revised, 
-				ValidEntry, 
-				ErrorReasonText, 
-				OriginalFileName, 
+				AliasExpressionSerNum,
+				Revised,
+				ValidEntry,
+				ErrorReasonText,
+				OriginalFileName,
 				FinalFileName,
                 CreatedBySerNum,
                 CreatedTimeStamp,
-				TransferStatus, 
+				TransferStatus,
 				TransferLog,
                 DateAdded,
 				LastUpdated
@@ -1270,13 +1274,13 @@ sub insertDocIntoOurDB
 			'$fileloc',
             '$createdby',
             '$createdtimestamp',
-			'$transferstatus',	
+			'$transferstatus',
 			'$log',
             NOW(),
 			NULL
 		)
 	";
-		
+
 	# prepare query
 	my $query = $SQLDatabase->prepare($insert_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
@@ -1299,7 +1303,7 @@ sub insertDocIntoOurDB
 #======================================================================================
 sub updateDatabase
 {
-	my ($document) = @_; # our document 
+	my ($document) = @_; # our document
 
 	my $sourceuid		    = $document->getDocSourceUID();
     my $sourcedbser         = $document->getDocSourceDatabaseSer();
@@ -1309,8 +1313,8 @@ sub updateDatabase
 	my $errtxt			    = $document->getDocErrorReasonText();
 	my $fileloc			    = $document->getDocFileLoc();
 	my $transferstatus	    = $document->getDocTransferStatus();
-	my $expressionser	    = $document->getDocAliasExpressionSer();	
-	my $log				    = $document->getDocLog();	
+	my $expressionser	    = $document->getDocAliasExpressionSer();
+	my $log				    = $document->getDocLog();
 	my $approvedby		    = $document->getDocApprovedBy();
 	my $approvedtimestamp	= $document->getDocApprovedTimeStamp();
 	my $authoredby			= $document->getDocAuthoredBy();
@@ -1322,7 +1326,7 @@ sub updateDatabase
 	my $update_sql = "
 		UPDATE
 			Document
-		SET 
+		SET
 			PatientSerNum		    = '$patientser',
 			CronLogSerNum 			= '$cronlogser',
 			Revised		 	        = '$revised',
@@ -1336,7 +1340,7 @@ sub updateDatabase
  			AuthoredBySerNum		= '$authoredby',
 			DateOfService			= '$dateofservice',
    			CreatedBySerNum			= '$createdby',
-			CreatedTimeStamp		= '$createdtimestamp',        
+			CreatedTimeStamp		= '$createdtimestamp',
 			TransferLog		        = '$log',
             ReadStatus              = 0
 		WHERE
@@ -1351,7 +1355,7 @@ sub updateDatabase
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 }
 
 #======================================================================================
@@ -1360,7 +1364,7 @@ sub updateDatabase
 #======================================================================================
 sub compareWith
 {
-	my ($SuspectDoc, $OriginalDoc) = @_; # our two document objects from arguments 
+	my ($SuspectDoc, $OriginalDoc) = @_; # our two document objects from arguments
 	my $UpdatedDoc = dclone($OriginalDoc);
 
 	# retrieve parameters...
@@ -1373,23 +1377,23 @@ sub compareWith
 	my $Sapprovedtimestamp	= $SuspectDoc->getDocApprovedTimeStamp();
 	my $Sfileloc			= $SuspectDoc->getDocFileLoc();
 	my $Stransferstatus		= $SuspectDoc->getDocTransferStatus();
-	my $Slog			    = $SuspectDoc->getDocLog();	
+	my $Slog			    = $SuspectDoc->getDocLog();
 	my $Sauthoredby			= $SuspectDoc->getDocAuthoredBy();
 	my $Sdateofservice		= $SuspectDoc->getDocDateOfService();
 	my $Screatedby			= $SuspectDoc->getDocCreatedBy();
 	my $Screatedtimestamp	= $SuspectDoc->getDocCreatedTimeStamp();
 	my $Scronlogser			= $SuspectDoc->getDocCronLogSer();
 
-	# Original document...	
+	# Original document...
 	my $Orevised			= $OriginalDoc->getDocRevised();
 	my $Ovalidentry			= $OriginalDoc->getDocValidEntry();
 	my $Oerrtxt			    = $OriginalDoc->getDocErrorReasonText();
-	my $Oaliasexpressionser	= $OriginalDoc->getDocAliasExpressionSer();	
+	my $Oaliasexpressionser	= $OriginalDoc->getDocAliasExpressionSer();
 	my $Oapprovedby			= $OriginalDoc->getDocApprovedBy();
 	my $Oapprovedtimestamp	= $OriginalDoc->getDocApprovedTimeStamp();
 	my $Ofileloc			= $OriginalDoc->getDocFileLoc();
 	my $Otransferstatus		= $OriginalDoc->getDocTransferStatus();
-	my $Olog			    = $OriginalDoc->getDocLog();	
+	my $Olog			    = $OriginalDoc->getDocLog();
 	my $Oauthoredby			= $OriginalDoc->getDocAuthoredBy();
 	my $Odateofservice		= $OriginalDoc->getDocDateOfService();
 	my $Ocreatedby			= $OriginalDoc->getDocCreatedBy();
@@ -1462,7 +1466,7 @@ sub compareWith
 		print "Document Created TimeStamp has changed from '$Ocreatedtimestamp' to '$Screatedtimestamp'\n";
 		my $updatedCreatedTimeStamp = $UpdatedDoc->setDocCreatedTimeStamp($Screatedtimestamp); # update
 		print "Will update database entry to '$updatedCreatedTimeStamp'.\n";
-	}   
+	}
 	if ($Stransferstatus ne $Otransferstatus) {
 
 		print "Document Transfer Status has changed from '$Otransferstatus' to '$Stransferstatus'\n";
@@ -1486,5 +1490,4 @@ sub compareWith
 }
 
 # To exit/return always true (for the module itself)
-1;	
-
+1;
