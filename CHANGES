@@ -1,3 +1,6 @@
+Version 0.18.16.3:
+ - Merge branch 'hotfix-0.18.16.2'
+
 Version 0.18.16.2:
  - Merge branch 'hotfix-0.18.16.1'
  - 	--- Fixes white space in appointment code causing alias expression serial to be null
