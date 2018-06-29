@@ -2,12 +2,12 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 25-Jul-2017 ++ File: PatientLocation.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates a patient location (PL) class. This module calls a constructor to 
-# create a PL object that contains PL information stored as object 
+# Perl module that creates a patient location (PL) class. This module calls a constructor to
+# create a PL object that contains PL information stored as object
 # variables.
 #
 # There exists various subroutines to set PL information, get PL information
-# and compare PL information between two PL objects. 
+# and compare PL information between two PL objects.
 # There exists various subroutines that use the Database.pm module to update the
 # MySQL database and check if a PL exists already in this database.
 
@@ -26,7 +26,7 @@ use Storable qw(dclone);
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our Patient Location class 
+# Constructor for our Patient Location class
 #====================================================================================
 sub new
 {
@@ -45,12 +45,12 @@ sub new
 
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
-	bless $patientlocation, $class; 
+	bless $patientlocation, $class;
 	return $patientlocation;
 }
 
 #====================================================================================
-# Subroutine to set the PL serial 
+# Subroutine to set the PL serial
 #====================================================================================
 sub setPatientLocationSer
 {
@@ -60,7 +60,7 @@ sub setPatientLocationSer
 }
 
 #====================================================================================
-# Subroutine to set the PL appointment serial 
+# Subroutine to set the PL appointment serial
 #====================================================================================
 sub setPatientLocationAppointmentSer
 {
@@ -90,7 +90,7 @@ sub setPatientLocationSourceUID
 }
 
 #====================================================================================
-# Subroutine to set the PL revision count 
+# Subroutine to set the PL revision count
 #====================================================================================
 sub setPatientLocationRevisionCount
 {
@@ -110,7 +110,7 @@ sub setPatientLocationCheckedInFlag
 }
 
 #====================================================================================
-# Subroutine to set the PL arrival date time  
+# Subroutine to set the PL arrival date time
 #====================================================================================
 sub setPatientLocationArrivalDateTime
 {
@@ -120,7 +120,7 @@ sub setPatientLocationArrivalDateTime
 }
 
 #====================================================================================
-# Subroutine to set the PL venue serial 
+# Subroutine to set the PL venue serial
 #====================================================================================
 sub setPatientLocationVenueSer
 {
@@ -130,7 +130,7 @@ sub setPatientLocationVenueSer
 }
 
 #====================================================================================
-# Subroutine to set the PL history date time 
+# Subroutine to set the PL history date time
 #====================================================================================
 sub setPatientLocationHstryDateTime
 {
@@ -229,6 +229,10 @@ sub getPatientLocationsFromSourceDB
 
 	my @patientLocationList = (); # initialize a list for PL objects
 
+	if (scalar @patientList == 0) {
+          return @patientLocationList;
+  }
+
 	my ($appointmentser, $sourceuid, $revcount, $checkedinflag, $arrivaldatetime, $venueser); # for query results
 	my $lasttransfer;
 
@@ -246,7 +250,7 @@ sub getPatientLocationsFromSourceDB
 		foreach my $Alias (@aliasList) {
 			my $aliasSourceDBSer 	= $Alias->getAliasSourceDatabaseSer();
 			my $aliasSer 			= $Alias->getAliasSer();
-			my @expressions         = $Alias->getAliasExpressions(); 
+			my @expressions         = $Alias->getAliasExpressions();
 
 			if ($sourceDBSer eq $aliasSourceDBSer) {
 		        if (!exists $expressionHash{$sourceDBSer}) {
@@ -263,7 +267,7 @@ sub getPatientLocationsFromSourceDB
 		        	if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
 		        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",'$expressionName'";
 		        	} else {
-		        		# start a new string 
+		        		# start a new string
 		        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "'$expressionName'";
 		        	}
 
@@ -295,7 +299,7 @@ sub getPatientLocationsFromSourceDB
 		}
 		$patientInfo_sql .= ")";
 
-		my $plInfo_sql = $patientInfo_sql . 
+		my $plInfo_sql = $patientInfo_sql .
 			"
 				SELECT DISTINCT
 					sa.ScheduledActivitySer,
@@ -323,7 +327,7 @@ sub getPatientLocationsFromSourceDB
 				AND	sa.ScheduledActivitySer 		= pl.ScheduledActivitySer
 				AND (
 			";
-		my $numOfExpressions = keys %{$expressionHash{$sourceDBSer}}; 
+		my $numOfExpressions = keys %{$expressionHash{$sourceDBSer}};
         my $counter = 0;
 		# loop through each transfer date
         foreach my $lastTransferDate (keys %{$expressionHash{$sourceDBSer}}) {
@@ -397,7 +401,7 @@ sub getPatientLocationsFromSourceDB
 		foreach my $Alias (@aliasList) {
 			my $aliasSourceDBSer 	= $Alias->getAliasSourceDatabaseSer();
 			my $aliasSer 			= $Alias->getAliasSer();
-			my @expressions         = $Alias->getAliasExpressions(); 
+			my @expressions         = $Alias->getAliasExpressions();
 
 			if ($sourceDBSer eq $aliasSourceDBSer) {
 		        if (!exists $expressionHash{$sourceDBSer}) {
@@ -415,7 +419,7 @@ sub getPatientLocationsFromSourceDB
 		        	if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
 		        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",('$expressionName','$expressionDesc')";
 		        	} else {
-		        		# start a new string 
+		        		# start a new string
 		        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "('$expressionName','$expressionDesc')";
 		        	}
 
@@ -462,7 +466,7 @@ sub getPatientLocationsFromSourceDB
 				Venue,
 				Patient pt
 			JOIN ($patientInfo_sql) pi
-            ON 	LEFT(LTRIM(pt.SSN), 12)  = pi.SSN	
+            ON 	LEFT(LTRIM(pt.SSN), 12)  = pi.SSN
 			WHERE
 				mval.PatientSerNum 			= pt.PatientSerNum
 			AND mval.AppointmentSerNum		= pl.AppointmentSerNum
@@ -470,7 +474,7 @@ sub getPatientLocationsFromSourceDB
 			AND (
 		";
 
-		my $numOfExpressions = keys %{$expressionHash{$sourceDBSer}}; 
+		my $numOfExpressions = keys %{$expressionHash{$sourceDBSer}};
         my $counter = 0;
 		# loop through each transfer date
         foreach my $lastTransferDate (keys %{$expressionHash{$sourceDBSer}}) {
@@ -491,7 +495,7 @@ sub getPatientLocationsFromSourceDB
 			}
     	}
 
-    	#print "$plInfo_sql\n";	
+    	#print "$plInfo_sql\n";
         # prepare query
 	    my $query = $sourceDatabase->prepare($plInfo_sql)
 		    or die "Could not prepare query: " . $sourceDatabase->errstr;
@@ -545,7 +549,7 @@ sub getPatientLocationsFromSourceDB
 		# my $expressionDict = {};
 		# foreach my $Alias (@aliasList) {
 			# my $aliasSourceDBSer 	= $Alias->getAliasSourceDatabaseSer();
-		# 	my @expressions         = $Alias->getAliasExpressions(); 
+		# 	my @expressions         = $Alias->getAliasExpressions();
 
 			# if ($sourceDBSer eq $aliasSourceDBSer) {
 		 #        if (!exists $expressionHash{$sourceDBSer}) {
@@ -563,7 +567,7 @@ sub getPatientLocationsFromSourceDB
 		 #        	if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
 		 #        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",('$expressionName','$expressionDesc')";
 		 #        	} else {
-		 #        		# start a new string 
+		 #        		# start a new string
 		 #        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "('$expressionName','$expressionDesc')";
 		 #        	}
 
@@ -602,7 +606,7 @@ sub getPatientLocationsMHFromSourceDB
 		my $patientSSN 				= $Patient->getPatientSSN();
 		my $patientLastTransfer		= $Patient->getPatientLastTransfer();
 
-		# reformat patient last transfer date 
+		# reformat patient last transfer date
 		my $formatted_PLU = Time::Piece->strptime($patientLastTransfer, "%Y-%m-%d %H:%M:%S");
 
 		foreach my $patientLocation (@$PLList) {
@@ -645,10 +649,10 @@ sub getPatientLocationsMHFromSourceDB
 				# execute query
 	        	$query->execute()
 		        	or die "Could not execute query: " . $query->errstr;
-    
+
         		# Fetched all data, instead of fetching each row
         		my $data = $query->fetchall_arrayref();
-		        
+
 		        foreach my $row (@$data) {
 
 					my $patientlocationMH = new PatientLocation(); # new PL object
@@ -703,7 +707,7 @@ sub getPatientLocationsMHFromSourceDB
 					AND pl.PatientLocationSerNum 	= '$sourceuid'
 				";
 
-                # print "$plInfo_sql\n";	
+                # print "$plInfo_sql\n";
 		        # prepare query
     		    my $query = $sourceDatabase->prepare($plInfo_sql)
 	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;
@@ -711,7 +715,7 @@ sub getPatientLocationsMHFromSourceDB
         		# execute query
 	        	$query->execute()
 		        	or die "Could not execute query: " . $query->errstr;
-    
+
         		# Fetched all data, instead of fetching each row
         		my $data = $query->fetchall_arrayref();
 		        foreach my $row (@$data) {
@@ -745,10 +749,10 @@ sub getPatientLocationsMHFromSourceDB
 		    # MOSAIQ
 		    ######################################
             if ($sourceDBSer eq 3) {
-  
+
                 my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
 
-                my $numOfExpressions = @expressions; 
+                my $numOfExpressions = @expressions;
                 my $counter = 0;
                 my $plInfo_sql = "";
 
@@ -759,7 +763,7 @@ sub getPatientLocationsMHFromSourceDB
                 	my $expressionLastTransfer = $Expression->{_lasttransfer};
                 	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
 
-                	# compare last updates to find the earliest date 
+                	# compare last updates to find the earliest date
 		            # get the diff in seconds
 		            my $date_diff = $formatted_PLU - $formatted_ELU;
 		            if ($date_diff < 0) {
@@ -784,13 +788,13 @@ sub getPatientLocationsMHFromSourceDB
         		# execute query
 	        	$query->execute()
 		        	or die "Could not execute query: " . $query->errstr;
-    
+
         		# Fetched all data, instead of fetching each row
         		my $data = $query->fetchall_arrayref();
 		        foreach my $row (@$data) {
-			    
+
     			    #my $patientlocation = new PatientLocation(); # uncomment to use
-                
+
                 	# use setters to set appropriate PL information from query
 
                 	#push(@patientLocationMHList, $patientlocation);
@@ -818,7 +822,7 @@ sub inOurDatabase
 	my $sourceDBSer = $patientlocation->getPatientLocationSourceDatabaseSer();
 
 	my $PLSourceUIDInDB = 0; # false by default. Will be true if PL exists
-	my $ExistingPL = (); # data to be entered if PL exists 
+	my $ExistingPL = (); # data to be entered if PL exists
 
 	# Other pl variables, if pl exists
 	my ($ser, $appointmentser, $revcount, $checkedinflag, $arrivaldatetime, $venueser);
@@ -833,7 +837,7 @@ sub inOurDatabase
 			pl.ArrivalDateTime,
 			pl.VenueSerNum
 		FROM
-			PatientLocation pl 
+			PatientLocation pl
 		WHERE
 			pl.SourceDatabaseSerNum  	= $sourceDBSer
 		AND pl.SourceUID				= $sourceUID
@@ -846,7 +850,7 @@ sub inOurDatabase
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
 
 		$ser 				= $data[0];
@@ -889,7 +893,7 @@ sub inOurDatabaseMH
 	my $sourceDBSer = $patientlocation->getPatientLocationSourceDatabaseSer();
 
 	my $PLSourceUIDInDB = 0; # false by default. Will be true if PL exists
-	my $ExistingPL = (); # data to be entered if PL exists 
+	my $ExistingPL = (); # data to be entered if PL exists
 
 	# Other pl variables, if pl exists
 	my ($ser, $appointmentser, $revcount, $checkedinflag, $arrivaldatetime, $venueser, $hstrydatetime);
@@ -905,7 +909,7 @@ sub inOurDatabaseMH
 			plmh.VenueSerNum,
 			plmh.HstryDateTime
 		FROM
-			PatientLocationMH plmh 
+			PatientLocationMH plmh
 		WHERE
 			plmh.SourceDatabaseSerNum  	= $sourceDBSer
 		AND plmh.SourceUID				= $sourceUID
@@ -918,7 +922,7 @@ sub inOurDatabaseMH
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
 
 		$ser 				= $data[0];
@@ -967,7 +971,7 @@ sub insertPatientLocationIntoOurDB
 	my $venueser			= $patientlocation->getPatientLocationVenueSer();
 
 	my $insert_sql = "
-		INSERT INTO 
+		INSERT INTO
 			PatientLocation (
 				SourceDatabaseSerNum,
 				SourceUID,
@@ -1024,7 +1028,7 @@ sub insertPatientLocationMHIntoOurDB
 	my $hstrydatetime 		= $patientlocation->getPatientLocationHstryDateTime();
 
 	my $insert_sql = "
-		INSERT INTO 
+		INSERT INTO
 			PatientLocationMH (
 				SourceDatabaseSerNum,
 				SourceUID,
@@ -1099,7 +1103,7 @@ sub updateDatabase
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 }
 
 #======================================================================================
@@ -1135,7 +1139,7 @@ sub updateDatabaseMH
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 }
 
 #======================================================================================
