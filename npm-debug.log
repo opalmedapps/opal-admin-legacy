@@ -48,12 +48,12 @@
 41 verbose targetResolver reading package data from /var/www/devDocuments/opalAdmin/node_modules/.bin/eslint/package.json
 42 verbose targetResolver reading package data from /var/www/devDocuments/opalAdmin/node_modules/.bin/grunt/package.json
 43 verbose targetResolver reading package data from /var/www/devDocuments/opalAdmin/node_modules/.bin/validate-commit-msg/package.json
-44 verbose already installed skipping angular-ui-grid@^4.0.2 /var/www/devDocuments/opalAdmin
-45 verbose already installed skipping express@^4.15.3 /var/www/devDocuments/opalAdmin
-46 verbose already installed skipping eslint@^3.18.0 /var/www/devDocuments/opalAdmin
-47 verbose already installed skipping firebase@^3.7.6 /var/www/devDocuments/opalAdmin
-48 verbose already installed skipping firebase-admin@^4.2.0 /var/www/devDocuments/opalAdmin
-49 verbose already installed skipping validate-commit-message@^3.0.1 /var/www/devDocuments/opalAdmin
+44 verbose already installed skipping express@^4.15.3 /var/www/devDocuments/opalAdmin
+45 verbose already installed skipping firebase@^3.7.6 /var/www/devDocuments/opalAdmin
+46 verbose already installed skipping firebase-admin@^4.2.0 /var/www/devDocuments/opalAdmin
+47 verbose already installed skipping validate-commit-message@^3.0.1 /var/www/devDocuments/opalAdmin
+48 verbose already installed skipping angular-ui-grid@^4.0.2 /var/www/devDocuments/opalAdmin
+49 verbose already installed skipping eslint@^3.18.0 /var/www/devDocuments/opalAdmin
 50 silly install resolved []
 51 info build /var/www/devDocuments/opalAdmin
 52 info linkStuff opaladmin@0.13.0
@@ -96,26 +96,26 @@
 74 verbose link bins   false ]
 75 verbose linkMans grunt@1.0.1
 76 verbose rebuildBundles grunt@1.0.1
-77 verbose rebuildBundles [ '.bin',
-77 verbose rebuildBundles   'coffee-script',
-77 verbose rebuildBundles   'dateformat',
-77 verbose rebuildBundles   'eventemitter2',
-77 verbose rebuildBundles   'exit',
-77 verbose rebuildBundles   'findup-sync',
-77 verbose rebuildBundles   'glob',
-77 verbose rebuildBundles   'grunt-cli',
-77 verbose rebuildBundles   'grunt-known-options',
-77 verbose rebuildBundles   'grunt-legacy-log',
-77 verbose rebuildBundles   'grunt-legacy-util',
-77 verbose rebuildBundles   'iconv-lite',
-77 verbose rebuildBundles   'js-yaml',
-77 verbose rebuildBundles   'minimatch',
-77 verbose rebuildBundles   'nopt',
-77 verbose rebuildBundles   'path-is-absolute',
-77 verbose rebuildBundles   'rimraf' ]
-78 silly gentlyRm /var/www/devDocuments/opalAdmin/node_modules/.bin/grunt is being purged
-79 verbose gentlyRm don't care about contents; nuking /var/www/devDocuments/opalAdmin/node_modules/.bin/grunt
-80 silly vacuum-fs purging /var/www/devDocuments/opalAdmin/node_modules/.bin/grunt
+77 silly gentlyRm /var/www/devDocuments/opalAdmin/node_modules/.bin/grunt is being purged
+78 verbose gentlyRm don't care about contents; nuking /var/www/devDocuments/opalAdmin/node_modules/.bin/grunt
+79 silly vacuum-fs purging /var/www/devDocuments/opalAdmin/node_modules/.bin/grunt
+80 verbose rebuildBundles [ '.bin',
+80 verbose rebuildBundles   'coffee-script',
+80 verbose rebuildBundles   'dateformat',
+80 verbose rebuildBundles   'eventemitter2',
+80 verbose rebuildBundles   'exit',
+80 verbose rebuildBundles   'findup-sync',
+80 verbose rebuildBundles   'glob',
+80 verbose rebuildBundles   'grunt-cli',
+80 verbose rebuildBundles   'grunt-known-options',
+80 verbose rebuildBundles   'grunt-legacy-log',
+80 verbose rebuildBundles   'grunt-legacy-util',
+80 verbose rebuildBundles   'iconv-lite',
+80 verbose rebuildBundles   'js-yaml',
+80 verbose rebuildBundles   'minimatch',
+80 verbose rebuildBundles   'nopt',
+80 verbose rebuildBundles   'path-is-absolute',
+80 verbose rebuildBundles   'rimraf' ]
 81 silly vacuum-fs quitting because other entries in /var/www/devDocuments/opalAdmin/node_modules/.bin
 82 verbose stack Error: EPERM, chmod '/var/www/devDocuments/opalAdmin/node_modules/grunt/bin/grunt'
 82 verbose stack     at Error (native)
