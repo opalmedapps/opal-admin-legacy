@@ -2,12 +2,12 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 06-Oct-2015 ++ File: ResourceAppointment.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates a resourceappointment (RA) class. This module calls a constructor to 
-# create an RA object that contains RA information stored as object 
+# Perl module that creates a resourceappointment (RA) class. This module calls a constructor to
+# create an RA object that contains RA information stored as object
 # variables.
 #
 # There exists various subroutines to set RA information, get RA information
-# and compare RA information between two RA objects. 
+# and compare RA information between two RA objects.
 # There exists various subroutines that use the Database.pm module to update the
 # MySQL database and check if an RA exists already in this database.
 
@@ -29,7 +29,7 @@ use Data::Dumper;
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our PatientDoctor class 
+# Constructor for our PatientDoctor class
 #====================================================================================
 sub new
 {
@@ -114,7 +114,7 @@ sub getResourceAppointmentResourceSer
 	my ($resappt) = @_; # our RA object
 	return $resappt->{_resourceser};
 }
-		
+
 #====================================================================================
 # Subroutine to get the RA appointment serial
 #====================================================================================
@@ -151,6 +151,10 @@ sub getResourceAppointmentsFromSourceDB
 
 	my @resapptList = (); # initialize a list for ResourceAppointment objects
 
+	if (scalar @patientList == 0) {
+          return @resapptList;
+  }
+
 	my ($resourceser, $apptser, $exclusiveflag, $primaryflag); # for query results
     my $lasttransfer;
 
@@ -168,7 +172,7 @@ sub getResourceAppointmentsFromSourceDB
 		foreach my $Alias (@aliasList) {
 			my $aliasSourceDBSer 	= $Alias->getAliasSourceDatabaseSer();
 			my $aliasSer 			= $Alias->getAliasSer();
-			my @expressions         = $Alias->getAliasExpressions(); 
+			my @expressions         = $Alias->getAliasExpressions();
 
 			if ($sourceDBSer eq $aliasSourceDBSer) {
 		        if (!exists $expressionHash{$sourceDBSer}) {
@@ -185,7 +189,7 @@ sub getResourceAppointmentsFromSourceDB
 		        	if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
 		        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",'$expressionName'";
 		        	} else {
-		        		# start a new string 
+		        		# start a new string
 		        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "'$expressionName'";
 		        	}
 
@@ -217,7 +221,7 @@ sub getResourceAppointmentsFromSourceDB
 		}
 		$patientInfo_sql .= ")";
 
-		my $raInfo_sql = $patientInfo_sql . 
+		my $raInfo_sql = $patientInfo_sql .
 			"
 				SELECT DISTINCT
 					att.ResourceSer,
@@ -245,7 +249,7 @@ sub getResourceAppointmentsFromSourceDB
 
 			";
 
-		my $numOfExpressions = keys %{$expressionHash{$sourceDBSer}}; 
+		my $numOfExpressions = keys %{$expressionHash{$sourceDBSer}};
         my $counter = 0;
 		# loop through each transfer date
         foreach my $lastTransferDate (keys %{$expressionHash{$sourceDBSer}}) {
@@ -314,7 +318,7 @@ sub getResourceAppointmentsFromSourceDB
 		foreach my $Alias (@aliasList) {
 			my $aliasSourceDBSer 	= $Alias->getAliasSourceDatabaseSer();
 			my $aliasSer 			= $Alias->getAliasSer();
-			my @expressions         = $Alias->getAliasExpressions(); 
+			my @expressions         = $Alias->getAliasExpressions();
 
 			if ($sourceDBSer eq $aliasSourceDBSer) {
 		        if (!exists $expressionHash{$sourceDBSer}) {
@@ -332,7 +336,7 @@ sub getResourceAppointmentsFromSourceDB
 		        	if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
 		        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",('$expressionName','$expressionDesc')";
 		        	} else {
-		        		# start a new string 
+		        		# start a new string
 		        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "('$expressionName','$expressionDesc')";
 		        	}
 
@@ -378,7 +382,7 @@ sub getResourceAppointmentsFromSourceDB
             AND (
         ";
 
-        my $numOfExpressions = keys %{$expressionHash{$sourceDBSer}}; 
+        my $numOfExpressions = keys %{$expressionHash{$sourceDBSer}};
         my $counter = 0;
 		# loop through each transfer date
         foreach my $lastTransferDate (keys %{$expressionHash{$sourceDBSer}}) {
@@ -411,7 +415,7 @@ sub getResourceAppointmentsFromSourceDB
 		# Fetched all data, instead of fetching each row
 		my $data = $query->fetchall_arrayref();
         foreach my $row (@$data) {
-	    
+
 		    my $resappt = new ResourceAppointment(); # new RA object
 
 		    my $patientSer 			= $row->[2];
@@ -447,7 +451,7 @@ sub getResourceAppointmentsFromSourceDB
 		# my $expressionDict = {};
 		# foreach my $Alias (@aliasList) {
 			# my $aliasSourceDBSer 	= $Alias->getAliasSourceDatabaseSer();
-		# 	my @expressions         = $Alias->getAliasExpressions(); 
+		# 	my @expressions         = $Alias->getAliasExpressions();
 
 			# if ($sourceDBSer eq $aliasSourceDBSer) {
 		 #        if (!exists $expressionHash{$sourceDBSer}) {
@@ -465,7 +469,7 @@ sub getResourceAppointmentsFromSourceDB
 		 #        	if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
 		 #        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",('$expressionName','$expressionDesc')";
 		 #        	} else {
-		 #        		# start a new string 
+		 #        		# start a new string
 		 #        		$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "('$expressionName','$expressionDesc')";
 		 #        	}
 
@@ -484,11 +488,11 @@ sub getResourceAppointmentsFromSourceDB
 	return @resapptList;
 
 }
-			
+
 #====================================================================================
 # Subroutine to get all patient's resources given an appointment serial
 #====================================================================================
-sub getPatientsResourcesFromOurDB 
+sub getPatientsResourcesFromOurDB
 {
     my ($appointmentSer) = @_; # args
 
@@ -528,7 +532,7 @@ sub getPatientsResourcesFromOurDB
 sub inOurDatabase
 {
 	my ($resappt) = @_; # ResourceAppointment object
-	
+
 	my $resourceSer	= $resappt->getResourceAppointmentResourceSer();
 	my $apptSer	= $resappt->getResourceAppointmentAppointmentSer();
 
@@ -557,7 +561,7 @@ sub inOurDatabase
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
 
 		$RASerInDB		= $data[0];
@@ -595,7 +599,7 @@ sub insertResourceAppointmentIntoOurDB
 	my $primaryflag		= $resappt->getResourceAppointmentPrimaryFlag();
 
 	my $insert_sql = "
-		INSERT INTO 
+		INSERT INTO
 			ResourceAppointment (
 				ResourceSerNum,
 				AppointmentSerNum,
@@ -627,7 +631,7 @@ sub insertResourceAppointmentIntoOurDB
 # Subroutine to update our database with the RA's updated info
 #======================================================================================
 sub updateDatabase
-{	
+{
 	my ($resappt) = @_; # our RA object to insert
 
 	my $resourceApptSer	= $resappt->getResourceAppointmentSer();
@@ -661,7 +665,7 @@ sub updateDatabase
 # to update RA object.
 #======================================================================================
 sub compareWith
-{	
+{
 	my ($SuspectRA, $OriginalRA) = @_; # our two RA objects
 	my $UpdatedRA = dclone($OriginalRA);
 
@@ -687,15 +691,9 @@ sub compareWith
 		my $updatedPrimaryFlag = $UpdatedRA->setResourceAppointmentPrimaryFlag($Sprimaryflag); # update
 		print "Will update database entry to '$updatedPrimaryFlag'.\n";
 	}
-	
+
 	return $UpdatedRA;
 }
 
 # To exit/return always true (for the module itself)
 1;
-
-
-
-	
-		
-				
