@@ -1,3 +1,9 @@
+Version 0.18.16.4:
+ -    --- Remove file
+ - Merge branch 'hotfix-0.18.16.3'
+ -    --- Add missing file
+ -    --- Fix empty patient array
+
 Version 0.18.16.3:
  - Merge branch 'hotfix-0.18.16.2'
 
