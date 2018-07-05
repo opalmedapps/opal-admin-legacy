@@ -13,13 +13,13 @@ package PushNotification; # Declaring package name
 
 use Database; # Our custom database module
 use Configs; # Configs.pm
-use NotificationControl; # NotificationControl.pm 
+use NotificationControl; # NotificationControl.pm
 
 use Time::Piece; # perl module
 use Array::Utils qw(:all);
 use POSIX; # perl module
 use LWP::UserAgent; # for post requests
-use JSON; 
+use JSON;
 use Net::Address::IP::Local;
 use Cwd;
 
@@ -31,11 +31,11 @@ use Patient; # Our custom patient module
 my $SQLDatabase		= $Database::targetDatabase;
 
 # global vars
-my $ipaddress = Net::Address::IP::Local->public; 
+my $ipaddress = Net::Address::IP::Local->public;
 my $thisURL = 'http://' . $ipaddress . $Configs::BACKEND_REL_URL . 'php/sendPushNotification.php';
 
 #====================================================================================
-# Constructor for our notification class 
+# Constructor for our notification class
 #====================================================================================
 sub new
 {
@@ -217,7 +217,7 @@ sub sendPushNotification
         $sendlog        = "Patient has no device identifier! No push notification sent.";
 
         my $insert_sql = "
-            INSERT INTO 
+            INSERT INTO
                 PushNotification (
                     PatientDeviceIdentifierSerNum,
                     PatientSerNum,
@@ -257,7 +257,7 @@ sub sendPushNotification
 
         # system command to call PHP push notification script
         my $browser = LWP::UserAgent->new;
-        my $response = $browser->post($thisURL, 
+        my $response = $browser->post($thisURL,
             [
                 'message_title'     => $title,
                 'message_text'      => $message,
@@ -270,7 +270,7 @@ sub sendPushNotification
         $returnStatus = decode_json($response->content);
 
         if ($returnStatus->{'success'} eq 1) {
-            
+
             $sendstatus = "T"; # successful
             $sendlog    = "Push notification successfully sent! Message: $message";
 
@@ -279,11 +279,11 @@ sub sendPushNotification
 
             $sendstatus = "F"; # failed
             $sendlog    = "Failed to send push notification! Message: $returnStatus->{'error'}";
-                
+
         }
 
         my $insert_sql = "
-            INSERT INTO 
+            INSERT INTO
                 PushNotification (
                     PatientDeviceIdentifierSerNum,
                     PatientSerNum,
@@ -327,16 +327,18 @@ sub getPatientDeviceIdentifiers
     # initialize list
     my @PTDIDs = ();
 
+    # DeviceType 0 is iOS
+    # DeviceType 1 is Android
     my $select_sql = "
         SELECT DISTINCT
             ptdid.PatientDeviceIdentifierSerNum,
             ptdid.RegistrationId,
             ptdid.DeviceType
-        FROM 
+        FROM
             PatientDeviceIdentifier ptdid
         WHERE
             ptdid.PatientSerNum = '$patientser'
-        AND ptdid.DeviceType    = '1' 
+            AND ptdid.DeviceType in ('0', '1')
     ";
 
     # prepare query
@@ -346,14 +348,14 @@ sub getPatientDeviceIdentifiers
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
 
         my $ser             = $data[0];
         my $registrationid  = $data[1];
         my $devicetype      = $data[2];
 
-        my $ptdid = {   
+        my $ptdid = {
             'ser'               => $ser,
             'registrationid'    => $registrationid,
             'devicetype'        => $devicetype
@@ -365,5 +367,5 @@ sub getPatientDeviceIdentifiers
     return @PTDIDs;
 }
 
-# Exit smoothly 
+# Exit smoothly
 1;
