@@ -339,6 +339,7 @@ sub getPatientDeviceIdentifiers
         WHERE
             ptdid.PatientSerNum = '$patientser'
             AND ptdid.DeviceType in ('0', '1')
+            AND IfNull(RegistrationId, '') <> ''
     ";
 
     # prepare query
