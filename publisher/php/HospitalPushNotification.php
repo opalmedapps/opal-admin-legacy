@@ -1,8 +1,8 @@
 <?php
     include_once "database.inc";
     require_once('PushNotifications.php');
-   
-   
+
+
    class HospitalPushNotification{
 
        /**
@@ -12,13 +12,13 @@
        **/
 
         /**
-        *    (sendSingleNotification($deviceType, $registrationId, $title, $description) 
-        *    Consumes a $deviceType, a $registrationId, a  $title and a $message 
+        *    (sendSingleNotification($deviceType, $registrationId, $title, $description)
+        *    Consumes a $deviceType, a $registrationId, a  $title and a $message
         *    Description: Sends notification with $title and $message to that device
         *    Requires: $deviceType = 0 or 1, 0 for iOS, 1 for Android.
 	    *    Returns: Array containing key of success, failure, error if any.
         **/
-       public function sendNotification($deviceType, $registrationId, $title, $description)
+       public static function sendNotification($deviceType, $registrationId, $title, $description)
        {
            $message = array(
                "mtitle"=>$title,
@@ -33,14 +33,14 @@
            }
            return $response;
        }
-    
+
         /**
         *    (sendNotificationToMultipleDevices($devices, $title, $description)
-        *    Consumes a $title,  a $description and an array of $devices. 
+        *    Consumes a $title,  a $description and an array of $devices.
         *    Sends notification with $title and $description to those devices listed
         *    Requires: $devices must have two fields for each array item: DeviceType,
         *    RegistrationId.
-        *    Returns: Array of Objects, each object has keys of success, failure,    
+        *    Returns: Array of Objects, each object has keys of success, failure,
         *    RegistrationId, DeviceType and error if any.
         **/
        public function sendNotificationToMultipleDevices($devices, $title, $description)
@@ -53,7 +53,7 @@
 
            //Go through list of devices
            $resultsArray = array();
-           for ($i=0; $i <count($devices) ; $i++) { 
+           for ($i=0; $i <count($devices) ; $i++) {
                //Determine device type
                 if($devices[$i]["DeviceType"]==0)
                 {
@@ -72,18 +72,18 @@
        }
       /**
         *    sendRoomNotification($patientId, $room, $appointmentSerNum):
-        *    Consumes a PatientId, a room location, and an AppointmentAriaSer, it 
-        *    stores notification in database, updates appointment with room location, sends 
-        *    the notification to the pertinent devices that map to that particular patientId,     
+        *    Consumes a PatientId, a room location, and an AppointmentAriaSer, it
+        *    stores notification in database, updates appointment with room location, sends
+        *    the notification to the pertinent devices that map to that particular patientId,
         *    and finally records the send status for the push notification.
         *    (sendRoomNotification String, String, String) -> Array
-        *    Requires: - PatientId and AppointmentSerNum are real values in the Database. 
-        *              - NotificationControlSerNum = 10, Corresponds to the AssignedRoom 
+        *    Requires: - PatientId and AppointmentSerNum are real values in the Database.
+        *              - NotificationControlSerNum = 10, Corresponds to the AssignedRoom
         *                notification.
-        *    Returns:  Object containing keys of success, failure,    
-        *             responseDevices, which is an array containing, (success, failure, 
-        *             registrationId, deviceId) for each device, and Message array containing 
-        *             (title,description),  NotificationSerNum, and error if any. 
+        *    Returns:  Object containing keys of success, failure,
+        *             responseDevices, which is an array containing, (success, failure,
+        *             registrationId, deviceId) for each device, and Message array containing
+        *             (title,description),  NotificationSerNum, and error if any.
         **/
        public function sendCallPatientNotification($patientId, $room, $appointmentAriaSer)
        {
@@ -107,7 +107,7 @@
                return array("success"=>0,"failure"=>1,"error"=>"No matching PatientSerNum or AppointmentSerNum in Database");
                exit();
            }
-           
+
            //Sets parameters for later usage
             $language = $result[0]["Language"];
             $patientSerNum = $result[0]["PatientSerNum"];
@@ -117,14 +117,14 @@
            //Update appointment room location in database
            try{
                $sql = "UPDATE Appointment SET RoomLocation_EN = '".$room['room_EN']."', RoomLocation_FR = '".$room['room_FR']."' WHERE Appointment.AppointmentAriaSer = ".$appointmentAriaSer." AND Appointment.PatientSerNum = ".$patientSerNum;
-                $resultAppointment = $pdo->query($sql); 
+                $resultAppointment = $pdo->query($sql);
            }catch(PDOException $e)
            {
                return array("success"=>0,"failure"=>1,"error"=>$e);
                exit();
            }
-           
-          //Insert into notifications table 
+
+          //Insert into notifications table
           try{
              $sql = 'INSERT INTO `Notification` (`PatientSerNum`, `NotificationControlSerNum`, `RefTableRowSerNum`, `DateAdded`, `ReadStatus`) SELECT '.$result[0]["PatientSerNum"].',ntc.NotificationControlSerNum,'.$result[0]["AppointmentSerNum"].', NOW(),0 FROM NotificationControl ntc WHERE ntc.NotificationType = "RoomAssignment"';
              $resultNotification = $pdo->query($sql);
@@ -133,8 +133,8 @@
                return array("success"=>0,"failure"=>1,"error"=>$e);
                exit();
            }
-            
- 
+
+
            //Obtain NotificationSerNum for the last inserted Id.
             //$notificationSerNum = $pdo->lastInsertId();
 
@@ -150,7 +150,7 @@
 
             //Build message, replace the $roomLocation with the actual room location argument $room
             $messageLabels = $result->fetch();
-           
+
             $message = self::buildMessageForRoomNotification($room["room_".$language], $messageLabels["Name_".$language ],$messageLabels["Description_".$language] );
            //Obtain patient device identifiers
             $patientDevices = self::getDevicesForPatient($patientId);
@@ -161,11 +161,11 @@
                 return array("success"=>1, "failure"=>0,"responseDevices"=>"No patient devices available for that patient");
                 exit();
             }
-            
+
             //Send message to patient devices and record in database
             $resultsArray = array();
             foreach($patientDevices as $device)
-            {   
+            {
                 //Determine device type
                 if($device["DeviceType"]==0)
                 {
@@ -185,14 +185,14 @@
 
             return array("success"=>1,"failure"=>0,"responseDevices"=>$resultsArray,"message"=>$message);
        }
-        
+
        /**
-       *    (sendNotificationUsingPatientId($patientId, $title, $description)) 
+       *    (sendNotificationUsingPatientId($patientId, $title, $description))
        *    Consumes a patientId, a title and a descriptions
        *    Description: Sends push notification containing title and description to all the
-       *                 devices matching that $patientId. 
-       *    NOTE: Does not log anything into database. 
-       *    Returns: Object with success, failure, responseDevices 
+       *                 devices matching that $patientId.
+       *    NOTE: Does not log anything into database.
+       *    Returns: Object with success, failure, responseDevices
        *            (array of response for each device), and the message array sent.
        **/
        public function sendNotificationUsingPatientId($patientId, $title, $description)
@@ -202,7 +202,7 @@
                "mtitle"=> $title,
                "mdesc"=> $description
            );
-            
+
             $patientDevices = self::getDevicesForPatient($patientId);
             //If not identifiers return there are no identifiers
             if(count($patientDevices)==0)
@@ -212,7 +212,7 @@
             }
 
            foreach($patientDevices as $device)
-            {   
+            {
                 //Determine device type
                 if($device["DeviceType"]==0)
                 {
@@ -233,11 +233,11 @@
 
        /**
        *    (sendFailedNotificationUsingNotificationSerNum($patientId, $title, $description,
-       *     $notificationSerNum)) 
+       *     $notificationSerNum))
        *    Consumes a patientId, a title, a description, and a notificationSerNum
        *    Description: Sends push notification containing title and description to all the
        *                 devices matching that $patientId and records results into OpalDB
-       *    Returns: Object with success, failure, responseDevices 
+       *    Returns: Object with success, failure, responseDevices
        *            (array of response for each device), and the message array sent.
        **/
        /*
@@ -251,7 +251,7 @@
 
            //Retrieve device identifiers for patient
             $patientDevices = self::getDevicesForPatient($patientId);
-        
+
             //If not identifiers return there are no identifiers
             if(count($patientDevices)==0)
             {
@@ -260,7 +260,7 @@
             }
            $resultsArray = array();
            foreach($patientDevices as $device)
-            {   
+            {
                 //Determine device type
                 if($device["DeviceType"]==0)
                 {
@@ -289,11 +289,11 @@
 
         /**
         *    (pushNotificationDatabaseUpdate($deviceSerNum, $patientSerNum, $appointmentSerNum, $sendStatus)
-        *    Consumes a PatientDeviceIdentifierSerNum, $deviceSerNum,   
+        *    Consumes a PatientDeviceIdentifierSerNum, $deviceSerNum,
         *    and response, $response, where send status is a 1 or 0 for whether is was successfully sent or not.
         *    Inserts a into the PushNotification table or updates SendLog flag.
         *    RegistrationId.
-        *    Returns: Returns the send status   
+        *    Returns: Returns the send status
         **/
        private function pushNotificationDatabaseUpdate($deviceSerNum, $patientSerNum, $appointmentSerNum, $response)
        {
@@ -304,10 +304,10 @@
            else {
                $sendStatus = 'T';
                $sendLog = "Successfully sent push notification!";
-           } 
+           }
            $sql = " INSERT INTO `PushNotification`(
                     `PatientDeviceIdentifierSerNum`, `PatientSerNum`, `NotificationControlSerNum`,
-                    `RefTableRowSerNum`, `DateAdded`, `SendStatus`, `SendLog`) 
+                    `RefTableRowSerNum`, `DateAdded`, `SendStatus`, `SendLog`)
                     SELECT ".$deviceSerNum.", $patientSerNum, ntc.NotificationControlSerNum, $appointmentSerNum,
                     NOW(),'".$sendStatus."','".$sendLog."' FROM NotificationControl ntc WHERE ntc.NotificationType = 'RoomAssignment'";
            $result = $pdo->query($sql);
@@ -317,7 +317,7 @@
        /**
         *    (getDevicesForPatient($patientId)
         *    Consumes a PatientId, $patientId
-        *    Returns: Returns array with devices that match that particular PatiendId. 
+        *    Returns: Returns array with devices that match that particular PatiendId.
         **/
        private function getDevicesForPatient($patientId)
        {
@@ -333,7 +333,7 @@
            }
           return $result ->fetchAll();
        }
-       
+
        /**
         *    (buildMessageForRoomNotification($room, $title, $description)
         *    Consumes a room, a title and a description of message
@@ -348,13 +348,13 @@
             );
             return $message;
        }
-      
-
-       
 
 
-       
+
+
+
+
 
    }
-   
+
 ?>
