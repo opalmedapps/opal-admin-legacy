@@ -10,12 +10,12 @@ class PushNotifications {
 	//(iOS) Location of certificate file
 	private static $certificate_file = CERTIFICATE_FILE;
 
-	
+
 	// Change the above three vriables as per your app.
 	public function __construct() {
 		exit('Init function is not allowed');
 	}
-	
+
         // Sends Push notification for Android users
 
 	/**
@@ -23,7 +23,7 @@ class PushNotifications {
 	*	to be sent and a registration id.
 	*	Description: Creates curl request to FCM (Firebase Cloud Messaging) and sends
 	*                push notification to android device
-	*   Requires: $data must contain mtitle, and mdesc for the 
+	*   Requires: $data must contain mtitle, and mdesc for the
 	*             push notification.
 	**/
 	public static function android($data, $reg_id) {
@@ -34,7 +34,7 @@ class PushNotifications {
                 'style'         => 'inbox',
                 'summaryText'   => 'There are %n% notifications'
 	        );
-	        
+
 	        $headers = array(
 	        	'Authorization: key=' .self::$api_key,
 	        	'Content-Type: application/json'
@@ -55,13 +55,13 @@ class PushNotifications {
 			}
 	    	return $data;
     	}
-		
+
     /**
 	*	(iOS($data, $devicetoken)) Consumes an array with message
 	*	to be sent and a registration id.
 	*	Description: Creates a connection to APN (Apple Push Notification
-	*              socket and sends push notification to android device              
-	*   Requires: $data must contain mtitle, and mdesc for the 
+	*              socket and sends push notification to android device
+	*   Requires: $data must contain mtitle, and mdesc for the
 	*             push notification.
 	**/
 	public static function iOS($data, $devicetoken) {
@@ -76,11 +76,11 @@ class PushNotifications {
 			$errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
 		if (!$fp)
 		{
-			
+
 			$response = array("success"=>0,"failure"=>1,"error"=>"Failed to connect: $err $errstr" . PHP_EOL);
 			return $response;
 		}
-			
+
 		// Create the payload body
 		$body['aps'] = array(
 			'alert' => array(
@@ -92,7 +92,7 @@ class PushNotifications {
 		// Encode the payload as JSON
 		$payload = json_encode($body);
 		// Build the binary notification
-		
+
 		// echo 'Device Token :' .  $deviceToken . '<br />';
 		if (strlen($deviceToken) == 64) {
 			$msg = chr(0) . pack('n', 32) . pack('H*', $deviceToken) . pack('n', strlen($payload)) . $payload;
@@ -108,9 +108,9 @@ class PushNotifications {
 			return $response;
 			}
 		}
-	
-	// Curl 
-	private function useCurl($url, $headers, $fields = null) {
+
+	// Curl
+	private static function useCurl($url, $headers, $fields = null) {
 	        // Open connection
 	        $ch = curl_init();
 	        if ($url) {
@@ -119,20 +119,20 @@ class PushNotifications {
 	            curl_setopt($ch, CURLOPT_POST, true);
 	            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 	            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	     
+
 	            // Disabling SSL Certificate support temporarly
 	            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 	            if ($fields) {
 	                curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
 	            }
-	     
+
 	            // Execute post
 	            $result = curl_exec($ch);
 	            if ($result === FALSE) {
 					$result = "{\"Success\":0,\"Failure\":1,\"Error\":\"Connection to Google servers failed\"}";
 	                die('Curl failed: ' . curl_error($ch));
 	            }
-	     
+
 	            // Close connection
 				 curl_close($ch);
 	            return $result;
