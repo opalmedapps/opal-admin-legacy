@@ -1,3 +1,7 @@
+Version 0.18.16.8:
+ - Merge branch 'hotfix-0.18.16.7'
+ - Fix issue with script crashing on Production
+
 Version 0.18.16.7:
  - Merge branch 'hotfix-0.18.16.6'
  -    --- Patched the send notification by making it as a static function
