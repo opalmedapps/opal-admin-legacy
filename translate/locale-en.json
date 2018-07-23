@@ -60,7 +60,6 @@
 	"ACCESS_LEVEL_DESCRIPTION": "Please specify medical record access level.",
 	"SELECT_ACCESS_LEVEL": "Select Access Level",
 	"ACCESS_LEVEL_1": "1 : Need-to-know information",
-	"ACCESS_LEVEL_3": "3 : All data"
-
-
+	"ACCESS_LEVEL_2": "2 : ",
+	"ACCESS_LEVEL_3": "2 : All data"
 }

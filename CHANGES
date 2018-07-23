@@ -1,3 +1,8 @@
+Version 0.18.16.9:
+ - Merge branch 'hotfix-0.18.16.8'
+ -    --- Added database version 8 - getDiagnosisDescription.sql
+ -    --- Patient Cell Phone Number is now a require field. Change some translation.
+
 Version 0.18.16.8:
  - Merge branch 'hotfix-0.18.16.7'
  - Fix issue with script crashing on Production
