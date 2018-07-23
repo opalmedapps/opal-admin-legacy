@@ -2,12 +2,12 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 14-Oct-2015 ++ File: TestResult.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates a TestResult class. This module calls a constructor to 
-# create a TestResult object that contains TestResult information stored as object 
+# Perl module that creates a TestResult class. This module calls a constructor to
+# create a TestResult object that contains TestResult information stored as object
 # variables.
 #
 # There exists various subroutines to set TestResult information, get TestResult information
-# and compare TestResult information between two TestResult objects. 
+# and compare TestResult information between two TestResult objects.
 # There exists various subroutines that use the Database.pm module to update the
 # MySQL database and check if a TestResult exists already in this database.
 
@@ -29,7 +29,7 @@ use TestResultControl; # Our Test Result Control module
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our class 
+# Constructor for our class
 #====================================================================================
 sub new
 {
@@ -56,7 +56,7 @@ sub new
     };
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
-	bless $testresult, $class; 
+	bless $testresult, $class;
 	return $testresult;
 }
 
@@ -442,7 +442,7 @@ sub getTestResultsFromSourceDB
 		    if ($sourceDBSer eq 1) {
 
 			    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-			    my $numOfExpressions = @expressions; 
+			    my $numOfExpressions = @expressions;
                 my $counter = 0;
 		        if ($sourceDatabase) {
 
@@ -464,7 +464,7 @@ sub getTestResultsFromSourceDB
 		                    tr.test_value_string,
 		                    RTRIM(tr.unit_desc),
 		                    tr.valid_entry_ind
-		                FROM 
+		                FROM
 		                    varianenm.dbo.test_result tr,
 		                    varianenm.dbo.pt pt,
 		                    variansystem.dbo.Patient Patient
@@ -483,7 +483,7 @@ sub getTestResultsFromSourceDB
 	                	my $expressionLastPublished = $Expression->{_lastpublished};
 	                	my $formatted_ELP = Time::Piece->strptime($expressionLastPublished, "%Y-%m-%d %H:%M:%S");
 
-	                	# compare last updates to find the earliest date 
+	                	# compare last updates to find the earliest date
 			            # get the diff in seconds
 			            my $date_diff = $formatted_PLT - $formatted_ELP;
 			            if ($date_diff < 0) {
@@ -518,7 +518,7 @@ sub getTestResultsFromSourceDB
 			    	$query->execute()
 				    	or die "Could not execute query: " . $query->errstr;
 
-		    		$data = $query->fetchall_arrayref(); 
+		    		$data = $query->fetchall_arrayref();
 		            foreach my $row (@$data) {
 
 		                my $testresult = new TestResult();
@@ -530,7 +530,7 @@ sub getTestResultsFromSourceDB
 		                $tr_id              = $row->[4];
 		                # combine the above id to create a unique id
 		                $sourceuid          = $pt_id.$visit_id.$test_id.$tr_group_id.$tr_id;
-	        
+
 		                $abnormalflag       = $row->[5];
 		                $expressionname     = $row->[6];
 
@@ -551,7 +551,7 @@ sub getTestResultsFromSourceDB
 		                $testvaluestring    = $row->[13];
 		                $unitdesc           = $row->[14];
 		                $validentry         = $row->[15];
-	    
+
 		                $testresult->setTestResultPatientSer($patientSer);
 		                $testresult->setTestResultSourceDatabaseSer($sourceDBSer);
 		                $testresult->setTestResultSourceUID($sourceuid);
@@ -568,7 +568,7 @@ sub getTestResultsFromSourceDB
 		                $testresult->setTestResultUnitDesc($unitdesc);
 		                $testresult->setTestResultValidEntry($validentry);
 		                $testresult->setTestResultCronLogSer($cronLogSer);
-	           
+
 		                push(@TRList, $testresult);
 		            }
 
@@ -595,7 +595,7 @@ sub getTestResultsFromSourceDB
 			    	$query->execute()
 				    	or die "Could not execute query: " . $query->errstr;
 
-		    		$data = $query->fetchall_arrayref(); 
+		    		$data = $query->fetchall_arrayref();
 		            foreach my $row (@$data) {
 
 		                #my $testresult = new TestResult(); # uncomment for use
@@ -628,7 +628,7 @@ sub getTestResultsFromSourceDB
 			    	$query->execute()
 				    	or die "Could not execute query: " . $query->errstr;
 
-		    		$data = $query->fetchall_arrayref(); 
+		    		$data = $query->fetchall_arrayref();
 		            foreach my $row (@$data) {
 
 		                #my $testresult = new TestResult(); # uncomment for use
@@ -723,7 +723,7 @@ sub inOurDatabase
 
     if ($TRSourceUIDInDB) {
 
-        $ExistingTR = new TestResult(); 
+        $ExistingTR = new TestResult();
 
         $ExistingTR->setTestResultSer($ser);
         $ExistingTR->setTestResultPatientSer($patientser);
@@ -754,67 +754,65 @@ sub inOurDatabase
 #======================================================================================
 sub insertTestResultIntoOurDB
 {
-    my ($testresult) = @_; # our object
+	my ($testresult) = @_; # our object
 
-    my $patientser              = $testresult->getTestResultPatientSer();
-    my $sourceuid               = $testresult->getTestResultSourceUID();
-    my $sourcedbser             = $testresult->getTestResultSourceDatabaseSer();
-    my $expressionser 			= $testresult->getTestResultExpressionSer();
-    my $name                    = $testresult->getTestResultName();
-    my $facname                 = $testresult->getTestResultFacName();
-    my $abnormalflag            = $testresult->getTestResultAbnormalFlag();
-    my $testdate                = $testresult->getTestResultTestDate();
-    my $maxnorm                 = $testresult->getTestResultMaxNorm();
-    my $minnorm                 = $testresult->getTestResultMinNorm();
-    my $apprvflag               = $testresult->getTestResultApprovedFlag();
-    my $testvalue               = $testresult->getTestResultTestValue();
-    my $testvaluestring         = $testresult->getTestResultTestValueString();
-    my $unitdesc                = $testresult->getTestResultUnitDesc();
-    my $validentry              = $testresult->getTestResultValidEntry();
-    my $cronlogser              = $testresult->getTestResultCronLogSer();
+	my $patientser							= $testresult->getTestResultPatientSer();
+	my $sourceuid								= $testresult->getTestResultSourceUID();
+	my $sourcedbser             = $testresult->getTestResultSourceDatabaseSer();
+	my $expressionser						= $testresult->getTestResultExpressionSer();
+	my $name                    = $testresult->getTestResultName();
+	my $facname                 = $testresult->getTestResultFacName();
+	my $abnormalflag            = $testresult->getTestResultAbnormalFlag();
+	my $testdate                = $testresult->getTestResultTestDate();
+	my $maxnorm                 = $testresult->getTestResultMaxNorm();
+	my $minnorm                 = $testresult->getTestResultMinNorm();
+	my $apprvflag               = $testresult->getTestResultApprovedFlag();
+	my $testvalue               = $testresult->getTestResultTestValue();
+	my $testvaluestring         = $testresult->getTestResultTestValueString();
+	my $unitdesc                = $testresult->getTestResultUnitDesc();
+	my $validentry              = $testresult->getTestResultValidEntry();
+	my $cronlogser              = $testresult->getTestResultCronLogSer();
 
-    my $insert_sql = "
-        INSERT INTO 
-            TestResult (
-                PatientSerNum,
-                CronLogSerNum,
-                SourceDatabaseSerNum,
-                TestResultAriaSer,
-                TestResultExpressionSerNum,
-                ComponentName,
-                FacComponentName,
-                AbnormalFlag,
-                TestDate,
-                MaxNorm,
-                MinNorm,
-                ApprovedFlag,
-                TestValue,
-                TestValueString,
-                UnitDescription,
-                ValidEntry,
-                DateAdded
-            )
-        VALUES (
-            '$patientser',
-            '$cronlogser',
-            '$sourcedbser',
-            '$sourceuid',
-            '$expressionser',
-            \"$name\",
-            \"$facname\",
-            '$abnormalflag',
-            '$testdate',
-            '$maxnorm',
-            '$minnorm',
-            '$apprvflag',
-            '$testvalue',
-            '$testvaluestring',
-            '$unitdesc',
-            '$validentry',
-            NOW()
-        )
-    
-    ";
+	my $insert_sql = "
+		INSERT INTO TestResult (
+			PatientSerNum,
+			CronLogSerNum,
+			SourceDatabaseSerNum,
+			TestResultAriaSer,
+			TestResultExpressionSerNum,
+			ComponentName,
+			FacComponentName,
+			AbnormalFlag,
+			TestDate,
+			MaxNorm,
+			MinNorm,
+			ApprovedFlag,
+			TestValue,
+			TestValueString,
+			UnitDescription,
+			ValidEntry,
+			DateAdded
+		)
+	VALUES (
+		'$patientser',
+		'$cronlogser',
+		'$sourcedbser',
+		'$sourceuid',
+		'$expressionser',
+		\"$name\",
+		\"$facname\",
+		'$abnormalflag',
+		'$testdate',
+		'$maxnorm',
+		'$minnorm',
+		'$apprvflag',
+		'$testvalue',
+		'$testvaluestring',
+		'$unitdesc',
+		'$validentry',
+		NOW()
+	)
+	";
 
     # prepare query
 	my $query = $SQLDatabase->prepare($insert_sql)
@@ -830,67 +828,72 @@ sub insertTestResultIntoOurDB
 	# Set the serial object
 	$testresult->setTestResultSer($ser);
 
-	# Send push notification
-    PushNotification::sendPushNotification($patientser, $ser, 'NewLabResult');
+	# Get the number of Lab Results based on the cron log serial number and patient serial number
+	my $CheckCount = getLabResultCount($cronlogser, $patientser);
+	# print "Cron Log Count : $CheckCount\n";
+
+	# Send push notification if the counter is 1
+	if ($CheckCount eq 1) {
+		print "Send Push Notification to $patientser\n";
+  	PushNotification::sendPushNotification($patientser, $ser, 'NewLabResult');
+	}
 
 	return $testresult;
 }
-
 
 #======================================================================================
 # Subroutine to update our database with the test result's updated info
 #======================================================================================
 sub updateDatabase
 {
-    my ($testresult) = @_; # our object
+	my ($testresult) = @_; # our object
 
-    my $sourceuid               = $testresult->getTestResultSourceUID();
-    my $sourcedbser             = $testresult->getTestResultSourceDatabaseSer();
-    my $expressionser 			= $testresult->getTestResultExpressionSer();
-    my $name                    = $testresult->getTestResultName();
-    my $facname                 = $testresult->getTestResultFacName();
-    my $abnormalflag            = $testresult->getTestResultAbnormalFlag();
-    my $testdate                = $testresult->getTestResultTestDate();
-    my $maxnorm                 = $testresult->getTestResultMaxNorm();
-    my $minnorm                 = $testresult->getTestResultMinNorm();
-    my $apprvflag               = $testresult->getTestResultApprovedFlag();
-    my $testvalue               = $testresult->getTestResultTestValue();
-    my $testvaluestring         = $testresult->getTestResultTestValueString();
-    my $unitdesc                = $testresult->getTestResultUnitDesc();
-    my $validentry              = $testresult->getTestResultValidEntry();
-    my $cronlogser              = $testresult->getTestResultCronLogSer();
+	my $sourceuid               = $testresult->getTestResultSourceUID();
+	my $sourcedbser             = $testresult->getTestResultSourceDatabaseSer();
+	my $expressionser 					= $testresult->getTestResultExpressionSer();
+	my $name                    = $testresult->getTestResultName();
+	my $facname                 = $testresult->getTestResultFacName();
+	my $abnormalflag            = $testresult->getTestResultAbnormalFlag();
+	my $testdate                = $testresult->getTestResultTestDate();
+	my $maxnorm                 = $testresult->getTestResultMaxNorm();
+	my $minnorm                 = $testresult->getTestResultMinNorm();
+	my $apprvflag               = $testresult->getTestResultApprovedFlag();
+	my $testvalue               = $testresult->getTestResultTestValue();
+	my $testvaluestring         = $testresult->getTestResultTestValueString();
+	my $unitdesc                = $testresult->getTestResultUnitDesc();
+	my $validentry              = $testresult->getTestResultValidEntry();
+	my $cronlogser              = $testresult->getTestResultCronLogSer();
 
-    my $update_sql = "
-        UPDATE
-            TestResult
-        SET
-        	TestResultExpressionSerNum	= '$expressionser',
-        	CronLogSerNum 				= '$cronlogser',
-            ComponentName           	= \"$name\",
-            FacComponentName        	= \"$facname\",
-            AbnormalFlag            	= '$abnormalflag',
-            TestDate                	= '$testdate',
-            MaxNorm                 	= '$maxnorm',
-            MinNorm                 	= '$minnorm',
-            ApprovedFlag            	= '$apprvflag',
-            TestValue               	= '$testvalue',
-            TestValueString         	= '$testvaluestring',
-            UnitDescription         	= '$unitdesc',
-            ValidEntry              	= '$validentry',
-            ReadStatus 					= 0
-        WHERE
-            TestResultAriaSer       	= '$sourceuid'
-        AND SourceDatabaseSerNum    	= '$sourcedbser'
-    ";
+	my $update_sql = "
+		UPDATE
+			TestResult
+		SET
+			TestResultExpressionSerNum	= '$expressionser',
+			CronLogSerNum 						= '$cronlogser',
+			ComponentName           	= \"$name\",
+			FacComponentName        	= \"$facname\",
+			AbnormalFlag            	= '$abnormalflag',
+			TestDate                	= '$testdate',
+			MaxNorm                 	= '$maxnorm',
+			MinNorm                 	= '$minnorm',
+			ApprovedFlag            	= '$apprvflag',
+			TestValue               	= '$testvalue',
+			TestValueString         	= '$testvaluestring',
+			UnitDescription         	= '$unitdesc',
+			ValidEntry              	= '$validentry',
+			ReadStatus								= 0
+		WHERE
+			TestResultAriaSer       	= '$sourceuid'
+			AND SourceDatabaseSerNum	= '$sourcedbser'
+	";
 
-    # prepare query
+	# prepare query
 	my $query = $SQLDatabase->prepare($update_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
 
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
 }
 
 #======================================================================================
@@ -1003,6 +1006,41 @@ sub compareWith
     return $UpdatedTR;
 }
 
-# To exit/return always true (for the module itself)
-1;	
+#======================================================================================
+# Subroutine to get the count of Lab Result for a specific patient
+#======================================================================================
+sub getLabResultCount
+{
+	my ($cronlogser, $patientser) = @_;  # our object of CronLogSerNum and PatientSer
 
+	# Default counter to 0;
+	my $returnCount = 0;
+
+	# Prepare SQL statement
+	my $qSQL = "
+			SELECT count(*) as Total
+			FROM TestResult
+			WHERE CronLogSerNum = '$cronlogser'
+			AND PatientSerNum = '$patientser'
+	";
+
+	# Prepare query
+	my $query = $SQLDatabase->prepare($qSQL)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# Execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+	# Retrieve the results
+	while (my @data = $query->fetchrow_array()) {
+		$returnCount = $data[0];
+	}
+
+	# Return the results
+	return $returnCount;
+}
+
+
+# To exit/return always true (for the module itself)
+1;
