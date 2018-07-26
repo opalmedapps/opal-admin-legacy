@@ -1,5 +1,3 @@
-DELIMITER $$
-
 CREATE FUNCTION `getDiagnosisDescription`(
 	`in_DiagnosisCode` VARCHAR(100),
 	`in_Language` VARCHAR(2)
@@ -37,4 +35,4 @@ BEGIN
 	set wsReturn = (IfNull(wsReturn, 'N/A'));
 
 	RETURN wsReturn;
-END $$
+END;
