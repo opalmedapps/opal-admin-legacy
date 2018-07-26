@@ -1,3 +1,7 @@
+Version 0.18.16.10:
+ - Merge branch 'hotfix-0.18.16.9'
+ -    --- Access Level change description "3: All data" to "2: All data", but still using the constant variable ACCESS_LEVEL_3. Added ACCESS_LEVEL_2 for future use.    --- Changed Push Notification to use notification syntax instead of data syntax.    --- Lab Results will now send only 1 notification instead of multiple notification based on cronlogser and patientser
+
 Version 0.18.16.9:
  - Merge branch 'hotfix-0.18.16.8'
  -    --- Added database version 8 - getDiagnosisDescription.sql
