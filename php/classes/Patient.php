@@ -50,28 +50,7 @@ class Patient {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			$sql = "
-<<<<<<< HEAD
-              SELECT DISTINCT
-                pc.PatientSerNum,
-                pc.PatientUpdate,
-                pt.FirstName,
-                pt.LastName,
-                pt.PatientId,
-                pc.LastTransferred,
-                pt.BlockedStatus,
-                usr.Username,
-                pt.Email,
-                pt.SSN,
-                pt.RegistrationDate
-              FROM
-                PatientControl pc,
-                Patient pt,
-                Users usr
-              WHERE
-                pt.PatientSerNum = pc.PatientSerNum
-                AND pt.PatientSerNum 	= usr.UserTypeSerNum
-                AND usr.UserType 		= 'Patient'
-=======
+
                 SELECT DISTINCT
                     pc.PatientSerNum,
                     pc.PatientUpdate,
@@ -90,8 +69,6 @@ class Patient {
                     pt.PatientSerNum = pc.PatientSerNum
 				AND pt.PatientSerNum 	= usr.UserTypeSerNum
 				AND usr.UserType 		= 'Patient'
->>>>>>> hotfix-0.18.16.11
-
             ";
 			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
