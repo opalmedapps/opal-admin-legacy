@@ -42,7 +42,7 @@ class Patient {
      *
      * Gets a list of existing patients in the database
      *
-     * @return array $patientList : the list of existing patients 
+     * @return array $patientList : the list of existing patients
      */
     public function getPatients() {
         $patientList = array();
@@ -68,7 +68,7 @@ class Patient {
                     pt.PatientSerNum = pc.PatientSerNum
 				AND pt.PatientSerNum 	= usr.UserTypeSerNum
 				AND usr.UserType 		= 'Patient'
-				
+
             ";
 			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
@@ -210,7 +210,7 @@ class Patient {
                 ";
                 $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
                 $query->execute();
-                
+
                 $lookupSSN = null;
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
                     $lookupSSN = $data[0];
@@ -274,7 +274,7 @@ class Patient {
                 $sql = "SELECT 'QUERY_HERE'";
                 $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
                 $query->execute();
-                
+
                 $lookupSSN = null;
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
                     //$lookupSSN = $data[0];
@@ -317,6 +317,8 @@ class Patient {
                     sq.QuestionText_$language
                 FROM
                     SecurityQuestion sq
+                WHERE
+                  Active = 1
             ";
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
@@ -481,7 +483,7 @@ class Patient {
             $questionnaires_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             $sql = "
-                INSERT INTO 
+                INSERT INTO
                     Patient (
                         PatientName,
                         PatientId
@@ -618,7 +620,7 @@ class Patient {
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 			$sql = "
-				SELECT DISTINCT 
+				SELECT DISTINCT
 					pt.FirstName,
 					pt.LastName,
 					pt.PatientId,
@@ -680,7 +682,7 @@ class Patient {
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 			$sql = "
-				UPDATE 
+				UPDATE
 					Users
 				SET
 					Users.Password = \"$password\"
@@ -694,13 +696,13 @@ class Patient {
 
 			$response['value'] = 1; // Success
 			return $response;
-			
+
 		} catch (PDOException $e) {
 			 $response['error']['code'] = 'db-catch';
 			 $response['error']['message'] = $e->getMessage();
 			 return $response;
 		}
-		 
+
 	 }
 
 	 /**
@@ -729,7 +731,7 @@ class Patient {
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 			$sql = "
-				UPDATE 
+				UPDATE
 					Patient
 				SET
 					Patient.BlockedStatus 	= '$blockedStatus',
@@ -753,9 +755,9 @@ class Patient {
 			else {
 				$response['error']['message'] = "System command failed";
 			}
-			
+
 			return $response;
-			
+
 		} catch (PDOException $e) {
 			 $response['error']['code'] = 'db-catch';
 			 $response['error']['message'] = $e->getMessage();
@@ -765,5 +767,3 @@ class Patient {
 }
 
 ?>
-
-
