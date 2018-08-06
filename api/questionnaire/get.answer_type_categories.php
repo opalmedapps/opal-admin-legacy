@@ -1,15 +1,16 @@
 <?php
-    /* To get a list of distinct answer type categories */
-    include_once('questionnaire.inc');
+	header('Content-Type: application/javascript');
+  /* To get a list of distinct answer type categories */
+  include_once('questionnaire.inc');
 
-	// Retrieve form param
-    $callback = $_GET['callback'];
+  // Retrieve form param
+  $callback = $_GET['callback'];
 
-    $answerType = new AnswerType(); // Object
+  $answerType = new AnswerType(); // Object
 
-	// Call function
-    $answerTypeCategoryList = $answerType->getAnswerTypeCategories();
+  // Call function
+  $answerTypeCategoryList = $answerType->getAnswerTypeCategories();
 
-    // Callback to http request
-    print $callback.'('.json_encode($answerTypeCategoryList).')';
+  // Callback to http request
+  print $callback.'('.json_encode($answerTypeCategoryList).')';
 ?>

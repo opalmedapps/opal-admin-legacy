@@ -1,12 +1,12 @@
-<?php 
-
+<?php
+	header('Content-Type: application/javascript');
 	/* To update a patient */
 	include_once('patient.inc');
 
 	// Construct array from FORM params
 	$patientArray = array(
-		'password'			=> $_POST['password'],
-		'serial'			=> $_POST['serial']
+		'password'	=> $_POST['password'],
+		'serial'		=> $_POST['serial']
 	);
 
 	$patientObj = new Patient; // Object
@@ -15,7 +15,5 @@
 	$response = $patientObj->updatePatient($patientArray);
 	print json_encode($response);
 
-	
+
 ?>
-
-

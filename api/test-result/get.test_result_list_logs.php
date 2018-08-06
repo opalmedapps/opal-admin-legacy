@@ -1,4 +1,5 @@
 <?php
+	header('Content-Type: application/javascript');
 	/* To get list logs on a particular test result */
 	include_once('test-result.inc');
 
