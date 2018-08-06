@@ -1,4 +1,5 @@
 <?php
+	header('Content-Type: application/javascript');
 	/* To get logs on a particular test result for highcharts */
 	include_once('test-result.inc');
 

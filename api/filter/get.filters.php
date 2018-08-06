@@ -1,4 +1,5 @@
 <?php
+	header('Content-Type: application/javascript');
 	/* To get filters (expression, dx, doctor, resource)*/
 	include_once('filter.inc');
 

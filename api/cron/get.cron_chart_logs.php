@@ -1,4 +1,5 @@
 <?php
+	header('Content-Type: application/javascript');
 	/* To get cron logs for highcharts */
 	include_once('cron.inc');
 

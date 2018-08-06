@@ -1,5 +1,5 @@
-<?php 
-
+<?php
+	header('Content-Type: application/javascript');
 	/* To call Post Object to update post when the "Publish Flag" checkbox has been changed */
 	include_once('post.inc');
 
@@ -7,11 +7,9 @@
 
 	// Retrieve FORM params
 	$postFlags	= $_POST['flagList'];
-	$user 		= $_POST['user'];
-	
+	$user 			= $_POST['user'];
+
 	// Call function
-    $response = $postObject->updatePostFlags($postFlags, $user);
-    print json_encode($response); // Return response
+  $response = $postObject->updatePostFlags($postFlags, $user);
+  print json_encode($response); // Return response
 ?>
-
-

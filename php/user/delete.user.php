@@ -1,5 +1,5 @@
 <?php
-
+	header('Content-Type: application/javascript');
 	/* To delete a user */
 	include_once('user.inc');
 
@@ -9,7 +9,7 @@
 	$serial = $_POST['serial'];
 
 	// Call function
-    $response = $user->deleteUser($serial);
-    print json_encode($response); // Return response
+  $response = $user->deleteUser($serial);
+  print json_encode($response); // Return response
 
 ?>
