@@ -1,5 +1,5 @@
 <?php
-
+	header('Content-Type: application/javascript');
 	/* To delete an alias */
 	include_once('alias.inc');
 
@@ -10,7 +10,7 @@
 	$user = $_POST['user'];
 
 	// Call function
-    $response = $alias->deleteAlias($serial, $user);
-    print json_encode($response); // Return response
+	$response = $alias->deleteAlias($serial, $user);
+	print json_encode($response); // Return response
 
 ?>
