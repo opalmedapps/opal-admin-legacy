@@ -1,4 +1,5 @@
 <?php
+	header('Content-Type: application/javascript');
 	/* To fetch the list of security questions */
 	include_once('patient.inc');
 

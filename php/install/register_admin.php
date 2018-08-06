@@ -1,5 +1,5 @@
 <?php
-
+	header('Content-Type: application/javascript');
 	/* To insert a newly created admin user */
 	include_once('install.inc');
 
@@ -11,9 +11,9 @@
 
 	$installObj = new Install; // Object
 
-	// Call function 
+	// Call function
 	$response = $installObj->registerAdminUser($adminCreds);
-	
+
 	// Return response
 	print json_encode($response);
 

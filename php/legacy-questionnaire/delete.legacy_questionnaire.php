@@ -1,5 +1,5 @@
 <?php
-
+	header('Content-Type: application/javascript');
 	/* To delete a legacy questionnaire */
 	include_once('legacy-questionnaire.inc');
 
@@ -10,7 +10,7 @@
 	$user 	= $_POST['user'];
 
 	// Call function
-    $response = $legacyQuestionnaire->deleteLegacyQuestionnaire($serial, $user);
-    print json_encode($response); // Return response
+  $response = $legacyQuestionnaire->deleteLegacyQuestionnaire($serial, $user);
+  print json_encode($response); // Return response
 
 ?>

@@ -1,4 +1,5 @@
 <?php
+	header('Content-Type: application/javascript');
 	/* To get list logs on a particular alias */
 	include_once('alias.inc');
 
@@ -6,7 +7,7 @@
 	$callback = $_GET['callback'];
 	$serials = json_decode($_GET['serials']);
 	$type = ( $_GET['type'] === 'undefined' ) ? null : $_GET['type'];
-	
+
 
 	$alias = new Alias; // Object
 

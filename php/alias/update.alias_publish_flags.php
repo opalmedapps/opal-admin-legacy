@@ -1,5 +1,5 @@
-<?php 
-
+<?php
+	header('Content-Type: application/javascript');
 	/* To call Alias Object to update alias when the "Update" checkbox has been changed */
 	include_once('alias.inc');
 
@@ -8,7 +8,7 @@
 	// Retrieve FORM params
 	$aliasUpdates	= $_POST['updateList'];
 	$user = $_POST['user'];
-	
+
 	// Construct array
 	$aliasList = array();
 
@@ -17,9 +17,7 @@
 	}
 
 	// Call function
-    $response = $aliasObject->updateAliasPublishFlags($aliasList, $user);
-    print json_encode($response); // Return response
+	$response = $aliasObject->updateAliasPublishFlags($aliasList, $user);
+	print json_encode($response); // Return response
 
 ?>
-
-

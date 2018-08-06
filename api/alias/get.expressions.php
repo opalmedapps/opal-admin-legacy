@@ -1,10 +1,11 @@
 <?php
+	header('Content-Type: application/javascript');
 	/* To get a list of expressions from a particular source database*/
 	include_once('alias.inc');
 
 	// Retrieve FORM param
 	$callback       = $_GET['callback'];
-    $sourceDBSer    = $_GET['sourcedbser'];
+	$sourceDBSer    = $_GET['sourcedbser'];
 	$type           = $_GET['type'];
 
 	$alias = new Alias; // Object

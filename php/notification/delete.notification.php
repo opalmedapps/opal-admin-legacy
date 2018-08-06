@@ -1,5 +1,5 @@
 <?php
-
+	header('Content-Type: application/javascript');
 	/* To delete a notification */
 	include_once('notification.inc');
 
@@ -11,5 +11,5 @@
 
 	// Call function
 	$response = $notification->deleteNotification($serial, $user);
-    print json_encode($response); // Return response
+  print json_encode($response); // Return response
 ?>

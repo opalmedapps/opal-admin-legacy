@@ -1,4 +1,5 @@
 <?php
+	header('Content-Type: application/javascript');
 	/* To delete a question */
 	include_once('questionnaire.inc');
 
@@ -9,6 +10,6 @@
 
 	// Call function
 	$response = $questionObj->deleteQuestion($serNum);
-	
-    print json_encode($response); // Return response
+
+  print json_encode($response); // Return response
 ?>

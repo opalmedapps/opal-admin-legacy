@@ -1,4 +1,5 @@
 <?php
+	header('Content-Type: application/javascript');
 	/* To get logs on a particular post for highcharts */
 	include_once('post.inc');
 
@@ -6,7 +7,7 @@
 	$callback = $_GET['callback'];
 	$serial = ( $_GET['serial'] === 'undefined' ) ? null : $_GET['serial'];
 	$type = ( $_GET['type'] === 'undefined' ) ? null : $_GET['type'];
-	
+
 	$post = new Post; // Object
 
 	// Call function

@@ -1,4 +1,5 @@
 <?php
+	header('Content-Type: application/javascript');
 	/* To get a list of source databases */
 	include_once('alias.inc');
 

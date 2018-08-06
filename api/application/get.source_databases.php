@@ -1,5 +1,5 @@
 <?php
-
+	header('Content-Type: application/javascript');
 	/* To get source databases */
 
 	include_once('application.inc');
