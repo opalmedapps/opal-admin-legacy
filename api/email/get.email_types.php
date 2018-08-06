@@ -1,5 +1,5 @@
 <?php
-
+	header('Content-Type: application/javascript');
 	/* To get a list email types */
 
 	include_once('email.inc');

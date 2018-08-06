@@ -1,4 +1,5 @@
 <?php
+	header('Content-Type: application/javascript');
 	/* To get a list of phase in treatments */
 	include_once('educational-material.inc');
 

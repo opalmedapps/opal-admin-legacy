@@ -1,5 +1,5 @@
-<?php 
-
+<?php
+	header('Content-Type: application/javascript');
 	/* To call Test Result Object to update when the "Publish Flag" checkbox has been changed */
 	include_once('test-result.inc');
 
@@ -7,8 +7,8 @@
 
 	// Retrieve FORM param
 	$testResultPublishes	= $_POST['publishList'];
-	$user 					= $_POST['user'];
-	
+	$user									= $_POST['user'];
+
 	// Construct array
 	$testResultList = array();
 
@@ -17,8 +17,6 @@
 	}
 
 	// Call function
-    $response = $testResultObject->updatePublishFlags($testResultList, $user);
-    print json_encode($response); // Return response
+  $response = $testResultObject->updatePublishFlags($testResultList, $user);
+  print json_encode($response); // Return response
 ?>
-
-

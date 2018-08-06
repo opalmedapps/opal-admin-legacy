@@ -1,4 +1,5 @@
 <?php
+	header('Content-Type: application/javascript');
 	/* To get list logs on a particular legacy questionnaire */
 	include_once('legacy-questionnaire.inc');
 
