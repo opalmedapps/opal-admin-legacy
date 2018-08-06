@@ -1,8 +1,8 @@
 <?php
+	header('Content-Type: application/javascript');
 	/* To check Mosaiq database connection */
-
 	$pathname 	= __DIR__;
-	$abspath 	= str_replace('php/install', '', $pathname); 
+	$abspath 	= str_replace('php/install', '', $pathname);
 
 	include_once($abspath . 'php/classes/Install.php');
 
@@ -17,11 +17,10 @@
 
 	$installObj = new Install; // Object
 
-	// Call function 
+	// Call function
 	$response = $installObj->checkMosaiqConnection($mosaiqCreds);
 
 	// Return response
 	print json_encode($response);
 
 ?>
-

@@ -1,4 +1,5 @@
 <?php
+	header('Content-Type: application/javascript');
 	/* To get a list of existing test results */
 	include_once('test-result.inc');
 

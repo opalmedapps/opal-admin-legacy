@@ -1,4 +1,5 @@
 <?php
+	header('Content-Type: application/javascript');
 	/* To get logs on a particular alias for highcharts */
 	include_once('alias.inc');
 

@@ -1422,8 +1422,12 @@ sub compareWith
 				"\\\$newAppointmentDateFR"	=> $langFR->time2str("%A %e %B %Y", $SStartDateTime),
 				"\\\$newAppointmentTimeFR"	=> $langFR->time2str("%R", $SStartDateTime)
 			);
-            PushNotification::sendPushNotification($patientSer, $appointmentSer, 'AppointmentTimeChange', %replacementMap);
 
+			# ****************************************************************************************************
+			# TEMPORARY DISABLE PUSH NOTIFICATION OF APPOINTMENT CHANGE
+			# 2018-08-03 : Requested by John
+			# ****************************************************************************************************
+			# PushNotification::sendPushNotification($patientSer, $appointmentSer, 'AppointmentTimeChange', %replacementMap);
 		}
 
 	}
