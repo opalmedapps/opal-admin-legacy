@@ -1,16 +1,17 @@
-<?php 
-    /* To get logs on a current user given a serial */
-    include_once('user.inc');
+<?php
+	header('Content-Type: application/javascript');
+  /* To get logs on a current user given a serial */
+  include_once('user.inc');
 
-	// Retrieve FORM params
-    $callback   = $_GET['callback'];
-    $userSer    = $_GET['userser'];
+  // Retrieve FORM params
+  $callback   = $_GET['callback'];
+  $userSer    = $_GET['userser'];
 
-    $userObject = new Users; // Object
+  $userObject = new Users; // Object
 
-    // Call function
-    $userLogs = $userObject->getUserActivityLogs($userSer); 
+  // Call function
+  $userLogs = $userObject->getUserActivityLogs($userSer);
 
-    // Callback to http request
-    print $callback.'('.json_encode($userLogs).')';
+  // Callback to http request
+  print $callback.'('.json_encode($userLogs).')';
 ?>

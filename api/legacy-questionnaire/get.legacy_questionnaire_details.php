@@ -1,5 +1,5 @@
 <?php
-
+	header('Content-Type: application/javascript');
 	/* To get details on a legacy questionnaire */
 	include_once('legacy-questionnaire.inc');
 

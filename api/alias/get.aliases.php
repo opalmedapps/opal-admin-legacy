@@ -1,5 +1,5 @@
 <?php
-
+	header('Content-Type: application/javascript');
 	/* To get a list of existing alias */
 
 	include_once('alias.inc');

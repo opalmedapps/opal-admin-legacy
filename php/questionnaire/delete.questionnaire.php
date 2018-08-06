@@ -1,11 +1,11 @@
 <?php
-	
+	header('Content-Type: application/javascript');
 	/* To delete a questionnaire */
 	include_once('questionnaire.inc');
 
 	// Retrieve FORM param
-	$questionnaire_serNum = $_POST['serNum'];
-	$user = $_POST['user'];
+	$questionnaire_serNum	= $_POST['serNum'];
+	$user 								= $_POST['user'];
 
 	$questionnaireObj = new Questionnaire; // Object
 

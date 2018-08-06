@@ -1,10 +1,11 @@
 <?php
+	header('Content-Type: application/javascript');
 	/* To get a list of existing color tags */
 	include_once('alias.inc');
 
 	// Retrieve FORM param
     $callback   = $_GET['callback'];
-    $type       = $_GET['type'];    
+    $type       = $_GET['type'];
 
 	$alias = new Alias; // Object
 
