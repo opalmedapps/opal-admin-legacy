@@ -1,5 +1,5 @@
 <?php
-
+	header('Content-Type: application/javascript');
 	/* To get details of a particular email template */
 
 	include_once('email.inc');

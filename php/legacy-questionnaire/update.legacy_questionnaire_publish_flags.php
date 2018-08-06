@@ -1,5 +1,5 @@
-<?php 
-
+<?php
+	header('Content-Type: application/javascript');
 	/* To update legacy questionnaire when the "Publish" checkbox has been changed */
 	include_once('legacy-questionnaire.inc');
 
@@ -8,11 +8,9 @@
 	// Retrieve FORM params
 	$legacyQuestionnairePublishFlags	= $_POST['flagList'];
 	$user 								= $_POST['user'];
-	
+
 	// Call function
-    $response = $legacyQuestionnaire->updatelegacyQuestionnairePublishFlags($legacyQuestionnairePublishFlags, $user);
-    print json_encode($response); // Return response
+  $response = $legacyQuestionnaire->updatelegacyQuestionnairePublishFlags($legacyQuestionnairePublishFlags, $user);
+  print json_encode($response); // Return response
 
 ?>
-
-

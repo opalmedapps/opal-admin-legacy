@@ -1,8 +1,8 @@
 <?php
+	header('Content-Type: application/javascript');
 	/* To write to configuration files */
-
 	$pathname 	= __DIR__;
-	$abspath 	= str_replace('php/install', '', $pathname); 
+	$abspath 	= str_replace('php/install', '', $pathname);
 
 	include_once($abspath . 'php/classes/Install.php');
 
@@ -15,11 +15,10 @@
 
 	$installObj = new Install; // Object
 
-	// Call function 
+	// Call function
 	$response = $installObj->writeConfigurations($configs);
 
 	// Return response
 	print json_encode($response);
 
 ?>
-

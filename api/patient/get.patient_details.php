@@ -1,5 +1,5 @@
 <?php
-
+	header('Content-Type: application/javascript');
 	/* Get patient details */
 	include_once('patient.inc');
 

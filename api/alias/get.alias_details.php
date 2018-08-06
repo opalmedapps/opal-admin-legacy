@@ -1,5 +1,5 @@
 <?php
-
+	header('Content-Type: application/javascript');
 	/* To get details on a particular alias */
 	include_once('alias.inc');
 

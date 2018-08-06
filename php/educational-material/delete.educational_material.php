@@ -1,5 +1,5 @@
 <?php
-
+	header('Content-Type: application/javascript');
 	/* To delete an educational material */
 	include_once('educational-material.inc');
 
@@ -10,7 +10,7 @@
 	$user = $_POST['user'];
 
 	// Call function
-    $response = $eduMat->deleteEducationalMaterial($serial, $user);
-    print json_encode($response); // Return response
+  $response = $eduMat->deleteEducationalMaterial($serial, $user);
+  print json_encode($response); // Return response
 
 ?>

@@ -1,5 +1,5 @@
 <?php
-
+	header('Content-Type: application/javascript');
 	/* To delete a test result */
 	include_once('test-result.inc');
 
@@ -10,7 +10,7 @@
 	$user = $_POST['user'];
 
 	// Call function
-    $response = $testResult->deleteTestResult($serial, $user);
-    print json_encode($response); // Return response
+  $response = $testResult->deleteTestResult($serial, $user);
+  print json_encode($response); // Return response
 
 ?>
