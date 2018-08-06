@@ -1,4 +1,5 @@
 <?php
+	header('Content-Type: application/javascript');
 	/* To get details on a particular post */
 	include_once('post.inc');
 

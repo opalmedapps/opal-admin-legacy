@@ -1,5 +1,5 @@
 <?php
-
+	header('Content-Type: application/javascript');
 	/* Find patient given an SSN */
 	include_once('patient.inc');
 

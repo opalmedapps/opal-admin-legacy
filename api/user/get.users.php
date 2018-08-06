@@ -1,15 +1,16 @@
 <?php
-    /* To get a list of existing users in our DB */
-    include_once('user.inc');
+	header('Content-Type: application/javascript');
+  /* To get a list of existing users in our DB */
+  include_once('user.inc');
 
-	// Retrieve FORM params
-	$callback = $_GET['callback'];
+  // Retrieve FORM params
+  $callback = $_GET['callback'];
 
-    $userObject = new Users; // Object
+  $userObject = new Users; // Object
 
-    // Call function
-    $users = $userObject->getUsers();
+  // Call function
+  $users = $userObject->getUsers();
 
-    // Callback to http request
-    print $callback.'('.json_encode($users).')';
+  // Callback to http request
+  print $callback.'('.json_encode($users).')';
 ?>
