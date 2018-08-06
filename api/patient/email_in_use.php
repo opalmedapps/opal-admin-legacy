@@ -1,5 +1,5 @@
 <?php
-
+	header('Content-Type: application/javascript');
 	/* Determine if email is taken */
 	include_once('patient.inc');
 

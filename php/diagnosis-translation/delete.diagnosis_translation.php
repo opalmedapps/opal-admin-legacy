@@ -1,5 +1,5 @@
 <?php
-
+	header('Content-Type: application/javascript');
 	/* To delete a diagnosis translation */
 	include_once('diagnosis-translation.inc');
 
@@ -10,7 +10,7 @@
 	$user = $_POST['user'];
 
 	// Call function
-    $response = $Diagnosis->deleteDiagnosisTranslation($serial, $user);
-    print json_encode($response); // Return response
+  $response = $Diagnosis->deleteDiagnosisTranslation($serial, $user);
+  print json_encode($response); // Return response
 
 ?>

@@ -1,4 +1,5 @@
-<?php 
+<?php
+	header('Content-Type: application/javascript');
 	/* To get details on a cron profile */
 	include_once('cron.inc');
 

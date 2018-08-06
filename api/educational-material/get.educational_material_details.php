@@ -1,4 +1,5 @@
 <?php
+	header('Content-Type: application/javascript');
 	/* To get details on a particular educational material */
 	include_once('educational-material.inc');
 
