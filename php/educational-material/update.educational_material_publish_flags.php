@@ -1,5 +1,5 @@
-<?php 
-
+<?php
+	header('Content-Type: application/javascript');
 	/* To call Edu Material Object to update when the "Publish Flag" checkbox has been changed */
 	include_once('educational-material.inc');
 
@@ -7,8 +7,8 @@
 
 	// Retrieve FORM params
 	$eduMatPublishes	= $_POST['publishList'];
-	$user 				= $_POST['user'];
-	
+	$user							= $_POST['user'];
+
 	// Construct array
 	$eduMatList = array();
 
@@ -17,8 +17,6 @@
 	}
 
 	// Call function
-    $response = $eduMatObject->updatePublishFlags($eduMatList, $user);
-    print json_encode($response); // Return response
+  $response = $eduMatObject->updatePublishFlags($eduMatList, $user);
+  print json_encode($response); // Return response
 ?>
-
-

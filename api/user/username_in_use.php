@@ -1,5 +1,5 @@
 <?php
-
+	header('Content-Type: application/javascript');
 	/* Determine if username is taken */
 	include_once('user.inc');
 
