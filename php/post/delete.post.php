@@ -1,5 +1,5 @@
 <?php
-
+	header('Content-Type: application/javascript');
 	/* To delete a post */
 	include_once('post.inc');
 
@@ -10,8 +10,8 @@
 	$user 	= $_POST['user'];
 
 	// Call function
-    $response = $post->deletePost($serial, $user);
+	$response = $post->deletePost($serial, $user);
 
-    print json_encode($response); // Return response
+	print json_encode($response); // Return response
 
 ?>

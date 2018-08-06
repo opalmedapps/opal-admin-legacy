@@ -1,4 +1,5 @@
 <?php
+	header('Content-Type: application/javascript');
 	/* To get a list of distinct diagnosis codes */
 	include_once('diagnosis-translation.inc');
 

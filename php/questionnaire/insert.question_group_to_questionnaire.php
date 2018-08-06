@@ -1,5 +1,5 @@
 <?php
-	
+	header('Content-Type: application/javascript');	
 	/* To insert a created question group to questionnaire */
 	include_once('questionnaire.inc');
 
