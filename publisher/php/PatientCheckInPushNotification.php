@@ -112,9 +112,10 @@ class PatientCheckInPushNotification{
         //Insert checkin notification into notifications table
         foreach ($apts as $apt){
             try{
-                $sql = 'INSERT INTO `Notification` (`PatientSerNum`, `NotificationControlSerNum`, `RefTableRowSerNum`, `DateAdded`, `ReadStatus`)
-                        SELECT  ' . $patientSerNum . ',ntc.NotificationControlSerNum, '. $apt . ', NOW(),0
-                        FROM NotificationControl ntc 
+                $sql = 'INSERT INTO `Notification` (`PatientSerNum`, `NotificationControlSerNum`, `RefTableRowSerNum`, `DateAdded`, `ReadStatus`, `RefTableRowTitle_EN`, `RefTableRowTitle_FR`)
+                        SELECT  ' . $patientSerNum . ',ntc.NotificationControlSerNum, '. $apt . ', NOW(), 0,
+                          getRefTableRowTitle('. $apt . ', "APPOINTMENT", "EN") EN, getRefTableRowTitle('. $apt . ', "APPOINTMENT", "FR") FR
+                        FROM NotificationControl ntc
                         WHERE ntc.NotificationType = \''. $type . '\'';
 
                 $s = $pdo->prepare($sql);
@@ -288,8 +289,8 @@ class PatientCheckInPushNotification{
             $sendLog = "Successfully sent push notification!";
         }
         $sql = " INSERT INTO `PushNotification`(`PatientDeviceIdentifierSerNum`, `PatientSerNum`, `NotificationControlSerNum`, `RefTableRowSerNum`, `DateAdded`, `SendStatus`, `SendLog`)
-                        SELECT ".$deviceSerNum.", $patientSerNum, ntc.NotificationControlSerNum, $appointmentSerNum, NOW(),'".$sendStatus."','".$sendLog."' 
-                        FROM NotificationControl ntc 
+                        SELECT ".$deviceSerNum.", $patientSerNum, ntc.NotificationControlSerNum, $appointmentSerNum, NOW(),'".$sendStatus."','".$sendLog."'
+                        FROM NotificationControl ntc
                         WHERE ntc.NotificationType in ('CheckInNotification', 'CheckInError')";
         $pdo->query($sql);
         return $sendStatus;
