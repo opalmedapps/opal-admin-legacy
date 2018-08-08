@@ -126,7 +126,10 @@
 
           //Insert into notifications table
           try{
-             $sql = 'INSERT INTO `Notification` (`PatientSerNum`, `NotificationControlSerNum`, `RefTableRowSerNum`, `DateAdded`, `ReadStatus`) SELECT '.$result[0]["PatientSerNum"].',ntc.NotificationControlSerNum,'.$result[0]["AppointmentSerNum"].', NOW(),0 FROM NotificationControl ntc WHERE ntc.NotificationType = "RoomAssignment"';
+             $sql = 'INSERT INTO `Notification` (`PatientSerNum`, `NotificationControlSerNum`, `RefTableRowSerNum`, `DateAdded`, `ReadStatus`, `RefTableRowTitle_EN`, `RefTableRowTitle_FR`)
+                    SELECT '.$result[0]["PatientSerNum"].',ntc.NotificationControlSerNum,'.$result[0]["AppointmentSerNum"].', NOW(), 0,
+                      getRefTableRowTitle('. $result[0]["AppointmentSerNum"] . ', "APPOINTMENT", "EN") EN, getRefTableRowTitle('. $result[0]["AppointmentSerNum"] . ', "APPOINTMENT", "FR") FR
+                    FROM NotificationControl ntc WHERE ntc.NotificationType = "RoomAssignment"';
              $resultNotification = $pdo->query($sql);
            }catch(PDOException $e)
            {
