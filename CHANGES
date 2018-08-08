@@ -1,3 +1,7 @@
+Version 0.18.16.13:
+ - Merge branch 'hotfix-0.18.16.12'
+ - Updated trigggers that inserted records to Notification. New Function getRefTableRowTitle. Disable Push Notification for Appointment Change.
+
 Version 0.18.16.12:
  - Merge branch 'hotfix-0.18.16.11'
  -    --- Only display the security question that are active
