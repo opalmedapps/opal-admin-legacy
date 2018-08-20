@@ -413,7 +413,7 @@ sub getDocsFromSourceDB
 	my ($cronLogSer, @patientList) = @_; # a list of patients and cron log serial from args
 
 	my @docList = (); # initialize a list for document objects
-	
+
   if (scalar @patientList == 0) {
           return @docList;
   }
@@ -822,7 +822,9 @@ sub transferPatientDocuments
 {
 	my (@DocsList) = @_; # our list of documents from args
 
-	my $lowriter = "/opt/libreoffice4.3/program/soffice.bin --writer";
+	# Updated libreoffice from 4.3 to 6.1
+	# my $lowriter = "/opt/libreoffice4.3/program/soffice.bin --writer";
+	my $lowriter = "/opt/libreoffice6.1/program/soffice.bin --writer";
 
     my $verbose = 1;
 
