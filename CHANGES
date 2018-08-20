@@ -1,3 +1,7 @@
+Version 0.18.16.14:
+ - Merge branch 'hotfix-0.18.16.13'
+ - Added the RefTableRowTitle for EN and FR when inserting to Notification
+
 Version 0.18.16.13:
  - Merge branch 'hotfix-0.18.16.12'
  - Updated trigggers that inserted records to Notification. New Function getRefTableRowTitle. Disable Push Notification for Appointment Change.
