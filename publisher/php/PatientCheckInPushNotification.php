@@ -169,18 +169,27 @@ class PatientCheckInPushNotification{
      *    (getDevicesForPatient($patientId)
      *    Consumes a PatientId, $patientId
      *    Returns: Returns array with devices that match that particular PatiendId.
+     *    Notes: Limit the number of devices to send push notification. Currenlty set to 15.
      **/
     private static function getPatientDevices($patientSerNum){
         global $pdo;
         //Retrieving device registration id for notification and device
         try{
-            $sql = "SELECT PD.PatientDeviceIdentifierSerNum, PD.RegistrationId, PD.DeviceType
-                    FROM PatientDeviceIdentifier as PD, Patient as P
-                    WHERE P.PatientSerNum = " . $patientSerNum . "
-                    AND P.PatientSerNum = PD.PatientSerNum
-                    AND length(trim(PD.RegistrationId)) > 0
-                    AND PD.DeviceType in (0,1)
-                    ORDER BY PD.PatientDeviceIdentifierSerNum;";
+          $sql = "SELECT PD.PatientDeviceIdentifierSerNum, PD.RegistrationId, PD.DeviceType
+                  FROM PatientDeviceIdentifier as PD, Patient as P
+                  WHERE P.PatientSerNum = " . $patientSerNum . "
+                  AND P.PatientSerNum = PD.PatientSerNum
+                  AND length(trim(PD.RegistrationId)) > 0
+                  AND PD.DeviceType in (0,1)
+                  ORDER BY PD.LastUpdated desc limit 15;";
+
+            // $sql = "SELECT PD.PatientDeviceIdentifierSerNum, PD.RegistrationId, PD.DeviceType
+            //         FROM PatientDeviceIdentifier as PD, Patient as P
+            //         WHERE P.PatientSerNum = " . $patientSerNum . "
+            //         AND P.PatientSerNum = PD.PatientSerNum
+            //         AND length(trim(PD.RegistrationId)) > 0
+            //         AND PD.DeviceType in (0,1)
+            //         ORDER BY PD.PatientDeviceIdentifierSerNum;";
             $result = $pdo->query($sql);
         }catch(PDOException $e) {
             return array("success"=>0,"failure"=>1,"error"=>$e);
