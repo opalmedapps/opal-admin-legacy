@@ -1137,28 +1137,52 @@ sub inOurDatabase
     my ($priorityser, $diagnosisser, $sourcedbser);
     my ($status, $state, $actualstartdate, $actualenddate, $cronlogser);
 
-	my $inDB_sql = "
-		SELECT DISTINCT
-			Appointment.AppointmentAriaSer,
-			Appointment.AliasExpressionSerNum,
-			Appointment.ScheduledStartTime,
-			Appointment.ScheduledEndTime,
-			Appointment.AppointmentSerNum,
-			Appointment.PatientSerNum,
-            Appointment.PrioritySerNum,
-            Appointment.DiagnosisSerNum,
-            Appointment.SourceDatabaseSerNum,
-            Appointment.Status,
-            Appointment.State,
-            Appointment.ActualStartDate,
-            Appointment.ActualEndDate,
-            Appointment.CronLogSerNum
-		FROM
-			Appointment
-		WHERE
-			Appointment.AppointmentAriaSer      = '$sourceUID'
-        AND Appointment.SourceDatabaseSerNum    = '$sourceDBSer'
-	";
+		# Default the scheduled start and end time to 1970-01-01 00:00:00
+		my $inDB_sql = "
+			SELECT DISTINCT
+				AppointmentAriaSer,
+				AliasExpressionSerNum,
+				if(ifnull(ScheduledStartTime, '1970-01-01 00:00:00') = '0000-00-00 00:00:00', '1970-01-01 00:00:00', ScheduledStartTime) as ScheduledStartTime,
+				if(ifnull(ScheduledEndTime, '1970-01-01 00:00:00') = '0000-00-00 00:00:00', '1970-01-01 00:00:00', ScheduledEndTime) as ScheduledEndTime,
+				AppointmentSerNum,
+				PatientSerNum,
+				PrioritySerNum,
+				DiagnosisSerNum,
+				SourceDatabaseSerNum,
+				Status,
+				State,
+				if(ifnull(ActualStartDate, '1970-01-01 00:00:00') = '0000-00-00 00:00:00', '1970-01-01 00:00:00', ActualStartDate) as ActualStartDate,
+				if(ifnull(ActualEndDate, '1970-01-01 00:00:00') = '0000-00-00 00:00:00', '1970-01-01 00:00:00', ActualEndDate) as ActualEndDate,
+				CronLogSerNum
+			FROM
+				Appointment
+			WHERE
+				AppointmentAriaSer      = '$sourceUID'
+	      AND SourceDatabaseSerNum    = '$sourceDBSer'
+		";
+
+	# my $inDB_sql = "
+	# 	SELECT DISTINCT
+	# 		Appointment.AppointmentAriaSer,
+	# 		Appointment.AliasExpressionSerNum,
+	# 		Appointment.ScheduledStartTime,
+	# 		Appointment.ScheduledEndTime,
+	# 		Appointment.AppointmentSerNum,
+	# 		Appointment.PatientSerNum,
+  #           Appointment.PrioritySerNum,
+  #           Appointment.DiagnosisSerNum,
+  #           Appointment.SourceDatabaseSerNum,
+  #           Appointment.Status,
+  #           Appointment.State,
+  #           Appointment.ActualStartDate,
+  #           Appointment.ActualEndDate,
+  #           Appointment.CronLogSerNum
+	# 	FROM
+	# 		Appointment
+	# 	WHERE
+	# 		Appointment.AppointmentAriaSer      = '$sourceUID'
+  #       AND Appointment.SourceDatabaseSerNum    = '$sourceDBSer'
+	# ";
 
 	# prepare query
 	my $query = $SQLDatabase->prepare($inDB_sql)
