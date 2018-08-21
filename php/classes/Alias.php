@@ -17,14 +17,14 @@ class Alias {
 	public function getExpressions ($sourceDBSer, $expressionType) {
         $expressionList = array();
         $databaseObj = new Database();
-        
+
         try {
 
             // get already assigned expressions from our database
             $assignedExpressions = $this->getAssignedExpressions($sourceDBSer, $expressionType);
 
             // ***********************************
-            // ARIA 
+            // ARIA
             // ***********************************
             if ($sourceDBSer == 1) {
 
@@ -36,12 +36,12 @@ class Alias {
                         $sql = "
                             SELECT DISTINCT
     			    	        vv_ActivityLng.Expression1
-        			        FROM  
-    	    			        variansystem.dbo.vv_ActivityLng vv_ActivityLng 
-                            ORDER BY 
+        			        FROM
+    	    			        variansystem.dbo.vv_ActivityLng vv_ActivityLng
+                            ORDER BY
                                 vv_ActivityLng.Expression1
                         ";
-						
+
                         $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
                         $query->execute();
 
@@ -50,7 +50,7 @@ class Alias {
                             $termName = $data[0];
                             $termArray = array(
     				           	'name'      => $termName,
-                                'id'        => $termName, 
+                                'id'        => $termName,
                                 'description' => $termName,
     			        	    'added'     => 0,
                                 'assigned'  => null
@@ -71,19 +71,19 @@ class Alias {
                         $sql = "
                             SELECT DISTINCT
                                 RTRIM(note_typ.note_typ_desc)
-                            FROM 
+                            FROM
                                 varianenm.dbo.note_typ note_typ
                             ORDER BY
                                 RTRIM(note_typ.note_typ_desc)
                         ";
-        
+
                         $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
                         $query->execute();
 
                         while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                             $termName = $data[0];
-                                
+
                             $termArray = array(
     				           	'name'      => $termName,
                                 'id'        => $termName,
@@ -97,7 +97,7 @@ class Alias {
                                 $termArray['added'] = 0;
                                 $termArray['assigned'] = $assignedExpression;
                             }
-        
+
                             array_push($expressionList, $termArray);
                         }
                     }
@@ -106,16 +106,16 @@ class Alias {
             }
 
             // ***********************************
-            // WaitRoomManagement 
+            // WaitRoomManagement
             // ***********************************
             if ($sourceDBSer == 2) {
 
                 $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
 
                 if ($source_db_link) {
-            
+
                     $sql = "
-                        SELECT DISTINCT 
+                        SELECT DISTINCT
                             mval.AppointmentCode,
                             mval.ResourceDescription
                         FROM
@@ -128,7 +128,7 @@ class Alias {
                     $query->execute();
 
                     while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                    
+
                         $termName   = $data[0];
                         $termDesc   = $data[1];
 
@@ -152,8 +152,8 @@ class Alias {
             }
 
             // ***********************************
-            // Mosaiq 
-            // ***********************************   
+            // Mosaiq
+            // ***********************************
             if ($sourceDBSer == 3) {
 
                 $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
@@ -173,7 +173,7 @@ class Alias {
                     }
                 }
 
-            }        
+            }
 
 			return $expressionList;
 
@@ -197,7 +197,7 @@ class Alias {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
-                SELECT DISTINCT 
+                SELECT DISTINCT
                     ae.ExpressionName,
                     ae.Description,
                     Alias.AliasName_EN
@@ -218,7 +218,7 @@ class Alias {
                 $expressionDetails = array (
                     'id'        => $data[0],
                     'description'   => $data[1],
-                    'name_EN'   => "$data[2]"   
+                    'name_EN'   => "$data[2]"
                 );
                 array_push($expressions, $expressionDetails);
             }
@@ -258,13 +258,13 @@ class Alias {
                 $aliasSer       = $alias['serial'];
 
 				$sql = "
-					UPDATE 
-						Alias 	
-					SET 
-						Alias.AliasUpdate = $aliasUpdate, 
+					UPDATE
+						Alias
+					SET
+						Alias.AliasUpdate = $aliasUpdate,
                         Alias.LastUpdatedBy = $userSer,
                         Alias.SessionId = '$sessionId'
-					WHERE 
+					WHERE
 						Alias.AliasSerNum = $aliasSer
 				";
 
@@ -299,12 +299,12 @@ class Alias {
             $sql = "
                 SELECT DISTINCT
                     Alias.AliasSerNum
-                FROM 
+                FROM
                     Alias
-                LEFT JOIN 
-                    AliasExpression 
+                LEFT JOIN
+                    AliasExpression
                 ON  Alias.AliasSerNum = AliasExpression.AliasSerNum
-                 WHERE  
+                 WHERE
                     AliasExpression.AliasSerNum IS NULL
                 AND Alias.AliasUpdate != 0
             ";
@@ -316,9 +316,9 @@ class Alias {
                 $aliasSer = $data[0];
 
                 $sql = "
-                    UPDATE 
-                        Alias 
-                    SET 
+                    UPDATE
+                        Alias
+                    SET
                         Alias.AliasUpdate       = 0,
                         Alias.LastUpdatedBy     = $userSer,
                         Alias.SessionId         = '$sessionId'
@@ -349,7 +349,7 @@ class Alias {
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             $sql = "
-                SELECT DISTINCT 
+                SELECT DISTINCT
                     Alias.AliasName_EN,
                     Alias.AliasName_FR,
                     Alias.ColorTag
@@ -400,9 +400,9 @@ class Alias {
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 			$sql = "
-				SELECT DISTINCT 
-					Alias.AliasSerNum, 
-					Alias.AliasType, 
+				SELECT DISTINCT
+					Alias.AliasSerNum,
+					Alias.AliasType,
 					Alias.AliasName_FR,
 					Alias.AliasName_EN,
 					Alias.AliasDescription_FR,
@@ -413,10 +413,10 @@ class Alias {
                     SourceDatabase.SourceDatabaseName,
                     Alias.ColorTag,
                     Alias.LastUpdated
-				FROM 
+				FROM
                     Alias,
                     SourceDatabase
-                WHERE   
+                WHERE
                     Alias.SourceDatabaseSerNum = SourceDatabase.SourceDatabaseSerNum
 			";
 
@@ -443,14 +443,14 @@ class Alias {
                 $aliasEduMat    = "";
 
 				$sql = "
-					SELECT DISTINCT 
+					SELECT DISTINCT
 						AliasExpression.ExpressionName,
-                        AliasExpression.Description 
-					FROM 
-						Alias, 
-						AliasExpression 
-					WHERE 
-						Alias.AliasSerNum 		        = $aliasSer 
+                        AliasExpression.Description
+					FROM
+						Alias,
+						AliasExpression
+					WHERE
+						Alias.AliasSerNum 		        = $aliasSer
 					AND AliasExpression.AliasSerNum 	= Alias.AliasSerNum
 				";
 
@@ -474,22 +474,22 @@ class Alias {
                     $eduMatObj = new EduMaterial();
                     $aliasEduMat = $eduMatObj->getEducationalMaterialDetails($aliasEduMatSer);
                 }
-                            
+
 				$aliasArray = array(
-					'name_FR' 		    => $aliasName_FR, 
-					'name_EN' 		    => $aliasName_EN, 
-					'serial' 		    => $aliasSer, 
-                    'type'			    => $aliasType, 
+					'name_FR' 		    => $aliasName_FR,
+					'name_EN' 		    => $aliasName_EN,
+					'serial' 		    => $aliasSer,
+                    'type'			    => $aliasType,
                     'color'             => $aliasColorTag,
                     'update'            => $aliasUpdate,
                     'changed'           => 0,
                     'eduMatSer'         => $aliasEduMatSer,
                     'eduMat'            => $aliasEduMat,
-					'description_EN' 	=> $aliasDesc_EN, 
+					'description_EN' 	=> $aliasDesc_EN,
                     'description_FR' 	=> $aliasDesc_FR,
-                    'source_db'         => $sourceDatabase, 
+                    'source_db'         => $sourceDatabase,
                     'lastupdated'       => $aliasLU,
-					'count' 		    => count($aliasTerms), 
+					'count' 		    => count($aliasTerms),
 					'terms' 		    => $aliasTerms
 				);
 
@@ -509,8 +509,8 @@ class Alias {
      *
      * @param integer $aliasSer : the alias serial number
      * @return array $aliasDetails : the alias details
-     */			
-    public function getAliasDetails ($aliasSer) { 
+     */
+    public function getAliasDetails ($aliasSer) {
 
 		$aliasDetails = array();
 		try {
@@ -518,8 +518,8 @@ class Alias {
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 			$sql = "
-				SELECT DISTINCT 
-					Alias.AliasType, 
+				SELECT DISTINCT
+					Alias.AliasType,
 					Alias.AliasName_FR,
 					Alias.AliasName_EN,
 					Alias.AliasDescription_FR,
@@ -527,13 +527,13 @@ class Alias {
                     Alias.AliasUpdate,
                     Alias.EducationalMaterialControlSerNum,
                     Alias.SourceDatabaseSerNum,
-                    SourceDatabase.SourceDatabaseName, 
+                    SourceDatabase.SourceDatabaseName,
                     Alias.ColorTag,
                     Alias.HospitalMapSerNum
-				FROM 
-                    Alias, 
+				FROM
+                    Alias,
                     SourceDatabase
-				WHERE 
+				WHERE
                     Alias.AliasSerNum                       = $aliasSer
                 AND SourceDatabase.SourceDatabaseSerNum     = Alias.SourceDatabaseSerNum
 
@@ -565,12 +565,12 @@ class Alias {
             $checkinDetails = $this->getCheckinDetails($aliasSer, $aliasType);
 
 			$sql = "
-				SELECT DISTINCT 
+				SELECT DISTINCT
 					AliasExpression.ExpressionName,
-                    AliasExpression.Description 
-				FROM 	
-					AliasExpression 
-				WHERE 
+                    AliasExpression.Description
+				FROM
+					AliasExpression
+				WHERE
 					AliasExpression.AliasSerNum = $aliasSer
 			";
 
@@ -599,26 +599,26 @@ class Alias {
                 $hospitalMapObj = new HospitalMap();
                 $hospitalMap = $hospitalMapObj->getHospitalMapDetails($hospitalMapSer);
             }
-                         
+
 			$aliasDetails = array(
-				'name_FR' 		    => $aliasName_FR, 
-				'name_EN' 		    => $aliasName_EN, 
-				'serial' 		    => $aliasSer, 
-                'type'			    => $aliasType, 
+				'name_FR' 		    => $aliasName_FR,
+				'name_EN' 		    => $aliasName_EN,
+				'serial' 		    => $aliasSer,
+                'type'			    => $aliasType,
                 'color'             => $aliasColorTag,
                 'update'            => $aliasUpdate,
                 'eduMatSer'         => $aliasEduMatSer,
                 'eduMat'            => $aliasEduMat,
-				'description_EN' 	=> $aliasDesc_EN, 
-                'description_FR' 	=> $aliasDesc_FR, 
+				'description_EN' 	=> $aliasDesc_EN,
+                'description_FR' 	=> $aliasDesc_FR,
                 'source_db'         => $sourceDatabase,
-				'count' 		    => count($aliasTerms), 
+				'count' 		    => count($aliasTerms),
 				'terms' 		    => $aliasTerms,
                 'checkin_details'   => $checkinDetails,
                 'hospitalMapSer'    => $hospitalMapSer,
                 'hospitalMap'       => $hospitalMap
 			);
-		
+
             return $aliasDetails;
 
 		} catch (PDOException $e) {
@@ -665,33 +665,33 @@ class Alias {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			$sql = "
-				INSERT INTO 
+				INSERT INTO
 					Alias (
-						AliasSerNum, 
+						AliasSerNum,
 						AliasName_FR,
 						AliasName_EN,
 						AliasDescription_FR,
-                        AliasDescription_EN, 
+                        AliasDescription_EN,
                         EducationalMaterialControlSerNum,
                         HospitalMapSerNum,
                         SourceDatabaseSerNum,
-                        AliasType, 
+                        AliasType,
                         ColorTag,
                         AliasUpdate,
                         LastUpdatedBy,
                         SessionId,
                         LastTransferred
-					) 
+					)
 				VALUES (
-					NULL, 
-					\"$aliasName_FR\", 
+					NULL,
+					\"$aliasName_FR\",
 					\"$aliasName_EN\",
-					\"$aliasDesc_FR\", 
-                    \"$aliasDesc_EN\", 
+					\"$aliasDesc_FR\",
+                    \"$aliasDesc_EN\",
                     $aliasEduMatSer,
                     $hospitalMapSer,
                     '$sourceDBSer',
-                    '$aliasType', 
+                    '$aliasType',
                     '$aliasColorTag',
                     '0',
                     '$userSer',
@@ -709,7 +709,7 @@ class Alias {
                 $termName = $aliasTerm['id'];
                 $termDesc = $aliasTerm['description'];
 				$sql = "
-                    INSERT INTO 
+                    INSERT INTO
                         AliasExpression (
                             AliasSerNum,
                             ExpressionName,
@@ -743,7 +743,7 @@ class Alias {
                 $instruction_FR  =  $checkinDetails['instruction_FR'];
 
                 $sql = "
-                    INSERT INTO 
+                    INSERT INTO
                         AppointmentCheckin (
                             AliasSerNum,
                             CheckinPossible,
@@ -766,8 +766,8 @@ class Alias {
                 $query = $host_db_link->prepare( $sql );
                 $query->execute();
             }
-				
-	
+
+
 		} catch( PDOException $e) {
 			return $e->getMessage();
 		}
@@ -801,14 +801,14 @@ class Alias {
                 WHERE
                     AliasExpression.AliasSerNum = $aliasSer
 			";
-			
+
 			$query = $host_db_link->prepare( $sql );
             $query->execute();
 
 			$sql = "
-				DELETE FROM 
-					Alias 
-				WHERE 
+				DELETE FROM
+					Alias
+				WHERE
 					Alias.AliasSerNum = $aliasSer
 			";
 
@@ -817,19 +817,19 @@ class Alias {
 
             $sql = "
                 UPDATE AliasMH
-                SET 
+                SET
                     AliasMH.LastUpdatedBy = '$userSer',
                     AliasMH.SessionId = '$sessionId'
                 WHERE
                     AliasMH.AliasSerNum = $aliasSer
-                ORDER BY AliasMH.AliasRevSerNum DESC 
+                ORDER BY AliasMH.AliasRevSerNum DESC
                 LIMIT 1
             ";
             $query = $host_db_link->prepare( $sql );
             $query->execute();
-	
+
             $response['value'] = 1; // Success
-            return $response;	
+            return $response;
 
 		} catch( PDOException $e) {
             $response['message'] = $e->getMessage();
@@ -843,7 +843,7 @@ class Alias {
      *
      * @param array $aliasDetails : the alias details
      * @return array $response : response
-     */    
+     */
     public function updateAlias( $aliasDetails ) {
 
 		$aliasName_EN 	= $aliasDetails['name_EN'];
@@ -855,7 +855,7 @@ class Alias {
         $aliasEduMatSer = $aliasDetails['edumatser'] ? $aliasDetails['edumatser'] : 'NULL';
         $hospitalMapSer = $aliasDetails['hospitalMapSer'] ? $aliasDetails['hospitalMapSer'] : 'NULL';
         $checkinDetails = $aliasDetails['checkin_details'] ? $aliasDetails['checkin_details'] : null;
-      
+
         $aliasColorTag  = $aliasDetails['color'];
 
         $userSer        = $aliasDetails['user']['id'];
@@ -872,18 +872,18 @@ class Alias {
             'value'     => 0,
             'message'   => ''
         );
-        
+
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             if ($detailsUpdated) {
     			$sql = "
-    				UPDATE 
-    					Alias 
-    				SET 
-    					Alias.AliasName_EN 		                = \"$aliasName_EN\", 
-    					Alias.AliasName_FR 		                = \"$aliasName_FR\", 
+    				UPDATE
+    					Alias
+    				SET
+    					Alias.AliasName_EN 		                = \"$aliasName_EN\",
+    					Alias.AliasName_FR 		                = \"$aliasName_FR\",
     					Alias.AliasDescription_EN	            = \"$aliasDesc_EN\",
                         Alias.AliasDescription_FR	            = \"$aliasDesc_FR\",
                         Alias.EducationalMaterialControlSerNum  = $aliasEduMatSer,
@@ -891,7 +891,7 @@ class Alias {
                         Alias.ColorTag                          = '$aliasColorTag',
                         Alias.LastUpdatedBy                     = '$userSer',
                         Alias.SessionId                         = '$sessionId'
-    				WHERE 
+    				WHERE
     					Alias.AliasSerNum = $aliasSer
     			";
 
@@ -904,18 +904,47 @@ class Alias {
                 $instruction_EN = $checkinDetails['instruction_EN'];
                 $instruction_FR = $checkinDetails['instruction_FR'];
 
-                $sql = "
-                    UPDATE
-                        AppointmentCheckin
-                    SET
-                        AppointmentCheckin.CheckinPossible          = '$checkinPossible',
-                        AppointmentCheckin.CheckinInstruction_EN    = \"$instruction_EN\",
-                        AppointmentCheckin.CheckinInstruction_FR    = \"$instruction_FR\",
-                        AppointmentCheckin.LastUpdatedBy            = '$userSer',
-                        AppointmentCheckin.SessionId                = '$sessionId'
-                    WHERE 
-                        AppointmentCheckin.AliasSerNum = $aliasSer
+								$sql = "
+                    INSERT INTO
+                        AppointmentCheckin (
+                            AliasSerNum,
+                            CheckinPossible,
+                            CheckinInstruction_EN,
+                            CheckinInstruction_FR,
+                            DateAdded,
+                            LastUpdatedBy,
+                            SessionId
+                        )
+                    VALUE (
+                        '$aliasSer',
+                        '$checkinPossible',
+                        \"$instruction_EN\",
+                        \"$instruction_FR\",
+                        NOW(),
+                        '$userSer',
+                        '$sessionId'
+                    )
+										ON DUPLICATE KEY UPDATE
+											AliasSerNum = '$aliasSer',
+											CheckinPossible = '$checkinPossible',
+											CheckinInstruction_EN = \"$instruction_EN\",
+											CheckinInstruction_FR = \"$instruction_FR\",
+											LastUpdatedBy = '$userSer',
+											SessionId = '$sessionId';
                 ";
+
+                // $sql = "
+                //     UPDATE
+                //         AppointmentCheckin
+                //     SET
+                //         AppointmentCheckin.CheckinPossible          = '$checkinPossible',
+                //         AppointmentCheckin.CheckinInstruction_EN    = \"$instruction_EN\",
+                //         AppointmentCheckin.CheckinInstruction_FR    = \"$instruction_FR\",
+                //         AppointmentCheckin.LastUpdatedBy            = '$userSer',
+                //         AppointmentCheckin.SessionId                = '$sessionId'
+                //     WHERE
+                //         AppointmentCheckin.AliasSerNum = $aliasSer
+                // ";
 
                 $query = $host_db_link->prepare( $sql );
                 $query->execute();
@@ -924,12 +953,12 @@ class Alias {
             if ($expressionsUpdated) {
 
     			$sql = "
-    				SELECT DISTINCT 
+    				SELECT DISTINCT
     					AliasExpression.ExpressionName,
-                        AliasExpression.Description 
-    				FROM 
-    					AliasExpression 
-    				WHERE 
+                        AliasExpression.Description
+    				FROM
+    					AliasExpression
+    				WHERE
     					AliasExpression.AliasSerNum = $aliasSer
     			";
 
@@ -953,7 +982,7 @@ class Alias {
                     $existingTermDesc = $existingTerm['description'];
     				if (!$this->nestedSearch($existingTermName, $existingTermDesc, $aliasTerms)) {
     					$sql = "
-                            DELETE FROM 
+                            DELETE FROM
     							AliasExpression
     						WHERE
                                 AliasExpression.ExpressionName = \"$existingTermName\"
@@ -968,13 +997,13 @@ class Alias {
 
                         $sql = "
                             UPDATE AliasExpressionMH
-                            SET 
+                            SET
                                 AliasExpressionMH.LastUpdatedBy = '$userSer',
                                 AliasExpressionMH.SessionId = '$sessionId'
                             WHERE
                                 AliasExpressionMH.ExpressionName = \"$existingTermName\"
                             AND AliasExpressionMH.Description = \"$existingTermDesc\"
-                            ORDER BY AliasExpressionMH.RevSerNum DESC 
+                            ORDER BY AliasExpressionMH.RevSerNum DESC
                             LIMIT 1
                         ";
                         $query = $host_db_link->prepare( $sql );
@@ -988,7 +1017,7 @@ class Alias {
                     $termDesc = $term['description'];
     				if (!$this->nestedSearch($termName, $termDesc, $existingTerms)) {
                         $sql = "
-                            INSERT INTO 
+                            INSERT INTO
                                 AliasExpression (
                                     AliasExpressionSerNum,
                                     AliasSerNum,
@@ -1020,7 +1049,7 @@ class Alias {
 
             $response['value'] = 1; // Success
             return $response;
-		
+
 		} catch( PDOException $e) {
 		    $response['message'] = $e->getMessage();
 			return $response; // Fail
@@ -1029,7 +1058,7 @@ class Alias {
 
     /**
      *
-     * Gets a list of source databases 
+     * Gets a list of source databases
      *
      * @return array $sourceDBList : the list of source databases
      */
@@ -1047,7 +1076,7 @@ class Alias {
                     SourceDatabase sd
                 WHERE
                     sd.Enabled = 1
-                ORDER BY 
+                ORDER BY
                     sd.SourceDatabaseSerNum
             ";
 
@@ -1066,7 +1095,7 @@ class Alias {
             }
 
             return $sourceDBList;
-        
+
         } catch (PDOException $e) {
 			echo $e->getMessage();
 			return $sourceDBList;
@@ -1091,11 +1120,11 @@ class Alias {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
-                SELECT DISTINCT 
+                SELECT DISTINCT
                     ac.CheckinPossible,
                     ac.CheckinInstruction_EN,
                     ac.CheckinInstruction_FR
-                FROM 
+                FROM
                     AppointmentCheckin ac
                 WHERE
                     ac.AliasSerNum = $serial
@@ -1148,7 +1177,7 @@ class Alias {
                         apmh.CronLogSerNum,
                         COUNT(apmh.CronLogSerNum),
                         cl.CronDateTime
-                    FROM 
+                    FROM
                         Alias al,
                         AliasExpression ae,
                         AppointmentMH apmh,
@@ -1159,12 +1188,12 @@ class Alias {
                     AND apmh.CronLogSerNum IS NOT NULL
                     AND apmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
                     AND ae.AliasSerNum = al.AliasSerNum
-                    GROUP BY 
+                    GROUP BY
                         al.AliasName_EN,
                         apmh.CronLogSerNum,
                         cl.CronDateTime
-                    ORDER BY 
-                        cl.CronDateTime ASC 
+                    ORDER BY
+                        cl.CronDateTime ASC
                 ";
 
                 $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -1194,7 +1223,7 @@ class Alias {
                         docmh.CronLogSerNum,
                         COUNT(docmh.CronLogSerNum),
                         cl.CronDateTime
-                    FROM 
+                    FROM
                         Alias al,
                         AliasExpression ae,
                         DocumentMH docmh,
@@ -1205,12 +1234,12 @@ class Alias {
                     AND docmh.CronLogSerNum IS NOT NULL
                     AND docmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
                     AND ae.AliasSerNum = al.AliasSerNum
-                    GROUP BY 
+                    GROUP BY
                         al.AliasName_EN,
                         docmh.CronLogSerNum,
                         cl.CronDateTime
-                    ORDER BY 
-                        cl.CronDateTime ASC 
+                    ORDER BY
+                        cl.CronDateTime ASC
                 ";
 
                 $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -1240,7 +1269,7 @@ class Alias {
                         tmh.CronLogSerNum,
                         COUNT(tmh.CronLogSerNum),
                         cl.CronDateTime
-                    FROM 
+                    FROM
                         Alias al,
                         AliasExpression ae,
                         TaskMH tmh,
@@ -1251,12 +1280,12 @@ class Alias {
                     AND tmh.CronLogSerNum IS NOT NULL
                     AND tmh.AliasExpressionSerNum = ae.AliasExpressionSerNum
                     AND ae.AliasSerNum = al.AliasSerNum
-                    GROUP BY 
+                    GROUP BY
                         al.AliasName_EN,
                         tmh.CronLogSerNum,
                         cl.CronDateTime
-                    ORDER BY 
-                        cl.CronDateTime ASC 
+                    ORDER BY
+                        cl.CronDateTime ASC
                 ";
 
                 $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -1306,8 +1335,8 @@ class Alias {
                         GROUP BY
                             apmh.CronLogSerNum,
                             cl.CronDateTime
-                        ORDER BY 
-                            cl.CronDateTime ASC 
+                        ORDER BY
+                            cl.CronDateTime ASC
                     ";
 
                 }
@@ -1331,8 +1360,8 @@ class Alias {
                         GROUP BY
                             docmh.CronLogSerNum,
                             cl.CronDateTime
-                        ORDER BY 
-                            cl.CronDateTime ASC 
+                        ORDER BY
+                            cl.CronDateTime ASC
                     ";
                 }
 
@@ -1355,8 +1384,8 @@ class Alias {
                         GROUP BY
                             taskmh.CronLogSerNum,
                             cl.CronDateTime
-                        ORDER BY 
-                            cl.CronDateTime ASC 
+                        ORDER BY
+                            cl.CronDateTime ASC
                     ";
                 }
                 $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -1408,7 +1437,7 @@ class Alias {
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             if (!$type) {
                 $sql = "
-                    SELECT DISTINCT 
+                    SELECT DISTINCT
                         al.AliasType,
                         ae.ExpressionName,
                         ae.Description,
@@ -1453,7 +1482,7 @@ class Alias {
                 }
 
                 $sql = "
-                    SELECT DISTINCT 
+                    SELECT DISTINCT
                         al.AliasType,
                         ae.ExpressionName,
                         ae.Description,
@@ -1498,7 +1527,7 @@ class Alias {
                 }
 
                 $sql = "
-                    SELECT DISTINCT 
+                    SELECT DISTINCT
                         al.AliasType,
                         ae.ExpressionName,
                         ae.Description,
@@ -1571,7 +1600,7 @@ class Alias {
                         apmh.AliasExpressionSerNum  = ae.AliasExpressionSerNum
                     AND apmh.SourceDatabaseSerNum   = sd.SourceDatabaseSerNum
                     AND apmh.CronLogSerNum          IN ($serials)
-                "; 
+                ";
                 $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
                 $query->execute();
 
@@ -1633,13 +1662,13 @@ class Alias {
                     LEFT JOIN
                         Staff Staff1
                     ON Staff1.StaffSerNum = docmh.CreatedBySerNum
-                    LEFT JOIN 
+                    LEFT JOIN
                         Staff Staff2
                     ON Staff2.StaffSerNum = docmh.ApprovedBySerNum
-                    LEFT JOIN 
+                    LEFT JOIN
                         Staff Staff3
                     ON Staff3.StaffSerNum = docmh.AuthoredBySerNum
-                    WHERE 
+                    WHERE
                         docmh.AliasExpressionSerNum  = ae.AliasExpressionSerNum
                     AND docmh.SourceDatabaseSerNum   = sd.SourceDatabaseSerNum
                     AND docmh.CronLogSerNum          IN ($serials)
@@ -1736,7 +1765,7 @@ class Alias {
             echo $e->getMessage();
             return $aliasLogs;
         }
-    }  
+    }
 
 
     /**
