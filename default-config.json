@@ -30,6 +30,9 @@
 			"host": "WRM_DB_HOST_HERE",
 			"port": "WRM_DB_PORT_HERE",
 			"name": "WRM_DB_NAME_HERE",
+			"_comment1": "FEDERATED_WRM_DB_NAME_HERE (nameFED) is used for FEDERATED database connection.",
+			"_comment2": "If no FEDERATED is used, then use the same WRM_DB_NAME_HERE (name)",
+			"nameFED": "FEDERATED_WRM_DB_NAME_HERE",
 			"username": "WRM_DB_USERNAME_HERE",
 			"password": "WRM_DB_PASSWORD_HERE",
 			"enabled": 0

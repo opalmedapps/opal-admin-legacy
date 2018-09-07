@@ -267,13 +267,19 @@ class OpalCheckin{
     private static function getCheckedInMediAppointments($patientId){
 
         // Create DB connection to WaitingRoomManagement
-        $conn = new mysqli(WRM_DB_HOST, WRM_DB_USERNAME, WRM_DB_PASSWORD, WRM_DB_NAME);
+
+				// YM 2018-09-07 - Use Opal DB instead of WaitingRoomManagement because
+				//		now the WaitingRoomManagement might be a FEDERATED engine or not
+        // $conn = new mysqli(WRM_DB_HOST, WRM_DB_USERNAME, WRM_DB_PASSWORD, WRM_DB_NAME);
+				$conn = new mysqli(OPAL_DB_HOST, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, OPAL_DB_NAME);
 
         // Gets the list of Schedule Aria Appointments that have successfully checked in
 				$opalDatabaseName = OPAL_DB_NAME;
+				$wrmDatabaseName = WRM_DB_NAME_FED;
 
-        $sql = "Select PMH.AppointmentSerNum
-                From PatientLocation PMH, Patient P, MediVisitAppointmentList MVA, $opalDatabaseName.Appointment A
+				$sql = "Select PMH.AppointmentSerNum
+                From $wrmDatabaseName.PatientLocation PMH, $wrmDatabaseName.Patient P,
+										$wrmDatabaseName.MediVisitAppointmentList MVA, $opalDatabaseName.Appointment A
                 Where P.PatientSerNum = MVA.PatientSerNum
                     And P.PatientId = " . $patientId . "
                     And MVA.AppointmentSerNum = PMH.AppointmentSerNum
@@ -281,15 +287,6 @@ class OpalCheckin{
                     And DATE_FORMAT(ArrivalDateTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d')
 										and DATE_FORMAT(A.ScheduledStartTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d');";
 
-// YM 2018-05-25 - Replace with new query
-/*				$sql = "Select PMH.AppointmentSerNum
-                From PatientLocationMH PMH, Patient P, MediVisitAppointmentList MVA
-                Where P.PatientSerNum = MVA.PatientSerNum
-                    And P.PatientId = " . $patientId . "
-                    And MVA.AppointmentSerNum = PMH.AppointmentSerNum
-                    And CheckinVenueName like '%Waiting Room%'
-                    And DATE_FORMAT(ArrivalDateTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d');";
-*/
         try{
             $resultMedi = $conn->query($sql);
 
