@@ -50,6 +50,7 @@
 	define( "WRM_DB_HOST", $config['databaseConfig']['wrm']['host'] );
 	define( "WRM_DB_PORT", $config['databaseConfig']['wrm']['port'] );
 	define( "WRM_DB_NAME", $config['databaseConfig']['wrm']['name'] );
+	define( "WRM_DB_NAME_FED", $config['databaseConfig']['wrm']['nameFED'] );
 	define( "WRM_DB_DSN", "mysql:host=" . WRM_DB_HOST . ";port=" . WRM_DB_PORT . ";dbname=" . WRM_DB_NAME . ";charset=utf8" );
 	define( "WRM_DB_USERNAME", $config['databaseConfig']['wrm']['username'] );
 	define( "WRM_DB_PASSWORD", $config['databaseConfig']['wrm']['password'] );
