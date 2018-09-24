@@ -240,8 +240,7 @@ sub getResourceAppointmentsFromSourceDB
 					PatientInfo
 				WHERE
 					sa.ActivityInstanceSer		= ai.ActivityInstanceSer
-				AND sa.PatientSer               = pt.PatientSer
-				AND LEFT(LTRIM(pt.SSN), 12)     = PatientInfo.SSN
+				AND sa.PatientSer = (select pt.PatientSer from variansystem.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
 				AND ai.ActivitySer			    = Activity.ActivitySer
 				AND	Activity.ActivityCode		= lt.LookupValue
 				AND	ai.ActivityInstanceSer		= att.ActivityInstanceSer

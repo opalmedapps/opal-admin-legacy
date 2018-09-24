@@ -477,8 +477,7 @@ sub getApptsFromSourceDB
 					sa.ActivityInstanceSer 		= ai.ActivityInstanceSer
 				AND ai.ActivitySer 			    = act.ActivitySer
 				AND act.ActivityCode 		    = lt.LookupValue
-				AND pt.PatientSer 				= sa.PatientSer
-				AND LEFT(LTRIM(pt.SSN), 12)		= PatientInfo.SSN
+				AND sa.PatientSer = (select pt.PatientSer from variansystem.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
 				AND (
 
 			";
@@ -605,7 +604,7 @@ sub getApptsFromSourceDB
 			my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
 
 			$patientInfo_sql .= "
-				SELECT '$patientSSN' as SSN, '$patientLastTransfer' as LastTransfer, '$patientSer' as PatientSerNum
+				(SELECT '$patientSSN' as SSN, '$patientLastTransfer' as LastTransfer, '$patientSer' as PatientSerNum)
 			";
 
 			$counter++;
