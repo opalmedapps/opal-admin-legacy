@@ -2,8 +2,8 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 19-Feb-2014 ++ File: Alias.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates an alias class. This module calls a constructor to 
-# create an alias object that contains alias information stored as object 
+# Perl module that creates an alias class. This module calls a constructor to
+# create an alias object that contains alias information stored as object
 # variables.
 #
 # There exists various subroutines to set alias information, get alias information (to/from objects)
@@ -25,7 +25,7 @@ my $SQLDatabase		= $Database::targetDatabase;
 my $verbose = 0;
 
 #====================================================================================
-# Constructor for our Alias class 
+# Constructor for our Alias class
 #====================================================================================
 sub new
 {
@@ -42,7 +42,7 @@ sub new
 
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
-	bless $alias, $class; 
+	bless $alias, $class;
 	return $alias;
 }
 
@@ -210,7 +210,7 @@ sub getAliasesMarkedForUpdate
 		";
 
 		print "$aliasInfo_sql\n" if $verbose;
-	    
+
 		# prepare query
 		my $query = $SQLDatabase->prepare($aliasInfo_sql)
 			or die "Could not prepare query: " . $SQLDatabase->errstr;
@@ -237,7 +237,7 @@ sub getAliasesMarkedForUpdate
 			# get expressions for this alias
 			@expressions	= $Alias->getAliasExpressionsFromOurDB();
 
-			# finally, set expressions 
+			# finally, set expressions
 			$Alias->setAliasExpressions(@expressions);
 
 			push(@aliasList, $Alias);
@@ -270,10 +270,10 @@ sub getAliasExpressionsFromOurDB
 	my $expressionInfo_sql = "
 		SELECT DISTINCT
 			AliasExpression.AliasExpressionSerNum,
-			REPLACE(AliasExpression.ExpressionName, '''', ''),
-			REPLACE(AliasExpression.Description, '''', ''),
+			RTRIM(REPLACE(AliasExpression.ExpressionName, '''', '')),
+			RTRIM(REPLACE(AliasExpression.Description, '''', '')),
 			AliasExpression.LastTransferred
-		FROM 
+		FROM
 			Alias,
 			AliasExpression
 		WHERE
@@ -305,14 +305,14 @@ sub getAliasExpressionsFromOurDB
 }
 
 #======================================================================================
-# Subroutine to set/update the "last transferred" field to current time 
+# Subroutine to set/update the "last transferred" field to current time
 #======================================================================================
 sub setAliasLastTransferIntoOurDB
-{	
+{
 	my ($current_datetime) = @_; # our current datetime in arguments
 
 	my $update_sql = "
-		
+
 		UPDATE
 			Alias,
 			AliasExpression
@@ -344,7 +344,7 @@ sub getExpressionNameFromOurDB
 {
     my ($expressionSer) = @_; # args
 
-    my $expressionName; #  initialize 
+    my $expressionName; #  initialize
 
     my $select_sql = "
         SELECT DISTINCT
@@ -382,7 +382,7 @@ sub getAliasFromOurDB
 {
     my ($expressionSer) = @_; # args
 
-    my $aliasSer; #  initialize 
+    my $aliasSer; #  initialize
 
     my $select_sql = "
         SELECT DISTINCT
@@ -413,5 +413,4 @@ sub getAliasFromOurDB
 
 }
 # To exit/return always true (for the module itself)
-1;	
-
+1;
