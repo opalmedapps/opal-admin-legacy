@@ -35,9 +35,22 @@ class PushNotifications {
 			'summaryText'   => 'There are %n% notifications'
 		);
 */
+
+	// Flag to identify when to use the utf8_encode because message coming
+	// from PERL alters the French characters
+	$wsFlag = (isset($data['encode'])? $data['encode'] :'Yes' );
+
+	if ($wsFlag == 'Yes') {
+		$wsTitle = utf8_encode($data['mtitle']);
+		$wsBody = utf8_encode($data['mdesc']);
+	} else {
+		$wsTitle = $data['mtitle'];
+		$wsBody = $data['mdesc'];
+	}
+
 		$message = array(
-			'title'								=> $data['mtitle'],
-			'body'								=> $data['mdesc'],
+			'title'								=> $wsTitle,
+			'body'								=> $wsBody,
 			'android_channel_id'	=> 'Opal',
 			'sound'								=> 'default',
 			'priority'						=> 'normal'
@@ -92,11 +105,23 @@ class PushNotifications {
 			return $response;
 		}
 
+		// Flag to identify when to use the utf8_encode because message coming
+		// from PERL alters the French characters
+		$wsFlag = (isset($data['encode'])? $data['encode'] :'Yes' );
+
+		if ($wsFlag == 'Yes') {
+			$wsTitle = utf8_encode($data['mtitle']);
+			$wsBody = utf8_encode($data['mdesc']);
+		} else {
+			$wsTitle = $data['mtitle'];
+			$wsBody = $data['mdesc'];
+		}
+
 		// Create the payload body
 		$body['aps'] = array(
 			'alert' => array(
-				'title' => $data['mtitle'],
-				'body' => $data['mdesc'],
+				'title' => $wsTitle,
+				'body' => $wsBody,
 			),
 			'sound' => 'default'
 		);

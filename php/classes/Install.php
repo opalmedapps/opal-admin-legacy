@@ -25,15 +25,15 @@ class Install {
 		);
 
 		// PHP
-		if (file_exists($abspath . 'php/config.php')) {
+		if (file_exists($abspath . 'php' . DIRECTORY_SEPARATOR . 'config.php')) {
 			$response['config_file']['php'] = 1;
 		}
 		// JS
-		if (file_exists($abspath . 'js/config.js')) {
+		if (file_exists($abspath . 'js' . DIRECTORY_SEPARATOR . 'config.js')) {
 			$response['config_file']['js'] = 1;
 		}
 		// Perl
-		if (file_exists($abspath . 'publisher/modules/Configs.pm')) {
+		if (file_exists($abspath . 'publisher' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'Configs.pm')) {
 			$response['config_file']['perl'] = 1;
 		}
 
@@ -69,9 +69,9 @@ class Install {
 			$query->execute();
 
 			$pathname 	= getcwd();
-			$abspath 	= str_replace('php/install', '', $pathname);
+			$abspath 	= str_replace('php' . DIRECTORY_SEPARATOR . 'install', '', $pathname);
 
-			$importFilename = $abspath . 'migration/0001-migration.sql';
+			$importFilename = $abspath . 'migration' . DIRECTORY_SEPARATOR . '0001-migration.sql';
 
 			//$command='/usr/local/mysql/bin/mysql -h' .$host .' -u' .$username .' -p' .$password .' ' .$name .' < ' .$importFilename;
 			$command='mysql -h' .$host .' -u' .$username .' -p' .$password .' ' .$name .' < ' .$importFilename;
@@ -125,7 +125,7 @@ class Install {
 
 		try {
 			$aria_link = new PDO( "dblib:host=$host:$port\\database", $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION) );
-			
+
 			// If we're here, connection's good
 			if ($document_path != '') {
 				if (!file_exists($document_path)) {
@@ -227,7 +227,7 @@ class Install {
 		);
 
 		$pathname 	= getcwd();
-		$abspath 	= str_replace('php/install', '', $pathname);
+		$abspath 	= str_replace('php' . DIRECTORY_SEPARATOR . 'install', '', $pathname);
 		$urlpath 	= $configs['urlpath'];
 
 		$opalCreds = $configs['opal'];
@@ -239,7 +239,7 @@ class Install {
 		}
 		else {
 			// PHP
-			$path_to_file = $abspath . 'php/config.php';
+			$path_to_file = $abspath . 'php' . DIRECTORY_SEPARATOR . 'config.php';
 			$file_contents = file_get_contents($path_to_file);
 			$file_contents = str_replace('OPAL_DB_HOST_HERE', $opalCreds['host'], $file_contents);
 			$file_contents = str_replace('OPAL_DB_PORT_HERE', $opalCreds['port'], $file_contents);
@@ -249,7 +249,7 @@ class Install {
 			file_put_contents($path_to_file, $file_contents);
 
 			// Perl
-			$path_to_file = $abspath . 'publisher/modules/Configs.pm';
+			$path_to_file = $abspath . 'publisher' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'Configs.pm';
 			$file_contents = file_get_contents($path_to_file);
 			$file_contents = str_replace('OPAL_DB_HOST_HERE', $opalCreds['host'], $file_contents);
 			$file_contents = str_replace('OPAL_DB_PORT_HERE', $opalCreds['port'], $file_contents);
@@ -259,9 +259,9 @@ class Install {
 			file_put_contents($path_to_file, $file_contents);
 
 			// Create local clinical documents directory
-			if (!is_dir($abspath . 'publisher/clinical/documents')) {
-				if(!mkdir($abspath . 'publisher/clinical/documents/', 0755, true))
-					die('Failed to create folder ' . $abspath . 'publisher/clinical/documents/');
+			if (!is_dir($abspath . 'publisher' . DIRECTORY_SEPARATOR . 'clinical' . DIRECTORY_SEPARATOR . 'documents')) {
+				if(!mkdir($abspath . 'publisher' . DIRECTORY_SEPARATOR . 'clinical' . DIRECTORY_SEPARATOR . 'documents' . DIRECTORY_SEPARATOR, 0755, true))
+					die('Failed to create folder ' . $abspath . 'publisher' . DIRECTORY_SEPARATOR . 'clinical' . DIRECTORY_SEPARATOR . 'documents' . DIRECTORY_SEPARATOR);
 			}
 
 		}
@@ -274,7 +274,7 @@ class Install {
 			}
 			else {
 				// PHP
-				$path_to_file = $abspath . 'php/config.php';
+				$path_to_file = $abspath . 'php' . DIRECTORY_SEPARATOR . 'config.php';
 				$file_contents = file_get_contents($path_to_file);
 				$file_contents = str_replace('ARIA_DB_HOST_HERE', $ariaCreds['host'], $file_contents);
 				$file_contents = str_replace('ARIA_DB_PORT_HERE', $ariaCreds['port'], $file_contents);
@@ -283,7 +283,7 @@ class Install {
 				file_put_contents($path_to_file, $file_contents);
 
 				// Perl
-				$path_to_file = $abspath . 'publisher/modules/Configs.pm';
+				$path_to_file = $abspath . 'publisher' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'Configs.pm';
 				$file_contents = file_get_contents($path_to_file);
 				$file_contents = str_replace('ARIA_DB_HOST_HERE', $ariaCreds['host'], $file_contents);
 				$file_contents = str_replace('ARIA_DB_PORT_HERE', $ariaCreds['port'], $file_contents);
@@ -312,7 +312,7 @@ class Install {
 			}
 			else {
 				// PHP
-				$path_to_file = $abspath . 'php/config.php';
+				$path_to_file = $abspath . 'php' . DIRECTORY_SEPARATOR . 'config.php';
 				$file_contents = file_get_contents($path_to_file);
 				$file_contents = str_replace('WRM_DB_HOST_HERE', $mediVisitCreds['host'], $file_contents);
 				$file_contents = str_replace('WRM_DB_PORT_HERE', $mediVisitCreds['port'], $file_contents);
@@ -352,7 +352,7 @@ class Install {
 			else {
 
 				// PHP
-				$path_to_file = $abspath . 'php/config.php';
+				$path_to_file = $abspath . 'php' . DIRECTORY_SEPARATOR . 'config.php';
 				$file_contents = file_get_contents($path_to_file);
 				$file_contents = str_replace('MOSAIQ_DB_HOST_HERE', $mosaiqCreds['host'], $file_contents);
 				$file_contents = str_replace('MOSAIQ_DB_PORT_HERE', $mosaiqCreds['port'], $file_contents);
@@ -361,7 +361,7 @@ class Install {
 				file_put_contents($path_to_file, $file_contents);
 
 				// Perl
-				$path_to_file = $abspath . 'publisher/modules/Configs.pm';
+				$path_to_file = $abspath . 'publisher' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'Configs.pm';
 				$file_contents = file_get_contents($path_to_file);
 				$file_contents = str_replace('MOSAIQ_DB_HOST_HERE', $mosaiqCreds['host'], $file_contents);
 				$file_contents = str_replace('MOSAIQ_DB_PORT_HERE', $mosaiqCreds['port'], $file_contents);
@@ -383,21 +383,21 @@ class Install {
 		}
 
 		// Javascript
-		$path_to_file = $abspath . 'js/config.js';
+		$path_to_file = $abspath . 'js' . DIRECTORY_SEPARATOR . 'config.js';
 		$file_contents = file_get_contents($path_to_file);
 		$file_contents = str_replace('ABSPATH_HERE', $abspath, $file_contents);
 		$file_contents = str_replace('URLPATH_HERE', $urlpath, $file_contents);
 		file_put_contents($path_to_file, $file_contents);
 
 		// PHP
-		$path_to_file = $abspath . 'php/config.php';
+		$path_to_file = $abspath . 'php' . DIRECTORY_SEPARATOR . 'config.php';
 		$file_contents = file_get_contents($path_to_file);
 		$file_contents = str_replace('FRONTEND_ABS_PATH_HERE', $abspath, $file_contents);
 		$file_contents = str_replace('FRONTEND_REL_URL_HERE', $urlpath, $file_contents);
 		file_put_contents($path_to_file, $file_contents);
 
 		// Perl
-		$path_to_file = $abspath . 'publisher/modules/Configs.pm';
+		$path_to_file = $abspath . 'publisher' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'Configs.pm';
 		$file_contents = file_get_contents($path_to_file);
 		$file_contents = str_replace('FRONTEND_ABS_PATH_HERE', $abspath, $file_contents);
 		$file_contents = str_replace('FRONTEND_REL_URL_HERE', $urlpath, $file_contents);
