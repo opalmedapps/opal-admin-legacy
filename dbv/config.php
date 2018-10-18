@@ -3,7 +3,7 @@
 $pathname 	= __DIR__;
 $abspath 	= str_replace('dbv', '', $pathname);
 
-include_once($abspath . 'php/config.php');
+include_once($abspath . 'ph' . DIRECTORY_SEPARATOR . 'config.php');
 
 /**
  * Your database authentication information goes here
