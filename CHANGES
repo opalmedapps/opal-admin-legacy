@@ -1,3 +1,21 @@
+Version 0.18.17.0:
+ - Merge branch 'hotfix-0.18.16.16'
+ -    --- Us htaccess to configure PHP variables, added FEDERATED variable for remote database connection, changed Opal Check-In to use the FEDERATED variable
+ - Version bump to 0.18.16.16
+ - Version bump to 0.18.16.16
+ - Merge branch 'hotfix-0.18.16.15'
+ - Fix Update Appointment Check-In when record does not exist
+ - Version bump to 0.18.16.15
+ - Merge branch 'hotfix-0.18.16.14'
+ - Default appointment scheduled if empty, change LibreOffice version, and limit up to 15 patient devices when sending push notification.
+ - Version bump to 0.18.16.14
+ - Merge branch 'hotfix-0.18.16.13'
+ - Added the RefTableRowTitle for EN and FR when inserting to Notification
+ - Version bump to 0.18.16.13
+ - Merge branch 'hotfix-0.18.16.12'
+ - Updated trigggers that inserted records to Notification. New Function getRefTableRowTitle. Disable Push Notification for Appointment Change.
+ - Version bump to 0.18.16.12
+
 Version 0.18.16.16:
  - Merge branch 'hotfix-0.18.16.15'
  - Fix Update Appointment Check-In when record does not exist
