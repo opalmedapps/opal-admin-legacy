@@ -15,6 +15,7 @@ use Time::Piece;
 use POSIX;
 use Storable qw(dclone);
 use File::Basename;
+use File::Spec;
 use JSON;
 use MIME::Lite;
 use Net::Address::IP::Local;
@@ -27,6 +28,9 @@ use Cwd 'abs_path';
 # 	2. Checks for crash reports
 # Both recorded in monitor_log.json
 #-----------------------------------------------------------------------
+
+our $wsSlash = File::Spec->catfile('', '');
+
 $execution_log = dirname($0) . '/logs/executions.log';
 $monitor_log = dirname($0) . '/logs/monitor_log.json';
 
@@ -210,6 +214,7 @@ sub writeToLogFile
 # Custom Modules
 #-----------------------------------------------------------------------
 use lib dirname($0) . '/modules'; # specify where are modules are -- $0 = this script's location
+
 use Configs;
 use Database;
 use Patient;
@@ -705,8 +710,10 @@ print "Finished Legacy Questionnaires\n" if $verbose;
 # Once everything is complete, we update the "last transferred" field for all controls
 # Patient control
 Patient::setPatientLastTransferredIntoOurDB($start_datetime);
+
 # Alias control
 Alias::setAliasLastTransferIntoOurDB($start_datetime);
+
 # Post control
 PostControl::setPostControlLastPublishedIntoOurDB($start_datetime);
 # Educational material control
