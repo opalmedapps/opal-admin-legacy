@@ -76,6 +76,7 @@ const our $BACKEND_REL_URL      => $FRONTEND_REL_URL . 'publisher/'; # relative 
 const our $ARIA_FTP_DIR         => $config->{'clinicalDocumentPathConfig'}{'aria'}; # clinical aria document directory
 const our $MOSAIQ_FTP_DIR       => $config->{'clinicalDocumentPathConfig'}{'mosaiq'}; # clinical mosaiq document directory
 const our $FTP_LOCAL_DIR        =>  $BACKEND_ABS_PATH . 'clinical/documents'; # PDF directory
+const our $OFFICE_PATH_DIR      => $config->{'clinicalDocumentPathConfig'}{'office_path'}; # Location where office is installed
 
 #======================================================================================
 # Subroutine to return source database credentials

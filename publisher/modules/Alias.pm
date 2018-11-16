@@ -272,8 +272,8 @@ sub getAliasExpressionsFromOurDB
 	my $expressionInfo_sql = "
 		SELECT DISTINCT
 			AliasExpression.AliasExpressionSerNum,
-			REPLACE(AliasExpression.ExpressionName, '''', ''),
-			REPLACE(AliasExpression.Description, '''', ''),
+			REPLACE(AliasExpression.ExpressionName, '''', ''''''),
+			REPLACE(AliasExpression.Description, '''', ''''''),
 			AliasExpression.LastTransferred
 		FROM
 			Alias,
@@ -282,6 +282,19 @@ sub getAliasExpressionsFromOurDB
 			Alias.AliasSerNum		    = $ser
 		AND AliasExpression.AliasSerNum	= Alias.AliasSerNum
 	";
+	# my $expressionInfo_sql = "
+	# 	SELECT DISTINCT
+	# 		AliasExpression.AliasExpressionSerNum,
+	# 		REPLACE(AliasExpression.ExpressionName, '''', ''),
+	# 		REPLACE(AliasExpression.Description, '''', ''),
+	# 		AliasExpression.LastTransferred
+	# 	FROM
+	# 		Alias,
+	# 		AliasExpression
+	# 	WHERE
+	# 		Alias.AliasSerNum		    = $ser
+	# 	AND AliasExpression.AliasSerNum	= Alias.AliasSerNum
+	# ";
 
 	print "$expressionInfo_sql\n" if $verbose;
 
@@ -302,7 +315,6 @@ sub getAliasExpressionsFromOurDB
 		};
 		push(@expressions, $aliasExpression); # push in our list
 	}
-
 	return @expressions;
 }
 

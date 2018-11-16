@@ -477,8 +477,7 @@ sub getApptsFromSourceDB
 					sa.ActivityInstanceSer 		= ai.ActivityInstanceSer
 				AND ai.ActivitySer 			    = act.ActivitySer
 				AND act.ActivityCode 		    = lt.LookupValue
-				AND pt.PatientSer 				= sa.PatientSer
-				AND LEFT(LTRIM(pt.SSN), 12)		= PatientInfo.SSN
+				AND sa.PatientSer = (select pt.PatientSer from variansystem.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
 				AND (
 
 			";
@@ -488,10 +487,10 @@ sub getApptsFromSourceDB
         foreach my $lastTransferDate (keys %{$expressionHash{$sourceDBSer}}) {
 
             # concatenate query
-    		$apptInfo_sql .= "
-				(REPLACE(lt.Expression1, '''', '')    	IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
-	        	AND sa.HstryDateTime	 				> (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
-    		";
+					$apptInfo_sql .= "
+					(lt.Expression1 IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
+					  	AND sa.HstryDateTime > (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
+					";
     		$counter++;
     		# concat "UNION" until we've reached the last query
     		if ($counter < $numOfExpressions) {
@@ -503,8 +502,7 @@ sub getApptsFromSourceDB
 			}
     	}
     	#$apptInfo_sql .= ")";
-
-		#print "$apptInfo_sql\n";
+			#print "$apptInfo_sql\n";
 
     	# prepare query
 	    my $query = $sourceDatabase->prepare($apptInfo_sql)
