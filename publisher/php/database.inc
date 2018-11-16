@@ -1,9 +1,9 @@
 <?php
 
 	$pathname 	= __DIR__;
-	$abspath 	= str_replace('publisher/php', '', $pathname);
+	$abspath 	= str_replace('publisher' . DIRECTORY_SEPARATOR . 'php', '', $pathname);
 
-	include_once($abspath . 'php/config.php');
+	include_once($abspath . 'php' . DIRECTORY_SEPARATOR . 'config.php');
 
     try{
        $pdo = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
