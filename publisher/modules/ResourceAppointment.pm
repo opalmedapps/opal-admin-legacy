@@ -254,9 +254,10 @@ sub getResourceAppointmentsFromSourceDB
         foreach my $lastTransferDate (keys %{$expressionHash{$sourceDBSer}}) {
 
             # concatenate query
+						# YM SPOT
     		$raInfo_sql .= "
-				(lt.Expression1   						IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
-	        	AND att.HstryDateTime	 				> (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
+				(lt.Expression1 IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
+	        	AND att.HstryDateTime > (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
     		";
     		$counter++;
     		# concat "UNION" until we've reached the last query
@@ -268,6 +269,7 @@ sub getResourceAppointmentsFromSourceDB
 				$raInfo_sql .= ")";
 			}
     	}
+
     	# print "$raInfo_sql\n";
     	# prepare query
 	    my $query = $sourceDatabase->prepare($raInfo_sql)

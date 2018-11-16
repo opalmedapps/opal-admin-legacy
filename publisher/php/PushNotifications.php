@@ -35,9 +35,29 @@ class PushNotifications {
 			'summaryText'   => 'There are %n% notifications'
 		);
 */
+
+	// Flag to identify when to use the utf8_encode because message coming
+	// from PERL alters the French characters
+	$wsFlag = (isset($data['encode'])? $data['encode'] :'Yes' );
+
+	if ($wsFlag == 'Yes') {
+		$wsTitle = utf8_encode($data['mtitle']);
+		$wsBody = utf8_encode($data['mdesc']);
+	} else {
+		$wsTitle = $data['mtitle'];
+		$wsBody = $data['mdesc'];
+	}
+
+		// Create a unique Post ID so that the push notification
+		// will not override the previous push notification by using
+		// time format (hours, minutes, and seconds)
+		// Ex: 10:35:23 would be 103523
+		$wsDate = date("His");
+
 		$message = array(
-			'title'								=> $data['mtitle'],
-			'body'								=> $data['mdesc'],
+			'notId' 							=> $wsDate,
+			'title'								=> $wsTitle,
+			'body'								=> $wsBody,
 			'android_channel_id'	=> 'Opal',
 			'sound'								=> 'default',
 			'priority'						=> 'normal'
@@ -48,10 +68,12 @@ class PushNotifications {
 			'Content-Type: application/json'
 		);
 
+		// data -->> is the message of the body
+		// notification -->> is a short title of the text message (about 64 characters)
 		$fields = array(
 			'registration_ids' => array($reg_id),
-			// 'data' => $message,
-			'notification' => $message
+			'data' => $message
+			// 'notification' => $message
 		);
 
 		$response = self::useCurl($url, $headers, json_encode($fields));
@@ -92,11 +114,23 @@ class PushNotifications {
 			return $response;
 		}
 
+		// Flag to identify when to use the utf8_encode because message coming
+		// from PERL alters the French characters
+		$wsFlag = (isset($data['encode'])? $data['encode'] :'Yes' );
+
+		if ($wsFlag == 'Yes') {
+			$wsTitle = utf8_encode($data['mtitle']);
+			$wsBody = utf8_encode($data['mdesc']);
+		} else {
+			$wsTitle = $data['mtitle'];
+			$wsBody = $data['mdesc'];
+		}
+
 		// Create the payload body
 		$body['aps'] = array(
 			'alert' => array(
-				'title' => $data['mtitle'],
-				'body' => $data['mdesc'],
+				'title' => $wsTitle,
+				'body' => $wsBody,
 			),
 			'sound' => 'default'
 		);

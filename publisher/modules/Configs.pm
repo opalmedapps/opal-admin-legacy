@@ -2,7 +2,7 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 30-Sept-2016 ++ File: Config.pm
 #---------------------------------------------------------------------------------
-# Perl module that sets various perl constants for use in this project. 
+# Perl module that sets various perl constants for use in this project.
 #--------------------------------------------------------------------------------
 package Configs; # define package name
 
@@ -38,10 +38,10 @@ const our $ARIA_DB_PORT     => $config->{'databaseConfig'}{'aria'}{'port'};
 const our $ARIA_DB_DSN      => 'DBI:Sybase:server=' . $ARIA_DB_HOST . ';port=' . $ARIA_DB_PORT;
 const our $ARIA_DB_USERNAME => $config->{'databaseConfig'}{'aria'}{'username'};
 const our $ARIA_DB_PASSWORD => $config->{'databaseConfig'}{'aria'}{'password'};
- 
+
 # DEFINE OPAL DATABASE CREDENTIALS HERE
-# NOTE: This works for a MySQL setup. 
-const our $OPAL_DB_NAME         => $config->{'databaseConfig'}{'opal'}{'name'}; 
+# NOTE: This works for a MySQL setup.
+const our $OPAL_DB_NAME         => $config->{'databaseConfig'}{'opal'}{'name'};
 const our $OPAL_DB_HOST         => $config->{'databaseConfig'}{'opal'}{'host'};
 const our $OPAL_DB_PORT         => $config->{'databaseConfig'}{'opal'}{'port'};
 const our $OPAL_DB_DSN          => 'DBI:mysql:database=' . $OPAL_DB_NAME . ';host=' . $OPAL_DB_HOST . ';port=' . $OPAL_DB_PORT;
@@ -75,14 +75,15 @@ const our $BACKEND_REL_URL      => $FRONTEND_REL_URL . 'publisher/'; # relative 
 # NOTE: This is for sending clinical documents
 const our $ARIA_FTP_DIR         => $config->{'clinicalDocumentPathConfig'}{'aria'}; # clinical aria document directory
 const our $MOSAIQ_FTP_DIR       => $config->{'clinicalDocumentPathConfig'}{'mosaiq'}; # clinical mosaiq document directory
-const our $FTP_LOCAL_DIR        =>  $BACKEND_ABS_PATH . 'clinical/documents'; # PDF directory 
+const our $FTP_LOCAL_DIR        =>  $BACKEND_ABS_PATH . 'clinical/documents'; # PDF directory
+const our $OFFICE_PATH_DIR      => $config->{'clinicalDocumentPathConfig'}{'office_path'}; # Location where office is installed
 
 #======================================================================================
 # Subroutine to return source database credentials
 #======================================================================================
 sub fetchSourceCredentials
 {
-    my ($sourceDBser) = @_; # source serial number 
+    my ($sourceDBser) = @_; # source serial number
 
     # initialize object
     my $sourceCredentials = {
@@ -94,7 +95,7 @@ sub fetchSourceCredentials
     if (!$sourceDBser) {return $sourceCredentials;} # return null object
 
     # ARIA
-    if ($sourceDBser eq 1) { 
+    if ($sourceDBser eq 1) {
 
         $sourceCredentials->{_dsn}          = $ARIA_DB_DSN;
         $sourceCredentials->{_user}         = $ARIA_DB_USERNAME;
@@ -123,15 +124,15 @@ sub fetchSourceCredentials
     # ...
 
 
-    return $sourceCredentials; 
+    return $sourceCredentials;
 }
 
 #======================================================================================
 # Subroutine to return FTP credentials
 #======================================================================================
-sub fetchFTPCredentials 
+sub fetchFTPCredentials
 {
-    my ($sourceDBser) = @_; # source serial number 
+    my ($sourceDBser) = @_; # source serial number
 
     # initialize object
     my $ftpCredentials = {
@@ -142,7 +143,7 @@ sub fetchFTPCredentials
     if (!$sourceDBser) {return $ftpCredentials;} # return null object
 
      # ARIA
-    if ($sourceDBser eq 1) { 
+    if ($sourceDBser eq 1) {
 
         $ftpCredentials->{_localdir}            = $FTP_LOCAL_DIR;
         $ftpCredentials->{_clinicaldir}         = $ARIA_FTP_DIR;
@@ -168,8 +169,8 @@ sub fetchFTPCredentials
     # ...
 
 
-    return $ftpCredentials; 
+    return $ftpCredentials;
 
 }
 
-1; # end module 
+1; # end module

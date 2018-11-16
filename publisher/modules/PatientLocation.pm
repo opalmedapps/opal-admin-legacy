@@ -333,9 +333,10 @@ sub getPatientLocationsFromSourceDB
         foreach my $lastTransferDate (keys %{$expressionHash{$sourceDBSer}}) {
 
             # concatenate query
+						# YM SPOT
     		$plInfo_sql .= "
-				(REPLACE(lt.Expression1, '''', '')    	IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
-	        	AND pl.HstryDateTime	 				> (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
+				(lt.Expression1 IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
+	        	AND pl.HstryDateTime > (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
     		";
     		$counter++;
     		# concat "UNION" until we've reached the last query
@@ -347,6 +348,7 @@ sub getPatientLocationsFromSourceDB
 				$plInfo_sql .= ")";
 			}
     	}
+
     	# print "$plInfo_sql\n";
 		# prepare query
 		my $query = $sourceDatabase->prepare($plInfo_sql)
