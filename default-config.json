@@ -99,7 +99,8 @@
 		"_comment": "Define where clinical documents are located. Has to be mounted. Leading slash REQUIRED!",
 
 		"aria": "CLINICAL_PATH_ARIA_HERE",
-		"mosaiq": "CLINICAL_PATH_MOSAIQ_HERE"
+		"mosaiq": "CLINICAL_PATH_MOSAIQ_HERE",
+		"office_path" : "OFFICE_PATH_HERE"
 	}
 
 }

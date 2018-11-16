@@ -48,7 +48,14 @@ class PushNotifications {
 		$wsBody = $data['mdesc'];
 	}
 
+		// Create a unique Post ID so that the push notification
+		// will not override the previous push notification by using
+		// time format (hours, minutes, and seconds)
+		// Ex: 10:35:23 would be 103523
+		$wsDate = date("His");
+
 		$message = array(
+			'notId' 							=> $wsDate,
 			'title'								=> $wsTitle,
 			'body'								=> $wsBody,
 			'android_channel_id'	=> 'Opal',
@@ -61,10 +68,12 @@ class PushNotifications {
 			'Content-Type: application/json'
 		);
 
+		// data -->> is the message of the body
+		// notification -->> is a short title of the text message (about 64 characters)
 		$fields = array(
 			'registration_ids' => array($reg_id),
-			// 'data' => $message,
-			'notification' => $message
+			'data' => $message
+			// 'notification' => $message
 		);
 
 		$response = self::useCurl($url, $headers, json_encode($fields));
