@@ -8,6 +8,14 @@
 # We use our custom Perl Modules to help us with getting information and
 # setting them into the appropriate place.
 
+#---------------------------------------------------------------------------------
+# Yick Mo 24-Sept-2018 ++ Note: write query to a text file
+#---------------------------------------------------------------------------------
+# open(my $fh, '>>', 'ym.txt');
+# print $fh $trInfo_sql;
+# close $fh;
+#---------------------------------------------------------------------------------
+
 #-----------------------------------------------------------------------
 # Packages/Modules
 #-----------------------------------------------------------------------
@@ -214,7 +222,6 @@ sub writeToLogFile
 # Custom Modules
 #-----------------------------------------------------------------------
 use lib dirname($0) . '/modules'; # specify where are modules are -- $0 = this script's location
-
 use Configs;
 use Database;
 use Patient;
@@ -242,6 +249,7 @@ use LegacyQuestionnaire;
 
 # Get the current time (for last-updates/logs)
 my $start_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
+print "--- Start --- ", $start_datetime, "\n";
 
 # Log that the script is initialized in the cronlog
 my $cronLogSer = Cron::setCronLog("Started", $start_datetime);
@@ -267,10 +275,12 @@ my $verbose = 1;
 #=========================================================================================
 # Retrieve all patients that are marked for update
 #=========================================================================================
+print "\n--- Start getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 @registeredPatients = Patient::getPatientsMarkedForUpdate($cronLogSer);
-
+print "--- End getPatientsMarkedForUpdate: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got patient list\n" if $verbose;
 
+print "--- Start Loop over each patient: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 #=========================================================================================
 # Loop over each patient.
 #=========================================================================================
@@ -313,19 +323,22 @@ foreach my $Patient (@registeredPatients) {
     }
 }
 
+print "-- End Loop over each patient: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished patient list\n" if $verbose;
 ##########################################################################################
 #
 # Data Retrieval PATIENTDOCTORS - get list of patient-doctor info updated since last update
 #
 ##########################################################################################
+print "\n--- Start getPatientDoctorsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 @PDList = PatientDoctor::getPatientDoctorsFromSourceDB(@patientList);
-
+print "--- End getPatientDoctorsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got patient doctor list\n" if $verbose;
 
 #=========================================================================================
 # Loop over each PD. Various functions are done.
 #=========================================================================================
+print "-- Start Loop over each PD: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 foreach my $PatientDoctor (@PDList) {
 
 	# check if patient exists in our database
@@ -348,7 +361,7 @@ foreach my $PatientDoctor (@PDList) {
 		$PatientDoctor->insertPatientDoctorIntoOurDB();
 	}
 }
-
+print "-- End Loop over each PD: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished patient doctor list\n" if $verbose;
 
 ##########################################################################################
@@ -356,12 +369,15 @@ print "Finished patient doctor list\n" if $verbose;
 # Data Retrieval DIAGNOSES - get list of diagnosis info updated since last update
 #
 ##########################################################################################
+print "\n--- Start getDiagnosesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 @DiagnosisList = Diagnosis::getDiagnosesFromSourceDB(@patientList);
+print "--- End getDiagnosesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got diagnosis list\n" if $verbose;
 
 #=========================================================================================
 # Loop over each diagnosis. Various functions are done.
 #=========================================================================================
+print "-- Start Loop over each diagnosis: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 foreach my $Diagnosis (@DiagnosisList) {
 
 	# check if diagnosis exists in our database
@@ -385,6 +401,7 @@ foreach my $Diagnosis (@DiagnosisList) {
 	}
 }
 
+print "-- End Loop over each diagnosis: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished diagnosis list\n" if $verbose;
 
 ##########################################################################################
@@ -392,12 +409,15 @@ print "Finished diagnosis list\n" if $verbose;
 # Data Retrieval PRIORITIES - get list of priority info updated since last update
 #
 ##########################################################################################
+print "\n--- Start getPrioritiesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 @PriorityList = Priority::getPrioritiesFromSourceDB(@patientList);
+print "--- End getPrioritiesFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got priority list\n" if $verbose;
 
 #=========================================================================================
 # Loop over each priority. Various functions are done.
 #=========================================================================================
+print "-- Start Loop over each priority: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 foreach my $Priority (@PriorityList) {
 
 	# check if priority exists in our database
@@ -420,7 +440,7 @@ foreach my $Priority (@PriorityList) {
 		$Priority->insertPriorityIntoOurDB();
 	}
 }
-
+print "-- End Loop over each priority: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished priority list\n" if $verbose;
 
 ##########################################################################################
@@ -428,12 +448,15 @@ print "Finished priority list\n" if $verbose;
 # Data Retrieval TASKS - get list of patients with tasks updated since last update
 #
 ##########################################################################################
+print "\n--- Start getTasksFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 @TaskList = Task::getTasksFromSourceDB($cronLogSer, @patientList);
+print "--- End getTasksFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got task list\n" if $verbose;
 
 #=========================================================================================
 # Loop over each task. Various functions are done.
 #=========================================================================================
+print "-- Start Loop over each task: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 foreach my $Task (@TaskList) {
 
 	# check if task exists in our database
@@ -457,18 +480,21 @@ foreach my $Task (@TaskList) {
 	}
 
 }
-
+print "-- End Loop over each task: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished task list\n" if $verbose;
 ##########################################################################################
 #
 # Data Retrieval APPOINTMENTS - get list of patients with appointments updated since last update
 #
 ##########################################################################################
+print "\n--- Start getApptsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 @ApptList = Appointment::getApptsFromSourceDB($cronLogSer, @patientList);
+print "--- End getApptsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got appointment list\n" if $verbose;
 #=========================================================================================
 # Loop over each patient. Various functions are done.
 #=========================================================================================
+print "-- Start Loop over each task: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 foreach my $Appointment (@ApptList) {
 
 	# check if appointment exists in our database
@@ -491,7 +517,7 @@ foreach my $Appointment (@ApptList) {
 		$Appointment = $Appointment->insertApptIntoOurDB();
 	}
 }
-
+print "-- End Loop over each task: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished appointment list\n" if $verbose;
 
 ##########################################################################################
@@ -499,13 +525,16 @@ print "Finished appointment list\n" if $verbose;
 # Data Retrieval RESOURCEAPPOINTMENT - get list of resourceappt info updated since last update
 #
 ##########################################################################################
+print "\n--- Start getResourceAppointmentsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 @RAList = ResourceAppointment::getResourceAppointmentsFromSourceDB(@patientList);
+print "--- End getResourceAppointmentsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 
 print "Got resource appointment list\n" if $verbose;
 
 #=========================================================================================
 # Loop over each RA. Various functions are done.
 #=========================================================================================
+print "-- Start Loop over each RA: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 foreach my $ResourceAppointment (@RAList) {
 
 	# check if RA exists in our database
@@ -528,6 +557,7 @@ foreach my $ResourceAppointment (@RAList) {
 		$ResourceAppointment->insertResourceAppointmentIntoOurDB();
 	}
 }
+print "-- End Loop over each RA: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished resource appointment list\n" if $verbose;
 
 ##########################################################################################
@@ -535,13 +565,15 @@ print "Finished resource appointment list\n" if $verbose;
 # Data Retrieval PATIENTLOCATION - get list of PL info updated since last update
 #
 ##########################################################################################
+print "\n--- Start getPatientLocationsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 @PLList = PatientLocation::getPatientLocationsFromSourceDB(@patientList);
-
+print "--- End getPatientLocationsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got patient location list\n" if $verbose;
 
 #=========================================================================================
 # Loop over each PL. Various functions are done.
 #=========================================================================================
+print "-- Start Loop over each PL: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 foreach my $PatientLocation (@PLList) {
 
 	# check if PL exists in our database
@@ -564,7 +596,7 @@ foreach my $PatientLocation (@PLList) {
 		$PatientLocation->insertPatientLocationIntoOurDB();
 	}
 }
-
+print "-- End Loop over each PL: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished patient location list\n" if $verbose;
 
 ##########################################################################################
@@ -572,13 +604,15 @@ print "Finished patient location list\n" if $verbose;
 # Data Retrieval PATIENTLOCATIONMH - get list of PL MH info updated since last update
 #
 ##########################################################################################
+print "\n--- Start getPatientLocationsMHFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 @PLMHList = PatientLocation::getPatientLocationsMHFromSourceDB(\@patientList, \@PLList);
-
+print "--- End getPatientLocationsMHFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got patient location MH list\n" if $verbose;
 
 #=========================================================================================
 # Loop over each PL MH. Various functions are done.
 #=========================================================================================
+print "-- Start Loop over each PL MH: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 foreach my $PatientLocation (@PLMHList) {
 
 	# check if PL exists in our database
@@ -601,7 +635,7 @@ foreach my $PatientLocation (@PLMHList) {
 		$PatientLocation->insertPatientLocationMHIntoOurDB();
 	}
 }
-
+print "-- End Loop over each PL MH: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished patient location MH list\n" if $verbose;
 
 ##########################################################################################
@@ -609,11 +643,15 @@ print "Finished patient location MH list\n" if $verbose;
 # Data Retrieval DOCUMENTS - get list of patients with documents updated since last update
 #
 ##########################################################################################
+print "\n--- Start getDocsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 @DocList = Document::getDocsFromSourceDB($cronLogSer, @patientList);
+print "--- End getDocsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got document list\n" if $verbose;
 
 # Transfer and log patient documents
+print "\n--- Start transferPatientDocuments: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 Document::transferPatientDocuments(@DocList);
+print "--- End transferPatientDocuments: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 
 print "Finished document list\n" if $verbose;
 
@@ -622,12 +660,15 @@ print "Finished document list\n" if $verbose;
 # Data Retrieval TESTRESULTS - get list of patients with test results updated since last update
 #
 ##########################################################################################
+print "\n--- Start getTestResultsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 @TRList = TestResult::getTestResultsFromSourceDB($cronLogSer, @patientList);
+print "--- End getTestResultsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Got test result list\n" if $verbose;
 
 #=========================================================================================
 # Loop over each test result. Various functions are done.
 #=========================================================================================
+print "-- Start Loop over each test result: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 foreach my $TestResult (@TRList) {
 
 	# check if TR exists in our database
@@ -651,6 +692,7 @@ foreach my $TestResult (@TRList) {
 	}
 
 }
+print "-- End Loop over each test result: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished test result list\n" if $verbose;
 
 ##########################################################################################
@@ -658,8 +700,9 @@ print "Finished test result list\n" if $verbose;
 # Publishing ANNOUNCEMENTS
 #
 ##########################################################################################
+print "\n--- Start publishAnnouncements: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 Announcement::publishAnnouncements($cronLogSer, @patientList);
-
+print "--- End publishAnnouncements: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished announcements\n" if $verbose;
 
 ##########################################################################################
@@ -667,8 +710,9 @@ print "Finished announcements\n" if $verbose;
 # Publishing TREATMENT TEAM MESSAGES
 #
 ##########################################################################################
+print "\n--- Start publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 TxTeamMessage::publishTxTeamMessages($cronLogSer, @patientList);
-
+print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished treatment team messages\n" if $verbose;
 
 ##########################################################################################
@@ -676,8 +720,9 @@ print "Finished treatment team messages\n" if $verbose;
 # Publishing PATIENTS FOR PATIENTS
 #
 ##########################################################################################
+print "\n--- Start publishPatientsForPatients: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 PatientsForPatients::publishPatientsForPatients($cronLogSer, @patientList);
-
+print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished patients for patients\n";
 
 ##########################################################################################
@@ -685,8 +730,9 @@ print "Finished patients for patients\n";
 # Publishing EDUCATIONAL MATERIALS
 #
 ##########################################################################################
+print "\n--- Start publishEducationalMaterials: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 EducationalMaterial::publishEducationalMaterials($cronLogSer, @patientList);
-
+print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished Educational materials\n" if $verbose;
 
 ##########################################################################################
@@ -703,8 +749,9 @@ print "Finished Educational materials\n" if $verbose;
 # Publishing LEGACY QUESTIONNAIRES
 #
 ##########################################################################################
+print "\n--- Start publishLegacyQuestionnaires: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 LegacyQuestionnaire::publishLegacyQuestionnaires($cronLogSer, @patientList);
-
+print "--- End publishTxTeamMessages: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 print "Finished Legacy Questionnaires\n" if $verbose;
 
 # Once everything is complete, we update the "last transferred" field for all controls
@@ -726,6 +773,10 @@ my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
 
 # Log that the script is finished in the cronlog
 Cron::setCronLog("Completed", $current_datetime);
+print "--- Completed ---- ", $current_datetime, "\n\n";
+
+print "Start Time: -->> $start_datetime\n";
+print "End Time: -->> $current_datetime\n";
 
 # success restart flag and counter for next run
 $json_log->{'start'} = 0;
