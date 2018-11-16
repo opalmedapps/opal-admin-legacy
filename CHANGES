@@ -1,3 +1,5 @@
+Version 0.18.17.0:
+
 Version 0.18.16.17:
  - Merge branch 'hotfix-0.18.16.16'
  -    --- Us htaccess to configure PHP variables, added FEDERATED variable for remote database connection, changed Opal Check-In to use the FEDERATED variable
@@ -1086,4 +1088,3 @@ Version 0.1.0
  - Added VERSION and CHANGES files, Version bump to v0.1.0
  -     -- Github issue #100..  Updated Alias logic to:         - Reassign alias serial if a new alias is using an existing expression         - Deny deletion of alias or expression if expression exists in dependent tables
  -     -- New commit
-

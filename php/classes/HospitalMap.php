@@ -1,5 +1,5 @@
 <?php
-include(FRONTEND_ABS_PATH.'php/lib/phpqrcode/qrlib.php');
+include(FRONTEND_ABS_PATH.'php' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'phpqrcode' . DIRECTORY_SEPARATOR . 'qrlib.php');
 
 /**
  * HospitalMap class
@@ -18,12 +18,12 @@ class HospitalMap {
     public function generateQRCode($qrid, $oldqrid) {
 
         if($oldqrid) {
-            $oldQRPath = FRONTEND_ABS_PATH.'images/hospital-maps/qrCodes/'.$oldqrid.'.png';
+            $oldQRPath = FRONTEND_ABS_PATH.'images' . DIRECTORY_SEPARATOR . 'hospital-maps' . DIRECTORY_SEPARATOR . 'qrCodes' . DIRECTORY_SEPARATOR .$oldqrid.'.png';
             if(file_exists($oldQRPath)) {
                 unlink($oldQRPath);
             }
         }
-        $qrPath = FRONTEND_ABS_PATH.'images/hospital-maps/qrCodes/'.$qrid.'.png';
+        $qrPath = FRONTEND_ABS_PATH.'images' . DIRECTORY_SEPARATOR . 'hospital-maps' . DIRECTORY_SEPARATOR . 'qrCodes' . DIRECTORY_SEPARATOR .$qrid.'.png';
         $qrCode = '';
 
         if(!file_exists($qrPath)) {
@@ -250,7 +250,7 @@ class HospitalMap {
         $serial             = $hosMapDetails['serial'];
         $userSer            = $hosMapDetails['user']['id'];
         $sessionId          = $hosMapDetails['user']['sessionid'];
- 
+
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -307,12 +307,12 @@ class HospitalMap {
 
             $sql = "
                 UPDATE HospitalMapMH
-                SET 
+                SET
                     HospitalMapMH.LastUpdatedBy = '$userSer',
                     HospitalMapMH.SessionId = '$sessionId'
                 WHERE
                     HospitalMapMH.HospitalMapSerNum = $serial
-                ORDER BY HospitalMapMH.RevSerNum DESC 
+                ORDER BY HospitalMapMH.RevSerNum DESC
                 LIMIT 1
             ";
             $query = $host_db_link->prepare( $sql );
