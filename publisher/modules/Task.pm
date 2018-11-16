@@ -2,12 +2,12 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 10-Aug-2015 ++ File: Task.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates a task class. This module calls a constructor to 
-# create a task object that contains task information stored as object 
+# Perl module that creates a task class. This module calls a constructor to
+# create a task object that contains task information stored as object
 # variables.
 #
 # There exists various subroutines to set task information, get task information
-# and compare task information between two task objects. 
+# and compare task information between two task objects.
 # There exists various subroutines that use the Database.pm module to update the
 # MySQL database and check if a task exists already in this database.
 
@@ -31,7 +31,7 @@ use Diagnosis; # Our diagnosis module
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our Task class 
+# Constructor for our Task class
 #====================================================================================
 sub new
 {
@@ -48,13 +48,13 @@ sub new
 		_creationdate		=> undef,
 		_status			    => undef,
         _state              => undef,
-		_completiondate		=> undef,  
-		_cronlogser 		=> undef,  
+		_completiondate		=> undef,
+		_cronlogser 		=> undef,
 	};
 
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
-	bless $task, $class; 
+	bless $task, $class;
 	return $task;
 }
 
@@ -109,7 +109,7 @@ sub setTaskAliasExpressionSer
 }
 
 #====================================================================================
-# Subroutine to set the task Due DateTime 
+# Subroutine to set the task Due DateTime
 #====================================================================================
 sub setTaskDueDateTime
 {
@@ -225,7 +225,7 @@ sub getTaskSourceUID
 }
 
 #====================================================================================
-# Subroutine to get the task alias expression serial 
+# Subroutine to get the task alias expression serial
 #====================================================================================
 sub getTaskAliasExpressionSer
 {
@@ -234,7 +234,7 @@ sub getTaskAliasExpressionSer
 }
 
 #====================================================================================
-# Subroutine to get the task Due DateTime 
+# Subroutine to get the task Due DateTime
 #====================================================================================
 sub getTaskDueDateTime
 {
@@ -243,7 +243,7 @@ sub getTaskDueDateTime
 }
 
 #====================================================================================
-# Subroutine to get the task creation date 
+# Subroutine to get the task creation date
 #====================================================================================
 sub getTaskCreationDate
 {
@@ -270,7 +270,7 @@ sub getTaskState
 }
 
 #====================================================================================
-# Subroutine to get the task completion date 
+# Subroutine to get the task completion date
 #====================================================================================
 sub getTaskCompletionDate
 {
@@ -310,12 +310,12 @@ sub getTaskCronLogSer
 #======================================================================================
 sub getTasksFromSourceDB
 {
-	my ($cronLogSer, @patientList) = @_; # a list of patients and cron log serial from args 
+	my ($cronLogSer, @patientList) = @_; # a list of patients and cron log serial from args
 
 	my @taskList = (); # initialize a list for task objects
 
 	# when we retrieve query results
-	my ($sourceuid, $duedatetime, $priorityser, $diagnosisser); 
+	my ($sourceuid, $duedatetime, $priorityser, $diagnosisser);
     my ($creationdate, $status, $state, $completiondate);
     my $lasttransfer;
 
@@ -333,7 +333,7 @@ sub getTasksFromSourceDB
         foreach my $Alias (@aliasList) {
 
             my $aliasSer            = $Alias->getAliasSer(); # get alias serial
-            my @expressions         = $Alias->getAliasExpressions(); 
+            my @expressions         = $Alias->getAliasExpressions();
             my $sourceDBSer         = $Alias->getAliasSourceDatabaseSer();
 
             ######################################
@@ -342,11 +342,11 @@ sub getTasksFromSourceDB
             if ($sourceDBSer eq 1) {
 
                 my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-                my $numOfExpressions = @expressions; 
+                my $numOfExpressions = @expressions;
                 my $counter = 0;
                 my $taskInfo_sql = "
 					WITH vva AS (
-						SELECT DISTINCT 
+						SELECT DISTINCT
 							Expression.Expression1,
 							Expression.LookupValue
 						FROM
@@ -360,7 +360,7 @@ sub getTasksFromSourceDB
 						NonScheduledActivity.ObjectStatus,
 						CONVERT(VARCHAR, NonScheduledActivityMH.HstryDateTime, 120) HstryDateTime,
 						vva.Expression1
-					FROM  
+					FROM
 						variansystem.dbo.Patient Patient,
 						variansystem.dbo.ActivityInstance ActivityInstance,
 						variansystem.dbo.Activity Activity,
@@ -374,11 +374,11 @@ sub getTasksFromSourceDB
                         WHERE nsamh.NonScheduledActivitySer = NonScheduledActivity.NonScheduledActivitySer
                         AND nsamh.NonScheduledActivityCode = 'Completed'
                     )
-					WHERE     
+					WHERE
 						NonScheduledActivity.ActivityInstanceSer 	= ActivityInstance.ActivityInstanceSer
 					AND ActivityInstance.ActivitySer 			    = Activity.ActivitySer
 					AND Activity.ActivityCode 				        = vva.LookupValue
-					AND Patient.PatientSer 				            = NonScheduledActivity.PatientSer     
+					AND Patient.PatientSer 				            = NonScheduledActivity.PatientSer
 					AND	LEFT(LTRIM(Patient.SSN), 12)			            = '$patientSSN'
 					AND (
 				";
@@ -390,7 +390,7 @@ sub getTasksFromSourceDB
                 	my $expressionLastTransfer = $Expression->{_lasttransfer};
                 	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
 
-                	# compare last updates to find the earliest date 
+                	# compare last updates to find the earliest date
 		            # get the diff in seconds
 		            my $date_diff = $formatted_PLU - $formatted_ELU;
 		            if ($date_diff < 0) {
@@ -400,8 +400,8 @@ sub getTasksFromSourceDB
 		            }
 
 	        		$taskInfo_sql .= "
-						(REPLACE(vva.Expression1, '''', '')    			= '$expressionName'
-						AND NonScheduledActivity.HstryDateTime		    > '$lasttransfer')
+						(vva.Expression1 = '$expressionName'
+						AND NonScheduledActivity.HstryDateTime > '$lasttransfer')
 	         		";
 	         		$counter++;
 	        		# concat "UNION" until we've reached the last query
@@ -413,9 +413,8 @@ sub getTasksFromSourceDB
 						$taskInfo_sql .= ")";
 					}
 	        	}
-                
-                #print "$taskInfo_sql\n";
 
+                #print "$taskInfo_sql\n";
 	        	# prepare query
     		    my $query = $sourceDatabase->prepare($taskInfo_sql)
 	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;
@@ -426,7 +425,7 @@ sub getTasksFromSourceDB
 
                 my $data = $query->fetchall_arrayref();
         		foreach my $row (@$data) {
-		
+
 	        		my $task = new Task(); # new task object
 
     		    	$sourceuid	    = $row->[0];
@@ -447,7 +446,7 @@ sub getTasksFromSourceDB
 							last; # break out of loop
 						}
 					}
-    
+
         			$task->setTaskPatientSer($patientSer);
 	        		$task->setTaskSourceUID($sourceuid); # assign id
                     $task->setTaskSourceDatabaseSer($sourceDBSer);
@@ -462,9 +461,9 @@ sub getTasksFromSourceDB
 		    	    $task->setTaskCronLogSer($cronLogSer); # assign cron log serail
 
         			push(@taskList, $task);
-		    		
+
                 }
-	    	 				
+
 	    	 	$sourceDatabase->disconnect();
 	    	}
 
@@ -474,7 +473,7 @@ sub getTasksFromSourceDB
             if ($sourceDBSer eq 2) {
 
                 my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-                my $numOfExpressions = @expressions; 
+                my $numOfExpressions = @expressions;
                 my $counter = 0;
                 my $taskInfo_sql = "";
 
@@ -485,7 +484,7 @@ sub getTasksFromSourceDB
                 	my $expressionLastTransfer = $Expression->{_lasttransfer};
                 	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
 
-                	# compare last updates to find the earliest date 
+                	# compare last updates to find the earliest date
 		            # get the diff in seconds
 		            my $date_diff = $formatted_PLU - $formatted_ELU;
 		            if ($date_diff < 0) {
@@ -513,15 +512,15 @@ sub getTasksFromSourceDB
 
                 my $data = $query->fetchall_arrayref();
         		foreach my $row (@$data) {
-		
+
 	        		#my $task = new Task(); # uncomment for use
 
 	        		# use setters to set appropriate task information from query
 
 	        		#push(@taskList, $task); # uncomment for use
-		    		
+
                 }
-	    	 				
+
 	    	 	$sourceDatabase->disconnect();
 	    	}
 
@@ -531,7 +530,7 @@ sub getTasksFromSourceDB
             if ($sourceDBSer eq 3) {
 
                 my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-                my $numOfExpressions = @expressions; 
+                my $numOfExpressions = @expressions;
                 my $counter = 0;
                 my $taskInfo_sql = "";
 
@@ -542,7 +541,7 @@ sub getTasksFromSourceDB
                 	my $expressionLastTransfer = $Expression->{_lasttransfer};
                 	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
 
-                	# compare last updates to find the earliest date 
+                	# compare last updates to find the earliest date
 		            # get the diff in seconds
 		            my $date_diff = $formatted_PLU - $formatted_ELU;
 		            if ($date_diff < 0) {
@@ -570,15 +569,15 @@ sub getTasksFromSourceDB
 
                 my $data = $query->fetchall_arrayref();
         		foreach my $row (@$data) {
-		
+
 	        		#my $task = new Task(); # uncomment for use
 
 	        		# use setters to set appropriate task information from query
 
 	        		#push(@taskList, $task); # uncomment for use
-		    		
+
                 }
-	    	 				
+
 	    	 	$sourceDatabase->disconnect();
 	    	}
 
@@ -633,7 +632,7 @@ sub inOurDatabase
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 	while (my @data = $query->fetchrow_array()) {
 
 		$TaskSourceUIDInDB	= $data[0];
@@ -670,7 +669,7 @@ sub inOurDatabase
 
 		return $ExistingTask; # this is true (ie. task exists, return object)
 	}
-	
+
 	else {return $ExistingTask;} # this is false (ie. task DNE, return empty)
 }
 
@@ -695,7 +694,7 @@ sub insertTaskIntoOurDB
 	my $cronlogser		    = $task->getTaskCronLogSer();
 
 	my $insert_sql = "
-		INSERT INTO 
+		INSERT INTO
 			Task (
 				PatientSerNum,
 				CronLogSerNum,
@@ -727,7 +726,7 @@ sub insertTaskIntoOurDB
             NOW()
 		)
 	";
-	
+
 	# prepare query
 	my $query = $SQLDatabase->prepare($insert_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
@@ -765,7 +764,7 @@ sub updateDatabase
 	my $cronlogser		    = $task->getTaskCronLogSer();
 
 	my $update_sql = "
-		
+
 		UPDATE
 			Task
 		SET
@@ -774,7 +773,7 @@ sub updateDatabase
  			Status			        = '$status',
             State                   = '$state',
 			CreationDate		    = '$creationdate',
-			CompletionDate		    = '$completiondate',           
+			CompletionDate		    = '$completiondate',
             PrioritySerNum          = '$priorityser',
             DiagnosisSerNum         = '$diagnosisser',
             CronLogSerNum 			= '$cronlogser'
@@ -790,7 +789,7 @@ sub updateDatabase
 	# execute query
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
-	
+
 }
 
 #======================================================================================
@@ -800,7 +799,7 @@ sub updateDatabase
 sub compareWith
 {
 	my ($SuspectTask, $OriginalTask) = @_; # our two task objects from arguments
-	my $UpdatedTask = dclone($OriginalTask); 
+	my $UpdatedTask = dclone($OriginalTask);
 
 	# retrieve parameters
 	# Suspect Task...
@@ -829,55 +828,55 @@ sub compareWith
 	if ($Sduedatetime ne $Oduedatetime) {
 
 		print "Task Due Date has changed from '$Oduedatetime' to '$Sduedatetime'\n";
-		my $updatedDueDateTime = $UpdatedTask->setTaskDueDateTime($Sduedatetime); # update 
+		my $updatedDueDateTime = $UpdatedTask->setTaskDueDateTime($Sduedatetime); # update
 		print "Will update database entry to '$updatedDueDateTime'.\n";
 	}
 	if ($Saliasexpressionser ne $Oaliasexpressionser) {
 
 		print "Task Alias Expression Serial has changed from '$Oaliasexpressionser' to '$Saliasexpressionser'\n";
-		my $updatedAESer = $UpdatedTask->setTaskAliasExpressionSer($Saliasexpressionser); # update 
+		my $updatedAESer = $UpdatedTask->setTaskAliasExpressionSer($Saliasexpressionser); # update
 		print "Will update database entry to '$updatedAESer'.\n";
 	}
 	if ($Spriorityser ne $Opriorityser) {
 
 		print "Task Priority serial has changed from '$Opriorityser' to '$Spriorityser'\n";
-		my $updatedPrioritySer = $UpdatedTask->setTaskPrioritySer($Spriorityser); # update 
+		my $updatedPrioritySer = $UpdatedTask->setTaskPrioritySer($Spriorityser); # update
 		print "Will update database entry to '$updatedPrioritySer'.\n";
 	}
 	if ($Sdiagnosisser ne $Odiagnosisser) {
 
 		print "Task Diagnosis serial has changed from '$Odiagnosisser' to '$Sdiagnosisser'\n";
-		my $updatedDiagnosisSer = $UpdatedTask->setTaskDiagnosisSer($Sdiagnosisser); # update 
+		my $updatedDiagnosisSer = $UpdatedTask->setTaskDiagnosisSer($Sdiagnosisser); # update
 		print "Will update database entry to '$updatedDiagnosisSer'.\n";
 	}
 	if ($Screationdate ne $Ocreationdate) {
 
 		print "Task Creation Date has changed from '$Ocreationdate' to '$Screationdate'\n";
-		my $updatedCreationDate = $UpdatedTask->setTaskCreationDate($Screationdate); # update 
+		my $updatedCreationDate = $UpdatedTask->setTaskCreationDate($Screationdate); # update
 		print "Will update database entry to '$updatedCreationDate'.\n";
 	}
 	if ($Sstatus ne $Ostatus) {
 
 		print "Task Status has changed from '$Ostatus' to '$Sstatus'\n";
-		my $updatedStatus = $UpdatedTask->setTaskStatus($Sstatus); # update 
+		my $updatedStatus = $UpdatedTask->setTaskStatus($Sstatus); # update
 		print "Will update database entry to '$updatedStatus'.\n";
 	}
     if ($Sstate ne $Ostate) {
 
 		print "Task State has changed from '$Ostate' to '$Sstate'\n";
-		my $updatedState = $UpdatedTask->setTaskState($Sstate); # update 
+		my $updatedState = $UpdatedTask->setTaskState($Sstate); # update
 		print "Will update database entry to '$updatedState'.\n";
 	}
 	if ($Scompletiondate ne $Ocompletiondate) {
 
 		print "Task Completion Date has changed from '$Ocompletiondate' to '$Scompletiondate'\n";
-		my $updatedCompletionDate = $UpdatedTask->setTaskCompletionDate($Scompletiondate); # update 
+		my $updatedCompletionDate = $UpdatedTask->setTaskCompletionDate($Scompletiondate); # update
 		print "Will update database entry to '$updatedCompletionDate'.\n";
 	}
 	if ($Scronlogser ne $Ocronlogser) {
 
 		print "Task Cron Log serial has changed from '$Ocronlogser' to '$Scronlogser'\n";
-		my $updatedCronLogSer = $UpdatedTask->setTaskCronLogSer($Scronlogser); # update 
+		my $updatedCronLogSer = $UpdatedTask->setTaskCronLogSer($Scronlogser); # update
 		print "Will update database entry to '$updatedCronLogSer'.\n";
 	}
 
@@ -885,8 +884,4 @@ sub compareWith
 }
 
 # To exit/return always true (for the module itself)
-1;	
-
-
-
-
+1;

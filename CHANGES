@@ -1,4 +1,8 @@
+Version 0.18.17.1:
+ -    --- Added a translation table and getTranslation function
+
 Version 0.18.17.0:
+ -    --- Support for Windows OS - fixing slash formats    --- Issue #5 on GitLab
 
 Version 0.18.16.17:
  - Merge branch 'hotfix-0.18.16.16'
