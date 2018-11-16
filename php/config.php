@@ -73,36 +73,36 @@
 	define( "UPLOAD_REL_PATH", FRONTEND_REL_URL . "uploads/" );
 
 	// Include the classes
-	include_once( FRONTEND_ABS_PATH . "php/classes/User.php" );
-	include_once( FRONTEND_ABS_PATH . "php/classes/Database.php" );
-	include_once( FRONTEND_ABS_PATH . "php/classes/Alias.php" );
-	include_once( FRONTEND_ABS_PATH . "php/classes/Post.php" );
-	include_once( FRONTEND_ABS_PATH . "php/classes/EduMaterial.php" );
-	include_once( FRONTEND_ABS_PATH . "php/classes/HospitalMap.php" );
-	include_once( FRONTEND_ABS_PATH . "php/classes/Notification.php" );
-	include_once( FRONTEND_ABS_PATH . "php/classes/Filter.php" );
-	include_once( FRONTEND_ABS_PATH . "php/classes/Cron.php" );
-	include_once( FRONTEND_ABS_PATH . "php/classes/CrontabManager.php" );
-	include_once( FRONTEND_ABS_PATH . "php/classes/Patient.php" );
-	include_once( FRONTEND_ABS_PATH . "php/classes/TestResult.php" );
-	include_once( FRONTEND_ABS_PATH . "php/classes/Install.php" );
-	include_once( FRONTEND_ABS_PATH . "php/classes/Email.php" );
-	include_once( FRONTEND_ABS_PATH . "php/classes/Questionnaire/Questionnaire.php");
-	include_once( FRONTEND_ABS_PATH . "php/classes/Questionnaire/Question.php");
-	include_once( FRONTEND_ABS_PATH . "php/classes/Questionnaire/QuestionGroup.php");
-	include_once( FRONTEND_ABS_PATH . "php/classes/Questionnaire/Tag.php");
-	include_once( FRONTEND_ABS_PATH . "php/classes/Questionnaire/Category.php");
-	include_once( FRONTEND_ABS_PATH . "php/classes/Questionnaire/AnswerType.php");
-	include_once( FRONTEND_ABS_PATH . "php/classes/Questionnaire/Library.php");
-	include_once( FRONTEND_ABS_PATH . "php/classes/LegacyQuestionnaire.php");
-	include_once( FRONTEND_ABS_PATH . "php/classes/Diagnosis.php");
-	include_once( FRONTEND_ABS_PATH . "php/classes/Application.php");
-	include_once( FRONTEND_ABS_PATH . "php/classes/Encrypt.php");
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "User.php" );
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Database.php" );
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Alias.php" );
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Post.php" );
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "EduMaterial.php" );
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "HospitalMap.php" );
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Notification.php" );
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Filter.php" );
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Cron.php" );
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "CrontabManager.php" );
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Patient.php" );
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TestResult.php" );
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Install.php" );
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Email.php" );
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Questionnaire". DIRECTORY_SEPARATOR . "Questionnaire.php");
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Questionnaire". DIRECTORY_SEPARATOR . "Question.php");
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Questionnaire". DIRECTORY_SEPARATOR . "QuestionGroup.php");
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Questionnaire". DIRECTORY_SEPARATOR . "Tag.php");
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Questionnaire". DIRECTORY_SEPARATOR . "Category.php");
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Questionnaire". DIRECTORY_SEPARATOR . "AnswerType.php");
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Questionnaire". DIRECTORY_SEPARATOR . "Library.php");
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "LegacyQuestionnaire.php");
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Diagnosis.php");
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Application.php");
+	include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Encrypt.php");
 	//include_once( FRONTEND_ABS_PATH . "php/classes/Upload.php");
 
 	// Push Notification FCM and APN credientials.
 	define( "API_KEY" , $config['pushNotificationConfig']['android']['apiKey'] );
 	define( "CERTIFICATE_PASSWORD" , $config['pushNotificationConfig']['apple']['certificate']['password'] );
-	define( "CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php/certificates/' . $config['pushNotificationConfig']['apple']['certificate']['filename'] );
+	define( "CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $config['pushNotificationConfig']['apple']['certificate']['filename'] );
 
 ?>
