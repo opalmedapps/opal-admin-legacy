@@ -15,6 +15,7 @@ package Document; # Declare package name
 
 use Exporter; # To export subroutines and variables
 use Database; # Use our custom database module Database.pm
+use Configs; # Configs.pm
 use Time::Piece; # To parse and convert date time
 use POSIX;
 use Storable qw(dclone);
@@ -497,6 +498,11 @@ sub getDocsFromSourceDB
                 	my $expressionser = $Expression->{_ser};
                 	my $expressionName = $Expression->{_name};
                 	my $expressionLastTransfer = $Expression->{_lasttransfer};
+
+									if ($expressionLastTransfer eq '0000-00-00 00:00:00') {
+										$expressionLastTransfer = $Expression->{_update};
+									}
+
                 	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
 
                 	# compare last updates to find the earliest date
@@ -521,8 +527,8 @@ sub getDocsFromSourceDB
 		            }
 
 	        		$docInfo_sql .= "
-						(REPLACE(RTRIM(note_typ.note_typ_desc), '''', '')   = '$expressionName'
-		        		AND	visit_note.trans_log_mtstamp					> '$lasttransfer')
+						(RTRIM(note_typ.note_typ_desc) = '$expressionName'
+		        		AND	visit_note.trans_log_mtstamp > '$lasttransfer')
 	    		    ";
 					$counter++;
 	        		# concat "UNION" until we've reached the last query
@@ -535,6 +541,7 @@ sub getDocsFromSourceDB
 					}
 	        	}
     	    	# prepare query
+
 	    	    my $query = $sourceDatabase->prepare($docInfo_sql)
 		    	    or die "Could not prepare query: " . $sourceDatabase->errstr;
 
@@ -822,9 +829,9 @@ sub transferPatientDocuments
 {
 	my (@DocsList) = @_; # our list of documents from args
 
-	# Updated libreoffice from 4.3 to 6.1
-	# my $lowriter = "/opt/libreoffice4.3/program/soffice.bin --writer";
-	my $lowriter = "/opt/libreoffice6.1/program/soffice.bin --writer";
+	# Preprod server uses libreoffice 4.3
+	# Prod server uses libreoffice 6.1
+	my $lowriter = $Configs::OFFICE_PATH_DIR . "soffice.bin --writer";
 
     my $verbose = 1;
 

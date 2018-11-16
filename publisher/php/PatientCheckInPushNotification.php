@@ -221,7 +221,8 @@ class PatientCheckInPushNotification{
 
         return array(
             "mtitle"=> $messageLabels["Name_".$language ],
-            "mdesc"=>str_replace('$getDateTime', $datetimestamp,  $messageLabels["Description_".$language])
+            "mdesc"=>str_replace('$getDateTime', $datetimestamp,  $messageLabels["Description_".$language]),
+            "encode"=> "No" // Set the encoding to NO because the French characters works
         );
     }
 
