@@ -400,7 +400,7 @@ sub getTasksFromSourceDB
 		            }
 
 	        		$taskInfo_sql .= "
-						(vva.Expression1 = '$expressionName'
+						(REPLACE(vva.Expression1, '''', '') = '$expressionName'
 						AND NonScheduledActivity.HstryDateTime > '$lasttransfer')
 	         		";
 	         		$counter++;
