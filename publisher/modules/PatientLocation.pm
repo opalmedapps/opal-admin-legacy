@@ -335,7 +335,7 @@ sub getPatientLocationsFromSourceDB
             # concatenate query
 						# YM SPOT
     		$plInfo_sql .= "
-				(lt.Expression1 IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
+				(REPLACE(lt.Expression1, '''', '') IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
 	        	AND pl.HstryDateTime > (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
     		";
     		$counter++;
