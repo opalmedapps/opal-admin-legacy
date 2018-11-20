@@ -488,7 +488,7 @@ sub getApptsFromSourceDB
 
             # concatenate query
 					$apptInfo_sql .= "
-					(lt.Expression1 IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
+					(REPLACE(lt.Expression1, '''', '') IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
 					  	AND sa.HstryDateTime > (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
 					";
     		$counter++;
