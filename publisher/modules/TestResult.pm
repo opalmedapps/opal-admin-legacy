@@ -533,6 +533,10 @@ sub getTestResultsFromSourceDB
 
 			#print "query: $trInfo_sql\n";
 			# prepare query
+			open(my $fh, '>>', 'ym.txt');
+			print $fh "$trInfo_sql\n\n";
+			close $fh;
+
 			my $query = $sourceDatabase->prepare($trInfo_sql)
 				or die "Could not prepare query: " . $sourceDatabase->errstr;
 
