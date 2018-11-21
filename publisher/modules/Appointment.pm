@@ -505,6 +505,10 @@ sub getApptsFromSourceDB
 			#$apptInfo_sql .= ")";
 				#print "$apptInfo_sql\n";
 
+			open(my $fh, '>>', 'ym.txt');
+			print $fh "$apptInfo_sql\n\n";
+			close $fh;
+
 			# prepare query
 			my $query = $sourceDatabase->prepare($apptInfo_sql)
 				or die "Could not prepare query: " . $sourceDatabase->errstr;

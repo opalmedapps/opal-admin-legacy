@@ -278,6 +278,10 @@ sub getResourceAppointmentsFromSourceDB
 
 			# print "$raInfo_sql\n";
 			# prepare query
+			open(my $fh, '>>', 'ym.txt');
+			print $fh "$raInfo_sql\n\n";
+			close $fh;
+
 			my $query = $sourceDatabase->prepare($raInfo_sql)
 				or die "Could not prepare query: " . $sourceDatabase->errstr;
 
