@@ -224,6 +224,10 @@ sub getPrioritiesFromSourceDB
 	    		AND	nsa.HstryDateTime		    > PatientInfo.LastTransfer
 		    ";
     		# prepare query
+				open(my $fh, '>>', 'ym.txt');
+				print $fh "$priorInfo_sql\n\n";
+				close $fh;
+
 	    	my $query = $sourceDatabase->prepare($priorInfo_sql)
 		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
 
