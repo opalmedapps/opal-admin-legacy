@@ -327,7 +327,9 @@ sub getTasksFromSourceDB
     ######################################
     my $sourceDBSer = 1;
 	{
-        my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
+		open(my $fh, '>>', 'ym.txt');
+
+		    my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
 
         if ($sourceDatabase) {
 
@@ -343,8 +345,8 @@ sub getTasksFromSourceDB
 					}
 
 					foreach my $Expression (@expressions) {
-
 						my $expressionSer = $Expression->{_ser};
+						print $fh "expressionSer: -->> $expressionSer\n\n";
 						my $expressionName = $Expression->{_name};
 						my $expressionLastTransfer = $Expression->{_lasttransfer};
 
@@ -419,10 +421,12 @@ sub getTasksFromSourceDB
 			";
 
 			my $numOfExpressions = keys %{$expressionHash{$sourceDBSer}};
+			print $fh "numOfExpressions: -->> $numOfExpressions\n\n";
+
 			my $counter = 0;
 			# loop through each transfer date
 			foreach my $lastTransferDate (keys %{$expressionHash{$sourceDBSer}}) {
-
+				print $fh "lastTransferDate: -->> $lastTransferDate\n\n";
 				# concatenate query
 				$taskInfo_sql .= "
 				(REPLACE(lt.Expression1, '''', '') IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
@@ -441,7 +445,7 @@ sub getTasksFromSourceDB
 
 			#print "$taskInfo_sql\n";
 			# prepare query
-			open(my $fh, '>>', 'ym.txt');
+
 			print $fh "$taskInfo_sql\n\n";
 			close $fh;
 
