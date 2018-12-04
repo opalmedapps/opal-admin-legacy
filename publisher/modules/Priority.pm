@@ -207,17 +207,17 @@ sub getPrioritiesFromSourceDB
 		    		nsa.NonScheduledActivitySer,
 			    	CONVERT(VARCHAR, nsa.DueDateTime, 120),
 				    lt.Expression1,
-					PatientInfo.PatientSer
+					PatientInfo.PatientSerNum
     			FROM
 		    		variansystem.dbo.NonScheduledActivity nsa,
 			    	variansystem.dbo.ActivityInstance ai,
 				    variansystem.dbo.Activity act,
     				variansystem.dbo.LookupTable lt,
-					PatientInfo.PatientSerNum
+					PatientInfo
 	    		WHERE
 		    	    nsa.ActivityInstanceSer 	= ai.ActivityInstanceSer
 	            AND ai.ActivitySer 			    = act.ActivitySer
-    	        AND act.ActivityCode 			= vva.LookupValue
+    	        AND act.ActivityCode 			= lt.LookupValue
 	    	   	AND nsa.PatientSer 				= (select pt.PatientSer from variansystem.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
 			    AND nsa.ObjectStatus 		    != 'Deleted'
     			AND lt.Expression1			    IN ('SGAS_P1','SGAS_P2','SGAS_P3','SGAS_P4')
