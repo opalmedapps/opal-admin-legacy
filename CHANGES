@@ -1,3 +1,7 @@
+Version 0.18.17.4:
+ - Merge branch 'hotfix-0.18.17.3'
+ -    --- Fixed the function getTranslation
+
 Version 0.18.17.3:
  - Merge branch 'hotfix-0.18.17.2'
  - Reverted back to REPLACE statement for AliasExpression
