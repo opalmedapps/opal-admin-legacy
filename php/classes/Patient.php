@@ -69,6 +69,7 @@
           AND pt.PatientSerNum 	= usr.UserTypeSerNum
   				AND usr.UserType 		= 'Patient'
         ";
+
 			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
 
@@ -660,8 +661,8 @@
       'error'		=> array(
         'code'		=> '',
         'message'	=> ''
-  		);
-    )
+  		)
+    );
 
     $password 	= $patientDetails['password'];
     $serial 	= $patientDetails['serial'];
