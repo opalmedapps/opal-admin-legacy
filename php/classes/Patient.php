@@ -661,8 +661,8 @@
       'error'		=> array(
         'code'		=> '',
         'message'	=> ''
-  		);
-    )
+  		)
+    );
 
     $password 	= $patientDetails['password'];
     $serial 	= $patientDetails['serial'];
