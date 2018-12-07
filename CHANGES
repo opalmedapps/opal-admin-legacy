@@ -1,3 +1,7 @@
+Version 0.18.17.5:
+ - Merge branch 'hotfix-0.18.17.4'
+ -    --- Quick patch for the patient image for now to allow user to register an account
+
 Version 0.18.17.4:
  - Merge branch 'hotfix-0.18.17.3'
  -    --- Fixed the function getTranslation
