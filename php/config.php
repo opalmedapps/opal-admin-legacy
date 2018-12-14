@@ -64,8 +64,8 @@
 	define( "MOSAIQ_DB_PASSWORD", $config['databaseConfig']['mosaiq']['password'] );
 
 	// Environment-specific variables
-	define( "FRONTEND_ABS_PATH", $config['pathConfig']['abs_path'] );
-	define( "FRONTEND_REL_URL", $config['pathConfig']['relative_url'] );
+	define( "FRONTEND_ABS_PATH", str_replace("/", DIRECTORY_SEPARATOR, $config['pathConfig']['abs_path'] ));
+	define( "FRONTEND_REL_URL", str_replace("/", DIRECTORY_SEPARATOR, $config['pathConfig']['relative_url'] ));
 	define( "BACKEND_ABS_PATH", FRONTEND_ABS_PATH . "publisher/" );
 	define( "BACKEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", BACKEND_ABS_PATH) );
 	define( "FRONTEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", FRONTEND_ABS_PATH) );
