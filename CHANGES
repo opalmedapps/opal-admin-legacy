@@ -1,3 +1,7 @@
+Version 0.18.17.6:
+ - Merge branch 'hotfix-0.18.17.5'
+ -    --- Fixed syntax error unexpected ; expecting ) in php/classes/Patient.php on line 663
+
 Version 0.18.17.5:
  - Merge branch 'hotfix-0.18.17.4'
  -    --- Quick patch for the patient image for now to allow user to register an account
