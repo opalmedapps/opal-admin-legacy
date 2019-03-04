@@ -44,3 +44,10 @@ uploads/**
 publisher/logs/**
 # except readme
 !publisher/logs/README.md
+
+# ignore Visual Studio Code
+.vscode
+
+# ignore push notificaiton test script
+publisher/php/ykmTestNotification.php
+
