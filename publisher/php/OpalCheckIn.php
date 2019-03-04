@@ -56,7 +56,7 @@ class OpalCheckin{
         // Get the Opal Patient ID using the Aria Serial Number
         $sql = "Select Patient.PatientSerNum
 				From Patient
-				Where PatientId = " . $patientId;
+				Where PatientId = '$patientId'";
 
         try {
             $patientSerNum = $conn->query($sql);
@@ -150,7 +150,7 @@ class OpalCheckin{
         $sqlAria = "
                 Select Appointment.AppointmentSerNum, Appointment.AppointmentAriaSer
                 From Patient, Appointment
-                Where Patient.patientId = " . $patientId . "
+                Where Patient.patientId = '$patientId'
                     And Patient.PatientSerNum = Appointment.PatientSerNum
                     And Appointment.SourceDatabaseSerNum = 1
                     And DATE_FORMAT(Appointment.ScheduledStartTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d');";
@@ -159,7 +159,7 @@ class OpalCheckin{
         $sqlMediVisit = "
                 Select Appointment.AppointmentSerNum, Appointment.AppointmentAriaSer
                 From Patient, Appointment
-                Where Patient.patientId = " . $patientId . "
+                Where Patient.patientId = '$patientId'
                     And Patient.PatientSerNum = Appointment.PatientSerNum
                     And Appointment.SourceDatabaseSerNum = 2
                     And DATE_FORMAT(Appointment.ScheduledStartTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d');";
@@ -243,7 +243,7 @@ class OpalCheckin{
                   (Select ScheduledActivity.ScheduledActivitySer
                   From variansystem.dbo.Patient, variansystem.dbo.ScheduledActivity
                   Where Patient.PatientSer = ScheduledActivity.PatientSer
-                    AND Patient.PatientId = '" . $patientId . "'
+                    AND Patient.PatientId = '$patientId'
                     AND left(convert(varchar, ScheduledActivity.ScheduledStartTime, 120), 10) = left(convert(varchar, getdate() - 0, 120), 10)
                   )
                 AND CheckedInFlag = 1";
@@ -281,7 +281,7 @@ class OpalCheckin{
                 From $wrmDatabaseName.PatientLocation PMH, $wrmDatabaseName.Patient P,
 										$wrmDatabaseName.MediVisitAppointmentList MVA, $opalDatabaseName.Appointment A
                 Where P.PatientSerNum = MVA.PatientSerNum
-                    And P.PatientId = " . $patientId . "
+                    And P.PatientId = '$patientId'
                     And MVA.AppointmentSerNum = PMH.AppointmentSerNum
 										and A.Checkin = 0
                     And DATE_FORMAT(ArrivalDateTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d')
