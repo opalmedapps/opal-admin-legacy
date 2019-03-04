@@ -54,14 +54,26 @@ class PushNotifications {
 		// Ex: 10:35:23 would be 103523
 		$wsDate = date("His");
 
+		// $message = array(
+			// 'notId' 							=> $wsDate,
+			// 'title'								=> $wsTitle,
+			// 'body'								=> $wsBody,
+			// 'android_channel_id'	=> 'opal',
+			// 'sound'								=> 'default',
+			// 'priority'						=> 'normal'
+			// );
+
 		$message = array(
-			'notId' 							=> $wsDate,
-			'title'								=> $wsTitle,
-			'body'								=> $wsBody,
-			'android_channel_id'	=> 'Opal',
-			'sound'								=> 'default',
-			'priority'						=> 'normal'
-			);
+			'notId' 				=> $wsDate,
+			'title'					=> $wsTitle,
+			'body'					=> $wsBody,
+			'channelId'				=> 'opal',
+			'payload'				=> array(
+				'aps'				=> array(
+					'category'		=> 'opal'
+				)
+			)
+		);
 
 		$headers = array(
 			'Authorization: key=' .self::$api_key,
