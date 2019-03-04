@@ -71,11 +71,16 @@ const our $FRONTEND_REL_URL     => $config->{'pathConfig'}{'relative_url'};
 const our $BACKEND_ABS_PATH     => $FRONTEND_ABS_PATH . 'publisher/'; # absolute path of this project (include trailing slash)
 const our $BACKEND_REL_URL      => $FRONTEND_REL_URL . 'publisher/'; # relative path of this project from http host (include trailing slash)
 
+# YM 2019-01-07 : Production use shared folder
+const our $BACKEND_SHARED_URL => $config->{'pathConfig'}{'shared_drive_path'};
+
 # DEFINE FTP CREDENTIALS HERE
 # NOTE: This is for sending clinical documents
 const our $ARIA_FTP_DIR         => $config->{'clinicalDocumentPathConfig'}{'aria'}; # clinical aria document directory
 const our $MOSAIQ_FTP_DIR       => $config->{'clinicalDocumentPathConfig'}{'mosaiq'}; # clinical mosaiq document directory
-const our $FTP_LOCAL_DIR        =>  $BACKEND_ABS_PATH . 'clinical/documents'; # PDF directory
+# const our $FTP_LOCAL_DIR        =>  $BACKEND_ABS_PATH . 'clinical/documents'; # PDF directory
+# YM 2019-01-07 : Production use shared folder
+const our $FTP_LOCAL_DIR        =>  $BACKEND_SHARED_URL . 'clinical/documents'; # PDF directory
 const our $OFFICE_PATH_DIR      => $config->{'clinicalDocumentPathConfig'}{'office_path'}; # Location where office is installed
 
 #======================================================================================
