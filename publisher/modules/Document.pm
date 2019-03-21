@@ -430,289 +430,293 @@ sub getDocsFromSourceDB
     # retrieve all aliases that are marked for update
     my @aliasList = Alias::getAliasesMarkedForUpdate('Document');
 
-	# Go through the list of Patient objects and get the information that we need
-    # in order to search for the corresponding documents in the database
-	foreach my $Patient (@patientList) {
+	######################################
+    # ARIA
+    ######################################
+    my $sourceDBSer = 1;
+	{
+        my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
 
-		my $patientSer		    		= $Patient->getPatientSer(); # get patient serial
-		my $patientSSN    				= $Patient->getPatientSSN();
-        my $patientLastTransfer			= $Patient->getPatientLastTransfer(); # get last updated
-        my $patientRegistrationDate 	= $Patient->getPatientRegistrationDate();
+        if ($sourceDatabase) {
 
-        my $formatted_PLU = Time::Piece->strptime($patientLastTransfer, "%Y-%m-%d %H:%M:%S");
-        my $formatted_reg = Time::Piece->strptime($patientRegistrationDate, "%Y-%m-%d %H:%M:%S");
+			my $expressionHash = {};
+			my $expressionDict = {};
+			foreach my $Alias (@aliasList) {
+				my $aliasSourceDBSer 	= $Alias->getAliasSourceDatabaseSer();
+				my @expressions         = $Alias->getAliasExpressions();
 
-        foreach my $Alias (@aliasList) {
+				if ($sourceDBSer eq $aliasSourceDBSer) {
+					if (!exists $expressionHash{$sourceDBSer}) {
+						$expressionHash{$sourceDBSer} = {}; # initialize key value
+					}
 
-            my $aliasSer            = $Alias->getAliasSer(); # get alias serial
-            my $sourceDBSer         = $Alias->getAliasSourceDatabaseSer();
-            my @expressions         = $Alias->getAliasExpressions();
+					foreach my $Expression (@expressions) {
 
-            ######################################
-		    # ARIA
-		    ######################################
-            if ($sourceDBSer eq 1) {
+						my $expressionSer = $Expression->{_ser};
+						my $expressionName = $Expression->{_name};
+						my $expressionLastTransfer = $Expression->{_lasttransfer};
 
-                my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-                my $numOfExpressions = @expressions;
-                my $counter = 0;
-                my $docInfo_sql = "
-					WITH note_typ AS (
-						SELECT DISTINCT
-							Expression.note_typ,
-							Expression.note_typ_desc
-						FROM
-							varianenm.dbo.note_typ Expression
-					)
-					SELECT DISTINCT
-						visit_note.pt_id,
-						visit_note.pt_visit_id,
-						visit_note.visit_note_id,
-						visit_note.revised_ind,
-						visit_note.valid_entry_ind,
-						visit_note.err_rsn_txt,
-						visit_note.doc_file_loc,
-						visit_note.appr_stkh_id,
-						CONVERT(VARCHAR, visit_note.appr_tstamp, 120),
-						visit_note.author_stkh_id,
-						CONVERT(VARCHAR, visit_note.note_tstamp, 120),
-						visit_note.trans_log_userid,
-						CONVERT(VARCHAR, visit_note.trans_log_tstamp, 120),
-						RTRIM(note_typ.note_typ_desc)
-					FROM
-						variansystem.dbo.Patient Patient,
-						varianenm.dbo.visit_note visit_note,
-						note_typ,
-						varianenm.dbo.pt pt
-					WHERE
-						pt.pt_id 			            = visit_note.pt_id
-					AND pt.patient_ser			        = Patient.PatientSer
-					AND LEFT(LTRIM(Patient.SSN), 12)     = '$patientSSN'
-					AND visit_note.note_typ		        = note_typ.note_typ
-					AND visit_note.appr_flag		    = 'A'
-					AND (
+						# append expression (surrounded by single quotes) to string
+						if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
+							$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",'$expressionName'";
+						} else {
+							# start a new string
+							$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "'$expressionName'";
+						}
+
+						$expressionDict{$expressionName} = $expressionSer;
+
+					}
+				}
+			}
+
+			my $patientInfo_sql = "
+				WITH PatientInfo (SSN, LastTransfer, PatientSerNum, RegistrationDate) AS (
+			";
+			my $numOfPatients = @patientList;
+			my $counter = 0;
+			foreach my $Patient (@patientList) {
+				my $patientSer 			= $Patient->getPatientSer();
+				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
+				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
+				my $patientRegistrationDate 	= $Patient->getPatientRegistrationDate();
+
+				$patientInfo_sql .= "
+					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer', '$patientRegistrationDate'
 				";
 
-                foreach my $Expression (@expressions) {
+				$counter++;
+				if ( $counter < $numOfPatients ) {
+					$patientInfo_sql .= "UNION";
+				}
+			}
+			$patientInfo_sql .= ")";
 
-                	my $expressionser = $Expression->{_ser};
-                	my $expressionName = $Expression->{_name};
-                	my $expressionLastTransfer = $Expression->{_lasttransfer};
 
-									if ($expressionLastTransfer eq '0000-00-00 00:00:00') {
-										$expressionLastTransfer = $Expression->{_update};
-									}
+			my $docInfo_sql = $patientInfo_sql . "
+				WITH note_typ AS (
+					SELECT DISTINCT
+						Expression.note_typ,
+						Expression.note_typ_desc
+					FROM
+						varianenm.dbo.note_typ Expression
+				)
+				SELECT DISTINCT
+					visit_note.pt_id,
+					visit_note.pt_visit_id,
+					visit_note.visit_note_id,
+					visit_note.revised_ind,
+					visit_note.valid_entry_ind,
+					visit_note.err_rsn_txt,
+					visit_note.doc_file_loc,
+					visit_note.appr_stkh_id,
+					CONVERT(VARCHAR, visit_note.appr_tstamp, 120),
+					visit_note.author_stkh_id,
+					CONVERT(VARCHAR, visit_note.note_tstamp, 120),
+					visit_note.trans_log_userid,
+					CONVERT(VARCHAR, visit_note.trans_log_tstamp, 120),
+					RTRIM(note_typ.note_typ_desc),
+					PatientInfo.PatientSerNum
+				FROM
+					varianenm.dbo.visit_note visit_note,
+					note_typ,
+					varianenm.dbo.pt pt,
+					PatientInfo
+				WHERE
+					pt.pt_id 			            = visit_note.pt_id
+				AND pt.patient_ser			        = (select pt.PatientSer from variansystem.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+				AND visit_note.note_typ		        = note_typ.note_typ
+				AND visit_note.appr_flag		    = 'A'
+				AND (
+			";
 
-                	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
+			my $numOfExpressions = keys %{$expressionHash{$sourceDBSer}};
+			my $counter = 0;
+			# loop through each transfer date
+			foreach my $lastTransferDate (keys %{$expressionHash{$sourceDBSer}}) {
 
-                	# compare last updates to find the earliest date
-		            # get the diff in seconds
-		            my $date_diff = $formatted_PLU - $formatted_ELU;
-		            if ($date_diff < 0) {
-		            	my $reg_date_diff = $formatted_PLU - $formatted_reg;
-		            	if ($reg_date_diff < 0) {
-		            		$lasttransfer = $patientRegistrationDate;
-		            	}
-		            	else {
-			                $lasttransfer = $patientLastTransfer;
-		            	}
-		            } else {
-		            	my $reg_date_diff = $formatted_ELU - $formatted_reg;
-		            	if ($reg_date_diff < 0) {
-		            		$lasttransfer = $patientRegistrationDate;
-		            	}
-		            	else {
-			                $lasttransfer = $expressionLastTransfer;
-		            	}
-		            }
+				# concatenate query
+				$docInfo_sql .= "
+				(RTRIM(note_typ.note_typ_desc) IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
+					AND visit_note.trans_log_mtstamp > (SELECT CASE WHEN
+						'$lastTransferDate' > PatientInfo.LastTransfer
+					THEN
+						CASE WHEN
+							PatientInfo.LastTransfer > PatientInfo.RegistrationDate
+						THEN PatientInfo.LastTransfer
+						ELSE PatientInfo.RegistrationDate END
+					ELSE
+						CASE WHEN
+							'$lastTransferDate' > PatientInfo.RegistrationDate
+						THEN '$lastTransferDate'
+						ELSE PatientInfo.RegistrationDate END
+					END
+					)
+				)
+				";
+				$counter++;
+				# concat "UNION" until we've reached the last query
+				if ($counter < $numOfExpressions) {
+					$docInfo_sql .= "OR";
+				}
+				# close bracket at end
+				else {
+					$docInfo_sql .= ")";
+				}
+			}
 
-	        		$docInfo_sql .= "
-						(RTRIM(note_typ.note_typ_desc) = '$expressionName'
-		        		AND	visit_note.trans_log_mtstamp > '$lasttransfer')
-	    		    ";
-					$counter++;
-	        		# concat "UNION" until we've reached the last query
-	        		if ($counter < $numOfExpressions) {
-	        			$docInfo_sql .= "OR";
-	        		}
-					# close bracket at end
-					else {
-						$docInfo_sql .= ")";
+			# prepare query
+			open(my $fh, '>>', 'ym.txt');
+			print $fh "$docInfo_sql\n\n";
+			close $fh;
+
+
+			my $query = $sourceDatabase->prepare($docInfo_sql)
+				or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+			# execute query
+			$query->execute()
+				or die "Could not execute query: " . $query->errstr;
+
+			my $data = $query->fetchall_arrayref();
+			foreach my $row (@$data) {
+
+				my $document = new Document();
+
+				$pt_id			= $row->[0];
+				$visit_id		= $row->[1];
+				$note_id		= $row->[2];
+				# so visit_note_id from varian manual claims to be "unique" but it's not
+				# I combine pt_id, visit_id, note_id to generate a unique Id for this document
+				$sourceuid		= $pt_id . $visit_id . $note_id;
+
+				$revised		= $row->[3];
+				$validentry		= $row->[4];
+				$errtxt			= $row->[5];
+				$fileloc		= $row->[6];
+				$apprvby		= Staff::reassignStaff($row->[7], $sourceDBSer);
+				$apprvts		= $row->[8];
+				$authoredby     = Staff::reassignStaff($row->[9]);
+				$dos            = $row->[10];
+				$createdby      = Staff::reassignStaff($row->[11]);
+				$createdts      = $row->[12];
+				$expressionname 	= $row->[13];
+				$patientSer 	= $row->[14];
+
+				$document->setDocSourceUID($sourceuid);
+				$document->setDocSourceDatabaseSer($sourceDBSer);
+				$document->setDocPatientSer($patientSer);
+				$document->setDocRevised($revised);
+				$document->setDocValidEntry($validentry);
+				$document->setDocErrorReasonText($errtxt);
+				$document->setDocFileLoc($fileloc);
+				$document->setDocAliasExpressionSer($expressionDict{$expressionname});
+				$document->setDocApprovedBy($apprvby);
+				$document->setDocApprovedTimeStamp($apprvts);
+				$document->setDocAuthoredBy($authoredby);
+				$document->setDocDateOfService($dos);
+				$document->setDocCreatedBy($createdby);
+				$document->setDocCreatedTimeStamp($createdts);
+				$document->setDocCronLogSer($cronLogSer);
+
+				push(@docList, $document);
+			}
+
+			$sourceDatabase->disconnect();
+        }
+	}
+
+    ######################################
+    # MediVisit
+    ######################################
+    my $sourceDBSer = 2;
+	{
+        my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
+
+        if ($sourceDatabase) {
+
+          	# my $expressionHash = {};
+			# my $expressionDict = {};
+			# foreach my $Alias (@aliasList) {
+			# 	my $aliasSourceDBSer 	= $Alias->getAliasSourceDatabaseSer();
+			# 	my @expressions         = $Alias->getAliasExpressions();
+
+			# 	if ($sourceDBSer eq $aliasSourceDBSer) {
+			# 		if (!exists $expressionHash{$sourceDBSer}) {
+			# 			$expressionHash{$sourceDBSer} = {}; # intialize key value
+			# 		}
+
+			# 		foreach my $Expression (@expressions) {
+
+			# 			my $expressionSer = $Expression->{_ser};
+			# 			my $expressionName = $Expression->{_name};
+			# 			my $expressionDesc = $Expression->{_description};
+			# 			my $expressionLastTransfer = $Expression->{_lasttransfer};
+
+			# 			# append expression (surrounded by single quotes) to string
+			# 			if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
+			# 				$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",('$expressionName','$expressionDesc')";
+			# 			} else {
+			# 				# start a new string
+			# 				$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "('$expressionName','$expressionDesc')";
+			# 			}
+
+			# 			$expressionDict{$expressionName}{$expressionDesc} = $expressionSer;
+
+			# 		}
+			# 	}
+
+			# }
+
+			########## 	PATIENT AND DOCUMENT QUERY HERE #############
+            $sourceDatabase->disconnect();
+        }
+	}
+
+     ######################################
+    # MOSAIQ
+    ######################################
+    my $sourceDBSer = 3;
+	{
+        my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
+
+        if ($sourceDatabase) {
+
+			my $expressionHash = {};
+			my $expressionDict = {};
+			foreach my $Alias (@aliasList) {
+				my $aliasSourceDBSer 	= $Alias->getAliasSourceDatabaseSer();
+				my @expressions         = $Alias->getAliasExpressions();
+
+				if ($sourceDBSer eq $aliasSourceDBSer) {
+					if (!exists $expressionHash{$sourceDBSer}) {
+						$expressionHash{$sourceDBSer} = {}; # intialize key value
 					}
-	        	}
-    	    	# prepare query
 
-	    	    my $query = $sourceDatabase->prepare($docInfo_sql)
-		    	    or die "Could not prepare query: " . $sourceDatabase->errstr;
+					foreach my $Expression (@expressions) {
 
-    		    # execute query
-    	    	$query->execute()
-	    	    	or die "Could not execute query: " . $query->errstr;
+						my $expressionSer = $Expression->{_ser};
+						my $expressionName = $Expression->{_name};
+						my $expressionDesc = $Expression->{_description};
+						my $expressionLastTransfer = $Expression->{_lasttransfer};
 
-                my $data = $query->fetchall_arrayref();
-	        	foreach my $row (@$data) {
-
-		        	my $document = new Document();
-
-        			$pt_id			= $row->[0];
-	        		$visit_id		= $row->[1];
-		        	$note_id		= $row->[2];
-    			    # so visit_note_id from varian manual claims to be "unique" but it's not
-        			# I combine pt_id, visit_id, note_id to generate a unique Id for this document
-	        		$sourceuid		= $pt_id . $visit_id . $note_id;
-
-	        		$revised		= $row->[3];
-		        	$validentry		= $row->[4];
-			        $errtxt			= $row->[5];
-        			$fileloc		= $row->[6];
-	    		    $apprvby		= Staff::reassignStaff($row->[7], $sourceDBSer);
-		    	    $apprvts		= $row->[8];
-                    $authoredby     = Staff::reassignStaff($row->[9]);
-                    $dos            = $row->[10];
-                    $createdby      = Staff::reassignStaff($row->[11]);
-                    $createdts      = $row->[12];
-                    $expressionname 	= $row->[13];
-
-					my $expressionser;
-					foreach my $checkExpression (@expressions) {
-						if ($checkExpression->{_name} eq $expressionname){ #match
-							$expressionser = $checkExpression->{_ser};
-							last; # break out of loop
+						# append expression (surrounded by single quotes) to string
+						if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
+							$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",('$expressionName','$expressionDesc')";
+						} else {
+							# start a new string
+							$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "('$expressionName','$expressionDesc')";
 						}
+
+						$expressionDict{$expressionName}{$expressionDesc} = $expressionSer;
+
 					}
+				}
 
-        			$document->setDocSourceUID($sourceuid);
-                    $document->setDocSourceDatabaseSer($sourceDBSer);
-	        		$document->setDocPatientSer($patientSer);
-		        	$document->setDocRevised($revised);
-    	    		$document->setDocValidEntry($validentry);
-        			$document->setDocErrorReasonText($errtxt);
-	        		$document->setDocFileLoc($fileloc);
-		        	$document->setDocAliasExpressionSer($expressionser);
-	    	    	$document->setDocApprovedBy($apprvby);
-    			    $document->setDocApprovedTimeStamp($apprvts);
-    		    	$document->setDocAuthoredBy($authoredby);
-	    		    $document->setDocDateOfService($dos);
-		        	$document->setDocCreatedBy($createdby);
-			        $document->setDocCreatedTimeStamp($createdts);
-			        $document->setDocCronLogSer($cronLogSer);
+			}
 
-    			    push(@docList, $document);
-        		}
-
-                $sourceDatabase->disconnect();
-            }
-
-            ######################################
-		    # MediVisit
-		    ######################################
-            if ($sourceDBSer eq 2) {
-
-                my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-                my $numOfExpressions = @expressions;
-                my $counter = 0;
-                my $docInfo_sql = "";
-
-                foreach my $Expression (@expressions) {
-
-                	my $expressionser = $Expression->{_ser};
-                	my $expressionName = $Expression->{_name};
-                	my $expressionLastTransfer = $Expression->{_lasttransfer};
-                	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
-
-                	# compare last updates to find the earliest date
-		            # get the diff in seconds
-		            my $date_diff = $formatted_PLU - $formatted_ELU;
-		            if ($date_diff < 0) {
-		                $lasttransfer = $patientLastTransfer;
-		            } else {
-		                $lasttransfer = $expressionLastTransfer;
-		            }
-
-	        		$docInfo_sql .= "SELECT 'QUERY_HERE' ";
-
-	        		$counter++;
-	        		# concat "UNION" until we've reached the last query
-	        		if ($counter < $numOfExpressions) {
-	        			$docInfo_sql .= "UNION";
-	        		}
-	        	}
-    	    	# prepare query
-	    	    my $query = $sourceDatabase->prepare($docInfo_sql)
-		    	    or die "Could not prepare query: " . $sourceDatabase->errstr;
-
-    		    # execute query
-    	    	$query->execute()
-	    	    	or die "Could not execute query: " . $query->errstr;
-
-                my $data = $query->fetchall_arrayref();
-	        	foreach my $row (@$data) {
-
-		        	#my $document = new Document(); # uncomment for use
-
-		        	# use setters to set appropriate document information from query
-
-		        	#push(@docList, $document); # uncomment for use
-        		}
-
-                $sourceDatabase->disconnect();
-            }
-
-            ######################################
-		    # MOSAIQ
-		    ######################################
-            if ($sourceDBSer eq 3) {
-
-                my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-                my $numOfExpressions = @expressions;
-                my $counter = 0;
-                my $docInfo_sql = "";
-
-                foreach my $Expression (@expressions) {
-
-                	my $expressionser = $Expression->{_ser};
-                	my $expressionName = $Expression->{_name};
-                	my $expressionLastTransfer = $Expression->{_lasttransfer};
-                	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
-
-                	# compare last updates to find the earliest date
-		            # get the diff in seconds
-		            my $date_diff = $formatted_PLU - $formatted_ELU;
-		            if ($date_diff < 0) {
-		                $lasttransfer = $patientLastTransfer;
-		            } else {
-		                $lasttransfer = $expressionLastTransfer;
-		            }
-
-	        		$docInfo_sql .= "SELECT 'QUERY_HERE' ";
-
-	        		$counter++;
-	        		# concat "UNION" until we've reached the last query
-	        		if ($counter < $numOfExpressions) {
-	        			$docInfo_sql .= "UNION";
-	        		}
-	        	}
-    	    	# prepare query
-	    	    my $query = $sourceDatabase->prepare($docInfo_sql)
-		    	    or die "Could not prepare query: " . $sourceDatabase->errstr;
-
-    		    # execute query
-    	    	$query->execute()
-	    	    	or die "Could not execute query: " . $query->errstr;
-
-                my $data = $query->fetchall_arrayref();
-	        	foreach my $row (@$data) {
-
-		        	#my $document = new Document(); # uncomment for use
-
-		        	# use setters to set appropriate document information from query
-
-		        	#push(@docList, $document); # uncomment for use
-        		}
-
-                $sourceDatabase->disconnect();
-            }
-
+			########## 	PATIENT AND DOCUMENT QUERY HERE #############
+			$sourceDatabase->disconnect();
 
         }
 	}
