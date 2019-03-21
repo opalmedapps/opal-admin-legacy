@@ -3,12 +3,12 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 10-Aug-2015 ++ File: Diagnosis.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates a diagnosis class. This module calls a constructor to 
-# create a diagnosis object that contains diagnosis information stored as object 
+# Perl module that creates a diagnosis class. This module calls a constructor to
+# create a diagnosis object that contains diagnosis information stored as object
 # variables.
 #
 # There exists various subroutines to set diagnosis information and compare diagnosis
-# information between two diagnosis objects. 
+# information between two diagnosis objects.
 # There exists various subroutines that use the Database.pm module to update the
 # MySQL database and check if a diagnosis exists already in this database.
 
@@ -28,7 +28,7 @@ use Patient; # our custom patient module
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our Diagnosis class 
+# Constructor for our Diagnosis class
 #====================================================================================
 sub new
 {
@@ -47,12 +47,12 @@ sub new
 
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
-	bless $diagnosis, $class; 
+	bless $diagnosis, $class;
 	return $diagnosis;
 }
 
 #====================================================================================
-# Subroutine to set the diagnosis serial 
+# Subroutine to set the diagnosis serial
 #====================================================================================
 sub setDiagnosisSer
 {
@@ -62,7 +62,7 @@ sub setDiagnosisSer
 }
 
 #====================================================================================
-# Subroutine to set the diagnosis source database serial 
+# Subroutine to set the diagnosis source database serial
 #====================================================================================
 sub setDiagnosisSourceDatabaseSer
 {
@@ -92,7 +92,7 @@ sub setDiagnosisPatientSer
 }
 
 #====================================================================================
-# Subroutine to set diagnosis DateStamp 
+# Subroutine to set diagnosis DateStamp
 #====================================================================================
 sub setDiagnosisDateStamp
 {
@@ -102,7 +102,7 @@ sub setDiagnosisDateStamp
 }
 
 #====================================================================================
-# Subroutine to set diagnosis description 
+# Subroutine to set diagnosis description
 #====================================================================================
 sub setDiagnosisDescription
 {
@@ -185,7 +185,7 @@ sub getDiagnosisDateStamp
 	my ($diagnosis) = @_; # our diagnosis object
 	return $diagnosis->{_datestamp};
 }
-	
+
 #======================================================================================
 # Subroutine to get the diagnosis description
 #======================================================================================
@@ -229,47 +229,71 @@ sub getDiagnosesFromSourceDB
 {
 	my (@patientList) = @_; # patient list from args
 	my @diagnosisList = (); # initialize a list for diagnosis objects
-	
+
 	# for query results
 	my ($sourceuid, $datestamp, $description, $code);
 
-	foreach my $Patient (@patientList) { 
+	######################################
+    # ARIA
+    ######################################
+    my $sourceDBSer = 1;
+	{
+		my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
 
-		my $patientSer		    = $Patient->getPatientSer(); # get patient ser
-		my $patientSSN    		= $Patient->getPatientSSN(); # get patient ssn
-		my $lastTransfer	    = $Patient->getPatientLastTransfer(); # get last transfer
-
-       	######################################
-	    # ARIA
-	    ######################################
-	    my $sourceDBSer = 1; # ARIA
-	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
         if ($sourceDatabase) {
 
-	    	my $diagInfo_sql = "
+			my $patientInfo_sql = "
+				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
+			";
+			my $numOfPatients = @patientList;
+			my $counter = 0;
+			foreach my $Patient (@patientList) {
+				my $patientSer 			= $Patient->getPatientSer();
+				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
+				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
+
+				$patientInfo_sql .= "
+					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer'
+				";
+
+				$counter++;
+				if ( $counter < $numOfPatients ) {
+					$patientInfo_sql .= "UNION";
+				}
+			}
+			$patientInfo_sql .= ")";
+
+	    	my $diagInfo_sql = $patientInfo_sql . "
 		    	SELECT DISTINCT
 			    	dx.DiagnosisSer,
 				    CONVERT(VARCHAR, dx.DateStamp, 120),
     				RTRIM(REPLACE(REPLACE(dx.Description,'Malignant neoplasm','malignant neoplasm'),'malignant neoplasm','Ca')),
                     dx.DiagnosisId,
                     pmdx.SummaryStage,
-                    RTRIM(pmdx.StageCriteria)
+                    RTRIM(pmdx.StageCriteria),
+					PatientInfo.PatientSerNum
 		    	FROM
 			    	variansystem.dbo.Diagnosis dx,
 				    variansystem.dbo.Patient pt,
-				    variansystem.dbo.PrmryDiagnosis pmdx
+				    variansystem.dbo.PrmryDiagnosis pmdx,
+					PatientInfo
     			WHERE
-	    			dx.PatientSer			= pt.PatientSer
-	    		AND dx.DiagnosisSer 		= pmdx.DiagnosisSer
+	    		 	dx.DiagnosisSer 		= pmdx.DiagnosisSer
 		    	AND	LEFT(LTRIM(pt.SSN), 12)	= '$patientSSN'
 			    AND	dx.Description 			NOT LIKE '%ERROR%'
     			AND	dx.HstryDateTime    	> '$lastTransfer'
 	    		AND dx.DateStamp			> '1970-01-01 00:00:00'
+				AND dx.PatientSer 			= (select pt.PatientSer from variansystem.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
 		    ";
     		# prepare query
+
+				open(my $fh, '>>', 'ym.txt');
+				print $fh "$diagInfo_sql\n\n";
+				close $fh;
+
 	    	my $query = $sourceDatabase->prepare($diagInfo_sql)
 		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
-    
+
 		    # execute query
 	    	$query->execute()
 			    or die "Could not execute query: " . $query->errstr;
@@ -285,7 +309,8 @@ sub getDiagnosesFromSourceDB
                 $code           = $row->[3];
                 $stage 			= $row->[4];
                 $stagecriteria 	= $row->[5];
-    
+				$patientSer 	= $row->[6];
+
 	    		# set diagnostic information
 		    	$diagnosis->setDiagnosisSourceUID($sourceuid);
 			    $diagnosis->setDiagnosisDateStamp($datestamp);
@@ -295,81 +320,85 @@ sub getDiagnosesFromSourceDB
                 $diagnosis->setDiagnosisStage($stage);
                 $diagnosis->setDiagnosisStageCriteria($stagecriteria);
                 $diagnosis->setDiagnosisSourceDatabaseSer($sourceDBSer);
-    
+
 	    		push(@diagnosisList, $diagnosis);
 		    }
 
             $sourceDatabase->disconnect();
         }
-
-        ######################################
-	    # MediVisit
-	    ######################################
-	    my $sourceDBSer = 2; # MediVisit
-	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-        if ($sourceDatabase) {
-
-        	my $diagInfo_sql = "SELECT 'QUERY_HERE'";
-
-        	# prepare query
-	    	my $query = $sourceDatabase->prepare($diagInfo_sql)
-		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
-    
-		    # execute query
-	    	$query->execute()
-			    or die "Could not execute query: " . $query->errstr;
-
-            my $data = $query->fetchall_arrayref();
-            foreach my $row (@$data) {
-
-            	#my $diagnosis = new Diagnosis(); # uncomment for use
-
-            	# use setters to set appropriate diagnosis information from query
-
-            	#push(@diagnosisList, $diagnosis);
-            }
-
-            $sourceDatabase->disconnect();
-        }
-
-        ######################################
-	    # MOSAIQ
-	    ######################################
-	    my $sourceDBSer = 3; # MOSAIQ
-	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-        if ($sourceDatabase) {
-
-        	my $diagInfo_sql = "SELECT 'QUERY_HERE'";
-
-        	# prepare query
-	    	my $query = $sourceDatabase->prepare($diagInfo_sql)
-		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
-    
-		    # execute query
-	    	$query->execute()
-			    or die "Could not execute query: " . $query->errstr;
-
-            my $data = $query->fetchall_arrayref();
-            foreach my $row (@$data) {
-
-            	#my $diagnosis = new Diagnosis(); # uncomment for use
-
-            	# use setters to set appropriate diagnosis information from query
-
-            	#push(@diagnosisList, $diagnosis);
-            }
-
-            $sourceDatabase->disconnect();
-        }
-
 	}
-	
+
+	######################################
+	# MediVisit
+	######################################
+	my $sourceDBSer = 2; # MediVisit
+	{
+		my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
+
+        if ($sourceDatabase) {
+
+        	my $diagInfo_sql = "SELECT 'QUERY_HERE'";
+
+        	# prepare query
+	    	# my $query = $sourceDatabase->prepare($diagInfo_sql)
+		    # 	or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+		    # # execute query
+	    	# $query->execute()
+			#     or die "Could not execute query: " . $query->errstr;
+
+            # my $data = $query->fetchall_arrayref();
+            # foreach my $row (@$data) {
+
+            # 	#my $diagnosis = new Diagnosis(); # uncomment for use
+
+            # 	# use setters to set appropriate diagnosis information from query
+
+            # 	#push(@diagnosisList, $diagnosis);
+            # }
+
+            # $sourceDatabase->disconnect();
+        }
+	}
+
+	######################################
+	# MOSAIQ
+	######################################
+	my $sourceDBSer = 3; # MOSAIQ
+	{
+	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+        if ($sourceDatabase) {
+
+        	my $diagInfo_sql = "SELECT 'QUERY_HERE'";
+
+        	# prepare query
+	    	# my $query = $sourceDatabase->prepare($diagInfo_sql)
+		    # 	or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+		    # # execute query
+	    	# $query->execute()
+			#     or die "Could not execute query: " . $query->errstr;
+
+            # my $data = $query->fetchall_arrayref();
+            # foreach my $row (@$data) {
+
+            # 	#my $diagnosis = new Diagnosis(); # uncomment for use
+
+            # 	# use setters to set appropriate diagnosis information from query
+
+            # 	#push(@diagnosisList, $diagnosis);
+            # }
+
+            # $sourceDatabase->disconnect();
+        }
+	}
+
 	return @diagnosisList;
 }
-	
+
 #======================================================================================
 # Subroutine to get the closest diagnosis in time given the patient serial and a date
-# 	@return: diagnosis serial 
+# 	@return: diagnosis serial
 #======================================================================================
 sub getClosestDiagnosis
 {
@@ -379,7 +408,7 @@ sub getClosestDiagnosis
 
 	# Since the diagnosis creation date will be ascending,
 	# if the first diagnosis date is already passed the ref date in time,
- 	# then we'll just take the first diagnosis, and break. 
+ 	# then we'll just take the first diagnosis, and break.
 	my $first = 1;
 
 	my $date_sql = "
@@ -390,9 +419,9 @@ sub getClosestDiagnosis
 			Diagnosis
 		WHERE
 			Diagnosis.PatientSerNum	= '$patientSer'
-		ORDER BY 
+		ORDER BY
 			Diagnosis.CreationDate ASC
-	";	
+	";
 
 	# prepare query
 	my $query = $SQLDatabase->prepare($date_sql)
@@ -402,14 +431,14 @@ sub getClosestDiagnosis
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
 
-	# how this will work is that we loop each creation date until 
-	# said date passes the reference date. In other words, the 
+	# how this will work is that we loop each creation date until
+	# said date passes the reference date. In other words, the
 	# delay gets smaller and may turn negative. The smallest,
 	# non-negative delay is the closest date.
 	while (my @data = $query->fetchrow_array()) {
 
 		$closestdate = $data[0];
-	
+
 		my $delay_sql = "
 			SELECT TIMESTAMPDIFF(DAY, '$closestdate', '$referencedate')
 		";
@@ -430,20 +459,20 @@ sub getClosestDiagnosis
 		if ($delay < 0) {
 			# however, if the first diagnosis is passed the ref date
 			# by less than 100 days, then count it as the closest diagnosis
-			if ($first and $delay > -100) { 
+			if ($first and $delay > -100) {
 				$diagnosisSer = $data[1];
 				last;
 			}
 			last;
 		}
 
-		# assign diagnosis serial 
+		# assign diagnosis serial
 		$diagnosisSer = $data[1];
-		
+
 		$first = undef;	 # passed the first diagnosis
 
 	}
-		
+
 	return $diagnosisSer;
 }
 
@@ -492,7 +521,7 @@ sub getPatientsDiagnosesFromOurDB
 {
     my ($patientSer) = @_; # args
 
-    my @diagnoses = (); # initialize list 
+    my @diagnoses = (); # initialize list
 
     my $select_sql = "
         SELECT DISTINCT
@@ -536,13 +565,13 @@ sub inOurDatabase
 
 	my $DiagnosisSourceUIDInDB = 0; # false by default. Will be true if diagnosis exists
 	my $ExistingDiagnosis = (); # data to be entered if diagnosis exists
-	
+
 	# Other diagnosis variables, if diagnosis exists
-	my ($ser, $patientser, $datestamp, $description, $code, $stage, $stagecriteria); 
+	my ($ser, $patientser, $datestamp, $description, $code, $stage, $stagecriteria);
 
 	my $inDB_sql = "
 		SELECT DISTINCT
-			Diagnosis.DiagnosisSerNum,	
+			Diagnosis.DiagnosisSerNum,
 			Diagnosis.DiagnosisAriaSer,
 			Diagnosis.CreationDate,
 			Diagnosis.Description_EN,
@@ -556,7 +585,7 @@ sub inOurDatabase
 			Diagnosis.DiagnosisAriaSer	    = '$sourceuid'
         AND Diagnosis.SourceDatabaseSerNum  = '$sourcedbser'
 	";
-	
+
 	# prepare query
 	my $query = $SQLDatabase->prepare($inDB_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
@@ -566,7 +595,7 @@ sub inOurDatabase
 		or die "Could not execute query: " . $query->errstr;
 
 	while (my @data = $query->fetchrow_array()) {
-		
+
 		$ser			        = $data[0];
 		$DiagnosisSourceUIDInDB = $data[1];
 		$datestamp		        = $data[2];
@@ -579,10 +608,10 @@ sub inOurDatabase
 	}
 
 	if ($DiagnosisSourceUIDInDB) {
-		
+
 		$ExistingDiagnosis = new Diagnosis(); # initialize diagnosis object
 
-		$ExistingDiagnosis->setDiagnosisSourceUID($DiagnosisSourceUIDInDB); # set the id from our retrieved id 
+		$ExistingDiagnosis->setDiagnosisSourceUID($DiagnosisSourceUIDInDB); # set the id from our retrieved id
 		$ExistingDiagnosis->setDiagnosisSourceDatabaseSer($sourcedbser);
 		$ExistingDiagnosis->setDiagnosisSer($ser);
 		$ExistingDiagnosis->setDiagnosisDateStamp($datestamp);
@@ -605,7 +634,7 @@ sub inOurDatabase
 sub insertDiagnosisIntoOurDB
 {
 	my ($diagnosis) = @_; # our diagnosis object serial
-	
+
 	my $patientser		= $diagnosis->getDiagnosisPatientSer();
 	my $sourceuid	    = $diagnosis->getDiagnosisSourceUID();
     my $sourcedbser     = $diagnosis->getDiagnosisSourceDatabaseSer();
@@ -614,10 +643,10 @@ sub insertDiagnosisIntoOurDB
 	my $code	    	= $diagnosis->getDiagnosisCode();
 	my $stage 			= $diagnosis->getDiagnosisStage();
 	my $stagecriteria 	= $diagnosis->getDiagnosisStageCriteria();
-	
+
 	# Insert diagnosis
 	my $insert_sql = "
-		INSERT INTO 
+		INSERT INTO
 			Diagnosis (
 				DiagnosisSerNum,
 				PatientSerNum,
@@ -659,7 +688,7 @@ sub insertDiagnosisIntoOurDB
 	$diagnosis->setDiagnosisSer($ser);
 
 	return $diagnosis;
-	
+
 }
 #======================================================================================
 # Subroutine to update our database with the diagnosis' updated info
@@ -675,9 +704,9 @@ sub updateDatabase
     my $code            = $diagnosis->getDiagnosisCode();
     my $stage 			= $diagnosis->getDiagnosisStage();
 	my $stagecriteria 	= $diagnosis->getDiagnosisStageCriteria();
- 
+
 	my $update_sql = "
-		
+
 		UPDATE
 			Diagnosis
 		SET
@@ -709,7 +738,7 @@ sub updateDatabase
 sub compareWith
 {
 	my ($SuspectDiagnosis, $OriginalDiagnosis) = @_; # our two diagnosis objects from arguments
-	my $UpdatedDiagnosis = dclone($OriginalDiagnosis); 
+	my $UpdatedDiagnosis = dclone($OriginalDiagnosis);
 
 	# retrieve parameters
 	# Suspect Diagnosis...
@@ -760,4 +789,4 @@ sub compareWith
 }
 
 # To exit/return always true (for the module itself)
-1;	
+1;

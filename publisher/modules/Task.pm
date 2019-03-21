@@ -322,266 +322,277 @@ sub getTasksFromSourceDB
     # retrieve all aliases that are marked for update
     my @aliasList = Alias::getAliasesMarkedForUpdate('Task');
 
-	foreach my $Patient (@patientList) {
+	######################################
+    # ARIA
+    ######################################
+    my $sourceDBSer = 1;
+	{
+		open(my $fh, '>>', 'ym.txt');
 
-		my $patientSer		    = $Patient->getPatientSer(); # get patient serial
-		my $patientSSN    		= $Patient->getPatientSSN(); # get patient ssn
-		my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last transfer
+		    my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
 
-		my $formatted_PLU = Time::Piece->strptime($patientLastTransfer, "%Y-%m-%d %H:%M:%S");
+        if ($sourceDatabase) {
 
-        foreach my $Alias (@aliasList) {
+			my $expressionHash = {};
+			my $expressionDict = {};
+			foreach my $Alias (@aliasList) {
+				my $aliasSourceDBSer 	= $Alias->getAliasSourceDatabaseSer();
+				my @expressions         = $Alias->getAliasExpressions();
 
-            my $aliasSer            = $Alias->getAliasSer(); # get alias serial
-            my @expressions         = $Alias->getAliasExpressions();
-            my $sourceDBSer         = $Alias->getAliasSourceDatabaseSer();
+				if ($sourceDBSer eq $aliasSourceDBSer) {
+					if (!exists $expressionHash{$sourceDBSer}) {
+						$expressionHash{$sourceDBSer} = {}; # initialize key value
+					}
 
-            ######################################
-		    # ARIA
-		    ######################################
-            if ($sourceDBSer eq 1) {
+					foreach my $Expression (@expressions) {
+						my $expressionSer = $Expression->{_ser};
+						print $fh "expressionSer: -->> $expressionSer\n\n";
+						my $expressionName = $Expression->{_name};
+						my $expressionLastTransfer = $Expression->{_lasttransfer};
 
-                my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-                my $numOfExpressions = @expressions;
-                my $counter = 0;
-                my $taskInfo_sql = "
-					WITH vva AS (
-						SELECT DISTINCT
-							Expression.Expression1,
-							Expression.LookupValue
-						FROM
-							variansystem.dbo.vv_ActivityLng Expression
-					)
-					SELECT DISTINCT
-						NonScheduledActivity.NonScheduledActivitySer,
-						CONVERT(VARCHAR, NonScheduledActivity.DueDateTime, 120),
-						CONVERT(VARCHAR, NonScheduledActivity.CreationDate, 120),
-						NonScheduledActivity.NonScheduledActivityCode,
-						NonScheduledActivity.ObjectStatus,
-						CONVERT(VARCHAR, NonScheduledActivityMH.HstryDateTime, 120) HstryDateTime,
-						vva.Expression1
-					FROM
-						variansystem.dbo.Patient Patient,
-						variansystem.dbo.ActivityInstance ActivityInstance,
-						variansystem.dbo.Activity Activity,
-						vva,
-						variansystem.dbo.NonScheduledActivity NonScheduledActivity
-                    LEFT JOIN variansystem.dbo.NonScheduledActivityMH NonScheduledActivityMH
-                    ON  NonScheduledActivityMH.NonScheduledActivitySer = NonScheduledActivity.NonScheduledActivitySer
-                    AND NonScheduledActivityMH.NonScheduledActivityRevCount = (
-                        SELECT MIN(nsamh.NonScheduledActivityRevCount)
-                        FROM variansystem.dbo.NonScheduledActivityMH nsamh
-                        WHERE nsamh.NonScheduledActivitySer = NonScheduledActivity.NonScheduledActivitySer
-                        AND nsamh.NonScheduledActivityCode = 'Completed'
-                    )
-					WHERE
-						NonScheduledActivity.ActivityInstanceSer 	= ActivityInstance.ActivityInstanceSer
-					AND ActivityInstance.ActivitySer 			    = Activity.ActivitySer
-					AND Activity.ActivityCode 				        = vva.LookupValue
-					AND Patient.PatientSer 				            = NonScheduledActivity.PatientSer
-					AND	LEFT(LTRIM(Patient.SSN), 12)			            = '$patientSSN'
-					AND (
+						# append expression (surrounded by single quotes) to string
+						if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
+							$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",'$expressionName'";
+						} else {
+							# start a new string
+							$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "'$expressionName'";
+						}
+
+						$expressionDict{$expressionName} = $expressionSer;
+
+					}
+				}
+
+			}
+
+			my $patientInfo_sql = "
+				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
+			";
+			my $numOfPatients = @patientList;
+			my $counter = 0;
+			foreach my $Patient (@patientList) {
+				my $patientSer 			= $Patient->getPatientSer();
+				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
+				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
+
+				$patientInfo_sql .= "
+					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer'
 				";
 
-                foreach my $Expression (@expressions) {
+				$counter++;
+				if ( $counter < $numOfPatients ) {
+					$patientInfo_sql .= "UNION";
+				}
+			}
+			$patientInfo_sql .= ")";
 
-                	my $expressionser = $Expression->{_ser};
-                	my $expressionName = $Expression->{_name};
-                	my $expressionLastTransfer = $Expression->{_lasttransfer};
-                	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
+			my $taskInfo_sql = "
+				SELECT DISTINCT
+					NonScheduledActivity.NonScheduledActivitySer,
+					CONVERT(VARCHAR, NonScheduledActivity.DueDateTime, 120),
+					CONVERT(VARCHAR, NonScheduledActivity.CreationDate, 120),
+					NonScheduledActivity.NonScheduledActivityCode,
+					NonScheduledActivity.ObjectStatus,
+					CONVERT(VARCHAR, NonScheduledActivityMH.HstryDateTime, 120) HstryDateTime,
+					REPLACE(lt.Expression1, '''', ''),
+					PatientInfo.PatientSerNum
+				FROM
+					variansystem.dbo.Patient Patient,
+					variansystem.dbo.ActivityInstance ActivityInstance,
+					variansystem.dbo.Activity Activity,
+					vva,
+					variansystem.dbo.LookupTable lt,
+					PatientInfo,
+					variansystem.dbo.NonScheduledActivity NonScheduledActivity
+				LEFT JOIN variansystem.dbo.NonScheduledActivityMH NonScheduledActivityMH
+				ON  NonScheduledActivityMH.NonScheduledActivitySer = NonScheduledActivity.NonScheduledActivitySer
+				AND NonScheduledActivityMH.NonScheduledActivityRevCount = (
+					SELECT MIN(nsamh.NonScheduledActivityRevCount)
+					FROM variansystem.dbo.NonScheduledActivityMH nsamh
+					WHERE nsamh.NonScheduledActivitySer = NonScheduledActivity.NonScheduledActivitySer
+					AND nsamh.NonScheduledActivityCode = 'Completed'
+				)
+				WHERE
+					NonScheduledActivity.ActivityInstanceSer 	= ActivityInstance.ActivityInstanceSer
+				AND ActivityInstance.ActivitySer 			    = Activity.ActivitySer
+				AND Activity.ActivityCode 				        = lt.LookupValue
+				AND NonScheduledActivity.PatientSer = (select pt.PatientSer from variansystem.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+				AND (
+			";
 
-                	# compare last updates to find the earliest date
-		            # get the diff in seconds
-		            my $date_diff = $formatted_PLU - $formatted_ELU;
-		            if ($date_diff < 0) {
-		                $lasttransfer = $patientLastTransfer;
-		            } else {
-		                $lasttransfer = $expressionLastTransfer;
-		            }
+			my $numOfExpressions = keys %{$expressionHash{$sourceDBSer}};
+			print $fh "numOfExpressions: -->> $numOfExpressions\n\n";
 
-	        		$taskInfo_sql .= "
-						(REPLACE(vva.Expression1, '''', '') = '$expressionName'
-						AND NonScheduledActivity.HstryDateTime > '$lasttransfer')
-	         		";
-	         		$counter++;
-	        		# concat "UNION" until we've reached the last query
-	        		if ($counter < $numOfExpressions) {
-	        			$taskInfo_sql .= "OR";
-	        		}
-					# close bracket at end
-					else {
-						$taskInfo_sql .= ")";
+			my $counter = 0;
+			# loop through each transfer date
+			foreach my $lastTransferDate (keys %{$expressionHash{$sourceDBSer}}) {
+				print $fh "lastTransferDate: -->> $lastTransferDate\n\n";
+				# concatenate query
+				$taskInfo_sql .= "
+				(REPLACE(lt.Expression1, '''', '') IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
+					AND sa.HstryDateTime > (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
+				";
+				$counter++;
+				# concat "UNION" until we've reached the last query
+				if ($counter < $numOfExpressions) {
+					$taskInfo_sql .= "OR";
+				}
+				# close bracket at end
+				else {
+					$taskInfo_sql .= ")";
+				}
+			}
+
+			#print "$taskInfo_sql\n";
+			# prepare query
+
+			print $fh "$taskInfo_sql\n\n";
+			close $fh;
+
+			my $query = $sourceDatabase->prepare($taskInfo_sql)
+				or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+			# execute query
+			$query->execute()
+				or die "Could not execute query: " . $query->errstr;
+
+			my $data = $query->fetchall_arrayref();
+			foreach my $row (@$data) {
+
+				my $task = new Task(); # new task object
+
+				$sourceuid	    = $row->[0];
+				$duedatetime	= $row->[1]; # convert date format
+				$creationdate   = $row->[2];
+				$status         = $row->[3];
+				$state          = $row->[4];
+				$completiondate = $row->[5];
+				$expressionname = $row->[6];
+				$patientSer 	= $row->[7];
+
+				$priorityser	= Priority::getClosestPriority($patientSer, $duedatetime);
+				$diagnosisser	= Diagnosis::getClosestDiagnosis($patientSer, $duedatetime);
+
+				$task->setTaskPatientSer($patientSer);
+				$task->setTaskSourceUID($sourceuid); # assign id
+				$task->setTaskSourceDatabaseSer($sourceDBSer);
+				$task->setTaskAliasExpressionSer($expressionDict{$expressionname}); # assign expression serial
+				$task->setTaskDueDateTime($duedatetime); # assign duedatetime
+				$task->setTaskPrioritySer($priorityser);
+				$task->setTaskDiagnosisSer($diagnosisser);
+				$task->setTaskCreationDate($creationdate); # assign creation date
+				$task->setTaskStatus($status); # assign status
+				$task->setTaskCompletionDate($completiondate); # assign completion date
+				$task->setTaskState($state); # assign state
+				$task->setTaskCronLogSer($cronLogSer); # assign cron log serial
+
+				push(@taskList, $task);
+
+			}
+
+			# empty hash
+			for (keys %{$expressionHash{$sourceDBSer}}) { delete $expressionHash{$sourceDBSer}{$_}; }
+
+			$sourceDatabase->disconnect();
+		}
+	}
+
+	######################################
+    # MediVisit
+    ######################################
+    my $sourceDBSer = 2;
+	{
+        my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
+
+        if ($sourceDatabase) {
+
+			# my $expressionHash = {};
+			# my $expressionDict = {};
+			# foreach my $Alias (@aliasList) {
+			# 	my $aliasSourceDBSer 	= $Alias->getAliasSourceDatabaseSer();
+			# 	my @expressions         = $Alias->getAliasExpressions();
+
+			# 	if ($sourceDBSer eq $aliasSourceDBSer) {
+			# 		if (!exists $expressionHash{$sourceDBSer}) {
+			# 			$expressionHash{$sourceDBSer} = {}; # intialize key value
+			# 		}
+
+			# 		foreach my $Expression (@expressions) {
+
+			# 			my $expressionSer = $Expression->{_ser};
+			# 			my $expressionName = $Expression->{_name};
+			# 			my $expressionDesc = $Expression->{_description};
+			# 			my $expressionLastTransfer = $Expression->{_lasttransfer};
+
+			# 			# append expression (surrounded by single quotes) to string
+			# 			if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
+			# 				$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",('$expressionName','$expressionDesc')";
+			# 			} else {
+			# 				# start a new string
+			# 				$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "('$expressionName','$expressionDesc')";
+			# 			}
+
+			# 			$expressionDict{$expressionName}{$expressionDesc} = $expressionSer;
+
+			# 		}
+			# 	}
+
+			# }
+
+			########## 	PATIENT AND TASK QUERY HERE #############
+
+			$sourceDatabase->disconnect();
+		}
+
+	}
+
+	######################################
+    # MOSAIQ
+    ######################################
+    my $sourceDBSer = 3;
+	{
+        my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
+
+        if ($sourceDatabase) {
+
+			my $expressionHash = {};
+			my $expressionDict = {};
+			foreach my $Alias (@aliasList) {
+				my $aliasSourceDBSer 	= $Alias->getAliasSourceDatabaseSer();
+				my @expressions         = $Alias->getAliasExpressions();
+
+				if ($sourceDBSer eq $aliasSourceDBSer) {
+					if (!exists $expressionHash{$sourceDBSer}) {
+						$expressionHash{$sourceDBSer} = {}; # intialize key value
 					}
-	        	}
 
-                #print "$taskInfo_sql\n";
-	        	# prepare query
-    		    my $query = $sourceDatabase->prepare($taskInfo_sql)
-	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;
+					foreach my $Expression (@expressions) {
 
-    		    # execute query
-        		$query->execute()
-	        		or die "Could not execute query: " . $query->errstr;
+						my $expressionSer = $Expression->{_ser};
+						my $expressionName = $Expression->{_name};
+						my $expressionDesc = $Expression->{_description};
+						my $expressionLastTransfer = $Expression->{_lasttransfer};
 
-                my $data = $query->fetchall_arrayref();
-        		foreach my $row (@$data) {
-
-	        		my $task = new Task(); # new task object
-
-    		    	$sourceuid	    = $row->[0];
-    	    		$duedatetime	= $row->[1]; # convert date format
-              	    $creationdate   = $row->[2];
-                    $status         = $row->[3];
-                    $state          = $row->[4];
-                    $completiondate = $row->[5];
-                    $expressionname = $row->[6];
-
-                    $priorityser	= Priority::getClosestPriority($patientSer, $duedatetime);
-    		    	$diagnosisser	= Diagnosis::getClosestDiagnosis($patientSer, $duedatetime);
-
-					my $expressionser;
-					foreach my $checkExpression (@expressions) {
-						if ($checkExpression->{_name} eq $expressionname){ #match
-							$expressionser = $checkExpression->{_ser};
-							last; # break out of loop
+						# append expression (surrounded by single quotes) to string
+						if (exists $expressionHash{$sourceDBSer}{$expressionLastTransfer}) {
+							$expressionHash{$sourceDBSer}{$expressionLastTransfer} .= ",('$expressionName','$expressionDesc')";
+						} else {
+							# start a new string
+							$expressionHash{$sourceDBSer}{$expressionLastTransfer} = "('$expressionName','$expressionDesc')";
 						}
+
+						$expressionDict{$expressionName}{$expressionDesc} = $expressionSer;
+
 					}
+				}
 
-        			$task->setTaskPatientSer($patientSer);
-	        		$task->setTaskSourceUID($sourceuid); # assign id
-                    $task->setTaskSourceDatabaseSer($sourceDBSer);
-		        	$task->setTaskAliasExpressionSer($expressionser); # assign expression serial
-			        $task->setTaskDueDateTime($duedatetime); # assign duedatetime
-    				$task->setTaskPrioritySer($priorityser);
-	    		    $task->setTaskDiagnosisSer($diagnosisser);
-			        $task->setTaskCreationDate($creationdate); # assign creation date
-    			    $task->setTaskStatus($status); # assign status
-	    		    $task->setTaskCompletionDate($completiondate); # assign completion date
-		    	    $task->setTaskState($state); # assign state
-		    	    $task->setTaskCronLogSer($cronLogSer); # assign cron log serail
+			}
 
-        			push(@taskList, $task);
+			########## 	PATIENT AND TASK QUERY HERE #############
 
-                }
+			$sourceDatabase->disconnect();
+		}
 
-	    	 	$sourceDatabase->disconnect();
-	    	}
-
-	    	######################################
-		    # MediVisit
-		    ######################################
-            if ($sourceDBSer eq 2) {
-
-                my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-                my $numOfExpressions = @expressions;
-                my $counter = 0;
-                my $taskInfo_sql = "";
-
-                foreach my $Expression (@expressions) {
-
-                	my $expressionser = $Expression->{_ser};
-                	my $expressionName = $Expression->{_name};
-                	my $expressionLastTransfer = $Expression->{_lasttransfer};
-                	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
-
-                	# compare last updates to find the earliest date
-		            # get the diff in seconds
-		            my $date_diff = $formatted_PLU - $formatted_ELU;
-		            if ($date_diff < 0) {
-		                $lasttransfer = $patientLastTransfer;
-		            } else {
-		                $lasttransfer = $expressionLastTransfer;
-		            }
-
-		            $taskInfo_sql .= "SELECT 'QUERY_HERE' ";
-
-		            $counter++;
-	        		# concat "UNION" until we've reached the last query
-	        		if ($counter < $numOfExpressions) {
-	        			$taskInfo_sql .= "UNION";
-	        		}
-	        	}
-
-	        	# prepare query
-    		    my $query = $sourceDatabase->prepare($taskInfo_sql)
-	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;
-
-    		    # execute query
-        		$query->execute()
-	        		or die "Could not execute query: " . $query->errstr;
-
-                my $data = $query->fetchall_arrayref();
-        		foreach my $row (@$data) {
-
-	        		#my $task = new Task(); # uncomment for use
-
-	        		# use setters to set appropriate task information from query
-
-	        		#push(@taskList, $task); # uncomment for use
-
-                }
-
-	    	 	$sourceDatabase->disconnect();
-	    	}
-
-	    	######################################
-		    # MOSAIQ
-		    ######################################
-            if ($sourceDBSer eq 3) {
-
-                my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-                my $numOfExpressions = @expressions;
-                my $counter = 0;
-                my $taskInfo_sql = "";
-
-                foreach my $Expression (@expressions) {
-
-                	my $expressionser = $Expression->{_ser};
-                	my $expressionName = $Expression->{_name};
-                	my $expressionLastTransfer = $Expression->{_lasttransfer};
-                	my $formatted_ELU = Time::Piece->strptime($expressionLastTransfer, "%Y-%m-%d %H:%M:%S");
-
-                	# compare last updates to find the earliest date
-		            # get the diff in seconds
-		            my $date_diff = $formatted_PLU - $formatted_ELU;
-		            if ($date_diff < 0) {
-		                $lasttransfer = $patientLastTransfer;
-		            } else {
-		                $lasttransfer = $expressionLastTransfer;
-		            }
-
-		            $taskInfo_sql .= "SELECT 'QUERY_HERE' ";
-
-		            $counter++;
-	        		# concat "UNION" until we've reached the last query
-	        		if ($counter < $numOfExpressions) {
-	        			$taskInfo_sql .= "UNION";
-	        		}
-	        	}
-
-	        	# prepare query
-    		    my $query = $sourceDatabase->prepare($taskInfo_sql)
-	    		    or die "Could not prepare query: " . $sourceDatabase->errstr;
-
-    		    # execute query
-        		$query->execute()
-	        		or die "Could not execute query: " . $query->errstr;
-
-                my $data = $query->fetchall_arrayref();
-        		foreach my $row (@$data) {
-
-	        		#my $task = new Task(); # uncomment for use
-
-	        		# use setters to set appropriate task information from query
-
-	        		#push(@taskList, $task); # uncomment for use
-
-                }
-
-	    	 	$sourceDatabase->disconnect();
-	    	}
-
-        }
 	}
 
 	return @taskList;
