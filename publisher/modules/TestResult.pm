@@ -502,7 +502,8 @@ sub getTestResultsFromSourceDB
 					PatientInfo.PatientSerNum
 				FROM
 					varianenm.dbo.test_result tr,
-					varianenm.dbo.pt pt
+					varianenm.dbo.pt pt,
+					PatientInfo
 				WHERE
 					tr.pt_id                		= pt.pt_id
 				AND pt.patient_ser          		= (select pt.PatientSer from variansystem.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
@@ -533,9 +534,6 @@ sub getTestResultsFromSourceDB
 
 			#print "query: $trInfo_sql\n";
 			# prepare query
-			open(my $fh, '>>', 'ym.txt');
-			print $fh "$trInfo_sql\n\n";
-			close $fh;
 
 			my $query = $sourceDatabase->prepare($trInfo_sql)
 				or die "Could not prepare query: " . $sourceDatabase->errstr;
@@ -559,8 +557,6 @@ sub getTestResultsFromSourceDB
 
 				$abnormalflag       = $row->[5];
 				$expressionname     = $row->[6];
-				$patientSer 		= $row->[7];
-
 				$facname            = $row->[7];
 				$testdate           = $row->[8];
 				$maxnorm            = $row->[9];
@@ -570,6 +566,7 @@ sub getTestResultsFromSourceDB
 				$testvaluestring    = $row->[13];
 				$unitdesc           = $row->[14];
 				$validentry         = $row->[15];
+				$patientSer 		= $row->[16];
 
 				$testresult->setTestResultPatientSer($patientSer);
 				$testresult->setTestResultSourceDatabaseSer($sourceDBSer);
@@ -832,7 +829,7 @@ sub insertTestResultIntoOurDB
 		NOW()
 	)
 	";
-
+	
     # prepare query
 	my $query = $SQLDatabase->prepare($insert_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;

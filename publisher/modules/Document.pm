@@ -490,11 +490,11 @@ sub getDocsFromSourceDB
 					$patientInfo_sql .= "UNION";
 				}
 			}
-			$patientInfo_sql .= ")";
+			$patientInfo_sql .= "),";
 
 
 			my $docInfo_sql = $patientInfo_sql . "
-				WITH note_typ AS (
+				note_typ AS (
 					SELECT DISTINCT
 						Expression.note_typ,
 						Expression.note_typ_desc
@@ -566,11 +566,6 @@ sub getDocsFromSourceDB
 			}
 
 			# prepare query
-			open(my $fh, '>>', 'ym.txt');
-			print $fh "$docInfo_sql\n\n";
-			close $fh;
-
-
 			my $query = $sourceDatabase->prepare($docInfo_sql)
 				or die "Could not prepare query: " . $sourceDatabase->errstr;
 

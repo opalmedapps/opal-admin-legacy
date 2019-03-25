@@ -327,9 +327,7 @@ sub getTasksFromSourceDB
     ######################################
     my $sourceDBSer = 1;
 	{
-		open(my $fh, '>>', 'ym.txt');
-
-		    my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
+		my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
 
         if ($sourceDatabase) {
 
@@ -346,7 +344,6 @@ sub getTasksFromSourceDB
 
 					foreach my $Expression (@expressions) {
 						my $expressionSer = $Expression->{_ser};
-						print $fh "expressionSer: -->> $expressionSer\n\n";
 						my $expressionName = $Expression->{_name};
 						my $expressionLastTransfer = $Expression->{_lasttransfer};
 
@@ -386,7 +383,8 @@ sub getTasksFromSourceDB
 			}
 			$patientInfo_sql .= ")";
 
-			my $taskInfo_sql = "
+			my $taskInfo_sql = $patientInfo_sql .
+				"
 				SELECT DISTINCT
 					NonScheduledActivity.NonScheduledActivitySer,
 					CONVERT(VARCHAR, NonScheduledActivity.DueDateTime, 120),
@@ -400,7 +398,6 @@ sub getTasksFromSourceDB
 					variansystem.dbo.Patient Patient,
 					variansystem.dbo.ActivityInstance ActivityInstance,
 					variansystem.dbo.Activity Activity,
-					vva,
 					variansystem.dbo.LookupTable lt,
 					PatientInfo,
 					variansystem.dbo.NonScheduledActivity NonScheduledActivity
@@ -421,16 +418,14 @@ sub getTasksFromSourceDB
 			";
 
 			my $numOfExpressions = keys %{$expressionHash{$sourceDBSer}};
-			print $fh "numOfExpressions: -->> $numOfExpressions\n\n";
 
 			my $counter = 0;
 			# loop through each transfer date
 			foreach my $lastTransferDate (keys %{$expressionHash{$sourceDBSer}}) {
-				print $fh "lastTransferDate: -->> $lastTransferDate\n\n";
 				# concatenate query
 				$taskInfo_sql .= "
 				(REPLACE(lt.Expression1, '''', '') IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
-					AND sa.HstryDateTime > (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
+					AND NonScheduledActivity.HstryDateTime > (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
 				";
 				$counter++;
 				# concat "UNION" until we've reached the last query
@@ -446,9 +441,9 @@ sub getTasksFromSourceDB
 			#print "$taskInfo_sql\n";
 			# prepare query
 
-			print $fh "$taskInfo_sql\n\n";
-			close $fh;
-
+			# print $fh "$taskInfo_sql\n\n";
+			# close $fh;
+			
 			my $query = $sourceDatabase->prepare($taskInfo_sql)
 				or die "Could not prepare query: " . $sourceDatabase->errstr;
 
