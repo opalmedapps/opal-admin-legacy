@@ -223,11 +223,8 @@ sub getPrioritiesFromSourceDB
     			AND lt.Expression1			    IN ('SGAS_P1','SGAS_P2','SGAS_P3','SGAS_P4')
 	    		AND	nsa.HstryDateTime		    > PatientInfo.LastTransfer
 		    ";
-    		# prepare query
-				open(my $fh, '>>', 'ym.txt');
-				print $fh "$priorInfo_sql\n\n";
-				close $fh;
 
+    		# prepare query
 	    	my $query = $sourceDatabase->prepare($priorInfo_sql)
 		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
 

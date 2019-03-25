@@ -285,12 +285,8 @@ sub getDiagnosesFromSourceDB
 	    		AND dx.DateStamp			> '1970-01-01 00:00:00'
 				AND dx.PatientSer 			= (select pt.PatientSer from variansystem.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
 		    ";
+
     		# prepare query
-
-				open(my $fh, '>>', 'ym.txt');
-				print $fh "$diagInfo_sql\n\n";
-				close $fh;
-
 	    	my $query = $sourceDatabase->prepare($diagInfo_sql)
 		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
 

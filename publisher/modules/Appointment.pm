@@ -505,10 +505,6 @@ sub getApptsFromSourceDB
 			#$apptInfo_sql .= ")";
 				#print "$apptInfo_sql\n";
 
-			open(my $fh, '>>', 'ym.txt');
-			print $fh "$apptInfo_sql\n\n";
-			close $fh;
-
 			# prepare query
 			my $query = $sourceDatabase->prepare($apptInfo_sql)
 				or die "Could not prepare query: " . $sourceDatabase->errstr;
@@ -659,6 +655,7 @@ sub getApptsFromSourceDB
 				}
 			}
 			#print "$apptInfo_sql\n";
+
 			my $query = $sourceDatabase->prepare($apptInfo_sql)
 				or die "Could not prepare query: " . $sourceDatabase->errstr;
 
@@ -667,6 +664,7 @@ sub getApptsFromSourceDB
 				or die "Could not execute query: " . $query->errstr;
 
 			my $data = $query->fetchall_arrayref();
+			
 			foreach my $row (@$data) {
 
 				my $appointment = new Appointment(); # new appointment object
@@ -1383,6 +1381,9 @@ sub updateDatabase
         AND SourceDatabaseSerNum    = '$sourcedbser'
 		";
 
+	#========================================
+	# NOTE: If AliasExpressionSerNum is empty, check the AliasExpression table (field: Description) if it contain leading space
+	#========================================
 	# prepare query
 	my $query = $SQLDatabase->prepare($update_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
@@ -1401,7 +1402,7 @@ sub compareWith
 {
 	my ($SuspectAppt, $OriginalAppt) = @_; # our two appt objects from arguments
 	my $UpdatedAppt = dclone($OriginalAppt);
-
+	
 	# retrieve parameters
 	# Suspect Appointment...
 	my $SAliasExpressionSer	= $SuspectAppt->getApptAliasExpressionSer();
@@ -1518,7 +1519,9 @@ sub compareWith
 		        pattern   => '%s',
 		        time_zone => 'America/New_York'
 		    );
-			$SStartDateTime = $timestamp->format_datetime($strp->parse_datetime($SStartDateTime)); # convert to timestamp
+			
+			# 2019-03-25 YM: Removed the date tme format since it is already formated
+			# $SStartDateTime = $timestamp->format_datetime($strp->parse_datetime($SStartDateTime)); # convert to timestamp
 
 			$patientSer = $OriginalAppt->getApptPatientSer();
 			$appointmentSer = $OriginalAppt->getApptSer();
@@ -1553,7 +1556,6 @@ sub compareWith
 		my $updatedCronLogSer = $UpdatedAppt->setApptCronLogSer($SCronLogSer); # update serial
 		print "Will update database entry to '$updatedCronLogSer'.\n";
 	}
-
 
 	return $UpdatedAppt;
 }
