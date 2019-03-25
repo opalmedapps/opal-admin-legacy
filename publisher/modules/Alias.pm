@@ -267,19 +267,6 @@ sub getAliasExpressionsFromOurDB
 	#======================================================================================
 	# Retrieve the alias expressions
 	#======================================================================================
-	# my $expressionInfo_sql = "
-	# 	SELECT DISTINCT
-	# 		AliasExpression.AliasExpressionSerNum,
-	# 		REPLACE(AliasExpression.ExpressionName, '''', ''''''),
-	# 		REPLACE(AliasExpression.Description, '''', ''''''),
-	# 		AliasExpression.LastTransferred
-	# 	FROM
-	# 		Alias,
-	# 		AliasExpression
-	# 	WHERE
-	# 		Alias.AliasSerNum		    = $ser
-	# 	AND AliasExpression.AliasSerNum	= Alias.AliasSerNum
-	# ";
 	my $expressionInfo_sql = "
 		SELECT DISTINCT
 			AliasExpression.AliasExpressionSerNum,

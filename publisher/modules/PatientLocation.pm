@@ -353,10 +353,6 @@ sub getPatientLocationsFromSourceDB
 
 			# print "$plInfo_sql\n";
 			# prepare query
-			open(my $fh, '>>', 'ym.txt');
-			print $fh "$plInfo_sql\n\n";
-			close $fh;
-
 			my $query = $sourceDatabase->prepare($plInfo_sql)
 				or die "Could not prepare PL query: " . $sourceDatabase->errstr;
 
