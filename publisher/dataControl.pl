@@ -26,6 +26,7 @@ use File::Basename;
 use File::Spec;
 use JSON;
 use MIME::Lite;
+use Data::Dumper;
 use Net::Address::IP::Local;
 use Cwd 'abs_path';
 
@@ -494,7 +495,7 @@ print "Got appointment list\n" if $verbose;
 #=========================================================================================
 # Loop over each patient. Various functions are done.
 #=========================================================================================
-print "-- Start Loop over each task: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+print "-- Start Loop over each Appointment: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
 foreach my $Appointment (@ApptList) {
 
 	# check if appointment exists in our database
