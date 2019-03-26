@@ -420,228 +420,244 @@ sub getTestResultsFromSourceDB
     # retrieve all test results that are marked for update
     my @testResultList = TestResultControl::getTestResultControlsMarkedForUpdate();
 
-	# Go through the list of Patient objects and get the information that we need
-    # in order to search for the corresponding test result in the database
-	foreach my $Patient (@patientList) {
+	######################################
+    # ARIA
+    ######################################
+    my $sourceDBSer = 1;
+	{
+        my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
 
-		my $patientSer		    = $Patient->getPatientSer(); # get patient serial
-		my $patientSSN    		= $Patient->getPatientSSN(); # get ssn
-		my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
+        if ($sourceDatabase) {
 
-		my $formatted_PLT = Time::Piece->strptime($patientLastTransfer, "%Y-%m-%d %H:%M:%S");
+			my $expressionHash = {};
+			my $expressionDict = {};
+			foreach my $TestResult (@testResultList) {
+				my $testResultSourceDBSer 	= $TestResult->getTestResultControlSourceDatabaseSer();
+				my @expressions         = $TestResult->getTestResultControlExpressions();
 
-		foreach my $TestResult (@testResultList) {
+				if ($sourceDBSer eq $testResultSourceDBSer) {
+					if (!exists $expressionHash{$sourceDBSer}) {
+						$expressionHash{$sourceDBSer} = {}; # initialize key value
+					}
 
-			my $controlSer 			= $TestResult->getTestResultControlSer();
-			my @expressions 		= $TestResult->getTestResultControlExpressions();
-			my $sourceDBSer 		= $TestResult->getTestResultControlSourceDatabaseSer();
+					foreach my $Expression (@expressions) {
 
-	        ######################################
-		    # ARIA
-		    ######################################
-		    if ($sourceDBSer eq 1) {
+						my $expressionSer = $Expression->{_ser};
+						my $expressionName = $Expression->{_name};
+						my $expressionLastPublished = $Expression->{_lastpublished};
 
-			    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-			    my $numOfExpressions = @expressions;
-                my $counter = 0;
-		        if ($sourceDatabase) {
-
-		            my $trInfo_sql = "
-		                SELECT DISTINCT
-		                    tr.pt_id,
-		                    tr.pt_visit_id,
-		                    tr.test_id,
-		                    tr.test_result_group_id,
-		                    tr.test_result_id,
-		                    RTRIM(tr.abnormal_flag_cd),
-		                    RTRIM(tr.comp_name),
-		                    RTRIM(tr.fac_comp_name),
-		                    CONVERT(VARCHAR, tr.date_test_pt_test, 120),
-		                    tr.max_norm,
-		                    tr.min_norm,
-		                    tr.result_appr_ind,
-		                    tr.test_value,
-		                    tr.test_value_string,
-		                    RTRIM(tr.unit_desc),
-		                    tr.valid_entry_ind
-		                FROM
-		                    varianenm.dbo.test_result tr,
-		                    varianenm.dbo.pt pt,
-		                    variansystem.dbo.Patient Patient
-		                WHERE
-		                    tr.pt_id                		= pt.pt_id
-		                AND pt.patient_ser          		= Patient.PatientSer
-		                AND LEFT(LTRIM(Patient.SSN), 12) 	= '$patientSSN'
-						AND tr.valid_entry_ind 				= 'Y'
-						AND (
-		            ";
-
-		            foreach my $Expression (@expressions) {
-
-		            	my $expressionser = $Expression->{_ser};
-	                	my $expressionName = $Expression->{_name};
-	                	my $expressionLastPublished = $Expression->{_lastpublished};
-	                	my $formatted_ELP = Time::Piece->strptime($expressionLastPublished, "%Y-%m-%d %H:%M:%S");
-
-	                	# compare last updates to find the earliest date
-			            # get the diff in seconds
-			            my $date_diff = $formatted_PLT - $formatted_ELP;
-			            if ($date_diff < 0) {
-			                $lastpublished = $patientLastTransfer;
-			            } else {
-			                $lastpublished = $expressionLastPublished;
-			            }
-
-			            # concatenate query
-			            $trInfo_sql .= "
-			            	(tr.comp_name 	LIKE	'$expressionName%'
-			            	AND tr.trans_log_mtstamp    > '$lastpublished')
-			            ";
-			            $counter++;
-
-			            # concat "UNION" until we've reached the last query
-		        		if ($counter < $numOfExpressions) {
-		        			$trInfo_sql .= "OR";
-		        		}
-						# close bracket at end
-						else {
-							$trInfo_sql .= ")";
-						}
-		            }
-
-			        #print "query: $trInfo_sql\n";
-		            # prepare query
-			    	my $query = $sourceDatabase->prepare($trInfo_sql)
-				    	or die "Could not prepare query: " . $sourceDatabase->errstr;
-
-		    		# execute query
-			    	$query->execute()
-				    	or die "Could not execute query: " . $query->errstr;
-
-		    		$data = $query->fetchall_arrayref();
-		            foreach my $row (@$data) {
-
-		                my $testresult = new TestResult();
-
-		                $pt_id              = $row->[0];
-		                $visit_id           = $row->[1];
-		                $test_id            = $row->[2];
-		                $tr_group_id        = $row->[3];
-		                $tr_id              = $row->[4];
-		                # combine the above id to create a unique id
-		                $sourceuid          = $pt_id.$visit_id.$test_id.$tr_group_id.$tr_id;
-
-		                $abnormalflag       = $row->[5];
-		                $expressionname     = $row->[6];
-
-		                my $expressionser;
-						foreach my $checkExpression (@expressions) {
-							if ($checkExpression->{_name} eq $expressionname){ #match
-								$expressionser = $checkExpression->{_ser};
-								last; # break out of loop
-							}
+						# append expression (surrounded by single quotes) to string
+						if (exists $expressionHash{$sourceDBSer}{$expressionLastPublished}) {
+							$expressionHash{$sourceDBSer}{$expressionLastPublished} .= ",'$expressionName'";
+						} else {
+							# start a new string
+							$expressionHash{$sourceDBSer}{$expressionLastPublished} = "'$expressionName'";
 						}
 
-		                $facname            = $row->[7];
-		                $testdate           = $row->[8];
-		                $maxnorm            = $row->[9];
-		                $minnorm            = $row->[10];
-		                $apprvflag          = $row->[11];
-		                $testvalue          = $row->[12];
-		                $testvaluestring    = $row->[13];
-		                $unitdesc           = $row->[14];
-		                $validentry         = $row->[15];
+						$expressionDict{$expressionName} = $expressionSer;
 
-		                $testresult->setTestResultPatientSer($patientSer);
-		                $testresult->setTestResultSourceDatabaseSer($sourceDBSer);
-		                $testresult->setTestResultSourceUID($sourceuid);
-		                $testresult->setTestResultExpressionSer($expressionser);
-		                $testresult->setTestResultName($expressionname);
-		                $testresult->setTestResultFacName($facname);
-		                $testresult->setTestResultAbnormalFlag($abnormalflag);
-		                $testresult->setTestResultTestDate($testdate);
-		                $testresult->setTestResultMaxNorm($maxnorm);
-		                $testresult->setTestResultMinNorm($minnorm);
-		                $testresult->setTestResultApprovedFlag($apprvflag);
-		                $testresult->setTestResultTestValue($testvalue);
-		                $testresult->setTestResultTestValueString($testvaluestring);
-		                $testresult->setTestResultUnitDesc($unitdesc);
-		                $testresult->setTestResultValidEntry($validentry);
-		                $testresult->setTestResultCronLogSer($cronLogSer);
+					}
+				}
+			}
 
-		                push(@TRList, $testresult);
-		            }
+			my $patientInfo_sql = "
+				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
+			";
+			my $numOfPatients = @patientList;
+			my $counter = 0;
+			foreach my $Patient (@patientList) {
+				my $patientSer 			= $Patient->getPatientSer();
+				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
+				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
 
-		            $sourceDatabase->disconnect();
-		        }
+				$patientInfo_sql .= "
+					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer'
+				";
 
-	        }
+				$counter++;
+				if ( $counter < $numOfPatients ) {
+					$patientInfo_sql .= "UNION";
+				}
+			}
+			$patientInfo_sql .= ")";
 
-	        ######################################
-		    # MediVisit
-		    ######################################
-		    if ($sourceDBSer eq 2) {
+			my $trInfo_sql = $patientInfo_sql . "
+				SELECT DISTINCT
+					tr.pt_id,
+					tr.pt_visit_id,
+					tr.test_id,
+					tr.test_result_group_id,
+					tr.test_result_id,
+					RTRIM(tr.abnormal_flag_cd),
+					RTRIM(tr.comp_name),
+					RTRIM(tr.fac_comp_name),
+					CONVERT(VARCHAR, tr.date_test_pt_test, 120),
+					tr.max_norm,
+					tr.min_norm,
+					tr.result_appr_ind,
+					tr.test_value,
+					tr.test_value_string,
+					RTRIM(tr.unit_desc),
+					tr.valid_entry_ind,
+					PatientInfo.PatientSerNum
+				FROM
+					varianenm.dbo.test_result tr,
+					varianenm.dbo.pt pt,
+					PatientInfo
+				WHERE
+					tr.pt_id                		= pt.pt_id
+				AND pt.patient_ser          		= (select pt.PatientSer from variansystem.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+				AND tr.valid_entry_ind 				= 'Y'
+				AND (
+			";
 
-			    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-		        if ($sourceDatabase) {
+			my $numOfExpressions = keys %{$expressionHash{$sourceDBSer}};
+			my $counter = 0;
+			# loop through each transfer date
+			foreach my $lastTransferDate (keys %{$expressionHash{$sourceDBSer}}) {
 
-		        	my $trInfo_sql = "SELECT 'QUERY_HERE'";
+				# concatenate query
+				$trInfo_sql .= "
+				(tr.comp_name IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
+					AND tr.trans_log_mtstamp > (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
+				";
+				$counter++;
+				# concat "UNION" until we've reached the last query
+				if ($counter < $numOfExpressions) {
+					$trInfo_sql .= "OR";
+				}
+				# close bracket at end
+				else {
+					$trInfo_sql .= ")";
+				}
+			}
 
-		        	# prepare query
-			    	my $query = $sourceDatabase->prepare($trInfo_sql)
-				    	or die "Could not prepare query: " . $sourceDatabase->errstr;
+			#print "query: $trInfo_sql\n";
+			# prepare query
 
-		    		# execute query
-			    	$query->execute()
-				    	or die "Could not execute query: " . $query->errstr;
+			my $query = $sourceDatabase->prepare($trInfo_sql)
+				or die "Could not prepare query: " . $sourceDatabase->errstr;
 
-		    		$data = $query->fetchall_arrayref();
-		            foreach my $row (@$data) {
+			# execute query
+			$query->execute()
+				or die "Could not execute query: " . $query->errstr;
 
-		                #my $testresult = new TestResult(); # uncomment for use
+			$data = $query->fetchall_arrayref();
+			foreach my $row (@$data) {
 
-		                # use setters to set appropriate test result information from query
+				my $testresult = new TestResult();
 
-		                #push(@TRList, $testresult); # uncomment for use
-		            }
+				$pt_id              = $row->[0];
+				$visit_id           = $row->[1];
+				$test_id            = $row->[2];
+				$tr_group_id        = $row->[3];
+				$tr_id              = $row->[4];
+				# combine the above id to create a unique id
+				$sourceuid          = $pt_id.$visit_id.$test_id.$tr_group_id.$tr_id;
 
-		            $sourceDatabase->disconnect();
+				$abnormalflag       = $row->[5];
+				$expressionname     = $row->[6];
+				$facname            = $row->[7];
+				$testdate           = $row->[8];
+				$maxnorm            = $row->[9];
+				$minnorm            = $row->[10];
+				$apprvflag          = $row->[11];
+				$testvalue          = $row->[12];
+				$testvaluestring    = $row->[13];
+				$unitdesc           = $row->[14];
+				$validentry         = $row->[15];
+				$patientSer 		= $row->[16];
 
-		        }
-		    }
+				$testresult->setTestResultPatientSer($patientSer);
+				$testresult->setTestResultSourceDatabaseSer($sourceDBSer);
+				$testresult->setTestResultSourceUID($sourceuid);
+				$testresult->setTestResultExpressionSer($expressionDict{$expressionname});
+				$testresult->setTestResultName($expressionname);
+				$testresult->setTestResultFacName($facname);
+				$testresult->setTestResultAbnormalFlag($abnormalflag);
+				$testresult->setTestResultTestDate($testdate);
+				$testresult->setTestResultMaxNorm($maxnorm);
+				$testresult->setTestResultMinNorm($minnorm);
+				$testresult->setTestResultApprovedFlag($apprvflag);
+				$testresult->setTestResultTestValue($testvalue);
+				$testresult->setTestResultTestValueString($testvaluestring);
+				$testresult->setTestResultUnitDesc($unitdesc);
+				$testresult->setTestResultValidEntry($validentry);
+				$testresult->setTestResultCronLogSer($cronLogSer);
 
-	        ######################################
-		    # MOSAIQ
-		    ######################################
-		    if ($sourceDBSer eq 3) {
+				push(@TRList, $testresult);
+			}
 
-			    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-		        if ($sourceDatabase) {
+			$sourceDatabase->disconnect();
+		}
 
-		        	my $trInfo_sql = "SELECT 'QUERY_HERE'";
+	}
 
-		        	# prepare query
-			    	my $query = $sourceDatabase->prepare($trInfo_sql)
-				    	or die "Could not prepare query: " . $sourceDatabase->errstr;
+	######################################
+    # MediVisit
+    ######################################
+    my $sourceDBSer = 2;
+	{
+        my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
 
-		    		# execute query
-			    	$query->execute()
-				    	or die "Could not execute query: " . $query->errstr;
+        if ($sourceDatabase) {
 
-		    		$data = $query->fetchall_arrayref();
-		            foreach my $row (@$data) {
+			my $trInfo_sql = "SELECT 'QUERY_HERE'";
 
-		                #my $testresult = new TestResult(); # uncomment for use
+			# # prepare query
+			# my $query = $sourceDatabase->prepare($trInfo_sql)
+			# 	or die "Could not prepare query: " . $sourceDatabase->errstr;
 
-		                # use setters to set appropriate test result information from query
+			# # execute query
+			# $query->execute()
+			# 	or die "Could not execute query: " . $query->errstr;
 
-		                #push(@TRList, $testresult); # uncomment for use
-		            }
+			# $data = $query->fetchall_arrayref();
+			# foreach my $row (@$data) {
 
-		            $sourceDatabase->disconnect();
+			# 	#my $testresult = new TestResult(); # uncomment for use
 
-		        }
-		    }
+			# 	# use setters to set appropriate test result information from query
+
+			# 	#push(@TRList, $testresult); # uncomment for use
+			# }
+
+			$sourceDatabase->disconnect();
+
+		}
+	}
+
+	 ######################################
+    # MOSAIQ
+    ######################################
+    my $sourceDBSer = 3;
+	{
+        my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
+
+        if ($sourceDatabase) {
+
+			# my $trInfo_sql = "SELECT 'QUERY_HERE'";
+
+			# # prepare query
+			# my $query = $sourceDatabase->prepare($trInfo_sql)
+			# 	or die "Could not prepare query: " . $sourceDatabase->errstr;
+
+			# # execute query
+			# $query->execute()
+			# 	or die "Could not execute query: " . $query->errstr;
+
+			# $data = $query->fetchall_arrayref();
+			# foreach my $row (@$data) {
+
+			#     #my $testresult = new TestResult(); # uncomment for use
+
+			#     # use setters to set appropriate test result information from query
+
+			#     #push(@TRList, $testresult); # uncomment for use
+			# }
+
+			$sourceDatabase->disconnect();
+
 		}
 
     }
@@ -813,7 +829,7 @@ sub insertTestResultIntoOurDB
 		NOW()
 	)
 	";
-
+	
     # prepare query
 	my $query = $SQLDatabase->prepare($insert_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;

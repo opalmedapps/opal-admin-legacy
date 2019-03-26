@@ -50,4 +50,8 @@ publisher/logs/**
 
 # ignore push notificaiton test script
 publisher/php/ykmTestNotification.php
+publisher/php/TestNotification.php
+publisher/php/test.php
 
+# ignore npm-debug log
+npm-debug.log

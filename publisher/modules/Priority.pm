@@ -3,12 +3,12 @@
 #---------------------------------------------------------------------------------
 # A.Joseph 13-Aug-2014 ++ File: Priority.pm
 #---------------------------------------------------------------------------------
-# Perl module that creates a priority class. This module calls a constructor to 
-# create a priority object that contains priority information stored as object 
+# Perl module that creates a priority class. This module calls a constructor to
+# create a priority object that contains priority information stored as object
 # variables.
 #
 # There exists various subroutines to set priority information and compare priority
-# information between two priority objects. 
+# information between two priority objects.
 # There exists various subroutines that use the Database.pm module to update the
 # MySQL database and check if a priority exists already in this database.
 
@@ -28,7 +28,7 @@ use Patient; # our custom patient module
 my $SQLDatabase		= $Database::targetDatabase;
 
 #====================================================================================
-# Constructor for our Priority class 
+# Constructor for our Priority class
 #====================================================================================
 sub new
 {
@@ -44,12 +44,12 @@ sub new
 
 	# bless associates an object with a class so Perl knows which package to search for
 	# when a method is invoked on this object
-	bless $priority, $class; 
+	bless $priority, $class;
 	return $priority;
 }
 
 #====================================================================================
-# Subroutine to set the priority serial 
+# Subroutine to set the priority serial
 #====================================================================================
 sub setPrioritySer
 {
@@ -59,7 +59,7 @@ sub setPrioritySer
 }
 
 #====================================================================================
-# Subroutine to set the priority patient serial 
+# Subroutine to set the priority patient serial
 #====================================================================================
 sub setPriorityPatientSer
 {
@@ -69,7 +69,7 @@ sub setPriorityPatientSer
 }
 
 #====================================================================================
-# Subroutine to set the priority source database serial 
+# Subroutine to set the priority source database serial
 #====================================================================================
 sub setPrioritySourceDatabaseSer
 {
@@ -89,7 +89,7 @@ sub setPrioritySourceUID
 }
 
 #====================================================================================
-# Subroutine to set priority DateStamp 
+# Subroutine to set priority DateStamp
 #====================================================================================
 sub setPriorityDateStamp
 {
@@ -99,7 +99,7 @@ sub setPriorityDateStamp
 }
 
 #====================================================================================
-# Subroutine to set priority code 
+# Subroutine to set priority code
 #====================================================================================
 sub setPriorityCode
 {
@@ -152,7 +152,7 @@ sub getPriorityDateStamp
 	my ($priority) = @_; # our priority object
 	return $priority->{_datestamp};
 }
-	
+
 #======================================================================================
 # Subroutine to get the priority code
 #======================================================================================
@@ -169,43 +169,61 @@ sub getPrioritiesFromSourceDB
 {
 	my (@patientList) = @_; # args
 	my @priorityList = (); # initialize a list of priority objects
-	
+
 	my ($patientser, $sourceuid, $datestamp, $code); # when we retrieve query results
 
-	foreach my $Patient (@patientList) { 
+	######################################
+    # ARIA
+    ######################################
+    my $sourceDBSer = 1;
+	{
+        my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
 
-		my $patientSer		    = $Patient->getPatientSer(); # get patient ser
-		my $patientSSN			= $Patient->getPatientSSN(); # get patient ssn
-		my $lastTransfer        = $Patient->getPatientLastTransfer(); # get last updated
-
-        ######################################
-	    # ARIA
-	    ######################################
-	    my $sourceDBSer = 1; # ARIA
-	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
         if ($sourceDatabase) {
 
-        	my $priorInfo_sql = "
+			my $patientInfo_sql = "
+				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
+			";
+			my $numOfPatients = @patientList;
+			my $counter = 0;
+			foreach my $Patient (@patientList) {
+				my $patientSer 			= $Patient->getPatientSer();
+				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
+				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
+
+				$patientInfo_sql .= "
+					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer'
+				";
+
+				$counter++;
+				if ( $counter < $numOfPatients ) {
+					$patientInfo_sql .= "UNION";
+				}
+			}
+			$patientInfo_sql .= ")";
+
+        	my $priorInfo_sql = $patientInfo_sql . "
 	    		SELECT DISTINCT
 		    		nsa.NonScheduledActivitySer,
 			    	CONVERT(VARCHAR, nsa.DueDateTime, 120),
-				    vva.Expression1
-    			FROM	
-	    			variansystem.dbo.Patient pt,
+				    lt.Expression1,
+					PatientInfo.PatientSerNum
+    			FROM
 		    		variansystem.dbo.NonScheduledActivity nsa,
 			    	variansystem.dbo.ActivityInstance ai,
 				    variansystem.dbo.Activity act,
-    				variansystem.dbo.vv_ActivityLng vva
+    				variansystem.dbo.LookupTable lt,
+					PatientInfo
 	    		WHERE
 		    	    nsa.ActivityInstanceSer 	= ai.ActivityInstanceSer
 	            AND ai.ActivitySer 			    = act.ActivitySer
-    	        AND act.ActivityCode 			= vva.LookupValue
-	    	   	AND pt.PatientSer 				= nsa.PatientSer
-                AND LEFT(LTRIM(pt.SSN), 12)      = '$patientSSN'  
-			    AND nsa.ObjectStatus 		    != 'Deleted' 
-    			AND vva.Expression1			    IN ('SGAS_P1','SGAS_P2','SGAS_P3','SGAS_P4')
-	    		AND	nsa.HstryDateTime		    > '$lastTransfer'
+    	        AND act.ActivityCode 			= lt.LookupValue
+	    	   	AND nsa.PatientSer 				= (select pt.PatientSer from variansystem.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+			    AND nsa.ObjectStatus 		    != 'Deleted'
+    			AND lt.Expression1			    IN ('SGAS_P1','SGAS_P2','SGAS_P3','SGAS_P4')
+	    		AND	nsa.HstryDateTime		    > PatientInfo.LastTransfer
 		    ";
+
     		# prepare query
 	    	my $query = $sourceDatabase->prepare($priorInfo_sql)
 		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
@@ -213,90 +231,95 @@ sub getPrioritiesFromSourceDB
     		# execute query
 	    	$query->execute()
 		    	or die "Could not execute query: " . $query->errstr;
-    
+
 	    	my $data = $query->fetchall_arrayref();
 		    foreach my $row (@$data) {
 
     			my $priority = new Priority(); # new priority object
-    
+
 	    		$sourceuid	    = $row->[0];
 		    	$datestamp		= $row->[1];
 			    $code			= $row->[2];
-    
+				$patientSer 	= $row->[3];
+
 	    		# set priority information
 		    	$priority->setPrioritySourceUID($sourceuid);
                 $priority->setPrioritySourceDatabaseSer($sourceDBSer);
 			    $priority->setPriorityDateStamp($datestamp);
     			$priority->setPriorityCode($code);
 	    		$priority->setPriorityPatientSer($patientSer);
-    
+
 	    		push(@priorityList, $priority);
             }
 
             $sourceDatabase->disconnect();
         }
+	}
 
-        ######################################
-	    # MediVisit
-	    ######################################
-	    my $sourceDBSer = 2; # MediVisit
-	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+    ######################################
+    # MediVisit
+    ######################################
+    my $sourceDBSer = 2;
+	{
+        my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
+
         if ($sourceDatabase) {
 
-        	my $priorInfo_sql = "SELECT 'QUERY_HERE'";
+        	# my $priorInfo_sql = "SELECT 'QUERY_HERE'";
 
-        	# prepare query
-	    	my $query = $sourceDatabase->prepare($priorInfo_sql)
-		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
+        	# # prepare query
+	    	# my $query = $sourceDatabase->prepare($priorInfo_sql)
+		    # 	or die "Could not prepare query: " . $sourceDatabase->errstr;
 
-    		# execute query
-	    	$query->execute()
-		    	or die "Could not execute query: " . $query->errstr;
-    
-	    	my $data = $query->fetchall_arrayref();
-		    foreach my $row (@$data) {
+    		# # execute query
+	    	# $query->execute()
+		    # 	or die "Could not execute query: " . $query->errstr;
 
-		    	#my $priority = new Priority(); # uncomment for use
+	    	# my $data = $query->fetchall_arrayref();
+		    # foreach my $row (@$data) {
 
-		    	# use setters to set appropriate priority information from query
+		    # 	#my $priority = new Priority(); # uncomment for use
 
-		    	#push(@priorityList, $priority); # uncomment for use
-		    }
+		    # 	# use setters to set appropriate priority information from query
+
+		    # 	#push(@priorityList, $priority); # uncomment for use
+		    # }
 
 		    $sourceDatabase->disconnect();
 		}
+	}
 
-		######################################
-	    # MOSAIQ
-	    ######################################
-	    my $sourceDBSer = 3; # MOSAIQ
-	    my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
+	######################################
+    # MOSAIQ
+    ######################################
+    my $sourceDBSer = 3;
+	{
+        my $sourceDatabase	= Database::connectToSourceDatabase($sourceDBSer);
+
         if ($sourceDatabase) {
 
-        	my $priorInfo_sql = "SELECT 'QUERY_HERE'";
+        	# my $priorInfo_sql = "SELECT 'QUERY_HERE'";
 
-        	# prepare query
-	    	my $query = $sourceDatabase->prepare($priorInfo_sql)
-		    	or die "Could not prepare query: " . $sourceDatabase->errstr;
+        	# # prepare query
+	    	# my $query = $sourceDatabase->prepare($priorInfo_sql)
+		    # 	or die "Could not prepare query: " . $sourceDatabase->errstr;
 
-    		# execute query
-	    	$query->execute()
-		    	or die "Could not execute query: " . $query->errstr;
-    
-	    	my $data = $query->fetchall_arrayref();
-		    foreach my $row (@$data) {
+    		# # execute query
+	    	# $query->execute()
+		    # 	or die "Could not execute query: " . $query->errstr;
 
-		    	#my $priority = new Priority(); # uncomment for use
+	    	# my $data = $query->fetchall_arrayref();
+		    # foreach my $row (@$data) {
 
-		    	# use setters to set appropriate priority information from query
+		    # 	#my $priority = new Priority(); # uncomment for use
 
-		    	#push(@priorityList, $priority); # uncomment for use
-		    }
+		    # 	# use setters to set appropriate priority information from query
+
+		    # 	#push(@priorityList, $priority); # uncomment for use
+		    # }
 
 		    $sourceDatabase->disconnect();
 		}
-
-    
 	}
 
 	return @priorityList;
@@ -304,7 +327,7 @@ sub getPrioritiesFromSourceDB
 
 #======================================================================================
 # Subroutine to get the closest priority in time given the patient serial and a date
-# 	@return: priority serial 
+# 	@return: priority serial
 #======================================================================================
 sub getClosestPriority
 {
@@ -314,7 +337,7 @@ sub getClosestPriority
 
 	# Since the priority datetime will be ascending,
 	# if the first priority date is already passed the ref date in time,
- 	# then we'll just take the first priority, and break. 
+ 	# then we'll just take the first priority, and break.
 	my $first = 1;
 
 	my $date_sql = "
@@ -325,9 +348,9 @@ sub getClosestPriority
 			Priority
 		WHERE
 			Priority.PatientSerNum	= '$patientSer'
-		ORDER BY 
+		ORDER BY
 			Priority.PriorityDateTime ASC
-	";	
+	";
 
 	# prepare query
 	my $query = $SQLDatabase->prepare($date_sql)
@@ -337,8 +360,8 @@ sub getClosestPriority
 	$query->execute()
 		or die "Could not execute query: " . $query->errstr;
 
-	# how this will work is that we loop each due date until 
-	# said date passes the reference date. In other words, the 
+	# how this will work is that we loop each due date until
+	# said date passes the reference date. In other words, the
 	# delay gets smaller and may turn negative. The smallest,
 	# non-negative delay is the closest date.
 	while (my @data = $query->fetchrow_array()) {
@@ -363,20 +386,20 @@ sub getClosestPriority
 		if ($delay < 0) {
 			# however, if the first priority is passed the ref date
 			# by less than 100 days, then count it as the closest priority
-			if ($first and $delay > -100) { 
+			if ($first and $delay > -100) {
 				$prioritySer = $data[1];
 				last;
 			}
 			last;
 		}
 
-		# assign priority serial 
+		# assign priority serial
 		$prioritySer = $data[1];
 
 		$first = undef;	 # passed the first priority
 
 	}
-		
+
 	return $prioritySer;
 }
 
@@ -387,13 +410,13 @@ sub getClosestPriority
 sub inOurDatabase
 {
 	my ($priority) = @_; # our priority object
-    
+
 	my $prioritySourceUID   = $priority->getPrioritySourceUID(); # retrieve the id from our object
     my $sourceDBSer         = $priority->getPrioritySourceDatabaseSer();
 
 	my $PrioritySourceUIDInDB = 0; # false by default. Will be true if priority exists
 	my $ExistingPriority = (); # data to be entered if priority exists
-	
+
 	# Other priority variables, if priority exists
 	my ($ser, $patientser, $datestamp, $code);
 
@@ -410,7 +433,7 @@ sub inOurDatabase
 			Priority.PriorityAriaSer 	    = $prioritySourceUID
         AND Priority.SourceDatabaseSerNum   = $sourceDBSer
 	";
-	
+
 	# prepare query
 	my $query = $SQLDatabase->prepare($inDB_sql)
 		or die "Could not prepare query: " . $SQLDatabase->errstr;
@@ -420,7 +443,7 @@ sub inOurDatabase
 		or die "Could not execute query: " . $query->errstr;
 
 	while (my @data = $query->fetchrow_array()) {
-		
+
 		$PrioritySourceUIDInDB 	    = $data[0];
 		$ser			            = $data[1];
 		$datestamp		            = $data[2];
@@ -429,7 +452,7 @@ sub inOurDatabase
 	}
 
 	if ($PrioritySourceUIDInDB) {
-		
+
 		$ExistingPriority = new Priority(); # initialize priority object
 
 		$ExistingPriority->setPrioritySourceUID($PrioritySourceUIDInDB);
@@ -457,10 +480,10 @@ sub insertPriorityIntoOurDB
     my $sourcedbser     = $priority->getPrioritySourceDatabaseSer();
 	my $datestamp		= $priority->getPriorityDateStamp();
 	my $code		= $priority->getPriorityCode();
-	
+
 	# Insert priority
 	my $insert_sql = "
-		INSERT INTO 
+		INSERT INTO
 			Priority (
 				PatientSerNum,
                 SourceDatabaseSerNum,
@@ -494,7 +517,7 @@ sub insertPriorityIntoOurDB
 	$priority->setPrioritySer($ser);
 
 	return $priority;
-	
+
 }
 #======================================================================================
 # Subroutine to update our database with the priority's updated info
@@ -510,7 +533,7 @@ sub updateDatabase
 	my $code		    = $priority->getPriorityCode();
 
 	my $update_sql = "
-		
+
 		UPDATE
 			Priority
 		SET
@@ -540,7 +563,7 @@ sub updateDatabase
 sub compareWith
 {
 	my ($SuspectPriority, $OriginalPriority) = @_; # our two priority objects from arguments
-	my $UpdatedPriority = dclone($OriginalPriority); 
+	my $UpdatedPriority = dclone($OriginalPriority);
 
 	# retrieve parameters
 	# Suspect Priority...
@@ -552,14 +575,14 @@ sub compareWith
 	my $Opatientser		= $OriginalPriority->getPriorityPatientSer();
 	my $Odatestamp		= $OriginalPriority->getPriorityDateStamp();
 	my $Ocode		= $OriginalPriority->getPriorityCode();
-	
+
 
 	# go through each parameter
-	
+
 	if ($Spatientser ne $Opatientser) {
 
 		print "Priority Patient serial has changed from '$Opatientser' to '$Spatientser'\n";
-		my $updatedPatientSer = $UpdatedPriority->setPriorityPatientSer($Spatientser); # update priority alias ser 
+		my $updatedPatientSer = $UpdatedPriority->setPriorityPatientSer($Spatientser); # update priority alias ser
 		print "Will update database entry to '$updatedPatientSer'.\n";
 	}
 	if ($Sdatestamp ne $Odatestamp) {
@@ -571,7 +594,7 @@ sub compareWith
 	if ($Scode ne $Ocode) {
 
 		print "Priority Code has changed from '$Ocode' to '$Scode'\n";
-		my $updatedCode = $UpdatedPriority->setPriorityCode($Scode); # update priority code 
+		my $updatedCode = $UpdatedPriority->setPriorityCode($Scode); # update priority code
 		print "Will update database entry to '$updatedCode'.\n";
 	}
 
@@ -579,4 +602,4 @@ sub compareWith
 }
 
 # To exit/return always true (for the module itself)
-1;	
+1;
