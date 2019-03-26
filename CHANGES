@@ -1,3 +1,40 @@
+Version 0.18.18.0:
+ -     -- updated the git ignore file
+ -     -- forgot to include the dbv version 13
+ -     -- merged Ackeem's optimized queries     -- fixed some of the optimization queries     -- modified PatientControl table by adding new field TransferFlag     -- fixed appointment update bug
+ - Merge Optimize Query for Cron
+ - --- Add new tables EducationalMaterialPackageContent and PatientActionLog for Fertility Educate
+ - Merge branch 'master' into staging
+ -    --- backup 2018-12-04
+ - Modified files to write queries into a text file for testing
+ - --- Optimized queries   -- Some modules had the optimized query (just added an if statement for source database existance)   -- Other modules missing current optimization (had query in loops)
+ - Merge branch 'hotfix-0.18.17.2' into develop
+ - Merge remote-tracking branch 'origin/master' into develop
+ - Merge branch 'hotfix-0.18.16.17' into develop
+ - Merge branch 'hotfix-0.18.16.16' into develop
+ - Merge branch 'hotfix-0.18.16.15' into develop
+ - Merge branch 'hotfix-0.18.16.14' into develop
+ - Merge branch 'hotfix-0.18.16.13' into develop
+ - Merge branch 'hotfix-0.18.16.12' into develop
+ -    --- Merging to development
+ - Merge branch 'hotfix-0.18.16.11' into develop
+ - Merge branch 'hotfix-0.18.16.10' into develop
+ - Merge branch 'hotfix-0.18.16.9' into develop
+ - Merge branch 'hotfix-0.18.16.8' into develop
+ - Merge branch 'develop' of http://gitlab.com/akimosupremo/opalAdmin into develop
+ - Merge branch 'hotfix-0.18.16.7' into develop
+ - Fix issue with script crashing on Production
+ - Merge branch 'hotfix-0.18.16.6' into develop
+ - Merge branch 'hotfix-0.18.16.5' into develop
+ - Merge branch 'hotfix-0.18.16.4' into develop
+ -    --- Remove file
+ - Merge branch 'hotfix-0.18.16.3' into develop
+ - Merge branch 'hotfix-0.18.16.2' into develop
+ - Merge branch 'hotfix-0.18.16.1' into develop
+ - Merge branch 'hotfix-0.18.16.1' into develop
+ - Modified the Patient to dispaly email and RAMQ
+ - Update Version
+
 Version 0.18.17.7:
  -     ---- Modified git ignore to exclude vscode, push notification test script, and added single quotes for patient ID
  - Merge branch 'hotfix-0.18.17.6'
