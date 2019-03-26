@@ -2,7 +2,7 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 
 
 	/******************************************************************************
-	* Patient Page controller 
+	* Patient Page controller
 	*******************************************************************************/
 	controller('patient', function ($scope, $filter, $sce, $state, $uibModal, patientCollectionService) {
 
@@ -12,7 +12,7 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 		};
 
 		$scope.bannerMessage = "";
-		// Function to show page banner 
+		// Function to show page banner
 		$scope.showBanner = function () {
 			$(".bannerMessage").slideDown(function () {
 				setTimeout(function () {
@@ -23,7 +23,7 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 
 		// Function to set banner class
 		$scope.setBannerClass = function (classname) {
-			// Remove any classes starting with "alert-" 
+			// Remove any classes starting with "alert-"
 			$(".bannerMessage").removeClass(function (index, css) {
 				return (css.match(/(^|\s)alert-\S+/g) || []).join(' ');
 			});
@@ -41,8 +41,8 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
 			'<strong><a href="" ng-click="grid.appScope.editPatient(row.entity)">Edit</a></strong>' +
-			'- <strong><a href="" ng-click="grid.appScope.toggleBlock(row.entity)"><span ng-if="row.entity.disabled">Unblock</span>' + 
-			'<span ng-if="!row.entity.disabled">Block</span></a></strong></div> '; 
+			'- <strong><a href="" ng-click="grid.appScope.toggleBlock(row.entity)"><span ng-if="row.entity.disabled">Unblock</span>' +
+			'<span ng-if="!row.entity.disabled">Block</span></a></strong></div> ';
 
 		// patient table search textbox param
 		$scope.filterOptions = function (renderableRows) {
@@ -73,11 +73,13 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 		$scope.gridOptions = {
 			data: 'patientList',
 			columnDefs: [
-				{ field: 'patientid', displayName: 'Patient ID', width: '25%' },
+				{ field: 'patientid', displayName: 'Patient ID', width: '10%' },
 				{ field: 'name', displayName: 'Name', width: '25%' },
+				{ field: 'Email', displayName: 'EMail', width: '25%' },
+				{ field: 'SSN', displayName: 'RAMQ', width: '10%' },
 				{ field: 'transfer', displayName: 'Publish Flag', width: '10%', cellTemplate: checkboxCellTemplate, enableFiltering: false },
-				{ field: 'lasttransferred', displayName: 'Last Publish', width:'20%' },
-				{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '20%'}
+				{ field: 'lasttransferred', displayName: 'Last Publish', width:'10%' },
+				{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '10%'}
 
 			],
 			enableFiltering: true,
@@ -104,7 +106,7 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 			console.error('Error occurred getting patient list:', response.status, response.data);
 		});
 
-		// When this function is called, we set the "publish" field to checked 
+		// When this function is called, we set the "publish" field to checked
 		// or unchecked based on value in the argument
 		$scope.updateTransferFlag = function (value) {
 			value = parseInt(value);
@@ -176,7 +178,7 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 				backdrop: 'static'
 			});
 
-			// After toggle, refresh the patient list 
+			// After toggle, refresh the patient list
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing patients
 				patientCollectionService.getPatients().then(function (response) {
@@ -203,7 +205,7 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 				keyboard: false,
 			});
 
-			// After update, refresh the patient list 
+			// After update, refresh the patient list
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing patients
 				patientCollectionService.getPatients().then(function (response) {
@@ -216,5 +218,3 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 		};
 
 	});
-
-
