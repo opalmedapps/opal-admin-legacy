@@ -605,6 +605,10 @@ sub getPatientInfoFromSourceDBs
 #======================================================================================
 sub getPatientsMarkedForUpdate
 {
+
+	# Update PatientControl Transfer flag form 0 to 1
+	MarkPatientForUpdate();
+	
     my ($cronLogSer) = @_; # cron log serial in args
 	
 	my @patientList = (); # initialize list of patient objects
@@ -620,7 +624,7 @@ sub getPatientsMarkedForUpdate
 			PatientControl,
             Patient
 		WHERE
-            PatientControl.PatientUpdate        = 1
+            PatientControl.TransferFlag        = 1
         AND Patient.PatientSerNum               = PatientControl.PatientSerNum
 	";
 
@@ -722,7 +726,7 @@ sub unsetPatientControl
 }
 
 #======================================================================================
-# Subroutine to set/update the "last transferred" field to current time 
+# Subroutine to set/update the "last transferred" field to current time  and reset the transfer flag back from 1 to 0
 #======================================================================================
 sub setPatientLastTransferredIntoOurDB
 {
@@ -734,9 +738,10 @@ sub setPatientLastTransferredIntoOurDB
 			PatientControl
 		SET
 			LastTransferred	= '$current_datetime',
-            LastUpdated     = LastUpdated
+            LastUpdated 		= LastUpdated,
+			TransferFlag 		= 0
 		WHERE
-			PatientUpdate 	= 1
+			TransferFlag		= 1
 	";
 
 	# prepare query
@@ -1143,5 +1148,24 @@ sub isValidDate
 	else {return 1;}
 }
 
+#======================================================================================
+# Subroutine the transfer flag to 1 where patient control is active (PatientUpdate = 1) 
+#======================================================================================
+sub MarkPatientForUpdate
+{
+	# Query
+	my $patients_sql = "Update PatientControl Set TransferFlag = 1 Where PatientUpdate = 1";
+
+	# prepare query
+	my $query = $SQLDatabase->prepare($patients_sql)
+		or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+	# execute query
+	$query->execute()
+		or die "Could not execute query: " . $query->errstr;
+
+}
 #exit module 
 1;
+
+
