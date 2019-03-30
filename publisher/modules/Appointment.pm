@@ -13,6 +13,7 @@
 
 package Appointment; # Declare package name
 
+use Configs; # Custom Config.pm to get constants (i.e. configurations)
 
 use Exporter; # To export subroutines and variables
 use Database; # Use our custom database module Database.pm
@@ -601,20 +602,21 @@ sub getApptsFromSourceDB
 			my $patientInfo_sql = "";
 			my $numOfPatients = @patientList;
 			my $counter = 0;
-			foreach my $Patient (@patientList) {
-				my $patientSer 			= $Patient->getPatientSer();
-				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
-				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
+			my $databaseName = $Configs::OPAL_DB_NAME;
+			# foreach my $Patient (@patientList) {
+				# my $patientSer 			= $Patient->getPatientSer();
+				# my $patientSSN          = $Patient->getPatientSSN(); # get ssn
+				# my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
 
-				$patientInfo_sql .= "
-					(SELECT '$patientSSN' as SSN, '$patientLastTransfer' as LastTransfer, '$patientSer' as PatientSerNum)
-				";
+				# $patientInfo_sql .= "
+					# (SELECT '$patientSSN' as SSN, '$patientLastTransfer' as LastTransfer, '$patientSer' as PatientSerNum)
+				# ";
 
-				$counter++;
-				if ( $counter < $numOfPatients ) {
-					$patientInfo_sql .= "UNION";
-				}
-			}
+				# $counter++;
+				# if ( $counter < $numOfPatients ) {
+					# $patientInfo_sql .= "UNION";
+				# }
+			# }
 
 			my $apptInfo_sql = "
 				SELECT DISTINCT
@@ -626,11 +628,14 @@ sub getApptsFromSourceDB
 					pi.PatientSerNum
 				FROM
 					MediVisitAppointmentList mval,
-					Patient pt
-				JOIN ($patientInfo_sql) pi
-				ON 	LEFT(LTRIM(pt.SSN), 12)  = pi.SSN
+					Patient pt,
+					(Select SSN, LastTransferred LastTransfer, P.PatientSerNum
+					from 	$databaseName.Patient P, $databaseName.PatientControl PC
+					where P.PatientSerNum = PC.PatientSerNum
+					and PC.TransferFlag = 1) pi
 				WHERE
-					mval.PatientSerNum      = pt.PatientSerNum
+					LEFT(LTRIM(pt.SSN), 12)  = pi.SSN
+					and mval.PatientSerNum      = pt.PatientSerNum
 				AND (
 			";
 
@@ -1187,29 +1192,6 @@ sub inOurDatabase
 				AppointmentAriaSer      = '$sourceUID'
 	      AND SourceDatabaseSerNum    = '$sourceDBSer'
 		";
-
-	# my $inDB_sql = "
-	# 	SELECT DISTINCT
-	# 		Appointment.AppointmentAriaSer,
-	# 		Appointment.AliasExpressionSerNum,
-	# 		Appointment.ScheduledStartTime,
-	# 		Appointment.ScheduledEndTime,
-	# 		Appointment.AppointmentSerNum,
-	# 		Appointment.PatientSerNum,
-  #           Appointment.PrioritySerNum,
-  #           Appointment.DiagnosisSerNum,
-  #           Appointment.SourceDatabaseSerNum,
-  #           Appointment.Status,
-  #           Appointment.State,
-  #           Appointment.ActualStartDate,
-  #           Appointment.ActualEndDate,
-  #           Appointment.CronLogSerNum
-	# 	FROM
-	# 		Appointment
-	# 	WHERE
-	# 		Appointment.AppointmentAriaSer      = '$sourceUID'
-  #       AND Appointment.SourceDatabaseSerNum    = '$sourceDBSer'
-	# ";
 
 	# prepare query
 	my $query = $SQLDatabase->prepare($inDB_sql)
