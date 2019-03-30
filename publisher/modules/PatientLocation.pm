@@ -13,6 +13,8 @@
 
 package PatientLocation; # Declare package name
 
+use Configs; # Custom Config.pm to get constants (i.e. configurations)
+
 use Database; # Our custom Database module
 use Time::Piece; # To parse and convert date time
 use Appointment; # Our custom Appointment module
@@ -442,20 +444,21 @@ sub getPatientLocationsFromSourceDB
 			my $patientInfo_sql = "";
 			my $numOfPatients = @patientList;
 			my $counter = 0;
-			foreach my $Patient (@patientList) {
-				my $patientSer 			= $Patient->getPatientSer();
-				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
-				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
+			my $databaseName = $Configs::OPAL_DB_NAME;
+			# foreach my $Patient (@patientList) {
+				# my $patientSer 			= $Patient->getPatientSer();
+				# my $patientSSN          = $Patient->getPatientSSN(); # get ssn
+				# my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
 
-				$patientInfo_sql .= "
-					SELECT '$patientSSN' as SSN, '$patientLastTransfer' as LastTransfer, '$patientSer' as PatientSerNum
-				";
+				# $patientInfo_sql .= "
+					# SELECT '$patientSSN' as SSN, '$patientLastTransfer' as LastTransfer, '$patientSer' as PatientSerNum
+				# ";
 
-				$counter++;
-				if ( $counter < $numOfPatients ) {
-					$patientInfo_sql .= "UNION";
-				}
-			}
+				# $counter++;
+				# if ( $counter < $numOfPatients ) {
+					# $patientInfo_sql .= "UNION";
+				# }
+			# }
 
 			my $plInfo_sql = "
 				SELECT DISTINCT
@@ -472,14 +475,17 @@ sub getPatientLocationsFromSourceDB
 					MediVisitAppointmentList mval,
 					PatientLocation pl,
 					Venue,
-					Patient pt
-				JOIN ($patientInfo_sql) pi
-				ON 	LEFT(LTRIM(pt.SSN), 12)  = pi.SSN
+					Patient pt,
+					(Select SSN, LastTransferred LastTransfer, P.PatientSerNum
+					from 	$databaseName.Patient P, $databaseName.PatientControl PC
+					where P.PatientSerNum = PC.PatientSerNum
+					and PC.TransferFlag = 1) pi
 				WHERE
-					mval.PatientSerNum 			= pt.PatientSerNum
-				AND mval.AppointmentSerNum		= pl.AppointmentSerNum
-				AND Venue.VenueId 				= pl.CheckinVenueName
-				AND (
+					LEFT(LTRIM(pt.SSN), 12)  = pi.SSN
+					AND mval.PatientSerNum 			= pt.PatientSerNum
+					AND mval.AppointmentSerNum		= pl.AppointmentSerNum
+					AND Venue.VenueId 				= pl.CheckinVenueName
+					AND (
 			";
 
 			my $numOfExpressions = keys %{$expressionHash{$sourceDBSer}};
@@ -505,6 +511,7 @@ sub getPatientLocationsFromSourceDB
 
 			#print "$plInfo_sql\n";
 			# prepare query
+			
 			my $query = $sourceDatabase->prepare($plInfo_sql)
 				or die "Could not prepare query: " . $sourceDatabase->errstr;
 
