@@ -13,6 +13,8 @@
 
 package ResourceAppointment; # Declare package name
 
+use Configs; # Custom Config.pm to get constants (i.e. configurations)
+
 use Exporter; # To export subroutines and variables
 use Database; # Use our custom database module Database.pm
 use Time::Piece; # To parse and convert date time
@@ -360,20 +362,21 @@ sub getResourceAppointmentsFromSourceDB
 			my $patientInfo_sql = "";
 			my $numOfPatients = @patientList;
 			my $counter = 0;
-			foreach my $Patient (@patientList) {
-				my $patientSer 			= $Patient->getPatientSer();
-				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
-				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
+			my $databaseName = $Configs::OPAL_DB_NAME;
+			# foreach my $Patient (@patientList) {
+				# my $patientSer 			= $Patient->getPatientSer();
+				# my $patientSSN          = $Patient->getPatientSSN(); # get ssn
+				# my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
 
-				$patientInfo_sql .= "
-					SELECT '$patientSSN' as SSN, '$patientLastTransfer' as LastTransfer, '$patientSer' as PatientSerNum
-				";
+				# $patientInfo_sql .= "
+					# SELECT '$patientSSN' as SSN, '$patientLastTransfer' as LastTransfer, '$patientSer' as PatientSerNum
+				# ";
 
-				$counter++;
-				if ( $counter < $numOfPatients ) {
-					$patientInfo_sql .= "UNION";
-				}
-			}
+				# $counter++;
+				# if ( $counter < $numOfPatients ) {
+					# $patientInfo_sql .= "UNION";
+				# }
+			# }
 
 			my $raInfo_sql = "
 				SELECT DISTINCT
@@ -384,12 +387,15 @@ sub getResourceAppointmentsFromSourceDB
 					mval.ResourceDescription
 				FROM
 					MediVisitAppointmentList mval,
-					Patient pt
-				JOIN ($patientInfo_sql) pi
-				ON 	LEFT(LTRIM(pt.SSN), 12)  = pi.SSN
+					Patient pt,
+					(Select SSN, LastTransferred LastTransfer, P.PatientSerNum
+					from 	$databaseName.Patient P, $databaseName.PatientControl PC
+					where P.PatientSerNum = PC.PatientSerNum
+					and PC.TransferFlag = 1) pi
 				WHERE
-					mval.PatientSerNum      = pt.PatientSerNum
-				AND (
+					LEFT(LTRIM(pt.SSN), 12)  = pi.SSN
+					AND mval.PatientSerNum      = pt.PatientSerNum
+					AND (
 			";
 
 			my $numOfExpressions = keys %{$expressionHash{$sourceDBSer}};
@@ -413,7 +419,6 @@ sub getResourceAppointmentsFromSourceDB
 				}
 			}
 			# print "$raInfo_sql\n";
-
 			# prepare query
 			my $query = $sourceDatabase->prepare($raInfo_sql)
 				or die "Could not prepare query: " . $sourceDatabase->errstr;
