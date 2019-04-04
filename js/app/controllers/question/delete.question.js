@@ -7,7 +7,7 @@ angular.module('opalAdmin.controllers.question.delete', ['ngAnimate', 'ngSanitiz
 			$.ajax({
 				type: "POST",
 				url: "php/questionnaire/delete.question.php",
-				data: $scope.questionToDelete,
+				data: {"ID": $scope.questionToDelete.serNum, "userId": Session.retrieveObject('user').id},
 				success: function (response) {
 					response = JSON.parse(response);
 					// Show success or failure depending on response
@@ -17,7 +17,7 @@ angular.module('opalAdmin.controllers.question.delete', ['ngAnimate', 'ngSanitiz
 					}
 					else {
 						$scope.setBannerClass('danger');
-						$scope.bannerMessage = response.message;
+						$scope.$parent.bannerMessage = response.message;
 					}
 					$scope.showBanner();
 					$uibModalInstance.close();
