@@ -37,6 +37,15 @@
 	define( "QUESTIONNAIRE_DB_USERNAME", $config['databaseConfig']['questionnaire']['username'] );
 	define( "QUESTIONNAIRE_DB_PASSWORD", $config['databaseConfig']['questionnaire']['password'] );
 
+	// DEFINE LEGACY QUESTIONNAIRE SERVER/DATABASE CREDENTIALS HERE
+	// NOTE: This works for a MySQL setup.
+	define( "QUESTIONNAIRE_DB_2019_HOST", $config['databaseConfig']['questionnaire2019']['host'] );
+	define( "QUESTIONNAIRE_DB_2019_PORT", $config['databaseConfig']['questionnaire2019']['port'] );
+	define( "QUESTIONNAIRE_DB_2019_NAME", $config['databaseConfig']['questionnaire2019']['name'] );
+	define( "QUESTIONNAIRE_DB_2019_DSN", "mysql:host=" . QUESTIONNAIRE_DB_2019_HOST . ";port=" . QUESTIONNAIRE_DB_2019_PORT . ";dbname=" . QUESTIONNAIRE_DB_2019_NAME . ";charset=utf8" );
+	define( "QUESTIONNAIRE_DB_2019_USERNAME", $config['databaseConfig']['questionnaire2019']['username'] );
+	define( "QUESTIONNAIRE_DB_2019_PASSWORD", $config['databaseConfig']['questionnaire2019']['password'] );
+
 	// DEFINE ARIA SERVER/DATABASE CREDENTIALS HERE
 	// NOTE: This works for a MicrosoftSQL (MSSQL) setup.
 	define( "ARIA_DB_HOST", $config['databaseConfig']['aria']['host'] );
