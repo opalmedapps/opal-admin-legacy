@@ -7,13 +7,19 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 			$state.go('questionnaire-question-add');
 		};
 
+		// Function to filter questionnaires
+		$scope.filterQuestion = function (filterValue) {
+			$scope.filterValue = filterValue;
+			$scope.gridApi.grid.refresh();
+		};
+
 		// Table
 		// Filter in table
 		$scope.filterOptions = function (renderableRows) {
 			var matcher = new RegExp($scope.filterValue, 'i');
 			renderableRows.forEach(function (row) {
 				var match = false;
-				['text_EN', 'group_name_EN', 'answertype_name_EN', 'library_name_EN'].forEach(function (field) {
+				['text_EN', 'text_FR', 'answertype_name_EN', 'answertype_name_FR', 'library_name_EN', 'library_name_FR'].forEach(function (field) {
 					if (row.entity[field].match(matcher)) {
 						match = true;
 					}
@@ -33,8 +39,8 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
 			'<strong><a href="" ng-click="grid.appScope.editQuestion(row.entity)">Edit</a></strong> ' +
 			'- <strong><a href="" ng-click="grid.appScope.deleteQuestion(row.entity)">Delete</a></strong></div>';
-		var cellTemplateGroupName = '<div class="ui-grid-cell-contents"> ' +
-			'{{row.entity.group_name_EN}} / {{row.entity.group_name_FR}}</div>';
+		//var cellTemplateGroupName = '<div class="ui-grid-cell-contents"> ' +
+		//	'{{row.entity.group_name_EN}} / {{row.entity.group_name_FR}}</div>';
 		var cellTemplateText = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editQuestion(row.entity)">' +
 			'<strong><a href="">{{row.entity.text_EN}} / {{row.entity.text_FR}}</a></strong></div>';
@@ -50,8 +56,8 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 			data: 'questionList',
 			columnDefs: [
 				{ field: 'serNum', displayName: 'ID', width: '4%', enableFiltering: false },
-				{ field: 'text_EN', displayName: 'Question (EN / FR)', cellTemplate: cellTemplateText, width: '30%' },
-				{ field: 'group_name_EN', displayName: 'Group (EN / FR)', cellTemplate: cellTemplateGroupName, width: '25%' },
+				{ field: 'text_EN', displayName: 'Question (EN / FR)', cellTemplate: cellTemplateText, width: '55%' },
+				//{ field: 'group_name_EN', displayName: 'Group (EN / FR)', cellTemplate: cellTemplateGroupName, width: '25%' },
 				{ field: 'answertype_name_EN', displayName: 'Answer Type (EN / FR)', cellTemplate: cellTemplateAt, width: '13%' },
 				{ field: 'library_name_EN', displayName: 'Library (EN / FR)', cellTemplate: cellTemplateLib, width: '10%' },
 				{

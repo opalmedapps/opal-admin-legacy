@@ -62,7 +62,37 @@ class Question {
 	public function getQuestions(){
 		$questions = array();
 		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link = new PDO( QUESTIONNAIRE_DB_2019_DSN, QUESTIONNAIRE_DB_2019_USERNAME, QUESTIONNAIRE_DB_2019_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+		    $sql = "SELECT
+                    q.ID AS SerNum,
+                    (SELECT d.content FROM dictionary d WHERE d.contentId = q.question AND d.languageId = 2) AS text_EN,
+                    (SELECT d.content FROM dictionary d WHERE d.contentId = q.question AND d.languageId = 1) AS text_FR,
+                    q.private,
+                    q.typeId AS answertype_serNum,
+                    (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = 2) AS answertype_name_EN,
+                    (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = 1) AS answertype_name_FR
+                    FROM question q LEFT JOIN type t ON t.ID = q.typeId WHERE deleted = 0;";
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+
+            while($row = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)){
+                $questionArray = array (
+                    'serNum'				=> $row[0],
+                    'text_EN'				=> $row[1],
+                    'text_FR'				=> $row[2],
+                    'private'				=> $row[3],
+                    'answertype_serNum'		=> $row[4],
+                    'answertype_name_EN'	=> $row[5],
+                    'answertype_name_FR'	=> $row[6],
+                    'library_serNum'		=> -1,
+                    'library_name_EN'		=> "None",
+                    'library_name_FR'		=> "Aucun",
+                );
+                array_push($questions, $questionArray);
+            }
+
+			/*$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
 			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 			$sql = "
@@ -142,7 +172,7 @@ class Question {
 					'library_name_FR'		=> $libNameFR
 				);
 				array_push($questions, $questionArray);
-			}
+			}*/
 			return $questions;
 		} catch (PDOException $e) {
 	 		echo $e->getMessage();
