@@ -626,10 +626,10 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
-		questionnaireAPI.getQuestions = function () {
+		questionnaireAPI.getQuestions = function (userid) {
 			return $http({
 				method: 'JSONP',
-				url: "api/questionnaire/get.questions.php?callback=JSON_CALLBACK"
+				url: "api/questionnaire/get.questions.php?callback=JSON_CALLBACK&userid=" + userid
 			});
 		};
 

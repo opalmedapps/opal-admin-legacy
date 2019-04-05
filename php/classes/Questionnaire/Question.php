@@ -59,31 +59,34 @@ class Question {
      *
      * @return array $questions : the list of existing questions
      */
-    public function getQuestions(){
+    public function getQuestions($userId = ""){
         $questions = array();
         try {
-            $host_db_link = new PDO( QUESTIONNAIRE_DB_2019_DSN, QUESTIONNAIRE_DB_2019_USERNAME, QUESTIONNAIRE_DB_2019_PASSWORD );
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $host_questionnaire_db_link = new PDO( QUESTIONNAIRE_DB_2019_DSN, QUESTIONNAIRE_DB_2019_USERNAME, QUESTIONNAIRE_DB_2019_PASSWORD );
+            $host_questionnaire_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
             $sql = "SELECT
                     q.ID AS ID,
                     (SELECT d.content FROM dictionary d WHERE d.contentId = q.question AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
                     (SELECT d.content FROM dictionary d WHERE d.contentId = q.question AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR,
                     q.private,
                     q.typeId AS answertype_Id,
-                    (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = 2) AS answertype_name_EN,
-                    (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = 1) AS answertype_name_FR
-                    FROM question q LEFT JOIN type t ON t.ID = q.typeId WHERE deleted = 0;";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-            $questionsLists = $query->fetchAll();
+                    (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS answertype_name_EN,
+                    (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS answertype_name_FR
+                    FROM question q LEFT JOIN type t ON t.ID = q.typeId WHERE deleted = 0 AND (OAUserId = '".$userId."' OR private = 0);";
+            $query_questionnaire = $host_questionnaire_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query_questionnaire->execute();
+            $questionsLists = $query_questionnaire->fetchAll();
 
             foreach ($questionsLists as $row){
                 $sql = "SELECT (SELECT d.content FROM dictionary d WHERE d.contentId = l.name AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN, (SELECT d.content FROM dictionary d WHERE d.contentId = l.name AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR FROM library l RIGHT JOIN libraryQuestion lq ON lq.libraryId = l.ID WHERE lq.questionId = :questionId";
 
-                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->bindParam(':questionId', $row["ID"], PDO::PARAM_INT);
-                $query->execute();
-                $libraries = $query->fetchAll();
+                $query_questionnaire = $host_questionnaire_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query_questionnaire->bindParam(':questionId', $row["ID"], PDO::PARAM_INT);
+                $query_questionnaire->execute();
+                $libraries = $query_questionnaire->fetchAll();
                 $libNameEn = array();
                 $libNameFr = array();
                 foreach($libraries as $library) {
@@ -97,16 +100,35 @@ class Question {
                 if ($libNameEn == "") $libNameEn = "None";
                 if ($libNameFr == "") $libNameFr = "Aucune";
 
+                $query_questionnaire = $host_questionnaire_db_link->prepare( "SELECT DISTINCT qst.ID FROM questionnaire qst RIGHT JOIN section s ON s.questionnaireId = qst.ID RIGHT JOIN questionSection qs ON qs.sectionId = s.ID WHERE qs.questionId = :questionId" );
+                $query_questionnaire->bindParam(':questionId', $row["ID"], PDO::PARAM_INT);
+                $query_questionnaire->execute();
+                $questionnaires = $query_questionnaire->fetchAll();
+                $questionnairesList = array();
+                foreach ($questionnaires as $questionnaire) {
+                    array_push($questionnairesList, $questionnaire["ID"]);
+                }
+
+                $questionLocked = 0;
+                if (count($questionnairesList) > 0) {
+                    $questionnairesList = implode(", ", $questionnairesList);
+                    $query = $host_db_link->prepare("SELECT COUNT(*) AS total FROM questionnairecontrol WHERE QuestionnaireDBSerNum IN ( $questionnairesList )");
+                    $query->execute();
+                    $questionLocked = $query->fetch();
+                    $questionLocked = intval($questionLocked["total"]);
+                }
+
                 $questionArray = array (
                     'serNum'				=> $row["ID"],
-                    'text_EN'				=> $row["text_EN"],
-                    'text_FR'				=> $row["text_FR"],
+                    'text_EN'				=> strip_tags($row["text_EN"]),
+                    'text_FR'				=> strip_tags($row["text_FR"]),
                     'private'				=> $row["private"],
                     'answertype_serNum'		=> $row["answertype_Id"],
                     'answertype_name_EN'	=> $row["answertype_name_EN"],
                     'answertype_name_FR'	=> $row["answertype_name_FR"],
                     'library_name_EN'		=> $libNameEn,
                     'library_name_FR'		=> $libNameFr,
+                    'locked'        		=> $questionLocked,
                 );
                 array_push($questions, $questionArray);
             }
@@ -238,34 +260,77 @@ class Question {
 
     /**
      *
-     * Deletes a question
+     * Mark a question as deleted. A question can only being marked as deleted if was never sent to a patient.
+     * Nothing should be ever deleted from the database!
      *
-     * @param integer $questionSerNum : the question serial number
+     * @param $questionId (ID of the question), $userId (ID of the user who requested the deletion)
      * @return array $response : response
      */
     public function deleteQuestion($questionId, $userId = -1) {
         try {
-
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $host_questionnaire_db_link = new PDO( QUESTIONNAIRE_DB_2019_DSN, QUESTIONNAIRE_DB_2019_USERNAME, QUESTIONNAIRE_DB_2019_PASSWORD );
+            $host_questionnaire_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            $query_questionnaire = $host_questionnaire_db_link->prepare("SELECT lastUpdated, updatedBy FROM question WHERE ID = :questionId;");
+            $query_questionnaire->bindParam(':questionId', $questionId, PDO::PARAM_INT);
+            $query_questionnaire->execute();
+            $lastUpdatedOrigin = $query_questionnaire->fetch();
+
             $query = $host_db_link->prepare("SELECT username FROM oauser WHERE OAUserSerNum = :userId");
             $query->bindParam(':userId', $userId, PDO::PARAM_INT);
             $query->execute();
             $username = $query->fetch();
             $username = $username["username"];
 
-            $host_db_link = new PDO( QUESTIONNAIRE_DB_2019_DSN, QUESTIONNAIRE_DB_2019_USERNAME, QUESTIONNAIRE_DB_2019_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-            $sql = "UPDATE question SET deleted = 1, deletedBy = :username, updatedBy = :username WHERE ID = :id ;";
-            $query = $host_db_link->prepare( $sql );
-            $query->bindParam(':username', $username, PDO::PARAM_STR);
-            $query->bindParam(':id', $questionId, PDO::PARAM_INT);
-            $query->execute();
+            $query_questionnaire = $host_questionnaire_db_link->prepare( "SELECT DISTINCT qst.ID FROM questionnaire qst RIGHT JOIN section s ON s.questionnaireId = qst.ID RIGHT JOIN questionSection qs ON qs.sectionId = s.ID WHERE qs.questionId = :questionId" );
+            $query_questionnaire->bindParam(':questionId', $questionId, PDO::PARAM_INT);
+            $query_questionnaire->execute();
+            $questionnaires = $query_questionnaire->fetchAll();
+            $questionnairesList = array();
+            foreach ($questionnaires as $questionnaire) {
+                array_push($questionnairesList, $questionnaire["ID"]);
+            }
 
-            $response['value'] = true; // Success
-            $response['message'] = null;
-            return $response;
+            $wasQuestionSent = false;
+            if (count($questionnairesList) > 0) {
+                $questionnairesList = implode(", ", $questionnairesList);
+                $query = $host_db_link->prepare("SELECT COUNT(*) AS total FROM questionnairecontrol WHERE QuestionnaireDBSerNum IN ( $questionnairesList )");
+                $query->execute();
+                $wasQuestionSent = $query->fetch();
+                $wasQuestionSent = intval($wasQuestionSent["total"]);
+            }
+
+            $query_questionnaire = $host_questionnaire_db_link->prepare("SELECT COUNT(*) AS total FROM question WHERE ID = :questionId AND lastUpdated = :lastUpdated AND updatedBy = :updatedBy;");
+            $query_questionnaire->bindParam(':questionId', $questionId, PDO::PARAM_INT);
+            $query_questionnaire->bindParam(':lastUpdated', $lastUpdatedOrigin["lastUpdated"], PDO::PARAM_STR);
+            $query_questionnaire->bindParam(':updatedBy', $lastUpdatedOrigin["updatedBy"], PDO::PARAM_STR);
+            $query_questionnaire->execute();
+            $nobodyUpdated = $query_questionnaire->fetch();
+            $nobodyUpdated = intval($nobodyUpdated["total"]);
+
+            if ($nobodyUpdated && !$wasQuestionSent){
+                $sql = "UPDATE question SET deleted = 1, deletedBy = :username, updatedBy = :username WHERE ID = :id ;";
+                $query_questionnaire = $host_questionnaire_db_link->prepare( $sql );
+                $query_questionnaire->bindParam(':username', $username, PDO::PARAM_STR);
+                $query_questionnaire->bindParam(':id', $questionId, PDO::PARAM_INT);
+                $query_questionnaire->execute();
+
+                $response['value'] = true; // Success
+                $response['message'] = null;
+                return $response;
+            }
+            else if (!$nobodyUpdated) {
+                $response['value'] = false; // failure
+                $response['message'] = "Somebody updated the question you are about to delete. Please verify and try again later.";
+                return $response;
+            } else {
+                $response['value'] = false; // failure
+                $response['message'] = "You cannot delete a question already sent to a patient.";
+                return $response;
+            }
 
         } catch (PDOException $e) {
             $response['value'] = false;
