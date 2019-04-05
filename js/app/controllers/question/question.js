@@ -77,9 +77,9 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 		};
 
 		// Call our API service to get the list of existing questions
-		questionnaireCollectionService.getQuestions().then(function (response) {
+		questionnaireCollectionService.getQuestions(Session.retrieveObject('user').id).then(function (response) {
 			$scope.questionList = response.data;
-			
+
 		}).catch(function(response) {
 			console.error('Error occurred getting question list:', response.status, response.data);
 		});
@@ -123,7 +123,7 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 			modalInstance.result.then(function () {
 				$scope.questionList = [];
 				// Call our API service to get the list of existing questions
-				questionnaireCollectionService.getQuestions().then(function (response) {
+				questionnaireCollectionService.getQuestions(Session.retrieveObject('user').id).then(function (response) {
 					$scope.questionList = response.data;
 				}).catch(function(response) {
 					console.error('Error occurred getting question list after modal close:', response.status, response.data);
@@ -137,23 +137,36 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 
 		// function to delete question
 		$scope.deleteQuestion = function (currentQuestion) {
-			$scope.questionToDelete = currentQuestion;
-			var modalInstance = $uibModal.open({
-				templateUrl: 'templates/questionnaire/delete.question.html',
-				controller: 'question.delete',
-				windowClass: 'deleteModal',
-				scope: $scope,
-				backdrop: 'static',
-			});
 
+
+			$scope.questionToDelete = currentQuestion;
+			var modalInstance;
+
+			if (currentQuestion.locked) {
+				modalInstance = $uibModal.open({
+					templateUrl: 'templates/questionnaire/cannot.delete.question.html',
+					controller: 'question.delete',
+					windowClass: 'deleteModal',
+					scope: $scope,
+					backdrop: 'static',
+				});
+			} else {
+				modalInstance = $uibModal.open({
+					templateUrl: 'templates/questionnaire/delete.question.html',
+					controller: 'question.delete',
+					windowClass: 'deleteModal',
+					scope: $scope,
+					backdrop: 'static',
+				});
+			}
 			// After delete, refresh the eduMat list
 			modalInstance.result.then(function () {
 				$scope.questionList = [];
 				// update data
-				questionnaireCollectionService.getQuestions().then(function (response) {
+				questionnaireCollectionService.getQuestions(Session.retrieveObject('user').id).then(function (response) {
 					$scope.questionList = response.data;
-				}).catch(function (response){
-					console.error('Error occurred getting question lsit after modal close:', response.status, response.data);
+				}).catch(function (response) {
+					console.error('Error occurred getting question list after modal close:', response.status, response.data);
 				});
 			});
 		};
