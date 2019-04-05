@@ -14,7 +14,7 @@
 		'options'					=> $_POST['options']
 	);
 
-	$answerTypeObj = new AnswerType; // Object
+	$answerTypeObj = new QuestionType; // Object
 
 	// Call function
 	$answerTypeObj->insertAnswerType($answerTypeArray);

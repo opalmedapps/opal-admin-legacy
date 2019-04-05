@@ -7,10 +7,10 @@
   $callback = $_GET['callback'];
   $userid = $_GET['userid'];
 
-  $answerType = new AnswerType(); // Object
+  $answerType = new QuestionType(); // Object
 
   // Call function
-  $answerTypeList = $answerType->getAnswerTypes($userid);
+  $answerTypeList = $answerType->getQuestionTypes($userid);
 
   // Callback to http request
   print $callback.'('.json_encode($answerTypeList).')';

@@ -74,7 +74,8 @@ class Question {
                     q.private,
                     q.typeId AS answertype_Id,
                     (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS answertype_name_EN,
-                    (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS answertype_name_FR
+                    (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS answertype_name_FR,
+                    q.final
                     FROM question q LEFT JOIN type t ON t.ID = q.typeId WHERE deleted = 0 AND (OAUserId = '".$userId."' OR private = 0);";
             $query_questionnaire = $host_questionnaire_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query_questionnaire->execute();
@@ -128,6 +129,7 @@ class Question {
                     'answertype_name_FR'	=> $row["answertype_name_FR"],
                     'library_name_EN'		=> $libNameEn,
                     'library_name_FR'		=> $libNameFr,
+                    'final'         		=> $row["final"],
                     'locked'        		=> $questionLocked,
                 );
                 array_push($questions, $questionArray);

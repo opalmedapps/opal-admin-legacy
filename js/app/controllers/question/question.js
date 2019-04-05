@@ -51,12 +51,19 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Public</p></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Private</p></div>';
 
+		var cellTemplateFinal = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Final</p></div>' +
+			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Draft</p></div>';
+
+		var cellTemplateLocked = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><div class="fa fa-lock text-danger"></div></div>' +
+			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><div class="fa fa-unlock text-success"></div></div>';
+
 		// Data binding for question table
 		$scope.gridLib = {
 			data: 'questionList',
 			columnDefs: [
-				{ field: 'serNum', displayName: 'ID', width: '4%', enableFiltering: false },
-				{ field: 'text_EN', displayName: 'Question (EN / FR)', cellTemplate: cellTemplateText, width: '55%' },
+				//{ field: 'serNum', displayName: 'ID', width: '4%', enableFiltering: false },
+				{ field: 'locked', displayName: '', cellTemplate: cellTemplateLocked, width: '2%', sortable: false, enableFiltering: false},
+				{ field: 'text_EN', displayName: 'Question (EN / FR)', cellTemplate: cellTemplateText, width: '49%' },
 				//{ field: 'group_name_EN', displayName: 'Group (EN / FR)', cellTemplate: cellTemplateGroupName, width: '25%' },
 				{ field: 'answertype_name_EN', displayName: 'Answer Type (EN / FR)', cellTemplate: cellTemplateAt, width: '13%' },
 				{ field: 'library_name_EN', displayName: 'Library (EN / FR)', cellTemplate: cellTemplateLib, width: '10%' },
@@ -64,6 +71,12 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 					field: 'private', displayName: 'Privacy', cellTemplate: cellTemplatePrivacy, width: '8%', filter: {
 						type: uiGridConstants.filter.SELECT,
 						selectOptions: [{ value: '1', label: 'Private' }, { value: '0', label: 'Public' }]
+					}
+				},
+				{
+					field: 'final', displayName: 'Status', cellTemplate: cellTemplateFinal, width: '8%', filter: {
+						type: uiGridConstants.filter.SELECT,
+						selectOptions: [{ value: '1', label: 'Final' }, { value: '0', label: 'Draft' }]
 					}
 				},
 				{ name: 'Operations', width: '10%', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false }
