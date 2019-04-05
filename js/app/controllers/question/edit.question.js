@@ -99,7 +99,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		});
 
 		// Call our API service to get the list of existing answer types 
-		questionnaireCollectionService.getAnswerTypes(userId).then(function (response) {
+		questionnaireCollectionService.getQuestionTypes(userId).then(function (response) {
 			$scope.atFilterList = response.data;
 		}).catch(function (response){
 			console.error('Error occurred getting answer types:', response.status, response.data);

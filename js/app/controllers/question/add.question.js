@@ -184,7 +184,7 @@ angular.module('opalAdmin.controllers.question.add', ['ngAnimate', 'ngSanitize',
 		};
 
 		// questionnaire API: retrieve data
-		questionnaireCollectionService.getAnswerTypes(userid).then(function (response) {
+		questionnaireCollectionService.getQuestionTypes(userid).then(function (response) {
 			$scope.atFilterList = response.data;
 		}).catch(function(response) {
 			console.error('Error occurred getting answer types:', response.status, response.data);
@@ -233,12 +233,12 @@ angular.module('opalAdmin.controllers.question.add', ['ngAnimate', 'ngSanitize',
 				// write in to db
 				$.ajax({
 					type: "POST",
-					url: "php/questionnaire/insert.answer_type.php",
+					url: "php/questionnaire/insert.question_type.php",
 					data: $scope.newAnswerType,
 					success: function () {
 						alert('Successfully added the new answer type. Please find your new answer type in the radio button form above.');
 						// update answer type list
-						questionnaireCollectionService.getAnswerTypes(userid).then(function (response) {
+						questionnaireCollectionService.getQuestionTypes(userid).then(function (response) {
 							$scope.atFilterList = response.data;
 						}).catch(function(response) {
 							console.error('Error occurred getting answer types:', response.status, response.data);
