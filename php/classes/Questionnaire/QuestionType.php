@@ -2,9 +2,9 @@
 
 /**
  *
- * Questionnaire-AnswerType class 
+ * Questionnaire-AnswerType class
  */
-class AnswerType {
+class QuestionType {
 
 	/**
      *
@@ -14,7 +14,7 @@ class AnswerType {
      * @return void
      */
 	public function insertAnswerType($answerType){
-		
+
 		// Properties
 		$name_EN 			= $answerType['name_EN'];
 		$name_FR 			= $answerType['name_FR'];
@@ -102,54 +102,45 @@ class AnswerType {
      * @param integer $userId : the user id
      * @return array $answerTypes : the list of existing answer types
      */
-	public function getAnswerTypes($userid){
+	public function getQuestionTypes($userid){
 		$answerTypes = array();
 		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $host_questionnaire_db_link = new PDO( QUESTIONNAIRE_DB_2019_DSN, QUESTIONNAIRE_DB_2019_USERNAME, QUESTIONNAIRE_DB_2019_PASSWORD );
+            $host_questionnaire_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			$sql = "
-				SELECT
-					serNum,
-					name_EN,
-					name_FR,
-					private,
-					category_EN,
-					category_FR,
-					created_by
-				FROM
-					QuestionnaireAnswerType
-				WHERE
-					private = 0
-				OR
-					created_by = $userid
-			";
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
-
-			// fetch
-			while($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)){
-				$serNum = $data[0];
-				$name_EN = $data[1];
-				$name_FR = $data[2];
-				$private = $data[3];
-				$category_EN = $data[4];
-				$category_FR = $data[5];
-				$created_by = $data[6];
-
-
+                SELECT
+                tt.ID,
+                (SELECT d.content FROM dictionary d WHERE d.contentId = tt.name AND d.languageId = 2) AS name_EN,
+                (SELECT d.content FROM dictionary d WHERE d.contentId = tt.name AND d.languageId = 1) AS name_FR,
+                tt.private,
+                (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = 2) AS type_EN,
+                (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = 1) AS type_FR,
+                dt.name AS tableName
+                FROM typeTemplate tt
+                LEFT JOIN type t ON t.ID = tt.typeId
+                LEFT JOIN definitionTable dt ON dt.ID = t.definitionTableId
+                WHERE
+                tt.private = 0
+                OR
+                tt.OAUserId = :userId;";
+            $query_questionnaire = $host_questionnaire_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query_questionnaire->bindParam(':userId', $userid, PDO::PARAM_INT);
+            $query_questionnaire->execute();
+            $questionTypes = $query_questionnaire->fetchAll();
+            foreach ($questionTypes as $row) {
                 $curr_qt = array(
-                    'serNum'        => $serNum,
-                    'name_EN'       => $name_EN,
-                    'name_FR'       => $name_FR,
-                    'private'       => $private,
-                    'category_EN'   => $category_EN,
-                    'category_FR'   => $category_FR,
-                    'created_by'    => $created_by,
+                    'serNum'        => $row["ID"],
+                    'name_EN'       => $row["name_EN"],
+                    'name_FR'       => $row["name_FR"],
+                    'private'       => $row["private"],
+                    'category_EN'   => $row["type_EN"],
+                    'category_FR'   => $row["type_FR"],
+                    'created_by'    => $userid,
                     'options'       => array()
                 );
 
 				// options for answer type
-				if($category_EN === 'Short Answer' || $category_EN === 'Time' || $category_FR === 'Date'){
+				/*if($category_EN === 'Short Answer' || $category_EN === 'Time' || $category_FR === 'Date'){
 					// no option
 				}
 				else {
@@ -179,7 +170,7 @@ class AnswerType {
 						);
 						array_push($curr_qt['options'], $optext);
 					}
-				}
+				}*/
 				array_push($answerTypes, $curr_qt);
 			}
 			return $answerTypes;
