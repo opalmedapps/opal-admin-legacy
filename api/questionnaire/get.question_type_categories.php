@@ -6,7 +6,7 @@
   // Retrieve form param
   $callback = $_GET['callback'];
 
-  $answerType = new AnswerType(); // Object
+  $answerType = new QuestionType(); // Object
 
   // Call function
   $answerTypeCategoryList = $answerType->getAnswerTypeCategories();

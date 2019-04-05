@@ -598,10 +598,10 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
-		questionnaireAPI.getAnswerTypes = function (userid) {
+		questionnaireAPI.getQuestionTypes = function (userid) {
 			return $http({
 				method: 'JSONP',
-				url: "api/questionnaire/get.answer_types.php?callback=JSON_CALLBACK&userid=" + userid
+				url: "api/questionnaire/get.question_types.php?callback=JSON_CALLBACK&userid=" + userid
 			});
 		};
 
@@ -615,7 +615,7 @@ angular.module('opalAdmin.collections', [])
 		questionnaireAPI.getAnswerTypeCategories = function () {
 			return $http({
 				method: 'JSONP',
-				url: "api/questionnaire/get.answer_type_categories.php?callback=JSON_CALLBACK"
+				url: "api/questionnaire/get.question_type_categories.php?callback=JSON_CALLBACK"
 			});
 		};
 
