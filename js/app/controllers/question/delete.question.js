@@ -17,7 +17,26 @@ angular.module('opalAdmin.controllers.question.delete', ['ngAnimate', 'ngSanitiz
 					}
 					else {
 						$scope.setBannerClass('danger');
-						$scope.$parent.bannerMessage = response.message;
+						var errMsg = "";
+						console.log(response.message);
+						switch(response.message) {
+							case 401:
+								errMsg = "You are not authentified!";
+								break;
+							case 403:
+								errMsg = "You do not have the permission to delete this question.";
+								break;
+							case 409:
+								errMsg = "The question was already modified by someone else. Please verify and try again.";
+								break;
+							case 423:
+								errMsg = "The question was already sent and is now locked.";
+								break;
+							default:
+								errMsg = response.message;
+						}
+
+						$scope.$parent.bannerMessage = errMsg;
 					}
 					$scope.showBanner();
 					$uibModalInstance.close();
