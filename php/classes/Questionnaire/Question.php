@@ -269,24 +269,52 @@ class Question {
      * @return array $response : response
      */
     public function deleteQuestion($questionId, $userId = -1) {
+        if ($userId == -1) {
+            $response['value'] = false; // User is not identified.
+            $response['message'] = 401;
+            return $response;
+        }
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $host_questionnaire_db_link = new PDO( QUESTIONNAIRE_DB_2019_DSN, QUESTIONNAIRE_DB_2019_USERNAME, QUESTIONNAIRE_DB_2019_PASSWORD );
             $host_questionnaire_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
+            /*
+             * Storing the last updated time during the process of validation of deletion in case somebody else modified
+             * the question.
+             * */
             $query_questionnaire = $host_questionnaire_db_link->prepare("SELECT lastUpdated, updatedBy FROM question WHERE ID = :questionId;");
             $query_questionnaire->bindParam(':questionId', $questionId, PDO::PARAM_INT);
             $query_questionnaire->execute();
             $lastUpdatedOrigin = $query_questionnaire->fetch();
 
+            /*
+             * If the user is trying to delete a private question that does not belongs to him/ger, reject the request
+             * */
+            $query_questionnaire = $host_questionnaire_db_link->prepare("SELECT COUNT(*) AS total FROM question WHERE ID = :questionId AND (OAUserId = :userId OR private = 0);");
+            $query_questionnaire->bindParam(':questionId', $questionId, PDO::PARAM_INT);
+            $query_questionnaire->bindParam(':userId', $userId, PDO::PARAM_INT);
+            $query_questionnaire->execute();
+            $accessAuthorized = $query_questionnaire->fetch();
+            $accessAuthorized = (intval($accessAuthorized["total"]) > 0?true:false);
+
+            if (!$accessAuthorized) {
+                $response['value'] = false; // Unauthorized deletion request.
+                $response['message'] = 403;
+                return $response;
+            }
+
+            /* Loading the username of the user requesting the deletion */
             $query = $host_db_link->prepare("SELECT username FROM oauser WHERE OAUserSerNum = :userId");
             $query->bindParam(':userId', $userId, PDO::PARAM_INT);
             $query->execute();
             $username = $query->fetch();
             $username = $username["username"];
 
-
+            /*
+             * Listing all the questionnaires with the question to be deleted.
+             * */
             $query_questionnaire = $host_questionnaire_db_link->prepare( "SELECT DISTINCT qst.ID FROM questionnaire qst RIGHT JOIN section s ON s.questionnaireId = qst.ID RIGHT JOIN questionSection qs ON qs.sectionId = s.ID WHERE qs.questionId = :questionId" );
             $query_questionnaire->bindParam(':questionId', $questionId, PDO::PARAM_INT);
             $query_questionnaire->execute();
@@ -296,6 +324,7 @@ class Question {
                 array_push($questionnairesList, $questionnaire["ID"]);
             }
 
+            /*If the question was already sent to any patient, it cannot be deleted*/
             $wasQuestionSent = false;
             if (count($questionnairesList) > 0) {
                 $questionnairesList = implode(", ", $questionnairesList);
@@ -305,6 +334,7 @@ class Question {
                 $wasQuestionSent = intval($wasQuestionSent["total"]);
             }
 
+            /* if the question was not updated during the verification process, it can be deleted */
             $query_questionnaire = $host_questionnaire_db_link->prepare("SELECT COUNT(*) AS total FROM question WHERE ID = :questionId AND lastUpdated = :lastUpdated AND updatedBy = :updatedBy;");
             $query_questionnaire->bindParam(':questionId', $questionId, PDO::PARAM_INT);
             $query_questionnaire->bindParam(':lastUpdated', $lastUpdatedOrigin["lastUpdated"], PDO::PARAM_STR);
@@ -321,16 +351,16 @@ class Question {
                 $query_questionnaire->execute();
 
                 $response['value'] = true; // Success
-                $response['message'] = null;
+                $response['message'] = 200;
                 return $response;
             }
             else if (!$nobodyUpdated) {
-                $response['value'] = false; // failure
-                $response['message'] = "Somebody updated the question you are about to delete. Please verify and try again later.";
+                $response['value'] = false; // conflict error. Somebody already updated the question.
+                $response['message'] = 409;
                 return $response;
             } else {
-                $response['value'] = false; // failure
-                $response['message'] = "You cannot delete a question already sent to a patient.";
+                $response['value'] = false; // Question locked.
+                $response['message'] = 423;
                 return $response;
             }
 

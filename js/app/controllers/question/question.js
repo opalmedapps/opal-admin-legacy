@@ -51,11 +51,11 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Public</p></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Private</p></div>';
 
-		var cellTemplateFinal = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Final</p></div>' +
-			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Draft</p></div>';
+		var cellTemplateFinal = '<div class="ui-grid-cell-contents" ng-show="row.entity.final == 1"><p>Final</p></div>' +
+			'<div class="ui-grid-cell-contents" ng-show="row.entity.final == 0"><p>Draft</p></div>';
 
-		var cellTemplateLocked = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><div class="fa fa-lock text-danger"></div></div>' +
-			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><div class="fa fa-unlock text-success"></div></div>';
+		var cellTemplateLocked = '<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 1"><div class="fa fa-lock text-danger"></div></div>' +
+			'<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 0"><div class="fa fa-unlock text-success"></div></div>';
 
 		// Data binding for question table
 		$scope.gridLib = {
