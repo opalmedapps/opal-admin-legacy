@@ -41,15 +41,15 @@
 			</div>
 		</div>
 
-    <!-- SECTION: Answer type -->
+    <!-- SECTION: Response type -->
 		<div uib-accordion-group is-open="answerTypeSection.open">
 			<uib-accordion-heading>
 				<div>
-					<strong>Answer Type</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': answerTypeSection.open, 'glyphicon-chevron-right': !answerTypeSection.open}"></i>
+					<strong>Response Type</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': answerTypeSection.open, 'glyphicon-chevron-right': !answerTypeSection.open}"></i>
 				</div>
 			</uib-accordion-heading>
 			<div class="alert alert-info" role="alert">
-        <strong>Current Answer Type</strong><br>
+        <strong>Current Response Type</strong><br>
         <p>
           <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
           <span>{{question.answertype_name_EN}} / {{question.answertype_name_FR}}</span>
@@ -58,7 +58,7 @@
 			<div class="list-space">
 				<div class="input-group">
 					<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-					<input class="form-control" type="text" ng-model="atEntered" ng-change="searchAt(atEntered)" placeholder="Search Answer Type"
+					<input class="form-control" type="text" ng-model="atEntered" ng-change="searchAt(atEntered)" placeholder="Search Response Type"
 					/>
 				</div>
 				<ul class="list-items">
@@ -79,7 +79,7 @@
 				</div>
 			</uib-accordion-heading>
 			<div class="alert alert-info" role="alert">
-        <strong>Current Answer Type</strong><br>
+        <strong>Current Response Type</strong><br>
         <p>
           <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
           <span ng-if="!groupSelected_name_EN">{{question.group_name_EN}} / {{question.group_name_FR}}</span>
