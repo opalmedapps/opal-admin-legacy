@@ -1,6 +1,6 @@
 <?php
 /**
- * Created by PhpStorm.
+ * Database Opal access class
  * User: Dominic Bourdua
  * Date: 4/10/2019
  * Time: 1:00 PM
