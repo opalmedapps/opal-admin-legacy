@@ -163,25 +163,8 @@ class QuestionType {
      *
      * @return array $answerTypeCategories : the list of answer type categories
      */
-    public function getAnswerTypeCategories(){
-        $answerTypeCategories = array();
-
-        try {
-            $host_questionnaire_db_link = new PDO( QUESTIONNAIRE_DB_2019_DSN, QUESTIONNAIRE_DB_2019_USERNAME, QUESTIONNAIRE_DB_2019_PASSWORD );
-            $host_questionnaire_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "SELECT ID, (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = 2) AS category_EN, (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = 1) AS category_FR FROM type t";
-
-            $query_questionnaire = $host_questionnaire_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query_questionnaire->bindParam(':userId', $userid, PDO::PARAM_INT);
-            $query_questionnaire->execute();
-            $answerTypeCategories = $query_questionnaire->fetchAll(PDO::FETCH_ASSOC);
-
-            return $answerTypeCategories;
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $answerTypeCategories;
-        }
+    public function getQuestionTypeCategories(){
+        return $this->questionnaireDB->getQuestionTypeCategories();
     }
 }
 
