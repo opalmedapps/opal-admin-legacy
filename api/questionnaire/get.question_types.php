@@ -5,13 +5,13 @@
 
   // Retrieve FORM params
   $callback = $_GET['callback'];
-  $userid = $_GET['userid'];
+  $userid = strip_tags($_GET['userid']);
 
-  $answerType = new QuestionType(); // Object
+  $questionType = new QuestionType($userid); // Object
 
   // Call function
-  $answerTypeList = $answerType->getQuestionTypes($userid);
+  $questionTypeList = $questionType->getQuestionTypes();
 
   // Callback to http request
-  print $callback.'('.json_encode($answerTypeList).')';
+  print $callback.'('.json_encode($questionTypeList).')';
 ?>

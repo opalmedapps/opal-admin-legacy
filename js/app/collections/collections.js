@@ -605,52 +605,6 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
-
-
-
-		/*questionnaireAPI.getQuestionTypes = function (userid) {
-			$.ajax({
-				type: "POST",
-				url: "api/questionnaire/get.question_types.php",
-				data: {"callback": "JSON_CALLBACK", "userid": userid},
-				/*success: function (response) {
-					response = JSON.parse(response);
-					// Show success or failure depending on response
-					if (response.value) {
-						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = "Successfully deleted \"" + $scope.questionToDelete.text_EN + "/ " + $scope.questionToDelete.text_FR + "\"!";
-					}
-					else {
-						$scope.setBannerClass('danger');
-						var errMsg = "";
-						console.log(response.message);
-						switch(response.message) {
-							case 401:
-								errMsg = "You are not authentified!";
-								break;
-							case 403:
-								errMsg = "You do not have the permission to delete this question.";
-								break;
-							case 409:
-								errMsg = "The question was already modified by someone else. Please verify and try again.";
-								break;
-							case 423:
-								errMsg = "The question was already sent and is now locked.";
-								break;
-							default:
-								errMsg = response.message;
-						}
-
-						$scope.$parent.bannerMessage = errMsg;
-					}
-					$scope.showBanner();
-					$uibModalInstance.close();
-				}
-			});
-		};*/
-
-
-
 		questionnaireAPI.getQuestionGroupCategories = function () {
 			return $http({
 				method: 'JSONP',
