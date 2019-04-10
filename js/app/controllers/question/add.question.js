@@ -232,8 +232,8 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	$scope.addNewAt = function (atCatSelected) {
 		// Binding categories
-		$scope.newAnswerType.category_EN = atCatSelected.category_EN;
-		$scope.newAnswerType.category_FR = atCatSelected.category_FR;
+		$scope.newAnswerType.ID = atCatSelected.ID;
+		$scope.newAnswerType.userId = Session.retrieveObject('user').id;
 
 		// Prompt to confirm user's action
 		var confirmation = confirm("Confirm to create the new response type [" + $scope.newAnswerType.name_EN + "] with category [" + atCatSelected.category_EN + "].");
@@ -253,12 +253,9 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 					});
 				},
 				error: function () {
-					alert("Something went wrong.");
+					alert("A problem occurred. Please try again.r");
 				}
 			});
-		} else {
-			// do nothing
-			console.log("Cancel creating new response type.")
 		}
 	};
 
