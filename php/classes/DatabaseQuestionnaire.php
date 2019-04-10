@@ -133,4 +133,27 @@ class DatabaseQuestionnaire extends DatabaseAccess
             die();
         }
     }
+
+    /*
+     * This function returns all the general categories types of question (slider, checkbox, etc)
+     * @param   Nothing
+     * @return  array of types
+     * */
+    function getQuestionTypeCategories() {
+        $sql = "SELECT
+            ID,
+            (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS category_EN,
+            (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS category_FR
+            FROM type t";
+
+        try {
+            $stmt = $this->connection->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (PDOException $e) {
+            echo "Fetching options of the question type failed.\r\nError : " . $e->getMessage();
+            die();
+        }
+    }
 }

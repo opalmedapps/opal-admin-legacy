@@ -9,7 +9,7 @@
   $answerType = new QuestionType(); // Object
 
   // Call function
-  $answerTypeCategoryList = $answerType->getAnswerTypeCategories();
+  $answerTypeCategoryList = $answerType->getQuestionTypeCategories();
 
   // Callback to http request
   print $callback.'('.json_encode($answerTypeCategoryList).')';
