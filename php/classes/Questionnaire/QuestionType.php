@@ -6,6 +6,36 @@
  */
 class QuestionType {
 
+    protected $questionnaireDB;
+    protected $opalDB;
+
+    public function __construct($userId = "-1") {
+        $this->questionnaireDB = new DatabaseQuestionnaire(
+            QUESTIONNAIRE_DB_2019_HOST,
+            QUESTIONNAIRE_DB_2019_NAME,
+            QUESTIONNAIRE_DB_2019_PORT,
+            QUESTIONNAIRE_DB_2019_USERNAME,
+            QUESTIONNAIRE_DB_2019_PASSWORD
+        );
+        $this->opalDB = new DatabaseOpal(
+            OPAL_DB_HOST,
+            OPAL_DB_NAME,
+            OPAL_DB_PORT,
+            OPAL_DB_USERNAME,
+            OPAL_DB_PASSWORD
+        );
+
+        $this->setUserInfo($userId);
+    }
+
+    protected function setUserInfo($userId) {
+        $userInfo = $this->opalDB->getUserInfo($userId);
+        $this->opalDB->setUserId($userInfo["userId"]);
+        $this->opalDB->setUsername($userInfo["username"]);
+        $this->questionnaireDB->setUserId($userInfo["userId"]);
+        $this->questionnaireDB->setUsername($userInfo["username"]);
+    }
+
     /**
      *
      * Inserts a new answer type
@@ -14,20 +44,13 @@ class QuestionType {
      * @return void
      */
     public function insertAnswerType($answerType){
-
-        // Properties
-        $name_EN 			= $answerType['name_EN'];
-        $name_FR 			= $answerType['name_FR'];
-        $category_EN 		= $answerType['category_EN'];
-        $category_FR 		= $answerType['category_FR'];
-        $private 			= $answerType['private'];
-        $last_updated_by 	= $answerType['last_updated_by'];
-        $created_by 		= $answerType['created_by'];
-        $options 			= $answerType['options'];
-
         try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $host_questionnaire_db_link = new PDO( QUESTIONNAIRE_DB_2019_DSN, QUESTIONNAIRE_DB_2019_USERNAME, QUESTIONNAIRE_DB_2019_PASSWORD );
+            $host_questionnaire_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+            //$temp = $newDB->getTableId(TYPE_TEMPLATE_TABLE);
+            //$minCaptionId = $newDB->addToDictionary($minCaption, $minCaption, $temp);
+
             $sql = "
 				INSERT INTO
 					QuestionnaireAnswerType (
@@ -50,8 +73,9 @@ class QuestionType {
 				)
 			";
 
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
+            $query_questionnaire = $host_questionnaire_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query_questionnaire->bindParam(':userId', $userid, PDO::PARAM_INT);
+            $query_questionnaire->execute();
 
             // add answer options
             if ($options) {
@@ -102,80 +126,35 @@ class QuestionType {
      * @param integer $userId : the user id
      * @return array $questionTypes : the list of existing answer types
      */
-    public function getQuestionTypes($userid){
+    public function getQuestionTypes(){
         $questionTypes = array();
-        try {
-            $host_questionnaire_db_link = new PDO( QUESTIONNAIRE_DB_2019_DSN, QUESTIONNAIRE_DB_2019_USERNAME, QUESTIONNAIRE_DB_2019_PASSWORD );
-            $host_questionnaire_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                        SELECT
-                        tt.ID AS serNum,
-                        t.ID as typeSerNum,
-                        (SELECT d.content FROM dictionary d WHERE d.contentId = tt.name AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
-                        (SELECT d.content FROM dictionary d WHERE d.contentId = tt.name AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR,
-                        tt.private,
-                        (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS category_EN,
-                        (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS category_FR,
-                        tts.minValue,
-                        tts.maxValue,
-                        tts.increment,
-                        (SELECT d.content FROM dictionary d WHERE d.contentId = tts.minCaption AND d.languageId = ".ENGLISH_LANGUAGE.") AS minCaption_EN,
-                        (SELECT d.content FROM dictionary d WHERE d.contentId = tts.minCaption AND d.languageId = ".FRENCH_LANGUAGE.") AS minCaption_FR,
-                        (SELECT d.content FROM dictionary d WHERE d.contentId = tts.maxCaption AND d.languageId = ".ENGLISH_LANGUAGE.") AS maxCaption_EN,
-                        (SELECT d.content FROM dictionary d WHERE d.contentId = tts.maxCaption AND d.languageId = ".FRENCH_LANGUAGE.") AS maxCaption_FR,
-                        dt1.name AS tableName,
-                        dt2.name AS subTableName,
-                        tt.OAUserId AS created_by
-                        FROM typeTemplate tt
-                        LEFT JOIN type t ON t.ID = tt.typeId
-                        LEFT JOIN definitionTable dt1 ON dt1.ID = t.templateTableId
-                        LEFT JOIN definitionTable dt2 ON dt2.ID = t.templateSubTableId
-                        LEFT JOIN typeTemplateSlider tts ON tts.typeTemplateId = tt.ID
-                        WHERE
-                        tt.private = 0
-                        OR
-                        tt.OAUserId = :userId;";
-            $query_questionnaire = $host_questionnaire_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query_questionnaire->bindParam(':userId', $userid, PDO::PARAM_INT);
-            $query_questionnaire->execute();
-            $listTypes = $query_questionnaire->fetchAll(PDO::FETCH_ASSOC);
-            foreach ($listTypes as $row) {
-                $temp = array(
-                    'serNum'        => $row["serNum"],
-                    'typeSerNum'    => $row["typeSerNum"],
-                    'name_EN'       => $row["name_EN"],
-                    'name_FR'       => $row["name_FR"],
-                    'private'       => $row["private"],
-                    'category_EN'   => $row["category_EN"],
-                    'category_FR'   => $row["category_FR"],
-                    'minCaption_EN'   => $row["minCaption_EN"],
-                    'minCaption_FR'   => $row["minCaption_FR"],
-                    'maxCaption_EN'   => $row["maxCaption_EN"],
-                    'maxCaption_FR'   => $row["maxCaption_FR"],
-                    'created_by'    => $row["created_by"],
-                    'minValue'      => $row["minValue"],
-                    'maxValue'      => $row["maxValue"],
-                    'increment'     => $row["increment"],
-                );
+        $result = $this->questionnaireDB->getQuestionTypes();
+        foreach ($result as $row) {
+            $temp = array(
+                'serNum'        => $row["serNum"],
+                'typeSerNum'    => $row["typeSerNum"],
+                'name_EN'       => $row["name_EN"],
+                'name_FR'       => $row["name_FR"],
+                'private'       => $row["private"],
+                'category_EN'   => $row["category_EN"],
+                'category_FR'   => $row["category_FR"],
+                'minCaption_EN'   => $row["minCaption_EN"],
+                'minCaption_FR'   => $row["minCaption_FR"],
+                'maxCaption_EN'   => $row["maxCaption_EN"],
+                'maxCaption_FR'   => $row["maxCaption_FR"],
+                'created_by'    => $row["created_by"],
+                'minValue'      => $row["minValue"],
+                'maxValue'      => $row["maxValue"],
+                'increment'     => $row["increment"],
+            );
 
-                // if the table has a subtable, returns its options
-                if($row["subTableName"] != "") {
-                    $subSql = "SELECT st.*, (SELECT d.content FROM dictionary d WHERE d.contentId = st.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN, (SELECT d.content FROM dictionary d WHERE d.contentId = st.description AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR FROM ".$row["subTableName"]." st WHERE parentTableId = :subTableId ORDER BY st.order;";
-                    $query_questionnaire = $host_questionnaire_db_link->prepare($subSql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                    $query_questionnaire->bindParam(':subTableId', $row["serNum"]);
-                    $query_questionnaire->execute();
-                    $subQuestions = $query_questionnaire->fetchAll(PDO::FETCH_ASSOC);
-                    $temp["options"] = $subQuestions;
-
-                }
-                array_push($questionTypes, $temp);
+            // if the table has a subtable, returns its options
+            if($row["subTableName"] != "") {
+                $temp["options"] = $this->questionnaireDB->getQuestionTypesOptions($row["serNum"], $row["subTableName"]);
             }
-            return $questionTypes;
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $questionTypes;
+            array_push($questionTypes, $temp);
         }
-
+        return $questionTypes;
     }
 
     /**
