@@ -29,4 +29,18 @@ class DatabaseOpal extends DatabaseAccess {
             die();
         }
     }
+
+    function getLockedQuestionnaires($questionnairesList) {
+        $sql = "SELECT COUNT(*) AS total FROM questionnairecontrol WHERE QuestionnaireDBSerNum IN ( :questionnaireList )";
+        try {
+            $stmt = $this->connection->prepare($sql);
+            $stmt->bindParam(':questionnaireList', $questionnairesList, PDO::PARAM_STR);
+            $stmt->execute();
+            return $stmt->fetch();
+        }
+        catch(PDOException $e) {
+            echo "Fetching locked questionnaires failed.\r\nError : ". $e->getMessage();
+            die();
+        }
+    }
 }

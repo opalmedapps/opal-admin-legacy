@@ -72,43 +72,10 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  array of question types
      * */
     function getQuestionTypes() {
-        if (!$this->isUserSetUp) {
-            echo "Fetching Questions Types failed.\r\nNo User ID specified.";
-            die();
-        }
-        $sql = "SELECT
-        tt.ID AS serNum, t.ID as typeSerNum,
-        (SELECT d.content FROM dictionary d WHERE d.contentId = tt.name AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
-        (SELECT d.content FROM dictionary d WHERE d.contentId = tt.name AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR,
-        tt.private,
-        (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS category_EN,
-        (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS category_FR,
-        tts.minValue,
-        tts.maxValue,
-        tts.increment,
-        (SELECT d.content FROM dictionary d WHERE d.contentId = tts.minCaption AND d.languageId = ".ENGLISH_LANGUAGE.") AS minCaption_EN,
-        (SELECT d.content FROM dictionary d WHERE d.contentId = tts.minCaption AND d.languageId = ".FRENCH_LANGUAGE.") AS minCaption_FR,
-        (SELECT d.content FROM dictionary d WHERE d.contentId = tts.maxCaption AND d.languageId = ".ENGLISH_LANGUAGE.") AS maxCaption_EN,
-        (SELECT d.content FROM dictionary d WHERE d.contentId = tts.maxCaption AND d.languageId = ".FRENCH_LANGUAGE.") AS maxCaption_FR,
-        dt1.name AS tableName,
-        dt2.name AS subTableName,
-        tt.OAUserId AS created_by
-        FROM typeTemplate tt
-        LEFT JOIN type t ON t.ID = tt.typeId
-        LEFT JOIN definitionTable dt1 ON dt1.ID = t.templateTableId
-        LEFT JOIN definitionTable dt2 ON dt2.ID = t.templateSubTableId
-        LEFT JOIN typeTemplateSlider tts ON tts.typeTemplateId = tt.ID
-        WHERE tt.private = 0 OR tt.OAUserId = :userId;";
-
-        try {
-            $stmt = $this->connection->prepare($sql);
-            $stmt->bindParam(':userId', $this->userId, PDO::PARAM_INT);
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch(PDOException $e) {
-            echo "Fetching Questions Types failed.\r\nError : " . $e->getMessage();
-            die();
-        }
+        return $this->fetchAll(SQL_QUESTIONNAIRE_GET_QUESTION_TYPES,
+            array(
+                array("parameter"=>":userId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
+            ));
     }
 
     /*
@@ -118,20 +85,10 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * */
     function getQuestionTypesOptions($tableId, $subTableName) {
         $subTableName = strip_tags($subTableName);
-        $subSql = "SELECT st.*,
-        (SELECT d.content FROM dictionary d WHERE d.contentId = st.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
-        (SELECT d.content FROM dictionary d WHERE d.contentId = st.description AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR
-        FROM ".$subTableName." st WHERE parentTableId = :subTableId ORDER BY st.order;";
-
-        try {
-            $stmt = $this->connection->prepare($subSql);
-            $stmt->bindParam(':subTableId', $tableId, PDO::PARAM_INT);
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch(PDOException $e) {
-            echo "Fetching options of the question type failed.\r\nError : " . $e->getMessage();
-            die();
-        }
+        $subSql = str_replace("%%SUBTABLENAME%%", $subTableName, SQL_QUESTIONNAIRE_GET_QUESTION_TYPE_OPTIONS);
+        return $this->fetchAll($subSql, array(
+            array("parameter"=>":subTableId","variable"=>$tableId,"data_type"=>PDO::PARAM_INT),
+        ));
     }
 
     /*
@@ -140,20 +97,99 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  array of types
      * */
     function getQuestionTypeCategories() {
-        $sql = "SELECT
-            ID,
-            (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS category_EN,
-            (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS category_FR
-            FROM type t";
+        return $this->fetchAll(SQL_QUESTIONNAIRE_GET_QUESTION_TYPES_CATEGORIES);
+    }
 
-        try {
-            $stmt = $this->connection->prepare($sql);
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    /*
+     * This function lists all the questions to be displayed in a listing
+     * @param   none
+     * @return  array of questions
+     * */
+    function fetchAllQuestions() {
+        return $this->fetchAll(SQL_QUESTIONNAIRE_FETCH_ALL_QUESTIONS,
+            array(
+                array("parameter"=>":userId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
 
-        } catch (PDOException $e) {
-            echo "Fetching options of the question type failed.\r\nError : " . $e->getMessage();
-            die();
-        }
+    /*
+     * This function fetch all the libraries to which a question is attached if the user is authorized to list
+     * @param   Id of a question (int)
+     * @return  list of libraries (array)
+     * */
+    function fetchLibrariesQuestion($questionId) {
+        return $this->fetchAll(SQL_QUESTIONNAIRE_FETCH_LIBRARIES_QUESTION,
+            array(
+                array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":userId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    /*
+     * This function fetch all the questionnaires ID to which a question is attached if the user is authorized to list
+     * @param   ID of a question (int)
+     * @return  list of questionnaires (array)
+     * */
+    function fetchQuestionnairesIdQuestion($questionId) {
+        return $this->fetchAll(SQL_QUESTIONNAIRE_FETCH_QUESTIONNAIRES_ID_QUESTION,
+            array(
+                array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":userId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    /*
+     * This function returns the last time a specific table was updated.
+     * @param   string of the table name
+     * @return  array of last time it was updated.
+     * */
+    function getLastTimeTableUpdated($tableName, $idFromTable)
+    {
+        $sql = str_replace("%%TABLENAME%%", strip_tags($tableName), SQL_QUESTIONNAIRE_GET_LAST_TIME_TABLE_UPDATED);
+        return $this->fetch($sql, array(
+            array("parameter"=>":ID","variable"=>$idFromTable,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * This function look if a specific record was updated since a specific time before another operation of
+     * modification can occur. It is done to prevent two users who tried to update the same record on the same table
+     * on the same time to erase the modification, based on a FIFO priority.
+     * @param   Table name to look at (string)
+     *          ID of the table (BIGINT)
+     *          last time the record was updated (string)
+     *          name of the persion who updated the record (string)
+     * @return  total of modification made: should be 0 or 1 (array)
+     * */
+    function canRecordBeUpdated($tableName, $tableId, $lastUpdated, $updatedBy) {
+        $sql = str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_CAN_RECORD_BE_UPDATED);
+        return $this->fetch($sql, array(
+            array("parameter"=>":tableId","variable"=>$tableId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":lastUpdated","variable"=>$lastUpdated,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":updatedBy","variable"=>$updatedBy,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    /*
+     * This function marks a specific record in a specific table as deleted.
+     *
+     * WARNING!!! No record should be EVER be removed from the questionnaire database! It should only being marked as
+     * being deleted ONLY  after it was verified the record is not locked, the user has the proper authorization and
+     * no more than one user is doing modification on it at a specific moment. Not following the proper procedure will
+     * have some serious impact on the integrity of the database and its records.
+     *
+     * REMEMBER !!! NO DELETE STATEMENT EVER !!! YOU HAVE BEING WARNED !!!
+     *
+     * @param   Table name (string)
+     *          record to mark as deleted in the table (BIGINT)
+     * @return  result of deletion (boolean)
+     * */
+    function markAsDeleted($tableName, $recordId) {
+        $sql = str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_MARK_RECORD_AS_DELETED);
+        return $this->execute($sql, array(
+            array("parameter"=>":username","variable"=>$this->username,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":recordId","variable"=>$recordId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":userId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
+        ));
     }
 }

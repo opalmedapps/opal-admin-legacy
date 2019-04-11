@@ -19,6 +19,8 @@ $json = file_get_contents($abspath . 'config.json');
 // Decode json to variable
 $config = json_decode($json, true);
 
+require_once($abspath."/php/config/questionnaire-sql.php");
+
 // DEFINE OPAL SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MySQL setup.
 define( "OPAL_DB_HOST", $config['databaseConfig']['opal']['host'] );
@@ -37,16 +39,7 @@ define( "QUESTIONNAIRE_DB_DSN", "mysql:host=" . QUESTIONNAIRE_DB_HOST . ";port="
 define( "QUESTIONNAIRE_DB_USERNAME", $config['databaseConfig']['questionnaire']['username'] );
 define( "QUESTIONNAIRE_DB_PASSWORD", $config['databaseConfig']['questionnaire']['password'] );
 
-// DEFINE QUESTIONNAIRE 2019 SERVER/DATABASE CREDENTIALS HERE
-// NOTE: This works for a MySQL setup.
-define( "QUESTIONNAIRE_DB_2019_HOST", $config['databaseConfig']['questionnaire2019']['host'] );
-define( "QUESTIONNAIRE_DB_2019_PORT", $config['databaseConfig']['questionnaire2019']['port'] );
-define( "QUESTIONNAIRE_DB_2019_NAME", $config['databaseConfig']['questionnaire2019']['name'] );
-define( "QUESTIONNAIRE_DB_2019_DSN", "mysql:host=" . QUESTIONNAIRE_DB_2019_HOST . ";port=" . QUESTIONNAIRE_DB_2019_PORT . ";dbname=" . QUESTIONNAIRE_DB_2019_NAME . ";charset=utf8" );
-define( "QUESTIONNAIRE_DB_2019_USERNAME", $config['databaseConfig']['questionnaire2019']['username'] );
-define( "QUESTIONNAIRE_DB_2019_PASSWORD", $config['databaseConfig']['questionnaire2019']['password'] );
-define("FRENCH_LANGUAGE","1");
-define("ENGLISH_LANGUAGE","2");
+
 
 // DEFINE ARIA SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MicrosoftSQL (MSSQL) setup.
@@ -82,52 +75,6 @@ define( "BACKEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", BACKEND_ABS_PATH
 define( "FRONTEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", FRONTEND_ABS_PATH) );
 define( "UPLOAD_ABS_PATH", FRONTEND_ABS_PATH . "uploads/" );
 define( "UPLOAD_REL_PATH", FRONTEND_REL_URL . "uploads/" );
-
-//Definition of all questionnaires table from the questionnaire DB
-define("ANSWER_CHECK_BOX_TABLE","answerCheckbox");
-define("ANSWER_QUESTIONNAIRE_TABLE","answerQuestionnaire");
-define("ANSWER_RADIO_BUTTON_TABLE","answerRadioButton");
-define("ANSWER_SECTION_TABLE","answerSection");
-define("ANSWER_SLIDER_TABLE","answerSlider");
-define("ANSWER_TABLE","answer");
-define("ANSWER_TEXT_BOX_TABLE","answerTextBox");
-define("CHECK_BOX_OPTION_TABLE","checkboxOption");
-define("CHECK_BOX_TABLE","checkbox");
-define("DATE_TABLE","date");
-define("DEFINITION_TABLE","definitionTable");
-define("DICTIONARY_TABLE","dictionary");
-define("LABEL_TABLE","label");
-define("LABEL_OPTION_TABLE","labelOption");
-define("LANGUAGE_TABLE","language");
-define("LEGACY_TYPE_TABLE","legacyType");
-define("LEGACY_STATUS_TABLE","legacyStatus");
-define("LIBRARY_TABLE","library");
-define("LIBRARY_QUESTION_TABLE","libraryQuestion");
-define("PATIENT_TABLE","patient");
-define("QUESTIONNAIRE_TABLE","questionnaire");
-define("QUESTION_TABLE","question");
-define("QUESTION_SECTION_TABLE","questionSection");
-define("RADIO_BUTTON_TABLE","radioButton");
-define("RADIO_BUTTON_OPTION_TABLE","radioButtonOption");
-define("SLIDER_TABLE","slider");
-define("SECTION_TABLE","section");
-define("TEXT_BOX_TABLE","textBox");
-define("TIME_TABLE","time");
-define("TRIGGER_WORD_TABLE","triggerWord");
-define("TYPE_TABLE","type");
-define("TYPE_TEMPLATE_TABLE","typeTemplate");
-define("TYPE_TEMPLATE_CHECKBOX_TABLE","typeTemplateCheckbox");
-define("TYPE_TEMPLATE_CHECKBOX_OPTION_TABLE","typeTemplateCheckboxOption");
-define("TYPE_TEMPLATE_DATE","typeTemplateDate");
-define("TYPE_TEMPLATE_LABEL_TABLE","typeTemplateLabel");
-define("TYPE_TEMPLATE_LABEL_OPTION_TABLE","typeTemplateLabelOption");
-define("TYPE_TEMPLATE_RADIO_BUTTON_TABLE","typeTemplateRadioButton");
-define("TYPE_TEMPLATE_RADIO_BUTTON_OPTION_TABLE","typeTemplateRadioButtonOption");
-define("TYPE_TEMPLATE_DATE_TABLE","typeTemplateDate");
-define("TYPE_TEMPLATE_SLIDER_TABLE","typeTemplateSlider");
-define("TYPE_TEMPLATE_TEXTBOX_TABLE","typeTemplateTextBox");
-define("TYPE_TEMPLATE_TIME_TABLE","typeTemplateTime");
-define("TYPE_TEMPLATE_TRIGGER_WORD","typeTemplateTriggerWord");
 
 // Include the classes
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "User.php" );

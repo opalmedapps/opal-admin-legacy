@@ -129,6 +129,9 @@ class QuestionType {
     public function getQuestionTypes(){
         $questionTypes = array();
         $result = $this->questionnaireDB->getQuestionTypes();
+
+
+
         foreach ($result as $row) {
             $temp = array(
                 'serNum'        => $row["serNum"],
