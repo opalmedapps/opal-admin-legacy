@@ -6,6 +6,37 @@
  */
 class Question {
 
+    protected $questionnaireDB;
+    protected $opalDB;
+    protected $userInfo;
+
+    public function __construct($userId = "-1") {
+        $this->questionnaireDB = new DatabaseQuestionnaire(
+            QUESTIONNAIRE_DB_2019_HOST,
+            QUESTIONNAIRE_DB_2019_NAME,
+            QUESTIONNAIRE_DB_2019_PORT,
+            QUESTIONNAIRE_DB_2019_USERNAME,
+            QUESTIONNAIRE_DB_2019_PASSWORD
+        );
+        $this->opalDB = new DatabaseOpal(
+            OPAL_DB_HOST,
+            OPAL_DB_NAME,
+            OPAL_DB_PORT,
+            OPAL_DB_USERNAME,
+            OPAL_DB_PASSWORD
+        );
+
+        $this->setUserInfo($userId);
+    }
+
+    protected function setUserInfo($userId) {
+        $this->userInfo = $this->opalDB->getUserInfo($userId);
+        $this->opalDB->setUserId($this->userInfo["userId"]);
+        $this->opalDB->setUsername($this->userInfo["username"]);
+        $this->questionnaireDB->setUserId($this->userInfo["userId"]);
+        $this->questionnaireDB->setUsername($this->userInfo["username"]);
+    }
+
     /**
      *
      * Inserts a question into our database
@@ -54,92 +85,58 @@ class Question {
     }
 
     /**
-     *
-     * Gets a list of existing questions
+     * Gets a list of existing questions. For each question, it will list the libraries it belongs too (if any) and
+     * if the question is locked (e.a. if the question was already sent to a patient).
      *
      * @return array $questions : the list of existing questions
      */
-    public function getQuestions($userId = ""){
+    public function getQuestions(){
         $questions = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $host_questionnaire_db_link = new PDO( QUESTIONNAIRE_DB_2019_DSN, QUESTIONNAIRE_DB_2019_USERNAME, QUESTIONNAIRE_DB_2019_PASSWORD );
-            $host_questionnaire_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "SELECT
-                    q.ID AS ID,
-                    (SELECT d.content FROM dictionary d WHERE d.contentId = q.question AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
-                    (SELECT d.content FROM dictionary d WHERE d.contentId = q.question AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR,
-                    q.private,
-                    q.typeId AS answertype_Id,
-                    (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS answertype_name_EN,
-                    (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS answertype_name_FR,
-                    q.final
-                    FROM question q LEFT JOIN type t ON t.ID = q.typeId WHERE deleted = 0 AND (OAUserId = '".$userId."' OR private = 0);";
-            $query_questionnaire = $host_questionnaire_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query_questionnaire->execute();
-            $questionsLists = $query_questionnaire->fetchAll();
-
-            foreach ($questionsLists as $row){
-                $sql = "SELECT (SELECT d.content FROM dictionary d WHERE d.contentId = l.name AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN, (SELECT d.content FROM dictionary d WHERE d.contentId = l.name AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR FROM library l RIGHT JOIN libraryQuestion lq ON lq.libraryId = l.ID WHERE lq.questionId = :questionId";
-
-                $query_questionnaire = $host_questionnaire_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query_questionnaire->bindParam(':questionId', $row["ID"], PDO::PARAM_INT);
-                $query_questionnaire->execute();
-                $libraries = $query_questionnaire->fetchAll();
-                $libNameEn = array();
-                $libNameFr = array();
-                foreach($libraries as $library) {
-                    array_push($libNameEn, $library["text_EN"]);
-                    array_push($libNameFr, $library["text_FR"]);
-                }
-
-                $libNameEn = implode(", ", $libNameEn);
-                $libNameFr = implode(", ", $libNameFr);
-
-                if ($libNameEn == "") $libNameEn = "None";
-                if ($libNameFr == "") $libNameFr = "Aucune";
-
-                $query_questionnaire = $host_questionnaire_db_link->prepare( "SELECT DISTINCT qst.ID FROM questionnaire qst RIGHT JOIN section s ON s.questionnaireId = qst.ID RIGHT JOIN questionSection qs ON qs.sectionId = s.ID WHERE qs.questionId = :questionId" );
-                $query_questionnaire->bindParam(':questionId', $row["ID"], PDO::PARAM_INT);
-                $query_questionnaire->execute();
-                $questionnaires = $query_questionnaire->fetchAll();
-                $questionnairesList = array();
-                foreach ($questionnaires as $questionnaire) {
-                    array_push($questionnairesList, $questionnaire["ID"]);
-                }
-
-                $questionLocked = 0;
-                if (count($questionnairesList) > 0) {
-                    $questionnairesList = implode(", ", $questionnairesList);
-                    $query = $host_db_link->prepare("SELECT COUNT(*) AS total FROM questionnairecontrol WHERE QuestionnaireDBSerNum IN ( $questionnairesList )");
-                    $query->execute();
-                    $questionLocked = $query->fetch();
-                    $questionLocked = intval($questionLocked["total"]);
-                }
-
-                $questionArray = array (
-                    'serNum'				=> $row["ID"],
-                    'text_EN'				=> strip_tags($row["text_EN"]),
-                    'text_FR'				=> strip_tags($row["text_FR"]),
-                    'private'				=> $row["private"],
-                    'answertype_serNum'		=> $row["answertype_Id"],
-                    'answertype_name_EN'	=> $row["answertype_name_EN"],
-                    'answertype_name_FR'	=> $row["answertype_name_FR"],
-                    'library_name_EN'		=> $libNameEn,
-                    'library_name_FR'		=> $libNameFr,
-                    'final'         		=> $row["final"],
-                    'locked'        		=> $questionLocked,
-                );
-                array_push($questions, $questionArray);
+        $questionsLists = $this->questionnaireDB->fetchAllQuestions();
+        foreach ($questionsLists as $row){
+            $libraries = $this->questionnaireDB->fetchLibrariesQuestion($row["ID"]);
+            $libNameEn = array();
+            $libNameFr = array();
+            foreach($libraries as $library) {
+                array_push($libNameEn, $library["text_EN"]);
+                array_push($libNameFr, $library["text_FR"]);
             }
-            return $questions;
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $questions;
 
+            $libNameEn = implode(", ", $libNameEn);
+            $libNameFr = implode(", ", $libNameFr);
+
+            if ($libNameEn == "") $libNameEn = "None";
+            if ($libNameFr == "") $libNameFr = "Aucune";
+            $questionnairesList = array();
+            $questionnaires = $this->questionnaireDB->fetchQuestionnairesIdQuestion($row["ID"]);
+
+            foreach ($questionnaires as $questionnaire) {
+                array_push($questionnairesList, $questionnaire["ID"]);
+            }
+
+            $questionLocked = 0;
+            if (count($questionnairesList) > 0) {
+                $questionnairesList = implode(", ", $questionnairesList);
+                $questionLocked = $this->opalDB->getLockedQuestionnaires($questionnairesList);
+                $questionLocked = intval($questionLocked["total"]);
+            }
+
+            $questionArray = array (
+                'serNum'				=> $row["ID"],
+                'text_EN'				=> strip_tags($row["text_EN"]),
+                'text_FR'				=> strip_tags($row["text_FR"]),
+                'private'				=> $row["private"],
+                'answertype_serNum'		=> $row["answertype_Id"],
+                'answertype_name_EN'	=> $row["answertype_name_EN"],
+                'answertype_name_FR'	=> $row["answertype_name_FR"],
+                'library_name_EN'		=> $libNameEn,
+                'library_name_FR'		=> $libNameFr,
+                'final'         		=> $row["final"],
+                'locked'        		=> $questionLocked,
+            );
+            array_push($questions, $questionArray);
         }
+        return $questions;
     }
 
     /**
@@ -261,112 +258,49 @@ class Question {
     }
 
     /**
-     *
-     * Mark a question as deleted. A question can only being marked as deleted if was never sent to a patient.
-     * Nothing should be ever deleted from the database!
+     * Mark a question as deleted. First, it get the last time it was updated, and check if the question was already
+     * sent to a patient. Then it checked if the record was updated in the meantime, and if not, it marks the question
+     * as being deleted.
      *
      * @param $questionId (ID of the question), $userId (ID of the user who requested the deletion)
      * @return array $response : response
      */
-    public function deleteQuestion($questionId, $userId = -1) {
-        if ($userId == -1) {
+    public function deleteQuestion($questionId) {
+        if ($this->userInfo["userId"] == -1) {
             $response['value'] = false; // User is not identified.
             $response['message'] = 401;
             return $response;
         }
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $host_questionnaire_db_link = new PDO( QUESTIONNAIRE_DB_2019_DSN, QUESTIONNAIRE_DB_2019_USERNAME, QUESTIONNAIRE_DB_2019_PASSWORD );
-            $host_questionnaire_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-            /*
-             * Storing the last updated time during the process of validation of deletion in case somebody else modified
-             * the question.
-             * */
-            $query_questionnaire = $host_questionnaire_db_link->prepare("SELECT lastUpdated, updatedBy FROM question WHERE ID = :questionId;");
-            $query_questionnaire->bindParam(':questionId', $questionId, PDO::PARAM_INT);
-            $query_questionnaire->execute();
-            $lastUpdatedOrigin = $query_questionnaire->fetch();
+        $lastUpdated = $this->questionnaireDB->getLastTimeTableUpdated(QUESTION_TABLE, $questionId);
+        $questionnaires = $this->questionnaireDB->fetchQuestionnairesIdQuestion($questionId);
+        $questionnairesList = array();
+        foreach ($questionnaires as $questionnaire) {
+            array_push($questionnairesList, $questionnaire["ID"]);
+        }
 
-            /*
-             * If the user is trying to delete a private question that does not belongs to him/ger, reject the request
-             * */
-            $query_questionnaire = $host_questionnaire_db_link->prepare("SELECT COUNT(*) AS total FROM question WHERE ID = :questionId AND (OAUserId = :userId OR private = 0);");
-            $query_questionnaire->bindParam(':questionId', $questionId, PDO::PARAM_INT);
-            $query_questionnaire->bindParam(':userId', $userId, PDO::PARAM_INT);
-            $query_questionnaire->execute();
-            $accessAuthorized = $query_questionnaire->fetch();
-            $accessAuthorized = (intval($accessAuthorized["total"]) > 0?true:false);
+        $wasQuestionSent = false;
+        if (count($questionnairesList) > 0) {
+            $wasQuestionSent = $this->opalDB->getLockedQuestionnaires(implode(", ", $questionnairesList));
+            $wasQuestionSent = intval($wasQuestionSent["total"]);
+        }
 
-            if (!$accessAuthorized) {
-                $response['value'] = false; // Unauthorized deletion request.
-                $response['message'] = 403;
-                return $response;
-            }
+        $nobodyUpdated = $this->questionnaireDB->canRecordBeUpdated(QUESTION_TABLE, $questionId, $lastUpdated["lastUpdated"], $lastUpdated["updatedBy"]);
+        $nobodyUpdated = intval($nobodyUpdated["total"]);
 
-            /* Loading the username of the user requesting the deletion */
-            $query = $host_db_link->prepare("SELECT username FROM oauser WHERE OAUserSerNum = :userId");
-            $query->bindParam(':userId', $userId, PDO::PARAM_INT);
-            $query->execute();
-            $username = $query->fetch();
-            $username = $username["username"];
-
-            /*
-             * Listing all the questionnaires with the question to be deleted.
-             * */
-            $query_questionnaire = $host_questionnaire_db_link->prepare( "SELECT DISTINCT qst.ID FROM questionnaire qst RIGHT JOIN section s ON s.questionnaireId = qst.ID RIGHT JOIN questionSection qs ON qs.sectionId = s.ID WHERE qs.questionId = :questionId" );
-            $query_questionnaire->bindParam(':questionId', $questionId, PDO::PARAM_INT);
-            $query_questionnaire->execute();
-            $questionnaires = $query_questionnaire->fetchAll();
-            $questionnairesList = array();
-            foreach ($questionnaires as $questionnaire) {
-                array_push($questionnairesList, $questionnaire["ID"]);
-            }
-
-            /*If the question was already sent to any patient, it cannot be deleted*/
-            $wasQuestionSent = false;
-            if (count($questionnairesList) > 0) {
-                $questionnairesList = implode(", ", $questionnairesList);
-                $query = $host_db_link->prepare("SELECT COUNT(*) AS total FROM questionnairecontrol WHERE QuestionnaireDBSerNum IN ( $questionnairesList )");
-                $query->execute();
-                $wasQuestionSent = $query->fetch();
-                $wasQuestionSent = intval($wasQuestionSent["total"]);
-            }
-
-            /* if the question was not updated during the verification process, it can be deleted */
-            $query_questionnaire = $host_questionnaire_db_link->prepare("SELECT COUNT(*) AS total FROM question WHERE ID = :questionId AND lastUpdated = :lastUpdated AND updatedBy = :updatedBy;");
-            $query_questionnaire->bindParam(':questionId', $questionId, PDO::PARAM_INT);
-            $query_questionnaire->bindParam(':lastUpdated', $lastUpdatedOrigin["lastUpdated"], PDO::PARAM_STR);
-            $query_questionnaire->bindParam(':updatedBy', $lastUpdatedOrigin["updatedBy"], PDO::PARAM_STR);
-            $query_questionnaire->execute();
-            $nobodyUpdated = $query_questionnaire->fetch();
-            $nobodyUpdated = intval($nobodyUpdated["total"]);
-
-            if ($nobodyUpdated && !$wasQuestionSent){
-                $sql = "UPDATE question SET deleted = 1, deletedBy = :username, updatedBy = :username WHERE ID = :id ;";
-                $query_questionnaire = $host_questionnaire_db_link->prepare( $sql );
-                $query_questionnaire->bindParam(':username', $username, PDO::PARAM_STR);
-                $query_questionnaire->bindParam(':id', $questionId, PDO::PARAM_INT);
-                $query_questionnaire->execute();
-
-                $response['value'] = true; // Success
-                $response['message'] = 200;
-                return $response;
-            }
-            else if (!$nobodyUpdated) {
-                $response['value'] = false; // conflict error. Somebody already updated the question.
-                $response['message'] = 409;
-                return $response;
-            } else {
-                $response['value'] = false; // Question locked.
-                $response['message'] = 423;
-                return $response;
-            }
-
-        } catch (PDOException $e) {
-            $response['value'] = false;
-            $response['message'] = $e->getMessage();
+        if ($nobodyUpdated && !$wasQuestionSent){
+            $this->questionnaireDB->markAsDeleted(QUESTION_TABLE, $questionId);
+            $response['value'] = true; // Success
+            $response['message'] = 200;
+            return $response;
+        }
+        else if (!$nobodyUpdated) {
+            $response['value'] = false; // conflict error. Somebody already updated the question or record does not exists.
+            $response['message'] = 409;
+            return $response;
+        } else {
+            $response['value'] = false; // Question locked.
+            $response['message'] = 423;
             return $response;
         }
     }

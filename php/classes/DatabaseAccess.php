@@ -60,7 +60,12 @@ class DatabaseAccess extends HelpSetup
         $this->username = $username;
     }
 
-    function connectTo() {
+    /*
+     * This function establish connection with the database
+     * @param   nothing
+     * @return  nothing
+     * */
+    protected function connectTo() {
         try {
             $this->connection = new PDO(
                 "mysql:host=$this->serverName;port=$this->port;dbname=$this->databaseName", $this->usernameDB, $this->password,
@@ -74,44 +79,103 @@ class DatabaseAccess extends HelpSetup
         }
     }
 
-    function fetchAll($sqlFetch) {
+    /*
+     * this function is used to fetch all results from a SQL query by binding parameters.
+     * @param   SQL query that begins with "SELECT" (string)
+     *          array of parameters to bind (optional) following PDO rules
+     *          ex: array(
+     *                  array(
+     *                      "parameter"=>":example",
+     *                      "variable"=>"Hello world!",
+     *                      "data_type"=>PDO::PARAM_STR,
+     *                  )
+     *              )
+     * @return  array of result
+     * */
+    protected function fetchAll($sqlFetchAll, $paramList = array()) {
         try {
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $stmt = $this->connection->prepare($sqlFetch);
+            $stmt = $this->connection->prepare($sqlFetchAll);
+            if(count($paramList) > 0) {
+                foreach($paramList as $value) {
+                    $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
+                }
+            }
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
         catch(PDOException $e) {
-            echo "Fetch all with query $sqlFetch failed.\r\nError : ". $e->getMessage();
+            echo "Fetch all $sqlFetchAll failed.\r\n$sqlFetchAll\r\nError : ". $e->getMessage();
             die();
         }
     }
 
-    function fetch($sqlFetch) {
+    /*
+     * this function is used to fetch a result from a SQL query by binding parameters.
+     * @param   SQL query that begins with "SELECT" (string)
+     *          array of parameters to bind (optional) following PDO rules
+     *          ex: array(
+     *                  array(
+     *                      "parameter"=>":example",
+     *                      "variable"=>"Hello world!",
+     *                      "data_type"=>PDO::PARAM_STR,
+     *                  )
+     *              )
+     * @return  array of result
+     * */
+    protected function fetch($sqlFetch, $paramList = array()) {
         try {
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $stmt = $this->connection->prepare($sqlFetch);
+            if(count($paramList) > 0) {
+                foreach($paramList as $value) {
+                    $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
+                }
+            }
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         }
         catch(PDOException $e) {
-            echo "Fetch with query $sqlFetch failed.\r\nError : ". $e->getMessage();
+            echo "Fetch failed.\r\n$sqlFetch\r\nError : ". $e->getMessage();
             die();
         }
     }
 
-    function query($sqlQuery) {
+    /*
+     * this function execute a SQL query and returns true once completed.
+     * @param   SQL query (string)
+     *          array of parameters to bind (optional) following PDO rules
+     *          ex: array(
+     *                  array(
+     *                      "parameter"=>":example",
+     *                      "variable"=>"Hello world!",
+     *                      "data_type"=>PDO::PARAM_STR,
+     *                  )
+     *              )
+     * @return  after execution
+     * */
+    protected function execute($sqlQuery, $paramList = array()) {
         try {
-            $this->connection->query($sqlQuery);
+            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $stmt = $this->connection->prepare($sqlQuery);
+            if(count($paramList) > 0) {
+                foreach($paramList as $value) {
+                    $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
+                }
+            }
+            $stmt->execute();
             return true;
         }
         catch(PDOException $e) {
-            echo "Query $sqlQuery failed.\r\nError : " . $e->getMessage();
+            echo "Query failed.\r\nError : " . $e->getMessage();
             die();
         }
     }
 
-    function disconnect() {
+    /*
+     * Destructor. Kills the connection
+     * */
+    public function disconnect() {
         $this->connection = null;
     }
 
@@ -126,7 +190,7 @@ class DatabaseAccess extends HelpSetup
             return $this->connection->lastInsertId();
         }
         catch(PDOException $e) {
-            echo "Insert query $sqlInsert failed.\r\nError : " . $e->getMessage();
+            echo "Insert query failed.\r\nError : " . $e->getMessage();
             die();
         }
 
