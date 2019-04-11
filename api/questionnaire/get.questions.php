@@ -7,10 +7,10 @@
 	$callback = $_GET['callback'];
 	$userId = $_GET["userid"];
 
-	$question = new Question(); // Object
+	$question = new Question($userId); // Object
 
 	// Call function
-	$questionList = $question->getQuestions($userId);
+	$questionList = $question->getQuestions();
 
 	// Callback to http request
 	print $callback.'('.json_encode($questionList).')';
