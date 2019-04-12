@@ -1074,6 +1074,7 @@ sub getApptInfoFromSourceDB
 
     ######################################
     # MediVisit
+	# TODO: Need to capture more information like status of appointment
     ######################################
     if ($apptSourceDBSer eq 2) {
 
