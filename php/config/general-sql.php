@@ -1,0 +1,9 @@
+<?php
+/**
+ * User: Dominic Bourdua
+ * Date: 4/12/2019
+ * Time: 3:02 PM
+ */
+
+define("DEACTIVATE_FOREIGN_KEY_CONSTRAINT", "SET FOREIGN_KEY_CHECKS=0;");
+define("ACTIVATE_FOREIGN_KEY_CONSTRAINT", "SET FOREIGN_KEY_CHECKS=1;");
