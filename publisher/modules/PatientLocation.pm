@@ -528,7 +528,7 @@ sub getPatientLocationsFromSourceDB
 				my $patientSer 			= $row->[6];
 				my $expressionName 		= $row->[7];
 				my $expressionDesc 		= $row->[8];
-				$appointmentser 		= Appointment::reassignAppointment($row->[0], $sourceDBSer, $aliasSer, $patientSer);
+				$appointmentser 		= Appointment::reassignAppointment($row->[0], $sourceDBSer, $expressionDict{$expressionName}{$expressionDesc}, $patientSer);
 				$sourceuid 				= $row->[1];
 				$revcount 				= $row->[2];
 				$checkedinflag 			= $row->[3];
