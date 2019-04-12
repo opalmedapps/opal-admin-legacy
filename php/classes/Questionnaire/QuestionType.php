@@ -36,101 +36,83 @@ class QuestionType {
         $this->questionnaireDB->setUsername($userInfo["username"]);
     }
 
-    /**
-     *
-     * Inserts a new answer type
-     *
-     * @param array $answerType : the answer type to be inserted
-     * @return void
-     */
-    public function insertAnswerType($answerType){
-        try {
-            $host_questionnaire_db_link = new PDO( QUESTIONNAIRE_DB_2019_DSN, QUESTIONNAIRE_DB_2019_USERNAME, QUESTIONNAIRE_DB_2019_PASSWORD );
-            $host_questionnaire_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            //$temp = $newDB->getTableId(TYPE_TEMPLATE_TABLE);
-            //$minCaptionId = $newDB->addToDictionary($minCaption, $minCaption, $temp);
-
-            $sql = "
-				INSERT INTO
-					QuestionnaireAnswerType (
-						name_EN,
-						name_FR,
-						category_EN,
-						category_FR,
-						private,
-						created_by,
-						last_updated_by
-					)
-				VALUES (
-					\"$name_EN\",
-					\"$name_FR\",
-					\"$category_EN\",
-					\"$category_FR\",
-					'$private',
-					'$created_by',
-					'$last_updated_by'
-				)
-			";
-
-            $query_questionnaire = $host_questionnaire_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query_questionnaire->bindParam(':userId', $userid, PDO::PARAM_INT);
-            $query_questionnaire->execute();
-
-            // add answer options
-            if ($options) {
-
-                $answerType_serNum = $host_db_link->lastInsertId();
-
-                foreach ($options as $option) {
-
-                    $text_EN = $option['text_EN'];
-                    $text_FR = $option['text_FR'];
-                    $position = $option['position'];
-
-                    $sql = "
-	                    INSERT INTO 
-	                        QuestionnaireAnswerOption (
-	                            text_EN,
-	                            text_FR,
-	                            answertype_serNum,
-	                            position,
-	                            last_updated_by,
-	                            created_by
-	                        )
-	                    VALUES (
-	                        \"$text_EN\",
-							\"$text_FR\",
-							'$answerType_serNum',
-							'$position',
-							'$last_updated_by',
-							'$created_by'
-	                    )
-	                    ON DUPLICATE KEY UPDATE
-	                        answertype_serNum = '$answerType_serNum'
-					";
-                    $query = $host_db_link->prepare( $sql );
-                    $query->execute();
-                }
-            }
-
-        } catch(PDOException $e) {
-            return $e->getMessage();
-        }
+    protected static function sort_order($a, $b){
+        if (intval($a["order"]) == intval($b["order"])) return 0;
+        return (intval($a["order"]) < intval($b["order"])) ? -1 : 1;
     }
 
-    /**
-     *
+    /*
+     * Inserts a new question type. First, it sanitizes all the data. Then it inserts the question text into the
+     * dictionary. Third, it inserts into the question table, and lastly it inserts in the correct question type
+     * options table if it necessary.
+     * @param array $newQuestionType : the question type to be inserted
+     * @return void
+     */
+    public function insertQuestionType($newQuestionType){
+
+        /*
+         * Sanitization of the data
+         * */
+        $typeId = strip_tags($newQuestionType["typeId"]);
+        $nameEn = strip_tags($newQuestionType["name_EN"]);
+        $nameFr = strip_tags($newQuestionType["name_FR"]);
+        $private = strip_tags($newQuestionType["private"]);
+        $options = array();
+        $optionToInsert = array();
+        if($typeId = CHECKBOXES) {
+            $tableToInsert = TYPE_TEMPLATE_CHECKBOX_TABLE;
+            $subTableToInsert = TYPE_TEMPLATE_CHECKBOX_OPTION_TABLE;
+
+
+            foreach($newQuestionType["options"] as $opt) {
+                $temp = array();
+                $toInsert = array(FRENCH_LANGUAGE=>$opt["text_FR"], ENGLISH_LANGUAGE=>$opt["text_EN"]);
+                $temp["description"] = $this->questionnaireDB->addToDictionary($toInsert, TYPE_TEMPLATE_TABLE);
+                $temp["order"] = strip_tags($opt["position"]);
+                array_push($options, $temp);
+            }
+            usort($options, 'self::sort_order');
+            $cpt = 0;
+            foreach($options as &$row) {
+                $cpt++;
+                $row["order"] = $cpt;
+            }
+
+            $optionToInsert["minAnswer"]= 1;
+            $optionToInsert["maxAnswer"] = count($options);
+        }
+
+        /*
+         * Insertion in the dictionary
+         * */
+        $toInsert = array(FRENCH_LANGUAGE=>$nameFr, ENGLISH_LANGUAGE=>$nameEn);
+        $dictId = $this->questionnaireDB->addToDictionary($toInsert, TYPE_TEMPLATE_TABLE);
+
+        /*
+         * Insertion into the type template table.
+         * */
+        $toInsert = array(
+            "name"=>$dictId,
+            "typeId"=>$typeId,
+            "private"=>$private,
+        );
+        $questionTypeId = $this->questionnaireDB->addQuestionType($toInsert);
+        $optionToInsert["typeTemplateId"] = $questionTypeId;
+
+        $optionId = $this->questionnaireDB->insertRecordIntoTable(TYPE_TEMPLATE_CHECKBOX_TABLE, $optionToInsert);
+
+
+        die("done");
+    }
+
+    /*
      * Gets a list of existing question types
-     *
      * @param integer $userId : the user id
      * @return array $questionTypes : the list of existing answer types
      */
     public function getQuestionTypes(){
         $questionTypes = array();
         $result = $this->questionnaireDB->getQuestionTypes();
-
-
 
         foreach ($result as $row) {
             $temp = array(
@@ -160,10 +142,8 @@ class QuestionType {
         return $questionTypes;
     }
 
-    /**
-     *
+    /*
      * Gets a list of answer type categories
-     *
      * @return array $answerTypeCategories : the list of answer type categories
      */
     public function getQuestionTypeCategories(){

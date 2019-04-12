@@ -19,16 +19,9 @@ $json = file_get_contents($abspath . 'config.json');
 // Decode json to variable
 $config = json_decode($json, true);
 
+require_once($abspath."/php/config/general-sql.php");
 require_once($abspath."/php/config/questionnaire-sql.php");
-
-// DEFINE OPAL SERVER/DATABASE CREDENTIALS HERE
-// NOTE: This works for a MySQL setup.
-define( "OPAL_DB_HOST", $config['databaseConfig']['opal']['host'] );
-define( "OPAL_DB_PORT", $config['databaseConfig']['opal']['port'] );
-define( "OPAL_DB_NAME", $config['databaseConfig']['opal']['name'] );
-define( "OPAL_DB_DSN", "mysql:host=" . OPAL_DB_HOST . ";port=" . OPAL_DB_PORT . ";dbname=" . OPAL_DB_NAME . ";charset=utf8" );
-define( "OPAL_DB_USERNAME", $config['databaseConfig']['opal']['username'] );
-define( "OPAL_DB_PASSWORD", $config['databaseConfig']['opal']['password'] );
+require_once($abspath."/php/config/opal-sql.php");
 
 // DEFINE LEGACY QUESTIONNAIRE SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MySQL setup.
@@ -38,8 +31,6 @@ define( "QUESTIONNAIRE_DB_NAME", $config['databaseConfig']['questionnaire']['nam
 define( "QUESTIONNAIRE_DB_DSN", "mysql:host=" . QUESTIONNAIRE_DB_HOST . ";port=" . QUESTIONNAIRE_DB_PORT . ";dbname=" . QUESTIONNAIRE_DB_NAME . ";charset=utf8" );
 define( "QUESTIONNAIRE_DB_USERNAME", $config['databaseConfig']['questionnaire']['username'] );
 define( "QUESTIONNAIRE_DB_PASSWORD", $config['databaseConfig']['questionnaire']['password'] );
-
-
 
 // DEFINE ARIA SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MicrosoftSQL (MSSQL) setup.
@@ -112,5 +103,22 @@ include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 define( "API_KEY" , $config['pushNotificationConfig']['android']['apiKey'] );
 define( "CERTIFICATE_PASSWORD" , $config['pushNotificationConfig']['apple']['certificate']['password'] );
 define( "CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $config['pushNotificationConfig']['apple']['certificate']['filename'] );
+
+/*
+ * Question type definition for the legacy questionnaire and the new questionnaire 2019
+ * */
+define("CHECKBOXES", 1);
+define("SLIDERS", 2);
+define("TEXT_BOX", 3);
+define("RADIO_BUTTON", 4);
+define("LABEL", 5);
+define("TIME", 6);
+define("DATE", 7);
+define("LEGACY_MC", 1);
+define("LEGACY_MINMAX", 2);
+define("LEGACY_SA", 3);
+define("LEGACY_CHECKBOX", 4);
+define("LEGACY_YESNO", 9);
+define("DEFAULT_TYPE", TEXT_BOX);
 
 ?>

@@ -63,6 +63,9 @@ define("TYPE_TEMPLATE_TEXTBOX_TABLE","typeTemplateTextBox");
 define("TYPE_TEMPLATE_TIME_TABLE","typeTemplateTime");
 define("TYPE_TEMPLATE_TRIGGER_WORD","typeTemplateTriggerWord");
 
+/*
+ * Listing of all SQL queries for the questionnaire database
+ * */
 define("SQL_QUESTIONNAIRE_FETCH_ALL_QUESTIONS",
     "SELECT
     q.ID AS ID,
@@ -123,9 +126,9 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPES",
 
 define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPE_OPTIONS",
     "SELECT st.*,
-        (SELECT d.content FROM dictionary d WHERE d.contentId = st.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
-        (SELECT d.content FROM dictionary d WHERE d.contentId = st.description AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR
-        FROM %%SUBTABLENAME%% st WHERE parentTableId = :subTableId ORDER BY st.order;"
+    (SELECT d.content FROM dictionary d WHERE d.contentId = st.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
+    (SELECT d.content FROM dictionary d WHERE d.contentId = st.description AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR
+    FROM %%SUBTABLENAME%% st WHERE parentTableId = :subTableId ORDER BY st.order;"
 );
 
 define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPES_CATEGORIES",
@@ -149,4 +152,16 @@ define("SQL_QUESTIONNAIRE_CAN_RECORD_BE_UPDATED",
 define("SQL_QUESTIONNAIRE_MARK_RECORD_AS_DELETED",
     "UPDATE %%TABLENAME%% SET deleted = ".DELETED_RECORD.", deletedBy = :username, updatedBy = :username
     WHERE ID = :recordId AND (OAUserId = :userId OR private = 0);"
+);
+
+define("SQL_QUESTIONNAIRE_GET_DICTIONARY_NEXT_CONTENT_ID",
+    "SELECT COALESCE(MAX(contentId) + 1, 1) AS nextContentId FROM ".DICTIONARY_TABLE.";"
+);
+
+define("SQL_QUESTIONNAIRE_GET_ALL_LANGUAGE",
+    "SELECT * FROM ".LANGUAGE_TABLE. ";"
+);
+
+define("SQL_QUESTIONNAIRE_GET_DEFINITION_TABLE_ID",
+    "SELECT ID FROM ".DEFINITION_TABLE." WHERE name = :tableName"
 );

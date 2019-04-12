@@ -98,14 +98,17 @@ class DatabaseAccess extends HelpSetup
             $stmt = $this->connection->prepare($sqlFetchAll);
             if(count($paramList) > 0) {
                 foreach($paramList as $value) {
-                    $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
+                    if(isset($value["data_type"]) &&  $value["data_type"] != "")
+                        $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
+                    else
+                        $stmt->bindParam($value["parameter"], $value["variable"]);
                 }
             }
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
         catch(PDOException $e) {
-            echo "Fetch all $sqlFetchAll failed.\r\n$sqlFetchAll\r\nError : ". $e->getMessage();
+            echo "Fetch all failed.\r\n$sqlFetchAll\r\nError : ". $e->getMessage();
             die();
         }
     }
@@ -129,7 +132,10 @@ class DatabaseAccess extends HelpSetup
             $stmt = $this->connection->prepare($sqlFetch);
             if(count($paramList) > 0) {
                 foreach($paramList as $value) {
-                    $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
+                    if(isset($value["data_type"]) &&  $value["data_type"] != "")
+                        $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
+                    else
+                        $stmt->bindParam($value["parameter"], $value["variable"]);
                 }
             }
             $stmt->execute();
@@ -160,14 +166,17 @@ class DatabaseAccess extends HelpSetup
             $stmt = $this->connection->prepare($sqlQuery);
             if(count($paramList) > 0) {
                 foreach($paramList as $value) {
-                    $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
+                    if(isset($value["data_type"]) &&  $value["data_type"] != "")
+                        $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
+                    else
+                        $stmt->bindParam($value["parameter"], $value["variable"]);
                 }
             }
             $stmt->execute();
             return true;
         }
         catch(PDOException $e) {
-            echo "Query failed.\r\nError : " . $e->getMessage();
+            echo "Execute failed.\r\nError : " . $e->getMessage();
             die();
         }
     }
@@ -183,10 +192,19 @@ class DatabaseAccess extends HelpSetup
      * Entry:   SQL INSERT command (String)
      * Exit:    ID of last entry
      */
-    function queryInsert($sqlInsert) {
+    protected function queryInsert($sqlInsert, $paramList = array()) {
         try {
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->connection->exec($sqlInsert);
+            $stmt = $this->connection->prepare($sqlInsert);
+            if(count($paramList) > 0) {
+                foreach($paramList as $value) {
+                    if(isset($value["data_type"]) &&  $value["data_type"] != "")
+                        $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
+                    else
+                        $stmt->bindParam($value["parameter"], $value["variable"]);
+                }
+            }
+            $stmt->execute();
             return $this->connection->lastInsertId();
         }
         catch(PDOException $e) {
@@ -197,20 +215,74 @@ class DatabaseAccess extends HelpSetup
     }
 
     /*
-     * This function add a single line to a specified table.
-     * Entry:   string for tableName
-     *          array("field1"=>"value1", "field2"=>"value2", ... );
-     * return:  ID of last insert.
-     */
-    function insertTableLine($tableName, $data) {
-        $fields = array();
-        $values = array();
-        foreach ($data as $key => $value) {
-            array_push($fields, $key);
-            array_push($values, $value);
+     * This function build a SQL insert query with a table name and a list of records and launch its execution.
+     * @param   table name where to insert (string)
+     *          array of records that contain arrays of data to insert and their field name. Each array must have the
+     *          same structure and same order.
+     *          example:    Array (
+	 *                          Array (
+	 * 	                            "field1" => "data"
+     *                              "field2" => "more data"
+     *                              "field3" => "even more data"
+     *                          )
+	 *                          Array (
+	 *                              "field1" => "enough data?"
+     *                              "field2" => "no more data!"
+     *                              "field3" => "data!"
+	 *                          )
+     *                      )
+     * */
+    function insertMultipleRecordsIntoTable($tableName, $records) {
+        $tableName = strip_tags($tableName);
+        $sqlInsert = "INSERT INTO $tableName (%%FIELDS%%) VALUES ";
+        $multiples = array();
+        $cpt = 0;
+        $ready = array();
+        foreach ($records as $data) {
+            $cpt++;
+            $fields = array();
+            $params = array();
+            foreach($data as $key=>$value) {
+                array_push($fields, strip_tags($key));
+                array_push($params, ":".strip_tags($key).$cpt);
+                array_push($ready, array("parameter"=>":".strip_tags($key).$cpt,"variable"=>strip_tags($value)));
+            }
+            $sqlFieldNames = "`".implode("`, `", $fields)."`";
+            array_push($multiples, implode(", ", $params));
         }
 
-        $sqlInsert = "INSERT INTO ".$tableName." (`".implode("`, `", $fields)."`) VALUES ('".implode("', '", $values)."');";
-        return $this->queryInsert($sqlInsert);
+        $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . "(" . implode("), (", $multiples) . ");";
+        return $this->queryInsert($sqlInsert, $ready);
+    }
+
+    /*
+     * This function build a SQL insert query with a table name and one record and launch its execution.
+     * @param   table name where to insert (string)
+     *          array of records that contain arrays of data to insert and their field name. Each array must have the
+     *          same structure and same order.
+     *          example:    Array (
+	 * 	                            "field1" => "data"
+     *                              "field2" => "more data"
+     *                              "field3" => "even more data"
+     *                      )
+     * */
+    function insertRecordIntoTable($tableName, $record) {
+        $tableName = strip_tags($tableName);
+        $sqlInsert = "INSERT INTO $tableName (%%FIELDS%%) VALUES ";
+        $multiples = array();
+        $cpt = 1;
+        $ready = array();
+        $fields = array();
+        $params = array();
+        foreach($record as $key=>$value) {
+            array_push($fields, strip_tags($key));
+            array_push($params, ":".strip_tags($key).$cpt);
+            array_push($ready, array("parameter"=>":".strip_tags($key).$cpt,"variable"=>strip_tags($value)));
+        }
+        $sqlFieldNames = "`".implode("`, `", $fields)."`";
+        array_push($multiples, implode(", ", $params));
+
+        $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . "(" . implode("), (", $multiples) . ");";
+        return $this->queryInsert($sqlInsert, $ready);
     }
 }
