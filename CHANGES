@@ -1,3 +1,8 @@
+Version 0.18.18.2:
+ -     ---- Quick fix for alias expression in patient location and added todo in appointment
+ - Merge branch 'staging'
+ - Merge branch 'staging'
+
 Version 0.18.18.1:
  -     --- Improve the queries to fetch data from ORMS
 
