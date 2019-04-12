@@ -9,51 +9,54 @@
 class DatabaseQuestionnaire extends DatabaseAccess
 {
 
-    /* This function add french and english entries to the dictionary. First, the contentId is calulated since it should
-     * be the same for both french and english entries. Then the entries are created.
-     * Entry:   frenchText(String) and englishText(String)
-     * Return:  contentID of matching both entries
+    /*
+     * This function returns the next content ID for the dictionary necessary for an insertion
+     * @param   nothing
+     * @return  next content ID
+     * */
+    protected function getNextContentId() {
+        $nextContentId = $this->fetch(SQL_QUESTIONNAIRE_GET_DICTIONARY_NEXT_CONTENT_ID);
+        return $nextContentId["nextContentId"];
+    }
+
+    /*
+     * This function returns an array that contains
+     * @param   nothing
+     * @return  array of languages
+     * */
+    function getLanguageTable() {
+        return $this->fetchAll(SQL_QUESTIONNAIRE_GET_ALL_LANGUAGE);
+    }
+
+    /* This function add entries to the dictionary. First, the contentId is calculated since it should be the same for
+     * all languages. Then the entries are created in the dictionary. If there is less entries than the number of
+     * languages, empty entries will be created with the mention XX_ in the content where XX is the iso-lang code in
+     * upper case.
+     * Entry:   associative array of language id and its content.
+     *          example: array(1=>"exemple", "2"=>"example")
+     * Return:  new contentID of matching all entries.
      */
-    function addToDictionary($frenchText, $englishText, $tableId = "-1") {
-        try {
-            $stmt = $this->connection->prepare("SELECT COALESCE(MAX(contentId) + 1, 1) AS nextContentId FROM dictionary;");
-            $stmt->execute();
-            $newValue = $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $newValue = $stmt->fetchAll();
-            $newValue = $newValue[0]["nextContentId"];
+    function addToDictionary($newEntries, $tableName) {
+        $tableId = $this->getTableId($tableName);
+        $languageTable = $this->getLanguageTable();
+        $toInsert = array();
+        $contentId = $this->getNextContentId();
+
+        foreach($languageTable as $lang) {
+            $toInsert[$lang["ID"]] = array(
+                "languageId"=>$lang["ID"],
+                "content"=>strtoupper($lang["isoLang"]."_"),
+                "contentId"=>$contentId,
+                "tableId"=>$tableId,
+                "createdBy"=>$this->username,
+                "updatedBy"=>$this->username,
+            );
         }
-        catch(PDOException $e) {
-            echo "Query to dictionary failed.\r\nError : " . $e->getMessage();
-            die();
+        foreach($newEntries as $key=>$value) {
+            $toInsert[$key]["content"] = $value;
         }
-
-        $sanitizedFrench = str_replace("'", "\'", $frenchText);
-        $sanitizedEnglish = str_replace("'", "\'", $englishText);
-
-        if ($sanitizedFrench == "") $sanitizedFrench = "FR_";
-        if ($sanitizedEnglish == "") $sanitizedEnglish = "EN_";
-
-        $toInsert = array(
-            "tableId"=>$tableId,
-            "languageId"=>FRENCH_LANGUAGE,
-            "contentId"=>$newValue,
-            "content"=>$sanitizedFrench,
-            "createdBy"=>DEFAULT_NAME,
-            "updatedBy"=>DEFAULT_NAME,
-
-        );
-        $this->insertTableLine(DICTIONARY_TABLE, $toInsert);
-
-        $toInsert = array(
-            "tableId"=>$tableId,
-            "languageId"=>ENGLISH_LANGUAGE,
-            "contentId"=>$newValue,
-            "content"=>$sanitizedEnglish,
-            "createdBy"=>DEFAULT_NAME,
-            "updatedBy"=>DEFAULT_NAME,
-        );
-        $this->insertTableLine(DICTIONARY_TABLE, $toInsert);
-        return $newValue;
+        $this->insertMultipleRecordsIntoTable(DICTIONARY_TABLE, $toInsert);
+        return $contentId;
     }
 
     /*
@@ -62,7 +65,10 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  its table ID
      * */
     function getTableId($tableName) {
-        $tableId = $this->fetch("SELECT ID FROM ".DEFINITION_TABLE." WHERE name = '".$tableName."'");
+        $tableId = $this->fetch(SQL_QUESTIONNAIRE_GET_DEFINITION_TABLE_ID,
+            array(
+                array("parameter"=>":tableName","variable"=>$tableName,"data_type"=>PDO::PARAM_STR),
+            ));
         return $tableId["ID"];
     }
 
@@ -84,8 +90,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  all the options available for the specified question type
      * */
     function getQuestionTypesOptions($tableId, $subTableName) {
-        $subTableName = strip_tags($subTableName);
-        $subSql = str_replace("%%SUBTABLENAME%%", $subTableName, SQL_QUESTIONNAIRE_GET_QUESTION_TYPE_OPTIONS);
+        $subSql = str_replace("%%SUBTABLENAME%%", strip_tags($subTableName), SQL_QUESTIONNAIRE_GET_QUESTION_TYPE_OPTIONS);
         return $this->fetchAll($subSql, array(
             array("parameter"=>":subTableId","variable"=>$tableId,"data_type"=>PDO::PARAM_INT),
         ));
@@ -143,8 +148,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @param   string of the table name
      * @return  array of last time it was updated.
      * */
-    function getLastTimeTableUpdated($tableName, $idFromTable)
-    {
+    function getLastTimeTableUpdated($tableName, $idFromTable) {
         $sql = str_replace("%%TABLENAME%%", strip_tags($tableName), SQL_QUESTIONNAIRE_GET_LAST_TIME_TABLE_UPDATED);
         return $this->fetch($sql, array(
             array("parameter"=>":ID","variable"=>$idFromTable,"data_type"=>PDO::PARAM_INT),
@@ -158,16 +162,29 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @param   Table name to look at (string)
      *          ID of the table (BIGINT)
      *          last time the record was updated (string)
-     *          name of the persion who updated the record (string)
+     *          name of the person who updated the record (string)
      * @return  total of modification made: should be 0 or 1 (array)
      * */
     function canRecordBeUpdated($tableName, $tableId, $lastUpdated, $updatedBy) {
-        $sql = str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_CAN_RECORD_BE_UPDATED);
+        $sql = str_replace("%%TABLENAME%%", strip_tags($tableName), SQL_QUESTIONNAIRE_CAN_RECORD_BE_UPDATED);
         return $this->fetch($sql, array(
             array("parameter"=>":tableId","variable"=>$tableId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":lastUpdated","variable"=>$lastUpdated,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":updatedBy","variable"=>$updatedBy,"data_type"=>PDO::PARAM_STR),
         ));
+    }
+
+    /*
+     * This function add a new question type to the type template table of the questionnaire DB.
+     * @param
+     * */
+    function addQuestionType($newQuestionType) {
+        $this->execute(DEACTIVATE_FOREIGN_KEY_CONSTRAINT);
+        $newQuestionType["createdBy"] = $this->username;
+        $newQuestionType["updatedBy"] = $this->username;
+        $result = $this->insertRecordIntoTable(TYPE_TEMPLATE_TABLE, $newQuestionType);
+        $this->execute(ACTIVATE_FOREIGN_KEY_CONSTRAINT);
+        return $result;
     }
 
     /*
@@ -185,7 +202,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  result of deletion (boolean)
      * */
     function markAsDeleted($tableName, $recordId) {
-        $sql = str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_MARK_RECORD_AS_DELETED);
+        $sql = str_replace("%%TABLENAME%%", strip_tags($tableName),SQL_QUESTIONNAIRE_MARK_RECORD_AS_DELETED);
         return $this->execute($sql, array(
             array("parameter"=>":username","variable"=>$this->username,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":recordId","variable"=>$recordId,"data_type"=>PDO::PARAM_INT),

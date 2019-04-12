@@ -117,7 +117,7 @@ class Question {
             $questionLocked = 0;
             if (count($questionnairesList) > 0) {
                 $questionnairesList = implode(", ", $questionnairesList);
-                $questionLocked = $this->opalDB->getLockedQuestionnaires($questionnairesList);
+                $questionLocked = $this->opalDB->countLockedQuestionnaires($questionnairesList);
                 $questionLocked = intval($questionLocked["total"]);
             }
 
@@ -262,6 +262,13 @@ class Question {
      * sent to a patient. Then it checked if the record was updated in the meantime, and if not, it marks the question
      * as being deleted.
      *
+     * WARNING!!! No record should be EVER be removed from the questionnaire database! It should only being marked as
+     * being deleted ONLY  after it was verified the record is not locked, the user has the proper authorization and
+     * no more than one user is doing modification on it at a specific moment. Not following the proper procedure will
+     * have some serious impact on the integrity of the database and its records.
+     *
+     * REMEMBER !!! NO DELETE STATEMENT EVER !!! YOU HAVE BEING WARNED !!!
+     *
      * @param $questionId (ID of the question), $userId (ID of the user who requested the deletion)
      * @return array $response : response
      */
@@ -281,7 +288,7 @@ class Question {
 
         $wasQuestionSent = false;
         if (count($questionnairesList) > 0) {
-            $wasQuestionSent = $this->opalDB->getLockedQuestionnaires(implode(", ", $questionnairesList));
+            $wasQuestionSent = $this->opalDB->countLockedQuestionnaires(implode(", ", $questionnairesList));
             $wasQuestionSent = intval($wasQuestionSent["total"]);
         }
 
