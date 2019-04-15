@@ -232,7 +232,7 @@ class DatabaseAccess extends HelpSetup
 	 *                          )
      *                      )
      * */
-    function insertMultipleRecordsIntoTable($tableName, $records) {
+    protected function insertMultipleRecordsIntoTable($tableName, $records) {
         $tableName = strip_tags($tableName);
         $sqlInsert = "INSERT INTO $tableName (%%FIELDS%%) VALUES ";
         $multiples = array();
@@ -266,7 +266,7 @@ class DatabaseAccess extends HelpSetup
      *                              "field3" => "even more data"
      *                      )
      * */
-    function insertRecordIntoTable($tableName, $record) {
+    protected function insertRecordIntoTable($tableName, $record) {
         $tableName = strip_tags($tableName);
         $sqlInsert = "INSERT INTO $tableName (%%FIELDS%%) VALUES ";
         $multiples = array();
