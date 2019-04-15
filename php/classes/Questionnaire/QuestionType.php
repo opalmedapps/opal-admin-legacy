@@ -36,6 +36,9 @@ class QuestionType {
         $this->questionnaireDB->setUsername($userInfo["username"]);
     }
 
+    /*
+     * Function to sort options by their order value. Only being used when a question type has a list of options to sort
+     * */
     protected static function sort_order($a, $b){
         if (intval($a["order"]) == intval($b["order"])) return 0;
         return (intval($a["order"]) < intval($b["order"])) ? -1 : 1;
@@ -89,20 +92,31 @@ class QuestionType {
         $dictId = $this->questionnaireDB->addToDictionary($toInsert, TYPE_TEMPLATE_TABLE);
 
         /*
-         * Insertion into the type template table.
+         * Insert data into the typeTemplate table
          * */
         $toInsert = array(
             "name"=>$dictId,
             "typeId"=>$typeId,
             "private"=>$private,
         );
-        $questionTypeId = $this->questionnaireDB->addQuestionType($toInsert);
+        $questionTypeId = $this->questionnaireDB->addToTypeTemplateTable($toInsert);
+
+        /*
+         * Insertion into the type template table.
+         * */
         $optionToInsert["typeTemplateId"] = $questionTypeId;
+        $parentTableId = $this->questionnaireDB->addToTypeTemplateTableType($tableToInsert, $optionToInsert);
 
-        $optionId = $this->questionnaireDB->insertRecordIntoTable(TYPE_TEMPLATE_CHECKBOX_TABLE, $optionToInsert);
-
-
-        die("done");
+        /*
+         * If the table type has a subtables for the list of options (for example, checkbox and checkbox options),
+         * insert request data.
+         * */
+        if ($subTableToInsert != "") {
+            foreach ($options as &$opt) {
+                $opt["parentTableId"] = $parentTableId;
+            }
+            $subOptionsId = $this->questionnaireDB->addToTypeTemplateTableTypeOptions($subTableToInsert, $options);
+        }
     }
 
     /*

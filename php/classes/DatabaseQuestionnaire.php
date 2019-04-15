@@ -178,12 +178,29 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * This function add a new question type to the type template table of the questionnaire DB.
      * @param
      * */
-    function addQuestionType($newQuestionType) {
+    function addToTypeTemplateTable($newQuestionType) {
         $this->execute(DEACTIVATE_FOREIGN_KEY_CONSTRAINT);
+        $newQuestionType["OAUserId"] = $this->userId;
         $newQuestionType["createdBy"] = $this->username;
         $newQuestionType["updatedBy"] = $this->username;
         $result = $this->insertRecordIntoTable(TYPE_TEMPLATE_TABLE, $newQuestionType);
         $this->execute(ACTIVATE_FOREIGN_KEY_CONSTRAINT);
+        return $result;
+    }
+
+    /*
+     * This function add to the correct typeTemplate option table its values
+     * */
+    function addToTypeTemplateTableType($tableName, $optionToInsert) {
+        $result = $this->insertRecordIntoTable($tableName, $optionToInsert);
+        return $result;
+    }
+
+    /*
+     * This function add to the correct typeTemplate option table its values
+     * */
+    function addToTypeTemplateTableTypeOptions($tableName, $optionToInsert) {
+        $result = $this->insertMultipleRecordsIntoTable($tableName, $optionToInsert);
         return $result;
     }
 
