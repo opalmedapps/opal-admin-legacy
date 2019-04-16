@@ -69,25 +69,25 @@ define("TYPE_TEMPLATE_TRIGGER_WORD","typeTemplateTriggerWord");
 define("SQL_QUESTIONNAIRE_FETCH_ALL_QUESTIONS",
     "SELECT
     q.ID AS ID,
-    (SELECT d.content FROM dictionary d WHERE d.contentId = q.question AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
-    (SELECT d.content FROM dictionary d WHERE d.contentId = q.question AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.question AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.question AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR,
     q.private,
     q.typeId AS answertype_Id,
-    (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS answertype_name_EN,
-    (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS answertype_name_FR,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS answertype_name_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS answertype_name_FR,
     q.final
     FROM ".QUESTION_TABLE." q
     LEFT JOIN ".TYPE_TABLE." t ON t.ID = q.typeId
-    WHERE deleted = 0 AND (OAUserId = :userId OR private = 0);"
+    WHERE q.deleted = 0 AND (OAUserId = :userId OR private = 0);"
 );
 
 define("SQL_QUESTIONNAIRE_FETCH_LIBRARIES_QUESTION",
     "SELECT
-    (SELECT d.content FROM dictionary d WHERE d.contentId = l.name AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
-    (SELECT d.content FROM dictionary d WHERE d.contentId = l.name AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = l.name AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = l.name AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR
     FROM ".LIBRARY_TABLE." l
     RIGHT JOIN ".LIBRARY_QUESTION_TABLE." lq ON lq.libraryId = l.ID
-    WHERE lq.questionId = :questionId AND (OAUserId = :userId OR private = 0)"
+    WHERE lq.questionId = :questionId AND (OAUserId = :userId OR private = 0) AND l.deleted = 0;"
 );
 
 define("SQL_QUESTIONNAIRE_FETCH_QUESTIONNAIRES_ID_QUESTION",
@@ -95,24 +95,24 @@ define("SQL_QUESTIONNAIRE_FETCH_QUESTIONNAIRES_ID_QUESTION",
     FROM ".QUESTIONNAIRE_TABLE." qst
     RIGHT JOIN section s ON s.questionnaireId = qst.ID
     RIGHT JOIN ".QUESTION_SECTION_TABLE." qs ON qs.sectionId = s.ID
-    WHERE qs.questionId = :questionId AND (OAUserId = :userId OR private = 0)"
+    WHERE qs.questionId = :questionId AND (OAUserId = :userId OR private = 0) AND qst.deleted = 0;"
 );
 
 define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPES",
     "SELECT
     tt.ID AS serNum, t.ID as typeSerNum,
-    (SELECT d.content FROM dictionary d WHERE d.contentId = tt.name AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
-    (SELECT d.content FROM dictionary d WHERE d.contentId = tt.name AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = tt.name AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = tt.name AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR,
     tt.private,
-    (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS category_EN,
-    (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS category_FR,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS category_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS category_FR,
     tts.minValue,
     tts.maxValue,
     tts.increment,
-    (SELECT d.content FROM dictionary d WHERE d.contentId = tts.minCaption AND d.languageId = ".ENGLISH_LANGUAGE.") AS minCaption_EN,
-    (SELECT d.content FROM dictionary d WHERE d.contentId = tts.minCaption AND d.languageId = ".FRENCH_LANGUAGE.") AS minCaption_FR,
-    (SELECT d.content FROM dictionary d WHERE d.contentId = tts.maxCaption AND d.languageId = ".ENGLISH_LANGUAGE.") AS maxCaption_EN,
-    (SELECT d.content FROM dictionary d WHERE d.contentId = tts.maxCaption AND d.languageId = ".FRENCH_LANGUAGE.") AS maxCaption_FR,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = tts.minCaption AND d.languageId = ".ENGLISH_LANGUAGE.") AS minCaption_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = tts.minCaption AND d.languageId = ".FRENCH_LANGUAGE.") AS minCaption_FR,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = tts.maxCaption AND d.languageId = ".ENGLISH_LANGUAGE.") AS maxCaption_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = tts.maxCaption AND d.languageId = ".FRENCH_LANGUAGE.") AS maxCaption_FR,
     dt1.name AS tableName,
     dt2.name AS subTableName,
     tt.OAUserId AS created_by
@@ -121,21 +121,21 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPES",
     LEFT JOIN ".DEFINITION_TABLE." dt1 ON dt1.ID = t.templateTableId
     LEFT JOIN ".DEFINITION_TABLE." dt2 ON dt2.ID = t.templateSubTableId
     LEFT JOIN ".TYPE_TEMPLATE_SLIDER_TABLE." tts ON tts.typeTemplateId = tt.ID
-    WHERE tt.typeId IN (1, 2, 3, 4) AND (tt.private = 0 OR tt.OAUserId = :userId);"
+    WHERE tt.typeId IN (1, 2, 3, 4) AND (tt.private = 0 OR tt.OAUserId = :userId) AND tt.deleted = 0;"
 );
 
 define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPE_OPTIONS",
     "SELECT st.*,
-    (SELECT d.content FROM dictionary d WHERE d.contentId = st.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
-    (SELECT d.content FROM dictionary d WHERE d.contentId = st.description AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = st.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = st.description AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR
     FROM %%SUBTABLENAME%% st WHERE parentTableId = :subTableId ORDER BY st.order;"
 );
 
 define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPES_CATEGORIES",
     "SELECT
     ID,
-    (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS category_EN,
-    (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS category_FR
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS category_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS category_FR
     FROM ".TYPE_TABLE." t WHERE t.ID IN (1, 2, 3, 4);"
 );
 
@@ -168,4 +168,14 @@ define("SQL_QUESTIONNAIRE_GET_DEFINITION_TABLE_ID",
 
 define("SQL_QUESTIONNAIRE_GET_ID_FROM_TEMPLATE_TYPES_OPTION",
     "SELECT DISTINCT ID FROM %%TABLENAME%% WHERE typeTemplateId = :ID;"
+);
+
+define("SQL_QUESTIONNAIRE_GET_ALL_LIBRARIES",
+    "SELECT 
+    l.ID AS SerNum,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = l.name AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = l.name AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR
+    FROM library l
+    WHERE l.deleted = 0 AND (l.OAUserId = :OAUserId OR l.private = 0)
+    ORDER BY l.order"
 );
