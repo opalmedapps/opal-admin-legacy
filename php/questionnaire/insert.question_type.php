@@ -9,49 +9,39 @@ $questionTypeArray = array(
     'name_FR' => strip_tags($_POST['name_FR']),
     'private' => strip_tags($_POST['private']),
     'userId' => strip_tags($_POST['userId']),
-    'options' => ($_POST['options']),
+    'options' => $_POST['options'],
 );
 
-$questionTypeArray = array(
-    "typeId" => "1",
-    "name_EN" => "This is a test",
-    "name_FR" => "Ceci est un test",
-    "private" => "0",
-    "userId" => "20",
-    "options" => array(
-        array(
-            "text_EN" => "Yes",
-            "text_FR" => "Oui",
-            "position" => "2",
-            "last_updated_by" => "20",
-            "created_by" => "20",
-        ),
-        array(
-            "text_EN" => "No",
-            "text_FR" => "Non",
-            "position" => "4",
-            "last_updated_by" => "20",
-            "created_by" => "20",
-        ),
-        array(
-            "text_EN" => "Maybe",
-            "text_FR" => "Peut-être",
-            "position" => "6",
-            "last_updated_by" => "20",
-            "created_by" => "20",
-        ),
-        array(
-            "text_EN" => "Do not want to answer",
-            "text_FR" => "Ne veut pas répondre",
-            "position" => "8",
-            "last_updated_by" => "20",
-            "created_by" => "20",
-        ),
-    ),
-);
+if ($questionTypeArray["typeId"] == SLIDERS)
+{
+    $questionTypeArray["MinCaption_EN"] = strip_tags($_POST["MinCaption_EN"]);
+    $questionTypeArray["MinCaption_FR"] = strip_tags($_POST["MinCaption_FR"]);
+    $questionTypeArray["MaxCaption_EN"] = strip_tags($_POST["MaxCaption_EN"]);
+    $questionTypeArray["MaxCaption_FR"] = strip_tags($_POST["MaxCaption_FR"]);
+    $questionTypeArray["minValue"] = strip_tags($_POST["minValue"]);
+    $questionTypeArray["maxValue"] = strip_tags($_POST["maxValue"]);
+    $questionTypeArray["increment"] = strip_tags($_POST["increment"]);
+}
+
+if($questionTypeArray["typeId"] == "" || $questionTypeArray["name_EN"] == "" || $questionTypeArray["name_FR"] == "" || $questionTypeArray["userId"] == "")
+{
+    header('Content-Type: application/javascript');
+    $response['value'] = false;
+    $response['message'] = 500;
+    $response['details'] = "Invalid question type format";
+    echo json_encode($response);
+    die();
+}
 
 $answerTypeObj = new QuestionType($questionTypeArray["userId"]); // Object
 
 // Call function
 $answerTypeObj->insertQuestionType($questionTypeArray);
+
+header('Content-Type: application/javascript');
+$response['value'] = true;
+$response['message'] = 200;
+echo json_encode($response);
+
+
 ?>
