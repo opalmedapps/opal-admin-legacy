@@ -12,7 +12,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	// Default booleans
 	$scope.titleSection = { open: false, show: true };
 	$scope.answerTypeSection = { open: false, show: false };
-	$scope.questionGroupSection = { open: false, show: false };
+	$scope.questionLibrarySection = { open: false, show: false };
 
 	// get current user id
 	var user = Session.retrieveObject('user');
@@ -111,7 +111,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 		$scope.answerTypeSection.open = true;
 		if ($scope.newQuestion.answertype_serNum) {
-			$scope.questionGroupSection.show = true;
+			$scope.questionLibrarySection.show = true;
 			$scope.selectedAt = selectedAt;
 			steps.answerType.completed = true;
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -138,7 +138,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	};
 
 	$scope.updateGroup = function (selectedGroup) {
-		$scope.questionGroupSection.open = true;
+		$scope.questionLibrarySection.open = true;
 		if ($scope.newQuestion.questiongroup_serNum) {
 
 			$scope.selectedGroup = selectedGroup;
@@ -165,12 +165,6 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	$scope.searchLib = function (field) {
 		$scope.libEntered = field;
 	};
-	$scope.searchCat = function (field) {
-		$scope.catEntered = field;
-	};
-	$scope.searchGroup = function (field) {
-		$scope.groupEntered = field;
-	};
 
 	// cancel selection
 	$scope.atCancelSelection = function () {
@@ -186,9 +180,9 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		var keyword = new RegExp($scope.atEntered, 'i');
 		return !$scope.atEntered || keyword.test(Filter.name_EN);
 	};
-	$scope.searchGroupFilter = function (Filter) {
-		var keyword = new RegExp($scope.groupEntered, 'i');
-		return !$scope.groupEntered || keyword.test(Filter.name_EN);
+	$scope.searchLibFilter = function (Filter) {
+		var keyword = new RegExp($scope.libEntered, 'i');
+		return !$scope.libEntered || keyword.test(Filter.name_EN);
 	};
 
 	// questionnaire API: retrieve data
@@ -205,10 +199,11 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		console.error('Error occurred getting libraries:', response.status, response.data);
 	});
 
-	questionnaireCollectionService.getQuestionGroups(userid).then(function (response) {
+	//questionnaireCollectionService.getQuestionGroups(userid).then(function (response) {
+	questionnaireCollectionService.getLibraries(userid).then(function (response) {
 		$scope.groupFilterList = response.data;
 	}).catch(function(response) {
-		console.error('Error occurred getting question groups:', response.status, response.data);
+		console.error('Error occurred getting question libraries:', response.status, response.data);
 	});
 
 	questionnaireCollectionService.getAnswerTypeCategories().then(function (response) {
@@ -292,6 +287,8 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	$scope.addNewLib = function () {
 		// Prompt to confirm user's action
 		var confirmation = confirm("Confirm to create the new library [" + $scope.newLibrary.name_EN + "].");
+		console.log($scope.newLibrary);
+
 		if (confirmation) {
 			// write in to db
 			$.ajax({
