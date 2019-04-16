@@ -74,7 +74,12 @@ class DatabaseAccess extends HelpSetup
         }
         catch(PDOException $e)
         {
-            echo "Connection to $this->databaseName on $this->serverName failed.\r\nError : " . $e->getMessage();
+            $this->execute(ACTIVATE_FOREIGN_KEY_CONSTRAINT);
+            header('Content-Type: application/javascript');
+            $response['value'] = false;
+            $response['message'] = 500;
+            $response['details'] = "Connection to the database failed.\r\nError : ". $e->getMessage();
+            echo json_encode($response);
             die();
         }
     }
@@ -101,14 +106,19 @@ class DatabaseAccess extends HelpSetup
                     if(isset($value["data_type"]) &&  $value["data_type"] != "")
                         $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
                     else
-                        $stmt->bindParam($value["parameter"], $value["variable"]);
+                        $stmt->bindParam($value["parameter"], $value["variable"], self::getTypeOf($value["variable"]));
                 }
             }
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
         catch(PDOException $e) {
-            echo "Fetch all failed.\r\n$sqlFetchAll\r\nError : ". $e->getMessage();
+            $this->execute(ACTIVATE_FOREIGN_KEY_CONSTRAINT);
+            header('Content-Type: application/javascript');
+            $response['value'] = false;
+            $response['message'] = 500;
+            $response['details'] = "Fetch all failed.\r\nError : ". $e->getMessage();
+            echo json_encode($response);
             die();
         }
     }
@@ -135,14 +145,19 @@ class DatabaseAccess extends HelpSetup
                     if(isset($value["data_type"]) &&  $value["data_type"] != "")
                         $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
                     else
-                        $stmt->bindParam($value["parameter"], $value["variable"]);
+                        $stmt->bindParam($value["parameter"], $value["variable"], self::getTypeOf($value["variable"]));
                 }
             }
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         }
         catch(PDOException $e) {
-            echo "Fetch failed.\r\n$sqlFetch\r\nError : ". $e->getMessage();
+            $this->execute(ACTIVATE_FOREIGN_KEY_CONSTRAINT);
+            header('Content-Type: application/javascript');
+            $response['value'] = false;
+            $response['message'] = 500;
+            $response['details'] = "Fetch failed.\r\nError : ". $e->getMessage();
+            echo json_encode($response);
             die();
         }
     }
@@ -169,14 +184,19 @@ class DatabaseAccess extends HelpSetup
                     if(isset($value["data_type"]) &&  $value["data_type"] != "")
                         $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
                     else
-                        $stmt->bindParam($value["parameter"], $value["variable"]);
+                        $stmt->bindParam($value["parameter"], $value["variable"], self::getTypeOf($value["variable"]));
                 }
             }
             $stmt->execute();
             return true;
         }
         catch(PDOException $e) {
-            echo "Execute failed.\r\nError : " . $e->getMessage();
+            $this->execute(ACTIVATE_FOREIGN_KEY_CONSTRAINT);
+            header('Content-Type: application/javascript');
+            $response['value'] = false;
+            $response['message'] = 500;
+            $response['details'] = "Execute failed.\r\nError : " . $e->getMessage();
+            echo json_encode($response);
             die();
         }
     }
@@ -186,6 +206,19 @@ class DatabaseAccess extends HelpSetup
      * */
     public function disconnect() {
         $this->connection = null;
+    }
+
+    protected static function getTypeOf($aVar) {
+        switch(gettype($aVar)) {
+            case "integer":
+                return PDO::PARAM_INT;
+                break;
+            case "boolean":
+                return PDO::PARAM_BOOL;
+                break;
+            default:
+                return PDO::PARAM_STR;
+        }
     }
 
     /* Execute a query insert SQL command
@@ -201,14 +234,19 @@ class DatabaseAccess extends HelpSetup
                     if(isset($value["data_type"]) &&  $value["data_type"] != "")
                         $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
                     else
-                        $stmt->bindParam($value["parameter"], $value["variable"]);
+                        $stmt->bindParam($value["parameter"], $value["variable"], self::getTypeOf($value["variable"]));
                 }
             }
             $stmt->execute();
             return $this->connection->lastInsertId();
         }
         catch(PDOException $e) {
-            echo "Insert query failed.\r\nError : " . $e->getMessage();
+            $this->execute(ACTIVATE_FOREIGN_KEY_CONSTRAINT);
+            header('Content-Type: application/javascript');
+            $response['value'] = false;
+            $response['message'] = 500;
+            $response['details'] = "Insert query failed.\r\nError : " . $e->getMessage();
+            echo json_encode($response);
             die();
         }
 

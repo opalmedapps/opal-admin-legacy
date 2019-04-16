@@ -121,7 +121,7 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPES",
     LEFT JOIN ".DEFINITION_TABLE." dt1 ON dt1.ID = t.templateTableId
     LEFT JOIN ".DEFINITION_TABLE." dt2 ON dt2.ID = t.templateSubTableId
     LEFT JOIN ".TYPE_TEMPLATE_SLIDER_TABLE." tts ON tts.typeTemplateId = tt.ID
-    WHERE tt.private = 0 OR tt.OAUserId = :userId;"
+    WHERE tt.typeId IN (1, 2, 3, 4) AND (tt.private = 0 OR tt.OAUserId = :userId);"
 );
 
 define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPE_OPTIONS",
@@ -136,7 +136,7 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPES_CATEGORIES",
     ID,
     (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS category_EN,
     (SELECT d.content FROM dictionary d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS category_FR
-    FROM ".TYPE_TABLE." t;"
+    FROM ".TYPE_TABLE." t WHERE t.ID IN (1, 2, 3, 4);"
 );
 
 define("SQL_QUESTIONNAIRE_GET_LAST_TIME_TABLE_UPDATED",
@@ -164,4 +164,8 @@ define("SQL_QUESTIONNAIRE_GET_ALL_LANGUAGE",
 
 define("SQL_QUESTIONNAIRE_GET_DEFINITION_TABLE_ID",
     "SELECT ID FROM ".DEFINITION_TABLE." WHERE name = :tableName"
+);
+
+define("SQL_QUESTIONNAIRE_GET_ID_FROM_TEMPLATE_TYPES_OPTION",
+    "SELECT DISTINCT ID FROM %%TABLENAME%% WHERE typeTemplateId = :ID;"
 );

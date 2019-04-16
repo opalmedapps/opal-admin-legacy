@@ -88,7 +88,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 		$scope.titleSection.open = true;
 		if (!$scope.newQuestion.text_EN && !$scope.newQuestion.text_FR) {
-			$scope.titleSection.open = false
+			$scope.titleSection.open = false;
 		}
 		if ($scope.newQuestion.text_EN && $scope.newQuestion.text_FR) {
 
@@ -116,10 +116,10 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 			steps.answerType.completed = true;
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 
-			var increment = parseInt($scope.selectedAt.increment);
-			var minValue = parseInt($scope.selectedAt.minValue);
-			if (minValue == 0) minValue = increment;
-			var maxValue = parseInt($scope.selectedAt.maxValue);
+			var increment = parseFloat($scope.selectedAt.increment);
+			var minValue = parseFloat($scope.selectedAt.minValue);
+			if (minValue === 0.0) minValue = increment;
+			var maxValue = parseFloat($scope.selectedAt.maxValue);
 
 			$scope.radiostep = new Array();
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -227,23 +227,26 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		private: 0,
 		last_updated_by: userid,
 		created_by: userid,
-		options: []
+		options: [],
+		slider: []
 	};
 
 	$scope.addNewAt = function (atCatSelected) {
 		// Binding categories
 		$scope.newAnswerType.ID = atCatSelected.ID;
 		$scope.newAnswerType.userId = Session.retrieveObject('user').id;
-
 		// Prompt to confirm user's action
-		var confirmation = confirm("Confirm to create the new response type [" + $scope.newAnswerType.name_EN + "] with category [" + atCatSelected.category_EN + "].");
+		var confirmation = confirm("Are you sure you want to create a new " + atCatSelected.category_EN.toLowerCase()  +  " response type named '" + $scope.newAnswerType.name_EN + "'?");
 		if (confirmation) {
 			// write in to db
 			$.ajax({
 				type: "POST",
 				url: "php/questionnaire/insert.question_type.php",
 				data: $scope.newAnswerType,
-				success: function () {
+				success: function (result) {
+					result = JSON.parse(result);
+					console.log(result);
+
 					alert('Successfully added the new response type. Please find your new response type in the radio button form above.');
 					// update answer type list
 					questionnaireCollectionService.getQuestionTypes(userid).then(function (response) {

@@ -73,7 +73,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     /*
-     * This fucntion lists all the questions types a specific user can have access.
+     * This function lists all the questions types a specific user can have access.
      * @param   none
      * @return  array of question types
      * */
@@ -89,10 +89,15 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @param   ID of the question type, name of the table options
      * @return  all the options available for the specified question type
      * */
-    function getQuestionTypesOptions($tableId, $subTableName) {
+    function getQuestionTypesOptions($tableId, $tableName, $subTableName) {
+        $mainSql = str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_ID_FROM_TEMPLATE_TYPES_OPTION);
+        $mainId = $this->fetch($mainSql, array(
+            array("parameter"=>":ID","variable"=>$tableId,"data_type"=>PDO::PARAM_INT),
+        ));
+        $mainId = $mainId["ID"];
         $subSql = str_replace("%%SUBTABLENAME%%", strip_tags($subTableName), SQL_QUESTIONNAIRE_GET_QUESTION_TYPE_OPTIONS);
         return $this->fetchAll($subSql, array(
-            array("parameter"=>":subTableId","variable"=>$tableId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":subTableId","variable"=>$mainId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
