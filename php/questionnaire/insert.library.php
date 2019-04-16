@@ -1,18 +1,22 @@
 <?php
-	/* To insert a newly-created library */
-	include_once('questionnaire.inc');
+/* To insert a newly-created library */
+include_once('questionnaire.inc');
 
-	// Construct array from FORM params
-	$libraryArray = array(
-		'name_EN'					=> $_POST['name_EN'],
-		'name_FR'					=> $_POST['name_FR'],
-		'private'					=> $_POST['private'],
-		'created_by'			=> $_POST['created_by'],
-		'last_updated_by'	=> $_POST['last_updated_by']
-	);
+// Construct array from FORM params
+$libraryArray = array(
+    'name_EN' => strip_tags($_POST['name_EN']),
+    'name_FR' => strip_tags($_POST['name_FR']),
+    'private' => strip_tags($_POST['private'])
+);
 
-	$libraryObj = new Library; // Object
+$userId = strip_tags($_POST['created_by']);
+$libraryObj = new Library($userId); // Object
 
-	// Call function
-	$libraryObj->insertLibrary($libraryArray);
+// Call function
+$libraryObj->insertLibrary($libraryArray);
+
+header('Content-Type: application/javascript');
+$response['value'] = true;
+$response['message'] = 200;
+echo json_encode($response);
 ?>

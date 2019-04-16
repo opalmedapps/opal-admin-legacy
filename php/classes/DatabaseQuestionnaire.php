@@ -201,6 +201,13 @@ class DatabaseQuestionnaire extends DatabaseAccess
         return $result;
     }
 
+    function addToLibraryTable($toInsert) {
+        $toInsert["OAUserId"] = $this->userId;
+        $toInsert["createdBy"] = $this->username;
+        $toInsert["updatedBy"] = $this->username;
+        return $this->insertRecordIntoTable(LIBRARY_TABLE, $toInsert);
+    }
+
     /*
      * This function add to the correct typeTemplate option table its values
      * */
@@ -208,6 +215,16 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $result = $this->insertMultipleRecordsIntoTable($tableName, $optionToInsert);
         return $result;
     }
+
+    /* This function returns all the current libraries a user is authorized to see*/
+    function fetchAllLibraries() {
+        return $this->fetchAll(SQL_QUESTIONNAIRE_GET_ALL_LIBRARIES,
+            array(
+                array("parameter"=>":OAUserId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+
 
     /*
      * This function marks a specific record in a specific table as deleted.
