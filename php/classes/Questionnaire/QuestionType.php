@@ -62,14 +62,13 @@ class QuestionType {
         $private = strip_tags($newQuestionType["private"]);
         $options = array();
         $optionToInsert = array();
-        if($typeId = CHECKBOXES) {
+        if($typeId == CHECKBOXES) {
             $tableToInsert = TYPE_TEMPLATE_CHECKBOX_TABLE;
             $subTableToInsert = TYPE_TEMPLATE_CHECKBOX_OPTION_TABLE;
 
-
             foreach($newQuestionType["options"] as $opt) {
                 $temp = array();
-                $toInsert = array(FRENCH_LANGUAGE=>$opt["text_FR"], ENGLISH_LANGUAGE=>$opt["text_EN"]);
+                $toInsert = array(FRENCH_LANGUAGE=>strip_tags($opt["text_FR"]), ENGLISH_LANGUAGE=>strip_tags($opt["text_EN"]));
                 $temp["description"] = $this->questionnaireDB->addToDictionary($toInsert, TYPE_TEMPLATE_TABLE);
                 $temp["order"] = strip_tags($opt["position"]);
                 array_push($options, $temp);
@@ -83,6 +82,62 @@ class QuestionType {
 
             $optionToInsert["minAnswer"]= 1;
             $optionToInsert["maxAnswer"] = count($options);
+        }
+        else if ($typeId == RADIO_BUTTON) {
+            $tableToInsert = TYPE_TEMPLATE_RADIO_BUTTON_TABLE;
+            $subTableToInsert = TYPE_TEMPLATE_RADIO_BUTTON_OPTION_TABLE;
+
+            foreach($newQuestionType["options"] as $opt) {
+                $temp = array();
+                $toInsert = array(FRENCH_LANGUAGE=>strip_tags($opt["text_FR"]), ENGLISH_LANGUAGE=>strip_tags($opt["text_EN"]));
+                $temp["description"] = $this->questionnaireDB->addToDictionary($toInsert, TYPE_TEMPLATE_TABLE);
+                $temp["order"] = strip_tags($opt["position"]);
+                array_push($options, $temp);
+            }
+            usort($options, 'self::sort_order');
+            $cpt = 0;
+            foreach($options as &$row) {
+                $cpt++;
+                $row["order"] = $cpt;
+            }
+        }
+        else if ($typeId == SLIDERS) {
+            $tableToInsert = TYPE_TEMPLATE_SLIDER_TABLE;
+            $minValue = floatval(strip_tags($newQuestionType["minValue"]));
+            $minCaptionEn = strip_tags($newQuestionType["MinCaption_EN"]);
+            $minCaptionFr = strip_tags($newQuestionType["MinCaption_FR"]);
+            $maxValue = floatval(strip_tags($newQuestionType["maxValue"]));
+            $maxCaptionEn = strip_tags($newQuestionType["MaxCaption_EN"]);
+            $maxCaptionFr = strip_tags($newQuestionType["MaxCaption_FR"]);
+            $increment = floatval(strip_tags($newQuestionType["increment"]));
+
+            if ($increment <= 0 || $minValue <= 0 || $maxValue <= $minValue) {
+                header('Content-Type: application/javascript');
+                $response['value'] = false;
+                $response['message'] = 500;
+                $response['details'] = "Invalid slider format. " . $newQuestionType["minValue"];
+                print_R($_POST);
+                echo json_encode($response);
+                die();
+            }
+
+            $maxValue = floatval(floor(($maxValue - $minValue) / $increment) * $increment) + $minValue;
+
+            $toInsert = array(
+                FRENCH_LANGUAGE=>$minCaptionFr, ENGLISH_LANGUAGE=>$minCaptionEn
+            );
+            $optionToInsert["minCaption"] = $this->questionnaireDB->addToDictionary($toInsert, TYPE_TEMPLATE_TABLE);
+            $toInsert = array(
+                FRENCH_LANGUAGE=>$maxCaptionFr, ENGLISH_LANGUAGE=>$maxCaptionEn
+            );
+            $optionToInsert["maxCaption"] = $this->questionnaireDB->addToDictionary($toInsert, TYPE_TEMPLATE_TABLE);
+            $optionToInsert["minValue"] = $minValue;
+            $optionToInsert["maxValue"] = $maxValue;
+            $optionToInsert["increment"] = $increment;
+        }
+        else {
+            $typeId = TEXT_BOX;
+            $tableToInsert = TYPE_TEMPLATE_TEXTBOX_TABLE;
         }
 
         /*
@@ -108,14 +163,14 @@ class QuestionType {
         $parentTableId = $this->questionnaireDB->addToTypeTemplateTableType($tableToInsert, $optionToInsert);
 
         /*
-         * If the table type has a subtables for the list of options (for example, checkbox and checkbox options),
+         * If the table type has a sub-table for the list of options (for example, checkbox and checkbox options),
          * insert request data.
          * */
         if ($subTableToInsert != "") {
             foreach ($options as &$opt) {
                 $opt["parentTableId"] = $parentTableId;
             }
-            $subOptionsId = $this->questionnaireDB->addToTypeTemplateTableTypeOptions($subTableToInsert, $options);
+            $this->questionnaireDB->addToTypeTemplateTableTypeOptions($subTableToInsert, $options);
         }
     }
 
@@ -132,6 +187,7 @@ class QuestionType {
             $temp = array(
                 'serNum'        => $row["serNum"],
                 'typeSerNum'    => $row["typeSerNum"],
+                'name'       => $row["name"],
                 'name_EN'       => $row["name_EN"],
                 'name_FR'       => $row["name_FR"],
                 'private'       => $row["private"],
@@ -149,7 +205,8 @@ class QuestionType {
 
             // if the table has a subtable, returns its options
             if($row["subTableName"] != "") {
-                $temp["options"] = $this->questionnaireDB->getQuestionTypesOptions($row["serNum"], $row["subTableName"]);
+
+                $temp["options"] = $this->questionnaireDB->getQuestionTypesOptions($row["serNum"], $row["tableName"], $row["subTableName"]);
             }
             array_push($questionTypes, $temp);
         }

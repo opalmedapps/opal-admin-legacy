@@ -369,16 +369,24 @@
                     <button type="button" class="btn btn-default" style="float: left; margin-top:5px;" ng-click="addOptions()"><span class="fa fa-plus"></span> Add option</button>
                   </div>
 
-                  <!-- Add Linear scale options -->
+                  <!-- Add Sliders options -->
                   <div class="col-xs-12 col-md-8" ng-show="atCategory.category_EN === 'Slider'">
-                    <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in newAnswerType.options">
-                      <input class="form-control" style="width:20%" type="number" min="1" placeholder="Position" ng-model="option.position" required/>
-                      <input class="form-control" style="width:40%" type="text" placeholder="Scale (EN)" ng-model="option.text_EN" required/>
-                      <input class="form-control" style="width:40%" type="text" placeholder="Scale (FR)" ng-model="option.text_FR" required/>
-                      <span class="input-group-btn"><button class="btn btn-default" ng-click="deleteOptions(option)"><span class="fa fa-minus"></span> Delete</button></span>
+                    <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
+                      <input class="form-control" style="width:20%" type="number" placeholder="Minimum value" ng-model="newAnswerType.minValue" ng-required="atCategory.category_EN === 'Slider'" />
+                      <input class="form-control" style="width:35%" type="text" ng-model="newAnswerType.MinCaption_EN" placeholder="Minimum caption (EN)" ng-required="atCategory.category_EN === 'Slider'"/>
+                      <input class="form-control" style="width:35%" type="text" ng-model="newAnswerType.MinCaption_FR" placeholder="Minimum caption (FR)" ng-required="atCategory.category_EN === 'Slider'" />
                     </div>
-                    <button type="button" class="btn btn-default" style="float: left; margin-top:5px;" ng-click="addOptions()"><span class="fa fa-plus"></span> Add option</button>
+                    <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
+                      <input class="form-control" style="width:20%" type="number" placeholder="Maximum value" ng-model="newAnswerType.maxValue" ng-required="atCategory.category_EN === 'Slider'" />
+                      <input class="form-control" style="width:35%" type="text" ng-model="newAnswerType.MaxCaption_EN" placeholder="Maximum caption (EN)" ng-required="atCategory.category_EN === 'Slider'" />
+                      <input class="form-control" style="width:35%" type="text" ng-model="newAnswerType.MaxCaption_FR" placeholder="Maximum caption (FR)" ng-required="atCategory.category_EN === 'Slider'" />
+                    </div>
+                    <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
+                      <input class="form-control" style="width:20%" type="number" placeholder="Increment step" ng-model="newAnswerType.increment" ng-required="atCategory.category_EN === 'Slider'"/>
+                    </div>
+
                   </div>
+
 
                   <div class="col-xs-12 col-md-8">
                     <div class="input-group" style="margin-top:10px; margin-bottom:10px;">
