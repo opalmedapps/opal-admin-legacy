@@ -172,10 +172,27 @@ define("SQL_QUESTIONNAIRE_GET_ID_FROM_TEMPLATE_TYPES_OPTION",
 
 define("SQL_QUESTIONNAIRE_GET_ALL_LIBRARIES",
     "SELECT 
-    l.ID AS SerNum,
+    l.ID AS serNum,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = l.name AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = l.name AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR
     FROM library l
-    WHERE l.deleted = 0 AND (l.OAUserId = :OAUserId OR l.private = 0)
-    ORDER BY l.order"
+    WHERE l.deleted = 0 AND (l.OAUserId = :OAUserId OR l.private = 0);"
+);
+
+define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPE",
+    "SELECT
+    tt.*,
+    tts.minValue,
+    tts.maxValue,
+    tts.minCaption,
+    tts.maxCaption,
+    tts.increment,
+    dt1.name AS tableName,
+    dt2.name AS subTableName
+    FROM ".TYPE_TEMPLATE_TABLE." tt
+    LEFT JOIN type t ON t.ID = tt.typeId
+    LEFT JOIN ".DEFINITION_TABLE." dt1 ON dt1.ID = t.tableId
+    LEFT JOIN ".DEFINITION_TABLE." dt2 ON dt2.ID = t.subTableId
+    LEFT JOIN ".TYPE_TEMPLATE_SLIDER_TABLE." tts ON tts.typeTemplateId = tt.ID
+    WHERE tt.ID = :ID AND (tt.private = 0 OR tt.OAUserId = :OAUserId) AND tt.deleted = 0;"
 );

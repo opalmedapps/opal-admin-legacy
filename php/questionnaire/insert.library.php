@@ -9,12 +9,12 @@ $libraryArray = array(
     'private' => strip_tags($_POST['private'])
 );
 
-$userId = strip_tags($_POST['created_by']);
+$userId = strip_tags($_POST['userid']);
 $libraryObj = new Library($userId); // Object
 
 // Call function
 $libraryObj->insertLibrary($libraryArray);
-
+die();
 header('Content-Type: application/javascript');
 $response['value'] = true;
 $response['message'] = 200;

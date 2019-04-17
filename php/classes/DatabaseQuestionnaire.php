@@ -224,7 +224,16 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
-
+    /*
+     * This function validate a question type for the user
+     * */
+    function validateQuestionType($questionTypeID){
+        return $this->fetchAll(SQL_QUESTIONNAIRE_GET_QUESTION_TYPE,
+            array(
+                array("parameter"=>":OAUserId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":ID","variable"=>$questionTypeID,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
 
     /*
      * This function marks a specific record in a specific table as deleted.

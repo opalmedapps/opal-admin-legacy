@@ -29,6 +29,7 @@ class Question {
         $this->setUserInfo($userId);
     }
 
+    /* this function sets the user info and the database access */
     protected function setUserInfo($userId) {
         $this->userInfo = $this->opalDB->getUserInfo($userId);
         $this->opalDB->setUserId($this->userInfo["userId"]);
@@ -41,46 +42,34 @@ class Question {
      *
      * Inserts a question into our database
      *
-     * @param array $questionDetails  : the question details
-     * @return void
+     * @param   array $questionDetails, array containing all the questions details
+     * @return  ID of the new question
      */
     public function insertQuestion($questionDetails){
 
-        $text_EN 				= $questionDetails['text_EN'];
-        $text_FR 				= $questionDetails['text_FR'];
-        $answertype_serNum 		= $questionDetails['answertype_serNum'];
-        $questiongroup_serNum 	= $questionDetails['questiongroup_serNum'];
-        $created_by 			= $questionDetails['created_by'];
-        $last_updated_by 		= $questionDetails['last_updated_by'];
 
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-				INSERT INTO
-					QuestionnaireQuestion (
-						text_EN,
-						text_FR,
-						questiongroup_serNum,
-						answertype_serNum,
-						last_updated_by,
-						created_by
-					)
-				VALUES (
-					\"$text_EN\",
-					\"$text_FR\",
-					'$questiongroup_serNum',
-					'$answertype_serNum',
-					'$last_updated_by',
-					'$created_by'
-				)
-			";
+        $textEn = strip_tags($questionDetails['text_EN']);
+        $textFr = strip_tags($questionDetails['text_FR']);
+        $questionTypeId = strip_tags($questionDetails['questiontype_ID']);
+        $libraryID = strip_tags($questionDetails['library_ID']);
 
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
+        $validQuestionType = $this->questionnaireDB->validateQuestionType($questionTypeId);
 
-        } catch(PDOException $e) {
-            return $e->getMessage();
+        print_R($validQuestionType);die();
+        $validLibrary = $this->questionnaireDB->validateLibrary($libraryID);
+
+
+        if($validQuestionType && $validLibrary) {
+            $contentId = $this->questionnaireDB->addToDictionary(array(FRENCH_LANGUAGE=>$textFr, ENGLISH_LANGUAGE=>$textEn), QUESTION_TABLE);
+            return $this->questionnaireDB->insertQuestion($contentId, $questionTypeId, $libraryID);
+        }
+        else {
+            header('Content-Type: application/javascript');
+            $response['value'] = false;
+            $response['message'] = 500;
+            $response['details'] = "Library and/or response type.";
+            echo json_encode($response);
+            die();
         }
     }
 

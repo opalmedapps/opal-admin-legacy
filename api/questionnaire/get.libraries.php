@@ -1,17 +1,23 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get a list of existing libraries */
-	include_once('questionnaire.inc');
+/**
+ * User: Dominic Bourdua
+ * Date: 4/16/2019
+ * Time: 1:45 PM
+ */
 
-	// Retrieve form params
-	$callback = $_GET['callback'];
-	$userid = $_GET['userid'];
+/* To get a list of existing question groups */
+include_once('questionnaire.inc');
 
-	$library = new Library(); // Object
+// Retrieve form params
+$callback = strip_tags($_GET['callback']);
+$userId = strip_tags($_GET['userid']);
 
-	// Call function
-	$libraryList = $library->getLibraries($userid);
+$questionLibrary = new Library($userId); // Object
 
-	// Callback to http request
-	print $callback.'('.json_encode($libraryList).')';
+// Call function
+$result = $questionLibrary->getLibraries();
+
+// Callback to http request
+header('Content-Type: application/javascript');
+print $callback.'('.json_encode($result).')';
 ?>
