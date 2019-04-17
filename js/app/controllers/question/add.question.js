@@ -26,8 +26,25 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	};
 
 	$scope.numOfCompletedSteps = 0;
-	$scope.stepTotal = 3;
+	$scope.stepTotal = 2;
 	$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+
+	$scope.decreaseStep = function() {
+		$scope.newQuestion.library_ID = null;
+		$scope.stepTotal = 2;
+		$scope.numOfCompletedSteps = 2;
+		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+		steps.question.completed = true;
+		$scope.questionLibrarySection.open = false;
+	};
+
+	$scope.increaseStep = function() {
+		$scope.stepTotal = 3;
+		steps.question.completed = false;
+		$scope.numOfCompletedSteps = 2;
+		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+		$scope.questionLibrarySection.open = true;
+	};
 
 	/* Function for the "Processing" dialog */
 	var processingModal;
@@ -42,8 +59,10 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	// Function to calculate / return step progress
 	function trackProgress(value, total) {
-		return Math.round(100 * value / total);
-	};
+		var result = Math.round(100 * value / total);
+		if (result > 100) result = 100;
+		return result;
+	}
 
 	// Function to return number of steps completed
 	function stepsCompleted(steps) {
@@ -54,16 +73,15 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 			}
 		}
 		return numberOfTrues;
-	};
+	}
 
 	// Initialize the new question object
 	$scope.newQuestion = {
 		text_EN: "",
 		text_FR: "",
-		questiongroup_serNum: null,
-		answertype_serNum: null,
-		last_updated_by: userid,
-		created_by: userid
+		library_ID: null,
+		questiontype_ID: null,
+		userid: userid
 	};
 
 	// Initialize variables for holding selected answer type & group
@@ -110,7 +128,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	$scope.updateAt = function (selectedAt) {
 
 		$scope.answerTypeSection.open = true;
-		if ($scope.newQuestion.answertype_serNum) {
+		if ($scope.newQuestion.questiontype_ID) {
 			$scope.questionLibrarySection.show = true;
 			$scope.selectedAt = selectedAt;
 			steps.answerType.completed = true;
@@ -137,14 +155,14 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		}
 	};
 
-	$scope.updateGroup = function (selectedGroup) {
+	$scope.updateLibrary = function (selectedLibrary) {
 		$scope.questionLibrarySection.open = true;
-		if ($scope.newQuestion.questiongroup_serNum) {
+		if ($scope.newQuestion.library_ID) {
 
-			$scope.selectedGroup = selectedGroup;
+			$scope.selectedGroup = selectedLibrary;
 
 			steps.questionGroup.completed = true;
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
+			$scope.numOfCompletedSteps = 3;
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
 		} else {
@@ -156,8 +174,6 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		}
 	};
 
-
-
 	// assign functions
 	$scope.searchAt = function (field) {
 		$scope.atEntered = field;
@@ -168,11 +184,11 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	// cancel selection
 	$scope.atCancelSelection = function () {
-		$scope.newQuestion.answertype_serNum = false;
+		$scope.newQuestion.questiontype_ID = false;
 	};
 
 	$scope.groupCancelSelection = function () {
-		$scope.newQuestion.questiongroup_serNum = false;
+		$scope.newQuestion.library_ID = false;
 	};
 
 	// search function
@@ -220,8 +236,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		category_EN: "",
 		category_FR: "",
 		private: 0,
-		last_updated_by: userid,
-		created_by: userid,
+		userid: userid,
 		options: [],
 		slider: []
 	};
@@ -240,8 +255,6 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 				data: $scope.newAnswerType,
 				success: function (result) {
 					result = JSON.parse(result);
-					console.log(result);
-
 					alert('Successfully added the new response type. Please find your new response type in the radio button form above.');
 					// update answer type list
 					questionnaireCollectionService.getQuestionTypes(userid).then(function (response) {
@@ -251,7 +264,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 					});
 				},
 				error: function () {
-					alert("A problem occurred. Please try again.r");
+					alert("A problem occurred. Please try again.");
 				}
 			});
 		}
@@ -263,8 +276,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 			text_EN: "",
 			text_FR: "",
 			position: undefined,
-			last_updated_by: userid,
-			created_by: userid
+			userid: userid
 		});
 	};
 
@@ -281,112 +293,42 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		name_EN: "",
 		name_FR: "",
 		private: 0,
-		last_updated_by: userid,
-		created_by: userid
+		userid: userid
 	};
 	$scope.addNewLib = function () {
 		// Prompt to confirm user's action
-		var confirmation = confirm("Confirm to create the new library [" + $scope.newLibrary.name_EN + "].");
-		console.log($scope.newLibrary);
-
+		var confirmation = confirm("Are you sure you want to create new library " + $scope.newLibrary.name_EN + " / "+$scope.newLibrary.name_FR+ "?");
 		if (confirmation) {
 			// write in to db
 			$.ajax({
 				type: "POST",
 				url: "php/questionnaire/insert.library.php",
 				data: $scope.newLibrary,
-				success: function () {
-					alert('Successfully added the new library. Please find your new library in the dropdown form above.');
-					// update
-					questionnaireCollectionService.getLibraries(userid).then(function (response) {
-						$scope.libFilterList = response.data;
-					}).catch(function(response) {
-						console.error('Error occurred getting libraries:', response.status, response.data);
-					});
+				success: function (result) {
+					result = JSON.parse(result);
+					if(result.message === 200) {
+						alert('Successfully added the new library. Please find your new library in the panel above.');
+						// update
+						questionnaireCollectionService.getLibraries(userid).then(function (response) {
+							$scope.groupFilterList = response.data;
+						}).catch(function (response) {
+							alert('Error occurred getting libraries. Code '+ response.status +"\r\n" + response.data);
+						});
+					}
+					else {
+						alert("Unable to create the library. Code " + result.message + ".\r\nErrore message: " + result.details);
+					}
 				},
 				error: function () {
 					alert("Something went wrong.");
 				}
 			});
-		} else {
-			// do nothing
-			console.log("Cancel creating new library.")
-		}
-	};
-
-	// Add new category
-	$scope.newCat = {
-		category_EN: "",
-		category_FR: ""
-	};
-
-	$scope.addNewCat = function (librarySelectedCat) {
-		// Prompt to confirm user's action
-		var confirmation = confirm("Confirm to enter the new category [" + $scope.newCat.category_EN + "]. ** Please note that category only exist when there's question group linked to it. Therefore the category you just entered would no longer exist if you didn't create a question group with it. **");
-		if (confirmation) {
-			// push to selected list
-			librarySelectedCat.push($scope.newCat);
-
-			alert('Successfully entered the new category. Please find your new category in the dropdown form on the left.');
-
-		} else {
-			// do nothing
-			console.log("Cancel entering new category.")
-		}
-	};
-
-	// Initialize the new group object
-	$scope.newGroup = {
-		name_EN: "",
-		name_FR: "",
-		category_EN: "",
-		category_FR: "",
-		private: 0,
-		last_updated_by: userid,
-		created_by: userid,
-		library_serNum: null
-	};
-
-	$scope.addNewGroup = function (librarySelectedSerNum, categorySelected) {
-		// bind selected data
-		if (categorySelected) {
-			$scope.newGroup.category_EN = categorySelected.category_EN;
-			$scope.newGroup.category_FR = categorySelected.category_FR;
-		}
-
-		$scope.newGroup.library_serNum = librarySelectedSerNum;
-		console.log("selected library sernum = " + librarySelectedSerNum);
-
-		// Prompt to confirm user's action
-		var confirmation = confirm("Confirm to create the new group [" + $scope.newGroup.name_EN + "] with category [" + $scope.newGroup.category_EN + "].");
-		if (confirmation) {
-			// write in to db
-			$.ajax({
-				type: "POST",
-				url: "php/questionnaire/insert.question_group.php",
-				data: $scope.newGroup,
-				success: function () {
-					alert('Successfully added the new group. Please find your new group in the radio button form above.');
-					// update
-					questionnaireCollectionService.getQuestionGroups(userid).then(function (response) {
-						$scope.groupFilterList = response.data;
-					}).catch(function(response) {
-						console.error('Error occurred getting question groups:', response.status, response.data);
-					});
-				},
-				error: function () {
-					alert("Something went wrong.");
-				}
-			});
-		} else {
-			// do nothing
-			console.log("Cancel creating new group.")
 		}
 	};
 
 	// check if form is completed
 	$scope.checkForm = function () {
-		if (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) == 100)
+		if (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) >= 100)
 			return true;
 		else
 			return false;
@@ -394,7 +336,8 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	// submit question: write into DB
 	$scope.submitQuestion = function () {
-		if ($scope.checkForm()) {
+		console.log($scope.newQuestion);
+		/*if ($scope.checkForm()) {
 			// Submit
 			$.ajax({
 				type: "POST",
@@ -404,7 +347,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 					$state.go('questionnaire-question');
 				}
 			});
-		}
+		}*/
 	};
 
 	var fixmeTop = $('.summary-fix').offset().top;
