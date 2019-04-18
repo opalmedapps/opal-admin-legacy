@@ -25,7 +25,6 @@ $questionObj = new Question($userId);
 $questionObj->insertQuestion($questionArray);
 
 header('Content-Type: application/javascript');
-$response['value'] = true;
-$response['message'] = 200;
+$response['code'] = HTTP_STATUS_SUCCESS;
 echo json_encode($response);
 ?>

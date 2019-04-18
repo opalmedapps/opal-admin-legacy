@@ -215,14 +215,13 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		console.error('Error occurred getting libraries:', response.status, response.data);
 	});
 
-	//questionnaireCollectionService.getQuestionGroups(userid).then(function (response) {
 	questionnaireCollectionService.getLibraries(userid).then(function (response) {
 		$scope.groupFilterList = response.data;
 	}).catch(function(response) {
 		console.error('Error occurred getting question libraries:', response.status, response.data);
 	});
 
-	questionnaireCollectionService.getAnswerTypeCategories().then(function (response) {
+	questionnaireCollectionService.getQuestionTypeCategories().then(function (response) {
 		$scope.atCatList = response.data;
 	}).catch(function(response) {
 		console.error('Error occurred getting response type categories:', response.status, response.data);
@@ -306,7 +305,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 				data: $scope.newLibrary,
 				success: function (result) {
 					result = JSON.parse(result);
-					if(result.message === 200) {
+					if(result.code === 200) {
 						alert('Successfully added the new library. Please find your new library in the panel above.');
 						// update
 						questionnaireCollectionService.getLibraries(userid).then(function (response) {

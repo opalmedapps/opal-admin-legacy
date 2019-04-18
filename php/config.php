@@ -84,9 +84,7 @@ include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Email.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Questionnaire". DIRECTORY_SEPARATOR . "Questionnaire.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Questionnaire". DIRECTORY_SEPARATOR . "Question.php");
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Questionnaire". DIRECTORY_SEPARATOR . "QuestionGroup.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Questionnaire". DIRECTORY_SEPARATOR . "Tag.php");
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Questionnaire". DIRECTORY_SEPARATOR . "Category.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Questionnaire". DIRECTORY_SEPARATOR . "QuestionType.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Questionnaire". DIRECTORY_SEPARATOR . "Library.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "LegacyQuestionnaire.php");
@@ -121,4 +119,9 @@ define("LEGACY_CHECKBOX", 4);
 define("LEGACY_YESNO", 9);
 define("DEFAULT_TYPE", TEXT_BOX);
 
+/*
+ * List of HTTP status codes
+ * */
+define("HTTP_STATUS_SUCCESS",200);
+define("HTTP_STATUS_INTERNAL_SERVER_ERROR",500);
 ?>
