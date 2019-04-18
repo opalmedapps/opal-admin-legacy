@@ -14,9 +14,7 @@ $libraryObj = new Library($userId); // Object
 
 // Call function
 $libraryObj->insertLibrary($libraryArray);
-die();
 header('Content-Type: application/javascript');
-$response['value'] = true;
-$response['message'] = 200;
+$response['code'] = HTTP_STATUS_SUCCESS;
 echo json_encode($response);
 ?>

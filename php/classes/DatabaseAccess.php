@@ -76,9 +76,8 @@ class DatabaseAccess extends HelpSetup
         {
             $this->execute(ACTIVATE_FOREIGN_KEY_CONSTRAINT);
             header('Content-Type: application/javascript');
-            $response['value'] = false;
-            $response['message'] = 500;
-            $response['details'] = "Connection to the database failed.\r\nError : ". $e->getMessage();
+            $response['code'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
+            $response['message'] = "Connection to the database failed.\r\nError : ". $e->getMessage();
             echo json_encode($response);
             die();
         }
@@ -115,9 +114,8 @@ class DatabaseAccess extends HelpSetup
         catch(PDOException $e) {
             $this->execute(ACTIVATE_FOREIGN_KEY_CONSTRAINT);
             header('Content-Type: application/javascript');
-            $response['value'] = false;
-            $response['message'] = 500;
-            $response['details'] = "Fetch all failed.\r\nError : ". $e->getMessage();
+            $response['code'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
+            $response['message'] = "Fetch all failed.\r\nError : ". $e->getMessage();
             echo json_encode($response);
             die();
         }
@@ -154,9 +152,8 @@ class DatabaseAccess extends HelpSetup
         catch(PDOException $e) {
             $this->execute(ACTIVATE_FOREIGN_KEY_CONSTRAINT);
             header('Content-Type: application/javascript');
-            $response['value'] = false;
-            $response['message'] = 500;
-            $response['details'] = "Fetch failed.\r\nError : ". $e->getMessage();
+            $response['code'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
+            $response['message'] = "Fetch failed.\r\nError : ". $e->getMessage();
             echo json_encode($response);
             die();
         }
@@ -193,9 +190,8 @@ class DatabaseAccess extends HelpSetup
         catch(PDOException $e) {
             $this->execute(ACTIVATE_FOREIGN_KEY_CONSTRAINT);
             header('Content-Type: application/javascript');
-            $response['value'] = false;
-            $response['message'] = 500;
-            $response['details'] = "Execute failed.\r\nError : " . $e->getMessage();
+            $response['code'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
+            $response['message'] = "Execution failed.\r\nError : ". $e->getMessage();
             echo json_encode($response);
             die();
         }
@@ -243,9 +239,8 @@ class DatabaseAccess extends HelpSetup
         catch(PDOException $e) {
             $this->execute(ACTIVATE_FOREIGN_KEY_CONSTRAINT);
             header('Content-Type: application/javascript');
-            $response['value'] = false;
-            $response['message'] = 500;
-            $response['details'] = "Insert query failed.\r\nError : " . $e->getMessage();
+            $response['code'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
+            $response['message'] = "Insert query failed.\r\nError : ". $e->getMessage();
             echo json_encode($response);
             die();
         }
