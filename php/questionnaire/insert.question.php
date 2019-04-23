@@ -6,19 +6,16 @@ include_once('questionnaire.inc');
 $questionArray = array(
     'text_EN'								=> $_POST['text_EN'],
     'text_FR'								=> $_POST['text_FR'],
-    'answertype_serNum'			=> $_POST['answertype_serNum'],
-    'questiongroup_serNum'	=> $_POST['questiongroup_serNum'],
-    'last_updated_by'				=> $_POST['last_updated_by'],
-    'created_by'						=> $_POST['created_by']
+    'questiontype_ID'			=> $_POST['questiontype_ID'],
 );
 
-$questionArray = array(
-    "questiontype_ID"=>"23",
-    "text_EN"=>"What do you think about Oxygen Not Included?",
-    "text_FR"=>"Que pensez-vous de Oxygen Not Included?",
-);
+//$questionArray = array(
+//    "questiontype_ID"=>"23",
+//    "text_EN"=>"What do you think about Oxygen Not Included?",
+//    "text_FR"=>"Que pensez-vous de Oxygen Not Included?",
+//);
 
-$userId = "20";
+$userId = $_POST['userid'];
 
 $questionObj = new Question($userId);
 $questionObj->insertQuestion($questionArray);

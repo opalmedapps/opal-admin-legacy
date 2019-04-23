@@ -341,7 +341,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	// submit question: write into DB
 	$scope.submitQuestion = function () {
 		console.log($scope.newQuestion);
-		/*if ($scope.checkForm()) {
+		if ($scope.checkForm()) {
 			// Submit
 			$.ajax({
 				type: "POST",
@@ -351,7 +351,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 					$state.go('questionnaire-question');
 				}
 			});
-		}*/
+		}
 	};
 
 	var fixmeTop = $('.summary-fix').offset().top;
