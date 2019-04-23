@@ -81,6 +81,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		text_FR: "",
 		library_ID: null,
 		questiontype_ID: null,
+		private: null,
 		userid: userid
 	};
 
@@ -264,7 +265,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 							console.error('Error occurred getting response types:', response.status, response.data);
 						});
 					} else {
-						alert("Unable to create the response type. Code " + result.code + ".\r\nErrore message: " + result.message);
+						alert("Unable to create the response type. Code " + result.code + ".\r\nError message: " + result.message);
 					}
 
 				},
@@ -320,7 +321,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 						});
 					}
 					else {
-						alert("Unable to create the library. Code " + result.code + ".\r\nErrore message: " + result.message);
+						alert("Unable to create the library. Code " + result.code + ".\r\nError message: " + result.message);
 					}
 				},
 				error: function () {
@@ -347,8 +348,16 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 				type: "POST",
 				url: "php/questionnaire/insert.question.php",
 				data: $scope.newQuestion,
-				success: function () {
-					$state.go('questionnaire-question');
+				success: function (result) {
+					result = JSON.parse(result);
+					if (result.code === 200) {
+						$state.go('questionnaire-question');
+					} else {
+						alert("Unable to create the question. Code " + result.code + ".\r\nError message: " + result.message);
+					}
+				},
+				error: function () {
+					alert("Something went wrong.");
 				}
 			});
 		}

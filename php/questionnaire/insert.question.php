@@ -4,9 +4,10 @@ include_once('questionnaire.inc');
 
 // Construct an array from FORM params
 $questionArray = array(
-    'text_EN'								=> $_POST['text_EN'],
-    'text_FR'								=> $_POST['text_FR'],
-    'questiontype_ID'			=> $_POST['questiontype_ID'],
+    'text_EN' => $_POST['text_EN'],
+    'text_FR' => $_POST['text_FR'],
+    'questiontype_ID' => $_POST['questiontype_ID'],
+    'private' => $_POST['private'],
 );
 
 //$questionArray = array(
