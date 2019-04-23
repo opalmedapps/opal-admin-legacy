@@ -52,6 +52,11 @@ class Question {
         $textFr = strip_tags($questionDetails['text_FR']);
         $questionTypeId = strip_tags($questionDetails['questiontype_ID']);
         $libraryID = strip_tags($questionDetails['library_ID']);
+        $private = strip_tags($questionDetails['private']);
+        if ($private == "1")
+            $private = true;
+        else
+            $private = false;
 
         $validQuestionType = $this->questionnaireDB->getTypeTemplate($questionTypeId);
         if(!$validQuestionType)
@@ -91,6 +96,7 @@ class Question {
             "typeId"=>$validQuestionType["typeId"],
             "display"=>$displayId,
             "definition"=>$definitionId,
+            "private"=>$private,
             "legacyTypeId"=>$legacyTypeId,
         );
 
