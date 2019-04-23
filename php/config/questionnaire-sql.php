@@ -179,13 +179,17 @@ define("SQL_QUESTIONNAIRE_GET_ALL_LIBRARIES",
     WHERE l.deleted = 0 AND (l.OAUserId = :OAUserId OR l.private = 0);"
 );
 
-define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPE",
+define("SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE",
     "SELECT
     tt.*,
     tts.minValue,
     tts.maxValue,
     tts.minCaption,
     tts.maxCaption,
+    ttc.ID AS ttcID,
+    ttc.minAnswer,
+    ttc.maxAnswer,
+    ttr.ID AS ttrID,
     tts.increment,
     dt1.name AS tableName,
     dt2.name AS subTableName
@@ -194,5 +198,27 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPE",
     LEFT JOIN ".DEFINITION_TABLE." dt1 ON dt1.ID = t.tableId
     LEFT JOIN ".DEFINITION_TABLE." dt2 ON dt2.ID = t.subTableId
     LEFT JOIN ".TYPE_TEMPLATE_SLIDER_TABLE." tts ON tts.typeTemplateId = tt.ID
+    LEFT JOIN ".TYPE_TEMPLATE_CHECKBOX_TABLE." ttc ON ttc.typeTemplateId = tt.ID
+    LEFT JOIN ".TYPE_TEMPLATE_RADIO_BUTTON_TABLE." ttr ON ttr.typeTemplateId = tt.ID
     WHERE tt.ID = :ID AND (tt.private = 0 OR tt.OAUserId = :OAUserId) AND tt.deleted = 0;"
+);
+
+define("SQL_QUESTIONNAIRE_GET_LIBRARY",
+    "SELECT * FROM ".LIBRARY_TABLE." l WHERE ID = :ID AND (private = 0 OR OAUserId = :OAUserId);"
+);
+
+define("SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE_CHECKBOX_OPTION",
+    "SELECT * FROM " . TYPE_TEMPLATE_CHECKBOX_OPTION_TABLE . " WHERE parentTableID = :parentTableID;"
+);
+
+define("SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE_RADIO_BUTTON_OPTION",
+    "SELECT * FROM " . TYPE_TEMPLATE_RADIO_BUTTON_OPTION_TABLE . " WHERE parentTableID = :parentTableID;"
+);
+
+define("SQL_QUESTIONNAIRE_GET_DICTIONNARY_TEXT",
+    "SELECT * FROM ".DICTIONARY_TABLE." WHERE contentId = :contentId;"
+);
+
+define("SQL_QUESTIONNAIRE_GETLEGACY_TYPE",
+    "SELECT * FROM ".LEGACY_TYPE_TABLE." WHERE typeId = :typeId; AND default = 1"
 );

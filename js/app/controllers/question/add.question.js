@@ -208,7 +208,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		console.error('Error occurred getting response types:', response.status, response.data);
 	});
 
-	// library with sub-array: categories
+	// Get the library list
 	questionnaireCollectionService.getLibraries(userid).then(function (response) {
 		$scope.libFilterList = response.data;
 	}).catch(function(response) {
@@ -240,7 +240,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		slider: []
 	};
 
-	$scope.addNewAt = function (atCatSelected) {
+	$scope.addNewQuestionType = function (atCatSelected) {
 		// Binding categories
 		$scope.newAnswerType.ID = atCatSelected.ID;
 		$scope.newAnswerType.userId = Session.retrieveObject('user').id;
@@ -254,13 +254,19 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 				data: $scope.newAnswerType,
 				success: function (result) {
 					result = JSON.parse(result);
-					alert('Successfully added the new response type. Please find your new response type in the radio button form above.');
-					// update answer type list
-					questionnaireCollectionService.getQuestionTypes(userid).then(function (response) {
-						$scope.atFilterList = response.data;
-					}).catch(function(response) {
-						console.error('Error occurred getting response types:', response.status, response.data);
-					});
+					if(result.code === 200) {
+
+						alert('Successfully added the new response type. Please find your new response type in the form above.');
+						// update answer type list
+						questionnaireCollectionService.getQuestionTypes(userid).then(function (response) {
+							$scope.atFilterList = response.data;
+						}).catch(function (response) {
+							console.error('Error occurred getting response types:', response.status, response.data);
+						});
+					} else {
+						alert("Unable to create the response type. Code " + result.code + ".\r\nErrore message: " + result.message);
+					}
+
 				},
 				error: function () {
 					alert("A problem occurred. Please try again.");
@@ -307,7 +313,6 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 					result = JSON.parse(result);
 					if(result.code === 200) {
 						alert('Successfully added the new library. Please find your new library in the panel above.');
-						// update
 						questionnaireCollectionService.getLibraries(userid).then(function (response) {
 							$scope.groupFilterList = response.data;
 						}).catch(function (response) {
@@ -315,7 +320,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 						});
 					}
 					else {
-						alert("Unable to create the library. Code " + result.message + ".\r\nErrore message: " + result.details);
+						alert("Unable to create the library. Code " + result.code + ".\r\nErrore message: " + result.message);
 					}
 				},
 				error: function () {

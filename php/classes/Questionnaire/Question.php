@@ -53,24 +53,127 @@ class Question {
         $questionTypeId = strip_tags($questionDetails['questiontype_ID']);
         $libraryID = strip_tags($questionDetails['library_ID']);
 
-        $validQuestionType = $this->questionnaireDB->validateQuestionType($questionTypeId);
-
-        print_R($validQuestionType);die();
-        $validLibrary = $this->questionnaireDB->validateLibrary($libraryID);
-
-
-        if($validQuestionType && $validLibrary) {
-            $contentId = $this->questionnaireDB->addToDictionary(array(FRENCH_LANGUAGE=>$textFr, ENGLISH_LANGUAGE=>$textEn), QUESTION_TABLE);
-            return $this->questionnaireDB->insertQuestion($contentId, $questionTypeId, $libraryID);
-        }
-        else {
+        $validQuestionType = $this->questionnaireDB->getTypeTemplate($questionTypeId);
+        if(!$validQuestionType)
+        {
             header('Content-Type: application/javascript');
-            $response['value'] = false;
-            $response['message'] = 500;
-            $response['details'] = "Library and/or response type.";
+            $response['message'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
+            $response['details'] = "Fetching question type error.";
             echo json_encode($response);
             die();
         }
+
+        if($libraryID != "") {
+            $validLibrary = $this->questionnaireDB->getLibrary($libraryID);
+            if(count($validLibrary) != 1)
+            {
+                header('Content-Type: application/javascript');
+                $response['message'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
+                $response['details'] = "Fetching library error.";
+                echo json_encode($response);
+                die();
+            }
+            $validLibrary = $validLibrary[0];
+        }
+
+        $toInsert = array(FRENCH_LANGUAGE=>$textFr, ENGLISH_LANGUAGE=>$textEn);
+        $contentId = $this->questionnaireDB->addToDictionary($toInsert, QUESTION_TABLE);
+
+        $toInsert = array(FRENCH_LANGUAGE=>"", ENGLISH_LANGUAGE=>"");
+        $displayId = $this->questionnaireDB->addToDictionary($toInsert, QUESTION_TABLE);
+        $definitionId = $this->questionnaireDB->addToDictionary($toInsert, QUESTION_TABLE);
+
+        $legacyTypeId = $this->questionnaireDB->getLegacyType($validQuestionType["typeId"]);
+        $legacyTypeId = $legacyTypeId["ID"];
+
+        $toInsert = array(
+            "question"=>$contentId,
+            "typeId"=>$validQuestionType["typeId"],
+            "display"=>$displayId,
+            "definition"=>$definitionId,
+            "legacyTypeId"=>$legacyTypeId,
+        );
+
+        $questionId = $this->questionnaireDB->insertQuestion($toInsert);
+
+        if ($validLibrary != "") {
+            $toInsert = array(
+                "libraryId"=>$validLibrary["ID"],
+                "questionId"=>$questionId,
+            );
+            $this->questionnaireDB->insertLibraryQuestion($toInsert);
+        }
+
+        if ($validQuestionType["typeId"] == CHECKBOXES)
+            $toInsert = array(
+                "questionId"=>$questionId,
+                "minAnswer"=>$validQuestionType["minAnswer"],
+                "maxAnswer"=>$validQuestionType["maxAnswer"],
+            );
+        else if ($validQuestionType["typeId"] == RADIO_BUTTON)
+            $toInsert = array(
+                "questionId"=>$questionId,
+            );
+        else if ($validQuestionType["typeId"] == SLIDERS) {
+            $newMinCaption = $this->questionnaireDB->copyToDictionary($validQuestionType["minCaption"], $validQuestionType["tableName"]);
+            $newMaxCaption = $this->questionnaireDB->copyToDictionary($validQuestionType["maxCaption"], $validQuestionType["tableName"]);
+            $toInsert = array(
+                "questionId" => $questionId,
+                "minValue" => $validQuestionType["minValue"],
+                "maxValue" => $validQuestionType["maxValue"],
+                "minCaption" => $newMinCaption,
+                "maxCaption" => $newMaxCaption,
+                "increment" => $validQuestionType["increment"],
+            );
+        }
+        else
+            $toInsert = array(
+                "questionId"=>$questionId,
+            );
+
+        $questionOptionId = $this->questionnaireDB->insertQuestionOptions($validQuestionType["tableName"], $toInsert);
+
+        $recordsToInsert = array();
+        if ($validQuestionType["subTableName"] == CHECK_BOX_OPTION_TABLE) {
+            if(count($validQuestionType["options"]) <= 0)
+            {
+                header('Content-Type: application/javascript');
+                $response['message'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
+                $response['details'] = "Checkbox option error.";
+                echo json_encode($response);
+                die();
+            }
+            foreach ($validQuestionType["options"] as $row) {
+                $newDescription = $this->questionnaireDB->copyToDictionary($row["description"], $validQuestionType["subTableName"]);
+                array_push($recordsToInsert, array(
+                    "parentTableId"=>$questionOptionId,
+                    "description"=>$newDescription,
+                    "order"=>$row["order"],
+                    "specialAction"=>$row["specialAction"],
+                ));
+            }
+            $this->questionnaireDB->insertCheckboxOption($recordsToInsert);
+        }
+        else if ($validQuestionType["subTableName"] == RADIO_BUTTON_OPTION_TABLE) {
+            if(count($validQuestionType["options"]) <= 0)
+            {
+                header('Content-Type: application/javascript');
+                $response['message'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
+                $response['details'] = "Radio Button option error.";
+                echo json_encode($response);
+                die();
+            }
+            foreach ($validQuestionType["options"] as $row) {
+                $newDescription = $this->questionnaireDB->copyToDictionary($row["description"], $validQuestionType["subTableName"]);
+                array_push($recordsToInsert, array(
+                    "parentTableId"=>$questionOptionId,
+                    "description"=>$newDescription,
+                    "order"=>$row["order"],
+                ));
+            }
+            $this->questionnaireDB->insertRadioButtonOption($recordsToInsert);
+        }
+
     }
 
     /**

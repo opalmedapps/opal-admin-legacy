@@ -124,4 +124,9 @@ define("DEFAULT_TYPE", TEXT_BOX);
  * */
 define("HTTP_STATUS_SUCCESS",200);
 define("HTTP_STATUS_INTERNAL_SERVER_ERROR",500);
+
+/*
+ * Miscellaneous constants
+ * */
+define("DEFAULT_FIELD", "");
 ?>
