@@ -13,10 +13,9 @@ $questionArray = array(
 );
 
 $questionArray = array(
-    "library_ID"=>"11",
-    "questiontype_ID"=>"27",
-    "text_EN"=>"Is this question exists?",
-    "text_FR"=>"Est-ce que cette question existe?",
+    "questiontype_ID"=>"23",
+    "text_EN"=>"What do you think about Oxygen Not Included?",
+    "text_FR"=>"Que pensez-vous de Oxygen Not Included?",
 );
 
 $userId = "20";
