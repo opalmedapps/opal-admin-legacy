@@ -74,7 +74,6 @@ class DatabaseAccess extends HelpSetup
         }
         catch(PDOException $e)
         {
-            $this->execute(ACTIVATE_FOREIGN_KEY_CONSTRAINT);
             header('Content-Type: application/javascript');
             $response['code'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
             $response['message'] = "Connection to the database failed.\r\nError : ". $e->getMessage();
@@ -112,7 +111,6 @@ class DatabaseAccess extends HelpSetup
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
         catch(PDOException $e) {
-            $this->execute(ACTIVATE_FOREIGN_KEY_CONSTRAINT);
             header('Content-Type: application/javascript');
             $response['code'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
             $response['message'] = "Fetch all failed.\r\nError : ". $e->getMessage();
@@ -150,7 +148,6 @@ class DatabaseAccess extends HelpSetup
             return $stmt->fetch(PDO::FETCH_ASSOC);
         }
         catch(PDOException $e) {
-            $this->execute(ACTIVATE_FOREIGN_KEY_CONSTRAINT);
             header('Content-Type: application/javascript');
             $response['code'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
             $response['message'] = "Fetch failed.\r\nError : ". $e->getMessage();
@@ -188,7 +185,6 @@ class DatabaseAccess extends HelpSetup
             return true;
         }
         catch(PDOException $e) {
-            $this->execute(ACTIVATE_FOREIGN_KEY_CONSTRAINT);
             header('Content-Type: application/javascript');
             $response['code'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
             $response['message'] = "Execution failed.\r\nError : ". $e->getMessage();
@@ -237,10 +233,9 @@ class DatabaseAccess extends HelpSetup
             return $this->connection->lastInsertId();
         }
         catch(PDOException $e) {
-            $this->execute(ACTIVATE_FOREIGN_KEY_CONSTRAINT);
             header('Content-Type: application/javascript');
             $response['code'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
-            $response['message'] = "Insert query failed.\r\nError : ". $e->getMessage();
+            $response['message'] = "Insert query failed. $sqlInsert\r\nError : ". $e->getMessage();
             echo json_encode($response);
             die();
         }
@@ -316,6 +311,10 @@ class DatabaseAccess extends HelpSetup
         array_push($multiples, implode(", ", $params));
 
         $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . "(" . implode("), (", $multiples) . ");";
+
+//        print $sqlInsert . "\r\n";
+//        print_r($ready);
+
         return $this->queryInsert($sqlInsert, $ready);
     }
 }

@@ -19,6 +19,10 @@ class DatabaseQuestionnaire extends DatabaseAccess
         return $nextContentId["nextContentId"];
     }
 
+    function getLegacyType($typeId) {
+        return $this->fetch(SQL_QUESTIONNAIRE_GETLEGACY_TYPE, array(array("parameter"=>":typeId", "variable"=>$typeId, "data_type"=>PDO::PARAM_INT)));
+    }
+
     /*
      * This function returns an array that contains
      * @param   nothing
@@ -34,6 +38,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * upper case.
      * Entry:   associative array of language id and its content.
      *          example: array(1=>"exemple", "2"=>"example")
+     *          table name where is used the entry
      * Return:  new contentID of matching all entries.
      */
     function addToDictionary($newEntries, $tableName) {
@@ -57,6 +62,34 @@ class DatabaseQuestionnaire extends DatabaseAccess
         }
         $this->insertMultipleRecordsIntoTable(DICTIONARY_TABLE, $toInsert);
         return $contentId;
+    }
+
+    /*
+     * this function create a copy of an entry in the dictionary and return the new contentId.
+     * Entry:   content ID in the table to duplicate
+     *          table name where is used the entry
+     * Return:  new contentID of matching all entries.
+     * */
+    function copyToDictionary($contentId, $tableName) {
+        $toCopy = $this->fetchAll(SQL_QUESTIONNAIRE_GET_DICTIONNARY_TEXT, array(array("parameter"=>":contentId", "variable"=>$contentId, "data_type"=>PDO::PARAM_INT)));
+        if (count($toCopy) <= 0) return false;
+        $tableId = $this->getTableId($tableName);
+        $newContentId = $this->getNextContentId();
+
+        $toInsert = array();
+        foreach($toCopy as $row) {
+            array_push($toInsert, array(
+                "tableId"=>$tableId,
+                "languageId"=>$row["languageId"],
+                "content"=>$row["content"],
+                "contentId"=>$newContentId,
+                "createdBy"=>$this->username,
+                "updatedBy"=>$this->username,
+            ));
+        }
+
+        $this->insertMultipleRecordsIntoTable(DICTIONARY_TABLE, $toInsert);
+        return $newContentId;
     }
 
     /*
@@ -184,12 +217,10 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @param
      * */
     function addToTypeTemplateTable($newQuestionType) {
-        $this->execute(DEACTIVATE_FOREIGN_KEY_CONSTRAINT);
         $newQuestionType["OAUserId"] = $this->userId;
         $newQuestionType["createdBy"] = $this->username;
         $newQuestionType["updatedBy"] = $this->username;
         $result = $this->insertRecordIntoTable(TYPE_TEMPLATE_TABLE, $newQuestionType);
-        $this->execute(ACTIVATE_FOREIGN_KEY_CONSTRAINT);
         return $result;
     }
 
@@ -224,15 +255,71 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    function getTypeTemplateCheckboxOption($ttcId) {
+        return $this->fetchAll(SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE_CHECKBOX_OPTION,
+            array(
+                array("parameter"=>":parentTableID","variable"=>$ttcId,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    function getTypeTemplateRadioButtonOption($ttrId) {
+        return $this->fetchAll(SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE_RADIO_BUTTON_OPTION,
+            array(
+                array("parameter"=>":parentTableID","variable"=>$ttrId,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
     /*
-     * This function validate a question type for the user
+     * This function validate and return a question type for the user
      * */
-    function validateQuestionType($questionTypeID){
-        return $this->fetchAll(SQL_QUESTIONNAIRE_GET_QUESTION_TYPE,
+    function getTypeTemplate($questionTypeID){
+        $result = $this->fetchAll(SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE,
             array(
                 array("parameter"=>":OAUserId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
                 array("parameter"=>":ID","variable"=>$questionTypeID,"data_type"=>PDO::PARAM_INT),
             ));
+
+        if(count($result) != 1) return false;
+        $result = $result[0];
+        if($result["ttcID"] != "")
+            $result["options"] = $this->getTypeTemplateCheckboxOption($result["ttcID"]);
+        else if($result["ttrID"] != "")
+            $result["options"] = $this->getTypeTemplateRadioButtonOption($result["ttrID"]);
+        return $result;
+    }
+
+    /*
+     * This function validate and return a library for the user
+     * */
+    function getLibrary($libraryID) {
+        return $this->fetchAll(SQL_QUESTIONNAIRE_GET_LIBRARY,
+            array(
+                array("parameter"=>":OAUserId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":ID","variable"=>$libraryID,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    function insertQuestion($toInsert) {
+        $toInsert["OAUserId"] = $this->userId;
+        $toInsert["createdBy"] = $this->username;
+        $toInsert["updatedBy"] = $this->username;
+        return $this->insertRecordIntoTable(QUESTION_TABLE, $toInsert);
+    }
+
+    function insertQuestionOptions($tableName, $toInsert) {
+        return $this->insertRecordIntoTable($tableName, $toInsert);
+    }
+
+    function insertCheckboxOption($toInsert) {
+        $this->insertMultipleRecordsIntoTable(CHECK_BOX_OPTION_TABLE, $toInsert);
+    }
+
+    function insertRadioButtonOption($toInsert) {
+        $this->insertMultipleRecordsIntoTable(RADIO_BUTTON_OPTION_TABLE, $toInsert);
+    }
+
+    function insertLibraryQuestion($toInsert) {
+        $this->insertRecordIntoTable(LIBRARY_QUESTION_TABLE, $toInsert);
     }
 
     /*
