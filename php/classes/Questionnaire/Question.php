@@ -46,12 +46,15 @@ class Question {
      * @return  ID of the new question
      */
     public function insertQuestion($questionDetails){
-
-
         $textEn = strip_tags($questionDetails['text_EN']);
         $textFr = strip_tags($questionDetails['text_FR']);
         $questionTypeId = strip_tags($questionDetails['questiontype_ID']);
-        $libraryID = strip_tags($questionDetails['library_ID']);
+
+        $libraries = array();
+        if (count($questionDetails['libraries']) > 0)
+            foreach($questionDetails['libraries'] as $library)
+                array_push($libraries, strip_tags($library));
+
         $private = strip_tags($questionDetails['private']);
         if ($private == "1")
             $private = true;
@@ -68,9 +71,9 @@ class Question {
             die();
         }
 
-        if($libraryID != "") {
-            $validLibrary = $this->questionnaireDB->getLibrary($libraryID);
-            if(count($validLibrary) != 1)
+        if(count($libraries) > 0) {
+            $librariesToAdd = $this->questionnaireDB->getLibraries($libraries);
+            if(count($librariesToAdd) <= 0)
             {
                 header('Content-Type: application/javascript');
                 $response['message'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
@@ -78,7 +81,6 @@ class Question {
                 echo json_encode($response);
                 die();
             }
-            $validLibrary = $validLibrary[0];
         }
 
         $toInsert = array(FRENCH_LANGUAGE=>$textFr, ENGLISH_LANGUAGE=>$textEn);
@@ -102,12 +104,12 @@ class Question {
 
         $questionId = $this->questionnaireDB->insertQuestion($toInsert);
 
-        if ($libraryID != "") {
-            $toInsert = array(
-                "libraryId"=>$validLibrary["ID"],
-                "questionId"=>$questionId,
-            );
-            $this->questionnaireDB->insertLibraryQuestion($toInsert);
+        if(count($librariesToAdd) > 0) {
+            $multipleInserts = array();
+            foreach($librariesToAdd as $lib) {
+                array_push($multipleInserts, array("libraryId"=>$lib["ID"], "questionId"=>$questionId));
+            }
+            $this->questionnaireDB->insertMultipleLibrariesToQuestion($multipleInserts);
         }
 
         if ($validQuestionType["typeId"] == CHECKBOXES)
@@ -265,65 +267,65 @@ class Question {
 
         return $result;
 
-       /* try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+        /* try {
+             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-            $sql = "
-				SELECT
-					QuestionnaireQuestion.text_EN,
-					QuestionnaireQuestion.text_FR,
-					QuestionnaireQuestion.answertype_serNum,
-					QuestionnaireQuestion.questiongroup_serNum,
-					QuestionnaireQuestion.last_updated_by,
-					QuestionnaireAnswerType.name_EN,
-					QuestionnaireAnswerType.name_FR,
-					Questiongroup.name_EN,
-					Questiongroup.name_FR
-				FROM
-					QuestionnaireQuestion,
-					QuestionnaireAnswerType,
-					Questiongroup
-				WHERE
-					QuestionnaireQuestion.serNum = $questionSerNum
-				AND
-					QuestionnaireAnswerType.serNum = QuestionnaireQuestion.answertype_serNum
-				AND
-					Questiongroup.serNum = QuestionnaireQuestion.questiongroup_serNum
-			";
+             $sql = "
+                 SELECT
+                     QuestionnaireQuestion.text_EN,
+                     QuestionnaireQuestion.text_FR,
+                     QuestionnaireQuestion.answertype_serNum,
+                     QuestionnaireQuestion.questiongroup_serNum,
+                     QuestionnaireQuestion.last_updated_by,
+                     QuestionnaireAnswerType.name_EN,
+                     QuestionnaireAnswerType.name_FR,
+                     Questiongroup.name_EN,
+                     Questiongroup.name_FR
+                 FROM
+                     QuestionnaireQuestion,
+                     QuestionnaireAnswerType,
+                     Questiongroup
+                 WHERE
+                     QuestionnaireQuestion.serNum = $questionSerNum
+                 AND
+                     QuestionnaireAnswerType.serNum = QuestionnaireQuestion.answertype_serNum
+                 AND
+                     Questiongroup.serNum = QuestionnaireQuestion.questiongroup_serNum
+             ";
 
-            $query = $host_db_link->prepare($sql);
-            $query->execute();
+             $query = $host_db_link->prepare($sql);
+             $query->execute();
 
-            $row = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
+             $row = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
 
-            $text_EN = $row[0];
-            $text_FR = $row[1];
-            $answertype_serNum = $row[2];
-            $questiongroup_serNum = $row[3];
-            $last_updated_by = $row[4];
-            $atNameEN = $row[5];
-            $atNameFR = $row[6];
-            $groupNameEN = $row[7];
-            $groupNameFR = $row[8];
+             $text_EN = $row[0];
+             $text_FR = $row[1];
+             $answertype_serNum = $row[2];
+             $questiongroup_serNum = $row[3];
+             $last_updated_by = $row[4];
+             $atNameEN = $row[5];
+             $atNameFR = $row[6];
+             $groupNameEN = $row[7];
+             $groupNameFR = $row[8];
 
-            $questionDetails = array(
-                'serNum'				=> $questionSerNum,
-                'text_EN'				=> $text_EN,
-                'text_FR'				=> $text_FR,
-                'answertype_serNum'		=> $answertype_serNum,
-                'questiongroup_serNum'	=> $questiongroup_serNum,
-                'last_updated_by'		=> $last_updated_by,
-                'answertype_name_EN'	=> $atNameEN,
-                'answertype_name_FR'	=> $atNameFR,
-                'group_name_EN'			=> $groupNameEN,
-                'group_name_FR'			=> $groupNameFR
-            );
+             $questionDetails = array(
+                 'serNum'				=> $questionSerNum,
+                 'text_EN'				=> $text_EN,
+                 'text_FR'				=> $text_FR,
+                 'answertype_serNum'		=> $answertype_serNum,
+                 'questiongroup_serNum'	=> $questiongroup_serNum,
+                 'last_updated_by'		=> $last_updated_by,
+                 'answertype_name_EN'	=> $atNameEN,
+                 'answertype_name_FR'	=> $atNameFR,
+                 'group_name_EN'			=> $groupNameEN,
+                 'group_name_FR'			=> $groupNameFR
+             );
 
-            return $questionDetails;
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-        }*/
+             return $questionDetails;
+         } catch (PDOException $e) {
+             echo $e->getMessage();
+         }*/
     }
 
     /**
