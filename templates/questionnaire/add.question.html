@@ -429,7 +429,7 @@
                 Please choose a library where to add this question.
               </div>
               <div class="col-xs-12 col-md-6">
-                <div class="panel" ng-class="newQuestion.library_ID ? 'panel-success': 'panel-danger'">
+                <div class="panel" ng-class="newQuestion.libraries.length > 0 ? 'panel-success': 'panel-danger'">
                   <div class="panel-heading"><strong>Question Libray</strong>
                     <span ng-hide="newQuestion.library_ID" style="float:right"><em>Incomplete</em></span>
                     <span ng-show="newQuestion.library_ID" style="float:right"><em>Complete</em></span>
@@ -444,7 +444,15 @@
                       <ul class="list-items">
                         <li ng-repeat="group in groupFilterList| filter: searchLibFilter">
                           <label>
-                            <input type="radio" name="{{group.name_EN}}" value="{{group.serNum}}" ng-model="newQuestion.library_ID" ng-change="updateLibrary(group)" /> {{group.name_EN}}
+                            <!--<input type="checkbox" name="library[]" value="{{group.serNum}}" ng-model="newQuestion.library_ID" ng-change="updateLibrary(group)" /> {{group.name_EN}}-->
+                            <input
+                                    type="checkbox"
+                                   name="library[]"
+                                   value="{{group.serNum}}"
+                                   ng-checked="newQuestion.libraries.indexOf(group) > -1"
+                                   ng-click="updateLibrary(group)"
+
+ /> {{group.name_EN}}
                           </label>
                         </li>
                       </ul>

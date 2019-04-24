@@ -8,7 +8,7 @@ $questionArray = array(
     'text_FR' => $_POST['text_FR'],
     'questiontype_ID' => $_POST['questiontype_ID'],
     'private' => $_POST['private'],
-    "library_ID"=>$_POST['library_ID'],
+    "libraries"=>$_POST['libraries'],
 );
 
 //$questionArray = array(
@@ -16,6 +16,17 @@ $questionArray = array(
 //    "text_EN"=>"What do you think about Oxygen Not Included?",
 //    "text_FR"=>"Que pensez-vous de Oxygen Not Included?",
 //);
+
+
+
+/*$questionArray = array("libraries"=>array("3","1"),
+"private"=>"",
+"questiontype_ID"=>"4",
+"text_EN"=>"Test libraries",
+"text_FR"=>"Test librairies",
+"userid"=>"20",
+);
+$userId = 20;*/
 
 $userId = $_POST['userid'];
 

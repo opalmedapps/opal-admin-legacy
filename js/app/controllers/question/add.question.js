@@ -80,6 +80,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		text_EN: "",
 		text_FR: "",
 		library_ID: null,
+		libraries: [],
 		questiontype_ID: null,
 		private: null,
 		userid: userid
@@ -158,7 +159,21 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	$scope.updateLibrary = function (selectedLibrary) {
 		$scope.questionLibrarySection.open = true;
-		if ($scope.newQuestion.library_ID) {
+
+		var idx = $scope.newQuestion.libraries.indexOf(selectedLibrary.serNum);
+
+		if (idx > -1) {
+			$scope.newQuestion.libraries.splice(idx, 1);
+		}
+
+		else {
+			$scope.newQuestion.libraries.push(selectedLibrary.serNum);
+		}
+
+		console.log($scope.newQuestion.libraries);
+
+
+		if ($scope.newQuestion.libraries.length > 0) {
 
 			$scope.selectedGroup = selectedLibrary;
 
@@ -342,6 +357,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	// submit question: write into DB
 	$scope.submitQuestion = function () {
 		console.log($scope.newQuestion);
+
 		if ($scope.checkForm()) {
 			// Submit
 			$.ajax({
