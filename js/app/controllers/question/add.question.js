@@ -281,8 +281,8 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 					}
 
 				},
-				error: function () {
-					alert("A problem occurred. Please try again.");
+				error: function (request, status, err) {
+					alert("A problem occurred. Please try again.\r\n"+request.responseText);
 				}
 			});
 		}
