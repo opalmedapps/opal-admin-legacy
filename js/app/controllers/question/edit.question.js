@@ -88,10 +88,10 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		$scope.showProcessingModal();
 
 		// Call our API service to get the questionnaire details
-		questionnaireCollectionService.getQuestionDetails($scope.currentQuestion.serNum).then(function (response) {
+		questionnaireCollectionService.getQuestionDetails($scope.currentQuestion.serNum, userId).then(function (response) {
 			// Assign value
-			$scope.question = response.data;
-
+			$scope.question = response.data[0];
+			console.log(response.data[0]);
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
 		}).catch(function (response) {
@@ -106,11 +106,11 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		});
 
 		// Call our API service to get the list of existing groups
-		questionnaireCollectionService.getQuestionGroups(userId).then(function (response) {
+		/*questionnaireCollectionService.getQuestionGroups(userId).then(function (response) {
 			$scope.groupFilterList = response.data;
 		}).catch(function (response){
 			console.error('Error occurred getting question groups:', response.status, response.data);
-		});
+		});*/
 
 		// Function to check necessary form fields are complete
 		$scope.checkForm = function () {
