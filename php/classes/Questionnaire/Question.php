@@ -102,7 +102,7 @@ class Question {
 
         $questionId = $this->questionnaireDB->insertQuestion($toInsert);
 
-        if ($validLibrary != "") {
+        if ($libraryID != "") {
             $toInsert = array(
                 "libraryId"=>$validLibrary["ID"],
                 "questionId"=>$questionId,
@@ -205,19 +205,7 @@ class Question {
 
             if ($libNameEn == "") $libNameEn = "None";
             if ($libNameFr == "") $libNameFr = "Aucune";
-            $questionnairesList = array();
-            $questionnaires = $this->questionnaireDB->fetchQuestionnairesIdQuestion($row["ID"]);
-
-            foreach ($questionnaires as $questionnaire) {
-                array_push($questionnairesList, $questionnaire["ID"]);
-            }
-
-            $questionLocked = 0;
-            if (count($questionnairesList) > 0) {
-                $questionnairesList = implode(", ", $questionnairesList);
-                $questionLocked = $this->opalDB->countLockedQuestionnaires($questionnairesList);
-                $questionLocked = intval($questionLocked["total"]);
-            }
+            $questionLocked = $this->isQuestionLocked($row["ID"]);
 
             $questionArray = array (
                 'serNum'				=> $row["ID"],
@@ -237,6 +225,23 @@ class Question {
         return $questions;
     }
 
+    function isQuestionLocked($questionId) {
+        $questionnairesList = array();
+        $questionnaires = $this->questionnaireDB->fetchQuestionnairesIdQuestion($questionId);
+
+        foreach ($questionnaires as $questionnaire) {
+            array_push($questionnairesList, $questionnaire["ID"]);
+        }
+
+        $questionLocked = 0;
+        if (count($questionnairesList) > 0) {
+            $questionnairesList = implode(", ", $questionnairesList);
+            $questionLocked = $this->opalDB->countLockedQuestionnaires($questionnairesList);
+            $questionLocked = intval($questionLocked["total"]);
+        }
+        return $questionLocked;
+    }
+
     /**
      *
      * Gets question details
@@ -244,9 +249,23 @@ class Question {
      * @param integer $questionSerNum : the question serial number
      * @return array $questionDetails : the question details
      */
-    public function getQuestionDetails ($questionSerNum) {
+    public function getQuestionDetails ($questionId) {
+        $result = $this->questionnaireDB->getQuestionDetails($questionId);
 
-        try {
+
+        if(count($result) != 1) {
+            header('Content-Type: application/javascript');
+            $response['message'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
+            $response['details'] = "Cannot get question details.";
+            echo json_encode($response);
+            die();
+        }
+        $result = $result[0];
+        $result["locked"] = $this->isQuestionLocked($questionId);
+
+        return $result;
+
+       /* try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
@@ -304,7 +323,7 @@ class Question {
             return $questionDetails;
         } catch (PDOException $e) {
             echo $e->getMessage();
-        }
+        }*/
     }
 
     /**

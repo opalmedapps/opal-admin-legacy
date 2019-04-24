@@ -1,17 +1,16 @@
 <?php
-	header('Content-Type: application/javascript');
-  /* To get question details */
-  include_once('questionnaire.inc');
+include_once('questionnaire.inc');
 
-  // Retrieve form params
-  $callback = $_GET['callback'];
-  $questionSerNum = $_GET['questionSerNum'];
+$callback = strip_tags($_GET['callback']);
+$questionId = strip_tags($_GET['questionSerNum']);
+$userId = strip_tags($_GET['userid']);
 
-  $question = new Question(); // Object
+$questionId = 915;
+$userId = 20;
 
-  // Call function
-  $questionDetails = $question->getQuestionDetails($questionSerNum);
+$question = new Question($userId);
+$questionDetails = $question->getQuestionDetails($questionId);
 
-  // Callback to http request
-  print $callback.'('.json_encode($questionDetails).')';
+header('Content-Type: application/javascript');
+echo $callback.'('.json_encode($questionDetails).')';
 ?>
