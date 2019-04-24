@@ -11,25 +11,7 @@ $questionArray = array(
     "libraries"=>$_POST['libraries'],
 );
 
-//$questionArray = array(
-//    "questiontype_ID"=>"23",
-//    "text_EN"=>"What do you think about Oxygen Not Included?",
-//    "text_FR"=>"Que pensez-vous de Oxygen Not Included?",
-//);
-
-
-
-/*$questionArray = array("libraries"=>array("3","1"),
-"private"=>"",
-"questiontype_ID"=>"4",
-"text_EN"=>"Test libraries",
-"text_FR"=>"Test librairies",
-"userid"=>"20",
-);
-$userId = 20;*/
-
 $userId = $_POST['userid'];
-
 $questionObj = new Question($userId);
 $questionObj->insertQuestion($questionArray);
 

@@ -170,9 +170,6 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 			$scope.newQuestion.libraries.push(selectedLibrary.serNum);
 		}
 
-		console.log($scope.newQuestion.libraries);
-
-
 		if ($scope.newQuestion.libraries.length > 0) {
 
 			$scope.selectedGroup = selectedLibrary;
@@ -356,8 +353,6 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	// submit question: write into DB
 	$scope.submitQuestion = function () {
-		console.log($scope.newQuestion);
-
 		if ($scope.checkForm()) {
 			// Submit
 			$.ajax({
