@@ -20,7 +20,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     function getLegacyType($typeId) {
-        return $this->fetch(SQL_QUESTIONNAIRE_GETLEGACY_TYPE, array(array("parameter"=>":typeId", "variable"=>$typeId, "data_type"=>PDO::PARAM_INT)));
+        return $this->fetch(SQL_QUESTIONNAIRE_GET_LEGACY_TYPE, array(array("parameter"=>":typeId", "variable"=>$typeId, "data_type"=>PDO::PARAM_INT)));
     }
 
     /*
@@ -320,6 +320,15 @@ class DatabaseQuestionnaire extends DatabaseAccess
 
     function insertLibraryQuestion($toInsert) {
         $this->insertRecordIntoTable(LIBRARY_QUESTION_TABLE, $toInsert);
+    }
+
+    function getQuestionDetails($questionId) {
+        $result = $this->fetchAll(SQL_QUESTIONNAIRE_GET_QUESTION_DETAILS,
+            array(
+                array("parameter"=>":OAUserId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":ID","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
+            ));
+        return $result;
     }
 
     /*

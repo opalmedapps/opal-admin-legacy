@@ -8,6 +8,7 @@ $questionArray = array(
     'text_FR' => $_POST['text_FR'],
     'questiontype_ID' => $_POST['questiontype_ID'],
     'private' => $_POST['private'],
+    "library_ID"=>$_POST['library_ID'],
 );
 
 //$questionArray = array(

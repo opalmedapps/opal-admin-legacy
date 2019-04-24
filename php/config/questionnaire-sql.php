@@ -219,6 +219,29 @@ define("SQL_QUESTIONNAIRE_GET_DICTIONNARY_TEXT",
     "SELECT * FROM ".DICTIONARY_TABLE." WHERE contentId = :contentId;"
 );
 
-define("SQL_QUESTIONNAIRE_GETLEGACY_TYPE",
+define("SQL_QUESTIONNAIRE_GET_LEGACY_TYPE",
     "SELECT * FROM ".LEGACY_TYPE_TABLE." WHERE typeId = :typeId; AND default = 1"
+);
+
+define("SQL_QUESTIONNAIRE_GET_QUESTION_DETAILS",
+    "SELECT
+    q.ID,
+    q.private,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.question AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.question AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR,
+    q.typeId,
+    q.final,
+    q.createdBy
+    FROM ".QUESTION_TABLE." q WHERE ID = :ID AND (q.private = 0 OR q.OAUserId = :OAUserId) AND q.deleted = 0;"
+);
+
+define("SQL_QUESTIONNAIRE_GET_QUESTION_OPTIONS",
+    "SELECT *
+    FROM %%TABLENAME%%
+    WHERE questionId = :questionId;"
+);
+define("SQL_QUESTIONNAIRE_GET_QUESTION_CHOICES",
+    "SELECT *
+    FROM %%TABLENAME%%
+    WHERE parentId = :parentId;"
 );
