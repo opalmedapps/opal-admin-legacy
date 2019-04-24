@@ -299,6 +299,12 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    function getLibraries($arrLib) {
+        return $this->fetchAll(str_replace("%%LIBRARIES_ID%%", implode(", ", $arrLib),SQL_QUESTIONNAIRE_GET_LIBRARIES),array(
+            array("parameter"=>":OAUserId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
     function insertQuestion($toInsert) {
         $toInsert["OAUserId"] = $this->userId;
         $toInsert["createdBy"] = $this->username;
@@ -320,6 +326,10 @@ class DatabaseQuestionnaire extends DatabaseAccess
 
     function insertLibraryQuestion($toInsert) {
         $this->insertRecordIntoTable(LIBRARY_QUESTION_TABLE, $toInsert);
+    }
+
+    function insertMultipleLibrariesToQuestion($toInsert) {
+        $this->insertMultipleRecordsIntoTable(LIBRARY_QUESTION_TABLE, $toInsert);
     }
 
     function getQuestionDetails($questionId) {
