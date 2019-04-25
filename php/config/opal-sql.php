@@ -16,6 +16,7 @@ define( "OPAL_DB_PASSWORD", $config['databaseConfig']['opal']['password'] );
 
 //Definition of all questionnaires table from the questionnaire DB
 define("OPAL_OAUSER_TABLE","oauser");
+define("OPAL_OAUSER_ROLE_TABLE","oauserrole");
 define("OPAL_QUESTIONNAIRE_CONTROL_TABLE","questionnairecontrol");
 
 /*
@@ -26,6 +27,12 @@ define("SQL_OPAL_SELECT_USER_INFO",
     Username AS username,
     Language as language
     FROM ".OPAL_OAUSER_TABLE."
+    WHERE OAUserSerNum = :userId"
+);
+
+define("SQL_OPAL_SELECT_USER_ROLE",
+    "SELECT *
+    FROM ".OPAL_OAUSER_ROLE_TABLE."
     WHERE OAUserSerNum = :userId"
 );
 

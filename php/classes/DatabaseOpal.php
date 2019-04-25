@@ -31,4 +31,11 @@ class DatabaseOpal extends DatabaseAccess {
                 array("parameter"=>":questionnaireList","variable"=>$questionnairesList,"data_type"=>PDO::PARAM_STR),
             ));
     }
+
+    function getUserRole($userId) {
+        return $this->fetchAll(SQL_OPAL_SELECT_USER_ROLE,
+            array(
+                array("parameter"=>":userId","variable"=>$userId,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
 }
