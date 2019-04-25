@@ -63,24 +63,12 @@ class Question {
 
         $validQuestionType = $this->questionnaireDB->getTypeTemplate($questionTypeId);
         if(!$validQuestionType)
-        {
-            header('Content-Type: application/javascript');
-            $response['message'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
-            $response['details'] = "Fetching question type error.";
-            echo json_encode($response);
-            die();
-        }
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Fetching question type error.");
 
         if(count($libraries) > 0) {
             $librariesToAdd = $this->questionnaireDB->getLibraries($libraries);
             if(count($librariesToAdd) <= 0)
-            {
-                header('Content-Type: application/javascript');
-                $response['message'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
-                $response['details'] = "Fetching library error.";
-                echo json_encode($response);
-                die();
-            }
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Fetching library error.");
         }
 
         $toInsert = array(FRENCH_LANGUAGE=>$textFr, ENGLISH_LANGUAGE=>$textEn);
@@ -144,13 +132,8 @@ class Question {
         $recordsToInsert = array();
         if ($validQuestionType["subTableName"] == CHECK_BOX_OPTION_TABLE) {
             if(count($validQuestionType["options"]) <= 0)
-            {
-                header('Content-Type: application/javascript');
-                $response['message'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
-                $response['details'] = "Checkbox option error.";
-                echo json_encode($response);
-                die();
-            }
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Checkbox option error.");
+
             foreach ($validQuestionType["options"] as $row) {
                 $newDescription = $this->questionnaireDB->copyToDictionary($row["description"], $validQuestionType["subTableName"]);
                 array_push($recordsToInsert, array(
@@ -164,13 +147,8 @@ class Question {
         }
         else if ($validQuestionType["subTableName"] == RADIO_BUTTON_OPTION_TABLE) {
             if(count($validQuestionType["options"]) <= 0)
-            {
-                header('Content-Type: application/javascript');
-                $response['message'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
-                $response['details'] = "Radio Button option error.";
-                echo json_encode($response);
-                die();
-            }
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Radio Button option error.");
+
             foreach ($validQuestionType["options"] as $row) {
                 $newDescription = $this->questionnaireDB->copyToDictionary($row["description"], $validQuestionType["subTableName"]);
                 array_push($recordsToInsert, array(
@@ -181,7 +159,6 @@ class Question {
             }
             $this->questionnaireDB->insertRadioButtonOption($recordsToInsert);
         }
-
     }
 
     /**
@@ -248,22 +225,55 @@ class Question {
      *
      * Gets question details
      *
-     * @param integer $questionSerNum : the question serial number
-     * @return array $questionDetails : the question details
+     * @param   question ID (int)
+     * @return  array $questionDetails : the question details
      */
     public function getQuestionDetails ($questionId) {
         $result = $this->questionnaireDB->getQuestionDetails($questionId);
 
+        if(count($result) != 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot get question details.");
 
-        if(count($result) != 1) {
-            header('Content-Type: application/javascript');
-            $response['message'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
-            $response['details'] = "Cannot get question details.";
-            echo json_encode($response);
-            die();
-        }
         $result = $result[0];
         $result["locked"] = $this->isQuestionLocked($questionId);
+
+        $userAuthorizations = array();
+        $userRole = $this->opalDB->getUserRole($this->opalDB->getUserId());
+        if (count($userRole) <= 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
+
+        foreach($userRole as $role)
+            array_push($userAuthorizations, $role["RoleSerNum"]);
+
+        $readOnly = false;
+        if ($result["locked"])
+            $readOnly = true;
+        else if($result["final"]) {
+            $readOnly = true;
+            foreach($userAuthorizations as $access) {
+                if (in_array($access, HelpSetup::AUTHORIZATION_MODIFICATION_FINALIZED)) {
+                    $readOnly = false;
+                    break;
+                }
+            }
+        }
+
+        $options = $this->questionnaireDB->getQuestionOptionsDetails($result["ID"], $result["tableName"]);
+        if (count($options) > 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Errors fetching the question. Too many options.");
+
+        $options = $options[0];
+
+        $subOptions = null;
+        if($result["subTableName"] != "" && $options["ID"] != "") {
+            $subOptions = $this->questionnaireDB->getQuestionSubOptionsDetails($options["ID"], $result["subTableName"]);
+        }
+
+        unset($result["tableName"]);
+        unset($result["subTableName"]);
+        $result["options"] = $options;
+        $result["subOptions"] = $subOptions;
+        $result["readOnly"] = strval(intval($readOnly));
 
         return $result;
 
