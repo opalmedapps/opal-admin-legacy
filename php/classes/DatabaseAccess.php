@@ -72,13 +72,8 @@ class DatabaseAccess extends HelpSetup
                 array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
-        catch(PDOException $e)
-        {
-            header('Content-Type: application/javascript');
-            $response['code'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
-            $response['message'] = "Connection to the database failed.\r\nError : ". $e->getMessage();
-            echo json_encode($response);
-            die();
+        catch(PDOException $e) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Connection to the database failed.\r\nError : ". $e->getMessage());
         }
     }
 
@@ -111,11 +106,7 @@ class DatabaseAccess extends HelpSetup
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
         catch(PDOException $e) {
-            header('Content-Type: application/javascript');
-            $response['code'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
-            $response['message'] = "Fetch all failed.\r\nError : ". $e->getMessage();
-            echo json_encode($response);
-            die();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Fetch all failed.\r\nError : ". $e->getMessage());
         }
     }
 
@@ -148,11 +139,7 @@ class DatabaseAccess extends HelpSetup
             return $stmt->fetch(PDO::FETCH_ASSOC);
         }
         catch(PDOException $e) {
-            header('Content-Type: application/javascript');
-            $response['code'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
-            $response['message'] = "Fetch failed.\r\nError : ". $e->getMessage();
-            echo json_encode($response);
-            die();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Fetch failed.\r\nError : ". $e->getMessage());
         }
     }
 
@@ -185,11 +172,7 @@ class DatabaseAccess extends HelpSetup
             return true;
         }
         catch(PDOException $e) {
-            header('Content-Type: application/javascript');
-            $response['code'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
-            $response['message'] = "Execution failed.\r\nError : ". $e->getMessage();
-            echo json_encode($response);
-            die();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Execution failed.\r\nError : ". $e->getMessage());
         }
     }
 
@@ -233,11 +216,7 @@ class DatabaseAccess extends HelpSetup
             return $this->connection->lastInsertId();
         }
         catch(PDOException $e) {
-            header('Content-Type: application/javascript');
-            $response['code'] = HTTP_STATUS_INTERNAL_SERVER_ERROR;
-            $response['message'] = "Insert query failed. $sqlInsert\r\nError : ". $e->getMessage();
-            echo json_encode($response);
-            die();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Insert query failed. $sqlInsert\r\nError : ". $e->getMessage());
         }
 
     }

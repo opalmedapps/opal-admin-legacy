@@ -194,7 +194,7 @@ define("SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE",
     dt1.name AS tableName,
     dt2.name AS subTableName
     FROM ".TYPE_TEMPLATE_TABLE." tt
-    LEFT JOIN type t ON t.ID = tt.typeId
+    LEFT JOIN ".TYPE_TABLE." t ON t.ID = tt.typeId
     LEFT JOIN ".DEFINITION_TABLE." dt1 ON dt1.ID = t.tableId
     LEFT JOIN ".DEFINITION_TABLE." dt2 ON dt2.ID = t.subTableId
     LEFT JOIN ".TYPE_TEMPLATE_SLIDER_TABLE." tts ON tts.typeTemplateId = tt.ID
@@ -235,8 +235,14 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_DETAILS",
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.question AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR,
     q.typeId,
     q.final,
-    q.createdBy
-    FROM ".QUESTION_TABLE." q WHERE ID = :ID AND (q.private = 0 OR q.OAUserId = :OAUserId) AND q.deleted = 0;"
+    q.createdBy,
+    dt1.name AS tableName,
+    dt2.name AS subTableName
+    FROM ".QUESTION_TABLE." q
+    LEFT JOIN ".TYPE_TABLE." t ON t.ID = q.typeId
+    LEFT JOIN ".DEFINITION_TABLE." dt1 ON dt1.ID = t.tableId
+    LEFT JOIN ".DEFINITION_TABLE." dt2 ON dt2.ID = t.subTableId
+    WHERE q.ID = :ID AND (q.private = 0 OR q.OAUserId = :OAUserId) AND q.deleted = 0;"
 );
 
 define("SQL_QUESTIONNAIRE_GET_QUESTION_OPTIONS",
@@ -244,8 +250,8 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_OPTIONS",
     FROM %%TABLENAME%%
     WHERE questionId = :questionId;"
 );
-define("SQL_QUESTIONNAIRE_GET_QUESTION_CHOICES",
+define("SQL_QUESTIONNAIRE_GET_QUESTION_SUB_OPTIONS",
     "SELECT *
     FROM %%TABLENAME%%
-    WHERE parentId = :parentId;"
+    WHERE parentTableId = :parentId;"
 );
