@@ -175,21 +175,14 @@ class PatientCheckInPushNotification{
         global $pdo;
         //Retrieving device registration id for notification and device
         try{
-          $sql = "SELECT PD.PatientDeviceIdentifierSerNum, PD.RegistrationId, PD.DeviceType
+            $sql = "SELECT PD.PatientDeviceIdentifierSerNum, PD.RegistrationId, PD.DeviceType
                   FROM PatientDeviceIdentifier as PD, Patient as P
                   WHERE P.PatientSerNum = " . $patientSerNum . "
                   AND P.PatientSerNum = PD.PatientSerNum
                   AND length(trim(PD.RegistrationId)) > 0
                   AND PD.DeviceType in (0,1)
-                  ORDER BY PD.LastUpdated desc limit 15;";
+                  ORDER BY PD.LastUpdated desc limit 25;";
 
-            // $sql = "SELECT PD.PatientDeviceIdentifierSerNum, PD.RegistrationId, PD.DeviceType
-            //         FROM PatientDeviceIdentifier as PD, Patient as P
-            //         WHERE P.PatientSerNum = " . $patientSerNum . "
-            //         AND P.PatientSerNum = PD.PatientSerNum
-            //         AND length(trim(PD.RegistrationId)) > 0
-            //         AND PD.DeviceType in (0,1)
-            //         ORDER BY PD.PatientDeviceIdentifierSerNum;";
             $result = $pdo->query($sql);
         }catch(PDOException $e) {
             return array("success"=>0,"failure"=>1,"error"=>$e);
