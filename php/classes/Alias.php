@@ -656,10 +656,7 @@ class Alias {
             $hospitalMapSer = $aliasDetails['hospitalMap']['serial'];
         }
 
-        $lastTransferred = 'NOW()';
-        if ($aliasType == 'Appointment') {
-            $lastTransferred = "'2000-01-01 00:00:00'";
-        }
+        $lastTransferred = ( in_array($aliasType, array('Appointment', 'Task') ) ?  "'2000-01-01 00:00:00'" : "'2019-01-01 00:00:00'" );
 
 		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
