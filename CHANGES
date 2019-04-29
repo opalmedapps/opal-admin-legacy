@@ -1,3 +1,20 @@
+Version 0.18.19.0:
+ - Merge branch 'Issue_673' into staging
+ - Merge branch 'documentFeatureChange' into staging
+ - Push Notification now in config file and allow registrant to view patient only
+ - --- Set the default last transferred for documents
+ - --- Set last transferred date for new document aliases to Jan 01, 2019    -- As per request from John. Patients complaining about not getting documents when they are registered since it was prospective --- Set the last transferred date for task to be the same as appointments    -- Not sure why they were prospective in the code but I don't see why tasks shouldn't be grabbed retrospectively like appointments
+ - Merge branch 'hotfix-0.18.17.7' into staging
+ - Merge branch 'hotfix-0.18.17.7' into develop
+ - Merge branch 'hotfix-0.18.17.7'
+ - Merge branch 'staging' into develop
+ - Merge branch 'staging' into develop
+ - Merge branch 'master' into develop
+ - Merge branch 'hotfix-0.18.17.6' into develop
+ - Merge branch 'hotfix-0.18.17.5' into develop
+ - Merge branch 'hotfix-0.18.17.4' into develop
+ - Merge branch 'hotfix-0.18.17.3' into develop
+
 Version 0.18.18.2:
  -     ---- Quick fix for alias expression in patient location and added todo in appointment
  - Merge branch 'staging'
