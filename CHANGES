@@ -1,3 +1,7 @@
+Version 0.18.19.1:
+ - Fix the missing single quote for $defaultLastTransferred
+ - Merge branch 'staging'
+
 Version 0.18.19.0:
  - Merge branch 'Issue_673' into staging
  - Merge branch 'documentFeatureChange' into staging
