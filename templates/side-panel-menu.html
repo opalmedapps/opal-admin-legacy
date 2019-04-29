@@ -170,7 +170,7 @@
                 </div>
 
                 <!-- SECTION: Patients -->
-                <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">
+                <div class="col-md-12" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
                   <div class="panel-container animated" ng-class="{pulse: hoverPatientMenu, active: currentPage == 'patients'}" ng-mouseenter="hoverPatientMenu=true" ng-mouseleave="hoverPatientMenu=false" style="cursor:pointer;" ng-click="goToPatient()">
                     <div class="side-panel-info-sm" ng-class="{active: currentPage == 'patients'}">
                       <div class="panel-content">
