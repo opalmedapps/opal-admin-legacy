@@ -545,12 +545,12 @@ sub getDocsFromSourceDB
 						CASE WHEN
 							PatientInfo.LastTransfer > $defaultLastTransferred
 						THEN PatientInfo.LastTransfer
-						ELSE $defaultLastTransferred END
+						ELSE '$defaultLastTransferred' END
 					ELSE
 						CASE WHEN
 							'$lastTransferDate' > $defaultLastTransferred
 						THEN '$lastTransferDate'
-						ELSE $defaultLastTransferred END
+						ELSE '$defaultLastTransferred' END
 					END
 					)
 				)
