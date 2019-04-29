@@ -90,7 +90,7 @@
           		Cron Logs
           	</a>
           </li>
-          <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
+          <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
           	<a ui-sref="patients" ng-click="closeNav()">
           		<span class="fa fa-address-card" aria-hidden="true"></span>
           		Patients
