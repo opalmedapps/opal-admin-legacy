@@ -543,12 +543,12 @@ sub getDocsFromSourceDB
 						'$lastTransferDate' > PatientInfo.LastTransfer
 					THEN
 						CASE WHEN
-							PatientInfo.LastTransfer > $defaultLastTransferred
+							PatientInfo.LastTransfer > '$defaultLastTransferred'
 						THEN PatientInfo.LastTransfer
 						ELSE '$defaultLastTransferred' END
 					ELSE
 						CASE WHEN
-							'$lastTransferDate' > $defaultLastTransferred
+							'$lastTransferDate' > '$defaultLastTransferred'
 						THEN '$lastTransferDate'
 						ELSE '$defaultLastTransferred' END
 					END
