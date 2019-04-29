@@ -51,7 +51,8 @@
 		"android": {
 			"_comment": "API access key from Google API's Console",
 
-			"apiKey": "ANDROID_API_HERE"
+			"apiKey": "ANDROID_API_HERE",
+			"androidURL": "FIREBASE_CLOUD_MESSAGING_URL"
 		},
 		"apple": {
 			"_comment": "Apple certificate private key passphrase and PEM file",
@@ -59,7 +60,8 @@
 			"certificate" : {
 				"password": "APPLE_CERTIFICATE_PASSWORD_HERE",
 				"filename": "APPLE_CERTIFICATE_FILENAME_HERE"
-			}
+			},
+			"appleURL": "APPLE_APNS_SERVER_URL"
 		}
 	},
 	"firebaseConfig": {
