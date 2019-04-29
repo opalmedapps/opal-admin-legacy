@@ -26,42 +26,26 @@ class PushNotifications {
 	*             push notification.
 	**/
 	public static function android($data, $reg_id) {
-		$url = 'https://fcm.googleapis.com/fcm/send';
-/*
-			$message = array(
-			'title'         => $data['mtitle'],
-			'message'       => $data['mdesc'],
-			'style'         => 'inbox',
-			'summaryText'   => 'There are %n% notifications'
-		);
-*/
+		// $url = 'https://fcm.googleapis.com/fcm/send';
+		$url = ANDROID_URL;
 
-	// Flag to identify when to use the utf8_encode because message coming
-	// from PERL alters the French characters
-	$wsFlag = (isset($data['encode'])? $data['encode'] :'Yes' );
+		// Flag to identify when to use the utf8_encode because message coming
+		// from PERL alters the French characters
+		$wsFlag = (isset($data['encode'])? $data['encode'] :'Yes' );
 
-	if ($wsFlag == 'Yes') {
-		$wsTitle = utf8_encode($data['mtitle']);
-		$wsBody = utf8_encode($data['mdesc']);
-	} else {
-		$wsTitle = $data['mtitle'];
-		$wsBody = $data['mdesc'];
-	}
+		if ($wsFlag == 'Yes') {
+			$wsTitle = utf8_encode($data['mtitle']);
+			$wsBody = utf8_encode($data['mdesc']);
+		} else {
+			$wsTitle = $data['mtitle'];
+			$wsBody = $data['mdesc'];
+		}
 
 		// Create a unique Post ID so that the push notification
 		// will not override the previous push notification by using
 		// time format (hours, minutes, and seconds)
 		// Ex: 10:35:23 would be 103523
 		$wsDate = date("His");
-
-		// $message = array(
-			// 'notId' 							=> $wsDate,
-			// 'title'								=> $wsTitle,
-			// 'body'								=> $wsBody,
-			// 'android_channel_id'	=> 'opal',
-			// 'sound'								=> 'default',
-			// 'priority'						=> 'normal'
-			// );
 
 		$message = array(
 			'notId' 				=> $wsDate,
@@ -119,7 +103,8 @@ class PushNotifications {
 		stream_context_set_option($ctx, 'ssl', 'local_cert', self::$certificate_file);
 		stream_context_set_option($ctx, 'ssl', 'passphrase', self::$passphrase);
 		// Open a connection to the APNS server
-		$fp = stream_socket_client('ssl://gateway.sandbox.push.apple.com:2195', $err,
+		// $fp = stream_socket_client('ssl://gateway.sandbox.push.apple.com:2195', $err,
+		$fp = stream_socket_client(IOS_URL, $err,
 					$errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
 		if (!$fp) {
 			$response = array("success"=>0,"failure"=>1,"error"=>"Failed to connect: $err $errstr" . PHP_EOL);

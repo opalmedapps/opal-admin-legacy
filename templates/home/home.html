@@ -255,7 +255,7 @@
               </div>
               
               <!-- SECTION: Patient -->
-							<div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin])">
+							<div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
 								<div class="panel-container animated" ng-class="{pulse: hoverPatientMenu}" ng-mouseenter="hoverPatientMenu=true" ng-mouseleave="hoverPatientMenu=false" style="cursor:pointer;" ng-click="goToPatient()">
 									<div class="panel-info" >
 										<div class="panel-content">
