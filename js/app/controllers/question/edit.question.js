@@ -11,15 +11,15 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		// initialize default variables & lists
 		$scope.changesMade = false;
 		$scope.question = {};
+		$scope.libraries = [];
 
 		// Initialize variables for holding selected answer type & group
 		$scope.selectedAt = null;
-		$scope.selectedGroup = null;
+		$scope.selectedLibrary = [];
 
 		// Filter lists initialized
 		$scope.atFilterList = [];
 		$scope.libraryFilterList = [];
-		//$scope.groupFilterList = [];
 		$scope.atCatList = [];
 
 		// Initialize search field variables
@@ -84,26 +84,38 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			});
 		};
 
+
+		/*$scope.toMaxValue = function() { return parseInt($scope.question.options.maxValue); };
+		$scope.toMaxValue = function() { return parseInt($scope.question.options.maxValue); };*/
+
 		// Show processing dialog on load
 		$scope.showProcessingModal();
 
 		// Call our API service to get the questionnaire details
 		questionnaireCollectionService.getQuestionDetails($scope.currentQuestion.serNum, userId).then(function (response) {
+
 			// Assign value
 			$scope.question = response.data;
-			if (response.data.private == "1")
+
+			$scope.toMinValue = parseInt($scope.question.options.minValue);
+			$scope.toMaxValue = parseInt($scope.question.options.maxValue);
+			$scope.toIncrement = parseInt($scope.question.options.increment);
+
+			if (response.data.private === "1")
 				$scope.question.private = true;
 			else
 				$scope.question.private = false;
-			if (response.data.final == "1")
+			if (response.data.final === "1")
 				$scope.question.final = true;
 			else
 				$scope.question.final = false;
-			console.log(response.data.libraries);
-			console.log(response.data.libSelected);
 			$scope.libraryFilterList = response.data.libraries;
+			$scope.selectedLibrary = response.data.libSelected;
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
+
+			console.log($scope.question);
+
 		}).catch(function (response) {
 			alert('Error occurred getting question details.\r\nCode ' + response.status + " " + response.data);
 			processingModal.close(); // hide modal
@@ -143,10 +155,16 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			$uibModalInstance.dismiss('cancel');
 		};
 
+		$scope.updateLibrary = function (selectedLibrary) {
+			var idx = $scope.selectedLibrary.indexOf(selectedLibrary.serNum);
+			if (idx > -1)
+				$scope.selectedLibrary.splice(idx, 1);
+			else
+				$scope.selectedLibrary.push(selectedLibrary.serNum);
+		};
+
 		// Submit changes
 		$scope.updateQuestion = function () {
-			console.log($scope.question);
-
 			/*if ($scope.checkForm()) {
 				// update last_updated_by
 				$scope.question.last_updated_by = userId;
