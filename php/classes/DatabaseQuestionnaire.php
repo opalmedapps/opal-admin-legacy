@@ -348,6 +348,13 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    function getQuestionSliderDetails($questionId, $tableName) {
+        return $this->fetchAll(str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_QUESTION_SLIDER_OPTIONS),
+            array(
+                array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
     function getQuestionSubOptionsDetails($parentId, $tableName) {
         return $this->fetchAll(str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_QUESTION_SUB_OPTIONS),
             array(

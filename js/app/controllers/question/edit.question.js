@@ -18,8 +18,8 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 
 		// Filter lists initialized
 		$scope.atFilterList = [];
-		$scope.libFilterList = [];
-		$scope.groupFilterList = [];
+		$scope.libraryFilterList = [];
+		//$scope.groupFilterList = [];
 		$scope.atCatList = [];
 
 		// Initialize search field variables
@@ -90,12 +90,24 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		// Call our API service to get the questionnaire details
 		questionnaireCollectionService.getQuestionDetails($scope.currentQuestion.serNum, userId).then(function (response) {
 			// Assign value
-			$scope.question = response.data[0];
-			console.log(response.data[0]);
+			$scope.question = response.data;
+			if (response.data.private == "1")
+				$scope.question.private = true;
+			else
+				$scope.question.private = false;
+			if (response.data.final == "1")
+				$scope.question.final = true;
+			else
+				$scope.question.final = false;
+			console.log(response.data.libraries);
+			console.log(response.data.libSelected);
+			$scope.libraryFilterList = response.data.libraries;
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
 		}).catch(function (response) {
-			console.error('Error occurred getting question details:', response.status, response.data);
+			alert('Error occurred getting question details.\r\nCode ' + response.status + " " + response.data);
+			processingModal.close(); // hide modal
+			processingModal = null; // remove reference
 		});
 
 		// Call our API service to get the list of existing answer types 
@@ -133,8 +145,9 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 
 		// Submit changes
 		$scope.updateQuestion = function () {
+			console.log($scope.question);
 
-			if ($scope.checkForm()) {
+			/*if ($scope.checkForm()) {
 				// update last_updated_by
 				$scope.question.last_updated_by = userId;
 
@@ -159,6 +172,6 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 						$uibModalInstance.close();
 					}
 				});
-			}
+			}*/
 		};
 	});
