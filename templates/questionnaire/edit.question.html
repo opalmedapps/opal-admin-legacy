@@ -70,6 +70,40 @@
                 </p>
             </div>
 
+            <!-- Edit text box options -->
+            <div class="col-xs-12 col-md-8" ng-show="question.typeId === '3'">
+                <p> No option.</p>
+            </div>
+
+            <!-- Edit radio button options -->
+            <div class="col-xs-12 col-md-8" ng-show="question.typeId === '4'">
+                <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in question.subOptions">
+                    <input class="form-control" style="width:20%" type="number" placeholder="Position" ng-model="option.position" required/>
+                    <input class="form-control" style="width:40%" type="text" placeholder="Text (EN)" ng-model="option.description_EN" required/>
+                    <input class="form-control" style="width:40%" type="text" placeholder="Text (FR)" ng-model="option.description_FR" required/>
+                    <span class="input-group-btn"><button class="btn btn-default" ng-click="deleteOptions(option)"><span class="fa fa-minus"></span> Delete</button></span>
+                </div>
+                <button type="button" class="btn btn-default" style="float: left; margin-top:5px;" ng-click="addOptions()"><span class="fa fa-plus"></span> Add option</button>
+            </div>
+
+            <!-- Edit Sliders options -->
+            <div class="col-xs-12 col-md-8" ng-show="question.typeId === '2'">
+                <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
+                    <input class="form-control" style="width:20%" type="number" placeholder="Minimum value" ng-model="toMinValue" required ng-disabled="question.readOnly == '1'" />
+                    <input class="form-control" style="width:35%" type="text" ng-model="question.options.minCaption_EN" placeholder="Minimum caption (EN)" required ng-disabled="question.readOnly == '1'" />
+                    <input class="form-control" style="width:35%" type="text" ng-model="question.options.minCaption_FR" placeholder="Minimum caption (FR)" required ng-disabled="question.readOnly == '1'" />
+                </div>
+                <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
+                    <input class="form-control" style="width:20%" type="number" placeholder="Maximum value" ng-model="toMaxValue" required ng-disabled="question.readOnly == '1'" />
+                    <input class="form-control" style="width:35%" type="text" ng-model="question.options.maxCaption_EN" placeholder="Maximum caption (EN)" required ng-disabled="question.readOnly == '1'" />
+                    <input class="form-control" style="width:35%" type="text" ng-model="question.options.maxCaption_FR" placeholder="Maximum caption (FR)" required ng-disabled="question.readOnly == '1'" />
+                </div>
+                <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
+                    <input class="form-control" style="width:20%" type="number" placeholder="Increment step" ng-model="toIncrement" required ng-disabled="question.readOnly == '1'" />
+                </div>
+            </div>
+
+
             <!-- div class="list-space">
                 <div class="input-group">
                     <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
@@ -102,7 +136,7 @@
                     <ul class="list-items">
                         <li ng-repeat="library in libraryFilterList| filter: searchLibFilter">
                             <label>
-                                <input type="checkbox" name="library[]" value="{{library.serNum}}" ng-checked="library.checked == 1" />
+                                <input type="checkbox" name="library[]" value="{{library.serNum}}" ng-checked="library.checked == 1" ng-click="updateLibrary(library)" ng-disabled="question.readOnly == '1'" />
                                 {{library.name_EN}} / {{library.name_FR}}
                             </label>
                         </li>

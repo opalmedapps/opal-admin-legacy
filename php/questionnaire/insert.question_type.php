@@ -39,7 +39,7 @@ $answerTypeObj = new QuestionType($questionTypeArray["userId"]); // Object
 $answerTypeObj->insertQuestionType($questionTypeArray);
 
 header('Content-Type: application/javascript');
-$response['code'] = HTTP_STATUS_SUCCESS;
+$response['message'] = HTTP_STATUS_SUCCESS;
 echo json_encode($response);
 
 

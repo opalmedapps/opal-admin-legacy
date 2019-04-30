@@ -112,13 +112,7 @@ class QuestionType {
             $increment = floatval(strip_tags($newQuestionType["increment"]));
 
             if ($increment <= 0 || $minValue <= 0 || $maxValue <= $minValue) {
-                header('Content-Type: application/javascript');
-                $response['value'] = false;
-                $response['message'] = 500;
-                $response['details'] = "Invalid slider format. " . $newQuestionType["minValue"];
-                print_R($_POST);
-                echo json_encode($response);
-                die();
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid slider format.");
             }
 
             $maxValue = floatval(floor(($maxValue - $minValue) / $increment) * $increment) + $minValue;
