@@ -221,10 +221,23 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		console.error('Error occurred getting response types:', response.status, response.data);
 	});
 
+// Get the library list
+	questionnaireCollectionService.getLibraries(userid).then(function (response) {
+		$scope.libFilterList = response.data;
+	}).catch(function(response) {
+		console.error('Error occurred getting libraries:', response.status, response.data);
+	});
+
 	questionnaireCollectionService.getLibraries(userid).then(function (response) {
 		$scope.groupFilterList = response.data;
 	}).catch(function(response) {
 		console.error('Error occurred getting question libraries:', response.status, response.data);
+	});
+
+	questionnaireCollectionService.getQuestionTypeCategories().then(function (response) {
+		$scope.atCatList = response.data;
+	}).catch(function(response) {
+		console.error('Error occurred getting response type categories:', response.status, response.data);
 	});
 
 	// add new types & write into DB
@@ -253,8 +266,9 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 				url: "php/questionnaire/insert.question_type.php",
 				data: $scope.newAnswerType,
 				success: function (result) {
+					console.log(result);
 					result = JSON.parse(result);
-					if(result.code === 200) {
+					if(result.message === 200) {
 
 						alert('Successfully added the new response type. Please find your new response type in the form above.');
 						// update answer type list
@@ -264,7 +278,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 							console.error('Error occurred getting response types:', response.status, response.data);
 						});
 					} else {
-						alert("Unable to create the response type. Code " + result.code + ".\r\nError message: " + result.message);
+						alert("Unable to create the response type. Code " + result.message + ".\r\nError message: " + result.details);
 					}
 
 				},
