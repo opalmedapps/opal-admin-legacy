@@ -228,14 +228,13 @@ class Question {
      * @param   question ID (int)
      * @return  array $questionDetails : the question details
      */
-    public function getQuestionDetails ($questionId) {
-        $result = $this->questionnaireDB->getQuestionDetails($questionId);
-
-        if(count($result) != 1)
+    public function getQuestionDetails($questionId) {
+        $question = $this->questionnaireDB->getQuestionDetails($questionId);
+        if(count($question) != 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot get question details.");
 
-        $result = $result[0];
-        $result["locked"] = $this->isQuestionLocked($questionId);
+        $question = $question[0];
+        $question["locked"] = $this->isQuestionLocked($questionId);
 
         $userAuthorizations = array();
         $userRole = $this->opalDB->getUserRole($this->opalDB->getUserId());
@@ -246,9 +245,9 @@ class Question {
             array_push($userAuthorizations, $role["RoleSerNum"]);
 
         $readOnly = false;
-        if ($result["locked"])
+        if ($question["locked"])
             $readOnly = true;
-        else if($result["final"]) {
+        else if($question["final"]) {
             $readOnly = true;
             foreach($userAuthorizations as $access) {
                 if (in_array($access, HelpSetup::AUTHORIZATION_MODIFICATION_FINALIZED)) {
@@ -258,84 +257,45 @@ class Question {
             }
         }
 
-        $options = $this->questionnaireDB->getQuestionOptionsDetails($result["ID"], $result["tableName"]);
+        if($question["typeId"] == SLIDERS)
+                $options = $this->questionnaireDB->getQuestionSliderDetails($question["ID"], $question["tableName"]);
+            else
+                $options = $this->questionnaireDB->getQuestionOptionsDetails($question["ID"], $question["tableName"]);
         if (count($options) > 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Errors fetching the question. Too many options.");
 
         $options = $options[0];
 
         $subOptions = null;
-        if($result["subTableName"] != "" && $options["ID"] != "") {
-            $subOptions = $this->questionnaireDB->getQuestionSubOptionsDetails($options["ID"], $result["subTableName"]);
+        if($question["subTableName"] != "" && $options["ID"] != "") {
+            $subOptions = $this->questionnaireDB->getQuestionSubOptionsDetails($options["ID"], $question["subTableName"]);
         }
 
-        unset($result["tableName"]);
-        unset($result["subTableName"]);
-        $result["options"] = $options;
-        $result["subOptions"] = $subOptions;
-        $result["readOnly"] = strval(intval($readOnly));
+        $libraries = $this->questionnaireDB->fetchLibrariesQuestion($question["ID"]);
 
-        return $result;
+        $arrLib = array();
+        foreach ($libraries as $lib) {
+            array_push($arrLib, $lib["ID"]);
+        }
 
-        /* try {
-             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+        $librariesList = $this->questionnaireDB->fetchAllLibraries();
 
-             $sql = "
-                 SELECT
-                     QuestionnaireQuestion.text_EN,
-                     QuestionnaireQuestion.text_FR,
-                     QuestionnaireQuestion.answertype_serNum,
-                     QuestionnaireQuestion.questiongroup_serNum,
-                     QuestionnaireQuestion.last_updated_by,
-                     QuestionnaireAnswerType.name_EN,
-                     QuestionnaireAnswerType.name_FR,
-                     Questiongroup.name_EN,
-                     Questiongroup.name_FR
-                 FROM
-                     QuestionnaireQuestion,
-                     QuestionnaireAnswerType,
-                     Questiongroup
-                 WHERE
-                     QuestionnaireQuestion.serNum = $questionSerNum
-                 AND
-                     QuestionnaireAnswerType.serNum = QuestionnaireQuestion.answertype_serNum
-                 AND
-                     Questiongroup.serNum = QuestionnaireQuestion.questiongroup_serNum
-             ";
+        unset($question["tableName"]);
+        unset($question["subTableName"]);
+        $question["options"] = $options;
+        $question["subOptions"] = $subOptions;
+        $question["readOnly"] = strval(intval($readOnly));
+        $question["libSelected"] = $arrLib;
 
-             $query = $host_db_link->prepare($sql);
-             $query->execute();
+        foreach($librariesList as &$lib) {
+            if (in_array($lib["serNum"], $arrLib))
+                $lib["checked"] = 1;
+            else
+                $lib["checked"] = 0;
+        }
+        $question["libraries"] = $librariesList;
 
-             $row = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
-
-             $text_EN = $row[0];
-             $text_FR = $row[1];
-             $answertype_serNum = $row[2];
-             $questiongroup_serNum = $row[3];
-             $last_updated_by = $row[4];
-             $atNameEN = $row[5];
-             $atNameFR = $row[6];
-             $groupNameEN = $row[7];
-             $groupNameFR = $row[8];
-
-             $questionDetails = array(
-                 'serNum'				=> $questionSerNum,
-                 'text_EN'				=> $text_EN,
-                 'text_FR'				=> $text_FR,
-                 'answertype_serNum'		=> $answertype_serNum,
-                 'questiongroup_serNum'	=> $questiongroup_serNum,
-                 'last_updated_by'		=> $last_updated_by,
-                 'answertype_name_EN'	=> $atNameEN,
-                 'answertype_name_FR'	=> $atNameFR,
-                 'group_name_EN'			=> $groupNameEN,
-                 'group_name_FR'			=> $groupNameFR
-             );
-
-             return $questionDetails;
-         } catch (PDOException $e) {
-             echo $e->getMessage();
-         }*/
+        return $question;
     }
 
     /**

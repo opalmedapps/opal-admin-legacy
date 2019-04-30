@@ -82,7 +82,7 @@ define("SQL_QUESTIONNAIRE_FETCH_ALL_QUESTIONS",
 );
 
 define("SQL_QUESTIONNAIRE_FETCH_LIBRARIES_QUESTION",
-    "SELECT
+    "SELECT l.ID,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = l.name AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = l.name AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR
     FROM ".LIBRARY_TABLE." l
@@ -234,6 +234,8 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_DETAILS",
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.question AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.question AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR,
     q.typeId,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS type_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS type_FR,
     q.final,
     q.createdBy,
     dt1.name AS tableName,
@@ -250,8 +252,21 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_OPTIONS",
     FROM %%TABLENAME%%
     WHERE questionId = :questionId;"
 );
+
+define("SQL_QUESTIONNAIRE_GET_QUESTION_SLIDER_OPTIONS",
+    "SELECT s.*,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = s.minCaption AND d.languageId = ".ENGLISH_LANGUAGE.") AS minCaption_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = s.minCaption AND d.languageId = ".FRENCH_LANGUAGE.") AS minCaption_FR,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = s.maxCaption AND d.languageId = ".ENGLISH_LANGUAGE.") AS maxCaption_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = s.maxCaption AND d.languageId = ".FRENCH_LANGUAGE.") AS maxCaption_FR
+    FROM %%TABLENAME%% s
+    WHERE questionId = :questionId;"
+);
+
 define("SQL_QUESTIONNAIRE_GET_QUESTION_SUB_OPTIONS",
-    "SELECT *
-    FROM %%TABLENAME%%
-    WHERE parentTableId = :parentId;"
+    "SELECT t.*,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS description_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR
+    FROM %%TABLENAME%% t
+    WHERE parentTableId = :parentId ORDER BY t.order;"
 );

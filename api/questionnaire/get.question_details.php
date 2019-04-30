@@ -3,7 +3,7 @@ include_once('questionnaire.inc');
 
 $callback = strip_tags($_GET['callback']);
 $questionId = strip_tags($_GET['questionId']);
-$userId = strip_tags($_GET['userid']);
+$userId = strip_tags($_GET['userId']);
 
 $question = new Question($userId);
 $questionDetails = $question->getQuestionDetails($questionId);

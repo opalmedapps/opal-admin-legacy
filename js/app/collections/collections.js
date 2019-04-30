@@ -629,7 +629,7 @@ angular.module('opalAdmin.collections', [])
 		questionnaireAPI.getQuestionDetails = function (questionSerNum, userid) {
 			return $http({
 				method: 'JSONP',
-				url: "api/questionnaire/get.question_details.php?callback=JSON_CALLBACK&questionSerNum=" + questionSerNum + "&userid=" + userid
+				url: "api/questionnaire/get.question_details.php?callback=JSON_CALLBACK&questionId=" + questionSerNum + "&userId=" + userid
 			});
 		};
 
