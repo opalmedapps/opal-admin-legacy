@@ -470,8 +470,10 @@ sub getDocsFromSourceDB
 				}
 			}
 
+			my $defaultLastTransferred = '2019-01-01 00:00:00';
+
 			my $patientInfo_sql = "
-				WITH PatientInfo (SSN, LastTransfer, PatientSerNum, RegistrationDate) AS (
+				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
 			";
 			my $numOfPatients = @patientList;
 			my $counter = 0;
@@ -479,10 +481,9 @@ sub getDocsFromSourceDB
 				my $patientSer 			= $Patient->getPatientSer();
 				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
 				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
-				my $patientRegistrationDate 	= $Patient->getPatientRegistrationDate();
 
 				$patientInfo_sql .= "
-					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer', '$patientRegistrationDate'
+					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer'
 				";
 
 				$counter++;
@@ -542,14 +543,14 @@ sub getDocsFromSourceDB
 						'$lastTransferDate' > PatientInfo.LastTransfer
 					THEN
 						CASE WHEN
-							PatientInfo.LastTransfer > PatientInfo.RegistrationDate
+							PatientInfo.LastTransfer > '$defaultLastTransferred'
 						THEN PatientInfo.LastTransfer
-						ELSE PatientInfo.RegistrationDate END
+						ELSE '$defaultLastTransferred' END
 					ELSE
 						CASE WHEN
-							'$lastTransferDate' > PatientInfo.RegistrationDate
+							'$lastTransferDate' > '$defaultLastTransferred'
 						THEN '$lastTransferDate'
-						ELSE PatientInfo.RegistrationDate END
+						ELSE '$defaultLastTransferred' END
 					END
 					)
 				)
