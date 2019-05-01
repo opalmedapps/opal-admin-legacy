@@ -39,7 +39,7 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 			'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
 			'ng-checked="grid.appScope.updateTransferFlag(row.entity.transfer)" ng-model="row.entity.transfer"></div>';
 
-		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
+		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;" ng-if="isAuthorized([userRoles.admin])" >' +
 			'<strong><a href="" ng-click="grid.appScope.editPatient(row.entity)">Edit</a></strong>' +
 			'- <strong><a href="" ng-click="grid.appScope.toggleBlock(row.entity)"><span ng-if="row.entity.disabled">Unblock</span>' +
 			'<span ng-if="!row.entity.disabled">Block</span></a></strong></div> ';
