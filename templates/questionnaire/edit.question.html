@@ -16,7 +16,7 @@
     <div class="modal-buttons col-xs-12">
     <span>
          <form method="post" ng-submit="updateQuestion()">
-          <input class="btn btn-primary submit" ng-class="" type="submit" value="Save Changes" ng-if="question.readOnly == '0'" />
+          <input class="btn btn-primary submit" ng-class="" type="submit" value="Save Changes" />
          <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel" />
         </form>
     </span>
@@ -35,22 +35,22 @@
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div class="input-group">
                         <span class="input-group-addon">EN</span>
-                        <textarea class="form-control" rows="2" ng-model="question.text_EN" placeholder="English Title" ng-change="setChangesMade()" ng-disabled="question.readOnly == '1'"></textarea>
+                        <textarea class="form-control" rows="2" ng-model="question.text_EN" placeholder="English Title" ng-change="setChangesMade()" ng-disabled="question.readOnly || question.final"></textarea>
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div class="input-group">
                         <span class="input-group-addon">FR</span>
-                        <textarea class="form-control" rows="2" ng-model="question.text_FR" placeholder="Titre Français" ng-change="setChangesMade()" ng-disabled="question.readOnly == '1'"></textarea>
+                        <textarea class="form-control" rows="2" ng-model="question.text_FR" placeholder="Titre Français" ng-change="setChangesMade()" ng-disabled="question.readOnly || question.final"></textarea>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-xs-6 col-md-6" style="margin-bottom: 20px;">
-                    <label style="font-size: 20px;">Make this question private: <input type="checkbox" ng-model="question.private" ng-disabled="question.readOnly == '1'"></label>
+                    <label style="font-size: 20px;">Make this question private: <input type="checkbox" ng-model="question.private" ng-disabled="question.readOnly && question.final"></label>
                 </div>
                 <div class="col-xs-6 col-md-6" style="margin-bottom: 20px;">
-                    <label style="font-size: 20px;">Finalize the question: <input type="checkbox" ng-model="question.final" ng-disabled="question.readOnly == '1'"></label>
+                    <label style="font-size: 20px;">Finalize the question: <input type="checkbox" ng-model="question.final" ng-disabled="question.readOnly"></label>
                 </div>
             </div>
         </div>
@@ -78,46 +78,30 @@
             <!-- Edit radio button options -->
             <div class="col-xs-12 col-md-8" ng-show="question.typeId === '4' || question.typeId === '1'">
                 <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in question.subOptions">
-                    <input class="form-control" style="width:20%" type="number" placeholder="Position" ng-model="option.position" required/>
-                    <input class="form-control" style="width:40%" type="text" placeholder="Text (EN)" ng-model="option.description_EN" required/>
-                    <input class="form-control" style="width:40%" type="text" placeholder="Text (FR)" ng-model="option.description_FR" required/>
-                    <span class="input-group-btn"><button class="btn btn-default" ng-click="deleteOptions(option)"><span class="fa fa-minus"></span> Delete</button></span>
+                    <input class="form-control" style="width:20%" type="number" placeholder="Position" ng-model="option.order" required ng-disabled="question.readOnly || question.final" />
+                    <input class="form-control" style="width:40%" type="text" placeholder="Text (EN)" ng-model="option.description_EN" required ng-disabled="question.readOnly || question.final" />
+                    <input class="form-control" style="width:40%" type="text" placeholder="Text (FR)" ng-model="option.description_FR" required ng-disabled="question.readOnly || question.final" />
+                    <span class="input-group-btn"><button class="btn btn-default" ng-click="deleteOptions(option)" ng-disabled="question.readOnly || question.final"><span class="fa fa-minus"></span> Delete</button></span>
                 </div>
-                <button type="button" class="btn btn-default" style="float: left; margin-top:5px;" ng-click="addOptions()"><span class="fa fa-plus"></span> Add option</button>
+                <button type="button" class="btn btn-default" style="float: left; margin-top:5px;" ng-click="addOptions()" ng-disabled="question.readOnly || question.final"><span class="fa fa-plus"></span> Add option</button>
             </div>
 
             <!-- Edit Sliders options -->
             <div class="col-xs-12 col-md-8" ng-show="question.typeId === '2'">
                 <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
-                    <input class="form-control" style="width:20%" type="number" placeholder="Minimum value" ng-model="toMinValue" required ng-disabled="question.readOnly == '1'" />
-                    <input class="form-control" style="width:35%" type="text" ng-model="question.options.minCaption_EN" placeholder="Minimum caption (EN)" required ng-disabled="question.readOnly == '1'" />
-                    <input class="form-control" style="width:35%" type="text" ng-model="question.options.minCaption_FR" placeholder="Minimum caption (FR)" required ng-disabled="question.readOnly == '1'" />
+                    <input class="form-control" style="width:20%" type="number" placeholder="Minimum value" ng-model="toMinValue" required ng-disabled="question.readOnly || question.final" />
+                    <input class="form-control" style="width:35%" type="text" ng-model="question.options.minCaption_EN" placeholder="Minimum caption (EN)" required ng-disabled="question.readOnly || question.final" />
+                    <input class="form-control" style="width:35%" type="text" ng-model="question.options.minCaption_FR" placeholder="Minimum caption (FR)" required ng-disabled="question.readOnly || question.final" />
                 </div>
                 <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
                     <input class="form-control" style="width:20%" type="number" placeholder="Maximum value" ng-model="toMaxValue" required ng-disabled="question.readOnly == '1'" />
-                    <input class="form-control" style="width:35%" type="text" ng-model="question.options.maxCaption_EN" placeholder="Maximum caption (EN)" required ng-disabled="question.readOnly == '1'" />
-                    <input class="form-control" style="width:35%" type="text" ng-model="question.options.maxCaption_FR" placeholder="Maximum caption (FR)" required ng-disabled="question.readOnly == '1'" />
+                    <input class="form-control" style="width:35%" type="text" ng-model="question.options.maxCaption_EN" placeholder="Maximum caption (EN)" required ng-disabled="question.readOnly || question.final" />
+                    <input class="form-control" style="width:35%" type="text" ng-model="question.options.maxCaption_FR" placeholder="Maximum caption (FR)" required ng-disabled="question.readOnly || question.final" />
                 </div>
                 <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
-                    <input class="form-control" style="width:20%" type="number" placeholder="Increment step" ng-model="toIncrement" required ng-disabled="question.readOnly == '1'" />
+                    <input class="form-control" style="width:20%" type="number" placeholder="Increment step" ng-model="toIncrement" required ng-disabled="question.readOnly || question.final" />
                 </div>
             </div>
-
-
-            <!-- div class="list-space">
-                <div class="input-group">
-                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                    <input class="form-control" type="text" ng-model="atEntered" ng-change="searchAt(atEntered)" placeholder="Search Response Type"
-                    />
-                </div>
-                <ul class="list-items">
-                    <li ng-repeat="at in atFilterList | filter: searchAtFilter">
-                        <label>
-                            <input type="radio" name="{{at.name_EN}}" value="{{at.serNum}}" ng-model="question.answertype_serNum" ng-change="updateAt(at)"/> {{at.name_EN}} ({{at.category_EN}})
-                        </label>
-                    </li>
-                </ul>
-            </div -->
         </div>
 
         <!-- SECTION: Libraries -->
