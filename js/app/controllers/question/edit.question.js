@@ -84,10 +84,6 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			});
 		};
 
-
-		/*$scope.toMaxValue = function() { return parseInt($scope.question.options.maxValue); };
-		$scope.toMaxValue = function() { return parseInt($scope.question.options.maxValue); };*/
-
 		// Show processing dialog on load
 		$scope.showProcessingModal();
 
@@ -97,9 +93,11 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			// Assign value
 			$scope.question = response.data;
 
-			$scope.toMinValue = parseInt($scope.question.options.minValue);
-			$scope.toMaxValue = parseInt($scope.question.options.maxValue);
-			$scope.toIncrement = parseInt($scope.question.options.increment);
+			if($scope.question.options !== null) {
+				$scope.toMinValue = parseInt($scope.question.options.minValue);
+				$scope.toMaxValue = parseInt($scope.question.options.maxValue);
+				$scope.toIncrement = parseInt($scope.question.options.increment);
+			}
 
 			if (response.data.private === "1")
 				$scope.question.private = true;
@@ -113,11 +111,8 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			$scope.selectedLibrary = response.data.libSelected;
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
-
-			console.log($scope.question);
-
-		}).catch(function (response) {
-			alert('Error occurred getting question details.\r\nCode ' + response.status + " " + response.data);
+		}).catch(function (err) {
+			alert('Error occurred getting question details.\r\nCode ' + err.status + " " + err.data);
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
 		});
@@ -163,8 +158,70 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 				$scope.selectedLibrary.push(selectedLibrary.serNum);
 		};
 
+		$scope.addOptions = function () {
+			console.log("passed");
+			$scope.question.subOptions.push({
+				description_EN: "",
+				description_FR: "",
+				position: undefined,
+				userId: userId
+			});
+		};
+
+		// delete options
+		$scope.deleteOptions = function (optionToDelete) {
+			var index = $scope.question.subOptions.indexOf(optionToDelete);
+			if (index > -1) {
+				$scope.question.subOptions.splice(index, 1);
+			}
+		};
+
+		questionnaireCollectionService.getLibraries(userId).then(function (response) {
+			$scope.groupFilterList = response.data;
+		}).catch(function(response) {
+			console.error('Error occurred getting question libraries:', response.status, response.data);
+		});
+
+		$scope.newLibrary = {
+			name_EN: "",
+			name_FR: "",
+			private: 0,
+			userid: userId
+		};
+		$scope.addNewLib = function () {
+			// Prompt to confirm user's action
+			var confirmation = confirm("Are you sure you want to create new library " + $scope.newLibrary.name_EN + " / "+$scope.newLibrary.name_FR+ "?");
+			if (confirmation) {
+				// write in to db
+				$.ajax({
+					type: "POST",
+					url: "php/questionnaire/insert.library.php",
+					data: $scope.newLibrary,
+					success: function (result) {
+						result = JSON.parse(result);
+						if(result.code === 200) {
+							alert('Successfully added the new library. Please find your new library in the panel above.');
+							questionnaireCollectionService.getLibraries(userId).then(function (response) {
+								$scope.libraryFilterList = response.data;
+							}).catch(function (response) {
+								alert('Error occurred getting libraries. Code '+ response.status +"\r\n" + response.data);
+							});
+						}
+						else {
+							alert("Unable to create the library. Code " + result.code + ".\r\nError message: " + result.message);
+						}
+					},
+					error: function () {
+						alert("Something went wrong.");
+					}
+				});
+			}
+		};
+
+
 		// Submit changes
 		$scope.updateQuestion = function () {
+			console.log($scope.question);
 			/*if ($scope.checkForm()) {
 				// update last_updated_by
 				$scope.question.last_updated_by = userId;

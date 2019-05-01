@@ -11,7 +11,7 @@
             <span class="text-danger fa fa-lock"></span>
             View Question
         </h2>
-        <p class="text-danger">This question has being already sent to patients and cannot be modified anymore. You can still view its details.</p>
+        <p class="text-danger">This question has being already sent to patients and cannot be modified anymore. You can still assign it to different libraries.</p>
     </div>
     <div class="modal-buttons col-xs-12">
     <span>
@@ -76,7 +76,7 @@
             </div>
 
             <!-- Edit radio button options -->
-            <div class="col-xs-12 col-md-8" ng-show="question.typeId === '4'">
+            <div class="col-xs-12 col-md-8" ng-show="question.typeId === '4' || question.typeId === '1'">
                 <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in question.subOptions">
                     <input class="form-control" style="width:20%" type="number" placeholder="Position" ng-model="option.position" required/>
                     <input class="form-control" style="width:40%" type="text" placeholder="Text (EN)" ng-model="option.description_EN" required/>
@@ -136,11 +136,35 @@
                     <ul class="list-items">
                         <li ng-repeat="library in libraryFilterList| filter: searchLibFilter">
                             <label>
-                                <input type="checkbox" name="library[]" value="{{library.serNum}}" ng-checked="library.checked == 1" ng-click="updateLibrary(library)" ng-disabled="question.readOnly == '1'" />
+                                <input type="checkbox" name="library[]" value="{{library.serNum}}" ng-checked="library.checked == 1" ng-click="updateLibrary(library)" />
                                 {{library.name_EN}} / {{library.name_FR}}
                             </label>
                         </li>
                     </ul>
+
+                    <div class="col-xs-12">
+                        <p style="margin-bottom: 10px; margin-top: 10px;">
+                            <span style="font-size: 20px;" class="fa fa-question-circle"></span>
+                            <span style="font-size: 15px">Can't find a question library? Create a new one here:</span>
+                        </p>
+                    </div>
+                    <div class="panel-container">
+
+                        <form name="newLibForm">
+                            <div class="col-md-2" style="margin-top:8px; margin-bottom:5px; font-size:20px;">
+                                <label>Private:  <input type="checkbox" ng-model="newLibrary.private" ng-true-value="1" ng-false-value="0"></label>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="input-group">
+                                    <input class="form-control" style="width:50%" type="text" ng-model="newLibrary.name_EN" placeholder="New Library (EN)" ng-disabled="librarySelected" required/>
+                                    <input class="form-control" style="width:50%" type="text" ng-model="newLibrary.name_FR" placeholder="New Library (FR)" ng-disabled="librarySelected" required/>
+                                    <span class="input-group-btn"><button class="btn btn-default" type="submit" ng-click="addNewLib()" ng-disabled="newLibForm.$invalid">Add</button></span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+
                 </div>
             </div>
         </div>
