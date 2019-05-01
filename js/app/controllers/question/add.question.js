@@ -221,13 +221,6 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		console.error('Error occurred getting response types:', response.status, response.data);
 	});
 
-// Get the library list
-	questionnaireCollectionService.getLibraries(userid).then(function (response) {
-		$scope.libFilterList = response.data;
-	}).catch(function(response) {
-		console.error('Error occurred getting libraries:', response.status, response.data);
-	});
-
 	questionnaireCollectionService.getLibraries(userid).then(function (response) {
 		$scope.groupFilterList = response.data;
 	}).catch(function(response) {
@@ -266,7 +259,6 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 				url: "php/questionnaire/insert.question_type.php",
 				data: $scope.newAnswerType,
 				success: function (result) {
-					console.log(result);
 					result = JSON.parse(result);
 					if(result.message === 200) {
 
