@@ -97,10 +97,12 @@ include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseOpal.php" );
 //include_once( FRONTEND_ABS_PATH . "php/classes/Upload.php");
 
-// Push Notification FCM and APN credientials.
-define( "API_KEY" , $config['pushNotificationConfig']['android']['apiKey'] );
-define( "CERTIFICATE_PASSWORD" , $config['pushNotificationConfig']['apple']['certificate']['password'] );
-define( "CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $config['pushNotificationConfig']['apple']['certificate']['filename'] );
+	// Push Notification FCM and APN credientials.
+	define( "API_KEY" , $config['pushNotificationConfig']['android']['apiKey'] );
+	define( "ANDROID_URL" , $config['pushNotificationConfig']['android']['androidURL'] );
+	define( "CERTIFICATE_PASSWORD" , $config['pushNotificationConfig']['apple']['certificate']['password'] );
+	define( "CERTIFICATE_FILE" , BACKEND_ABS_PATH . 'php' . DIRECTORY_SEPARATOR . 'certificates' . DIRECTORY_SEPARATOR . $config['pushNotificationConfig']['apple']['certificate']['filename'] );
+	define( "IOS_URL" , $config['pushNotificationConfig']['apple']['appleURL'] );
 
 /*
  * Question type definition for the legacy questionnaire and the new questionnaire 2019
