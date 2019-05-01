@@ -99,6 +99,12 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 				$scope.toIncrement = parseInt($scope.question.options.increment);
 			}
 
+			if($scope.question.subOptions !== null) {
+				$scope.question.subOptions.forEach(function(entry) {
+					entry.order = parseInt(entry.order);
+				});
+			}
+
 			if (response.data.private === "1")
 				$scope.question.private = true;
 			else
@@ -107,6 +113,11 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 				$scope.question.final = true;
 			else
 				$scope.question.final = false;
+			if (response.data.readOnly === "1")
+				$scope.question.readOnly = true;
+			else
+				$scope.question.readOnly = false;
+
 			$scope.libraryFilterList = response.data.libraries;
 			$scope.selectedLibrary = response.data.libSelected;
 			processingModal.close(); // hide modal
@@ -123,13 +134,6 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		}).catch(function (response){
 			console.error('Error occurred getting response types:', response.status, response.data);
 		});
-
-		// Call our API service to get the list of existing groups
-		/*questionnaireCollectionService.getQuestionGroups(userId).then(function (response) {
-			$scope.groupFilterList = response.data;
-		}).catch(function (response){
-			console.error('Error occurred getting question groups:', response.status, response.data);
-		});*/
 
 		// Function to check necessary form fields are complete
 		$scope.checkForm = function () {
@@ -159,7 +163,6 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		};
 
 		$scope.addOptions = function () {
-			console.log("passed");
 			$scope.question.subOptions.push({
 				description_EN: "",
 				description_FR: "",
@@ -222,9 +225,10 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		// Submit changes
 		$scope.updateQuestion = function () {
 			console.log($scope.question);
-			/*if ($scope.checkForm()) {
+			if ($scope.checkForm()) {
+				console.log($scope.question);
 				// update last_updated_by
-				$scope.question.last_updated_by = userId;
+				/*$scope.question.last_updated_by = userId;
 
 				// Submit form
 				$.ajax({
@@ -246,7 +250,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 						$scope.showBanner();
 						$uibModalInstance.close();
 					}
-				});
-			}*/
+				});*/
+			}
 		};
 	});
