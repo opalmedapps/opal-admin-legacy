@@ -231,6 +231,7 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_DETAILS",
     "SELECT
     q.ID,
     q.private,
+    q.OAUserId AS userId,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.question AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.question AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR,
     q.typeId,
