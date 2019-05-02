@@ -245,6 +245,9 @@ class Question {
             array_push($userAuthorizations, $role["RoleSerNum"]);
 
         $readOnly = false;
+        $isOwner = false;
+        if($this->userInfo["userId"] == $question["userId"])
+            $isOwner = true;
         if ($question["locked"])
             $readOnly = true;
         else if($question["final"]) {
@@ -278,22 +281,13 @@ class Question {
             array_push($arrLib, $lib["ID"]);
         }
 
-        $librariesList = $this->questionnaireDB->fetchAllLibraries();
-
         unset($question["tableName"]);
         unset($question["subTableName"]);
         $question["options"] = $options;
         $question["subOptions"] = $subOptions;
         $question["readOnly"] = strval(intval($readOnly));
+        $question["isOwner"] = strval(intval($isOwner));
         $question["libSelected"] = $arrLib;
-
-        foreach($librariesList as &$lib) {
-            if (in_array($lib["serNum"], $arrLib))
-                $lib["checked"] = 1;
-            else
-                $lib["checked"] = 0;
-        }
-        $question["libraries"] = $librariesList;
 
         return $question;
     }

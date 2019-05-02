@@ -21,17 +21,16 @@ if ($questionTypeArray["typeId"] == SLIDERS)
     $questionTypeArray["minValue"] = strip_tags($_POST["minValue"]);
     $questionTypeArray["maxValue"] = strip_tags($_POST["maxValue"]);
     $questionTypeArray["increment"] = strip_tags($_POST["increment"]);
+
+    if($questionTypeArray["MinCaption_EN"] == "" || $questionTypeArray["MinCaption_FR"] || $questionTypeArray["MaxCaption_EN"] || $questionTypeArray["MaxCaption_FR"] || intval($questionTypeArray["minValue"]) <= 0 || intval($questionTypeArray["maxValue"]) <= 0 || intval($questionTypeArray["increment"]) <= 0)
+        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid question type format");
 }
 
 if($questionTypeArray["typeId"] == "" || $questionTypeArray["name_EN"] == "" || $questionTypeArray["name_FR"] == "" || $questionTypeArray["userId"] == "")
-{
-    header('Content-Type: application/javascript');
-    $response['value'] = false;
-    $response['message'] = 500;
-    $response['details'] = "Invalid question type format";
-    echo json_encode($response);
-    die();
-}
+    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid question type format");
+
+if (($questionTypeArray["typeId"] == CHECKBOXES || $questionTypeArray["typeId"] || RADIO_BUTTON) && count($questionTypeArray["options"]) <= 0)
+    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid question type format");
 
 $answerTypeObj = new QuestionType($questionTypeArray["userId"]); // Object
 
