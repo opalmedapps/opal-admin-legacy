@@ -335,22 +335,52 @@ class Question {
     public function updateQuestion($updatedQuestion) {
 
         $oldQuestion = $this->getQuestionDetails($updatedQuestion["ID"]);
+        $isLocked = $this->isQuestionLocked($oldQuestion["ID"]);
 
         if(empty($updatedQuestion["libraries"]))
             $updatedQuestion["libraries"] = array("-1");
         $arrNewLib = $this->questionnaireDB->getLibrariesByUser(implode(", ", $updatedQuestion["libraries"]));
 
-        print_r($arrNewLib);
+        $validNewLibraries = array();
+        $toInsertLibraries = array();
 
-        $validNewLibraries = array("-1");
         foreach ($arrNewLib as $lib) {
             array_push($validNewLibraries, $lib["ID"]);
+            array_push($toInsertLibraries, array("questionId"=>$updatedQuestion["ID"], "libraryId"=>$lib["ID"]));
+        }
+        if(empty($validNewLibraries)) $validNewLibraries = array("-1");
+
+        $toDelete = array(
+            "questionId"=>$updatedQuestion["ID"],
+            "libraryId"=>implode(", ", $validNewLibraries),
+        );
+
+        $total = $this->questionnaireDB->deleteFromIntersectionTable(LIBRARY_QUESTION_TABLE, $toDelete);
+        print "\r\nintersection deletion $total\r\n";
+
+        if(!empty($toInsertLibraries)) {
+            $total = $this->questionnaireDB->insertIntoIntersectionTable(LIBRARY_QUESTION_TABLE, $toInsertLibraries);
+            print "\r\nintersection insertion $total\r\n";
+
         }
 
-        print_r($validNewLibraries);
+        if($isLocked) return true;
 
-        $this->questionnaireDB->deleteFromIntersectionTable(LIBRARY_QUESTION_TABLE, "questionId", $updatedQuestion["ID"], "libraryId", implode(", ", $validNewLibraries));
+        $toUpdateDict = array(
+            array(
+                "content"=>$updatedQuestion["text_FR"],
+                "languageId"=>FRENCH_LANGUAGE,
+                "contentId"=>$oldQuestion["question"],
+            ),
+            array(
+                "content"=>$updatedQuestion["text_EN"],
+                "languageId"=>ENGLISH_LANGUAGE,
+                "contentId"=>$oldQuestion["question"],
+            ),
+        );
 
+        $total = $this->questionnaireDB->updateDictionary($toUpdateDict, QUESTION_TABLE);
+        print "\r\nupdated record $total\r\n";
 
         print "\r\nupdated question:";print_r($updatedQuestion);
         print "\r\nold question:";print_r($oldQuestion);die();
