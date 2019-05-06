@@ -7,9 +7,10 @@ $questionArray = Question::validateAndSanitize($_POST);
 $userId = $questionArray["userId"];
 
 $questionObj = new Question($userId);
-$response = $questionObj->updateQuestion($questionArray);
+$questionObj->updateQuestion($questionArray);
 
-print_r($questionArray);die();
+header('Content-Type: application/javascript');
+$response['code'] = HTTP_STATUS_SUCCESS;
+echo json_encode($response);
 
-print json_encode($response); // Return response
 ?>

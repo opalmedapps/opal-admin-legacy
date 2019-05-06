@@ -92,6 +92,26 @@ class DatabaseQuestionnaire extends DatabaseAccess
         return $newContentId;
     }
 
+    function updateDictionary($updatedEntries, $tableName) {
+        $total = 0;
+        $tableId = $this->getTableId($tableName);
+        foreach($updatedEntries as $data) {
+            $toUpdate = array(
+                array("parameter"=>":content","variable"=>$data["content"]),
+                array("parameter"=>":languageId","variable"=>$data["languageId"]),
+                array("parameter"=>":contentId","variable"=>$data["contentId"]),
+                array("parameter"=>":updatedBy","variable"=>$this->username),
+                array("parameter"=>":tableId","variable"=>$tableId),
+            );
+            $total += $this->execute(SQL_QUESTIONNAIRE_UPDATE_DICTIONARY, $toUpdate);
+        }
+        return $total;
+    }
+
+    function updateTable($tableName, $updatedEntries) {
+
+    }
+
     /*
      * This function looks into the definition table of the questionnaire and returns the ID of the requested table
      * @param   string of a table name
@@ -271,18 +291,10 @@ class DatabaseQuestionnaire extends DatabaseAccess
 
     function getLibrariesByUser($listIds) {
         $sqlFetchAll = str_replace("%%LISTOFIDS%%", $listIds, SQL_QUESTIONNAIRE_GET_USER_LIBRARIES);
-
-        print $sqlFetchAll;
-
         return $this->fetchAll($sqlFetchAll,
             array(
                 array("parameter"=>":OAUserId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
             ));
-
-    }
-
-    function removeIntersectionTable($tableName, $listIds) {
-        $sqlRemove = str_replace("%%LISTOFIDS%%", $listIds, $tableName);
     }
 
     /*
