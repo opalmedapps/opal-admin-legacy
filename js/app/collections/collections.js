@@ -587,7 +587,12 @@ angular.module('opalAdmin.collections', [])
 		questionnaireAPI.getLibraries = function (userid) {
 			return $http({
 				method: 'JSONP',
-				url: "api/questionnaire/get.libraries.php?callback=JSON_CALLBACK&userid=" + userid
+				url: "api/questionnaire/get.libraries.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					userId: userid,
+				}
+
 			});
 		};
 
@@ -601,7 +606,11 @@ angular.module('opalAdmin.collections', [])
 		questionnaireAPI.getQuestionTypes = function (userid) {
 			return $http({
 				method: 'JSONP',
-				url: "api/questionnaire/get.question_types.php?callback=JSON_CALLBACK&userid=" + userid
+				url: "api/questionnaire/get.question_types.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					userId: userid,
+				}
 			});
 		};
 
@@ -622,14 +631,23 @@ angular.module('opalAdmin.collections', [])
 		questionnaireAPI.getQuestions = function (userid) {
 			return $http({
 				method: 'JSONP',
-				url: "api/questionnaire/get.questions.php?callback=JSON_CALLBACK&userid=" + userid
+				url: "api/questionnaire/get.questions.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					userId: userid,
+				}
 			});
 		};
 
 		questionnaireAPI.getQuestionDetails = function (questionSerNum, userid) {
 			return $http({
 				method: 'JSONP',
-				url: "api/questionnaire/get.question_details.php?callback=JSON_CALLBACK&questionId=" + questionSerNum + "&userId=" + userid
+				url: "api/questionnaire/get.question_details.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					questionId: questionSerNum,
+					userId: userid,
+				}
 			});
 		};
 

@@ -10,7 +10,7 @@ include_once('questionnaire.inc');
 
 // Retrieve form params
 $callback = strip_tags($_GET['callback']);
-$userId = strip_tags($_GET['userid']);
+$userId = strip_tags($_GET['userId']);
 
 $questionLibrary = new Library($userId); // Object
 

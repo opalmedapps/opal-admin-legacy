@@ -5,9 +5,9 @@ include_once('questionnaire.inc');
 
 // Retrieve FORM params
 $callback = $_GET['callback'];
-$userid = strip_tags($_GET['userid']);
+$userId = strip_tags($_GET['userId']);
 
-$questionType = new QuestionType($userid); // Object
+$questionType = new QuestionType($userId); // Object
 
 // Call function
 $questionTypeList = $questionType->getQuestionTypes();

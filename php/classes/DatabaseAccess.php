@@ -290,10 +290,19 @@ class DatabaseAccess extends HelpSetup
         array_push($multiples, implode(", ", $params));
 
         $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . "(" . implode("), (", $multiples) . ");";
-
-//        print $sqlInsert . "\r\n";
-//        print_r($ready);
-
         return $this->queryInsert($sqlInsert, $ready);
+    }
+
+    public function deleteFromIntersectionTable($tableName, $primaryIdName, $primaryID, $secondaryIdName, $secondaryId) {
+        $sqlRemove = str_replace("%%TABLENAME%%", strip_tags($tableName), SQL_QUESTIONNAIRE_DELETE_INTERSECTION_TABLE);
+        $sqlRemove = str_replace("%%PRIMARYIDNAME%%", strip_tags($primaryIdName), $sqlRemove);
+        $sqlRemove = str_replace("%%SECONDARYIDNAME%%", strip_tags($secondaryIdName), $sqlRemove);
+        $sqlRemove = str_replace("%%SECONDARYID%%", strip_tags($secondaryId), $sqlRemove);
+
+        print_R($sqlRemove);
+        return $this->execute($sqlRemove,
+            array(
+                array("parameter"=>":primaryId","variable"=>$primaryID,"data_type"=>PDO::PARAM_INT),
+            ));
     }
 }
