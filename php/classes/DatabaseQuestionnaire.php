@@ -269,6 +269,22 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    function getLibrariesByUser($listIds) {
+        $sqlFetchAll = str_replace("%%LISTOFIDS%%", $listIds, SQL_QUESTIONNAIRE_GET_USER_LIBRARIES);
+
+        print $sqlFetchAll;
+
+        return $this->fetchAll($sqlFetchAll,
+            array(
+                array("parameter"=>":OAUserId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
+            ));
+
+    }
+
+    function removeIntersectionTable($tableName, $listIds) {
+        $sqlRemove = str_replace("%%LISTOFIDS%%", $listIds, $tableName);
+    }
+
     /*
      * This function validate and return a question type for the user
      * */

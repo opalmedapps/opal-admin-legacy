@@ -38,40 +38,71 @@ class Question {
         $this->questionnaireDB->setUsername($this->userInfo["username"]);
     }
 
+    public static function validateAndSanitize($questionToSanitize) {
+        $validatedQuestion = array(
+            "text_EN"=>htmlspecialchars($questionToSanitize['text_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "text_FR"=>htmlspecialchars($questionToSanitize['text_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "typeId"=>strip_tags($questionToSanitize['typeId']),
+            "userId"=>strip_tags($questionToSanitize['userId']),
+        );
+
+        if($questionToSanitize["ID"] != "") {
+            $validatedQuestion["ID"] = strip_tags($questionToSanitize["ID"]);
+            if($validatedQuestion["ID"] == "")
+                return false;
+        }
+
+        $libraries = array();
+        if (count($questionToSanitize['libraries']) > 0)
+            foreach($questionToSanitize['libraries'] as $library)
+                array_push($libraries, strip_tags($library));
+
+        $validatedQuestion["libraries"] = $libraries;
+        $validatedQuestion["private"] = (strip_tags($questionToSanitize['private'])=="true"||strip_tags($questionToSanitize['private'])=="1"?"1":"0");
+        $validatedQuestion["final"] = (strip_tags($questionToSanitize['final'])=="true"||strip_tags($questionToSanitize['final'])=="1"?"1":"0");
+
+        if ($validatedQuestion["text_EN"] == "" || $validatedQuestion["text_FR"] == "" || $validatedQuestion["typeId"] == "")
+            return false;
+
+        $options = array();
+        if(!empty($questionToSanitize["options"]))
+            foreach($questionToSanitize["options"] as $key=>$value)
+                if ($key != '$$hashKey')
+                    $options[strip_tags($key)] = strip_tags($value);
+        $validatedQuestion["options"] = $options;
+
+        $subOptions = array();
+
+        if(!empty($questionToSanitize["subOptions"])) {
+            foreach ($questionToSanitize["subOptions"] as $aSub) {
+                $newSub = array();
+                foreach ($aSub as $key => $value)
+                    if ($key != '$$hashKey')
+                        $newSub[strip_tags($key)] = strip_tags($value);
+                array_push($subOptions, $newSub);
+            }
+        }
+        $validatedQuestion["subOptions"] = $subOptions;
+        return $validatedQuestion;
+    }
+
     /**
-     *
      * Inserts a question into our database
-     *
      * @param   array $questionDetails, array containing all the questions details
      * @return  ID of the new question
      */
     public function insertQuestion($questionDetails){
-        $textEn = strip_tags($questionDetails['text_EN']);
-        $textFr = strip_tags($questionDetails['text_FR']);
-        $questionTypeId = strip_tags($questionDetails['questiontype_ID']);
-
-        $libraries = array();
-        if (count($questionDetails['libraries']) > 0)
-            foreach($questionDetails['libraries'] as $library)
-                array_push($libraries, strip_tags($library));
-
-        $private = strip_tags($questionDetails['private']);
-        if ($private == "1")
-            $private = true;
-        else
-            $private = false;
-
-        $validQuestionType = $this->questionnaireDB->getTypeTemplate($questionTypeId);
+        $validQuestionType = $this->questionnaireDB->getTypeTemplate($questionDetails['typeId']);
         if(!$validQuestionType)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Fetching question type error.");
 
-        if(count($libraries) > 0) {
-            $librariesToAdd = $this->questionnaireDB->getLibraries($libraries);
+        if(count($questionDetails['libraries']) > 0) {
+            $librariesToAdd = $this->questionnaireDB->getLibraries($questionDetails['libraries']);
             if(count($librariesToAdd) <= 0)
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Fetching library error.");
         }
 
-        $toInsert = array(FRENCH_LANGUAGE=>$textFr, ENGLISH_LANGUAGE=>$textEn);
+        $toInsert = array(FRENCH_LANGUAGE=>$questionDetails['text_FR'], ENGLISH_LANGUAGE=>$questionDetails['text_EN']);
         $contentId = $this->questionnaireDB->addToDictionary($toInsert, QUESTION_TABLE);
 
         $toInsert = array(FRENCH_LANGUAGE=>"", ENGLISH_LANGUAGE=>"");
@@ -86,7 +117,7 @@ class Question {
             "typeId"=>$validQuestionType["typeId"],
             "display"=>$displayId,
             "definition"=>$definitionId,
-            "private"=>$private,
+            "private"=>$questionDetails['private'],
             "legacyTypeId"=>$legacyTypeId,
         );
 
@@ -188,8 +219,8 @@ class Question {
 
             $questionArray = array (
                 'serNum'				=> $row["ID"],
-                'text_EN'				=> strip_tags($row["text_EN"]),
-                'text_FR'				=> strip_tags($row["text_FR"]),
+                'text_EN'				=> strip_tags(htmlspecialchars_decode($row["text_EN"])),
+                'text_FR'				=> strip_tags(htmlspecialchars_decode($row["text_FR"])),
                 'private'				=> $row["private"],
                 'answertype_serNum'		=> $row["answertype_Id"],
                 'answertype_name_EN'	=> $row["answertype_name_EN"],
@@ -234,6 +265,8 @@ class Question {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot get question details.");
 
         $question = $question[0];
+        $question["text_EN"] = htmlspecialchars_decode($question["text_EN"]);
+        $question["text_FR"] = htmlspecialchars_decode($question["text_FR"]);
         $question["locked"] = $this->isQuestionLocked($questionId);
 
         $userAuthorizations = array();
@@ -261,9 +294,9 @@ class Question {
         }
 
         if($question["typeId"] == SLIDERS)
-                $options = $this->questionnaireDB->getQuestionSliderDetails($question["ID"], $question["tableName"]);
-            else
-                $options = $this->questionnaireDB->getQuestionOptionsDetails($question["ID"], $question["tableName"]);
+            $options = $this->questionnaireDB->getQuestionSliderDetails($question["ID"], $question["tableName"]);
+        else
+            $options = $this->questionnaireDB->getQuestionOptionsDetails($question["ID"], $question["tableName"]);
         if (count($options) > 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Errors fetching the question. Too many options.");
 
@@ -287,7 +320,7 @@ class Question {
         $question["subOptions"] = $subOptions;
         $question["readOnly"] = strval(intval($readOnly));
         $question["isOwner"] = strval(intval($isOwner));
-        $question["libSelected"] = $arrLib;
+        $question["libraries"] = $arrLib;
 
         return $question;
     }
@@ -299,44 +332,32 @@ class Question {
      * @param array $questionDetails  : the question details
      * @return array $response : response
      */
-    public function updateQuestion($questionDetails) {
+    public function updateQuestion($updatedQuestion) {
 
-        $serNum 				= $questionDetails['serNum'];
-        $text_EN 				= $questionDetails['text_EN'];
-        $text_FR 				= $questionDetails['text_FR'];
-        $answertype_serNum 		= $questionDetails['answertype_serNum'];
-        $questiongroup_serNum 	= $questionDetails['questiongroup_serNum'];
-        $last_updated_by 		= $questionDetails['last_updated_by'];
+        $oldQuestion = $this->getQuestionDetails($updatedQuestion["ID"]);
 
-        $response = array(
-            'value'     => 0,
-            'message'   => ''
-        );
+        if(empty($updatedQuestion["libraries"]))
+            $updatedQuestion["libraries"] = array("-1");
+        $arrNewLib = $this->questionnaireDB->getLibrariesByUser(implode(", ", $updatedQuestion["libraries"]));
 
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-				UPDATE
-					QuestionnaireQuestion
-				SET
-					QuestionnaireQuestion.text_EN = \"$text_EN\",
-					QuestionnaireQuestion.text_FR = \"$text_FR\",
-					QuestionnaireQuestion.answertype_serNum = '$answertype_serNum',
-					QuestionnaireQuestion.questiongroup_serNum = '$questiongroup_serNum',
-					QuestionnaireQuestion.last_updated_by = '$last_updated_by'
-				WHERE
-					QuestionnaireQuestion.serNum = $serNum
-			";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
+        print_r($arrNewLib);
 
-            $response['value'] = 1; // Success
-            return $response;
+        $validNewLibraries = array("-1");
+        foreach ($arrNewLib as $lib) {
+            array_push($validNewLibraries, $lib["ID"]);
+        }
 
-        } catch (PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response;
+        print_r($validNewLibraries);
+
+        $this->questionnaireDB->deleteFromIntersectionTable(LIBRARY_QUESTION_TABLE, "questionId", $updatedQuestion["ID"], "libraryId", implode(", ", $validNewLibraries));
+
+
+        print "\r\nupdated question:";print_r($updatedQuestion);
+        print "\r\nold question:";print_r($oldQuestion);die();
+        die();
+
+        if(!empty($questionDetails["libraries"])) {
+            $libraries = $this->questionnaireDB->getLibraries($questionDetails['libraries']);
         }
     }
 

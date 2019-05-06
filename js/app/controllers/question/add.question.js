@@ -16,7 +16,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	// get current user id
 	var user = Session.retrieveObject('user');
-	var userid = user.id;
+	var userId = user.id;
 
 	// step bar
 	var steps = {
@@ -81,9 +81,9 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		text_FR: "",
 		library_ID: null,
 		libraries: [],
-		questiontype_ID: null,
+		typeId: null,
 		private: null,
-		userid: userid
+		userId: userId
 	};
 
 	// Initialize variables for holding selected answer type & group
@@ -130,7 +130,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	$scope.updateAt = function (selectedAt) {
 
 		$scope.answerTypeSection.open = true;
-		if ($scope.newQuestion.questiontype_ID) {
+		if ($scope.newQuestion.typeId) {
 			$scope.questionLibrarySection.show = true;
 			$scope.selectedAt = selectedAt;
 			steps.answerType.completed = true;
@@ -197,7 +197,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	// cancel selection
 	$scope.atCancelSelection = function () {
-		$scope.newQuestion.questiontype_ID = false;
+		$scope.newQuestion.typeId = false;
 	};
 
 	$scope.groupCancelSelection = function () {
@@ -215,22 +215,22 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	};
 
 	// questionnaire API: retrieve data
-	questionnaireCollectionService.getQuestionTypes(userid).then(function (response) {
+	questionnaireCollectionService.getQuestionTypes(userId).then(function (response) {
 		$scope.atFilterList = response.data;
 	}).catch(function(response) {
-		console.error('Error occurred getting response types:', response.status, response.data);
+		alert('Error occurred getting response types: '+response.status +"\r\n"+ response.data);
 	});
 
-	questionnaireCollectionService.getLibraries(userid).then(function (response) {
+	questionnaireCollectionService.getLibraries(userId).then(function (response) {
 		$scope.groupFilterList = response.data;
 	}).catch(function(response) {
-		console.error('Error occurred getting question libraries:', response.status, response.data);
+		alert('Error occurred getting question libraries: '+response.status +"\r\n"+ response.data);
 	});
 
 	questionnaireCollectionService.getQuestionTypeCategories().then(function (response) {
 		$scope.atCatList = response.data;
 	}).catch(function(response) {
-		console.error('Error occurred getting response type categories:', response.status, response.data);
+		alert('Error occurred getting response type categories: '+response.status +"\r\n"+ response.data);
 	});
 
 	// add new types & write into DB
@@ -241,7 +241,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		category_EN: "",
 		category_FR: "",
 		private: 0,
-		userid: userid,
+		userId: userId,
 		options: [],
 		slider: []
 	};
@@ -264,10 +264,10 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 						alert('Successfully added the new response type. Please find your new response type in the form above.');
 						// update answer type list
-						questionnaireCollectionService.getQuestionTypes(userid).then(function (response) {
+						questionnaireCollectionService.getQuestionTypes(userId).then(function (response) {
 							$scope.atFilterList = response.data;
 						}).catch(function (response) {
-							console.error('Error occurred getting response types:', response.status, response.data);
+							alert('Error occurred getting response types: '+response.status +"\r\n"+ response.data);
 						});
 					} else {
 						alert("Unable to create the response type. Code " + result.message + ".\r\nError message: " + result.details);
@@ -286,8 +286,8 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		$scope.newAnswerType.options.push({
 			text_EN: "",
 			text_FR: "",
-			position: undefined,
-			userid: userid
+			order: undefined,
+			userId: userId
 		});
 	};
 
@@ -304,7 +304,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		name_EN: "",
 		name_FR: "",
 		private: 0,
-		userid: userid
+		userId: userId
 	};
 	$scope.addNewLib = function () {
 		// Prompt to confirm user's action
@@ -319,7 +319,8 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 					result = JSON.parse(result);
 					if(result.code === 200) {
 						alert('Successfully added the new library. Please find your new library in the panel above.');
-						questionnaireCollectionService.getLibraries(userid).then(function (response) {
+						questionnaireCollectionService.getLibraries(userId).then(function (response) {
+							$scope.libraries = [];
 							$scope.groupFilterList = response.data;
 						}).catch(function (response) {
 							alert('Error occurred getting libraries. Code '+ response.status +"\r\n" + response.data);

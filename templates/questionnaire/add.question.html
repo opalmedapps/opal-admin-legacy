@@ -80,21 +80,21 @@
                             </div>
 
                             <!-- SECTION: Answer type -->
-                            <div uib-accordion-group is-open="answerTypeSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show" is-disabled="!newQuestion.questiontype_ID">
+                            <div uib-accordion-group is-open="answerTypeSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show" is-disabled="!newQuestion.typeId">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
-                                            <span ng-if="newQuestion.questiontype_ID" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                            <span ng-if="newQuestion.typeId" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
                                             <strong>Response Type</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': answerTypeSection.open, 'glyphicon-chevron-right': !answerTypeSection.open}" ng-if="newQuestion.questiontype_ID"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': answerTypeSection.open, 'glyphicon-chevron-right': !answerTypeSection.open}" ng-if="newQuestion.typeId"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
-                                <div ng-if="newQuestion.questiontype_ID" class="description">
+                                <div ng-if="newQuestion.typeId" class="description">
                                     <p style="margin-bottom:5px;">
                                         {{selectedAt.category_EN}}
                                     </p>
@@ -104,7 +104,7 @@
                                         {{selectedAt.name_EN}}
                                     </p>
                                 </div>
-                                <div ng-if="newQuestion.questiontype_ID" class="description">
+                                <div ng-if="newQuestion.typeId" class="description">
                                     <p style="margin-bottom:5px;">
                                         <strong>FR</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
@@ -275,10 +275,10 @@
                                 </p>
                                 <div class="row animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show">
                                     <div class="col-xs-12">
-                                        <div class="panel" ng-class="newQuestion.questiontype_ID ? 'panel-success': 'panel-danger'">
+                                        <div class="panel" ng-class="newQuestion.typeId ? 'panel-success': 'panel-danger'">
                                             <div class="panel-heading"><strong>Response Type</strong>
-                                                <span ng-hide="newQuestion.questiontype_ID" style="float:right"><em>Incomplete</em></span>
-                                                <span ng-show="newQuestion.questiontype_ID" style="float:right"><em>Complete</em></span>
+                                                <span ng-hide="newQuestion.typeId" style="float:right"><em>Incomplete</em></span>
+                                                <span ng-show="newQuestion.typeId" style="float:right"><em>Complete</em></span>
                                             </div>
                                             <div class="panel-body">
                                                 <div class="input-group">
@@ -288,7 +288,7 @@
                                                 <ul class="list-items">
                                                     <li ng-repeat="at in atFilterList | filter: searchAtFilter">
                                                         <label>
-                                                            <input type="radio" name="{{at.name_EN}}" value="{{at.serNum}}" ng-model="newQuestion.questiontype_ID" ng-change="updateAt(at)"/> {{at.name_EN}} ({{at.category_EN}})
+                                                            <input type="radio" name="{{at.name_EN}}" value="{{at.serNum}}" ng-model="newQuestion.typeId" ng-change="updateAt(at)"/> {{at.name_EN}} ({{at.category_EN}})
                                                         </label>
                                                     </li>
                                                 </ul>
@@ -303,7 +303,7 @@
                                 </p>
 
                                 <!-- Preview -->
-                                <div class="col-xs-12" ng-show="newQuestion.text_EN && newQuestion.text_FR && newQuestion.questiontype_ID">
+                                <div class="col-xs-12" ng-show="newQuestion.text_EN && newQuestion.text_FR && newQuestion.typeId">
                                     <h2>Question: {{newQuestion.text_EN}} / {{newQuestion.text_FR}} ({{selectedAt.category_EN}})</h2>
 
                                     <!-- Show category -->
@@ -364,7 +364,7 @@
                                     <!-- Add multiple choice options -->
                                     <div class="col-xs-12 col-md-8" ng-show="atCategory.category_EN === 'Checkbox' || atCategory.category_EN === 'Radio Button'">
                                         <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in newAnswerType.options">
-                                            <input class="form-control" style="width:20%" type="number" placeholder="Position" ng-model="option.position" required/>
+                                            <input class="form-control" style="width:20%" type="number" placeholder="Position" ng-model="option.order" required/>
                                             <input class="form-control" style="width:40%" type="text" placeholder="Text (EN)" ng-model="option.text_EN" required/>
                                             <input class="form-control" style="width:40%" type="text" placeholder="Text (FR)" ng-model="option.text_FR" required/>
                                             <span class="input-group-btn"><button class="btn btn-default" ng-click="deleteOptions(option)"><span class="fa fa-minus"></span> Delete</button></span>

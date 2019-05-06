@@ -179,6 +179,17 @@ define("SQL_QUESTIONNAIRE_GET_ALL_LIBRARIES",
     WHERE l.deleted = 0 AND (l.OAUserId = :OAUserId OR l.private = 0);"
 );
 
+define("SQL_QUESTIONNAIRE_GET_USER_LIBRARIES",
+    "SELECT 
+    l.ID
+    FROM library l
+    WHERE l.deleted = 0 AND (l.OAUserId = :OAUserId OR l.private = 0) AND l.ID IN (%%LISTOFIDS%%);"
+);
+
+define("SQL_QUESTIONNAIRE_DELETE_INTERSECTION_TABLE",
+    "DELETE FROM %%TABLENAME%% WHERE %%PRIMARYIDNAME%% = :primaryId AND %%SECONDARYIDNAME%% NOT IN (%%SECONDARYID%%);"
+);
+
 define("SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE",
     "SELECT
     tt.*,

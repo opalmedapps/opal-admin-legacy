@@ -1,21 +1,15 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To update a question */
-	include_once('questionnaire.inc');
+header('Content-Type: application/javascript');
+/* To update a question */
+include_once('questionnaire.inc');
 
-	// Construct array from FORM params
-	$questionArray = array(
-		'serNum'								=> $_POST['serNum'],
-		'text_EN'								=> $_POST['text_EN'],
-		'text_FR'								=> $_POST['text_FR'],
-		'answertype_serNum'			=> $_POST['answertype_serNum'],
-		'questiongroup_serNum'	=> $_POST['questiongroup_serNum'],
-		'last_updated_by'				=> $_POST['last_updated_by']
-	);
+$questionArray = Question::validateAndSanitize($_POST);
+$userId = $questionArray["userId"];
 
-	$questionObj = new Question; // Object
+$questionObj = new Question($userId);
+$response = $questionObj->updateQuestion($questionArray);
 
-	// Call function
-	$response = $questionObj->updateQuestion($questionArray);
-	print json_encode($response); // Return response
+print_r($questionArray);die();
+
+print json_encode($response); // Return response
 ?>
