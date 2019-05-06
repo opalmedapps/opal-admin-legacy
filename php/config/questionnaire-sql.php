@@ -186,10 +186,6 @@ define("SQL_QUESTIONNAIRE_GET_USER_LIBRARIES",
     WHERE l.deleted = 0 AND (l.OAUserId = :OAUserId OR l.private = 0) AND l.ID IN (%%LISTOFIDS%%);"
 );
 
-define("SQL_QUESTIONNAIRE_DELETE_INTERSECTION_TABLE",
-    "DELETE FROM %%TABLENAME%% WHERE %%PRIMARYIDNAME%% = :primaryId AND %%SECONDARYIDNAME%% NOT IN (%%SECONDARYID%%);"
-);
-
 define("SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE",
     "SELECT
     tt.*,
@@ -243,6 +239,7 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_DETAILS",
     q.ID,
     q.private,
     q.OAUserId AS userId,
+    q.question,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.question AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.question AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR,
     q.typeId,
@@ -281,4 +278,14 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_SUB_OPTIONS",
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR
     FROM %%TABLENAME%% t
     WHERE parentTableId = :parentId ORDER BY t.order;"
+);
+
+define("SQL_QUESTIONNAIRE_UPDATE_DICTIONARY",
+    "UPDATE " . DICTIONARY_TABLE . "
+    SET content = :content, updatedBy = :updatedBy
+    WHERE contentId = :contentId
+    AND languageId = :languageId
+    AND content != :content
+    AND tableId = :tableId
+    AND deleted = 0;"
 );

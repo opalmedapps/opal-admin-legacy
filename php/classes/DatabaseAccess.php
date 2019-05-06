@@ -169,7 +169,7 @@ class DatabaseAccess extends HelpSetup
                 }
             }
             $stmt->execute();
-            return true;
+            return $stmt->rowCount();
         }
         catch(PDOException $e) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Execution failed.\r\nError : ". $e->getMessage());
@@ -240,8 +240,7 @@ class DatabaseAccess extends HelpSetup
      *                      )
      * */
     protected function insertMultipleRecordsIntoTable($tableName, $records) {
-        $tableName = strip_tags($tableName);
-        $sqlInsert = "INSERT INTO $tableName (%%FIELDS%%) VALUES ";
+        $sqlInsert = str_replace("%%TABLENAME%%", strip_tags($tableName), SQL_GENERAL_INSERT_INTO);
         $multiples = array();
         $cpt = 0;
         $ready = array();
@@ -274,8 +273,7 @@ class DatabaseAccess extends HelpSetup
      *                      )
      * */
     protected function insertRecordIntoTable($tableName, $record) {
-        $tableName = strip_tags($tableName);
-        $sqlInsert = "INSERT INTO $tableName (%%FIELDS%%) VALUES ";
+        $sqlInsert = str_replace("%%TABLENAME%%", strip_tags($tableName), SQL_GENERAL_INSERT_INTO);
         $multiples = array();
         $cpt = 1;
         $ready = array();
@@ -293,16 +291,55 @@ class DatabaseAccess extends HelpSetup
         return $this->queryInsert($sqlInsert, $ready);
     }
 
-    public function deleteFromIntersectionTable($tableName, $primaryIdName, $primaryID, $secondaryIdName, $secondaryId) {
-        $sqlRemove = str_replace("%%TABLENAME%%", strip_tags($tableName), SQL_QUESTIONNAIRE_DELETE_INTERSECTION_TABLE);
-        $sqlRemove = str_replace("%%PRIMARYIDNAME%%", strip_tags($primaryIdName), $sqlRemove);
-        $sqlRemove = str_replace("%%SECONDARYIDNAME%%", strip_tags($secondaryIdName), $sqlRemove);
-        $sqlRemove = str_replace("%%SECONDARYID%%", strip_tags($secondaryId), $sqlRemove);
+    public function deleteFromIntersectionTable($tableName, $records) {
+        $primaryField = null;
+        $primaryId = null;
+        $cpt = 0;
+        $subSet = null;
+        foreach ($records as $key=>$value) {
+            if ($cpt == 0) {
+                $primaryField = $key;
+                $primaryId = $value;
+                $cpt++;
+            }
+            else
+                $subSet .= str_replace("%%SECONDARYID%%", $value, str_replace("%%SECONDARYIDNAME%%", $key, SQL_GENERAL_DELETE_INTERSECTION_TABLE_SUBSET));
+        }
 
-        print_R($sqlRemove);
-        return $this->execute($sqlRemove,
+        $sqlDelete = str_replace("%%PRIMARYIDNAME%%", $primaryField, str_replace("%%TABLENAME%%", $tableName, SQL_GENERAL_DELETE_INTERSECTION_TABLE)) . $subSet;
+
+        return $this->execute($sqlDelete,
             array(
-                array("parameter"=>":primaryId","variable"=>$primaryID,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":primaryId","variable"=>$primaryId,"data_type"=>PDO::PARAM_INT),
             ));
+    }
+
+    public function insertIntoIntersectionTable($tableName, $records) {
+        $sqlSubSet = array();
+        $cpt = 0;
+        $params = array();
+
+        foreach ($records as $record) {
+            $cpt++;
+            $fieldsName = array();
+            $ids = array();
+            $conditions = array();
+            foreach($record as $key=>$value) {
+                array_push($fieldsName, $key);
+                array_push($ids, $value);
+                array_push($conditions, "$key = :".$key.$cpt);
+                array_push($params, array("parameter"=>":".$key.$cpt, "variable"=>$value));
+            }
+            $subSql = str_replace("%%VALUES%%", implode(", ", $ids), SQL_GENERAL_INSERT_INTERSECTION_TABLE_SUB_REQUEST);
+            $subSql = str_replace("%%FIELDS%%", implode(", ", $fieldsName), $subSql);
+            $subSql = str_replace("%%CONDITIONS%%", implode(" AND ", $conditions), $subSql);
+            array_push($sqlSubSet, $subSql);
+        }
+
+        $finalSql =
+            str_replace("%%TABLENAME%%", $tableName, str_replace("%%FIELDS%%", implode(",", $fieldsName), SQL_GENERAL_INSERT_INTERSECTION_TABLE)
+            . implode(SQL_GENERAL_UNION_ALL, $sqlSubSet));
+
+        return $this->execute($finalSql, $params);
     }
 }

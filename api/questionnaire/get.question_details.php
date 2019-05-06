@@ -7,6 +7,7 @@ $userId = strip_tags($_GET['userId']);
 
 $question = new Question($userId);
 $questionDetails = $question->getQuestionDetails($questionId);
+unset($questionDetails['question']);
 
 header('Content-Type: application/javascript');
 echo $callback.'('.json_encode($questionDetails).')';
