@@ -2,16 +2,12 @@
 /* To insert a newly-created question */
 include_once('questionnaire.inc');
 
-// Construct an array from FORM params
-$questionArray = array(
-    'text_EN' => $_POST['text_EN'],
-    'text_FR' => $_POST['text_FR'],
-    'questiontype_ID' => $_POST['questiontype_ID'],
-    'private' => $_POST['private'],
-    "libraries"=>$_POST['libraries'],
-);
 
-$userId = $_POST['userid'];
+$userId = strip_tags($_POST['userId']);
+$questionArray = Question::validateAndSanitize($_POST);
+
+if(!$questionArray)
+    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid question format");
 $questionObj = new Question($userId);
 $questionObj->insertQuestion($questionArray);
 

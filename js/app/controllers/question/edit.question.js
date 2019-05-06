@@ -46,7 +46,6 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		};
 
 		$scope.checkForm = function () {
-			//return $scope.changesMade;
 			if ($scope.question.text_EN && $scope.question.text_FR && $scope.changesMade) {
 				if($scope.question.typeId === "2") {
 					if ($scope.question.options.increment <= 0 || $scope.question.options.minValue <= 0 || $scope.question.options.maxValue <= 0 || $scope.question.options.minValue > $scope.question.options.maxValue || $scope.question.options.minCaption_EN === "" || $scope.question.options.minCaption_FR === "" || $scope.question.options.maxCaption_EN === "" || $scope.question.options.maxCaption_FR === "" )
@@ -114,9 +113,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 
 			//$scope.libraryFilterList = response.data.libraries;
 			//console.log($scope.libraryFilterList);
-			$scope.selectedLibrary = response.data.libSelected;
-
-			console.log(response.data.libSelected);
+			$scope.selectedLibrary = response.data.libraries;
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
 		}).catch(function (err) {
@@ -173,11 +170,13 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			name_EN: "",
 			name_FR: "",
 			private: 0,
-			userid: userId
+			userId: userId
 		};
 		$scope.addNewLib = function () {
 			// Prompt to confirm user's action
 			var confirmation = confirm("Are you sure you want to create new library " + $scope.newLibrary.name_EN + " / "+$scope.newLibrary.name_FR+ "?");
+			console.log($scope.newLibrary);
+
 			if (confirmation) {
 				// write in to db
 				$.ajax({
@@ -189,6 +188,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 						if(result.code === 200) {
 							alert('Successfully added the new library. Please find your new library in the panel above.');
 							questionnaireCollectionService.getLibraries(userId).then(function (response) {
+								$scope.libraries = [];
 								$scope.libraryFilterList = response.data;
 							}).catch(function (response) {
 								alert('Error occurred getting libraries. Code '+ response.status +"\r\n" + response.data);
@@ -208,12 +208,12 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 
 		// Submit changes
 		$scope.updateQuestion = function () {
-			console.log($scope.question);
+			//console.log($scope.question);
 
 
 
 			// Submit form
-			/*$.ajax({
+			$.ajax({
 				type: "POST",
 				url: "php/questionnaire/update.question.php",
 				data: $scope.question,
@@ -232,6 +232,6 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 					$scope.showBanner();
 					$uibModalInstance.close();
 				}
-			});*/
+			});
 		};
 	});

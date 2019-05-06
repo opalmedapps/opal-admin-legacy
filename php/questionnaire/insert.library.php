@@ -9,7 +9,7 @@ $libraryArray = array(
     'private' => strip_tags($_POST['private'])
 );
 
-$userId = strip_tags($_POST['userid']);
+$userId = strip_tags($_POST['userId']);
 $libraryObj = new Library($userId); // Object
 
 // Call function
