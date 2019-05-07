@@ -47,10 +47,10 @@
             </div>
             <div class="row">
                 <div class="col-xs-6 col-md-6" style="margin-bottom: 20px;">
-                    <label style="font-size: 20px;">Make this question private: <input ng-change="setChangesMade()" type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="question.private" ng-disabled="!question.isOwner"></label>
+                    <label style="font-size: 20px;">Make this question private: <input ng-change="setChangesMade()" type="checkbox" ng-model="question.private" ng-disabled="!question.isOwner || question.readOnly || question.final"  ng-true-value="true" ng-false-value="false"></label>
                 </div>
                 <div class="col-xs-6 col-md-6" style="margin-bottom: 20px;">
-                    <label style="font-size: 20px;">Finalize the question: <input ng-change="setChangesMade()" type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="question.final" ng-disabled="question.readOnly"></label>
+                    <label style="font-size: 20px;">Finalize the question: <input ng-change="setChangesMade()" type="checkbox" ng-true-value="true" ng-false-value="false" ng-model="question.final" ng-disabled="question.readOnly"></label>
                 </div>
             </div>
         </div>
@@ -68,7 +68,7 @@
 
             <!-- Edit text box options -->
             <div class="col-xs-12 col-md-8" ng-if="question.typeId === '3'">
-                <p> No option.</p>
+                <p>No option.</p>
             </div>
 
             <!-- Edit radio button options -->

@@ -584,13 +584,13 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
-		questionnaireAPI.getLibraries = function (userid) {
+		questionnaireAPI.getLibraries = function (userId) {
 			return $http({
 				method: 'JSONP',
 				url: "api/questionnaire/get.libraries.php",
 				params: {
 					callback: 'JSON_CALLBACK',
-					userId: userid,
+					userId: userId,
 				}
 
 			});
@@ -603,28 +603,14 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
-		questionnaireAPI.getQuestionTypes = function (userid) {
+		questionnaireAPI.getQuestionTypes = function (userId) {
 			return $http({
 				method: 'JSONP',
 				url: "api/questionnaire/get.question_types.php",
 				params: {
 					callback: 'JSON_CALLBACK',
-					userId: userid,
+					userId: userId,
 				}
-			});
-		};
-
-		questionnaireAPI.getQuestionTypeCategories = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/questionnaire/get.question_type_categories.php?callback=JSON_CALLBACK"
-			});
-		};
-
-		questionnaireAPI.getQuestionGroups = function (userid) {
-			return $http({
-				method: 'JSONP',
-				url: "api/questionnaire/get.question_groups.php?callback=JSON_CALLBACK&userid=" + userid
 			});
 		};
 
