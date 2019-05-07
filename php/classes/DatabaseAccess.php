@@ -305,9 +305,7 @@ class DatabaseAccess extends HelpSetup
             else
                 $subSet .= str_replace("%%SECONDARYID%%", $value, str_replace("%%SECONDARYIDNAME%%", $key, SQL_GENERAL_DELETE_INTERSECTION_TABLE_SUBSET));
         }
-
         $sqlDelete = str_replace("%%PRIMARYIDNAME%%", $primaryField, str_replace("%%TABLENAME%%", $tableName, SQL_GENERAL_DELETE_INTERSECTION_TABLE)) . $subSet;
-
         return $this->execute($sqlDelete,
             array(
                 array("parameter"=>":primaryId","variable"=>$primaryId,"data_type"=>PDO::PARAM_INT),

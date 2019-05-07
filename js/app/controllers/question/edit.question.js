@@ -5,6 +5,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		var user = Session.retrieveObject('user');
 		var userId = user.id;
 
+
 		// initialize default variables & lists
 		$scope.question = {};
 		$scope.libraries = [];
@@ -111,8 +112,8 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			else
 				$scope.question.isOwner = false;
 
-			//$scope.libraryFilterList = response.data.libraries;
-			//console.log($scope.libraryFilterList);
+			$scope.question.userId = userId;
+
 			$scope.selectedLibrary = response.data.libraries;
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
@@ -122,8 +123,11 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			processingModal = null; // remove reference
 		});
 
-		// Call our API service to get the list of existing answer types 
+		// Call our API service to get the list of existing answer types
+
 		questionnaireCollectionService.getQuestionTypes(userId).then(function (response) {
+			console.log(userId);
+			console.log($scope.question);
 			$scope.atFilterList = response.data;
 		}).catch(function (response){
 			console.error('Error occurred getting response types:', response.status, response.data);
@@ -141,6 +145,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 				$scope.selectedLibrary.splice(idx, 1);
 			else
 				$scope.selectedLibrary.push(selectedLibrary.serNum);
+
 		};
 
 		$scope.addOptions = function () {
@@ -152,6 +157,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			});
 		};
 
+
 		// delete options
 		$scope.deleteOptions = function (optionToDelete) {
 			var index = $scope.question.subOptions.indexOf(optionToDelete);
@@ -161,10 +167,13 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		};
 
 		questionnaireCollectionService.getLibraries(userId).then(function (response) {
+			console.log(userId);
+			console.log($scope.question);
 			$scope.groupFilterList = response.data;
 		}).catch(function(response) {
 			console.error('Error occurred getting question libraries:', response.status, response.data);
 		});
+
 
 		$scope.newLibrary = {
 			name_EN: "",
@@ -172,11 +181,11 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			private: 0,
 			userId: userId
 		};
+
+
 		$scope.addNewLib = function () {
 			// Prompt to confirm user's action
 			var confirmation = confirm("Are you sure you want to create new library " + $scope.newLibrary.name_EN + " / "+$scope.newLibrary.name_FR+ "?");
-			console.log($scope.newLibrary);
-
 			if (confirmation) {
 				// write in to db
 				$.ajax({
@@ -187,6 +196,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 						result = JSON.parse(result);
 						if(result.code === 200) {
 							alert('Successfully added the new library. Please find your new library in the panel above.');
+
 							questionnaireCollectionService.getLibraries(userId).then(function (response) {
 								$scope.libraries = [];
 								$scope.libraryFilterList = response.data;
@@ -208,10 +218,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 
 		// Submit changes
 		$scope.updateQuestion = function () {
-			//console.log($scope.question);
-
-
-
+			console.log($scope.question);
 			// Submit form
 			$.ajax({
 				type: "POST",
