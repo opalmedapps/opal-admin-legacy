@@ -227,12 +227,6 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		alert('Error occurred getting question libraries: '+response.status +"\r\n"+ response.data);
 	});
 
-	questionnaireCollectionService.getQuestionTypeCategories().then(function (response) {
-		$scope.atCatList = response.data;
-	}).catch(function(response) {
-		alert('Error occurred getting response type categories: '+response.status +"\r\n"+ response.data);
-	});
-
 	// add new types & write into DB
 	// Initialize the new answer type object
 	$scope.newAnswerType = {

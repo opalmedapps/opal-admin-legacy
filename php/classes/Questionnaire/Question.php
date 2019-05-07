@@ -333,13 +333,15 @@ class Question {
      * @return array $response : response
      */
     public function updateQuestion($updatedQuestion) {
-
         $oldQuestion = $this->getQuestionDetails($updatedQuestion["ID"]);
+        //print_R($oldQuestion);die();
         $isLocked = $this->isQuestionLocked($oldQuestion["ID"]);
+        print_r($updatedQuestion["libraries"]);
 
         if(empty($updatedQuestion["libraries"]))
             $updatedQuestion["libraries"] = array("-1");
         $arrNewLib = $this->questionnaireDB->getLibrariesByUser(implode(", ", $updatedQuestion["libraries"]));
+
 
         $validNewLibraries = array();
         $toInsertLibraries = array();
@@ -350,17 +352,24 @@ class Question {
         }
         if(empty($validNewLibraries)) $validNewLibraries = array("-1");
 
+
         $toDelete = array(
             "questionId"=>$updatedQuestion["ID"],
             "libraryId"=>implode(", ", $validNewLibraries),
         );
 
+
+        print_r($toDelete);
+        print_r($toInsertLibraries);die();
+
+        //print_r($validNewLibraries);die();
+
         $total = $this->questionnaireDB->deleteFromIntersectionTable(LIBRARY_QUESTION_TABLE, $toDelete);
-        print "\r\nintersection deletion $total\r\n";
+        //print "\r\nintersection deletion $total\r\n";
 
         if(!empty($toInsertLibraries)) {
             $total = $this->questionnaireDB->insertIntoIntersectionTable(LIBRARY_QUESTION_TABLE, $toInsertLibraries);
-            print "\r\nintersection insertion $total\r\n";
+          //  print "\r\nintersection insertion $total\r\n";
 
         }
 
@@ -380,11 +389,11 @@ class Question {
         );
 
         $total = $this->questionnaireDB->updateDictionary($toUpdateDict, QUESTION_TABLE);
-        print "\r\nupdated record $total\r\n";
+       /* print "\r\nupdated record $total\r\n";
 
         print "\r\nupdated question:";print_r($updatedQuestion);
         print "\r\nold question:";print_r($oldQuestion);die();
-        die();
+        die();*/
 
         if(!empty($questionDetails["libraries"])) {
             $libraries = $this->questionnaireDB->getLibraries($questionDetails['libraries']);
