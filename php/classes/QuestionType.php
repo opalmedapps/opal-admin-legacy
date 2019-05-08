@@ -4,30 +4,8 @@
  *
  * Questionnaire-AnswerType class
  */
-class QuestionType {
+class QuestionType extends QuestionnaireProject {
 
-    protected $questionnaireDB;
-    protected $opalDB;
-
-    public function __construct($userId = "-1") {
-        $this->questionnaireDB = new DatabaseQuestionnaire(
-            QUESTIONNAIRE_DB_2019_HOST,
-            QUESTIONNAIRE_DB_2019_NAME,
-            QUESTIONNAIRE_DB_2019_PORT,
-            QUESTIONNAIRE_DB_2019_USERNAME,
-            QUESTIONNAIRE_DB_2019_PASSWORD
-        );
-        $this->opalDB = new DatabaseOpal(
-            OPAL_DB_HOST,
-            OPAL_DB_NAME,
-            OPAL_DB_PORT,
-            OPAL_DB_USERNAME,
-            OPAL_DB_PASSWORD
-        );
-
-        $this->setUserInfo($userId);
-    }
-    
     public static function validateAndSanitize($newQuestionType) {
         $validatedQT = array(
             'typeId' => strip_tags($newQuestionType['ID']),
@@ -86,14 +64,6 @@ class QuestionType {
             return false;
 
         return $validatedQT;
-    }
-
-    protected function setUserInfo($userId) {
-        $userInfo = $this->opalDB->getUserInfo($userId);
-        $this->opalDB->setUserId($userInfo["userId"]);
-        $this->opalDB->setUsername($userInfo["username"]);
-        $this->questionnaireDB->setUserId($userInfo["userId"]);
-        $this->questionnaireDB->setUsername($userInfo["username"]);
     }
 
     /*
@@ -228,8 +198,8 @@ class QuestionType {
      * Gets a list of answer type categories
      * @return array $answerTypeCategories : the list of answer type categories
      */
-    public function getQuestionTypeCategories(){
-        return $this->questionnaireDB->getQuestionTypeCategories();
+    public function getQuestionTypeList(){
+        return $this->questionnaireDB->getQuestionTypeList();
     }
 }
 

@@ -4,12 +4,13 @@
   include_once('questionnaire.inc');
 
   // Retrieve form param
-  $callback = $_GET['callback'];
+  $callback = strip_tags($_GET['callback']);
+  $userId = strip_tags($_GET['userId']);
 
-  $answerType = new QuestionType(); // Object
+  $answerType = new QuestionType($userId); // Object
 
   // Call function
-  $answerTypeCategoryList = $answerType->getQuestionTypeCategories();
+  $answerTypeCategoryList = $answerType->getQuestionTypeList();
 
   // Callback to http request
   print $callback.'('.json_encode($answerTypeCategoryList).')';

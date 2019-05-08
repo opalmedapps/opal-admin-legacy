@@ -14,7 +14,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @param   nothing
      * @return  next content ID
      * */
-    protected function getNextContentId() {
+    protected function _getNextContentId() {
         $nextContentId = $this->fetch(SQL_QUESTIONNAIRE_GET_DICTIONARY_NEXT_CONTENT_ID);
         return $nextContentId["nextContentId"];
     }
@@ -45,7 +45,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $tableId = $this->getTableId($tableName);
         $languageTable = $this->getLanguageTable();
         $toInsert = array();
-        $contentId = $this->getNextContentId();
+        $contentId = $this->_getNextContentId();
 
         foreach($languageTable as $lang) {
             $toInsert[$lang["ID"]] = array(
@@ -74,7 +74,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $toCopy = $this->fetchAll(SQL_QUESTIONNAIRE_GET_DICTIONNARY_TEXT, array(array("parameter"=>":contentId", "variable"=>$contentId, "data_type"=>PDO::PARAM_INT)));
         if (count($toCopy) <= 0) return false;
         $tableId = $this->getTableId($tableName);
-        $newContentId = $this->getNextContentId();
+        $newContentId = $this->_getNextContentId();
 
         $toInsert = array();
         foreach($toCopy as $row) {
@@ -159,7 +159,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @param   Nothing
      * @return  array of types
      * */
-    function getQuestionTypeCategories() {
+    function getQuestionTypeList() {
         return $this->fetchAll(SQL_QUESTIONNAIRE_GET_QUESTION_TYPES_CATEGORIES);
     }
 
