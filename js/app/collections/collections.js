@@ -614,6 +614,17 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
+		questionnaireAPI.getQuestionTypeList = function (userid) {
+			return $http({
+				method: 'JSONP',
+				url: "api/questionnaire/get.question_type_categories.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					userId: userid,
+				}
+			});
+		};
+
 		questionnaireAPI.getQuestions = function (userid) {
 			return $http({
 				method: 'JSONP',

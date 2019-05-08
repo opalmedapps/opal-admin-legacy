@@ -2,41 +2,9 @@
 
 /**
  *
- * Questionnaire-Question class
+ * Question class
  */
-class Question {
-
-    protected $questionnaireDB;
-    protected $opalDB;
-    protected $userInfo;
-
-    public function __construct($userId = "-1") {
-        $this->questionnaireDB = new DatabaseQuestionnaire(
-            QUESTIONNAIRE_DB_2019_HOST,
-            QUESTIONNAIRE_DB_2019_NAME,
-            QUESTIONNAIRE_DB_2019_PORT,
-            QUESTIONNAIRE_DB_2019_USERNAME,
-            QUESTIONNAIRE_DB_2019_PASSWORD
-        );
-        $this->opalDB = new DatabaseOpal(
-            OPAL_DB_HOST,
-            OPAL_DB_NAME,
-            OPAL_DB_PORT,
-            OPAL_DB_USERNAME,
-            OPAL_DB_PASSWORD
-        );
-
-        $this->setUserInfo($userId);
-    }
-
-    /* this function sets the user info and the database access */
-    protected function setUserInfo($userId) {
-        $this->userInfo = $this->opalDB->getUserInfo($userId);
-        $this->opalDB->setUserId($this->userInfo["userId"]);
-        $this->opalDB->setUsername($this->userInfo["username"]);
-        $this->questionnaireDB->setUserId($this->userInfo["userId"]);
-        $this->questionnaireDB->setUsername($this->userInfo["username"]);
-    }
+class Question extends QuestionnaireProject {
 
     public static function validateAndSanitize($questionToSanitize) {
         $validatedQuestion = array(
@@ -269,23 +237,16 @@ class Question {
         $question["text_FR"] = htmlspecialchars_decode($question["text_FR"]);
         $question["locked"] = $this->isQuestionLocked($questionId);
 
-        $userAuthorizations = array();
-        $userRole = $this->opalDB->getUserRole($this->opalDB->getUserId());
-        if (count($userRole) <= 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
-
-        foreach($userRole as $role)
-            array_push($userAuthorizations, $role["RoleSerNum"]);
-
+        $userRole = $this->opalDB->getUserRole();
         $readOnly = false;
         $isOwner = false;
-        if($this->userInfo["userId"] == $question["userId"])
+        if($this->questionnaireDB->getUserId() == $question["userId"])
             $isOwner = true;
         if ($question["locked"])
             $readOnly = true;
         else if($question["final"]) {
             $readOnly = true;
-            foreach($userAuthorizations as $access) {
+            foreach($userRole as $access) {
                 if (in_array($access, HelpSetup::AUTHORIZATION_MODIFICATION_FINALIZED)) {
                     $readOnly = false;
                     break;
@@ -369,7 +330,7 @@ class Question {
 
         if(!empty($toInsertLibraries)) {
             $total = $this->questionnaireDB->insertIntoIntersectionTable(LIBRARY_QUESTION_TABLE, $toInsertLibraries);
-          //  print "\r\nintersection insertion $total\r\n";
+            //  print "\r\nintersection insertion $total\r\n";
 
         }
 
@@ -389,11 +350,11 @@ class Question {
         );
 
         $total = $this->questionnaireDB->updateDictionary($toUpdateDict, QUESTION_TABLE);
-       /* print "\r\nupdated record $total\r\n";
+        /* print "\r\nupdated record $total\r\n";
 
-        print "\r\nupdated question:";print_r($updatedQuestion);
-        print "\r\nold question:";print_r($oldQuestion);die();
-        die();*/
+         print "\r\nupdated question:";print_r($updatedQuestion);
+         print "\r\nold question:";print_r($oldQuestion);die();
+         die();*/
 
         if(!empty($questionDetails["libraries"])) {
             $libraries = $this->questionnaireDB->getLibraries($questionDetails['libraries']);
@@ -401,9 +362,9 @@ class Question {
     }
 
     /**
-     * Mark a question as deleted. First, it get the last time it was updated, and check if the question was already
-     * sent to a patient. Then it checked if the record was updated in the meantime, and if not, it marks the question
-     * as being deleted.
+     * Mark a question as deleted. First, it get the last time it was updated, check if the user has the proper
+     * authorization, and check if the question was already sent to a patient. Then it checked if the record was
+     * updated in the meantime, and if not, it marks the question as being deleted.
      *
      * WARNING!!! No record should be EVER be removed from the questionnaire database! It should only being marked as
      * being deleted ONLY  after it was verified the record is not locked, the user has the proper authorization and
@@ -416,11 +377,12 @@ class Question {
      * @return array $response : response
      */
     public function deleteQuestion($questionId) {
-        if ($this->userInfo["userId"] == -1) {
-            $response['value'] = false; // User is not identified.
-            $response['message'] = 401;
-            return $response;
-        }
+        if ($this->questionnaireDB->getUserId() <= 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
+
+        $questionToDelete = $this->questionnaireDB->getQuestionDetails($questionId);
+        if($questionToDelete["private"] == 1 && $this->questionnaireDB->getUserId() != $questionToDelete["userId"])
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Access denied.");
 
         $lastUpdated = $this->questionnaireDB->getLastTimeTableUpdated(QUESTION_TABLE, $questionId);
         $questionnaires = $this->questionnaireDB->fetchQuestionnairesIdQuestion($questionId);

@@ -16,48 +16,64 @@ class DatabaseAccess extends HelpSetup
     protected $databaseName;
     protected $userId;
     protected $username;
-    protected $isUserSetUp;
+    protected $userRole;
 
     /* constructor that connects to the database */
-    function __construct($newServer = "localhost", $newDB = "", $newPort = "3306", $newUserDB = "root", $newPass = "", $newUserId = -1) {
+    function __construct($newServer = "localhost", $newDB = "", $newPort = "3306", $newUserDB = "root", $newPass = "", $newUserId = false) {
         $this->serverName = $newServer;
         $this->port = $newPort;
         $this->usernameDB = $newUserDB;
         $this->password = $newPass;
         $this->databaseName = $newDB;
-        $this->userId = $newUserId;
-        $this->isUserSetUp = false;
         $this->connectTo();
     }
 
     /**
      * @return mixed
      */
-    public function getUserId() {
+    public function getUserId()
+    {
         return $this->userId;
     }
 
     /**
      * @param mixed $userId
      */
-    public function setUserId($userId) {
+    public function setUserId($userId)
+    {
         $this->userId = $userId;
-        if ($this->userId != -1 && $this->userId != "")
-            $this->isUserSetUp = true;
     }
 
     /**
      * @return mixed
      */
-    public function getUsername() {
+    public function getUsername()
+    {
         return $this->username;
     }
 
     /**
      * @param mixed $username
      */
-    public function setUsername($username) {
+    public function setUsername($username)
+    {
         $this->username = $username;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUserRole()
+    {
+        return $this->userRole;
+    }
+
+    /**
+     * @param mixed $userRole
+     */
+    public function setUserRole($userRole)
+    {
+        $this->userRole = $userRole;
     }
 
     /*
@@ -336,7 +352,7 @@ class DatabaseAccess extends HelpSetup
 
         $finalSql =
             str_replace("%%TABLENAME%%", $tableName, str_replace("%%FIELDS%%", implode(",", $fieldsName), SQL_GENERAL_INSERT_INTERSECTION_TABLE)
-            . implode(SQL_GENERAL_UNION_ALL, $sqlSubSet));
+                . implode(SQL_GENERAL_UNION_ALL, $sqlSubSet));
 
         return $this->execute($finalSql, $params);
     }

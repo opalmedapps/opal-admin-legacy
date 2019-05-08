@@ -175,15 +175,23 @@ define("SQL_QUESTIONNAIRE_GET_ALL_LIBRARIES",
     l.ID AS serNum,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = l.name AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = l.name AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR
-    FROM library l
+    FROM ".LIBRARY_TABLE." l
     WHERE l.deleted = 0 AND (l.OAUserId = :OAUserId OR l.private = 0);"
 );
 
 define("SQL_QUESTIONNAIRE_GET_USER_LIBRARIES",
     "SELECT 
     l.ID
-    FROM library l
+    FROM ".LIBRARY_TABLE." l
     WHERE l.deleted = 0 AND (l.OAUserId = :OAUserId OR l.private = 0) AND l.ID IN (%%LISTOFIDS%%);"
+);
+
+define("SQL_QUESTIONNAIRE_DELETE_LIBRARY_QUESTION",
+    "DELETE FROM ".LIBRARY_QUESTION_TABLE." lq
+    LEFT JOIN ".LIBRARY_TABLE." l ON l.id = lq.libraryId
+    WHERE lq.questionId = :questionId
+    AND ((l.OAUserId = :userId AND l.private = 1) OR l.private = 0)
+    AND lq.libraryId NOT IN (%%LIBRARYIDS%%)"
 );
 
 define("SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE",
