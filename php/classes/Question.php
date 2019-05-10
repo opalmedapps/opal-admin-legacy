@@ -129,7 +129,7 @@ class Question extends QuestionnaireProject {
         $questionOptionId = $this->questionnaireDB->insertQuestionOptions($validQuestionType["tableName"], $toInsert);
 
         $recordsToInsert = array();
-        if ($validQuestionType["subTableName"] == CHECK_BOX_OPTION_TABLE) {
+        if ($validQuestionType["subTableName"] == CHECKBOX_OPTION_TABLE) {
             if(count($validQuestionType["options"]) <= 0)
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Checkbox option error.");
 
@@ -300,29 +300,121 @@ class Question extends QuestionnaireProject {
     }
 
     function updateRadioButtonOptions($options, $subOptions) {
-        self::sortOptions($subOptions);
         $optionsToKeepAndUpdate = array();
         $optionsToAdd = array();
+        $total = 0;
+        self::sortOptions($subOptions);
 
-        foreach($subOptions as $sub) {
-            if ($sub["ID"] != "") array_push($optionsToKeepAndUpdate, $sub["ID"]);
-            else array_push($optionsToAdd, $sub);
+        foreach($subOptions as $sub)
+            if ($sub["ID"] != "")
+                array_push($optionsToKeepAndUpdate, $sub["ID"]);
+
+        if (empty($optionsToKeepAndUpdate))
+            $optionsToKeepAndUpdate = array("-1");
+
+        if (!empty($optionsToKeepAndUpdate)) {
+            $optionsToDelete = $this->questionnaireDB->fetchOptionsToBeDeleted(RADIO_BUTTON_OPTION_TABLE, RADIO_BUTTON_TABLE, $options["ID"], $optionsToKeepAndUpdate);
+            foreach ($optionsToDelete as $opt)
+                $this->questionnaireDB->markAsDeletedInDictionary($opt["description"]);
+            $total += $this->questionnaireDB->deleteOptionsForQuestion(RADIO_BUTTON_OPTION_TABLE, RADIO_BUTTON_TABLE, $options["ID"], $optionsToKeepAndUpdate);
+
+            foreach($subOptions as $data) {
+                $toUpdate = array();
+                foreach($data as $key=>$value) {
+                    if (in_array($key, array("ID","description_FR","description_EN"))) continue;
+                    else if($key == "userId")
+                        $toUpdate["OAUserId"] = $value;
+                    else
+                        $toUpdate[$key] = $value;
+                }
+
+                $toUpdateDict = array(
+                    array(
+                        "content"=>$data["description_FR"],
+                        "languageId"=>FRENCH_LANGUAGE,
+                        "contentId"=>$data["description"],
+                    ),
+                    array(
+                        "content"=>$data["description_EN"],
+                        "languageId"=>ENGLISH_LANGUAGE,
+                        "contentId"=>$data["description"],
+                    ),
+                );
+                $total += $this->questionnaireDB->updateDictionary($toUpdateDict, RADIO_BUTTON_OPTION_TABLE);
+                $total += $this->questionnaireDB->updateOptionsForQuestion(RADIO_BUTTON_OPTION_TABLE, RADIO_BUTTON_TABLE, $data["ID"], $toUpdate);
+            }
         }
 
-        $optionsToDelete = $this->questionnaireDB->fetchOptionsToBeDeleted(RADIO_BUTTON_OPTION_TABLE, RADIO_BUTTON_TABLE, $options["ID"], $optionsToKeepAndUpdate);
+        foreach($subOptions as $sub) {
+            if ($sub["ID"] == "") {
+                $toInsert = array(FRENCH_LANGUAGE=>$sub['description_FR'], ENGLISH_LANGUAGE=>$sub['description_EN']);
+                $dictId = $this->questionnaireDB->addToDictionary($toInsert, RADIO_BUTTON_TABLE);
+                array_push($optionsToAdd, array("parentTableId"=>$options["ID"], "description"=>$dictId, "order"=>$sub["order"]));
+            }
+        }
 
-        print_r($optionsToDelete);
-        print_r($optionsToKeepAndUpdate);
-        print_r($optionsToAdd);
-
-        die();
-        foreach($optionsToDelete as $opt)
-            $this->questionnaireDB->markAsDeletedFromDictionary($opt["description"]);
-
+        if (!empty($optionsToAdd))
+            $total += $this->questionnaireDB->insertOptionsQuestion(RADIO_BUTTON_OPTION_TABLE, $optionsToAdd);
+        return $total;
     }
 
     function updateCheckboxOptions($options, $subOptions) {
+        $optionsToKeepAndUpdate = array();
+        $optionsToAdd = array();
+        $total = 0;
+        self::sortOptions($subOptions);
 
+        foreach($subOptions as $sub)
+            if ($sub["ID"] != "")
+                array_push($optionsToKeepAndUpdate, $sub["ID"]);
+
+        if (empty($optionsToKeepAndUpdate))
+            $optionsToKeepAndUpdate = array("-1");
+
+        if (!empty($optionsToKeepAndUpdate)) {
+            $optionsToDelete = $this->questionnaireDB->fetchOptionsToBeDeleted(CHECKBOX_OPTION_TABLE, CHECKBOX_TABLE, $options["ID"], $optionsToKeepAndUpdate);
+            foreach ($optionsToDelete as $opt)
+                $this->questionnaireDB->markAsDeletedInDictionary($opt["description"]);
+            $total += $this->questionnaireDB->deleteOptionsForQuestion(CHECKBOX_OPTION_TABLE, CHECKBOX_TABLE, $options["ID"], $optionsToKeepAndUpdate);
+
+            foreach($subOptions as $data) {
+                $toUpdate = array();
+                foreach($data as $key=>$value) {
+                    if (in_array($key, array("ID","description_FR","description_EN"))) continue;
+                    else if($key == "userId")
+                        $toUpdate["OAUserId"] = $value;
+                    else
+                        $toUpdate[$key] = $value;
+                }
+
+                $toUpdateDict = array(
+                    array(
+                        "content"=>$data["description_FR"],
+                        "languageId"=>FRENCH_LANGUAGE,
+                        "contentId"=>$data["description"],
+                    ),
+                    array(
+                        "content"=>$data["description_EN"],
+                        "languageId"=>ENGLISH_LANGUAGE,
+                        "contentId"=>$data["description"],
+                    ),
+                );
+                $total += $this->questionnaireDB->updateDictionary($toUpdateDict, CHECKBOX_OPTION_TABLE);
+                $total += $this->questionnaireDB->updateOptionsForQuestion(CHECKBOX_OPTION_TABLE, CHECKBOX_TABLE, $data["ID"], $toUpdate);
+            }
+        }
+
+        foreach($subOptions as $sub) {
+            if ($sub["ID"] == "") {
+                $toInsert = array(FRENCH_LANGUAGE=>$sub['description_FR'], ENGLISH_LANGUAGE=>$sub['description_EN']);
+                $dictId = $this->questionnaireDB->addToDictionary($toInsert, CHECKBOX_OPTION_TABLE);
+                array_push($optionsToAdd, array("parentTableId"=>$options["ID"], "description"=>$dictId, "order"=>$sub["order"]));
+            }
+        }
+
+        if (!empty($optionsToAdd))
+            $total += $this->questionnaireDB->insertOptionsQuestion(CHECKBOX_OPTION_TABLE, $optionsToAdd);
+        return $total;
     }
 
     function updateSliderOptions($options) {
@@ -340,12 +432,15 @@ class Question extends QuestionnaireProject {
         $total = 0;
         $oldQuestion = $this->getQuestionDetails($updatedQuestion["ID"]);
         $isLocked = $this->isQuestionLocked($oldQuestion["ID"]);
-        if ($this->questionnaireDB->getUsername() == "" || ($oldQuestion["private"] == 1 && $this->questionnaireDB->getUserId() != $oldQuestion["userId"]))
+        if ($oldQuestion["deleted"] == DELETED_RECORD || $this->questionnaireDB->getUsername() == "" || ($oldQuestion["private"] == 1 && $this->questionnaireDB->getUserId() != $oldQuestion["userId"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
+        else if(empty($updatedQuestion["options"]) || ($updatedQuestion["typeId"] == RADIO_BUTTON || $updatedQuestion["typeId"] == CHECKBOXES) && empty($updatedQuestion["subOptions"]))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data.");
 
         $total += $this->updateLibrariesForQuestion($updatedQuestion["ID"], $updatedQuestion["libraries"]);
 
-        if($isLocked) return true;
+        if($isLocked)
+            return true;
 
         $toUpdateDict = array(
             array(
@@ -376,12 +471,6 @@ class Question extends QuestionnaireProject {
             $this->updateCheckboxOptions($updatedQuestion["options"],$updatedQuestion["subOptions"]);
         else if($updatedQuestion["typeId"] == SLIDERS)
             $this->updateSliderOptions($updatedQuestion["options"]);
-
-        die();
-        print_r($updatedQuestion);
-        print_r($oldQuestion);
-
-
     }
 
     /**
@@ -422,9 +511,9 @@ class Question extends QuestionnaireProject {
         $nobodyUpdated = intval($nobodyUpdated["total"]);
 
         if ($nobodyUpdated && !$wasQuestionSent){
-            $this->questionnaireDB->markAsDeletedFromDictionary($questionToDelete["display"]);
-            $this->questionnaireDB->markAsDeletedFromDictionary($questionToDelete["definition"]);
-            $this->questionnaireDB->markAsDeletedFromDictionary($questionToDelete["question"]);
+            $this->questionnaireDB->markAsDeletedInDictionary($questionToDelete["display"]);
+            $this->questionnaireDB->markAsDeletedInDictionary($questionToDelete["definition"]);
+            $this->questionnaireDB->markAsDeletedInDictionary($questionToDelete["question"]);
             $this->questionnaireDB->removeAllLibrariesForQuestion($questionId);
             $this->questionnaireDB->removeAllSectionForQuestion($questionId);
             $this->questionnaireDB->removeAllTagsForQuestion($questionId);

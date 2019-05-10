@@ -273,6 +273,37 @@ class DatabaseAccess extends HelpSetup
         return $this->_queryInsert($sqlInsert, $ready);
     }
 
+    protected function _insertMultipleRecordsIntoTableConditional($tableName, $records) {
+        $sqlSubSet = array();
+        $cpt = 0;
+        $params = array();
+
+        foreach ($records as $record) {
+            $cpt++;
+            $fieldsName = array();
+            $subFieldsName = array();
+            $ids = array();
+            $conditions = array();
+            foreach($record as $key=>$value) {
+                array_push($fieldsName, "`$key`");
+                array_push($subFieldsName, "tblnm.$key");
+                array_push($ids, $value);
+                array_push($conditions, "tblnm.$key = :".$key.$cpt);
+                array_push($params, array("parameter"=>":".$key.$cpt, "variable"=>$value));
+            }
+            $subSql = str_replace("%%VALUES%%", implode(", ", $ids), SQL_GENERAL_INSERT_INTERSECTION_TABLE_SUB_REQUEST);
+            $subSql = str_replace("%%FIELDS%%", implode(", ", $subFieldsName), $subSql);
+            $subSql = str_replace("%%CONDITIONS%%", implode(" AND ", $conditions), $subSql);
+            array_push($sqlSubSet, $subSql);
+        }
+
+        $finalSql =
+            str_replace("%%TABLENAME%%", $tableName, str_replace("%%FIELDS%%", implode(",", $fieldsName), SQL_GENERAL_INSERT_INTERSECTION_TABLE)
+                . implode(SQL_GENERAL_UNION_ALL, $sqlSubSet));
+
+        return $this->_execute($finalSql, $params);
+    }
+
     /*
      * This function build a SQL insert query with a table name and one record and launch its execution.
      * @param   table name where to insert (string)
