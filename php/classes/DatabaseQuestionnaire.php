@@ -15,12 +15,12 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  next content ID
      * */
     protected function _getNextContentId() {
-        $nextContentId = $this->fetch(SQL_QUESTIONNAIRE_GET_DICTIONARY_NEXT_CONTENT_ID);
+        $nextContentId = $this->_fetch(SQL_QUESTIONNAIRE_GET_DICTIONARY_NEXT_CONTENT_ID);
         return $nextContentId["nextContentId"];
     }
 
     function getLegacyType($typeId) {
-        return $this->fetch(SQL_QUESTIONNAIRE_GET_LEGACY_TYPE, array(array("parameter"=>":typeId", "variable"=>$typeId, "data_type"=>PDO::PARAM_INT)));
+        return $this->_fetch(SQL_QUESTIONNAIRE_GET_LEGACY_TYPE, array(array("parameter"=>":typeId", "variable"=>$typeId, "data_type"=>PDO::PARAM_INT)));
     }
 
     /*
@@ -29,7 +29,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  array of languages
      * */
     function getLanguageTable() {
-        return $this->fetchAll(SQL_QUESTIONNAIRE_GET_ALL_LANGUAGE);
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_ALL_LANGUAGE);
     }
 
     /* This function add entries to the dictionary. First, the contentId is calculated since it should be the same for
@@ -60,7 +60,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
         foreach($newEntries as $key=>$value) {
             $toInsert[$key]["content"] = $value;
         }
-        $this->insertMultipleRecordsIntoTable(DICTIONARY_TABLE, $toInsert);
+        $this->_insertMultipleRecordsIntoTable(DICTIONARY_TABLE, $toInsert);
         return $contentId;
     }
 
@@ -71,7 +71,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * Return:  new contentID of matching all entries.
      * */
     function copyToDictionary($contentId, $tableName) {
-        $toCopy = $this->fetchAll(SQL_QUESTIONNAIRE_GET_DICTIONNARY_TEXT, array(array("parameter"=>":contentId", "variable"=>$contentId, "data_type"=>PDO::PARAM_INT)));
+        $toCopy = $this->_fetchAll(SQL_QUESTIONNAIRE_GET_DICTIONNARY_TEXT, array(array("parameter"=>":contentId", "variable"=>$contentId, "data_type"=>PDO::PARAM_INT)));
         if (count($toCopy) <= 0) return false;
         $tableId = $this->getTableId($tableName);
         $newContentId = $this->_getNextContentId();
@@ -88,7 +88,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
         }
 
-        $this->insertMultipleRecordsIntoTable(DICTIONARY_TABLE, $toInsert);
+        $this->_insertMultipleRecordsIntoTable(DICTIONARY_TABLE, $toInsert);
         return $newContentId;
     }
 
@@ -103,13 +103,17 @@ class DatabaseQuestionnaire extends DatabaseAccess
                 array("parameter"=>":updatedBy","variable"=>$this->username),
                 array("parameter"=>":tableId","variable"=>$tableId),
             );
-            $total += $this->execute(SQL_QUESTIONNAIRE_UPDATE_DICTIONARY, $toUpdate);
+            $total += $this->_execute(SQL_QUESTIONNAIRE_UPDATE_DICTIONARY, $toUpdate);
         }
         return $total;
     }
 
-    function updateTable($tableName, $updatedEntries) {
+    function updateQuestion($updatedEntries) {
+        $sqlToUpdate = SQL_QUESTIONNAIRE_UPDATE_QUESTION;
+        $updatedEntries["updatedBy"]=$this->getUsername();
+        $updatedEntries["OAUserId"]=$this->getUserId();
 
+        return $this->_updateRecordIntoTable($sqlToUpdate, $updatedEntries);
     }
 
     /*
@@ -118,7 +122,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  its table ID
      * */
     function getTableId($tableName) {
-        $tableId = $this->fetch(SQL_QUESTIONNAIRE_GET_DEFINITION_TABLE_ID,
+        $tableId = $this->_fetch(SQL_QUESTIONNAIRE_GET_DEFINITION_TABLE_ID,
             array(
                 array("parameter"=>":tableName","variable"=>$tableName,"data_type"=>PDO::PARAM_STR),
             ));
@@ -131,7 +135,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  array of question types
      * */
     function getQuestionTypes() {
-        return $this->fetchAll(SQL_QUESTIONNAIRE_GET_QUESTION_TYPES,
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_QUESTION_TYPES,
             array(
                 array("parameter"=>":userId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
             ));
@@ -144,12 +148,12 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * */
     function getQuestionTypesOptions($tableId, $tableName, $subTableName) {
         $mainSql = str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_ID_FROM_TEMPLATE_TYPES_OPTION);
-        $mainId = $this->fetch($mainSql, array(
+        $mainId = $this->_fetch($mainSql, array(
             array("parameter"=>":ID","variable"=>$tableId,"data_type"=>PDO::PARAM_INT),
         ));
         $mainId = $mainId["ID"];
         $subSql = str_replace("%%SUBTABLENAME%%", strip_tags($subTableName), SQL_QUESTIONNAIRE_GET_QUESTION_TYPE_OPTIONS);
-        return $this->fetchAll($subSql, array(
+        return $this->_fetchAll($subSql, array(
             array("parameter"=>":subTableId","variable"=>$mainId,"data_type"=>PDO::PARAM_INT),
         ));
     }
@@ -160,7 +164,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  array of types
      * */
     function getQuestionTypeList() {
-        return $this->fetchAll(SQL_QUESTIONNAIRE_GET_QUESTION_TYPES_CATEGORIES);
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_QUESTION_TYPES_CATEGORIES);
     }
 
     /*
@@ -169,7 +173,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  array of questions
      * */
     function fetchAllQuestions() {
-        return $this->fetchAll(SQL_QUESTIONNAIRE_FETCH_ALL_QUESTIONS,
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_FETCH_ALL_QUESTIONS,
             array(
                 array("parameter"=>":userId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
             ));
@@ -181,7 +185,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  list of libraries (array)
      * */
     function fetchLibrariesQuestion($questionId) {
-        return $this->fetchAll(SQL_QUESTIONNAIRE_FETCH_LIBRARIES_QUESTION,
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_FETCH_LIBRARIES_QUESTION,
             array(
                 array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
                 array("parameter"=>":userId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
@@ -194,7 +198,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  list of questionnaires (array)
      * */
     function fetchQuestionnairesIdQuestion($questionId) {
-        return $this->fetchAll(SQL_QUESTIONNAIRE_FETCH_QUESTIONNAIRES_ID_QUESTION,
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_FETCH_QUESTIONNAIRES_ID_QUESTION,
             array(
                 array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
                 array("parameter"=>":userId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
@@ -208,7 +212,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * */
     function getLastTimeTableUpdated($tableName, $idFromTable) {
         $sql = str_replace("%%TABLENAME%%", strip_tags($tableName), SQL_QUESTIONNAIRE_GET_LAST_TIME_TABLE_UPDATED);
-        return $this->fetch($sql, array(
+        return $this->_fetch($sql, array(
             array("parameter"=>":ID","variable"=>$idFromTable,"data_type"=>PDO::PARAM_INT),
         ));
     }
@@ -225,7 +229,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * */
     function canRecordBeUpdated($tableName, $tableId, $lastUpdated, $updatedBy) {
         $sql = str_replace("%%TABLENAME%%", strip_tags($tableName), SQL_QUESTIONNAIRE_CAN_RECORD_BE_UPDATED);
-        return $this->fetch($sql, array(
+        return $this->_fetch($sql, array(
             array("parameter"=>":tableId","variable"=>$tableId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":lastUpdated","variable"=>$lastUpdated,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":updatedBy","variable"=>$updatedBy,"data_type"=>PDO::PARAM_STR),
@@ -240,7 +244,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $newQuestionType["OAUserId"] = $this->userId;
         $newQuestionType["createdBy"] = $this->username;
         $newQuestionType["updatedBy"] = $this->username;
-        $result = $this->insertRecordIntoTable(TYPE_TEMPLATE_TABLE, $newQuestionType);
+        $result = $this->_insertRecordIntoTable(TYPE_TEMPLATE_TABLE, $newQuestionType);
         return $result;
     }
 
@@ -248,7 +252,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * This function add to the correct typeTemplate option table its values
      * */
     function addToTypeTemplateTableType($tableName, $optionToInsert) {
-        $result = $this->insertRecordIntoTable($tableName, $optionToInsert);
+        $result = $this->_insertRecordIntoTable($tableName, $optionToInsert);
         return $result;
     }
 
@@ -256,34 +260,34 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $toInsert["OAUserId"] = $this->userId;
         $toInsert["createdBy"] = $this->username;
         $toInsert["updatedBy"] = $this->username;
-        return $this->insertRecordIntoTable(LIBRARY_TABLE, $toInsert);
+        return $this->_insertRecordIntoTable(LIBRARY_TABLE, $toInsert);
     }
 
     /*
      * This function add to the correct typeTemplate option table its values
      * */
     function addToTypeTemplateTableTypeOptions($tableName, $optionToInsert) {
-        $result = $this->insertMultipleRecordsIntoTable($tableName, $optionToInsert);
+        $result = $this->_insertMultipleRecordsIntoTable($tableName, $optionToInsert);
         return $result;
     }
 
     /* This function returns all the current libraries a user is authorized to see*/
     function fetchAllLibraries() {
-        return $this->fetchAll(SQL_QUESTIONNAIRE_GET_ALL_LIBRARIES,
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_ALL_LIBRARIES,
             array(
                 array("parameter"=>":OAUserId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
             ));
     }
 
     function getTypeTemplateCheckboxOption($ttcId) {
-        return $this->fetchAll(SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE_CHECKBOX_OPTION,
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE_CHECKBOX_OPTION,
             array(
                 array("parameter"=>":parentTableID","variable"=>$ttcId,"data_type"=>PDO::PARAM_INT),
             ));
     }
 
     function getTypeTemplateRadioButtonOption($ttrId) {
-        return $this->fetchAll(SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE_RADIO_BUTTON_OPTION,
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE_RADIO_BUTTON_OPTION,
             array(
                 array("parameter"=>":parentTableID","variable"=>$ttrId,"data_type"=>PDO::PARAM_INT),
             ));
@@ -291,7 +295,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
 
     function getLibrariesByUser($listIds) {
         $sqlFetchAll = str_replace("%%LISTOFIDS%%", $listIds, SQL_QUESTIONNAIRE_GET_USER_LIBRARIES);
-        return $this->fetchAll($sqlFetchAll,
+        return $this->_fetchAll($sqlFetchAll,
             array(
                 array("parameter"=>":OAUserId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
             ));
@@ -301,7 +305,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * This function validate and return a question type for the user
      * */
     function getTypeTemplate($questionTypeID){
-        $result = $this->fetchAll(SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE,
+        $result = $this->_fetchAll(SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE,
             array(
                 array("parameter"=>":OAUserId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
                 array("parameter"=>":ID","variable"=>$questionTypeID,"data_type"=>PDO::PARAM_INT),
@@ -320,7 +324,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * This function validate and return a library for the user
      * */
     function getLibrary($libraryID) {
-        return $this->fetchAll(SQL_QUESTIONNAIRE_GET_LIBRARY,
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_LIBRARY,
             array(
                 array("parameter"=>":OAUserId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
                 array("parameter"=>":ID","variable"=>$libraryID,"data_type"=>PDO::PARAM_INT),
@@ -328,7 +332,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     function getLibraries($arrLib) {
-        return $this->fetchAll(str_replace("%%LIBRARIES_ID%%", implode(", ", $arrLib),SQL_QUESTIONNAIRE_GET_LIBRARIES),array(
+        return $this->_fetchAll(str_replace("%%LIBRARIES_ID%%", implode(", ", $arrLib),SQL_QUESTIONNAIRE_GET_LIBRARIES),array(
             array("parameter"=>":OAUserId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
         ));
     }
@@ -337,31 +341,109 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $toInsert["OAUserId"] = $this->userId;
         $toInsert["createdBy"] = $this->username;
         $toInsert["updatedBy"] = $this->username;
-        return $this->insertRecordIntoTable(QUESTION_TABLE, $toInsert);
+        return $this->_insertRecordIntoTable(QUESTION_TABLE, $toInsert);
     }
 
     function insertQuestionOptions($tableName, $toInsert) {
-        return $this->insertRecordIntoTable($tableName, $toInsert);
+        return $this->_insertRecordIntoTable($tableName, $toInsert);
     }
 
     function insertCheckboxOption($toInsert) {
-        $this->insertMultipleRecordsIntoTable(CHECK_BOX_OPTION_TABLE, $toInsert);
+        $this->_insertMultipleRecordsIntoTable(CHECK_BOX_OPTION_TABLE, $toInsert);
     }
 
     function insertRadioButtonOption($toInsert) {
-        $this->insertMultipleRecordsIntoTable(RADIO_BUTTON_OPTION_TABLE, $toInsert);
+        $this->_insertMultipleRecordsIntoTable(RADIO_BUTTON_OPTION_TABLE, $toInsert);
     }
 
     function insertLibraryQuestion($toInsert) {
-        $this->insertRecordIntoTable(LIBRARY_QUESTION_TABLE, $toInsert);
+        $this->_insertRecordIntoTable(LIBRARY_QUESTION_TABLE, $toInsert);
     }
 
     function insertMultipleLibrariesToQuestion($toInsert) {
-        $this->insertMultipleRecordsIntoTable(LIBRARY_QUESTION_TABLE, $toInsert);
+        $this->_insertMultipleRecordsIntoTable(LIBRARY_QUESTION_TABLE, $toInsert);
+    }
+
+    function removeLibrariesForQuestion($questionId, $libraries) {
+        $sanitizedArray = array();
+        foreach($libraries as $library) {
+            $library = strip_tags($library);
+            if ($library != "")
+                array_push($sanitizedArray, $library);
+        }
+        $sqlToDelete = str_replace("%%LIBRARYIDS%%", implode(", ", $sanitizedArray), SQL_QUESTIONNAIRE_DELETE_LIBRARY_QUESTION);
+        return $this->_execute($sqlToDelete,
+            array(
+                array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":userId","variable"=>$this->getUserId(),"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    function removeAllLibrariesForQuestion($questionId) {
+        return $this->_execute(SQL_QUESTIONNAIRE_DELETE_ALL_LIBRARIES_QUESTION,
+            array(
+                array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":userId","variable"=>$this->getUserId(),"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    function removeAllSectionForQuestion($questionId) {
+        return $this->_execute(SQL_QUESTIONNAIRE_DELETE_ALL_SECTIONS_QUESTION,
+            array(
+                array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":userId","variable"=>$this->getUserId(),"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    function fetchOptionsToBeDeleted($tableName, $parentTable, $parentTableId, $idsToBeKept) {
+        $sqlSelect = str_replace("%%OPTIONIDS%%", implode(", ", $idsToBeKept),str_replace("%%PARENTTABLE%%", $parentTable, str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_SELECT_QUESTION_OPTIONS_TO_BE_DELETED)));
+
+        return $this->_fetchAll($sqlSelect,
+            array(
+                array("parameter"=>":parentTableId","variable"=>$parentTableId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":userId","variable"=>$this->getUserId(),"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    function removeAllTagsForQuestion($questionId) {
+        return $this->_execute(SQL_QUESTIONNAIRE_DELETE_ALL_TAGS_QUESTION,
+            array(
+                array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":userId","variable"=>$this->getUserId(),"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    function insertLibrariesForQuestion($records) {
+        $sqlSubSet = array();
+        $cpt = 0;
+        $params = array();
+
+        foreach ($records as $record) {
+            $cpt++;
+            $fieldsName = array();
+            $ids = array();
+            $conditions = array();
+            foreach($record as $key=>$value) {
+                array_push($fieldsName, $key);
+                array_push($ids, $value);
+                array_push($conditions, "$key = :".$key.$cpt);
+                array_push($params, array("parameter"=>":".$key.$cpt, "variable"=>$value));
+            }
+            $subSql = str_replace("%%VALUES%%", implode(", ", $ids), SQL_GENERAL_INSERT_INTERSECTION_TABLE_SUB_REQUEST);
+            $subSql = str_replace("%%FIELDS%%", implode(", ", $fieldsName), $subSql);
+            $subSql = str_replace("%%CONDITIONS%%", implode(" AND ", $conditions), $subSql);
+            array_push($sqlSubSet, $subSql);
+        }
+
+        $finalSql =
+            str_replace("%%TABLENAME%%", LIBRARY_QUESTION_TABLE, str_replace("%%FIELDS%%", implode(",", $fieldsName), SQL_GENERAL_INSERT_INTERSECTION_TABLE)
+                . implode(SQL_GENERAL_UNION_ALL, $sqlSubSet));
+
+        return $this->_execute($finalSql, $params);
     }
 
     function getQuestionDetails($questionId) {
-        $result = $this->fetchAll(SQL_QUESTIONNAIRE_GET_QUESTION_DETAILS,
+        $result = $this->_fetchAll(SQL_QUESTIONNAIRE_GET_QUESTION_DETAILS,
             array(
                 array("parameter"=>":OAUserId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
                 array("parameter"=>":ID","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
@@ -370,24 +452,45 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     function getQuestionOptionsDetails($questionId, $tableName) {
-        return $this->fetchAll(str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_QUESTION_OPTIONS),
+        return $this->_fetchAll(str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_QUESTION_OPTIONS),
             array(
                 array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
             ));
     }
 
     function getQuestionSliderDetails($questionId, $tableName) {
-        return $this->fetchAll(str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_QUESTION_SLIDER_OPTIONS),
+        return $this->_fetchAll(str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_QUESTION_SLIDER_OPTIONS),
             array(
                 array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
             ));
     }
 
     function getQuestionSubOptionsDetails($parentId, $tableName) {
-        return $this->fetchAll(str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_QUESTION_SUB_OPTIONS),
+        return $this->_fetchAll(str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_QUESTION_SUB_OPTIONS),
             array(
                 array("parameter"=>":parentId","variable"=>$parentId,"data_type"=>PDO::PARAM_INT),
             ));
+    }
+
+    /*
+     * This function marks a all records for a specific text as deleted in the dictionary.
+     *
+     * WARNING!!! No record should be EVER be removed from the questionnaire database! It should only being marked as
+     * being deleted ONLY after after verifications. Not following the proper procedure will have some serious impact
+     * on the integrity of the database and its records.
+     *
+     * REMEMBER !!! NO DELETE STATEMENT EVER !!! YOU HAVE BEING WARNED !!!
+     *
+     * @param   contentId (integer)
+     * @return  result of deletion (boolean)
+     * */
+    public function markAsDeletedFromDictionary($contentId) {
+        return $this->_execute(SQL_QUESTIONNAIRE_MARK_DICTIONARY_RECORD_AS_DELETED, array(
+            array("parameter"=>":username","variable"=>$this->username,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":contentId","variable"=>$contentId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":userId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
+        ));
+
     }
 
     /*
@@ -406,7 +509,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * */
     function markAsDeleted($tableName, $recordId) {
         $sql = str_replace("%%TABLENAME%%", strip_tags($tableName),SQL_QUESTIONNAIRE_MARK_RECORD_AS_DELETED);
-        return $this->execute($sql, array(
+        return $this->_execute($sql, array(
             array("parameter"=>":username","variable"=>$this->username,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":recordId","variable"=>$recordId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":userId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),

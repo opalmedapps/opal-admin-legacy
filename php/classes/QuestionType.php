@@ -47,12 +47,7 @@ class QuestionType extends QuestionnaireProject {
                 array_push($sanitizedOptions, $temp);
             }
 
-            usort($sanitizedOptions, 'self::sort_order');
-            $cpt = 0;
-            foreach($sanitizedOptions as &$row) {
-                $cpt++;
-                $row["order"] = $cpt;
-            }
+            self::sortOptions($sanitizedOptions);
 
             if ($validatedQT["typeId"] == CHECKBOXES ) {
                 $validatedQT["minAnswer"] = 1;
@@ -64,14 +59,6 @@ class QuestionType extends QuestionnaireProject {
             return false;
 
         return $validatedQT;
-    }
-
-    /*
-     * Function to sort options by their order value. Only being used when a question type has a list of options to sort
-     * */
-    protected static function sort_order($a, $b){
-        if (intval($a["order"]) == intval($b["order"])) return 0;
-        return (intval($a["order"]) < intval($b["order"])) ? -1 : 1;
     }
 
     /*
