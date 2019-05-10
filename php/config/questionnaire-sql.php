@@ -19,15 +19,15 @@ define("DELETED_RECORD", 1);
 define("NON_DELETED_RECORD", 0);
 
 //Definition of all questionnaires table from the questionnaire DB
-define("ANSWER_CHECK_BOX_TABLE","answerCheckbox");
+define("ANSWER_CHECKBOX_TABLE","answerCheckbox");
 define("ANSWER_QUESTIONNAIRE_TABLE","answerQuestionnaire");
 define("ANSWER_RADIO_BUTTON_TABLE","answerRadioButton");
 define("ANSWER_SECTION_TABLE","answerSection");
 define("ANSWER_SLIDER_TABLE","answerSlider");
 define("ANSWER_TABLE","answer");
 define("ANSWER_TEXT_BOX_TABLE","answerTextBox");
-define("CHECK_BOX_OPTION_TABLE","checkboxOption");
-define("CHECK_BOX_TABLE","checkbox");
+define("CHECKBOX_OPTION_TABLE","checkboxOption");
+define("CHECKBOX_TABLE","checkbox");
 define("DATE_TABLE","date");
 define("DEFINITION_TABLE","definitionTable");
 define("DICTIONARY_TABLE","dictionary");
@@ -218,7 +218,7 @@ define("SQL_QUESTIONNAIRE_DELETE_ALL_TAGS_QUESTION",
 );
 
 define("SQL_QUESTIONNAIRE_DELETE_QUESTION_OPTIONS",
-    "DELETE top FROM %%TABLEOPTIONS%% top
+    "DELETE top FROM %%TABLENAME%% top
     LEFT JOIN %%PARENTTABLE%% pt ON pt.id = top.parentTableId
     LEFT JOIN ".QUESTION_TABLE." q ON q.id = pt.questionId
     WHERE top.parentTableId = :parentTableId
@@ -354,4 +354,15 @@ define("SQL_QUESTIONNAIRE_UPDATE_QUESTION",
     AND (private = 0 OR OAUserId = :OAUserId)
     AND (private != :private OR final != :final) 
     AND deleted = ".NON_DELETED_RECORD.";"
+);
+
+define("SQL_QUESTIONNAIRE_UPDATE_QUESTION_OPTIONS",
+    "UPDATE %%TABLENAME%% tb
+    LEFT JOIN %%PARENTTABLE%% pt ON pt.id = tb.parentTableId
+    LEFT JOIN ".QUESTION_TABLE." q ON q.id = pt.questionId
+    SET %%OPTIONSTOUPDATE%%
+    WHERE tb.ID = :ID
+    AND (%%OPTIONSWEREUPDATED%%)
+    AND (q.OAUserId = :userId OR q.private = 0)
+    AND q.deleted = ".NON_DELETED_RECORD.";"
 );

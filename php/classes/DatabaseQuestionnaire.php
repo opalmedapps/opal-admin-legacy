@@ -349,7 +349,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     function insertCheckboxOption($toInsert) {
-        $this->_insertMultipleRecordsIntoTable(CHECK_BOX_OPTION_TABLE, $toInsert);
+        $this->_insertMultipleRecordsIntoTable(CHECKBOX_OPTION_TABLE, $toInsert);
     }
 
     function insertRadioButtonOption($toInsert) {
@@ -405,6 +405,39 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    function deleteOptionsForQuestion($tableName, $parentTable, $parentTableId, $idsToBeKept) {
+        $sqlSelect = str_replace("%%OPTIONIDS%%", implode(", ", $idsToBeKept),str_replace("%%PARENTTABLE%%", $parentTable, str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_DELETE_QUESTION_OPTIONS)));
+
+        return $this->_execute($sqlSelect,
+            array(
+                array("parameter"=>":parentTableId","variable"=>$parentTableId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":userId","variable"=>$this->getUserId(),"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    function updateOptionsForQuestion($tableName, $parentTable, $id, $option) {
+        $sqlOptionsToUpdate = array();
+        $sqlOptionsWereUpdated = array();
+        $optionsToUpdate = array();
+        foreach ($option as $key=>$value) {
+            array_push($optionsToUpdate, array(
+                "parameter"=>":$key",
+                "variable"=>$value,
+            ));
+            array_push($sqlOptionsToUpdate, "`$key` = :$key");
+            array_push($sqlOptionsWereUpdated, "`$key` != :$key");
+        }
+
+        $sqlSelect = str_replace("%%PARENTTABLE%%", $parentTable, str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_UPDATE_QUESTION_OPTIONS));
+        $sqlSelect = str_replace("%%OPTIONSTOUPDATE%%", implode(", ", $sqlOptionsToUpdate), $sqlSelect);
+        $sqlSelect = str_replace("%%OPTIONSWEREUPDATED%%", implode(" OR ", $sqlOptionsWereUpdated), $sqlSelect);
+
+        array_push($optionsToUpdate, array("parameter"=>":ID","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":userId","variable"=>$this->getUserId(),"data_type"=>PDO::PARAM_INT));
+
+        return $this->_execute($sqlSelect, $optionsToUpdate);
+    }
+
     function removeAllTagsForQuestion($questionId) {
         return $this->_execute(SQL_QUESTIONNAIRE_DELETE_ALL_TAGS_QUESTION,
             array(
@@ -414,32 +447,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     function insertLibrariesForQuestion($records) {
-        $sqlSubSet = array();
-        $cpt = 0;
-        $params = array();
+        return $this->_insertMultipleRecordsIntoTableConditional(LIBRARY_QUESTION_TABLE, $records);
+    }
 
-        foreach ($records as $record) {
-            $cpt++;
-            $fieldsName = array();
-            $ids = array();
-            $conditions = array();
-            foreach($record as $key=>$value) {
-                array_push($fieldsName, $key);
-                array_push($ids, $value);
-                array_push($conditions, "$key = :".$key.$cpt);
-                array_push($params, array("parameter"=>":".$key.$cpt, "variable"=>$value));
-            }
-            $subSql = str_replace("%%VALUES%%", implode(", ", $ids), SQL_GENERAL_INSERT_INTERSECTION_TABLE_SUB_REQUEST);
-            $subSql = str_replace("%%FIELDS%%", implode(", ", $fieldsName), $subSql);
-            $subSql = str_replace("%%CONDITIONS%%", implode(" AND ", $conditions), $subSql);
-            array_push($sqlSubSet, $subSql);
-        }
-
-        $finalSql =
-            str_replace("%%TABLENAME%%", LIBRARY_QUESTION_TABLE, str_replace("%%FIELDS%%", implode(",", $fieldsName), SQL_GENERAL_INSERT_INTERSECTION_TABLE)
-                . implode(SQL_GENERAL_UNION_ALL, $sqlSubSet));
-
-        return $this->_execute($finalSql, $params);
+    function insertOptionsQuestion($tableName, $records) {
+        return $this->_insertMultipleRecordsIntoTableConditional($tableName, $records);
     }
 
     function getQuestionDetails($questionId) {
@@ -484,7 +496,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @param   contentId (integer)
      * @return  result of deletion (boolean)
      * */
-    public function markAsDeletedFromDictionary($contentId) {
+    public function markAsDeletedInDictionary($contentId) {
         return $this->_execute(SQL_QUESTIONNAIRE_MARK_DICTIONARY_RECORD_AS_DELETED, array(
             array("parameter"=>":username","variable"=>$this->username,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":contentId","variable"=>$contentId,"data_type"=>PDO::PARAM_INT),

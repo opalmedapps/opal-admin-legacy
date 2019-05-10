@@ -163,6 +163,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			var index = $scope.question.subOptions.indexOf(optionToDelete);
 			if (index > -1) {
 				$scope.question.subOptions.splice(index, 1);
+				$scope.changesMade = true;
 			}
 		};
 
