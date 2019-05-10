@@ -25,7 +25,14 @@ class DatabaseAccess extends HelpSetup
         $this->usernameDB = $newUserDB;
         $this->password = $newPass;
         $this->databaseName = $newDB;
-        $this->connectTo();
+        $this->_connectTo();
+    }
+
+    /*
+     * Destructor. Kills the connection
+     * */
+    public function disconnect() {
+        $this->connection = null;
     }
 
     /**
@@ -81,7 +88,7 @@ class DatabaseAccess extends HelpSetup
      * @param   nothing
      * @return  nothing
      * */
-    protected function connectTo() {
+    protected function _connectTo() {
         try {
             $this->connection = new PDO(
                 "mysql:host=$this->serverName;port=$this->port;dbname=$this->databaseName", $this->usernameDB, $this->password,
@@ -106,7 +113,7 @@ class DatabaseAccess extends HelpSetup
      *              )
      * @return  array of result
      * */
-    protected function fetchAll($sqlFetchAll, $paramList = array()) {
+    protected function _fetchAll($sqlFetchAll, $paramList = array()) {
         try {
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $stmt = $this->connection->prepare($sqlFetchAll);
@@ -115,7 +122,7 @@ class DatabaseAccess extends HelpSetup
                     if(isset($value["data_type"]) &&  $value["data_type"] != "")
                         $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
                     else
-                        $stmt->bindParam($value["parameter"], $value["variable"], self::getTypeOf($value["variable"]));
+                        $stmt->bindParam($value["parameter"], $value["variable"], self::_getTypeOf($value["variable"]));
                 }
             }
             $stmt->execute();
@@ -139,7 +146,7 @@ class DatabaseAccess extends HelpSetup
      *              )
      * @return  array of result
      * */
-    protected function fetch($sqlFetch, $paramList = array()) {
+    protected function _fetch($sqlFetch, $paramList = array()) {
         try {
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $stmt = $this->connection->prepare($sqlFetch);
@@ -148,7 +155,7 @@ class DatabaseAccess extends HelpSetup
                     if(isset($value["data_type"]) &&  $value["data_type"] != "")
                         $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
                     else
-                        $stmt->bindParam($value["parameter"], $value["variable"], self::getTypeOf($value["variable"]));
+                        $stmt->bindParam($value["parameter"], $value["variable"], self::_getTypeOf($value["variable"]));
                 }
             }
             $stmt->execute();
@@ -172,7 +179,7 @@ class DatabaseAccess extends HelpSetup
      *              )
      * @return  after execution
      * */
-    protected function execute($sqlQuery, $paramList = array()) {
+    protected function _execute($sqlQuery, $paramList = array()) {
         try {
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $stmt = $this->connection->prepare($sqlQuery);
@@ -181,42 +188,31 @@ class DatabaseAccess extends HelpSetup
                     if(isset($value["data_type"]) &&  $value["data_type"] != "")
                         $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
                     else
-                        $stmt->bindParam($value["parameter"], $value["variable"], self::getTypeOf($value["variable"]));
+                        $stmt->bindParam($value["parameter"], $value["variable"], self::_getTypeOf($value["variable"]));
                 }
             }
             $stmt->execute();
             return $stmt->rowCount();
         }
         catch(PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Execution failed.\r\nError : ". $e->getMessage());
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Execution failed.\r\n$sqlQuery\r\nError : ". $e->getMessage());
         }
     }
 
-    /*
-     * Destructor. Kills the connection
-     * */
-    public function disconnect() {
-        $this->connection = null;
-    }
-
-    protected static function getTypeOf($aVar) {
-        switch(gettype($aVar)) {
-            case "integer":
-                return PDO::PARAM_INT;
-                break;
-            case "boolean":
-                return PDO::PARAM_BOOL;
-                break;
-            default:
-                return PDO::PARAM_STR;
-        }
+    protected static function _getTypeOf($aVar) {
+        if(filter_var($aVar, FILTER_VALIDATE_INT) !== false)
+            return PDO::PARAM_INT;
+        else if (filter_var($aVar, FILTER_VALIDATE_BOOLEAN) !== false)
+            return PDO::PARAM_BOOL;
+        else
+            return PDO::PARAM_STR;
     }
 
     /* Execute a query insert SQL command
      * Entry:   SQL INSERT command (String)
      * Exit:    ID of last entry
      */
-    protected function queryInsert($sqlInsert, $paramList = array()) {
+    protected function _queryInsert($sqlInsert, $paramList = array()) {
         try {
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $stmt = $this->connection->prepare($sqlInsert);
@@ -225,7 +221,7 @@ class DatabaseAccess extends HelpSetup
                     if(isset($value["data_type"]) &&  $value["data_type"] != "")
                         $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
                     else
-                        $stmt->bindParam($value["parameter"], $value["variable"], self::getTypeOf($value["variable"]));
+                        $stmt->bindParam($value["parameter"], $value["variable"], self::_getTypeOf($value["variable"]));
                 }
             }
             $stmt->execute();
@@ -255,7 +251,7 @@ class DatabaseAccess extends HelpSetup
 	 *                          )
      *                      )
      * */
-    protected function insertMultipleRecordsIntoTable($tableName, $records) {
+    protected function _insertMultipleRecordsIntoTable($tableName, $records) {
         $sqlInsert = str_replace("%%TABLENAME%%", strip_tags($tableName), SQL_GENERAL_INSERT_INTO);
         $multiples = array();
         $cpt = 0;
@@ -274,7 +270,7 @@ class DatabaseAccess extends HelpSetup
         }
 
         $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . "(" . implode("), (", $multiples) . ");";
-        return $this->queryInsert($sqlInsert, $ready);
+        return $this->_queryInsert($sqlInsert, $ready);
     }
 
     /*
@@ -288,7 +284,7 @@ class DatabaseAccess extends HelpSetup
      *                              "field3" => "even more data"
      *                      )
      * */
-    protected function insertRecordIntoTable($tableName, $record) {
+    protected function _insertRecordIntoTable($tableName, $record) {
         $sqlInsert = str_replace("%%TABLENAME%%", strip_tags($tableName), SQL_GENERAL_INSERT_INTO);
         $multiples = array();
         $cpt = 1;
@@ -304,56 +300,15 @@ class DatabaseAccess extends HelpSetup
         array_push($multiples, implode(", ", $params));
 
         $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . "(" . implode("), (", $multiples) . ");";
-        return $this->queryInsert($sqlInsert, $ready);
+        return $this->_queryInsert($sqlInsert, $ready);
     }
 
-    public function deleteFromIntersectionTable($tableName, $records) {
-        $primaryField = null;
-        $primaryId = null;
-        $cpt = 0;
-        $subSet = null;
-        foreach ($records as $key=>$value) {
-            if ($cpt == 0) {
-                $primaryField = $key;
-                $primaryId = $value;
-                $cpt++;
-            }
-            else
-                $subSet .= str_replace("%%SECONDARYID%%", $value, str_replace("%%SECONDARYIDNAME%%", $key, SQL_GENERAL_DELETE_INTERSECTION_TABLE_SUBSET));
+
+    protected function _updateRecordIntoTable($sqlQuery, $record) {
+        $ready = array();
+        foreach($record as $key=>$value) {
+            array_push($ready, array("parameter"=>":".strip_tags($key),"variable"=>strip_tags($value)));
         }
-        $sqlDelete = str_replace("%%PRIMARYIDNAME%%", $primaryField, str_replace("%%TABLENAME%%", $tableName, SQL_GENERAL_DELETE_INTERSECTION_TABLE)) . $subSet;
-        return $this->execute($sqlDelete,
-            array(
-                array("parameter"=>":primaryId","variable"=>$primaryId,"data_type"=>PDO::PARAM_INT),
-            ));
-    }
-
-    public function insertIntoIntersectionTable($tableName, $records) {
-        $sqlSubSet = array();
-        $cpt = 0;
-        $params = array();
-
-        foreach ($records as $record) {
-            $cpt++;
-            $fieldsName = array();
-            $ids = array();
-            $conditions = array();
-            foreach($record as $key=>$value) {
-                array_push($fieldsName, $key);
-                array_push($ids, $value);
-                array_push($conditions, "$key = :".$key.$cpt);
-                array_push($params, array("parameter"=>":".$key.$cpt, "variable"=>$value));
-            }
-            $subSql = str_replace("%%VALUES%%", implode(", ", $ids), SQL_GENERAL_INSERT_INTERSECTION_TABLE_SUB_REQUEST);
-            $subSql = str_replace("%%FIELDS%%", implode(", ", $fieldsName), $subSql);
-            $subSql = str_replace("%%CONDITIONS%%", implode(" AND ", $conditions), $subSql);
-            array_push($sqlSubSet, $subSql);
-        }
-
-        $finalSql =
-            str_replace("%%TABLENAME%%", $tableName, str_replace("%%FIELDS%%", implode(",", $fieldsName), SQL_GENERAL_INSERT_INTERSECTION_TABLE)
-                . implode(SQL_GENERAL_UNION_ALL, $sqlSubSet));
-
-        return $this->execute($finalSql, $params);
+        return $this->_execute($sqlQuery, $ready);
     }
 }

@@ -16,6 +16,7 @@ define( "QUESTIONNAIRE_DB_2019_PASSWORD", $config['databaseConfig']['questionnai
 define("FRENCH_LANGUAGE","1");
 define("ENGLISH_LANGUAGE","2");
 define("DELETED_RECORD", 1);
+define("NON_DELETED_RECORD", 0);
 
 //Definition of all questionnaires table from the questionnaire DB
 define("ANSWER_CHECK_BOX_TABLE","answerCheckbox");
@@ -45,6 +46,7 @@ define("RADIO_BUTTON_TABLE","radioButton");
 define("RADIO_BUTTON_OPTION_TABLE","radioButtonOption");
 define("SLIDER_TABLE","slider");
 define("SECTION_TABLE","section");
+define("TAG_QUESTION_TABLE","tagQuestion");
 define("TEXT_BOX_TABLE","textBox");
 define("TIME_TABLE","time");
 define("TRIGGER_WORD_TABLE","triggerWord");
@@ -78,7 +80,7 @@ define("SQL_QUESTIONNAIRE_FETCH_ALL_QUESTIONS",
     q.final
     FROM ".QUESTION_TABLE." q
     LEFT JOIN ".TYPE_TABLE." t ON t.ID = q.typeId
-    WHERE q.deleted = 0 AND (OAUserId = :userId OR private = 0);"
+    WHERE q.deleted = ".NON_DELETED_RECORD." AND (OAUserId = :userId OR private = 0);"
 );
 
 define("SQL_QUESTIONNAIRE_FETCH_LIBRARIES_QUESTION",
@@ -87,7 +89,7 @@ define("SQL_QUESTIONNAIRE_FETCH_LIBRARIES_QUESTION",
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = l.name AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR
     FROM ".LIBRARY_TABLE." l
     RIGHT JOIN ".LIBRARY_QUESTION_TABLE." lq ON lq.libraryId = l.ID
-    WHERE lq.questionId = :questionId AND (OAUserId = :userId OR private = 0) AND l.deleted = 0;"
+    WHERE lq.questionId = :questionId AND (OAUserId = :userId OR private = 0) AND l.deleted = ".NON_DELETED_RECORD.";"
 );
 
 define("SQL_QUESTIONNAIRE_FETCH_QUESTIONNAIRES_ID_QUESTION",
@@ -95,7 +97,7 @@ define("SQL_QUESTIONNAIRE_FETCH_QUESTIONNAIRES_ID_QUESTION",
     FROM ".QUESTIONNAIRE_TABLE." qst
     RIGHT JOIN section s ON s.questionnaireId = qst.ID
     RIGHT JOIN ".QUESTION_SECTION_TABLE." qs ON qs.sectionId = s.ID
-    WHERE qs.questionId = :questionId AND (OAUserId = :userId OR private = 0) AND qst.deleted = 0;"
+    WHERE qs.questionId = :questionId AND (OAUserId = :userId OR private = 0) AND qst.deleted = ".NON_DELETED_RECORD.";"
 );
 
 define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPES",
@@ -121,7 +123,7 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPES",
     LEFT JOIN ".DEFINITION_TABLE." dt1 ON dt1.ID = t.templateTableId
     LEFT JOIN ".DEFINITION_TABLE." dt2 ON dt2.ID = t.templateSubTableId
     LEFT JOIN ".TYPE_TEMPLATE_SLIDER_TABLE." tts ON tts.typeTemplateId = tt.ID
-    WHERE tt.typeId IN (1, 2, 3, 4) AND (tt.private = 0 OR tt.OAUserId = :userId) AND tt.deleted = 0;"
+    WHERE tt.typeId IN (1, 2, 3, 4) AND (tt.private = 0 OR tt.OAUserId = :userId) AND tt.deleted = ".NON_DELETED_RECORD.";"
 );
 
 define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPE_OPTIONS",
@@ -151,7 +153,7 @@ define("SQL_QUESTIONNAIRE_CAN_RECORD_BE_UPDATED",
 
 define("SQL_QUESTIONNAIRE_MARK_RECORD_AS_DELETED",
     "UPDATE %%TABLENAME%% SET deleted = ".DELETED_RECORD.", deletedBy = :username, updatedBy = :username
-    WHERE ID = :recordId AND (OAUserId = :userId OR private = 0);"
+    WHERE ID = :recordId AND (OAUserId = :userId OR private = 0) AND deleted = ".NON_DELETED_RECORD.";"
 );
 
 define("SQL_QUESTIONNAIRE_GET_DICTIONARY_NEXT_CONTENT_ID",
@@ -176,22 +178,66 @@ define("SQL_QUESTIONNAIRE_GET_ALL_LIBRARIES",
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = l.name AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = l.name AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR
     FROM ".LIBRARY_TABLE." l
-    WHERE l.deleted = 0 AND (l.OAUserId = :OAUserId OR l.private = 0);"
+    WHERE l.deleted = ".NON_DELETED_RECORD." AND (l.OAUserId = :OAUserId OR l.private = 0);"
 );
 
 define("SQL_QUESTIONNAIRE_GET_USER_LIBRARIES",
     "SELECT 
     l.ID
     FROM ".LIBRARY_TABLE." l
-    WHERE l.deleted = 0 AND (l.OAUserId = :OAUserId OR l.private = 0) AND l.ID IN (%%LISTOFIDS%%);"
+    WHERE l.deleted = ".NON_DELETED_RECORD." AND (l.OAUserId = :OAUserId OR l.private = 0) AND l.ID IN (%%LISTOFIDS%%);"
 );
 
 define("SQL_QUESTIONNAIRE_DELETE_LIBRARY_QUESTION",
-    "DELETE FROM ".LIBRARY_QUESTION_TABLE." lq
+    "DELETE lq FROM ".LIBRARY_QUESTION_TABLE." lq
     LEFT JOIN ".LIBRARY_TABLE." l ON l.id = lq.libraryId
     WHERE lq.questionId = :questionId
     AND ((l.OAUserId = :userId AND l.private = 1) OR l.private = 0)
     AND lq.libraryId NOT IN (%%LIBRARYIDS%%)"
+);
+
+define("SQL_QUESTIONNAIRE_DELETE_ALL_LIBRARIES_QUESTION",
+    "DELETE lq FROM ".LIBRARY_QUESTION_TABLE." lq
+    LEFT JOIN ".QUESTION_TABLE." q ON q.id = lq.questionId
+    WHERE lq.questionId = :questionId
+    AND (q.OAUserId = :userId OR q.private = 0)"
+);
+
+define("SQL_QUESTIONNAIRE_DELETE_ALL_SECTIONS_QUESTION",
+    "DELETE qs FROM ".QUESTION_SECTION_TABLE." qs
+    LEFT JOIN ".QUESTION_TABLE." q ON q.id = qs.questionId
+    WHERE qs.questionId = :questionId
+    AND (q.OAUserId = :userId OR q.private = 0)"
+);
+
+define("SQL_QUESTIONNAIRE_DELETE_ALL_TAGS_QUESTION",
+    "DELETE tq FROM ".TAG_QUESTION_TABLE." tq
+    LEFT JOIN ".QUESTION_TABLE." q ON q.id = tq.questionId
+    WHERE tq.questionId = :questionId
+    AND (q.OAUserId = :userId OR q.private = 0)"
+);
+
+define("SQL_QUESTIONNAIRE_DELETE_QUESTION_OPTIONS",
+    "DELETE top FROM %%TABLEOPTIONS%% top
+    LEFT JOIN %%PARENTTABLE%% pt ON pt.id = top.parentTableId
+    LEFT JOIN ".QUESTION_TABLE." q ON q.id = pt.questionId
+    WHERE top.parentTableId = :parentTableId
+    AND (q.OAUserId = :userId OR q.private = 0)
+    AND top.ID NOT IN (%%OPTIONIDS%%);"
+);
+
+define("SQL_QUESTIONNAIRE_SELECT_QUESTION_OPTIONS_TO_BE_DELETED",
+    "SELECT top.description FROM %%TABLENAME%% top
+    LEFT JOIN %%PARENTTABLE%% pt ON pt.id = top.parentTableId
+    LEFT JOIN ".QUESTION_TABLE." q ON q.id = pt.questionId
+    WHERE top.parentTableId = :parentTableId
+    AND (q.OAUserId = :userId OR q.private = 0)
+    AND top.ID NOT IN (%%OPTIONIDS%%);"
+);
+
+define("SQL_QUESTIONNAIRE_MARK_DICTIONARY_RECORD_AS_DELETED",
+    "UPDATE ".DICTIONARY_TABLE." SET deleted = ".DELETED_RECORD.", deletedBy = :username, updatedBy = :username
+    WHERE contentId = :contentId AND deleted = ".NON_DELETED_RECORD.";"
 );
 
 define("SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE",
@@ -215,7 +261,7 @@ define("SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE",
     LEFT JOIN ".TYPE_TEMPLATE_SLIDER_TABLE." tts ON tts.typeTemplateId = tt.ID
     LEFT JOIN ".TYPE_TEMPLATE_CHECKBOX_TABLE." ttc ON ttc.typeTemplateId = tt.ID
     LEFT JOIN ".TYPE_TEMPLATE_RADIO_BUTTON_TABLE." ttr ON ttr.typeTemplateId = tt.ID
-    WHERE tt.ID = :ID AND (tt.private = 0 OR tt.OAUserId = :OAUserId) AND tt.deleted = 0;"
+    WHERE tt.ID = :ID AND (tt.private = 0 OR tt.OAUserId = :OAUserId) AND tt.deleted = ".NON_DELETED_RECORD.";"
 );
 
 define("SQL_QUESTIONNAIRE_GET_LIBRARY",
@@ -245,6 +291,9 @@ define("SQL_QUESTIONNAIRE_GET_LEGACY_TYPE",
 define("SQL_QUESTIONNAIRE_GET_QUESTION_DETAILS",
     "SELECT
     q.ID,
+    q.display,
+    q.definition,
+    q.question,
     q.private,
     q.OAUserId AS userId,
     q.question,
@@ -261,7 +310,7 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_DETAILS",
     LEFT JOIN ".TYPE_TABLE." t ON t.ID = q.typeId
     LEFT JOIN ".DEFINITION_TABLE." dt1 ON dt1.ID = t.tableId
     LEFT JOIN ".DEFINITION_TABLE." dt2 ON dt2.ID = t.subTableId
-    WHERE q.ID = :ID AND (q.private = 0 OR q.OAUserId = :OAUserId) AND q.deleted = 0;"
+    WHERE q.ID = :ID AND (q.private = 0 OR q.OAUserId = :OAUserId) AND q.deleted = ".NON_DELETED_RECORD.";"
 );
 
 define("SQL_QUESTIONNAIRE_GET_QUESTION_OPTIONS",
@@ -295,5 +344,14 @@ define("SQL_QUESTIONNAIRE_UPDATE_DICTIONARY",
     AND languageId = :languageId
     AND content != :content
     AND tableId = :tableId
-    AND deleted = 0;"
+    AND deleted = ".NON_DELETED_RECORD.";"
+);
+
+define("SQL_QUESTIONNAIRE_UPDATE_QUESTION",
+    "UPDATE ".QUESTION_TABLE."
+    SET updatedBy = :updatedBy, private = :private, final = :final
+    WHERE ID = :ID
+    AND (private = 0 OR OAUserId = :OAUserId)
+    AND (private != :private OR final != :final) 
+    AND deleted = ".NON_DELETED_RECORD.";"
 );

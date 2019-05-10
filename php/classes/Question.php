@@ -6,7 +6,7 @@
  */
 class Question extends QuestionnaireProject {
 
-    public static function validateAndSanitize($questionToSanitize) {
+    static function validateAndSanitize($questionToSanitize) {
         $validatedQuestion = array(
             "text_EN"=>htmlspecialchars($questionToSanitize['text_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
             "text_FR"=>htmlspecialchars($questionToSanitize['text_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
@@ -59,7 +59,7 @@ class Question extends QuestionnaireProject {
      * @param   array $questionDetails, array containing all the questions details
      * @return  ID of the new question
      */
-    public function insertQuestion($questionDetails){
+    function insertQuestion($questionDetails){
         $validQuestionType = $this->questionnaireDB->getTypeTemplate($questionDetails['typeId']);
         if(!$validQuestionType)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Fetching question type error.");
@@ -166,7 +166,7 @@ class Question extends QuestionnaireProject {
      *
      * @return array $questions : the list of existing questions
      */
-    public function getQuestions(){
+    function getQuestions(){
         $questions = array();
         $questionsLists = $this->questionnaireDB->fetchAllQuestions();
         foreach ($questionsLists as $row){
@@ -227,7 +227,7 @@ class Question extends QuestionnaireProject {
      * @param   question ID (int)
      * @return  array $questionDetails : the question details
      */
-    public function getQuestionDetails($questionId) {
+    function getQuestionDetails($questionId) {
         $question = $this->questionnaireDB->getQuestionDetails($questionId);
         if(count($question) != 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot get question details.");
@@ -244,15 +244,6 @@ class Question extends QuestionnaireProject {
             $isOwner = true;
         if ($question["locked"])
             $readOnly = true;
-        else if($question["final"]) {
-            $readOnly = true;
-            foreach($userRole as $access) {
-                if (in_array($access, HelpSetup::AUTHORIZATION_MODIFICATION_FINALIZED)) {
-                    $readOnly = false;
-                    break;
-                }
-            }
-        }
 
         if($question["typeId"] == SLIDERS)
             $options = $this->questionnaireDB->getQuestionSliderDetails($question["ID"], $question["tableName"]);
@@ -275,8 +266,6 @@ class Question extends QuestionnaireProject {
             array_push($arrLib, $lib["ID"]);
         }
 
-        unset($question["tableName"]);
-        unset($question["subTableName"]);
         $question["options"] = $options;
         $question["subOptions"] = $subOptions;
         $question["readOnly"] = strval(intval($readOnly));
@@ -286,6 +275,60 @@ class Question extends QuestionnaireProject {
         return $question;
     }
 
+    function updateLibrariesForQuestion($questionId, $libraries) {
+        $total = 0;
+        if(empty($libraries))
+            $libraries = array("-1");
+        $arrNewLib = $this->questionnaireDB->getLibrariesByUser(implode(", ", $libraries));
+
+        $validNewLibraries = array();
+        $toInsertLibraries = array();
+
+        foreach ($arrNewLib as $lib) {
+            array_push($validNewLibraries, $lib["ID"]);
+            array_push($toInsertLibraries, array("questionId"=>$questionId, "libraryId"=>$lib["ID"]));
+        }
+
+        if(empty($validNewLibraries)) $validNewLibraries = array("-1");
+
+        $total += $this->questionnaireDB->removeLibrariesForQuestion($questionId, $validNewLibraries);
+
+        if(!empty($toInsertLibraries)) {
+            $total += $this->questionnaireDB->insertLibrariesForQuestion($toInsertLibraries);
+        }
+        return $total;
+    }
+
+    function updateRadioButtonOptions($options, $subOptions) {
+        self::sortOptions($subOptions);
+        $optionsToKeepAndUpdate = array();
+        $optionsToAdd = array();
+
+        foreach($subOptions as $sub) {
+            if ($sub["ID"] != "") array_push($optionsToKeepAndUpdate, $sub["ID"]);
+            else array_push($optionsToAdd, $sub);
+        }
+
+        $optionsToDelete = $this->questionnaireDB->fetchOptionsToBeDeleted(RADIO_BUTTON_OPTION_TABLE, RADIO_BUTTON_TABLE, $options["ID"], $optionsToKeepAndUpdate);
+
+        print_r($optionsToDelete);
+        print_r($optionsToKeepAndUpdate);
+        print_r($optionsToAdd);
+
+        die();
+        foreach($optionsToDelete as $opt)
+            $this->questionnaireDB->markAsDeletedFromDictionary($opt["description"]);
+
+    }
+
+    function updateCheckboxOptions($options, $subOptions) {
+
+    }
+
+    function updateSliderOptions($options) {
+
+    }
+
     /**
      *
      * Updates a question
@@ -293,46 +336,14 @@ class Question extends QuestionnaireProject {
      * @param array $questionDetails  : the question details
      * @return array $response : response
      */
-    public function updateQuestion($updatedQuestion) {
+    function updateQuestion($updatedQuestion) {
+        $total = 0;
         $oldQuestion = $this->getQuestionDetails($updatedQuestion["ID"]);
-        //print_R($oldQuestion);die();
         $isLocked = $this->isQuestionLocked($oldQuestion["ID"]);
-        print_r($updatedQuestion["libraries"]);
+        if ($this->questionnaireDB->getUsername() == "" || ($oldQuestion["private"] == 1 && $this->questionnaireDB->getUserId() != $oldQuestion["userId"]))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
 
-        if(empty($updatedQuestion["libraries"]))
-            $updatedQuestion["libraries"] = array("-1");
-        $arrNewLib = $this->questionnaireDB->getLibrariesByUser(implode(", ", $updatedQuestion["libraries"]));
-
-
-        $validNewLibraries = array();
-        $toInsertLibraries = array();
-
-        foreach ($arrNewLib as $lib) {
-            array_push($validNewLibraries, $lib["ID"]);
-            array_push($toInsertLibraries, array("questionId"=>$updatedQuestion["ID"], "libraryId"=>$lib["ID"]));
-        }
-        if(empty($validNewLibraries)) $validNewLibraries = array("-1");
-
-
-        $toDelete = array(
-            "questionId"=>$updatedQuestion["ID"],
-            "libraryId"=>implode(", ", $validNewLibraries),
-        );
-
-
-        print_r($toDelete);
-        print_r($toInsertLibraries);die();
-
-        //print_r($validNewLibraries);die();
-
-        $total = $this->questionnaireDB->deleteFromIntersectionTable(LIBRARY_QUESTION_TABLE, $toDelete);
-        //print "\r\nintersection deletion $total\r\n";
-
-        if(!empty($toInsertLibraries)) {
-            $total = $this->questionnaireDB->insertIntoIntersectionTable(LIBRARY_QUESTION_TABLE, $toInsertLibraries);
-            //  print "\r\nintersection insertion $total\r\n";
-
-        }
+        $total += $this->updateLibrariesForQuestion($updatedQuestion["ID"], $updatedQuestion["libraries"]);
 
         if($isLocked) return true;
 
@@ -349,16 +360,28 @@ class Question extends QuestionnaireProject {
             ),
         );
 
-        $total = $this->questionnaireDB->updateDictionary($toUpdateDict, QUESTION_TABLE);
-        /* print "\r\nupdated record $total\r\n";
+        $total += $this->questionnaireDB->updateDictionary($toUpdateDict, QUESTION_TABLE);
 
-         print "\r\nupdated question:";print_r($updatedQuestion);
-         print "\r\nold question:";print_r($oldQuestion);die();
-         die();*/
+        $toUpdateQuestion = array(
+            "ID"=>$oldQuestion["ID"],
+            "private"=>$updatedQuestion["private"],
+            "final"=>$updatedQuestion["final"],
+        );
 
-        if(!empty($questionDetails["libraries"])) {
-            $libraries = $this->questionnaireDB->getLibraries($questionDetails['libraries']);
-        }
+        $questionUpdated = $this->questionnaireDB->updateQuestion($toUpdateQuestion);
+
+        if($updatedQuestion["typeId"] == RADIO_BUTTON)
+            $this->updateRadioButtonOptions($updatedQuestion["options"],$updatedQuestion["subOptions"]);
+        else if($updatedQuestion["typeId"] == CHECKBOXES)
+            $this->updateCheckboxOptions($updatedQuestion["options"],$updatedQuestion["subOptions"]);
+        else if($updatedQuestion["typeId"] == SLIDERS)
+            $this->updateSliderOptions($updatedQuestion["options"]);
+
+        die();
+        print_r($updatedQuestion);
+        print_r($oldQuestion);
+
+
     }
 
     /**
@@ -376,13 +399,11 @@ class Question extends QuestionnaireProject {
      * @param $questionId (ID of the question), $userId (ID of the user who requested the deletion)
      * @return array $response : response
      */
-    public function deleteQuestion($questionId) {
-        if ($this->questionnaireDB->getUserId() <= 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
-
+    function deleteQuestion($questionId) {
         $questionToDelete = $this->questionnaireDB->getQuestionDetails($questionId);
-        if($questionToDelete["private"] == 1 && $this->questionnaireDB->getUserId() != $questionToDelete["userId"])
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Access denied.");
+        $questionToDelete = $questionToDelete[0];
+        if ($this->questionnaireDB->getUserId() <= 0 || $questionToDelete["deleted"] == 1 || ($questionToDelete["private"] == 1 && $this->questionnaireDB->getUserId() != $questionToDelete["userId"]))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
 
         $lastUpdated = $this->questionnaireDB->getLastTimeTableUpdated(QUESTION_TABLE, $questionId);
         $questionnaires = $this->questionnaireDB->fetchQuestionnairesIdQuestion($questionId);
@@ -401,6 +422,12 @@ class Question extends QuestionnaireProject {
         $nobodyUpdated = intval($nobodyUpdated["total"]);
 
         if ($nobodyUpdated && !$wasQuestionSent){
+            $this->questionnaireDB->markAsDeletedFromDictionary($questionToDelete["display"]);
+            $this->questionnaireDB->markAsDeletedFromDictionary($questionToDelete["definition"]);
+            $this->questionnaireDB->markAsDeletedFromDictionary($questionToDelete["question"]);
+            $this->questionnaireDB->removeAllLibrariesForQuestion($questionId);
+            $this->questionnaireDB->removeAllSectionForQuestion($questionId);
+            $this->questionnaireDB->removeAllTagsForQuestion($questionId);
             $this->questionnaireDB->markAsDeleted(QUESTION_TABLE, $questionId);
             $response['value'] = true; // Success
             $response['message'] = 200;
