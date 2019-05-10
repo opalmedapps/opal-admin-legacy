@@ -21,7 +21,7 @@ class DatabaseOpal extends DatabaseAccess {
         $newUserId = strip_tags($newUserId);
         if($newUserId == "" || $newUserId <= 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
-        $result = $this->fetchAll(SQL_OPAL_SELECT_USER_INFO,
+        $result = $this->_fetchAll(SQL_OPAL_SELECT_USER_INFO,
             array(
                 array("parameter"=>":userId","variable"=>$newUserId,"data_type"=>PDO::PARAM_INT),
             ));
@@ -30,7 +30,7 @@ class DatabaseOpal extends DatabaseAccess {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
         }
 
-        $resultRole = $this->fetchAll(SQL_OPAL_SELECT_USER_ROLE,
+        $resultRole = $this->_fetchAll(SQL_OPAL_SELECT_USER_ROLE,
             array(
                 array("parameter"=>":userId","variable"=>$newUserId,"data_type"=>PDO::PARAM_INT),
             ));
@@ -46,7 +46,7 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     function countLockedQuestionnaires($questionnairesList) {
-        return $this->fetch(SQL_OPAL_LIST_QUESTIONNAIRES_FROM_QUESTIONNAIRE_CONTROL,
+        return $this->_fetch(SQL_OPAL_LIST_QUESTIONNAIRES_FROM_QUESTIONNAIRE_CONTROL,
             array(
                 array("parameter"=>":questionnaireList","variable"=>$questionnairesList,"data_type"=>PDO::PARAM_STR),
             ));
