@@ -415,7 +415,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
-    function updateOptionsForQuestion($tableName, $parentTable, $id, $option) {
+    function updateOptionsForQuestion($tableName, $id, $option) {
         $sqlOptionsToUpdate = array();
         $sqlOptionsWereUpdated = array();
         $optionsToUpdate = array();
@@ -428,7 +428,30 @@ class DatabaseQuestionnaire extends DatabaseAccess
             array_push($sqlOptionsWereUpdated, "`$key` != :$key");
         }
 
-        $sqlSelect = str_replace("%%PARENTTABLE%%", $parentTable, str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_UPDATE_QUESTION_OPTIONS));
+        $sqlSelect = str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_UPDATE_QUESTION_OPTIONS);
+        $sqlSelect = str_replace("%%OPTIONSTOUPDATE%%", implode(", ", $sqlOptionsToUpdate), $sqlSelect);
+        $sqlSelect = str_replace("%%OPTIONSWEREUPDATED%%", implode(" OR ", $sqlOptionsWereUpdated), $sqlSelect);
+
+        array_push($optionsToUpdate, array("parameter"=>":ID","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":userId","variable"=>$this->getUserId(),"data_type"=>PDO::PARAM_INT));
+
+        return $this->_execute($sqlSelect, $optionsToUpdate);
+    }
+
+    function updateSubOptionsForQuestion($tableName, $parentTable, $id, $option) {
+        $sqlOptionsToUpdate = array();
+        $sqlOptionsWereUpdated = array();
+        $optionsToUpdate = array();
+        foreach ($option as $key=>$value) {
+            array_push($optionsToUpdate, array(
+                "parameter"=>":$key",
+                "variable"=>$value,
+            ));
+            array_push($sqlOptionsToUpdate, "`$key` = :$key");
+            array_push($sqlOptionsWereUpdated, "`$key` != :$key");
+        }
+
+        $sqlSelect = str_replace("%%PARENTTABLE%%", $parentTable, str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_UPDATE_QUESTION_SUB_OPTIONS));
         $sqlSelect = str_replace("%%OPTIONSTOUPDATE%%", implode(", ", $sqlOptionsToUpdate), $sqlSelect);
         $sqlSelect = str_replace("%%OPTIONSWEREUPDATED%%", implode(" OR ", $sqlOptionsWereUpdated), $sqlSelect);
 
@@ -477,10 +500,17 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
-    function getQuestionSubOptionsDetails($parentId, $tableName) {
+    function getQuestionSubOptionsDetails($parentTableId, $tableName) {
         return $this->_fetchAll(str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_QUESTION_SUB_OPTIONS),
             array(
-                array("parameter"=>":parentId","variable"=>$parentId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":parentTableId","variable"=>$parentTableId,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    function getQuestionTotalSubOptions($parentTableId, $tableName) {
+        return $this->_fetch(str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_QUESTION_TOTAL_SUB_OPTIONS),
+            array(
+                array("parameter"=>":parentTableId","variable"=>$parentTableId,"data_type"=>PDO::PARAM_INT),
             ));
     }
 

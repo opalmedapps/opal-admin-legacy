@@ -334,7 +334,12 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_SUB_OPTIONS",
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS description_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR
     FROM %%TABLENAME%% t
-    WHERE parentTableId = :parentId ORDER BY t.order;"
+    WHERE parentTableId = :parentTableId ORDER BY t.order;"
+);
+
+define("SQL_QUESTIONNAIRE_GET_QUESTION_TOTAL_SUB_OPTIONS",
+    "SELECT COUNT(*) AS total FROM %%TABLENAME%% t
+    WHERE parentTableId = :parentTableId;"
 );
 
 define("SQL_QUESTIONNAIRE_UPDATE_DICTIONARY",
@@ -357,6 +362,16 @@ define("SQL_QUESTIONNAIRE_UPDATE_QUESTION",
 );
 
 define("SQL_QUESTIONNAIRE_UPDATE_QUESTION_OPTIONS",
+    "UPDATE %%TABLENAME%% tb
+    LEFT JOIN ".QUESTION_TABLE." q ON q.id = tb.questionId
+    SET %%OPTIONSTOUPDATE%%
+    WHERE tb.ID = :ID
+    AND (%%OPTIONSWEREUPDATED%%)
+    AND (q.OAUserId = :userId OR q.private = 0)
+    AND q.deleted = ".NON_DELETED_RECORD.";"
+);
+
+define("SQL_QUESTIONNAIRE_UPDATE_QUESTION_SUB_OPTIONS",
     "UPDATE %%TABLENAME%% tb
     LEFT JOIN %%PARENTTABLE%% pt ON pt.id = tb.parentTableId
     LEFT JOIN ".QUESTION_TABLE." q ON q.id = pt.questionId
