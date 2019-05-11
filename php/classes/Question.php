@@ -6,6 +6,11 @@
  */
 class Question extends QuestionnaireProject {
 
+    const CRITICAL_QUESTION_FIELDS = array("ID", "display", "definition", "question", "typeId");
+    const CRITICAL_QUESTION_OPTIONS_FIELDS = array("ID", "questionId");
+    const CRITICAL_QUESTION_OPTIONS_SLIDERS_FIELDS = array("ID", "questionId", "minCaption", "maxCaption");
+    const CRITICAL_QUESTION_SUB_OPTIONS_FIELDS = array("ID", "parentTableId", "description");
+
     static function validateAndSanitize($questionToSanitize) {
         $validatedQuestion = array(
             "text_EN"=>htmlspecialchars($questionToSanitize['text_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
@@ -341,7 +346,7 @@ class Question extends QuestionnaireProject {
                     ),
                 );
                 $total += $this->questionnaireDB->updateDictionary($toUpdateDict, RADIO_BUTTON_OPTION_TABLE);
-                $total += $this->questionnaireDB->updateOptionsForQuestion(RADIO_BUTTON_OPTION_TABLE, RADIO_BUTTON_TABLE, $data["ID"], $toUpdate);
+                $total += $this->questionnaireDB->updateSubOptionsForQuestion(RADIO_BUTTON_OPTION_TABLE, RADIO_BUTTON_TABLE, $data["ID"], $toUpdate);
             }
         }
 
@@ -400,7 +405,7 @@ class Question extends QuestionnaireProject {
                     ),
                 );
                 $total += $this->questionnaireDB->updateDictionary($toUpdateDict, CHECKBOX_OPTION_TABLE);
-                $total += $this->questionnaireDB->updateOptionsForQuestion(CHECKBOX_OPTION_TABLE, CHECKBOX_TABLE, $data["ID"], $toUpdate);
+                $total += $this->questionnaireDB->updateSubOptionsForQuestion(CHECKBOX_OPTION_TABLE, CHECKBOX_TABLE, $data["ID"], $toUpdate);
             }
         }
 
@@ -414,10 +419,41 @@ class Question extends QuestionnaireProject {
 
         if (!empty($optionsToAdd))
             $total += $this->questionnaireDB->insertOptionsQuestion(CHECKBOX_OPTION_TABLE, $optionsToAdd);
+
+        $options["minAnswer"] = 1;
+        $options["maxAnswer"] = $this->questionnaireDB->getQuestionTotalSubOptions($options["ID"], CHECKBOX_OPTION_TABLE);
+        $options["maxAnswer"] = $options["maxAnswer"]["total"];
+        $tempId = $options["ID"];
+        unset($options["ID"]);
+
+        $total += $this->questionnaireDB->updateOptionsForQuestion(CHECKBOX_TABLE, $tempId, $options);
         return $total;
     }
 
     function updateSliderOptions($options) {
+        print_r($options);die();
+
+
+
+        $toUpdateDict = array(
+            array(
+                "content"=>$options["minCaption_FR"],
+                "languageId"=>FRENCH_LANGUAGE,
+                "contentId"=>$options["minCaption"],
+            ),
+            array(
+                "content"=>$options["minCaption_EN"],
+                "languageId"=>ENGLISH_LANGUAGE,
+                "contentId"=>$options["minCaption"],
+            ),
+        );
+        $total += $this->questionnaireDB->updateDictionary($toUpdateDict, CHECKBOX_OPTION_TABLE);
+
+
+    }
+
+    protected static function _areKeyIDsSecure($updatedQuestion, $oldQuestion) {
+        $answer = true;
 
     }
 
@@ -437,7 +473,16 @@ class Question extends QuestionnaireProject {
         else if(empty($updatedQuestion["options"]) || ($updatedQuestion["typeId"] == RADIO_BUTTON || $updatedQuestion["typeId"] == CHECKBOXES) && empty($updatedQuestion["subOptions"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data.");
 
+
+
         $total += $this->updateLibrariesForQuestion($updatedQuestion["ID"], $updatedQuestion["libraries"]);
+
+
+        print_r($oldQuestion);
+        print_r($updatedQuestion);
+        die();
+
+
 
         if($isLocked)
             return true;
@@ -456,14 +501,13 @@ class Question extends QuestionnaireProject {
         );
 
         $total += $this->questionnaireDB->updateDictionary($toUpdateDict, QUESTION_TABLE);
-
         $toUpdateQuestion = array(
             "ID"=>$oldQuestion["ID"],
             "private"=>$updatedQuestion["private"],
             "final"=>$updatedQuestion["final"],
         );
-
         $questionUpdated = $this->questionnaireDB->updateQuestion($toUpdateQuestion);
+
 
         if($updatedQuestion["typeId"] == RADIO_BUTTON)
             $this->updateRadioButtonOptions($updatedQuestion["options"],$updatedQuestion["subOptions"]);
