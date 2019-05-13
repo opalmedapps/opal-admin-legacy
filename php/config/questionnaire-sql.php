@@ -361,6 +361,14 @@ define("SQL_QUESTIONNAIRE_UPDATE_QUESTION",
     AND deleted = ".NON_DELETED_RECORD.";"
 );
 
+define("SQL_QUESTIONNAIRE_UPDATE_UPDATEDBY_QUESTION",
+    "UPDATE ".QUESTION_TABLE."
+    SET updatedBy = :updatedBy, lastUpdated = NOW()
+    WHERE ID = :ID
+    AND (private = 0 OR OAUserId = :OAUserId)
+    AND deleted = ".NON_DELETED_RECORD.";"
+);
+
 define("SQL_QUESTIONNAIRE_UPDATE_QUESTION_OPTIONS",
     "UPDATE %%TABLENAME%% tb
     LEFT JOIN ".QUESTION_TABLE." q ON q.id = tb.questionId

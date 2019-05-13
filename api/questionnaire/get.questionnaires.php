@@ -1,17 +1,12 @@
 <?php
-	header('Content-Type: application/javascript');
-  /* To get a list of existing questionnaires */
-  include_once('questionnaire.inc');
+include_once('questionnaire.inc');
 
-  // Retrieve form params
-  $callback = $_GET['callback'];
-  $userid = $_GET['userid'];
+$callback = strip_tags($_GET['callback']);
+$userId = strip_tags($_GET['userId']);
 
-  $questionnaire = new Questionnaire(); // object
+$questionnaire = new Questionnaire();
+$questionnairesList = $questionnaire->getQuestionnaires($userId);
 
-  // Call function
-  $questionnairesList = $questionnaire->getQuestionnaires($userid);
-
-  // Callback to http request
-  print $callback.'('.json_encode($questionnairesList).')';
+header('Content-Type: application/javascript');
+print $callback.'('.json_encode($questionnairesList).')';
 ?>

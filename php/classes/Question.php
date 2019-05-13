@@ -226,7 +226,6 @@ class Question extends QuestionnaireModule {
     }
 
     /**
-     *
      * Gets question details
      *
      * @param   question ID (int)
@@ -533,8 +532,11 @@ class Question extends QuestionnaireModule {
 
         $total += $this->updateLibrariesForQuestion($updatedQuestion["ID"], $updatedQuestion["libraries"]);
 
-        if($isLocked)
+        if($isLocked) {
+            if ($total > 0)
+                $this->questionnaireDB->forceUpdateQuestion($updatedQuestion["ID"]);
             return true;
+        }
 
         $toUpdateDict = array(
             array(
@@ -559,11 +561,14 @@ class Question extends QuestionnaireModule {
 
 
         if($updatedQuestion["typeId"] == RADIO_BUTTON)
-            $this->updateRadioButtonOptions($updatedQuestion["options"],$updatedQuestion["subOptions"]);
+            $total += $this->updateRadioButtonOptions($updatedQuestion["options"],$updatedQuestion["subOptions"]);
         else if($updatedQuestion["typeId"] == CHECKBOXES)
-            $this->updateCheckboxOptions($updatedQuestion["options"],$updatedQuestion["subOptions"]);
+            $total += $this->updateCheckboxOptions($updatedQuestion["options"],$updatedQuestion["subOptions"]);
         else if($updatedQuestion["typeId"] == SLIDERS)
-            $this->updateSliderOptions($updatedQuestion["options"]);
+            $total += $this->updateSliderOptions($updatedQuestion["options"]);
+
+        if ($questionUpdated == 0 && $total > 0)
+            $this->questionnaireDB->forceUpdateQuestion($updatedQuestion["ID"]);
     }
 
     /**

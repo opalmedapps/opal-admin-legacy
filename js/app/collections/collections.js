@@ -577,10 +577,14 @@ angular.module('opalAdmin.collections', [])
 	.factory('questionnaireCollectionService', function ($http) {
 		var questionnaireAPI = {};
 
-		questionnaireAPI.getQuestionnaires = function (userid) {
+		questionnaireAPI.getQuestionnaires = function (userId) {
 			return $http({
 				method: 'JSONP',
-				url: "api/questionnaire/get.questionnaires.php?callback=JSON_CALLBACK&userid=" + userid
+				url: "api/questionnaire/get.questionnaires.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					userId: userId,
+				}
 			});
 		};
 
