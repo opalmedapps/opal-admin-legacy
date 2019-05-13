@@ -4,12 +4,12 @@
  *
  * Question class
  */
-class Question extends QuestionnaireProject {
+class Question extends QuestionnaireModule {
 
-    const CRITICAL_QUESTION_FIELDS = array("ID", "display", "definition", "question", "typeId");
-    const CRITICAL_QUESTION_OPTIONS_FIELDS = array("ID", "questionId");
-    const CRITICAL_QUESTION_OPTIONS_SLIDERS_FIELDS = array("ID", "questionId", "minCaption", "maxCaption");
-    const CRITICAL_QUESTION_SUB_OPTIONS_FIELDS = array("ID", "parentTableId", "description");
+    const PIVOTAL_QUESTION_FIELDS = array("ID", "display", "definition", "question", "typeId");
+    const PIVOTAL_QUESTION_OPTIONS_FIELDS = array("ID", "questionId");
+    const PIVOTAL_QUESTION_OPTIONS_SLIDERS_FIELDS = array("ID", "questionId", "minCaption", "maxCaption");
+    const PIVOTAL_QUESTION_SUB_OPTIONS_FIELDS = array("ID", "parentTableId", "description");
 
     static function validateAndSanitize($questionToSanitize) {
         $validatedQuestion = array(
@@ -393,16 +393,8 @@ class Question extends QuestionnaireProject {
                 }
 
                 $toUpdateDict = array(
-                    array(
-                        "content"=>$data["description_FR"],
-                        "languageId"=>FRENCH_LANGUAGE,
-                        "contentId"=>$data["description"],
-                    ),
-                    array(
-                        "content"=>$data["description_EN"],
-                        "languageId"=>ENGLISH_LANGUAGE,
-                        "contentId"=>$data["description"],
-                    ),
+                    array("content"=>$data["description_FR"], "languageId"=>FRENCH_LANGUAGE, "contentId"=>$data["description"]),
+                    array("content"=>$data["description_EN"], "languageId"=>ENGLISH_LANGUAGE, "contentId"=>$data["description"]),
                 );
                 $total += $this->questionnaireDB->updateDictionary($toUpdateDict, CHECKBOX_OPTION_TABLE);
                 $total += $this->questionnaireDB->updateSubOptionsForQuestion(CHECKBOX_OPTION_TABLE, CHECKBOX_TABLE, $data["ID"], $toUpdate);
@@ -431,38 +423,102 @@ class Question extends QuestionnaireProject {
     }
 
     function updateSliderOptions($options) {
-        print_r($options);die();
+        $total = 0;
 
+        $options["minValue"] = floatval($options["minValue"]);
+        $options["maxValue"] = floatval($options["maxValue"]);
+        $options["increment"] = floatval($options["increment"]);
 
+        if( $options["minCaption_EN"] == "" ||  $options["minCaption_FR"] == "" ||  $options["maxCaption_EN"] == "" ||  $options["maxCaption_FR"] == "" || $options["minValue"] <= 0.0 || $options["maxValue"] <= 0.0 || $options["increment"] <= 0.0 || $options["minValue"] >= $options["maxValue"])
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid data.");
+
+        $options["maxValue"] = floatval(floor(($options["maxValue"] - $options["minValue"]) / $options["increment"]) * $options["increment"]) + $options["minValue"];
 
         $toUpdateDict = array(
-            array(
-                "content"=>$options["minCaption_FR"],
-                "languageId"=>FRENCH_LANGUAGE,
-                "contentId"=>$options["minCaption"],
-            ),
-            array(
-                "content"=>$options["minCaption_EN"],
-                "languageId"=>ENGLISH_LANGUAGE,
-                "contentId"=>$options["minCaption"],
-            ),
+            array("content"=>$options["minCaption_FR"], "languageId"=>FRENCH_LANGUAGE, "contentId"=>$options["minCaption"]),
+            array("content"=>$options["minCaption_EN"], "languageId"=>ENGLISH_LANGUAGE, "contentId"=>$options["minCaption"]),
         );
-        $total += $this->questionnaireDB->updateDictionary($toUpdateDict, CHECKBOX_OPTION_TABLE);
 
+        $total += $this->questionnaireDB->updateDictionary($toUpdateDict, SLIDER_TABLE);
 
+        $toUpdateDict = array(
+            array("content"=>$options["maxCaption_FR"], "languageId"=>FRENCH_LANGUAGE, "contentId"=>$options["maxCaption"]),
+            array("content"=>$options["maxCaption_EN"], "languageId"=>ENGLISH_LANGUAGE, "contentId"=>$options["maxCaption"]),
+        );
+        $total += $this->questionnaireDB->updateDictionary($toUpdateDict, SLIDER_TABLE);
+
+        $sliderToUpdate = array(
+            "minValue"=>$options["minValue"],
+            "maxValue"=>$options["maxValue"],
+            "increment"=>$options["increment"],
+        );
+
+        $total += $this->questionnaireDB->updateOptionsForQuestion(SLIDER_TABLE, $options["ID"], $sliderToUpdate);
+        return $total;
     }
 
-    protected static function _areKeyIDsSecure($updatedQuestion, $oldQuestion) {
+    /*
+     * This function validate the pivotal IDs of an updated question to insure it will not compromise the data when
+     * updating the database.
+     *
+     * @params  Reference of the updated questions (array) and current question in the DB (array)
+     * @return  boolean if the data are compromised or not.
+     * */
+    static function validatePivotalIDs(&$updatedQuestion, &$oldQuestion) {
         $answer = true;
+        $arrayOldOption = array();
 
+        if(!empty($oldQuestion["subOptions"])) {
+            foreach ($oldQuestion["subOptions"] as $options)
+                $arrayOldOption[$options["ID"]] = $options;
+        }
+
+        foreach($updatedQuestion as $key=>$value)
+            if(in_array($key, self::PIVOTAL_QUESTION_FIELDS) && $oldQuestion[$key] != $value) {
+                $answer = false;
+                break;
+            }
+
+        if($oldQuestion["typeId"] == SLIDERS)
+            $fieldLists = self::PIVOTAL_QUESTION_OPTIONS_SLIDERS_FIELDS;
+        else
+            $fieldLists = self::PIVOTAL_QUESTION_OPTIONS_FIELDS;
+
+        foreach($updatedQuestion["options"] as $key=>$value) {
+            if(in_array($key, $fieldLists) && $oldQuestion["options"][$key] !== $value) {
+                $answer = false;
+                break;
+            }
+        }
+
+        foreach($updatedQuestion["subOptions"] as $sub) {
+            $tempId = $sub["ID"];
+            foreach ($sub as $key => $value) {
+                if (in_array($key, self::PIVOTAL_QUESTION_SUB_OPTIONS_FIELDS) && $value !== $arrayOldOption[$tempId][$key]) {
+                    $answer = false;
+                    break;
+                }
+            }
+        }
+        return  $answer;
     }
 
     /**
+     * This function update a question after validating the data.
      *
-     * Updates a question
+     * If the user is registered, is the owner of the question or the question is public, no data are missing or
+     * corrupted, the update starts.
      *
-     * @param array $questionDetails  : the question details
-     * @return array $response : response
+     * First, the libraries associated to the question are updated. Then, if the question was not sent already to a
+     * patient, it will update the dictionary with the new question text, the private and final status, and finally
+     * the options depending the type of questions (slider, checkbox, etc)
+     *
+     * All these updates will be made only if there is only changes made. If there was any changes made but not in
+     * the question table, the question will still be updated with the date and username of the person who made the
+     * changes.
+     *
+     * param   array question details (array)
+     * return  void
      */
     function updateQuestion($updatedQuestion) {
         $total = 0;
@@ -472,17 +528,10 @@ class Question extends QuestionnaireProject {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
         else if(empty($updatedQuestion["options"]) || ($updatedQuestion["typeId"] == RADIO_BUTTON || $updatedQuestion["typeId"] == CHECKBOXES) && empty($updatedQuestion["subOptions"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data.");
-
-
+        else if(!self::validatePivotalIDs($updatedQuestion, $oldQuestion))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Corrupted data.");
 
         $total += $this->updateLibrariesForQuestion($updatedQuestion["ID"], $updatedQuestion["libraries"]);
-
-
-        print_r($oldQuestion);
-        print_r($updatedQuestion);
-        die();
-
-
 
         if($isLocked)
             return true;

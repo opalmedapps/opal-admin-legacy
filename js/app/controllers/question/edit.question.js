@@ -126,11 +126,9 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		// Call our API service to get the list of existing answer types
 
 		questionnaireCollectionService.getQuestionTypes(userId).then(function (response) {
-			console.log(userId);
-			console.log($scope.question);
 			$scope.atFilterList = response.data;
 		}).catch(function (response){
-			console.error('Error occurred getting response types:', response.status, response.data);
+			alert('Error occurred getting response types:', response.status, response.data);
 		});
 
 		// Function to close modal dialog
@@ -168,11 +166,9 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		};
 
 		questionnaireCollectionService.getLibraries(userId).then(function (response) {
-			console.log(userId);
-			console.log($scope.question);
 			$scope.groupFilterList = response.data;
 		}).catch(function(response) {
-			console.error('Error occurred getting question libraries:', response.status, response.data);
+			alert('Error occurred getting question libraries:', response.status, response.data);
 		});
 
 
@@ -219,7 +215,6 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 
 		// Submit changes
 		$scope.updateQuestion = function () {
-			console.log($scope.question);
 			// Submit form
 			$.ajax({
 				type: "POST",
@@ -227,14 +222,15 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 				data: $scope.question,
 				success: function (response) {
 					response = JSON.parse(response);
+
 					// Show success or failure depending on response
-					if (response.value) {
+					if (response.code === 200) {
 						$scope.setBannerClass('success');
 						$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.question.text_EN + "/ " + $scope.question.text_FR + "\"!";
 					}
 					else {
 						$scope.setBannerClass('danger');
-						$scope.$parent.bannerMessage = response.message;
+						$scope.$parent.bannerMessage = "An error occured. Please review the error message below.\r\n" + response.details;
 					}
 
 					$scope.showBanner();

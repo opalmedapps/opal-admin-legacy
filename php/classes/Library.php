@@ -5,7 +5,7 @@
  * Time: 1:55 PM
  */
 
-class Library extends QuestionnaireProject {
+class Library extends QuestionnaireModule {
 
     public function getLibraries() {
         return $this->questionnaireDB->fetchAllLibraries();
