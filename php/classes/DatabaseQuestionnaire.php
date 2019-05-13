@@ -109,11 +109,19 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     function updateQuestion($updatedEntries) {
-        $sqlToUpdate = SQL_QUESTIONNAIRE_UPDATE_QUESTION;
         $updatedEntries["updatedBy"]=$this->getUsername();
         $updatedEntries["OAUserId"]=$this->getUserId();
+       return $this->_updateRecordIntoTable(SQL_QUESTIONNAIRE_UPDATE_QUESTION, $updatedEntries);
+    }
 
-        return $this->_updateRecordIntoTable($sqlToUpdate, $updatedEntries);
+    function forceUpdateQuestion($id) {
+        $updatedEntries = array(
+            "ID"=>$id,
+            "updatedBy"=>$this->getUsername(),
+            "OAUserId"=>$this->getUserId(),
+        );
+
+        return $this->_updateRecordIntoTable(SQL_QUESTIONNAIRE_UPDATE_UPDATEDBY_QUESTION, $updatedEntries);
     }
 
     /*
