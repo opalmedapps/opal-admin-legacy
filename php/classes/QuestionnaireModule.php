@@ -5,7 +5,7 @@
  * Time: 8:46 AM
  */
 
-class QuestionnaireProject extends OpalProject
+class QuestionnaireModule extends OpalProject
 {
     protected $questionnaireDB;
 
