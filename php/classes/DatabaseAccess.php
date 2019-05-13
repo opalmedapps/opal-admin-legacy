@@ -340,6 +340,7 @@ class DatabaseAccess extends HelpSetup
         foreach($record as $key=>$value) {
             array_push($ready, array("parameter"=>":".strip_tags($key),"variable"=>strip_tags($value)));
         }
+
         return $this->_execute($sqlQuery, $ready);
     }
 }

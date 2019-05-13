@@ -3,7 +3,7 @@
  *
  * Questionnaire class 
  */
-class Questionnaire{
+class Questionnaire extends QuestionnaireModule {
 
 	/**
      *
