@@ -4,6 +4,9 @@ header('Content-Type: application/javascript');
 include_once('questionnaire.inc');
 
 $questionArray = Question::validateAndSanitize($_POST);
+if(!$questionArray)
+    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid question format");
+
 $userId = $questionArray["userId"];
 
 $questionObj = new Question($userId);

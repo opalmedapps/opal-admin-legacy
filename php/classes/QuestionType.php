@@ -4,7 +4,7 @@
  *
  * Questionnaire-AnswerType class
  */
-class QuestionType extends QuestionnaireProject {
+class QuestionType extends QuestionnaireModule {
 
     public static function validateAndSanitize($newQuestionType) {
         $validatedQT = array(
@@ -22,15 +22,15 @@ class QuestionType extends QuestionnaireProject {
 
         if ($validatedQT["typeId"] == SLIDERS)
         {
-            $validatedQT["MinCaption_EN"] = strip_tags($newQuestionType["MinCaption_EN"]);
-            $validatedQT["MinCaption_FR"] = strip_tags($newQuestionType["MinCaption_FR"]);
-            $validatedQT["MaxCaption_EN"] = strip_tags($newQuestionType["MaxCaption_EN"]);
-            $validatedQT["MaxCaption_FR"] = strip_tags($newQuestionType["MaxCaption_FR"]);
+            $validatedQT["minCaption_EN"] = strip_tags($newQuestionType["minCaption_EN"]);
+            $validatedQT["minCaption_FR"] = strip_tags($newQuestionType["minCaption_FR"]);
+            $validatedQT["maxCaption_EN"] = strip_tags($newQuestionType["maxCaption_EN"]);
+            $validatedQT["maxCaption_FR"] = strip_tags($newQuestionType["maxCaption_FR"]);
             $validatedQT["minValue"] = floatval(strip_tags($newQuestionType["minValue"]));
             $validatedQT["maxValue"] = floatval(strip_tags($newQuestionType["maxValue"]));
             $validatedQT["increment"] = floatval(strip_tags($newQuestionType["increment"]));
 
-            if( $validatedQT["MinCaption_EN"] == "" ||  $validatedQT["MinCaption_FR"] == "" ||  $validatedQT["MaxCaption_EN"] == "" ||  $validatedQT["MaxCaption_FR"] == "" || $validatedQT["minValue"] <= 0.0 || $validatedQT["maxValue"] <= 0.0 || $validatedQT["increment"] <= 0.0 || $validatedQT["minValue"] >= $validatedQT["maxValue"])
+            if( $validatedQT["minCaption_EN"] == "" ||  $validatedQT["minCaption_FR"] == "" ||  $validatedQT["maxCaption_EN"] == "" ||  $validatedQT["maxCaption_FR"] == "" || $validatedQT["minValue"] <= 0.0 || $validatedQT["maxValue"] <= 0.0 || $validatedQT["increment"] <= 0.0 || $validatedQT["minValue"] >= $validatedQT["maxValue"])
                 return false;
 
             $validatedQT["maxValue"] = floatval(floor(($validatedQT["maxValue"] - $validatedQT["minValue"]) / $validatedQT["increment"]) * $validatedQT["increment"]) + $validatedQT["minValue"];
@@ -98,11 +98,11 @@ class QuestionType extends QuestionnaireProject {
         else if ($newQuestionType["typeId"] == SLIDERS) {
             $tableToInsert = TYPE_TEMPLATE_SLIDER_TABLE;
             $toInsert = array(
-                FRENCH_LANGUAGE=>$newQuestionType["MinCaption_FR"], ENGLISH_LANGUAGE=>$newQuestionType["MinCaption_EN"]
+                FRENCH_LANGUAGE=>$newQuestionType["minCaption_FR"], ENGLISH_LANGUAGE=>$newQuestionType["minCaption_EN"]
             );
             $options["minCaption"] = $this->questionnaireDB->addToDictionary($toInsert, TYPE_TEMPLATE_TABLE);
             $toInsert = array(
-                FRENCH_LANGUAGE=>$newQuestionType["MaxCaption_FR"], ENGLISH_LANGUAGE=>$newQuestionType["MaxCaption_EN"]
+                FRENCH_LANGUAGE=>$newQuestionType["maxCaption_FR"], ENGLISH_LANGUAGE=>$newQuestionType["maxCaption_EN"]
             );
             $options["maxCaption"] = $this->questionnaireDB->addToDictionary($toInsert, TYPE_TEMPLATE_TABLE);
             $options["minValue"] = $newQuestionType["minValue"];
