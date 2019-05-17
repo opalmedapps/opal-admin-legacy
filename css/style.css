@@ -947,7 +947,7 @@ ul.no-list {
 }
 
 .panel-container.disabled {
-  cursor: not-allowed;
+  cursor: not-allowed !important;
   box-shadow: none;
   color: #999;
 }

@@ -1,7 +1,7 @@
 angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular'])
 
 	.controller('questionnaire', function ($sce, $scope, $state, $filter, $timeout, $uibModal, questionnaireCollectionService, filterCollectionService, Session, uiGridConstants) {
-		
+
 		// get current user id
 		var user = Session.retrieveObject('user');
 		var userId = user.id;
@@ -78,14 +78,17 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Private</p></div>';
 		var cellTemplatePublish = '<div class="ui-grid-cell-contents" ng-show="row.entity.publish == 0"><p>No</p></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.publish == 1"><p>Yes</p></div>';
-		var cellTemplateTags = '<div class="ui-grid-cell-contents">' +
-			'<span ng-repeat="tag in row.entity.tags">{{tag.name_EN}} / {{tag.name_FR}} ; </span></div>';
+		var cellTemplateLocked = '<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 1"><div class="fa fa-lock text-danger"></div></div>' +
+			'<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 0"><div class="fa fa-unlock text-success"></div></div>';
+		// var cellTemplateTags = '<div class="ui-grid-cell-contents">' +
+		// 	'<span ng-repeat="tag in row.entity.tags">{{tag.name_EN}} / {{tag.name_FR}} ; </span></div>';
 
 		// Data binding for main table
 		$scope.gridOptions = {
 			data: 'questionnaireList',
 			columnDefs: [
-				{ field: 'name_EN', displayName: 'Title (EN / FR)', cellTemplate: cellTemplateName, width: '25%' },
+				{ field: 'locked', displayName: '', cellTemplate: cellTemplateLocked, width: '2%', sortable: false, enableFiltering: false},
+				{ field: 'name_EN', displayName: 'Title (EN / FR)', cellTemplate: cellTemplateName, width: '53%' },
 				{
 					field: 'private', displayName: 'Privacy', cellTemplate: cellTemplatePrivacy, width: '10%', filter: {
 						type: uiGridConstants.filter.SELECT,
@@ -93,13 +96,13 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 					}
 				},
 				{
-					field: 'publish', displayName: 'Publish', cellTemplate: cellTemplatePublish, width: '10%', filter: {
+					field: 'publish', displayName: 'Final', cellTemplate: cellTemplatePublish, width: '10%', filter: {
 						type: uiGridConstants.filter.SELECT,
 						selectOptions: [{ value: '1', label: 'Yes' }, { value: '0', label: 'No' }]
 					}
 				},
 				{ field: 'created_by', displayName: 'Author', width: '10%' },
-				{ field: 'tags', displayName: 'Tags (EN / FR)', cellTemplate: cellTemplateTags, width: '30%', enableFiltering: false },
+				//{ field: 'tags', displayName: 'Tags (EN / FR)', cellTemplate: cellTemplateTags, width: '30%', enableFiltering: false },
 				{ name: 'Operations', width: '15%', cellTemplate: cellTemplateOperations, enableFiltering: false, sortable: false }
 			],
 			enableFiltering: true,
@@ -119,7 +122,7 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 			$scope.questionnaireList = response.data;
 		}).catch(function(response) {
 			console.error('Error occurred getting questionnaire list:', response.status, response.data);
-		});	
+		});
 
 		// Initialize the questionnaire to be deleted
 		$scope.questionnaireToDelete = {};
@@ -128,13 +131,25 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 		$scope.deleteQuestionnaire = function (questionnaire) {
 			$scope.questionnaireToDelete = questionnaire;
 
-			var modalInstance = $uibModal.open({ // open modal
-				templateUrl: 'templates/questionnaire/delete.questionnaire.html',
-				controller: 'questionnaire.delete',
-				windowClass: 'deleteModal',
-				scope: $scope,
-				backdrop: 'static',
-			});
+			if (questionnaire.locked) {
+				modalInstance = $uibModal.open({
+					templateUrl: 'templates/questionnaire/cannot.delete.questionnaire.html',
+					controller: 'question.delete',
+					windowClass: 'deleteModal',
+					scope: $scope,
+					backdrop: 'static',
+				});
+			}
+			else
+			{
+				var modalInstance = $uibModal.open({ // open modal
+					templateUrl: 'templates/questionnaire/delete.questionnaire.html',
+					controller: 'questionnaire.delete',
+					windowClass: 'deleteModal',
+					scope: $scope,
+					backdrop: 'static',
+				});
+			}
 
 			// After delete, refresh the questionnaire list
 			modalInstance.result.then(function () {

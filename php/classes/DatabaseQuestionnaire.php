@@ -494,6 +494,23 @@ class DatabaseQuestionnaire extends DatabaseAccess
         return $result;
     }
 
+    function getFinalizedQuestions() {
+        $result = $this->_fetchAll(SQL_QUESTIONNAIRE_GET_FINALIZED_QUESTIONS,
+            array(
+                array("parameter"=>":OAUserId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
+            ));
+        return $result;
+    }
+
+    function getQuestionnaireDetails($questionnaireId) {
+        $result = $this->_fetchAll(SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_DETAILS,
+            array(
+                array("parameter"=>":OAUserId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":ID","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+            ));
+        return $result;
+    }
+
     function getQuestionOptionsDetails($questionId, $tableName) {
         return $this->_fetchAll(str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_QUESTION_OPTIONS),
             array(
@@ -565,4 +582,13 @@ class DatabaseQuestionnaire extends DatabaseAccess
             array("parameter"=>":userId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    function fetchAllQuestionnaires() {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_FETCH_ALL_QUESTIONNAIRES,
+            array(
+                array("parameter"=>":OAUserId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+
 }
