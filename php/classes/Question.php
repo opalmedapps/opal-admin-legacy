@@ -208,6 +208,48 @@ class Question extends QuestionnaireModule {
         return $questions;
     }
 
+    function getFinalizedQuestions(){
+        $questionsLists = $this->questionnaireDB->getFinalizedQuestions();
+        foreach ($questionsLists as &$row){
+            $libraries = $this->questionnaireDB->fetchLibrariesQuestion($row["ID"]);
+            $libNameEn = array();
+            $libNameFr = array();
+            foreach($libraries as $library) {
+                array_push($libNameEn, $library["text_EN"]);
+                array_push($libNameFr, $library["text_FR"]);
+            }
+
+            $libNameEn = implode(", ", $libNameEn);
+            $libNameFr = implode(", ", $libNameFr);
+
+            if ($libNameEn == "") $libNameEn = "None";
+            if ($libNameFr == "") $libNameFr = "Aucune";
+
+            $row["library_name_EN"] = $libNameEn;
+            $row["library_name_FR"] = $libNameFr;
+
+            $row["text_EN"] = htmlspecialchars_decode($row["text_EN"]);
+            $row["text_FR"] = htmlspecialchars_decode($row["text_FR"]);
+
+            if($row["typeId"] == SLIDERS)
+                $options = $this->questionnaireDB->getQuestionSliderDetails($row["ID"], $row["tableName"]);
+            else
+                $options = $this->questionnaireDB->getQuestionOptionsDetails($row["ID"], $row["tableName"]);
+            if (count($options) > 1)
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Errors fetching the question. Too many options.");
+
+            $options = $options[0];
+
+            $subOptions = null;
+            if($row["subTableName"] != "" && $options["ID"] != "") {
+                $subOptions = $this->questionnaireDB->getQuestionSubOptionsDetails($options["ID"], $row["subTableName"]);
+            }
+            $row["options"] = $options;
+            $row["subOptions"] = $subOptions;
+        }
+        return $questionsLists;
+    }
+
     function isQuestionLocked($questionId) {
         $questionnairesList = array();
         $questionnaires = $this->questionnaireDB->fetchQuestionnairesIdQuestion($questionId);
@@ -218,8 +260,7 @@ class Question extends QuestionnaireModule {
 
         $questionLocked = 0;
         if (count($questionnairesList) > 0) {
-            $questionnairesList = implode(", ", $questionnairesList);
-            $questionLocked = $this->opalDB->countLockedQuestionnaires($questionnairesList);
+            $questionLocked = $this->opalDB->countLockedQuestionnaires(implode(", ", $questionnairesList));
             $questionLocked = intval($questionLocked["total"]);
         }
         return $questionLocked;
@@ -583,7 +624,7 @@ class Question extends QuestionnaireModule {
      *
      * REMEMBER !!! NO DELETE STATEMENT EVER !!! YOU HAVE BEING WARNED !!!
      *
-     * @param $questionId (ID of the question), $userId (ID of the user who requested the deletion)
+     * @param $questionId (ID of the question)
      * @return array $response : response
      */
     function deleteQuestion($questionId) {

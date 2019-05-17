@@ -629,13 +629,13 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
-		questionnaireAPI.getQuestions = function (userid) {
+		questionnaireAPI.getQuestions = function (userId) {
 			return $http({
 				method: 'JSONP',
 				url: "api/questionnaire/get.questions.php",
 				params: {
 					callback: 'JSON_CALLBACK',
-					userId: userid,
+					userId: userId,
 				}
 			});
 		};
@@ -656,6 +656,17 @@ angular.module('opalAdmin.collections', [])
 			return $http({
 				method: 'JSONP',
 				url: "api/questionnaire/get.question_group_with_libraries.php?callback=JSON_CALLBACK&userid=" + userid
+			});
+		};
+
+		questionnaireAPI.getFinalizedQuestions = function (userId) {
+			return $http({
+				method: 'JSONP',
+				url: "api/questionnaire/get.finalizedQuestions.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					userId: userId,
+				}
 			});
 		};
 
