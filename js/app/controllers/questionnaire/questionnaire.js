@@ -80,8 +80,6 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.publish == 1"><p>Yes</p></div>';
 		var cellTemplateLocked = '<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 1"><div class="fa fa-lock text-danger"></div></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 0"><div class="fa fa-unlock text-success"></div></div>';
-		// var cellTemplateTags = '<div class="ui-grid-cell-contents">' +
-		// 	'<span ng-repeat="tag in row.entity.tags">{{tag.name_EN}} / {{tag.name_FR}} ; </span></div>';
 
 		// Data binding for main table
 		$scope.gridOptions = {
@@ -102,7 +100,6 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 					}
 				},
 				{ field: 'created_by', displayName: 'Author', width: '10%' },
-				//{ field: 'tags', displayName: 'Tags (EN / FR)', cellTemplate: cellTemplateTags, width: '30%', enableFiltering: false },
 				{ name: 'Operations', width: '15%', cellTemplate: cellTemplateOperations, enableFiltering: false, sortable: false }
 			],
 			enableFiltering: true,
@@ -121,7 +118,7 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 		questionnaireCollectionService.getQuestionnaires(userId).then(function (response) {
 			$scope.questionnaireList = response.data;
 		}).catch(function(response) {
-			console.error('Error occurred getting questionnaire list:', response.status, response.data);
+			alert('Error occurred getting questionnaire list: ' + response.status + " " + response.data);
 		});
 
 		// Initialize the questionnaire to be deleted
@@ -156,7 +153,7 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 				questionnaireCollectionService.getQuestionnaires(userId).then(function (response) {
 					$scope.questionnaireList = response.data;
 				}).catch(function(response) {
-					console.error('Error occurred getting questionnaire list after modal close:', response.status, response.data);
+					alert('Error occurred getting questionnaire list after modal close: ' + response.status + " " + response.data);
 				});
 			});
 		};
@@ -181,7 +178,7 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 				questionnaireCollectionService.getQuestionnaires(userId).then(function (response) {
 					$scope.questionnaireList = response.data;
 				}).catch(function(response) {
-					console.error('Error occurred getting questionnaire list after modal close:', response.status, response.data);
+					alert('Error occurred getting questionnaire list after modal close: ' + response.status + " " + response.data);
 				});
 			});
 		};

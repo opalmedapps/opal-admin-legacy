@@ -31,7 +31,6 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		title: {completed: false},
 		privacy: {completed: false},
 		questions: {completed: false},
-		//tags: {completed: false}
 	};
 
 	$scope.numOfCompletedSteps = 0;
@@ -292,16 +291,22 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 
 	// submit
 	$scope.submitQuestionnaire = function () {
-		console.log($scope.newQuestionnaire);
-
 		if ($scope.checkForm()) {
 			// Submit
 			$.ajax({
 				type: "POST",
 				url: "php/questionnaire/insert.questionnaire.php",
 				data: $scope.newQuestionnaire,
-				success: function () {
-					$state.go('questionnaire');
+				success: function (result) {
+					result = JSON.parse(result);
+					if (result.code === 200) {
+						$state.go('questionnaire');
+					} else {
+						alert("Unable to create the questionnaire. Code " + result.code + ".\r\nError message: " + result.message);
+					}
+				},
+				error: function () {
+					alert("Something went wrong.");
 				}
 			});
 		}
