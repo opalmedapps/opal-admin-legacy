@@ -313,6 +313,32 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_DETAILS",
     WHERE q.ID = :ID AND (q.private = 0 OR q.OAUserId = :OAUserId) AND q.deleted = ".NON_DELETED_RECORD.";"
 );
 
+define("SQL_QUESTIONNAIRE_GET_FINALIZED_QUESTIONS",
+    "SELECT
+    q.ID,
+    q.question,
+    q.private,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.question AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.question AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR,
+    q.typeId,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS type_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS type_FR,
+    q.final,
+    dt1.name AS tableName,
+    dt2.name AS subTableName
+    FROM ".QUESTION_TABLE." q
+    LEFT JOIN ".TYPE_TABLE." t ON t.ID = q.typeId
+    LEFT JOIN ".DEFINITION_TABLE." dt1 ON dt1.ID = t.tableId
+    LEFT JOIN ".DEFINITION_TABLE." dt2 ON dt2.ID = t.subTableId
+    WHERE q.final = 1 AND (q.private = 0 OR q.OAUserId = :OAUserId) AND q.deleted = ".NON_DELETED_RECORD.";"
+);
+
+define("SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_DETAILS",
+    "SELECT * 
+    FROM ".QUESTIONNAIRE_TABLE." q
+    WHERE q.ID = :ID AND (q.private = 0 OR q.OAUserId = :OAUserId) AND q.deleted = ".NON_DELETED_RECORD.";"
+);
+
 define("SQL_QUESTIONNAIRE_GET_QUESTION_OPTIONS",
     "SELECT *
     FROM %%TABLENAME%%
@@ -388,4 +414,16 @@ define("SQL_QUESTIONNAIRE_UPDATE_QUESTION_SUB_OPTIONS",
     AND (%%OPTIONSWEREUPDATED%%)
     AND (q.OAUserId = :userId OR q.private = 0)
     AND q.deleted = ".NON_DELETED_RECORD.";"
+);
+
+define("SQL_QUESTIONNAIRE_FETCH_ALL_QUESTIONNAIRES",
+    "SELECT
+    q.ID AS ID,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".FRENCH_LANGUAGE.") AS name_fr,
+    q.private,
+    q.final AS publish,
+    q.createdBy AS created_by
+    FROM ".QUESTIONNAIRE_TABLE." q
+    WHERE q.deleted = ".NON_DELETED_RECORD." AND (OAUserId = :OAUserId OR private = 0);"
 );
