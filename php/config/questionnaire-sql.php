@@ -17,6 +17,10 @@ define("FRENCH_LANGUAGE","1");
 define("ENGLISH_LANGUAGE","2");
 define("DELETED_RECORD", 1);
 define("NON_DELETED_RECORD", 0);
+define("NON_FINAL_RECORD", 0);
+define("FINAL_RECORD", 1);
+define("PRIVATE_RECORD", 1);
+define("PUBLIC_RECORD", 0);
 
 //Definition of all questionnaires table from the questionnaire DB
 define("ANSWER_CHECKBOX_TABLE","answerCheckbox");
@@ -81,6 +85,14 @@ define("SQL_QUESTIONNAIRE_FETCH_ALL_QUESTIONS",
     FROM ".QUESTION_TABLE." q
     LEFT JOIN ".TYPE_TABLE." t ON t.ID = q.typeId
     WHERE q.deleted = ".NON_DELETED_RECORD." AND (OAUserId = :userId OR private = 0);"
+);
+
+define("SQL_QUESTIONNAIRE_FETCH_QUESTIONS_BY_ID",
+    "SELECT
+    q.ID,
+    q.private
+    FROM ".QUESTION_TABLE." q
+    WHERE q.ID IN (%%LISTIDS%%) AND q.deleted = ".NON_DELETED_RECORD." AND (OAUserId = :userId OR private = ".PUBLIC_RECORD.") AND q.final = ".FINAL_RECORD.";"
 );
 
 define("SQL_QUESTIONNAIRE_FETCH_LIBRARIES_QUESTION",
@@ -420,7 +432,7 @@ define("SQL_QUESTIONNAIRE_FETCH_ALL_QUESTIONNAIRES",
     "SELECT
     q.ID AS ID,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
-    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".FRENCH_LANGUAGE.") AS name_fr,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR,
     q.private,
     q.final AS publish,
     q.createdBy AS created_by

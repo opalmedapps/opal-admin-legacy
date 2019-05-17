@@ -352,6 +352,19 @@ class DatabaseQuestionnaire extends DatabaseAccess
         return $this->_insertRecordIntoTable(QUESTION_TABLE, $toInsert);
     }
 
+    function insertQuestionnaire($toInsert) {
+        $toInsert["OAUserId"] = $this->userId;
+        $toInsert["createdBy"] = $this->username;
+        $toInsert["updatedBy"] = $this->username;
+        return $this->_insertRecordIntoTable(QUESTIONNAIRE_TABLE, $toInsert);
+    }
+
+    function insertSection($toInsert) {
+        $toInsert["createdBy"] = $this->username;
+        $toInsert["updatedBy"] = $this->username;
+        return $this->_insertRecordIntoTable(SECTION_TABLE, $toInsert);
+    }
+
     function insertQuestionOptions($tableName, $toInsert) {
         return $this->_insertRecordIntoTable($tableName, $toInsert);
     }
@@ -370,6 +383,14 @@ class DatabaseQuestionnaire extends DatabaseAccess
 
     function insertMultipleLibrariesToQuestion($toInsert) {
         $this->_insertMultipleRecordsIntoTable(LIBRARY_QUESTION_TABLE, $toInsert);
+    }
+
+    function fetchQuestionsByIds($idList) {
+        $sqlFetch = str_replace("%%LISTIDS%%", implode(", " , $idList), SQL_QUESTIONNAIRE_FETCH_QUESTIONS_BY_ID);
+        return $this->_fetchAll($sqlFetch,
+            array(
+                array("parameter"=>":userId","variable"=>$this->getUserId(),"data_type"=>PDO::PARAM_INT),
+            ));
     }
 
     function removeLibrariesForQuestion($questionId, $libraries) {
@@ -483,6 +504,10 @@ class DatabaseQuestionnaire extends DatabaseAccess
 
     function insertOptionsQuestion($tableName, $records) {
         return $this->_insertMultipleRecordsIntoTableConditional($tableName, $records);
+    }
+
+    function insertQuestionsIntoSection($records) {
+        return $this->_insertMultipleRecordsIntoTable(QUESTION_SECTION_TABLE, $records);
     }
 
     function getQuestionDetails($questionId) {

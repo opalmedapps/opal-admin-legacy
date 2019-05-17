@@ -2,22 +2,15 @@
 
 include_once('questionnaire.inc');
 
-$questionnaireArray = array(
-    'name_EN'					=> $_POST['name_EN'],
-    'name_FR'					=> $_POST['name_FR'],
-    'private'					=> $_POST['private'],
-    'publish'					=> $_POST['publish'],
-    'last_updated_by'	=> $_POST['last_updated_by'],
-    'created_by'			=> $_POST['created_by'],
-    'tags'						=> $_POST['tags'],
-    'questiongroups'	=> $_POST['groups'],
-    'filters'					=> $_POST['filters'],
-    'user'						=> $_POST['user']
-);
+$userId = strip_tags($_POST['userId']);
+print_r($_POST);
 
 $questionnaire = new Questionnaire($userId);
-$questionnairesList = $questionnaire->getQuestionnaires();
-$questionnaireObj->insertQuestionnaire($questionnaireArray);
+$questionnaireArray = $questionnaire->validateAndSanitize($_POST);
+if(!$questionnaireArray)
+    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire format");
+
+$questionnaire->insertQuestionnaire($questionnaireArray);
 
 header('Content-Type: application/javascript');
 $response['code'] = HTTP_STATUS_SUCCESS;
