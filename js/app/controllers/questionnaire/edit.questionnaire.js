@@ -17,6 +17,8 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 		$scope.groupList = [];
 		$scope.selectedGroups;
 		$scope.tagFilter = "";
+		$scope.anyPrivate = false;
+		var publicPrivateWarning = true;
 
 		// table
 		// Filter in table
@@ -39,29 +41,29 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 		// Template for group table
 		var cellTemplateName = '<div class="ui-grid-cell-contents" ' +
 			'<p>{{row.entity.name_EN}} / {{row.entity.name_FR}}</p></div>';
-		var cellTemplateCat = '<div class="ui-grid-cell-contents" ' +
-			'<p>{{row.entity.category_EN}} / {{row.entity.category_FR}}</p></div>';
+		// var cellTemplateCat = '<div class="ui-grid-cell-contents" ' +
+		// 	'<p>{{row.entity.category_EN}} / {{row.entity.category_FR}}</p></div>';
 		var cellTemplateLib = '<div class="ui-grid-cell-contents" ' +
 			'<p>{{row.entity.library_name_EN}} / {{row.entity.library_name_FR}}</p></div>';
 		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Public</p></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Private</p></div>';
-		var cellTemplateTags = '<div class="ui-grid-cell-contents">' +
-			'<span ng-repeat="tag in row.entity.tags">{{tag.name_EN}} / {{tag.name_FR}} ; </span></div>';
+		// var cellTemplateTags = '<div class="ui-grid-cell-contents">' +
+		// 	'<span ng-repeat="tag in row.entity.tags">{{tag.name_EN}} / {{tag.name_FR}} ; </span></div>';
 
 		// Table Data binding
 		$scope.gridGroups = {
 			data: 'groupList',
 			columnDefs: [
-				{ field: 'name_EN', displayName: 'Group (EN / FR)', cellTemplate: cellTemplateName, width: '20%' },
-				{ field: 'category_EN', displayName: 'Category (EN / FR)', cellTemplate: cellTemplateCat, width: '25%' },
-				{ field: 'library_name_EN', displayName: 'Library (EN / FR)', cellTemplate: cellTemplateLib, width: '15%' },
+				{ field: 'text_EN', displayName: 'Name (EN / FR)', cellTemplate: cellTemplateName, width: '54%' },
+//				{ field: 'category_EN', displayName: 'Category (EN / FR)', cellTemplate: cellTemplateCat, width: '25%' },
+				{ field: 'library_name_EN', displayName: 'Library (EN / FR)', cellTemplate: cellTemplateLib, width: '30%' },
 				{
-					field: 'private', displayName: 'Privacy', cellTemplate: cellTemplatePrivacy, width: '10%', filter: {
+					field: 'private', displayName: 'Privacy', cellTemplate: cellTemplatePrivacy, width: '13%', filter: {
 						type: uiGridConstants.filter.SELECT,
 						selectOptions: [{ value: '1', label: 'Private' }, { value: '0', label: 'Public' }]
 					}
 				},
-				{ field: 'tags', displayName: 'Tags (EN / FR)', cellTemplate: cellTemplateTags, enableFiltering: true, width: '30%' }
+//				{ field: 'tags', displayName: 'Tags (EN / FR)', cellTemplate: cellTemplateTags, enableFiltering: true, width: '30%' }
 			],
 			enableColumnResizing: true,
 			enableFiltering: true,
@@ -159,38 +161,8 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 			$scope.questionnaire = response.data;
 
 		}).catch(function (response) {
-			console.log('Error occurred getting questionnaire details after modal open: ' + response.status + " " + response.data);
-			
+			alert('Error occurred getting questionnaire details after modal open: ' + response.status + " " + response.data);
 		}).finally(function () {
-
-			// Call our API service to get the list of possible question groups
-			// questionnaireCollectionService.getQuestionGroupWithLibraries(userId).then(function (response) {
-			//
-			// 	$scope.groupList = response.data; // Assign response data
-			//
-			// 	// This preselects the existing question groups in the table
-			// 	$timeout(function () {
-			// 		if ($scope.gridApi.selection.selectRow) {
-			// 			angular.forEach($scope.questionnaire.groups, function (selectedGroup) {
-			// 				angular.forEach($scope.groupList, function (group) {
-			// 					if (selectedGroup.ID == group.ID) {
-			// 						$scope.gridApi.selection.selectRow(group);
-			// 					}
-			// 				});
-			// 			});
-			// 		}
-			// 	});
-			//
-			// }).catch(function (response){
-			// 	alert('Error occurred getting question groups: ' + response.status + " " + response.data);
-			// });
-
-			// Call our API service to get each filter
-			filterCollectionService.getFilters().then(function (response) {
-			}).catch(function(response) {
-				alert('Error occurred getting filter list: ' + response.status + " " + response.data);
-			});
-
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
 		});
@@ -205,56 +177,56 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 		};
 
 		// Function to assign '1' to existing filters 
-		function checkAddedFilter(filterList) {
-			angular.forEach($scope.questionnaire.filters, function (selectedFilter) {
-				var selectedFilterId = selectedFilter.id;
-				var selectedFilterType = selectedFilter.type;
-				angular.forEach(filterList, function (filter) {
-					var filterId = filter.id;
-					var filterType = filter.type;
-					if (filterId == selectedFilterId && filterType == selectedFilterType) {
-						filter.added = 1;
-					}
-				});
-			});
-
-			return filterList;
-		}
+		// function checkAddedFilter(filterList) {
+		// 	angular.forEach($scope.questionnaire.filters, function (selectedFilter) {
+		// 		var selectedFilterId = selectedFilter.id;
+		// 		var selectedFilterType = selectedFilter.type;
+		// 		angular.forEach(filterList, function (filter) {
+		// 			var filterId = filter.id;
+		// 			var filterType = filter.type;
+		// 			if (filterId == selectedFilterId && filterType == selectedFilterType) {
+		// 				filter.added = 1;
+		// 			}
+		// 		});
+		// 	});
+		//
+		// 	return filterList;
+		// }
 
 		// Function to assign a "1" to existing tags
-		function checkAdded(filterList) {
-			angular.forEach($scope.questionnaire.tags, function (selectedFilter) {
-				var selectedFilterId = selectedFilter.ID;
-				angular.forEach(filterList, function (filter) {
-					var filterId = filter.ID;
-					if (filterId == selectedFilterId) {
-						filter.added = 1;
-					}
-				});
-			});
-			return filterList;
-		}
+		// function checkAdded(filterList) {
+		// 	angular.forEach($scope.questionnaire.tags, function (selectedFilter) {
+		// 		var selectedFilterId = selectedFilter.ID;
+		// 		angular.forEach(filterList, function (filter) {
+		// 			var filterId = filter.ID;
+		// 			if (filterId == selectedFilterId) {
+		// 				filter.added = 1;
+		// 			}
+		// 		});
+		// 	});
+		// 	return filterList;
+		// }
 
 		// assign search field for tags
-		$scope.searchTag = function (field) {
-			$scope.tagFilter = field;
-		};
-
-		// search filter for tags
-		$scope.searchTagFilter = function (Filter) {
-			var keyword = new RegExp($scope.tagFilter, 'i');
-			return !$scope.tagFilter || keyword.test(Filter.name_EN);
-		};
-
-		// Function to toggle Tag in a list on/off
-		$scope.selectTag = function (tag) {
-			$scope.changesMade = true;
-			if (tag.added) {
-				tag.added = 0;
-			} else {
-				tag.added = 1;
-			}
-		};
+		// $scope.searchTag = function (field) {
+		// 	$scope.tagFilter = field;
+		// };
+		//
+		// // search filter for tags
+		// $scope.searchTagFilter = function (Filter) {
+		// 	var keyword = new RegExp($scope.tagFilter, 'i');
+		// 	return !$scope.tagFilter || keyword.test(Filter.name_EN);
+		// };
+		//
+		// // Function to toggle Tag in a list on/off
+		// $scope.selectTag = function (tag) {
+		// 	$scope.changesMade = true;
+		// 	if (tag.added) {
+		// 		tag.added = 0;
+		// 	} else {
+		// 		tag.added = 1;
+		// 	}
+		// };
 
 		// Function called when changing the questionnaire privacy flag
 		$scope.privacyUpdate = function (value) {
@@ -285,22 +257,22 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 		};
 
 		// Function to return filters that have been checked
-		function addFilters(filterList) {
-			angular.forEach(filterList, function (Filter) {
-				if (Filter.added)
-					$scope.questionnaire.filters.push({ id: Filter.id, type: Filter.type });
-			});
-		}
+		// function addFilters(filterList) {
+		// 	angular.forEach(filterList, function (Filter) {
+		// 		if (Filter.added)
+		// 			$scope.questionnaire.filters.push({ id: Filter.id, type: Filter.type });
+		// 	});
+		// }
 
 		// Function to check if all filters are added
-		$scope.allFilters = function (filterList) {
-			var allFiltersAdded = true;
-			angular.forEach(filterList, function (Filter) {
-				if (Filter.added)
-					allFiltersAdded = false;
-			});
-			return allFiltersAdded;
-		};
+		// $scope.allFilters = function (filterList) {
+		// 	var allFiltersAdded = true;
+		// 	angular.forEach(filterList, function (Filter) {
+		// 		if (Filter.added)
+		// 			allFiltersAdded = false;
+		// 	});
+		// 	return allFiltersAdded;
+		// };
 
 		// Function for updating the questionnaire 
 		$scope.updateQuestionnaire = function () {

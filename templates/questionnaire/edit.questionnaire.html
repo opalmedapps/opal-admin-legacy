@@ -5,7 +5,7 @@
 		Edit Questionnaire
 	</h2>
 	<p class="modal-title-caption col-xs-12">
-		{{questionnaire.name_EN}} / {{questionnaire.name_FR}}
+		{{questionnaire.text_EN}} / {{questionnaire.text_FR}}
 	</p>
 	<div class="modal-buttons col-xs-12">
         <span>
@@ -29,13 +29,13 @@
 				<div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
 					<div class="input-group">
 						<span class="input-group-addon">EN</span>
-						<textarea class="form-control" rows="1" ng-model="questionnaire.name_EN" placeholder="English Title" ng-change="setChangesMade()"></textarea>
+						<textarea class="form-control" rows="1" ng-model="questionnaire.text_EN" placeholder="English Title" ng-change="setChangesMade()"></textarea>
 					</div>
 				</div>
 				<div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
 					<div class="input-group">
 						<span class="input-group-addon">FR</span>
-						<textarea class="form-control" rows="1" ng-model="questionnaire.name_FR" placeholder="Titre Français" ng-change="setChangesMade()"></textarea>
+						<textarea class="form-control" rows="1" ng-model="questionnaire.text_FR" placeholder="Titre Français" ng-change="setChangesMade()"></textarea>
 					</div>
 				</div>
 			</div>
@@ -79,43 +79,29 @@
 					<strong>Question Group </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': questionGroupSection.open, 'glyphicon-chevron-right': !questionGroupSection.open}"></i>
 				</div>
 			</uib-accordion-heading>
-			<div class="alert alert-info" role="alert">
-				<strong>Current Question Groups</strong><br>
-				<p>
-				<ul class="list-items">
-					<li ng-repeat="group in questionnaire.groups">
-						{{group.name_EN}}
-					</li>
-				</ul>
-				</p>
-			</div>
 			<div class="row">
 				<div class="panel-container" style="margin:20px;">
-					<h4 style="text-align:left;">Edit current question groups: </h4>
+					<h4 style="text-align:left;">Edit current question list: </h4>
 					<div class="panel-info">
 						<table style="width:100%;">
 							<tr style="font-size:16px;">
-								<td>Current Position</td>
-								<td>Change Position</td>
+								<td>Order</td>
 								<td>Question Group</td>
 								<td>Required/Optional</td>
 							</tr>
 							<tr>
 							</tr>
-							<tr ng-repeat="group in questionnaire.groups">
+							<tr ng-repeat="question in questionnaire.questions">
 								<td>
-									{{group.position}}
+									<label><input type="number" min="1" ng-model="question.order" ng-change="setChangesMade()"></label>
 								</td>
 								<td>
-									<label><input type="number" min="1" ng-model="group.position" ng-change="setChangesMade()"></label>
+									{{question.text_EN}} / {{question.text_FR}} | {{question.optional}}
 								</td>
 								<td>
-									{{group.name_EN}} / {{group.name_FR}}
-								</td>
-								<td>
-									<select name="groupOptional" ng-model="group.optional" ng-change="setChangesMade()" required>
-										<option value=0 selected>Required</option>
-										<option value=1>Optional</option>
+									<select name="groupOptional" ng-model="question.optional" ng-change="setChangesMade()" ng-init="question.optional" required>
+										<option value="0">Required</option>
+										<option value="1">Optional</option>
 									</select>
 								</td>
 							</tr>
@@ -124,7 +110,7 @@
 				</div>
 			</div>
 			<div class="row">
-				<h4 style="text-align:left; margin-left:20px" ;>Add new question groups: </h4>
+				<h4 style="text-align:left; margin-left:20px" ;>Add new questions: </h4>
 				<!-- Selected groups: change position -->
 				<div class="col-md-12" ng-show="newgroups.length">
 					<div class="panel-container" style="margin:10px;">
@@ -143,13 +129,13 @@
 								</tr>
 								<tr ng-repeat="newgroup in newgroups">
 									<td>
-										{{newgroup.position}}
+										{{newgroup.order}}
 									</td>
 									<td>
 										<label><input type="number" min="1" ng-model="newgroup.position"></label>
 									</td>
 									<td>
-										{{newgroup.name_EN}} / {{newgroup.name_FR}}
+										{{newgroup.text_EN}} / {{newgroup.text_FR}}
 									</td>
 									<td>
 										<select name="groupOption" ng-model="newgroup.optional" required>
