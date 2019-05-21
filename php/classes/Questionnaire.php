@@ -105,171 +105,33 @@ class Questionnaire extends QuestionnaireModule {
         return $questionLocked;
     }
 
-    /**
-     *
+    /*
      * Gets questionnaire details
      *
-     * @param integer $questionnaireSerNum : the questionnaire serial number
+     * @param integer $questionnaireId : the questionnaire ID
      * @return array $questionnaireDetails : the questionnaire details
      */
-    public function getQuestionnaireDetails($questionnaireSerNum){
+    public function getQuestionnaireDetails($questionnaireId){
+        $questionnaireDetails = $this->questionnaireDB->getQuestionnaireDetails($questionnaireId);
 
-        $questionnaireDetails = array();
+        if(count($questionnaireDetails) != 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire");
 
-        try{
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+        $questionnaireDetails = $questionnaireDetails[0];
 
-            $sql = "
-				SELECT DISTINCT
-					serNum,
-					name_EN,
-					name_FR,
-					private,
-					publish,
-					last_updated_by
-				FROM
-					QuestionnaireControlNew
-				WHERE
-					serNum = $questionnaireSerNum
-			";
-
-            $query = $host_db_link->prepare($sql);
-            $query->execute();
-
-            // fetch
-            $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
-
-            $serNum 		= $data[0];
-            $name_EN   		= $data[1];
-            $name_FR		= $data[2];
-            $private 		= $data[3];
-            $publish 		= $data[4];
-            $last_updated_by= $data[5];
-            $filters 		= array();
-
-            $sql = "
-                SELECT DISTINCT 
-                    Filters.FilterType,
-                    Filters.FilterId
-                FROM
-                    QuestionnaireControlNew que,
-                    Filters
-                WHERE
-                    que.serNum     							= $serNum
-                AND Filters.ControlTable                    = 'QuestionnaireControl'
-                AND Filters.ControlTableSerNum              = que.serNum
-                AND Filters.FilterType                      != ''
-                AND Filters.FilterId                        != ''
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $filterType = $data[0];
-                $filterId   = $data[1];
-                $filterArray = array (
-                    'type'  => $filterType,
-                    'id'    => $filterId,
-                    'added' => 1
-                );
-
-                array_push($filters, $filterArray);
-            }
-
-            $questionnaireDetails = array(
-                'serNum'			=> $serNum,
-                'name_EN'			=> $name_EN,
-                'name_FR'			=> $name_FR,
-                'private'			=> $private,
-                'publish'			=> $publish,
-                'last_updated_by'	=> $last_updated_by,
-                'groups'			=> array(),
-                'tags' 				=> array(),
-                'filters'			=> $filters
-            );
-
-            // get groups
-            $groupsql = "
- 				SELECT
- 					Questionnaire_questiongroup.position,
- 					Questionnaire_questiongroup.questiongroup_serNum,
- 					Questionnaire_questiongroup.optional,
- 					Questionnaire_questiongroup.last_updated_by,
- 					Questiongroup.name_EN,
- 					Questiongroup.name_FR 					
- 				FROM
- 					Questionnaire_questiongroup,
- 					Questiongroup
- 				WHERE
- 					Questionnaire_questiongroup.questionnaire_serNum = $questionnaireSerNum
- 				AND
- 					Questiongroup.serNum = Questionnaire_questiongroup.questiongroup_serNum
- 				ORDER BY
- 					Questionnaire_questiongroup.position
- 			";
-
-            $query = $host_db_link->prepare($groupsql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $questiongroup = array(
-                    'serNum'			=> $data[1],
-                    'position'			=> intval($data[0]),
-                    'optional'			=> $data[2],
-                    'last_updated_by'	=> $data[3],
-                    'name_EN'			=> $data[4],
-                    'name_FR'			=> $data[5]
-                );
-                array_push($questionnaireDetails['groups'], $questiongroup);
-            }
-
-            // get tag
-            $tagsql = "
- 				SELECT
- 					Questionnaire_tag.tag_serNum,
- 					Questionnaire_tag.last_updated_by,
- 					QuestionnaireTag.name_EN,
- 					QuestionnaireTag.name_FR 					
- 				FROM
- 					Questionnaire_tag,
- 					QuestionnaireTag
- 				WHERE
- 					Questionnaire_tag.questionnaire_serNum = $questionnaireSerNum
- 				AND
- 					QuestionnaireTag.serNum = Questionnaire_tag.tag_serNum
- 			";
-
-            $query = $host_db_link->prepare($tagsql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                $tag = array(
-                    'serNum'			=> $data[0],
-                    'name_EN'			=> $data[2],
-                    'name_FR'			=> $data[3],
-                    'last_updated_by'	=> $data[1]
-                );
-                array_push($questionnaireDetails['tags'], $tag);
-            }
-
-            return $questionnaireDetails;
-        } catch( PDOException $e) {
-            return $e->getMessage();
-            return $questionnaireDetails;
-        }
+        $sectionDetails = $this->questionnaireDB->getSectionsByQuestionnaireId($questionnaireDetails["ID"]);
+        $sectionDetails = $sectionDetails[0];
+        $questionnaireDetails["questions"] = $this->questionnaireDB->getQuestionsBySectionId($sectionDetails["ID"]);
+        return $questionnaireDetails;
     }
 
-    /**
-     *
-     * Inserts a questionnaire into our database
+    /*
+     * Inserts a questionnaire into the questionnaire, section and questionSection tables.
      *
      * @param array $questionnaireDetails  : the questionnaire details
      * @return void
      */
     public function insertQuestionnaire($newQuestionnaire){
-
         $toInsert = array(FRENCH_LANGUAGE=>$newQuestionnaire['text_FR'], ENGLISH_LANGUAGE=>$newQuestionnaire['text_EN']);
         $title = $this->questionnaireDB->addToDictionary($toInsert, QUESTIONNAIRE_TABLE);
 
@@ -292,7 +154,6 @@ class Questionnaire extends QuestionnaireModule {
         $titleSection = $this->questionnaireDB->addToDictionary($toInsert, SECTION_TABLE);
         $instructionSection = $this->questionnaireDB->addToDictionary($toInsert, SECTION_TABLE);
 
-
         $toInsert = array(
             "questionnaireId"=>$questionnaireId,
             "title"=>$titleSection,
@@ -300,137 +161,10 @@ class Questionnaire extends QuestionnaireModule {
         );
 
         $sectionId = $this->questionnaireDB->insertSection($toInsert);
-        foreach($newQuestionnaire["questions"] as &$question) {
+        foreach($newQuestionnaire["questions"] as &$question)
             $question["sectionId"] = $sectionId;
-        }
 
         $this->questionnaireDB->insertQuestionsIntoSection($newQuestionnaire["questions"]);
-
-//        $name_EN 				= $questionnaireDetails['name_EN'];
-//        $name_FR 				= $questionnaireDetails['name_FR'];
-//        $private 				= $questionnaireDetails['private'];
-//        $publish 				= $questionnaireDetails['publish'];
-//        $created_by 			= $questionnaireDetails['created_by'];
-//        $last_updated_by 		= $questionnaireDetails['last_updated_by'];
-//        $tags 					= $questionnaireDetails['tags'];
-//        $questiongroups 		= $questionnaireDetails['questiongroups'];
-//        $filters 				= $questionnaireDetails['filters'];
-//        $userSer 				= $questionnaireDetails['user']['id'];
-//        $sessionId 				= $questionnaireDetails['user']['sessionid'];
-//
-//        try {
-//            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-//            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-//
-//            $sql = "
-//				INSERT INTO
-//					QuestionnaireControlNew(
-//						name_EN,
-//						name_FR,
-//						private,
-//						publish,
-//						last_updated_by,
-//						created_by,
-//						session_id
-//					)
-//				VALUES(
-//					\"$name_EN\",
-//					\"$name_FR\",
-//					'$private',
-//					'$publish',
-//					'$userSer',
-//					'$created_by',
-//					'$sessionId'
-//				)
-//			";
-//
-//            $query = $host_db_link->prepare( $sql );
-//            $query->execute();
-//
-//            $questionnaire_id =  $host_db_link->lastInsertId();
-//
-//            foreach($questiongroups as $group){
-//                $group_id = $group['questiongroup_serNum'];
-//                $optional = $group['optional'];
-//                $position = $group['position'];
-//
-//                $sql = "
-//					INSERT INTO
-//						Questionnaire_questiongroup(
-//							questionnaire_serNum,
-//							questiongroup_serNum,
-//							position,
-//							optional,
-//							last_updated_by,
-//							created_by
-//						)
-//					VALUES(
-//						'$questionnaire_id',
-//						'$group_id',
-//						'$position',
-//						'$optional',
-//						'$last_updated_by',
-//						'$created_by'
-//					)
-//				";
-//                $query = $host_db_link->prepare( $sql );
-//                $query->execute();
-//
-//
-//            }
-//
-//            //add tag
-//            foreach($tags as $tag){
-//                $sql = "
-//					INSERT INTO
-//						Questionnaire_tag(
-//							questionnaire_serNum,
-//							tag_serNum,
-//							last_updated_by,
-//							created_by
-//						)
-//					VALUES(
-//						'$questionnaire_id',
-//						'$tag',
-//						'$last_updated_by',
-//						'$created_by'
-//					)
-//				";
-//                $query = $host_db_link->prepare( $sql );
-//                $query->execute();
-//            }
-//
-//            if ($filters) {
-//                foreach ($filters as $filter) {
-//
-//                    $filterType = $filter['type'];
-//                    $filterId   = $filter['id'];
-//
-//                    $sql = "
-//                        INSERT INTO
-//                            Filters (
-//                                ControlTable,
-//                                ControlTableSerNum,
-//                                FilterType,
-//                                FilterId,
-//                                DateAdded
-//                            )
-//                        VALUES (
-//                            'QuestionnaireControl',
-//                            '$questionnaire_id',
-//                            '$filterType',
-//                            \"$filterId\",
-//                            NOW()
-//                        )
-//		    		";
-//                    $query = $host_db_link->prepare( $sql );
-//                    $query->execute();
-//                }
-//            }
-//
-//        } catch( PDOException $e) {
-//            return $e->getMessage();
-//        }
     }
 
     /**

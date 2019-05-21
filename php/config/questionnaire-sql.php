@@ -325,6 +325,18 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_DETAILS",
     WHERE q.ID = :ID AND (q.private = 0 OR q.OAUserId = :OAUserId) AND q.deleted = ".NON_DELETED_RECORD.";"
 );
 
+define("SQL_QUESTIONNAIRE_GET_QUESTIONS_BY_SECTION_ID",
+    "SELECT
+    q.*,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.question AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.question AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR,
+    qs.order
+    FROM ".QUESTION_TABLE." q
+    LEFT JOIN ".QUESTION_SECTION_TABLE." qs ON q.ID = qs.questionId
+    WHERE qs.sectionID = :sectionId AND (q.private = 0 OR q.OAUserId = :OAUserId) AND q.deleted = ".NON_DELETED_RECORD."
+    ORDER BY qs.order;"
+);
+
 define("SQL_QUESTIONNAIRE_GET_FINALIZED_QUESTIONS",
     "SELECT
     q.ID,
@@ -346,9 +358,17 @@ define("SQL_QUESTIONNAIRE_GET_FINALIZED_QUESTIONS",
 );
 
 define("SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_DETAILS",
-    "SELECT * 
+    "SELECT q.*,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR 
     FROM ".QUESTIONNAIRE_TABLE." q
     WHERE q.ID = :ID AND (q.private = 0 OR q.OAUserId = :OAUserId) AND q.deleted = ".NON_DELETED_RECORD.";"
+);
+
+define("SQL_QUESTIONNAIRE_GET_SECTION_BY_QUESTIONNAIRE_ID",
+    "SELECT s.*
+    FROM ".SECTION_TABLE." s
+    WHERE s.questionnaireId = :questionnaireId AND s.deleted = ".NON_DELETED_RECORD.";"
 );
 
 define("SQL_QUESTIONNAIRE_GET_QUESTION_OPTIONS",

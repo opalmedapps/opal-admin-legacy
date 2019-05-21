@@ -652,12 +652,12 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
-		questionnaireAPI.getQuestionGroupWithLibraries = function (userid) {
+		/*questionnaireAPI.getQuestionGroupWithLibraries = function (userid) {
 			return $http({
 				method: 'JSONP',
 				url: "api/questionnaire/get.question_group_with_libraries.php?callback=JSON_CALLBACK&userid=" + userid
 			});
-		};
+		};*/
 
 		questionnaireAPI.getFinalizedQuestions = function (userId) {
 			return $http({
@@ -670,10 +670,15 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
-		questionnaireAPI.getQuestionnaireDetails = function (questionnaireSerNum) {
+		questionnaireAPI.getQuestionnaireDetails = function (questionnaireId, userId) {
 			return $http({
 				method: 'JSONP',
-				url: "api/questionnaire/get.questionnaire_details.php?callback=JSON_CALLBACK&serNum=" + questionnaireSerNum
+				url: "api/questionnaire/get.questionnaire_details.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					questionnaireId: questionnaireId,
+					userId: userId,
+				}
 			});
 		};
 
