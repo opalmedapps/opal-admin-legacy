@@ -511,20 +511,26 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     function getQuestionDetails($questionId) {
-        $result = $this->_fetchAll(SQL_QUESTIONNAIRE_GET_QUESTION_DETAILS,
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_QUESTION_DETAILS,
             array(
                 array("parameter"=>":OAUserId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
                 array("parameter"=>":ID","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
             ));
-        return $result;
+    }
+
+    function getQuestionsBySectionId($sectionId) {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_QUESTIONS_BY_SECTION_ID,
+            array(
+                array("parameter"=>":OAUserId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":sectionId","variable"=>$sectionId,"data_type"=>PDO::PARAM_INT),
+            ));
     }
 
     function getFinalizedQuestions() {
-        $result = $this->_fetchAll(SQL_QUESTIONNAIRE_GET_FINALIZED_QUESTIONS,
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_FINALIZED_QUESTIONS,
             array(
                 array("parameter"=>":OAUserId","variable"=>$this->userId,"data_type"=>PDO::PARAM_INT),
             ));
-        return $result;
     }
 
     function getQuestionnaireDetails($questionnaireId) {
@@ -534,6 +540,13 @@ class DatabaseQuestionnaire extends DatabaseAccess
                 array("parameter"=>":ID","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
             ));
         return $result;
+    }
+
+    function getSectionsByQuestionnaireId($questionnaireId) {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_SECTION_BY_QUESTIONNAIRE_ID,
+            array(
+                array("parameter"=>":questionnaireId","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+            ));
     }
 
     function getQuestionOptionsDetails($questionId, $tableName) {
