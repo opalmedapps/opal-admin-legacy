@@ -118,10 +118,18 @@ class Questionnaire extends QuestionnaireModule {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire");
 
         $questionnaireDetails = $questionnaireDetails[0];
+        $questionnaireDetails["text_EN"] = strip_tags(htmlspecialchars_decode($questionnaireDetails["text_EN"]));
+        $questionnaireDetails["text_FR"] = strip_tags(htmlspecialchars_decode($questionnaireDetails["text_FR"]));
 
         $sectionDetails = $this->questionnaireDB->getSectionsByQuestionnaireId($questionnaireDetails["ID"]);
         $sectionDetails = $sectionDetails[0];
         $questionnaireDetails["questions"] = $this->questionnaireDB->getQuestionsBySectionId($sectionDetails["ID"]);
+        foreach($questionnaireDetails["questions"] as &$question) {
+            $question["order"] = intval($question["order"]);
+            //$question["optional"] = intval($question["optional"]);
+            $question["text_EN"] = strip_tags(htmlspecialchars_decode($question["text_EN"]));
+            $question["text_FR"] = strip_tags(htmlspecialchars_decode($question["text_FR"]));
+        }
         return $questionnaireDetails;
     }
 
