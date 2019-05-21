@@ -330,10 +330,11 @@ define("SQL_QUESTIONNAIRE_GET_QUESTIONS_BY_SECTION_ID",
     q.*,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.question AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.question AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR,
-    qs.order
+    qs.order,
+    qs.optional
     FROM ".QUESTION_TABLE." q
     LEFT JOIN ".QUESTION_SECTION_TABLE." qs ON q.ID = qs.questionId
-    WHERE qs.sectionID = :sectionId AND (q.private = 0 OR q.OAUserId = :OAUserId) AND q.deleted = ".NON_DELETED_RECORD."
+    WHERE qs.sectionID = :sectionId AND (q.private = ".PUBLIC_RECORD." OR q.OAUserId = :OAUserId) AND q.deleted = ".NON_DELETED_RECORD."
     ORDER BY qs.order;"
 );
 
