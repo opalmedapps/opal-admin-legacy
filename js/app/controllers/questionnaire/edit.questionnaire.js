@@ -13,81 +13,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 		// Responsible for "searching" in search bars
 		$scope.filter = $filter('filter');
 
-		// Initialize a list of sexes
-		$scope.sexes = [
-			{
-				name: 'Male',
-				icon: 'male'
-			}, {
-				name: 'Female',
-				icon: 'female'
-			}
-		];
-
-		// Initialize to hold demographic filters
-		$scope.demoFilter = {
-			sex: null,
-			age: {
-				min: 0,
-				max: 100
-			}
-		};
-
-		// Initialize search field variables
-		$scope.appointmentSearchField = "";
-		$scope.dxSearchField = "";
-		$scope.doctorSearchField = "";
-		$scope.resourceSearchField = "";
-		$scope.patientSearchField = "";
-
-		// Function to assign search fields when textbox changes
-		$scope.searchAppointment = function (field) {
-			$scope.appointmentSearchField = field;
-		};
-		$scope.searchDiagnosis = function (field) {
-			$scope.dxSearchField = field;
-		};
-		$scope.searchDoctor = function (field) {
-			$scope.doctorSearchField = field;
-		};
-		$scope.searchResource = function (field) {
-			$scope.resourceSearchField = field;
-		};
-		$scope.searchPatient = function (field) {
-			$scope.patientSearchField = field;
-		};
-
-		// Function for search through the filters
-		$scope.searchAppointmentFilter = function (Filter) {
-			var keyword = new RegExp($scope.appointmentSearchField, 'i');
-			return !$scope.appointmentSearchField || keyword.test(Filter.name);
-		};
-		$scope.searchDxFilter = function (Filter) {
-			var keyword = new RegExp($scope.dxSearchField, 'i');
-			return !$scope.dxSearchField || keyword.test(Filter.name);
-		};
-		$scope.searchDoctorFilter = function (Filter) {
-			var keyword = new RegExp($scope.doctorSearchField, 'i');
-			return !$scope.doctorSearchField || keyword.test(Filter.name);
-		};
-		$scope.searchResourceFilter = function (Filter) {
-			var keyword = new RegExp($scope.resourceSearchField, 'i');
-			return !$scope.resourceSearchField || keyword.test(Filter.name);
-		};
-		$scope.searchPatientFilter = function (Filter) {
-			var keyword = new RegExp($scope.patientSearchField, 'i');
-			return !$scope.patientSearchField || keyword.test(Filter.name);
-		};
-
-		// Initialize lists to hold filters
-		$scope.appointmentList = [];
-		$scope.dxFilterList = [];
-		$scope.doctorFilterList = [];
-		$scope.resourceFilterList = [];
-		$scope.patientFilterList = [];
-
 		// initialize variables
-		$scope.tagList = [];
 		$scope.groupList = [];
 		$scope.selectedGroups;
 		$scope.tagFilter = "";
@@ -168,7 +94,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 			// Check to see if current row was (de)selected
 			var wasSelected = false;
 			angular.forEach($scope.selectedGroups, function(selectedGroup) {
-				if (row.entity.serNum == selectedGroup.entity.serNum) {
+				if (row.entity.ID == selectedGroup.entity.ID) {
 					wasSelected = true;
 				}
 			});
@@ -176,7 +102,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 			var groupIndex = null;
 			if (!wasSelected) {  // Deselected
 				angular.forEach($scope.questionnaire.groups, function(group, index) {
-					if(group.serNum == row.entity.serNum) {
+					if(group.ID == row.entity.ID) {
 						groupIndex = index; // array index of the group that was removed
 					}
 				});
@@ -190,7 +116,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 				// Check to see if added row exists already in the groups
 				var inGroups = false;
 				angular.forEach($scope.questionnaire.groups, function(group){
-					if (row.entity.serNum == group.serNum) {
+					if (row.entity.ID == group.ID) {
 						inGroups = true;
 					}
 				});
@@ -198,10 +124,9 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 				if (!inGroups) { // If not, append it to existing groups
 					var currentPosition = $scope.questionnaire.groups.length + 1;
 					var group = {
-						questionnaire_serNum: $scope.questionnaire.serNum,
+						questionnaire_ID: $scope.questionnaire.ID,
 						created_by: userId,
-						last_updated_by: userId,
-						serNum: row.entity.serNum,
+						ID: row.entity.ID,
 						optional: 0,
 						position: currentPosition,
 						name_EN: row.entity.name_EN,
@@ -228,59 +153,42 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 		$scope.showProcessingModal();
 
 		// Call our API service to get questionnaire details
-		questionnaireCollectionService.getQuestionnaireDetails($scope.currentQuestionnaire.serNum).then(function (response) {
+		questionnaireCollectionService.getQuestionnaireDetails($scope.currentQuestionnaire.ID, userId).then(function (response) {
 
 			// Assign value
 			$scope.questionnaire = response.data;
 
 		}).catch(function (response) {
-			console.error('Error occurred getting questionnaire details after modal open:', response.status, response.data);
+			console.log('Error occurred getting questionnaire details after modal open: ' + response.status + " " + response.data);
 			
 		}).finally(function () {
 
 			// Call our API service to get the list of possible question groups
-			questionnaireCollectionService.getQuestionGroupWithLibraries(userId).then(function (response) {
-
-				$scope.groupList = response.data; // Assign response data
-
-				// This preselects the existing question groups in the table
-				$timeout(function () {
-					if ($scope.gridApi.selection.selectRow) {
-						angular.forEach($scope.questionnaire.groups, function (selectedGroup) {
-							angular.forEach($scope.groupList, function (group) {
-								if (selectedGroup.serNum == group.serNum) {
-									$scope.gridApi.selection.selectRow(group);
-								}
-							});
-						});
-					}
-				});
-
-			}).catch(function (response){
-				console.error('Error occurred getting question groups:', response.status, response.data);
-			});
-
-			// Call our API service to get the list of possible tags
-			questionnaireCollectionService.getTags().then(function (response) {
-				$scope.tagList = checkAdded(response.data); // Assign value and check those that were already added
-			}).catch(function(response) {
-				console.error('Error occurred getting tags:', response.status, response.data);
-			});
-
-			// Assign demographic filters
-			checkDemographicFilters();
+			// questionnaireCollectionService.getQuestionGroupWithLibraries(userId).then(function (response) {
+			//
+			// 	$scope.groupList = response.data; // Assign response data
+			//
+			// 	// This preselects the existing question groups in the table
+			// 	$timeout(function () {
+			// 		if ($scope.gridApi.selection.selectRow) {
+			// 			angular.forEach($scope.questionnaire.groups, function (selectedGroup) {
+			// 				angular.forEach($scope.groupList, function (group) {
+			// 					if (selectedGroup.ID == group.ID) {
+			// 						$scope.gridApi.selection.selectRow(group);
+			// 					}
+			// 				});
+			// 			});
+			// 		}
+			// 	});
+			//
+			// }).catch(function (response){
+			// 	alert('Error occurred getting question groups: ' + response.status + " " + response.data);
+			// });
 
 			// Call our API service to get each filter
 			filterCollectionService.getFilters().then(function (response) {
-
-				$scope.appointmentList = checkAddedFilter(response.data.appointments); // Assign value
-				$scope.dxFilterList = checkAddedFilter(response.data.dx);
-				$scope.doctorFilterList = checkAddedFilter(response.data.doctors);
-				$scope.resourceFilterList = checkAddedFilter(response.data.resources);
-				$scope.patientFilterList = checkAddedFilter(response.data.patients);
-
 			}).catch(function(response) {
-				console.error('Error occurred getting filter list:', response.status, response.data);
+				alert('Error occurred getting filter list: ' + response.status + " " + response.data);
 			});
 
 			processingModal.close(); // hide modal
@@ -305,7 +213,6 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 					var filterId = filter.id;
 					var filterType = filter.type;
 					if (filterId == selectedFilterId && filterType == selectedFilterType) {
-						console.log("HERE");
 						filter.added = 1;
 					}
 				});
@@ -314,48 +221,12 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 			return filterList;
 		}
 
-		// Function to check demographic filters
-		function checkDemographicFilters() {
-			var demoFilter = {
-				sex: null,
-				age: {
-					min: 0,
-					max: 100
-				}
-			};
-			angular.forEach($scope.questionnaire.filters, function (selectedFilter) {
-				if (selectedFilter.type == 'Sex')
-					$scope.demoFilter.sex = selectedFilter.id;
-				if (selectedFilter.type == 'Age') {
-					$scope.demoFilter.age.min = parseInt(selectedFilter.id.split(',')[0]);
-					$scope.demoFilter.age.max = parseInt(selectedFilter.id.split(',')[1]);
-				}
-			});
-
-			return demoFilter;
-		}
-
-		// Function to toggle necessary changes when updating the sex
-		$scope.sexUpdate = function (sex) {
-
-			if (!$scope.demoFilter.sex) {
-				$scope.demoFilter.sex = sex.name;
-			} else if ($scope.demoFilter.sex == sex.name) {
-				$scope.demoFilter.sex = null; // Toggle off
-			} else {
-				$scope.demoFilter.sex = sex.name;
-			}
-
-			$scope.changesMade = true;
-
-		};
-
 		// Function to assign a "1" to existing tags
 		function checkAdded(filterList) {
 			angular.forEach($scope.questionnaire.tags, function (selectedFilter) {
-				var selectedFilterId = selectedFilter.serNum;
+				var selectedFilterId = selectedFilter.ID;
 				angular.forEach(filterList, function (filter) {
-					var filterId = filter.serNum;
+					var filterId = filter.ID;
 					if (filterId == selectedFilterId) {
 						filter.added = 1;
 					}
@@ -383,25 +254,6 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 			} else {
 				tag.added = 1;
 			}
-		};
-
-		// add tags to the questionnaire tag array
-		function addTags(tagList) {
-			angular.forEach(tagList, function (Filter) {
-				if (Filter.added) {
-					$scope.questionnaire.tags.push(Filter);
-				}
-			});
-		}
-
-		// check if there's any tag added
-		$scope.checkTags = function (tagList) {
-			var tagsAdded = false;
-			angular.forEach(tagList, function (Filter) {
-				if (Filter.added)
-					tagsAdded = true;
-			});
-			return tagsAdded;
 		};
 
 		// Function called when changing the questionnaire privacy flag
@@ -469,15 +321,6 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 						});
 					}
 				}
-
-				// Add filters to edu material
-				addFilters($scope.appointmentList);
-				addFilters($scope.dxFilterList);
-				addFilters($scope.doctorFilterList);
-				addFilters($scope.resourceFilterList);
-				addFilters($scope.patientFilterList);
-
-				addTags($scope.tagList); // Add tags to questionnaire object
 
 				// Log who updated questionnaire
 				var currentUser = Session.retrieveObject('user');
