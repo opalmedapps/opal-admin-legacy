@@ -28,8 +28,7 @@
                                             <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left"
                                                   aria-hidden="true"></span>
                                             <h6 class="side-panel-title"
-                                                style="display:inline-block;margin:0;font-size:14px;"><strong>Back to
-                                                Manage Questionnaires</strong>
+                                                style="display:inline-block;margin:0;font-size:14px;"><strong>Back to Manage Questionnaires</strong>
                                             </h6>
                                         </div>
                                     </div>
@@ -294,16 +293,12 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: privacySection.show}"
-                             ng-if="privacySection.show">
+                        <div class="row animated" ng-class="{fadeInUp: privacySection.show}" ng-if="privacySection.show">
                             <div class="col-xs-12 col-sm-6 col-md-3">
-                                <div class="panel-container animated" style="cursor:pointer;"
-                                     ng-class="{pulse: hoverB, active: newQuestionnaire.private == 1}"
-                                     ng-click="privacyUpdate(1)" ng-mouseenter="hoverB=true"
-                                     ng-mouseleave="hoverB=false">
+                                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hoverB, active: newQuestionnaire.private == 1}" ng-click="privacyUpdate(1)" ng-mouseenter="hoverB=true" ng-mouseleave="hoverB=false">
                                     <div class="panel-info" ng-class="{active: newQuestionnaire.private == 1}">
                                         <div class="panel-content" style="text-align:center">
-                                            <span style="font-size:30px;" class="fa fa-lock"></span>
+                                            <span style="font-size:30px;" class="fa fa-user-secret"></span>
                                             <div class="option-panel-title">Private</div>
                                         </div>
                                     </div>
@@ -316,7 +311,7 @@
                                      ng-mouseleave="hoverC=false">
                                     <div class="panel-info" ng-class="{active: newQuestionnaire.private == 0}">
                                         <div class="panel-content" style="text-align:center">
-                                            <span style="font-size:30px;" class="fa fa-unlock-alt"></span>
+                                            <span style="font-size:30px;" class="fa fa-users"></span>
                                             <div class="option-panel-title">Public</div>
                                         </div>
                                     </div>
@@ -399,7 +394,7 @@
                                                     </div>
                                                 </div>
                                                 <div ng-if="selectedGroupObj.entity.typeId == '3'">
-                                                    <textarea rows="3" cols="50">Type in your answer.</textarea>
+                                                    <textarea rows="3" cols="50" disabled>Type in your answer.</textarea>
                                                 </div>
                                             </div>
                                         </div>
