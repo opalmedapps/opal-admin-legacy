@@ -9,7 +9,6 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 	$scope.titleSection = {open: false, show: true};
 	$scope.privacySection = {open: false, show: false};
 	$scope.questionsSection = {open: false, show: false};
-//	$scope.tagsSection = {open: false, show: false};
 	$scope.demoSection = {open: false, show: false};
 	$scope.filterSection = {open: false, show: false};
 	$scope.anyPrivate = false;
@@ -82,8 +81,6 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		private: undefined,
 		userId: userId,
 		questions: [],
-		//tags: [],
-		//filters: []
 	};
 
 	$scope.formLoaded = false;
@@ -123,18 +120,20 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 	};
 
 	$scope.privacyUpdate = function (value) {
-		$scope.privacySection.open = true;
-		if (value == 0 || value == 1) {
-			// update value
-			$scope.newQuestionnaire.private = value;
-			$scope.questionsSection.show = true;
-			steps.privacy.completed = true;
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-		} else {
-			steps.privacy.completed = false;
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+		if(!$scope.anyPrivate) {
+			$scope.privacySection.open = true;
+			if (value == 0 || value == 1) {
+				// update value
+				$scope.newQuestionnaire.private = value;
+				$scope.questionsSection.show = true;
+				steps.privacy.completed = true;
+				$scope.numOfCompletedSteps = stepsCompleted(steps);
+				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+			} else {
+				steps.privacy.completed = false;
+				$scope.numOfCompletedSteps = stepsCompleted(steps);
+				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+			}
 		}
 	};
 
@@ -211,7 +210,7 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		enableRowSelection: true,
 		enableSelectAll: false,
 		enableSelectionBatchEvent: true,
-		//showGridFooter:true,
+		showGridFooter:true,
 		onRegisterApi: function (gridApi) {
 			$scope.gridApi = gridApi;
 			gridApi.grid.registerRowsProcessor($scope.filterOptions, 300);
@@ -258,7 +257,6 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 	};
 
 	questionnaireCollectionService.getFinalizedQuestions(userId).then(function (response) {
-
 		response.data.forEach(function(entry) {
 
 			if(entry.typeId === "2") {

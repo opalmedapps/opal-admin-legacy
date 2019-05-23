@@ -1,212 +1,282 @@
 <!-- Modal title -->
 <div class="modal-header">
-	<h2 class="modal-title col-xs-12">
-		<span class="glyphicon glyphicon-pencil"></span>
-		Edit Questionnaire
-	</h2>
-	<p class="modal-title-caption col-xs-12">
-		{{questionnaire.text_EN}} / {{questionnaire.text_FR}}
-	</p>
-	<div class="modal-buttons col-xs-12">
+    <h2 class="modal-title col-xs-12" ng-if="questionnaire.readOnly == '0'">
+        <span class="glyphicon glyphicon-pencil"></span>
+        Edit Questionnaire
+    </h2>
+    <div class="row col-xs-12" ng-if="questionnaire.readOnly == 1">
+        <h2 class="modal-title col-xs-12">
+            <span class="text-danger fa fa-lock"></span>
+            View Questionnaire
+        </h2>
+        <p class="text-danger">This questionnaire has being already sent to patients.</p>
+    </div>
+    <p class="modal-title-caption col-xs-12">
+        {{questionnaire.text_EN}} / {{questionnaire.text_FR}}
+    </p>
+    <div class="modal-buttons col-xs-12">
         <span>
             <form method="post" ng-submit="updateQuestionnaire()">
-                <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
+                <input ng-if="questionnaire.readOnly == 0" class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
                 <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
             </form>
         </span>
-	</div>
+    </div>
 </div>
 <div class="modal-body">
-	<uib-accordion>
-		<!-- SECTION: Titles -->
-		<div uib-accordion-group is-open="titleSection.open">
-			<uib-accordion-heading>
-				<div>
-					<strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
-				</div>
-			</uib-accordion-heading>
-			<div class="row">
-				<div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-					<div class="input-group">
-						<span class="input-group-addon">EN</span>
-						<textarea class="form-control" rows="1" ng-model="questionnaire.text_EN" placeholder="English Title" ng-change="setChangesMade()"></textarea>
-					</div>
-				</div>
-				<div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-					<div class="input-group">
-						<span class="input-group-addon">FR</span>
-						<textarea class="form-control" rows="1" ng-model="questionnaire.text_FR" placeholder="Titre Français" ng-change="setChangesMade()"></textarea>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- SECTION: Privacy -->
-		<div uib-accordion-group is-open="privacySection.open">
-			<uib-accordion-heading>
-				<div>
-					<strong>Privacy </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': privacySection.open, 'glyphicon-chevron-right': !privacySection.open}"></i>
-				</div>
-			</uib-accordion-heading>
-			<div class="row">
-				<div class="col-xs-12 col-sm-6 col-md-3">
-					<div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hoverB, active: questionnaire.private == 1}"
-						 ng-click="privacyUpdate(1)" ng-mouseenter="hoverB=true" ng-mouseleave="hoverB=false">
-						<div class="panel-info" ng-class="{active: questionnaire.private == 1}">
-							<div class="panel-content" style="text-align:center">
-								<span style="font-size:30px;" class="fa fa-lock"></span>
-								<div class="option-panel-title">Private</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-xs-12 col-sm-6 col-md-3">
-					<div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hoverC, active: questionnaire.private == 0}"
-						 ng-click="privacyUpdate(0)" ng-mouseenter="hoverC=true" ng-mouseleave="hoverC=false">
-						<div class="panel-info" ng-class="{active: questionnaire.private == 0}">
-							<div class="panel-content" style="text-align:center">
-								<span style="font-size:30px;" class="fa fa-unlock-alt"></span>
-								<div class="option-panel-title">Public</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- SECTION: Question group -->
-		<div uib-accordion-group is-open="questionGroupSection.open">
-			<uib-accordion-heading>
-				<div>
-					<strong>Question Group </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': questionGroupSection.open, 'glyphicon-chevron-right': !questionGroupSection.open}"></i>
-				</div>
-			</uib-accordion-heading>
-			<div class="row">
-				<div class="panel-container" style="margin:20px;">
-					<h4 style="text-align:left;">Edit current question list: </h4>
-					<div class="panel-info">
-						<table style="width:100%;">
-							<tr style="font-size:16px;">
-								<td>Order</td>
-								<td>Question Group</td>
-								<td>Required/Optional</td>
-							</tr>
-							<tr>
-							</tr>
-							<tr ng-repeat="question in questionnaire.questions">
-								<td>
-									<label><input type="number" min="1" ng-model="question.order" ng-change="setChangesMade()"></label>
-								</td>
-								<td>
-									{{question.text_EN}} / {{question.text_FR}} | {{question.optional}}
-								</td>
-								<td>
-									<select name="groupOptional" ng-model="question.optional" ng-change="setChangesMade()" ng-init="question.optional" required>
-										<option value="0">Required</option>
-										<option value="1">Optional</option>
-									</select>
-								</td>
-							</tr>
-						</table>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<h4 style="text-align:left; margin-left:20px" ;>Add new questions: </h4>
-				<!-- Selected groups: change position -->
-				<div class="col-md-12" ng-show="newgroups.length">
-					<div class="panel-container" style="margin:10px;">
-						<div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
-							<span style="background-color: #fff; padding: 0 10px; font-size:16px;"> Edit selected question groups </span>
-						</div>
-						<div class="panel-info">
-							<table style="width:100%;">
-								<tr style="font-size:16px;">
-									<td>Current Position</td>
-									<td>Change Position</td>
-									<td>Question Group</td>
-									<td>Required/Optional(default: required)</td>
-								</tr>
-								<tr>
-								</tr>
-								<tr ng-repeat="newgroup in newgroups">
-									<td>
-										{{newgroup.order}}
-									</td>
-									<td>
-										<label><input type="number" min="1" ng-model="newgroup.position"></label>
-									</td>
-									<td>
-										{{newgroup.text_EN}} / {{newgroup.text_FR}}
-									</td>
-									<td>
-										<select name="groupOption" ng-model="newgroup.optional" required>
-											<option value=0 selected>Required</option>
-											<option value=1>Optional</option>
-										</select>
-									</td>
-								</tr>
-							</table>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-12">
-					<!-- question group table -->
-					<div class="col-md-8">
-						<div class="panel-container" style="text-align:left;">
-							<div class="panel-info">
-								<div class="panel-input">
-									<div id="data-table">
-										<div class="gridStyle" ui-grid="gridGroups" ui-grid-resize-columns ui-grid-selection style="height:75vh"></div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<!-- Preview -->
-					<div class="col-md-4" style="text-align:right">
-						<div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
+    <uib-accordion>
+        <!-- SECTION: Titles -->
+        <div uib-accordion-group is-open="titleSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">EN</span>
+                        <textarea class="form-control" rows="1" ng-model="questionnaire.text_EN" placeholder="English Title" ng-change="setChangesMade()" ng-disabled="questionnaire.readOnly || questionnaire.final"></textarea>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">FR</span>
+                        <textarea class="form-control" rows="1" ng-model="questionnaire.text_FR" placeholder="Titre Français" ng-change="setChangesMade()" ng-disabled="questionnaire.readOnly || questionnaire.final"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 col-md-6" style="margin-bottom: 20px;">
+                </div>
+                <div class="col-xs-6 col-md-6" style="margin-bottom: 20px;">
+                    <label style="font-size: 20px;">Finalize the questionnaire: <input ng-change="setChangesMade()" type="checkbox" ng-true-value="true" ng-false-value="false" ng-model="questionnaire.final" ng-disabled="questionnaire.readOnly"></label>
+                </div>
+            </div>
+
+        </div>
+        <!-- SECTION: Privacy -->
+        <div uib-accordion-group is-open="privacySection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>Privacy </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': privacySection.open, 'glyphicon-chevron-right': !privacySection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-3">
+                    <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hoverB, active: questionnaire.private == 1, disabled : questionnaire.readOnly || questionnaire.final, animated : !questionnaire.readOnly && !questionnaire.final}"
+                         ng-click="privacyUpdate(1)" ng-mouseenter="hoverB=true" ng-mouseleave="hoverB=false">
+                        <div class="panel-info" ng-class="{active: questionnaire.private == 1}">
+                            <div class="panel-content" style="text-align:center">
+                                <span style="font-size:30px;" class="fa fa-user-secret"></span>
+                                <div class="option-panel-title">Private</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-3">
+                    <div id="btn-public" class="panel-container" style="cursor:pointer;" ng-class="{pulse: hoverC, active: questionnaire.private == 0, disabled : anyPrivate || questionnaire.readOnly || questionnaire.final, animated : !anyPrivate && !questionnaire.readOnly && !questionnaire.final}"
+                         ng-click="privacyUpdate(0)" ng-mouseenter="hoverC=true" ng-mouseleave="hoverC=false">
+                        <div class="panel-info" ng-class="{active: questionnaire.private == 0}">
+                            <div class="panel-content" style="text-align:center">
+                                <span style="font-size:30px;" class="fa fa-users"></span>
+                                <div class="option-panel-title">Public</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Question group -->
+        <div uib-accordion-group is-open="questionGroupSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>Questions</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': questionGroupSection.open, 'glyphicon-chevron-right': !questionGroupSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row" ng-hide="questionnaire.readOnly || questionnaire.final">
+                <div class="panel-container" style="margin:20px;">
+                    <h4 style="text-align:left;">Edit current question list: </h4>
+                    <div class="panel-info">
+                        <table style="width:100%;">
+                            <tr style="font-size:16px;">
+                                <td>Order</td>
+                                <td>Question</td>
+                                <td>Required/Optional</td>
+                            </tr>
+                            <tr>
+                            </tr>
+                            <tr ng-repeat="question in questionnaire.questions">
+                                <td>
+                                    <label><input type="number" min="1" ng-model="question.order" ng-change="setChangesMade();orderPreview();" ng-disabled="questionnaire.readOnly || questionnaire.final"></label>
+                                </td>
+                                <td>
+                                    {{question.text_EN}} / {{question.text_FR}}
+                                </td>
+                                <td>
+                                    <select name="groupOptional" ng-model="question.optional" ng-change="setChangesMade()" ng-init="question.optional" required ng-disabled="questionnaire.readOnly || questionnaire.final">
+                                        <option value="0">Required</option>
+                                        <option value="1">Optional</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <h4 style="text-align:left; margin-left:20px" ng-hide="questionnaire.readOnly || questionnaire.final" >Edit questions selection: </h4>
+                <!-- Selected groups: change position -->
+                <div class="col-md-12" ng-show="newgroups.length" >
+                    <div class="panel-container" style="margin:10px;">
+                        <div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
+                            <span style="background-color: #fff; padding: 0 10px; font-size:16px;"> Edit selected question groups </span>
+                        </div>
+                        <div class="panel-info">
+                            <table style="width:100%;">
+                                <tr style="font-size:16px;">
+                                    <td>Current Position</td>
+                                    <td>Change Position</td>
+                                    <td>Question</td>
+                                    <td>Required/Optional</td>
+                                </tr>
+                                <tr>
+                                </tr>
+                                <tr ng-repeat="newgroup in newgroups">
+                                    <td>
+                                        {{newgroup.order}}
+                                    </td>
+                                    <td>
+                                        <label><input type="number" min="1" ng-model="newgroup.position"></label>
+                                    </td>
+                                    <td>
+                                        {{newgroup.text_EN}} / {{newgroup.text_FR}}
+                                    </td>
+                                    <td>
+                                        <select name="groupOption" ng-model="newgroup.optional" required>
+                                            <option value=0 selected>Required</option>
+                                            <option value=1>Optional</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12" ng-hide="questionnaire.readOnly || questionnaire.final">
+                    <!-- question group table -->
+                    <div class="col-md-8">
+                        <div class="panel-container" style="text-align:left;">
+                            <div class="panel-info">
+                                <div class="panel-input">
+                                    <div id="data-table">
+                                        <div class="gridStyle" ui-grid="gridGroups" ui-grid-resize-columns ui-grid-selection style="height:75vh"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Preview -->
+                    <div class="col-md-4" style="text-align:right">
+                        <div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
                             <span style="background-color: #fff; padding: 0 10px; font-size:16px;">
                             Selected questions preview</span>
-						</div>
-						<div class="previewContainer">
-							<div class="previewContent">
-								<div ng-repeat="selectedGroupObj in selectedGroups">
-									<h4 style="font-weight:bold;">{{selectedGroupObj.entity.name_EN}} / {{selectedGroupObj.entity.name_FR}}:</h4>
-									<div ng-repeat="question in selectedGroupObj.entity.questions">
-										<p>{{question.text_EN}} / {{question.text_FR}}
-											<span style="color:#d9534f">( Question type: {{question.answertype_category_EN}} - {{question.answertype_name_EN}} / {{question.answertype_name_FR}} )</span>
-										</p>
-										<!-- Answer type preview -->
-										<div ng-if="question.answertype_category_EN == 'Multiple Choice'">
-											<div ng-repeat="option in question.options">
-												<label><input type="radio"> {{option.text_EN}} / {{option.text_FR}}</label>
-											</div>
-										</div>
-										<div ng-if="question.answertype_category_EN == 'Checkboxes'">
-											<div ng-repeat="option in question.options">
-												<label><input type="checkbox"> {{option.text_EN}} / {{option.text_FR}}</label>
-											</div>
-										</div>
-										<div ng-if="question.answertype_category_EN == 'Linear Scale'">
-											<div ng-repeat="option in question.options">
-												<label><input type="radio"> {{option.text_EN}} / {{option.text_FR}}</label>
-											</div>
-										</div>
-										<div ng-if="question.answertype_category_EN == 'Date'">
-											<label>Date:<input type="date"></label>
-										</div>
-										<div ng-if="question.answertype_category_EN == 'Time'">
-											<label>Time:<input type="time"></label>
-										</div>
-										<div ng-if="question.answertype_category_EN == 'Short Answer'">
-											<textarea rows="3" cols="50">Type in your answer.</textarea>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</uib-accordion>
+                        </div>
+                        <div class="previewContainer">
+                            <div class="previewContent">
+                                <div ng-repeat="selectedGroupObj in questionnaire.questions">
+                                    <h4>{{selectedGroupObj.type_EN}} / {{selectedGroupObj.type_FR}}:</h4>
+                                    <p>{{selectedGroupObj.text_EN}} / {{selectedGroupObj.text_FR}} <span style="color:red;">({{selectedGroupObj.optional == 1 ? 'optional' : 'required'}})</span></p>
+                                    <!-- Answer type preview -->
+                                    <div ng-if="selectedGroupObj.typeId == '4'">
+                                        <div ng-repeat="option in selectedGroupObj.subOptions">
+                                            <label><input type="radio" disabled> {{option.description_EN}} /
+                                                {{option.description_FR}}</label>
+                                        </div>
+                                    </div>
+                                    <div ng-if="selectedGroupObj.typeId == '2'">
+                                        <div ng-repeat="option in selectedGroupObj.subOptions">
+                                            <label><input type="radio" disabled>
+                                                {{option.description}}</label>
+                                        </div>
+                                    </div>
+                                    <div ng-if="selectedGroupObj.typeId == '1'">
+                                        <div ng-repeat="option in selectedGroupObj.subOptions">
+                                            <label><input type="checkbox" disabled>
+                                                {{option.description_EN}} /
+                                                {{option.description_FR}}</label>
+                                        </div>
+                                    </div>
+                                    <div ng-if="selectedGroupObj.typeId == '3'">
+                                        <textarea rows="3" cols="40" disabled>Type in your answer.</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12" ng-show="questionnaire.readOnly || questionnaire.final">
+                    <div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
+                            <span style="background-color: #fff; padding: 0 10px; font-size:16px;">
+                            Selected questions preview</span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="previewContent">
+                            <div ng-repeat="selectedGroupObj in questionnaire.questions">
+                                <h4>{{selectedGroupObj.type_EN}}</h4>
+                                <p>{{selectedGroupObj.text_EN}} <span style="color:red;">({{selectedGroupObj.optional == 1 ? 'optional' : 'required'}})</span></p>
+                                <!-- Answer type preview -->
+                                <div ng-if="selectedGroupObj.typeId == '4'">
+                                    <div ng-repeat="option in selectedGroupObj.subOptions">
+                                        <label><input type="radio" disabled> {{option.description_EN}}</label>
+                                    </div>
+                                </div>
+                                <div ng-if="selectedGroupObj.typeId == '2'">
+                                    <div ng-repeat="option in selectedGroupObj.subOptions">
+                                        <label><input type="radio" disabled> {{option.description_EN}}</label>
+                                    </div>
+                                </div>
+                                <div ng-if="selectedGroupObj.typeId == '1'">
+                                    <div ng-repeat="option in selectedGroupObj.subOptions">
+                                        <label><input type="checkbox" disabled> {{option.description_EN}}</label>
+                                    </div>
+                                </div>
+                                <div ng-if="selectedGroupObj.typeId == '3'">
+                                    <textarea rows="3" cols="40" disabled>Type in your answer.</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="previewContent">
+                            <div ng-repeat="selectedGroupObj in questionnaire.questions">
+                                <h4>{{selectedGroupObj.type_FR}}</h4>
+                                <p>{{selectedGroupObj.text_FR}} <span style="color:red;">({{selectedGroupObj.optional == 1 ? 'optionnel' : 'obligatoire'}})</span></p>
+                                <!-- Answer type preview -->
+                                <div ng-if="selectedGroupObj.typeId == '4'">
+                                    <div ng-repeat="option in selectedGroupObj.subOptions">
+                                        <label><input type="radio" disabled> {{option.description_FR}}</label>
+                                    </div>
+                                </div>
+                                <div ng-if="selectedGroupObj.typeId == '2'">
+                                    <div ng-repeat="option in selectedGroupObj.subOptions">
+                                        <label><input type="radio" disabled> {{option.description_FR}}</label>
+                                    </div>
+                                </div>
+                                <div ng-if="selectedGroupObj.typeId == '1'">
+                                    <div ng-repeat="option in selectedGroupObj.subOptions">
+                                        <label><input type="checkbox" disabled> {{option.description_FR}}</label>
+                                    </div>
+                                </div>
+                                <div ng-if="selectedGroupObj.typeId == '3'">
+                                    <textarea rows="3" cols="40" disabled>Entrez votre réponse.</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </uib-accordion>
 </div>
