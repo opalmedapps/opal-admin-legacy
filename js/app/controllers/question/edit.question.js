@@ -73,7 +73,6 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 
 		// Call our API service to get the questionnaire details
 		questionnaireCollectionService.getQuestionDetails($scope.currentQuestion.serNum, userId).then(function (response) {
-
 			questionnaireCollectionService.getLibraries(userId).then(function (resp) {
 				$scope.libraryFilterList = resp.data;
 			}).catch(function (response) {

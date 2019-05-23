@@ -120,15 +120,42 @@ class Questionnaire extends QuestionnaireModule {
         $questionnaireDetails = $questionnaireDetails[0];
         $questionnaireDetails["text_EN"] = strip_tags(htmlspecialchars_decode($questionnaireDetails["text_EN"]));
         $questionnaireDetails["text_FR"] = strip_tags(htmlspecialchars_decode($questionnaireDetails["text_FR"]));
+        $questionnaireDetails["locked"] = intval($this->isQuestionnaireLocked($questionnaireId));
+
+        $readOnly = false;
+        $isOwner = false;
+        if($this->questionnaireDB->getUserId() == $questionnaireDetails["userId"])
+            $isOwner = true;
+        if ($questionnaireDetails["locked"])
+            $readOnly = true;
+
+        $questionnaireDetails["readOnly"] = intval($readOnly);
+        $questionnaireDetails["isOwner"] = intval($isOwner);
+        $questionnaireDetails["final"] = intval($questionnaireDetails["final"]);
 
         $sectionDetails = $this->questionnaireDB->getSectionsByQuestionnaireId($questionnaireDetails["ID"]);
         $sectionDetails = $sectionDetails[0];
         $questionnaireDetails["questions"] = $this->questionnaireDB->getQuestionsBySectionId($sectionDetails["ID"]);
         foreach($questionnaireDetails["questions"] as &$question) {
             $question["order"] = intval($question["order"]);
-            //$question["optional"] = intval($question["optional"]);
             $question["text_EN"] = strip_tags(htmlspecialchars_decode($question["text_EN"]));
             $question["text_FR"] = strip_tags(htmlspecialchars_decode($question["text_FR"]));
+
+            if($question["typeId"] == SLIDERS)
+                $options = $this->questionnaireDB->getQuestionSliderDetails($question["ID"], $question["tableName"]);
+            else
+                $options = $this->questionnaireDB->getQuestionOptionsDetails($question["ID"], $question["tableName"]);
+            if (count($options) > 1)
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Errors fetching the question. Too many options.");
+
+            $options = $options[0];
+
+            $subOptions = null;
+            if($question["subTableName"] != "" && $options["ID"] != "") {
+                $subOptions = $this->questionnaireDB->getQuestionSubOptionsDetails($options["ID"], $question["subTableName"]);
+            }
+            $question["options"] = $options;
+            $question["subOptions"] = $subOptions;
         }
         return $questionnaireDetails;
     }

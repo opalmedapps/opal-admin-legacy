@@ -282,7 +282,6 @@ class Question extends QuestionnaireModule {
         $question["text_FR"] = htmlspecialchars_decode($question["text_FR"]);
         $question["locked"] = $this->isQuestionLocked($questionId);
 
-        $userRole = $this->opalDB->getUserRole();
         $readOnly = false;
         $isOwner = false;
         if($this->questionnaireDB->getUserId() == $question["userId"])
