@@ -49,7 +49,6 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 				}
 			});
 			return questions;
-
 		}
 
 		questionnaireCollectionService.getFinalizedQuestions(OAUserId).then(function (response) {
@@ -105,7 +104,6 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 		// Function to update the questionnaire after changing selection
 		var selectUpdate = function (row) {
 
-
 			// get selected rows
 			$scope.selectedGroups = $scope.gridApi.selection.getSelectedGridRows();
 
@@ -145,8 +143,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 				});
 
 				if (!inGroups) { // If not, append it to existing groups
-					var currentPosition = $scope.questionnaire.questions.length + 1;
-					row.entity.order = currentPosition;
+					row.entity.order = $scope.questionnaire.questions.length + 1;
 					row.entity.optional = '0';
 					$scope.questionnaire.questions.push(row.entity);
 					$scope.changesMade = true; // set changes made
@@ -161,8 +158,6 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 
 			$scope.anyPrivate = anyPrivate;
 			if (anyPrivate) {
-				//document.getElementById("btn-public").classList.add("disabled");
-				//document.getElementById("btn-public").classList.remove("animated");
 				if(publicPrivateWarning && $scope.questionnaire.private !== 1) {
 					publicPrivateWarning = false;
 					alert("When selecting a private question, a questionnaire has to be set to private.");
@@ -170,8 +165,6 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 				$scope.questionnaire.private = 1;
 			}
 			else {
-				//document.getElementById("btn-public").classList.remove("disabled");
-				//document.getElementById("btn-public").classList.add("animated");
 				publicPrivateWarning = true;
 			}
 		};
