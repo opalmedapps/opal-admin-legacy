@@ -16,7 +16,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	// get current user id
 	var user = Session.retrieveObject('user');
-	var userId = user.id;
+	var OAUserId = user.id;
 
 	// step bar
 	var steps = {
@@ -83,7 +83,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		libraries: [],
 		typeId: null,
 		private: null,
-		userId: userId
+		OAUserId: OAUserId
 	};
 
 	// Initialize variables for holding selected answer type & group
@@ -215,19 +215,19 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	};
 
 	// questionnaire API: retrieve data
-	questionnaireCollectionService.getQuestionTypes(userId).then(function (response) {
+	questionnaireCollectionService.getQuestionTypes(OAUserId).then(function (response) {
 		$scope.atFilterList = response.data;
 	}).catch(function(response) {
 		alert('Error occurred getting response types: '+response.status +"\r\n"+ response.data);
 	});
 
-	questionnaireCollectionService.getLibraries(userId).then(function (response) {
+	questionnaireCollectionService.getLibraries(OAUserId).then(function (response) {
 		$scope.groupFilterList = response.data;
 	}).catch(function(response) {
 		alert('Error occurred getting question libraries: '+response.status +"\r\n"+ response.data);
 	});
 
-	questionnaireCollectionService.getQuestionTypeList(userId).then(function (response) {
+	questionnaireCollectionService.getQuestionTypeList(OAUserId).then(function (response) {
 		$scope.atCatList = response.data;
 	}).catch(function(response) {
 		alert('Error occurred getting response type categories: '+response.status +"\r\n"+ response.data);
@@ -241,7 +241,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		category_EN: "",
 		category_FR: "",
 		private: 0,
-		userId: userId,
+		OAUserId: OAUserId,
 		options: [],
 		slider: []
 	};
@@ -249,7 +249,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	$scope.addNewQuestionType = function (atCatSelected) {
 		// Binding categories
 		$scope.newAnswerType.ID = atCatSelected.ID;
-		$scope.newAnswerType.userId = Session.retrieveObject('user').id;
+		$scope.newAnswerType.OAUserId = Session.retrieveObject('user').id;
 		// Prompt to confirm user's action
 		var confirmation = confirm("Are you sure you want to create a new " + atCatSelected.category_EN.toLowerCase()  +  " response type named '" + $scope.newAnswerType.name_EN + "'?");
 		if (confirmation) {
@@ -264,7 +264,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 						alert('Successfully added the new response type. Please find your new response type in the form above.');
 						// update answer type list
-						questionnaireCollectionService.getQuestionTypes(userId).then(function (response) {
+						questionnaireCollectionService.getQuestionTypes(OAUserId).then(function (response) {
 							$scope.atFilterList = response.data;
 						}).catch(function (response) {
 							alert('Error occurred getting response types: '+response.status +"\r\n"+ response.data);
@@ -287,7 +287,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 			text_EN: "",
 			text_FR: "",
 			order: undefined,
-			userId: userId
+			OAUserId: OAUserId
 		});
 	};
 
@@ -304,7 +304,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		name_EN: "",
 		name_FR: "",
 		private: 0,
-		userId: userId
+		OAUserId: OAUserId
 	};
 	$scope.addNewLib = function () {
 		// Prompt to confirm user's action
@@ -319,7 +319,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 					result = JSON.parse(result);
 					if(result.code === 200) {
 						alert('Successfully added the new library. Please find your new library in the panel above.');
-						questionnaireCollectionService.getLibraries(userId).then(function (response) {
+						questionnaireCollectionService.getLibraries(OAUserId).then(function (response) {
 							$scope.libraries = [];
 							$scope.groupFilterList = response.data;
 						}).catch(function (response) {

@@ -7,7 +7,7 @@ angular.module('opalAdmin.controllers.question.delete', ['ngAnimate', 'ngSanitiz
 			$.ajax({
 				type: "POST",
 				url: "php/questionnaire/delete.question.php",
-				data: {"ID": $scope.questionToDelete.serNum, "userId": Session.retrieveObject('user').id},
+				data: {"ID": $scope.questionToDelete.serNum, "OAUserId": Session.retrieveObject('user').id},
 				success: function (response) {
 					response = JSON.parse(response);
 					// Show success or failure depending on response
@@ -21,7 +21,7 @@ angular.module('opalAdmin.controllers.question.delete', ['ngAnimate', 'ngSanitiz
 						console.log(response.message);
 						switch(response.message) {
 							case 401:
-								errMsg = "You are not authentified!";
+								errMsg = "You are not authenticated!";
 								break;
 							case 403:
 								errMsg = "You do not have the permission to delete this question.";

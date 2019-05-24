@@ -1,17 +1,14 @@
 <?php
-	header('Content-Type: application/javascript');
-  /* To get a list of distinct answer type categories */
-  include_once('questionnaire.inc');
+/* To get a list of distinct answer type categories */
+include_once('questionnaire.inc');
 
-  // Retrieve form param
-  $callback = strip_tags($_GET['callback']);
-  $userId = strip_tags($_GET['userId']);
+$callback = strip_tags($_GET['callback']);
+$OAUserId = strip_tags($_GET['OAUserId']);
 
-  $answerType = new QuestionType($userId); // Object
+$answerType = new QuestionType($OAUserId); // Object
+$answerTypeCategoryList = $answerType->getQuestionTypeList();
 
-  // Call function
-  $answerTypeCategoryList = $answerType->getQuestionTypeList();
-
-  // Callback to http request
-  print $callback.'('.json_encode($answerTypeCategoryList).')';
+// Callback to http request
+header('Content-Type: application/javascript');
+print $callback.'('.json_encode($answerTypeCategoryList).')';
 ?>

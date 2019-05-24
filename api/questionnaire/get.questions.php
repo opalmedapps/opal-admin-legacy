@@ -3,9 +3,9 @@ include_once('questionnaire.inc');
 
 // Retrieve form param
 $callback = strip_tags($_GET['callback']);
-$userId = strip_tags($_GET["userId"]);
+$OAUserId = strip_tags($_GET["OAUserId"]);
 
-$question = new Question($userId);
+$question = new Question($OAUserId);
 $questionList = $question->getQuestions();
 
 header('Content-Type: application/javascript');

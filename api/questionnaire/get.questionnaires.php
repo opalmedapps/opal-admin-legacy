@@ -2,9 +2,9 @@
 include_once('questionnaire.inc');
 
 $callback = strip_tags($_GET['callback']);
-$userId = strip_tags($_GET['userId']);
+$OAUserId = strip_tags($_GET['OAUserId']);
 
-$questionnaire = new Questionnaire($userId);
+$questionnaire = new Questionnaire($OAUserId);
 $questionnairesList = $questionnaire->getQuestionnaires();
 
 header('Content-Type: application/javascript');

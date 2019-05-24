@@ -15,7 +15,7 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 
 	// get current user id
 	var user = Session.retrieveObject('user');
-	var userId = user.id;
+	var OAUserId = user.id;
 
 	var publicPrivateWarning = true;
 
@@ -79,7 +79,7 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		text_EN: "",
 		text_FR: "",
 		private: undefined,
-		userId: userId,
+		OAUserId: OAUserId,
 		questions: [],
 	};
 
@@ -256,7 +256,7 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		}
 	};
 
-	questionnaireCollectionService.getFinalizedQuestions(userId).then(function (response) {
+	questionnaireCollectionService.getFinalizedQuestions(OAUserId).then(function (response) {
 		response.data.forEach(function(entry) {
 
 			if(entry.typeId === "2") {

@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 
 		// get current user id
 		var user = Session.retrieveObject('user');
-		var userId = user.id;
+		var OAUserId = user.id;
 
 		// initialize default variables & lists
 		$scope.changesMade = false;
@@ -52,7 +52,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 
 		}
 
-		questionnaireCollectionService.getFinalizedQuestions(userId).then(function (response) {
+		questionnaireCollectionService.getFinalizedQuestions(OAUserId).then(function (response) {
 			$scope.groupList = decodeQuestions(response.data);
 		}).catch(function (response) {
 			alert('Error occurred getting group list. Code ' + response.status  + ".\r\n" + response.data);
@@ -191,7 +191,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 		$scope.showProcessingModal();
 
 		// Call our API service to get questionnaire details
-		questionnaireCollectionService.getQuestionnaireDetails($scope.currentQuestionnaire.ID, userId).then(function (response) {
+		questionnaireCollectionService.getQuestionnaireDetails($scope.currentQuestionnaire.ID, OAUserId).then(function (response) {
 
 			// Assign value
 			$scope.questionnaire = response.data;
@@ -266,44 +266,27 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 
 			if ($scope.checkForm()) {
 				console.log($scope.questionnaire);
-				// Initialize filter
-				// $scope.questionnaire.filters = [];
-				//
-				// // Add demographic filters, if defined
-				// if ($scope.demoFilter.sex)
-				// 	$scope.questionnaire.filters.push({ id: $scope.demoFilter.sex, type: 'Sex' });
-				// if ($scope.demoFilter.age.min >= 0 && $scope.demoFilter.age.max <= 100) { // i.e. not empty
-				// 	if ($scope.demoFilter.age.min !== 0 || $scope.demoFilter.age.max != 100) { // Filters were changed
-				// 		$scope.questionnaire.filters.push({
-				// 			id: String($scope.demoFilter.age.min).concat(',', String($scope.demoFilter.age.max)),
-				// 			type: 'Age'
-				// 		});
-				// 	}
-				// }
-				//
-				// // Log who updated questionnaire
-				// var currentUser = Session.retrieveObject('user');
-				// $scope.questionnaire.user = currentUser;
-				// // ajax POST
-				// $.ajax({
-				// 	type: "POST",
-				// 	url: "php/questionnaire/update.questionnaire.php",
-				// 	data: $scope.questionnaire,
-				// 	success: function (response) {
-				// 		response = JSON.parse(response);
-				// 		if (response.value) {
-				// 			$scope.setBannerClass('success');
-				// 			$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.questionnaire.text_EN + "/ " + $scope.questionnaire.text_FR + "\"!";
-				// 		}
-				// 		else {
-				// 			$scope.setBannerClass('danger');
-				// 			$scope.$parent.bannerMessage = response.message;
-				// 		}
-				//
-				// 		$scope.showBanner();
-				// 		$uibModalInstance.close();
-				// 	}
-				// });
+
+				// ajax POST
+				$.ajax({
+					type: "POST",
+					url: "php/questionnaire/update.questionnaire.php",
+					data: $scope.questionnaire,
+					success: function (response) {
+						response = JSON.parse(response);
+						if (response.value) {
+							$scope.setBannerClass('success');
+							$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.questionnaire.text_EN + "/ " + $scope.questionnaire.text_FR + "\"!";
+						}
+						else {
+							$scope.setBannerClass('danger');
+							$scope.$parent.bannerMessage = response.message;
+						}
+
+						$scope.showBanner();
+						$uibModalInstance.close();
+					}
+				});
 			}
 		};
 

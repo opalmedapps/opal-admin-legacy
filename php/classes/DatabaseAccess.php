@@ -14,7 +14,7 @@ class DatabaseAccess extends HelpSetup
     protected $usernameDB;
     protected $password;
     protected $databaseName;
-    protected $userId;
+    protected $OAUserId;
     protected $username;
     protected $userRole;
 
@@ -38,17 +38,17 @@ class DatabaseAccess extends HelpSetup
     /**
      * @return mixed
      */
-    public function getUserId()
+    public function getOAUserId()
     {
-        return $this->userId;
+        return $this->OAUserId;
     }
 
     /**
-     * @param mixed $userId
+     * @param mixed $OAUserId
      */
-    public function setUserId($userId)
+    public function setOAUserId($OAUserId)
     {
-        $this->userId = $userId;
+        $this->OAUserId = $OAUserId;
     }
 
     /**
