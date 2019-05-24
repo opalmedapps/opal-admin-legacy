@@ -85,6 +85,9 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-lg-12" ng-class="{invisible: !anyPrivate}">
+                    <p style="color:#d9534f;">Your questionnaire cannot be set as public when it contains at least one private question.</p>
+                </div>
             </div>
         </div>
         <!-- SECTION: Question group -->
@@ -186,7 +189,7 @@
                             <div class="previewContent">
                                 <div ng-repeat="selectedGroupObj in questionnaire.questions">
                                     <h4>{{selectedGroupObj.type_EN}} / {{selectedGroupObj.type_FR}}:</h4>
-                                    <p>{{selectedGroupObj.text_EN}} / {{selectedGroupObj.text_FR}} <span style="color:red;">({{selectedGroupObj.optional == 1 ? 'optional' : 'required'}})</span></p>
+                                    <p>{{selectedGroupObj.text_EN}} / {{selectedGroupObj.text_FR}} <span style="color:#d9534f;;">({{selectedGroupObj.optional == 1 ? 'optional' : 'required'}})</span></p>
                                     <!-- Answer type preview -->
                                     <div ng-if="selectedGroupObj.typeId == '4'">
                                         <div ng-repeat="option in selectedGroupObj.subOptions">
@@ -225,7 +228,7 @@
                         <div class="previewContent">
                             <div ng-repeat="selectedGroupObj in questionnaire.questions">
                                 <h4>{{selectedGroupObj.type_EN}}</h4>
-                                <p>{{selectedGroupObj.text_EN}} <span style="color:red;">({{selectedGroupObj.optional == 1 ? 'optional' : 'required'}})</span></p>
+                                <p>{{selectedGroupObj.text_EN}} <span style="color:#d9534f;;">({{selectedGroupObj.optional == 1 ? 'optional' : 'required'}})</span></p>
                                 <!-- Answer type preview -->
                                 <div ng-if="selectedGroupObj.typeId == '4'">
                                     <div ng-repeat="option in selectedGroupObj.subOptions">
@@ -252,7 +255,7 @@
                         <div class="previewContent">
                             <div ng-repeat="selectedGroupObj in questionnaire.questions">
                                 <h4>{{selectedGroupObj.type_FR}}</h4>
-                                <p>{{selectedGroupObj.text_FR}} <span style="color:red;">({{selectedGroupObj.optional == 1 ? 'optionnel' : 'obligatoire'}})</span></p>
+                                <p>{{selectedGroupObj.text_FR}} <span style="color:#d9534f;;">({{selectedGroupObj.optional == 1 ? 'optionnel' : 'obligatoire'}})</span></p>
                                 <!-- Answer type preview -->
                                 <div ng-if="selectedGroupObj.typeId == '4'">
                                     <div ng-repeat="option in selectedGroupObj.subOptions">
