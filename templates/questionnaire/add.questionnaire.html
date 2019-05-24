@@ -305,10 +305,7 @@
                                 </div>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-3">
-                                <div id="btn-public" class="panel-container animated" style="cursor:pointer;"
-                                     ng-class="{pulse: hoverC, active: newQuestionnaire.private == 0}"
-                                     ng-click="privacyUpdate(0)" ng-mouseenter="hoverC=true"
-                                     ng-mouseleave="hoverC=false">
+                                <div id="btn-public" class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hoverC, active: newQuestionnaire.private == 0}" ng-click="privacyUpdate(0)" ng-mouseenter="hoverC=true" ng-mouseleave="hoverC=false">
                                     <div class="panel-info" ng-class="{active: newQuestionnaire.private == 0}">
                                         <div class="panel-content" style="text-align:center">
                                             <span style="font-size:30px;" class="fa fa-users"></span>
@@ -317,8 +314,11 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-lg-12" ng-class="{invisible: !anyPrivate}">
+                                <p style="color:#d9534f;margin-bottom:20px;">Your questionnaire cannot be set as public when it contains at least one private question.</p>
+                            </div>
                         </div>
-                        <!-- SECTION: Add Question group -->
+                        <!-- SECTION: Add Questions -->
                         <div class="row animated" ng-class="{fadeInUp: questionsSection.show}" ng-if="questionsSection.show">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
@@ -329,8 +329,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: questionsSection.show}"
-                             ng-if="questionsSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: questionsSection.show}" ng-if="questionsSection.show">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
                                     <span style="color:#d9534f"><strong>Required field:</strong></span>
@@ -338,21 +337,18 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: questionsSection.show}"
-                             ng-if="questionsSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: questionsSection.show}" ng-if="questionsSection.show">
                             <div class="col-xs-12">
                                 <!-- question group table -->
                                 <div class="col-xs-12 col-md-8">
-                                    <div class="panel"
-                                         ng-class="newQuestionnaire.questions.length ? 'panel-success': 'panel-danger'">
+                                    <div class="panel" ng-class="newQuestionnaire.questions.length ? 'panel-success': 'panel-danger'">
                                         <div class="panel-heading"><strong>Questions</strong>
                                             <span ng-hide="newQuestionnaire.questions.length" style="float:right"><em>Incomplete</em></span>
                                             <span ng-show="newQuestionnaire.questions.length" style="float:right"><em>Complete</em></span>
                                         </div>
                                         <div class="panel-body">
                                             <div id="data-table">
-                                                <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns
-                                                     ui-grid-selection style="height:75vh"></div>
+                                                <div class="gridStyle" ui-grid="gridOptions" ui-grid-resize-columns ui-grid-selection style="height:75vh"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -365,43 +361,43 @@
                                     </div>
                                     <div class="previewContainer">
                                         <div class="previewContent">
-                                            <div ng-repeat="selectedGroupObj in selectedGroups">
-                                                <h4
-                                                        style="font-weight:bold;">{{selectedGroupObj.entity.type_EN}} /
-                                                    {{selectedGroupObj.entity.type_FR}}:
+                                            <div ng-repeat="selectedGroupObj in newQuestionnaire.questions">
+                                                <h4 style="font-weight:bold;">{{selectedGroupObj.type_EN}} /
+                                                    {{selectedGroupObj.type_FR}}:
                                                 </h4>
-                                                <p>{{selectedGroupObj.entity.text_EN}} /
-                                                    {{selectedGroupObj.entity.text_FR}}
+                                                <p>{{selectedGroupObj.text_EN}} /
+                                                    {{selectedGroupObj.text_FR}} <span style="color:#d9534f;;">({{selectedGroupObj.optional == 1 ? 'optional' : 'required'}})</span>
                                                 </p>
                                                 <!-- Answer type preview -->
-                                                <div ng-if="selectedGroupObj.entity.typeId == '4'">
-                                                    <div ng-repeat="option in selectedGroupObj.entity.subOptions">
+                                                <div ng-if="selectedGroupObj.typeId == '4'">
+                                                    <div ng-repeat="option in selectedGroupObj.subOptions">
                                                         <label><input type="radio" disabled> {{option.description_EN}} /
                                                             {{option.description_FR}}</label>
                                                     </div>
                                                 </div>
-                                                <div ng-if="selectedGroupObj.entity.typeId == '2'">
-                                                    <div ng-repeat="option in selectedGroupObj.entity.subOptions">
+                                                <div ng-if="selectedGroupObj.typeId == '2'">
+                                                    <div ng-repeat="option in selectedGroupObj.subOptions">
                                                         <label><input type="radio" disabled>
                                                             {{option.description}}</label>
                                                     </div>
                                                 </div>
-                                                <div ng-if="selectedGroupObj.entity.typeId == '1'">
-                                                    <div ng-repeat="option in selectedGroupObj.entity.subOptions">
+                                                <div ng-if="selectedGroupObj.typeId == '1'">
+                                                    <div ng-repeat="option in selectedGroupObj.subOptions">
                                                         <label><input type="checkbox" disabled>
                                                             {{option.description_EN}} /
-                                                            {{option.description_FR}}</label>
+                                                            {{option.description_FR}}
+                                                        </label>
                                                     </div>
                                                 </div>
-                                                <div ng-if="selectedGroupObj.entity.typeId == '3'">
-                                                    <textarea rows="3" cols="50" disabled>Type in your answer.</textarea>
+                                                <div ng-if="selectedGroupObj.typeId == '3'">
+                                                    <textarea rows="3" cols="40" disabled>Type in your answer.</textarea>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <!-- Selected groups: change position -->
+                            <!-- Selected groups: change order -->
                             <div class="col-xs-12 col-md-8" ng-show="newQuestionnaire.questions.length">
                                 <div class="panel-container">
                                     <div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
@@ -410,23 +406,18 @@
                                     <div class="panel-info">
                                         <table style="width:100%;">
                                             <tr style="font-size:16px;">
-                                                <td>Position</td>
+                                                <td>Order</td>
                                                 <td>Question</td>
                                                 <td>Required or Optional?</td>
                                             </tr>
-                                            <tr>
-                                            </tr>
+                                            <tr></tr>
                                             <tr ng-repeat="group in newQuestionnaire.questions">
                                                 <td>
                                                     <label>
-                                                        <input type="number" min="1"
-                                                               max="{{newQuestionnaire.questions.length}}"
-                                                               ng-model="group.position" placeholder={{group.position}}>
+                                                        <input type="number" min="1" max="{{newQuestionnaire.questions.length}}" ng-model="group.order" ng-change="orderPreview();" placeholder={{group.order}}>
                                                     </label>
                                                 </td>
-                                                <td>
-                                                    {{group.text_EN}} / {{group.text_FR}}
-                                                </td>
+                                                <td>{{group.text_EN}} / {{group.text_FR}}</td>
                                                 <td>
                                                     <select name="groupOptional" ng-model="group.optional" required ng-init="group.optional='0'">
                                                         <option value="0">Required</option>

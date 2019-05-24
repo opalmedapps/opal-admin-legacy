@@ -97,6 +97,32 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		$scope.loadForm();
 	});
 
+	function decodeQuestions(questions) {
+		questions.forEach(function(entry) {
+			entry.text_EN = entry.text_EN.replace(/(<([^>]+)>)/ig,"");
+			entry.text_FR = entry.text_FR.replace(/(<([^>]+)>)/ig,"");
+			if(entry.typeId === "2") {
+				var increment = parseFloat(entry.options.increment);
+				var minValue = parseFloat(entry.options.minValue);
+				if (minValue === 0.0) minValue = increment;
+				var maxValue = parseFloat(entry.options.maxValue);
+
+				var radiostep = new Array();
+				for(var i = minValue; i <= maxValue; i += increment) {
+					radiostep.push({"description":" " + i,"description_EN":" " + i,"description_FR":" " + i});
+				}
+				radiostep[0]["description"] += " " + entry.options.minCaption_EN + " / " + entry.options.minCaption_FR;
+				radiostep[0]["description_EN"] += " " + entry.options.minCaption_EN;
+				radiostep[0]["description_FR"] += " " + entry.options.minCaption_FR;
+				radiostep[radiostep.length - 1]["description"] += " " + entry.options.maxCaption_EN + " / " + entry.options.maxCaption_FR;
+				radiostep[radiostep.length - 1]["description_EN"] += " " + entry.options.maxCaption_EN;
+				radiostep[radiostep.length - 1]["description_FR"] += " " + entry.options.maxCaption_FR;
+				entry.subOptions = radiostep;
+			}
+		});
+		return questions;
+	}
+
 	// update form functions
 	$scope.titleUpdate = function () {
 
@@ -152,8 +178,9 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		}
 
 		var anyPrivate = false;
+
 		$scope.newQuestionnaire.questions.forEach(function(entry) {
-			if(entry.private === 1)
+			if(entry.private === "1")
 				anyPrivate = true;
 		});
 
@@ -210,71 +237,39 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		enableRowSelection: true,
 		enableSelectAll: false,
 		enableSelectionBatchEvent: true,
-		showGridFooter:true,
+		showGridFooter:false,
 		onRegisterApi: function (gridApi) {
 			$scope.gridApi = gridApi;
 			gridApi.grid.registerRowsProcessor($scope.filterOptions, 300);
 			gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-				selectUpdate();
+				selectUpdate(row);
 				questionsUpdate();
 			});
 		},
 	};
 
-	// cancel selection
-	$scope.cancelSelection = function () {
-		$scope.gridApi.selection.clearSelectedRows();
-		selectUpdate();
-	};
-
-	// select all rows
-	$scope.selectAll = function () {
-		$scope.gridApi.selection.selectAllRows();
-		selectUpdate();
-	};
-
 	// function to update the newQuestionnaire content after changing selection
-	var selectUpdate = function () {
+	var selectUpdate = function (row) {
 		$scope.selectedGroups = $scope.gridApi.selection.getSelectedGridRows();
 		var selectedNum = $scope.gridApi.selection.getSelectedCount();
 		if (selectedNum === 0) {
 			$scope.newQuestionnaire.questions = [];
 		} else {
-			var tempGroupArray = [];
-			for (var i = 0; i < selectedNum; i++) {
-				var group = {
-					position: i + 1,
-					questionId: $scope.selectedGroups[i].entity.ID,
-					private: parseInt($scope.selectedGroups[i].entity.private),
-					optional: 0,
-					text_EN: $scope.selectedGroups[i].entity.text_EN,
-					text_FR: $scope.selectedGroups[i].entity.text_FR
-				};
-				tempGroupArray.push(group);
-				$scope.newQuestionnaire.questions = tempGroupArray.slice(0);
-			}
+
+			row.entity.order = $scope.newQuestionnaire.questions.length + 1;
+			row.entity.optional = '0';
+			$scope.newQuestionnaire.questions.push(row.entity);
 		}
 	};
 
-	questionnaireCollectionService.getFinalizedQuestions(OAUserId).then(function (response) {
-		response.data.forEach(function(entry) {
-
-			if(entry.typeId === "2") {
-				var increment = parseFloat(entry.options.increment);
-				var minValue = parseFloat(entry.options.minValue);
-				if (minValue === 0.0) minValue = increment;
-				var maxValue = parseFloat(entry.options.maxValue);
-
-				var radiostep = new Array();
-				for(var i = minValue; i <= maxValue; i += increment) {
-					radiostep.push({"description_EN":"","description_FR":""});
-				}
-				radiostep[0]["description"] = entry.options.minCaption_EN + " / " + entry.options.minCaption_FR;
-				radiostep[radiostep.length - 1]["description"] = entry.options.maxCaption_EN + " / " + entry.options.maxCaption_FR;
-				entry.subOptions = radiostep;
-			}
+	$scope.orderPreview = function () {
+		$scope.newQuestionnaire.questions.sort(function(a,b){
+			return (a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0);
 		});
-		$scope.groupList = response.data;
+	}
+
+	questionnaireCollectionService.getFinalizedQuestions(OAUserId).then(function (response) {
+		$scope.groupList = decodeQuestions(response.data);
 	}).catch(function (response) {
 		alert('Error occurred getting group list:' + response.status + response.data);
 	});
