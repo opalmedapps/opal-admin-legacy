@@ -6,7 +6,7 @@ angular.module('opalAdmin.controllers.questionnaire.delete', ['ngAnimate', 'ngSa
 		$scope.deleteQuestionnaire = function () {
 			// Log who deleted questionnaire
 			var currentUser = Session.retrieveObject('user');
-			$scope.questionnaireToDelete.userId = currentUser.id;
+			$scope.questionnaireToDelete.OAUserId = currentUser.id;
 			$.ajax({
 				type: "POST",
 				url: "php/questionnaire/delete.questionnaire.php",

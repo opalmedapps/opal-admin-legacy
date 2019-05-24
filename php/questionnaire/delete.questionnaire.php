@@ -2,8 +2,8 @@
 include_once('questionnaire.inc');
 
 $questionnaireId = strip_tags($_POST['ID']);
-$userId = strip_tags($_POST['userId']);
-$questionnaireObj = new Questionnaire($userId);
+$OAUserId = strip_tags($_POST['OAUserId']);
+$questionnaireObj = new Questionnaire($OAUserId);
 
 $response = $questionnaireObj->deleteQuestionnaire($questionnaireId);
 

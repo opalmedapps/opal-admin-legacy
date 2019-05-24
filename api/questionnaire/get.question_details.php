@@ -3,9 +3,9 @@ include_once('questionnaire.inc');
 
 $callback = strip_tags($_GET['callback']);
 $questionId = strip_tags($_GET['questionId']);
-$userId = strip_tags($_GET['userId']);
+$OAUserId = strip_tags($_GET['OAUserId']);
 
-$question = new Question($userId);
+$question = new Question($OAUserId);
 $questionDetails = $question->getQuestionDetails($questionId);
 unset($questionDetails['question']);
 unset($questionDetails["tableName"]);

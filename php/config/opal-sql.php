@@ -23,17 +23,17 @@ define("OPAL_QUESTIONNAIRE_CONTROL_TABLE","questionnairecontrol");
  * Listing of all SQL queries for the Opal database
  * */
 define("SQL_OPAL_SELECT_USER_INFO",
-    "SELECT OAUserSerNum AS userId,
+    "SELECT OAUserSerNum AS OAUserId,
     Username AS username,
     Language as language
     FROM ".OPAL_OAUSER_TABLE."
-    WHERE OAUserSerNum = :userId"
+    WHERE OAUserSerNum = :OAUserId"
 );
 
 define("SQL_OPAL_SELECT_USER_ROLE",
     "SELECT *
     FROM ".OPAL_OAUSER_ROLE_TABLE."
-    WHERE OAUserSerNum = :userId"
+    WHERE OAUserSerNum = :OAUserId"
 );
 
 define("SQL_OPAL_LIST_QUESTIONNAIRES_FROM_QUESTIONNAIRE_CONTROL",

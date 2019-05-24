@@ -16,7 +16,7 @@ class Question extends QuestionnaireModule {
             "text_EN"=>htmlspecialchars($questionToSanitize['text_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
             "text_FR"=>htmlspecialchars($questionToSanitize['text_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
             "typeId"=>strip_tags($questionToSanitize['typeId']),
-            "userId"=>strip_tags($questionToSanitize['userId']),
+            "OAUserId"=>strip_tags($questionToSanitize['OAUserId']),
         );
 
         if($questionToSanitize["ID"] != "") {
@@ -284,7 +284,7 @@ class Question extends QuestionnaireModule {
 
         $readOnly = false;
         $isOwner = false;
-        if($this->questionnaireDB->getUserId() == $question["userId"])
+        if($this->questionnaireDB->getOAUserId() == $question["OAUserId"])
             $isOwner = true;
         if ($question["locked"])
             $readOnly = true;
@@ -366,7 +366,7 @@ class Question extends QuestionnaireModule {
                 $toUpdate = array();
                 foreach($data as $key=>$value) {
                     if (in_array($key, array("ID","description_FR","description_EN"))) continue;
-                    else if($key == "userId")
+                    else if($key == "OAUserId")
                         $toUpdate["OAUserId"] = $value;
                     else
                         $toUpdate[$key] = $value;
@@ -425,7 +425,7 @@ class Question extends QuestionnaireModule {
                 $toUpdate = array();
                 foreach($data as $key=>$value) {
                     if (in_array($key, array("ID","description_FR","description_EN"))) continue;
-                    else if($key == "userId")
+                    else if($key == "OAUserId")
                         $toUpdate["OAUserId"] = $value;
                     else
                         $toUpdate[$key] = $value;
@@ -563,7 +563,7 @@ class Question extends QuestionnaireModule {
         $total = 0;
         $oldQuestion = $this->getQuestionDetails($updatedQuestion["ID"]);
         $isLocked = $this->isQuestionLocked($oldQuestion["ID"]);
-        if ($oldQuestion["deleted"] == DELETED_RECORD || $this->questionnaireDB->getUsername() == "" || ($oldQuestion["private"] == 1 && $this->questionnaireDB->getUserId() != $oldQuestion["userId"]))
+        if ($oldQuestion["deleted"] == DELETED_RECORD || $this->questionnaireDB->getUsername() == "" || ($oldQuestion["private"] == 1 && $this->questionnaireDB->getOAUserId() != $oldQuestion["OAUserId"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
         else if(empty($updatedQuestion["options"]) || ($updatedQuestion["typeId"] == RADIO_BUTTON || $updatedQuestion["typeId"] == CHECKBOXES) && empty($updatedQuestion["subOptions"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data.");
@@ -629,7 +629,7 @@ class Question extends QuestionnaireModule {
     function deleteQuestion($questionId) {
         $questionToDelete = $this->questionnaireDB->getQuestionDetails($questionId);
         $questionToDelete = $questionToDelete[0];
-        if ($this->questionnaireDB->getUserId() <= 0 || $questionToDelete["deleted"] == 1 || ($questionToDelete["private"] == 1 && $this->questionnaireDB->getUserId() != $questionToDelete["userId"]))
+        if ($this->questionnaireDB->getOAUserId() <= 0 || $questionToDelete["deleted"] == 1 || ($questionToDelete["private"] == 1 && $this->questionnaireDB->getOAUserId() != $questionToDelete["OAUserId"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
 
         $lastUpdated = $this->questionnaireDB->getLastTimeTableUpdated(QUESTION_TABLE, $questionId);
