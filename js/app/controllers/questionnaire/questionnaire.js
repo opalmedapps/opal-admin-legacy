@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 
 		// get current user id
 		var user = Session.retrieveObject('user');
-		var userId = user.id;
+		var OAUserId = user.id;
 
 		// navigating functions
 		$scope.goToQuestionnaire = function () {
@@ -115,7 +115,7 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 		$scope.questionnaireList = [];
 
 		// Call API to get the list of questionnaires
-		questionnaireCollectionService.getQuestionnaires(userId).then(function (response) {
+		questionnaireCollectionService.getQuestionnaires(OAUserId).then(function (response) {
 			$scope.questionnaireList = response.data;
 		}).catch(function(response) {
 			alert('Error occurred getting questionnaire list: ' + response.status + " " + response.data);
@@ -150,7 +150,7 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 
 			// After delete, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				questionnaireCollectionService.getQuestionnaires(userId).then(function (response) {
+				questionnaireCollectionService.getQuestionnaires(OAUserId).then(function (response) {
 					$scope.questionnaireList = response.data;
 				}).catch(function(response) {
 					alert('Error occurred getting questionnaire list after modal close: ' + response.status + " " + response.data);
@@ -175,7 +175,7 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 
 			// After update, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				questionnaireCollectionService.getQuestionnaires(userId).then(function (response) {
+				questionnaireCollectionService.getQuestionnaires(OAUserId).then(function (response) {
 					$scope.questionnaireList = response.data;
 				}).catch(function(response) {
 					alert('Error occurred getting questionnaire list after modal close: ' + response.status + " " + response.data);

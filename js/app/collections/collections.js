@@ -577,24 +577,24 @@ angular.module('opalAdmin.collections', [])
 	.factory('questionnaireCollectionService', function ($http) {
 		var questionnaireAPI = {};
 
-		questionnaireAPI.getQuestionnaires = function (userId) {
+		questionnaireAPI.getQuestionnaires = function (OAUserId) {
 			return $http({
 				method: 'JSONP',
 				url: "api/questionnaire/get.questionnaires.php",
 				params: {
 					callback: 'JSON_CALLBACK',
-					userId: userId,
+					OAUserId: OAUserId,
 				}
 			});
 		};
 
-		questionnaireAPI.getLibraries = function (userId) {
+		questionnaireAPI.getLibraries = function (OAUserId) {
 			return $http({
 				method: 'JSONP',
 				url: "api/questionnaire/get.libraries.php",
 				params: {
 					callback: 'JSON_CALLBACK',
-					userId: userId,
+					OAUserId: OAUserId,
 				}
 
 			});
@@ -607,77 +607,70 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
-		questionnaireAPI.getQuestionTypes = function (userId) {
+		questionnaireAPI.getQuestionTypes = function (OAUserId) {
 			return $http({
 				method: 'JSONP',
 				url: "api/questionnaire/get.question_types.php",
 				params: {
 					callback: 'JSON_CALLBACK',
-					userId: userId,
+					OAUserId: OAUserId,
 				}
 			});
 		};
 
-		questionnaireAPI.getQuestionTypeList = function (userid) {
+		questionnaireAPI.getQuestionTypeList = function (OAUserId) {
 			return $http({
 				method: 'JSONP',
 				url: "api/questionnaire/get.question_type_categories.php",
 				params: {
 					callback: 'JSON_CALLBACK',
-					userId: userid,
+					OAUserId: OAUserId,
 				}
 			});
 		};
 
-		questionnaireAPI.getQuestions = function (userId) {
+		questionnaireAPI.getQuestions = function (OAUserId) {
 			return $http({
 				method: 'JSONP',
 				url: "api/questionnaire/get.questions.php",
 				params: {
 					callback: 'JSON_CALLBACK',
-					userId: userId,
+					OAUserId: OAUserId,
 				}
 			});
 		};
 
-		questionnaireAPI.getQuestionDetails = function (questionSerNum, userid) {
+		questionnaireAPI.getQuestionDetails = function (questionId, OAUserId) {
 			return $http({
 				method: 'JSONP',
 				url: "api/questionnaire/get.question_details.php",
 				params: {
 					callback: 'JSON_CALLBACK',
-					questionId: questionSerNum,
-					userId: userid,
+					questionId: questionId,
+					OAUserId: OAUserId,
 				}
 			});
 		};
 
-		/*questionnaireAPI.getQuestionGroupWithLibraries = function (userid) {
-			return $http({
-				method: 'JSONP',
-				url: "api/questionnaire/get.question_group_with_libraries.php?callback=JSON_CALLBACK&userid=" + userid
-			});
-		};*/
-
-		questionnaireAPI.getFinalizedQuestions = function (userId) {
+		questionnaireAPI.getFinalizedQuestions = function (OAUserId) {
 			return $http({
 				method: 'JSONP',
 				url: "api/questionnaire/get.finalizedQuestions.php",
 				params: {
 					callback: 'JSON_CALLBACK',
-					userId: userId,
+					OAUserId: OAUserId,
 				}
 			});
 		};
 
-		questionnaireAPI.getQuestionnaireDetails = function (questionnaireId, userId) {
+		questionnaireAPI.getQuestionnaireDetails = function (questionnaireId, OAUserId) {
 			return $http({
 				method: 'JSONP',
 				url: "api/questionnaire/get.questionnaire_details.php",
 				params: {
 					callback: 'JSON_CALLBACK',
 					questionnaireId: questionnaireId,
-					userId: userId,
+					OAUserId: OAUserId,
 				}
 			});
 		};

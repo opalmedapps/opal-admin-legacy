@@ -9,8 +9,8 @@ class QuestionnaireModule extends OpalProject
 {
     protected $questionnaireDB;
 
-    public function __construct($userId = false) {
-        parent::__construct($userId);
+    public function __construct($OAUserId = false) {
+        parent::__construct($OAUserId);
 
         $this->questionnaireDB = new DatabaseQuestionnaire(
             QUESTIONNAIRE_DB_2019_HOST,
@@ -18,11 +18,11 @@ class QuestionnaireModule extends OpalProject
             QUESTIONNAIRE_DB_2019_PORT,
             QUESTIONNAIRE_DB_2019_USERNAME,
             QUESTIONNAIRE_DB_2019_PASSWORD,
-            $userId
+            $OAUserId
         );
 
         $this->questionnaireDB->setUsername($this->opalDB->getUsername());
-        $this->questionnaireDB->setUserId($this->opalDB->getUserId());
+        $this->questionnaireDB->setOAUserId($this->opalDB->getOAUserId());
         $this->questionnaireDB->setUserRole($this->opalDB->getUserRole());
     }
 

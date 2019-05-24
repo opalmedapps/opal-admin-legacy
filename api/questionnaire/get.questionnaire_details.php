@@ -3,10 +3,12 @@ include_once('questionnaire.inc');
 
 $callback = strip_tags($_GET['callback']);
 $questionnaireId = strip_tags($_GET['questionnaireId']);
-$userId = strip_tags($_GET['userId']);
+$OAUserId = strip_tags($_GET['OAUserId']);
 
-$questionnaire = new Questionnaire($userId);
+$questionnaire = new Questionnaire($OAUserId);
 $questionnaireDetails = $questionnaire->getQuestionnaireDetails($questionnaireId);
+$questionnaireDetails["OAUserId"] = $questionnaireDetails["OAUserID"];
+unset($questionnaireDetails["OAUserID"]);
 unset($questionnaireDetails["category"]);
 unset($questionnaireDetails["createdBy"]);
 unset($questionnaireDetails["creationDate"]);

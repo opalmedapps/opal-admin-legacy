@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 	.controller('question.edit', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
 		// get current user id
 		var user = Session.retrieveObject('user');
-		var userId = user.id;
+		var OAUserId = user.id;
 
 
 		// initialize default variables & lists
@@ -72,8 +72,8 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		$scope.showProcessingModal();
 
 		// Call our API service to get the questionnaire details
-		questionnaireCollectionService.getQuestionDetails($scope.currentQuestion.serNum, userId).then(function (response) {
-			questionnaireCollectionService.getLibraries(userId).then(function (resp) {
+		questionnaireCollectionService.getQuestionDetails($scope.currentQuestion.serNum, OAUserId).then(function (response) {
+			questionnaireCollectionService.getLibraries(OAUserId).then(function (resp) {
 				$scope.libraryFilterList = resp.data;
 			}).catch(function (response) {
 				alert('Error occurred getting libraries. Code '+ response.status +"\r\n" + response.data);
@@ -111,7 +111,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			else
 				$scope.question.isOwner = false;
 
-			$scope.question.userId = userId;
+			$scope.question.OAUserId = OAUserId;
 
 			$scope.selectedLibrary = response.data.libraries;
 			processingModal.close(); // hide modal
@@ -124,7 +124,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 
 		// Call our API service to get the list of existing answer types
 
-		questionnaireCollectionService.getQuestionTypes(userId).then(function (response) {
+		questionnaireCollectionService.getQuestionTypes(OAUserId).then(function (response) {
 			$scope.atFilterList = response.data;
 		}).catch(function (response){
 			alert('Error occurred getting response types:', response.status, response.data);
@@ -150,7 +150,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 				description_EN: "",
 				description_FR: "",
 				position: undefined,
-				userId: userId
+				OAUserId: OAUserId
 			});
 		};
 
@@ -164,7 +164,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			}
 		};
 
-		questionnaireCollectionService.getLibraries(userId).then(function (response) {
+		questionnaireCollectionService.getLibraries(OAUserId).then(function (response) {
 			$scope.groupFilterList = response.data;
 		}).catch(function(response) {
 			alert('Error occurred getting question libraries:', response.status, response.data);
@@ -175,7 +175,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			name_EN: "",
 			name_FR: "",
 			private: 0,
-			userId: userId
+			OAUserId: OAUserId
 		};
 
 
@@ -193,7 +193,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 						if(result.code === 200) {
 							alert('Successfully added the new library. Please find your new library in the panel above.');
 
-							questionnaireCollectionService.getLibraries(userId).then(function (response) {
+							questionnaireCollectionService.getLibraries(OAUserId).then(function (response) {
 								$scope.libraries = [];
 								$scope.libraryFilterList = response.data;
 							}).catch(function (response) {

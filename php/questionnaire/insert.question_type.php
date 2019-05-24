@@ -9,7 +9,7 @@ $questionTypeArray = QuestionType::validateAndSanitize($_POST);
 if(!$questionTypeArray)
     HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid question type format");
 
-$answerTypeObj = new QuestionType($questionTypeArray["userId"]); // Object
+$answerTypeObj = new QuestionType($questionTypeArray["OAUserId"]); // Object
 
 // Call function
 $answerTypeObj->insertQuestionType($questionTypeArray);

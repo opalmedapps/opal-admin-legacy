@@ -1,26 +1,17 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To update questionnaire information from POST request */
-	include_once('questionnaire.inc'); // Load library
+$OAUserId = strip_tags($_POST['OAUserId']);
+print_R($_POST);die();
 
-	// Construct array from FORM params
-	$questionnaireArray = array(
-		'serNum'					=> $_POST['serNum'],
-		'name_EN'	 				=> $_POST['name_EN'],
-		'name_FR'	 				=> $_POST['name_FR'],
-		'private' 				=> $_POST['private'],
-		'publish' 				=> $_POST['publish'],
-		'last_updated_by'	=> $_POST['last_updated_by'],
-		'tags'						=> $_POST['tags'],
-		'groups'					=> $_POST['groups'],
-		'filters'					=> $_POST['filters'],
-		'user'						=> $_POST['user']
-	);
+$questionnaire = new Questionnaire($OAUserId);
+$questionnaireArray = $questionnaire->validateAndSanitize($_POST);
+if(!$questionnaireArray)
+    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire format");
 
-	$questionnaireObj = new Questionnaire; // Object
+print_R($questionnaireArray);die();
 
-	// Call function
-	$response = $questionnaireObj->updateQuestionnaire($questionnaireArray);
+$questionnaire->updateQuestionnaire($questionnaireArray);
 
-	print json_encode($response); // Return response
+header('Content-Type: application/javascript');
+$response['code'] = HTTP_STATUS_SUCCESS;
+echo json_encode($response);
 ?>

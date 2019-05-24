@@ -124,7 +124,7 @@ class Questionnaire extends QuestionnaireModule {
 
         $readOnly = false;
         $isOwner = false;
-        if($this->questionnaireDB->getUserId() == $questionnaireDetails["userId"])
+        if($this->questionnaireDB->getOAUserId() == $questionnaireDetails["OAUserId"])
             $isOwner = true;
         if ($questionnaireDetails["locked"])
             $readOnly = true;
@@ -220,7 +220,7 @@ class Questionnaire extends QuestionnaireModule {
     public function deleteQuestionnaire($questionnaireId){
         $questionToDelete = $this->questionnaireDB->getQuestionnaireDetails($questionnaireId);
         $questionToDelete = $questionToDelete[0];
-        if ($this->questionnaireDB->getUserId() <= 0 || $questionToDelete["deleted"] == 1 || ($questionToDelete["private"] == 1 && $this->questionnaireDB->getUserId() != $questionToDelete["OAUserId"]))
+        if ($this->questionnaireDB->getOAUserId() <= 0 || $questionToDelete["deleted"] == 1 || ($questionToDelete["private"] == 1 && $this->questionnaireDB->getOAUserId() != $questionToDelete["OAUserId"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
 
         $lastUpdated = $this->questionnaireDB->getLastTimeTableUpdated(QUESTIONNAIRE_TABLE, $questionnaireId);

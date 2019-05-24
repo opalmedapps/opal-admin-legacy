@@ -12,12 +12,12 @@ class QuestionType extends QuestionnaireModule {
             'name_EN' => strip_tags($newQuestionType['name_EN']),
             'name_FR' => strip_tags($newQuestionType['name_FR']),
             'private' => strip_tags($newQuestionType['private']),
-            'userId' => strip_tags($newQuestionType['userId']),
+            'OAUserId' => strip_tags($newQuestionType['OAUserId']),
             'options' => $newQuestionType['options'],
         );
 
 
-        if( $validatedQT["typeId"] == "" ||  $validatedQT["name_EN"] == "" ||  $validatedQT["name_FR"] == "" ||  $validatedQT["userId"] == "")
+        if( $validatedQT["typeId"] == "" ||  $validatedQT["name_EN"] == "" ||  $validatedQT["name_FR"] == "" ||  $validatedQT["OAUserId"] == "")
             return false;
 
         if ($validatedQT["typeId"] == SLIDERS)
@@ -144,7 +144,7 @@ class QuestionType extends QuestionnaireModule {
 
     /*
      * Gets a list of existing question types
-     * @param integer $userId : the user id
+     * @param integer $OAUserId : the user id
      * @return array $questionTypes : the list of existing answer types
      */
     public function getQuestionTypes(){
