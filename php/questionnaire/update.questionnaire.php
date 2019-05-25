@@ -1,13 +1,12 @@
 <?php
-$OAUserId = strip_tags($_POST['OAUserId']);
-print_R($_POST);die();
+include_once('questionnaire.inc');
 
+$OAUserId = strip_tags($_POST['OAUserId']);
 $questionnaire = new Questionnaire($OAUserId);
 $questionnaireArray = $questionnaire->validateAndSanitize($_POST);
+
 if(!$questionnaireArray)
     HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire format");
-
-print_R($questionnaireArray);die();
 
 $questionnaire->updateQuestionnaire($questionnaireArray);
 

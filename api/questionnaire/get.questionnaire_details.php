@@ -7,8 +7,6 @@ $OAUserId = strip_tags($_GET['OAUserId']);
 
 $questionnaire = new Questionnaire($OAUserId);
 $questionnaireDetails = $questionnaire->getQuestionnaireDetails($questionnaireId);
-$questionnaireDetails["OAUserId"] = $questionnaireDetails["OAUserID"];
-unset($questionnaireDetails["OAUserID"]);
 unset($questionnaireDetails["category"]);
 unset($questionnaireDetails["createdBy"]);
 unset($questionnaireDetails["creationDate"]);
