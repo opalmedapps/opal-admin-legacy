@@ -136,6 +136,7 @@ class Questionnaire extends QuestionnaireModule {
 
         $sectionDetails = $this->questionnaireDB->getSectionsByQuestionnaireId($questionnaireDetails["ID"]);
         $sectionDetails = $sectionDetails[0];
+        $questionnaireDetails["sections"] = array($sectionDetails["ID"]);
         $questionnaireDetails["questions"] = $this->questionnaireDB->getQuestionsBySectionId($sectionDetails["ID"]);
         foreach($questionnaireDetails["questions"] as &$question) {
             $question["order"] = intval($question["order"]);
@@ -250,41 +251,105 @@ class Questionnaire extends QuestionnaireModule {
         }
     }
 
-    /**
+    /*
+     * This function updates a questionnaire. If the questionnaire has being sent already, it is considered as locked
+     * and cannot be sent. First, it will remove any questions to the questionnaire, then it will add the ones
+     * requested, and finally update the questions settings. Next, the dictionary will be updated with updated titles,
+     * and finally the privacy and status (draft final) of the questionnaire will be updated.
      *
-     * Sets a questionnaire publish flag for a particular questionnaire
-     *
-     * @param integer $questionnaire_serNum : the questionnaire serial number
-     * @return void
-     */
-    public function publishQuestionnaire($questionnaire_serNum){
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-				UPDATE
-					QuestionnaireControlNew
-				SET
-					publish = 1
-				WHERE
-					serNum = $questionnaire_serNum
-			";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-        } catch(PDOException $e) {
-            return $e->getMessage();
+     * @params  $updatedQuestionnaire (array)
+     * @return  void
+     * */
+    public function updateQuestionnaire($updatedQuestionnaire){
+        $total = 0;
+        $questionnaireUpdated = 0;
+        $oldQuestions = array();
+        $newQuestions = array();
+        $updatedQuestions = array();
+        $questionsToKeep = array();
+        $questionCheckPrivacy = array();
+
+        /*
+         *  $this->questionnaireDB->fetchQuestionsByIds($arrIds)
+         * */
+        //Get current questionnaire infos
+        $oldQuestionnaire = $this->getQuestionnaireDetails($updatedQuestionnaire["ID"]);
+
+        //If the questionnaire is locked, ignore all the changes
+        if($this->isQuestionnaireLocked($oldQuestionnaire["ID"])) return false;
+
+        //Look for the current questions IDs associated to the questionnaire
+        foreach($oldQuestionnaire["questions"] as $question)
+            if(!in_array($question["ID"], $oldQuestions))
+                array_push($oldQuestions, $question["ID"]);
+
+        //Prepare the list of questions to keep, to update and to insert
+        foreach($updatedQuestionnaire["questions"] as $question) {
+            array_push($questionCheckPrivacy, $question["questionId"]);
+            if (!in_array($question["questionId"], $questionsToKeep))
+                array_push($questionsToKeep, $question["questionId"]);
+            if (!in_array($question["questionId"], $oldQuestions) && !in_array($question["questionId"], $newQuestions)) {
+                $tempQuestion = $question;
+                $tempQuestion["sectionId"] = $oldQuestionnaire["sections"][0];
+                array_push($newQuestions, $tempQuestion);
+            }
+            if (in_array($question["questionId"], $oldQuestions) && !in_array($question["questionId"], $updatedQuestions)) {
+                $tempQuestion = $question;
+                $tempQuestion["sectionId"] = $oldQuestionnaire["sections"][0];
+                array_push($updatedQuestions, $tempQuestion);
+            }
         }
-    }
 
-    /**
-     *
-     * Updates a questionnaire
-     *
-     * @param array $questionnaireDetails  : the questionnaire details
-     * @return array $response : response
-     */
-    public function updateQuestionnaire($questionnaireDetails){
+        //Check if any questions are private. If it is, then the questionnaire must be private no matter what
+        $anyPrivate = $this->questionnaireDB->countPrivateQuestions($questionCheckPrivacy);
+        $anyPrivate = intval($anyPrivate["total"]);
+        if($anyPrivate)
+            $updatedQuestionnaire["private"] = true;
 
+        //Delete questions from questionnaire if necessary
+        $total += $this->questionnaireDB->deleteQuestionsFromSection($oldQuestionnaire["sections"][0], $questionsToKeep);
+
+        //Insert new questions to the questionnaire if necessary
+        if(!empty($newQuestions))
+            $total += $this->questionnaireDB->insertQuestionsIntoSection($newQuestions);
+
+        //Update questions settings to the questionnaire if necessary
+        foreach($updatedQuestions as $question) {
+            $tempQuestion = $question;
+            unset($tempQuestion["sectionId"]);
+            unset($tempQuestion["questionId"]);
+            $total += $this->questionnaireDB->updateQuestionSection($question["sectionId"], $question["questionId"], $tempQuestion);
+        }
+
+        //Update the dictionary entry for the title if necessary
+        $toUpdateDict = array(
+            array(
+                "content"=>$updatedQuestionnaire["text_FR"],
+                "languageId"=>FRENCH_LANGUAGE,
+                "contentId"=>$oldQuestionnaire["title"],
+            ),
+            array(
+                "content"=>$updatedQuestionnaire["text_EN"],
+                "languageId"=>ENGLISH_LANGUAGE,
+                "contentId"=>$oldQuestionnaire["title"],
+            ),
+        );
+        $total += $this->questionnaireDB->updateDictionary($toUpdateDict, QUESTIONNAIRE_TABLE);
+
+        //Update privay and final fields if necessary
+        $toUpdate = array(
+            "ID"=>$oldQuestionnaire["ID"],
+            "private"=>$updatedQuestionnaire["private"],
+            "final"=>$updatedQuestionnaire["final"],
+        );
+        $questionnaireUpdated = $this->questionnaireDB->updateQuestionnaire($toUpdate);
+
+        /*
+         * If any modifications were made except to the questionnaire table, force the questionnaire entry to be updated
+         * with the name and date anyway.
+         * */
+        if ($questionnaireUpdated == 0 && $total > 0)
+            $this->questionnaireDB->forceUpdateQuestionnaire($updatedQuestionnaire["ID"]);
     }
 }
 ?>

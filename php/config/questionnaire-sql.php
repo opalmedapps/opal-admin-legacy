@@ -95,6 +95,12 @@ define("SQL_QUESTIONNAIRE_FETCH_QUESTIONS_BY_ID",
     WHERE q.ID IN (%%LISTIDS%%) AND q.deleted = ".NON_DELETED_RECORD." AND (OAUserId = :OAUserId OR private = ".PUBLIC_RECORD.") AND q.final = ".FINAL_RECORD.";"
 );
 
+define("SQL_QUESTIONNAIRE_COUNT_PRIVATE_QUESTIONS",
+    "SELECT COUNT(*) AS total
+    FROM ".QUESTION_TABLE." q
+    WHERE q.ID IN (%%LISTIDS%%) AND q.deleted = ".NON_DELETED_RECORD." AND private = ".PRIVATE_RECORD.";"
+);
+
 define("SQL_QUESTIONNAIRE_FETCH_LIBRARIES_QUESTION",
     "SELECT l.ID,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = l.name AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
@@ -236,6 +242,15 @@ define("SQL_QUESTIONNAIRE_DELETE_QUESTION_OPTIONS",
     WHERE top.parentTableId = :parentTableId
     AND (q.OAUserId = :OAUserId OR q.private = 0)
     AND top.ID NOT IN (%%OPTIONIDS%%);"
+);
+
+define("SQL_QUESTIONNAIRE_DELETE_QUESTION_SECTION",
+    "DELETE qs FROM ".QUESTION_SECTION_TABLE." qs
+    LEFT JOIN ".SECTION_TABLE." s ON s.ID = qs.sectionId
+    LEFT JOIN ".QUESTIONNAIRE_TABLE." q ON q.id = s.questionnaireId
+    WHERE qs.sectionId = :sectionId
+    AND (q.OAUserId = :OAUserId OR q.private = 0)
+    AND qs.questionId NOT IN (%%OPTIONIDS%%);"
 );
 
 define("SQL_QUESTIONNAIRE_SELECT_QUESTION_OPTIONS_TO_BE_DELETED",
@@ -435,6 +450,23 @@ define("SQL_QUESTIONNAIRE_UPDATE_UPDATEDBY_QUESTION",
     AND deleted = ".NON_DELETED_RECORD.";"
 );
 
+define("SQL_QUESTIONNAIRE_UPDATE_QUESTIONNAIRE",
+    "UPDATE ".QUESTIONNAIRE_TABLE."
+    SET updatedBy = :updatedBy, private = :private, final = :final
+    WHERE ID = :ID
+    AND (private = 0 OR OAUserId = :OAUserId)
+    AND (private != :private OR final != :final) 
+    AND deleted = ".NON_DELETED_RECORD.";"
+);
+
+define("SQL_QUESTIONNAIRE_UPDATE_UPDATEDBY_QUESTIONNAIRE",
+    "UPDATE ".QUESTIONNAIRE_TABLE."
+    SET updatedBy = :updatedBy, lastUpdated = NOW()
+    WHERE ID = :ID
+    AND (private = 0 OR OAUserId = :OAUserId)
+    AND deleted = ".NON_DELETED_RECORD.";"
+);
+
 define("SQL_QUESTIONNAIRE_UPDATE_QUESTION_OPTIONS",
     "UPDATE %%TABLENAME%% tb
     LEFT JOIN ".QUESTION_TABLE." q ON q.id = tb.questionId
@@ -451,6 +483,18 @@ define("SQL_QUESTIONNAIRE_UPDATE_QUESTION_SUB_OPTIONS",
     LEFT JOIN ".QUESTION_TABLE." q ON q.id = pt.questionId
     SET %%OPTIONSTOUPDATE%%
     WHERE tb.ID = :ID
+    AND (%%OPTIONSWEREUPDATED%%)
+    AND (q.OAUserId = :OAUserId OR q.private = 0)
+    AND q.deleted = ".NON_DELETED_RECORD.";"
+);
+
+define("SQL_QUESTIONNAIRE_UPDATE_QUESTION_SECTION",
+    "UPDATE ".QUESTION_SECTION_TABLE." qst
+    LEFT JOIN ".SECTION_TABLE." s ON s.id = qst.sectionId
+    LEFT JOIN ".QUESTIONNAIRE_TABLE." q ON q.id = s.questionnaireId
+    SET %%OPTIONSTOUPDATE%%
+    WHERE qst.sectionId = :sectionId
+    AND qst.questionId = :questionId
     AND (%%OPTIONSWEREUPDATED%%)
     AND (q.OAUserId = :OAUserId OR q.private = 0)
     AND q.deleted = ".NON_DELETED_RECORD.";"
