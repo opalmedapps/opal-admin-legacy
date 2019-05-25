@@ -1,7 +1,6 @@
 <?php
 
 /**
- *
  * Question class
  */
 class Question extends QuestionnaireModule {
@@ -11,6 +10,11 @@ class Question extends QuestionnaireModule {
     const PIVOTAL_QUESTION_OPTIONS_SLIDERS_FIELDS = array("ID", "questionId", "minCaption", "maxCaption");
     const PIVOTAL_QUESTION_SUB_OPTIONS_FIELDS = array("ID", "parentTableId", "description");
 
+    /*
+     * This function validate and sanitize a question form received from a user.
+     * @param   $questionToSanitize(array)
+     * @return  sanitized question or false if the format is invalid
+     * */
     static function validateAndSanitize($questionToSanitize) {
         $validatedQuestion = array(
             "text_EN"=>htmlspecialchars($questionToSanitize['text_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
@@ -208,6 +212,14 @@ class Question extends QuestionnaireModule {
         return $questions;
     }
 
+
+    /*
+     * List all the finalized questions ready to be sent to patients. We do not want to include draft or deleted
+     * questions.
+     *
+     * @param   void
+     * @return  array of questions
+     * */
     function getFinalizedQuestions(){
         $questionsLists = $this->questionnaireDB->getFinalizedQuestions();
         foreach ($questionsLists as &$row){
@@ -250,6 +262,12 @@ class Question extends QuestionnaireModule {
         return $questionsLists;
     }
 
+    /*
+     * Look into opalDB and returns if the question was sent to a patient or not.
+     *
+     * @param   $question (BIGINT ID of the question to look for)
+     * @return  $questionLocked (boolean)
+     * */
     function isQuestionLocked($questionId) {
         $questionnairesList = array();
         $questionnaires = $this->questionnaireDB->fetchQuestionnairesIdQuestion($questionId);
@@ -319,6 +337,15 @@ class Question extends QuestionnaireModule {
         return $question;
     }
 
+    /*
+     * This function update the list of libraries associated to a question. It will first remove the libraries
+     * associated to the question marked as is, then it will add new ones. All these operations are optional:
+     * if there is no library to delete for example, no modification at the the database will be done. Same thing for
+     * any possible insert. Lastly, it will return the number of records that was affected.
+     *
+     * @param   $questionId (BINGINT ID of the question to which we remove the libraries)
+     * @return  $libraries (array of libraries to be updated and/or added. Any other libraries has to be removed)
+     * */
     function updateLibrariesForQuestion($questionId, $libraries) {
         $total = 0;
         if(empty($libraries))
@@ -343,6 +370,15 @@ class Question extends QuestionnaireModule {
         return $total;
     }
 
+    /*
+     * This function update the options of a radio button question. It will first delete the options marked to be
+     * deleted, then it will update the options, and it will add the new options. All these operations are optional:
+     * if there is no option to delete for example, no modification at the the database will be done. Same thing for
+     * any possible update or insert. Lastly, it will return the number of records that was affected.
+     *
+     * @param   $options (array of options of the question, $subOptions (array of the different choices)
+     * @return  $total (number of records affected by the update)
+     * */
     function updateRadioButtonOptions($options, $subOptions) {
         $optionsToKeepAndUpdate = array();
         $optionsToAdd = array();
@@ -402,6 +438,15 @@ class Question extends QuestionnaireModule {
         return $total;
     }
 
+    /*
+     * This function update the options of a checkbox question. It will first delete the options marked to be
+     * deleted, then it will update the options, and it will add the new options. All these operations are optional:
+     * if there is no option to delete for example, no modification at the the database will be done. Same thing for
+     * any possible update or insert. Lastly, it will return the number of records that was affected.
+     *
+     * @param   $options (array of options of the question, $subOptions (array of the different choices)
+     * @return  $total (number of records affected by the update)
+     * */
     function updateCheckboxOptions($options, $subOptions) {
         $optionsToKeepAndUpdate = array();
         $optionsToAdd = array();
@@ -461,6 +506,12 @@ class Question extends QuestionnaireModule {
         return $total;
     }
 
+    /*
+     * This function update the options of a slider question.
+     *
+     * @param   $options (array of options of the question)
+     * @return  $total (number of records affected by the update)
+     * */
     function updateSliderOptions($options) {
         $total = 0;
 
@@ -503,7 +554,7 @@ class Question extends QuestionnaireModule {
      * @params  Reference of the updated questions (array) and current question in the DB (array)
      * @return  boolean if the data are compromised or not.
      * */
-    static function validatePivotalIDs(&$updatedQuestion, &$oldQuestion) {
+    function validatePivotalIDs(&$updatedQuestion, &$oldQuestion) {
         $answer = true;
         $arrayOldOption = array();
 
@@ -567,7 +618,7 @@ class Question extends QuestionnaireModule {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
         else if(empty($updatedQuestion["options"]) || ($updatedQuestion["typeId"] == RADIO_BUTTON || $updatedQuestion["typeId"] == CHECKBOXES) && empty($updatedQuestion["subOptions"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data.");
-        else if(!self::validatePivotalIDs($updatedQuestion, $oldQuestion))
+        else if(!$this->validatePivotalIDs($updatedQuestion, $oldQuestion))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Corrupted data.");
 
         $total += $this->updateLibrariesForQuestion($updatedQuestion["ID"], $updatedQuestion["libraries"]);

@@ -27,8 +27,6 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 				entry.text_EN = entry.text_EN.replace(/(<([^>]+)>)/ig,"");
 				entry.text_FR = entry.text_FR.replace(/(<([^>]+)>)/ig,"");
 
-				//console.log(entry);
-
 				if(entry.typeId === "2") {
 					var increment = parseFloat(entry.options.increment);
 					var minValue = parseFloat(entry.options.minValue);
@@ -258,7 +256,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 		$scope.updateQuestionnaire = function () {
 
 			if ($scope.checkForm()) {
-				console.log($scope.questionnaire);
+				$scope.questionnaire.OAUserId = OAUserId;
 
 				// ajax POST
 				$.ajax({
@@ -267,17 +265,16 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 					data: $scope.questionnaire,
 					success: function (response) {
 						response = JSON.parse(response);
-						if (response.value) {
+
+						// Show success or failure depending on response
+						if (response.code === 200) {
 							$scope.setBannerClass('success');
 							$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.questionnaire.text_EN + "/ " + $scope.questionnaire.text_FR + "\"!";
+							$uibModalInstance.close();
+							$scope.showBanner();
 						}
-						else {
-							$scope.setBannerClass('danger');
-							$scope.$parent.bannerMessage = response.message;
-						}
-
-						$scope.showBanner();
-						$uibModalInstance.close();
+						else
+							alert("An error occurred, code "+response.code+". Please review the error message below.\r\n" + response.message);
 					}
 				});
 			}

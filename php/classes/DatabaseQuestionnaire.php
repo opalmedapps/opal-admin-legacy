@@ -120,8 +120,22 @@ class DatabaseQuestionnaire extends DatabaseAccess
             "updatedBy"=>$this->getUsername(),
             "OAUserId"=>$this->getOAUserId(),
         );
-
         return $this->_updateRecordIntoTable(SQL_QUESTIONNAIRE_UPDATE_UPDATEDBY_QUESTION, $updatedEntries);
+    }
+
+    function updateQuestionnaire($updatedEntries) {
+        $updatedEntries["updatedBy"]=$this->getUsername();
+        $updatedEntries["OAUserId"]=$this->getOAUserId();
+       return $this->_updateRecordIntoTable(SQL_QUESTIONNAIRE_UPDATE_QUESTIONNAIRE, $updatedEntries);
+    }
+
+    function forceUpdateQuestionnaire($id) {
+        $updatedEntries = array(
+            "ID"=>$id,
+            "updatedBy"=>$this->getUsername(),
+            "OAUserId"=>$this->getOAUserId(),
+        );
+        return $this->_updateRecordIntoTable(SQL_QUESTIONNAIRE_UPDATE_UPDATEDBY_QUESTIONNAIRE, $updatedEntries);
     }
 
     /*
@@ -393,6 +407,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    function countPrivateQuestions($idList) {
+        $sqlFetch = str_replace("%%LISTIDS%%", implode(", " , $idList), SQL_QUESTIONNAIRE_COUNT_PRIVATE_QUESTIONS);
+        return $this->_fetchAll($sqlFetch, array());
+    }
+
     function removeLibrariesForQuestion($questionId, $libraries) {
         $sanitizedArray = array();
         foreach($libraries as $library) {
@@ -444,6 +463,16 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    function deleteQuestionsFromSection($sectionId, $idsToBeKept) {
+        $sqlSelect = str_replace("%%OPTIONIDS%%", implode(", ", $idsToBeKept), SQL_QUESTIONNAIRE_DELETE_QUESTION_SECTION);
+
+        return $this->_execute($sqlSelect,
+            array(
+                array("parameter"=>":sectionId","variable"=>$sectionId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":OAUserId","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
     function updateOptionsForQuestion($tableName, $id, $option) {
         $sqlOptionsToUpdate = array();
         $sqlOptionsWereUpdated = array();
@@ -490,6 +519,30 @@ class DatabaseQuestionnaire extends DatabaseAccess
         return $this->_execute($sqlSelect, $optionsToUpdate);
     }
 
+    function updateQuestionSection($sectionId, $questionId, $option) {
+        $sqlOptionsToUpdate = array();
+        $sqlOptionsWereUpdated = array();
+        $optionsToUpdate = array();
+        foreach ($option as $key=>$value) {
+            array_push($optionsToUpdate, array(
+                "parameter"=>":$key",
+                "variable"=>$value,
+            ));
+            array_push($sqlOptionsToUpdate, "`qst`.`$key` = :$key");
+            array_push($sqlOptionsWereUpdated, "`qst`.`$key` != :$key");
+        }
+
+        $sqlSelect = str_replace("%%OPTIONSTOUPDATE%%", implode(", ", $sqlOptionsToUpdate), SQL_QUESTIONNAIRE_UPDATE_QUESTION_SECTION);
+        $sqlSelect = str_replace("%%OPTIONSWEREUPDATED%%", implode(" OR ", $sqlOptionsWereUpdated), $sqlSelect);
+
+        array_push($optionsToUpdate,
+            array("parameter"=>":sectionId","variable"=>$sectionId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":OAUserId","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT)
+        );
+        return $this->_execute($sqlSelect, $optionsToUpdate);
+    }
+
     function removeAllTagsForQuestion($questionId) {
         return $this->_execute(SQL_QUESTIONNAIRE_DELETE_ALL_TAGS_QUESTION,
             array(
@@ -507,7 +560,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     function insertQuestionsIntoSection($records) {
-        return $this->_insertMultipleRecordsIntoTable(QUESTION_SECTION_TABLE, $records);
+        return $this->_insertMultipleRecordsIntoTableConditional(QUESTION_SECTION_TABLE, $records);
     }
 
     function getQuestionDetails($questionId) {

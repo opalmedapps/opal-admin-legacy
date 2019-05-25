@@ -226,14 +226,11 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 					if (response.code === 200) {
 						$scope.setBannerClass('success');
 						$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.question.text_EN + "/ " + $scope.question.text_FR + "\"!";
+						$uibModalInstance.close();
+						$scope.showBanner();
 					}
-					else {
-						$scope.setBannerClass('danger');
-						$scope.$parent.bannerMessage = "An error occured. Please review the error message below.\r\n" + response.details;
-					}
-
-					$scope.showBanner();
-					$uibModalInstance.close();
+					else
+						alert("An error occurred, code "+response.code+". Please review the error message below.\r\n" + response.message);
 				}
 			});
 		};
