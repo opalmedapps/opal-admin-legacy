@@ -11,21 +11,26 @@ class DatabaseQuestionnaire extends DatabaseAccess
 
     /*
      * This function returns the next content ID for the dictionary necessary for an insertion
-     * @param   nothing
-     * @return  next content ID
+     * @param   void
+     * @return  next content ID (string)
      * */
     protected function _getNextContentId() {
         $nextContentId = $this->_fetch(SQL_QUESTIONNAIRE_GET_DICTIONARY_NEXT_CONTENT_ID);
         return $nextContentId["nextContentId"];
     }
 
+    /*
+     * This function translate a new type of question into the legacy one, since the app does not recognize them yet.
+     * @param   $typeId (int)
+     * @return  legacy type (string)
+     * */
     function getLegacyType($typeId) {
         return $this->_fetch(SQL_QUESTIONNAIRE_GET_LEGACY_TYPE, array(array("parameter"=>":typeId", "variable"=>$typeId, "data_type"=>PDO::PARAM_INT)));
     }
 
     /*
-     * This function returns an array that contains
-     * @param   nothing
+     * This function returns the language table.
+     * @param   void
      * @return  array of languages
      * */
     function getLanguageTable() {
@@ -92,6 +97,24 @@ class DatabaseQuestionnaire extends DatabaseAccess
         return $newContentId;
     }
 
+    /*
+     * This function update an entry in a specific language into the dictionary. It will update an entry only if it was
+     * modified. It accepts multiples entries if necessary.
+     * @params  $updatedEntries array(
+     *                              array(
+     *                                  "content"=>"new text",
+     *                                  "languageId"=>Specified language (int),
+     *                                  "contentId"=>content Id from the dictionary,
+     *                              ),
+     *                              array(
+     *                                  "content"=>"new text",
+     *                                  "languageId"=>Specified language (int),
+     *                                  "contentId"=>content Id from the dictionary,
+     *                              ),
+     *                          );
+     *          $tableName (string) name of the table associated with the specifics entries
+     * @return  total of lines modified (int)
+     * */
     function updateDictionary($updatedEntries, $tableName) {
         $total = 0;
         $tableId = $this->getTableId($tableName);
@@ -108,12 +131,24 @@ class DatabaseQuestionnaire extends DatabaseAccess
         return $total;
     }
 
+    /*
+     * Update a question with a list of specific values with the username of the user stored. The update will occur
+     * only if there was any modification done to the question.
+     * @param   $updatedEntries (array) updated question
+     * @return  total modified records
+     * */
     function updateQuestion($updatedEntries) {
         $updatedEntries["updatedBy"]=$this->getUsername();
         $updatedEntries["OAUserId"]=$this->getOAUserId();
-       return $this->_updateRecordIntoTable(SQL_QUESTIONNAIRE_UPDATE_QUESTION, $updatedEntries);
+        return $this->_updateRecordIntoTable(SQL_QUESTIONNAIRE_UPDATE_QUESTION, $updatedEntries);
     }
 
+    /*
+     * This function forces a question to be updated with the date of update and the username. It is necessary if the
+     * question table was not modified directly but its options were.
+     * @params  id of the question to force update (int)
+     * @return  total record updated (string)
+     * */
     function forceUpdateQuestion($id) {
         $updatedEntries = array(
             "ID"=>$id,
@@ -123,12 +158,24 @@ class DatabaseQuestionnaire extends DatabaseAccess
         return $this->_updateRecordIntoTable(SQL_QUESTIONNAIRE_UPDATE_UPDATEDBY_QUESTION, $updatedEntries);
     }
 
+    /*
+     * Update a questionnaire with a list of specific values with the username of the user stored. The update will occur
+     * only if there was any modification done to the questionnaire.
+     * @param   $updatedEntries (array) updated questionnaire
+     * @return  total modified records
+     * */
     function updateQuestionnaire($updatedEntries) {
         $updatedEntries["updatedBy"]=$this->getUsername();
         $updatedEntries["OAUserId"]=$this->getOAUserId();
-       return $this->_updateRecordIntoTable(SQL_QUESTIONNAIRE_UPDATE_QUESTIONNAIRE, $updatedEntries);
+        return $this->_updateRecordIntoTable(SQL_QUESTIONNAIRE_UPDATE_QUESTIONNAIRE, $updatedEntries);
     }
 
+    /*
+     * This function forces a questionnaire to be updated with the date of update and the username. It is necessary if
+     * the questionnaire table was not modified directly but its options were.
+     * @params  id of the questionnaire to force update (int)
+     * @return  total record updated (string)
+     * */
     function forceUpdateQuestionnaire($id) {
         $updatedEntries = array(
             "ID"=>$id,
@@ -153,7 +200,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
 
     /*
      * This function lists all the questions types a specific user can have access.
-     * @param   none
+     * @param   void
      * @return  array of question types
      * */
     function getQuestionTypes() {
@@ -182,7 +229,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
 
     /*
      * This function returns all the general categories types of question (slider, checkbox, etc)
-     * @param   Nothing
+     * @param   void
      * @return  array of types
      * */
     function getQuestionTypeList() {
@@ -191,7 +238,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
 
     /*
      * This function lists all the questions to be displayed in a listing
-     * @param   none
+     * @param   void
      * @return  array of questions
      * */
     function fetchAllQuestions() {
@@ -243,6 +290,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * This function look if a specific record was updated since a specific time before another operation of
      * modification can occur. It is done to prevent two users who tried to update the same record on the same table
      * on the same time to erase the modification, based on a FIFO priority.
+     *
      * @param   Table name to look at (string)
      *          ID of the table (BIGINT)
      *          last time the record was updated (string)
@@ -260,24 +308,38 @@ class DatabaseQuestionnaire extends DatabaseAccess
 
     /*
      * This function add a new question type to the type template table of the questionnaire DB.
-     * @param
+     * @param   array of a new question type. It also adds the username of the user who made the request
+     * @return  ID of the record
      * */
     function addToTypeTemplateTable($newQuestionType) {
         $newQuestionType["OAUserId"] = $this->OAUserId;
         $newQuestionType["createdBy"] = $this->username;
         $newQuestionType["updatedBy"] = $this->username;
-        $result = $this->_insertRecordIntoTable(TYPE_TEMPLATE_TABLE, $newQuestionType);
-        return $result;
+        return $this->_insertRecordIntoTable(TYPE_TEMPLATE_TABLE, $newQuestionType);
     }
 
     /*
-     * This function add to the correct typeTemplate option table its values
+     * This function add to the correct typeTemplate option table its values.
+     * @params  name of the type template table where to do the insert (string)
+     *          lists of options to insert (array) in the dependant table of typeTemplate. If it is a slider for
+     *          example, it will contains, the min and max answers with captions. If it is a checkbox type, it will be
+     *          the minimum and maximum number of answers.
+     * @returns ID of the record
      * */
     function addToTypeTemplateTableType($tableName, $optionToInsert) {
         $result = $this->_insertRecordIntoTable($tableName, $optionToInsert);
         return $result;
     }
 
+    /*
+     * This function creates a new library, and adds the username of the creator.
+     * @params  Settings to create a new library.
+     *          array(
+     *              "name"=>content ID from the dictionary,
+     *              "private"=>int if the library is private or not,
+     *          );
+     * @return  ID of the record
+     * */
     function addToLibraryTable($toInsert) {
         $toInsert["OAUserId"] = $this->OAUserId;
         $toInsert["createdBy"] = $this->username;
@@ -286,14 +348,23 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     /*
-     * This function add to the correct typeTemplate option table its values
+     * This function add to the correct typeTemplate option in the suv table its values. For example, all the possible
+     * options for checkboxes or radio buttons.
+     * @params  name of the type template table where to do the insert (string)
+     *          lists of options to insert (array) in the dependant table of the option. If it is a checkbox or radio
+     *          button type, it will be the description, order for example
+     * @returns ID of the record
      * */
     function addToTypeTemplateTableTypeOptions($tableName, $optionToInsert) {
         $result = $this->_insertMultipleRecordsIntoTable($tableName, $optionToInsert);
         return $result;
     }
 
-    /* This function returns all the current libraries a user is authorized to see*/
+    /*
+     * This function fetch all possible libraries a user can see.
+     * @params  void
+     * @returns array of libraries
+     * */
     function fetchAllLibraries() {
         return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_ALL_LIBRARIES,
             array(
@@ -301,6 +372,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * this function lists all the options of a specific checkbox template
+     * @params  Id of the template checkbox
+     * @return  all the possible options of the checkbox template (array)
+     * */
     function getTypeTemplateCheckboxOption($ttcId) {
         return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE_CHECKBOX_OPTION,
             array(
@@ -308,6 +384,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * this function lists all the options of a specific radio button template
+     * @params  Id of the template radio button
+     * @return  all the possible options of the radio button template (array)
+     * */
     function getTypeTemplateRadioButtonOption($ttrId) {
         return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE_RADIO_BUTTON_OPTION,
             array(
@@ -315,7 +396,12 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
-    function getLibrariesByUser($listIds) {
+    /*
+     * This function returns a list of libraries based on a list of libraries IDs requested
+     * @params  array of libraries ID
+     * @return  array of libraries requested if available and visible
+     * */
+    function getLibrariesByIds($listIds) {
         $sqlFetchAll = str_replace("%%LISTOFIDS%%", $listIds, SQL_QUESTIONNAIRE_GET_USER_LIBRARIES);
         return $this->_fetchAll($sqlFetchAll,
             array(
@@ -324,7 +410,10 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     /*
-     * This function validate and return a question type for the user
+     * This function validate and return a question type for the user. If there is any extra options, (like for
+     * checkboxes or radio buttons), it will append them to the array before returning it to the calling functioné
+     * @params  ID of the requested question type
+     * @returns array with all the question type information and options
      * */
     function getTypeTemplate($questionTypeID){
         $result = $this->_fetchAll(SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE,
@@ -343,22 +432,21 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     /*
-     * This function validate and return a library for the user
+     * Get a list of specific libraries based on an list of IDs and if the user is authorized to see them
+     * @params  array of ids of libraries
+     * @return  array of libraries
      * */
-    function getLibrary($libraryID) {
-        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_LIBRARY,
-            array(
-                array("parameter"=>":OAUserId","variable"=>$this->OAUserId,"data_type"=>PDO::PARAM_INT),
-                array("parameter"=>":ID","variable"=>$libraryID,"data_type"=>PDO::PARAM_INT),
-            ));
-    }
-
     function getLibraries($arrLib) {
         return $this->_fetchAll(str_replace("%%LIBRARIES_ID%%", implode(", ", $arrLib),SQL_QUESTIONNAIRE_GET_LIBRARIES),array(
             array("parameter"=>":OAUserId","variable"=>$this->OAUserId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
+    /*
+     * Insert a question into the question table, and adding the username of the creator.
+     * @params  array of settings for the question
+     * @returns ID of the question.
+     * */
     function insertQuestion($toInsert) {
         $toInsert["OAUserId"] = $this->OAUserId;
         $toInsert["createdBy"] = $this->username;
@@ -366,6 +454,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
         return $this->_insertRecordIntoTable(QUESTION_TABLE, $toInsert);
     }
 
+    /*
+     * Insert a questionnaire into the questionnaire table, and adding the username of the creator.
+     * @params  array of settings for the questionnaire
+     * @returns ID of the questionnaire.
+     * */
     function insertQuestionnaire($toInsert) {
         $toInsert["OAUserId"] = $this->OAUserId;
         $toInsert["createdBy"] = $this->username;
@@ -373,32 +466,50 @@ class DatabaseQuestionnaire extends DatabaseAccess
         return $this->_insertRecordIntoTable(QUESTIONNAIRE_TABLE, $toInsert);
     }
 
+    /*
+     * Insert a section of a questionnaire into the section table, and adding the username of the creator.
+     * @params  array of settings for the section
+     * @returns ID of the section.
+     * */
     function insertSection($toInsert) {
         $toInsert["createdBy"] = $this->username;
         $toInsert["updatedBy"] = $this->username;
         return $this->_insertRecordIntoTable(SECTION_TABLE, $toInsert);
     }
 
+    /*
+     * Insert the options of a specific question to the correct table
+     * @params  table name options where to do the insert (string)
+     *          array of options to insert in the table mentionned above
+     * @returns ID of the record.
+     * */
     function insertQuestionOptions($tableName, $toInsert) {
         return $this->_insertRecordIntoTable($tableName, $toInsert);
     }
 
+    /*
+     * Insert all the options of a checkbox question
+     * @params  array of options to insert in the checkbox option tables
+     * @returns void
+     * */
     function insertCheckboxOption($toInsert) {
         $this->_insertMultipleRecordsIntoTable(CHECKBOX_OPTION_TABLE, $toInsert);
     }
 
+    /*
+     * Insert all the options of a radio button question
+     * @params  array of options to insert in the radio button
+     * @returns void
+     * */
     function insertRadioButtonOption($toInsert) {
         $this->_insertMultipleRecordsIntoTable(RADIO_BUTTON_OPTION_TABLE, $toInsert);
     }
 
-    function insertLibraryQuestion($toInsert) {
-        $this->_insertRecordIntoTable(LIBRARY_QUESTION_TABLE, $toInsert);
-    }
-
-    function insertMultipleLibrariesToQuestion($toInsert) {
-        $this->_insertMultipleRecordsIntoTable(LIBRARY_QUESTION_TABLE, $toInsert);
-    }
-
+    /*
+     * Returns a list of questions a user is authorized to access based on a list of IDs
+     * @params  array of IDs
+     * @returns array of questions the user is authorized to access
+     * */
     function fetchQuestionsByIds($idList) {
         $sqlFetch = str_replace("%%LISTIDS%%", implode(", " , $idList), SQL_QUESTIONNAIRE_FETCH_QUESTIONS_BY_ID);
         return $this->_fetchAll($sqlFetch,
@@ -407,11 +518,22 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * Count the number of questions marked as private in the array of questions. This is useful to determine if a
+     * questionnaire has be be considered as private if at least one question is private.
+     * @params  arrays of IDs
+     * @return total of questions marked as private (array)
+     * */
     function countPrivateQuestions($idList) {
         $sqlFetch = str_replace("%%LISTIDS%%", implode(", " , $idList), SQL_QUESTIONNAIRE_COUNT_PRIVATE_QUESTIONS);
-        return $this->_fetchAll($sqlFetch, array());
+        return $this->_fetch($sqlFetch, array());
     }
 
+    /*
+     * Delete into the library question intersection table. It will remove all libraries not in the list of IDs passed
+     * @params  question ID of the question (int), array of libraries to keep
+     * @returns total records affected (int)
+     * */
     function removeLibrariesForQuestion($questionId, $libraries) {
         $sanitizedArray = array();
         foreach($libraries as $library) {
@@ -427,6 +549,12 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * This function removes all libraries associated to a specific question. Used when marking a question as being
+     * deleted.
+     * @params  question ID (int)
+     * @return  number of records affected (int)
+     * */
     function removeAllLibrariesForQuestion($questionId) {
         return $this->_execute(SQL_QUESTIONNAIRE_DELETE_ALL_LIBRARIES_QUESTION,
             array(
@@ -435,6 +563,12 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * This function removes all sections associated to a specific question. Used when marking a question as being
+     * deleted.
+     * @params  question ID (int)
+     * @return  number of records affected (int)
+     * */
     function removeAllSectionForQuestion($questionId) {
         return $this->_execute(SQL_QUESTIONNAIRE_DELETE_ALL_SECTIONS_QUESTION,
             array(
@@ -443,6 +577,12 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * Returns all the options of a question that needs to be deleted
+     * @params  table name where to look at (string), parent table name of the option (string), ID of the parent table
+     *          (int), IDs of options to keep (array of int)
+     * @return  array of records found
+     * */
     function fetchOptionsToBeDeleted($tableName, $parentTable, $parentTableId, $idsToBeKept) {
         $sqlSelect = str_replace("%%OPTIONIDS%%", implode(", ", $idsToBeKept),str_replace("%%PARENTTABLE%%", $parentTable, str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_SELECT_QUESTION_OPTIONS_TO_BE_DELETED)));
 
@@ -453,6 +593,12 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * This function removes options associated to a specific question. Used when updating a question.
+     * @params  table name where to look at (string), parent table name of the option (string), ID of the parent table
+     *          (int), IDs of options to keep (array of int)
+     * @return  array of records deleted
+     * */
     function deleteOptionsForQuestion($tableName, $parentTable, $parentTableId, $idsToBeKept) {
         $sqlSelect = str_replace("%%OPTIONIDS%%", implode(", ", $idsToBeKept),str_replace("%%PARENTTABLE%%", $parentTable, str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_DELETE_QUESTION_OPTIONS)));
 
@@ -463,6 +609,12 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * This function removes sections associated to a specific question. Used when deleting a question.
+     * @params  table name where to look at (string), parent table name of the option (string), ID of the parent table
+     *          (int), IDs of options to keep (array of int)
+     * @return  array of records deleted
+     * */
     function deleteQuestionsFromSection($sectionId, $idsToBeKept) {
         $sqlSelect = str_replace("%%OPTIONIDS%%", implode(", ", $idsToBeKept), SQL_QUESTIONNAIRE_DELETE_QUESTION_SECTION);
 
@@ -473,6 +625,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * This function updates the  options associated to a specific question. Used when updating a question.
+     * @params  table name where to look at (string) ID of the parent table (int), options to update (array)
+     * @return  total records executed
+     * */
     function updateOptionsForQuestion($tableName, $id, $option) {
         $sqlOptionsToUpdate = array();
         $sqlOptionsWereUpdated = array();
@@ -496,6 +653,12 @@ class DatabaseQuestionnaire extends DatabaseAccess
         return $this->_execute($sqlSelect, $optionsToUpdate);
     }
 
+    /*
+     * This function updates the list of multiple options associated to a specific question. Used when updating a
+     * question.
+     * @params  table name where to look at (string), ID of the parent table (int), options to update (array)
+     * @return  total records executed
+     * */
     function updateSubOptionsForQuestion($tableName, $parentTable, $id, $option) {
         $sqlOptionsToUpdate = array();
         $sqlOptionsWereUpdated = array();
@@ -519,6 +682,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
         return $this->_execute($sqlSelect, $optionsToUpdate);
     }
 
+    /*
+     * This function updates the section associated with a question. Used when updating a question.
+     * @params  table name where to look at (string), ID of the parent table (int), options to update (array)
+     * @return  total records executed
+     * */
     function updateQuestionSection($sectionId, $questionId, $option) {
         $sqlOptionsToUpdate = array();
         $sqlOptionsWereUpdated = array();
@@ -543,6 +711,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
         return $this->_execute($sqlSelect, $optionsToUpdate);
     }
 
+    /*
+     * This function removes all tags associated with a question. Used when deleting a question.
+     * @params  Id the question (int)
+     * @return  total records executed
+     * */
     function removeAllTagsForQuestion($questionId) {
         return $this->_execute(SQL_QUESTIONNAIRE_DELETE_ALL_TAGS_QUESTION,
             array(
@@ -551,18 +724,38 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * Insert into the library question intersection table. It will associate a question with a list of libraries
+     * @params  array of options to insert in the table mentioned above
+     * @returns void
+     * */
     function insertLibrariesForQuestion($records) {
         return $this->_insertMultipleRecordsIntoTableConditional(LIBRARY_QUESTION_TABLE, $records);
     }
 
+    /*
+     * Insert multiple options to a question.
+     * @params  table name of the options (string), array of records to insert
+     * @return number of records created
+     * */
     function insertOptionsQuestion($tableName, $records) {
         return $this->_insertMultipleRecordsIntoTableConditional($tableName, $records);
     }
 
+    /*
+     * Insert multiple questions to a section.
+     * @params  records to insert into the intersection table
+     * @return  number of records created
+     * */
     function insertQuestionsIntoSection($records) {
         return $this->_insertMultipleRecordsIntoTableConditional(QUESTION_SECTION_TABLE, $records);
     }
 
+    /*
+     * Get all the details of a specific questions.
+     * @params  Question id (int)
+     * @return  array of details of the question itself
+     * */
     function getQuestionDetails($questionId) {
         return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_QUESTION_DETAILS,
             array(
@@ -571,6 +764,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * Get details of all questions associated with a specific section of a questionnaire
+     * @params  Section id (int)
+     * @return  array of questions
+     * */
     function getQuestionsBySectionId($sectionId) {
         return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_QUESTIONS_BY_SECTION_ID,
             array(
@@ -579,6 +777,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * Get lists of all finalized questionnaires, used to display questions ready for a questionnaire for example
+     * @params  Section id (int)
+     * @return  array of questions
+     * */
     function getFinalizedQuestions() {
         return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_FINALIZED_QUESTIONS,
             array(
@@ -586,6 +789,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * Get all the details of a specific questionnaire.
+     * @params  Questionnaire id (int)
+     * @return  array of details of the question itself
+     * */
     function getQuestionnaireDetails($questionnaireId) {
         $result = $this->_fetchAll(SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_DETAILS,
             array(
@@ -595,6 +803,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
         return $result;
     }
 
+    /*
+     * Get all sections of a specific questionnaire.
+     * @params  questionnaire id (int)
+     * @return  array of sections
+     * */
     function getSectionsByQuestionnaireId($questionnaireId) {
         return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_SECTION_BY_QUESTIONNAIRE_ID,
             array(
@@ -602,6 +815,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * Get options of a question (except slider)
+     * @params  question id (int) and table name of the option (string)
+     * @returns array of options
+     * */
     function getQuestionOptionsDetails($questionId, $tableName) {
         return $this->_fetchAll(str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_QUESTION_OPTIONS),
             array(
@@ -609,6 +827,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * Get slider options of a question
+     * @params  question id (int) and table name of the option (string)
+     * @returns array of options
+     * */
     function getQuestionSliderDetails($questionId, $tableName) {
         return $this->_fetchAll(str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_QUESTION_SLIDER_OPTIONS),
             array(
@@ -616,6 +839,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * Get lisr of multiple options of a question (for checkbox or radio button for example)
+     * @params  parent table id (int) and table name of the  list of option (string)
+     * @returns array of options
+     * */
     function getQuestionSubOptionsDetails($parentTableId, $tableName) {
         return $this->_fetchAll(str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_QUESTION_SUB_OPTIONS),
             array(
@@ -623,6 +851,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * returns the total number of multiple options for a specific question
+     * @params  ID of the parent table (ID), table name (string)
+     * @return  total of options (array)
+     * */
     function getQuestionTotalSubOptions($parentTableId, $tableName) {
         return $this->_fetch(str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_QUESTION_TOTAL_SUB_OPTIONS),
             array(
@@ -631,7 +864,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     /*
-     * This function marks a all records for a specific text as deleted in the dictionary.
+     * This function marks all records for a specific text as deleted in the dictionary.
      *
      * WARNING!!! No record should be EVER be removed from the questionnaire database! It should only being marked as
      * being deleted ONLY after after verifications. Not following the proper procedure will have some serious impact
@@ -674,6 +907,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
         ));
     }
 
+    /*
+     * Returns the list of all questionnaires an user cann access
+     * @params  void
+     * @return  list of questionnaires (array)
+     * */
     function fetchAllQuestionnaires() {
         return $this->_fetchAll(SQL_QUESTIONNAIRE_FETCH_ALL_QUESTIONNAIRES,
             array(

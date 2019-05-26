@@ -9,6 +9,9 @@ class OpalProject
 {
     protected $opalDB;
 
+    /*
+     * constructor of the class
+     * */
     public function __construct($OAUserId = false) {
         $this->opalDB = new DatabaseOpal(
             OPAL_DB_HOST,

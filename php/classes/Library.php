@@ -19,7 +19,6 @@ class Library extends QuestionnaireModule {
         $contentId = $this->questionnaireDB->addToDictionary(array(FRENCH_LANGUAGE=>$nameFr, ENGLISH_LANGUAGE=>$nameEn), TYPE_TEMPLATE_TABLE);
 
         $toInsert = array(
-            "OAUserId"=>$this->questionnaireDB->getOAUserId(),
             "name"=>$contentId,
             "private"=>$private,
         );

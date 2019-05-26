@@ -34,6 +34,7 @@ class QuestionnaireModule extends OpalProject
         return (intval($a["order"]) < intval($b["order"])) ? -1 : 1;
     }
 
+    /* Sort function based on the order field */
     protected static function sortOptions(&$options) {
         usort($options, 'self::sort_order');
         $cpt = 0;
