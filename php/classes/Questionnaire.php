@@ -303,6 +303,7 @@ class Questionnaire extends QuestionnaireModule {
         //Check if any questions are private. If it is, then the questionnaire must be private no matter what
         $anyPrivate = $this->questionnaireDB->countPrivateQuestions($questionCheckPrivacy);
         $anyPrivate = intval($anyPrivate["total"]);
+
         if($anyPrivate)
             $updatedQuestionnaire["private"] = true;
 

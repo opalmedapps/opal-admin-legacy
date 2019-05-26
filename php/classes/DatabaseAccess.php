@@ -199,6 +199,10 @@ class DatabaseAccess extends HelpSetup
         }
     }
 
+    /* Determine the type of the variable for a SQL query
+     * @params variable to analyze (any type)
+     * @returns constant based if it is an int, bool or a string (int)
+     * */
     protected static function _getTypeOf($aVar) {
         if(filter_var($aVar, FILTER_VALIDATE_INT) !== false)
             return PDO::PARAM_INT;
@@ -273,6 +277,25 @@ class DatabaseAccess extends HelpSetup
         return $this->_queryInsert($sqlInsert, $ready);
     }
 
+    /*
+     * This function build a SQL insert query with a table name and a list of records and launch its execution. The
+     * records will only be added if they do not exists already.
+     * @param   table name where to insert (string)
+     *          array of records that contain arrays of data to insert and their field name. Each array must have the
+     *          same structure and same order.
+     *          example:    Array (
+	 *                          Array (
+	 * 	                            "field1" => "data"
+     *                              "field2" => "more data"
+     *                              "field3" => "even more data"
+     *                          )
+	 *                          Array (
+	 *                              "field1" => "enough data?"
+     *                              "field2" => "no more data!"
+     *                              "field3" => "data!"
+	 *                          )
+     *                      )
+     * */
     protected function _insertMultipleRecordsIntoTableConditional($tableName, $records) {
         $sqlSubSet = array();
         $cpt = 0;
@@ -334,7 +357,11 @@ class DatabaseAccess extends HelpSetup
         return $this->_queryInsert($sqlInsert, $ready);
     }
 
-
+    /*
+     * This function will update a series of records based on the sql queries requested and the list of record
+     * @params  sql query to execute (string), array of records to execute with the query
+     * @return  total records executed
+     * */
     protected function _updateRecordIntoTable($sqlQuery, $record) {
         $ready = array();
         foreach($record as $key=>$value) {

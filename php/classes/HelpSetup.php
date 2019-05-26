@@ -12,6 +12,9 @@ class HelpSetup {
     const OPAL_OAUSER_ROLE_MANAGER = "6";
     const AUTHORIZATION_MODIFICATION_FINALIZED = array(HelpSetup::OPAL_OAUSER_ROLE_ADMIN, HelpSetup::OPAL_OAUSER_ROLE_MANAGER);
 
+    /*
+     * Basic functions to return an error message to the caller
+     * */
     public static function returnErrorMessage($errcode, $details) {
         header('Content-Type: application/javascript');
         $response['code'] = $errcode;
