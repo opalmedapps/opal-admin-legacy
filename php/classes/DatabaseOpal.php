@@ -8,6 +8,9 @@
 
 class DatabaseOpal extends DatabaseAccess {
 
+    /*
+     * Constructor of the class
+     * */
     public function __construct($newServer = "localhost", $newDB = "", $newPort = "3306", $newUserDB = "root", $newPass = "", $newOAUserId = false) {
         parent::__construct($newServer, $newDB, $newPort, $newUserDB, $newPass, $newOAUserId);
         $newOAUserId = strip_tags($newOAUserId);
@@ -17,6 +20,11 @@ class DatabaseOpal extends DatabaseAccess {
         $this->userRole = $userInfo["userRole"];
     }
 
+    /*
+     * Get the user information based on the user ID
+     * @params  user ID (int)
+     * @return  array of the user informations and roles
+     * */
     protected function _getUserInfoFromDB($newOAUserId) {
         $newOAUserId = strip_tags($newOAUserId);
         if($newOAUserId == "" || $newOAUserId <= 0)
@@ -45,6 +53,11 @@ class DatabaseOpal extends DatabaseAccess {
         return $result;
     }
 
+    /*
+     * counts the number of locked questions based on a list of questionnaire IDs
+     * @params  array of questionnaire ID
+     * @return  total of questionnaire locked (array)
+     * */
     function countLockedQuestionnaires($questionnairesList) {
         return $this->_fetch(SQL_OPAL_LIST_QUESTIONNAIRES_FROM_QUESTIONNAIRE_CONTROL,
             array(

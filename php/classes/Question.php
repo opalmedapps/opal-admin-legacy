@@ -64,28 +64,33 @@ class Question extends QuestionnaireModule {
     }
 
     /**
-     * Inserts a question into our database
+     * Inserts a question into our database.
      * @param   array $questionDetails, array containing all the questions details
      * @return  ID of the new question
      */
     function insertQuestion($questionDetails){
+        //If the question type template is invalid rejects the request
         $validQuestionType = $this->questionnaireDB->getTypeTemplate($questionDetails['typeId']);
         if(!$validQuestionType)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Fetching question type error.");
 
+        //If the libraries requested are invalid, reject the requests
         if(count($questionDetails['libraries']) > 0) {
             $librariesToAdd = $this->questionnaireDB->getLibraries($questionDetails['libraries']);
             if(count($librariesToAdd) <= 0)
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Fetching library error.");
         }
 
+        //Insert the question text into the dictionary
         $toInsert = array(FRENCH_LANGUAGE=>$questionDetails['text_FR'], ENGLISH_LANGUAGE=>$questionDetails['text_EN']);
         $contentId = $this->questionnaireDB->addToDictionary($toInsert, QUESTION_TABLE);
 
+        //For now the display and definition texts are empty and not being used. But later it will be implemented
         $toInsert = array(FRENCH_LANGUAGE=>"", ENGLISH_LANGUAGE=>"");
         $displayId = $this->questionnaireDB->addToDictionary($toInsert, QUESTION_TABLE);
         $definitionId = $this->questionnaireDB->addToDictionary($toInsert, QUESTION_TABLE);
 
+        //Prepare and insert the question into the question table
         $legacyTypeId = $this->questionnaireDB->getLegacyType($validQuestionType["typeId"]);
         $legacyTypeId = $legacyTypeId["ID"];
 
@@ -100,14 +105,16 @@ class Question extends QuestionnaireModule {
 
         $questionId = $this->questionnaireDB->insertQuestion($toInsert);
 
+        //Add the question newly created to the specific libraries
         if(count($librariesToAdd) > 0) {
             $multipleInserts = array();
             foreach($librariesToAdd as $lib) {
                 array_push($multipleInserts, array("libraryId"=>$lib["ID"], "questionId"=>$questionId));
             }
-            $this->questionnaireDB->insertMultipleLibrariesToQuestion($multipleInserts);
+            $this->questionnaireDB->insertLibrariesForQuestion($multipleInserts);
         }
 
+        //Prepare the extra options to be inserted depending of the type of question (checkboxes, sliders, etc)
         if ($validQuestionType["typeId"] == CHECKBOXES)
             $toInsert = array(
                 "questionId"=>$questionId,
@@ -135,8 +142,10 @@ class Question extends QuestionnaireModule {
                 "questionId"=>$questionId,
             );
 
+        //Insert the option in the requested option table of the question
         $questionOptionId = $this->questionnaireDB->insertQuestionOptions($validQuestionType["tableName"], $toInsert);
 
+        //if extra options are required (for checkboxes or radio buttons), insert them now.
         $recordsToInsert = array();
         if ($validQuestionType["subTableName"] == CHECKBOX_OPTION_TABLE) {
             if(count($validQuestionType["options"]) <= 0)
@@ -350,7 +359,7 @@ class Question extends QuestionnaireModule {
         $total = 0;
         if(empty($libraries))
             $libraries = array("-1");
-        $arrNewLib = $this->questionnaireDB->getLibrariesByUser(implode(", ", $libraries));
+        $arrNewLib = $this->questionnaireDB->getLibrariesByIds(implode(", ", $libraries));
 
         $validNewLibraries = array();
         $toInsertLibraries = array();
