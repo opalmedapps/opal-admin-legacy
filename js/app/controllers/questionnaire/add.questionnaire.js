@@ -6,7 +6,7 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 	};
 
 	// Default booleans
-	$scope.titleSection = {open: false, show: true};
+	$scope.titleDescriptionSection = {open: false, show: true};
 	$scope.privacySection = {open: false, show: false};
 	$scope.questionsSection = {open: false, show: false};
 	$scope.demoSection = {open: false, show: false};
@@ -25,9 +25,17 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 	$scope.selectedGroups;
 	$scope.tagFilter = "";
 
+	// Default toolbar for wysiwyg
+	$scope.toolbar = [
+		['h1', 'h2', 'h3', 'p'],
+		['bold', 'italics', 'underline', 'ul', 'ol'],
+		['justifyLeft', 'justifyCenter', 'indent', 'outdent'],
+		['html', 'insertLink']
+	];
+
 	// step bar
 	var steps = {
-		title: {completed: false},
+		titleDescriptionSection: {completed: false},
 		privacy: {completed: false},
 		questions: {completed: false},
 	};
@@ -76,8 +84,10 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 
 	// new questionnaire object
 	$scope.newQuestionnaire = {
-		text_EN: "",
-		text_FR: "",
+		title_EN: "",
+		title_FR: "",
+		description_EN: "",
+		description_FR: "",
 		private: undefined,
 		OAUserId: OAUserId,
 		questions: [],
@@ -124,25 +134,20 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 	}
 
 	// update form functions
-	$scope.titleUpdate = function () {
 
-		$scope.titleSection.open = true;
+	$scope.titleDescriptionUpdate = function () {
 
-		if (!$scope.newQuestionnaire.text_EN && !$scope.newQuestionnaire.text_FR) {
-			$scope.titleSection.open = false;
-		}
+		$scope.titleDescriptionSection.open = true;
 
-		if ($scope.newQuestionnaire.text_EN && $scope.newQuestionnaire.text_FR) {
+		if ($scope.newQuestionnaire.title_EN && $scope.newQuestionnaire.title_FR &&
+			$scope.newQuestionnaire.description_EN && $scope.newQuestionnaire.description_FR) {
+			steps.titleDescriptionSection.completed = true;
 			$scope.privacySection.show = true;
-			steps.title.completed = true;
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-
 		} else {
-			steps.title.completed = false;
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+			steps.titleDescriptionSection.completed = false;
 		}
+		$scope.numOfCompletedSteps = stepsCompleted(steps);
+		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 	};
 
 	$scope.privacyUpdate = function (value) {
@@ -223,7 +228,7 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		data: 'groupList',
 		columnDefs: [
 			{field: 'text_EN', displayName: 'Name (EN / FR)', cellTemplate: cellTemplateName, width: '50%'},
-			{field: 'library_name_EN', displayName: 'Library (EN / FR)', cellTemplate: cellTemplateLib, width: '38%'},
+			{field: 'text_EN', displayName: 'Library (EN / FR)', cellTemplate: cellTemplateLib, width: '38%'},
 			{
 				field: 'private', displayName: 'Privacy', cellTemplate: cellTemplatePrivacy, width: '10%', filter: {
 					type: uiGridConstants.filter.SELECT,
@@ -285,6 +290,7 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 	// submit
 	$scope.submitQuestionnaire = function () {
 		if ($scope.checkForm()) {
+			console.log($scope.newQuestionnaire);
 			// Submit
 			$.ajax({
 				type: "POST",
