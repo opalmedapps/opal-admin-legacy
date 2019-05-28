@@ -53,37 +53,35 @@
                         </div>
                         <uib-accordion class="side-navbar">
                             <!-- SECTION: Title -->
-                            <div uib-accordion-group is-open="titleSection.open" class="panel-container summary-box"
-                                 is-disabled="!newQuestionnaire.text_EN && !newQuestionnaire.text_FR">
+                            <div uib-accordion-group is-open="titleDescriptionSection.open" class="panel-container summary-box" class="panel-container summary-box animated" ng-class="{fadeInUp: titleDescriptionSection.show}"  ng-if="titleDescriptionSection.show" is-disabled="!newQuestionnaire.name_EN && !newQuestionnaire.name_FR && !newQuestionnaire.description_EN && !newQuestionnaire.description_FR">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
-                                            <span ng-if="newQuestionnaire.text_EN && newQuestionnaire.text_FR"
-                                                  style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                            <span ng-if="newQuestionnaire.title_EN && newQuestionnaire.title_FR && newQuestionnaire.description_EN && newQuestionnaire.description_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
-                                            <strong>Title</strong>
+                                            <strong>Title & Description</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i ng-if="newQuestionnaire.text_EN || newQuestionnaire.text_FR"
-                                               class="pull-right glyphicon"
-                                               ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleDescriptionSection.open, 'glyphicon-chevron-right': !titleDescriptionSection.open}" ng-if="newQuestionnaire.title_EN || newQuestionnaire.title_FR || newQuestionnaire.description_EN || newQuestionnaire.description_FR"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
-                                <div ng-if="newQuestionnaire.text_EN" class="description">
-                                    <p style="margin-bottom:5px;">
+                                <div ng-if="newQuestionnaire.title_EN || newQuestionnaire.description_EN" class="description">
+                                    <p ng-if="newQuestionnaire.title_EN" style="margin-bottom:5px;">
                                         <strong>EN</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{newQuestionnaire.text_EN}}
+                                        {{newQuestionnaire.title_EN}}
                                     </p>
+                                    <p ng-if="newQuestionnaire.description_EN" style="padding-left:10px; font-size:10px;"><em>See rendered output for description</em></p>
                                 </div>
-                                <div ng-if="newQuestionnaire.text_FR" class="description">
-                                    <p style="margin-bottom:5px;">
+                                <div ng-if="newQuestionnaire.title_FR || newQuestionnaire.description_FR" class="description">
+                                    <p ng-if="newQuestionnaire.title_FR" style="margin-bottom:5px;">
                                         <strong>FR</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{newQuestionnaire.text_FR}}
+                                        {{newQuestionnaire.title_FR}}
                                     </p>
+                                    <p ng-if="newQuestionnaire.description_FR" style="padding-left:10px; font-size:10px;"><em>See rendered output for description</em></p>
                                 </div>
                             </div>
                             <!-- SECTION: Privacy -->
@@ -215,12 +213,14 @@
                     </div>
                     <div class="section-content">
                         <!-- SECTION: Title -->
+
+
                         <div class="row">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
                                         <span class="fas fa-dot-circle"></span>
-                                        <h2>Title</h2>
+                                        <h2>Title and description</h2>
                                     </span>
                                 </div>
                             </div>
@@ -229,33 +229,42 @@
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
                                     <span style="color:#d9534f"><strong>Required field:</strong></span>
-                                    Please assign an english and french title.
+                                    Please assign an english and french title and description.
                                 </p>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-xs-12 col-md-6">
-                                <div class="panel" ng-class="(newQuestionnaire.text_EN) ? 'panel-success': 'panel-danger'">
+                                <div class="panel" ng-class="(newQuestionnaire.title_EN && newQuestionnaire.description_EN) ? 'panel-success': 'panel-danger'">
                                     <div class="panel-heading"><strong>English</strong>
-                                        <span ng-hide="newQuestionnaire.text_EN" style="float:right"><em>Incomplete</em></span>
-                                        <span ng-show="newQuestionnaire.text_EN" style="float:right"><em>Complete</em></span>
+                                        <span ng-hide="newQuestionnaire.title_EN && newQuestionnaire.description_EN" style="float:right"><em>Incomplete</em></span>
+                                        <span ng-show="newQuestionnaire.title_EN && newQuestionnaire.description_EN" style="float:right"><em>Complete</em></span>
                                     </div>
                                     <div class="panel-body form-horizontal">
                                         <div class="form-group">
-                                            <label class="control-label col-xs-12 col-lg-2">Title</label>
+                                            <label class="control-label col-xs-12 col-lg-2">
+                                                Title
+                                            </label>
                                             <div class="col-xs-12 col-lg-10">
-                                                <input class="form-control" type="text" ng-model="newQuestionnaire.text_EN" ng-change="titleUpdate()" placeholder="English Title" required="required">
+                                                <input class="form-control" type="text" ng-model="newQuestionnaire.title_EN" ng-change="titleDescriptionUpdate()" placeholder="English Title" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12 col-lg-2">
+                                                Description
+                                            </label>
+                                            <div class="col-xs-12 col-lg-10">
+                                                <div text-angular ng-model="newQuestionnaire.description_EN" ng-change="titleDescriptionUpdate()" placeholder="English Description" required="required" ta-toolbar="toolbar"></div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-xs-12 col-md-6">
-                                <div class="panel"
-                                     ng-class="(newQuestionnaire.text_FR) ? 'panel-success': 'panel-danger'">
+                                <div class="panel" ng-class="(newQuestionnaire.title_FR && newQuestionnaire.description_FR) ? 'panel-success': 'panel-danger'">
                                     <div class="panel-heading"><strong>Français</strong>
-                                        <span ng-hide="newQuestionnaire.text_FR" style="float:right"><em>Incomplete</em></span>
-                                        <span ng-show="newQuestionnaire.text_FR" style="float:right"><em>Complete</em></span>
+                                        <span ng-hide="newQuestionnaire.title_FR && newQuestionnaire.description_FR" style="float:right"><em>Incomplete</em></span>
+                                        <span ng-show="newQuestionnaire.title_FR && newQuestionnaire.description_FR" style="float:right"><em>Complete</em></span>
                                     </div>
                                     <div class="panel-body form-horizontal">
                                         <div class="form-group">
@@ -263,13 +272,21 @@
                                                 Titre
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
-                                                <input class="form-control" type="text" ng-model="newQuestionnaire.text_FR" ng-change="titleUpdate()" placeholder="Titre Français" required="required">
+                                                <input class="form-control" type="text" ng-model="newQuestionnaire.title_FR" ng-change="titleDescriptionUpdate()" placeholder="Titre Français" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12 col-lg-2">
+                                                Description
+                                            </label>
+                                            <div class="col-xs-12 col-lg-10">
+                                                <div text-angular ng-model="newQuestionnaire.description_FR" ng-change="titleDescriptionUpdate()" placeholder="Description Français" required="required" ta-toolbar="toolbar"></div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div>                    
                         <!-- SECTION: Privacy -->
                         <div class="row animated" ng-class="{fadeInUp: privacySection.show}"
                              ng-if="privacySection.show">
