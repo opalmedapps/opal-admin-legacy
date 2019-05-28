@@ -13,6 +13,14 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 		// Responsible for "searching" in search bars
 		$scope.filter = $filter('filter');
 
+		// Default toolbar for wysiwyg
+		$scope.toolbar = [
+			['h1', 'h2', 'h3', 'p'],
+			['bold', 'italics', 'underline', 'ul', 'ol'],
+			['justifyLeft', 'justifyCenter', 'indent', 'outdent'],
+			['html', 'insertLink']
+		];
+
 		// initialize variables
 		$scope.groupList = [];
 		$scope.groupListReferenced = [];
@@ -186,10 +194,12 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 
 			// Assign value
 			$scope.questionnaire = response.data;
+
+			console.log(response.data);
 			$scope.questionnaire.questions = decodeQuestions($scope.questionnaire.questions);
 
-		}).catch(function (response) {
-			alert('Error occurred getting questionnaire details after modal open. Code ' + response.status + ".\r\n" + response.data);
+		}).catch(function (e) {
+			alert('Error occurred getting questionnaire details after modal open. Code ' + e.status + ".\r\n" + e.data);
 		}).finally(function () {
 			$timeout(function () {
 				if ($scope.gridApi.selection.selectRow) {
@@ -245,7 +255,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 
 		// Function to check necessary form fields are complete
 		$scope.checkForm = function () {
-			if ($scope.questionnaire.text_EN && $scope.questionnaire.text_FR && $scope.questionnaire.questions.length && $scope.changesMade) {
+			if ($scope.questionnaire.title_EN && $scope.questionnaire.title_FR && $scope.questionnaire.questions.length && $scope.changesMade) {
 				return true;
 			}
 			else
@@ -269,7 +279,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 						// Show success or failure depending on response
 						if (response.code === 200) {
 							$scope.setBannerClass('success');
-							$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.questionnaire.text_EN + "/ " + $scope.questionnaire.text_FR + "\"!";
+							$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.questionnaire.title_EN + "/ " + $scope.questionnaire.title_FR + "\"!";
 							$uibModalInstance.close();
 							$scope.showBanner();
 						}

@@ -382,8 +382,10 @@ define("SQL_QUESTIONNAIRE_GET_FINALIZED_QUESTIONS",
 
 define("SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_DETAILS",
     "SELECT q.*,
-    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
-    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".FRENCH_LANGUAGE.") AS text_FR 
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS title_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".FRENCH_LANGUAGE.") AS title_FR,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS description_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR 
     FROM ".QUESTIONNAIRE_TABLE." q
     WHERE q.ID = :ID AND (q.private = 0 OR q.OAUserId = :OAUserId) AND q.deleted = ".NON_DELETED_RECORD.";"
 );

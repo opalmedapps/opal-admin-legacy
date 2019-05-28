@@ -27,11 +27,13 @@ class Questionnaire extends QuestionnaireModule {
     function validateAndSanitize($questionnaireToSanitize) {
         //Sanitize the name of the questionnaire. If it is empty, rejects it.
         $validatedQuestionnaire = array(
-            "text_EN"=>htmlspecialchars($questionnaireToSanitize['text_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
-            "text_FR"=>htmlspecialchars($questionnaireToSanitize['text_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "title_EN"=>htmlspecialchars($questionnaireToSanitize['title_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "title_FR"=>htmlspecialchars($questionnaireToSanitize['title_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "description_EN"=>htmlspecialchars($questionnaireToSanitize['description_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "description_FR"=>htmlspecialchars($questionnaireToSanitize['description_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
         );
 
-        if ($validatedQuestionnaire["text_EN"] == "" || $validatedQuestionnaire["text_FR"] == "")
+        if ($validatedQuestionnaire["title_EN"] == "" || $validatedQuestionnaire["title_FR"] == "" || $validatedQuestionnaire["description_EN"] == "" || $validatedQuestionnaire["description_FR"] == "")
             return false;
 
         //Sanitize the questionnaire ID (if any). IF there was supposed to be an ID and it's empty, reject the
@@ -119,8 +121,11 @@ class Questionnaire extends QuestionnaireModule {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire");
 
         $questionnaireDetails = $questionnaireDetails[0];
-        $questionnaireDetails["text_EN"] = strip_tags(htmlspecialchars_decode($questionnaireDetails["text_EN"]));
-        $questionnaireDetails["text_FR"] = strip_tags(htmlspecialchars_decode($questionnaireDetails["text_FR"]));
+
+        $questionnaireDetails["title_EN"] = htmlspecialchars_decode($questionnaireDetails["title_EN"]);
+        $questionnaireDetails["title_FR"] = htmlspecialchars_decode($questionnaireDetails["title_FR"]);
+        $questionnaireDetails["description_EN"] = htmlspecialchars_decode($questionnaireDetails["description_EN"]);
+        $questionnaireDetails["description_FR"] = htmlspecialchars_decode($questionnaireDetails["description_FR"]);
         $questionnaireDetails["locked"] = intval($this->isQuestionnaireLocked($questionnaireId));
 
         $readOnly = false;
@@ -169,12 +174,14 @@ class Questionnaire extends QuestionnaireModule {
      * @return void
      */
     public function insertQuestionnaire($newQuestionnaire){
-        $toInsert = array(FRENCH_LANGUAGE=>$newQuestionnaire['text_FR'], ENGLISH_LANGUAGE=>$newQuestionnaire['text_EN']);
+        $toInsert = array(FRENCH_LANGUAGE=>$newQuestionnaire['title_FR'], ENGLISH_LANGUAGE=>$newQuestionnaire['title_EN']);
         $title = $this->questionnaireDB->addToDictionary($toInsert, QUESTIONNAIRE_TABLE);
+
+        $toInsert = array(FRENCH_LANGUAGE=>$newQuestionnaire['description_FR'], ENGLISH_LANGUAGE=>$newQuestionnaire['description_EN']);
+        $description = $this->questionnaireDB->addToDictionary($toInsert, QUESTIONNAIRE_TABLE);
 
         $toInsert = array(FRENCH_LANGUAGE=>"", ENGLISH_LANGUAGE=>"");
         $nickname = $this->questionnaireDB->addToDictionary($toInsert, QUESTIONNAIRE_TABLE);
-        $description = $this->questionnaireDB->addToDictionary($toInsert, QUESTIONNAIRE_TABLE);
         $instruction = $this->questionnaireDB->addToDictionary($toInsert, QUESTIONNAIRE_TABLE);
 
         $toInsert = array(
@@ -325,14 +332,28 @@ class Questionnaire extends QuestionnaireModule {
         //Update the dictionary entry for the title if necessary
         $toUpdateDict = array(
             array(
-                "content"=>$updatedQuestionnaire["text_FR"],
+                "content"=>$updatedQuestionnaire["title_FR"],
                 "languageId"=>FRENCH_LANGUAGE,
                 "contentId"=>$oldQuestionnaire["title"],
             ),
             array(
-                "content"=>$updatedQuestionnaire["text_EN"],
+                "content"=>$updatedQuestionnaire["title_EN"],
                 "languageId"=>ENGLISH_LANGUAGE,
                 "contentId"=>$oldQuestionnaire["title"],
+            ),
+        );
+        $total += $this->questionnaireDB->updateDictionary($toUpdateDict, QUESTIONNAIRE_TABLE);
+
+        $toUpdateDict = array(
+            array(
+                "content"=>$updatedQuestionnaire["description_FR"],
+                "languageId"=>FRENCH_LANGUAGE,
+                "contentId"=>$oldQuestionnaire["description"],
+            ),
+            array(
+                "content"=>$updatedQuestionnaire["description_EN"],
+                "languageId"=>ENGLISH_LANGUAGE,
+                "contentId"=>$oldQuestionnaire["description"],
             ),
         );
         $total += $this->questionnaireDB->updateDictionary($toUpdateDict, QUESTIONNAIRE_TABLE);
