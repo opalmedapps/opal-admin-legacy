@@ -18,6 +18,14 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			$scope.changesMade = true;
 		};
 
+		$scope.toolbar = [
+			['h1', 'h2', 'h3', 'p'],
+			['bold', 'italics', 'underline', 'ul', 'ol'],
+			['justifyLeft', 'justifyCenter', 'indent', 'outdent'],
+			['html', 'insertLink']
+		];
+
+
 		// Filter lists initialized
 		$scope.libraryFilterList = [];
 
@@ -114,6 +122,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			$scope.question.OAUserId = OAUserId;
 
 			$scope.selectedLibrary = response.data.libraries;
+
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
 		}).catch(function (err) {
@@ -211,7 +220,6 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			}
 		};
 
-
 		// Submit changes
 		$scope.updateQuestion = function () {
 			// Submit form
@@ -225,7 +233,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 					// Show success or failure depending on response
 					if (response.code === 200) {
 						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.question.text_EN + "/ " + $scope.question.text_FR + "\"!";
+						$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.question.text_EN.replace(/<(?:.|\n)*?>/gm, '') + " / " + $scope.question.text_FR.replace(/<(?:.|\n)*?>/gm, '') + "\"!";
 						$uibModalInstance.close();
 						$scope.showBanner();
 					}
