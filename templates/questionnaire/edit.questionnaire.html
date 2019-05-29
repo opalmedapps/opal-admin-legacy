@@ -268,7 +268,7 @@
                         <div class="previewContent">
                             <div ng-repeat="selectedGroupObj in questionnaire.questions">
                                 <h4>{{selectedGroupObj.type_EN}}</h4>
-                                <p>{{selectedGroupObj.text_EN}} <span style="color:#d9534f;;">({{selectedGroupObj.optional == 1 ? 'optional' : 'required'}})</span></p>
+                                <div ng-bind-html="selectedGroupObj.text_EN"></div><p style="color:#d9534f;">({{selectedGroupObj.optional == 1 ? 'optional' : 'required'}})</p>
                                 <!-- Answer type preview -->
                                 <div ng-if="selectedGroupObj.typeId == '4'">
                                     <div ng-repeat="option in selectedGroupObj.subOptions">
@@ -295,7 +295,7 @@
                         <div class="previewContent">
                             <div ng-repeat="selectedGroupObj in questionnaire.questions">
                                 <h4>{{selectedGroupObj.type_FR}}</h4>
-                                <p>{{selectedGroupObj.text_FR}} <span style="color:#d9534f;;">({{selectedGroupObj.optional == 1 ? 'optionnel' : 'obligatoire'}})</span></p>
+                                <div ng-bind-html="selectedGroupObj.text_FR"></div><p style="color:#d9534f;;">({{selectedGroupObj.optional == 1 ? 'optionnel' : 'obligatoire'}})</p>
                                 <!-- Answer type preview -->
                                 <div ng-if="selectedGroupObj.typeId == '4'">
                                     <div ng-repeat="option in selectedGroupObj.subOptions">

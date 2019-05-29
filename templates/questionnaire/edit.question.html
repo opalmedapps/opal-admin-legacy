@@ -31,18 +31,36 @@
                     <strong>Titles</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
                 </div>
             </uib-accordion-heading>
-            <div class="row">
+            <div class="row" ng-hide="question.readOnly || question.final">
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div style="text-align:center; margin-bottom: 10px;">
+                        <span style="font-size:20px;">HTML (English)</span>
+                    </div>
                     <div class="input-group">
-                        <span class="input-group-addon">EN</span>
-                        <input type="text" class="form-control" ng-model="question.text_EN" placeholder="English Title" ng-change="setChangesMade()" ng-disabled="question.readOnly || question.final" />
+                        <div text-angular ng-model="question.text_EN" ng-change="setChangesMade()" placeholder="English question" required="required" ta-toolbar="toolbar"  ng-change="setChangesMade()" ng-disabled="questionnaire.readOnly || questionnaire.final"></div>
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-                    <div class="input-group">
-                        <span class="input-group-addon">FR</span>
-                        <input type="text" class="form-control" ng-model="question.text_FR" placeholder="Titre Français" ng-change="setChangesMade()" ng-disabled="question.readOnly || question.final" />
+                    <div style="text-align:center; margin-bottom: 10px;">
+                        <span style="font-size:20px;">HTML (Français)</span>
                     </div>
+                    <div class="input-group">
+                        <div text-angular ng-model="question.text_FR" ng-change="setChangesMade()" placeholder="Question française" required="required" ta-toolbar="toolbar"  ng-change="setChangesMade()" ng-disabled="questionnaire.readOnly || questionnaire.final"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" ng-show="question.readOnly || question.final">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div style="text-align:center; margin-bottom: 10px;">
+                        <span style="font-size:20px;">HTML (English)</span>
+                    </div>
+                    <div ng-bind-html="question.text_EN"></div>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div style="text-align:center; margin-bottom: 10px;">
+                        <span style="font-size:20px;">HTML (Français)</span>
+                    </div>
+                    <div ng-bind-html="question.text_FR"></div>
                 </div>
             </div>
             <div class="row">
@@ -73,6 +91,9 @@
 
             <!-- Edit radio button options -->
             <div class="col-xs-12 col-md-8" ng-if="question.typeId === '4' || question.typeId === '1'">
+                <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
+                    Position English French
+                </div>
                 <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in question.subOptions">
                     <input class="form-control" style="width:20%" ng-change="setChangesMade()" type="number" placeholder="Position" ng-model="option.order" ng-disabled="question.readOnly || question.final" />
                     <input class="form-control" style="width:40%" ng-change="setChangesMade()" type="text" placeholder="Text (EN)" ng-model="option.description_EN" ng-disabled="question.readOnly || question.final" />
