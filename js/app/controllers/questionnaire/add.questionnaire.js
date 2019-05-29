@@ -20,10 +20,8 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 	var publicPrivateWarning = true;
 
 	// initialize variables
-	$scope.tagList = [];
 	$scope.groupList = [];
 	$scope.selectedGroups;
-	$scope.tagFilter = "";
 
 	// Default toolbar for wysiwyg
 	$scope.toolbar = [

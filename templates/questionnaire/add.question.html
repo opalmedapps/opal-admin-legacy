@@ -67,14 +67,16 @@
                                     <p style="margin-botton:5px">
                                         <strong>EN</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{newQuestion.text_EN}}
+                                    <p ng-if="newQuestion.text_EN" style="padding-left:10px; font-size:10px;"><em>See rendered output for text</em></p>
+
                                     </p>
                                 </div>
                                 <div ng-if="newQuestion.text_FR" class="description">
                                     <p style="margin-botton:5px">
                                         <strong>FR</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{newQuestion.text_FR}}
+                                    <p ng-if="newQuestion.text_FR" style="padding-left:10px; font-size:10px;"><em>See rendered output for question</em></p>
+
                                     </p>
                                 </div>
                             </div>
@@ -230,7 +232,9 @@
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <textarea class="form-control" rows="2" ng-model="newQuestion.text_EN" ng-change="updateQuestionText()"></textarea>
+
+                                                <div text-angular ng-model="newQuestion.text_EN" ng-change="updateQuestionText()" placeholder="English Question" ta-toolbar="toolbar"></div>
+                                                <!--<textarea class="form-control" rows="2" ng-model="newQuestion.text_EN" ng-change="updateQuestionText()"></textarea>-->
                                             </div>
                                         </div>
                                     </div>
@@ -245,7 +249,8 @@
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <textarea class="form-control" rows="2" ng-model="newQuestion.text_FR" ng-change="updateQuestionText()"></textarea>
+                                                <div text-angular ng-model="newQuestion.text_FR" ng-change="updateQuestionText()" placeholder="Question française" ta-toolbar="toolbar"></div>
+                                                <!--<textarea class="form-control" rows="2" ng-model="newQuestion.text_FR" ng-change="updateQuestionText()"></textarea>-->
                                             </div>
                                         </div>
                                     </div>
@@ -304,7 +309,8 @@
 
                                 <!-- Preview -->
                                 <div class="col-xs-12" ng-show="newQuestion.text_EN && newQuestion.text_FR && newQuestion.typeId">
-                                    <h2>Question: {{newQuestion.text_EN}} / {{newQuestion.text_FR}} ({{selectedAt.category_EN}})</h2>
+                                    <div ng-bind-html="newQuestion.text_EN"></div>
+                                    <div ng-bind-html="newQuestion.text_FR"></div>
 
                                     <!-- Show category -->
                                     <div ng-if="selectedAt.typeSerNum === '4'">
