@@ -10,6 +10,8 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		$scope.question = {};
 		$scope.libraries = [];
 		$scope.changesMade = false;
+		$scope.validSlider = true;
+
 
 		// Initialize variables for holding selected answer type & group
 		$scope.selectedLibrary = [];
@@ -17,14 +19,6 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		$scope.setChangesMade = function () {
 			$scope.changesMade = true;
 		};
-
-		$scope.toolbar = [
-			['h1', 'h2', 'h3', 'p'],
-			['bold', 'italics', 'underline', 'ul', 'ol'],
-			['justifyLeft', 'justifyCenter', 'indent', 'outdent'],
-			['html', 'insertLink']
-		];
-
 
 		// Filter lists initialized
 		$scope.libraryFilterList = [];
@@ -42,6 +36,43 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			var keyword = new RegExp($scope.libEntered, 'i');
 			return !$scope.libEntered || keyword.test(Filter.name_EN);
 		};
+
+		$scope.orderPreview = function () {
+			$scope.question.subOptions.sort(function(a,b){
+				return (a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0);
+			});
+		};
+
+		/*
+		$options["minValue"] <= 0.0 || $options["maxValue"] <= 0.0 || $options["increment"] <= 0.0 || $options["minValue"] >= $options["maxValue"])
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid data.");
+
+        $options["maxValue"] = floatval(floor(($options["maxValue"] - $options["minValue"]) / $options["increment"]) * $options["increment"]) + $options["minValue"];
+
+		* */
+
+
+		$scope.updateSlider = function () {
+			var radiostep = new Array();
+			var increment = parseFloat($scope.question.options.increment);
+			var minValue = parseFloat($scope.question.options.minValue);
+			var maxValue = parseFloat($scope.question.options.maxValue);
+
+			if (minValue <= 0.0 || maxValue <= 0.0 || increment <= 0 || minValue >= maxValue)
+				$scope.validSlider = false;
+			else {
+				maxValue = (Math.floor((maxValue - minValue) / increment) * increment) + minValue;
+				$scope.validSlider = true;
+				for(var i = minValue; i <= maxValue; i += increment) {
+					radiostep.push({"description":" " + i,"description_EN":" " + i,"description_FR":" " + i});
+				}
+				radiostep[0]["description_EN"] += " " + $scope.question.options.minCaption_EN;
+				radiostep[0]["description_FR"] += " " + $scope.question.options.minCaption_FR;
+				radiostep[radiostep.length - 1]["description_EN"] += " " + $scope.question.options.maxCaption_EN;
+				radiostep[radiostep.length - 1]["description_FR"] += " " + $scope.question.options.maxCaption_FR;
+			}
+			$scope.question.subOptions = radiostep;
+		}
 
 		/* Function for the "Processing" dialog */
 		var processingModal;
@@ -94,6 +125,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 				$scope.question.options.minValue = parseInt($scope.question.options.minValue);
 				$scope.question.options.maxValue = parseInt($scope.question.options.maxValue);
 				$scope.question.options.increment = parseInt($scope.question.options.increment);
+				$scope.updateSlider();
 			}
 
 			if($scope.question.subOptions !== null) {
@@ -158,11 +190,10 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			$scope.question.subOptions.push({
 				description_EN: "",
 				description_FR: "",
-				position: undefined,
+				order: $scope.question.subOptions.length+1,
 				OAUserId: OAUserId
 			});
 		};
-
 
 		// delete options
 		$scope.deleteOptions = function (optionToDelete) {
@@ -179,14 +210,12 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			alert('Error occurred getting question libraries:', response.status, response.data);
 		});
 
-
 		$scope.newLibrary = {
 			name_EN: "",
 			name_FR: "",
 			private: 0,
 			OAUserId: OAUserId
 		};
-
 
 		$scope.addNewLib = function () {
 			// Prompt to confirm user's action
