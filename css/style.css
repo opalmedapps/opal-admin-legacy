@@ -1831,7 +1831,8 @@ footer {
 .previewContent h3 {
     font-size: 20px;
     font-weight: bold;
-    margin-top:10px;
+    margin-top:20px;
+    margin-bottom:5px;
 }
 
 .previewContent h4 {
