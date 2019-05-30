@@ -17,8 +17,8 @@ class Question extends QuestionnaireModule {
      * */
     static function validateAndSanitize($questionToSanitize) {
         $validatedQuestion = array(
-            "text_EN"=>htmlspecialchars($questionToSanitize['text_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
-            "text_FR"=>htmlspecialchars($questionToSanitize['text_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "text_EN"=>strip_tags($questionToSanitize['text_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "text_FR"=>strip_tags($questionToSanitize['text_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
             "typeId"=>strip_tags($questionToSanitize['typeId']),
             "OAUserId"=>strip_tags($questionToSanitize['OAUserId']),
         );
@@ -205,8 +205,8 @@ class Question extends QuestionnaireModule {
 
             $questionArray = array (
                 'serNum'				=> $row["ID"],
-                'text_EN'				=> strip_tags(htmlspecialchars_decode($row["text_EN"])),
-                'text_FR'				=> strip_tags(htmlspecialchars_decode($row["text_FR"])),
+                'text_EN'				=> $row["text_EN"],
+                'text_FR'				=> $row["text_FR"],
                 'private'				=> $row["private"],
                 'answertype_serNum'		=> $row["answertype_Id"],
                 'answertype_name_EN'	=> $row["answertype_name_EN"],
@@ -248,9 +248,6 @@ class Question extends QuestionnaireModule {
 
             $row["library_name_EN"] = $libNameEn;
             $row["library_name_FR"] = $libNameFr;
-
-            $row["text_EN"] = htmlspecialchars_decode($row["text_EN"]);
-            $row["text_FR"] = htmlspecialchars_decode($row["text_FR"]);
 
             if($row["typeId"] == SLIDERS)
                 $options = $this->questionnaireDB->getQuestionSliderDetails($row["ID"], $row["tableName"]);
@@ -305,8 +302,6 @@ class Question extends QuestionnaireModule {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot get question details.");
 
         $question = $question[0];
-        $question["text_EN"] = htmlspecialchars_decode($question["text_EN"]);
-        $question["text_FR"] = htmlspecialchars_decode($question["text_FR"]);
         $question["locked"] = $this->isQuestionLocked($questionId);
 
         $readOnly = false;
@@ -578,8 +573,10 @@ class Question extends QuestionnaireModule {
                 break;
             }
 
-        if($oldQuestion["typeId"] == SLIDERS)
+        if($oldQuestion["typeId"] == SLIDERS) {
+            $updatedQuestion["subOptions"] = array();
             $fieldLists = self::PIVOTAL_QUESTION_OPTIONS_SLIDERS_FIELDS;
+        }
         else
             $fieldLists = self::PIVOTAL_QUESTION_OPTIONS_FIELDS;
 

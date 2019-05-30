@@ -32,9 +32,6 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 
 		function decodeQuestions(questions) {
 			questions.forEach(function(entry) {
-				entry.text_EN = entry.text_EN.replace(/(<([^>]+)>)/ig,"");
-				entry.text_FR = entry.text_FR.replace(/(<([^>]+)>)/ig,"");
-
 				if(entry.typeId === "2") {
 					var increment = parseFloat(entry.options.increment);
 					var minValue = parseFloat(entry.options.minValue);

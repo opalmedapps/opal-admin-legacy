@@ -14,13 +14,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	$scope.answerTypeSection = { open: false, show: false };
 	$scope.questionLibrarySection = { open: false, show: false };
 
-	// Default toolbar for wysiwyg
-	$scope.toolbar = [
-		['h1', 'h2', 'h3', 'p'],
-		['bold', 'italics', 'underline', 'ul', 'ol'],
-		['justifyLeft', 'justifyCenter', 'indent', 'outdent'],
-		['html', 'insertLink']
-	];
+	$scope.list = ["one", "two", "three", "four", "five", "six"];
 
 	// get current user id
 	var user = Session.retrieveObject('user');
