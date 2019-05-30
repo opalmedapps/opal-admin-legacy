@@ -288,7 +288,6 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 	// submit
 	$scope.submitQuestionnaire = function () {
 		if ($scope.checkForm()) {
-			console.log($scope.newQuestionnaire);
 			// Submit
 			$.ajax({
 				type: "POST",
