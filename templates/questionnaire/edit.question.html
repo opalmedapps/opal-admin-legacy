@@ -89,15 +89,9 @@
                     <div style="display: block; float: left;width: 22%;">
                         &nbsp;
                     </div>
-                    <div style="display: block; float: left;width: 8%;">
-                        Value
-                    </div>
-                    <div style="display: block; float: left;width: 35%;">
-                        English
-                    </div>
-                    <div style="display: block; float: left;width: 35%;">
-                        French
-                    </div>
+                    <div style="display: block; float: left;width: 8%;">Value</div>
+                    <div style="display: block; float: left;width: 35%;">English</div>
+                    <div style="display: block; float: left;width: 35%;">French</div>
 
                 </div>
                 <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
@@ -127,15 +121,16 @@
                 <div class="previewContainer" style="max-height: 300px;height:100%;">
                     <div class="previewContent" ng-show="validSlider">
                         <div class="row">
-                            <div class="col-lg-6">
-                                <div style="margin-top:10px; margin-bottom:10px"; ng-bind-html="question.text_EN"></div>
+                            <div ng-class="question.readOnly || question.final ? 'col-lg-6' : 'col-lg-12'">
+                                <h4 style="margin-top:10px;">English</h4>
+                                <p style="margin-top:10px; margin-bottom:10px"; ng-bind-html="question.text_EN"></p>
                                 <div ng-if="question.typeId === '1'">
                                     <div ng-repeat="option in question.subOptions">
                                         <label><input type="checkbox" disabled> {{option.description_EN}}</label>
                                     </div>
                                 </div>
                                 <div ng-if="question.typeId == '3'">
-                                    <textarea rows="3" cols="40" disabled>Type in your answer.</textarea>
+                                    <textarea rows="3" cols="30" disabled>Type in your answer.</textarea>
                                 </div>
                                 <div ng-if="question.typeId == '2'">
                                     <div ng-repeat="option in question.subOptions">
@@ -148,8 +143,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-6">
-                                <div style="margin-top:10px; margin-bottom:10px"; ng-bind-html="question.text_FR"></div>
+                            <div ng-class="question.readOnly || question.final ? 'col-lg-6' : 'col-lg-12'">
+                                <h4 style="margin-top:10px;">Français</h4>
+                                <p style="margin-top:10px; margin-bottom:10px"; ng-bind-html="question.text_FR"></p>
                                 <div ng-if="question.typeId === '1'">
                                     <div ng-repeat="option in question.subOptions">
                                         <label><input type="checkbox" disabled> {{option.description_FR}}</label>
@@ -161,14 +157,13 @@
                                     </div>
                                 </div>
                                 <div ng-if="question.typeId == '3'">
-                                    <textarea rows="3" cols="40" disabled>Entrez votre réponse.</textarea>
+                                    <textarea rows="3" cols="30" disabled>Entrez votre réponse.</textarea>
                                 </div>
                                 <div ng-if="question.typeId == '4'">
                                     <div ng-repeat="option in question.subOptions">
                                         <label><input type="radio" disabled> {{option.description_FR}}</label>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -177,7 +172,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
         <!-- SECTION: Libraries -->
@@ -223,8 +217,6 @@
                             </div>
                         </form>
                     </div>
-
-
                 </div>
             </div>
         </div>

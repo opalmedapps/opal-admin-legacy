@@ -206,9 +206,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-12" ng-hide="questionnaire.readOnly || questionnaire.final">
+                <div class="col-md-12">
                     <!-- question group table -->
-                    <div class="col-md-8">
+                    <div class="col-md-8" ng-hide="questionnaire.readOnly || questionnaire.final">
                         <div class="panel-container" style="text-align:left;">
                             <div class="panel-info">
                                 <div class="panel-input">
@@ -220,106 +220,137 @@
                         </div>
                     </div>
                     <!-- Preview -->
-                    <div class="col-md-4" style="text-align:right">
+                    <div ng-class="questionnaire.readOnly || questionnaire.final ? 'col-lg-12' : 'col-md-4'" style="text-align:right">
                         <div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
                             <span style="background-color: #fff; padding: 0 10px; font-size:16px;">
                             Selected questions preview</span>
                         </div>
                         <div class="previewContainer">
-                            <div class="previewContent">
-                                <div ng-repeat="selectedGroupObj in questionnaire.questions">
-                                    <h4>{{selectedGroupObj.type_EN}} / {{selectedGroupObj.type_FR}}:</h4>
-                                    <p>{{selectedGroupObj.text_EN}} / {{selectedGroupObj.text_FR}} <span style="color:#d9534f;;">({{selectedGroupObj.optional == 1 ? 'optional' : 'required'}})</span></p>
-                                    <!-- Answer type preview -->
-                                    <div ng-if="selectedGroupObj.typeId == '4'">
-                                        <div ng-repeat="option in selectedGroupObj.subOptions">
-                                            <label><input type="radio" disabled> {{option.description_EN}} /
-                                                {{option.description_FR}}</label>
+                            <div ng-class="questionnaire.readOnly || questionnaire.final ? 'col-lg-6' : 'col-lg-12'">
+                                <div class="previewContent">
+                                    <h3>English</h3>
+                                    <div ng-repeat="selectedGroupObj in questionnaire.questions">
+                                        <h4>{{selectedGroupObj.type_EN}}:</h4>
+                                        <p>{{selectedGroupObj.text_EN}} <span style="color:#d9534f;;">({{selectedGroupObj.optional == 1 ? 'optional' : 'required'}})</span></p>
+                                        <!-- Answer type preview -->
+                                        <div ng-if="selectedGroupObj.typeId == '4'">
+                                            <div ng-repeat="option in selectedGroupObj.subOptions">
+                                                <label><input type="radio" disabled> {{option.description_EN}}</label>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div ng-if="selectedGroupObj.typeId == '2'">
-                                        <div ng-repeat="option in selectedGroupObj.subOptions">
-                                            <label><input type="radio" disabled>
-                                                {{option.description}}</label>
+                                        <div ng-if="selectedGroupObj.typeId == '2'">
+                                            <div ng-repeat="option in selectedGroupObj.subOptions">
+                                                <label><input type="radio" disabled>
+                                                    {{option.description_EN}}</label>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div ng-if="selectedGroupObj.typeId == '1'">
-                                        <div ng-repeat="option in selectedGroupObj.subOptions">
-                                            <label><input type="checkbox" disabled>
-                                                {{option.description_EN}} /
-                                                {{option.description_FR}}</label>
+                                        <div ng-if="selectedGroupObj.typeId == '1'">
+                                            <div ng-repeat="option in selectedGroupObj.subOptions">
+                                                <label><input type="checkbox" disabled>
+                                                    {{option.description_EN}}</label>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div ng-if="selectedGroupObj.typeId == '3'">
-                                        <textarea rows="3" cols="40" disabled>Type in your answer.</textarea>
+                                        <div ng-if="selectedGroupObj.typeId == '3'">
+                                            <textarea rows="3" cols="40" disabled>Type in your answer.</textarea>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-12" ng-show="questionnaire.readOnly || questionnaire.final">
-                    <div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
-                            <span style="background-color: #fff; padding: 0 10px; font-size:16px;">
-                            Selected questions preview</span>
-                    </div>
+                            <div ng-class="questionnaire.readOnly || questionnaire.final ? 'col-lg-6' : 'col-lg-12'">
+                                <div class="previewContent">
+                                    <h3>Français</h3>
+                                    <div ng-repeat="selectedGroupObj in questionnaire.questions">
+                                        <h4>{{selectedGroupObj.type_FR}}:</h4>
+                                        <p>{{selectedGroupObj.text_FR}} <span style="color:#d9534f;;">({{selectedGroupObj.optional == 1 ? 'optionnel' : 'requis'}})</span></p>
+                                        <!-- Answer type preview -->
+                                        <div ng-if="selectedGroupObj.typeId == '4'">
+                                            <div ng-repeat="option in selectedGroupObj.subOptions">
+                                                <label><input type="radio" disabled> {{option.description_FR}}</label>
+                                            </div>
+                                        </div>
+                                        <div ng-if="selectedGroupObj.typeId == '2'">
+                                            <div ng-repeat="option in selectedGroupObj.subOptions">
+                                                <label><input type="radio" disabled>
+                                                    {{option.description_FR}}</label>
+                                            </div>
+                                        </div>
+                                        <div ng-if="selectedGroupObj.typeId == '1'">
+                                            <div ng-repeat="option in selectedGroupObj.subOptions">
+                                                <label><input type="checkbox" disabled>
+                                                    {{option.description_FR}}</label>
+                                            </div>
+                                        </div>
+                                        <div ng-if="selectedGroupObj.typeId == '3'">
+                                            <textarea rows="3" cols="40" disabled>Type in your answer.</textarea>
+                                        </div>
+                                    </div>
 
-                    <div class="col-md-6">
-                        <div class="previewContent">
-                            <div ng-repeat="selectedGroupObj in questionnaire.questions">
-                                <h4>{{selectedGroupObj.type_EN}}</h4>
-                                <div ng-bind-html="selectedGroupObj.text_EN"></div><p style="color:#d9534f;">({{selectedGroupObj.optional == 1 ? 'optional' : 'required'}})</p>
-                                <!-- Answer type preview -->
-                                <div ng-if="selectedGroupObj.typeId == '4'">
-                                    <div ng-repeat="option in selectedGroupObj.subOptions">
-                                        <label><input type="radio" disabled> {{option.description_EN}}</label>
-                                    </div>
-                                </div>
-                                <div ng-if="selectedGroupObj.typeId == '2'">
-                                    <div ng-repeat="option in selectedGroupObj.subOptions">
-                                        <label><input type="radio" disabled> {{option.description_EN}}</label>
-                                    </div>
-                                </div>
-                                <div ng-if="selectedGroupObj.typeId == '1'">
-                                    <div ng-repeat="option in selectedGroupObj.subOptions">
-                                        <label><input type="checkbox" disabled> {{option.description_EN}}</label>
-                                    </div>
-                                </div>
-                                <div ng-if="selectedGroupObj.typeId == '3'">
-                                    <textarea rows="3" cols="40" disabled>Type in your answer.</textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="previewContent">
-                            <div ng-repeat="selectedGroupObj in questionnaire.questions">
-                                <h4>{{selectedGroupObj.type_FR}}</h4>
-                                <div ng-bind-html="selectedGroupObj.text_FR"></div><p style="color:#d9534f;;">({{selectedGroupObj.optional == 1 ? 'optionnel' : 'obligatoire'}})</p>
-                                <!-- Answer type preview -->
-                                <div ng-if="selectedGroupObj.typeId == '4'">
-                                    <div ng-repeat="option in selectedGroupObj.subOptions">
-                                        <label><input type="radio" disabled> {{option.description_FR}}</label>
-                                    </div>
-                                </div>
-                                <div ng-if="selectedGroupObj.typeId == '2'">
-                                    <div ng-repeat="option in selectedGroupObj.subOptions">
-                                        <label><input type="radio" disabled> {{option.description_FR}}</label>
-                                    </div>
-                                </div>
-                                <div ng-if="selectedGroupObj.typeId == '1'">
-                                    <div ng-repeat="option in selectedGroupObj.subOptions">
-                                        <label><input type="checkbox" disabled> {{option.description_FR}}</label>
-                                    </div>
-                                </div>
-                                <div ng-if="selectedGroupObj.typeId == '3'">
-                                    <textarea rows="3" cols="40" disabled>Entrez votre réponse.</textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <!--                <div class="col-md-12" ng-show="questionnaire.readOnly || questionnaire.final">
+                                        <div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
+                                                <span style="background-color: #fff; padding: 0 10px; font-size:16px;">
+                                                Selected questions preview</span>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="previewContent">
+                                                <div ng-repeat="selectedGroupObj in questionnaire.questions">
+                                                    <h4>{{selectedGroupObj.type_EN}}</h4>
+                                                    <div ng-bind-html="selectedGroupObj.text_EN"></div><p style="color:#d9534f;">({{selectedGroupObj.optional == 1 ? 'optional' : 'required'}})</p>
+                                                    &lt;!&ndash; Answer type preview &ndash;&gt;
+                                                    <div ng-if="selectedGroupObj.typeId == '4'">
+                                                        <div ng-repeat="option in selectedGroupObj.subOptions">
+                                                            <label><input type="radio" disabled> {{option.description_EN}}</label>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="selectedGroupObj.typeId == '2'">
+                                                        <div ng-repeat="option in selectedGroupObj.subOptions">
+                                                            <label><input type="radio" disabled> {{option.description_EN}}</label>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="selectedGroupObj.typeId == '1'">
+                                                        <div ng-repeat="option in selectedGroupObj.subOptions">
+                                                            <label><input type="checkbox" disabled> {{option.description_EN}}</label>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="selectedGroupObj.typeId == '3'">
+                                                        <textarea rows="3" cols="40" disabled>Type in your answer.</textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="previewContent">
+                                                <div ng-repeat="selectedGroupObj in questionnaire.questions">
+                                                    <h4>{{selectedGroupObj.type_FR}}</h4>
+                                                    <div ng-bind-html="selectedGroupObj.text_FR"></div><p style="color:#d9534f;;">({{selectedGroupObj.optional == 1 ? 'optionnel' : 'obligatoire'}})</p>
+                                                    &lt;!&ndash; Answer type preview &ndash;&gt;
+                                                    <div ng-if="selectedGroupObj.typeId == '4'">
+                                                        <div ng-repeat="option in selectedGroupObj.subOptions">
+                                                            <label><input type="radio" disabled> {{option.description_FR}}</label>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="selectedGroupObj.typeId == '2'">
+                                                        <div ng-repeat="option in selectedGroupObj.subOptions">
+                                                            <label><input type="radio" disabled> {{option.description_FR}}</label>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="selectedGroupObj.typeId == '1'">
+                                                        <div ng-repeat="option in selectedGroupObj.subOptions">
+                                                            <label><input type="checkbox" disabled> {{option.description_FR}}</label>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="selectedGroupObj.typeId == '3'">
+                                                        <textarea rows="3" cols="40" disabled>Entrez votre réponse.</textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>-->
                 </div>
             </div>
-        </div>
     </uib-accordion>
 </div>
