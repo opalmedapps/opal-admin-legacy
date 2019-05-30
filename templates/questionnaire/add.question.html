@@ -308,8 +308,7 @@
 
                                 <!-- Preview -->
                                 <div class="col-xs-12" ng-show="newQuestion.text_EN && newQuestion.text_FR && newQuestion.typeId">
-                                    <div ng-bind-html="newQuestion.text_EN"></div>
-                                    <div ng-bind-html="newQuestion.text_FR"></div>
+                                    <p ng-bind-html="newQuestion.text_EN + ' / ' + newQuestion.text_FR"></p>
 
                                     <!-- Show category -->
                                     <div ng-if="selectedAt.typeSerNum === '4'">
@@ -405,15 +404,13 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- SECTION: Question library -->
                     <div class="row animated" ng-class="{fadeInUp: questionLibrarySection.show}" ng-if="questionLibrarySection.show" style="margin-top: 10px;">
                         <div class="col-xs-12 side-menu-title">
                             <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                      <span style="background-color:#e6edfa; padding: 0 10px;">
-                        <span class="fas fa-dot-circle"></span>
-                        <h2>Question Library</h2>
-                      </span>
+                                <span style="background-color:#e6edfa; padding: 0 10px;">
+                                    <span class="fas fa-dot-circle"></span><h2>Question Library</h2>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -436,7 +433,6 @@
                                         <span ng-show="newQuestion.library_ID" style="float:right"><em>Complete</em></span>
                                     </div>
                                     <div class="panel-body">
-
                                         <div class="list-space">
                                             <div class="input-group">
                                                 <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
@@ -462,7 +458,6 @@
                                     </p>
                                 </div>
                                 <div class="panel-container">
-
                                     <form name="newLibForm">
                                         <div class="col-md-2" style="margin-top:8px; margin-bottom:5px; font-size:20px;">
                                             <label>Private:  <input type="checkbox" ng-model="newLibrary.private" ng-true-value="1" ng-false-value="0"></label>
