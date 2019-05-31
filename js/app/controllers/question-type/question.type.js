@@ -19,7 +19,7 @@ angular.module('opalAdmin.controllers.question.type', ['ngAnimate', 'ngSanitize'
 			var matcher = new RegExp($scope.filterValue, 'i');
 			renderableRows.forEach(function (row) {
 				var match = false;
-				['text_EN', 'text_FR', 'answertype_name_EN', 'answertype_name_FR', 'library_name_EN', 'library_name_FR'].forEach(function (field) {
+				['name_EN', 'name_FR', 'category_EN', 'category_FR'].forEach(function (field) {
 					if (row.entity[field].match(matcher)) {
 						match = true;
 					}
@@ -36,43 +36,31 @@ angular.module('opalAdmin.controllers.question.type', ['ngAnimate', 'ngSanitize'
 		};
 
 		// Templates for main question table
-		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editQuestion(row.entity)">Edit</a></strong> ' +
-			'- <strong><a href="" ng-click="grid.appScope.deleteQuestion(row.entity)">Delete</a></strong></div>';
-		var cellTemplateText = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
+		var cellTemplateTextEn = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editQuestion(row.entity)">' +
-			'<strong><a href="">{{row.entity.text_EN}} / {{row.entity.text_FR}}</a></strong></div>';
-		var cellTemplateLib = '<div class="ui-grid-cell-contents"> ' +
-			'{{row.entity.library_name_EN}} / {{row.entity.library_name_FR}}</div>';
+			'<strong><a href="">{{row.entity.name_EN}}</a></strong></div>';
+		var cellTemplateTextFr = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
+			'ng-click="grid.appScope.editQuestion(row.entity)">' +
+			'<strong><a href="">{{row.entity.name_FR}}</a></strong></div>';
 		var cellTemplateAt = '<div class="ui-grid-cell-contents"> ' +
-			'{{row.entity.answertype_name_EN}} / {{row.entity.answertype_name_FR}}</div>';
+			'{{row.entity.category_EN}} / {{row.entity.category_FR}}</div>';
 		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Public</p></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Private</p></div>';
-
-		var cellTemplateFinal = '<div class="ui-grid-cell-contents" ng-show="row.entity.final == 1"><p>Final</p></div>' +
-			'<div class="ui-grid-cell-contents" ng-show="row.entity.final == 0"><p>Draft</p></div>';
-
-		var cellTemplateLocked = '<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 1"><div class="fa fa-lock text-danger"></div></div>' +
-			'<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 0"><div class="fa fa-unlock text-success"></div></div>';
+		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
+			'<strong><a href="" ng-click="grid.appScope.editQuestionType(row.entity)">Edit</a></strong> ' +
+			'- <strong><a href="" ng-click="grid.appScope.deleteQuestionType(row.entity)">Delete</a></strong></div>';
 
 		// Data binding for question table
 		$scope.gridLib = {
-			data: 'questionList',
+			data: 'questionTypeList',
 			columnDefs: [
-				{ field: 'locked', displayName: '', cellTemplate: cellTemplateLocked, width: '2%', sortable: false, enableFiltering: false},
-				{ field: 'text_EN', displayName: 'Question (EN / FR)', cellTemplate: cellTemplateText, width: '49%' },
-				{ field: 'answertype_name_EN', displayName: 'Response Type (EN / FR)', cellTemplate: cellTemplateAt, width: '13%' },
-				{ field: 'library_name_EN', displayName: 'Library (EN / FR)', cellTemplate: cellTemplateLib, width: '10%' },
+				{ field: 'name_EN', displayName: 'Name (EN)', cellTemplate: cellTemplateTextEn, width: '30%' },
+				{ field: 'name_FR', displayName: 'Name (FR)', cellTemplate: cellTemplateTextFr, width: '30%' },
+				{ field: 'category_EN', displayName: 'Response Category (EN / FR)', cellTemplate: cellTemplateAt, width: '23%' },
 				{
 					field: 'private', displayName: 'Privacy', cellTemplate: cellTemplatePrivacy, width: '8%', filter: {
 						type: uiGridConstants.filter.SELECT,
 						selectOptions: [{ value: '1', label: 'Private' }, { value: '0', label: 'Public' }]
-					}
-				},
-				{
-					field: 'final', displayName: 'Status', cellTemplate: cellTemplateFinal, width: '8%', filter: {
-						type: uiGridConstants.filter.SELECT,
-						selectOptions: [{ value: '1', label: 'Final' }, { value: '0', label: 'Draft' }]
 					}
 				},
 				{ name: 'Operations', width: '10%', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false }
@@ -85,13 +73,13 @@ angular.module('opalAdmin.controllers.question.type', ['ngAnimate', 'ngSanitize'
 			},
 		};
 
-		// Call our API service to get the list of existing questions
-		questionnaireCollectionService.getQuestions(Session.retrieveObject('user').id).then(function (response) {
-			$scope.questionList = response.data;
-
+		// Call our API service to get the list of existing questions types
+		questionnaireCollectionService.getQuestionTypes(Session.retrieveObject('user').id).then(function (response) {
+			$scope.questionTypeList = response.data;
 		}).catch(function(response) {
-			console.error('Error occurred getting question list:', response.status, response.data);
+			alert('Error occurred getting response types: '+response.status +"\r\n"+ response.data);
 		});
+
 
 		// Banner
 		$scope.bannerMessage = "";
@@ -130,52 +118,39 @@ angular.module('opalAdmin.controllers.question.type', ['ngAnimate', 'ngSanitize'
 
 			// after update, refresh data
 			modalInstance.result.then(function () {
-				$scope.questionList = [];
+				$scope.questionTypeList = [];
 				// Call our API service to get the list of existing questions
-				questionnaireCollectionService.getQuestions(Session.retrieveObject('user').id).then(function (response) {
-					$scope.questionList = response.data;
+				questionnaireCollectionService.getQuestionTypes(Session.retrieveObject('user').id).then(function (response) {
+					$scope.questionTypeList = response.data;
 				}).catch(function(response) {
-					console.error('Error occurred getting question list after modal close:', response.status, response.data);
+					alert('Error occurred getting response types: '+response.status +"\r\n"+ response.data);
 				});
-
 			});
 		};
 
 		// initialize variable for storing deleting question
-		$scope.questionToDelete = {};
+		$scope.questionTypeToDelete = {};
 
 		// function to delete question
-		$scope.deleteQuestion = function (currentQuestion) {
+		$scope.deleteQuestionType = function (currentQuestion) {
 
+			$scope.questionTypeToDelete = currentQuestion;
+			var modalInstance = $uibModal.open({
+				templateUrl: 'templates/questionnaire/delete.question.type.html',
+				controller: 'question.type.delete',
+				windowClass: 'deleteModal',
+				scope: $scope,
+				backdrop: 'static',
+			});
 
-			$scope.questionToDelete = currentQuestion;
-			var modalInstance;
-
-			if (currentQuestion.locked) {
-				modalInstance = $uibModal.open({
-					templateUrl: 'templates/questionnaire/cannot.delete.question.html',
-					controller: 'question.delete',
-					windowClass: 'deleteModal',
-					scope: $scope,
-					backdrop: 'static',
-				});
-			} else {
-				modalInstance = $uibModal.open({
-					templateUrl: 'templates/questionnaire/delete.question.html',
-					controller: 'question.delete',
-					windowClass: 'deleteModal',
-					scope: $scope,
-					backdrop: 'static',
-				});
-			}
 			// After delete, refresh the eduMat list
 			modalInstance.result.then(function () {
-				$scope.questionList = [];
+				$scope.questionTypeList = [];
 				// update data
-				questionnaireCollectionService.getQuestions(Session.retrieveObject('user').id).then(function (response) {
-					$scope.questionList = response.data;
-				}).catch(function (response) {
-					alert('Error occurred getting question list after modal close. Code: ' + response.status + "\r\n" +  response.data);
+				questionnaireCollectionService.getQuestionTypes(Session.retrieveObject('user').id).then(function (response) {
+					$scope.questionTypeList = response.data;
+				}).catch(function(response) {
+					alert('Error occurred getting response types: '+response.status +"\r\n"+ response.data);
 				});
 			});
 		};

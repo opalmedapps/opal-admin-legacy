@@ -188,6 +188,44 @@ class QuestionType extends QuestionnaireModule {
     public function getQuestionTypeList(){
         return $this->questionnaireDB->getQuestionTypeList();
     }
+
+    /**
+     * Mark a question type as deleted. First, it get the last time it was updated, check if the user has the proper
+     * authorization. Then it checked if the record was updated in the meantime, and if not, it marks the question as
+     * being deleted.
+     *
+     * WARNING!!! No record should be EVER be removed from the questionnaire database! It should only being marked as
+     * being deleted ONLY  if the user has the proper authorization and no more than one user is doing modification
+     * on it at a specific moment. Not following the proper procedure will have some serious impact on the integrity
+     * of the database and its records.
+     *
+     * REMEMBER !!! NO DELETE STATEMENT EVER !!! YOU HAVE BEING WARNED !!!
+     *
+     * @param $questionId (ID of the question)
+     * @return array $response : response
+     */
+    function deleteQuestionType($questionTypeId) {
+        $questionTypeToDelete = $this->questionnaireDB->getTypeTemplate($questionTypeId);
+
+        if ($this->questionnaireDB->getOAUserId() <= 0 || $questionTypeToDelete["deleted"] == 1 || ($questionTypeToDelete["private"] == 1 && $this->questionnaireDB->getOAUserId() != $questionTypeToDelete["OAUserId"]))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
+
+        $lastUpdated = $this->questionnaireDB->getLastTimeTableUpdated(TYPE_TEMPLATE_TABLE, $questionTypeId);
+        $nobodyUpdated = $this->questionnaireDB->canRecordBeUpdated(TYPE_TEMPLATE_TABLE, $questionTypeId, $lastUpdated["lastUpdated"], $lastUpdated["updatedBy"]);
+        $nobodyUpdated = intval($nobodyUpdated["total"]);
+        if ($nobodyUpdated){
+            $this->questionnaireDB->markAsDeletedInDictionary($questionTypeToDelete["name"]);
+            $this->questionnaireDB->markAsDeleted(TYPE_TEMPLATE_TABLE, $questionTypeId);
+            $response['value'] = true; // Success
+            $response['message'] = 200;
+            return $response;
+        }
+        else {
+            $response['value'] = false; // conflict error. Somebody already updated the question or record does not exists.
+            $response['message'] = 409;
+            return $response;
+        }
+    }
 }
 
 ?>
