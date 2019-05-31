@@ -85,6 +85,10 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		$scope.goToQuestionnaireCompleted = function () {
 			$state.go('questionnaire-completed');
 		};
+		// Function to go to question type page
+		$scope.goToQuestionType = function () {
+			$state.go('questionnaire-question-type');
+		};
 		// Function to go to legacy questionnaires page
 		$scope.goToLegacyQuestionnaire = function () {
 			$state.go('legacy-questionnaire');
