@@ -1,0 +1,24 @@
+<div class="modal-header">
+	<h2 class="modal-title col-xs-12">
+		<span class="glyphicon glyphicon-trash"></span> Delete Question 
+	</h2>
+	<p class="modal-title-caption col-xs-12">
+		{{questionToDelete.text_EN}} / {{questionToDelete.text_EN}}
+	</p>
+</div>
+<div class="modal-body">
+	<div class="alert alert-danger" role="alert">
+    <strong>Delete Question</strong><br>
+    <p>
+      Are you sure you want to delete the question "{{questionToDelete.text_EN}}" ?
+    </p>
+  </div>
+  <div class="row">
+    <div class="modal-buttons col-xs-12">
+      <form method="post" ng-submit="deleteQuestion()">			
+        <input class="btn btn-primary submit" type="submit" value="Delete">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+      </form>
+    </div>
+  </div>
+</div>
