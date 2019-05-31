@@ -1,36 +1,32 @@
 angular.module('opalAdmin.controllers.question.type.delete', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns'])
 
-	.controller('question.delete', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
+	.controller('question.type.delete', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
 
 		// Submit delete
 		$scope.deleteQuestion = function () {
 			$.ajax({
 				type: "POST",
-				url: "php/questionnaire/delete.question.php",
-				data: {"ID": $scope.questionToDelete.serNum, "OAUserId": Session.retrieveObject('user').id},
+				url: "php/questionnaire/delete.question.type.php",
+				data: {"ID": $scope.questionTypeToDelete.serNum, "OAUserId": Session.retrieveObject('user').id},
 				success: function (response) {
 					response = JSON.parse(response);
 					// Show success or failure depending on response
 					if (response.value) {
 						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = "Successfully deleted \"" + $scope.questionToDelete.text_EN + "/ " + $scope.questionToDelete.text_FR + "\"!";
+						$scope.$parent.bannerMessage = "Successfully deleted \"" + $scope.questionTypeToDelete.name_EN + "/ " + $scope.questionTypeToDelete.name_FR + "\"!";
 					}
 					else {
 						$scope.setBannerClass('danger');
 						var errMsg = "";
-						console.log(response.message);
 						switch(response.message) {
 							case 401:
 								errMsg = "You are not authenticated!";
 								break;
 							case 403:
-								errMsg = "You do not have the permission to delete this question.";
+								errMsg = "You do not have the permission to delete this answer type.";
 								break;
 							case 409:
-								errMsg = "The question was already modified by someone else. Please verify and try again.";
-								break;
-							case 423:
-								errMsg = "The question was already sent and is now locked.";
+								errMsg = "The answer type was already modified by someone else. Please verify and try again.";
 								break;
 							default:
 								errMsg = response.message;
