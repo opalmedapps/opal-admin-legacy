@@ -19,6 +19,10 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 		$scope.goToQuestionnaireCompleted = function () {
 			$state.go('questionnaire-completed');
 		};
+		// Function to go to question type page
+		$scope.goToQuestionType = function () {
+			$state.go('questionnaire-question-type');
+		};
 
 		// Banner
 		$scope.bannerMessage = "";
