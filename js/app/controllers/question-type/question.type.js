@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.question.type', ['ngAnimate', 'ngSanitize'
 
 		// Routing to go to add question page
 		$scope.goToAddQuestion = function () {
-			$state.go('questionnaire-question-add');
+			$state.go('questionnaire-question-type-add');
 		};
 
 		// Function to filter questionnaires

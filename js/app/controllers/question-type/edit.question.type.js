@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.question.type.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns'])
 
-	.controller('question.edit', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
+	.controller('question.type.edit', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
 		// get current user id
 		var user = Session.retrieveObject('user');
 		var OAUserId = user.id;
