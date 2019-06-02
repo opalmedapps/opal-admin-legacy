@@ -1,5 +1,5 @@
 angular.module('opalAdmin.controllers.question.type.add', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.bootstrap.materialPicker']).
-controller('question.add', function ($scope, $state, $filter, $uibModal, Session, filterCollectionService, questionnaireCollectionService) {
+controller('question.type.add', function ($scope, $state, $filter, $uibModal, Session, filterCollectionService, questionnaireCollectionService) {
 	// navigation function
 	$scope.goBack = function () {
 		$state.go('questionnaire');
@@ -13,8 +13,6 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	$scope.titleSection = { open: false, show: true };
 	$scope.answerTypeSection = { open: false, show: false };
 	$scope.questionLibrarySection = { open: false, show: false };
-
-	$scope.list = ["one", "two", "three", "four", "five", "six"];
 
 	// get current user id
 	var user = Session.retrieveObject('user');
@@ -30,23 +28,6 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	$scope.numOfCompletedSteps = 0;
 	$scope.stepTotal = 2;
 	$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-
-	$scope.decreaseStep = function() {
-		$scope.newQuestion.library_ID = null;
-		$scope.stepTotal = 2;
-		$scope.numOfCompletedSteps = 2;
-		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-		steps.question.completed = true;
-		$scope.questionLibrarySection.open = false;
-	};
-
-	$scope.increaseStep = function() {
-		$scope.stepTotal = 3;
-		steps.question.completed = false;
-		$scope.numOfCompletedSteps = 2;
-		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-		$scope.questionLibrarySection.open = true;
-	};
 
 	/* Function for the "Processing" dialog */
 	var processingModal;
@@ -78,7 +59,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	}
 
 	// Initialize the new question object
-	$scope.newQuestion = {
+	$scope.newQuestionType = {
 		text_EN: "",
 		text_FR: "",
 		library_ID: null,
@@ -109,10 +90,13 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	$scope.updateQuestionText = function () {
 
 		$scope.titleSection.open = true;
-		if (!$scope.newQuestion.text_EN && !$scope.newQuestion.text_FR) {
+
+
+
+		if (!$scope.newQuestionType.name_EN && !$scope.newQuestionType.name_FR) {
 			$scope.titleSection.open = false;
 		}
-		if ($scope.newQuestion.text_EN && $scope.newQuestion.text_FR) {
+		if ($scope.newQuestionType.name_EN && $scope.newQuestionType.name_FR) {
 
 			$scope.answerTypeSection.show = true;
 
@@ -132,7 +116,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	$scope.updateAt = function (selectedAt) {
 
 		$scope.answerTypeSection.open = true;
-		if ($scope.newQuestion.typeId) {
+		if ($scope.newQuestionType.typeId) {
 			$scope.questionLibrarySection.show = true;
 			$scope.selectedAt = selectedAt;
 			steps.answerType.completed = true;
@@ -162,17 +146,17 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	$scope.updateLibrary = function (selectedLibrary) {
 		$scope.questionLibrarySection.open = true;
 
-		var idx = $scope.newQuestion.libraries.indexOf(selectedLibrary.serNum);
+		var idx = $scope.newQuestionType.libraries.indexOf(selectedLibrary.serNum);
 
 		if (idx > -1) {
-			$scope.newQuestion.libraries.splice(idx, 1);
+			$scope.newQuestionType.libraries.splice(idx, 1);
 		}
 
 		else {
-			$scope.newQuestion.libraries.push(selectedLibrary.serNum);
+			$scope.newQuestionType.libraries.push(selectedLibrary.serNum);
 		}
 
-		if ($scope.newQuestion.libraries.length > 0) {
+		if ($scope.newQuestionType.libraries.length > 0) {
 
 			$scope.selectedGroup = selectedLibrary;
 
@@ -199,11 +183,11 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	// cancel selection
 	$scope.atCancelSelection = function () {
-		$scope.newQuestion.typeId = false;
+		$scope.newQuestionType.typeId = false;
 	};
 
 	$scope.groupCancelSelection = function () {
-		$scope.newQuestion.library_ID = false;
+		$scope.newQuestionType.library_ID = false;
 	};
 
 	// search function
@@ -237,7 +221,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	// add new types & write into DB
 	// Initialize the new answer type object
-	$scope.newAnswerType = {
+	$scope.newQuestionType = {
 		name_EN: "",
 		name_FR: "",
 		category_EN: "",
@@ -245,21 +229,29 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		private: 0,
 		OAUserId: OAUserId,
 		options: [],
-		slider: []
+		slider: {
+			minValue: 1,
+			minCaption_EN: "Minimum english text",
+			minCaption_FR: "Minimum texte français",
+			maxValue: 10,
+			maxCaption_EN: "Maximum english text",
+			maxCaption_FR: "Maximum texte français",
+			increment: 1,
+		},
 	};
 
-	$scope.addNewQuestionType = function (atCatSelected) {
+	$scope.addnewQuestionType = function (atCatSelected) {
 		// Binding categories
-		$scope.newAnswerType.ID = atCatSelected.ID;
-		$scope.newAnswerType.OAUserId = Session.retrieveObject('user').id;
+		$scope.newQuestionType.ID = atCatSelected.ID;
+		$scope.newQuestionType.OAUserId = Session.retrieveObject('user').id;
 		// Prompt to confirm user's action
-		var confirmation = confirm("Are you sure you want to create a new " + atCatSelected.category_EN.toLowerCase()  +  " response type named '" + $scope.newAnswerType.name_EN + "'?");
+		var confirmation = confirm("Are you sure you want to create a new " + atCatSelected.category_EN.toLowerCase()  +  " response type named '" + $scope.newQuestionType.name_EN + "'?");
 		if (confirmation) {
 			// write in to db
 			$.ajax({
 				type: "POST",
 				url: "php/questionnaire/insert.question_type.php",
-				data: $scope.newAnswerType,
+				data: $scope.newQuestionType,
 				success: function (result) {
 					result = JSON.parse(result);
 					if(result.message === 200) {
@@ -285,59 +277,56 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	// add options
 	$scope.addOptions = function () {
-		$scope.newAnswerType.options.push({
+		$scope.newQuestionType.options.push({
 			text_EN: "",
 			text_FR: "",
-			order: undefined,
+			order: $scope.newQuestionType.options.length + 1,
 			OAUserId: OAUserId
 		});
 	};
 
 	// delete options
 	$scope.deleteOptions = function (optionToDelete) {
-		var index = $scope.newAnswerType.options.indexOf(optionToDelete);
+		var index = $scope.newQuestionType.options.indexOf(optionToDelete);
 		if (index > -1) {
-			$scope.newAnswerType.options.splice(index, 1);
+			$scope.newQuestionType.options.splice(index, 1);
 		}
+
+		var i = 1;
+		$scope.newQuestionType.options.forEach(function(entry) {
+			entry.order = i;
+			i++;
+		});
 	};
 
-	// Initialize the new library object
-	$scope.newLibrary = {
-		name_EN: "",
-		name_FR: "",
-		private: 0,
-		OAUserId: OAUserId
+	$scope.orderPreview = function () {
+		$scope.newQuestionType.options.sort(function(a,b){
+			return (a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0);
+		});
 	};
-	$scope.addNewLib = function () {
-		// Prompt to confirm user's action
-		var confirmation = confirm("Are you sure you want to create new library " + $scope.newLibrary.name_EN + " / "+$scope.newLibrary.name_FR+ "?");
-		if (confirmation) {
-			// write in to db
-			$.ajax({
-				type: "POST",
-				url: "php/questionnaire/insert.library.php",
-				data: $scope.newLibrary,
-				success: function (result) {
-					result = JSON.parse(result);
-					if(result.code === 200) {
-						alert('Successfully added the new library. Please find your new library in the panel above.');
-						questionnaireCollectionService.getLibraries(OAUserId).then(function (response) {
-							$scope.libraries = [];
-							$scope.groupFilterList = response.data;
-						}).catch(function (response) {
-							alert('Error occurred getting libraries. Code '+ response.status +"\r\n" + response.data);
-						});
-					}
-					else {
-						alert("Unable to create the library. Code " + result.code + ".\r\nError message: " + result.message);
-					}
-				},
-				error: function () {
-					alert("Something went wrong.");
-				}
-			});
+
+	$scope.updateSlider = function () {
+		var radiostep = new Array();
+		var increment = parseFloat($scope.newQuestionType.slider.increment);
+		var minValue = parseFloat($scope.newQuestionType.slider.minValue);
+		var maxValue = parseFloat($scope.newQuestionType.slider.maxValue);
+
+		if (minValue <= 0.0 || maxValue <= 0.0 || increment <= 0 || minValue >= maxValue)
+			$scope.validSlider = false;
+		else {
+			maxValue = (Math.floor((maxValue - minValue) / increment) * increment) + minValue;
+			$scope.newQuestionType.slider.maxValue = parseInt(maxValue);
+			$scope.validSlider = true;
+			for(var i = minValue; i <= maxValue; i += increment) {
+				radiostep.push({"name_EN":" " + i,"name_FR":" " + i});
+			}
+			radiostep[0]["name_EN"] += " " + $scope.newQuestionType.slider.minCaption_EN;
+			radiostep[0]["name_FR"] += " " + $scope.newQuestionType.slider.minCaption_FR;
+			radiostep[radiostep.length - 1]["name_EN"] += " " + $scope.newQuestionType.slider.maxCaption_EN;
+			radiostep[radiostep.length - 1]["name_FR"] += " " + $scope.newQuestionType.slider.maxCaption_FR;
 		}
-	};
+		$scope.newQuestionType.options = radiostep;
+	}
 
 	// check if form is completed
 	$scope.checkForm = function () {
@@ -354,7 +343,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 			$.ajax({
 				type: "POST",
 				url: "php/questionnaire/insert.question.php",
-				data: $scope.newQuestion,
+				data: $scope.newQuestionType,
 				success: function (result) {
 					result = JSON.parse(result);
 					if (result.code === 200) {
