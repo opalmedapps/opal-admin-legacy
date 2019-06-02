@@ -43,15 +43,6 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			});
 		};
 
-		/*
-		$options["minValue"] <= 0.0 || $options["maxValue"] <= 0.0 || $options["increment"] <= 0.0 || $options["minValue"] >= $options["maxValue"])
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid data.");
-
-        $options["maxValue"] = floatval(floor(($options["maxValue"] - $options["minValue"]) / $options["increment"]) * $options["increment"]) + $options["minValue"];
-
-		* */
-
-
 		$scope.updateSlider = function () {
 			var radiostep = new Array();
 			var increment = parseFloat($scope.question.options.increment);
@@ -202,6 +193,12 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 				$scope.question.subOptions.splice(index, 1);
 				$scope.changesMade = true;
 			}
+
+			var i = 1;
+			$scope.question.subOptions.forEach(function(entry) {
+				entry.order = i;
+				i++;
+			});
 		};
 
 		questionnaireCollectionService.getLibraries(OAUserId).then(function (response) {
