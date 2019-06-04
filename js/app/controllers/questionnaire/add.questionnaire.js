@@ -269,7 +269,7 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		$scope.newQuestionnaire.questions.sort(function(a,b){
 			return (a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0);
 		});
-	}
+	};
 
 	questionnaireCollectionService.getFinalizedQuestions(OAUserId).then(function (response) {
 		$scope.groupList = decodeQuestions(response.data);

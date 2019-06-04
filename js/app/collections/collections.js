@@ -17,7 +17,7 @@ angular.module('opalAdmin.collections', [])
 				method: 'GET',
 				url: "config.json"
 			});
-		}
+		};
 
 		// Function to get the app version and build
 		applicationAPI.getApplicationBuild = function () {
@@ -102,7 +102,7 @@ angular.module('opalAdmin.collections', [])
 					type: type
 				}
 			});
-		}
+		};
 
 		return aliasAPI;
 	})
@@ -147,7 +147,7 @@ angular.module('opalAdmin.collections', [])
 					type: type
 				}
 			});
-		}
+		};
 
 		return postAPI;
 	})
@@ -215,7 +215,7 @@ angular.module('opalAdmin.collections', [])
 					serials: JSON.stringify(serials)
 				}
 			});
-		}
+		};
 
 		return educationalMaterialAPI;
 	})
@@ -431,7 +431,7 @@ angular.module('opalAdmin.collections', [])
 					serials: JSON.stringify(serials),
 				}
 			});
-		}
+		};
 
 		return testResultAPI;
 	})
@@ -569,7 +569,7 @@ angular.module('opalAdmin.collections', [])
 					serials: JSON.stringify(serials),
 				}
 			});
-		}
+		};
 
 		return emailAPI;
 	})
@@ -738,7 +738,7 @@ angular.module('opalAdmin.collections', [])
 					serials: JSON.stringify(serials),
 				}
 			});
-		}
+		};
 
 		return legacyQuestionnaireAPI;
 	})
