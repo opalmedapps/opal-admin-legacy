@@ -211,6 +211,19 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     /*
+     * This function returns the details of a specific question type.
+     * @param   ID of the question type (int)
+     * @return  array of details of the question type
+     * */
+    function getQuestionTypeDetails($questionTypeId) {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_QUESTION_TYPE_DETAILS,
+            array(
+                array("parameter"=>":ID","variable"=>$questionTypeId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":OAUserId","variable"=>$this->OAUserId,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    /*
      * This function lists all the options of a specific question types from its table.
      * @param   ID of the question type, name of the table options
      * @return  all the options available for the specified question type
@@ -820,10 +833,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @params  question id (int) and table name of the option (string)
      * @returns array of options
      * */
-    function getQuestionOptionsDetails($questionId, $tableName) {
-        return $this->_fetchAll(str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_QUESTION_OPTIONS),
+    function getQuestionOptionsDetails($questionId, $tableName, $fieldName = "questionId") {
+        $sqlFetch = str_replace("%%FIELDNAME%%", $fieldName, str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_QUESTION_OPTIONS));
+        return $this->_fetchAll($sqlFetch,
             array(
-                array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":fieldId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
             ));
     }
 
@@ -832,10 +846,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @params  question id (int) and table name of the option (string)
      * @returns array of options
      * */
-    function getQuestionSliderDetails($questionId, $tableName) {
-        return $this->_fetchAll(str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_QUESTION_SLIDER_OPTIONS),
+    function getQuestionSliderDetails($questionId, $tableName, $fieldName = "questionId") {
+        $sqlFetch = str_replace("%%FIELDNAME%%", $fieldName, str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_QUESTION_SLIDER_OPTIONS));
+        return $this->_fetchAll($sqlFetch,
             array(
-                array("parameter"=>":questionId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":fieldId","variable"=>$questionId,"data_type"=>PDO::PARAM_INT),
             ));
     }
 

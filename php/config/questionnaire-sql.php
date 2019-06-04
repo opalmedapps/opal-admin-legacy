@@ -144,6 +144,33 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPES",
     WHERE tt.typeId IN (1, 2, 3, 4) AND (tt.private = 0 OR tt.OAUserId = :OAUserId) AND tt.deleted = ".NON_DELETED_RECORD.";"
 );
 
+define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPE_DETAILS",
+    "SELECT
+    tt.ID,
+    t.ID AS typeId,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = tt.name AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = tt.name AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR,
+    tt.private,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS category_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS category_FR,
+    tts.minValue,
+    tts.maxValue,
+    tts.increment,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = tts.minCaption AND d.languageId = ".ENGLISH_LANGUAGE.") AS minCaption_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = tts.minCaption AND d.languageId = ".FRENCH_LANGUAGE.") AS minCaption_FR,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = tts.maxCaption AND d.languageId = ".ENGLISH_LANGUAGE.") AS maxCaption_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = tts.maxCaption AND d.languageId = ".FRENCH_LANGUAGE.") AS maxCaption_FR,
+    dt1.name AS tableName,
+    dt2.name AS subTableName,
+    tt.OAUserId AS created_by
+    FROM ".TYPE_TEMPLATE_TABLE." tt
+    LEFT JOIN type t ON t.ID = tt.typeId
+    LEFT JOIN ".DEFINITION_TABLE." dt1 ON dt1.ID = t.templateTableId
+    LEFT JOIN ".DEFINITION_TABLE." dt2 ON dt2.ID = t.templateSubTableId
+    LEFT JOIN ".TYPE_TEMPLATE_SLIDER_TABLE." tts ON tts.typeTemplateId = tt.ID
+    WHERE TT.ID = :ID AND (tt.private = 0 OR tt.OAUserId = :OAUserId) AND tt.deleted = ".NON_DELETED_RECORD.";"
+);
+
 define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPE_OPTIONS",
     "SELECT st.*,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = st.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS text_EN,
@@ -399,7 +426,7 @@ define("SQL_QUESTIONNAIRE_GET_SECTION_BY_QUESTIONNAIRE_ID",
 define("SQL_QUESTIONNAIRE_GET_QUESTION_OPTIONS",
     "SELECT *
     FROM %%TABLENAME%%
-    WHERE questionId = :questionId;"
+    WHERE %%FIELDNAME%% = :fieldId;"
 );
 
 define("SQL_QUESTIONNAIRE_GET_QUESTION_SLIDER_OPTIONS",
@@ -409,7 +436,7 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_SLIDER_OPTIONS",
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = s.maxCaption AND d.languageId = ".ENGLISH_LANGUAGE.") AS maxCaption_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = s.maxCaption AND d.languageId = ".FRENCH_LANGUAGE.") AS maxCaption_FR
     FROM %%TABLENAME%% s
-    WHERE questionId = :questionId;"
+    WHERE %%FIELDNAME%% = :fieldId;"
 );
 
 define("SQL_QUESTIONNAIRE_GET_QUESTION_SUB_OPTIONS",

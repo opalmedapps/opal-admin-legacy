@@ -81,25 +81,16 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 
 	// Initialize variables for holding selected answer type & group
 	$scope.selectedAt = null;
-	$scope.selectedGroup = null;
 
 	// Filter lists initialized
-	$scope.atFilterList = [];
-	$scope.libFilterList = [];
-	// $scope.catFilterList = [];
-	$scope.groupFilterList = [];
 	$scope.atCatList = [];
 
 	// Initialize search field variables
-	$scope.atEntered = '';
-	$scope.libEntered = '';
-	$scope.catEntered = '';
-	$scope.groupEntered = '';
-	$scope.atCategory = "";
-
-	$scope.updateSelection = function () {
-
-	};
+	// $scope.atEntered = '';
+	// $scope.libEntered = '';
+	// $scope.catEntered = '';
+	// $scope.groupEntered = '';
+	// $scope.atCategory = "";
 
 	$scope.updateQuestionType = function (selected) {
 		$scope.newQuestionType.ID = selected.ID;
@@ -116,14 +107,12 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 		};
 		$scope.newQuestionType.options = [];
 
-		if (selected.ID === "2") {
+		if (selected.ID === "2")
 			$scope.updateSlider();
-		}
 
 	};
 
-
-	$scope.addNewQuestionType = function () {
+	$scope.submitQuestionType = function () {
 		if ($scope.checkForm()) {
 			// Submit
 			$.ajax({
@@ -145,7 +134,7 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 		}
 
 
-	}
+	};
 
 	// Update values from form
 	$scope.updateQuestionText = function () {
@@ -199,86 +188,12 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 		}
 	};
 
-	// assign functions
-	$scope.searchAt = function (field) {
-		$scope.atEntered = field;
-	};
-	$scope.searchLib = function (field) {
-		$scope.libEntered = field;
-	};
-
-	// cancel selection
-	$scope.atCancelSelection = function () {
-		$scope.newQuestionType.typeId = false;
-	};
-
-	$scope.groupCancelSelection = function () {
-		$scope.newQuestionType.library_ID = false;
-	};
-
-	// search function
-	$scope.searchAtFilter = function (Filter) {
-		var keyword = new RegExp($scope.atEntered, 'i');
-		return !$scope.atEntered || keyword.test(Filter.name_EN);
-	};
-	$scope.searchLibFilter = function (Filter) {
-		var keyword = new RegExp($scope.libEntered, 'i');
-		return !$scope.libEntered || keyword.test(Filter.name_EN);
-	};
-
 	// questionnaire API: retrieve data
-	questionnaireCollectionService.getQuestionTypes(OAUserId).then(function (response) {
-		$scope.atFilterList = response.data;
-	}).catch(function(response) {
-		alert('Error occurred getting response types: '+response.status +"\r\n"+ response.data);
-	});
-
-	questionnaireCollectionService.getLibraries(OAUserId).then(function (response) {
-		$scope.groupFilterList = response.data;
-	}).catch(function(response) {
-		alert('Error occurred getting question libraries: '+response.status +"\r\n"+ response.data);
-	});
-
 	questionnaireCollectionService.getQuestionTypeList(OAUserId).then(function (response) {
 		$scope.atCatList = response.data;
 	}).catch(function(response) {
 		alert('Error occurred getting response type categories: '+response.status +"\r\n"+ response.data);
 	});
-
-	$scope.addnewQuestionType = function (atCatSelected) {
-		// Binding categories
-		$scope.newQuestionType.ID = atCatSelected.ID;
-		$scope.newQuestionType.OAUserId = Session.retrieveObject('user').id;
-		// Prompt to confirm user's action
-		var confirmation = confirm("Are you sure you want to create a new " + atCatSelected.category_EN.toLowerCase()  +  " response type named '" + $scope.newQuestionType.name_EN + "'?");
-		if (confirmation) {
-			// write in to db
-			$.ajax({
-				type: "POST",
-				url: "php/questionnaire/insert.question_type.php",
-				data: $scope.newQuestionType,
-				success: function (result) {
-					result = JSON.parse(result);
-					if(result.message === 200) {
-
-						alert('Successfully added the new response type. Please find your new response type in the form above.');
-						// update answer type list
-						questionnaireCollectionService.getQuestionTypes(OAUserId).then(function (response) {
-							$scope.atFilterList = response.data;
-						}).catch(function (response) {
-							alert('Error occurred getting response types: '+response.status +"\r\n"+ response.data);
-						});
-					} else {
-						alert("Unable to create the response type. Code " + result.message + ".\r\nError message: " + result.details);
-					}
-
-				},
-				error: function (request) {
-					alert("A problem occurred. Please try again.\r\n"+request.responseText);
-				}
-			});
-		}
-	};
 
 	// add options
 	$scope.addOptions = function () {
