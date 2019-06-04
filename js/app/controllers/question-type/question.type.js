@@ -103,14 +103,14 @@ angular.module('opalAdmin.controllers.question.type', ['ngAnimate', 'ngSanitize'
 		};
 
 		// initialize variable for storing selected question
-		$scope.currentQuestion = {};
+		$scope.currentQuestionType = {};
 
 		// function to edit question
 		$scope.editQuestion = function (question) {
-			$scope.currentQuestion = question;
+			$scope.currentQuestionType = question;
 			var modalInstance = $uibModal.open({
-				templateUrl: 'templates/questionnaire/edit.question.html',
-				controller: 'question.edit',
+				templateUrl: 'templates/questionnaire/edit.question.type.html',
+				controller: 'question.type.edit',
 				scope: $scope,
 				windowClass: 'customModal',
 				backdrop: 'static',
@@ -132,9 +132,9 @@ angular.module('opalAdmin.controllers.question.type', ['ngAnimate', 'ngSanitize'
 		$scope.questionTypeToDelete = {};
 
 		// function to delete question
-		$scope.deleteQuestionType = function (currentQuestion) {
+		$scope.deleteQuestionType = function (currentQuestionType) {
 
-			$scope.questionTypeToDelete = currentQuestion;
+			$scope.questionTypeToDelete = currentQuestionType;
 			var modalInstance = $uibModal.open({
 				templateUrl: 'templates/questionnaire/delete.question.type.html',
 				controller: 'question.type.delete',

@@ -618,6 +618,18 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
+		questionnaireAPI.getQuestionTypeDetails = function (questionTypeId, OAUserId) {
+			return $http({
+				method: 'JSONP',
+				url: "api/questionnaire/get.question_type_details.php",
+				params: {
+					callback: 'JSON_CALLBACK',
+					questionTypeId: questionTypeId,
+					OAUserId: OAUserId,
+				}
+			});
+		};
+
 		questionnaireAPI.getQuestionTypeList = function (OAUserId) {
 			return $http({
 				method: 'JSONP',

@@ -24,7 +24,7 @@
                                     <div class="side-panel-info-sm">
                                         <div class="panel-content">
                                             <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
-                                            <h6 class="side-panel-title" style="display:inline-block;margin:0;font-size:14px;"><strong>Back to Manage Questions</strong></h6>
+                                            <h6 class="side-panel-title" style="display:inline-block;margin:0;font-size:14px;"><strong>Back to Manage types of response</strong></h6>
                                         </div>
                                     </div>
                                 </div>
@@ -55,7 +55,7 @@
                                             <span ng-if="newQuestionType.name_EN && newQuestionType.name_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
-                                            <strong>Question</strong>
+                                            <strong>Name</strong>
                                         </div>
                                         <div class="col-md-2">
                                             <i ng-if="newQuestionType.name_EN || newQuestionType.name_FR" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
@@ -146,8 +146,8 @@
 
                         <!-- Submit button -->
                         <div class="panel-container">
-                            <a href="" ng-click="addNewQuestionType()" ng-if="checkForm()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" style="width: 100%;">
-                                <span style="font-size: 20px;"><strong>Submit Question</strong></span>
+                            <a href="" ng-click="submitQuestionType()" ng-if="checkForm()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" style="width: 100%;">
+                                <span style="font-size: 20px;"><strong>Submit response type</strong></span>
                             </a>
                         </div>
                     </div>
@@ -196,13 +196,6 @@
                                 </div>
                             </div>
                         </div>
-<!--                        <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkForm()">
-                            <div class="panel-container">
-                                <a href="" ng-click="submitQuestion()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
-                                    <span style="font-size: 20px;"><strong>Submit Question</strong></span>
-                                </a>
-                            </div>
-                        </div>-->
                     </div>
 
                     <div class="section-content">
@@ -292,7 +285,7 @@
                                         <!-- Add multiple choice options -->
                                         <div class="col-xs-12" ng-show="atCategory.category_EN === 'Checkbox' || atCategory.category_EN === 'Radio Button'">
                                             <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in newQuestionType.options">
-                                                <input ng-change="checkCompletion();" class="form-control" style="width:20%" type="number" placeholder="Position" ng-model="option.order" min="1" max="{{newQuestionType.options.length}}" ng-change="orderPreview()" required/>
+                                                <input ng-change="checkCompletion();orderPreview();" class="form-control" style="width:20%" type="number" placeholder="Position" ng-model="option.order" min="1" required/>
                                                 <input ng-change="checkCompletion();" class="form-control" style="width:40%" type="text" placeholder="Text (EN)" ng-model="option.text_EN" required/>
                                                 <input ng-change="checkCompletion();" class="form-control" style="width:40%" type="text" placeholder="Text (FR)" ng-model="option.text_FR" required/>
                                                 <span class="input-group-btn"><button class="btn btn-default" ng-click="deleteOptions(option);checkCompletion();"><span class="fa fa-minus"></span> Delete</button></span>

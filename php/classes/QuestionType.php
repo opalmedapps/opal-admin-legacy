@@ -118,7 +118,7 @@ class QuestionType extends QuestionnaireModule {
         $toInsert = array(FRENCH_LANGUAGE=>$newQuestionType["name_FR"], ENGLISH_LANGUAGE=>$newQuestionType["name_EN"]);
         $dictId = $this->questionnaireDB->addToDictionary($toInsert, TYPE_TEMPLATE_TABLE);
 
-         //Insert data into the typeTemplate table
+        //Insert data into the typeTemplate table
         $toInsert = array(
             "name"=>$dictId,
             "typeId"=>$newQuestionType["typeId"],
@@ -140,6 +140,43 @@ class QuestionType extends QuestionnaireModule {
             }
             $this->questionnaireDB->addToTypeTemplateTableTypeOptions($subTableToInsert, $subOptions);
         }
+    }
+
+    /*
+     * This function returns the details of a specific question type.
+     * @param   ID of the question type (int)
+     * @return  array of details of the question type
+     * */
+    public function getQuestionTypeDetails($questionTypeId) {
+
+        $questionType = $this->questionnaireDB->getQuestionTypeDetails($questionTypeId);
+        if(count($questionType) != 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Errors fetching the question type. Number of result is wrong.");
+        $questionType = $questionType[0];
+
+        $isOwner = false;
+        if($this->questionnaireDB->getOAUserId() == $questionType["OAUserId"])
+            $isOwner = true;
+
+        if($questionType["typeId"] == SLIDERS)
+            $options = $this->questionnaireDB->getQuestionSliderDetails($questionType["ID"], $questionType["tableName"], "typeTemplateId");
+        else
+            $options = $this->questionnaireDB->getQuestionOptionsDetails($questionType["ID"], $questionType["tableName"], "typeTemplateId");
+        if (count($options) > 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Errors fetching the question. Too many options.");
+
+        $options = $options[0];
+
+        $subOptions = null;
+        if($questionType["subTableName"] != "" && $options["ID"] != "") {
+            $subOptions = $this->questionnaireDB->getQuestionSubOptionsDetails($options["ID"], $questionType["subTableName"]);
+        }
+
+        $questionType["isOwner"] = $isOwner;
+        $questionType["options"] = $options;
+        $questionType["subOptions"] = $subOptions;
+
+        return $questionType;
     }
 
     /*
@@ -173,7 +210,6 @@ class QuestionType extends QuestionnaireModule {
 
             // if the table has a subtable, returns its options
             if($row["subTableName"] != "") {
-
                 $temp["options"] = $this->questionnaireDB->getQuestionTypesOptions($row["serNum"], $row["tableName"], $row["subTableName"]);
             }
             array_push($questionTypes, $temp);
