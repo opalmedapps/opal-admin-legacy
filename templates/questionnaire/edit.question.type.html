@@ -1,25 +1,15 @@
 <!-- Modal title -->
 <div class="modal-header">
-    <div class="row col-xs-12" ng-if="question.readOnly == '0'">
-        <h2 class="modal-title col-xs-12">
-            <span class="glyphicon glyphicon-pencil"></span>
-            Edit Question
-        </h2>
-    </div>
-    <div class="row col-xs-12" ng-if="question.readOnly == '1'">
-        <h2 class="modal-title col-xs-12">
-            <span class="text-danger fa fa-lock"></span>
-            View Question
-        </h2>
-        <p class="text-danger">This question has being already sent to patients.</p>
+    <div class="row col-xs-12"">
+        <h2 class="modal-title col-xs-12"><span class="glyphicon glyphicon-pencil"></span>Edit Answer Type Template</h2>
     </div>
     <div class="modal-buttons col-xs-12">
-  <span>
-     <form method="post" ng-submit="updateQuestion()">
-     <input class="btn btn-primary submit" type="submit" value="Save Changes" ng-disabled="!checkForm()" />
-     <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel" />
-    </form>
-  </span>
+        <span>
+            <form method="post" ng-submit="updateQuestionType()">
+                <input class="btn btn-primary submit" type="submit" value="Save Changes" ng-disabled="!checkForm()" />
+                <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel" />
+            </form>
+        </span>
     </div>
 </div>
 <div class="modal-body">
@@ -31,26 +21,23 @@
                     <strong>Titles</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
                 </div>
             </uib-accordion-heading>
-                <div class="row">
-                    <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-                        <div class="input-group">
-                            <span class="input-group-addon">EN</span>
-                            <input type="text" class="form-control" ng-model="question.text_EN" placeholder="English Title" ng-change="setChangesMade()" ng-disabled="question.readOnly || question.final" />
-                        </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">EN</span>
+                        <input type="text" class="form-control" ng-model="questionType.name_EN" placeholder="English Title" ng-change="setChangesMade()"  />
                     </div>
-                    <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-                        <div class="input-group">
-                            <span class="input-group-addon">FR</span>
-                            <input type="text" class="form-control" ng-model="question.text_FR" placeholder="Titre Français" ng-change="setChangesMade()" ng-disabled="question.readOnly || question.final" />
-                        </div>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">FR</span>
+                        <input type="text" class="form-control" ng-model="questionType.name_FR" placeholder="Titre Français" ng-change="setChangesMade()"  />
                     </div>
+                </div>
             </div>
             <div class="row">
                 <div class="col-xs-6 col-md-6" style="margin-bottom: 20px;">
-                    <label style="font-size: 20px;">Make this question private: <input ng-change="setChangesMade()" type="checkbox" ng-model="question.private" ng-disabled="!question.isOwner || question.readOnly || question.final"  ng-true-value="true" ng-false-value="false"></label>
-                </div>
-                <div class="col-xs-6 col-md-6" style="margin-bottom: 20px;">
-                    <label style="font-size: 20px;">Finalize the question: <input ng-change="setChangesMade()" type="checkbox" ng-true-value="true" ng-false-value="false" ng-model="question.final" ng-disabled="question.readOnly"></label>
+                    <label style="font-size: 20px;">Make this answer type private: <input ng-change="setChangesMade()" type="checkbox" ng-model="questionType.private" ng-disabled="!questionType.isOwner || questionType.readOnly"  ng-true-value="true" ng-false-value="false"></label>
                 </div>
             </div>
         </div>
@@ -63,104 +50,104 @@
                 </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
-                <strong>{{question.type_EN}} / {{question.type_FR}}</strong>
+                <strong>{{questionType.category_EN}} / {{questionType.category_FR}}</strong>
             </div>
 
-            <div ng-hide="question.readOnly || question.final">
-            <!-- Edit text box options -->
-            <div class="col-xs-12 col-md-8" ng-if="question.typeId === '3'">
-                <p>No option.</p>
-            </div>
-
-            <!-- Edit radio button options -->
-            <div class="col-xs-12 col-md-8" ng-if="question.typeId === '4' || question.typeId === '1'">
-                <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in question.subOptions">
-                    <input class="form-control" style="width:20%" ng-change="setChangesMade();orderPreview();" type="number" placeholder="Position" ng-model="option.order" ng-disabled="question.readOnly || question.final" />
-                    <input class="form-control" style="width:40%" ng-change="setChangesMade();" type="text" placeholder="Text (EN)" ng-model="option.description_EN" ng-disabled="question.readOnly || question.final" />
-                    <input class="form-control" style="width:40%" ng-change="setChangesMade();" type="text" placeholder="Text (FR)" ng-model="option.description_FR" ng-disabled="question.readOnly || question.final" />
-                    <span class="input-group-btn"><button class="btn btn-default" ng-click="deleteOptions(option);orderPreview();" ng-disabled="question.readOnly || question.final"><span class="fa fa-minus"></span> Delete</button></span>
+            <div ng-hide="questionType.readOnly">
+                <!-- Edit text box options -->
+                <div class="col-xs-12 col-md-8" ng-if="questionType.typeId === '3'">
+                    <p>No option.</p>
                 </div>
-                <button type="button" class="btn btn-default" style="float: left; margin-top:5px;" ng-click="addOptions()" ng-disabled="question.readOnly || question.final"><span class="fa fa-plus"></span> Add option</button>
-            </div>
 
-            <!-- Edit Sliders options -->
-            <div class="col-xs-12 col-md-8" ng-if="question.typeId === '2'">
-                <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
-                    <div style="display: block; float: left;width: 22%;">
-                        &nbsp;
+                <!-- Edit radio button options -->
+                <div class="col-xs-12 col-md-8" ng-if="questionType.typeId === '4' || questionType.typeId === '1'">
+                    <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in questionType.subOptions">
+                        <input class="form-control" style="width:20%" ng-change="setChangesMade();orderPreview();" type="number" placeholder="Position" ng-model="option.order"  />
+                        <input class="form-control" style="width:40%" ng-change="setChangesMade();" type="text" placeholder="Text (EN)" ng-model="option.description_EN"  />
+                        <input class="form-control" style="width:40%" ng-change="setChangesMade();" type="text" placeholder="Text (FR)" ng-model="option.description_FR"  />
+                        <span class="input-group-btn"><button class="btn btn-default" ng-click="deleteOptions(option);orderPreview();" ><span class="fa fa-minus"></span> Delete</button></span>
                     </div>
-                    <div style="display: block; float: left;width: 8%;">Value</div>
-                    <div style="display: block; float: left;width: 35%;">English</div>
-                    <div style="display: block; float: left;width: 35%;">French</div>
+                    <button type="button" class="btn btn-default" style="float: left; margin-top:5px;" ng-click="addOptions()" ><span class="fa fa-plus"></span> Add option</button>
+                </div>
 
+                <!-- Edit Sliders options -->
+                <div class="col-xs-12 col-md-8" ng-if="questionType.typeId === '2'">
+                    <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
+                        <div style="display: block; float: left;width: 22%;">
+                            &nbsp;
+                        </div>
+                        <div style="display: block; float: left;width: 8%;">Value</div>
+                        <div style="display: block; float: left;width: 35%;">English</div>
+                        <div style="display: block; float: left;width: 35%;">French</div>
+
+                    </div>
+                    <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
+                        <span class="input-group-addon">&nbsp;Minimum settings</span>
+                        <input class="form-control" style="width:12%;" ng-change="setChangesMade();updateSlider();" min="1" type="number" placeholder="Minimum value" ng-model="questionType.options.minValue"  />
+                        <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="questionType.options.minCaption_EN" placeholder="Minimum caption (EN)"  />
+                        <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="questionType.options.minCaption_FR" placeholder="Minimum caption (FR)"  />
+                    </div>
+                    <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
+                        <span class="input-group-addon">Maximum settings</span>
+                        <input class="form-control" style="width:12%" ng-change="setChangesMade();updateSlider();" min="1" type="number" placeholder="Maximum value" ng-model="questionType.options.maxValue"  />
+                        <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="questionType.options.maxCaption_EN" placeholder="Maximum caption (EN)"  />
+                        <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="questionType.options.maxCaption_FR" placeholder="Maximum caption (FR)"  />
+                    </div>
+                    <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
+                        <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Increment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <input class="form-control" style="width:12%" ng-change="setChangesMade();updateSlider();" type="number" min="1" placeholder="Increment step" ng-model="questionType.options.increment"  />
+                    </div>
                 </div>
-                <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
-                    <span class="input-group-addon">&nbsp;Minimum settings</span>
-                    <input class="form-control" style="width:12%;" ng-change="setChangesMade();updateSlider();" min="1" type="number" placeholder="Minimum value" ng-model="question.options.minValue" ng-disabled="question.readOnly || question.final" />
-                    <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="question.options.minCaption_EN" placeholder="Minimum caption (EN)" ng-disabled="question.readOnly || question.final" />
-                    <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="question.options.minCaption_FR" placeholder="Minimum caption (FR)" ng-disabled="question.readOnly || question.final" />
-                </div>
-                <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
-                    <span class="input-group-addon">Maximum settings</span>
-                    <input class="form-control" style="width:12%" ng-change="setChangesMade();updateSlider();" min="1" type="number" placeholder="Maximum value" ng-model="question.options.maxValue" ng-disabled="question.readOnly || question.final" />
-                    <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="question.options.maxCaption_EN" placeholder="Maximum caption (EN)" ng-disabled="question.readOnly || question.final" />
-                    <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="question.options.maxCaption_FR" placeholder="Maximum caption (FR)" ng-disabled="question.readOnly || question.final" />
-                </div>
-                <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
-                    <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Increment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    <input class="form-control" style="width:12%" ng-change="setChangesMade();updateSlider();" type="number" min="1" placeholder="Increment step" ng-model="question.options.increment" ng-disabled="question.readOnly || question.final" />
-                </div>
-            </div>
             </div>
 
             <!-- Preview -->
-            <div ng-class="question.readOnly || question.final ? 'col-xs-12' : 'col-md-4'" style="text-align:right">
+            <div ng-class="questionType.readOnly ? 'col-xs-12' : 'col-md-4'" style="text-align:right">
                 <div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
                     <span style="background-color: #fff; padding: 0 10px; font-size:16px;">Question preview</span>
                 </div>
                 <div class="previewContainer" style="max-height: 300px;height:100%;">
                     <div class="previewContent" ng-show="validSlider">
                         <div class="row">
-                            <div ng-class="question.readOnly || question.final ? 'col-lg-6' : 'col-lg-12'">
+                            <div ng-class="questionType.readOnly ? 'col-lg-6' : 'col-lg-12'">
                                 <h4 style="margin-top:10px;">English</h4>
-                                <p style="margin-top:10px; margin-bottom:10px"; ng-bind-html="question.text_EN"></p>
-                                <div ng-if="question.typeId === '1'">
-                                    <div ng-repeat="option in question.subOptions">
+                                <p style="margin-top:10px; margin-bottom:10px"; ng-bind-html="questionType.name_EN"></p>
+                                <div ng-if="questionType.typeId === '1'">
+                                    <div ng-repeat="option in questionType.subOptions">
                                         <label><input type="checkbox" disabled> {{option.description_EN}}</label>
                                     </div>
                                 </div>
-                                <div ng-if="question.typeId == '3'">
+                                <div ng-if="questionType.typeId == '3'">
                                     <textarea rows="3" cols="30" disabled>Type in your answer.</textarea>
                                 </div>
-                                <div ng-if="question.typeId == '2'">
-                                    <div ng-repeat="option in question.subOptions">
+                                <div ng-if="questionType.typeId == '2'">
+                                    <div ng-repeat="option in questionType.subOptions">
                                         <label><input type="radio" disabled> {{option.description_EN}}</label>
                                     </div>
                                 </div>
-                                <div ng-if="question.typeId == '4'">
-                                    <div ng-repeat="option in question.subOptions">
+                                <div ng-if="questionType.typeId == '4'">
+                                    <div ng-repeat="option in questionType.subOptions">
                                         <label><input type="radio" disabled> {{option.description_EN}}</label>
                                     </div>
                                 </div>
                             </div>
-                            <div ng-class="question.readOnly || question.final ? 'col-lg-6' : 'col-lg-12'">
+                            <div ng-class="questionType.readOnly ? 'col-lg-6' : 'col-lg-12'">
                                 <h4 style="margin-top:10px;">Français</h4>
-                                <p style="margin-top:10px; margin-bottom:10px"; ng-bind-html="question.text_FR"></p>
-                                <div ng-if="question.typeId === '1'">
-                                    <div ng-repeat="option in question.subOptions">
+                                <p style="margin-top:10px; margin-bottom:10px"; ng-bind-html="questionType.name_FR"></p>
+                                <div ng-if="questionType.typeId === '1'">
+                                    <div ng-repeat="option in questionType.subOptions">
                                         <label><input type="checkbox" disabled> {{option.description_FR}}</label>
                                     </div>
                                 </div>
-                                <div ng-if="question.typeId == '2'">
-                                    <div ng-repeat="option in question.subOptions">
+                                <div ng-if="questionType.typeId == '2'">
+                                    <div ng-repeat="option in questionType.subOptions">
                                         <label><input type="radio" disabled> {{option.description_FR}}</label>
                                     </div>
                                 </div>
-                                <div ng-if="question.typeId == '3'">
+                                <div ng-if="questionType.typeId == '3'">
                                     <textarea rows="3" cols="30" disabled>Entrez votre réponse.</textarea>
                                 </div>
-                                <div ng-if="question.typeId == '4'">
-                                    <div ng-repeat="option in question.subOptions">
+                                <div ng-if="questionType.typeId == '4'">
+                                    <div ng-repeat="option in questionType.subOptions">
                                         <label><input type="radio" disabled> {{option.description_FR}}</label>
                                     </div>
                                 </div>
@@ -169,53 +156,6 @@
                     </div>
                     <div class="previewContent" ng-hide="validSlider">
                         <p>Invalid slider settings.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- SECTION: Libraries -->
-        <div uib-accordion-group is-open="librarySection.open">
-            <uib-accordion-heading>
-                <div>
-                    <strong>Libraries</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': librarySection.open, 'glyphicon-chevron-right': !librarySection.open}"></i>
-                </div>
-            </uib-accordion-heading>
-            <div class="panel-body">
-                <div class="list-space">
-                    <div class="input-group">
-                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                        <input class="form-control" type="text" ng-model="libEntered" ng-change="searchLib(libEntered)" placeholder="Search Question Library"/>
-                    </div>
-                    <ul class="list-items">
-                        <li ng-repeat="library in libraryFilterList| filter: searchLibFilter">
-                            <label>
-                                <input type="checkbox" name="library[]" value="{{library.serNum}}" ng-checked="selectedLibrary.indexOf(library.serNum) != -1" ng-click="updateLibrary(library)"  />
-                                {{library.name_EN}} / {{library.name_FR}}
-                            </label>
-                        </li>
-                    </ul>
-
-                    <div class="col-xs-12">
-                        <p style="margin-bottom: 10px; margin-top: 10px;">
-                            <span style="font-size: 20px;" class="fa fa-question-circle"></span>
-                            <span style="font-size: 15px">Can't find a question library? Create a new one here:</span>
-                        </p>
-                    </div>
-                    <div class="panel-container">
-
-                        <form name="newLibForm">
-                            <div class="col-md-2" style="margin-top:8px; margin-bottom:5px; font-size:20px;">
-                                <label>Private: <input type="checkbox" ng-model="newLibrary.private" ng-true-value="1" ng-false-value="0"></label>
-                            </div>
-                            <div class="col-md-8">
-                                <div class="input-group">
-                                    <input class="form-control" style="width:50%" type="text" ng-model="newLibrary.name_EN" placeholder="New Library (EN)" ng-disabled="librarySelected" />
-                                    <input class="form-control" style="width:50%" type="text" ng-model="newLibrary.name_FR" placeholder="New Library (FR)" ng-disabled="librarySelected" />
-                                    <span class="input-group-btn"><button class="btn btn-default" type="submit" ng-click="addNewLib()" ng-disabled="newLibForm.$invalid">Add</button></span>
-                                </div>
-                            </div>
-                        </form>
                     </div>
                 </div>
             </div>
