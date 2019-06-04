@@ -56,7 +56,7 @@ angular.module('opalAdmin.controllers.question.type.edit', ['ngAnimate', 'ngSani
 				radiostep[radiostep.length - 1]["description_FR"] += " " + $scope.questionType.options.maxCaption_FR;
 			}
 			$scope.questionType.subOptions = radiostep;
-		}
+		};
 
 		/* Function for the "Processing" dialog */
 		var processingModal;
@@ -96,9 +96,6 @@ angular.module('opalAdmin.controllers.question.type.edit', ['ngAnimate', 'ngSani
 
 		// Call our API service to get the questionnaire details
 		questionnaireCollectionService.getQuestionTypeDetails($scope.currentQuestionType.serNum, OAUserId).then(function (response) {
-
-			console.log(response.data);
-
 			// Assign value
 			$scope.questionType = response.data;
 
