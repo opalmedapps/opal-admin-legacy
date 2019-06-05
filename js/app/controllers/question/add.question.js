@@ -79,8 +79,8 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	// Initialize the new question object
 	$scope.newQuestion = {
-		text_EN: "",
-		text_FR: "",
+		question_EN: "",
+		question_FR: "",
 		library_ID: null,
 		libraries: [],
 		typeId: null,
@@ -109,10 +109,10 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	$scope.updateQuestionText = function () {
 
 		$scope.titleSection.open = true;
-		if (!$scope.newQuestion.text_EN && !$scope.newQuestion.text_FR) {
+		if (!$scope.newQuestion.question_EN && !$scope.newQuestion.question_FR) {
 			$scope.titleSection.open = false;
 		}
-		if ($scope.newQuestion.text_EN && $scope.newQuestion.text_FR) {
+		else if ($scope.newQuestion.question_EN && $scope.newQuestion.question_FR) {
 
 			$scope.answerTypeSection.show = true;
 
@@ -137,20 +137,22 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 			$scope.selectedAt = selectedAt;
 			steps.answerType.completed = true;
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
+			if (selectedAt.typeId === "2") {
+				var increment = parseFloat($scope.selectedAt.increment);
+				var minValue = parseFloat($scope.selectedAt.minValue);
+				if (minValue === 0.0) minValue = increment;
+				var maxValue = parseFloat($scope.selectedAt.maxValue);
 
-			var increment = parseFloat($scope.selectedAt.increment);
-			var minValue = parseFloat($scope.selectedAt.minValue);
-			if (minValue === 0.0) minValue = increment;
-			var maxValue = parseFloat($scope.selectedAt.maxValue);
-
-			$scope.radiostep = new Array();
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-			for(var i = minValue; i <= maxValue; i += increment) {
-				$scope.radiostep.push({"name":""});
+				$scope.radiostep = new Array();
+				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+				for (var i = minValue; i <= maxValue; i += increment) {
+					$scope.radiostep.push({"name": i});
+				}
+				$scope.radiostep[0]["name"] +=  " " + $scope.selectedAt.minCaption_EN + " / " + $scope.selectedAt.minCaption_FR;
+				$scope.radiostep[$scope.radiostep.length - 1]["name"] += " " + $scope.selectedAt.maxCaption_EN + " / " + $scope.selectedAt.maxCaption_FR;
 			}
-			$scope.radiostep[0]["name"] = $scope.selectedAt.minCaption_EN + " / " + $scope.selectedAt.minCaption_FR;
-			$scope.radiostep[$scope.radiostep.length - 1]["name"] = $scope.selectedAt.maxCaption_EN + " / " + $scope.selectedAt.maxCaption_FR;
-		} else {
+		}
+		else {
 
 			steps.answerType.completed = false;
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
@@ -229,7 +231,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		alert('Error occurred getting question libraries: '+response.status +"\r\n"+ response.data);
 	});
 
-	questionnaireCollectionService.getQuestionTypeList(OAUserId).then(function (response) {
+	questionnaireCollectionService.getQuestionTypeCategory(OAUserId).then(function (response) {
 		$scope.atCatList = response.data;
 	}).catch(function(response) {
 		alert('Error occurred getting response type categories: '+response.status +"\r\n"+ response.data);
@@ -286,8 +288,8 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	// add options
 	$scope.addOptions = function () {
 		$scope.newAnswerType.options.push({
-			text_EN: "",
-			text_FR: "",
+			description_EN: "",
+			description_FR: "",
 			order: undefined,
 			OAUserId: OAUserId
 		});

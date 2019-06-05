@@ -68,7 +68,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 
 		// Template for group table
 		var cellTemplateName = '<div class="ui-grid-cell-contents" ' +
-			'<p>{{row.entity.text_EN}} / {{row.entity.text_FR}}</p></div>';
+			'<p>{{row.entity.question_EN}} / {{row.entity.question_FR}}</p></div>';
 		var cellTemplateLib = '<div class="ui-grid-cell-contents" ' +
 			'<p>{{row.entity.library_name_EN}} / {{row.entity.library_name_FR}}</p></div>';
 		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Public</p></div>' +
@@ -78,7 +78,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 		$scope.gridGroups = {
 			data: 'groupList',
 			columnDefs: [
-				{ field: 'text_EN', displayName: 'Name (EN / FR)', cellTemplate: cellTemplateName, width: '54%' },
+				{ field: 'question_EN', displayName: 'Name (EN / FR)', cellTemplate: cellTemplateName, width: '54%' },
 				{ field: 'library_name_EN', displayName: 'Library (EN / FR)', cellTemplate: cellTemplateLib, width: '30%' },
 				{
 					field: 'private', displayName: 'Privacy', cellTemplate: cellTemplatePrivacy, width: '13%', filter: {
@@ -191,8 +191,6 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 
 			// Assign value
 			$scope.questionnaire = response.data;
-
-			console.log(response.data);
 			$scope.questionnaire.questions = decodeQuestions($scope.questionnaire.questions);
 
 		}).catch(function (e) {

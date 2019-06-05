@@ -189,7 +189,7 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 	};
 
 	// questionnaire API: retrieve data
-	questionnaireCollectionService.getQuestionTypeList(OAUserId).then(function (response) {
+	questionnaireCollectionService.getQuestionTypeCategory(OAUserId).then(function (response) {
 		$scope.atCatList = response.data;
 	}).catch(function(response) {
 		alert('Error occurred getting response type categories: '+response.status +"\r\n"+ response.data);
@@ -289,29 +289,6 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 			return true;
 		else
 			return false;
-	};
-
-	// submit question: write into DB
-	$scope.submitQuestion = function () {
-		if ($scope.checkForm()) {
-			// Submit
-			$.ajax({
-				type: "POST",
-				url: "php/questionnaire/insert.question.php",
-				data: $scope.newQuestionType,
-				success: function (result) {
-					result = JSON.parse(result);
-					if (result.code === 200) {
-						$state.go('questionnaire-question');
-					} else {
-						alert("Unable to create the question. Code " + result.code + ".\r\nError message: " + result.message);
-					}
-				},
-				error: function () {
-					alert("Something went wrong.");
-				}
-			});
-		}
 	};
 
 	var fixmeTop = $('.summary-fix').offset().top;

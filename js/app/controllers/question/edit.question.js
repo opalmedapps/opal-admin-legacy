@@ -77,7 +77,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		};
 
 		$scope.checkForm = function () {
-			if ($scope.question.text_EN && $scope.question.text_FR && $scope.changesMade) {
+			if ($scope.question.question_EN && $scope.question.question_FR && $scope.changesMade) {
 				if($scope.question.typeId === "2") {
 					if ($scope.question.options.increment <= 0 || $scope.question.options.minValue <= 0 || $scope.question.options.maxValue <= 0 || $scope.question.options.minValue > $scope.question.options.maxValue || $scope.question.options.minCaption_EN === "" || $scope.question.options.minCaption_FR === "" || $scope.question.options.maxCaption_EN === "" || $scope.question.options.maxCaption_FR === "" )
 						return false;
@@ -248,18 +248,21 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 
 		// Submit changes
 		$scope.updateQuestion = function () {
+			var toSubmit = $scope.question;
+			if (toSubmit["typeId"] === "2")
+				delete toSubmit["subOptions"];
 			// Submit form
 			$.ajax({
 				type: "POST",
 				url: "php/questionnaire/update.question.php",
-				data: $scope.question,
+				data: toSubmit,
 				success: function (response) {
 					response = JSON.parse(response);
 
 					// Show success or failure depending on response
 					if (response.code === 200) {
 						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.question.text_EN.replace(/<(?:.|\n)*?>/gm, '') + " / " + $scope.question.text_FR.replace(/<(?:.|\n)*?>/gm, '') + "\"!";
+						$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.question.question_EN.replace(/<(?:.|\n)*?>/gm, '') + " / " + $scope.question.question_FR.replace(/<(?:.|\n)*?>/gm, '') + "\"!";
 						$uibModalInstance.close();
 						$scope.showBanner();
 					}

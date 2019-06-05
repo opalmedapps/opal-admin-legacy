@@ -41,8 +41,8 @@ class QuestionType extends QuestionnaireModule {
             $sanitizedOptions = array();
             foreach($validatedQT["options"] as $option) {
                 $temp = array();
-                $temp["text_EN"] = strip_tags($option["text_EN"]);
-                $temp["text_FR"] = strip_tags($option["text_FR"]);
+                $temp["description_EN"] = strip_tags($option["description_EN"]);
+                $temp["description_FR"] = strip_tags($option["description_FR"]);
                 $temp["order"] = strip_tags($option["order"]);
                 array_push($sanitizedOptions, $temp);
             }
@@ -75,7 +75,7 @@ class QuestionType extends QuestionnaireModule {
 
             foreach($newQuestionType["options"] as $opt) {
                 $tempArray = array();
-                $toInsert = array(FRENCH_LANGUAGE=>$opt["text_FR"], ENGLISH_LANGUAGE=>$opt["text_EN"]);
+                $toInsert = array(FRENCH_LANGUAGE=>$opt["description_FR"], ENGLISH_LANGUAGE=>$opt["description_EN"]);
                 $tempArray["description"] = $this->questionnaireDB->addToDictionary($toInsert, TYPE_TEMPLATE_TABLE);
                 $tempArray["order"] = $opt["order"];
                 array_push($subOptions, $tempArray);
@@ -89,7 +89,7 @@ class QuestionType extends QuestionnaireModule {
 
             foreach($newQuestionType["options"] as $opt) {
                 $tempArray = array();
-                $toInsert = array(FRENCH_LANGUAGE=>$opt["text_FR"], ENGLISH_LANGUAGE=>$opt["text_EN"]);
+                $toInsert = array(FRENCH_LANGUAGE=>$opt["description_FR"], ENGLISH_LANGUAGE=>$opt["description_EN"]);
                 $tempArray["description"] = $this->questionnaireDB->addToDictionary($toInsert, TYPE_TEMPLATE_TABLE);
                 $tempArray["order"] = $opt["order"];
                 array_push($subOptions, $tempArray);
@@ -173,9 +173,10 @@ class QuestionType extends QuestionnaireModule {
         }
 
         $questionType["isOwner"] = $isOwner;
-        $questionType["options"] = $options;
-        $questionType["subOptions"] = $subOptions;
-
+        if($questionType["typeId"] == SLIDERS)
+            $questionType["options"] = $options;
+        else
+            $questionType["options"] = $subOptions;
         return $questionType;
     }
 
@@ -190,8 +191,8 @@ class QuestionType extends QuestionnaireModule {
 
         foreach ($result as $row) {
             $temp = array(
-                'serNum'        => $row["serNum"],
-                'typeSerNum'    => $row["typeSerNum"],
+                'ID'        => $row["ID"],
+                'typeId'    => $row["typeId"],
                 'name'       => $row["name"],
                 'name_EN'       => $row["name_EN"],
                 'name_FR'       => $row["name_FR"],
@@ -210,7 +211,7 @@ class QuestionType extends QuestionnaireModule {
 
             // if the table has a subtable, returns its options
             if($row["subTableName"] != "") {
-                $temp["options"] = $this->questionnaireDB->getQuestionTypesOptions($row["serNum"], $row["tableName"], $row["subTableName"]);
+                $temp["options"] = $this->questionnaireDB->getQuestionTypesOptions($row["ID"], $row["tableName"], $row["subTableName"]);
             }
             array_push($questionTypes, $temp);
         }

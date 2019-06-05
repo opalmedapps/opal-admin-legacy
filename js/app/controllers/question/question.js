@@ -19,7 +19,7 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 			var matcher = new RegExp($scope.filterValue, 'i');
 			renderableRows.forEach(function (row) {
 				var match = false;
-				['text_EN', 'text_FR', 'answertype_name_EN', 'answertype_name_FR', 'library_name_EN', 'library_name_FR'].forEach(function (field) {
+				['question_EN', 'question_FR', 'questionType_EN', 'questionType_FR', 'library_name_EN', 'library_name_FR'].forEach(function (field) {
 					if (row.entity[field].match(matcher)) {
 						match = true;
 					}
@@ -41,11 +41,11 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 			'- <strong><a href="" ng-click="grid.appScope.deleteQuestion(row.entity)">Delete</a></strong></div>';
 		var cellTemplateText = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editQuestion(row.entity)">' +
-			'<strong><a href="">{{row.entity.text_EN}} / {{row.entity.text_FR}}</a></strong></div>';
+			'<strong><a href="">{{row.entity.question_EN}} / {{row.entity.question_FR}}</a></strong></div>';
 		var cellTemplateLib = '<div class="ui-grid-cell-contents"> ' +
 			'{{row.entity.library_name_EN}} / {{row.entity.library_name_FR}}</div>';
 		var cellTemplateAt = '<div class="ui-grid-cell-contents"> ' +
-			'{{row.entity.answertype_name_EN}} / {{row.entity.answertype_name_FR}}</div>';
+			'{{row.entity.questionType_EN}} / {{row.entity.questionType_FR}}</div>';
 		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Public</p></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Private</p></div>';
 
@@ -60,8 +60,8 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 			data: 'questionList',
 			columnDefs: [
 				{ field: 'locked', displayName: '', cellTemplate: cellTemplateLocked, width: '2%', sortable: false, enableFiltering: false},
-				{ field: 'text_EN', displayName: 'Question (EN / FR)', cellTemplate: cellTemplateText, width: '49%' },
-				{ field: 'answertype_name_EN', displayName: 'Response Type (EN / FR)', cellTemplate: cellTemplateAt, width: '13%' },
+				{ field: 'question_EN', displayName: 'Question (EN / FR)', cellTemplate: cellTemplateText, width: '49%' },
+				{ field: 'questionType_EN', displayName: 'Response Type (EN / FR)', cellTemplate: cellTemplateAt, width: '13%' },
 				{ field: 'library_name_EN', displayName: 'Library (EN / FR)', cellTemplate: cellTemplateLib, width: '10%' },
 				{
 					field: 'private', displayName: 'Privacy', cellTemplate: cellTemplatePrivacy, width: '8%', filter: {
@@ -90,7 +90,7 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 			$scope.questionList = response.data;
 
 		}).catch(function(response) {
-			console.error('Error occurred getting question list:', response.status, response.data);
+			alert('Error occurred getting question list:\r\n' + response.status + " " + response.data);
 		});
 
 		// Banner
@@ -135,7 +135,7 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 				questionnaireCollectionService.getQuestions(Session.retrieveObject('user').id).then(function (response) {
 					$scope.questionList = response.data;
 				}).catch(function(response) {
-					console.error('Error occurred getting question list after modal close:', response.status, response.data);
+					alert('Error occurred getting question list after modal close:\r\n' + response.status + " " + response.data);
 				});
 
 			});

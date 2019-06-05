@@ -31,16 +31,16 @@ angular.module('opalAdmin.controllers.question.type.edit', ['ngAnimate', 'ngSani
 		};
 
 		$scope.orderPreview = function () {
-			$scope.questionType.subOptions.sort(function(a,b){
+			$scope.questionType.options.sort(function(a,b){
 				return (a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0);
 			});
 		};
 
 		$scope.updateSlider = function () {
 			var radiostep = new Array();
-			var increment = parseFloat($scope.questionType.options.increment);
-			var minValue = parseFloat($scope.questionType.options.minValue);
-			var maxValue = parseFloat($scope.questionType.options.maxValue);
+			var increment = parseFloat($scope.questionType.increment);
+			var minValue = parseFloat($scope.questionType.minValue);
+			var maxValue = parseFloat($scope.questionType.maxValue);
 
 			if (minValue <= 0.0 || maxValue <= 0.0 || increment <= 0 || minValue >= maxValue)
 				$scope.validSlider = false;
@@ -50,12 +50,12 @@ angular.module('opalAdmin.controllers.question.type.edit', ['ngAnimate', 'ngSani
 				for(var i = minValue; i <= maxValue; i += increment) {
 					radiostep.push({"description":" " + i,"description_EN":" " + i,"description_FR":" " + i});
 				}
-				radiostep[0]["description_EN"] += " " + $scope.questionType.options.minCaption_EN;
-				radiostep[0]["description_FR"] += " " + $scope.questionType.options.minCaption_FR;
-				radiostep[radiostep.length - 1]["description_EN"] += " " + $scope.questionType.options.maxCaption_EN;
-				radiostep[radiostep.length - 1]["description_FR"] += " " + $scope.questionType.options.maxCaption_FR;
+				radiostep[0]["description_EN"] += " " + $scope.questionType.minCaption_EN;
+				radiostep[0]["description_FR"] += " " + $scope.questionType.minCaption_FR;
+				radiostep[radiostep.length - 1]["description_EN"] += " " + $scope.questionType.maxCaption_EN;
+				radiostep[radiostep.length - 1]["description_FR"] += " " + $scope.questionType.maxCaption_FR;
 			}
-			$scope.questionType.subOptions = radiostep;
+			$scope.questionType = radiostep;
 		};
 
 		/* Function for the "Processing" dialog */
@@ -72,13 +72,13 @@ angular.module('opalAdmin.controllers.question.type.edit', ['ngAnimate', 'ngSani
 		$scope.checkForm = function () {
 			if ($scope.questionType.name_EN && $scope.questionType.name_FR && $scope.changesMade) {
 				if($scope.questionType.typeId === "2") {
-					if ($scope.questionType.options.increment <= 0 || $scope.questionType.options.minValue <= 0 || $scope.questionType.options.maxValue <= 0 || $scope.questionType.options.minValue > $scope.questionType.options.maxValue || $scope.questionType.options.minCaption_EN === "" || $scope.questionType.options.minCaption_FR === "" || $scope.questionType.options.maxCaption_EN === "" || $scope.questionType.options.maxCaption_FR === "" )
+					if ($scope.questionType.increment <= 0 || $scope.questionType.minValue <= 0 || $scope.questionType.maxValue <= 0 || $scope.questionType.minValue > $scope.questionType.maxValue || $scope.questionType.minCaption_EN === "" || $scope.questionType.minCaption_FR === "" || $scope.questionType.maxCaption_EN === "" || $scope.questionType.maxCaption_FR === "" )
 						return false;
 					else
 						return true;
 				} else if ($scope.questionType.typeId === "4" || $scope.questionType.typeId === "1") {
 					var loopResult = true;
-					$scope.questionType.subOptions.forEach(function(entry) {
+					$scope.questionType.options.forEach(function(entry) {
 						if (entry.description_EN ==="" || entry.description_FR ==="" || entry.order === "")
 							loopResult = false;
 					});
@@ -100,17 +100,17 @@ angular.module('opalAdmin.controllers.question.type.edit', ['ngAnimate', 'ngSani
 			$scope.questionType = response.data;
 
 			if($scope.questionType.typeId === "2") {
-				$scope.questionType.options.minValue = parseInt($scope.questionType.options.minValue);
-				$scope.questionType.options.maxValue = parseInt($scope.questionType.options.maxValue);
-				$scope.questionType.options.increment = parseInt($scope.questionType.options.increment);
+				$scope.questionType.minValue = parseInt($scope.questionType.minValue);
+				$scope.questionType.maxValue = parseInt($scope.questionType.maxValue);
+				$scope.questionType.increment = parseInt($scope.questionType.increment);
 				$scope.updateSlider();
 			}
-
-			if($scope.questionType.subOptions !== null) {
-				$scope.questionType.subOptions.forEach(function(entry) {
+			else if($scope.questionType.options !== null) {
+				$scope.questionType.options.forEach(function(entry) {
 					entry.order = parseInt(entry.order);
 				});
 			}
+
 
 			if (response.data.private === "1")
 				$scope.questionType.private = true;
@@ -138,19 +138,19 @@ angular.module('opalAdmin.controllers.question.type.edit', ['ngAnimate', 'ngSani
 
 
 		$scope.addOptions = function () {
-			$scope.questionType.subOptions.push({
+			$scope.questionType.options.push({
 				description_EN: "",
 				description_FR: "",
-				order: $scope.questionType.subOptions.length+1,
+				order: $scope.questionType.options.length+1,
 				OAUserId: OAUserId
 			});
 		};
 
 		// delete options
 		$scope.deleteOptions = function (optionToDelete) {
-			var index = $scope.questionType.subOptions.indexOf(optionToDelete);
+			var index = $scope.questionType.options.indexOf(optionToDelete);
 			if (index > -1) {
-				$scope.questionType.subOptions.splice(index, 1);
+				$scope.questionType.options.splice(index, 1);
 				$scope.changesMade = true;
 			}
 		};
@@ -161,7 +161,7 @@ angular.module('opalAdmin.controllers.question.type.edit', ['ngAnimate', 'ngSani
 			// Submit form
 			$.ajax({
 				type: "POST",
-				url: "php/questionnaire/update.question_type.php",
+					url: "php/questionnaire/update.question_type.php",
 				data: $scope.questionType,
 				success: function (response) {
 					response = JSON.parse(response);

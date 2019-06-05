@@ -61,7 +61,7 @@
 
                 <!-- Edit radio button options -->
                 <div class="col-xs-12 col-md-8" ng-if="questionType.typeId === '4' || questionType.typeId === '1'">
-                    <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in questionType.subOptions">
+                    <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in questionType.options">
                         <input class="form-control" style="width:20%" ng-change="setChangesMade();orderPreview();" type="number" placeholder="Position" ng-model="option.order"  />
                         <input class="form-control" style="width:40%" ng-change="setChangesMade();" type="text" placeholder="Text (EN)" ng-model="option.description_EN"  />
                         <input class="form-control" style="width:40%" ng-change="setChangesMade();" type="text" placeholder="Text (FR)" ng-model="option.description_FR"  />
@@ -83,19 +83,19 @@
                     </div>
                     <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
                         <span class="input-group-addon">&nbsp;Minimum settings</span>
-                        <input class="form-control" style="width:12%;" ng-change="setChangesMade();updateSlider();" min="1" type="number" placeholder="Minimum value" ng-model="questionType.options.minValue"  />
-                        <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="questionType.options.minCaption_EN" placeholder="Minimum caption (EN)"  />
-                        <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="questionType.options.minCaption_FR" placeholder="Minimum caption (FR)"  />
+                        <input class="form-control" style="width:12%;" ng-change="setChangesMade();updateSlider();" min="1" type="number" placeholder="Minimum value" ng-model="questionType.minValue"  />
+                        <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="questionType.minCaption_EN" placeholder="Minimum caption (EN)"  />
+                        <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="questionType.minCaption_FR" placeholder="Minimum caption (FR)"  />
                     </div>
                     <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
                         <span class="input-group-addon">Maximum settings</span>
-                        <input class="form-control" style="width:12%" ng-change="setChangesMade();updateSlider();" min="1" type="number" placeholder="Maximum value" ng-model="questionType.options.maxValue"  />
-                        <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="questionType.options.maxCaption_EN" placeholder="Maximum caption (EN)"  />
-                        <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="questionType.options.maxCaption_FR" placeholder="Maximum caption (FR)"  />
+                        <input class="form-control" style="width:12%" ng-change="setChangesMade();updateSlider();" min="1" type="number" placeholder="Maximum value" ng-model="questionType.maxValue"  />
+                        <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="questionType.maxCaption_EN" placeholder="Maximum caption (EN)"  />
+                        <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="questionType.maxCaption_FR" placeholder="Maximum caption (FR)"  />
                     </div>
                     <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
                         <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Increment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                        <input class="form-control" style="width:12%" ng-change="setChangesMade();updateSlider();" type="number" min="1" placeholder="Increment step" ng-model="questionType.options.increment"  />
+                        <input class="form-control" style="width:12%" ng-change="setChangesMade();updateSlider();" type="number" min="1" placeholder="Increment step" ng-model="questionType.increment"  />
                     </div>
                 </div>
             </div>
@@ -112,7 +112,7 @@
                                 <h4 style="margin-top:10px;">English</h4>
                                 <p style="margin-top:10px; margin-bottom:10px"; ng-bind-html="questionType.name_EN"></p>
                                 <div ng-if="questionType.typeId === '1'">
-                                    <div ng-repeat="option in questionType.subOptions">
+                                    <div ng-repeat="option in questionType.options">
                                         <label><input type="checkbox" disabled> {{option.description_EN}}</label>
                                     </div>
                                 </div>
@@ -120,12 +120,12 @@
                                     <textarea rows="3" cols="30" disabled>Type in your answer.</textarea>
                                 </div>
                                 <div ng-if="questionType.typeId == '2'">
-                                    <div ng-repeat="option in questionType.subOptions">
+                                    <div ng-repeat="option in questionType.options">
                                         <label><input type="radio" disabled> {{option.description_EN}}</label>
                                     </div>
                                 </div>
                                 <div ng-if="questionType.typeId == '4'">
-                                    <div ng-repeat="option in questionType.subOptions">
+                                    <div ng-repeat="option in questionType.options">
                                         <label><input type="radio" disabled> {{option.description_EN}}</label>
                                     </div>
                                 </div>
@@ -134,12 +134,12 @@
                                 <h4 style="margin-top:10px;">Français</h4>
                                 <p style="margin-top:10px; margin-bottom:10px"; ng-bind-html="questionType.name_FR"></p>
                                 <div ng-if="questionType.typeId === '1'">
-                                    <div ng-repeat="option in questionType.subOptions">
+                                    <div ng-repeat="option in questionType.options">
                                         <label><input type="checkbox" disabled> {{option.description_FR}}</label>
                                     </div>
                                 </div>
                                 <div ng-if="questionType.typeId == '2'">
-                                    <div ng-repeat="option in questionType.subOptions">
+                                    <div ng-repeat="option in questionType.options">
                                         <label><input type="radio" disabled> {{option.description_FR}}</label>
                                     </div>
                                 </div>
@@ -147,7 +147,7 @@
                                     <textarea rows="3" cols="30" disabled>Entrez votre réponse.</textarea>
                                 </div>
                                 <div ng-if="questionType.typeId == '4'">
-                                    <div ng-repeat="option in questionType.subOptions">
+                                    <div ng-repeat="option in questionType.options">
                                         <label><input type="radio" disabled> {{option.description_FR}}</label>
                                     </div>
                                 </div>
