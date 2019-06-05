@@ -630,7 +630,7 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
-		questionnaireAPI.getQuestionTypeList = function (OAUserId) {
+		questionnaireAPI.getQuestionTypeCategory = function (OAUserId) {
 			return $http({
 				method: 'JSONP',
 				url: "api/questionnaire/get.question_type_categories.php",

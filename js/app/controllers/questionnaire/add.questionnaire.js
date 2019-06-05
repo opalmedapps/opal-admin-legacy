@@ -107,8 +107,8 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 
 	function decodeQuestions(questions) {
 		questions.forEach(function(entry) {
-			entry.text_EN = entry.text_EN.replace(/(<([^>]+)>)/ig,"");
-			entry.text_FR = entry.text_FR.replace(/(<([^>]+)>)/ig,"");
+			entry.question_EN = entry.question_EN.replace(/(<([^>]+)>)/ig,"");
+			entry.question_FR = entry.question_FR.replace(/(<([^>]+)>)/ig,"");
 			if(entry.typeId === "2") {
 				var increment = parseFloat(entry.options.increment);
 				var minValue = parseFloat(entry.options.minValue);
@@ -214,7 +214,7 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 
 	// Template for table
 	var cellTemplateName = '<div class="ui-grid-cell-contents" ' +
-		'<p>{{row.entity.text_EN}} / {{row.entity.text_FR}}</p></div>';
+		'<p>{{row.entity.question_EN}} / {{row.entity.question_FR}}</p></div>';
 	var cellTemplateLib = '<div class="ui-grid-cell-contents" ' +
 		'<p>{{row.entity.library_name_EN}} / {{row.entity.library_name_FR}}</p></div>';
 	var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Public</p></div>' +
@@ -225,8 +225,8 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 	$scope.gridOptions = {
 		data: 'groupList',
 		columnDefs: [
-			{field: 'text_EN', displayName: 'Name (EN / FR)', cellTemplate: cellTemplateName, width: '50%'},
-			{field: 'text_EN', displayName: 'Library (EN / FR)', cellTemplate: cellTemplateLib, width: '38%'},
+			{field: 'question_EN', displayName: 'Name (EN / FR)', cellTemplate: cellTemplateName, width: '50%'},
+			{field: 'question_EN', displayName: 'Library (EN / FR)', cellTemplate: cellTemplateLib, width: '38%'},
 			{
 				field: 'private', displayName: 'Privacy', cellTemplate: cellTemplatePrivacy, width: '10%', filter: {
 					type: uiGridConstants.filter.SELECT,

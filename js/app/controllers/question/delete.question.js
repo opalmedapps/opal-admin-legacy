@@ -18,7 +18,6 @@ angular.module('opalAdmin.controllers.question.delete', ['ngAnimate', 'ngSanitiz
 					else {
 						$scope.setBannerClass('danger');
 						var errMsg = "";
-						console.log(response.message);
 						switch(response.message) {
 							case 401:
 								errMsg = "You are not authenticated!";

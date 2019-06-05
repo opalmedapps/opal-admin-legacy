@@ -145,8 +145,8 @@ class Questionnaire extends QuestionnaireModule {
         $questionnaireDetails["questions"] = $this->questionnaireDB->getQuestionsBySectionId($sectionDetails["ID"]);
         foreach($questionnaireDetails["questions"] as &$question) {
             $question["order"] = intval($question["order"]);
-            $question["text_EN"] = strip_tags(htmlspecialchars_decode($question["text_EN"]));
-            $question["text_FR"] = strip_tags(htmlspecialchars_decode($question["text_FR"]));
+            $question["question_EN"] = strip_tags(htmlspecialchars_decode($question["question_EN"]));
+            $question["question_FR"] = strip_tags(htmlspecialchars_decode($question["question_FR"]));
 
             if($question["typeId"] == SLIDERS)
                 $options = $this->questionnaireDB->getQuestionSliderDetails($question["ID"], $question["tableName"]);
