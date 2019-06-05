@@ -17,8 +17,8 @@ class Question extends QuestionnaireModule {
      * */
     static function validateAndSanitize($questionToSanitize) {
         $validatedQuestion = array(
-            "text_EN"=>strip_tags($questionToSanitize['text_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
-            "text_FR"=>strip_tags($questionToSanitize['text_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "question_EN"=>strip_tags($questionToSanitize['question_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "question_FR"=>strip_tags($questionToSanitize['question_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
             "typeId"=>strip_tags($questionToSanitize['typeId']),
             "OAUserId"=>strip_tags($questionToSanitize['OAUserId']),
         );
@@ -38,7 +38,7 @@ class Question extends QuestionnaireModule {
         $validatedQuestion["private"] = (strip_tags($questionToSanitize['private'])=="true"||strip_tags($questionToSanitize['private'])=="1"?"1":"0");
         $validatedQuestion["final"] = (strip_tags($questionToSanitize['final'])=="true"||strip_tags($questionToSanitize['final'])=="1"?"1":"0");
 
-        if ($validatedQuestion["text_EN"] == "" || $validatedQuestion["text_FR"] == "" || $validatedQuestion["typeId"] == "")
+        if ($validatedQuestion["question_EN"] == "" || $validatedQuestion["question_FR"] == "" || $validatedQuestion["typeId"] == "")
             return false;
 
         $options = array();
@@ -82,7 +82,7 @@ class Question extends QuestionnaireModule {
         }
 
         //Insert the question text into the dictionary
-        $toInsert = array(FRENCH_LANGUAGE=>$questionDetails['text_FR'], ENGLISH_LANGUAGE=>$questionDetails['text_EN']);
+        $toInsert = array(FRENCH_LANGUAGE=>$questionDetails['question_FR'], ENGLISH_LANGUAGE=>$questionDetails['question_EN']);
         $contentId = $this->questionnaireDB->addToDictionary($toInsert, QUESTION_TABLE);
 
         //For now the display and definition texts are empty and not being used. But later it will be implemented
@@ -192,8 +192,8 @@ class Question extends QuestionnaireModule {
             $libNameEn = array();
             $libNameFr = array();
             foreach($libraries as $library) {
-                array_push($libNameEn, $library["text_EN"]);
-                array_push($libNameFr, $library["text_FR"]);
+                array_push($libNameEn, $library["name_EN"]);
+                array_push($libNameFr, $library["name_FR"]);
             }
 
             $libNameEn = implode(", ", $libNameEn);
@@ -205,12 +205,12 @@ class Question extends QuestionnaireModule {
 
             $questionArray = array (
                 'serNum'				=> $row["ID"],
-                'text_EN'				=> $row["text_EN"],
-                'text_FR'				=> $row["text_FR"],
+                'question_EN'			=> $row["question_EN"],
+                'question_FR'			=> $row["question_FR"],
                 'private'				=> $row["private"],
-                'answertype_serNum'		=> $row["answertype_Id"],
-                'answertype_name_EN'	=> $row["answertype_name_EN"],
-                'answertype_name_FR'	=> $row["answertype_name_FR"],
+                'typeId'        		=> $row["typeId"],
+                'questionType_EN'   	=> $row["questionType_EN"],
+                'questionType_FR'	    => $row["questionType_FR"],
                 'library_name_EN'		=> $libNameEn,
                 'library_name_FR'		=> $libNameFr,
                 'final'         		=> $row["final"],
@@ -236,8 +236,8 @@ class Question extends QuestionnaireModule {
             $libNameEn = array();
             $libNameFr = array();
             foreach($libraries as $library) {
-                array_push($libNameEn, $library["text_EN"]);
-                array_push($libNameFr, $library["text_FR"]);
+                array_push($libNameEn, $library["name_EN"]);
+                array_push($libNameFr, $library["name_FR"]);
             }
 
             $libNameEn = implode(", ", $libNameEn);
@@ -637,12 +637,12 @@ class Question extends QuestionnaireModule {
 
         $toUpdateDict = array(
             array(
-                "content"=>$updatedQuestion["text_FR"],
+                "content"=>$updatedQuestion["question_FR"],
                 "languageId"=>FRENCH_LANGUAGE,
                 "contentId"=>$oldQuestion["question"],
             ),
             array(
-                "content"=>$updatedQuestion["text_EN"],
+                "content"=>$updatedQuestion["question_EN"],
                 "languageId"=>ENGLISH_LANGUAGE,
                 "contentId"=>$oldQuestion["question"],
             ),

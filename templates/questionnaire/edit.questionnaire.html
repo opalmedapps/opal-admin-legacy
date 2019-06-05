@@ -154,7 +154,7 @@
                                     <label><input type="number" min="1" ng-model="question.order" ng-change="setChangesMade();orderPreview();" ng-disabled="questionnaire.readOnly || questionnaire.final"></label>
                                 </td>
                                 <td>
-                                    {{question.text_EN}} / {{question.text_FR}}
+                                    {{question.question_EN}} / {{question.question_FR}}
                                 </td>
                                 <td>
                                     <select name="groupOptional" ng-model="question.optional" ng-change="setChangesMade()" ng-init="question.optional" required ng-disabled="questionnaire.readOnly || questionnaire.final">
@@ -193,7 +193,7 @@
                                         <label><input type="number" min="1" ng-model="newgroup.position"></label>
                                     </td>
                                     <td>
-                                        {{newgroup.text_EN}} / {{newgroup.text_FR}}
+                                        {{newgroup.question_EN}} / {{newgroup.question_FR}}
                                     </td>
                                     <td>
                                         <select name="groupOption" ng-model="newgroup.optional" required>
@@ -231,7 +231,7 @@
                                     <h3>English</h3>
                                     <div ng-repeat="selectedGroupObj in questionnaire.questions">
                                         <h4>{{selectedGroupObj.type_EN}}:</h4>
-                                        <p>{{selectedGroupObj.text_EN}} <span style="color:#d9534f;;">({{selectedGroupObj.optional == 1 ? 'optional' : 'required'}})</span></p>
+                                        <p>{{selectedGroupObj.question_EN}} <span style="color:#d9534f;;">({{selectedGroupObj.optional == 1 ? 'optional' : 'required'}})</span></p>
                                         <!-- Answer type preview -->
                                         <div ng-if="selectedGroupObj.typeId == '4'">
                                             <div ng-repeat="option in selectedGroupObj.subOptions">
@@ -261,7 +261,7 @@
                                     <h3>Français</h3>
                                     <div ng-repeat="selectedGroupObj in questionnaire.questions">
                                         <h4>{{selectedGroupObj.type_FR}}:</h4>
-                                        <p>{{selectedGroupObj.text_FR}} <span style="color:#d9534f;;">({{selectedGroupObj.optional == 1 ? 'optionnel' : 'requis'}})</span></p>
+                                        <p>{{selectedGroupObj.question_FR}} <span style="color:#d9534f;;">({{selectedGroupObj.optional == 1 ? 'optionnel' : 'requis'}})</span></p>
                                         <!-- Answer type preview -->
                                         <div ng-if="selectedGroupObj.typeId == '1'">
                                             <div ng-repeat="option in selectedGroupObj.subOptions">

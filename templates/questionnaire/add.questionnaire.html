@@ -379,7 +379,7 @@
                                             <div ng-repeat="selectedGroupObj in newQuestionnaire.questions">
                                                 <h4>{{selectedGroupObj.type_EN}}:
                                                 </h4>
-                                                <p>{{selectedGroupObj.text_EN}}<span style="color:#d9534f;;"> ({{selectedGroupObj.optional == 1 ? 'optional' : 'required'}})</span></p>
+                                                <p>{{selectedGroupObj.question_EN}}<span style="color:#d9534f;;"> ({{selectedGroupObj.optional == 1 ? 'optional' : 'required'}})</span></p>
                                                 <!-- Answer type preview -->
                                                 <div ng-if="selectedGroupObj.typeId == '4'">
                                                     <div ng-repeat="option in selectedGroupObj.subOptions">
@@ -403,7 +403,7 @@
                                             <h3>Français</h3>
                                             <div ng-repeat="selectedGroupObj in newQuestionnaire.questions">
                                                 <h4>{{selectedGroupObj.type_FR}}:</h4>
-                                                <p>{{selectedGroupObj.text_FR}}<span style="color:#d9534f;;"> ({{selectedGroupObj.optional == 1 ? 'optionel' : 'requis'}})</span></p>
+                                                <p>{{selectedGroupObj.question_FR}}<span style="color:#d9534f;;"> ({{selectedGroupObj.optional == 1 ? 'optionel' : 'requis'}})</span></p>
                                                 <!-- Answer type preview -->
                                                 <div ng-if="selectedGroupObj.typeId == '4'">
                                                     <div ng-repeat="option in selectedGroupObj.subOptions">
@@ -448,7 +448,7 @@
                                                         <input type="number" min="1" max="{{newQuestionnaire.questions.length}}" ng-model="group.order" ng-change="orderPreview();" placeholder={{group.order}}>
                                                     </label>
                                                 </td>
-                                                <td>{{group.text_EN}} / {{group.text_FR}}</td>
+                                                <td>{{group.question_EN}} / {{group.question_FR}}</td>
                                                 <td>
                                                     <select name="groupOptional" ng-model="group.optional" required ng-init="group.optional='0'">
                                                         <option value="0">Required</option>
