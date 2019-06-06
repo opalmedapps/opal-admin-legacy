@@ -3,16 +3,8 @@
 include_once('questionnaire.inc');
 
 // Construct array from FORM params
-
-$questionTypeArray = QuestionType::validateAndSanitize($_POST);
-
-if(!$questionTypeArray)
-    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid question type format");
-
-$answerTypeObj = new QuestionType($questionTypeArray["OAUserId"]); // Object
-
-// Call function
-$answerTypeObj->insertQuestionType($questionTypeArray);
+$answerTypeObj = new QuestionType(strip_tags($_POST["OAUserId"])); // Object
+$answerTypeObj->insertQuestionType($_POST);
 
 header('Content-Type: application/javascript');
 $response['message'] = HTTP_STATUS_SUCCESS;

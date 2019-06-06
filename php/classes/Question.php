@@ -60,6 +60,30 @@ class Question extends QuestionnaireModule {
             }
         }
         $validatedQuestion["subOptions"] = $subOptions;
+
+
+
+
+
+
+
+
+        if($validatedQuestion["typeId"] === SLIDERS) {
+            $validatedQuestion["options"]["minValue"] = floatval($validatedQuestion["options"]["minValue"]);
+            $validatedQuestion["options"]["maxValue"] = floatval($validatedQuestion["options"]["maxValue"]);
+            $validatedQuestion["options"]["increment"] = floatval($validatedQuestion["options"]["increment"]);
+
+            if ($validatedQuestion["options"]["minCaption_EN"] == "" || $validatedQuestion["options"]["minCaption_FR"] == "" || $validatedQuestion["options"]["maxCaption_EN"] == "" || $validatedQuestion["options"]["maxCaption_FR"] == "" || $validatedQuestion["options"]["minValue"] <= 0.0 || $validatedQuestion["options"]["maxValue"] <= 0.0 || $validatedQuestion["options"]["increment"] <= 0.0 || $validatedQuestion["options"]["minValue"] >= $validatedQuestion["options"]["maxValue"])
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid slider data.");
+
+            $options["maxValue"] = floatval(floor(($options["maxValue"] - $options["minValue"]) / $options["increment"]) * $options["increment"]) + $options["minValue"];
+        }
+
+
+
+
+
+
         return $validatedQuestion;
     }
 
