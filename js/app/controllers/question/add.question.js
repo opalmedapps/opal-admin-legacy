@@ -130,7 +130,6 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	};
 
 	$scope.updateAt = function (selectedAt) {
-
 		$scope.answerTypeSection.open = true;
 		if ($scope.newQuestion.typeId) {
 			$scope.questionLibrarySection.show = true;
@@ -159,6 +158,12 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
 		}
+	};
+
+	$scope.updateOptions = function() {
+
+		$scope.newQuestionType.options = {};
+		$scope.newQuestionType.subOptions = [];
 	};
 
 	$scope.updateLibrary = function (selectedLibrary) {
@@ -239,29 +244,29 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	// add new types & write into DB
 	// Initialize the new answer type object
-	$scope.newAnswerType = {
+	$scope.newQuestionType = {
 		name_EN: "",
 		name_FR: "",
 		category_EN: "",
 		category_FR: "",
 		private: 0,
 		OAUserId: OAUserId,
-		options: [],
-		slider: []
+		options: {},
+		subOptions: [],
 	};
 
 	$scope.addNewQuestionType = function (atCatSelected) {
 		// Binding categories
-		$scope.newAnswerType.ID = atCatSelected.ID;
-		$scope.newAnswerType.OAUserId = Session.retrieveObject('user').id;
+		$scope.newQuestionType.typeId = atCatSelected.ID;
+		$scope.newQuestionType.OAUserId = Session.retrieveObject('user').id;
+		var toSend = $scope.newQuestionType;
 		// Prompt to confirm user's action
-		var confirmation = confirm("Are you sure you want to create a new " + atCatSelected.category_EN.toLowerCase()  +  " response type named '" + $scope.newAnswerType.name_EN + "'?");
+		var confirmation = confirm("Are you sure you want to create a new " + atCatSelected.category_EN.toLowerCase()  +  " response type named '" + $scope.newQuestionType.name_EN + "'?");
 		if (confirmation) {
-			// write in to db
 			$.ajax({
 				type: "POST",
 				url: "php/questionnaire/insert.question_type.php",
-				data: $scope.newAnswerType,
+				data: toSend,
 				success: function (result) {
 					result = JSON.parse(result);
 					if(result.message === 200) {
@@ -271,7 +276,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 						questionnaireCollectionService.getQuestionTypes(OAUserId).then(function (response) {
 							$scope.atFilterList = response.data;
 						}).catch(function (response) {
-							alert('Error occurred getting response types: '+response.status +"\r\n"+ response.data);
+							alert('Error occurred while created response types: '+response.code +"\r\n"+ response.message);
 						});
 					} else {
 						alert("Unable to create the response type. Code " + result.message + ".\r\nError message: " + result.details);
@@ -287,19 +292,19 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	// add options
 	$scope.addOptions = function () {
-		$scope.newAnswerType.options.push({
+		$scope.newQuestionType.subOptions.push({
 			description_EN: "",
 			description_FR: "",
-			order: undefined,
+			order: $scope.newQuestionType.subOptions.length + 1,
 			OAUserId: OAUserId
 		});
 	};
 
 	// delete options
 	$scope.deleteOptions = function (optionToDelete) {
-		var index = $scope.newAnswerType.options.indexOf(optionToDelete);
+		var index = $scope.newQuestionType.subOptions.indexOf(optionToDelete);
 		if (index > -1) {
-			$scope.newAnswerType.options.splice(index, 1);
+			$scope.newQuestionType.subOptions.splice(index, 1);
 		}
 	};
 

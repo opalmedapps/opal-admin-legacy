@@ -7,7 +7,7 @@ angular.module('opalAdmin.controllers.question.type.delete', ['ngAnimate', 'ngSa
 			$.ajax({
 				type: "POST",
 				url: "php/questionnaire/delete.question.type.php",
-				data: {"ID": $scope.questionTypeToDelete.serNum, "OAUserId": Session.retrieveObject('user').id},
+				data: {"ID": $scope.questionTypeToDelete.ID, "OAUserId": Session.retrieveObject('user').id},
 				success: function (response) {
 					response = JSON.parse(response);
 					// Show success or failure depending on response

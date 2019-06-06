@@ -19,12 +19,12 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 
 	// step bar
 	var steps = {
-		question: { completed: false },
-		answerType: { completed: false },
-		questionGroup: { completed: false }
+		name: { completed: false },
+		type: { completed: false },
 	};
 
 	$scope.numOfCompletedSteps = 0;
+	$scope.preview = [];
 	$scope.stepTotal = 2;
 	$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
@@ -59,24 +59,12 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 
 	// Initialize the new answer type object
 	$scope.newQuestionType = {
-		ID: "",
 		name_EN: "",
 		name_FR: "",
-		category_EN: "",
-		category_FR: "",
 		private: 0,
 		OAUserId: OAUserId,
-		options: [],
-		minValue: 1,
-		minCaption_EN: undefined,
-		minCaption_FR: undefined,
-		maxValue: 10,
-		maxCaption_EN: undefined,
-		maxCaption_FR: undefined,
-		increment: 1,
-		slider: {
-			options: [],
-		},
+		options: {},
+		subOptions: [],
 	};
 
 	// Initialize variables for holding selected answer type & group
@@ -85,31 +73,21 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 	// Filter lists initialized
 	$scope.atCatList = [];
 
-	// Initialize search field variables
-	// $scope.atEntered = '';
-	// $scope.libEntered = '';
-	// $scope.catEntered = '';
-	// $scope.groupEntered = '';
-	// $scope.atCategory = "";
-
 	$scope.updateQuestionType = function (selected) {
-		$scope.newQuestionType.ID = selected.ID;
+		$scope.newQuestionType.typeId = selected.ID;
 
-		$scope.newQuestionType.minValue = 1;
-		$scope.newQuestionType.minCaption_EN = undefined;
-		$scope.newQuestionType.minCaption_FR = undefined;
-		$scope.newQuestionType.maxValue = 10;
-		$scope.newQuestionType.maxCaption_EN = undefined;
-		$scope.newQuestionType.maxCaption_FR = undefined;
-		$scope.newQuestionType.increment = 1;
-		$scope.newQuestionType.slider = {
-			options: [],
-		};
-		$scope.newQuestionType.options = [];
-
-		if (selected.ID === "2")
+		$scope.newQuestionType.options = {};
+		if(selected.ID === "2") {
+			$scope.newQuestionType.options.minValue = 1;
+			$scope.newQuestionType.options.minCaption_EN = undefined;
+			$scope.newQuestionType.options.minCaption_FR = undefined;
+			$scope.newQuestionType.options.maxValue = 10;
+			$scope.newQuestionType.options.maxCaption_EN = undefined;
+			$scope.newQuestionType.options.maxCaption_FR = undefined;
+			$scope.newQuestionType.options.increment = 1;
 			$scope.updateSlider();
-
+		}
+		$scope.newQuestionType.subOptions = [];
 	};
 
 	$scope.submitQuestionType = function () {
@@ -132,8 +110,6 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 				}
 			});
 		}
-
-
 	};
 
 	// Update values from form
@@ -143,49 +119,13 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 			$scope.titleSection.open = false;
 		}
 		if ($scope.newQuestionType.name_EN && $scope.newQuestionType.name_FR) {
-
 			$scope.answerTypeSection.show = true;
-
-			steps.question.completed = true;
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-
+			steps.name.completed = true;
 		} else {
-
-			steps.question.completed = false;
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-
+			steps.name.completed = false;
 		}
-	};
-
-	$scope.updateAt = function (selectedAt) {
-
-		$scope.answerTypeSection.open = true;
-		if ($scope.newQuestionType.typeId) {
-			$scope.selectedAt = selectedAt;
-			steps.answerType.completed = true;
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
-
-			var increment = parseFloat($scope.selectedAt.increment);
-			var minValue = parseFloat($scope.selectedAt.minValue);
-			if (minValue === 0.0) minValue = increment;
-			var maxValue = parseFloat($scope.selectedAt.maxValue);
-
-			$scope.radiostep = new Array();
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-			for(var i = minValue; i <= maxValue; i += increment) {
-				$scope.radiostep.push({"name":""});
-			}
-			$scope.radiostep[0]["name"] = $scope.selectedAt.minCaption_EN + " / " + $scope.selectedAt.minCaption_FR;
-			$scope.radiostep[$scope.radiostep.length - 1]["name"] = $scope.selectedAt.maxCaption_EN + " / " + $scope.selectedAt.maxCaption_FR;
-		} else {
-
-			steps.answerType.completed = false;
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-
-		}
+		$scope.numOfCompletedSteps = stepsCompleted(steps);
+		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 	};
 
 	// questionnaire API: retrieve data
@@ -197,10 +137,10 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 
 	// add options
 	$scope.addOptions = function () {
-		$scope.newQuestionType.options.push({
-			text_EN: "",
-			text_FR: "",
-			order: $scope.newQuestionType.options.length + 1,
+		$scope.newQuestionType.subOptions.push({
+			description_EN: "",
+			description_FR: "",
+			order: $scope.newQuestionType.subOptions.length + 1,
 			OAUserId: OAUserId
 		});
 		$scope.checkCompletion();
@@ -208,20 +148,20 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 
 	// delete options
 	$scope.deleteOptions = function (optionToDelete) {
-		var index = $scope.newQuestionType.options.indexOf(optionToDelete);
+		var index = $scope.newQuestionType.subOptions.indexOf(optionToDelete);
 		if (index > -1) {
-			$scope.newQuestionType.options.splice(index, 1);
+			$scope.newQuestionType.subOptions.splice(index, 1);
 		}
 
 		var i = 1;
-		$scope.newQuestionType.options.forEach(function(entry) {
+		$scope.newQuestionType.subOptions.forEach(function(entry) {
 			entry.order = i;
 			i++;
 		});
 	};
 
 	$scope.orderPreview = function () {
-		$scope.newQuestionType.options.sort(function(a,b){
+		$scope.newQuestionType.subOptions.sort(function(a,b){
 			return (a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0);
 		});
 	};
@@ -233,53 +173,53 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 
 	$scope.updateSlider = function () {
 		var radiostep = new Array();
-		var increment = parseFloat($scope.newQuestionType.increment);
-		var minValue = parseFloat($scope.newQuestionType.minValue);
-		var maxValue = parseFloat($scope.newQuestionType.maxValue);
+		var increment = parseFloat($scope.newQuestionType.options.increment);
+		var minValue = parseFloat($scope.newQuestionType.options.minValue);
+		var maxValue = parseFloat($scope.newQuestionType.options.maxValue);
 
-		if (minValue <= 0.0 || maxValue <= 0.0 || increment <= 0 || minValue >= maxValue || $scope.newQuestionType.minCaption_EN === undefined || $scope.newQuestionType.minCaption_FR === undefined || $scope.newQuestionType.maxCaption_EN === undefined || $scope.newQuestionType.maxCaption_FR === undefined)
+		if (minValue <= 0.0 || maxValue <= 0.0 || increment <= 0 || minValue >= maxValue || $scope.newQuestionType.options.minCaption_EN === undefined || $scope.newQuestionType.options.minCaption_FR === undefined || $scope.newQuestionType.options.maxCaption_EN === undefined || $scope.newQuestionType.options.maxCaption_FR === undefined)
 			$scope.validSlider = false;
 		else {
-			//maxValue = (Math.floor((maxValue - minValue) / increment) * increment) + minValue;
-			$scope.newQuestionType.maxValue = parseInt(maxValue);
+			$scope.newQuestionType.options.maxValue = parseInt(maxValue);
 			$scope.validSlider = true;
 			for(var i = minValue; i <= maxValue; i += increment) {
-				radiostep.push({"text_EN":" " + i,"text_FR":" " + i});
+				radiostep.push({"description_EN":" " + i,"description_FR":" " + i});
 			}
-			radiostep[0]["text_EN"] += " " + $scope.newQuestionType.minCaption_EN;
-			radiostep[0]["text_FR"] += " " + $scope.newQuestionType.minCaption_FR;
-			radiostep[radiostep.length - 1]["text_EN"] += " " + $scope.newQuestionType.maxCaption_EN;
-			radiostep[radiostep.length - 1]["text_FR"] += " " + $scope.newQuestionType.maxCaption_FR;
+			radiostep[0]["description_EN"] += " " + $scope.newQuestionType.options.minCaption_EN;
+			radiostep[0]["description_FR"] += " " + $scope.newQuestionType.options.minCaption_FR;
+			radiostep[radiostep.length - 1]["description_EN"] += " " + $scope.newQuestionType.options.maxCaption_EN;
+			radiostep[radiostep.length - 1]["description_FR"] += " " + $scope.newQuestionType.options.maxCaption_FR;
 		}
-		$scope.newQuestionType.options = radiostep;
+		$scope.preview = radiostep;
 	};
 
 	$scope.checkCompletion = function () {
-		if($scope.newQuestionType.ID === "4" || $scope.newQuestionType.ID === "1") {
+		if($scope.newQuestionType.typeId === "4" || $scope.newQuestionType.typeId === "1") {
 			var allGood = true;
 
-			if (typeof $scope.newQuestionType.options === 'undefined' || $scope.newQuestionType.options.length <= 0)
+			if (typeof $scope.newQuestionType.subOptions === 'undefined' || $scope.newQuestionType.subOptions.length <= 0)
 				allGood = false;
 			else
-				$scope.newQuestionType.options.forEach(function(entry) {
-					if (entry.text_EN === undefined || entry.text_FR === undefined  || entry.text_EN === "" || entry.text_FR === ""  || entry.order === 0 || entry.order === undefined)
+				$scope.newQuestionType.subOptions.forEach(function(entry) {
+					if (entry.description_EN === undefined || entry.description_FR === undefined  || entry.description_EN === "" || entry.description_FR === ""  || entry.order === 0 || entry.order === undefined)
 						allGood = false;
 				});
 			if(allGood)
-				$scope.numOfCompletedSteps = 2;
+				steps.type.completed = true;
 			else
-				$scope.numOfCompletedSteps = 1;
+				steps.type.completed = false;
 		}
-		else if($scope.newQuestionType.ID === "2") {
-			if($scope.newQuestionType.slider) {
+		else if($scope.newQuestionType.typeId === "2") {
+			if($scope.newQuestionType.options) {
 				if($scope.validSlider)
-					$scope.numOfCompletedSteps = 2;
+					steps.type.completed = true;
 				else
-					$scope.numOfCompletedSteps = 1;
+					steps.type.completed = false;
 			}
 		}
 		else
-			$scope.numOfCompletedSteps = 2;
+			steps.type.completed = true;
+		$scope.numOfCompletedSteps = stepsCompleted(steps);
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 	};
 

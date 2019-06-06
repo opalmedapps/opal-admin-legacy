@@ -135,7 +135,7 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPES",
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = tts.maxCaption AND d.languageId = ".FRENCH_LANGUAGE.") AS maxCaption_FR,
     dt1.name AS tableName,
     dt2.name AS subTableName,
-    tt.OAUserId AS created_by
+    tt.OAUserId
     FROM ".TYPE_TEMPLATE_TABLE." tt
     LEFT JOIN type t ON t.ID = tt.typeId
     LEFT JOIN ".DEFINITION_TABLE." dt1 ON dt1.ID = t.templateTableId
@@ -162,7 +162,7 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPE_DETAILS",
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = tts.maxCaption AND d.languageId = ".FRENCH_LANGUAGE.") AS maxCaption_FR,
     dt1.name AS tableName,
     dt2.name AS subTableName,
-    tt.OAUserId AS created_by
+    tt.OAUserId
     FROM ".TYPE_TEMPLATE_TABLE." tt
     LEFT JOIN type t ON t.ID = tt.typeId
     LEFT JOIN ".DEFINITION_TABLE." dt1 ON dt1.ID = t.templateTableId
