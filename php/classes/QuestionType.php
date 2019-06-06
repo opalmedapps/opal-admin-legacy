@@ -6,9 +6,14 @@
  */
 class QuestionType extends QuestionnaireModule {
 
-    public static function validateAndSanitize($newQuestionType) {
+    const PIVOTAL_TYPE_TEMPLATE_FIELDS = array("ID", "name", "typeId");
+    const PIVOTAL_TYPE_TEMPLATE_OPTIONS_FIELDS = array("ID", "typeTemplateId");
+    const PIVOTAL_TYPE_TEMPLATE_OPTIONS_SLIDERS_FIELDS = array("ID", "typeTemplateId", "minCaption", "maxCaption");
+    const PIVOTAL_TYPE_TEMPLATE_SUB_OPTIONS_FIELDS = array("ID", "parentTableId", "description");
+
+    public function validateAndSanitize($newQuestionType) {
         $validatedQT = array(
-            'typeId' => strip_tags($newQuestionType['ID']),
+            'typeId' => strip_tags($newQuestionType['typeId']),
             'name_EN' => strip_tags($newQuestionType['name_EN']),
             'name_FR' => strip_tags($newQuestionType['name_FR']),
             'private' => strip_tags($newQuestionType['private']),
@@ -16,49 +21,152 @@ class QuestionType extends QuestionnaireModule {
             'options' => $newQuestionType['options'],
         );
 
+        if ($newQuestionType["ID"] != "")
+            $validatedQT["ID"] = strip_tags($newQuestionType['ID']);
 
         if( $validatedQT["typeId"] == "" ||  $validatedQT["name_EN"] == "" ||  $validatedQT["name_FR"] == "" ||  $validatedQT["OAUserId"] == "")
             return false;
 
-        if ($validatedQT["typeId"] == SLIDERS)
-        {
-            $validatedQT["minCaption_EN"] = strip_tags($newQuestionType["minCaption_EN"]);
-            $validatedQT["minCaption_FR"] = strip_tags($newQuestionType["minCaption_FR"]);
-            $validatedQT["maxCaption_EN"] = strip_tags($newQuestionType["maxCaption_EN"]);
-            $validatedQT["maxCaption_FR"] = strip_tags($newQuestionType["maxCaption_FR"]);
-            $validatedQT["minValue"] = floatval(strip_tags($newQuestionType["minValue"]));
-            $validatedQT["maxValue"] = floatval(strip_tags($newQuestionType["maxValue"]));
-            $validatedQT["increment"] = floatval(strip_tags($newQuestionType["increment"]));
 
-            if( $validatedQT["minCaption_EN"] == "" ||  $validatedQT["minCaption_FR"] == "" ||  $validatedQT["maxCaption_EN"] == "" ||  $validatedQT["maxCaption_FR"] == "" || $validatedQT["minValue"] <= 0.0 || $validatedQT["maxValue"] <= 0.0 || $validatedQT["increment"] <= 0.0 || $validatedQT["minValue"] >= $validatedQT["maxValue"])
+        $options = array();
+        if(!empty($newQuestionType["options"]))
+            foreach($newQuestionType["options"] as $key=>$value)
+                if ($key != '$$hashKey')
+                    $options[strip_tags($key)] = strip_tags($value);
+        $validatedQT["options"] = $options;
+
+
+        $subOptions = array();
+
+        if(!empty($newQuestionType["subOptions"])) {
+            foreach ($newQuestionType["subOptions"] as $aSub) {
+                $newSub = array();
+                foreach ($aSub as $key => $value)
+                    if ($key != '$$hashKey')
+                        $newSub[strip_tags($key)] = strip_tags($value);
+                array_push($subOptions, $newSub);
+            }
+        }
+        $validatedQT["subOptions"] = $subOptions;
+
+        if($validatedQT["typeId"] == SLIDERS) {
+            if(!$validatedQT["options"] = $this->validateSliderForm($validatedQT["options"]))
                 return false;
-
-            $validatedQT["maxValue"] = floatval(floor(($validatedQT["maxValue"] - $validatedQT["minValue"]) / $validatedQT["increment"]) * $validatedQT["increment"]) + $validatedQT["minValue"];
         }
         else if ($validatedQT["typeId"] == CHECKBOXES || $validatedQT["typeId"] == RADIO_BUTTON) {
-            if (count($validatedQT["options"]) <= 0)
-                return false;
-            $sanitizedOptions = array();
-            foreach($validatedQT["options"] as $option) {
-                $temp = array();
-                $temp["description_EN"] = strip_tags($option["description_EN"]);
-                $temp["description_FR"] = strip_tags($option["description_FR"]);
-                $temp["order"] = strip_tags($option["order"]);
-                array_push($sanitizedOptions, $temp);
+            if (count($validatedQT["subOptions"]) <= 0) return false;
+            foreach($validatedQT["subOptions"] as $sub) {
+                if($sub["description_EN"] == "" || $sub["description_FR"] == "" || $sub["order"] == "")
+                    return false;
             }
-
-            self::sortOptions($sanitizedOptions);
-
-            if ($validatedQT["typeId"] == CHECKBOXES ) {
-                $validatedQT["minAnswer"] = 1;
-                $validatedQT["maxAnswer"] = count($sanitizedOptions);
-            }
-            $validatedQT["options"] = $sanitizedOptions;
         }
-        else if ($validatedQT["typeId"] != TEXT_BOX)
-            return false;
-
         return $validatedQT;
+    }
+
+    /*
+     * This function validate the pivotal IDs of an updated type template to insure it will not compromise the data when
+     * updating the database.
+     *
+     * @params  Reference of the updated type template (array) and current type template in the DB (array)
+     * @return  boolean if the data are compromised or not.
+     * */
+    function validatePivotalIDs(&$updatedQuestion, &$oldQuestion) {
+        $answer = true;
+        $arrayOldOption = array();
+
+        if(!empty($oldQuestion["subOptions"])) {
+            foreach ($oldQuestion["subOptions"] as $options)
+                $arrayOldOption[$options["ID"]] = $options;
+        }
+
+        foreach($updatedQuestion as $key=>$value)
+            if(in_array($key, self::PIVOTAL_TYPE_TEMPLATE_FIELDS) && $oldQuestion[$key] != $value) {
+                $answer = false;
+                break;
+            }
+
+        if($oldQuestion["typeId"] == SLIDERS) {
+            $updatedQuestion["subOptions"] = array();
+            $fieldLists = self::PIVOTAL_TYPE_TEMPLATE_OPTIONS_SLIDERS_FIELDS;
+        }
+        else
+            $fieldLists = self::PIVOTAL_TYPE_TEMPLATE_OPTIONS_FIELDS;
+
+        foreach($updatedQuestion["options"] as $key=>$value) {
+            if(in_array($key, $fieldLists) && $oldQuestion["options"][$key] !== $value) {
+                $answer = false;
+                break;
+            }
+        }
+
+        foreach($updatedQuestion["subOptions"] as $sub) {
+            $tempId = $sub["ID"];
+            foreach ($sub as $key => $value) {
+                if (in_array($key, self::PIVOTAL_TYPE_TEMPLATE_SUB_OPTIONS_FIELDS) && $value !== $arrayOldOption[$tempId][$key]) {
+                    $answer = false;
+                    break;
+                }
+            }
+        }
+        return  $answer;
+    }
+
+    /**
+     * This function update a question type template after validating the data.
+     *
+     * If the user is registered, is the owner of the question or the question is public, no data are missing or
+     * corrupted, the update starts.
+     *
+     * First, it will update the dictionary with the new question text, the private and final status, and finally
+     * the options depending the type of template (slider, checkbox, etc)
+     *
+     * All these updates will be made only if there is only changes made. If there was any changes made but not in
+     * the type template table, the question will still be updated with the date and username of the person who made the
+     * changes.
+     *
+     * param   array type template details (array)
+     * return  void
+     */
+    function updateQuestionType($updatedQuestionType) {
+        $total = 0;
+        $oldQuestionType = $this->getQuestionTypeDetails($updatedQuestionType["ID"]);
+        if ($oldQuestionType["deleted"] == DELETED_RECORD || $this->questionnaireDB->getUsername() == "" || ($oldQuestionType["private"] == 1 && $this->questionnaireDB->getOAUserId() != $oldQuestionType["OAUserId"]))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
+        else if(empty($updatedQuestionType["options"]) || ($updatedQuestionType["typeId"] == RADIO_BUTTON || $updatedQuestionType["typeId"] == CHECKBOXES) && empty($updatedQuestionType["subOptions"]))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data.");
+        else if(!$this->validatePivotalIDs($updatedQuestionType, $oldQuestionType))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Corrupted data.");
+
+        $toUpdateDict = array(
+            array(
+                "content"=>$updatedQuestionType["name_FR"],
+                "languageId"=>FRENCH_LANGUAGE,
+                "contentId"=>$oldQuestionType["question"],
+            ),
+            array(
+                "content"=>$updatedQuestionType["name_EN"],
+                "languageId"=>ENGLISH_LANGUAGE,
+                "contentId"=>$oldQuestionType["question"],
+            ),
+        );
+
+        $total += $this->questionnaireDB->updateDictionary($toUpdateDict, TYPE_TEMPLATE_TABLE);
+        $toUpdateQuestionType = array(
+            "ID"=>$oldQuestionType["ID"],
+            "private"=>$updatedQuestionType["private"],
+            "final"=>$updatedQuestionType["final"],
+        );
+        /*$updatedQuestionType = $this->questionnaireDB->updateQuestionType($toUpdateQuestionType);
+
+        if($updatedQuestionType["typeId"] == RADIO_BUTTON)
+            $total += $this->updateRadioButtonOptions($updatedQuestionType["options"],$updatedQuestionType["subOptions"]);
+        else if($updatedQuestionType["typeId"] == CHECKBOXES)
+            $total += $this->updateCheckboxOptions($updatedQuestionType["options"],$updatedQuestionType["subOptions"]);
+        else if($updatedQuestionType["typeId"] == SLIDERS)
+            $total += $this->updateSliderOptions($updatedQuestionType["options"]);
+
+        if ($questionUpdated == 0 && $total > 0)
+            $this->questionnaireDB->forceUpdateQuestion($updatedQuestionType["ID"]);*/
     }
 
     /*
@@ -67,13 +175,19 @@ class QuestionType extends QuestionnaireModule {
      * @return void
      */
     public function insertQuestionType($newQuestionType){
+
+        $newQuestionType = $this->validateAndSanitize($newQuestionType);
+
+        if(!$newQuestionType)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid question type format");
+
         $options = array();
         $subOptions = array();
         if($newQuestionType["typeId"] == CHECKBOXES) {
             $tableToInsert = TYPE_TEMPLATE_CHECKBOX_TABLE;
             $subTableToInsert = TYPE_TEMPLATE_CHECKBOX_OPTION_TABLE;
 
-            foreach($newQuestionType["options"] as $opt) {
+            foreach($newQuestionType["subOptions"] as $opt) {
                 $tempArray = array();
                 $toInsert = array(FRENCH_LANGUAGE=>$opt["description_FR"], ENGLISH_LANGUAGE=>$opt["description_EN"]);
                 $tempArray["description"] = $this->questionnaireDB->addToDictionary($toInsert, TYPE_TEMPLATE_TABLE);
@@ -87,7 +201,7 @@ class QuestionType extends QuestionnaireModule {
             $tableToInsert = TYPE_TEMPLATE_RADIO_BUTTON_TABLE;
             $subTableToInsert = TYPE_TEMPLATE_RADIO_BUTTON_OPTION_TABLE;
 
-            foreach($newQuestionType["options"] as $opt) {
+            foreach($newQuestionType["subOptions"] as $opt) {
                 $tempArray = array();
                 $toInsert = array(FRENCH_LANGUAGE=>$opt["description_FR"], ENGLISH_LANGUAGE=>$opt["description_EN"]);
                 $tempArray["description"] = $this->questionnaireDB->addToDictionary($toInsert, TYPE_TEMPLATE_TABLE);
@@ -98,16 +212,16 @@ class QuestionType extends QuestionnaireModule {
         else if ($newQuestionType["typeId"] == SLIDERS) {
             $tableToInsert = TYPE_TEMPLATE_SLIDER_TABLE;
             $toInsert = array(
-                FRENCH_LANGUAGE=>$newQuestionType["minCaption_FR"], ENGLISH_LANGUAGE=>$newQuestionType["minCaption_EN"]
+                FRENCH_LANGUAGE=>$newQuestionType["options"]["minCaption_FR"], ENGLISH_LANGUAGE=>$newQuestionType["options"]["minCaption_EN"]
             );
             $options["minCaption"] = $this->questionnaireDB->addToDictionary($toInsert, TYPE_TEMPLATE_TABLE);
             $toInsert = array(
-                FRENCH_LANGUAGE=>$newQuestionType["maxCaption_FR"], ENGLISH_LANGUAGE=>$newQuestionType["maxCaption_EN"]
+                FRENCH_LANGUAGE=>$newQuestionType["options"]["maxCaption_FR"], ENGLISH_LANGUAGE=>$newQuestionType["options"]["maxCaption_EN"]
             );
             $options["maxCaption"] = $this->questionnaireDB->addToDictionary($toInsert, TYPE_TEMPLATE_TABLE);
-            $options["minValue"] = $newQuestionType["minValue"];
-            $options["maxValue"] = $newQuestionType["maxValue"];
-            $options["increment"] = $newQuestionType["increment"];
+            $options["minValue"] = $newQuestionType["options"]["minValue"];
+            $options["maxValue"] = $newQuestionType["options"]["maxValue"];
+            $options["increment"] = $newQuestionType["options"]["increment"];
         }
         else {
             $newQuestionType["typeId"] = TEXT_BOX;
@@ -172,7 +286,7 @@ class QuestionType extends QuestionnaireModule {
             $subOptions = $this->questionnaireDB->getQuestionSubOptionsDetails($options["ID"], $questionType["subTableName"]);
         }
 
-        $questionType["isOwner"] = $isOwner;
+        $questionType["isOwner"] = strval(intval($isOwner));
         if($questionType["typeId"] == SLIDERS)
             $questionType["options"] = $options;
         else
@@ -244,11 +358,13 @@ class QuestionType extends QuestionnaireModule {
     function deleteQuestionType($questionTypeId) {
         $questionTypeToDelete = $this->questionnaireDB->getTypeTemplate($questionTypeId);
 
+
         if ($this->questionnaireDB->getOAUserId() <= 0 || $questionTypeToDelete["deleted"] == 1 || ($questionTypeToDelete["private"] == 1 && $this->questionnaireDB->getOAUserId() != $questionTypeToDelete["OAUserId"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
 
         $lastUpdated = $this->questionnaireDB->getLastTimeTableUpdated(TYPE_TEMPLATE_TABLE, $questionTypeId);
         $nobodyUpdated = $this->questionnaireDB->canRecordBeUpdated(TYPE_TEMPLATE_TABLE, $questionTypeId, $lastUpdated["lastUpdated"], $lastUpdated["updatedBy"]);
+
         $nobodyUpdated = intval($nobodyUpdated["total"]);
         if ($nobodyUpdated){
             $this->questionnaireDB->markAsDeletedInDictionary($questionTypeToDelete["name"]);

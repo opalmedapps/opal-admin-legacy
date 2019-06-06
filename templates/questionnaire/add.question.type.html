@@ -146,7 +146,7 @@
 
                         <!-- Submit button -->
                         <div class="panel-container">
-                            <a href="" ng-click="submitQuestionType()" ng-if="checkForm()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" style="width: 100%;">
+                            <a href="" ng-click="submitQuestionType()" ng-show="checkForm()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" style="width: 100%;">
                                 <span style="font-size: 20px;"><strong>Submit response type</strong></span>
                             </a>
                         </div>
@@ -284,13 +284,13 @@
 
                                         <!-- Add multiple choice options -->
                                         <div class="col-xs-12" ng-show="atCategory.category_EN === 'Checkbox' || atCategory.category_EN === 'Radio Button'">
-                                            <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in newQuestionType.options">
+                                            <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in newQuestionType.subOptions">
                                                 <input ng-change="checkCompletion();orderPreview();" class="form-control" style="width:20%" type="number" placeholder="Position" ng-model="option.order" min="1" required/>
-                                                <input ng-change="checkCompletion();" class="form-control" style="width:40%" type="text" placeholder="Text (EN)" ng-model="option.text_EN" required/>
-                                                <input ng-change="checkCompletion();" class="form-control" style="width:40%" type="text" placeholder="Text (FR)" ng-model="option.text_FR" required/>
+                                                <input ng-change="checkCompletion();" class="form-control" style="width:40%" type="text" placeholder="Text (EN)" ng-model="option.description_EN" required/>
+                                                <input ng-change="checkCompletion();" class="form-control" style="width:40%" type="text" placeholder="Text (FR)" ng-model="option.description_FR" required/>
                                                 <span class="input-group-btn"><button class="btn btn-default" ng-click="deleteOptions(option);checkCompletion();"><span class="fa fa-minus"></span> Delete</button></span>
                                             </div>
-                                            <button type="button" class="btn btn-default" style="float: left; margin-top:5px;" ng-click="addOptions(xfdgdfsgfrdsgdfghdfdfgdf);"><span class="fa fa-plus"></span> Add option</button>
+                                            <button type="button" class="btn btn-default" style="float: left; margin-top:5px;" ng-click="addOptions();"><span class="fa fa-plus"></span> Add option</button>
                                         </div>
 
                                         <!-- Add textbox options -->
@@ -308,19 +308,19 @@
                                             </div>
                                             <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
                                                 <span class="input-group-addon">&nbsp; Minimum settings</span>
-                                                <input class="form-control" style="width:20%" type="number" placeholder="Minimum value" ng-model="newQuestionType.minValue" min="1" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();"/>
-                                                <input class="form-control" style="width:35%" type="text" ng-model="newQuestionType.minCaption_EN" placeholder="Minimum caption (EN)" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
-                                                <input class="form-control" style="width:35%" type="text" ng-model="newQuestionType.minCaption_FR" placeholder="Minimum caption (FR)" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
+                                                <input class="form-control" style="width:20%" type="number" placeholder="Minimum value" ng-model="newQuestionType.options.minValue" min="1" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();"/>
+                                                <input class="form-control" style="width:35%" type="text" ng-model="newQuestionType.options.minCaption_EN" placeholder="Minimum caption (EN)" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
+                                                <input class="form-control" style="width:35%" type="text" ng-model="newQuestionType.options.minCaption_FR" placeholder="Minimum caption (FR)" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
                                             </div>
                                             <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
                                                 <span class="input-group-addon">&nbsp;Maximum settings</span>
-                                                <input class="form-control" style="width:20%" type="number" placeholder="Maximum value" ng-model="newQuestionType.maxValue" min="1" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
-                                                <input class="form-control" style="width:35%" type="text" ng-model="newQuestionType.maxCaption_EN" placeholder="Maximum caption (EN)" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
-                                                <input class="form-control" style="width:35%" type="text" ng-model="newQuestionType.maxCaption_FR" placeholder="Maximum caption (FR)" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
+                                                <input class="form-control" style="width:20%" type="number" placeholder="Maximum value" ng-model="newQuestionType.options.maxValue" min="1" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
+                                                <input class="form-control" style="width:35%" type="text" ng-model="newQuestionType.options.maxCaption_EN" placeholder="Maximum caption (EN)" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
+                                                <input class="form-control" style="width:35%" type="text" ng-model="newQuestionType.options.maxCaption_FR" placeholder="Maximum caption (FR)" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
                                             </div>
                                             <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
                                                 <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Increment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                                <input class="form-control" style="width:20%" type="number" placeholder="Increment step" ng-model="newQuestionType.increment" min="1" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
+                                                <input class="form-control" style="width:20%" type="number" placeholder="Increment step" ng-model="newQuestionType.options.increment" min="1" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
                                             </div>
                                         </div>
                                     </form>
@@ -336,52 +336,52 @@
                                     <h4>English</h4>
                                     <!-- Show category -->
                                     <div ng-if="atCategory.category_EN === 'Slider'">
-                                        <div ng-repeat="option in newQuestionType.options" ng-show="validSlider">
-                                            <label><input type="radio" name="option"/> {{option.text_EN}}</label>
+                                        <div ng-repeat="option in preview" ng-show="validSlider">
+                                            <label><input type="radio" name="option"/> {{option.description_EN}}</label>
                                         </div>
                                         <div ng-hide="validSlider"><p>Invalid slider options.</p></div>
                                     </div>
 
                                     <div ng-if="atCategory.category_EN === 'Radio Button'">
-                                        <div ng-repeat="option in newQuestionType.options">
-                                            <label><input type="radio" name="option"/> {{option.text_EN}}</label>
+                                        <div ng-repeat="option in newQuestionType.subOptions">
+                                            <label><input type="radio" name="option"/> {{option.description_EN}}</label>
                                         </div>
                                     </div>
 
                                     <div ng-if="atCategory.category_EN === 'Checkbox'">
-                                        <div ng-repeat="option in newQuestionType.options">
-                                            <label><input type="checkbox" name="option"/> {{option.text_EN}}</label>
+                                        <div ng-repeat="option in newQuestionType.subOptions">
+                                            <label><input type="checkbox" name="option"/> {{option.description_EN}}</label>
                                         </div>
                                     </div>
 
                                     <div ng-if="atCategory.category_EN === 'Text box'">
-                                        <textarea style="width:80%" rows="10" placeholder="Please enter your answer."></textarea>
+                                        <textarea style="width:80%" rows="10" placeholder="Please enter your answer." disabled></textarea>
                                     </div>
                                 </div>
                                 <div class="col-xs-12">
                                     <h4>Français</h4>
                                     <!-- Show category -->
                                     <div ng-if="atCategory.category_EN === 'Slider'">
-                                        <div ng-repeat="option in newQuestionType.options" ng-show="validSlider">
-                                            <label><input type="radio" name="option"/> {{option.text_FR}}</label>
+                                        <div ng-repeat="option in preview" ng-show="validSlider">
+                                            <label><input type="radio" name="option"/> {{option.description_FR}}</label>
                                         </div>
                                         <div ng-hide="validSlider"><p>Options de la case de défilement invalides.</p></div>
                                     </div>
 
                                     <div ng-if="atCategory.category_EN === 'Radio Button'">
-                                        <div ng-repeat="option in newQuestionType.options">
-                                            <label><input type="radio" name="option"/> {{option.text_FR}}</label>
+                                        <div ng-repeat="option in newQuestionType.subOptions">
+                                            <label><input type="radio" name="option"/> {{option.description_FR}}</label>
                                         </div>
                                     </div>
 
                                     <div ng-if="atCategory.category_EN === 'Checkbox'">
-                                        <div ng-repeat="option in newQuestionType.options">
-                                            <label><input type="checkbox" name="option"/> {{option.text_FR}}</label>
+                                        <div ng-repeat="option in newQuestionType.subOptions">
+                                            <label><input type="checkbox" name="option"/> {{option.description_FR}}</label>
                                         </div>
                                     </div>
 
                                     <div ng-if="atCategory.category_EN === 'Text box'">
-                                        <textarea style="width:80%" rows="10" placeholder="Veuillez entrer votre réponse."></textarea>
+                                        <textarea style="width:80%" rows="10" placeholder="Veuillez entrer votre réponse." disabled></textarea>
                                     </div>
                                 </div>
                             </div>

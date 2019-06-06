@@ -55,7 +55,7 @@ angular.module('opalAdmin.controllers.question.type.edit', ['ngAnimate', 'ngSani
 				radiostep[radiostep.length - 1]["description_EN"] += " " + $scope.questionType.maxCaption_EN;
 				radiostep[radiostep.length - 1]["description_FR"] += " " + $scope.questionType.maxCaption_FR;
 			}
-			$scope.questionType = radiostep;
+			$scope.questionType["options"] = radiostep;
 		};
 
 		/* Function for the "Processing" dialog */
@@ -95,9 +95,11 @@ angular.module('opalAdmin.controllers.question.type.edit', ['ngAnimate', 'ngSani
 		$scope.showProcessingModal();
 
 		// Call our API service to get the questionnaire details
-		questionnaireCollectionService.getQuestionTypeDetails($scope.currentQuestionType.serNum, OAUserId).then(function (response) {
+		questionnaireCollectionService.getQuestionTypeDetails($scope.currentQuestionType.ID, OAUserId).then(function (response) {
 			// Assign value
 			$scope.questionType = response.data;
+
+			console.log(response.data);
 
 			if($scope.questionType.typeId === "2") {
 				$scope.questionType.minValue = parseInt($scope.questionType.minValue);
@@ -159,9 +161,14 @@ angular.module('opalAdmin.controllers.question.type.edit', ['ngAnimate', 'ngSani
 		// Submit changes
 		$scope.updateQuestionType = function () {
 			// Submit form
+			if($scope.questionType.typeId === "2") {
+				delete $scope.questionType.options;
+				$scope.questionType.options = [];
+			}
+
 			$.ajax({
 				type: "POST",
-					url: "php/questionnaire/update.question_type.php",
+				url: "php/questionnaire/update.question_type.php",
 				data: $scope.questionType,
 				success: function (response) {
 					response = JSON.parse(response);

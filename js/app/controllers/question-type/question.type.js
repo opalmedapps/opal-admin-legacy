@@ -37,10 +37,10 @@ angular.module('opalAdmin.controllers.question.type', ['ngAnimate', 'ngSanitize'
 
 		// Templates for main question table
 		var cellTemplateTextEn = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
-			'ng-click="grid.appScope.editQuestion(row.entity)">' +
+			'ng-click="grid.appScope.editQuestionType(row.entity)">' +
 			'<strong><a href="">{{row.entity.name_EN}}</a></strong></div>';
 		var cellTemplateTextFr = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
-			'ng-click="grid.appScope.editQuestion(row.entity)">' +
+			'ng-click="grid.appScope.editQuestionType(row.entity)">' +
 			'<strong><a href="">{{row.entity.name_FR}}</a></strong></div>';
 		var cellTemplateAt = '<div class="ui-grid-cell-contents"> ' +
 			'{{row.entity.category_EN}} / {{row.entity.category_FR}}</div>';
@@ -106,7 +106,7 @@ angular.module('opalAdmin.controllers.question.type', ['ngAnimate', 'ngSanitize'
 		$scope.currentQuestionType = {};
 
 		// function to edit question
-		$scope.editQuestion = function (question) {
+		$scope.editQuestionType = function (question) {
 			$scope.currentQuestionType = question;
 			var modalInstance = $uibModal.open({
 				templateUrl: 'templates/questionnaire/edit.question.type.html',
