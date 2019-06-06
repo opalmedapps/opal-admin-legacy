@@ -128,45 +128,7 @@ class QuestionType extends QuestionnaireModule {
      * return  void
      */
     function updateQuestionType($updatedQuestionType) {
-        $total = 0;
-        $oldQuestionType = $this->getQuestionTypeDetails($updatedQuestionType["ID"]);
-        if ($oldQuestionType["deleted"] == DELETED_RECORD || $this->questionnaireDB->getUsername() == "" || ($oldQuestionType["private"] == 1 && $this->questionnaireDB->getOAUserId() != $oldQuestionType["OAUserId"]))
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
-        else if(empty($updatedQuestionType["options"]) || ($updatedQuestionType["typeId"] == RADIO_BUTTON || $updatedQuestionType["typeId"] == CHECKBOXES) && empty($updatedQuestionType["subOptions"]))
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data.");
-        else if(!$this->validatePivotalIDs($updatedQuestionType, $oldQuestionType))
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Corrupted data.");
 
-        $toUpdateDict = array(
-            array(
-                "content"=>$updatedQuestionType["name_FR"],
-                "languageId"=>FRENCH_LANGUAGE,
-                "contentId"=>$oldQuestionType["question"],
-            ),
-            array(
-                "content"=>$updatedQuestionType["name_EN"],
-                "languageId"=>ENGLISH_LANGUAGE,
-                "contentId"=>$oldQuestionType["question"],
-            ),
-        );
-
-        $total += $this->questionnaireDB->updateDictionary($toUpdateDict, TYPE_TEMPLATE_TABLE);
-        $toUpdateQuestionType = array(
-            "ID"=>$oldQuestionType["ID"],
-            "private"=>$updatedQuestionType["private"],
-            "final"=>$updatedQuestionType["final"],
-        );
-        /*$updatedQuestionType = $this->questionnaireDB->updateQuestionType($toUpdateQuestionType);
-
-        if($updatedQuestionType["typeId"] == RADIO_BUTTON)
-            $total += $this->updateRadioButtonOptions($updatedQuestionType["options"],$updatedQuestionType["subOptions"]);
-        else if($updatedQuestionType["typeId"] == CHECKBOXES)
-            $total += $this->updateCheckboxOptions($updatedQuestionType["options"],$updatedQuestionType["subOptions"]);
-        else if($updatedQuestionType["typeId"] == SLIDERS)
-            $total += $this->updateSliderOptions($updatedQuestionType["options"]);
-
-        if ($questionUpdated == 0 && $total > 0)
-            $this->questionnaireDB->forceUpdateQuestion($updatedQuestionType["ID"]);*/
     }
 
     /*
@@ -280,17 +242,15 @@ class QuestionType extends QuestionnaireModule {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Errors fetching the question. Too many options.");
 
         $options = $options[0];
-
         $subOptions = null;
+
         if($questionType["subTableName"] != "" && $options["ID"] != "") {
             $subOptions = $this->questionnaireDB->getQuestionSubOptionsDetails($options["ID"], $questionType["subTableName"]);
         }
 
         $questionType["isOwner"] = strval(intval($isOwner));
-        if($questionType["typeId"] == SLIDERS)
-            $questionType["options"] = $options;
-        else
-            $questionType["options"] = $subOptions;
+        $questionType["options"] = $options;
+        $questionType["subOptions"] = $subOptions;
         return $questionType;
     }
 
