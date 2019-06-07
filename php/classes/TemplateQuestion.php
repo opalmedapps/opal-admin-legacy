@@ -307,7 +307,6 @@ class TemplateQuestion extends QuestionnaireModule {
      * @return  array of details of the question type
      * */
     public function getTemplateQuestionDetails($templateQuestionId) {
-
         $templateQuestion = $this->questionnaireDB->getTemplateQuestionDetails($templateQuestionId);
         if(count($templateQuestion) != 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Errors fetching the question type. Number of result is wrong.");
