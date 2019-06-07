@@ -5,8 +5,8 @@ include_once('questionnaire.inc');
 $callback = strip_tags($_GET['callback']);
 $OAUserId = strip_tags($_GET['OAUserId']);
 
-$answerType = new QuestionType($OAUserId); // Object
-$answerTypeCategoryList = $answerType->getQuestionTypeList();
+$answerType = new TemplateQuestion($OAUserId); // Object
+$answerTypeCategoryList = $answerType->getTemplateQuestionList();
 
 // Callback to http request
 header('Content-Type: application/javascript');

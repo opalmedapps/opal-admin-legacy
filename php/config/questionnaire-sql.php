@@ -51,23 +51,23 @@ define("RADIO_BUTTON_OPTION_TABLE","radioButtonOption");
 define("SLIDER_TABLE","slider");
 define("SECTION_TABLE","section");
 define("TAG_QUESTION_TABLE","tagQuestion");
+define("TEMPLATE_QUESTION_TABLE","templateQuestion");
+define("TEMPLATE_QUESTION_CHECKBOX_TABLE","templateQuestionCheckbox");
+define("TEMPLATE_QUESTION_CHECKBOX_OPTION_TABLE","templateQuestionCheckboxOption");
+define("TEMPLATE_QUESTION_DATE","templateQuestionDate");
+define("TEMPLATE_QUESTION_LABEL_TABLE","templateQuestionLabel");
+define("TEMPLATE_QUESTION_LABEL_OPTION_TABLE","templateQuestionLabelOption");
+define("TEMPLATE_QUESTION_RADIO_BUTTON_TABLE","templateQuestionRadioButton");
+define("TEMPLATE_QUESTION_RADIO_BUTTON_OPTION_TABLE","templateQuestionRadioButtonOption");
+define("TEMPLATE_QUESTION_DATE_TABLE","templateQuestionDate");
+define("TEMPLATE_QUESTION_SLIDER_TABLE","templateQuestionSlider");
+define("TEMPLATE_QUESTION_TEXTBOX_TABLE","templateQuestionTextBox");
+define("TEMPLATE_QUESTION_TEXT_BOX_TRIGGER","templateQuestionTextBoxTrigger");
+define("TEMPLATE_QUESTION_TIME_TABLE","templateQuestionTime");
 define("TEXT_BOX_TABLE","textBox");
+define("TEXT_BOX_TRIGGER_TABLE","textBoxTrigger");
 define("TIME_TABLE","time");
-define("TRIGGER_WORD_TABLE","triggerWord");
 define("TYPE_TABLE","type");
-define("TYPE_TEMPLATE_TABLE","typeTemplate");
-define("TYPE_TEMPLATE_CHECKBOX_TABLE","typeTemplateCheckbox");
-define("TYPE_TEMPLATE_CHECKBOX_OPTION_TABLE","typeTemplateCheckboxOption");
-define("TYPE_TEMPLATE_DATE","typeTemplateDate");
-define("TYPE_TEMPLATE_LABEL_TABLE","typeTemplateLabel");
-define("TYPE_TEMPLATE_LABEL_OPTION_TABLE","typeTemplateLabelOption");
-define("TYPE_TEMPLATE_RADIO_BUTTON_TABLE","typeTemplateRadioButton");
-define("TYPE_TEMPLATE_RADIO_BUTTON_OPTION_TABLE","typeTemplateRadioButtonOption");
-define("TYPE_TEMPLATE_DATE_TABLE","typeTemplateDate");
-define("TYPE_TEMPLATE_SLIDER_TABLE","typeTemplateSlider");
-define("TYPE_TEMPLATE_TEXTBOX_TABLE","typeTemplateTextBox");
-define("TYPE_TEMPLATE_TIME_TABLE","typeTemplateTime");
-define("TYPE_TEMPLATE_TRIGGER_WORD","typeTemplateTriggerWord");
 
 /*
  * Listing of all SQL queries for the questionnaire database
@@ -118,7 +118,7 @@ define("SQL_QUESTIONNAIRE_FETCH_QUESTIONNAIRES_ID_QUESTION",
     WHERE qs.questionId = :questionId AND (OAUserId = :OAUserId OR private = 0) AND qst.deleted = ".NON_DELETED_RECORD.";"
 );
 
-define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPES",
+define("SQL_QUESTIONNAIRE_GET_TEMPLATE_QUESTIONS",
     "SELECT
     tt.ID, t.ID as typeId,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = tt.name AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
@@ -136,18 +136,19 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPES",
     dt1.name AS tableName,
     dt2.name AS subTableName,
     tt.OAUserId
-    FROM ".TYPE_TEMPLATE_TABLE." tt
+    FROM ".TEMPLATE_QUESTION_TABLE." tt
     LEFT JOIN type t ON t.ID = tt.typeId
     LEFT JOIN ".DEFINITION_TABLE." dt1 ON dt1.ID = t.templateTableId
     LEFT JOIN ".DEFINITION_TABLE." dt2 ON dt2.ID = t.templateSubTableId
-    LEFT JOIN ".TYPE_TEMPLATE_SLIDER_TABLE." tts ON tts.typeTemplateId = tt.ID
+    LEFT JOIN ".TEMPLATE_QUESTION_SLIDER_TABLE." tts ON tts.templateQuestionId = tt.ID
     WHERE tt.typeId IN (1, 2, 3, 4) AND (tt.private = 0 OR tt.OAUserId = :OAUserId) AND tt.deleted = ".NON_DELETED_RECORD.";"
 );
 
-define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPE_DETAILS",
+define("SQL_QUESTIONNAIRE_GET_TEMPLATE_QUESTION_DETAILS",
     "SELECT
     tt.ID,
     t.ID AS typeId,
+    tt.name,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = tt.name AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = tt.name AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR,
     tt.private,
@@ -156,21 +157,21 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPE_DETAILS",
     dt1.name AS tableName,
     dt2.name AS subTableName,
     tt.OAUserId
-    FROM ".TYPE_TEMPLATE_TABLE." tt
+    FROM ".TEMPLATE_QUESTION_TABLE." tt
     LEFT JOIN type t ON t.ID = tt.typeId
     LEFT JOIN ".DEFINITION_TABLE." dt1 ON dt1.ID = t.templateTableId
     LEFT JOIN ".DEFINITION_TABLE." dt2 ON dt2.ID = t.templateSubTableId
     WHERE TT.ID = :ID AND (tt.private = 0 OR tt.OAUserId = :OAUserId) AND tt.deleted = ".NON_DELETED_RECORD.";"
 );
 
-define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPE_OPTIONS",
+define("SQL_QUESTIONNAIRE_GET_TEMPLATE_QUESTION_OPTIONS",
     "SELECT st.*,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = st.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS description_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = st.description AND d.languageId = ".FRENCH_LANGUAGE.") AS description_FR
     FROM %%SUBTABLENAME%% st WHERE parentTableId = :subTableId ORDER BY st.order;"
 );
 
-define("SQL_QUESTIONNAIRE_GET_QUESTION_TYPES_CATEGORIES",
+define("SQL_QUESTIONNAIRE_GET_TEMPLATE_QUESTIONS_CATEGORIES",
     "SELECT
     ID,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS category_EN,
@@ -206,7 +207,7 @@ define("SQL_QUESTIONNAIRE_GET_DEFINITION_TABLE_ID",
 );
 
 define("SQL_QUESTIONNAIRE_GET_ID_FROM_TEMPLATE_TYPES_OPTION",
-    "SELECT DISTINCT ID FROM %%TABLENAME%% WHERE typeTemplateId = :ID;"
+    "SELECT DISTINCT ID FROM %%TABLENAME%% WHERE templateQuestionId = :ID;"
 );
 
 define("SQL_QUESTIONNAIRE_GET_ALL_LIBRARIES",
@@ -300,13 +301,13 @@ define("SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE",
     tts.increment,
     dt1.name AS tableName,
     dt2.name AS subTableName
-    FROM ".TYPE_TEMPLATE_TABLE." tt
+    FROM ".TEMPLATE_QUESTION_TABLE." tt
     LEFT JOIN ".TYPE_TABLE." t ON t.ID = tt.typeId
     LEFT JOIN ".DEFINITION_TABLE." dt1 ON dt1.ID = t.tableId
     LEFT JOIN ".DEFINITION_TABLE." dt2 ON dt2.ID = t.subTableId
-    LEFT JOIN ".TYPE_TEMPLATE_SLIDER_TABLE." tts ON tts.typeTemplateId = tt.ID
-    LEFT JOIN ".TYPE_TEMPLATE_CHECKBOX_TABLE." ttc ON ttc.typeTemplateId = tt.ID
-    LEFT JOIN ".TYPE_TEMPLATE_RADIO_BUTTON_TABLE." ttr ON ttr.typeTemplateId = tt.ID
+    LEFT JOIN ".TEMPLATE_QUESTION_SLIDER_TABLE." tts ON tts.templateQuestionId = tt.ID
+    LEFT JOIN ".TEMPLATE_QUESTION_CHECKBOX_TABLE." ttc ON ttc.templateQuestionId = tt.ID
+    LEFT JOIN ".TEMPLATE_QUESTION_RADIO_BUTTON_TABLE." ttr ON ttr.templateQuestionId = tt.ID
     WHERE tt.ID = :ID AND (tt.private = 0 OR tt.OAUserId = :OAUserId) AND tt.deleted = ".NON_DELETED_RECORD.";"
 );
 
@@ -318,12 +319,12 @@ define("SQL_QUESTIONNAIRE_GET_LIBRARIES",
     "SELECT * FROM ".LIBRARY_TABLE." l WHERE ID IN (%%LIBRARIES_ID%%);"
 );
 
-define("SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE_CHECKBOX_OPTION",
-    "SELECT * FROM " . TYPE_TEMPLATE_CHECKBOX_OPTION_TABLE . " WHERE parentTableID = :parentTableID;"
+define("SQL_QUESTIONNAIRE_GET_TEMPLATE_QUESTION_CHECKBOX_OPTION",
+    "SELECT * FROM " . TEMPLATE_QUESTION_CHECKBOX_OPTION_TABLE . " WHERE parentTableID = :parentTableID;"
 );
 
-define("SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE_RADIO_BUTTON_OPTION",
-    "SELECT * FROM " . TYPE_TEMPLATE_RADIO_BUTTON_OPTION_TABLE . " WHERE parentTableID = :parentTableID;"
+define("SQL_QUESTIONNAIRE_GET_TEMPLATE_QUESTION_RADIO_BUTTON_OPTION",
+    "SELECT * FROM " . TEMPLATE_QUESTION_RADIO_BUTTON_OPTION_TABLE . " WHERE parentTableID = :parentTableID;"
 );
 
 define("SQL_QUESTIONNAIRE_GET_DICTIONNARY_TEXT",
@@ -460,6 +461,15 @@ define("SQL_QUESTIONNAIRE_UPDATE_QUESTION",
     WHERE ID = :ID
     AND (private = 0 OR OAUserId = :OAUserId)
     AND (private != :private OR final != :final) 
+    AND deleted = ".NON_DELETED_RECORD.";"
+);
+
+define("SQL_QUESTIONNAIRE_UPDATE_TYPE_TEMPLATE",
+    "UPDATE ".TEMPLATE_QUESTION_TABLE."
+    SET updatedBy = :updatedBy, private = :private
+    WHERE ID = :ID
+    AND (private = 0 OR OAUserId = :OAUserId)
+    AND (private != :private) 
     AND deleted = ".NON_DELETED_RECORD.";"
 );
 

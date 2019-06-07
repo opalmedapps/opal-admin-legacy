@@ -84,8 +84,8 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		library_ID: null,
 		libraries: [],
 		typeId: null,
-		private: null,
-		OAUserId: OAUserId
+		private: 0,
+		OAUserId: OAUserId,
 	};
 
 	// Initialize variables for holding selected answer type & group
