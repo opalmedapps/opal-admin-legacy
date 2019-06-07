@@ -935,6 +935,28 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     /*
+     * This function marks a specific record in a specific table as deleted when there is no user.
+     *
+     * WARNING!!! No record should be EVER be removed from the questionnaire database! It should only being marked as
+     * being deleted ONLY  after it was verified the record is not locked, the user has the proper authorization and
+     * no more than one user is doing modification on it at a specific moment. Not following the proper procedure will
+     * have some serious impact on the integrity of the database and its records.
+     *
+     * REMEMBER !!! NO DELETE STATEMENT EVER !!! YOU HAVE BEING WARNED !!!
+     *
+     * @param   Table name (string)
+     *          record to mark as deleted in the table (BIGINT)
+     * @return  result of deletion (boolean)
+     * */
+    function markAsDeletedNoUSer($tableName, $recordId) {
+        $sql = str_replace("%%TABLENAME%%", strip_tags($tableName),SQL_QUESTIONNAIRE_MARK_RECORD_AS_DELETED_NO_USER);
+        return $this->_execute($sql, array(
+            array("parameter"=>":username","variable"=>$this->username,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":recordId","variable"=>$recordId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
      * Returns the list of all questionnaires an user cann access
      * @params  void
      * @return  list of questionnaires (array)

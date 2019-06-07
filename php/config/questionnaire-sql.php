@@ -194,6 +194,11 @@ define("SQL_QUESTIONNAIRE_MARK_RECORD_AS_DELETED",
     WHERE ID = :recordId AND (OAUserId = :OAUserId OR private = 0) AND deleted = ".NON_DELETED_RECORD.";"
 );
 
+define("SQL_QUESTIONNAIRE_MARK_RECORD_AS_DELETED_NO_USER",
+    "UPDATE %%TABLENAME%% SET deleted = ".DELETED_RECORD.", deletedBy = :username, updatedBy = :username
+    WHERE ID = :recordId AND deleted = ".NON_DELETED_RECORD.";"
+);
+
 define("SQL_QUESTIONNAIRE_GET_DICTIONARY_NEXT_CONTENT_ID",
     "SELECT COALESCE(MAX(contentId) + 1, 1) AS nextContentId FROM ".DICTIONARY_TABLE.";"
 );
