@@ -144,6 +144,18 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     /*
+     * Update a question type with a list of specific values with the username of the user stored. The update will occur
+     * only if there was any modification done to the template.
+     * @param   $updatedEntries (array) updated question
+     * @return  total modified records
+     * */
+    function updateTemplateQuestion($updatedEntries) {
+        $updatedEntries["updatedBy"]=$this->getUsername();
+        $updatedEntries["OAUserId"]=$this->getOAUserId();
+        return $this->_updateRecordIntoTable(SQL_QUESTIONNAIRE_UPDATE_TYPE_TEMPLATE, $updatedEntries);
+    }
+
+    /*
      * This function forces a question to be updated with the date of update and the username. It is necessary if the
      * question table was not modified directly but its options were.
      * @params  id of the question to force update (int)
@@ -203,8 +215,8 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @param   void
      * @return  array of question types
      * */
-    function getQuestionTypes() {
-        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_QUESTION_TYPES,
+    function getTemplateQuestions() {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_TEMPLATE_QUESTIONS,
             array(
                 array("parameter"=>":OAUserId","variable"=>$this->OAUserId,"data_type"=>PDO::PARAM_INT),
             ));
@@ -215,8 +227,8 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @param   ID of the question type (int)
      * @return  array of details of the question type
      * */
-    function getQuestionTypeDetails($questionTypeId) {
-        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_QUESTION_TYPE_DETAILS,
+    function getTemplateQuestionDetails($questionTypeId) {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_TEMPLATE_QUESTION_DETAILS,
             array(
                 array("parameter"=>":ID","variable"=>$questionTypeId,"data_type"=>PDO::PARAM_INT),
                 array("parameter"=>":OAUserId","variable"=>$this->OAUserId,"data_type"=>PDO::PARAM_INT),
@@ -228,13 +240,13 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @param   ID of the question type, name of the table options
      * @return  all the options available for the specified question type
      * */
-    function getQuestionTypesOptions($tableId, $tableName, $subTableName) {
+    function getTemplateQuestionsOptions($tableId, $tableName, $subTableName) {
         $mainSql = str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_ID_FROM_TEMPLATE_TYPES_OPTION);
         $mainId = $this->_fetch($mainSql, array(
             array("parameter"=>":ID","variable"=>$tableId,"data_type"=>PDO::PARAM_INT),
         ));
         $mainId = $mainId["ID"];
-        $subSql = str_replace("%%SUBTABLENAME%%", strip_tags($subTableName), SQL_QUESTIONNAIRE_GET_QUESTION_TYPE_OPTIONS);
+        $subSql = str_replace("%%SUBTABLENAME%%", strip_tags($subTableName), SQL_QUESTIONNAIRE_GET_TEMPLATE_QUESTION_OPTIONS);
         return $this->_fetchAll($subSql, array(
             array("parameter"=>":subTableId","variable"=>$mainId,"data_type"=>PDO::PARAM_INT),
         ));
@@ -245,8 +257,8 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @param   void
      * @return  array of types
      * */
-    function getQuestionTypeList() {
-        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_QUESTION_TYPES_CATEGORIES);
+    function getTemplateQuestionList() {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_TEMPLATE_QUESTIONS_CATEGORIES);
     }
 
     /*
@@ -324,17 +336,17 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @param   array of a new question type. It also adds the username of the user who made the request
      * @return  ID of the record
      * */
-    function addToTypeTemplateTable($newQuestionType) {
-        $newQuestionType["OAUserId"] = $this->OAUserId;
-        $newQuestionType["createdBy"] = $this->username;
-        $newQuestionType["updatedBy"] = $this->username;
-        return $this->_insertRecordIntoTable(TYPE_TEMPLATE_TABLE, $newQuestionType);
+    function addToTypeTemplateTable($newTemplateQuestion) {
+        $newTemplateQuestion["OAUserId"] = $this->OAUserId;
+        $newTemplateQuestion["createdBy"] = $this->username;
+        $newTemplateQuestion["updatedBy"] = $this->username;
+        return $this->_insertRecordIntoTable(TEMPLATE_QUESTION_TABLE, $newTemplateQuestion);
     }
 
     /*
-     * This function add to the correct typeTemplate option table its values.
+     * This function add to the correct templateQuestion option table its values.
      * @params  name of the type template table where to do the insert (string)
-     *          lists of options to insert (array) in the dependant table of typeTemplate. If it is a slider for
+     *          lists of options to insert (array) in the dependant table of templateQuestion. If it is a slider for
      *          example, it will contains, the min and max answers with captions. If it is a checkbox type, it will be
      *          the minimum and maximum number of answers.
      * @returns ID of the record
@@ -361,7 +373,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     /*
-     * This function add to the correct typeTemplate option in the suv table its values. For example, all the possible
+     * This function add to the correct templateQuestion option in the suv table its values. For example, all the possible
      * options for checkboxes or radio buttons.
      * @params  name of the type template table where to do the insert (string)
      *          lists of options to insert (array) in the dependant table of the option. If it is a checkbox or radio
@@ -391,7 +403,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  all the possible options of the checkbox template (array)
      * */
     function getTypeTemplateCheckboxOption($ttcId) {
-        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE_CHECKBOX_OPTION,
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_TEMPLATE_QUESTION_CHECKBOX_OPTION,
             array(
                 array("parameter"=>":parentTableID","variable"=>$ttcId,"data_type"=>PDO::PARAM_INT),
             ));
@@ -403,7 +415,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  all the possible options of the radio button template (array)
      * */
     function getTypeTemplateRadioButtonOption($ttrId) {
-        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE_RADIO_BUTTON_OPTION,
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_TEMPLATE_QUESTION_RADIO_BUTTON_OPTION,
             array(
                 array("parameter"=>":parentTableID","variable"=>$ttrId,"data_type"=>PDO::PARAM_INT),
             ));

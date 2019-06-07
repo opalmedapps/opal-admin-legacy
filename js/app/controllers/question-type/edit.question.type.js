@@ -160,10 +160,6 @@ angular.module('opalAdmin.controllers.question.type.edit', ['ngAnimate', 'ngSani
 		// Submit changes
 		$scope.updateQuestionType = function () {
 			// Submit form
-			if($scope.questionType.typeId === "2") {
-				delete $scope.questionType.options;
-				$scope.questionType.options = [];
-			}
 			$.ajax({
 				type: "POST",
 				url: "php/questionnaire/update.question_type.php",

@@ -35,8 +35,9 @@ class Question extends QuestionnaireModule {
                 array_push($libraries, strip_tags($library));
 
         $validatedQuestion["libraries"] = $libraries;
-        $validatedQuestion["private"] = (strip_tags($questionToSanitize['private'])=="true"||strip_tags($questionToSanitize['private'])=="1"?"1":"0");
-        $validatedQuestion["final"] = (strip_tags($questionToSanitize['final'])=="true"||strip_tags($questionToSanitize['final'])=="1"?"1":"0");
+
+        $validatedQuestion["private"] = strip_tags($questionToSanitize['private']) == PRIVATE_RECORD ?  PRIVATE_RECORD : PUBLIC_RECORD;
+        $validatedQuestion["final"] = strip_tags($questionToSanitize['final']) == FINAL_RECORD ? FINAL_RECORD : NON_FINAL_RECORD;
 
         if ($validatedQuestion["question_EN"] == "" || $validatedQuestion["question_FR"] == "" || $validatedQuestion["typeId"] == "")
             return false;
@@ -60,14 +61,6 @@ class Question extends QuestionnaireModule {
             }
         }
         $validatedQuestion["subOptions"] = $subOptions;
-
-
-
-
-
-
-
-
         if($validatedQuestion["typeId"] === SLIDERS) {
             $validatedQuestion["options"]["minValue"] = floatval($validatedQuestion["options"]["minValue"]);
             $validatedQuestion["options"]["maxValue"] = floatval($validatedQuestion["options"]["maxValue"]);
@@ -78,12 +71,6 @@ class Question extends QuestionnaireModule {
 
             $options["maxValue"] = floatval(floor(($options["maxValue"] - $options["minValue"]) / $options["increment"]) * $options["increment"]) + $options["minValue"];
         }
-
-
-
-
-
-
         return $validatedQuestion;
     }
 
@@ -94,8 +81,8 @@ class Question extends QuestionnaireModule {
      */
     function insertQuestion($questionDetails){
         //If the question type template is invalid rejects the request
-        $validQuestionType = $this->questionnaireDB->getTypeTemplate($questionDetails['typeId']);
-        if(!$validQuestionType)
+        $validTemplateQuestion = $this->questionnaireDB->getTypeTemplate($questionDetails['typeId']);
+        if(!$validTemplateQuestion)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Fetching question type error.");
 
         //If the libraries requested are invalid, reject the requests
@@ -115,12 +102,12 @@ class Question extends QuestionnaireModule {
         $definitionId = $this->questionnaireDB->addToDictionary($toInsert, QUESTION_TABLE);
 
         //Prepare and insert the question into the question table
-        $legacyTypeId = $this->questionnaireDB->getLegacyType($validQuestionType["typeId"]);
+        $legacyTypeId = $this->questionnaireDB->getLegacyType($validTemplateQuestion["typeId"]);
         $legacyTypeId = $legacyTypeId["ID"];
 
         $toInsert = array(
             "question"=>$contentId,
-            "typeId"=>$validQuestionType["typeId"],
+            "typeId"=>$validTemplateQuestion["typeId"],
             "display"=>$displayId,
             "definition"=>$definitionId,
             "private"=>$questionDetails['private'],
@@ -139,26 +126,26 @@ class Question extends QuestionnaireModule {
         }
 
         //Prepare the extra options to be inserted depending of the type of question (checkboxes, sliders, etc)
-        if ($validQuestionType["typeId"] == CHECKBOXES)
+        if ($validTemplateQuestion["typeId"] == CHECKBOXES)
             $toInsert = array(
                 "questionId"=>$questionId,
-                "minAnswer"=>$validQuestionType["minAnswer"],
-                "maxAnswer"=>$validQuestionType["maxAnswer"],
+                "minAnswer"=>$validTemplateQuestion["minAnswer"],
+                "maxAnswer"=>$validTemplateQuestion["maxAnswer"],
             );
-        else if ($validQuestionType["typeId"] == RADIO_BUTTON)
+        else if ($validTemplateQuestion["typeId"] == RADIO_BUTTON)
             $toInsert = array(
                 "questionId"=>$questionId,
             );
-        else if ($validQuestionType["typeId"] == SLIDERS) {
-            $newMinCaption = $this->questionnaireDB->copyToDictionary($validQuestionType["minCaption"], $validQuestionType["tableName"]);
-            $newMaxCaption = $this->questionnaireDB->copyToDictionary($validQuestionType["maxCaption"], $validQuestionType["tableName"]);
+        else if ($validTemplateQuestion["typeId"] == SLIDERS) {
+            $newMinCaption = $this->questionnaireDB->copyToDictionary($validTemplateQuestion["minCaption"], $validTemplateQuestion["tableName"]);
+            $newMaxCaption = $this->questionnaireDB->copyToDictionary($validTemplateQuestion["maxCaption"], $validTemplateQuestion["tableName"]);
             $toInsert = array(
                 "questionId" => $questionId,
-                "minValue" => $validQuestionType["minValue"],
-                "maxValue" => $validQuestionType["maxValue"],
+                "minValue" => $validTemplateQuestion["minValue"],
+                "maxValue" => $validTemplateQuestion["maxValue"],
                 "minCaption" => $newMinCaption,
                 "maxCaption" => $newMaxCaption,
-                "increment" => $validQuestionType["increment"],
+                "increment" => $validTemplateQuestion["increment"],
             );
         }
         else
@@ -167,16 +154,16 @@ class Question extends QuestionnaireModule {
             );
 
         //Insert the option in the requested option table of the question
-        $questionOptionId = $this->questionnaireDB->insertQuestionOptions($validQuestionType["tableName"], $toInsert);
+        $questionOptionId = $this->questionnaireDB->insertQuestionOptions($validTemplateQuestion["tableName"], $toInsert);
 
         //if extra options are required (for checkboxes or radio buttons), insert them now.
         $recordsToInsert = array();
-        if ($validQuestionType["subTableName"] == CHECKBOX_OPTION_TABLE) {
-            if(count($validQuestionType["options"]) <= 0)
+        if ($validTemplateQuestion["subTableName"] == CHECKBOX_OPTION_TABLE) {
+            if(count($validTemplateQuestion["options"]) <= 0)
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Checkbox option error.");
 
-            foreach ($validQuestionType["options"] as $row) {
-                $newDescription = $this->questionnaireDB->copyToDictionary($row["description"], $validQuestionType["subTableName"]);
+            foreach ($validTemplateQuestion["options"] as $row) {
+                $newDescription = $this->questionnaireDB->copyToDictionary($row["description"], $validTemplateQuestion["subTableName"]);
                 array_push($recordsToInsert, array(
                     "parentTableId"=>$questionOptionId,
                     "description"=>$newDescription,
@@ -186,12 +173,12 @@ class Question extends QuestionnaireModule {
             }
             $this->questionnaireDB->insertCheckboxOption($recordsToInsert);
         }
-        else if ($validQuestionType["subTableName"] == RADIO_BUTTON_OPTION_TABLE) {
-            if(count($validQuestionType["options"]) <= 0)
+        else if ($validTemplateQuestion["subTableName"] == RADIO_BUTTON_OPTION_TABLE) {
+            if(count($validTemplateQuestion["options"]) <= 0)
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Radio Button option error.");
 
-            foreach ($validQuestionType["options"] as $row) {
-                $newDescription = $this->questionnaireDB->copyToDictionary($row["description"], $validQuestionType["subTableName"]);
+            foreach ($validTemplateQuestion["options"] as $row) {
+                $newDescription = $this->questionnaireDB->copyToDictionary($row["description"], $validTemplateQuestion["subTableName"]);
                 array_push($recordsToInsert, array(
                     "parentTableId"=>$questionOptionId,
                     "description"=>$newDescription,
@@ -644,7 +631,7 @@ class Question extends QuestionnaireModule {
         $total = 0;
         $oldQuestion = $this->getQuestionDetails($updatedQuestion["ID"]);
         $isLocked = $this->isQuestionLocked($oldQuestion["ID"]);
-        if ($oldQuestion["deleted"] == DELETED_RECORD || $this->questionnaireDB->getUsername() == "" || ($oldQuestion["private"] == 1 && $this->questionnaireDB->getOAUserId() != $oldQuestion["OAUserId"]))
+        if ($oldQuestion["deleted"] == DELETED_RECORD || $this->questionnaireDB->getUsername() == "" || ($oldQuestion["private"] === PRIVATE_RECORD && $this->questionnaireDB->getOAUserId() != $oldQuestion["OAUserId"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
         else if(empty($updatedQuestion["options"]) || ($updatedQuestion["typeId"] == RADIO_BUTTON || $updatedQuestion["typeId"] == CHECKBOXES) && empty($updatedQuestion["subOptions"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data.");
@@ -710,7 +697,7 @@ class Question extends QuestionnaireModule {
     function deleteQuestion($questionId) {
         $questionToDelete = $this->questionnaireDB->getQuestionDetails($questionId);
         $questionToDelete = $questionToDelete[0];
-        if ($this->questionnaireDB->getOAUserId() <= 0 || $questionToDelete["deleted"] == 1 || ($questionToDelete["private"] == 1 && $this->questionnaireDB->getOAUserId() != $questionToDelete["OAUserId"]))
+        if ($this->questionnaireDB->getOAUserId() <= 0 || $questionToDelete["deleted"] == DELETED_RECORD || ($questionToDelete["private"] == PRIVATE_RECORD && $this->questionnaireDB->getOAUserId() != $questionToDelete["OAUserId"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
 
         $lastUpdated = $this->questionnaireDB->getLastTimeTableUpdated(QUESTION_TABLE, $questionId);

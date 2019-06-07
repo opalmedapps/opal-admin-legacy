@@ -5,7 +5,6 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		var user = Session.retrieveObject('user');
 		var OAUserId = user.id;
 
-
 		// initialize default variables & lists
 		$scope.question = {};
 		$scope.libraries = [];
@@ -125,22 +124,10 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 				});
 			}
 
-			if (response.data.private === "1")
-				$scope.question.private = true;
-			else
-				$scope.question.private = false;
-			if (response.data.final === "1")
-				$scope.question.final = true;
-			else
-				$scope.question.final = false;
-			if (response.data.readOnly === "1")
-				$scope.question.readOnly = true;
-			else
-				$scope.question.readOnly = false;
-			if (response.data.isOwner === "1")
-				$scope.question.isOwner = true;
-			else
-				$scope.question.isOwner = false;
+			$scope.question.private = parseInt($scope.question.private);
+			$scope.question.final = parseInt($scope.question.final);
+			$scope.question.readOnly = parseInt($scope.question.readOnly);
+			$scope.question.isOwner = parseInt($scope.question.isOwner);
 
 			$scope.question.OAUserId = OAUserId;
 
