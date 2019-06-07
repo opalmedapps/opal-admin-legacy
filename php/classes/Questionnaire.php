@@ -227,9 +227,9 @@ class Questionnaire extends QuestionnaireModule {
      * @return array $response : response
      */
     public function deleteQuestionnaire($questionnaireId){
-        $questionToDelete = $this->questionnaireDB->getQuestionnaireDetails($questionnaireId);
-        $questionToDelete = $questionToDelete[0];
-        if ($this->questionnaireDB->getOAUserId() <= 0 || $questionToDelete["deleted"] == 1 || ($questionToDelete["private"] == 1 && $this->questionnaireDB->getOAUserId() != $questionToDelete["OAUserId"]))
+        $questionnaireToDelete = $this->getQuestionnaireDetails($questionnaireId);
+
+        if ($this->questionnaireDB->getOAUserId() <= 0 || $questionnaireToDelete["deleted"] == 1 || ($questionnaireToDelete["private"] == 1 && $this->questionnaireDB->getOAUserId() != $questionnaireToDelete["OAUserId"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
 
         $lastUpdated = $this->questionnaireDB->getLastTimeTableUpdated(QUESTIONNAIRE_TABLE, $questionnaireId);
@@ -238,10 +238,14 @@ class Questionnaire extends QuestionnaireModule {
         $wasQuestionSent = $this->isQuestionnaireLocked($questionnaireId);
 
         if ($nobodyUpdated && !$wasQuestionSent) {
-            $this->questionnaireDB->markAsDeletedInDictionary($questionToDelete["title"]);
-            $this->questionnaireDB->markAsDeletedInDictionary($questionToDelete["nickname"]);
-            $this->questionnaireDB->markAsDeletedInDictionary($questionToDelete["description"]);
-            $this->questionnaireDB->markAsDeletedInDictionary($questionToDelete["instruction"]);
+            $this->questionnaireDB->markAsDeletedInDictionary($questionnaireToDelete["title"]);
+            $this->questionnaireDB->markAsDeletedInDictionary($questionnaireToDelete["nickname"]);
+            $this->questionnaireDB->markAsDeletedInDictionary($questionnaireToDelete["description"]);
+            $this->questionnaireDB->markAsDeletedInDictionary($questionnaireToDelete["instruction"]);
+
+            foreach($questionnaireToDelete["sections"] as $section)
+                $this->questionnaireDB->markAsDeletedNoUSer(SECTION_TABLE, $section);
+
             $this->questionnaireDB->markAsDeleted(QUESTIONNAIRE_TABLE, $questionnaireId);
             $response['value'] = true; // Success
             $response['message'] = 200;

@@ -695,9 +695,9 @@ class Question extends QuestionnaireModule {
      * @return array $response : response
      */
     function deleteQuestion($questionId) {
-        $questionToDelete = $this->questionnaireDB->getQuestionDetails($questionId);
-        $questionToDelete = $questionToDelete[0];
-        if ($this->questionnaireDB->getOAUserId() <= 0 || $questionToDelete["deleted"] == DELETED_RECORD || ($questionToDelete["private"] == PRIVATE_RECORD && $this->questionnaireDB->getOAUserId() != $questionToDelete["OAUserId"]))
+        $questionToDelete = $this->getQuestionDetails($questionId);
+
+        if ($this->questionnaireDB->getOAUserId() <= 0 || ($questionToDelete["private"] == PRIVATE_RECORD && $this->questionnaireDB->getOAUserId() != $questionToDelete["OAUserId"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
 
         $lastUpdated = $this->questionnaireDB->getLastTimeTableUpdated(QUESTION_TABLE, $questionId);
@@ -723,6 +723,17 @@ class Question extends QuestionnaireModule {
             $this->questionnaireDB->removeAllLibrariesForQuestion($questionId);
             $this->questionnaireDB->removeAllSectionForQuestion($questionId);
             $this->questionnaireDB->removeAllTagsForQuestion($questionId);
+
+            if($questionToDelete["typeId"] == RADIO_BUTTON || $questionToDelete["typeId"] == CHECKBOXES)
+            {
+                foreach($questionToDelete["subOptions"] as $sub)
+                    $this->questionnaireDB->markAsDeletedInDictionary($sub["description"]);
+            }
+            else if($questionToDelete["typeId"] == SLIDERS) {
+                $this->questionnaireDB->markAsDeletedInDictionary($questionToDelete["options"]["minCaption"]);
+                $this->questionnaireDB->markAsDeletedInDictionary($questionToDelete["options"]["maxCaption"]);
+            }
+
             $this->questionnaireDB->markAsDeleted(QUESTION_TABLE, $questionId);
             $response['value'] = true; // Success
             $response['message'] = 200;
