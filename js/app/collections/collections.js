@@ -607,10 +607,10 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
-		questionnaireAPI.getQuestionTypes = function (OAUserId) {
+		questionnaireAPI.getTemplatesQuestions = function (OAUserId) {
 			return $http({
 				method: 'JSONP',
-				url: "api/questionnaire/get.question_types.php",
+				url: "api/questionnaire/get.templates_questions.php",
 				params: {
 					callback: 'JSON_CALLBACK',
 					OAUserId: OAUserId,
@@ -618,22 +618,22 @@ angular.module('opalAdmin.collections', [])
 			});
 		};
 
-		questionnaireAPI.getQuestionTypeDetails = function (questionTypeId, OAUserId) {
+		questionnaireAPI.getTemplateQuestionDetails = function (templateQuestionId, OAUserId) {
 			return $http({
 				method: 'JSONP',
-				url: "api/questionnaire/get.question_type_details.php",
+				url: "api/questionnaire/get.template_question_details.php",
 				params: {
 					callback: 'JSON_CALLBACK',
-					questionTypeId: questionTypeId,
+					templateQuestionId: templateQuestionId,
 					OAUserId: OAUserId,
 				}
 			});
 		};
 
-		questionnaireAPI.getQuestionTypeCategory = function (OAUserId) {
+		questionnaireAPI.getTemplateQuestionCategory = function (OAUserId) {
 			return $http({
 				method: 'JSONP',
-				url: "api/questionnaire/get.question_type_categories.php",
+				url: "api/questionnaire/get.template_question_list.php",
 				params: {
 					callback: 'JSON_CALLBACK',
 					OAUserId: OAUserId,

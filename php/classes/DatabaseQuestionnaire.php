@@ -215,7 +215,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @param   void
      * @return  array of question types
      * */
-    function getTemplateQuestions() {
+    function getTemplatesQuestions() {
         return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_TEMPLATE_QUESTIONS,
             array(
                 array("parameter"=>":OAUserId","variable"=>$this->OAUserId,"data_type"=>PDO::PARAM_INT),
@@ -227,10 +227,10 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @param   ID of the question type (int)
      * @return  array of details of the question type
      * */
-    function getTemplateQuestionDetails($questionTypeId) {
+    function getTemplateQuestionDetails($templateQuestionId) {
         return $this->_fetchAll(SQL_QUESTIONNAIRE_GET_TEMPLATE_QUESTION_DETAILS,
             array(
-                array("parameter"=>":ID","variable"=>$questionTypeId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":ID","variable"=>$templateQuestionId,"data_type"=>PDO::PARAM_INT),
                 array("parameter"=>":OAUserId","variable"=>$this->OAUserId,"data_type"=>PDO::PARAM_INT),
             ));
     }
@@ -440,11 +440,11 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @params  ID of the requested question type
      * @returns array with all the question type information and options
      * */
-    function getTypeTemplate($questionTypeID){
+    function getTypeTemplate($templateQuestionID){
         $result = $this->_fetchAll(SQL_QUESTIONNAIRE_GET_TYPE_TEMPLATE,
             array(
                 array("parameter"=>":OAUserId","variable"=>$this->OAUserId,"data_type"=>PDO::PARAM_INT),
-                array("parameter"=>":ID","variable"=>$questionTypeID,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":ID","variable"=>$templateQuestionID,"data_type"=>PDO::PARAM_INT),
             ));
 
         if(count($result) != 1) return false;
