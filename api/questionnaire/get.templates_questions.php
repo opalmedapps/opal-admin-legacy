@@ -7,11 +7,11 @@ include_once('questionnaire.inc');
 $callback = $_GET['callback'];
 $OAUserId = strip_tags($_GET['OAUserId']);
 
-$questionType = new TemplateQuestion($OAUserId); // Object
+$templateQuestion = new TemplateQuestion($OAUserId); // Object
 
 // Call function
-$questionTypeList = $questionType->getTemplateQuestions();
+$templateQuestionList = $templateQuestion->getTemplatesQuestions();
 
 // Callback to http request
-print $callback.'('.json_encode($questionTypeList).')';
+print $callback.'('.json_encode($templateQuestionList).')';
 ?>

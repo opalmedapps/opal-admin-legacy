@@ -4,13 +4,13 @@ header('Content-Type: application/javascript');
 include_once('questionnaire.inc');
 
 // Retrieve FORM param
-$questionTypeId = strip_tags($_POST['ID']);
+$templateQuestionId = strip_tags($_POST['ID']);
 $OAUserId = strip_tags($_POST['OAUserId']);
 
 // Call function
-$questionTypeObj = new TemplateQuestion($OAUserId); // Object
+$templateQuestionObj = new TemplateQuestion($OAUserId); // Object
 
-$response = $questionTypeObj->deleteTemplateQuestion($questionTypeId);
+$response = $templateQuestionObj->deleteTemplateQuestion($templateQuestionId);
 
 print json_encode($response); // Return response
 ?>

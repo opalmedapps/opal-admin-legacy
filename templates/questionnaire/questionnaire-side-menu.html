@@ -72,8 +72,8 @@
         </div>
         <!-- Questions Types -->
         <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">
-            <div class="panel-container animated" ng-class="{pulse: hoverQuestionType, active: currentPage == 'questionnaire/question-type'}" ng-mouseenter="hoverQuestionType=true" ng-mouseleave="hoverQuestionType=false" style="cursor:pointer;" ng-click="goToQuestionType()">
-                <div class="side-panel-info-sm" ng-class="{active: currentPage == 'questionnaire/question-type'}">
+            <div class="panel-container animated" ng-class="{pulse: hoverTemplateQuestion, active: currentPage == 'questionnaire/template-question'}" ng-mouseenter="hoverTemplateQuestion=true" ng-mouseleave="hoverTemplateQuestion=false" style="cursor:pointer;" ng-click="goToTemplateQuestion()">
+                <div class="side-panel-info-sm" ng-class="{active: currentPage == 'questionnaire/template-question'}">
                     <div class="panel-content">
                         <span style="font-size: 23px;vertical-align:middle" class="fa fa-question-circle-o" aria-hidden="true"></span>
                         <h6 class="side-panel-title" style="display:inline-block;margin:0"><strong>Response Types</strong></h6>
