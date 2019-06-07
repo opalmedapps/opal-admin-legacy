@@ -283,10 +283,10 @@ class TemplateQuestion extends QuestionnaireModule {
             "typeId"=>$newTemplateQuestion["typeId"],
             "private"=>$newTemplateQuestion["private"],
         );
-        $questionTypeId = $this->questionnaireDB->addToTypeTemplateTable($toInsert);
+        $templateQuestionId = $this->questionnaireDB->addToTypeTemplateTable($toInsert);
 
         // Insertion into the type template table.
-        $options["templateQuestionId"] = $questionTypeId;
+        $options["templateQuestionId"] = $templateQuestionId;
         $parentTableId = $this->questionnaireDB->addToTypeTemplateTableType($tableToInsert, $options);
 
         /*
@@ -306,45 +306,45 @@ class TemplateQuestion extends QuestionnaireModule {
      * @param   ID of the question type (int)
      * @return  array of details of the question type
      * */
-    public function getTemplateQuestionDetails($questionTypeId) {
+    public function getTemplateQuestionDetails($templateQuestionId) {
 
-        $questionType = $this->questionnaireDB->getTemplateQuestionDetails($questionTypeId);
-        if(count($questionType) != 1)
+        $templateQuestion = $this->questionnaireDB->getTemplateQuestionDetails($templateQuestionId);
+        if(count($templateQuestion) != 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Errors fetching the question type. Number of result is wrong.");
-        $questionType = $questionType[0];
+        $templateQuestion = $templateQuestion[0];
 
         $isOwner = false;
-        if($this->questionnaireDB->getOAUserId() == $questionType["OAUserId"])
+        if($this->questionnaireDB->getOAUserId() == $templateQuestion["OAUserId"])
             $isOwner = true;
 
-        if($questionType["typeId"] == SLIDERS)
-            $options = $this->questionnaireDB->getQuestionSliderDetails($questionType["ID"], $questionType["tableName"], "templateQuestionId");
+        if($templateQuestion["typeId"] == SLIDERS)
+            $options = $this->questionnaireDB->getQuestionSliderDetails($templateQuestion["ID"], $templateQuestion["tableName"], "templateQuestionId");
         else
-            $options = $this->questionnaireDB->getQuestionOptionsDetails($questionType["ID"], $questionType["tableName"], "templateQuestionId");
+            $options = $this->questionnaireDB->getQuestionOptionsDetails($templateQuestion["ID"], $templateQuestion["tableName"], "templateQuestionId");
         if (count($options) > 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Errors fetching the question. Too many options.");
 
         $options = $options[0];
         $subOptions = null;
 
-        if($questionType["subTableName"] != "" && $options["ID"] != "") {
-            $subOptions = $this->questionnaireDB->getQuestionSubOptionsDetails($options["ID"], $questionType["subTableName"]);
+        if($templateQuestion["subTableName"] != "" && $options["ID"] != "") {
+            $subOptions = $this->questionnaireDB->getQuestionSubOptionsDetails($options["ID"], $templateQuestion["subTableName"]);
         }
 
-        $questionType["isOwner"] = strval(intval($isOwner));
-        $questionType["options"] = $options;
-        $questionType["subOptions"] = $subOptions;
-        return $questionType;
+        $templateQuestion["isOwner"] = strval(intval($isOwner));
+        $templateQuestion["options"] = $options;
+        $templateQuestion["subOptions"] = $subOptions;
+        return $templateQuestion;
     }
 
     /*
      * Gets a list of existing question types
      * @param integer $OAUserId : the user id
-     * @return array $questionTypes : the list of existing answer types
+     * @return array $templateQuestions : the list of existing answer types
      */
-    public function getTemplateQuestions(){
-        $questionTypes = array();
-        $result = $this->questionnaireDB->getTemplateQuestions();
+    public function getTemplatesQuestions(){
+        $templateQuestions = array();
+        $result = $this->questionnaireDB->getTemplatesQuestions();
 
         foreach ($result as $row) {
             $temp = array(
@@ -370,9 +370,9 @@ class TemplateQuestion extends QuestionnaireModule {
             if($row["subTableName"] != "") {
                 $temp["options"] = $this->questionnaireDB->getTemplateQuestionsOptions($row["ID"], $row["tableName"], $row["subTableName"]);
             }
-            array_push($questionTypes, $temp);
+            array_push($templateQuestions, $temp);
         }
-        return $questionTypes;
+        return $templateQuestions;
     }
 
     /*
@@ -398,20 +398,20 @@ class TemplateQuestion extends QuestionnaireModule {
      * @param $questionId (ID of the question)
      * @return array $response : response
      */
-    function deleteTemplateQuestion($questionTypeId) {
-        $questionTypeToDelete = $this->questionnaireDB->getTypeTemplate($questionTypeId);
+    function deleteTemplateQuestion($templateQuestionId) {
+        $templateQuestionToDelete = $this->questionnaireDB->getTypeTemplate($templateQuestionId);
 
 
-        if ($this->questionnaireDB->getOAUserId() <= 0 || $questionTypeToDelete["deleted"] == 1 || ($questionTypeToDelete["private"] == 1 && $this->questionnaireDB->getOAUserId() != $questionTypeToDelete["OAUserId"]))
+        if ($this->questionnaireDB->getOAUserId() <= 0 || $templateQuestionToDelete["deleted"] == 1 || ($templateQuestionToDelete["private"] == 1 && $this->questionnaireDB->getOAUserId() != $templateQuestionToDelete["OAUserId"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
 
-        $lastUpdated = $this->questionnaireDB->getLastTimeTableUpdated(TEMPLATE_QUESTION_TABLE, $questionTypeId);
-        $nobodyUpdated = $this->questionnaireDB->canRecordBeUpdated(TEMPLATE_QUESTION_TABLE, $questionTypeId, $lastUpdated["lastUpdated"], $lastUpdated["updatedBy"]);
+        $lastUpdated = $this->questionnaireDB->getLastTimeTableUpdated(TEMPLATE_QUESTION_TABLE, $templateQuestionId);
+        $nobodyUpdated = $this->questionnaireDB->canRecordBeUpdated(TEMPLATE_QUESTION_TABLE, $templateQuestionId, $lastUpdated["lastUpdated"], $lastUpdated["updatedBy"]);
 
         $nobodyUpdated = intval($nobodyUpdated["total"]);
         if ($nobodyUpdated){
-            $this->questionnaireDB->markAsDeletedInDictionary($questionTypeToDelete["name"]);
-            $this->questionnaireDB->markAsDeleted(TEMPLATE_QUESTION_TABLE, $questionTypeId);
+            $this->questionnaireDB->markAsDeletedInDictionary($templateQuestionToDelete["name"]);
+            $this->questionnaireDB->markAsDeleted(TEMPLATE_QUESTION_TABLE, $templateQuestionId);
             $response['value'] = true; // Success
             $response['message'] = 200;
             return $response;

@@ -11,8 +11,8 @@ $callback = strip_tags($_GET['callback']);
 $questionId = strip_tags($_GET['questionTypeId']);
 $OAUserId = strip_tags($_GET['OAUserId']);
 
-$questionType = new TemplateQuestion($OAUserId);
-$questionTypeDetails = $questionType->getTemplateQuestionDetails($questionId);
+$templateQuestion = new TemplateQuestion($OAUserId);
+$templateQuestionDetails = $templateQuestion->getTemplateQuestionDetails($questionId);
 
 header('Content-Type: application/javascript');
-echo $callback.'('.json_encode($questionTypeDetails).')';
+echo $callback.'('.json_encode($templateQuestionDetails).')';

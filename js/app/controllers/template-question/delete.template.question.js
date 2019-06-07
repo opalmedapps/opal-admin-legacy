@@ -1,19 +1,19 @@
-angular.module('opalAdmin.controllers.question.type.delete', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns'])
+angular.module('opalAdmin.controllers.template.question.delete', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns'])
 
-	.controller('question.type.delete', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
+	.controller('template.question.delete', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
 
 		// Submit delete
 		$scope.deleteQuestion = function () {
 			$.ajax({
 				type: "POST",
-				url: "php/questionnaire/delete.question.type.php",
-				data: {"ID": $scope.questionTypeToDelete.ID, "OAUserId": Session.retrieveObject('user').id},
+				url: "php/questionnaire/delete.template.question.php",
+				data: {"ID": $scope.templateQuestionToDelete.ID, "OAUserId": Session.retrieveObject('user').id},
 				success: function (response) {
 					response = JSON.parse(response);
 					// Show success or failure depending on response
 					if (response.value) {
 						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = "Successfully deleted \"" + $scope.questionTypeToDelete.name_EN + "/ " + $scope.questionTypeToDelete.name_FR + "\"!";
+						$scope.$parent.bannerMessage = "Successfully deleted \"" + $scope.templateQuestionToDelete.name_EN + "/ " + $scope.templateQuestionToDelete.name_FR + "\"!";
 					}
 					else {
 						$scope.setBannerClass('danger');

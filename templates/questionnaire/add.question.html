@@ -354,7 +354,7 @@
                             <div class="panel-container">
                                 <form name="newAtForm">
                                     <div class="col-md-2" style="margin-top:15px; margin-bottom:5px; font-size:20px;">
-                                        <label>Private:  <input type="checkbox" ng-model="newQuestionType.private" ng-true-value="1" ng-false-value="0"></label>
+                                        <label>Private:  <input type="checkbox" ng-model="newTemplateQuestion.private" ng-true-value="1" ng-false-value="0"></label>
                                     </div>
 
                                     <div class="col-xs-12 col-md-8">
@@ -365,7 +365,7 @@
 
                                     <!-- Add multiple choice options -->
                                     <div class="col-xs-12 col-md-8" ng-show="atCategory.category_EN === 'Checkbox' || atCategory.category_EN === 'Radio Button'">
-                                        <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in newQuestionType.subOptions">
+                                        <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in newTemplateQuestion.subOptions">
                                             <input class="form-control" style="width:20%" type="number" placeholder="Position" ng-model="option.order" required/>
                                             <input class="form-control" style="width:40%" type="text" placeholder="Text (EN)" ng-model="option.description_EN" required/>
                                             <input class="form-control" style="width:40%" type="text" placeholder="Text (FR)" ng-model="option.description_FR" required/>
@@ -377,24 +377,24 @@
                                     <!-- Add Sliders options -->
                                     <div class="col-xs-12 col-md-8" ng-show="atCategory.category_EN === 'Slider'">
                                         <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
-                                            <input class="form-control" style="width:20%" type="number" placeholder="Minimum value" ng-model="newQuestionType.options.minValue" ng-required="atCategory.category_EN === 'Slider'" />
-                                            <input class="form-control" style="width:35%" type="text" ng-model="newQuestionType.options.minCaption_EN" placeholder="Minimum caption (EN)" ng-required="atCategory.category_EN === 'Slider'"/>
-                                            <input class="form-control" style="width:35%" type="text" ng-model="newQuestionType.options.minCaption_FR" placeholder="Minimum caption (FR)" ng-required="atCategory.category_EN === 'Slider'" />
+                                            <input class="form-control" style="width:20%" type="number" placeholder="Minimum value" ng-model="newTemplateQuestion.options.minValue" ng-required="atCategory.category_EN === 'Slider'" />
+                                            <input class="form-control" style="width:35%" type="text" ng-model="newTemplateQuestion.options.minCaption_EN" placeholder="Minimum caption (EN)" ng-required="atCategory.category_EN === 'Slider'"/>
+                                            <input class="form-control" style="width:35%" type="text" ng-model="newTemplateQuestion.options.minCaption_FR" placeholder="Minimum caption (FR)" ng-required="atCategory.category_EN === 'Slider'" />
                                         </div>
                                         <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
-                                            <input class="form-control" style="width:20%" type="number" placeholder="Maximum value" ng-model="newQuestionType.options.maxValue" ng-required="atCategory.category_EN === 'Slider'" />
-                                            <input class="form-control" style="width:35%" type="text" ng-model="newQuestionType.options.maxCaption_EN" placeholder="Maximum caption (EN)" ng-required="atCategory.category_EN === 'Slider'" />
-                                            <input class="form-control" style="width:35%" type="text" ng-model="newQuestionType.options.maxCaption_FR" placeholder="Maximum caption (FR)" ng-required="atCategory.category_EN === 'Slider'" />
+                                            <input class="form-control" style="width:20%" type="number" placeholder="Maximum value" ng-model="newTemplateQuestion.options.maxValue" ng-required="atCategory.category_EN === 'Slider'" />
+                                            <input class="form-control" style="width:35%" type="text" ng-model="newTemplateQuestion.options.maxCaption_EN" placeholder="Maximum caption (EN)" ng-required="atCategory.category_EN === 'Slider'" />
+                                            <input class="form-control" style="width:35%" type="text" ng-model="newTemplateQuestion.options.maxCaption_FR" placeholder="Maximum caption (FR)" ng-required="atCategory.category_EN === 'Slider'" />
                                         </div>
                                         <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
-                                            <input class="form-control" style="width:20%" type="number" placeholder="Increment step" ng-model="newQuestionType.options.increment" ng-required="atCategory.category_EN === 'Slider'"/>
+                                            <input class="form-control" style="width:20%" type="number" placeholder="Increment step" ng-model="newTemplateQuestion.options.increment" ng-required="atCategory.category_EN === 'Slider'"/>
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-md-8">
                                         <div class="input-group" style="margin-top:10px; margin-bottom:10px;">
-                                            <input class="form-control" style="width:50%" type="text" ng-model="newQuestionType.name_EN" placeholder="New Response Type (EN)" ng-disabled="!atCategory" required/>
-                                            <input class="form-control" style="width:50%" type="text" ng-model="newQuestionType.name_FR" placeholder="New Response Type (FR)" ng-disabled="!atCategory" required/>
-                                            <span class="input-group-btn"><button class="btn btn-default" type="submit" ng-click="addNewQuestionType(atCategory)" ng-disabled="newAtForm.$invalid">Add</button></span>
+                                            <input class="form-control" style="width:50%" type="text" ng-model="newTemplateQuestion.name_EN" placeholder="New Response Type (EN)" ng-disabled="!atCategory" required/>
+                                            <input class="form-control" style="width:50%" type="text" ng-model="newTemplateQuestion.name_FR" placeholder="New Response Type (FR)" ng-disabled="!atCategory" required/>
+                                            <span class="input-group-btn"><button class="btn btn-default" type="submit" ng-click="addNewTemplateQuestion(atCategory)" ng-disabled="newAtForm.$invalid">Add</button></span>
                                         </div>
                                     </div>
 

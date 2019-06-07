@@ -162,8 +162,8 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	$scope.updateOptions = function() {
 
-		$scope.newQuestionType.options = {};
-		$scope.newQuestionType.subOptions = [];
+		$scope.newTemplateQuestion.options = {};
+		$scope.newTemplateQuestion.subOptions = [];
 	};
 
 	$scope.updateLibrary = function (selectedLibrary) {
@@ -224,7 +224,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	};
 
 	// questionnaire API: retrieve data
-	questionnaireCollectionService.getQuestionTypes(OAUserId).then(function (response) {
+	questionnaireCollectionService.getTemplatesQuestions(OAUserId).then(function (response) {
 		$scope.atFilterList = response.data;
 	}).catch(function(response) {
 		alert('Error occurred getting response types: '+response.status +"\r\n"+ response.data);
@@ -236,7 +236,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		alert('Error occurred getting question libraries: '+response.status +"\r\n"+ response.data);
 	});
 
-	questionnaireCollectionService.getQuestionTypeCategory(OAUserId).then(function (response) {
+	questionnaireCollectionService.getTemplateQuestionCategory(OAUserId).then(function (response) {
 		$scope.atCatList = response.data;
 	}).catch(function(response) {
 		alert('Error occurred getting response type categories: '+response.status +"\r\n"+ response.data);
@@ -244,7 +244,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	// add new types & write into DB
 	// Initialize the new answer type object
-	$scope.newQuestionType = {
+	$scope.newTemplateQuestion = {
 		name_EN: "",
 		name_FR: "",
 		category_EN: "",
@@ -255,17 +255,17 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		subOptions: [],
 	};
 
-	$scope.addNewQuestionType = function (atCatSelected) {
+	$scope.addNewTemplateQuestion = function (atCatSelected) {
 		// Binding categories
-		$scope.newQuestionType.typeId = atCatSelected.ID;
-		$scope.newQuestionType.OAUserId = Session.retrieveObject('user').id;
-		var toSend = $scope.newQuestionType;
+		$scope.newTemplateQuestion.typeId = atCatSelected.ID;
+		$scope.newTemplateQuestion.OAUserId = Session.retrieveObject('user').id;
+		var toSend = $scope.newTemplateQuestion;
 		// Prompt to confirm user's action
-		var confirmation = confirm("Are you sure you want to create a new " + atCatSelected.category_EN.toLowerCase()  +  " response type named '" + $scope.newQuestionType.name_EN + "'?");
+		var confirmation = confirm("Are you sure you want to create a new " + atCatSelected.category_EN.toLowerCase()  +  " response type named '" + $scope.newTemplateQuestion.name_EN + "'?");
 		if (confirmation) {
 			$.ajax({
 				type: "POST",
-				url: "php/questionnaire/insert.question_type.php",
+				url: "php/questionnaire/insert.template_question.php",
 				data: toSend,
 				success: function (result) {
 					result = JSON.parse(result);
@@ -273,7 +273,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 						alert('Successfully added the new response type. Please find your new response type in the form above.');
 						// update answer type list
-						questionnaireCollectionService.getQuestionTypes(OAUserId).then(function (response) {
+						questionnaireCollectionService.getTemplatesQuestions(OAUserId).then(function (response) {
 							$scope.atFilterList = response.data;
 						}).catch(function (response) {
 							alert('Error occurred while created response types: '+response.code +"\r\n"+ response.message);
@@ -292,19 +292,19 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	// add options
 	$scope.addOptions = function () {
-		$scope.newQuestionType.subOptions.push({
+		$scope.newTemplateQuestion.subOptions.push({
 			description_EN: "",
 			description_FR: "",
-			order: $scope.newQuestionType.subOptions.length + 1,
+			order: $scope.newTemplateQuestion.subOptions.length + 1,
 			OAUserId: OAUserId
 		});
 	};
 
 	// delete options
 	$scope.deleteOptions = function (optionToDelete) {
-		var index = $scope.newQuestionType.subOptions.indexOf(optionToDelete);
+		var index = $scope.newTemplateQuestion.subOptions.indexOf(optionToDelete);
 		if (index > -1) {
-			$scope.newQuestionType.subOptions.splice(index, 1);
+			$scope.newTemplateQuestion.subOptions.splice(index, 1);
 		}
 	};
 

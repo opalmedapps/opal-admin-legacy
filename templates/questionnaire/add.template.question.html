@@ -48,52 +48,52 @@
                         <uib-accordion class="side-navbar">
 
                             <!-- SECTION: Question Text -->
-                            <div uib-accordion-group is-open="titleSection.open" class="panel-container summary-box" is-disabled="!newQuestionType.name_EN && !newQuestionType.name_FR">
+                            <div uib-accordion-group is-open="titleSection.open" class="panel-container summary-box" is-disabled="!newTemplateQuestion.name_EN && !newTemplateQuestion.name_FR">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
-                                            <span ng-if="newQuestionType.name_EN && newQuestionType.name_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                            <span ng-if="newTemplateQuestion.name_EN && newTemplateQuestion.name_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
                                             <strong>Name</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i ng-if="newQuestionType.name_EN || newQuestionType.name_FR" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                                            <i ng-if="newTemplateQuestion.name_EN || newTemplateQuestion.name_FR" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
-                                <div ng-if="newQuestionType.name_EN" class="description">
+                                <div ng-if="newTemplateQuestion.name_EN" class="description">
                                     <p style="margin-botton:5px">
                                         <strong>EN</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{newQuestionType.name_EN}}
+                                        {{newTemplateQuestion.name_EN}}
                                     </p>
                                 </div>
-                                <div ng-if="newQuestionType.name_FR" class="description">
+                                <div ng-if="newTemplateQuestion.name_FR" class="description">
                                     <p style="margin-botton:5px">
                                         <strong>FR</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{newQuestionType.name_FR}}
+                                        {{newTemplateQuestion.name_FR}}
                                     </p>
                                 </div>
                             </div>
 
                             <!-- SECTION: Answer type -->
-                            <div uib-accordion-group is-open="answerTypeSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show" is-disabled="!newQuestionType.typeId">
+                            <div uib-accordion-group is-open="answerTypeSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show" is-disabled="!newTemplateQuestion.typeId">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
-                                            <span ng-if="newQuestionType.typeId" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                            <span ng-if="newTemplateQuestion.typeId" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
                                             <strong>Response Type</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': answerTypeSection.open, 'glyphicon-chevron-right': !answerTypeSection.open}" ng-if="newQuestionType.typeId"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': answerTypeSection.open, 'glyphicon-chevron-right': !answerTypeSection.open}" ng-if="newTemplateQuestion.typeId"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
-                                <div ng-if="newQuestionType.typeId" class="description">
+                                <div ng-if="newTemplateQuestion.typeId" class="description">
                                     <p style="margin-bottom:5px;">
                                         {{selectedAt.category_EN}}
                                     </p>
@@ -103,7 +103,7 @@
                                         {{selectedAt.name_EN}}
                                     </p>
                                 </div>
-                                <div ng-if="newQuestionType.typeId" class="description">
+                                <div ng-if="newTemplateQuestion.typeId" class="description">
                                     <p style="margin-bottom:5px;">
                                         <strong>FR</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
@@ -113,28 +113,28 @@
                             </div>
 
                             <!-- SECTION: Question Library -->
-                            <div uib-accordion-group is-open="questionLibrarySection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: questionLibrarySection.show}" ng-if="questionLibrarySection.show" is-disabled="!newQuestionType.library_ID">
+                            <div uib-accordion-group is-open="questionLibrarySection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: questionLibrarySection.show}" ng-if="questionLibrarySection.show" is-disabled="!newTemplateQuestion.library_ID">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
-                                            <span ng-if="newQuestionType.library_ID" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                            <span ng-if="newTemplateQuestion.library_ID" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
                                             <strong>Question Library</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': questionLibrarySection.open, 'glyphicon-chevron-right': !questionLibrarySection.open}" ng-if="newQuestionType.library_ID"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': questionLibrarySection.open, 'glyphicon-chevron-right': !questionLibrarySection.open}" ng-if="newTemplateQuestion.library_ID"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
-                                <div ng-if="newQuestionType.library_ID" class="description">
+                                <div ng-if="newTemplateQuestion.library_ID" class="description">
                                     <p style="margin-bottom:5px;">
                                         <strong>EN</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                                         {{selectedGroup.name_EN}}
                                     </p>
                                 </div>
-                                <div ng-if="newQuestionType.library_ID" class="description">
+                                <div ng-if="newTemplateQuestion.library_ID" class="description">
                                     <p style="margin-bottom:5px;">
                                         <strong>FR</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
@@ -146,7 +146,7 @@
 
                         <!-- Submit button -->
                         <div class="panel-container">
-                            <a href="" ng-click="submitQuestionType()" ng-show="checkForm()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" style="width: 100%;">
+                            <a href="" ng-click="submitTemplateQuestion()" ng-show="checkForm()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" style="width: 100%;">
                                 <span style="font-size: 20px;"><strong>Submit response type</strong></span>
                             </a>
                         </div>
@@ -219,37 +219,37 @@
                         </div>
                         <div class="row">
                             <div class="col-xs-12 col-md-6">
-                                <div class="panel" ng-class="(newQuestionType.name_EN) ? 'panel-success': 'panel-danger'">
+                                <div class="panel" ng-class="(newTemplateQuestion.name_EN) ? 'panel-success': 'panel-danger'">
                                     <div class="panel-heading"><strong>English</strong>
-                                        <span ng-hide="newQuestionType.name_EN" style="float:right"><em>Incomplete</em></span>
-                                        <span ng-show="newQuestionType.name_EN" style="float:right"><em>Complete</em></span>
+                                        <span ng-hide="newTemplateQuestion.name_EN" style="float:right"><em>Incomplete</em></span>
+                                        <span ng-show="newTemplateQuestion.name_EN" style="float:right"><em>Complete</em></span>
                                     </div>
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <textarea class="form-control" rows="2" ng-model="newQuestionType.name_EN" ng-change="updateQuestionText()"></textarea>
+                                                <textarea class="form-control" rows="2" ng-model="newTemplateQuestion.name_EN" ng-change="updateQuestionText()"></textarea>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-xs-12 col-md-6">
-                                <div class="panel" ng-class="(newQuestionType.name_FR) ? 'panel-success': 'panel-danger'">
+                                <div class="panel" ng-class="(newTemplateQuestion.name_FR) ? 'panel-success': 'panel-danger'">
                                     <div class="panel-heading"><strong>Français</strong>
-                                        <span ng-hide="newQuestionType.name_FR" style="float:right"><em>Incomplete</em></span>
-                                        <span ng-show="newQuestionType.name_FR" style="float:right"><em>Complete</em></span>
+                                        <span ng-hide="newTemplateQuestion.name_FR" style="float:right"><em>Incomplete</em></span>
+                                        <span ng-show="newTemplateQuestion.name_FR" style="float:right"><em>Complete</em></span>
                                     </div>
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <textarea class="form-control" rows="2" ng-model="newQuestionType.name_FR" ng-change="updateQuestionText()"></textarea>
+                                                <textarea class="form-control" rows="2" ng-model="newTemplateQuestion.name_FR" ng-change="updateQuestionText()"></textarea>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-xs-12 col-md-6" style="margin-bottom: 20px;">
-                                <label style="font-size: 20px;">Make this response type private: <input type="checkbox" ng-model="newQuestionType.private" ng-true-value="1" ng-false-value="0"></label>
+                                <label style="font-size: 20px;">Make this response type private: <input type="checkbox" ng-model="newTemplateQuestion.private" ng-true-value="1" ng-false-value="0"></label>
                             </div>
                         </div>
 
@@ -277,14 +277,14 @@
                                 <div class="panel-container">
                                     <form name="newAtForm">
                                         <div class="col-xs-12">
-                                            <select class="form-control" name="atCategory" style="width:60%;" ng-change="updateQuestionType(atCategory);checkCompletion();" ng-model="atCategory" ng-options="atCat.category_EN for atCat in atCatList" required>
+                                            <select class="form-control" name="atCategory" style="width:60%;" ng-change="updateTemplateQuestion(atCategory);checkCompletion();" ng-model="atCategory" ng-options="atCat.category_EN for atCat in atCatList" required>
                                                 <option value="" disabled>-- select a response category --</option>
                                             </select>
                                         </div>
 
                                         <!-- Add multiple choice options -->
                                         <div class="col-xs-12" ng-show="atCategory.category_EN === 'Checkbox' || atCategory.category_EN === 'Radio Button'">
-                                            <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in newQuestionType.subOptions">
+                                            <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in newTemplateQuestion.subOptions">
                                                 <input ng-change="checkCompletion();orderPreview();" class="form-control" style="width:20%" type="number" placeholder="Position" ng-model="option.order" min="1" required/>
                                                 <input ng-change="checkCompletion();" class="form-control" style="width:40%" type="text" placeholder="Text (EN)" ng-model="option.description_EN" required/>
                                                 <input ng-change="checkCompletion();" class="form-control" style="width:40%" type="text" placeholder="Text (FR)" ng-model="option.description_FR" required/>
@@ -308,19 +308,19 @@
                                             </div>
                                             <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
                                                 <span class="input-group-addon">&nbsp; Minimum settings</span>
-                                                <input class="form-control" style="width:20%" type="number" placeholder="Minimum value" ng-model="newQuestionType.options.minValue" min="1" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();"/>
-                                                <input class="form-control" style="width:35%" type="text" ng-model="newQuestionType.options.minCaption_EN" placeholder="Minimum caption (EN)" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
-                                                <input class="form-control" style="width:35%" type="text" ng-model="newQuestionType.options.minCaption_FR" placeholder="Minimum caption (FR)" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
+                                                <input class="form-control" style="width:20%" type="number" placeholder="Minimum value" ng-model="newTemplateQuestion.options.minValue" min="1" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();"/>
+                                                <input class="form-control" style="width:35%" type="text" ng-model="newTemplateQuestion.options.minCaption_EN" placeholder="Minimum caption (EN)" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
+                                                <input class="form-control" style="width:35%" type="text" ng-model="newTemplateQuestion.options.minCaption_FR" placeholder="Minimum caption (FR)" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
                                             </div>
                                             <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
                                                 <span class="input-group-addon">&nbsp;Maximum settings</span>
-                                                <input class="form-control" style="width:20%" type="number" placeholder="Maximum value" ng-model="newQuestionType.options.maxValue" min="1" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
-                                                <input class="form-control" style="width:35%" type="text" ng-model="newQuestionType.options.maxCaption_EN" placeholder="Maximum caption (EN)" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
-                                                <input class="form-control" style="width:35%" type="text" ng-model="newQuestionType.options.maxCaption_FR" placeholder="Maximum caption (FR)" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
+                                                <input class="form-control" style="width:20%" type="number" placeholder="Maximum value" ng-model="newTemplateQuestion.options.maxValue" min="1" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
+                                                <input class="form-control" style="width:35%" type="text" ng-model="newTemplateQuestion.options.maxCaption_EN" placeholder="Maximum caption (EN)" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
+                                                <input class="form-control" style="width:35%" type="text" ng-model="newTemplateQuestion.options.maxCaption_FR" placeholder="Maximum caption (FR)" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
                                             </div>
                                             <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
                                                 <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Increment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                                <input class="form-control" style="width:20%" type="number" placeholder="Increment step" ng-model="newQuestionType.options.increment" min="1" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
+                                                <input class="form-control" style="width:20%" type="number" placeholder="Increment step" ng-model="newTemplateQuestion.options.increment" min="1" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
                                             </div>
                                         </div>
                                     </form>
@@ -343,13 +343,13 @@
                                     </div>
 
                                     <div ng-if="atCategory.category_EN === 'Radio Button'">
-                                        <div ng-repeat="option in newQuestionType.subOptions">
+                                        <div ng-repeat="option in newTemplateQuestion.subOptions">
                                             <label><input type="radio" name="option"/> {{option.description_EN}}</label>
                                         </div>
                                     </div>
 
                                     <div ng-if="atCategory.category_EN === 'Checkbox'">
-                                        <div ng-repeat="option in newQuestionType.subOptions">
+                                        <div ng-repeat="option in newTemplateQuestion.subOptions">
                                             <label><input type="checkbox" name="option"/> {{option.description_EN}}</label>
                                         </div>
                                     </div>
@@ -369,13 +369,13 @@
                                     </div>
 
                                     <div ng-if="atCategory.category_EN === 'Radio Button'">
-                                        <div ng-repeat="option in newQuestionType.subOptions">
+                                        <div ng-repeat="option in newTemplateQuestion.subOptions">
                                             <label><input type="radio" name="option"/> {{option.description_FR}}</label>
                                         </div>
                                     </div>
 
                                     <div ng-if="atCategory.category_EN === 'Checkbox'">
-                                        <div ng-repeat="option in newQuestionType.subOptions">
+                                        <div ng-repeat="option in newTemplateQuestion.subOptions">
                                             <label><input type="checkbox" name="option"/> {{option.description_FR}}</label>
                                         </div>
                                     </div>

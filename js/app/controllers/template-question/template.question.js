@@ -1,10 +1,10 @@
-angular.module('opalAdmin.controllers.question.type', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns'])
+angular.module('opalAdmin.controllers.template.question', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns'])
 
-	.controller('question.type', function ($scope, $state, $filter, $uibModal, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
+	.controller('template.question', function ($scope, $state, $filter, $uibModal, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
 
 		// Routing to go to add question page
 		$scope.goToAddQuestion = function () {
-			$state.go('questionnaire-question-type-add');
+			$state.go('questionnaire-template-question-add');
 		};
 
 		// Function to filter questionnaires
@@ -37,22 +37,22 @@ angular.module('opalAdmin.controllers.question.type', ['ngAnimate', 'ngSanitize'
 
 		// Templates for main question table
 		var cellTemplateTextEn = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
-			'ng-click="grid.appScope.editQuestionType(row.entity)">' +
+			'ng-click="grid.appScope.editTemplateQuestion(row.entity)">' +
 			'<strong><a href="">{{row.entity.name_EN}}</a></strong></div>';
 		var cellTemplateTextFr = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
-			'ng-click="grid.appScope.editQuestionType(row.entity)">' +
+			'ng-click="grid.appScope.editTemplateQuestion(row.entity)">' +
 			'<strong><a href="">{{row.entity.name_FR}}</a></strong></div>';
 		var cellTemplateAt = '<div class="ui-grid-cell-contents"> ' +
 			'{{row.entity.category_EN}} / {{row.entity.category_FR}}</div>';
 		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Public</p></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Private</p></div>';
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editQuestionType(row.entity)">Edit</a></strong> ' +
-			'- <strong><a href="" ng-click="grid.appScope.deleteQuestionType(row.entity)">Delete</a></strong></div>';
+			'<strong><a href="" ng-click="grid.appScope.editTemplateQuestion(row.entity)">Edit</a></strong> ' +
+			'- <strong><a href="" ng-click="grid.appScope.deleteTemplateQuestion(row.entity)">Delete</a></strong></div>';
 
 		// Data binding for question table
 		$scope.gridLib = {
-			data: 'questionTypeList',
+			data: 'templateQuestionList',
 			columnDefs: [
 				{ field: 'name_EN', displayName: 'Name (EN)', cellTemplate: cellTemplateTextEn, width: '30%' },
 				{ field: 'name_FR', displayName: 'Name (FR)', cellTemplate: cellTemplateTextFr, width: '30%' },
@@ -74,8 +74,8 @@ angular.module('opalAdmin.controllers.question.type', ['ngAnimate', 'ngSanitize'
 		};
 
 		// Call our API service to get the list of existing questions types
-		questionnaireCollectionService.getQuestionTypes(Session.retrieveObject('user').id).then(function (response) {
-			$scope.questionTypeList = response.data;
+		questionnaireCollectionService.getTemplatesQuestions(Session.retrieveObject('user').id).then(function (response) {
+			$scope.templateQuestionList = response.data;
 		}).catch(function(response) {
 			alert('Error occurred getting response types: '+response.status +"\r\n"+ response.data);
 		});
@@ -103,14 +103,14 @@ angular.module('opalAdmin.controllers.question.type', ['ngAnimate', 'ngSanitize'
 		};
 
 		// initialize variable for storing selected question
-		$scope.currentQuestionType = {};
+		$scope.currentTemplateQuestion = {};
 
 		// function to edit question
-		$scope.editQuestionType = function (question) {
-			$scope.currentQuestionType = question;
+		$scope.editTemplateQuestion = function (question) {
+			$scope.currentTemplateQuestion = question;
 			var modalInstance = $uibModal.open({
-				templateUrl: 'templates/questionnaire/edit.question.type.html',
-				controller: 'question.type.edit',
+				templateUrl: 'templates/questionnaire/edit.template.question.html',
+				controller: 'template.question.edit',
 				scope: $scope,
 				windowClass: 'customModal',
 				backdrop: 'static',
@@ -118,10 +118,10 @@ angular.module('opalAdmin.controllers.question.type', ['ngAnimate', 'ngSanitize'
 
 			// after update, refresh data
 			modalInstance.result.then(function () {
-				$scope.questionTypeList = [];
+				$scope.templateQuestionList = [];
 				// Call our API service to get the list of existing questions
-				questionnaireCollectionService.getQuestionTypes(Session.retrieveObject('user').id).then(function (response) {
-					$scope.questionTypeList = response.data;
+				questionnaireCollectionService.getTemplatesQuestions(Session.retrieveObject('user').id).then(function (response) {
+					$scope.templateQuestionList = response.data;
 				}).catch(function(response) {
 					alert('Error occurred getting response types: '+response.status +"\r\n"+ response.data);
 				});
@@ -129,15 +129,15 @@ angular.module('opalAdmin.controllers.question.type', ['ngAnimate', 'ngSanitize'
 		};
 
 		// initialize variable for storing deleting question
-		$scope.questionTypeToDelete = {};
+		$scope.templateQuestionToDelete = {};
 
 		// function to delete question
-		$scope.deleteQuestionType = function (currentQuestionType) {
+		$scope.deleteTemplateQuestion = function (currentTemplateQuestion) {
 
-			$scope.questionTypeToDelete = currentQuestionType;
+			$scope.templateQuestionToDelete = currentTemplateQuestion;
 			var modalInstance = $uibModal.open({
-				templateUrl: 'templates/questionnaire/delete.question.type.html',
-				controller: 'question.type.delete',
+				templateUrl: 'templates/questionnaire/delete.template.question.html',
+				controller: 'template.question.delete',
 				windowClass: 'deleteModal',
 				scope: $scope,
 				backdrop: 'static',
@@ -145,10 +145,10 @@ angular.module('opalAdmin.controllers.question.type', ['ngAnimate', 'ngSanitize'
 
 			// After delete, refresh the eduMat list
 			modalInstance.result.then(function () {
-				$scope.questionTypeList = [];
+				$scope.templateQuestionList = [];
 				// update data
-				questionnaireCollectionService.getQuestionTypes(Session.retrieveObject('user').id).then(function (response) {
-					$scope.questionTypeList = response.data;
+				questionnaireCollectionService.getTemplatesQuestions(Session.retrieveObject('user').id).then(function (response) {
+					$scope.templateQuestionList = response.data;
 				}).catch(function(response) {
 					alert('Error occurred getting response types: '+response.status +"\r\n"+ response.data);
 				});

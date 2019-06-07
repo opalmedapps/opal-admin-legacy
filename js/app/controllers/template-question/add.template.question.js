@@ -1,5 +1,5 @@
-angular.module('opalAdmin.controllers.question.type.add', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.bootstrap.materialPicker']).
-controller('question.type.add', function ($scope, $state, $filter, $uibModal, Session, filterCollectionService, questionnaireCollectionService) {
+angular.module('opalAdmin.controllers.template.question.add', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.bootstrap.materialPicker']).
+controller('template.question.add', function ($scope, $state, $filter, $uibModal, Session, filterCollectionService, questionnaireCollectionService) {
 	// navigation function
 	$scope.goBack = function () {
 		$state.go('questionnaire');
@@ -58,7 +58,7 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 	}
 
 	// Initialize the new answer type object
-	$scope.newQuestionType = {
+	$scope.newTemplateQuestion = {
 		name_EN: "",
 		name_FR: "",
 		private: 0,
@@ -73,34 +73,34 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 	// Filter lists initialized
 	$scope.atCatList = [];
 
-	$scope.updateQuestionType = function (selected) {
-		$scope.newQuestionType.typeId = selected.ID;
+	$scope.updateTemplateQuestion = function (selected) {
+		$scope.newTemplateQuestion.typeId = selected.ID;
 
-		$scope.newQuestionType.options = {};
+		$scope.newTemplateQuestion.options = {};
 		if(selected.ID === "2") {
-			$scope.newQuestionType.options.minValue = 1;
-			$scope.newQuestionType.options.minCaption_EN = undefined;
-			$scope.newQuestionType.options.minCaption_FR = undefined;
-			$scope.newQuestionType.options.maxValue = 10;
-			$scope.newQuestionType.options.maxCaption_EN = undefined;
-			$scope.newQuestionType.options.maxCaption_FR = undefined;
-			$scope.newQuestionType.options.increment = 1;
+			$scope.newTemplateQuestion.options.minValue = 1;
+			$scope.newTemplateQuestion.options.minCaption_EN = undefined;
+			$scope.newTemplateQuestion.options.minCaption_FR = undefined;
+			$scope.newTemplateQuestion.options.maxValue = 10;
+			$scope.newTemplateQuestion.options.maxCaption_EN = undefined;
+			$scope.newTemplateQuestion.options.maxCaption_FR = undefined;
+			$scope.newTemplateQuestion.options.increment = 1;
 			$scope.updateSlider();
 		}
-		$scope.newQuestionType.subOptions = [];
+		$scope.newTemplateQuestion.subOptions = [];
 	};
 
-	$scope.submitQuestionType = function () {
+	$scope.submitTemplateQuestion = function () {
 		if ($scope.checkForm()) {
 			// Submit
 			$.ajax({
 				type: "POST",
-				url: "php/questionnaire/insert.question_type.php",
-				data: $scope.newQuestionType,
+				url: "php/questionnaire/insert.template_question.php",
+				data: $scope.newTemplateQuestion,
 				success: function (result) {
 					result = JSON.parse(result);
 					if (result.message === 200) {
-						$state.go('questionnaire-question-type');
+						$state.go('questionnaire-template-question');
 					} else {
 						alert("Unable to create the question type. Code " + result.code + ".\r\nError message: " + result.message);
 					}
@@ -115,10 +115,10 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 	// Update values from form
 	$scope.updateQuestionText = function () {
 		$scope.titleSection.open = true;
-		if (!$scope.newQuestionType.name_EN && !$scope.newQuestionType.name_FR) {
+		if (!$scope.newTemplateQuestion.name_EN && !$scope.newTemplateQuestion.name_FR) {
 			$scope.titleSection.open = false;
 		}
-		if ($scope.newQuestionType.name_EN && $scope.newQuestionType.name_FR) {
+		if ($scope.newTemplateQuestion.name_EN && $scope.newTemplateQuestion.name_FR) {
 			$scope.answerTypeSection.show = true;
 			steps.name.completed = true;
 		} else {
@@ -129,7 +129,7 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 	};
 
 	// questionnaire API: retrieve data
-	questionnaireCollectionService.getQuestionTypeCategory(OAUserId).then(function (response) {
+	questionnaireCollectionService.getTemplateQuestionCategory(OAUserId).then(function (response) {
 		$scope.atCatList = response.data;
 	}).catch(function(response) {
 		alert('Error occurred getting response type categories: '+response.status +"\r\n"+ response.data);
@@ -137,10 +137,10 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 
 	// add options
 	$scope.addOptions = function () {
-		$scope.newQuestionType.subOptions.push({
+		$scope.newTemplateQuestion.subOptions.push({
 			description_EN: "",
 			description_FR: "",
-			order: $scope.newQuestionType.subOptions.length + 1,
+			order: $scope.newTemplateQuestion.subOptions.length + 1,
 			OAUserId: OAUserId
 		});
 		$scope.checkCompletion();
@@ -148,59 +148,59 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 
 	// delete options
 	$scope.deleteOptions = function (optionToDelete) {
-		var index = $scope.newQuestionType.subOptions.indexOf(optionToDelete);
+		var index = $scope.newTemplateQuestion.subOptions.indexOf(optionToDelete);
 		if (index > -1) {
-			$scope.newQuestionType.subOptions.splice(index, 1);
+			$scope.newTemplateQuestion.subOptions.splice(index, 1);
 		}
 
 		var i = 1;
-		$scope.newQuestionType.subOptions.forEach(function(entry) {
+		$scope.newTemplateQuestion.subOptions.forEach(function(entry) {
 			entry.order = i;
 			i++;
 		});
 	};
 
 	$scope.orderPreview = function () {
-		$scope.newQuestionType.subOptions.sort(function(a,b){
+		$scope.newTemplateQuestion.subOptions.sort(function(a,b){
 			return (a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0);
 		});
 	};
 
 	$scope.updateSelection = function (){
-		$scope.newQuestionType.options = [];
+		$scope.newTemplateQuestion.options = [];
 		$scope.updateSlider();
 	};
 
 	$scope.updateSlider = function () {
 		var radiostep = new Array();
-		var increment = parseFloat($scope.newQuestionType.options.increment);
-		var minValue = parseFloat($scope.newQuestionType.options.minValue);
-		var maxValue = parseFloat($scope.newQuestionType.options.maxValue);
+		var increment = parseFloat($scope.newTemplateQuestion.options.increment);
+		var minValue = parseFloat($scope.newTemplateQuestion.options.minValue);
+		var maxValue = parseFloat($scope.newTemplateQuestion.options.maxValue);
 
-		if (minValue <= 0.0 || maxValue <= 0.0 || increment <= 0 || minValue >= maxValue || $scope.newQuestionType.options.minCaption_EN === undefined || $scope.newQuestionType.options.minCaption_FR === undefined || $scope.newQuestionType.options.maxCaption_EN === undefined || $scope.newQuestionType.options.maxCaption_FR === undefined)
+		if (minValue <= 0.0 || maxValue <= 0.0 || increment <= 0 || minValue >= maxValue || $scope.newTemplateQuestion.options.minCaption_EN === undefined || $scope.newTemplateQuestion.options.minCaption_FR === undefined || $scope.newTemplateQuestion.options.maxCaption_EN === undefined || $scope.newTemplateQuestion.options.maxCaption_FR === undefined)
 			$scope.validSlider = false;
 		else {
-			$scope.newQuestionType.options.maxValue = parseInt(maxValue);
+			$scope.newTemplateQuestion.options.maxValue = parseInt(maxValue);
 			$scope.validSlider = true;
 			for(var i = minValue; i <= maxValue; i += increment) {
 				radiostep.push({"description_EN":" " + i,"description_FR":" " + i});
 			}
-			radiostep[0]["description_EN"] += " " + $scope.newQuestionType.options.minCaption_EN;
-			radiostep[0]["description_FR"] += " " + $scope.newQuestionType.options.minCaption_FR;
-			radiostep[radiostep.length - 1]["description_EN"] += " " + $scope.newQuestionType.options.maxCaption_EN;
-			radiostep[radiostep.length - 1]["description_FR"] += " " + $scope.newQuestionType.options.maxCaption_FR;
+			radiostep[0]["description_EN"] += " " + $scope.newTemplateQuestion.options.minCaption_EN;
+			radiostep[0]["description_FR"] += " " + $scope.newTemplateQuestion.options.minCaption_FR;
+			radiostep[radiostep.length - 1]["description_EN"] += " " + $scope.newTemplateQuestion.options.maxCaption_EN;
+			radiostep[radiostep.length - 1]["description_FR"] += " " + $scope.newTemplateQuestion.options.maxCaption_FR;
 		}
 		$scope.preview = radiostep;
 	};
 
 	$scope.checkCompletion = function () {
-		if($scope.newQuestionType.typeId === "4" || $scope.newQuestionType.typeId === "1") {
+		if($scope.newTemplateQuestion.typeId === "4" || $scope.newTemplateQuestion.typeId === "1") {
 			var allGood = true;
 
-			if (typeof $scope.newQuestionType.subOptions === 'undefined' || $scope.newQuestionType.subOptions.length <= 0)
+			if (typeof $scope.newTemplateQuestion.subOptions === 'undefined' || $scope.newTemplateQuestion.subOptions.length <= 0)
 				allGood = false;
 			else
-				$scope.newQuestionType.subOptions.forEach(function(entry) {
+				$scope.newTemplateQuestion.subOptions.forEach(function(entry) {
 					if (entry.description_EN === undefined || entry.description_FR === undefined  || entry.description_EN === "" || entry.description_FR === ""  || entry.order === 0 || entry.order === undefined)
 						allGood = false;
 				});
@@ -209,8 +209,8 @@ controller('question.type.add', function ($scope, $state, $filter, $uibModal, Se
 			else
 				steps.type.completed = false;
 		}
-		else if($scope.newQuestionType.typeId === "2") {
-			if($scope.newQuestionType.options) {
+		else if($scope.newTemplateQuestion.typeId === "2") {
+			if($scope.newTemplateQuestion.options) {
 				if($scope.validSlider)
 					steps.type.completed = true;
 				else
