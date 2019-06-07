@@ -16,7 +16,7 @@ class Library extends QuestionnaireModule {
         $nameFr = strip_tags($newLibrary["name_FR"]);
         $private = strip_tags($newLibrary["private"]);
 
-        $contentId = $this->questionnaireDB->addToDictionary(array(FRENCH_LANGUAGE=>$nameFr, ENGLISH_LANGUAGE=>$nameEn), TYPE_TEMPLATE_TABLE);
+        $contentId = $this->questionnaireDB->addToDictionary(array(FRENCH_LANGUAGE=>$nameFr, ENGLISH_LANGUAGE=>$nameEn), TEMPLATE_QUESTION_TABLE);
 
         $toInsert = array(
             "name"=>$contentId,

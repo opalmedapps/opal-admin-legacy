@@ -8,9 +8,9 @@ $questionTypeId = strip_tags($_POST['ID']);
 $OAUserId = strip_tags($_POST['OAUserId']);
 
 // Call function
-$questionTypeObj = new QuestionType($OAUserId); // Object
+$questionTypeObj = new TemplateQuestion($OAUserId); // Object
 
-$response = $questionTypeObj->deleteQuestionType($questionTypeId);
+$response = $questionTypeObj->deleteTemplateQuestion($questionTypeId);
 
 print json_encode($response); // Return response
 ?>
