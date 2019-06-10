@@ -1,3 +1,6 @@
+Version 0.18.19.4:
+ - Correct Diagnosis and Patient Location queries
+
 Version 0.18.19.3:
  -      ---- Quick patch to send notification for the legacy questionnaire
  - Merge branch 'hotfix-0.18.19.2' into staging
