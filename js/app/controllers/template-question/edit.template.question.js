@@ -112,15 +112,8 @@ angular.module('opalAdmin.controllers.template.question.edit', ['ngAnimate', 'ng
 				});
 			}
 
-
-			if (response.data.private === "1")
-				$scope.templateQuestion.private = true;
-			else
-				$scope.templateQuestion.private = false;
-			if (response.data.isOwner === "1")
-				$scope.templateQuestion.isOwner = true;
-			else
-				$scope.templateQuestion.isOwner = false;
+			$scope.templateQuestion.private = parseInt($scope.templateQuestion.private);
+			$scope.templateQuestion.isOwner = parseInt($scope.templateQuestion.isOwner);
 
 			$scope.templateQuestion.OAUserId = OAUserId;
 

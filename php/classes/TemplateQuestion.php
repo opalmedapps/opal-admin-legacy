@@ -109,6 +109,188 @@ class TemplateQuestion extends QuestionnaireModule {
         return  $answer;
     }
 
+    /*
+     * This function update the options of a radio button template question. It will first delete the options marked to
+     * be deleted, then it will update the options, and it will add the new options. All these operations are optional:
+     * if there is no option to delete for example, no modification at the the database will be done. Same thing for
+     * any possible update or insert. Lastly, it will return the number of records that was affected.
+     *
+     * @param   $options (array of options of the template question, $subOptions (array of the different choices)
+     * @return  $total (number of records affected by the update)
+ * */
+    function updateRadioButtonOptions($options, $subOptions) {
+        $optionsToKeepAndUpdate = array();
+        $optionsToAdd = array();
+        $total = 0;
+        self::sortOptions($subOptions);
+
+        foreach($subOptions as $sub)
+            if ($sub["ID"] != "")
+                array_push($optionsToKeepAndUpdate, $sub["ID"]);
+
+        if (empty($optionsToKeepAndUpdate))
+            $optionsToKeepAndUpdate = array("-1");
+
+        if (!empty($optionsToKeepAndUpdate)) {
+            $optionsToDelete = $this->questionnaireDB->fetchTemplateQuestionOptionsToBeDeleted(TEMPLATE_QUESTION_RADIO_BUTTON_OPTION_TABLE, TEMPLATE_QUESTION_RADIO_BUTTON_TABLE, $options["ID"], $optionsToKeepAndUpdate);
+
+
+            foreach ($optionsToDelete as $opt)
+                $this->questionnaireDB->markAsDeletedInDictionary($opt["description"]);
+            $total += $this->questionnaireDB->deleteOptionsForTemplateQuestion(TEMPLATE_QUESTION_RADIO_BUTTON_OPTION_TABLE, TEMPLATE_QUESTION_RADIO_BUTTON_TABLE, $options["ID"], $optionsToKeepAndUpdate);
+
+
+            foreach($subOptions as $data) {
+                $toUpdate = array();
+                foreach($data as $key=>$value) {
+                    if (in_array($key, array("ID","description_FR","description_EN"))) continue;
+                    else if($key == "OAUserId")
+                        $toUpdate["OAUserId"] = $value;
+                    else
+                        $toUpdate[$key] = $value;
+                }
+
+                $toUpdateDict = array(
+                    array(
+                        "content"=>$data["description_FR"],
+                        "languageId"=>FRENCH_LANGUAGE,
+                        "contentId"=>$data["description"],
+                    ),
+                    array(
+                        "content"=>$data["description_EN"],
+                        "languageId"=>ENGLISH_LANGUAGE,
+                        "contentId"=>$data["description"],
+                    ),
+                );
+
+                $total += $this->questionnaireDB->updateDictionary($toUpdateDict, TEMPLATE_QUESTION_RADIO_BUTTON_OPTION_TABLE);
+                $total += $this->questionnaireDB->updateSubOptionsForTemplateQuestion(TEMPLATE_QUESTION_RADIO_BUTTON_OPTION_TABLE, TEMPLATE_QUESTION_RADIO_BUTTON_TABLE, $data["ID"], $toUpdate);
+            }
+        }
+
+        foreach($subOptions as $sub) {
+            if ($sub["ID"] == "") {
+                $toInsert = array(FRENCH_LANGUAGE=>$sub['description_FR'], ENGLISH_LANGUAGE=>$sub['description_EN']);
+                $dictId = $this->questionnaireDB->addToDictionary($toInsert, TEMPLATE_QUESTION_RADIO_BUTTON_TABLE);
+                array_push($optionsToAdd, array("parentTableId"=>$options["ID"], "description"=>$dictId, "order"=>$sub["order"]));
+            }
+        }
+
+        if (!empty($optionsToAdd))
+            $total += $this->questionnaireDB->insertOptionsQuestion(TEMPLATE_QUESTION_RADIO_BUTTON_OPTION_TABLE, $optionsToAdd);
+        return $total;
+    }
+
+    /*
+     * This function update the options of a checkbox template question. It will first delete the options marked to be
+     * deleted, then it will update the options, and it will add the new options. All these operations are optional:
+     * if there is no option to delete for example, no modification at the the database will be done. Same thing for
+     * any possible update or insert. Lastly, it will return the number of records that was affected.
+     *
+     * @param   $options (array of options of the question, $subOptions (array of the different choices)
+     * @return  $total (number of records affected by the update)
+     * */
+    function updateCheckboxOptions($options, $subOptions) {
+        $optionsToKeepAndUpdate = array();
+        $optionsToAdd = array();
+        $total = 0;
+        self::sortOptions($subOptions);
+
+        foreach($subOptions as $sub)
+            if ($sub["ID"] != "")
+                array_push($optionsToKeepAndUpdate, $sub["ID"]);
+
+        if (empty($optionsToKeepAndUpdate))
+            $optionsToKeepAndUpdate = array("-1");
+
+        if (!empty($optionsToKeepAndUpdate)) {
+            $optionsToDelete = $this->questionnaireDB->fetchTemplateQuestionOptionsToBeDeleted(TEMPLATE_QUESTION_CHECKBOX_OPTION_TABLE, TEMPLATE_QUESTION_CHECKBOX_TABLE, $options["ID"], $optionsToKeepAndUpdate);
+            foreach ($optionsToDelete as $opt)
+                $this->questionnaireDB->markAsDeletedInDictionary($opt["description"]);
+            $total += $this->questionnaireDB->deleteOptionsForTemplateQuestion(TEMPLATE_QUESTION_CHECKBOX_OPTION_TABLE, TEMPLATE_QUESTION_CHECKBOX_TABLE, $options["ID"], $optionsToKeepAndUpdate);
+
+            foreach($subOptions as $data) {
+                $toUpdate = array();
+                foreach($data as $key=>$value) {
+                    if (in_array($key, array("ID","description_FR","description_EN"))) continue;
+                    else if($key == "OAUserId")
+                        $toUpdate["OAUserId"] = $value;
+                    else
+                        $toUpdate[$key] = $value;
+                }
+
+                $toUpdateDict = array(
+                    array("content"=>$data["description_FR"], "languageId"=>FRENCH_LANGUAGE, "contentId"=>$data["description"]),
+                    array("content"=>$data["description_EN"], "languageId"=>ENGLISH_LANGUAGE, "contentId"=>$data["description"]),
+                );
+                $total += $this->questionnaireDB->updateDictionary($toUpdateDict, TEMPLATE_QUESTION_CHECKBOX_OPTION_TABLE);
+                $total += $this->questionnaireDB->updateSubOptionsForTemplateQuestion(TEMPLATE_QUESTION_CHECKBOX_OPTION_TABLE, TEMPLATE_QUESTION_CHECKBOX_TABLE, $data["ID"], $toUpdate);
+            }
+        }
+
+        foreach($subOptions as $sub) {
+            if ($sub["ID"] == "") {
+                $toInsert = array(FRENCH_LANGUAGE=>$sub['description_FR'], ENGLISH_LANGUAGE=>$sub['description_EN']);
+                $dictId = $this->questionnaireDB->addToDictionary($toInsert, TEMPLATE_QUESTION_CHECKBOX_OPTION_TABLE);
+                array_push($optionsToAdd, array("parentTableId"=>$options["ID"], "description"=>$dictId, "order"=>$sub["order"]));
+            }
+        }
+
+        if (!empty($optionsToAdd))
+            $total += $this->questionnaireDB->insertOptionsQuestion(TEMPLATE_QUESTION_CHECKBOX_OPTION_TABLE, $optionsToAdd);
+
+        $options["minAnswer"] = 1;
+        $options["maxAnswer"] = $this->questionnaireDB->getTemplateQuestionTotalSubOptions($options["ID"], TEMPLATE_QUESTION_CHECKBOX_OPTION_TABLE);
+        $options["maxAnswer"] = $options["maxAnswer"]["total"];
+        $tempId = $options["ID"];
+        unset($options["ID"]);
+
+        $total += $this->questionnaireDB->updateOptionsForTemplateQuestion(TEMPLATE_QUESTION_CHECKBOX_TABLE, $tempId, $options);
+        return $total;
+    }
+
+    /*
+     * This function update the options of a slider question.
+     *
+     * @param   $options (array of options of the question)
+     * @return  $total (number of records affected by the update)
+     * */
+    function updateSliderOptions($options) {
+        $total = 0;
+
+        $options["minValue"] = floatval($options["minValue"]);
+        $options["maxValue"] = floatval($options["maxValue"]);
+        $options["increment"] = floatval($options["increment"]);
+
+        if($options["minCaption_EN"] == "" ||  $options["minCaption_FR"] == "" || $options["maxCaption_EN"] == "" ||  $options["maxCaption_FR"] == "" || $options["minValue"] <= 0.0 || $options["maxValue"] <= 0.0 || $options["increment"] <= 0.0 || $options["minValue"] >= $options["maxValue"])
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid data.");
+
+        $options["maxValue"] = floatval(floor(($options["maxValue"] - $options["minValue"]) / $options["increment"]) * $options["increment"]) + $options["minValue"];
+
+        $toUpdateDict = array(
+            array("content"=>$options["minCaption_FR"], "languageId"=>FRENCH_LANGUAGE, "contentId"=>$options["minCaption"]),
+            array("content"=>$options["minCaption_EN"], "languageId"=>ENGLISH_LANGUAGE, "contentId"=>$options["minCaption"]),
+        );
+
+        $total += $this->questionnaireDB->updateDictionary($toUpdateDict, TEMPLATE_QUESTION_SLIDER_TABLE);
+
+        $toUpdateDict = array(
+            array("content"=>$options["maxCaption_FR"], "languageId"=>FRENCH_LANGUAGE, "contentId"=>$options["maxCaption"]),
+            array("content"=>$options["maxCaption_EN"], "languageId"=>ENGLISH_LANGUAGE, "contentId"=>$options["maxCaption"]),
+        );
+        $total += $this->questionnaireDB->updateDictionary($toUpdateDict, TEMPLATE_QUESTION_SLIDER_TABLE);
+
+        $sliderToUpdate = array(
+            "minValue"=>$options["minValue"],
+            "maxValue"=>$options["maxValue"],
+            "increment"=>$options["increment"],
+        );
+
+        $total += $this->questionnaireDB->updateOptionsForTemplateQuestion(TEMPLATE_QUESTION_SLIDER_TABLE, $options["ID"], $sliderToUpdate);
+        return $total;
+    }
+
+
     /**
      * This function update a question type template after validating the data.
      *
@@ -152,48 +334,12 @@ class TemplateQuestion extends QuestionnaireModule {
             ),
         );
 
-        print_R($oldTemplateQuestion);
         $total += $this->questionnaireDB->updateDictionary($toUpdateDict, TEMPLATE_QUESTION_TABLE);
         $toUpdateTemplateQuestion = array(
             "ID"=>$oldTemplateQuestion["ID"],
             "private"=>$updatedTemplateQuestion["private"],
         );
-        $totalQuestionUpdated = $this->questionnaireDB->updateTemplateQuestion($toUpdateTemplateQuestion);
-
-
-
-
-        print_R($toUpdateTemplateQuestion);die($totalQuestionUpdated . " " . $total);
-
-
-
-
-
-
-        /*
-
-
-        $toUpdateDict = array(
-            array(
-                "content"=>$updatedTemplateQuestion["question_FR"],
-                "languageId"=>FRENCH_LANGUAGE,
-                "contentId"=>$oldTemplateQuestion["question"],
-            ),
-            array(
-                "content"=>$updatedTemplateQuestion["question_EN"],
-                "languageId"=>ENGLISH_LANGUAGE,
-                "contentId"=>$oldTemplateQuestion["question"],
-            ),
-        );
-
-        $total += $this->questionnaireDB->updateDictionary($toUpdateDict, QUESTION_TABLE);
-        $toUpdateQuestion = array(
-            "ID"=>$oldTemplateQuestion["ID"],
-            "private"=>$updatedTemplateQuestion["private"],
-            "final"=>$updatedTemplateQuestion["final"],
-        );
-        $questionUpdated = $this->questionnaireDB->updateQuestion($toUpdateQuestion);
-
+        $totalTemplateQuestionUpdated = $this->questionnaireDB->updateTemplateQuestion($toUpdateTemplateQuestion);
 
         if($updatedTemplateQuestion["typeId"] == RADIO_BUTTON)
             $total += $this->updateRadioButtonOptions($updatedTemplateQuestion["options"],$updatedTemplateQuestion["subOptions"]);
@@ -202,16 +348,8 @@ class TemplateQuestion extends QuestionnaireModule {
         else if($updatedTemplateQuestion["typeId"] == SLIDERS)
             $total += $this->updateSliderOptions($updatedTemplateQuestion["options"]);
 
-        if ($questionUpdated == 0 && $total > 0)
-            $this->questionnaireDB->forceUpdateQuestion($updatedTemplateQuestion["ID"]);
-
-         * */
-
-
-
-
-
-
+        if ($totalTemplateQuestionUpdated == 0 && $total > 0)
+            $this->questionnaireDB->forceUpdate($updatedTemplateQuestion["ID"], TEMPLATE_QUESTION_TABLE);
     }
 
     /*
@@ -249,7 +387,7 @@ class TemplateQuestion extends QuestionnaireModule {
             foreach($newTemplateQuestion["subOptions"] as $opt) {
                 $tempArray = array();
                 $toInsert = array(FRENCH_LANGUAGE=>$opt["description_FR"], ENGLISH_LANGUAGE=>$opt["description_EN"]);
-                $tempArray["description"] = $this->questionnaireDB->addToDictionary($toInsert, TEMPLATE_QUESTION_TABLE);
+                $tempArray["description"] = $this->questionnaireDB->addToDictionary($toInsert, $subTableToInsert);
                 $tempArray["order"] = $opt["order"];
                 array_push($subOptions, $tempArray);
             }
@@ -259,11 +397,11 @@ class TemplateQuestion extends QuestionnaireModule {
             $toInsert = array(
                 FRENCH_LANGUAGE=>$newTemplateQuestion["options"]["minCaption_FR"], ENGLISH_LANGUAGE=>$newTemplateQuestion["options"]["minCaption_EN"]
             );
-            $options["minCaption"] = $this->questionnaireDB->addToDictionary($toInsert, TEMPLATE_QUESTION_TABLE);
+            $options["minCaption"] = $this->questionnaireDB->addToDictionary($toInsert, $tableToInsert);
             $toInsert = array(
                 FRENCH_LANGUAGE=>$newTemplateQuestion["options"]["maxCaption_FR"], ENGLISH_LANGUAGE=>$newTemplateQuestion["options"]["maxCaption_EN"]
             );
-            $options["maxCaption"] = $this->questionnaireDB->addToDictionary($toInsert, TEMPLATE_QUESTION_TABLE);
+            $options["maxCaption"] = $this->questionnaireDB->addToDictionary($toInsert, $tableToInsert);
             $options["minValue"] = $newTemplateQuestion["options"]["minValue"];
             $options["maxValue"] = $newTemplateQuestion["options"]["maxValue"];
             $options["increment"] = $newTemplateQuestion["options"]["increment"];
