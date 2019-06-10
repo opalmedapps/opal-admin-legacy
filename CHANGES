@@ -1,3 +1,6 @@
+Version 0.18.19.5:
+ - FIxed the push notification for French characters
+
 Version 0.18.19.4:
  - Correct Diagnosis and Patient Location queries
 
