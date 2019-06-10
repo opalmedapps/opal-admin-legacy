@@ -705,7 +705,6 @@ sub getPatientLocationsMHFromSourceDB
 			if ($sourceDBSer eq 2) {
 
 				my $sourceDatabase = Database::connectToSourceDatabase($sourceDBSer);
-
 				my $plInfo_sql = "
 					SELECT DISTINCT
 						plmh.PatientLocationSerNum,
@@ -717,7 +716,6 @@ sub getPatientLocationsMHFromSourceDB
 					FROM
 						Patient pt,
 						MediVisitAppointmentList mval,
-						PatientLocation pl,
 						PatientLocationMH plmh,
 						Venue
 					WHERE
@@ -725,8 +723,52 @@ sub getPatientLocationsMHFromSourceDB
 					AND	LEFT(LTRIM(pt.SSN), 12)		= '$patientSSN'
 					AND mval.AppointmentSerNum		= plmh.AppointmentSerNum
 					AND plmh.CheckinVenueName  		= Venue.VenueId
-					AND pl.PatientLocationSerNum 	= '$sourceuid'
-				";
+					AND plmh.PatientLocationSerNum 	= '$sourceuid'
+					
+					UNION
+					
+					SELECT DISTINCT
+						pl.PatientLocationSerNum,
+						pl.PatientLocationRevCount,
+						'1' as CheckedInFlag,
+						pl.ArrivalDateTime,
+						Venue.ResourceSer,
+						null as DichargeThisLocationDateTime
+					FROM
+						Patient pt,
+						MediVisitAppointmentList mval,
+						PatientLocation pl,
+						Venue
+					WHERE
+						mval.PatientSerNum 			= pt.PatientSerNum
+					AND	LEFT(LTRIM(pt.SSN), 12)		= '$patientSSN'
+					AND mval.AppointmentSerNum		= pl.AppointmentSerNum
+					AND pl.CheckinVenueName  		= Venue.VenueId
+					AND pl.PatientLocationSerNum 	= '$sourceuid'					
+					";
+				
+				# Keep this as a backup for now
+				# my $plInfo_sql = "
+				# 	SELECT DISTINCT
+				# 		plmh.PatientLocationSerNum,
+				# 		plmh.PatientLocationRevCount,
+				# 		'1' as CheckedInFlag,
+				# 		plmh.ArrivalDateTime,
+				# 		Venue.ResourceSer,
+				# 		plmh.DichargeThisLocationDateTime
+				# 	FROM
+				# 		Patient pt,
+				# 		MediVisitAppointmentList mval,
+				# 		PatientLocation pl,
+				# 		PatientLocationMH plmh,
+				# 		Venue
+				# 	WHERE
+				# 		mval.PatientSerNum 			= pt.PatientSerNum
+				# 	AND	LEFT(LTRIM(pt.SSN), 12)		= '$patientSSN'
+				# 	AND mval.AppointmentSerNum		= plmh.AppointmentSerNum
+				# 	AND plmh.CheckinVenueName  		= Venue.VenueId
+				# 	AND pl.PatientLocationSerNum 	= '$sourceuid'
+				# ";
 
                 # print "$plInfo_sql\n";
 		        # prepare query
