@@ -156,18 +156,19 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     /*
-     * This function forces a question to be updated with the date of update and the username. It is necessary if the
-     * question table was not modified directly but its options were.
+     * This function forces a table to be updated with the date of update and the username. It is necessary if the
+     * table was not modified directly but its options were.
      * @params  id of the question to force update (int)
      * @return  total record updated (string)
      * */
-    function forceUpdateQuestion($id) {
+    function forceUpdate($id, $tableName) {
+        $sqlQuery = str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_FORCE_UPDATE_UPDATEDBY);
         $updatedEntries = array(
             "ID"=>$id,
             "updatedBy"=>$this->getUsername(),
             "OAUserId"=>$this->getOAUserId(),
         );
-        return $this->_updateRecordIntoTable(SQL_QUESTIONNAIRE_UPDATE_UPDATEDBY_QUESTION, $updatedEntries);
+        return $this->_updateRecordIntoTable($sqlQuery, $updatedEntries);
     }
 
     /*
@@ -180,21 +181,6 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $updatedEntries["updatedBy"]=$this->getUsername();
         $updatedEntries["OAUserId"]=$this->getOAUserId();
         return $this->_updateRecordIntoTable(SQL_QUESTIONNAIRE_UPDATE_QUESTIONNAIRE, $updatedEntries);
-    }
-
-    /*
-     * This function forces a questionnaire to be updated with the date of update and the username. It is necessary if
-     * the questionnaire table was not modified directly but its options were.
-     * @params  id of the questionnaire to force update (int)
-     * @return  total record updated (string)
-     * */
-    function forceUpdateQuestionnaire($id) {
-        $updatedEntries = array(
-            "ID"=>$id,
-            "updatedBy"=>$this->getUsername(),
-            "OAUserId"=>$this->getOAUserId(),
-        );
-        return $this->_updateRecordIntoTable(SQL_QUESTIONNAIRE_UPDATE_UPDATEDBY_QUESTIONNAIRE, $updatedEntries);
     }
 
     /*
@@ -608,8 +594,24 @@ class DatabaseQuestionnaire extends DatabaseAccess
      *          (int), IDs of options to keep (array of int)
      * @return  array of records found
      * */
-    function fetchOptionsToBeDeleted($tableName, $parentTable, $parentTableId, $idsToBeKept) {
-        $sqlSelect = str_replace("%%OPTIONIDS%%", implode(", ", $idsToBeKept),str_replace("%%PARENTTABLE%%", $parentTable, str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_SELECT_QUESTION_OPTIONS_TO_BE_DELETED)));
+    function fetchTemplateQuestionOptionsToBeDeleted($tableName, $parentTable, $parentTableId, $idsToBeKept) {
+        $sqlSelect = str_replace("%%GRANDPARENTFIELDNAME%%", "templateQuestionId", str_replace("%%GRANDPARENTTABLE%%", TEMPLATE_QUESTION_TABLE, str_replace("%%OPTIONIDS%%", implode(", ", $idsToBeKept),str_replace("%%PARENTTABLE%%", $parentTable, str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_SELECT_OPTIONS_TO_BE_DELETED)))));
+
+        return $this->_fetchAll($sqlSelect,
+            array(
+                array("parameter"=>":parentTableId","variable"=>$parentTableId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":OAUserId","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    /*
+     * Returns all the options of a question that needs to be deleted
+     * @params  table name where to look at (string), parent table name of the option (string), ID of the parent table
+     *          (int), IDs of options to keep (array of int)
+     * @return  array of records found
+     * */
+    function fetchQuestionOptionsToBeDeleted($tableName, $parentTable, $parentTableId, $idsToBeKept) {
+        $sqlSelect = str_replace("%%GRANDPARENTFIELDNAME%%", "questionId", str_replace("%%GRANDPARENTTABLE%%", QUESTION_TABLE, str_replace("%%OPTIONIDS%%", implode(", ", $idsToBeKept),str_replace("%%PARENTTABLE%%", $parentTable, str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_SELECT_OPTIONS_TO_BE_DELETED)))));
 
         return $this->_fetchAll($sqlSelect,
             array(
@@ -625,7 +627,23 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  array of records deleted
      * */
     function deleteOptionsForQuestion($tableName, $parentTable, $parentTableId, $idsToBeKept) {
-        $sqlSelect = str_replace("%%OPTIONIDS%%", implode(", ", $idsToBeKept),str_replace("%%PARENTTABLE%%", $parentTable, str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_DELETE_QUESTION_OPTIONS)));
+        $sqlSelect = str_replace("%%GRANDPARENTFIELDNAME%%", "questionId", str_replace("%%GRANDPARENTTABLE%%", QUESTION_TABLE, str_replace("%%OPTIONIDS%%", implode(", ", $idsToBeKept),str_replace("%%PARENTTABLE%%", $parentTable, str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_DELETE_QUESTION_OPTIONS)))));
+
+        return $this->_execute($sqlSelect,
+            array(
+                array("parameter"=>":parentTableId","variable"=>$parentTableId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":OAUserId","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    /*
+     * This function removes options associated to a specific template question. Used when updating a template question.
+     * @params  table name where to look at (string), parent table name of the option (string), ID of the parent table
+     *          (int), IDs of options to keep (array of int)
+     * @return  array of records deleted
+     * */
+    function deleteOptionsForTemplateQuestion($tableName, $parentTable, $parentTableId, $idsToBeKept) {
+        $sqlSelect = str_replace("%%GRANDPARENTFIELDNAME%%", "templateQuestionId", str_replace("%%GRANDPARENTTABLE%%", TEMPLATE_QUESTION_TABLE, str_replace("%%OPTIONIDS%%", implode(", ", $idsToBeKept),str_replace("%%PARENTTABLE%%", $parentTable, str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_DELETE_QUESTION_OPTIONS)))));
 
         return $this->_execute($sqlSelect,
             array(
@@ -679,6 +697,35 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     /*
+     * This function updates the options associated to a specific template question. Used when updating a template
+     * question.
+     * @params  table name where to look at (string) ID of the parent table (int), options to update (array)
+     * @return  total records executed
+     * */
+    function updateOptionsForTemplateQuestion($tableName, $id, $option) {
+        $sqlOptionsToUpdate = array();
+        $sqlOptionsWereUpdated = array();
+        $optionsToUpdate = array();
+        foreach ($option as $key=>$value) {
+            array_push($optionsToUpdate, array(
+                "parameter"=>":$key",
+                "variable"=>$value,
+            ));
+            array_push($sqlOptionsToUpdate, "`$key` = :$key");
+            array_push($sqlOptionsWereUpdated, "`$key` != :$key");
+        }
+
+        $sqlSelect = str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_UPDATE_TEMPLATE_QUESTION_OPTIONS);
+        $sqlSelect = str_replace("%%OPTIONSTOUPDATE%%", implode(", ", $sqlOptionsToUpdate), $sqlSelect);
+        $sqlSelect = str_replace("%%OPTIONSWEREUPDATED%%", implode(" OR ", $sqlOptionsWereUpdated), $sqlSelect);
+
+        array_push($optionsToUpdate, array("parameter"=>":ID","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":OAUserId","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT));
+
+        return $this->_execute($sqlSelect, $optionsToUpdate);
+    }
+
+    /*
      * This function updates the list of multiple options associated to a specific question. Used when updating a
      * question.
      * @params  table name where to look at (string), ID of the parent table (int), options to update (array)
@@ -698,6 +745,35 @@ class DatabaseQuestionnaire extends DatabaseAccess
         }
 
         $sqlSelect = str_replace("%%PARENTTABLE%%", $parentTable, str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_UPDATE_QUESTION_SUB_OPTIONS));
+        $sqlSelect = str_replace("%%OPTIONSTOUPDATE%%", implode(", ", $sqlOptionsToUpdate), $sqlSelect);
+        $sqlSelect = str_replace("%%OPTIONSWEREUPDATED%%", implode(" OR ", $sqlOptionsWereUpdated), $sqlSelect);
+
+        array_push($optionsToUpdate, array("parameter"=>":ID","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":OAUserId","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT));
+
+        return $this->_execute($sqlSelect, $optionsToUpdate);
+    }
+
+    /*
+     * This function updates the list of multiple options associated to a specific template question. Used when
+     * updating a template question.
+     * @params  table name where to look at (string), ID of the parent table (int), options to update (array)
+     * @return  total records executed
+     * */
+    function updateSubOptionsForTemplateQuestion($tableName, $parentTable, $id, $option) {
+        $sqlOptionsToUpdate = array();
+        $sqlOptionsWereUpdated = array();
+        $optionsToUpdate = array();
+        foreach ($option as $key=>$value) {
+            array_push($optionsToUpdate, array(
+                "parameter"=>":$key",
+                "variable"=>$value,
+            ));
+            array_push($sqlOptionsToUpdate, "`$key` = :$key");
+            array_push($sqlOptionsWereUpdated, "`$key` != :$key");
+        }
+
+        $sqlSelect = str_replace("%%PARENTTABLE%%", $parentTable, str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_UPDATE_TEMPLATE_QUESTION_SUB_OPTIONS));
         $sqlSelect = str_replace("%%OPTIONSTOUPDATE%%", implode(", ", $sqlOptionsToUpdate), $sqlSelect);
         $sqlSelect = str_replace("%%OPTIONSWEREUPDATED%%", implode(" OR ", $sqlOptionsWereUpdated), $sqlSelect);
 
@@ -764,6 +840,15 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return number of records created
      * */
     function insertOptionsQuestion($tableName, $records) {
+        return $this->_insertMultipleRecordsIntoTableConditional($tableName, $records);
+    }
+
+    /*
+     * Insert multiple options to a template question.
+     * @params  table name of the options (string), array of records to insert
+     * @return number of records created
+     * */
+    function insertOptionsTemplateQuestion($tableName, $records) {
         return $this->_insertMultipleRecordsIntoTableConditional($tableName, $records);
     }
 
@@ -891,6 +976,18 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     /*
+     * returns the total number of multiple options for a specific question
+     * @params  ID of the parent table (ID), table name (string)
+     * @return  total of options (array)
+     * */
+    function getTemplateQuestionTotalSubOptions($parentTableId, $tableName) {
+        return $this->_fetch(str_replace("%%TABLENAME%%", $tableName,SQL_QUESTIONNAIRE_GET_TEMPLATE_QUESTION_TOTAL_SUB_OPTIONS),
+            array(
+                array("parameter"=>":parentTableId","variable"=>$parentTableId,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    /*
      * This function marks all records for a specific text as deleted in the dictionary.
      *
      * WARNING!!! No record should be EVER be removed from the questionnaire database! It should only being marked as
@@ -935,7 +1032,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     /*
-     * This function marks a specific record in a specific table as deleted when there is no user.
+     * This function marks a specific record in a specific table as deleted when there is no user to check.
      *
      * WARNING!!! No record should be EVER be removed from the questionnaire database! It should only being marked as
      * being deleted ONLY  after it was verified the record is not locked, the user has the proper authorization and
