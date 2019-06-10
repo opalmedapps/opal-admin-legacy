@@ -23,10 +23,10 @@ angular.module('opalAdmin.controllers.template.question.delete', ['ngAnimate', '
 								errMsg = "You are not authenticated!";
 								break;
 							case 403:
-								errMsg = "You do not have the permission to delete this answer type.";
+								errMsg = "You do not have the permission to delete this response type.";
 								break;
 							case 409:
-								errMsg = "The answer type was already modified by someone else. Please verify and try again.";
+								errMsg = "The response type was already modified by someone else. Please verify and try again.";
 								break;
 							default:
 								errMsg = response.message;

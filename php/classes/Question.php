@@ -408,7 +408,7 @@ class Question extends QuestionnaireModule {
             $optionsToKeepAndUpdate = array("-1");
 
         if (!empty($optionsToKeepAndUpdate)) {
-            $optionsToDelete = $this->questionnaireDB->fetchOptionsToBeDeleted(RADIO_BUTTON_OPTION_TABLE, RADIO_BUTTON_TABLE, $options["ID"], $optionsToKeepAndUpdate);
+            $optionsToDelete = $this->questionnaireDB->fetchQuestionOptionsToBeDeleted(RADIO_BUTTON_OPTION_TABLE, RADIO_BUTTON_TABLE, $options["ID"], $optionsToKeepAndUpdate);
             foreach ($optionsToDelete as $opt)
                 $this->questionnaireDB->markAsDeletedInDictionary($opt["description"]);
             $total += $this->questionnaireDB->deleteOptionsForQuestion(RADIO_BUTTON_OPTION_TABLE, RADIO_BUTTON_TABLE, $options["ID"], $optionsToKeepAndUpdate);
@@ -449,7 +449,7 @@ class Question extends QuestionnaireModule {
         }
 
         if (!empty($optionsToAdd))
-            $total += $this->questionnaireDB->insertOptionsQuestion(RADIO_BUTTON_OPTION_TABLE, $optionsToAdd);
+            $total += $this->questionnaireDB->insertOptionsTemplateQuestion(RADIO_BUTTON_OPTION_TABLE, $optionsToAdd);
         return $total;
     }
 
@@ -476,7 +476,7 @@ class Question extends QuestionnaireModule {
             $optionsToKeepAndUpdate = array("-1");
 
         if (!empty($optionsToKeepAndUpdate)) {
-            $optionsToDelete = $this->questionnaireDB->fetchOptionsToBeDeleted(CHECKBOX_OPTION_TABLE, CHECKBOX_TABLE, $options["ID"], $optionsToKeepAndUpdate);
+            $optionsToDelete = $this->questionnaireDB->fetchQuestionOptionsToBeDeleted(CHECKBOX_OPTION_TABLE, CHECKBOX_TABLE, $options["ID"], $optionsToKeepAndUpdate);
             foreach ($optionsToDelete as $opt)
                 $this->questionnaireDB->markAsDeletedInDictionary($opt["description"]);
             $total += $this->questionnaireDB->deleteOptionsForQuestion(CHECKBOX_OPTION_TABLE, CHECKBOX_TABLE, $options["ID"], $optionsToKeepAndUpdate);
@@ -642,7 +642,7 @@ class Question extends QuestionnaireModule {
 
         if($isLocked) {
             if ($total > 0)
-                $this->questionnaireDB->forceUpdateQuestion($updatedQuestion["ID"]);
+                $this->questionnaireDB->forceUpdate($updatedQuestion["ID"], QUESTION_TABLE);
             return true;
         }
 
@@ -676,7 +676,7 @@ class Question extends QuestionnaireModule {
             $total += $this->updateSliderOptions($updatedQuestion["options"]);
 
         if ($questionUpdated == 0 && $total > 0)
-            $this->questionnaireDB->forceUpdateQuestion($updatedQuestion["ID"]);
+            $this->questionnaireDB->forceUpdate($updatedQuestion["ID"], QUESTION_TABLE);
     }
 
     /**

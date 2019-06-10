@@ -1,7 +1,7 @@
 <!-- Modal title -->
 <div class="modal-header">
     <div class="row col-xs-12"">
-        <h2 class="modal-title col-xs-12"><span class="glyphicon glyphicon-pencil"></span>Edit Answer Type Template</h2>
+        <h2 class="modal-title col-xs-12"><span class="glyphicon glyphicon-pencil"></span>Edit Response Type Template</h2>
     </div>
     <div class="modal-buttons col-xs-12">
         <span>
@@ -37,7 +37,7 @@
             </div>
             <div class="row">
                 <div class="col-xs-6 col-md-6" style="margin-bottom: 20px;">
-                    <label style="font-size: 20px;">Make this answer type private: <input ng-change="setChangesMade()" type="checkbox" ng-model="templateQuestion.private" ng-disabled="!templateQuestion.isOwner || templateQuestion.readOnly"  ng-true-value="true" ng-false-value="false"></label>
+                    <label style="font-size: 20px;">Make this answer type private: <input ng-change="setChangesMade()" type="checkbox" ng-model="templateQuestion.private" ng-disabled="!templateQuestion.isOwner || templateQuestion.readOnly"  ng-true-value="1" ng-false-value="0"></label>
                 </div>
             </div>
         </div>

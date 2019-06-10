@@ -263,9 +263,9 @@ define("SQL_QUESTIONNAIRE_DELETE_ALL_TAGS_QUESTION",
 define("SQL_QUESTIONNAIRE_DELETE_QUESTION_OPTIONS",
     "DELETE top FROM %%TABLENAME%% top
     LEFT JOIN %%PARENTTABLE%% pt ON pt.id = top.parentTableId
-    LEFT JOIN ".QUESTION_TABLE." q ON q.id = pt.questionId
+    LEFT JOIN %%GRANDPARENTTABLE%% gpt ON gpt.id = pt.%%GRANDPARENTFIELDNAME%%
     WHERE top.parentTableId = :parentTableId
-    AND (q.OAUserId = :OAUserId OR q.private = 0)
+    AND (gpt.OAUserId = :OAUserId OR gpt.private = 0)
     AND top.ID NOT IN (%%OPTIONIDS%%);"
 );
 
@@ -278,12 +278,12 @@ define("SQL_QUESTIONNAIRE_DELETE_QUESTION_SECTION",
     AND qs.questionId NOT IN (%%OPTIONIDS%%);"
 );
 
-define("SQL_QUESTIONNAIRE_SELECT_QUESTION_OPTIONS_TO_BE_DELETED",
+define("SQL_QUESTIONNAIRE_SELECT_OPTIONS_TO_BE_DELETED",
     "SELECT top.description FROM %%TABLENAME%% top
     LEFT JOIN %%PARENTTABLE%% pt ON pt.id = top.parentTableId
-    LEFT JOIN ".QUESTION_TABLE." q ON q.id = pt.questionId
+    LEFT JOIN %%GRANDPARENTTABLE%% gpt ON gpt.id = pt.%%GRANDPARENTFIELDNAME%%
     WHERE top.parentTableId = :parentTableId
-    AND (q.OAUserId = :OAUserId OR q.private = 0)
+    AND (gpt.OAUserId = :OAUserId OR gpt.private = 0)
     AND top.ID NOT IN (%%OPTIONIDS%%);"
 );
 
@@ -450,6 +450,11 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_TOTAL_SUB_OPTIONS",
     WHERE parentTableId = :parentTableId;"
 );
 
+define("SQL_QUESTIONNAIRE_GET_TEMPLATE_QUESTION_TOTAL_SUB_OPTIONS",
+    "SELECT COUNT(*) AS total FROM %%TABLENAME%% t
+    WHERE parentTableId = :parentTableId;"
+);
+
 define("SQL_QUESTIONNAIRE_UPDATE_DICTIONARY",
     "UPDATE " . DICTIONARY_TABLE . "
     SET content = :content, updatedBy = :updatedBy
@@ -478,8 +483,8 @@ define("SQL_QUESTIONNAIRE_UPDATE_TYPE_TEMPLATE",
     AND deleted = ".NON_DELETED_RECORD.";"
 );
 
-define("SQL_QUESTIONNAIRE_UPDATE_UPDATEDBY_QUESTION",
-    "UPDATE ".QUESTION_TABLE."
+define("SQL_QUESTIONNAIRE_FORCE_UPDATE_UPDATEDBY",
+    "UPDATE %%TABLENAME%%
     SET updatedBy = :updatedBy, lastUpdated = NOW()
     WHERE ID = :ID
     AND (private = 0 OR OAUserId = :OAUserId)
@@ -517,6 +522,27 @@ define("SQL_QUESTIONNAIRE_UPDATE_QUESTION_SUB_OPTIONS",
     "UPDATE %%TABLENAME%% tb
     LEFT JOIN %%PARENTTABLE%% pt ON pt.id = tb.parentTableId
     LEFT JOIN ".QUESTION_TABLE." q ON q.id = pt.questionId
+    SET %%OPTIONSTOUPDATE%%
+    WHERE tb.ID = :ID
+    AND (%%OPTIONSWEREUPDATED%%)
+    AND (q.OAUserId = :OAUserId OR q.private = 0)
+    AND q.deleted = ".NON_DELETED_RECORD.";"
+);
+
+define("SQL_QUESTIONNAIRE_UPDATE_TEMPLATE_QUESTION_OPTIONS",
+    "UPDATE %%TABLENAME%% tb
+    LEFT JOIN ".TEMPLATE_QUESTION_TABLE." q ON q.id = tb.templateQuestionId
+    SET %%OPTIONSTOUPDATE%%
+    WHERE tb.ID = :ID
+    AND (%%OPTIONSWEREUPDATED%%)
+    AND (q.OAUserId = :OAUserId OR q.private = 0)
+    AND q.deleted = ".NON_DELETED_RECORD.";"
+);
+
+define("SQL_QUESTIONNAIRE_UPDATE_TEMPLATE_QUESTION_SUB_OPTIONS",
+    "UPDATE %%TABLENAME%% tb
+    LEFT JOIN %%PARENTTABLE%% pt ON pt.id = tb.parentTableId
+    LEFT JOIN ".TEMPLATE_QUESTION_TABLE." q ON q.id = pt.templateQuestionId
     SET %%OPTIONSTOUPDATE%%
     WHERE tb.ID = :ID
     AND (%%OPTIONSWEREUPDATED%%)

@@ -375,7 +375,7 @@ class Questionnaire extends QuestionnaireModule {
          * with the name and date anyway.
          * */
         if ($questionnaireUpdated == 0 && $total > 0)
-            $this->questionnaireDB->forceUpdateQuestionnaire($updatedQuestionnaire["ID"]);
+            $this->questionnaireDB->forceUpdate($updatedQuestionnaire["ID"], QUESTIONNAIRE_TABLE);
     }
 }
 ?>
