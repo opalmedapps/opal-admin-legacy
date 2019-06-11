@@ -1,0 +1,394 @@
+<div id="main">
+    <div id="top">
+        <div class="clearfix">
+            <div class="row">
+                <!-- side bar: summary -->
+                <div class="col-lg-2">
+                    <!-- Home logo-->
+                    <div class="side-navbar" ng-controller="navigation">
+                        <div class="row side-logo" ng-click="goToHome()">
+                            <div class="col-md-12">
+                                <div class="logo">
+                                    <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+                                </div>
+                                <h1 class="animated fadeIn">opal <strong>ADMIN</strong></h1>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="summary-fix">
+                        <!-- Back button -->
+                        <div class="row side-panel-menu">
+                            <div class="col-xs-12 col-sm-5 col-lg-12">
+                                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                                    <div class="side-panel-info-sm">
+                                        <div class="panel-content">
+                                            <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                                            <h6 class="side-panel-title" style="display:inline-block;margin:0;font-size:14px;"><strong>Back to Manage types of response</strong></h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Summary -->
+                            <div class="side-menu-title col-lg-12">
+                                <div class="horz-line" style="height: 10px; text-align: center">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <h2>Summary</h2>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="progress progress-striped active">
+                                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <uib-accordion class="side-navbar">
+
+                            <!-- SECTION: Question Text -->
+                            <div uib-accordion-group is-open="titleSection.open" class="panel-container summary-box" is-disabled="!newTemplateQuestion.name_EN && !newTemplateQuestion.name_FR">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="newTemplateQuestion.name_EN && newTemplateQuestion.name_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>Name</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i ng-if="newTemplateQuestion.name_EN || newTemplateQuestion.name_FR" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="newTemplateQuestion.name_EN" class="description">
+                                    <p style="margin-botton:5px">
+                                        <strong>EN</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{newTemplateQuestion.name_EN}}
+                                    </p>
+                                </div>
+                                <div ng-if="newTemplateQuestion.name_FR" class="description">
+                                    <p style="margin-botton:5px">
+                                        <strong>FR</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{newTemplateQuestion.name_FR}}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- SECTION: Answer type -->
+                            <div uib-accordion-group is-open="answerTypeSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show" is-disabled="!newTemplateQuestion.typeId">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="newTemplateQuestion.typeId" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>Response Type</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': answerTypeSection.open, 'glyphicon-chevron-right': !answerTypeSection.open}" ng-if="newTemplateQuestion.typeId"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="newTemplateQuestion.typeId" class="description">
+                                    <p style="margin-bottom:5px;">
+                                        {{selectedAt.category_EN}}
+                                    </p>
+                                    <p style="margin-bottom:5px;">
+                                        <strong>EN</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{selectedAt.name_EN}}
+                                    </p>
+                                </div>
+                                <div ng-if="newTemplateQuestion.typeId" class="description">
+                                    <p style="margin-bottom:5px;">
+                                        <strong>FR</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{selectedAt.name_FR}}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- SECTION: Question Library -->
+                            <div uib-accordion-group is-open="questionLibrarySection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: questionLibrarySection.show}" ng-if="questionLibrarySection.show" is-disabled="!newTemplateQuestion.library_ID">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="newTemplateQuestion.library_ID" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>Question Library</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': questionLibrarySection.open, 'glyphicon-chevron-right': !questionLibrarySection.open}" ng-if="newTemplateQuestion.library_ID"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="newTemplateQuestion.library_ID" class="description">
+                                    <p style="margin-bottom:5px;">
+                                        <strong>EN</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{selectedGroup.name_EN}}
+                                    </p>
+                                </div>
+                                <div ng-if="newTemplateQuestion.library_ID" class="description">
+                                    <p style="margin-bottom:5px;">
+                                        <strong>FR</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{selectedGroup.name_FR}}
+                                    </p>
+                                </div>
+                            </div>
+                        </uib-accordion>
+
+                        <!-- Submit button -->
+                        <div class="panel-container">
+                            <a href="" ng-click="submitTemplateQuestion()" ng-show="checkForm()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" style="width: 100%;">
+                                <span style="font-size: 20px;"><strong>Submit response type</strong></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right side detail view -->
+                <div class="col-xs-12 col-lg-10 animated fadeInRight">
+                    <div class="row main-title">
+                        <!-- Page title -->
+                        <div class="col-xs-12 col-md-6 title-content">
+                            <span class="fa fa-plus"></span>
+                            <h1><strong>Add Response Type</strong></h1>
+                        </div>
+                        <!-- Breadcrumbs -->
+                        <div class="col-md-6 title-breadcrumbs">
+                            <span>
+                                <a ui-sref="home">Home</a>
+                                <span class="glyphicon glyphicon-menu-right teflon"></span>
+                                <a ui-sref="questionnaire-menu">Questionnaires</a>
+                                <span class="glyphicon glyphicon-menu-right teflon"></span>
+                                <a ui-sref="questionnaire-question">Manage</a>
+                                <span class="glyphicon glyphicon-menu-right teflon"></span>
+                                <strong>Add Response Type</strong>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="row mobile-side-panel-menu">
+                        <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
+                            <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                                <div class="side-panel-info-sm">
+                                    <div class="panel-content">
+                                        <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                                        <h6 class="side-panel-title"><strong>Back to Manage Questions</strong></h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkForm()">
+                            <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
+                                <span style="padding: 0 10px;">
+                                    <h2>Step {{numOfCompletedSteps}} of {{stepTotal}} Completed</h2>
+                                </span>
+                            </div>
+                            <div class="progress progress-striped active">
+                                <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-content">
+                        <!-- SECTION: Question text -->
+                        <div class="row">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span><h2>Name</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 5px;">
+                                    <span style="color:#d9534f"><strong>Required field:</strong></span>
+                                    Please assign the response type name in both english and in french.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="panel" ng-class="(newTemplateQuestion.name_EN) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>English</strong>
+                                        <span ng-hide="newTemplateQuestion.name_EN" style="float:right"><em>Incomplete</em></span>
+                                        <span ng-show="newTemplateQuestion.name_EN" style="float:right"><em>Complete</em></span>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <textarea class="form-control" rows="2" ng-model="newTemplateQuestion.name_EN" ng-change="updateQuestionText()"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                                <div class="panel" ng-class="(newTemplateQuestion.name_FR) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>Français</strong>
+                                        <span ng-hide="newTemplateQuestion.name_FR" style="float:right"><em>Incomplete</em></span>
+                                        <span ng-show="newTemplateQuestion.name_FR" style="float:right"><em>Complete</em></span>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <textarea class="form-control" rows="2" ng-model="newTemplateQuestion.name_FR" ng-change="updateQuestionText()"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6" style="margin-bottom: 20px;">
+                                <label style="font-size: 20px;">Make this response type private: <input type="checkbox" ng-model="newTemplateQuestion.private" ng-true-value="1" ng-false-value="0"></label>
+                            </div>
+                        </div>
+
+                        <!-- SECTION: Question Type -->
+                        <div class="row animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>Response Type</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show" style="margin-bottom:20px;">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 5px;">
+                                    <span style="color:#d9534f"><strong>Required field:</strong></span>
+                                    Please choose a type of response and fill the required field.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show">
+                            <div class="col-xs-12 col-md-8">
+                                <div class="panel-container">
+                                    <form name="newAtForm">
+                                        <div class="col-xs-12">
+                                            <select class="form-control" name="atCategory" style="width:60%;" ng-change="updateTemplateQuestion(atCategory);checkCompletion();" ng-model="atCategory" ng-options="atCat.category_EN for atCat in atCatList" required>
+                                                <option value="" disabled>-- select a response category --</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Add multiple choice options -->
+                                        <div class="col-xs-12" ng-show="atCategory.category_EN === 'Checkbox' || atCategory.category_EN === 'Radio Button'">
+                                            <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in newTemplateQuestion.subOptions">
+                                                <input ng-change="checkCompletion();orderPreview();" class="form-control" style="width:20%" type="number" placeholder="Position" ng-model="option.order" min="1" required/>
+                                                <input ng-change="checkCompletion();" class="form-control" style="width:40%" type="text" placeholder="Text (EN)" ng-model="option.description_EN" required/>
+                                                <input ng-change="checkCompletion();" class="form-control" style="width:40%" type="text" placeholder="Text (FR)" ng-model="option.description_FR" required/>
+                                                <span class="input-group-btn"><button class="btn btn-default" ng-click="deleteOptions(option);checkCompletion();"><span class="fa fa-minus"></span> Delete</button></span>
+                                            </div>
+                                            <button type="button" class="btn btn-default" style="float: left; margin-top:5px;" ng-click="addOptions();"><span class="fa fa-plus"></span> Add option</button>
+                                        </div>
+
+                                        <!-- Add textbox options -->
+                                        <div class="col-xs-12" ng-show="atCategory.category_EN === 'Text box'">
+                                            <p style="text-align: left;margin-top:20px;">No option.</p>
+                                        </div>
+
+                                        <!-- Add Sliders options -->
+                                        <div class="col-xs-12" ng-show="atCategory.category_EN === 'Slider'">
+                                            <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
+                                                <div style="display: block; float: left;width: 16%;">&nbsp;</div>
+                                                <div style="display: block; float: left;width: 16%;">Value</div>
+                                                <div style="display: block; float: left;width: 29%;">English</div>
+                                                <div style="display: block; float: left;width: 29%;">French</div>
+                                            </div>
+                                            <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
+                                                <span class="input-group-addon">&nbsp; Minimum settings</span>
+                                                <input class="form-control" style="width:20%" type="number" placeholder="Minimum value" ng-model="newTemplateQuestion.options.minValue" min="1" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();"/>
+                                                <input class="form-control" style="width:35%" type="text" ng-model="newTemplateQuestion.options.minCaption_EN" placeholder="Minimum caption (EN)" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
+                                                <input class="form-control" style="width:35%" type="text" ng-model="newTemplateQuestion.options.minCaption_FR" placeholder="Minimum caption (FR)" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
+                                            </div>
+                                            <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
+                                                <span class="input-group-addon">&nbsp;Maximum settings</span>
+                                                <input class="form-control" style="width:20%" type="number" placeholder="Maximum value" ng-model="newTemplateQuestion.options.maxValue" min="1" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
+                                                <input class="form-control" style="width:35%" type="text" ng-model="newTemplateQuestion.options.maxCaption_EN" placeholder="Maximum caption (EN)" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
+                                                <input class="form-control" style="width:35%" type="text" ng-model="newTemplateQuestion.options.maxCaption_FR" placeholder="Maximum caption (FR)" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
+                                            </div>
+                                            <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
+                                                <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Increment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                                <input class="form-control" style="width:20%" type="number" placeholder="Increment step" ng-model="newTemplateQuestion.options.increment" min="1" ng-required="atCategory.category_EN === 'Slider'" ng-change="updateSlider();checkCompletion();" />
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-4" ng-if="atCategory.category_EN === 'Radio Button' || atCategory.category_EN === 'Checkbox' || atCategory.category_EN === 'Slider' || atCategory.category_EN === 'Text box'">
+                                <p style="margin-bottom: 10px;">
+                                    <span style="font-size: 20px;"><strong>Preview</strong></span>
+                                </p>
+
+                                <!-- Preview -->
+                                <div class="col-xs-12">
+                                    <h4>English</h4>
+                                    <!-- Show category -->
+                                    <div ng-if="atCategory.category_EN === 'Slider'">
+                                        <div ng-repeat="option in preview" ng-show="validSlider">
+                                            <label><input type="radio" name="option"/> {{option.description_EN}}</label>
+                                        </div>
+                                        <div ng-hide="validSlider"><p>Invalid slider options.</p></div>
+                                    </div>
+
+                                    <div ng-if="atCategory.category_EN === 'Radio Button'">
+                                        <div ng-repeat="option in newTemplateQuestion.subOptions">
+                                            <label><input type="radio" name="option"/> {{option.description_EN}}</label>
+                                        </div>
+                                    </div>
+
+                                    <div ng-if="atCategory.category_EN === 'Checkbox'">
+                                        <div ng-repeat="option in newTemplateQuestion.subOptions">
+                                            <label><input type="checkbox" name="option"/> {{option.description_EN}}</label>
+                                        </div>
+                                    </div>
+
+                                    <div ng-if="atCategory.category_EN === 'Text box'">
+                                        <textarea style="width:80%" rows="10" placeholder="Please enter your answer." disabled></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <h4>Français</h4>
+                                    <!-- Show category -->
+                                    <div ng-if="atCategory.category_EN === 'Slider'">
+                                        <div ng-repeat="option in preview" ng-show="validSlider">
+                                            <label><input type="radio" name="option"/> {{option.description_FR}}</label>
+                                        </div>
+                                        <div ng-hide="validSlider"><p>Options de la case de défilement invalides.</p></div>
+                                    </div>
+
+                                    <div ng-if="atCategory.category_EN === 'Radio Button'">
+                                        <div ng-repeat="option in newTemplateQuestion.subOptions">
+                                            <label><input type="radio" name="option"/> {{option.description_FR}}</label>
+                                        </div>
+                                    </div>
+
+                                    <div ng-if="atCategory.category_EN === 'Checkbox'">
+                                        <div ng-repeat="option in newTemplateQuestion.subOptions">
+                                            <label><input type="checkbox" name="option"/> {{option.description_FR}}</label>
+                                        </div>
+                                    </div>
+
+                                    <div ng-if="atCategory.category_EN === 'Text box'">
+                                        <textarea style="width:80%" rows="10" placeholder="Veuillez entrer votre réponse." disabled></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
