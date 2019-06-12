@@ -450,6 +450,14 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_TOTAL_SUB_OPTIONS",
     WHERE parentTableId = :parentTableId;"
 );
 
+define("SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_NAMES",
+    "SELECT
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS title_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".FRENCH_LANGUAGE.") AS title_FR
+    FROM ".QUESTIONNAIRE_TABLE." q
+    WHERE q.ID = :questionnaireId;"
+);
+
 define("SQL_QUESTIONNAIRE_GET_TEMPLATE_QUESTION_TOTAL_SUB_OPTIONS",
     "SELECT COUNT(*) AS total FROM %%TABLENAME%% t
     WHERE parentTableId = :parentTableId;"
