@@ -65,4 +65,24 @@ class DatabaseOpal extends DatabaseAccess {
             ));
     }
 
+    /*
+     * Returns the list of published questionnaires
+     * @params  void
+     * @return  array of questionnaires
+     * */
+    function getPublishedQuestionnaires() {
+        return $this->_fetchAll(SQL_OPAL_GET_PUBLISHED_QUESTIONNAIRES, array());
+    }
+
+    /*
+     * Returns the filters for a specific questionnaire controll
+     * @params  questionnaire control ID
+     * @return  array of filters
+     * */
+    function getFilters($questionnaireControlId) {
+        return $this->_fetchAll(SQL_OPAL_GET_FILTERS,
+            array(
+                array("parameter"=>":questionnaireControlId","variable"=>$questionnaireControlId,"data_type"=>PDO::PARAM_STR),
+            ));
+    }
 }

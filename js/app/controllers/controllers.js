@@ -59,7 +59,6 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.publication.tool',
 	'opalAdmin.controllers.publication.tool.add',
 	'opalAdmin.controllers.publication.tool.edit',
-	'opalAdmin.controllers.publication.tool.delete',
 	'opalAdmin.controllers.question',
 	'opalAdmin.controllers.question.add',
 	'opalAdmin.controllers.question.edit',

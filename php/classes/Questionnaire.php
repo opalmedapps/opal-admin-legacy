@@ -108,6 +108,10 @@ class Questionnaire extends QuestionnaireModule {
         return $questionLocked;
     }
 
+    function getQuestionnaireName($questionnaireId) {
+        return $this->questionnaireDB->getQuestionnaireName($questionnaireId);
+    }
+
     /*
      * Gets questionnaire details
      *
@@ -280,9 +284,6 @@ class Questionnaire extends QuestionnaireModule {
         $questionsToKeep = array();
         $questionCheckPrivacy = array();
 
-        /*
-         *  $this->questionnaireDB->fetchQuestionsByIds($arrIds)
-         * */
         //Get current questionnaire infos
         $oldQuestionnaire = $this->getQuestionnaireDetails($updatedQuestionnaire["ID"]);
 

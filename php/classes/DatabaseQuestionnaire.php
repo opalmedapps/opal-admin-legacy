@@ -197,6 +197,18 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     /*
+     * This function returns the names of the questionnaires
+     * @params  questionnaire ID
+     * @return  array of names of the questionnaire
+     * */
+    function getQuestionnaireNames($questionnaireId) {
+        return $this->_fetch(SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_NAMES,
+            array(
+                array("parameter"=>":questionnaireId","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_STR),
+            ));
+    }
+
+    /*
      * This function lists all the questions types a specific user can have access.
      * @param   void
      * @return  array of question types

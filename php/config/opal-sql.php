@@ -18,6 +18,7 @@ define( "OPAL_DB_PASSWORD", $config['databaseConfig']['opal']['password'] );
 define("OPAL_OAUSER_TABLE","oauser");
 define("OPAL_OAUSER_ROLE_TABLE","oauserrole");
 define("OPAL_QUESTIONNAIRE_CONTROL_TABLE","questionnairecontrol");
+define("OPAL_FILTERS_TABLE","Filters");
 
 /*
  * Listing of all SQL queries for the Opal database
@@ -40,4 +41,31 @@ define("SQL_OPAL_LIST_QUESTIONNAIRES_FROM_QUESTIONNAIRE_CONTROL",
     "SELECT COUNT(*) AS total
     FROM ".OPAL_QUESTIONNAIRE_CONTROL_TABLE."
     WHERE QuestionnaireDBSerNum IN ( :questionnaireList )"
+);
+
+define("SQL_OPAL_GET_PUBLISHED_QUESTIONNAIRES",
+    "SELECT DISTINCT
+    qc.QuestionnaireControlSerNum AS serial,
+    qc.QuestionnaireDBSerNum AS db_serial,
+    qc.QuestionnaireName_EN AS name_FR,
+    qc.QuestionnaireName_FR AS name_EN,
+    qc.PublishFlag AS publish,
+    0 AS changed
+    FROM ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." qc;"
+);
+
+define("SQL_OPAL_GET_FILTERS",
+    "SELECT DISTINCT 
+    f.FilterType AS type,
+    f.FilterId AS id,
+    1 AS added
+    FROM 
+    ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." qc, 
+    ".OPAL_FILTERS_TABLE." f
+    WHERE
+    qc.QuestionnaireControlSerNum = :questionnaireControlId
+    AND f.ControlTable = 'LegacyQuestionnaireControl'
+    AND f.ControlTableSerNum = qc.QuestionnaireControlSerNum
+    AND f.FilterType != ''
+    AND f.FilterId != '';"
 );
