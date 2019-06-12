@@ -1,3 +1,6 @@
+Version 0.18.19.6:
+ - Enabled push notificaiton for appointment changes
+
 Version 0.18.19.5:
  - FIxed the push notification for French characters
 
