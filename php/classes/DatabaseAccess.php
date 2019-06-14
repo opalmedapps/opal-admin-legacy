@@ -15,6 +15,7 @@ class DatabaseAccess extends HelpSetup
     protected $password;
     protected $databaseName;
     protected $OAUserId;
+    protected $sessionId;
     protected $username;
     protected $userRole;
 
@@ -82,6 +83,23 @@ class DatabaseAccess extends HelpSetup
     {
         $this->userRole = $userRole;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getSessionId()
+    {
+        return $this->sessionId;
+    }
+
+    /**
+     * @param mixed $sessionId
+     */
+    public function setSessionId($sessionId)
+    {
+        $this->sessionId = $sessionId;
+    }
+
 
     /*
      * This function establish connection with the database
@@ -217,15 +235,23 @@ class DatabaseAccess extends HelpSetup
      * Exit:    ID of last entry
      */
     protected function _queryInsert($sqlInsert, $paramList = array()) {
+        foreach($paramList as $value) {
+            if (in_array(substr($value["parameter"], 1), HelpSetup::EXCEPTION_FIELDS))
+                $sqlInsert = str_replace($value["parameter"], $value["variable"], $sqlInsert);
+        }
+        $cpt = 0;
         try {
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $stmt = $this->connection->prepare($sqlInsert);
             if(count($paramList) > 0) {
                 foreach($paramList as $value) {
-                    if(isset($value["data_type"]) &&  $value["data_type"] != "")
-                        $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
-                    else
-                        $stmt->bindParam($value["parameter"], $value["variable"], self::_getTypeOf($value["variable"]));
+                    if(!in_array(substr($value["parameter"], 1), HelpSetup::EXCEPTION_FIELDS)) {
+                        $cpt++;
+                        if(isset($value["data_type"]) &&  $value["data_type"] != "")
+                            $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
+                        else
+                            $stmt->bindParam($value["parameter"], $value["variable"], self::_getTypeOf($value["variable"]));
+                    }
                 }
             }
             $stmt->execute();
@@ -265,9 +291,12 @@ class DatabaseAccess extends HelpSetup
             $fields = array();
             $params = array();
             foreach($data as $key=>$value) {
+                $temp = "";
+                if (!in_array($key, HelpSetup::EXCEPTION_FIELDS))
+                    $temp = $cpt;
                 array_push($fields, strip_tags($key));
-                array_push($params, ":".strip_tags($key).$cpt);
-                array_push($ready, array("parameter"=>":".strip_tags($key).$cpt,"variable"=>strip_tags($value)));
+                array_push($params, ":".strip_tags($key).$temp);
+                array_push($ready, array("parameter"=>":".strip_tags($key).$temp,"variable"=>strip_tags($value)));
             }
             $sqlFieldNames = "`".implode("`, `", $fields)."`";
             array_push($multiples, implode(", ", $params));
@@ -346,9 +375,12 @@ class DatabaseAccess extends HelpSetup
         $fields = array();
         $params = array();
         foreach($record as $key=>$value) {
+            $temp = "";
+            if (!in_array($key, HelpSetup::EXCEPTION_FIELDS))
+                $temp = $cpt;
             array_push($fields, strip_tags($key));
-            array_push($params, ":".strip_tags($key).$cpt);
-            array_push($ready, array("parameter"=>":".strip_tags($key).$cpt,"variable"=>strip_tags($value)));
+            array_push($params, ":".strip_tags($key).$temp);
+            array_push($ready, array("parameter"=>":".strip_tags($key).$temp,"variable"=>strip_tags($value)));
         }
         $sqlFieldNames = "`".implode("`, `", $fields)."`";
         array_push($multiples, implode(", ", $params));

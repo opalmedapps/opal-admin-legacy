@@ -69,3 +69,11 @@ define("SQL_OPAL_GET_FILTERS",
     AND f.FilterType != ''
     AND f.FilterId != '';"
 );
+
+define("SQL_OPAL_UPDATE_PUBLISHED_QUESTIONNAIRES_STATUS",
+    "UPDATE ".QUESTIONNAIRE_TABLE."
+    SET updatedBy = :updatedBy, lastUpdated = NOW()
+    WHERE ID = :ID
+    AND (private = 0 OR OAUserId = :OAUserId)
+    AND deleted = ".NON_DELETED_RECORD.";"
+);

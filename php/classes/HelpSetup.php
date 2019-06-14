@@ -7,10 +7,8 @@
  */
 
 class HelpSetup {
-
-    const OPAL_OAUSER_ROLE_ADMIN = "1";
-    const OPAL_OAUSER_ROLE_MANAGER = "6";
-    const AUTHORIZATION_MODIFICATION_FINALIZED = array(HelpSetup::OPAL_OAUSER_ROLE_ADMIN, HelpSetup::OPAL_OAUSER_ROLE_MANAGER);
+    const CREATION_DATE_FIELD = "creationDate";
+    const EXCEPTION_FIELDS = array(HelpSetup::CREATION_DATE_FIELD);
 
     /*
      * Basic functions to return an error message to the caller

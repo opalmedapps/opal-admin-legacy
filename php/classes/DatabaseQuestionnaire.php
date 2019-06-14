@@ -58,6 +58,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
                 "content"=>strtoupper($lang["isoLang"]."_"),
                 "contentId"=>$contentId,
                 "tableId"=>$tableId,
+                "creationDate"=>"CURRENT_TIMESTAMP",
                 "createdBy"=>$this->username,
                 "updatedBy"=>$this->username,
             );
@@ -88,6 +89,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
                 "languageId"=>$row["languageId"],
                 "content"=>$row["content"],
                 "contentId"=>$newContentId,
+                "creationDate"=>"CURRENT_TIMESTAMP",
                 "createdBy"=>$this->username,
                 "updatedBy"=>$this->username,
             ));
@@ -336,6 +338,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * */
     function addToTypeTemplateTable($newTemplateQuestion) {
         $newTemplateQuestion["OAUserId"] = $this->OAUserId;
+        $newTemplateQuestion["creationDate"] = "CURRENT_TIMESTAMP";
         $newTemplateQuestion["createdBy"] = $this->username;
         $newTemplateQuestion["updatedBy"] = $this->username;
         return $this->_insertRecordIntoTable(TEMPLATE_QUESTION_TABLE, $newTemplateQuestion);
@@ -365,6 +368,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * */
     function addToLibraryTable($toInsert) {
         $toInsert["OAUserId"] = $this->OAUserId;
+        $toInsert["creationDate"] = "CURRENT_TIMESTAMP";
         $toInsert["createdBy"] = $this->username;
         $toInsert["updatedBy"] = $this->username;
         return $this->_insertRecordIntoTable(LIBRARY_TABLE, $toInsert);
@@ -473,6 +477,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
     function insertQuestion($toInsert) {
         $toInsert["OAUserId"] = $this->OAUserId;
         $toInsert["createdBy"] = $this->username;
+        $toInsert["creationDate"] = "CURRENT_TIMESTAMP";
         $toInsert["updatedBy"] = $this->username;
         return $this->_insertRecordIntoTable(QUESTION_TABLE, $toInsert);
     }
@@ -484,6 +489,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * */
     function insertQuestionnaire($toInsert) {
         $toInsert["OAUserId"] = $this->OAUserId;
+        $toInsert["creationDate"] = "CURRENT_TIMESTAMP";
         $toInsert["createdBy"] = $this->username;
         $toInsert["updatedBy"] = $this->username;
         return $this->_insertRecordIntoTable(QUESTIONNAIRE_TABLE, $toInsert);
@@ -495,6 +501,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @returns ID of the section.
      * */
     function insertSection($toInsert) {
+        $toInsert["creationDate"] = "CURRENT_TIMESTAMP";
         $toInsert["createdBy"] = $this->username;
         $toInsert["updatedBy"] = $this->username;
         return $this->_insertRecordIntoTable(SECTION_TABLE, $toInsert);
