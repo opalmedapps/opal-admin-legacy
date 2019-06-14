@@ -12,7 +12,7 @@ class OpalProject
     /*
      * constructor of the class
      * */
-    public function __construct($OAUserId = false) {
+    public function __construct($OAUserId = false, $sessionId = false) {
         $this->opalDB = new DatabaseOpal(
             OPAL_DB_HOST,
             OPAL_DB_NAME,

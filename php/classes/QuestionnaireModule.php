@@ -9,7 +9,7 @@ class QuestionnaireModule extends OpalProject
 {
     protected $questionnaireDB;
 
-    public function __construct($OAUserId = false) {
+    public function __construct($OAUserId = false, $sessionId = false) {
         parent::__construct($OAUserId);
 
         $this->questionnaireDB = new DatabaseQuestionnaire(

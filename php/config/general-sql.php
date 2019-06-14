@@ -23,3 +23,5 @@ define("SQL_GENERAL_INSERT_INTERSECTION_TABLE_SUB_REQUEST",
 );
 
 define("SQL_GENERAL_UPDATE_RECORDS", "UPDATE %%TABLENAME%% SET %%NEWVALUES%% WHERE %%CONDITIONS%%");
+
+$exceptionFields = array(":creationDate");
