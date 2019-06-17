@@ -172,7 +172,6 @@ angular.module('opalAdmin.controllers.publication.tool', ['ngAnimate', 'ngSaniti
 				$scope.publishedQuestionnaireFlags.OAUserId = currentUser.id;
 				$scope.publishedQuestionnaireFlags.sessionId = currentUser.sessionid;
 				// Submit form
-				console.log($scope.publishedQuestionnaireFlags);
 				$.ajax({
 					type: "POST",
 					url: "php/questionnaire/update.questionnaire_publish_flag.php",
