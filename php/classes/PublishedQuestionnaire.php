@@ -52,7 +52,7 @@ class PublishedQuestionnaire extends Questionnaire {
         foreach($toValidate as $questionnaire) {
             $id = trim(strip_tags($questionnaire["serial"]));
             $publish = intval(trim(strip_tags($questionnaire["publish"])));
-            if ($publish != 0 || $publish != 1)
+            if ($publish != 0 && $publish != 1)
                 $publish = 0;
             array_push($validatedList, array("serial"=>$id, "publish"=>$publish));
         }
@@ -71,6 +71,8 @@ class PublishedQuestionnaire extends Questionnaire {
      * @return  void
      * */
     function updatePublicationFlags($list) {
-
+        foreach($list as $row) {
+            $this->opalDB->updatePublicationFlags($row["serial"], $row["publish"]);
+        }
     }
 }

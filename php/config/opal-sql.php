@@ -70,10 +70,16 @@ define("SQL_OPAL_GET_FILTERS",
     AND f.FilterId != '';"
 );
 
+define("SQL_OPAL_UPDATE_PUBLISHED_QUESTIONNAIRES_STATUS_LAST_PUBLISHED",
+    "UPDATE ".OPAL_QUESTIONNAIRE_CONTROL_TABLE."
+    SET PublishFlag = :PublishFlag, LastUpdatedBy = :LastUpdatedBy, LastPublished = :LastPublished
+    WHERE QuestionnaireControlSerNum = :QuestionnaireControlSerNum
+    AND (PublishFlag != :PublishFlag);"
+);
+
 define("SQL_OPAL_UPDATE_PUBLISHED_QUESTIONNAIRES_STATUS",
-    "UPDATE ".QUESTIONNAIRE_TABLE."
-    SET updatedBy = :updatedBy, lastUpdated = NOW()
-    WHERE ID = :ID
-    AND (private = 0 OR OAUserId = :OAUserId)
-    AND deleted = ".NON_DELETED_RECORD.";"
+    "UPDATE ".OPAL_QUESTIONNAIRE_CONTROL_TABLE."
+    SET PublishFlag = :PublishFlag, LastUpdatedBy = :LastUpdatedBy
+    WHERE QuestionnaireControlSerNum = :QuestionnaireControlSerNum
+    AND (PublishFlag != :PublishFlag);"
 );

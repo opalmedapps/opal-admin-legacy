@@ -85,4 +85,23 @@ class DatabaseOpal extends DatabaseAccess {
                 array("parameter"=>":questionnaireControlId","variable"=>$questionnaireControlId,"data_type"=>PDO::PARAM_STR),
             ));
     }
+
+    /*
+     *
+     * */
+    function updatePublicationFlags($id, $value) {
+
+        $sqlToUpdate = SQL_OPAL_UPDATE_PUBLISHED_QUESTIONNAIRES_STATUS;
+        $toInsert = array(
+            array("parameter"=>":QuestionnaireControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":LastUpdatedBy","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":PublishFlag","variable"=>$value,"data_type"=>PDO::PARAM_STR),
+        );
+        if($value == 1) {
+            $sqlToUpdate = SQL_OPAL_UPDATE_PUBLISHED_QUESTIONNAIRES_STATUS_LAST_PUBLISHED;
+            array_push($toInsert, array("parameter"=>":LastPublished","variable"=>date("Y-m-d H:i:s")));
+        }
+
+        return $this->_execute($sqlToUpdate, $toInsert);
+    }
 }
