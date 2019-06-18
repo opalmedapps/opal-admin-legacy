@@ -341,23 +341,18 @@
         *    (buildMessageForRoomNotification($room, $title, $description)
         *    Consumes a room, a title and a description of message
         *    Description: Builds push notification message for Room Notification
+        *    Encode: is set to NO because we do not want to re-encode again
         *    Returns: Returns array with the push notification message to be sent
         **/
-       private function buildMessageForRoomNotification($room, $title, $description)
-       {
-            $message = array(
-               "mtitle"=>$title,
-               "mdesc"=>str_replace('$roomNumber',$room, $description)
-            );
-            return $message;
-       }
-
-
-
-
-
-
-
+        private function buildMessageForRoomNotification($room, $title, $description)
+        {
+             $message = array(
+                "mtitle"=>$title,
+                "mdesc"=>str_replace('$roomNumber',$room, $description),
+                "encode"=>'No'
+             );
+             return $message;
+        }
    }
 
 ?>

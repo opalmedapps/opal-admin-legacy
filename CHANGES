@@ -1,3 +1,17 @@
+Version 0.18.19.6:
+ - Enabled push notificaiton for appointment changes
+
+Version 0.18.19.5:
+ - FIxed the push notification for French characters
+
+Version 0.18.19.4:
+ - Correct Diagnosis and Patient Location queries
+
+Version 0.18.19.3:
+ -      ---- Quick patch to send notification for the legacy questionnaire
+ - Merge branch 'hotfix-0.18.19.2' into staging
+ - Merge branch 'hotfix-0.18.19.1' into staging
+
 Version 0.18.19.2:
  - Quick fix on additinal single quote for $defaultLastTransferred
  - Merge branch 'hotfix-0.18.19.1'

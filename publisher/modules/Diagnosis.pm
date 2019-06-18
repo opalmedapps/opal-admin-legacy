@@ -263,7 +263,7 @@ sub getDiagnosesFromSourceDB
 			}
 			$patientInfo_sql .= ")";
 
-	    	my $diagInfo_sql = $patientInfo_sql . "
+			my $diagInfo_sql = $patientInfo_sql . "
 		    	SELECT DISTINCT
 			    	dx.DiagnosisSer,
 				    CONVERT(VARCHAR, dx.DateStamp, 120),
@@ -279,12 +279,35 @@ sub getDiagnosesFromSourceDB
 					PatientInfo
     			WHERE
 	    		 	dx.DiagnosisSer 		= pmdx.DiagnosisSer
-		    	AND	LEFT(LTRIM(pt.SSN), 12)	= '$patientSSN'
 			    AND	dx.Description 			NOT LIKE '%ERROR%'
     			AND	dx.HstryDateTime    	> '$lastTransfer'
 	    		AND dx.DateStamp			> '1970-01-01 00:00:00'
 				AND dx.PatientSer 			= (select pt.PatientSer from variansystem.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
 		    ";
+
+	    	# Keep this as a backup for now
+			# my $diagInfo_sql = $patientInfo_sql . "
+		    # 	SELECT DISTINCT
+			#     	dx.DiagnosisSer,
+			# 	    CONVERT(VARCHAR, dx.DateStamp, 120),
+    		# 		RTRIM(REPLACE(REPLACE(dx.Description,'Malignant neoplasm','malignant neoplasm'),'malignant neoplasm','Ca')),
+            #         dx.DiagnosisId,
+            #         pmdx.SummaryStage,
+            #         RTRIM(pmdx.StageCriteria),
+			# 		PatientInfo.PatientSerNum
+		    # 	FROM
+			#     	variansystem.dbo.Diagnosis dx,
+			# 	    variansystem.dbo.Patient pt,
+			# 	    variansystem.dbo.PrmryDiagnosis pmdx,
+			# 		PatientInfo
+    		# 	WHERE
+	    	# 	 	dx.DiagnosisSer 		= pmdx.DiagnosisSer
+		    # 	AND	LEFT(LTRIM(pt.SSN), 12)	= '$patientSSN'
+			#     AND	dx.Description 			NOT LIKE '%ERROR%'
+    		# 	AND	dx.HstryDateTime    	> '$lastTransfer'
+	    	# 	AND dx.DateStamp			> '1970-01-01 00:00:00'
+			# 	AND dx.PatientSer 			= (select pt.PatientSer from variansystem.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+		    # ";
 
     		# prepare query
 	    	my $query = $sourceDatabase->prepare($diagInfo_sql)

@@ -1427,7 +1427,8 @@ sub compareWith
 		$SStartDateTimeForm = Time::Piece->strptime($SStartDateTime, "%Y-%m-%d %H:%M:%S");
 		$OStartDateTimeForm = Time::Piece->strptime($OStartDateTime, "%Y-%m-%d %H:%M:%S");
 		# if difference is greater than an hour (in seconds)
-		if ( abs($SStartDateTimeForm - $OStartDateTimeForm) >= 3600 ) {
+		# 2019-06-12 : Change from 1 hour to 2 hours by John's request
+		if ( abs($SStartDateTimeForm - $OStartDateTimeForm) >= 7200 ) {
 			print "Sending push notification on appointment time change\n";
 
 			# parser
@@ -1463,8 +1464,9 @@ sub compareWith
 			# ****************************************************************************************************
 			# TEMPORARY DISABLE PUSH NOTIFICATION OF APPOINTMENT CHANGE
 			# 2018-08-03 : Requested by John
+			# 2019-06-12 : Re-enabled the push notification
 			# ****************************************************************************************************
-			# PushNotification::sendPushNotification($patientSer, $appointmentSer, 'AppointmentTimeChange', %replacementMap);
+			PushNotification::sendPushNotification($patientSer, $appointmentSer, 'AppointmentTimeChange', %replacementMap);
 		}
 
 	}
