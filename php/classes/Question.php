@@ -5,10 +5,21 @@
  */
 class Question extends QuestionnaireModule {
 
+    protected $pivotal_question_fields = array("ID", "display", "definition", "question", "typeId");
+    protected $pivotal_question_options_fields = array("ID", "questionId");
+    protected $pivotal_question_options_sliders_fields = array("ID", "questionId", "minCaption", "maxCaption");
+    protected $pivotal_question_sub_options_fields = array("ID", "parentTableId", "description");
+
+    /*
+     * Because the PHP was never updated on production or pre-production server, we cannot use const method. Instead,
+     * We have to use regular variables.
+     * TODO Update the php and switch back to constant
+     *
     const PIVOTAL_QUESTION_FIELDS = array("ID", "display", "definition", "question", "typeId");
     const PIVOTAL_QUESTION_OPTIONS_FIELDS = array("ID", "questionId");
     const PIVOTAL_QUESTION_OPTIONS_SLIDERS_FIELDS = array("ID", "questionId", "minCaption", "maxCaption");
     const PIVOTAL_QUESTION_SUB_OPTIONS_FIELDS = array("ID", "parentTableId", "description");
+    */
 
     /*
      * This function validate and sanitize a question form received from a user.
@@ -579,17 +590,17 @@ class Question extends QuestionnaireModule {
         }
 
         foreach($updatedQuestion as $key=>$value)
-            if(in_array($key, self::PIVOTAL_QUESTION_FIELDS) && $oldQuestion[$key] != $value) {
+            if(in_array($key, $this->pivotal_question_fields) && $oldQuestion[$key] != $value) {
                 $answer = false;
                 break;
             }
 
         if($oldQuestion["typeId"] == SLIDERS) {
             $updatedQuestion["subOptions"] = array();
-            $fieldLists = self::PIVOTAL_QUESTION_OPTIONS_SLIDERS_FIELDS;
+            $fieldLists = $this->pivotal_question_options_sliders_fields;
         }
         else
-            $fieldLists = self::PIVOTAL_QUESTION_OPTIONS_FIELDS;
+            $fieldLists = $this->pivotal_question_options_fields;
 
         foreach($updatedQuestion["options"] as $key=>$value) {
             if(in_array($key, $fieldLists) && $oldQuestion["options"][$key] !== $value) {
@@ -601,7 +612,7 @@ class Question extends QuestionnaireModule {
         foreach($updatedQuestion["subOptions"] as $sub) {
             $tempId = $sub["ID"];
             foreach ($sub as $key => $value) {
-                if (in_array($key, self::PIVOTAL_QUESTION_SUB_OPTIONS_FIELDS) && $value !== $arrayOldOption[$tempId][$key]) {
+                if (in_array($key, $this->pivotal_question_sub_options_fields) && $value !== $arrayOldOption[$tempId][$key]) {
                     $answer = false;
                     break;
                 }
