@@ -1073,12 +1073,24 @@ class DatabaseQuestionnaire extends DatabaseAccess
     }
 
     /*
-     * Returns the list of all questionnaires an user cann access
+     * Returns the list of all questionnaires an user can access
      * @params  void
      * @return  list of questionnaires (array)
      * */
     function fetchAllQuestionnaires() {
         return $this->_fetchAll(SQL_QUESTIONNAIRE_FETCH_ALL_QUESTIONNAIRES,
+            array(
+                array("parameter"=>":OAUserId","variable"=>$this->OAUserId,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    /*
+     * Returns the list of all finalized questionnaires an user can access
+     * @params  void
+     * @return  list of finalized questionnaires (array)
+     * */
+    function fetchAllFinalQuestionnaires() {
+        return $this->_fetchAll(SQL_QUESTIONNAIRE_FETCH_ALL_FINAL_QUESTIONNAIRES,
             array(
                 array("parameter"=>":OAUserId","variable"=>$this->OAUserId,"data_type"=>PDO::PARAM_INT),
             ));

@@ -270,8 +270,6 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 					data: $scope.questionnaire,
 					success: function (response) {
 						response = JSON.parse(response);
-
-						// Show success or failure depending on response
 						if (response.code === 200) {
 							$scope.setBannerClass('success');
 							$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.questionnaire.title_EN + "/ " + $scope.questionnaire.title_FR + "\"!";
