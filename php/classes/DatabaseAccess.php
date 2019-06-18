@@ -8,6 +8,23 @@
 
 class DatabaseAccess extends HelpSetup
 {
+
+    /*
+     * The following constants are used by the database class to manually insert the creation date by creating an array
+     * of exception fields. WARNING!!! THIS METHOD BYPASS THE BINDPARAM METHOD OF PHP AND CAN CAUSE A SERIOUS SECURITY
+     * RISK! ONLY USE IT IF YOU HAVE THE APPROVAL OF THE TEAM!
+     * */
+
+    /*
+     * Because the PHP was never updated on production or pre-production server, we cannot use const method. Instead,
+     * We have to use regular variables.
+     * TODO Update the php and switch back to constant
+     *
+    const CREATION_DATE_FIELD = "creationDate";
+    const EXCEPTION_FIELDS = array(HelpSetup::CREATION_DATE_FIELD);*/
+
+    protected $exception_fields = array("creationDate");
+
     protected $connection;
     protected $serverName;
     protected $port;
@@ -236,7 +253,7 @@ class DatabaseAccess extends HelpSetup
      */
     protected function _queryInsert($sqlInsert, $paramList = array()) {
         foreach($paramList as $value) {
-            if (in_array(substr($value["parameter"], 1), HelpSetup::EXCEPTION_FIELDS))
+            if (in_array(substr($value["parameter"], 1), $this->exception_fields))
                 $sqlInsert = str_replace($value["parameter"], $value["variable"], $sqlInsert);
         }
         $cpt = 0;
@@ -245,7 +262,7 @@ class DatabaseAccess extends HelpSetup
             $stmt = $this->connection->prepare($sqlInsert);
             if(count($paramList) > 0) {
                 foreach($paramList as $value) {
-                    if(!in_array(substr($value["parameter"], 1), HelpSetup::EXCEPTION_FIELDS)) {
+                    if(!in_array(substr($value["parameter"], 1), $this->exception_fields)) {
                         $cpt++;
                         if(isset($value["data_type"]) &&  $value["data_type"] != "")
                             $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
@@ -292,7 +309,7 @@ class DatabaseAccess extends HelpSetup
             $params = array();
             foreach($data as $key=>$value) {
                 $temp = "";
-                if (!in_array($key, HelpSetup::EXCEPTION_FIELDS))
+                if (!in_array($key, $this->exception_fields))
                     $temp = $cpt;
                 array_push($fields, strip_tags($key));
                 array_push($params, ":".strip_tags($key).$temp);
@@ -376,7 +393,7 @@ class DatabaseAccess extends HelpSetup
         $params = array();
         foreach($record as $key=>$value) {
             $temp = "";
-            if (!in_array($key, HelpSetup::EXCEPTION_FIELDS))
+            if (!in_array($key, $this->exception_fields))
                 $temp = $cpt;
             array_push($fields, strip_tags($key));
             array_push($params, ":".strip_tags($key).$temp);
