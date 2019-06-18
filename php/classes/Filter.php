@@ -276,6 +276,62 @@ class Filter {
                     'added' => 0
                 );
                 array_push($filters['appointmentStatuses'], $statusDetails);
+
+                // Doctor Filters
+                $sql = "
+                    SELECT DISTINCT
+                        max(Doctor.ResourceSerNum) ResourceSerNum,
+                        trim(Doctor.LastName) LastName
+                    FROM Doctor Doctor
+                    
+                    WHERE
+                        Doctor.ResourceSerNum > 0
+                    GROUP BY 
+                        Doctor.LastName
+                    ORDER BY
+                        Doctor.LastName;
+                ";
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $doctorArray = array(
+                        'name'  => $data[1],
+                        'id'    => $data[0],
+                        'type'  => 'Doctor',
+                        'added' => 0
+                    );
+                    array_push($filters['doctors'], $doctorArray);
+                }
+
+                // Machine Filters
+                $sql = "
+                    SELECT DISTINCT
+                        ResourceSerNum,
+                        ResourceName
+                    FROM    
+                        resource
+                    WHERE
+                        ResourceName     LIKE 'STX%'
+                        OR  ResourceName     LIKE 'TB%'
+                    ORDER BY 	
+                        ResourceName;
+                ";
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $machineArray = array(
+                        'name'  => $data[1],
+                        'id'    => $data[0],
+                        'type'  => 'Machine',
+                        'added' => 0
+                    );
+                    array_push($filters['machines'], $machineArray);
+                }
+
 			}
 
             return $filters;

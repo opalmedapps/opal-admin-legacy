@@ -20,6 +20,19 @@ class Questionnaire extends QuestionnaireModule {
     }
 
     /*
+     * This function returns a list of questionnaire an user can access
+     * @param   void
+     * @return  list of questionnaires (array)
+     * */
+    public function getFinalizedQuestionnaires(){
+        $results = $this->questionnaireDB->fetchAllFinalQuestionnaires();
+        foreach($results as &$questionnaire) {
+            $questionnaire["locked"] = $this->isQuestionnaireLocked($questionnaire["ID"]);
+        }
+        return $results;
+    }
+
+    /*
      * This function validate and sanitize a questionnaire
      * @param   $questionnaireToSanitize (array)
      * @return  sanitized questionnaire or false if invalid
@@ -98,7 +111,7 @@ class Questionnaire extends QuestionnaireModule {
     }
 
     /*
-     * Check if a specific questionnaire has being sent already
+     * Check if a specific questionnaire has being published already
      * @param   $questionnaireId (integer)
      * @return  true or false (boolean)
      * */
@@ -267,8 +280,8 @@ class Questionnaire extends QuestionnaireModule {
     }
 
     /*
-     * This function updates a questionnaire. If the questionnaire has being sent already, it is considered as locked
-     * and cannot be sent. First, it will remove any questions to the questionnaire, then it will add the ones
+     * This function updates a questionnaire. If the questionnaire has being published already, it is considered as
+     * locked and cannot be sent. First, it will remove any questions to the questionnaire, then it will add the ones
      * requested, and finally update the questions settings. Next, the dictionary will be updated with updated titles,
      * and finally the privacy and status (draft final) of the questionnaire will be updated.
      *
