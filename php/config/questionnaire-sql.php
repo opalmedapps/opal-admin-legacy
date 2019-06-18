@@ -581,3 +581,15 @@ define("SQL_QUESTIONNAIRE_FETCH_ALL_QUESTIONNAIRES",
     FROM ".QUESTIONNAIRE_TABLE." q
     WHERE q.deleted = ".NON_DELETED_RECORD." AND (OAUserId = :OAUserId OR private = 0);"
 );
+
+define("SQL_QUESTIONNAIRE_FETCH_ALL_FINAL_QUESTIONNAIRES",
+    "SELECT
+    q.ID AS ID,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".ENGLISH_LANGUAGE.") AS name_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.title AND d.languageId = ".FRENCH_LANGUAGE.") AS name_FR,
+    q.private,
+    q.final,
+    q.createdBy AS created_by
+    FROM ".QUESTIONNAIRE_TABLE." q
+    WHERE q.final = ".FINAL_RECORD." AND q.deleted = ".NON_DELETED_RECORD." AND (OAUserId = :OAUserId OR private = 0);"
+);

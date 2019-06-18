@@ -13,8 +13,8 @@ angular.module('opalAdmin.controllers.publication.tool', ['ngAnimate', 'ngSaniti
 		$scope.goToPublicationTool = function () {
 			$state.go('publication-tool');
 		};
-		$scope.goToAddQuestionnaire = function () {
-			$state.go('questionnaire-add');
+		$scope.goToAddPublicationTool = function () {
+			$state.go('publication-tool-add');
 		};
 		$scope.goToQuestionnaireQuestionBank = function () {
 			$state.go('questionnaire-question');
@@ -184,8 +184,7 @@ angular.module('opalAdmin.controllers.publication.tool', ['ngAnimate', 'ngSaniti
 							alert('Error occurred getting published questionnaire list: ' + response.status + " " + response.data);
 						});
 						response = JSON.parse(response);
-						// Show success or failure depending on response
-						if (response.value) {
+						if (response.code === 200) {
 							$scope.setBannerClass('success');
 							$scope.bannerMessage = "Flag(s) Successfully Saved!";
 						}
