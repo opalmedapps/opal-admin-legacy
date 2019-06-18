@@ -4,10 +4,21 @@
 
 class TemplateQuestion extends QuestionnaireModule {
 
+    protected $pivotal_template_question_fields = array("ID", "name", "typeId");
+    protected $pivotal_template_question_options_fields = array("ID", "templateQuestionId");
+    protected $pivotal_template_question_options_sliders_fields = array("ID", "templateQuestionId", "minCaption", "maxCaption");
+    protected $pivotal_template_question_sub_options_fields = array("ID", "parentTableId", "description");
+
+    /*
+     * Because the PHP was never updated on production or pre-production server, we cannot use const method. Instead,
+     * We have to use regular variables.
+     * TODO Update the php and switch back to constant
+     *
     const PIVOTAL_TEMPLATE_QUESTION_FIELDS = array("ID", "name", "typeId");
     const PIVOTAL_TEMPLATE_QUESTION_OPTIONS_FIELDS = array("ID", "templateQuestionId");
     const PIVOTAL_TEMPLATE_QUESTION_OPTIONS_SLIDERS_FIELDS = array("ID", "templateQuestionId", "minCaption", "maxCaption");
     const PIVOTAL_TEMPLATE_QUESTION_SUB_OPTIONS_FIELDS = array("ID", "parentTableId", "description");
+    */
 
     public function validateAndSanitize($newTemplateQuestion) {
         $validatedQT = array(
@@ -78,17 +89,17 @@ class TemplateQuestion extends QuestionnaireModule {
         }
 
         foreach($updatedTemplateQuestion as $key=>$value)
-            if(in_array($key, self::PIVOTAL_TEMPLATE_QUESTION_FIELDS) && $oldTemplateQuestion[$key] != $value) {
+            if(in_array($key, $this->pivotal_template_question_fields) && $oldTemplateQuestion[$key] != $value) {
                 $answer = false;
                 break;
             }
 
         if($oldTemplateQuestion["typeId"] == SLIDERS) {
             $updatedTemplateQuestion["subOptions"] = array();
-            $fieldLists = self::PIVOTAL_TEMPLATE_QUESTION_OPTIONS_SLIDERS_FIELDS;
+            $fieldLists = $this->pivotal_template_question_options_sliders_fields;
         }
         else
-            $fieldLists = self::PIVOTAL_TEMPLATE_QUESTION_OPTIONS_FIELDS;
+            $fieldLists = $this->pivotal_template_question_options_fields;
 
         foreach($updatedTemplateQuestion["options"] as $key=>$value) {
             if(in_array($key, $fieldLists) && $oldTemplateQuestion["options"][$key] !== $value) {
@@ -100,7 +111,7 @@ class TemplateQuestion extends QuestionnaireModule {
         foreach($updatedTemplateQuestion["subOptions"] as $sub) {
             $tempId = $sub["ID"];
             foreach ($sub as $key => $value) {
-                if (in_array($key, self::PIVOTAL_TEMPLATE_QUESTION_SUB_OPTIONS_FIELDS) && $value !== $arrayOldOption[$tempId][$key]) {
+                if (in_array($key, $this->pivotal_template_question_sub_options_fields) && $value !== $arrayOldOption[$tempId][$key]) {
                     $answer = false;
                     break;
                 }
