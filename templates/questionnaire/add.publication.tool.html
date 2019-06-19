@@ -46,7 +46,7 @@
                         </div>
 
                         <uib-accordion class="side-navbar">
-                            <!-- SECTION: Question Text -->
+                            <!-- SECTION: Title -->
                             <div uib-accordion-group is-open="titleSection.open" class="panel-container summary-box" is-disabled="!newQuestionnaireToPublish.name_EN && !newQuestionnaireToPublish.name_FR">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
@@ -73,6 +73,36 @@
                                         <strong>FR</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                                         {{newQuestionnaireToPublish.name_FR}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Questionnaire -->
+                            <div uib-accordion-group is-open="questionnaireSection.open" class="panel-container summary-box" is-disabled="!newQuestionnaireToPublish.questionnaireId" ng-class="{fadeInUp: questionnaireSection.show}" ng-if="questionnaireSection.show">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="newQuestionnaireToPublish.questionnaireId" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>Questionnaire</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i ng-if="newQuestionnaireToPublish.name_EN || newQuestionnaireToPublish.name_FR" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': questionnaireSection.open, 'glyphicon-chevron-right': !questionnaireSection.open}"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="newQuestionnaireToPublish.name_EN" class="description">
+                                    <p style="margin-botton:5px">
+                                        <strong>EN</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{selectedAt.name_EN}}
+                                    </p>
+                                </div>
+                                <div ng-if="newQuestionnaireToPublish.name_FR" class="description">
+                                    <p style="margin-botton:5px">
+                                        <strong>FR</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{selectedAt.name_FR}}
                                     </p>
                                 </div>
                             </div>
@@ -328,7 +358,7 @@
                         <!-- Page title -->
                         <div class="col-xs-12 col-md-6 title-content">
                             <span class="fa fa-plus"></span>
-                            <h1><strong>Add Questionnaire To Publish</strong></h1>
+                            <h1><strong>Add a questionnaire for publication</strong></h1>
                         </div>
                         <!-- Breadcrumbs -->
                         <div class="col-md-6 title-breadcrumbs">
@@ -515,7 +545,7 @@
                                             </label>
                                             <div class="col-xs-12 col-lg-9">
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newLegacyQuestionnaire.occurrence.start_date" ng-change="setChangesMade()" is-open="popupStart.opened"datepicker-options="dateOptionsStart" ng-required="true" close-text="Close" />
+                                                    <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newQuestionnaireToPublish.occurrence.start_date" ng-change="setChangesMade()" is-open="popupStart.opened"datepicker-options="dateOptionsStart" ng-required="true" close-text="Close" />
                                                     <span class="input-group-btn">
                             <button class="btn btn-default" ng-click="openStart($event)"><i class="glyphicon glyphicon-calendar"></i></button>
                           </span>
@@ -538,7 +568,7 @@
                                             </div>
                                             <div class="col-xs-12 col-lg-9" style="margin-bottom:10px;">
                                                 <div class="input-group">
-                                                    <input ng-if="addEndDate" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newLegacyQuestionnaire.occurrence.end_date" ng-change="setChangesMade()" is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true" close-text="Close" />
+                                                    <input ng-if="addEndDate" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newQuestionnaireToPublish.occurrence.end_date" ng-change="setChangesMade()" is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true" close-text="Close" />
                                                     <span ng-if="addEndDate" class="input-group-btn">
                             <button class="btn btn-default" ng-click="openEnd($event)"><i class="glyphicon glyphicon-calendar"></i></button>
                           </span>

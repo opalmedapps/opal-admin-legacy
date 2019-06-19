@@ -4,6 +4,9 @@
 * PHP global settings:
 */
 
+// Set the time ze for the Eastern Time Zone (ET)
+date_default_timezone_set("America/Toronto");
+
 // Turn on all errors except for notices
 error_reporting(E_ALL & ~E_NOTICE);
 ini_set('display_errors', 1);

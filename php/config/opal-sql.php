@@ -17,8 +17,9 @@ define( "OPAL_DB_PASSWORD", $config['databaseConfig']['opal']['password'] );
 //Definition of all questionnaires table from the questionnaire DB
 define("OPAL_OAUSER_TABLE","oauser");
 define("OPAL_OAUSER_ROLE_TABLE","oauserrole");
-define("OPAL_QUESTIONNAIRE_CONTROL_TABLE","questionnairecontrol");
+define("OPAL_QUESTIONNAIRE_CONTROL_TABLE","QuestionnaireControl");
 define("OPAL_FILTERS_TABLE","Filters");
+define("OPAL_FREQUENCY_EVENTS_TABLE","FrequencyEvents");
 
 /*
  * Listing of all SQL queries for the Opal database
@@ -47,8 +48,8 @@ define("SQL_OPAL_GET_PUBLISHED_QUESTIONNAIRES",
     "SELECT DISTINCT
     qc.QuestionnaireControlSerNum AS serial,
     qc.QuestionnaireDBSerNum AS db_serial,
-    qc.QuestionnaireName_EN AS name_FR,
-    qc.QuestionnaireName_FR AS name_EN,
+    qc.QuestionnaireName_EN AS name_EN,
+    qc.QuestionnaireName_FR AS name_FR,
     qc.PublishFlag AS publish,
     0 AS changed
     FROM ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." qc;"
