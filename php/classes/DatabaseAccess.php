@@ -8,22 +8,11 @@
 
 class DatabaseAccess extends HelpSetup
 {
-
     /*
      * The following constants are used by the database class to manually insert the creation date by creating an array
      * of exception fields. WARNING!!! THIS METHOD BYPASS THE BINDPARAM METHOD OF PHP AND CAN CAUSE A SERIOUS SECURITY
      * RISK! ONLY USE IT IF YOU HAVE THE APPROVAL OF THE TEAM!
      * */
-
-    /*
-     * Because the PHP was never updated on production or pre-production server, we cannot use const method. Instead,
-     * We have to use regular variables.
-     * TODO Update the php and switch back to constant
-     *
-    const CREATION_DATE_FIELD = "creationDate";
-    const EXCEPTION_FIELDS = array(HelpSetup::CREATION_DATE_FIELD);*/
-
-    protected $exception_fields = array("creationDate");
 
     protected $connection;
     protected $serverName;
@@ -252,23 +241,23 @@ class DatabaseAccess extends HelpSetup
      * Exit:    ID of last entry
      */
     protected function _queryInsert($sqlInsert, $paramList = array()) {
-        foreach($paramList as $value) {
-            if (in_array(substr($value["parameter"], 1), $this->exception_fields))
-                $sqlInsert = str_replace($value["parameter"], $value["variable"], $sqlInsert);
-        }
+//        foreach($paramList as $value) {
+//            if (in_array(substr($value["parameter"], 1), $this->exception_fields))
+//                $sqlInsert = str_replace($value["parameter"], $value["variable"], $sqlInsert);
+//        }
         $cpt = 0;
         try {
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $stmt = $this->connection->prepare($sqlInsert);
             if(count($paramList) > 0) {
                 foreach($paramList as $value) {
-                    if(!in_array(substr($value["parameter"], 1), $this->exception_fields)) {
+//                    if(!in_array(substr($value["parameter"], 1), $this->exception_fields)) {
                         $cpt++;
                         if(isset($value["data_type"]) &&  $value["data_type"] != "")
                             $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
                         else
                             $stmt->bindParam($value["parameter"], $value["variable"], self::_getTypeOf($value["variable"]));
-                    }
+//                    }
                 }
             }
             $stmt->execute();
@@ -299,7 +288,7 @@ class DatabaseAccess extends HelpSetup
      *                      )
      * */
     protected function _insertMultipleRecordsIntoTable($tableName, $records) {
-        $sqlInsert = str_replace("%%TABLENAME%%", strip_tags($tableName), SQL_GENERAL_INSERT_INTO);
+        $sqlInsert = str_replace("%%TABLENAME%%", $tableName, SQL_GENERAL_INSERT_INTO);
         $multiples = array();
         $cpt = 0;
         $ready = array();
@@ -308,12 +297,9 @@ class DatabaseAccess extends HelpSetup
             $fields = array();
             $params = array();
             foreach($data as $key=>$value) {
-                $temp = "";
-                if (!in_array($key, $this->exception_fields))
-                    $temp = $cpt;
-                array_push($fields, strip_tags($key));
-                array_push($params, ":".strip_tags($key).$temp);
-                array_push($ready, array("parameter"=>":".strip_tags($key).$temp,"variable"=>strip_tags($value)));
+                array_push($fields, $key);
+                array_push($params, ":".$key.$cpt);
+                array_push($ready, array("parameter"=>":".$key.$cpt,"variable"=>$value));
             }
             $sqlFieldNames = "`".implode("`, `", $fields)."`";
             array_push($multiples, implode(", ", $params));
@@ -385,19 +371,16 @@ class DatabaseAccess extends HelpSetup
      *                      )
      * */
     protected function _insertRecordIntoTable($tableName, $record) {
-        $sqlInsert = str_replace("%%TABLENAME%%", strip_tags($tableName), SQL_GENERAL_INSERT_INTO);
+        $sqlInsert = str_replace("%%TABLENAME%%", $tableName, SQL_GENERAL_INSERT_INTO);
         $multiples = array();
         $cpt = 1;
         $ready = array();
         $fields = array();
         $params = array();
         foreach($record as $key=>$value) {
-            $temp = "";
-            if (!in_array($key, $this->exception_fields))
-                $temp = $cpt;
-            array_push($fields, strip_tags($key));
-            array_push($params, ":".strip_tags($key).$temp);
-            array_push($ready, array("parameter"=>":".strip_tags($key).$temp,"variable"=>strip_tags($value)));
+            array_push($fields, $key);
+            array_push($params, ":".$key.$cpt);
+            array_push($ready, array("parameter"=>":".$key.$cpt,"variable"=>$value));
         }
         $sqlFieldNames = "`".implode("`, `", $fields)."`";
         array_push($multiples, implode(", ", $params));
@@ -414,7 +397,7 @@ class DatabaseAccess extends HelpSetup
     protected function _updateRecordIntoTable($sqlQuery, $record) {
         $ready = array();
         foreach($record as $key=>$value) {
-            array_push($ready, array("parameter"=>":".strip_tags($key),"variable"=>strip_tags($value)));
+            array_push($ready, array("parameter"=>":".$key,"variable"=>$value));
         }
 
         return $this->_execute($sqlQuery, $ready);

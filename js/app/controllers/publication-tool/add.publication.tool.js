@@ -30,7 +30,7 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 	// step bar
 	var steps = {
 		name: { completed: false },
-		type: { completed: false },
+		questionnaire: { completed: false },
 	};
 
 	$scope.numOfCompletedSteps = 0;
@@ -80,7 +80,6 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 		name_EN: "",
 		name_FR: "",
 		questionnaireId: undefined,
-		questionnaireName: undefined,
 		OAUserId: OAUserId,
 		triggers: [],
 		occurrence: {
@@ -145,15 +144,17 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 		$scope.questionnaireSection.open = true;
 
 		if ($scope.newQuestionnaireToPublish.questionnaireId) {
+			$scope.publishFrequencySection.show = true;
 			$scope.triggerSection.show = true;
 			$scope.demoSection.show = true;
-			$scope.publishFrequencySection.show = true;
 			$scope.selectedAt = selectedAt;
+			steps.questionnaire.completed = true;
 		}
 		else {
 			$scope.triggerSection.show = false;
 			$scope.demoSection.show = false;
 			$scope.publishFrequencySection.show = false;
+			steps.questionnaire.completed = false;
 		}
 		$scope.numOfCompletedSteps = stepsCompleted(steps);
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -167,37 +168,87 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 
 	// Call our API service to get each trigger
 	filterCollectionService.getFilters().then(function (response) {
-
 		$scope.appointmentTriggerList = response.data.appointments; // Assign value
 		$scope.dxTriggerList = response.data.dx;
 		$scope.doctorTriggerList = response.data.doctors;
 		$scope.machineTriggerList = response.data.machines;
 		$scope.patientTriggerList = response.data.patients;
 		$scope.appointmentStatusList = response.data.appointmentStatuses;
-
-		// processingModal.close(); // hide modal
-		// processingModal = null; // remove reference
-		//
-		// $scope.formLoaded = true;
-		// $scope.loadForm();
-
 	}).catch(function(response) {
 		alert('Error occurred getting filter list.\r\n' + response.status + " " + response.data);
 	});
 
 	$scope.submitTemplateQuestion = function () {
+
 		if ($scope.checkForm()) {
+
+
+			// Add demographic triggers, if defined
+			if ($scope.demoTrigger.sex)
+				$scope.newQuestionnaireToPublish.triggers.push({ id: $scope.demoTrigger.sex, type: 'Sex' });
+			if ($scope.demoTrigger.age.min >= 0 && $scope.demoTrigger.age.max <= 100) { // i.e. not empty
+				if ($scope.demoTrigger.age.min !== 0 || $scope.demoTrigger.age.max !== 100) { // triggers were changed
+					$scope.newQuestionnaireToPublish.triggers.push({
+						id: String($scope.demoTrigger.age.min).concat(',', String($scope.demoTrigger.age.max)),
+						type: 'Age'
+					});
+				}
+			}
+			// Add triggers to new legacy questionnaire object
+			addTriggers($scope.appointmentTriggerList, $scope.selectAll.appointment.all);
+			addTriggers($scope.dxTriggerList, $scope.selectAll.diagnosis.all);
+			addTriggers($scope.doctorTriggerList, $scope.selectAll.doctor.all);
+			addTriggers($scope.machineTriggerList, $scope.selectAll.machine.all);
+			addTriggers($scope.patientTriggerList, $scope.selectAll.patient.all);
+			addTriggers($scope.appointmentStatusList);
+
+			// Add frequency trigger if exists
+			if ($scope.showFrequency) {
+				$scope.newQuestionnaireToPublish.occurrence.set = 1;
+				// convert dates to timestamps
+				console.log("1");
+				$scope.newQuestionnaireToPublish.occurrence.start_date = moment($scope.newQuestionnaireToPublish.occurrence.start_date).format('X');
+				console.log("2");
+				if ($scope.newQuestionnaireToPublish.occurrence.end_date) {
+					console.log("3");
+					$scope.newQuestionnaireToPublish.occurrence.end_date = moment($scope.newQuestionnaireToPublish.occurrence.end_date).format('X');
+					console.log("4");
+				}
+				if ($scope.newQuestionnaireToPublish.occurrence.frequency.custom) {
+					$scope.newQuestionnaireToPublish.occurrence.frequency.meta_key = $scope.customFrequency.unit.meta_key;
+					$scope.newQuestionnaireToPublish.occurrence.frequency.meta_value = $scope.customFrequency.meta_value;
+					$scope.newQuestionnaireToPublish.occurrence.frequency.additionalMeta = [];
+					angular.forEach(Object.keys($scope.additionalMeta), function(meta_key){
+						if ($scope.additionalMeta[meta_key].length) {
+							var metaDetails = {
+								meta_key: meta_key,
+								meta_value: $scope.additionalMeta[meta_key]
+							};
+							$scope.newQuestionnaireToPublish.occurrence.frequency.additionalMeta.push(metaDetails);
+						}
+					});
+				}
+				else {
+					$scope.newQuestionnaireToPublish.occurrence.frequency.additionalMeta = [];
+				}
+			}
+
+			// Log who created legacy questionnaire
+			var currentUser = Session.retrieveObject('user');
+			$scope.newQuestionnaireToPublish.OAUserId = currentUser.id;
+			$scope.newQuestionnaireToPublish.sessionId = currentUser.sessionid;
+
 			// Submit
 			$.ajax({
 				type: "POST",
-				url: "php/questionnaire/insert.template_question.php",
+				url: "php/questionnaire/insert.published_questionnaire.php",
 				data: $scope.newQuestionnaireToPublish,
 				success: function (result) {
 					result = JSON.parse(result);
-					if (result.message === 200) {
-						$state.go('questionnaire-template-question');
+					if (result.code === 200) {
+						$state.go('publication-tool');
 					} else {
-						alert("Unable to create the question type. Code " + result.code + ".\r\nError message: " + result.message);
+						alert("Unable to create the questionnaire. Code " + result.code + ".\r\nError message: " + result.message);
 					}
 				},
 				error: function () {
@@ -230,45 +281,8 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 		alert('Error occurred getting group list:' + response.status + response.data);
 	});
 
-	$scope.checkCompletion = function () {
-		if($scope.newQuestionnaireToPublish.typeId === "4" || $scope.newQuestionnaireToPublish.typeId === "1") {
-			var allGood = true;
-
-			if (typeof $scope.newQuestionnaireToPublish.subOptions === 'undefined' || $scope.newQuestionnaireToPublish.subOptions.length <= 0)
-				allGood = false;
-			else
-				$scope.newQuestionnaireToPublish.subOptions.forEach(function(entry) {
-					if (entry.description_EN === undefined || entry.description_FR === undefined  || entry.description_EN === "" || entry.description_FR === ""  || entry.order === 0 || entry.order === undefined)
-						allGood = false;
-				});
-			if(allGood)
-				steps.type.completed = true;
-			else
-				steps.type.completed = false;
-		}
-		else if($scope.newQuestionnaireToPublish.typeId === "2") {
-			if($scope.newQuestionnaireToPublish.options) {
-				if($scope.validSlider)
-					steps.type.completed = true;
-				else
-					steps.type.completed = false;
-			}
-		}
-		else
-			steps.type.completed = true;
-		$scope.numOfCompletedSteps = stepsCompleted(steps);
-		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-	};
-
-	// check if form is completed
-	$scope.checkForm = function () {
-		if (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) >= 100)
-			return true;
-		else
-			return false;
-	};
-
-
+	// Responsible for "searching" in search bars
+	$scope.filter = $filter('filter');
 
 
 	// Call our API service to get each trigger
@@ -291,53 +305,9 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 		alert('Error occurred getting filter list.\r\n' + response.status + " " + response.data);
 	});
 
-	// Function to toggle necessary changes when updating the legacy questionnaire
-	$scope.legacyQuestionnaireUpdate = function () {
-
-		$scope.legacyQuestionnaireSection.open = true;
-
-		$scope.titleSection.show = true;
-
-		// Toggle step completion
-		steps.legacy_questionnaire.completed = true;
-		// Count the number of completed steps
-		$scope.numOfCompletedSteps = stepsCompleted(steps);
-		// Change progress bar
-		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-
-	};
-
-
-	// Function to toggle necessary changes when updating post name
-	$scope.titleUpdate = function () {
-
-		$scope.titleSection.open = true;
-
-		if ($scope.newLegacyQuestionnaire.name_EN && $scope.newLegacyQuestionnaire.name_FR) {
-
-			$scope.introSection.show = true;
-
-			// Toggle step completion
-			steps.title.completed = true;
-			// Count the number of completed steps
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			// Change progress bar
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-		} else {
-			// Toggle step completion
-			steps.title.completed = false;
-			// Count the number of completed steps
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			// Change progress bar
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-		}
-	};
-
 	// Function to toggle necessary changes when updating the sex
 	$scope.sexUpdate = function (sex) {
-
 		$scope.demoSection.open = true;
-
 		if (!$scope.demoTrigger.sex) {
 			$scope.demoTrigger.sex = sex.name;
 		} else if ($scope.demoTrigger.sex == sex.name) {
@@ -487,12 +457,12 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 	// Function to return triggers that have been checked
 	function addTriggers(triggerList, selectAll) {
 		if(selectAll) {
-			$scope.newLegacyQuestionnaire.triggers.push({id: 'ALL', type: triggerList[0].type});
+			$scope.newQuestionnaireToPublish.triggers.push({id: 'ALL', type: triggerList[0].type});
 		}
 		else {
 			angular.forEach(triggerList, function (trigger) {
 				if (trigger.added)
-					$scope.newLegacyQuestionnaire.triggers.push({ id: trigger.id, type: trigger.type });
+					$scope.newQuestionnaireToPublish.triggers.push({ id: trigger.id, type: trigger.type });
 			});
 		}
 	}
@@ -510,8 +480,8 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 	// Function to check frequency trigger forms are complete
 	$scope.checkFrequencyTrigger = function () {
 		if ($scope.showFrequency) {
-			if (!$scope.newLegacyQuestionnaire.occurrence.start_date ||
-				($scope.addEndDate && !$scope.newLegacyQuestionnaire.occurrence.end_date) ) {
+			if (!$scope.newQuestionnaireToPublish.occurrence.start_date ||
+				($scope.addEndDate && !$scope.newQuestionnaireToPublish.occurrence.end_date) ) {
 				return false;
 			} else {
 				if ($scope.frequencySelected.id != 'custom') {
@@ -556,15 +526,15 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 	// Function for adding new frequency filter
 	$scope.addFrequencyFilter = function () {
 		$scope.showFrequency = true;
-		$scope.newLegacyQuestionnaire.occurrence.frequency.meta_value = $scope.frequencySelected.meta_value;
-		$scope.newLegacyQuestionnaire.occurrence.frequency.meta_key = $scope.frequencySelected.meta_key;
+		$scope.newQuestionnaireToPublish.occurrence.frequency.meta_value = $scope.frequencySelected.meta_value;
+		$scope.newQuestionnaireToPublish.occurrence.frequency.meta_key = $scope.frequencySelected.meta_key;
 		$scope.publishFrequencySection.open = true;
 	};
 
 	// Function for removing new frequency filter
 	$scope.removeFrequencyFilter = function () {
 		$scope.showFrequency = false; // Hide form
-		$scope.newLegacyQuestionnaire.occurrence.set = 0; // Not set anymore
+		$scope.newQuestionnaireToPublish.occurrence.set = 0; // Not set anymore
 		$scope.flushAllFrequencyFilters();
 		$scope.publishFrequencySection.open = false;
 	};
@@ -584,8 +554,8 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 
 	// Function to reset repeat dates
 	$scope.flushRepeatDates = function () {
-		$scope.newLegacyQuestionnaire.occurrence.start_date = null;
-		$scope.newLegacyQuestionnaire.occurrence.end_date = null;
+		$scope.newQuestionnaireToPublish.occurrence.start_date = null;
+		$scope.newQuestionnaireToPublish.occurrence.end_date = null;
 	};
 
 	// Function to reset repeat interval
@@ -624,13 +594,13 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 		maxDate: null
 	};
 	// Watch to restrict the end calendar to not choose an earlier date than the start date
-	$scope.$watch('newLegacyQuestionnaire.occurrence.start_date', function(startDate){
+	$scope.$watch('newQuestionnaireToPublish.occurrence.start_date', function(startDate){
 		if (startDate !== undefined) {
 			$scope.dateOptionsEnd.minDate = startDate;
 		}
 	});
 	// Watch to restrict the start calendar to not choose a start after the end date
-	$scope.$watch('newLegacyQuestionnaire.occurrence.end_date', function(endDate){
+	$scope.$watch('newQuestionnaireToPublish.occurrence.end_date', function(endDate){
 		if (endDate !== undefined) {
 			$scope.dateOptionsStart.maxDate = endDate;
 		}
@@ -660,7 +630,7 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 	$scope.toggleEndDate = function () {
 		$scope.addEndDate = !$scope.addEndDate;
 		if (!$scope.addEndDate) {
-			$scope.newLegacyQuestionnaire.occurrence.end_date = null;
+			$scope.newQuestionnaireToPublish.occurrence.end_date = null;
 		}
 		$scope.publishFrequencySection.open = true;
 	};
@@ -673,14 +643,14 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 		$scope.frequencySelected = frequency;
 		$scope.publishFrequencySection.open = true;
 		if (frequency.id != 'custom') {
-			$scope.newLegacyQuestionnaire.occurrence.frequency.meta_value = $scope.frequencySelected.meta_value;
-			$scope.newLegacyQuestionnaire.occurrence.frequency.meta_key = $scope.frequencySelected.meta_key;
-			$scope.newLegacyQuestionnaire.occurrence.frequency.custom = 0;
+			$scope.newQuestionnaireToPublish.occurrence.frequency.meta_value = $scope.frequencySelected.meta_value;
+			$scope.newQuestionnaireToPublish.occurrence.frequency.meta_key = $scope.frequencySelected.meta_key;
+			$scope.newQuestionnaireToPublish.occurrence.frequency.custom = 0;
 			$scope.flushRepeatInterval();
 			$scope.flushRepeatTypes();
 		}
 		else {
-			$scope.newLegacyQuestionnaire.occurrence.frequency.custom = 1;
+			$scope.newQuestionnaireToPublish.occurrence.frequency.custom = 1;
 		}
 	};
 
@@ -1029,93 +999,6 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 		else
 			return false;
 	};
-
-	// Function to submit the new legacy questionnaire
-	$scope.submitLegacyQuestionnaire = function () {
-		if ($scope.checkForm()) {
-
-			// For some reason the HTML text fields add a zero-width-space
-			// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
-			$scope.newLegacyQuestionnaire.intro_EN = $scope.newLegacyQuestionnaire.intro_EN.replace(/\u200B/g,'');
-			$scope.newLegacyQuestionnaire.intro_FR = $scope.newLegacyQuestionnaire.intro_FR.replace(/\u200B/g,'');
-
-			// Add demographic triggers, if defined
-			if ($scope.demoTrigger.sex)
-				$scope.newLegacyQuestionnaire.triggers.push({ id: $scope.demoTrigger.sex, type: 'Sex' });
-			if ($scope.demoTrigger.age.min >= 0 && $scope.demoTrigger.age.max <= 100) { // i.e. not empty
-				if ($scope.demoTrigger.age.min !== 0 || $scope.demoTrigger.age.max != 100) { // triggers were changed
-					$scope.newLegacyQuestionnaire.triggers.push({
-						id: String($scope.demoTrigger.age.min).concat(',', String($scope.demoTrigger.age.max)),
-						type: 'Age'
-					});
-				}
-			}
-			// Add triggers to new legacy questionnaire object
-			addTriggers($scope.appointmentTriggerList, $scope.selectAll.appointment.all);
-			addTriggers($scope.dxTriggerList, $scope.selectAll.diagnosis.all);
-			addTriggers($scope.doctorTriggerList, $scope.selectAll.doctor.all);
-			addTriggers($scope.machineTriggerList, $scope.selectAll.machine.all);
-			addTriggers($scope.patientTriggerList, $scope.selectAll.patient.all);
-			addTriggers($scope.appointmentStatusList);
-
-			// Add frequency trigger if exists
-			if ($scope.showFrequency) {
-				$scope.newLegacyQuestionnaire.occurrence.set = 1;
-				// convert dates to timestamps
-				$scope.newLegacyQuestionnaire.occurrence.start_date = moment($scope.newLegacyQuestionnaire.occurrence.start_date).format('X');
-				if ($scope.newLegacyQuestionnaire.occurrence.end_date) {
-					$scope.newLegacyQuestionnaire.occurrence.end_date = moment($scope.newLegacyQuestionnaire.occurrence.end_date).format('X');
-				}
-				if ($scope.newLegacyQuestionnaire.occurrence.frequency.custom) {
-					$scope.newLegacyQuestionnaire.occurrence.frequency.meta_key = $scope.customFrequency.unit.meta_key;
-					$scope.newLegacyQuestionnaire.occurrence.frequency.meta_value = $scope.customFrequency.meta_value;
-					$scope.newLegacyQuestionnaire.occurrence.frequency.additionalMeta = [];
-					angular.forEach(Object.keys($scope.additionalMeta), function(meta_key){
-						if ($scope.additionalMeta[meta_key].length) {
-							var metaDetails = {
-								meta_key: meta_key,
-								meta_value: $scope.additionalMeta[meta_key]
-							};
-							$scope.newLegacyQuestionnaire.occurrence.frequency.additionalMeta.push(metaDetails);
-						}
-					});
-				}
-				else {
-					$scope.newLegacyQuestionnaire.occurrence.frequency.additionalMeta = [];
-				}
-			}
-
-			// Log who created legacy questionnaire
-			var currentUser = Session.retrieveObject('user');
-			$scope.newLegacyQuestionnaire.user = currentUser;
-
-			// Submit
-			$.ajax({
-				type: "POST",
-				url: "php/legacy-questionnaire/insert.legacy_questionnaire.php",
-				data: $scope.newLegacyQuestionnaire,
-				success: function () {
-					$state.go('legacy-questionnaire');
-				}
-			});
-		}
-	};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	var fixmeTop = $('.summary-fix').offset().top;
 	$(window).scroll(function () {

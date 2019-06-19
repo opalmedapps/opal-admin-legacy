@@ -75,6 +75,28 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
+     * Insert a new published questionnaire in questionnaire control table
+     * @params  array of the published questionnaire
+     * @return  ID of the entry
+     * */
+    function insertPublishedQuestionnaire($toInsert) {
+        return $this->_insertRecordIntoTable(OPAL_QUESTIONNAIRE_CONTROL_TABLE, $toInsert);
+    }
+
+    /*
+     * Insert filters in the filter table
+     * @params  array of the published questionnaire
+     * @return  ID of the entry
+     * */
+    function insertMultipleFilters($toInsert) {
+        $this->_insertMultipleRecordsIntoTable(OPAL_FILTERS_TABLE, $toInsert);
+    }
+
+    function insertMultipleFrequencyEvents($toInsert) {
+        $this->_insertMultipleRecordsIntoTable(OPAL_FREQUENCY_EVENTS_TABLE, $toInsert);
+    }
+
+    /*
      * Returns the filters for a specific questionnaire controll
      * @params  questionnaire control ID
      * @return  array of filters
@@ -87,7 +109,9 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     *
+     * update the publication flag of a questionnaire.
+     * @params  id of questionnaire, and value of the status (both integers)
+     * @return  number of record affected
      * */
     function updatePublicationFlags($id, $value) {
 
