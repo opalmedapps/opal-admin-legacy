@@ -280,7 +280,7 @@ class Filter {
                 // Doctor Filters
                 $sql = "
                     SELECT DISTINCT
-                        max(Doctor.ResourceSerNum) ResourceSerNum,
+                        max(Doctor.DoctorAriaSer) ResourceSerNum,
                         trim(Doctor.LastName) LastName
                     FROM Doctor Doctor
                     
@@ -308,7 +308,7 @@ class Filter {
                 // Machine Filters
                 $sql = "
                     SELECT DISTINCT
-                        ResourceSerNum,
+                        ResourceAriaSer AS ResourceSerNum,
                         ResourceName
                     FROM    
                         resource

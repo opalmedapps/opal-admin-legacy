@@ -75,4 +75,107 @@ class PublishedQuestionnaire extends Questionnaire {
             $this->opalDB->updatePublicationFlags($row["serial"], $row["publish"]);
         }
     }
+
+    function validateAndSanitize($arrayForm) {
+        $sanitizedArray = array();
+        foreach($arrayForm as $key=>$value) {
+            $key = strip_tags($key);
+            if(is_array($value))
+                $value = $this->validateAndSanitize($value);
+            else
+                $value = strip_tags($value);
+            $sanitizedArray[$key] = $value;
+        }
+        return $sanitizedArray;
+    }
+
+    /*
+     * Insert a questionnaire ready to be published in the questionnaire control, filter and frequency events table
+     * after validating and sanitizing the data.
+     * @params  array of questionnaire settings and triggers
+     * @return  void
+     * */
+    function insertPublishedQuestionnaire($questionnaire) {
+        $currentQuestionnaire = $this->questionnaireDB->getQuestionnaireDetails($questionnaire["questionnaireId"]);
+
+        if(count($currentQuestionnaire) != 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire");
+        $currentQuestionnaire = $currentQuestionnaire[0];
+
+        $questionnaire = $this->validateAndSanitize($questionnaire);
+
+        $toInsert = array(
+            "QuestionnaireDBSerNum"=>$currentQuestionnaire["ID"],
+            "QuestionnaireName_EN"=>$questionnaire["name_EN"],
+            "QuestionnaireName_FR"=>$questionnaire["name_FR"],
+            "Intro_EN"=>htmlspecialchars_decode($currentQuestionnaire["description_EN"]),
+            "Intro_FR"=>htmlspecialchars_decode($currentQuestionnaire["description_FR"]),
+            "SessionId"=>$questionnaire["sessionId"],
+            "DateAdded"=>date("Y-m-d H:i:s"),
+            "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
+        );
+
+        $questionnaireControlId = $this->opalDB->insertPublishedQuestionnaire($toInsert);
+        $toInsert = array();
+        if(!empty($questionnaire['triggers'])) {
+            foreach($questionnaire['triggers'] as $trigger) {
+                array_push($toInsert, array(
+                    "ControlTable"=>"LegacyQuestionnaireControl",
+                    "ControlTableSerNum"=>$questionnaireControlId,
+                    "FilterType"=>$trigger['type'],
+                    "FilterId"=>$trigger['id'],
+                    "DateAdded"=>date("Y-m-d H:i:s"),
+                    "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
+                    "SessionId"=>$questionnaire["sessionId"],
+                ));
+            }
+            $this->opalDB->insertMultipleFilters($toInsert);
+        }
+
+        if ($questionnaire['occurrence']['set']) {
+            $toInsert = array();
+            array_push($toInsert, array(
+                "ControlTable"=>"LegacyQuestionnaireControl",
+                "ControlTableSerNum"=>$questionnaireControlId,
+                "MetaKey"=>"repeat_start",
+                "MetaValue"=>$questionnaire['occurrence']['start_date'],
+                "CustomFlag"=>"0",
+                "DateAdded"=>date("Y-m-d H:i:s"),
+            ));
+
+            if($questionnaire['occurrence']['end_date']) {
+                array_push($toInsert, array(
+                    "ControlTable"=>"LegacyQuestionnaireControl",
+                    "ControlTableSerNum"=>$questionnaireControlId,
+                    "MetaKey"=>"repeat_end",
+                    "MetaValue"=>$questionnaire['occurrence']['end_date'],
+                    "CustomFlag"=>"0",
+                    "DateAdded"=>date("Y-m-d H:i:s"),
+                ));
+            }
+
+            array_push($toInsert, array(
+                "ControlTable"=>"LegacyQuestionnaireControl",
+                "ControlTableSerNum"=>$questionnaireControlId,
+                "MetaKey"=>$questionnaire['occurrence']['frequency']['meta_key']."|lqc_".$questionnaireControlId,
+                "MetaValue"=>$questionnaire['occurrence']['frequency']['meta_value'],
+                "CustomFlag"=>$questionnaire['occurrence']['frequency']['custom'],
+                "DateAdded"=>date("Y-m-d H:i:s"),
+            ));
+
+            if(!empty($questionnaire['occurrence']['frequency']['additionalMeta'])) {
+                foreach($questionnaire['occurrence']['frequency']['additionalMeta'] as $meta) {
+                    array_push($toInsert, array(
+                        "ControlTable"=>"LegacyQuestionnaireControl",
+                        "ControlTableSerNum"=>$questionnaireControlId,
+                        "MetaKey"=>$meta['meta_key']."|lqc_".$questionnaireControlId,
+                        "MetaValue"=>implode(',', $meta['meta_value']),
+                        "CustomFlag"=>"1",
+                        "DateAdded"=>date("Y-m-d H:i:s"),
+                    ));
+                }
+            }
+            $this->opalDB->insertMultipleFrequencyEvents($toInsert);
+        }
+    }
 }
