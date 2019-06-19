@@ -307,7 +307,7 @@ class Question extends QuestionnaireModule {
         $questionLocked = 0;
         if (count($questionnairesList) > 0) {
             $questionLocked = $this->opalDB->countLockedQuestionnaires(implode(", ", $questionnairesList));
-            $questionLocked = intval($questionLocked["total"]);
+            $questionLocked = (intval($questionLocked["total"]) > 0?true:false);
         }
         return $questionLocked;
     }
