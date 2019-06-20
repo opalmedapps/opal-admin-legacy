@@ -161,7 +161,7 @@ define("SQL_QUESTIONNAIRE_GET_TEMPLATE_QUESTION_DETAILS",
     LEFT JOIN type t ON t.ID = tt.typeId
     LEFT JOIN ".DEFINITION_TABLE." dt1 ON dt1.ID = t.templateTableId
     LEFT JOIN ".DEFINITION_TABLE." dt2 ON dt2.ID = t.templateSubTableId
-    WHERE TT.ID = :ID AND (tt.private = 0 OR tt.OAUserId = :OAUserId) AND tt.deleted = ".NON_DELETED_RECORD.";"
+    WHERE tt.ID = :ID AND (tt.private = 0 OR tt.OAUserId = :OAUserId) AND tt.deleted = ".NON_DELETED_RECORD.";"
 );
 
 define("SQL_QUESTIONNAIRE_GET_TEMPLATE_QUESTION_OPTIONS",
