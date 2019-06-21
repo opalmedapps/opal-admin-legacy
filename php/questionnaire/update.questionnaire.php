@@ -13,4 +13,3 @@ $questionnaire->updateQuestionnaire($questionnaireArray);
 header('Content-Type: application/javascript');
 $response['code'] = HTTP_STATUS_SUCCESS;
 echo json_encode($response);
-?>

@@ -75,6 +75,42 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
+     * Get all the details of a specific published questionnaire.
+     * @params  Questionnaire serial number (int)
+     * @return  array of details of the published questionnaire itself
+     * */
+    function getPublishedQuestionnaireDetails($questionnaireId) {
+        return $this->_fetchAll(SQL_OPAL_GET_QUESTIONNAIRE_CONTROL_DETAILS,
+            array(
+                array("parameter"=>":QuestionnaireControlSerNum","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    /*
+     * Get all the triggers of a specific published questionnaire.
+     * @params  Questionnaire serial number (int)
+     * @return  array of details of the published questionnaire itself
+     * */
+    function getPublishedQuestionnaireTriggers($questionnaireId) {
+        return $this->_fetchAll(SQL_OPAL_GET_FILTERS_QUESTIONNAIRE_CONTROL,
+            array(
+                array("parameter"=>":QuestionnaireControlSerNum","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    /*
+     * Get all the triggers of a specific published questionnaire.
+     * @params  Questionnaire serial number (int)
+     * @return  array of details of the published questionnaire itself
+     * */
+    function getPublishedQuestionnaireFrequencyEvents($questionnaireId) {
+        return $this->_fetchAll(SQL_OPAL_GET_FREQUENCY_EVENTS_QUESTIONNAIRE_CONTROL,
+            array(
+                array("parameter"=>":ControlTableSerNum","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    /*
      * Insert a new published questionnaire in questionnaire control table
      * @params  array of the published questionnaire
      * @return  ID of the entry
@@ -96,16 +132,44 @@ class DatabaseOpal extends DatabaseAccess {
         $this->_insertMultipleRecordsIntoTable(OPAL_FREQUENCY_EVENTS_TABLE, $toInsert);
     }
 
+    function deleteTriggersWithIDs($controlTableSerNum) {
+        $toDelete = array(
+            array("parameter"=>":ControlTableSerNum","variable"=>$controlTableSerNum,"data_type"=>PDO::PARAM_INT),
+        );
+        $this->_execute(SQL_OPAL_DELETE_FREQUENCY_EVENTS_TABLE, $toDelete);
+    }
+
     /*
-     * Returns the filters for a specific questionnaire controll
+     * Returns the filters for a specific questionnaire control
      * @params  questionnaire control ID
      * @return  array of filters
      * */
-    function getFilters($questionnaireControlId) {
+    function getFilters($questionnaireControlSerNum) {
         return $this->_fetchAll(SQL_OPAL_GET_FILTERS,
             array(
-                array("parameter"=>":questionnaireControlId","variable"=>$questionnaireControlId,"data_type"=>PDO::PARAM_STR),
+                array("parameter"=>":QuestionnaireControlSerNum","variable"=>$questionnaireControlSerNum,"data_type"=>PDO::PARAM_INT),
             ));
+    }
+
+    /*
+     * Returns the filters with a specific control table ser num
+     * @params  questionnaire control ID
+     * @return  array of filters
+     * */
+    function getFiltersByControlTableSerNum($controlTableSerNum) {
+        return $this->_fetchAll(SQL_OPAL_GET_FILTERS_BY_CONTROL_TABLE_SERNUM,
+            array(
+                array("parameter"=>":ControlTableSerNum","variable"=>$controlTableSerNum,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    function deleteFilters($filterId, $filterType, $controlTableSerNum) {
+        $toDelete = array(
+            array("parameter"=>":FilterId","variable"=>$filterId),
+            array("parameter"=>":FilterType","variable"=>$filterType),
+            array("parameter"=>":ControlTableSerNum","variable"=>$controlTableSerNum),
+        );
+        return $this->_execute(SQL_OPAL_DELETE_FILTERS, $toDelete);
     }
 
     /*
@@ -117,9 +181,9 @@ class DatabaseOpal extends DatabaseAccess {
 
         $sqlToUpdate = SQL_OPAL_UPDATE_PUBLISHED_QUESTIONNAIRES_STATUS;
         $toInsert = array(
-            array("parameter"=>":QuestionnaireControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":LastUpdatedBy","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_STR),
-            array("parameter"=>":PublishFlag","variable"=>$value,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":QuestionnaireControlSerNum","variable"=>$id,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":LastUpdatedBy","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":PublishFlag","variable"=>$value,"data_type"=>PDO::PARAM_INT),
         );
         if($value == 1) {
             $sqlToUpdate = SQL_OPAL_UPDATE_PUBLISHED_QUESTIONNAIRES_STATUS_LAST_PUBLISHED;
@@ -127,5 +191,31 @@ class DatabaseOpal extends DatabaseAccess {
         }
 
         return $this->_execute($sqlToUpdate, $toInsert);
+    }
+
+    function updateQuestionnaireControl($record) {
+        return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_QUESTIONNAIRE_CONTROL, $record);
+    }
+
+    function updateFiltersModificationHistory($record) {
+        return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_FILTERSMH, $record);
+    }
+
+    function insertReplaceFrequencyEvent($record) {
+        return $this->_insertRecordIntoTable(OPAL_FREQUENCY_EVENTS_TABLE, $record);
+    }
+
+    function deleteRepeatEndFromFrequencyEvents($controlTableSerNum) {
+        $toInsert = array(
+            array("parameter"=>":ControlTableSerNum","variable"=>$controlTableSerNum,"data_type"=>PDO::PARAM_INT),
+        );
+        return $this->_execute(SQL_OPAL_DELETE_REPEAT_END_FROM_FREQUENCY_EVENTS, $toInsert);
+    }
+
+    function deleteOtherMetasFromFrequencyEvents($controlTableSerNum) {
+        $toInsert = array(
+            array("parameter"=>":ControlTableSerNum","variable"=>$controlTableSerNum,"data_type"=>PDO::PARAM_INT),
+        );
+        return $this->_execute(SQL_OPAL_DELETE_OTHER_METAS_FROM_FREQUENCY_EVENTS, $toInsert);
     }
 }

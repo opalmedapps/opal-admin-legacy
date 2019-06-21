@@ -19,6 +19,7 @@ define("OPAL_OAUSER_TABLE","oauser");
 define("OPAL_OAUSER_ROLE_TABLE","oauserrole");
 define("OPAL_QUESTIONNAIRE_CONTROL_TABLE","QuestionnaireControl");
 define("OPAL_FILTERS_TABLE","Filters");
+define("OPAL_FILTERS_MODIFICATION_HISTORY_TABLE","FiltersMH");
 define("OPAL_FREQUENCY_EVENTS_TABLE","FrequencyEvents");
 
 /*
@@ -64,11 +65,50 @@ define("SQL_OPAL_GET_FILTERS",
     ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." qc, 
     ".OPAL_FILTERS_TABLE." f
     WHERE
-    qc.QuestionnaireControlSerNum = :questionnaireControlId
+    qc.QuestionnaireControlSerNum = :QuestionnaireControlSerNum
     AND f.ControlTable = 'LegacyQuestionnaireControl'
     AND f.ControlTableSerNum = qc.QuestionnaireControlSerNum
     AND f.FilterType != ''
     AND f.FilterId != '';"
+);
+
+define("SQL_OPAL_GET_FILTERS_BY_CONTROL_TABLE_SERNUM",
+    "SELECT DISTINCT 
+    FilterType AS type,
+    FilterId AS id
+    FROM 
+    ".OPAL_FILTERS_TABLE."
+    WHERE ControlTableSerNum = :ControlTableSerNum
+    AND ControlTable = 'LegacyQuestionnaireControl'
+    AND FilterType != ''
+    AND FilterId != '';"
+);
+
+define("SQL_OPAL_DELETE_FILTERS",
+    "DELETE FROM ".OPAL_FILTERS_TABLE."
+    WHERE FilterId = :FilterId
+    AND FilterType = :FilterType
+    AND ControlTableSerNum = :ControlTableSerNum
+    AND ControlTable = 'LegacyQuestionnaireControl';"
+);
+
+define("SQL_OPAL_UPDATE_FILTERSMH",
+    "UPDATE ".OPAL_FILTERS_MODIFICATION_HISTORY_TABLE."
+    SET 
+    LastUpdatedBy = :LastUpdatedBy,
+    SessionId = :SessionId
+    WHERE FilterId = :FilterId
+    AND FilterType = :FilterType
+    AND ControlTableSerNum = :ControlTableSerNum
+    AND ControlTable = 'LegacyQuestionnaireControl'
+    ORDER BY DateAdded DESC 
+    LIMIT 1;"
+);
+
+define("SQL_OPAL_DELETE_FREQUENCY_EVENTS_TABLE",
+    "DELETE FROM ".OPAL_FREQUENCY_EVENTS_TABLE." 
+    WHERE ControlTable = 'LegacyQuestionnaireControl'
+    AND ControlTableSerNum = :ControlTableSerNum;"
 );
 
 define("SQL_OPAL_UPDATE_PUBLISHED_QUESTIONNAIRES_STATUS_LAST_PUBLISHED",
@@ -83,4 +123,68 @@ define("SQL_OPAL_UPDATE_PUBLISHED_QUESTIONNAIRES_STATUS",
     SET PublishFlag = :PublishFlag, LastUpdatedBy = :LastUpdatedBy
     WHERE QuestionnaireControlSerNum = :QuestionnaireControlSerNum
     AND (PublishFlag != :PublishFlag);"
+);
+
+define("SQL_OPAL_GET_QUESTIONNAIRE_CONTROL_DETAILS",
+    "SELECT DISTINCT
+    QuestionnaireControlSerNum AS serial,
+    QuestionnaireDBSerNum AS db_serial,
+    QuestionnaireName_EN AS name_EN,
+    QuestionnaireName_FR AS name_FR,
+    Intro_EN,
+    Intro_FR,
+    PublishFlag AS publish
+    FROM
+    ".OPAL_QUESTIONNAIRE_CONTROL_TABLE."
+    WHERE QuestionnaireControlSerNum = :QuestionnaireControlSerNum;"
+);
+
+define("SQL_OPAL_GET_FILTERS_QUESTIONNAIRE_CONTROL",
+    "SELECT DISTINCT 
+    Filters.FilterType AS type,
+    Filters.FilterId AS id,
+    1 AS added
+	FROM 
+	".OPAL_QUESTIONNAIRE_CONTROL_TABLE.", 
+	".OPAL_FILTERS_TABLE." 
+	WHERE 
+    QuestionnaireControl.QuestionnaireControlSerNum = :QuestionnaireControlSerNum
+    AND Filters.ControlTable = 'LegacyQuestionnaireControl'
+    AND Filters.ControlTableSerNum = QuestionnaireControl.QuestionnaireControlSerNum
+    AND Filters.FilterType != ''
+    AND Filters.FilterId != '';"
+);
+
+define("SQL_OPAL_GET_FREQUENCY_EVENTS_QUESTIONNAIRE_CONTROL",
+    "SELECT DISTINCT CustomFlag, MetaKey, MetaValue 
+    FROM ".OPAL_FREQUENCY_EVENTS_TABLE."
+    WHERE ControlTable = 'LegacyQuestionnaireControl'
+    AND ControlTableSerNum = :ControlTableSerNum;"
+);
+
+define("SQL_OPAL_UPDATE_QUESTIONNAIRE_CONTROL",
+    "UPDATE 
+    ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." 
+    SET 
+    QuestionnaireControl.QuestionnaireName_EN = :QuestionnaireName_EN, 
+    QuestionnaireControl.QuestionnaireName_FR = :QuestionnaireName_FR,
+    QuestionnaireControl.LastUpdatedBy = :LastUpdatedBy,
+    QuestionnaireControl.SessionId = :SessionId
+    WHERE 
+    QuestionnaireControl.QuestionnaireControlSerNum = :QuestionnaireControlSerNum;"
+);
+
+define("SQL_OPAL_DELETE_REPEAT_END_FROM_FREQUENCY_EVENTS",
+    "DELETE FROM ".OPAL_FREQUENCY_EVENTS_TABLE."
+    WHERE ControlTable = 'LegacyQuestionnaireControl'
+    AND ControlTableSerNum = :ControlTableSerNum
+    AND MetaKey = 'repeat_end';"
+);
+
+define("SQL_OPAL_DELETE_OTHER_METAS_FROM_FREQUENCY_EVENTS",
+    "DELETE FROM ".OPAL_FREQUENCY_EVENTS_TABLE."
+    WHERE ControlTable = 'LegacyQuestionnaireControl'
+    AND ControlTableSerNum = :ControlTableSerNum
+    AND MetaKey != 'repeat_start'
+    AND MetaKey != 'repeat_end';"
 );

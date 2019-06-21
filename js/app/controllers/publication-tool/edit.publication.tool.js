@@ -1,4 +1,12 @@
-angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('publication.tool.edit', function ($scope, $state, $filter, $uibModal, questionnaireCollectionService, filterCollectionService, FrequencyFilterService, Session) {
+angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('publication.tool.edit', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, filterCollectionService, FrequencyFilterService, Session) {
+
+	// initialize default variables & lists
+	$scope.changesMade = false;
+	$scope.publishedQuestionnaire = {};
+
+	// get current user id
+	var user = Session.retrieveObject('user');
+	var OAUserId = user.id;
 
 	// initialize default variables & lists
 	$scope.changesMade = false;
@@ -28,7 +36,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 		doctor: {all:false, checked:false},
 		machine: {all:false, checked:false},
 		patient: {all:false, checked:false}
-	}
+	};
 
 	// Initialize search field variables
 	$scope.appointmentSearchField = "";
@@ -89,15 +97,13 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 	$scope.patientTriggerList = [];
 	$scope.appointmentStatusList = [];
 
-	// Call our API service to get legacy questionnaire details
-	legacyQuestionnaireCollectionService.getLegacyQuestionnaireDetails($scope.currentLegacyQuestionnaire.serial).then(function (response) {
+	// Call our API service to get published questionnaire details
+	questionnaireCollectionService.getPublishedQuestionnaireDetails($scope.currentPublishedQuestionnaire.serial, OAUserId).then(function (response) {
 
 		// Assign value
 		$scope.publishedQuestionnaire = response.data;
 		if ($scope.publishedQuestionnaire.occurrence.set) {
-
 			$scope.showFrequency = true;
-
 			$scope.publishedQuestionnaire.occurrence.start_date = new Date($scope.publishedQuestionnaire.occurrence.start_date*1000);
 			if ($scope.publishedQuestionnaire.occurrence.end_date) {
 				$scope.publishedQuestionnaire.occurrence.end_date = new Date($scope.publishedQuestionnaire.occurrence.end_date*1000);
@@ -134,7 +140,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 		}
 
 	}).catch(function (response) {
-		console.error('Error occurred getting legacy questionnaire details after modal open:', response.status, response.data);
+		alert('Error occurred getting published questionnaire details after modal open:' + response.status + " " + response.data);
 
 	}).finally(function () {
 
@@ -152,7 +158,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 			$scope.appointmentStatusList = checkAdded(response.data.appointmentStatuses);
 
 		}).catch(function(response) {
-			console.error('Error occurred getting filter list:', response.status, response.data);
+			alert('Error occurred getting filter list:' + response.status + " " + response.data);
 		});
 
 		processingModal.close(); // hide modal
@@ -194,7 +200,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 			$scope.setSelectedMonthsInYearText($scope.selectedMonthsInYear);
 		}
 
-	}
+	};
 
 	// Function to toggle trigger in a list on/off
 	$scope.selectTrigger = function (trigger, selectAll) {
@@ -253,7 +259,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 	};
 
 
-	// Function to toggle appointment status trigger
+	// Function to toggle appointment status trigger 
 	$scope.appointmentStatusUpdate = function (index) {
 		$scope.setChangesMade();
 		$scope.publishedQuestionnaire.triggers_updated = 1;
@@ -320,10 +326,8 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 	// Function to check necessary form fields are complete
 	$scope.checkForm = function () {
 		if ($scope.publishedQuestionnaire.name_EN && $scope.publishedQuestionnaire.name_FR && $scope.changesMade
-			&& $scope.publishedQuestionnaire.intro_EN && $scope.publishedQuestionnaire.intro_FR
-			&& $scope.checkFrequencyTrigger()) {
+			&& $scope.checkFrequencyTrigger())
 			return true;
-		}
 		else
 			return false;
 	};
@@ -369,7 +373,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 		} else {
 			return true;
 		}
-	}
+	};
 
 	// Initialize a list of sexes
 	$scope.sexes = [
@@ -398,7 +402,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 
 	};
 
-	// Function to toggle necessary changes when updating the age
+	// Function to toggle necessary changes when updating the age 
 	$scope.ageUpdate = function () {
 
 		$scope.setChangesMade();
@@ -409,7 +413,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 	$scope.detailsUpdated = function () {
 		$scope.publishedQuestionnaire.details_updated = 1;
 		$scope.setChangesMade();
-	}
+	};
 
 	// Function to return triggers that have been checked
 	function addTriggers(triggerList, selectAll) {
@@ -444,7 +448,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 		$scope.setChangesMade();
 		$scope.publishedQuestionnaire.occurrence.frequency.meta_value = $scope.frequencySelected.meta_value;
 		$scope.publishedQuestionnaire.occurrence.frequency.meta_key = $scope.frequencySelected.meta_key;
-	}
+	};
 
 	// Function for removing new frequency filter
 	$scope.removeFrequencyFilter = function () {
@@ -452,7 +456,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 		$scope.publishedQuestionnaire.occurrence.set = 0; // Not set anymore
 		$scope.flushAllFrequencyFilters();
 		$scope.setChangesMade();
-	}
+	};
 
 	// Function to reset all frequency filters
 	$scope.flushAllFrequencyFilters = function () {
@@ -460,25 +464,25 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 		$scope.flushRepeatDates();
 		$scope.flushRepeatInterval();
 		$scope.flushRepeatTypes();
-	}
+	};
 
 	// Function to reset the preset frequency
 	$scope.flushPresetFrequency = function () {
 		$scope.frequencySelected = $scope.presetFrequencies[0];
-	}
+	};
 
 	// Function to reset repeat dates
 	$scope.flushRepeatDates = function () {
 		$scope.publishedQuestionnaire.occurrence.start_date = null;
 		$scope.publishedQuestionnaire.occurrence.end_date = null;
-	}
+	};
 
 	// Function to reset repeat interval
 	$scope.flushRepeatInterval = function () {
 		$scope.customFrequency = jQuery.extend(true, {}, FrequencyFilterService.customFrequency);
 		$scope.customFrequency.unit = $scope.frequencyUnits[0];
 		$scope.customFrequency.meta_value = 1;
-	}
+	};
 
 	// Function to reset repeat types
 	$scope.flushRepeatTypes = function () {
@@ -492,7 +496,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 		$scope.selectedWeekNumberInMonthText = "";
 		$scope.selectedMonthsInYear = [];
 		$scope.selectedMonthsInYearText = "";
-	}
+	};
 
 	// Date format for start and end frequency dates
 	$scope.format = 'yyyy-MM-dd';
@@ -548,7 +552,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 			$scope.publishedQuestionnaire.occurrence.end_date = null;
 		}
 		$scope.setChangesMade();
-	}
+	};
 
 	// Initialize list of preset publishing frequencies
 	$scope.presetFrequencies = FrequencyFilterService.presetFrequencies;
@@ -567,7 +571,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 		else {
 			$scope.publishedQuestionnaire.occurrence.frequency.custom = 1;
 		}
-	}
+	};
 
 	// Initialize object for repeat interval
 	$scope.customFrequency = FrequencyFilterService.customFrequency;
@@ -601,7 +605,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 	$scope.selectedSingleDayInWeek = null; // Default
 	$scope.selectedSingleDayInWeekText = "";
 
-	// settings for week dropdown menu
+	// settings for week dropdown menu 
 	$scope.weekDropdownSettings = {
 		displayProp: 'name',
 		showCheckAll: false,
@@ -614,12 +618,12 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 			}
 			return selectionArray.length + " Days Selected";
 		}
-	}
+	};
 	// event options for week dropdown menu
 	$scope.weekDropdownEvents = {
 		onItemSelect: function (dayInWeek) {$scope.selectDayInWeek(dayInWeek, $scope.customFrequency.unit.id);},
 		onItemDeselect: function (dayInWeek) {$scope.selectDayInWeek(dayInWeek, $scope.customFrequency.unit.id);}
-	}
+	};
 	// Function when selecting the days on the week
 	$scope.selectDayInWeek = function (day, unit) {
 		$scope.setChangesMade();
@@ -639,7 +643,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 			}
 			// Selecting a single day in the week from month or year repeat interval
 			else if (unit == 'month' || unit == 'year') {
-				// If a week number exists we are ready to add meta data
+				// If a week number exists we are ready to add meta data 
 				if ($scope.selectedWeekNumberInMonth) {
 					$scope.additionalMeta.repeat_day_iw = [day.id];
 					$scope.additionalMeta.repeat_week_im = [$scope.selectedWeekNumberInMonth.id];
@@ -654,7 +658,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 				}
 			}
 		}
-		else { // A day in week was not selected
+		else { // A day in week was not selected 
 			if (unit == 'month' || unit == 'year') {
 				// Empty meta data array
 				$scope.additionalMeta.repeat_day_iw = [];
@@ -683,16 +687,16 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 				$scope.selectedDaysInWeekText = $scope.selectedDaysInWeekText.slice(0,-2) + " and " + $scope.selectedDaysInWeek[i].name;
 			}
 		}
-	}
+	};
 
 	$scope.setSelectedWeekNumberInMonthText = function (week) {
 		$scope.selectedWeekNumberInMonthText = week.name;
 
-	}
+	};
 
 	$scope.setSelectedSingleDayInWeekText = function (day) {
 		$scope.selectedSingleDayInWeekText = day.name;
-	}
+	};
 
 	$scope.setSelectedMonthsInYearText = function (months) {
 		// Construct text for display of selected months
@@ -738,7 +742,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 			if (dates.length == 1) {
 				$scope.selectedDatesInMonthText = dateNumber;
 			}
-			// Concat commas
+			// Concat commas 
 			// Eg. 4th, 5th
 			else if (index < dates.length-1) {
 				$scope.selectedDatesInMonthText += dateNumber + ", "
@@ -749,7 +753,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 				$scope.selectedDatesInMonthText = $scope.selectedDatesInMonthText.slice(0,-2) + " and " + dateNumber;
 			}
 		});
-	}
+	};
 
 	// Function when a repeat interval is selected
 	$scope.selectRepeatInterval = function (unit) {
@@ -779,7 +783,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 			$scope.selectedMonthsInYearText = "";
 		}
 		$scope.setChangesMade();
-	}
+	};
 
 	$scope.repeatSub = null;
 	// Function to set the tab options for repeats onDate or onWeek
@@ -807,7 +811,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 			$scope.selectedSingleDayInWeek = null;
 		}
 
-	}
+	};
 
 	// Function watch to deal with selected dates in calendar
 	$scope.selectedDatesInMonth = [];
@@ -853,13 +857,13 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 			$scope.additionalMeta.repeat_week_im = [];
 			$scope.selectedWeekNumberInMonthText = "";
 		}
-	}
+	};
 
 	// Set calendar to static date that starts on Sunday (Eg. Jan. 2018)
 	// (For easy use when selecting dates on the calendar)
 	$scope.staticMonth = moment().set({'year':2018, 'month': 0});
 
-	// settings for month dropdown menu
+	// settings for month dropdown menu 
 	$scope.monthDropdownSettings = {
 		displayProp: 'name',
 		showCheckAll: false,
@@ -872,12 +876,12 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 			}
 			return selectionArray.length + " Months Selected";
 		}
-	}
+	};
 	// event options for month dropdown menu
 	$scope.monthDropdownEvents = {
 		onItemSelect: function (month) {$scope.selectMonthInYear(month);},
 		onItemDeselect: function (month) {$scope.selectMonthInYear(month);}
-	}
+	};
 
 	// Initialize list of months in a year
 	$scope.selectedMonthsInYear = [];
@@ -905,16 +909,10 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 	// Initialize array holding additional meta data for custom repeats
 	$scope.additionalMeta = FrequencyFilterService.additionalMeta;
 
-	// Function for updating the legacy questionnaire
-	$scope.updateLegacyQuestionnaire = function () {
+	// Function for updating the published questionnaire
+	$scope.updatePublishedQuestionnaire = function () {
 
 		if ($scope.checkForm()) {
-
-			// For some reason the HTML text fields add a zero-width-space
-			// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
-			$scope.publishedQuestionnaire.intro_EN = $scope.publishedQuestionnaire.intro_EN.replace(/\u200B/g,'');
-			$scope.publishedQuestionnaire.intro_FR = $scope.publishedQuestionnaire.intro_FR.replace(/\u200B/g,'');
-
 			// Initialize filter
 			$scope.publishedQuestionnaire.triggers = [];
 
@@ -930,7 +928,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 				}
 			}
 
-			// Add triggers to legacy questionnaire
+			// Add triggers to published questionnaire
 			addTriggers($scope.appointmentTriggerList, $scope.selectAll.appointment.all);
 			addTriggers($scope.dxTriggerList, $scope.selectAll.diagnosis.all);
 			addTriggers($scope.doctorTriggerList, $scope.selectAll.doctor.all);
@@ -955,7 +953,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 							var metaDetails = {
 								meta_key: meta_key,
 								meta_value: $scope.additionalMeta[meta_key]
-							}
+							};
 							$scope.publishedQuestionnaire.occurrence.frequency.additionalMeta.push(metaDetails);
 						}
 					});
@@ -965,28 +963,25 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 				}
 			}
 
-			// Log who updated legacy questionnaire
+			// Log who updated published questionnaire
 			var currentUser = Session.retrieveObject('user');
-			$scope.publishedQuestionnaire.user = currentUser;
+			$scope.publishedQuestionnaire.OAUserId = currentUser.id;
+			$scope.publishedQuestionnaire.sessionId = currentUser.sessionid;
 
-			// ajax POST
 			$.ajax({
 				type: "POST",
-				url: "php/legacy-questionnaire/update.legacy_questionnaire.php",
+				url: "php/questionnaire/update.published_questionnaire.php",
 				data: $scope.publishedQuestionnaire,
 				success: function (response) {
 					response = JSON.parse(response);
-					if (response.value) {
+					if (response.code === 200) {
 						$scope.setBannerClass('success');
 						$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.publishedQuestionnaire.name_EN + "/ " + $scope.publishedQuestionnaire.name_FR + "\"!";
+						$uibModalInstance.close();
+						$scope.showBanner();
 					}
-					else {
-						$scope.setBannerClass('danger');
-						$scope.$parent.bannerMessage = response.message;
-					}
-
-					$scope.showBanner();
-					$uibModalInstance.close();
+					else
+						alert("An error occurred, code "+response.code+". Please review the error message below.\r\n" + response.message);
 				}
 			});
 		}
