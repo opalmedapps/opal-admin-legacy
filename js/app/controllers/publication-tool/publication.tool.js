@@ -154,7 +154,7 @@ angular.module('opalAdmin.controllers.publication.tool', ['ngAnimate', 'ngSaniti
 		});
 
 		// Initialize a scope variable for a selected questionnaire
-		$scope.currentQuestionnaire = {};
+		$scope.currentPublishedQuestionnaire = {};
 
 		// Function to submit changes when flags have been modified
 		$scope.submitPublishFlags = function () {
@@ -202,12 +202,11 @@ angular.module('opalAdmin.controllers.publication.tool', ['ngAnimate', 'ngSaniti
 		};
 		
 		// Function to edit questionnaire
-		$scope.editQuestionnaire = function (questionnaire) {
-			$scope.currentQuestionnaire = questionnaire;
-
+		$scope.editPublishedQuestionnaire = function (questionnaire) {
+			$scope.currentPublishedQuestionnaire = questionnaire;
 			var modalInstance = $uibModal.open({ // open modal
-				templateUrl: 'templates/questionnaire/edit.questionnaire.html',
-				controller: 'questionnaire.edit',
+				templateUrl: 'templates/questionnaire/edit.publication.tool.html',
+				controller: 'publication.tool.edit',
 				scope: $scope,
 				windowClass: 'customModal',
 				backdrop: 'static',

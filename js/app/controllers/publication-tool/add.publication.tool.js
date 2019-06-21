@@ -206,13 +206,9 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 			if ($scope.showFrequency) {
 				$scope.newQuestionnaireToPublish.occurrence.set = 1;
 				// convert dates to timestamps
-				console.log("1");
 				$scope.newQuestionnaireToPublish.occurrence.start_date = moment($scope.newQuestionnaireToPublish.occurrence.start_date).format('X');
-				console.log("2");
 				if ($scope.newQuestionnaireToPublish.occurrence.end_date) {
-					console.log("3");
 					$scope.newQuestionnaireToPublish.occurrence.end_date = moment($scope.newQuestionnaireToPublish.occurrence.end_date).format('X');
-					console.log("4");
 				}
 				if ($scope.newQuestionnaireToPublish.occurrence.frequency.custom) {
 					$scope.newQuestionnaireToPublish.occurrence.frequency.meta_key = $scope.customFrequency.unit.meta_key;
