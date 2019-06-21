@@ -60,6 +60,7 @@
             </div>
         </div>
         <!-- Completed questionnaires -->
+<!--
         <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">
             <div class="panel-container animated" ng-class="{pulse: hoverCompletedQuestionnaires, active: currentPage == 'questionnaire/completed'}" ng-mouseenter="hoverCompletedQuestionnaires=true" ng-mouseleave="hoverCompletedQuestionnaires=false" style="cursor:pointer;" ng-click="goToQuestionnaireCompleted()">
                 <div class="side-panel-info-sm" ng-class="{active: currentPage == 'questionnaire/completed'}">
@@ -70,6 +71,7 @@
                 </div>
             </div>
         </div>
+-->
         <!-- Questions Templates -->
         <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">
             <div class="panel-container animated" ng-class="{pulse: hoverTemplateQuestion, active: currentPage == 'questionnaire/template-question'}" ng-mouseenter="hoverTemplateQuestion=true" ng-mouseleave="hoverTemplateQuestion=false" style="cursor:pointer;" ng-click="goToTemplateQuestion()">
