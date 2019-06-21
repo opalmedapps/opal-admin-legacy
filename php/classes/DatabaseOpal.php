@@ -128,11 +128,21 @@ class DatabaseOpal extends DatabaseAccess {
         $this->_insertMultipleRecordsIntoTable(OPAL_FILTERS_TABLE, $toInsert);
     }
 
+    /*
+     * insert multiple frequency events
+     * @params  array of records to insert
+     * @return  number of records affected
+     * */
     function insertMultipleFrequencyEvents($toInsert) {
         $this->_insertMultipleRecordsIntoTable(OPAL_FREQUENCY_EVENTS_TABLE, $toInsert);
     }
 
-    function deleteTriggersWithIDs($controlTableSerNum) {
+    /*
+     * Delete a specific frequency event.
+     * @params  SerNum from the QuestionnaireControl to delete in frequency event table
+     * @return  number of records affected
+     * */
+    function deleteFrequencyEvent($controlTableSerNum) {
         $toDelete = array(
             array("parameter"=>":ControlTableSerNum","variable"=>$controlTableSerNum,"data_type"=>PDO::PARAM_INT),
         );
@@ -163,6 +173,11 @@ class DatabaseOpal extends DatabaseAccess {
             ));
     }
 
+    /*
+     * Delete a specific frequency event trigger when doing an update
+     * @params  filterId, filterType and SerNum from the QuestionnaireControl
+     * @return  Total of records modified.
+     * */
     function deleteFilters($filterId, $filterType, $controlTableSerNum) {
         $toDelete = array(
             array("parameter"=>":FilterId","variable"=>$filterId),
@@ -193,18 +208,38 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_execute($sqlToUpdate, $toInsert);
     }
 
+    /*
+    * Update questionnaireControl table with changes made by user
+    * @params  SerNum of the QuestionnaireControl table updated
+    * @return  Total of records modified.
+    * */
     function updateQuestionnaireControl($record) {
         return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_QUESTIONNAIRE_CONTROL, $record);
     }
 
+    /*
+     * Update the modification history filter table with new changes made
+     * @params  record to insert
+     * @return  total records updated
+     * */
     function updateFiltersModificationHistory($record) {
         return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_FILTERSMH, $record);
     }
 
+    /*
+     * Insert new trigger events
+     * @params  record to insert
+     * @return  ID of the insertion
+     * */
     function insertReplaceFrequencyEvent($record) {
         return $this->_insertRecordIntoTable(OPAL_FREQUENCY_EVENTS_TABLE, $record);
     }
 
+    /*
+     * Delete the end date of repeat frequency eventswhen doing an update
+     * @params  SerNum of the QuestionnaireControl table updated
+     * @return  Total of records modified.
+     * */
     function deleteRepeatEndFromFrequencyEvents($controlTableSerNum) {
         $toInsert = array(
             array("parameter"=>":ControlTableSerNum","variable"=>$controlTableSerNum,"data_type"=>PDO::PARAM_INT),
@@ -212,6 +247,11 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_execute(SQL_OPAL_DELETE_REPEAT_END_FROM_FREQUENCY_EVENTS, $toInsert);
     }
 
+    /*
+     * Delete all other meta tags not required in Frequency Events, when doing an update
+     * @params  SerNum of the QuestionnaireControl table updated
+     * @return  Total of records modified.
+     * */
     function deleteOtherMetasFromFrequencyEvents($controlTableSerNum) {
         $toInsert = array(
             array("parameter"=>":ControlTableSerNum","variable"=>$controlTableSerNum,"data_type"=>PDO::PARAM_INT),
