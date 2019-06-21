@@ -214,7 +214,7 @@ angular.module('opalAdmin.controllers.publication.tool', ['ngAnimate', 'ngSaniti
 
 			// After update, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				questionnaireCollectionService.getQuestionnaires(OAUserId).then(function (response) {
+				questionnaireCollectionService.getPublishedQuestionnaires(OAUserId).then(function (response) {
 					$scope.publishedQuestionnaireList = response.data;
 				}).catch(function(response) {
 					alert('Error occurred getting questionnaire list after modal close: ' + response.status + " " + response.data);

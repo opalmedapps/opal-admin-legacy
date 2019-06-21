@@ -41,6 +41,11 @@ class PublishedQuestionnaire extends Questionnaire {
         return $publishedQuestionnaires;
     }
 
+    /*
+     * Get details of a published questionnaire
+     * @params  ID of the requested published questionnaire
+     * @return  array with all the details
+     * */
     public function getPublishedQuestionnaireDetails($id) {
         $occurrenceArray = array(
             'start_date' => null,
@@ -244,6 +249,11 @@ class PublishedQuestionnaire extends Questionnaire {
         }
     }
 
+    /*
+     * This function search specific ID and type in an array
+     * @params  ID and types to search in an array
+     * return   boolean
+     * */
     protected function _nestedSearch($id, $type, $array) {
         if(empty($array) || !$id || !$type)
             return false;
@@ -253,15 +263,14 @@ class PublishedQuestionnaire extends Questionnaire {
         return false;
     }
 
+
+    /*
+     * Updates the triggers and filters of published questionnaires.
+     * @params  Array of triggers and settings
+     * @return  void
+     * */
     function updatePublishedQuestionnaire($questionnaire) {
-        $currentQuestionnaire = $this->questionnaireDB->getQuestionnaireDetails($questionnaire["db_serial"]);
-
-        if(count($currentQuestionnaire) != 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire");
-        $currentQuestionnaire = $currentQuestionnaire[0];
-
         $questionnaire = $this->validateAndSanitize($questionnaire);
-
         $toUpdate = array(
             "QuestionnaireName_EN"=>$questionnaire["name_EN"],
             "QuestionnaireName_FR"=>$questionnaire["name_FR"],
@@ -308,7 +317,7 @@ class PublishedQuestionnaire extends Questionnaire {
         }
 
         if(!$questionnaire["occurrence"]["set"]) {
-            $total += $this->opalDB->deleteTriggersWithIDs($questionnaire["serial"]);
+            $total += $this->opalDB->deleteFrequencyEvent($questionnaire["serial"]);
         }
         else {
             $toInsert = array(
