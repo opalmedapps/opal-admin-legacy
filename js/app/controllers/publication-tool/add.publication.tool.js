@@ -149,6 +149,8 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 			$scope.demoSection.show = true;
 			$scope.selectedAt = selectedAt;
 			steps.questionnaire.completed = true;
+			if (!selectedAt.locked)
+				alert("The questionnaire '"+selectedAt.name_EN+"' has never been published before. By doing so, it will be locked and can not be modified in the future.");
 		}
 		else {
 			$scope.triggerSection.show = false;
