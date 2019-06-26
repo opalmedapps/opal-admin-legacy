@@ -5,19 +5,11 @@
  * Time: 1:45 PM
  */
 
-/* To get a list of existing question groups */
 include_once('questionnaire.inc');
 
-// Retrieve form params
-$callback = strip_tags($_GET['callback']);
-$OAUserId = strip_tags($_GET['OAUserId']);
-
-$questionLibrary = new Library($OAUserId); // Object
-
-// Call function
+$OAUserId = strip_tags($_POST['OAUserId']);
+$questionLibrary = new Library($OAUserId);
 $result = $questionLibrary->getLibraries();
 
-// Callback to http request
 header('Content-Type: application/javascript');
-print $callback.'('.json_encode($result).')';
-?>
+echo json_encode($result);

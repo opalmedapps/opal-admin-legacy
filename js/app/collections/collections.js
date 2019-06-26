@@ -6,7 +6,7 @@
 
 angular.module('opalAdmin.collections', [])
 
-	// Application API server
+// Application API server
 	.factory('applicationCollectionService', function ($http) {
 
 		var applicationAPI = {};
@@ -578,149 +578,153 @@ angular.module('opalAdmin.collections', [])
 		var questionnaireAPI = {};
 
 		questionnaireAPI.getQuestionnaires = function (OAUserId) {
-			return $http({
-				method: 'JSONP',
-				url: "api/questionnaire/get.questionnaires.php",
-				params: {
-					callback: 'JSON_CALLBACK',
+			return $http.post(
+				"questionnaire/get/questionnaires",
+				$.param({
 					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
 		};
 
 		questionnaireAPI.getPublishedQuestionnaires = function (OAUserId) {
-			return $http({
-				method: 'JSONP',
-				url: "api/questionnaire/get.published_questionnaires.php",
-				params: {
-					callback: 'JSON_CALLBACK',
+			return $http.post(
+				"questionnaire/get/published-questionnaires",
+				$.param({
 					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
+
 		};
 
 		questionnaireAPI.getPublishedQuestionnaireDetails = function (publishedQuestionnaireId, OAUserId) {
-			return $http({
-				method: 'JSONP',
-				url: "api/questionnaire/get.published_questionnaires_details.php",
-				params: {
-					callback: 'JSON_CALLBACK',
-					publishedQuestionnaireId: publishedQuestionnaireId,
+			return $http.post(
+				"questionnaire/get/published-questionnaire-details",
+				$.param({
 					OAUserId: OAUserId,
+					publishedQuestionnaireId: publishedQuestionnaireId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
 		};
 
 		questionnaireAPI.getLibraries = function (OAUserId) {
-			return $http({
-				method: 'JSONP',
-				url: "api/questionnaire/get.libraries.php",
-				params: {
-					callback: 'JSON_CALLBACK',
+			return $http.post(
+				"questionnaire/get/libraries",
+				$.param({
 					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-
-			});
-		};
-
-		questionnaireAPI.getTags = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/questionnaire/get.tags.php?callback=JSON_CALLBACK"
-			});
+			);
 		};
 
 		questionnaireAPI.getTemplatesQuestions = function (OAUserId) {
-			return $http({
-				method: 'JSONP',
-				url: "api/questionnaire/get.templates_questions.php",
-				params: {
-					callback: 'JSON_CALLBACK',
+			return $http.post(
+				"questionnaire/get/templates-questions",
+				$.param({
 					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
 		};
 
 		questionnaireAPI.getTemplateQuestionDetails = function (templateQuestionId, OAUserId) {
-			return $http({
-				method: 'JSONP',
-				url: "api/questionnaire/get.template_question_details.php",
-				params: {
-					callback: 'JSON_CALLBACK',
-					templateQuestionId: templateQuestionId,
+			return $http.post(
+				"questionnaire/get/template-question-details",
+				$.param({
 					OAUserId: OAUserId,
+					templateQuestionId: templateQuestionId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
 		};
 
 		questionnaireAPI.getTemplateQuestionCategory = function (OAUserId) {
-			return $http({
-				method: 'JSONP',
-				url: "api/questionnaire/get.template_question_list.php",
-				params: {
-					callback: 'JSON_CALLBACK',
+			return $http.post(
+				"questionnaire/get/template-question-list",
+				$.param({
 					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
 		};
 
 		questionnaireAPI.getQuestions = function (OAUserId) {
-			return $http({
-				method: 'JSONP',
-				url: "api/questionnaire/get.questions.php",
-				params: {
-					callback: 'JSON_CALLBACK',
+			return $http.post(
+				"questionnaire/get/questions",
+				$.param({
 					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
 		};
 
 		questionnaireAPI.getQuestionDetails = function (questionId, OAUserId) {
-			return $http({
-				method: 'JSONP',
-				url: "api/questionnaire/get.question_details.php",
-				params: {
-					callback: 'JSON_CALLBACK',
+			return $http.post(
+				"questionnaire/get/question-details",
+				$.param({
 					questionId: questionId,
 					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
 		};
 
 		questionnaireAPI.getFinalizedQuestions = function (OAUserId) {
-			return $http({
-				method: 'JSONP',
-				url: "api/questionnaire/get.finalizedQuestions.php",
-				params: {
-					callback: 'JSON_CALLBACK',
+			return $http.post(
+				"questionnaire/get/finalized-questions",
+				$.param({
 					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
 		};
 
 		questionnaireAPI.getFinalizedQuestionnaires = function (OAUserId) {
-			return $http({
-				method: 'JSONP',
-				url: "api/questionnaire/get.finalizedQuestionnaires.php",
-				params: {
-					callback: 'JSON_CALLBACK',
+			return $http.post(
+				"questionnaire/get/finalized-questionnaires",
+				$.param({
 					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
 		};
 
 		questionnaireAPI.getQuestionnaireDetails = function (questionnaireId, OAUserId) {
-			return $http({
-				method: 'JSONP',
-				url: "api/questionnaire/get.questionnaire_details.php",
-				params: {
-					callback: 'JSON_CALLBACK',
+			return $http.post(
+				"questionnaire/get/questionnaire-details",
+				$.param({
 					questionnaireId: questionnaireId,
 					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
 		};
-
 
 		return questionnaireAPI;
 	})
