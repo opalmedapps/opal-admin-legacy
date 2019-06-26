@@ -6,13 +6,12 @@
  */
 
 include_once('questionnaire.inc');
-header('Content-Type: application/javascript');
 
-$callback = strip_tags($_GET['callback']);
-$publishedQuestionnaireId = strip_tags($_GET['publishedQuestionnaireId']);
-$OAUserId = strip_tags($_GET['OAUserId']);
+$publishedQuestionnaireId = strip_tags($_POST['publishedQuestionnaireId']);
+$OAUserId = strip_tags($_POST['OAUserId']);
 
 $questionnaire = new PublishedQuestionnaire($OAUserId);
 $questionnairesList = $questionnaire->getPublishedQuestionnaireDetails($publishedQuestionnaireId);
 
-print $callback.'('.json_encode($questionnairesList).')';
+header('Content-Type: application/javascript');
+echo json_encode($questionnairesList);

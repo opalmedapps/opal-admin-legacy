@@ -66,3 +66,16 @@ AddHandler cgi-script .php .pl .py .jsp .asp .htm .shtml .sh .cgi
 # Show CGI Source Code
 RemoveHandler cgi-script .pl .py .cgi
 AddType text/plain .pl .py .cgi
+
+RewriteRule ^questionnaire/get/finalized-questionnaires api/questionnaire/get.finalizedQuestionnaires.php [QSA,L]
+RewriteRule ^questionnaire/get/finalized-questions api/questionnaire/get.finalizedQuestions.php [QSA,L]
+RewriteRule ^questionnaire/get/libraries api/questionnaire/get.libraries.php [QSA,L]
+RewriteRule ^questionnaire/get/published-questionnaire-details api/questionnaire/get.published_questionnaires_details.php [QSA,L]
+RewriteRule ^questionnaire/get/published-questionnaires api/questionnaire/get.published_questionnaires.php [QSA,L]
+RewriteRule ^questionnaire/get/question-details api/questionnaire/get.question_details.php [QSA,L]
+RewriteRule ^questionnaire/get/questions api/questionnaire/get.questions.php [QSA,L]
+RewriteRule ^questionnaire/get/questionnaires api/questionnaire/get.questionnaires.php [QSA,L]
+RewriteRule ^questionnaire/get/questionnaire-details api/questionnaire/get.questionnaire_details.php [QSA,L]
+RewriteRule ^questionnaire/get/template-question-list api/questionnaire/get.template_question_list.php [QSA,L]
+RewriteRule ^questionnaire/get/template-question-details api/questionnaire/get.template_question_details.php [QSA,L]
+RewriteRule ^questionnaire/get/templates-questions api/questionnaire/get.templates_questions.php [QSA,L]

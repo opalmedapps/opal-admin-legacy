@@ -1,9 +1,8 @@
 <?php
 include_once('questionnaire.inc');
 
-$callback = strip_tags($_GET['callback']);
-$questionnaireId = strip_tags($_GET['questionnaireId']);
-$OAUserId = strip_tags($_GET['OAUserId']);
+$questionnaireId = strip_tags($_POST['questionnaireId']);
+$OAUserId = strip_tags($_POST['OAUserId']);
 
 $questionnaire = new Questionnaire($OAUserId);
 $questionnaireDetails = $questionnaire->getQuestionnaireDetails($questionnaireId);
@@ -17,5 +16,5 @@ unset($questionnaireDetails["optionalFeedback"]);
 unset($questionnaireDetails["version"]);
 
 header('Content-Type: application/javascript');
-echo $callback.'('.json_encode($questionnaireDetails).')';
+echo json_encode($questionnaireDetails);
 ?>

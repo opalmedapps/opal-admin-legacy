@@ -7,12 +7,12 @@
 
 include_once('questionnaire.inc');
 
-$callback = strip_tags($_GET['callback']);
-$templateQuestionId = strip_tags($_GET['templateQuestionId']);
-$OAUserId = strip_tags($_GET['OAUserId']);
+$callback = strip_tags($_POST['callback']);
+$templateQuestionId = strip_tags($_POST['templateQuestionId']);
+$OAUserId = strip_tags($_POST['OAUserId']);
 
 $templateQuestion = new TemplateQuestion($OAUserId);
 $templateQuestionDetails = $templateQuestion->getTemplateQuestionDetails($templateQuestionId);
 
 header('Content-Type: application/javascript');
-echo $callback.'('.json_encode($templateQuestionDetails).')';
+echo json_encode($templateQuestionDetails);
