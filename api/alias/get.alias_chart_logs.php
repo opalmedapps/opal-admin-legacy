@@ -4,9 +4,9 @@
 	include_once('alias.inc');
 
 	// Retrieve FORM params
-	$callback = $_GET['callback'];
-	$serial = ( $_GET['serial'] === 'undefined' ) ? null : $_GET['serial'];
-	$type = ( $_GET['type'] === 'undefined' ) ? null : $_GET['type'];
+	$callback = $_POST['callback'];
+	$serial = ( $_POST['serial'] === 'undefined' ) ? null : $_POST['serial'];
+	$type = ( $_POST['type'] === 'undefined' ) ? null : $_POST['type'];
 
 	$alias = new Alias; // Object
 
@@ -14,6 +14,6 @@
 	$aliasLogs = $alias->getAliasChartLogs($serial, $type);
 
 	// Callback to http request
-	print $callback.'('.json_encode($aliasLogs).')';
+	echo json_encode($aliasLogs);
 
 ?>
