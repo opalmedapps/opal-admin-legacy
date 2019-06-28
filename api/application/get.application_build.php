@@ -1,18 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get the application build */
+header('Content-Type: application/javascript');
+/* To get the application build */
 
-	include_once('application.inc');
+include_once('application.inc');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
+$appObject = new Application; // Object
+$build = $appObject->getApplicationBuild();
 
-	$appObject = new Application; // Object
-
-	// Call function
-	$build = $appObject->getApplicationBuild();
-
-	// Callback to http request
-	print $callback.'('.json_encode($build).')';
-
-?>
+echo json_encode($build);
