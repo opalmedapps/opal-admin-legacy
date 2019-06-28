@@ -140,7 +140,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaire.add', ['ngAnimate', 'u
 		legacyQuestionnaireCollectionService.getLegacyQuestionnaireExpressions().then(function (response) {
 			$scope.legacyQuestionnaireList = response.data; // Assign value
 		}).catch(function(response) {
-			console.error('Error occurred getting educational materials:', response.status, response.data);
+			console.error('Error occurred getting legacy questionnaire expressions:', response.status, response.data);
 		});
 
 		// Call our API service to get each trigger
