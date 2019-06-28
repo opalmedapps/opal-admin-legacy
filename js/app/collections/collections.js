@@ -21,18 +21,23 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get the app version and build
 		applicationAPI.getApplicationBuild = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/application/get.application_build.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"application/get/application-build",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+
 		};
 
 		// Function to get source databases
 		applicationAPI.getSourceDatabases = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/application/get.source_databases.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"application/get/source-databases",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		return applicationAPI;
@@ -45,7 +50,6 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get the list of existing alias in our DB
 		aliasAPI.getAliases = function () {
-
 			return $http.post(
 				"alias/get/aliases",
 				{
@@ -188,62 +192,81 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get the list of existing education materials
 		educationalMaterialAPI.getEducationalMaterials = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/educational-material/get.educational_materials.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"educational-material/get/educational-materials",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get an educational material detail given a serial
 		educationalMaterialAPI.getEducationalMaterialDetails = function (serial) {
-			return $http({
-				method: 'JSONP',
-				url: "api/educational-material/get.educational_material_details.php?callback=JSON_CALLBACK&serial=" + serial
-			});
+			return $http.post(
+				"educational-material/get/educational-material-details",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get distinct educational material types
 		educationalMaterialAPI.getEducationalMaterialTypes = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/educational-material/get.educational_material_types.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"educational-material/get/educational-material-types",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get phases in treatment
 		educationalMaterialAPI.getPhasesInTreatment = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/educational-material/get.phases_in_treatment.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"educational-material/get/phases-in-treatment",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get parent educational materials
 		educationalMaterialAPI.getParentEducationalMaterials = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/educational-material/get.educational_material_parents.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"educational-material/get/educational-material-parents",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get edcuational material chart logs given a serial
 		educationalMaterialAPI.getEducationalMaterialChartLogs = function (serial) {
-			return $http({
-				method: 'JSONP',
-				url: "api/educational-material/get.educational_material_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial
-			});
+			return $http.post(
+				"educational-material/get/educational-material-chart-logs",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get edcuational material log list details given an array of serial numbers
 		educationalMaterialAPI.getEducationalMaterialListLogs = function (serials) {
-			return $http({
-				method: 'JSONP',
-				url: "api/educational-material/get.educational_material_list_logs.php",
-				params: {
-					callback: 'JSON_CALLBACK',
-					serials: JSON.stringify(serials)
+			return $http.post(
+				"educational-material/get/educational-material-list-logs",
+				$.param({
+					serials: serials,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
 		};
 
 		return educationalMaterialAPI;
@@ -473,30 +496,35 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get the cron details in our DB
 		cronAPI.getCronDetails = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/cron/get.cron_details.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"cron/get/cron-details",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get the cron logs for highcharts
 		cronAPI.getCronChartLogs = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/cron/get.cron_chart_logs.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"cron/get/cron-chart-logs",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get selected cron logs
 		cronAPI.getSelectedCronListLogs = function (contents) {
-			return $http({
-				method: 'JSONP',
-				url: "api/cron/get.cron_list_logs.php",
-				params: {
-					callback: 'JSON_CALLBACK',
+			return $http.post(
+				"cron/get/cron-list-logs",
+				$.param({
 					contents: JSON.stringify(contents),
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
 		};
 
 		return cronAPI;
@@ -746,28 +774,36 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get distinct diagnosis codes
 		diagnosisAPI.getDiagnoses = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/diagnosis-translation/get.diagnoses.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"diagnosis-translation/get/diagnoses",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get existing diagnosis translations
 		diagnosisAPI.getDiagnosisTranslations = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/diagnosis-translation/get.diagnosis_translations.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"diagnosis-translation/get/diagnosis-translations",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get diagnosis translation details
 		diagnosisAPI.getDiagnosisTranslationDetails = function (serial) {
-			return $http({
-				method: 'JSONP',
-				url: "api/diagnosis-translation/get.diagnosis_translation_details.php?callback=JSON_CALLBACK&serial=" + serial
-			});
+			return $http.post(
+				"diagnosis-translation/get/diagnosis-translation-details",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
-
 		return diagnosisAPI;
 	})
 

@@ -1,18 +1,12 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get cron logs for highcharts */
-	include_once('cron.inc');
+header('Content-Type: application/javascript');
+/* To get cron logs for highcharts */
+include_once('cron.inc');
 
-	// Retrieve FORM params
-	$callback = $_GET['callback'];
-	$contents = json_decode($_GET['contents'], true);
+// Retrieve FORM params
+$contents = json_decode($_POST['contents'], true);
 
-	$cron = new Cron; // Object
+$cron = new Cron; // Object
+$cronLogs = $cron->getCronListLogs($contents);
 
-	// Call function
-	$cronLogs = $cron->getCronListLogs($contents);
-
-	// Callback to http request
-	print $callback.'('.json_encode($cronLogs).')';
-
-?>
+echo json_encode($cronLogs);
