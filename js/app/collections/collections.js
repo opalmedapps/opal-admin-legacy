@@ -6,7 +6,7 @@
 
 angular.module('opalAdmin.collections', [])
 
-	// Application API server
+// Application API server
 	.factory('applicationCollectionService', function ($http) {
 
 		var applicationAPI = {};
@@ -17,7 +17,7 @@ angular.module('opalAdmin.collections', [])
 				method: 'GET',
 				url: "config.json"
 			});
-		}
+		};
 
 		// Function to get the app version and build
 		applicationAPI.getApplicationBuild = function () {
@@ -45,64 +45,93 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get the list of existing alias in our DB
 		aliasAPI.getAliases = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/alias/get.aliases.php?callback=JSON_CALLBACK"
-			});
+
+			return $http.post(
+				"alias/get/aliases",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get an alias detail given an id number
 		aliasAPI.getAliasDetails = function (serial) {
-			return $http({
-				method: 'JSONP',
-				url: "api/alias/get.alias_details.php?callback=JSON_CALLBACK&serial=" + serial
-			});
+			return $http.post(
+				"alias/get/alias-details",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get a list of unassigned expressions
 		aliasAPI.getExpressions = function (sourcedbser, type) {
-			return $http({
-				method: 'JSONP',
-				url: "api/alias/get.expressions.php?callback=JSON_CALLBACK&sourcedbser=" + sourcedbser + "&type=" + type
-			});
+			return $http.post(
+				"alias/get/expressions",
+				$.param({
+					sourcedbser: sourcedbser,
+					type: type,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+
 		};
 
 		// Function to get a list of source databases
 		aliasAPI.getSourceDatabases = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/alias/get.source_databases.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"alias/get/source-databases",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get existing color tags
 		aliasAPI.getExistingColorTags = function (type) {
-			return $http({
-				method: 'JSONP',
-				url: "api/alias/get.color_tags.php?callback=JSON_CALLBACK&type=" + type
-			});
+			return $http.post(
+				"alias/get/color-tags",
+				$.param({
+					type: type,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get alias chart logs given a serial
 		aliasAPI.getAliasChartLogs = function (serial, type) {
-			return $http({
-				method: 'JSONP',
-				url: "api/alias/get.alias_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial + '&type=' + type
-			});
+			return $http.post(
+				"alias/get/alias-chart-logs",
+				$.param({
+					serial: serial,
+					type: type,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get alias log list details given an array of serial numbers
 		aliasAPI.getAliasListLogs = function (serials, type) {
-			return $http({
-				method: 'JSONP',
-				url: "api/alias/get.alias_list_logs.php",
-				params: {
-					callback: 'JSON_CALLBACK',
+			return $http.post(
+				"alias/get/alias-list-logs",
+				$.param({
 					serials: JSON.stringify(serials),
 					type: type
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
-		}
+			);
+		};
 
 		return aliasAPI;
 	})
@@ -147,7 +176,7 @@ angular.module('opalAdmin.collections', [])
 					type: type
 				}
 			});
-		}
+		};
 
 		return postAPI;
 	})
@@ -215,7 +244,7 @@ angular.module('opalAdmin.collections', [])
 					serials: JSON.stringify(serials)
 				}
 			});
-		}
+		};
 
 		return educationalMaterialAPI;
 	})
@@ -431,7 +460,7 @@ angular.module('opalAdmin.collections', [])
 					serials: JSON.stringify(serials),
 				}
 			});
-		}
+		};
 
 		return testResultAPI;
 	})
@@ -569,7 +598,7 @@ angular.module('opalAdmin.collections', [])
 					serials: JSON.stringify(serials),
 				}
 			});
-		}
+		};
 
 		return emailAPI;
 	})
@@ -705,7 +734,7 @@ angular.module('opalAdmin.collections', [])
 					serials: JSON.stringify(serials),
 				}
 			});
-		}
+		};
 
 		return legacyQuestionnaireAPI;
 	})
