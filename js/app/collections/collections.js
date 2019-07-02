@@ -13,10 +13,12 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get configs
 		applicationAPI.getConfigs = function () {
-			return $http({
-				method: 'GET',
-				url: "config.json"
-			});
+			return $http.post(
+				"application/get/config",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get the app version and build
@@ -324,10 +326,12 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get the list of notifications
 		notificationAPI.getNotifications = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/notification/get.notifications.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"notification/get/notifications",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get notification details given a serial
@@ -345,10 +349,12 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get distinct notification types
 		notificationAPI.getNotificationTypes = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/notification/get.notification_types.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"notification/get/notification-types",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get notification logs given a serial
@@ -367,7 +373,7 @@ angular.module('opalAdmin.collections', [])
 		// Function to get notification log list details given an array of serial numbers
 		notificationAPI.getNotificationListLogs = function (serials) {
 			return $http.post(
-				"notification-list-logs",
+				"notification/get/notification-list-logs",
 				$.param({
 					serials: serials,
 				}),
@@ -387,50 +393,80 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get the list of patients
 		patientAPI.getPatients = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/patient/get.patients.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"patient/get/patients",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// API to find patient given an SSN
 		patientAPI.findPatient = function (ssn, id) {
-			return $http({
-				method: 'JSONP',
-				url: "api/patient/find_patient.php?callback=JSON_CALLBACK&ssn=" + ssn + "&id=" + id
-			});
+			return $http.post(
+				"patient/find-patient",
+				$.param({
+					ssn: ssn,
+					id: id,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// API to fetch security questions
 		patientAPI.fetchSecurityQuestions = function (lang) {
-			return $http({
-				method: 'JSONP',
-				url: "api/patient/get.security_questions.php?callback=JSON_CALLBACK&lang=" + lang
-			});
+			return $http.post(
+				"patient/get/security-questions",
+				$.param({
+					lang: lang,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// API to check email existence
 		patientAPI.emailAlreadyInUse = function (email) {
-			return $http({
-				method: 'JSONP',
-				url: "api/patient/email_in_use.php?callback=JSON_CALLBACK&email=" + email
-			});
+			// return $http({
+			// 	method: 'JSONP',
+			// 	url: "api/patient/email_in_use.php?callback=JSON_CALLBACK&email=" + email
+			// });
+
+			return $http.post(
+				"patient/email-in-use",
+				$.param({
+					email: email,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// API to get patient activity list
 		patientAPI.getPatientActivities = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/patient/get.patient_activities.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"patient/get/patient-activities",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// API to get a patient's details
 		patientAPI.getPatientDetails = function (serial) {
-			return $http({
-				method: 'JSONP',
-				url: "api/patient/get.patient_details.php?callback=JSON_CALLBACK&serial=" + serial
-			});
+			return $http.post(
+				"patient/get/patient-details",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		return patientAPI;
