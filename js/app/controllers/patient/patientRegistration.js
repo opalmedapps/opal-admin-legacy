@@ -249,20 +249,17 @@ angular.module('opalAdmin.controllers.patientRegistration', ['ngAnimate', 'ngSan
 
 				// Make request to check if email already in use
 				patientCollectionService.emailAlreadyInUse(email).then(function (response) {
-					if (response.data == 'TRUE') {
+					response.data = !!+response.data.trim();
+					if (response.data) {
 						$scope.validEmail.status = 'warning';
 						$scope.validEmail.message = $filter('translate')('STATUS_EMAIL_IN_USE');
 						$scope.emailUpdate();
 						return;
-					} else if (response.data == 'FALSE') {
+					} else {
 						$scope.validEmail.status = 'valid';
 						$scope.validEmail.message = null;
 						$scope.emailUpdate();
 						return;
-					} else {
-						$scope.validEmail.status = 'invalid';
-						$scope.validEmail.message = $filter('translate')('STATUS_MISC_ERROR');
-						$scope.emailUpdate();
 					}
 
 				}).catch(function(response) {
