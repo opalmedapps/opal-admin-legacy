@@ -1,18 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To fetch the list of security questions */
-	include_once('patient.inc');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
-	$language = $_GET['lang'];
+header('Content-Type: application/javascript');
+include_once('patient.inc');
 
-	$patientObj = new Patient; // Object
+$language = strip_tags($_POST['lang']);
+$patientObj = new Patient; // Object
+$securityQuestions = $patientObj->getSecurityQuestions($language);
 
-	// Call function
-	$securityQuestions = $patientObj->getSecurityQuestions($language);
-
-	// Callback to http request
-	print $callback.'('.json_encode($securityQuestions).')';
-
-?>
+echo json_encode($securityQuestions);
