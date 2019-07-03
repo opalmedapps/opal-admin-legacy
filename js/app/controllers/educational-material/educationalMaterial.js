@@ -162,7 +162,7 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/educational-material/update.educational_material_publish_flags.php",
+					url: "educational-material/update/educational-material-publish-flags",
 					data: $scope.eduMatPublishes,
 					success: function (response) {
 						// Call our API to get the list of existing educational materials

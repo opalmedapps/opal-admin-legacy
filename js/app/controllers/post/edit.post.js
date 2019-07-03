@@ -270,7 +270,7 @@ angular.module('opalAdmin.controllers.post.edit', ['ngAnimate', 'ngSanitize', 'u
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/post/update.post.php",
+					url: "post/update/post",
 					data: $scope.post,
 					success: function (response) {
 						response = JSON.parse(response);

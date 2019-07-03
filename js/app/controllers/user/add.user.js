@@ -230,7 +230,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 				// submit form
 				$.ajax({
 					type: "POST",
-					url: 'php/user/insert.user.php',
+					url: 'user/insert/user',
 					data: user,
 					success: function () {
 						$state.go('users');

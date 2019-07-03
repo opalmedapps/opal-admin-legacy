@@ -638,10 +638,12 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get the list of existing users in our DB
 		userAPI.getUsers = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/user/get.users.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"user/get/users",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to check username existence

@@ -459,7 +459,7 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/alias/insert.alias.php",
+					url: "alias/insert/alias",
 					data: $scope.newAlias,
 					success: function () {
 						$state.go('alias');
