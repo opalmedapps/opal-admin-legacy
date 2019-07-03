@@ -1,16 +1,9 @@
 <?php
-	header('Content-Type: application/javascript');
-  /* To get a list of existing roles in our DB */
-  include_once('user.inc');
 
-  // Retrieve FORM params
-  $callback = $_GET['callback'];
+header('Content-Type: application/javascript');
+include_once('user.inc');
 
-  $userObject = new Users; // Object
+$userObject = new Users; // Object
+$roles = $userObject->getRoles();
 
-  // Call function
-  $roles = $userObject->getRoles();
-
-  // Callback to http request
-  print $callback.'('.json_encode($roles).')';
-?>
+echo json_encode($roles);

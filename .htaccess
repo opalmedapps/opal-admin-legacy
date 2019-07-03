@@ -68,6 +68,8 @@ RemoveHandler cgi-script .pl .py .cgi
 AddType text/plain .pl .py .cgi
 
 # Accesses to the OpalAdmin API
+
+# Tasks/Appts/Docs Section (Alias)
 RewriteRule ^alias/get/alias-chart-logs api/alias/get.alias_chart_logs.php [QSA,L]
 RewriteRule ^alias/get/alias-details api/alias/get.alias_details.php [QSA,L]
 RewriteRule ^alias/get/alias-list-logs api/alias/get.alias_list_logs.php [QSA,L]
@@ -75,15 +77,23 @@ RewriteRule ^alias/get/aliases api/alias/get.aliases.php [QSA,L]
 RewriteRule ^alias/get/color-tags api/alias/get.color_tags.php [QSA,L]
 RewriteRule ^alias/get/expressions api/alias/get.expressions.php [QSA,L]
 RewriteRule ^alias/get/source-databases api/alias/get.source_databases.php [QSA,L]
+
+# Application
 RewriteRule ^application/get/application-build api/application/get.application_build.php [QSA,L]
 RewriteRule ^application/get/config config.json [QSA,L]
 RewriteRule ^application/get/source-databases api/application/get.source_databases.php [QSA,L]
+
+# Cron Logs Section
 RewriteRule ^cron/get/cron-chart-logs api/cron/get.cron_chart_logs.php [QSA,L]
 RewriteRule ^cron/get/cron-details api/cron/get.cron_details.php [QSA,L]
 RewriteRule ^cron/get/cron-list-logs api/cron/get.cron_list_logs.php [QSA,L]
+
+# Diagnosis Translation Section
 RewriteRule ^diagnosis-translation/get/diagnoses api/diagnosis-translation/get.diagnoses.php [QSA,L]
 RewriteRule ^diagnosis-translation/get/diagnosis-translation-details api/diagnosis-translation/get.diagnosis_translation_details.php [QSA,L]
 RewriteRule ^diagnosis-translation/get/diagnosis-translations api/diagnosis-translation/get.diagnosis_translations.php [QSA,L]
+
+# Educational Material Section
 RewriteRule ^educational-material/get/educational-material-chart-logs api/educational-material/get.educational_material_chart_logs.php [QSA,L]
 RewriteRule ^educational-material/get/educational-material-details api/educational-material/get.educational_material_details.php [QSA,L]
 RewriteRule ^educational-material/get/educational-material-list-logs api/educational-material/get.educational_material_list_logs.php [QSA,L]
@@ -91,29 +101,61 @@ RewriteRule ^educational-material/get/educational-material-parents api/education
 RewriteRule ^educational-material/get/educational-material-types api/educational-material/get.educational_material_types.php [QSA,L]
 RewriteRule ^educational-material/get/educational-materials api/educational-material/get.educational_materials.php [QSA,L]
 RewriteRule ^educational-material/get/phases-in-treatment api/educational-material/get.phases_in_treatment.php [QSA,L]
+
+# Email Section
 RewriteRule ^email/get/email-chart-logs api/email/get.email_chart_logs.php [QSA,L]
 RewriteRule ^email/get/email-details api/email/get.email_details.php [QSA,L]
 RewriteRule ^email/get/email-list-logs api/email/get.email_list_logs.php [QSA,L]
 RewriteRule ^email/get/email-templates api/email/get.email_templates.php [QSA,L]
 RewriteRule ^email/get/email-types api/email/get.email_types.php [QSA,L]
+
+# Filters
 RewriteRule ^filter/get/filters api/filter/get.filters.php [QSA,L]
+
+# Hospital Map Section
 RewriteRule ^hospital-map/generate-qr-code api/hospital-map/generate_QR_code.php [QSA,L]
 RewriteRule ^hospital-map/get/hospital-map-details api/hospital-map/get.hospital_map_details.php [QSA,L]
 RewriteRule ^hospital-map/get/hospital-maps api/hospital-map/get.hospital_maps.php [QSA,L]
+
+# Legacy Questionnaire Section
 RewriteRule ^legacy-questionnaire/get/legacy-questionnaire-chart-logs api/legacy-questionnaire/get.legacy_questionnaire_chart_logs.php [QSA,L]
 RewriteRule ^legacy-questionnaire/get/legacy-questionnaire-details api/legacy-questionnaire/get.legacy_questionnaire_details.php [QSA,L]
 RewriteRule ^legacy-questionnaire/get/legacy-questionnaire-expressions api/legacy-questionnaire/get.legacy_questionnaire_expressions.php [QSA,L]
 RewriteRule ^legacy-questionnaire/get/legacy-questionnaire-list-logs api/legacy-questionnaire/get.legacy_questionnaire_list_logs.php [QSA,L]
 RewriteRule ^legacy-questionnaire/get/legacy-questionnaires api/legacy-questionnaire/get.legacy_questionnaires.php [QSA,L]
 RewriteRule ^legacy-questionnaire/get/legacy-questionnaires api/notification/get.notification_chart_logs.php [QSA,L]
+
+# Notification Section
 RewriteRule ^notification/get/notification-chart-logs api/notification/get.notification_chart_logs.php [QSA,L]
 RewriteRule ^notification/get/notification-details api/notification/get.notification_details.php [QSA,L]
 RewriteRule ^notification/get/notification-list-logs api/notification/get.notification_list_logs.php [QSA,L]
 RewriteRule ^notification/get/notification-types api/notification/get.notification_types.php [QSA,L]
 RewriteRule ^notification/get/notifications api/notification/get.notifications.php [QSA,L]
+
+# Patient Section
 RewriteRule ^patient/email-in-use api/patient/email_in_use.php [QSA,L]
 RewriteRule ^patient/find-patient api/patient/find_patient.php [QSA,L]
 RewriteRule ^patient/get/patient-activities api/patient/get.patient_activities.php [QSA,L]
 RewriteRule ^patient/get/patient-details api/patient/get.patient_details.php [QSA,L]
 RewriteRule ^patient/get/patients api/patient/get.patients.php [QSA,L]
 RewriteRule ^patient/get/security-questions api/patient/get.security_questions.php [QSA,L]
+
+# Post Section
+RewriteRule ^post/get/post-chart-logs api/post/get.post_chart_logs.php [QSA,L]
+RewriteRule ^post/get/post-details api/post/get.post_details.php [QSA,L]
+RewriteRule ^post/get/post-list-logs api/post/get.post_list_logs.php [QSA,L]
+RewriteRule ^post/get/posts api/post/get.posts.php [QSA,L]
+
+# Test Result Section
+RewriteRule ^test-result/get/test-names api/test-result/get.test_names.php [QSA,L]
+RewriteRule ^test-result/get/test-result-chart-logs api/test-result/get.test_result_chart_logs.php [QSA,L]
+RewriteRule ^test-result/get/test-result-details api/test-result/get.test_result_details.php [QSA,L]
+RewriteRule ^test-result/get/test-result-groups api/test-result/get.test_result_groups.php [QSA,L]
+RewriteRule ^test-result/get/test-result-list-logs api/test-result/get.test_result_list_logs.php [QSA,L]
+RewriteRule ^test-result/get/test-results api/test-result/get.test_results.php [QSA,L]
+
+# User Section
+RewriteRule ^user/get/roles api/user/get.roles.php [QSA,L]
+RewriteRule ^user/get/user-activity-logs api/user/get.user_activity_logs.php [QSA,L]
+RewriteRule ^user/get/user-details api/user/get.user_details.php [QSA,L]
+RewriteRule ^user/username-in-use api/user/username_in_use.php [QSA,L]
