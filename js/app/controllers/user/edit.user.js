@@ -148,7 +148,7 @@ angular.module('opalAdmin.controllers.user.edit', ['ui.bootstrap', 'ui.grid']).
 				// submit 
 				$.ajax({
 					type: "POST",
-					url: "php/user/update.user.php",
+					url: "user/update/user",
 					data: user,
 					success: function (response) {
 						response = JSON.parse(response);

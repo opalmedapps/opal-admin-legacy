@@ -191,7 +191,7 @@ angular.module('opalAdmin.controllers.post', ['ngAnimate', 'ngSanitize', 'ui.boo
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/post/update.post_publish_flags.php",
+					url: "post/update/post-publish-flags",
 					data: $scope.postFlags,
 					success: function (response) {
 						// Call our API to get the list of existing posts

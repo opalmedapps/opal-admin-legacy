@@ -146,7 +146,7 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/patient/update.patient_publish_flags.php",
+					url: "patient/update/patient-publish-flags",
 					data: $scope.patientTransfers,
 					success: function () {
 						// Call our API to get the list of existing patients

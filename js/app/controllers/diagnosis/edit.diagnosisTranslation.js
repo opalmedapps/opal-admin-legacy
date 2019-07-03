@@ -253,7 +253,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.edit', ['ngAnimate', 
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/diagnosis-translation/update.diagnosis_translation.php",
+					url: "diagnosis-translation/update/diagnosis-translation",
 					data: $scope.diagnosisTranslation,
 					success: function (response) {
 						response = JSON.parse(response);

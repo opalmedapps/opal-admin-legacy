@@ -14,12 +14,12 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		$scope.hideAssigned = false;
 
 		// Default toolbar for wysiwyg
-		$scope.toolbar = [ 
+		$scope.toolbar = [
 			['h1', 'h2', 'h3', 'p'],
-      		['bold', 'italics', 'underline', 'ul', 'ol'],
-      		['justifyLeft', 'justifyCenter', 'indent', 'outdent'],
-      		['html', 'insertLink']
-      	];
+			['bold', 'italics', 'underline', 'ul', 'ol'],
+			['justifyLeft', 'justifyCenter', 'indent', 'outdent'],
+			['html', 'insertLink']
+		];
 
 		$scope.alias = {}; // initialize alias object
 		$scope.aliasModal = {}; // for deep copy
@@ -70,7 +70,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		// Function for searching through expression names
 		$scope.searchTermsFilter = function (term) {
 			var keyword = new RegExp($scope.termFilter, 'i');
-			return ((!$scope.termFilter || keyword.test(term.name)) 
+			return ((!$scope.termFilter || keyword.test(term.name))
 				&& (($scope.clinicalCodeFilter == 'all') || ($scope.clinicalCodeFilter == 'current' && term.added)
 					|| ($scope.clinicalCodeFilter == 'other' && term.assigned && !term.added) || ($scope.clinicalCodeFilter == 'none' && !term.added && !term.assigned)));
 		};
@@ -351,7 +351,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/alias/update.alias.php",
+					url: "alias/update/alias",
 					data: $scope.alias,
 					success: function (response) {
 						response = JSON.parse(response);
@@ -366,8 +366,6 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 							$scope.showAlert('response');
 							$scope.$apply();
 						}
-
-						
 					}
 				});
 			}
@@ -391,7 +389,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		$scope.selectAllFilteredTerms = function () {
 
 			var filtered = $scope.filter($scope.termList, $scope.searchTermsFilter);
-			
+
 			if ($scope.selectAll) { // was checked
 				angular.forEach(filtered, function (term) {
 					term.added = 0;
@@ -400,7 +398,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 			}
 			else { // was not checked
-				
+
 				angular.forEach(filtered, function (term) {
 					term.added = 1;
 				});
@@ -424,7 +422,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			if (($scope.alias.name_EN && $scope.alias.name_FR && $scope.alias.description_EN
 				&& $scope.alias.description_FR && $scope.alias.type && $scope.checkTermsAdded($scope.termList)
 				&& $scope.changesMade) && ($scope.alias.type != 'Appointment' || ($scope.alias.type == 'Appointment' &&
-					$scope.alias.checkin_details.instruction_EN && $scope.alias.checkin_details.instruction_FR ))) {
+				$scope.alias.checkin_details.instruction_EN && $scope.alias.checkin_details.instruction_FR ))) {
 				return true;
 			}
 			else
@@ -432,4 +430,4 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		};
 
 
-});
+	});
