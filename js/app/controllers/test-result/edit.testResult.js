@@ -274,7 +274,7 @@ angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootst
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/test-result/update.test_result.php",
+					url: "test-result/update/test-result",
 					data: $scope.testResult,
 					success: function (response) {
 						response = JSON.parse(response);

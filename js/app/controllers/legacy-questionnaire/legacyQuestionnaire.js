@@ -145,7 +145,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaire', ['ngAnimate', 'ngSan
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/legacy-questionnaire/update.legacy_questionnaire_publish_flags.php",
+					url: "legacy-questionnaire/update/legacy-questionnaire-publish-flags",
 					data: $scope.legacyQuestionnairePublishFlags,
 					success: function (response) {
 						// Call our API to get the list of existing legacy questionnaires

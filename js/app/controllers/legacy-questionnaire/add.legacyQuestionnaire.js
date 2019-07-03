@@ -1006,7 +1006,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaire.add', ['ngAnimate', 'u
 				// Submit 
 				$.ajax({
 					type: "POST",
-					url: "php/legacy-questionnaire/insert.legacy_questionnaire.php",
+					url: "legacy-questionnaire/insert/legacy-questionnaire",
 					data: $scope.newLegacyQuestionnaire,
 					success: function () {
 						$state.go('legacy-questionnaire');

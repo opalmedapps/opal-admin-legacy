@@ -10,7 +10,7 @@ angular.module('opalAdmin.controllers.testResult.delete', ['ngAnimate', 'ui.boot
 			$scope.testResultToDelete.user = currentUser;
 			$.ajax({
 				type: "POST",
-				url: "php/test-result/delete.test_result.php",
+				url: "test-result/delete/test-result",
 				data: $scope.testResultToDelete,
 				success: function (response) {
 					response = JSON.parse(response);

@@ -9,7 +9,7 @@ angular.module('opalAdmin.controllers.post.delete', ['ngAnimate', 'ngSanitize', 
 			$scope.postToDelete.user = currentUser;
 			$.ajax({
 				type: "POST",
-				url: "php/post/delete.post.php",
+				url: "post/delete/post",
 				data: $scope.postToDelete,
 				success: function (response) {
 					response = JSON.parse(response);
