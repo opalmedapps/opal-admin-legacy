@@ -89,20 +89,17 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 
 			// Make request to check if username already in use
 			userCollectionService.usernameAlreadyInUse(username).then(function (response) {
-				if (response.data == 'TRUE') {
+				response.data = !!+response.data.trim();
+				if (response.data) {
 					$scope.validUsername.status = 'warning';
 					$scope.validUsername.message = 'Username already in use';
 					$scope.usernameUpdate();
 					return;
-				} else if (response.data == 'FALSE') {
+				} else {
 					$scope.validUsername.status = 'valid';
 					$scope.validUsername.message = null;
 					$scope.usernameUpdate();
 					return;
-				} else {
-					$scope.validUsername.status = 'invalid';
-					$scope.validUsername.message = 'Something went wrong';
-					$scope.usernameUpdate();
 				}
 			}).catch(function(response) {
 				console.error('Error occurred verifying username:', response.status, response.data);

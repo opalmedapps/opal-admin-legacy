@@ -1,19 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get list logs on a particular post */
-	include_once('post.inc');
 
-	// Retrieve FORM params
-	$callback = $_GET['callback'];
-	$serials = json_decode($_GET['serials']);
-	$type = ( $_GET['type'] === 'undefined' ) ? null : $_GET['type'];
+header('Content-Type: application/javascript');
+include_once('post.inc');
+$serials = json_decode($_POST['serials']);
+$type = ( $_POST['type'] === 'undefined' ) ? null : $_POST['type'];
+$post = new Post; // Object
+$postLogs = $post->getPostListLogs($serials, $type);
 
-	$post = new Post; // Object
-
-	// Call function
-	$postLogs = $post->getPostListLogs($serials, $type);
-
-	// // Callback to http request
-	print $callback.'('.json_encode($postLogs).')';
-
-?>
+echo json_encode($postLogs);
