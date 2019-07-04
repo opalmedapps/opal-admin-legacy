@@ -1,18 +1,9 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get source databases */
+header('Content-Type: application/javascript');
+/* To get source databases */
 
-	include_once('application.inc');
+include_once('application.inc');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
-
-	$appObject = new Application; // Object
-
-	// Call function
-	$sourceDatabases = $appObject->getSourceDatabases();
-
-	// Callback to http request
-	print $callback.'('.json_encode($sourceDatabases).')';
-
-?>
+$appObject = new Application; // Object
+$sourceDatabases = $appObject->getSourceDatabases();
+echo json_encode($sourceDatabases);

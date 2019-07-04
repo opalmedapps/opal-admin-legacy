@@ -143,7 +143,7 @@ angular.module('opalAdmin.controllers.account', ['ui.bootstrap']).
 				// submit form 
 				$.ajax({
 					type: "POST",
-					url: "php/user/update.password.php",
+					url: "user/update/password",
 					data: user,
 					success: function (response) {
 						response = JSON.parse(response);
@@ -182,7 +182,7 @@ angular.module('opalAdmin.controllers.account', ['ui.bootstrap']).
 			// submit form 
 			$.ajax({
 				type: "POST",
-				url: "php/user/update.language.php",
+				url: "user/update/language",
 				data: user,
 				success: function (response) {
 					response = JSON.parse(response);

@@ -52,7 +52,7 @@ angular.module('opalAdmin.controllers.notification.edit', ['ngAnimate', 'ngSanit
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/notification/update.notification.php",
+					url: "notification/update/notification",
 					data: $scope.notification,
 					success: function (response) {
 						response = JSON.parse(response);

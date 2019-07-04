@@ -151,7 +151,7 @@ angular.module('opalAdmin.controllers.email.add', ['ngAnimate', 'ngSanitize', 'u
 				// Submit 
 				$.ajax({
 					type: "POST",
-					url: "php/email/insert.email.php",
+					url: "email/insert/email",
 					data: $scope.newEmail,
 					success: function () {
 						$state.go('email');

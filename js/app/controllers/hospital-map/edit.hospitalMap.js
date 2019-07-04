@@ -102,7 +102,7 @@ angular.module('opalAdmin.controllers.hospitalMap.edit', ['ngAnimate', 'ngSaniti
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/hospital-map/update.hospital_map.php",
+					url: "hospital-map/update/hospital-map",
 					data: $scope.hosMap,
 					success: function () {
 						$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.hosMap.name_EN + "/ " + $scope.hosMap.name_FR + "\"!";

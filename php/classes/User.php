@@ -436,7 +436,6 @@
 	 * @return array $Response : response
 	 */
 	public function usernameAlreadyInUse($username) {
-		$Response = null;
 		try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -454,10 +453,10 @@
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
-            $Response = 'FALSE';
+            $Response = 0;
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
                 if ($data[0]) {
-                    $Response = 'TRUE';
+                    $Response = 1;
                 }
             }
 

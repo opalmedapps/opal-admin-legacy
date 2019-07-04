@@ -358,7 +358,7 @@ angular.module('opalAdmin.controllers.testResult.add', ['ngAnimate', 'ngSanitize
 				// Submit form
 				$.ajax({
 					type: 'POST',
-					url: 'php/test-result/insert.test_result.php',
+					url: 'test-result/insert/test-result',
 					data: $scope.newTestResult,
 					success: function () {
 						$state.go('test-result');
