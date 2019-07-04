@@ -10,7 +10,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.delete', ['ngAnimate',
 
 			$.ajax({
 				type: "POST",
-				url: "php/educational-material/delete.educational_material.php",
+				url: "educational-material/delete/educational-material",
 				data: $scope.eduMatToDelete,
 				success: function (response) {
 					response = JSON.parse(response);

@@ -98,7 +98,7 @@ angular.module('opalAdmin.controllers.cron', ['ngAnimate', 'ui.bootstrap', 'high
 
 				$.ajax({
 					type: "POST",
-					url: "php/cron/update.cron.php",
+					url: "cron/update/cron",
 					data: $scope.cronDetailsMod,
 					success: function () {
 

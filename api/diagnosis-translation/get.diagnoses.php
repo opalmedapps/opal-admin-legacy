@@ -1,17 +1,9 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get a list of distinct diagnosis codes */
-	include_once('diagnosis-translation.inc');
+header('Content-Type: application/javascript');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
+include_once('diagnosis-translation.inc');
 
-	$diagnosisObject = new Diagnosis; // Object
+$diagnosisObject = new Diagnosis; // Object
+$diagnoses = $diagnosisObject->getDiagnoses();
 
-	// Call function
-	$diagnoses = $diagnosisObject->getDiagnoses();
-
-	// Callback to http request
-	print $callback.'('.json_encode($diagnoses).')';
-
-?>
+echo json_encode($diagnoses);

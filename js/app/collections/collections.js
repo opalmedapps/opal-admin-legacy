@@ -13,26 +13,33 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get configs
 		applicationAPI.getConfigs = function () {
-			return $http({
-				method: 'GET',
-				url: "config.json"
-			});
+			return $http.post(
+				"application/get/config",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get the app version and build
 		applicationAPI.getApplicationBuild = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/application/get.application_build.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"application/get/application-build",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+
 		};
 
 		// Function to get source databases
 		applicationAPI.getSourceDatabases = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/application/get.source_databases.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"application/get/source-databases",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		return applicationAPI;
@@ -45,63 +52,91 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get the list of existing alias in our DB
 		aliasAPI.getAliases = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/alias/get.aliases.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"alias/get/aliases",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get an alias detail given an id number
 		aliasAPI.getAliasDetails = function (serial) {
-			return $http({
-				method: 'JSONP',
-				url: "api/alias/get.alias_details.php?callback=JSON_CALLBACK&serial=" + serial
-			});
+			return $http.post(
+				"alias/get/alias-details",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get a list of unassigned expressions
 		aliasAPI.getExpressions = function (sourcedbser, type) {
-			return $http({
-				method: 'JSONP',
-				url: "api/alias/get.expressions.php?callback=JSON_CALLBACK&sourcedbser=" + sourcedbser + "&type=" + type
-			});
+			return $http.post(
+				"alias/get/expressions",
+				$.param({
+					sourcedbser: sourcedbser,
+					type: type,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+
 		};
 
 		// Function to get a list of source databases
 		aliasAPI.getSourceDatabases = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/alias/get.source_databases.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"alias/get/source-databases",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get existing color tags
 		aliasAPI.getExistingColorTags = function (type) {
-			return $http({
-				method: 'JSONP',
-				url: "api/alias/get.color_tags.php?callback=JSON_CALLBACK&type=" + type
-			});
+			return $http.post(
+				"alias/get/color-tags",
+				$.param({
+					type: type,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get alias chart logs given a serial
 		aliasAPI.getAliasChartLogs = function (serial, type) {
-			return $http({
-				method: 'JSONP',
-				url: "api/alias/get.alias_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial + '&type=' + type
-			});
+			return $http.post(
+				"alias/get/alias-chart-logs",
+				$.param({
+					serial: serial,
+					type: type,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get alias log list details given an array of serial numbers
 		aliasAPI.getAliasListLogs = function (serials, type) {
-			return $http({
-				method: 'JSONP',
-				url: "api/alias/get.alias_list_logs.php",
-				params: {
-					callback: 'JSON_CALLBACK',
+			return $http.post(
+				"alias/get/alias-list-logs",
+				$.param({
 					serials: JSON.stringify(serials),
 					type: type
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
 		};
 
 		return aliasAPI;
@@ -114,39 +149,53 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get the list of posts
 		postAPI.getPosts = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/post/get.posts.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"post/get/posts",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get a post detail given a serial
 		postAPI.getPostDetails = function (serial) {
-			return $http({
-				method: 'JSONP',
-				url: "api/post/get.post_details.php?callback=JSON_CALLBACK&serial=" + serial
-			});
+			return $http.post(
+				"post/get/post-details",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get post chart logs given a serial
 		postAPI.getPostChartLogs = function (serial, type) {
-			return $http({
-				method: 'JSONP',
-				url: "api/post/get.post_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial + '&type=' + type
-			});
+			return $http.post(
+				"post/get/post-chart-logs",
+				$.param({
+					serial: serial,
+					type: type,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get post log list details given an array of serial numbers
 		postAPI.getPostListLogs = function (serials, type) {
-			return $http({
-				method: 'JSONP',
-				url: "api/post/get.post_list_logs.php",
-				params: {
-					callback: 'JSON_CALLBACK',
+			return $http.post(
+				"post/get/post-list-logs",
+				$.param({
 					serials: JSON.stringify(serials),
-					type: type
+					type: type,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
 		};
 
 		return postAPI;
@@ -159,62 +208,81 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get the list of existing education materials
 		educationalMaterialAPI.getEducationalMaterials = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/educational-material/get.educational_materials.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"educational-material/get/educational-materials",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get an educational material detail given a serial
 		educationalMaterialAPI.getEducationalMaterialDetails = function (serial) {
-			return $http({
-				method: 'JSONP',
-				url: "api/educational-material/get.educational_material_details.php?callback=JSON_CALLBACK&serial=" + serial
-			});
+			return $http.post(
+				"educational-material/get/educational-material-details",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get distinct educational material types
 		educationalMaterialAPI.getEducationalMaterialTypes = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/educational-material/get.educational_material_types.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"educational-material/get/educational-material-types",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get phases in treatment
 		educationalMaterialAPI.getPhasesInTreatment = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/educational-material/get.phases_in_treatment.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"educational-material/get/phases-in-treatment",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get parent educational materials
 		educationalMaterialAPI.getParentEducationalMaterials = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/educational-material/get.educational_material_parents.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"educational-material/get/educational-material-parents",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get edcuational material chart logs given a serial
 		educationalMaterialAPI.getEducationalMaterialChartLogs = function (serial) {
-			return $http({
-				method: 'JSONP',
-				url: "api/educational-material/get.educational_material_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial
-			});
+			return $http.post(
+				"educational-material/get/educational-material-chart-logs",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get edcuational material log list details given an array of serial numbers
 		educationalMaterialAPI.getEducationalMaterialListLogs = function (serials) {
-			return $http({
-				method: 'JSONP',
-				url: "api/educational-material/get.educational_material_list_logs.php",
-				params: {
-					callback: 'JSON_CALLBACK',
-					serials: JSON.stringify(serials)
+			return $http.post(
+				"educational-material/get/educational-material-list-logs",
+				$.param({
+					serials: JSON.stringify(serials),
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
 		};
 
 		return educationalMaterialAPI;
@@ -227,26 +295,39 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get the list of hospital maps
 		hospitalMapAPI.getHospitalMaps = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/hospital-map/get.hospital_maps.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"hospital-map/get/hospital-maps",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get map details given a serial
 		hospitalMapAPI.getHospitalMapDetails = function (serial) {
-			return $http({
-				method: 'JSONP',
-				url: "api/hospital-map/get.hospital_map_details.php?callback=JSON_CALLBACK&serial=" + serial
-			});
+			return $http.post(
+				"hospital-map/get/hospital-map-details",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to generate qrcode and return image path
 		hospitalMapAPI.generateQRCode = function (qrid, oldqrid) {
-			return $http({
-				method: 'JSONP',
-				url: "api/hospital-map/generate_QR_code.php?callback=JSON_CALLBACK&qrid=" + qrid + "&oldqrid=" + oldqrid
-			});
+			return $http.post(
+				"hospital-map/generate-qr-code",
+				$.param({
+					qrid: qrid,
+					oldqrid: oldqrid,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		return hospitalMapAPI;
@@ -259,46 +340,61 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get the list of notifications
 		notificationAPI.getNotifications = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/notification/get.notifications.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"notification/get/notifications",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get notification details given a serial
 		notificationAPI.getNotificationDetails = function (serial) {
-			return $http({
-				method: 'JSONP',
-				url: "api/notification/get.notification_details.php?callback=JSON_CALLBACK&serial=" + serial
-			});
+			return $http.post(
+				"notification/get/notification-details",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get distinct notification types
 		notificationAPI.getNotificationTypes = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/notification/get.notification_types.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"notification/get/notification-types",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get notification logs given a serial
 		notificationAPI.getNotificationChartLogs = function (serial) {
-			return $http({
-				method: 'JSONP',
-				url: "api/notification/get.notification_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial
-			});
+			return $http.post(
+				"notification/get/notification-chart-logs",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get notification log list details given an array of serial numbers
 		notificationAPI.getNotificationListLogs = function (serials) {
-			return $http({
-				method: 'JSONP',
-				url: "api/notification/get.notification_list_logs.php",
-				params: {
-					callback: 'JSON_CALLBACK',
-					serials: JSON.stringify(serials)
+			return $http.post(
+				"notification/get/notification-list-logs",
+				$.param({
+					serials: JSON.stringify(serials),
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
 		};
 
 		return notificationAPI;
@@ -311,50 +407,75 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get the list of patients
 		patientAPI.getPatients = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/patient/get.patients.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"patient/get/patients",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// API to find patient given an SSN
 		patientAPI.findPatient = function (ssn, id) {
-			return $http({
-				method: 'JSONP',
-				url: "api/patient/find_patient.php?callback=JSON_CALLBACK&ssn=" + ssn + "&id=" + id
-			});
+			return $http.post(
+				"patient/find-patient",
+				$.param({
+					ssn: ssn,
+					id: id,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// API to fetch security questions
 		patientAPI.fetchSecurityQuestions = function (lang) {
-			return $http({
-				method: 'JSONP',
-				url: "api/patient/get.security_questions.php?callback=JSON_CALLBACK&lang=" + lang
-			});
+			return $http.post(
+				"patient/get/security-questions",
+				$.param({
+					lang: lang,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// API to check email existence
 		patientAPI.emailAlreadyInUse = function (email) {
-			return $http({
-				method: 'JSONP',
-				url: "api/patient/email_in_use.php?callback=JSON_CALLBACK&email=" + email
-			});
+			return $http.post(
+				"patient/email-in-use",
+				$.param({
+					email: email,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// API to get patient activity list
 		patientAPI.getPatientActivities = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/patient/get.patient_activities.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"patient/get/patient-activities",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// API to get a patient's details
 		patientAPI.getPatientDetails = function (serial) {
-			return $http({
-				method: 'JSONP',
-				url: "api/patient/get.patient_details.php?callback=JSON_CALLBACK&serial=" + serial
-			});
+			return $http.post(
+				"patient/get/patient-details",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		return patientAPI;
@@ -367,10 +488,12 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get all filters
 		filterAPI.getFilters = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/filter/get.filters.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"filter/get/filters",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		return filterAPI;
@@ -383,54 +506,71 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get distinct test groups
 		testResultAPI.getTestResultGroups = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/test-result/get.test_result_groups.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"test-result/get/test-result-groups",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get distinct tests
 		testResultAPI.getTestNames = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/test-result/get.test_names.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"test-result/get/test-names",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get existing test results
 		testResultAPI.getExistingTestResults = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/test-result/get.test_results.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"test-result/get/test-results",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get test result details
 		testResultAPI.getTestResultDetails = function (serial) {
-			return $http({
-				method: 'JSONP',
-				url: "api/test-result/get.test_result_details.php?callback=JSON_CALLBACK&serial=" + serial
-			});
+			return $http.post(
+				"test-result/get/test-result-details",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get test result chart logs given a serial
 		testResultAPI.getTestResultChartLogs = function (serial) {
-			return $http({
-				method: 'JSONP',
-				url: "api/test-result/get.test_result_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial
-			});
+			return $http.post(
+				"test-result/get/test-result-chart-logs",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get test result log list details given an array of serial numbers
 		testResultAPI.getTestResultListLogs = function (serials) {
-			return $http({
-				method: 'JSONP',
-				url: "api/test-result/get.test_result_list_logs.php",
-				params: {
-					callback: 'JSON_CALLBACK',
+			return $http.post(
+				"test-result/get/test-result-list-logs",
+				$.param({
 					serials: JSON.stringify(serials),
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
 		};
 
 		return testResultAPI;
@@ -444,30 +584,35 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get the cron details in our DB
 		cronAPI.getCronDetails = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/cron/get.cron_details.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"cron/get/cron-details",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get the cron logs for highcharts
 		cronAPI.getCronChartLogs = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/cron/get.cron_chart_logs.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"cron/get/cron-chart-logs",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get selected cron logs
 		cronAPI.getSelectedCronListLogs = function (contents) {
-			return $http({
-				method: 'JSONP',
-				url: "api/cron/get.cron_list_logs.php",
-				params: {
-					callback: 'JSON_CALLBACK',
+			return $http.post(
+				"cron/get/cron-list-logs",
+				$.param({
 					contents: JSON.stringify(contents),
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
 		};
 
 		return cronAPI;
@@ -480,42 +625,61 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get user details given a serial
 		userAPI.getUserDetails = function (userser) {
-			return $http({
-				method: 'JSONP',
-				url: "api/user/get.user_details.php?callback=JSON_CALLBACK&userser=" + userser
-			});
+			return $http.post(
+				"user/get/user-details",
+				$.param({
+					userser: userser,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get the list of existing users in our DB
 		userAPI.getUsers = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/user/get.users.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"user/get/users",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to check username existence
 		userAPI.usernameAlreadyInUse = function (username) {
-			return $http({
-				method: 'JSONP',
-				url: "api/user/username_in_use.php?callback=JSON_CALLBACK&username=" + username
-			});
+			return $http.post(
+				"user/username-in-use",
+				$.param({
+					username: username,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get the list of existing roles
 		userAPI.getRoles = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/user/get.roles.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"user/get/roles",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get user logs given a serial
 		userAPI.getUserActivityLogs = function (userser) {
-			return $http({
-				method: 'JSONP',
-				url: "api/user/get.user_activity_logs.php?callback=JSON_CALLBACK&userser=" + userser
-			});
+			return $http.post(
+				"user/get/user-activity-logs",
+				$.param({
+					userser: userser,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		return userAPI;
@@ -529,46 +693,61 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get the list of email templates
 		emailAPI.getEmails = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/email/get.email_templates.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"email/get/email-templates",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get email details given a serial
 		emailAPI.getEmailDetails = function (serial) {
-			return $http({
-				method: 'JSONP',
-				url: "api/email/get.email_details.php?callback=JSON_CALLBACK&serial=" + serial
-			});
+			return $http.post(
+				"email/get/email-details",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get distinct email types
 		emailAPI.getEmailTypes = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/email/get.email_types.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"email/get/email-types",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get email chart logs given a serial
 		emailAPI.getEmailChartLogs = function (serial) {
-			return $http({
-				method: 'JSONP',
-				url: "api/email/get.email_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial
-			});
+			return $http.post(
+				"email/get/email-chart-logs",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get email log list details given an array of serial numbers
 		emailAPI.getEmailListLogs = function (serials) {
-			return $http({
-				method: 'JSONP',
-				url: "api/email/get.email_list_logs.php",
-				params: {
-					callback: 'JSON_CALLBACK',
+			return $http.post(
+				"email/get/email-list-logs",
+				$.param({
 					serials: JSON.stringify(serials),
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
 		};
 
 		return emailAPI;
@@ -736,46 +915,61 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get the list of legacy questionnaires
 		legacyQuestionnaireAPI.getLegacyQuestionnaires = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/legacy-questionnaire/get.legacy_questionnaires.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"legacy-questionnaire/get/legacy-questionnaires",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get legacy questionnaire details given a serial
 		legacyQuestionnaireAPI.getLegacyQuestionnaireDetails = function (serial) {
-			return $http({
-				method: 'JSONP',
-				url: "api/legacy-questionnaire/get.legacy_questionnaire_details.php?callback=JSON_CALLBACK&serial=" + serial
-			});
+			return $http.post(
+				"legacy-questionnaire/get/legacy-questionnaire-details",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get legacy questionnaire expressions
 		legacyQuestionnaireAPI.getLegacyQuestionnaireExpressions = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/legacy-questionnaire/get.legacy_questionnaire_expressions.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"legacy-questionnaire/get/legacy-questionnaire-expressions",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get legacy questionnaire chart logs given a serial
 		legacyQuestionnaireAPI.getLegacyQuestionnaireChartLogs = function (serial) {
-			return $http({
-				method: 'JSONP',
-				url: "api/legacy-questionnaire/get.legacy_questionnaire_chart_logs.php?callback=JSON_CALLBACK&serial=" + serial
-			});
+			return $http.post(
+				"legacy-questionnaire/get/legacy-questionnaire-chart-logs",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get legacy questionnaire log list details given an array of serial numbers
 		legacyQuestionnaireAPI.getLegacyQuestionnaireListLogs = function (serials) {
-			return $http({
-				method: 'JSONP',
-				url: "api/legacy-questionnaire/get.legacy_questionnaire_list_logs.php",
-				params: {
-					callback: 'JSON_CALLBACK',
+			return $http.post(
+				"legacy-questionnaire/get/legacy-questionnaire-list-logs",
+				$.param({
 					serials: JSON.stringify(serials),
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
-			});
+			);
 		};
 
 		return legacyQuestionnaireAPI;
@@ -788,28 +982,36 @@ angular.module('opalAdmin.collections', [])
 
 		// Function to get distinct diagnosis codes
 		diagnosisAPI.getDiagnoses = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/diagnosis-translation/get.diagnoses.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"diagnosis-translation/get/diagnoses",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get existing diagnosis translations
 		diagnosisAPI.getDiagnosisTranslations = function () {
-			return $http({
-				method: 'JSONP',
-				url: "api/diagnosis-translation/get.diagnosis_translations.php?callback=JSON_CALLBACK"
-			});
+			return $http.post(
+				"diagnosis-translation/get/diagnosis-translations",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 
 		// Function to get diagnosis translation details
 		diagnosisAPI.getDiagnosisTranslationDetails = function (serial) {
-			return $http({
-				method: 'JSONP',
-				url: "api/diagnosis-translation/get.diagnosis_translation_details.php?callback=JSON_CALLBACK&serial=" + serial
-			});
+			return $http.post(
+				"diagnosis-translation/get/diagnosis-translation-details",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
-
 		return diagnosisAPI;
 	})
 

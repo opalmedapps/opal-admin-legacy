@@ -9,7 +9,7 @@ angular.module('opalAdmin.controllers.notification.delete', ['ngAnimate', 'ngSan
 			$scope.notificationToDelete.user = currentUser;
 			$.ajax({
 				type: "POST",
-				url: "php/notification/delete.notification.php",
+				url: "notification/delete/notification",
 				data: $scope.notificationToDelete,
 				success: function (response) {
 					response = JSON.parse(response);

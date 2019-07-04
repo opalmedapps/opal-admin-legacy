@@ -1,18 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* Determine if username is taken */
-	include_once('user.inc');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
-	$username = $_GET['username'];
+header('Content-Type: application/javascript');
+include_once('user.inc');
 
-	$userObj = new Users; // Object
+$username = strip_tags($_POST['username']);
+$userObj = new Users; // Object
+$Response = $userObj->usernameAlreadyInUse($username);
 
-	// Call function
-	$Response = $userObj->usernameAlreadyInUse($username);
-
-	// Callback to http request
-	print $callback.'('.json_encode($Response).')';
-
-?>
+echo json_encode($Response);

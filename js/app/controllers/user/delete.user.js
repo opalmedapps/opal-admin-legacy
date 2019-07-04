@@ -6,7 +6,7 @@ angular.module('opalAdmin.controllers.user.delete', ['ui.bootstrap', 'ui.grid'])
 		$scope.deleteUser = function () {
 			$.ajax({
 				type: "POST",
-				url: "php/user/delete.user.php",
+				url: "user/delete/user",
 				data: $scope.userToDelete,
 				success: function (response) {
 					response = JSON.parse(response);

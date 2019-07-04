@@ -1,18 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get logs on a particular test result for highcharts */
-	include_once('test-result.inc');
 
-	// Retrieve FORM params
-	$callback = $_GET['callback'];
-	$serial = ( $_GET['serial'] === 'undefined' ) ? null : $_GET['serial'];
+header('Content-Type: application/javascript');
+include_once('test-result.inc');
 
-	$testResult = new TestResult; // Object
+$serial = ( strip_tags($_POST['serial']) === 'undefined' ) ? null : strip_tags($_POST['serial']);
+$testResult = new TestResult; // Object
+$testResultLogs = $testResult->getTestResultChartLogs($serial);
 
-	// Call function
-	$testResultLogs = $testResult->getTestResultChartLogs($serial);
-
-	// Callback to http request
-	print $callback.'('.json_encode($testResultLogs).')';
-
-?>
+echo json_encode($testResultLogs);

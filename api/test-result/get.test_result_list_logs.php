@@ -1,18 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get list logs on a particular test result */
-	include_once('test-result.inc');
 
-	// Retrieve FORM params
-	$callback = $_GET['callback'];
-	$serials = json_decode($_GET['serials']);
+header('Content-Type: application/javascript');
+include_once('test-result.inc');
 
-	$testResult = new TestResult; // Object
+$serials = json_decode($_POST['serials']);
+$testResult = new TestResult; // Object
+$testResultLogs = $testResult->getTestResultListLogs($serials);
 
-	// Call function
-	$testResultLogs = $testResult->getTestResultListLogs($serials);
-
-	// // Callback to http request
-	print $callback.'('.json_encode($testResultLogs).')';
-
-?>
+echo json_encode($testResultLogs);
