@@ -1,18 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get details on a particular test result */
-	include_once('test-result.inc');
 
-	// Retrieve FORM params
-	$callback = $_GET['callback'];
-	$serial = $_GET['serial'];
+header('Content-Type: application/javascript');
+include_once('test-result.inc');
 
-	$testResult = new TestResult; // Object
+$serial = strip_tags($_POST['serial']);
+$testResult = new TestResult; // Object
+$testResultDetails = $testResult->getTestResultDetails($serial);
 
-	// Call function
-	$testResultDetails = $testResult->getTestResultDetails($serial);
-
-	// Callback to http request
-	print $callback.'('.json_encode($testResultDetails).')';
-
-?>
+echo json_encode($testResultDetails);

@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 	controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModal, $uibModalInstance, $state, educationalMaterialCollectionService, filterCollectionService, uiGridConstants, Session) {
 
 		// Default Booleans
-		$scope.changesMade = false; // changes have been made? 
+		$scope.changesMade = false; // changes have been made?
 
 		// Responsible for "searching" in search bars
 		$scope.filter = $filter('filter');
@@ -61,7 +61,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 
 		$scope.bannerMessageModal = "";
 
-		// Function to show page banner 
+		// Function to show page banner
 		$scope.showBannerModal = function () {
 			$(".bannerMessageModal").slideDown(function () {
 				setTimeout(function () {
@@ -72,7 +72,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 
 		// Function to set banner class
 		$scope.setBannerModalClass = function (classname) {
-			// Remove any classes starting with "alert-" 
+			// Remove any classes starting with "alert-"
 			$(".bannerMessageModal").removeClass(function (index, css) {
 				return (css.match(/(^|\s)alert-\S+/g) || []).join(' ');
 			});
@@ -416,7 +416,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/educational-material/update.educational_material.php",
+					url: "educational-material/update/educational-material",
 					data: $scope.eduMat,
 					success: function (response) {
 						response = JSON.parse(response);
@@ -433,7 +433,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 							$scope.$apply();
 							$scope.showBannerModal();
 						}
-						
+
 					}
 				});
 			}
@@ -494,7 +494,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', '
 			return $sce.trustAsHtml(htmlSnippet);
 		};
 
-		$scope.showWeeks = true; // show weeks sidebar 
+		$scope.showWeeks = true; // show weeks sidebar
 		$scope.toggleWeeks = function () {
 			$scope.showWeeks = !$scope.showWeeks;
 		};

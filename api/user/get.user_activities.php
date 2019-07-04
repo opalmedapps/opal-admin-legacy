@@ -1,17 +1,8 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get a list of user activities */
-	include_once('user.inc');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
+header('Content-Type: application/javascript');
+include_once('user.inc');
 
-	$user = new Users; // Object
-
-	// Call function
-	$userActivityList = $user->getUserActivities();
-
-	// Callback to http request
-	print $callback.'('.json_encode($userActivityList).')';
-
-?>
+$user = new Users; // Object
+$userActivityList = $user->getUserActivities();
+echo json_encode($userActivityList);

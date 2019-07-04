@@ -270,7 +270,7 @@ angular.module('opalAdmin.controllers.post.add', ['ngAnimate', 'ngSanitize', 'ui
 				// Submit 
 				$.ajax({
 					type: "POST",
-					url: "php/post/insert.post.php",
+					url: "post/insert/post",
 					data: $scope.newPost,
 					success: function () {
 						$state.go('post');

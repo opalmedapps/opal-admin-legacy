@@ -294,7 +294,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/alias/update.alias_publish_flags.php",
+					url: "alias/update/publish-flags",
 					data: $scope.aliasUpdates,
 					success: function (response) {
 						// Call our API to get the list of existing aliases

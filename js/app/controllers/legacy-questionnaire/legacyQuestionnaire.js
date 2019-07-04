@@ -128,46 +128,46 @@ controller('legacyQuestionnaire', function ($sce, $scope, $state, $filter, $time
 	};
 
 
-	// Function to submit changes when flags have been modified
-	$scope.submitPublishFlags = function () {
-		if ($scope.changesMade) {
-			angular.forEach($scope.legacyQuestionnaireList, function (legacyQuestionnaire) {
-				if (legacyQuestionnaire.changed) {
-					$scope.legacyQuestionnairePublishFlags.flagList.push({
-						serial: legacyQuestionnaire.serial,
-						publish: legacyQuestionnaire.publish
-					});
-				}
-			});
-			// Log who updated legacy questionnaire flags
-			var currentUser = Session.retrieveObject('user');
-			$scope.legacyQuestionnairePublishFlags.user = currentUser;
-			// Submit form
-			$.ajax({
-				type: "POST",
-				url: "php/legacy-questionnaire/update.legacy_questionnaire_publish_flags.php",
-				data: $scope.legacyQuestionnairePublishFlags,
-				success: function (response) {
-					// Call our API to get the list of existing legacy questionnaires
-					legacyQuestionnaireCollectionService.getLegacyQuestionnaires().then(function (response) {
-						// Assign value
-						$scope.legacyQuestionnaireList = response.data;
-					}).catch(function(response) {
-						console.error('Error occurred getting legacy questionnaires:', response.status, response.data);
-					});
-					response = JSON.parse(response);
-					// Show success or failure depending on response
-					if (response.value) {
-						$scope.setBannerClass('success');
-						$scope.bannerMessage = "Flag(s) Successfully Saved!";
+		// Function to submit changes when flags have been modified
+		$scope.submitPublishFlags = function () {
+			if ($scope.changesMade) {
+				angular.forEach($scope.legacyQuestionnaireList, function (legacyQuestionnaire) {
+					if (legacyQuestionnaire.changed) {
+						$scope.legacyQuestionnairePublishFlags.flagList.push({
+							serial: legacyQuestionnaire.serial,
+							publish: legacyQuestionnaire.publish
+						});
 					}
-					else {
-						$scope.setBannerClass('danger');
-						$scope.bannerMessage = response.message;
-					}
-					$scope.showBanner();
-					$scope.changesMade = false;
-					$scope.legacyQuestionnairePublishFlags.flagList = [];
+				});
+				// Log who updated legacy questionnaire flags
+				var currentUser = Session.retrieveObject('user');
+				$scope.legacyQuestionnairePublishFlags.user = currentUser;
+				// Submit form
+				$.ajax({
+					type: "POST",
+					url: "legacy-questionnaire/update/legacy-questionnaire-publish-flags",
+					data: $scope.legacyQuestionnairePublishFlags,
+					success: function (response) {
+						// Call our API to get the list of existing legacy questionnaires
+						legacyQuestionnaireCollectionService.getLegacyQuestionnaires().then(function (response) {
+							// Assign value
+							$scope.legacyQuestionnaireList = response.data;
+						}).catch(function(response) {
+							console.error('Error occurred getting legacy questionnaires:', response.status, response.data);
+						});
+						response = JSON.parse(response);
+						// Show success or failure depending on response
+						if (response.value) {
+							$scope.setBannerClass('success');
+							$scope.bannerMessage = "Flag(s) Successfully Saved!";
+						}
+						else {
+							$scope.setBannerClass('danger');
+							$scope.bannerMessage = response.message;
+						}
+						$scope.showBanner();
+						$scope.changesMade = false;
+						$scope.legacyQuestionnairePublishFlags.flagList = [];
 
 				}
 			});

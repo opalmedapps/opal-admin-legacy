@@ -1,18 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get details on a particular notification */
-	include_once('notification.inc');
+header('Content-Type: application/javascript');
+/* To get details on a particular notification */
+include_once('notification.inc');
 
-	// Retrieve FORM params
-	$callback = $_GET['callback'];
-	$serial = $_GET['serial'];
+$serial = strip_tags($_POST['serial']);
+$notification = new Notification; // Object
+$notificationDetails = $notification->getNotificationDetails($serial);
 
-	$notification = new Notification; // Object
-
-	// Call function
-	$notificationDetails = $notification->getNotificationDetails($serial);
-
-	// Callback to http request
-	print $callback.'('.json_encode($notificationDetails).')';
-
-?>
+echo json_encode($notificationDetails);
