@@ -266,7 +266,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 				// ajax POST
 				$.ajax({
 					type: "POST",
-					url: "php/questionnaire/update.questionnaire.php",
+					url: "questionnaire/update/questionnaire",
 					data: $scope.questionnaire,
 					success: function (response) {
 						response = JSON.parse(response);

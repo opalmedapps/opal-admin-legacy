@@ -187,26 +187,37 @@ RewriteRule ^post/update/post php/post/update.post.php [QSA,L]
 RewriteRule ^post/update/post-publish-flags php/post/update.post_publish_flags.php [QSA,L]
 
 # Question Section
+RewriteRule ^question/delete/question php/questionnaire/delete.question.php [QSA,L]
+RewriteRule ^question/insert/question php/questionnaire/insert.question.php [QSA,L]
 RewriteRule ^question/get/question-details api/questionnaire/get.question_details.php [QSA,L]
 RewriteRule ^question/get/questions api/questionnaire/get.questions.php [QSA,L]
+RewriteRule ^question/update/question php/questionnaire/update.question.php [QSA,L]
 
 # Questionnaire Section
+RewriteRule ^questionnaire/delete/questionnaire php/questionnaire/delete.questionnaire.php [QSA,L]
+RewriteRule ^questionnaire/get/finalized-questions api/questionnaire/get.finalizedQuestions.php [QSA,L]
 RewriteRule ^questionnaire/get/questionnaires api/questionnaire/get.questionnaires.php [QSA,L]
 RewriteRule ^questionnaire/get/questionnaire-details api/questionnaire/get.questionnaire_details.php [QSA,L]
+RewriteRule ^questionnaire/insert/questionnaire php/questionnaire/insert.questionnaire.php [QSA,L]
+RewriteRule ^questionnaire/update/questionnaire php/questionnaire/update.questionnaire.php [QSA,L]
 
 # Publication Tool Section
+RewriteRule ^publication-tool/update/published-questionnaire php/questionnaire/update.published_questionnaire.php [QSA,L]
+RewriteRule ^publication-tool/update/published-questionnaire-publish-flag php/questionnaire/update.questionnaire_publish_flag.php [QSA,L]
 RewriteRule ^publication-tool/get/finalized-questionnaires api/questionnaire/get.finalizedQuestionnaires.php [QSA,L]
-RewriteRule ^questionnaire/get/finalized-questions api/questionnaire/get.finalizedQuestions.php [QSA,L]
 RewriteRule ^publication-tool/get/published-questionnaire-details api/questionnaire/get.published_questionnaires_details.php [QSA,L]
 RewriteRule ^publication-tool/get/published-questionnaires api/questionnaire/get.published_questionnaires.php [QSA,L]
+RewriteRule ^publication-tool/insert/published-questionnaire php/questionnaire/insert.published_questionnaire.php [QSA,L]
 
 # Library Section
 RewriteRule ^library/get/libraries api/questionnaire/get.libraries.php [QSA,L]
+RewriteRule ^library/insert/library php/questionnaire/insert.library.php [QSA,L]
 
 # Template Question
 RewriteRule ^template-question/get/template-question-list api/questionnaire/get.template_question_list.php [QSA,L]
 RewriteRule ^template-question/get/template-question-details api/questionnaire/get.template_question_details.php [QSA,L]
 RewriteRule ^template-question/get/templates-questions api/questionnaire/get.templates_questions.php [QSA,L]
+RewriteRule ^template-question/insert/template-question php/questionnaire/insert.template_question.php [QSA,L]
 
 # Test Result Section
 RewriteRule ^test-result/delete/test-result php/test-result/delete.test_result.php [QSA,L]

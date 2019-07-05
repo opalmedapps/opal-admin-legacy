@@ -6,7 +6,7 @@ angular.module('opalAdmin.controllers.question.delete', ['ngAnimate', 'ngSanitiz
 		$scope.deleteQuestion = function () {
 			$.ajax({
 				type: "POST",
-				url: "php/questionnaire/delete.question.php",
+				url: "question/delete/question",
 				data: {"ID": $scope.questionToDelete.serNum, "OAUserId": Session.retrieveObject('user').id},
 				success: function (response) {
 					response = JSON.parse(response);
