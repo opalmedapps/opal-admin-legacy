@@ -265,7 +265,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		if (confirmation) {
 			$.ajax({
 				type: "POST",
-				url: "php/questionnaire/insert.template_question.php",
+				url: "template-question/insert/template-question",
 				data: toSend,
 				success: function (result) {
 					result = JSON.parse(result);
@@ -322,7 +322,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 			// write in to db
 			$.ajax({
 				type: "POST",
-				url: "php/questionnaire/insert.library.php",
+				url: "library/insert/library",
 				data: $scope.newLibrary,
 				success: function (result) {
 					result = JSON.parse(result);
@@ -360,7 +360,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 			// Submit
 			$.ajax({
 				type: "POST",
-				url: "php/questionnaire/insert.question.php",
+				url: "question/insert/question",
 				data: $scope.newQuestion,
 				success: function (result) {
 					result = JSON.parse(result);

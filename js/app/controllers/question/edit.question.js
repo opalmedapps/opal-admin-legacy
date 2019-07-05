@@ -208,7 +208,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 				// write in to db
 				$.ajax({
 					type: "POST",
-					url: "php/questionnaire/insert.library.php",
+					url: "library/insert/library",
 					data: $scope.newLibrary,
 					success: function (result) {
 						result = JSON.parse(result);
@@ -241,7 +241,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			// Submit form
 			$.ajax({
 				type: "POST",
-				url: "php/questionnaire/update.question.php",
+				url: "question/update/question",
 				data: toSubmit,
 				success: function (response) {
 					response = JSON.parse(response);

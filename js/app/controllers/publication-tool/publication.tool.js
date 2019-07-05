@@ -174,7 +174,7 @@ angular.module('opalAdmin.controllers.publication.tool', ['ngAnimate', 'ngSaniti
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/questionnaire/update.questionnaire_publish_flag.php",
+					url: "publication-tool/update/published-questionnaire-publish-flag",
 					data: $scope.publishedQuestionnaireFlags,
 					success: function (response) {
 						// Call our API to get the list of existing legacy questionnaires
