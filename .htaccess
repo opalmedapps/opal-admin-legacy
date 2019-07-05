@@ -196,7 +196,7 @@ RewriteRule ^questionnaire/get/questionnaire-details api/questionnaire/get.quest
 
 # Publication Tool Section
 RewriteRule ^publication-tool/get/finalized-questionnaires api/questionnaire/get.finalizedQuestionnaires.php [QSA,L]
-RewriteRule ^publication-tool/get/finalized-questions api/questionnaire/get.finalizedQuestions.php [QSA,L]
+RewriteRule ^questionnaire/get/finalized-questions api/questionnaire/get.finalizedQuestions.php [QSA,L]
 RewriteRule ^publication-tool/get/published-questionnaire-details api/questionnaire/get.published_questionnaires_details.php [QSA,L]
 RewriteRule ^publication-tool/get/published-questionnaires api/questionnaire/get.published_questionnaires.php [QSA,L]
 
@@ -205,8 +205,8 @@ RewriteRule ^library/get/libraries api/questionnaire/get.libraries.php [QSA,L]
 
 # Template Question
 RewriteRule ^template-question/get/template-question-list api/questionnaire/get.template_question_list.php [QSA,L]
-RewriteRule ^questionnaire/get/template-question-details api/questionnaire/get.template_question_details.php [QSA,L]
-RewriteRule ^questionnaire/get/templates-questions api/questionnaire/get.templates_questions.php [QSA,L]
+RewriteRule ^template-question/get/template-question-details api/questionnaire/get.template_question_details.php [QSA,L]
+RewriteRule ^template-question/get/templates-questions api/questionnaire/get.templates_questions.php [QSA,L]
 
 # Test Result Section
 RewriteRule ^test-result/delete/test-result php/test-result/delete.test_result.php [QSA,L]

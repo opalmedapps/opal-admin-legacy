@@ -770,7 +770,7 @@ angular.module('opalAdmin.collections', [])
 
 		questionnaireAPI.getPublishedQuestionnaires = function (OAUserId) {
 			return $http.post(
-				"questionnaire/get/published-questionnaires",
+				"publication-tool/get/published-questionnaires",
 				$.param({
 					OAUserId: OAUserId,
 				}),
@@ -783,7 +783,7 @@ angular.module('opalAdmin.collections', [])
 
 		questionnaireAPI.getPublishedQuestionnaireDetails = function (publishedQuestionnaireId, OAUserId) {
 			return $http.post(
-				"questionnaire/get/published-questionnaire-details",
+				"publication-tool/get/published-questionnaire-details",
 				$.param({
 					OAUserId: OAUserId,
 					publishedQuestionnaireId: publishedQuestionnaireId,
@@ -796,7 +796,7 @@ angular.module('opalAdmin.collections', [])
 
 		questionnaireAPI.getLibraries = function (OAUserId) {
 			return $http.post(
-				"questionnaire/get/libraries",
+				"library/get/libraries",
 				$.param({
 					OAUserId: OAUserId,
 				}),
@@ -808,7 +808,7 @@ angular.module('opalAdmin.collections', [])
 
 		questionnaireAPI.getTemplatesQuestions = function (OAUserId) {
 			return $http.post(
-				"questionnaire/get/templates-questions",
+				"template-question/get/templates-questions",
 				$.param({
 					OAUserId: OAUserId,
 				}),
@@ -820,7 +820,7 @@ angular.module('opalAdmin.collections', [])
 
 		questionnaireAPI.getTemplateQuestionDetails = function (templateQuestionId, OAUserId) {
 			return $http.post(
-				"questionnaire/get/template-question-details",
+				"template-question/get/template-question-details",
 				$.param({
 					OAUserId: OAUserId,
 					templateQuestionId: templateQuestionId,
@@ -833,7 +833,7 @@ angular.module('opalAdmin.collections', [])
 
 		questionnaireAPI.getTemplateQuestionCategory = function (OAUserId) {
 			return $http.post(
-				"questionnaire/get/template-question-list",
+				"template-question/get/template-question-list",
 				$.param({
 					OAUserId: OAUserId,
 				}),
@@ -845,7 +845,7 @@ angular.module('opalAdmin.collections', [])
 
 		questionnaireAPI.getQuestions = function (OAUserId) {
 			return $http.post(
-				"questionnaire/get/questions",
+				"question/get/questions",
 				$.param({
 					OAUserId: OAUserId,
 				}),
@@ -857,7 +857,7 @@ angular.module('opalAdmin.collections', [])
 
 		questionnaireAPI.getQuestionDetails = function (questionId, OAUserId) {
 			return $http.post(
-				"questionnaire/get/question-details",
+				"question/get/question-details",
 				$.param({
 					questionId: questionId,
 					OAUserId: OAUserId,
@@ -882,7 +882,7 @@ angular.module('opalAdmin.collections', [])
 
 		questionnaireAPI.getFinalizedQuestionnaires = function (OAUserId) {
 			return $http.post(
-				"questionnaire/get/finalized-questionnaires",
+				"publication-tool/get/finalized-questionnaires",
 				$.param({
 					OAUserId: OAUserId,
 				}),
