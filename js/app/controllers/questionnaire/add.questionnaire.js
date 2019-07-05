@@ -291,7 +291,7 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 			// Submit
 			$.ajax({
 				type: "POST",
-				url: "php/questionnaire/insert.questionnaire.php",
+				url: "questionnaire/insert/questionnaire",
 				data: $scope.newQuestionnaire,
 				success: function (result) {
 					result = JSON.parse(result);

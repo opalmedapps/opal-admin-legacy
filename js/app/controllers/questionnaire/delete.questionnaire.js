@@ -9,7 +9,7 @@ angular.module('opalAdmin.controllers.questionnaire.delete', ['ngAnimate', 'ngSa
 			$scope.questionnaireToDelete.OAUserId = currentUser.id;
 			$.ajax({
 				type: "POST",
-				url: "php/questionnaire/delete.questionnaire.php",
+				url: "questionnaire/delete/questionnaire",
 				data: $scope.questionnaireToDelete,
 				success: function (response) {
 					response = JSON.parse(response);

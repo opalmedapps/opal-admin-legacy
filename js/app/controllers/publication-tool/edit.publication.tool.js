@@ -970,7 +970,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 
 			$.ajax({
 				type: "POST",
-				url: "php/questionnaire/update.published_questionnaire.php",
+				url: "publication-tool/update/published-questionnaire",
 				data: $scope.publishedQuestionnaire,
 				success: function (response) {
 					response = JSON.parse(response);

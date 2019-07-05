@@ -239,7 +239,7 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 			// Submit
 			$.ajax({
 				type: "POST",
-				url: "php/questionnaire/insert.published_questionnaire.php",
+				url: "publication-tool/insert/published-questionnaire",
 				data: $scope.newQuestionnaireToPublish,
 				success: function (result) {
 					result = JSON.parse(result);
