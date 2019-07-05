@@ -67,18 +67,6 @@ AddHandler cgi-script .php .pl .py .jsp .asp .htm .shtml .sh .cgi
 RemoveHandler cgi-script .pl .py .cgi
 AddType text/plain .pl .py .cgi
 
-RewriteRule ^questionnaire/get/finalized-questionnaires api/questionnaire/get.finalizedQuestionnaires.php [QSA,L]
-RewriteRule ^questionnaire/get/finalized-questions api/questionnaire/get.finalizedQuestions.php [QSA,L]
-RewriteRule ^questionnaire/get/libraries api/questionnaire/get.libraries.php [QSA,L]
-RewriteRule ^questionnaire/get/published-questionnaire-details api/questionnaire/get.published_questionnaires_details.php [QSA,L]
-RewriteRule ^questionnaire/get/published-questionnaires api/questionnaire/get.published_questionnaires.php [QSA,L]
-RewriteRule ^questionnaire/get/question-details api/questionnaire/get.question_details.php [QSA,L]
-RewriteRule ^questionnaire/get/questions api/questionnaire/get.questions.php [QSA,L]
-RewriteRule ^questionnaire/get/questionnaires api/questionnaire/get.questionnaires.php [QSA,L]
-RewriteRule ^questionnaire/get/questionnaire-details api/questionnaire/get.questionnaire_details.php [QSA,L]
-RewriteRule ^questionnaire/get/template-question-list api/questionnaire/get.template_question_list.php [QSA,L]
-RewriteRule ^questionnaire/get/template-question-details api/questionnaire/get.template_question_details.php [QSA,L]
-RewriteRule ^questionnaire/get/templates-questions api/questionnaire/get.templates_questions.php [QSA,L]
 # Accesses to the OpalAdmin API
 
 # Tasks/Appts/Docs Section (Alias)
@@ -197,6 +185,28 @@ RewriteRule ^post/get/posts api/post/get.posts.php [QSA,L]
 RewriteRule ^post/insert/post php/post/insert.post.php [QSA,L]
 RewriteRule ^post/update/post php/post/update.post.php [QSA,L]
 RewriteRule ^post/update/post-publish-flags php/post/update.post_publish_flags.php [QSA,L]
+
+# Question Section
+RewriteRule ^question/get/question-details api/questionnaire/get.question_details.php [QSA,L]
+RewriteRule ^question/get/questions api/questionnaire/get.questions.php [QSA,L]
+
+# Questionnaire Section
+RewriteRule ^questionnaire/get/questionnaires api/questionnaire/get.questionnaires.php [QSA,L]
+RewriteRule ^questionnaire/get/questionnaire-details api/questionnaire/get.questionnaire_details.php [QSA,L]
+
+# Publication Tool Section
+RewriteRule ^publication-tool/get/finalized-questionnaires api/questionnaire/get.finalizedQuestionnaires.php [QSA,L]
+RewriteRule ^publication-tool/get/finalized-questions api/questionnaire/get.finalizedQuestions.php [QSA,L]
+RewriteRule ^publication-tool/get/published-questionnaire-details api/questionnaire/get.published_questionnaires_details.php [QSA,L]
+RewriteRule ^publication-tool/get/published-questionnaires api/questionnaire/get.published_questionnaires.php [QSA,L]
+
+# Library Section
+RewriteRule ^library/get/libraries api/questionnaire/get.libraries.php [QSA,L]
+
+# Template Question
+RewriteRule ^template-question/get/template-question-list api/questionnaire/get.template_question_list.php [QSA,L]
+RewriteRule ^questionnaire/get/template-question-details api/questionnaire/get.template_question_details.php [QSA,L]
+RewriteRule ^questionnaire/get/templates-questions api/questionnaire/get.templates_questions.php [QSA,L]
 
 # Test Result Section
 RewriteRule ^test-result/delete/test-result php/test-result/delete.test_result.php [QSA,L]
