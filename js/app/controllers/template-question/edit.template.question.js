@@ -155,7 +155,7 @@ angular.module('opalAdmin.controllers.template.question.edit', ['ngAnimate', 'ng
 			// Submit form
 			$.ajax({
 				type: "POST",
-				url: "php/questionnaire/update.template.question.php",
+				url: "template-question/update/template-question",
 				data: $scope.templateQuestion,
 				success: function (response) {
 					response = JSON.parse(response);
