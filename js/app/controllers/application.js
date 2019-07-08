@@ -49,7 +49,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 				if (updateNeeded) {
 					$.ajax({
 						type: "POST",
-						url: "php/application/update.source_databases.php",
+						url: "application/update/source-databases",
 						data: $scope.sourceDatabases,
 						success: function (response) {
 							console.log("Updated source databases");

@@ -639,7 +639,7 @@ angular.module('opalAdmin.controllers.patientRegistration', ['ngAnimate', 'ngSan
 						// submit form
 						$.ajax({
 							type: "POST",
-							url: "php/patient/insert.patient.php",
+							url: "patient/insert/patient",
 							data: $scope.newPatient,
 							success: function () {
 								$state.go('home');

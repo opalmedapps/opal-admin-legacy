@@ -95,7 +95,7 @@ controller('template.question.add', function ($scope, $state, $filter, $uibModal
 			// Submit
 			$.ajax({
 				type: "POST",
-				url: "php/questionnaire/insert.template_question.php",
+				url: "template-question/insert/template-question",
 				data: $scope.newTemplateQuestion,
 				success: function (result) {
 					result = JSON.parse(result);
