@@ -47,7 +47,7 @@ angular.module('opalAdmin', [
 
 		authService.login = function (credentials) {
 			return $http
-				.post('php/user/validate_login.php', credentials)
+				.post('user/validate-login', credentials)
 				.then(function (response) {
 					if (response.data.user) {
 						Session.create(response.data.user);
@@ -60,7 +60,7 @@ angular.module('opalAdmin', [
 
 		authService.confirm = function (credentials) {
 			return $http
-				.post('php/user/validate_login.php', credentials)
+				.post('user/validate-login', credentials)
 				.then(function (response) {
 					if (response.data.success) {
 						return response.success;

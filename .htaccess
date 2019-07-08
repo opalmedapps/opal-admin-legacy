@@ -86,6 +86,7 @@ RewriteRule ^alias/update/publish-flags php/alias/update.alias_publish_flags.php
 RewriteRule ^application/get/application-build api/application/get.application_build.php [QSA,L]
 RewriteRule ^application/get/config config.json [QSA,L]
 RewriteRule ^application/get/source-databases api/application/get.source_databases.php [QSA,L]
+RewriteRule ^application/update/source-databases php/application/update.source_databases.php [QSA,L]
 
 # Cron Logs Section
 RewriteRule ^cron/get/cron-chart-logs api/cron/get.cron_chart_logs.php [QSA,L]
@@ -214,10 +215,12 @@ RewriteRule ^library/get/libraries api/questionnaire/get.libraries.php [QSA,L]
 RewriteRule ^library/insert/library php/questionnaire/insert.library.php [QSA,L]
 
 # Template Question
+RewriteRule ^template-question/delete/template-question php/questionnaire/delete.template.question.php [QSA,L]
 RewriteRule ^template-question/get/template-question-list api/questionnaire/get.template_question_list.php [QSA,L]
 RewriteRule ^template-question/get/template-question-details api/questionnaire/get.template_question_details.php [QSA,L]
 RewriteRule ^template-question/get/templates-questions api/questionnaire/get.templates_questions.php [QSA,L]
 RewriteRule ^template-question/insert/template-question php/questionnaire/insert.template_question.php [QSA,L]
+RewriteRule ^template-question/update/template-question php/questionnaire/update.template.question.php [QSA,L]
 
 # Test Result Section
 RewriteRule ^test-result/delete/test-result php/test-result/delete.test_result.php [QSA,L]
@@ -238,7 +241,9 @@ RewriteRule ^user/get/user-activity-logs api/user/get.user_activity_logs.php [QS
 RewriteRule ^user/get/user-details api/user/get.user_details.php [QSA,L]
 RewriteRule ^user/get/users api/user/get.users.php [QSA,L]
 RewriteRule ^user/insert/user php/user/insert.user.php [QSA,L]
+RewriteRule ^user/logout php/user/logout.php [QSA,L]
 RewriteRule ^user/update/language php/user/update.language.php [QSA,L]
 RewriteRule ^user/update/password php/user/update.password.php [QSA,L]
 RewriteRule ^user/update/user php/user/update.user.php [QSA,L]
 RewriteRule ^user/username-in-use api/user/username_in_use.php [QSA,L]
+RewriteRule ^user/validate-login php/user/validate_login.php [QSA,L]
