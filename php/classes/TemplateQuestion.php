@@ -234,6 +234,7 @@ class TemplateQuestion extends QuestionnaireModule {
                     array("content"=>$data["description_FR"], "languageId"=>FRENCH_LANGUAGE, "contentId"=>$data["description"]),
                     array("content"=>$data["description_EN"], "languageId"=>ENGLISH_LANGUAGE, "contentId"=>$data["description"]),
                 );
+
                 $total += $this->questionnaireDB->updateDictionary($toUpdateDict, TEMPLATE_QUESTION_CHECKBOX_OPTION_TABLE);
                 $total += $this->questionnaireDB->updateSubOptionsForTemplateQuestion(TEMPLATE_QUESTION_CHECKBOX_OPTION_TABLE, TEMPLATE_QUESTION_CHECKBOX_TABLE, $data["ID"], $toUpdate);
             }
@@ -384,7 +385,7 @@ class TemplateQuestion extends QuestionnaireModule {
             foreach($newTemplateQuestion["subOptions"] as $opt) {
                 $tempArray = array();
                 $toInsert = array(FRENCH_LANGUAGE=>$opt["description_FR"], ENGLISH_LANGUAGE=>$opt["description_EN"]);
-                $tempArray["description"] = $this->questionnaireDB->addToDictionary($toInsert, TEMPLATE_QUESTION_TABLE);
+                $tempArray["description"] = $this->questionnaireDB->addToDictionary($toInsert, $subTableToInsert);
                 $tempArray["order"] = $opt["order"];
                 array_push($subOptions, $tempArray);
             }
