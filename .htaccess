@@ -203,8 +203,8 @@ RewriteRule ^questionnaire/insert/questionnaire php/questionnaire/insert.questio
 RewriteRule ^questionnaire/update/questionnaire php/questionnaire/update.questionnaire.php [QSA,L]
 
 # Publication Tool Section
-RewriteRule ^publication-tool/update/published-questionnaire php/questionnaire/update.published_questionnaire.php [QSA,L]
 RewriteRule ^publication-tool/update/published-questionnaire-publish-flag php/questionnaire/update.questionnaire_publish_flag.php [QSA,L]
+RewriteRule ^publication-tool/update/published-questionnaire php/questionnaire/update.published_questionnaire.php [QSA,L]
 RewriteRule ^publication-tool/get/finalized-questionnaires api/questionnaire/get.finalizedQuestionnaires.php [QSA,L]
 RewriteRule ^publication-tool/get/published-questionnaire-details api/questionnaire/get.published_questionnaires_details.php [QSA,L]
 RewriteRule ^publication-tool/get/published-questionnaires api/questionnaire/get.published_questionnaires.php [QSA,L]
