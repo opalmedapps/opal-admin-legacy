@@ -42,18 +42,6 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 	$scope.stepTotal = 3;
 	$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
-	/* Function for the "Processing" dialog */
-	var processingModal;
-	$scope.showProcessingModal = function () {
-
-		processingModal = $uibModal.open({
-			templateUrl: 'templates/processingModal.html',
-			backdrop: 'static',
-			keyboard: false,
-		});
-	};
-	$scope.showProcessingModal(); // Calling function
-
 	// Function to calculate / return step progress
 	function trackProgress(value, total) {
 		return Math.round(100 * value / total);
@@ -73,13 +61,6 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 	// Responsible for "searching" in search bars
 	$scope.filter = $filter('filter');
 
-	// Initialize search field variables
-	$scope.appointmentSearchField = "";
-	$scope.dxSearchField = "";
-	$scope.doctorSearchField = "";
-	$scope.resourceSearchField = "";
-	$scope.patientSearchField = "";
-
 	// new questionnaire object
 	$scope.newQuestionnaire = {
 		title_EN: "",
@@ -90,20 +71,6 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		OAUserId: OAUserId,
 		questions: [],
 	};
-
-	$scope.formLoaded = false;
-	// Function to load form as animations
-	$scope.loadForm = function () {
-		$('.form-box-left').addClass('fadeInDown');
-		$('.form-box-right').addClass('fadeInRight');
-	};
-
-	filterCollectionService.getFilters().then(function () {
-		processingModal.close(); // hide modal
-		processingModal = null; // remove reference
-		$scope.formLoaded = true;
-		$scope.loadForm();
-	});
 
 	function decodeQuestions(questions) {
 		questions.forEach(function(entry) {
