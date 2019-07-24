@@ -14,10 +14,12 @@
     "DIAGNOSIS_TRANSLATION": "Diagnosis Translation",
     "CRON_LOGS": "Cron Logs",
     "PATIENTS": "Patients",
+    "PATIENT_REGISTRATION": "Patient registration",
     "PATIENT_ACTIVITY": "Patient Activity",
     "USERS": "Users",
     "PROFILE": "Profile",
-    "ACCOUNT": "Account"
+    "ACCOUNT": "Account",
+    "LOGOUT": "Déconnexion"
   },
   "BREADCRUMBS": {
     "HOME": "Home"
