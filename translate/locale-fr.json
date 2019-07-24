@@ -11,13 +11,15 @@
     "EMAIL": "Courriels",
     "LEGACY_QUESTIONNAIRE": "Anciens questionnaires",
     "ADMINISTRATION": "Administration",
-    "DIAGNOSIS_TRANSLATION": "Traductions des diagnostics",
+    "DIAGNOSIS_TRANSLATION": "Traductions diagnostics",
     "CRON_LOGS": "Journal des tâches cron",
     "PATIENTS": "Patients",
+    "PATIENT_REGISTRATION": "Enregistrement patient",
     "PATIENT_ACTIVITY": "Activité des patients",
     "USERS": "Utilisateurs",
     "PROFILE": "Profil",
-    "ACCOUNT": "Compte"
+    "ACCOUNT": "Compte",
+    "LOGOUT": "Déconnexion"
   },
   "BREADCRUMBS": {
     "HOME": "Accueil"
