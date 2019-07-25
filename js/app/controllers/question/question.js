@@ -54,7 +54,6 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 
 		var cellTemplateLocked = '<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 1"><div class="fa fa-lock text-danger"></div></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 0"><div class="fa fa-unlock text-success"></div></div>';
-
 		// Data binding for question table
 		$scope.gridLib = {
 			data: 'questionList',
@@ -62,7 +61,7 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 				{ field: 'locked', displayName: '', cellTemplate: cellTemplateLocked, width: '2%', sortable: false, enableFiltering: false},
 				{ field: 'question_EN', displayName: 'Question (EN / FR)', cellTemplate: cellTemplateText, width: '49%' },
 				{ field: 'questionType_EN', displayName: 'Response Type (EN / FR)', cellTemplate: cellTemplateAt, width: '13%' },
-				{ field: 'library_name_EN', displayName: 'Library (EN / FR)', cellTemplate: cellTemplateLib, width: '10%' },
+				{ field: 'library_name_EN', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.LIBRARY'), cellTemplate: cellTemplateLib, width: '10%' },
 				{
 					field: 'private', displayName: 'Privacy', cellTemplate: cellTemplatePrivacy, width: '8%', filter: {
 						type: uiGridConstants.filter.SELECT,

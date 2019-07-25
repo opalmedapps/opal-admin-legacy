@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.account', ['ui.bootstrap']).
 /******************************************************************************
  * Controller for the account page
  *******************************************************************************/
-controller('account', function ($scope, $rootScope, Session, Encrypt) {
+controller('account', function ($scope, $rootScope, $translate, $filter, Session, Encrypt) {
 
 	// Set current user
 	$scope.currentUser = Session.retrieveObject('user');
@@ -76,11 +76,11 @@ controller('account', function ($scope, $rootScope, Session, Encrypt) {
 
 		if (password.length < 6) {
 			$scope.validPassword.status = 'invalid';
-			$scope.validPassword.message = 'Use greater than 6 characters';
+			$scope.validPassword.message = $filter('translate')('PROFILE.SHORT');
 			return;
 		} else if ($scope.account.oldPassword && $scope.account.oldPassword == password) {
 			$scope.validPassword.status = 'warning';
-			$scope.validPassword.message = 'Old and new password are the same';
+			$scope.validPassword.message = $filter('translate')('PROFILE.OLD_NEW');
 		}
 		else {
 			$scope.validPassword.status = 'valid';
@@ -99,7 +99,7 @@ controller('account', function ($scope, $rootScope, Session, Encrypt) {
 
 		if ($scope.validPassword.status != 'valid' || $scope.account.password != $scope.account.confirmPassword) {
 			$scope.validConfirmPassword.status = 'invalid';
-			$scope.validConfirmPassword.message = 'Enter same valid password';
+			$scope.validConfirmPassword.message = $filter('translate')('PROFILE.SAME_VALID');
 			return;
 		} else {
 			$scope.validConfirmPassword.status = 'valid';
@@ -124,7 +124,7 @@ controller('account', function ($scope, $rootScope, Session, Encrypt) {
 
 			// check if user is defined in session (they should...)
 			if (!$scope.currentUser) {
-				$scope.bannerMessage = "Your session seems to be invalid...";
+				$scope.bannerMessage = $filter('translate')('PROFILE.INVALID_SESSION');
 				$scope.setBannerClass('danger');
 				$scope.showBanner();
 				return;
@@ -150,7 +150,7 @@ controller('account', function ($scope, $rootScope, Session, Encrypt) {
 					if (response.value == 1) {
 						$scope.flushAccount();
 						$scope.setBannerClass('success');
-						$scope.bannerMessage = "Password successfully changed";
+						$scope.bannerMessage = $filter('translate')('PROFILE.PASSWORD_SUCCESS');
 						$scope.showBanner();
 						$scope.$apply();
 					} else {
@@ -158,9 +158,9 @@ controller('account', function ($scope, $rootScope, Session, Encrypt) {
 						var errorMessage = response.error.message;
 						if (errorCode == 'old-password-incorrect') {
 							$scope.validOldPassword.status = 'warning';
-							$scope.validOldPassword.message = errorMessage;
+							$scope.validOldPassword.message = $filter('translate')('PROFILE.INVALID_PASSWORD');
 							$scope.setBannerClass('warning');
-							$scope.bannerMessage = errorMessage;
+							$scope.bannerMessage = $filter('translate')('PROFILE.INVALID_PASSWORD');
 							$scope.$apply();
 							$scope.showBanner();
 						} else {
@@ -168,9 +168,7 @@ controller('account', function ($scope, $rootScope, Session, Encrypt) {
 							$scope.bannerMessage = errorMessage;
 							$scope.showBanner();
 						}
-
 					}
-
 				}
 			});
 
@@ -184,19 +182,16 @@ controller('account', function ($scope, $rootScope, Session, Encrypt) {
 			type: "POST",
 			url: "user/update/language",
 			data: user,
-			success: function (response) {
-				response = JSON.parse(response);
-				if (response.value == 1) {
-					$scope.setBannerClass('success');
-					$scope.bannerMessage = "Language successfully changed";
-					$scope.showBanner();
-					Session.update(user); // change language in cookies
-				} else {
-					$scope.setBannerClass('danger');
-					$scope.bannerMessage = response.error.message;
-					$scope.showBanner();
-				}
+			success: function () {
+				$scope.setBannerClass('success');
+				$scope.bannerMessage = "Language successfully changed";
+				$scope.showBanner();
+				Session.update(user); // change language in cookies
 				$scope.$apply();
+				$translate.use($scope.currentUser.language.toLowerCase());
+			},
+			error: function () {
+				alert("An error occured while changing the language.");
 			}
 		});
 	};
