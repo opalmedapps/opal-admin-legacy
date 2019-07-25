@@ -66,7 +66,22 @@
       "PUBLICATION_TOOLS_SUB": "Publier et envoyer des questionnaires aux patients."
     },
     "QUESTION_LIST" : {
-      "LIBRARY": "Librarie (AN / FR)"
+      "TITLE": "Gérer les questions",
+      "ADD": "Ajouter",
+      "SEARCH": "Rechercher",
+      "QUESTION": "Question",
+      "RESPONSE_TYPE": "Type de réponse",
+      "LIBRARY": "Librairie",
+      "PRIVACY": "Confidentialité",
+      "STATUS": "Statut",
+      "OPERATIONS": "Opérations",
+      "PRIVATE": "Privé",
+      "PUBLIC": "Public",
+      "DRAFT": "Brouillon",
+      "FINAL": "Final",
+      "EDIT": "Modifier",
+      "DELETE": "Supprimer",
+      "ERROR_QUESTIONS": "Une erreur s'est produite lors de l'obtention de la liste de questions. Réponse du serveur:\r\n\r\n"
     }
   },
   "PROFILE": {
@@ -87,7 +102,9 @@
     "OLD_NEW": "L'ancien et le nouveau mot de passe sont les mêmes",
     "INVALID_SESSION": "Votre session semble être invalide.",
     "INVALID_PASSWORD": "Votre mot de passe actuel est erroné.",
-    "PASSWORD_SUCCESS": "Mot de passe changé avec succès"
+    "PASSWORD_SUCCESS": "Mot de passe changé avec succès",
+    "LANGUAGE_SUCCESS": "Language preference successfully changed.",
+    "LANGUAGE_ERROR": "Une erreur est survenue. Impossible de changer la langue."
   },
   "PATIENT_REGISTRATION_TITLE": "Enregistrement Patient",
   "PATIENT_REGISTRATION_SEARCH_HEADER": "Recherche",
