@@ -146,7 +146,7 @@ angular.module('opalAdmin', [
 			suffix: '.json'
 		});
 		// load 'en' table on startup
-		$translateProvider.preferredLanguage('en');
+		$translateProvider.preferredLanguage('fr');
 		// Enable escaping of HTML
 		$translateProvider.useSanitizeValueStrategy('escaped');
 	})

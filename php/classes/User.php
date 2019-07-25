@@ -200,11 +200,7 @@
      */
 	public function updateLanguage($userDetails) {
 	 	$response = array (
-	 		'value'		=> 0,
-	 		'error'		=> array(
-	 			'code'		=> '',
-	 			'message'	=> ''
-	 		)
+	 		'code'		=> "0",
 	 	);
 	 	$language 	= $userDetails['language'];
 	 	$userSer	= $userDetails['id'];
@@ -220,7 +216,7 @@
 			$stmt->bindValue( "language", $language, PDO::PARAM_STR );
 			$stmt->execute();
 
-			$response['value'] = 1; // Success
+			$response['code'] = "1"; // Success
 			return $response;
 
 	 	} catch (PDOException $e) {
