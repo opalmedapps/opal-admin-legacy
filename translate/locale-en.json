@@ -66,7 +66,23 @@
       "PUBLICATION_TOOLS_SUB": "Publish and send questionnaires to patients."
     },
     "QUESTION_LIST" : {
-      "LIBRARY": "Library (EN / FR)"
+      "TITLE": "Manage Questions",
+      "ADD": "Add",
+      "SEARCH": "Search...",
+      "QUESTION": "Question",
+      "RESPONSE_TYPE": "Response type",
+      "LIBRARY": "Library",
+      "PRIVACY": "Privacy",
+      "STATUS": "Status",
+      "OPERATIONS": "Operations",
+      "PRIVATE": "Private",
+      "PUBLIC": "Public",
+      "DRAFT": "Draft",
+      "FINAL": "Final",
+      "EDIT": "Edit",
+      "DELETE": "Delete",
+      "ERROR_QUESTIONS": "An error occurred whille getting question list. Answer from the server:\r\n\r\n"
+
     }
   },
   "PROFILE": {
@@ -87,7 +103,9 @@
     "OLD_NEW": "Old and new password are the same",
     "INVALID_SESSION": "Your session seems to be invalid.",
     "INVALID_PASSWORD": "Your current password is wrong.",
-    "PASSWORD_SUCCESS": "Password successfully changed"
+    "PASSWORD_SUCCESS": "Password successfully changed",
+    "LANGUAGE_SUCCESS": "Préférence de langue modifiée avec succès",
+    "LANGUAGE_ERROR": "An error occurred. Unable to change the language."
   },
   "PATIENT_REGISTRATION_TITLE": "Patient Registration",
   "PATIENT_REGISTRATION_SEARCH_HEADER": "Registration Search",

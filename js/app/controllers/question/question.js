@@ -37,8 +37,8 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 
 		// Templates for main question table
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editQuestion(row.entity)">Edit</a></strong> ' +
-			'- <strong><a href="" ng-click="grid.appScope.deleteQuestion(row.entity)">Delete</a></strong></div>';
+			'<strong><a href="" ng-click="grid.appScope.editQuestion(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ' +
+			'- <strong><a href="" ng-click="grid.appScope.deleteQuestion(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
 		var cellTemplateText = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editQuestion(row.entity)">' +
 			'<strong><a href="">{{row.entity.question_EN}} / {{row.entity.question_FR}}</a></strong></div>';
@@ -46,11 +46,11 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 			'{{row.entity.library_name_EN}} / {{row.entity.library_name_FR}}</div>';
 		var cellTemplateAt = '<div class="ui-grid-cell-contents"> ' +
 			'{{row.entity.questionType_EN}} / {{row.entity.questionType_FR}}</div>';
-		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Public</p></div>' +
-			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Private</p></div>';
+		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.PUBLIC')+'</p></div>' +
+			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.PRIVATE')+'</p></div>';
 
-		var cellTemplateFinal = '<div class="ui-grid-cell-contents" ng-show="row.entity.final == 1"><p>Final</p></div>' +
-			'<div class="ui-grid-cell-contents" ng-show="row.entity.final == 0"><p>Draft</p></div>';
+		var cellTemplateFinal = '<div class="ui-grid-cell-contents" ng-show="row.entity.final == 1"><p>'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.FINAL')+'</p></div>' +
+			'<div class="ui-grid-cell-contents" ng-show="row.entity.final == 0"><p>'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.DRAFT')+'</p></div>';
 
 		var cellTemplateLocked = '<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 1"><div class="fa fa-lock text-danger"></div></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 0"><div class="fa fa-unlock text-success"></div></div>';
@@ -59,22 +59,22 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 			data: 'questionList',
 			columnDefs: [
 				{ field: 'locked', displayName: '', cellTemplate: cellTemplateLocked, width: '2%', sortable: false, enableFiltering: false},
-				{ field: 'question_EN', displayName: 'Question (EN / FR)', cellTemplate: cellTemplateText, width: '49%' },
-				{ field: 'questionType_EN', displayName: 'Response Type (EN / FR)', cellTemplate: cellTemplateAt, width: '13%' },
+				{ field: 'question_EN', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.QUESTION'), cellTemplate: cellTemplateText, width: '49%' },
+				{ field: 'questionType_EN', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.RESPONSE_TYPE'), cellTemplate: cellTemplateAt, width: '13%' },
 				{ field: 'library_name_EN', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.LIBRARY'), cellTemplate: cellTemplateLib, width: '10%' },
 				{
-					field: 'private', displayName: 'Privacy', cellTemplate: cellTemplatePrivacy, width: '8%', filter: {
+					field: 'private', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.PRIVACY'), cellTemplate: cellTemplatePrivacy, width: '8%', filter: {
 						type: uiGridConstants.filter.SELECT,
-						selectOptions: [{ value: '1', label: 'Private' }, { value: '0', label: 'Public' }]
+						selectOptions: [{ value: '1', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.PRIVATE') }, { value: '0', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.PUBLIC') }]
 					}
 				},
 				{
-					field: 'final', displayName: 'Status', cellTemplate: cellTemplateFinal, width: '8%', filter: {
+					field: 'final', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.STATUS'), cellTemplate: cellTemplateFinal, width: '8%', filter: {
 						type: uiGridConstants.filter.SELECT,
-						selectOptions: [{ value: '1', label: 'Final' }, { value: '0', label: 'Draft' }]
+						selectOptions: [{ value: '1', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.FINAL') }, { value: '0', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.DRAFT') }]
 					}
 				},
-				{ name: 'Operations', width: '10%', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false }
+				{ name: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.OPERATIONS'), width: '10%', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false }
 			],
 			enableFiltering: true,
 			enableColumnResizing: true,

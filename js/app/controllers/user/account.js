@@ -11,10 +11,10 @@ controller('account', function ($scope, $rootScope, $translate, $filter, Session
 
 	// Initialize a list of languages available
 	$scope.languages = [{
-		name: 'English',
+		name: $filter('translate')('PROFILE.ENGLISH'),
 		id: 'EN'
 	}, {
-		name: 'French',
+		name: $filter('translate')('PROFILE.FRENCH'),
 		id: 'FR'
 	}];
 
@@ -184,14 +184,14 @@ controller('account', function ($scope, $rootScope, $translate, $filter, Session
 			data: user,
 			success: function () {
 				$scope.setBannerClass('success');
-				$scope.bannerMessage = "Language successfully changed";
+				$scope.bannerMessage = $filter('translate')('PROFILE.LANGUAGE_SUCCESS');
 				$scope.showBanner();
 				Session.update(user); // change language in cookies
 				$scope.$apply();
 				$translate.use($scope.currentUser.language.toLowerCase());
 			},
 			error: function () {
-				alert("An error occured while changing the language.");
+				alert($filter('translate')('PROFILE.LANGUAGE_ERROR'));
 			}
 		});
 	};
