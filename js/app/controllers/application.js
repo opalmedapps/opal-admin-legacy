@@ -71,7 +71,7 @@ controller('application', function ($scope, $rootScope, $state, $filter, Idle, K
 	// Set the site language
 	$rootScope.setSiteLanguage = function (user) {
 		if (!user)
-			$rootScope.siteLanguage = 'EN';
+			$rootScope.siteLanguage = 'FR';
 		else {
 			$rootScope.siteLanguage = user.language;
 		}
