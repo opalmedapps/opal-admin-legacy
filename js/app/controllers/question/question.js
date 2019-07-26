@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns'])
 
-	.controller('question', function ($scope, $state, $filter, $uibModal, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
+	.controller('question', function ($scope, $state, $filter, $uibModal, $translate, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
 
 		// Routing to go to add question page
 		$scope.goToAddQuestion = function () {
@@ -19,7 +19,7 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 			var matcher = new RegExp($scope.filterValue, 'i');
 			renderableRows.forEach(function (row) {
 				var match = false;
-				['question_EN', 'question_FR', 'questionType_EN', 'questionType_FR', 'library_name_EN', 'library_name_FR'].forEach(function (field) {
+				['question_'+Session.retrieveObject('user').language, 'questionType_'+Session.retrieveObject('user').language, 'library_name_'+Session.retrieveObject('user').language].forEach(function (field) {
 					if (row.entity[field].match(matcher)) {
 						match = true;
 					}
@@ -41,11 +41,11 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 			'- <strong><a href="" ng-click="grid.appScope.deleteQuestion(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
 		var cellTemplateText = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editQuestion(row.entity)">' +
-			'<strong><a href="">{{row.entity.question_EN}} / {{row.entity.question_FR}}</a></strong></div>';
+			'<strong><a href="">{{row.entity.question_' + Session.retrieveObject('user').language + '}}</a></strong></div>';
 		var cellTemplateLib = '<div class="ui-grid-cell-contents"> ' +
-			'{{row.entity.library_name_EN}} / {{row.entity.library_name_FR}}</div>';
+			'{{row.entity.library_name_'+ Session.retrieveObject('user').language +'}}</div>';
 		var cellTemplateAt = '<div class="ui-grid-cell-contents"> ' +
-			'{{row.entity.questionType_EN}} / {{row.entity.questionType_FR}}</div>';
+			'{{row.entity.questionType_'+ Session.retrieveObject('user').language +'}}</div>';
 		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.PUBLIC')+'</p></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.PRIVATE')+'</p></div>';
 
@@ -59,9 +59,9 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 			data: 'questionList',
 			columnDefs: [
 				{ field: 'locked', displayName: '', cellTemplate: cellTemplateLocked, width: '2%', sortable: false, enableFiltering: false},
-				{ field: 'question_EN', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.QUESTION'), cellTemplate: cellTemplateText, width: '49%' },
-				{ field: 'questionType_EN', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.RESPONSE_TYPE'), cellTemplate: cellTemplateAt, width: '13%' },
-				{ field: 'library_name_EN', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.LIBRARY'), cellTemplate: cellTemplateLib, width: '10%' },
+				{ field: 'question_'+Session.retrieveObject('user').language, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.QUESTION'), cellTemplate: cellTemplateText, width: '49%' },
+				{ field: 'questionType_'+Session.retrieveObject('user').language, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.RESPONSE_TYPE'), cellTemplate: cellTemplateAt, width: '13%' },
+				{ field: 'library_name_'+Session.retrieveObject('user').language, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.LIBRARY'), cellTemplate: cellTemplateLib, width: '10%' },
 				{
 					field: 'private', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.PRIVACY'), cellTemplate: cellTemplatePrivacy, width: '8%', filter: {
 						type: uiGridConstants.filter.SELECT,
@@ -89,7 +89,7 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 			$scope.questionList = response.data;
 
 		}).catch(function(response) {
-			alert('Error occurred getting question list:\r\n' + response.status + " " + response.data);
+			alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.ERROR_QUESTIONS') + "\r\n\r\n" + response.status + " - " + response.data);
 		});
 
 		// Banner
@@ -134,7 +134,7 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 				questionnaireCollectionService.getQuestions(Session.retrieveObject('user').id).then(function (response) {
 					$scope.questionList = response.data;
 				}).catch(function(response) {
-					alert('Error occurred getting question list after modal close:\r\n' + response.status + " " + response.data);
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.ERROR_QUESTIONS') + "\r\n\r\n" + response.status + " - " + response.data);
 				});
 
 			});
@@ -145,11 +145,8 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 
 		// function to delete question
 		$scope.deleteQuestion = function (currentQuestion) {
-
-
 			$scope.questionToDelete = currentQuestion;
 			var modalInstance;
-
 			if (currentQuestion.locked) {
 				modalInstance = $uibModal.open({
 					templateUrl: 'templates/questionnaire/cannot.delete.question.html',
@@ -174,7 +171,7 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 				questionnaireCollectionService.getQuestions(Session.retrieveObject('user').id).then(function (response) {
 					$scope.questionList = response.data;
 				}).catch(function (response) {
-					alert('Error occurred getting question list after modal close. Code: ' + response.status + "\r\n" +  response.data);
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.ERROR_QUESTIONS') + "\r\n\r\n" + response.status + " - " + response.data);
 				});
 			});
 		};

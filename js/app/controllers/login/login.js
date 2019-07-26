@@ -15,8 +15,8 @@ controller('login', function ($scope, $rootScope, $state, $translate, AUTH_EVENT
 	$scope.loginPage = true;
 
 	$scope.language = {
-		main: "en",
-		alt: "fr",
+		main: "fr",
+		alt: "en",
 	};
 
 	$scope.bannerMessage = "";

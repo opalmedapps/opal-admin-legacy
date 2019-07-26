@@ -24,7 +24,7 @@
                                     <div class="side-panel-info-sm">
                                         <div class="panel-content">
                                             <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
-                                            <h6 class="side-panel-title" style="display:inline-block;margin:0;font-size:14px;"><strong>Back to Manage Questions</strong></h6>
+                                            <h6 class="side-panel-title" style="display:inline-block;margin:0;font-size:14px;"><strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.BACK'|translate}}</strong></h6>
                                         </div>
                                     </div>
                                 </div>
@@ -33,7 +33,7 @@
                             <div class="side-menu-title col-lg-12">
                                 <div class="horz-line" style="height: 10px; text-align: center">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
-                                        <h2>Summary</h2>
+                                        <h2>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.SUMMARY'|translate}}</h2>
                                     </span>
                                 </div>
                             </div>
@@ -55,7 +55,7 @@
                                             <span ng-if="newQuestion.question_EN && newQuestion.question_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
-                                            <strong>Question</strong>
+                                            <strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.QUESTION_TITLE'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
                                             <i ng-if="newQuestion.question_EN || newQuestion.question_FR" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
@@ -64,14 +64,14 @@
                                 </uib-accordion-heading>
                                 <div ng-if="newQuestion.question_EN" class="description">
                                     <p style="margin-botton:5px">
-                                        <strong>EN</strong>
+                                        <strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.ENGLISH_TITLE'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                                         {{newQuestion.question_EN}}
                                     </p>
                                 </div>
                                 <div ng-if="newQuestion.question_FR" class="description">
                                     <p style="margin-botton:5px">
-                                        <strong>FR</strong>
+                                        <strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.FRENCH_TITLE'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                                         {{newQuestion.question_FR}}
                                     </p>
@@ -86,7 +86,7 @@
                                             <span ng-if="newQuestion.typeId" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
-                                            <strong>Response Type</strong>
+                                            <strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.RESPONSE_TYPE'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
                                             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': answerTypeSection.open, 'glyphicon-chevron-right': !answerTypeSection.open}" ng-if="newQuestion.typeId"></i>
@@ -98,14 +98,14 @@
                                         {{selectedAt.category_EN}}
                                     </p>
                                     <p style="margin-bottom:5px;">
-                                        <strong>EN</strong>
+                                        <strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.ENGLISH_TITLE'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                                         {{selectedAt.name_EN}}
                                     </p>
                                 </div>
                                 <div ng-if="newQuestion.typeId" class="description">
                                     <p style="margin-bottom:5px;">
-                                        <strong>FR</strong>
+                                        <strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.FRENCH_TITLE'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                                         {{selectedAt.name_FR}}
                                     </p>
@@ -120,7 +120,7 @@
                                             <span ng-if="newQuestion.library_ID" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
-                                            <strong>Question Library</strong>
+                                            <strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.QUESTION_LIBRARY'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
                                             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': questionLibrarySection.open, 'glyphicon-chevron-right': !questionLibrarySection.open}" ng-if="newQuestion.library_ID"></i>
@@ -147,7 +147,7 @@
                         <!-- Submit button -->
                         <div class="panel-container">
                             <a href="" ng-click="submitQuestion()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
-                                <span style="font-size: 20px;"><strong>Submit Question</strong></span>
+                                <span style="font-size: 20px;"><strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.SUBMIT'|translate}}</strong></span>
                             </a>
                         </div>
                     </div>
@@ -158,18 +158,18 @@
                         <!-- Page title -->
                         <div class="col-xs-12 col-md-6 title-content">
                             <span class="fa fa-plus"></span>
-                            <h1><strong>Add Question</strong></h1>
+                            <h1><strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.TITLE'|translate}}</strong></h1>
                         </div>
                         <!-- Breadcrumbs -->
                         <div class="col-md-6 title-breadcrumbs">
                             <span>
-                                <a ui-sref="home">Home</a>
+                                <a ui-sref="home">{{'BREADCRUMBS.HOME'|translate}}</a>
                                 <span class="glyphicon glyphicon-menu-right teflon"></span>
-                                <a ui-sref="questionnaire-menu">Questionnaires</a>
+                                <a ui-sref="questionnaire-menu">{{'QUESTIONNAIRE_MODULE.DASHBOARD.TITLE'|translate}}</a>
                                 <span class="glyphicon glyphicon-menu-right teflon"></span>
-                                <a ui-sref="questionnaire-question">Manage</a>
+                                <a ui-sref="questionnaire-question">{{'QUESTIONNAIRE_MODULE.QUESTION_LIST.TITLE'|translate}}</a>
                                 <span class="glyphicon glyphicon-menu-right teflon"></span>
-                                <strong>Add Question</strong>
+                                <strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.TITLE'|translate}}</strong>
                             </span>
                         </div>
                     </div>
@@ -180,7 +180,7 @@
                                 <div class="side-panel-info-sm">
                                     <div class="panel-content">
                                         <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
-                                        <h6 class="side-panel-title"><strong>Back to Manage Questions</strong></h6>
+                                        <h6 class="side-panel-title"><strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.BACK'|translate}}</strong></h6>
                                     </div>
                                 </div>
                             </div>
@@ -188,7 +188,7 @@
                         <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkForm()">
                             <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
                                 <span style="padding: 0 10px;">
-                                    <h2>Step {{numOfCompletedSteps}} of {{stepTotal}} Completed</h2>
+                                    <h2>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.STEP'|translate}} {{numOfCompletedSteps}} {{'QUESTIONNAIRE_MODULE.QUESTION_ADD.OF'|translate}} {{stepTotal}} {{'QUESTIONNAIRE_MODULE.QUESTION_ADD.COMPLETED'|translate}}</h2>
                                 </span>
                             </div>
                             <div class="progress progress-striped active">
@@ -199,7 +199,7 @@
                         <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkForm()">
                             <div class="panel-container">
                                 <a href="" ng-click="submitQuestion()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
-                                    <span style="font-size: 20px;"><strong>Submit Question</strong></span>
+                                    <span style="font-size: 20px;"><strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.SUBMIT'|translate}}</strong></span>
                                 </a>
                             </div>
                         </div>
@@ -219,17 +219,17 @@
                         <div class="row">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 5px;">
-                                    <span style="color:#d9534f"><strong>Required field:</strong></span>
-                                    Please assign the question content in both english and in french.
+                                    <span style="color:#d9534f"><strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.REQUIRED'|translate}}</strong></span>
+                                    {{'QUESTIONNAIRE_MODULE.QUESTION_ADD.QUESTION_EXPLANATION'|translate}}
                                 </p>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-xs-12 col-md-6">
                                 <div class="panel" ng-class="(newQuestion.question_EN) ? 'panel-success': 'panel-danger'">
-                                    <div class="panel-heading"><strong>English</strong>
-                                        <span ng-hide="newQuestion.question_EN" style="float:right"><em>Incomplete</em></span>
-                                        <span ng-show="newQuestion.question_EN" style="float:right"><em>Complete</em></span>
+                                    <div class="panel-heading"><strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.ENGLISH'|translate}}</strong>
+                                        <span ng-hide="newQuestion.question_EN" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="newQuestion.question_EN" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body">
                                         <div class="row">
@@ -242,9 +242,9 @@
                             </div>
                             <div class="col-xs-12 col-md-6">
                                 <div class="panel" ng-class="(newQuestion.question_FR) ? 'panel-success': 'panel-danger'">
-                                    <div class="panel-heading"><strong>Français</strong>
-                                        <span ng-hide="newQuestion.question_FR" style="float:right"><em>Incomplete</em></span>
-                                        <span ng-show="newQuestion.question_FR" style="float:right"><em>Complete</em></span>
+                                    <div class="panel-heading"><strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.FRENCH'|translate}}</strong>
+                                        <span ng-hide="newQuestion.question_FR" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="newQuestion.question_FR" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body">
                                         <div class="row">
@@ -256,7 +256,7 @@
                                 </div>
                             </div>
                             <div class="col-xs-12 col-md-6" style="margin-bottom: 20px;">
-                                <label style="font-size: 20px;">Make this question private: <input type="checkbox" ng-model="newQuestion.private" ng-true-value="1" ng-false-value="0"></label>
+                                <label style="font-size: 20px;">{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.PRIVATE'|translate}} <input type="checkbox" ng-model="newQuestion.private" ng-true-value="1" ng-false-value="0"></label>
                             </div>
                         </div>
 
@@ -266,7 +266,7 @@
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
                                         <span class="fas fa-dot-circle"></span>
-                                        <h2>Response Type</h2>
+                                        <h2>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.RESPONSE_TYPE'|translate}}</h2>
                                     </span>
                                 </div>
                             </div>
@@ -274,25 +274,25 @@
                         <div class="row animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show">
                             <div class="col-xs-12 col-md-6">
                                 <p style="margin-bottom: 10px;">
-                                    <span style="color:#d9534f"><strong>Required field:</strong></span>
-                                    Please choose a response type where to add this question.
+                                    <span style="color:#d9534f"><strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.REQUIRED'|translate}}</strong></span>
+                                    {{'QUESTIONNAIRE_MODULE.QUESTION_ADD.RESPONSE_EXPLANATION'|translate}}
                                 </p>
                                 <div class="row animated" ng-class="{fadeInUp: answerTypeSection.show}" ng-if="answerTypeSection.show">
                                     <div class="col-xs-12">
                                         <div class="panel" ng-class="newQuestion.typeId ? 'panel-success': 'panel-danger'">
-                                            <div class="panel-heading"><strong>Response Type</strong>
-                                                <span ng-hide="newQuestion.typeId" style="float:right"><em>Incomplete</em></span>
-                                                <span ng-show="newQuestion.typeId" style="float:right"><em>Complete</em></span>
+                                            <div class="panel-heading"><strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.RESPONSE_TYPE'|translate}}</strong>
+                                                <span ng-hide="newQuestion.typeId" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.INCOMPLETE'|translate}}</em></span>
+                                                <span ng-show="newQuestion.typeId" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.COMPLETE'|translate}}</em></span>
                                             </div>
                                             <div class="panel-body">
                                                 <div class="input-group">
                                                     <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                                                    <input class="form-control" type="text" ng-model="atEntered" ng-change="searchAt(atEntered)" placeholder="Search Response Type"/>
+                                                    <input class="form-control" type="text" ng-model="atEntered" ng-change="searchAt(atEntered)" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.SEARCH_RESPONSE_TYPE'|translate}}"/>
                                                 </div>
                                                 <ul class="list-items">
                                                     <li ng-repeat="at in atFilterList | filter: searchAtFilter">
                                                         <label>
-                                                            <input type="radio" name="{{at.name_EN}}" value="{{at.ID}}" ng-model="newQuestion.typeId" ng-change="updateAt(at)"/> {{at.name_EN}} ({{at.category_EN}})
+                                                            <input type="radio" name="{{at.name_EN}}" value="{{at.ID}}" ng-model="newQuestion.typeId" ng-change="updateAt(at)"/> {{at.name_display}} ({{at.category_display}})
                                                         </label>
                                                     </li>
                                                 </ul>
@@ -303,7 +303,7 @@
                             </div>
                             <div class="col-xs-12 col-md-6">
                                 <p style="margin-bottom: 10px;">
-                                    <span style="font-size: 20px;"><strong>Preview </strong></span><span style="font-size: 15px;">(available only when both title and response type are filled)</span>
+                                    <span style="font-size: 20px;"><strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.PREVIEW'|translate}} </strong></span><span style="font-size: 15px;">{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.AVAILABLE'|translate}}</span>
                                 </p>
 
                                 <!-- Preview -->
@@ -329,7 +329,7 @@
                                     </div>
 
                                     <div ng-if="selectedAt.typeId === '3'">
-                                        <textarea style="width:80%" rows="10" placeholder="Please enter your answer." disabled></textarea>
+                                        <textarea style="width:80%" rows="10" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.PLACEHOLDER_ANSWER'|translate}}" disabled></textarea>
                                     </div>
 
                                     <div ng-if="selectedAt.typeId === '7'">
@@ -347,39 +347,39 @@
                         <div class="col-xs-12 col-md-8">
                             <p style="margin-bottom: 10px; margin-top: 10px;">
                                 <span style="font-size: 20px;" class="fa fa-question-circle"></span>
-                                <span style="font-size: 15px;"> Can't find response type? Create a new one here:</span>
+                                <span style="font-size: 15px;"> {{'QUESTIONNAIRE_MODULE.QUESTION_ADD.NEW_EXPLANATION'|translate}}</span>
                             </p>
                         </div>
                         <div class="col-xs-12">
                             <div class="panel-container">
                                 <form name="newAtForm">
                                     <div class="col-md-2" style="margin-top:15px; margin-bottom:5px; font-size:20px;">
-                                        <label>Private:  <input type="checkbox" ng-model="newTemplateQuestion.private" ng-true-value="1" ng-false-value="0"></label>
+                                        <label>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.PRIVATE_2'|translate}} <input type="checkbox" ng-model="newTemplateQuestion.private" ng-true-value="1" ng-false-value="0"></label>
                                     </div>
 
                                     <div class="col-xs-12 col-md-8">
-                                        <select class="form-control" name="atCategory" style="width:60%;" ng-change="updateOptions();" ng-model="atCategory" ng-options="atCat.category_EN for atCat in atCatList" required>
-                                            <option value="">-- select a response category --</option>
+                                        <select class="form-control" name="atCategory" style="width:60%;" ng-change="updateOptions();" ng-model="atCategory" ng-options="atCat.category_{{language}} for atCat in atCatList" required>
+                                            <option value="" disabled>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.SELECT_CATEGORY'|translate}}</option>
                                         </select>
                                     </div>
 
                                     <!-- Add multiple choice options -->
                                     <div class="col-xs-12 col-md-8" ng-show="atCategory.category_EN === 'Checkbox' || atCategory.category_EN === 'Radio Button'">
                                         <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in newTemplateQuestion.subOptions">
-                                            <input class="form-control" style="width:20%" type="number" placeholder="Position" ng-model="option.order" required/>
-                                            <input class="form-control" style="width:40%" type="text" placeholder="Text (EN)" ng-model="option.description_EN" required/>
-                                            <input class="form-control" style="width:40%" type="text" placeholder="Text (FR)" ng-model="option.description_FR" required/>
-                                            <span class="input-group-btn"><button class="btn btn-default" ng-click="deleteOptions(option)"><span class="fa fa-minus"></span> Delete</button></span>
+                                            <input class="form-control" style="width:20%" type="number" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.PLACEHOLDER_POSITION'|translate}}" ng-model="option.order" required/>
+                                            <input class="form-control" style="width:40%" type="text" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.PLACEHOLDER_TEXT_EN'|translate}}" ng-model="option.description_EN" required/>
+                                            <input class="form-control" style="width:40%" type="text" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.PLACEHOLDER_TEXT_FR'|translate}}" ng-model="option.description_FR" required/>
+                                            <span class="input-group-btn"><button class="btn btn-default" ng-click="deleteOptions(option)"><span class="fa fa-minus"></span> {{'QUESTIONNAIRE_MODULE.QUESTION_ADD.DELETE'|translate}}</button></span>
                                         </div>
-                                        <button type="button" class="btn btn-default" style="float: left; margin-top:5px;" ng-click="addOptions()"><span class="fa fa-plus"></span> Add option</button>
+                                        <button type="button" class="btn btn-default" style="float: left; margin-top:5px;" ng-click="addOptions()"><span class="fa fa-plus"></span> {{'QUESTIONNAIRE_MODULE.QUESTION_ADD.ADD_OPTION'|translate}}</button>
                                     </div>
 
                                     <!-- Add Sliders options -->
                                     <div class="col-xs-12 col-md-8" ng-show="atCategory.category_EN === 'Slider'">
                                         <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
-                                            <input class="form-control" style="width:20%" type="number" placeholder="Minimum value" ng-model="newTemplateQuestion.options.minValue" ng-required="atCategory.category_EN === 'Slider'" />
-                                            <input class="form-control" style="width:35%" type="text" ng-model="newTemplateQuestion.options.minCaption_EN" placeholder="Minimum caption (EN)" ng-required="atCategory.category_EN === 'Slider'"/>
-                                            <input class="form-control" style="width:35%" type="text" ng-model="newTemplateQuestion.options.minCaption_FR" placeholder="Minimum caption (FR)" ng-required="atCategory.category_EN === 'Slider'" />
+                                            <input class="form-control" style="width:20%" type="number" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.PLACEHOLDER_MIN_VALUE'|translate}}" ng-model="newTemplateQuestion.options.minValue" ng-required="atCategory.category_EN === 'Slider'" />
+                                            <input class="form-control" style="width:35%" type="text" ng-model="newTemplateQuestion.options.minCaption_EN" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.PLACEHOLDER_MIN_CAPTION_EN'|translate}}" ng-required="atCategory.category_EN === 'Slider'"/>
+                                            <input class="form-control" style="width:35%" type="text" ng-model="newTemplateQuestion.options.minCaption_FR" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.PLACEHOLDER_MIN_CAPTION_FR'|translate}}" ng-required="atCategory.category_EN === 'Slider'" />
                                         </div>
                                         <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
                                             <input class="form-control" style="width:20%" type="number" placeholder="Maximum value" ng-model="newTemplateQuestion.options.maxValue" ng-required="atCategory.category_EN === 'Slider'" />
@@ -392,9 +392,9 @@
                                     </div>
                                     <div class="col-xs-12 col-md-8">
                                         <div class="input-group" style="margin-top:10px; margin-bottom:10px;">
-                                            <input class="form-control" style="width:50%" type="text" ng-model="newTemplateQuestion.name_EN" placeholder="New Response Type (EN)" ng-disabled="!atCategory" required/>
-                                            <input class="form-control" style="width:50%" type="text" ng-model="newTemplateQuestion.name_FR" placeholder="New Response Type (FR)" ng-disabled="!atCategory" required/>
-                                            <span class="input-group-btn"><button class="btn btn-default" type="submit" ng-click="addNewTemplateQuestion(atCategory)" ng-disabled="newAtForm.$invalid">Add</button></span>
+                                            <input class="form-control" style="width:50%" type="text" ng-model="newTemplateQuestion.name_EN" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.PLACEHOLDER_RESPONSE_TYPE_EN'|translate}}" ng-disabled="!atCategory" required/>
+                                            <input class="form-control" style="width:50%" type="text" ng-model="newTemplateQuestion.name_FR" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.PLACEHOLDER_RESPONSE_TYPE_FR'|translate}}" ng-disabled="!atCategory" required/>
+                                            <span class="input-group-btn"><button class="btn btn-default" type="submit" ng-click="addNewTemplateQuestion(atCategory)" ng-disabled="newAtForm.$invalid">{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.ADD'|translate}}</button></span>
                                         </div>
                                     </div>
 
@@ -407,40 +407,40 @@
                         <div class="col-xs-12 side-menu-title">
                             <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                 <span style="background-color:#e6edfa; padding: 0 10px;">
-                                    <span class="fas fa-dot-circle"></span><h2>Question Library</h2>
+                                    <span class="fas fa-dot-circle"></span><h2>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.QUESTION_LIBRARY'|translate}}</h2>
                                 </span>
                             </div>
                         </div>
                     </div>
                     <div class="row animated" ng-class="{fadeInUp: questionLibrarySection.show}" ng-if="questionLibrarySection.show">
                         <div class="col-xs-12" ng-init="content=1">
-                            <p><label for="first"><input id="first" type="radio" name="content" ng-model="content" value="1" ng-click="decreaseStep()">No library needed.</label></p>
+                            <p><label for="first"><input id="first" type="radio" name="content" ng-model="content" value="1" ng-click="decreaseStep()">{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.NO_LIBRARY'|translate}}</label></p>
                         </div>
                         <div class="col-xs-12" style="margin-bottom: 10px;">
-                            <p><label for="other"><input id="other" type="radio" name="content" ng-model="content" value="2" ng-click="increaseStep()">Add the question to a library.</label></p>
+                            <p><label for="other"><input id="other" type="radio" name="content" ng-model="content" value="2" ng-click="increaseStep()">{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.ADD_QUESTION'|translate}}</label></p>
                         </div>
                         <div class="col-xs-12" ng-show="content == 2" style="padding-left:0;">
                             <div class="col-xs-12" style="margin-bottom: 10px;">
-                                <span style="color:#d9534f"><strong>Required field:</strong></span>
-                                Please choose a library where to add this question.
+                                <span style="color:#d9534f"><strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.REQUIRED'|translate}}</strong></span>
+                                {{'QUESTIONNAIRE_MODULE.QUESTION_ADD.LIBRARY_EXPLANATION'|translate}}
                             </div>
                             <div class="col-xs-12 col-md-6">
                                 <div class="panel" ng-class="newQuestion.libraries.length > 0 ? 'panel-success': 'panel-danger'">
-                                    <div class="panel-heading"><strong>Question Libray</strong>
-                                        <span ng-hide="newQuestion.library_ID" style="float:right"><em>Incomplete</em></span>
-                                        <span ng-show="newQuestion.library_ID" style="float:right"><em>Complete</em></span>
+                                    <div class="panel-heading"><strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.QUESTION_LIBRARY'|translate}}</strong>
+                                        <span ng-hide="newQuestion.library_ID" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="newQuestion.library_ID" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body">
                                         <div class="list-space">
                                             <div class="input-group">
                                                 <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                                                <input class="form-control" type="text" ng-model="libEntered" ng-change="searchLib(libEntered)" placeholder="Search Question Library"/>
+                                                <input class="form-control" type="text" ng-model="libEntered" ng-change="searchLib(libEntered)" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.SEARCH'|translate}}"/>
                                             </div>
                                             <ul class="list-items">
                                                 <li ng-repeat="group in groupFilterList| filter: searchLibFilter">
                                                     <label>
                                                         <input type="checkbox" name="library[]" value="{{group.serNum}}" ng-checked="newQuestion.libraries.indexOf(group) > -1" ng-click="updateLibrary(group)" />
-                                                        {{group.name_EN}}
+                                                        {{group.name_display}}
                                                     </label>
                                                 </li>
                                             </ul>
@@ -452,19 +452,19 @@
                                 <div class="col-xs-12">
                                     <p style="margin-bottom: 10px; margin-top: 10px;">
                                         <span style="font-size: 20px;" class="fa fa-question-circle"></span>
-                                        <span style="font-size: 15px">Can't find a question library? Create a new one here:</span>
+                                        <span style="font-size: 15px">{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.CREATE_LIBRARY'|translate}}</span>
                                     </p>
                                 </div>
                                 <div class="panel-container">
                                     <form name="newLibForm">
                                         <div class="col-md-2" style="margin-top:8px; margin-bottom:5px; font-size:20px;">
-                                            <label>Private:  <input type="checkbox" ng-model="newLibrary.private" ng-true-value="1" ng-false-value="0"></label>
+                                            <label>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.PRIVATE_2'|translate}}  <input type="checkbox" ng-model="newLibrary.private" ng-true-value="1" ng-false-value="0"></label>
                                         </div>
                                         <div class="col-md-8">
                                             <div class="input-group">
-                                                <input class="form-control" style="width:50%" type="text" ng-model="newLibrary.name_EN" placeholder="New Library (EN)" ng-disabled="librarySelected" required/>
-                                                <input class="form-control" style="width:50%" type="text" ng-model="newLibrary.name_FR" placeholder="New Library (FR)" ng-disabled="librarySelected" required/>
-                                                <span class="input-group-btn"><button class="btn btn-default" type="submit" ng-click="addNewLib()" ng-disabled="newLibForm.$invalid">Add</button></span>
+                                                <input class="form-control" style="width:50%" type="text" ng-model="newLibrary.name_EN" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.PLACEHOLDER_LIBRARY_EN'|translate}}" ng-disabled="librarySelected" required/>
+                                                <input class="form-control" style="width:50%" type="text" ng-model="newLibrary.name_FR" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.PLACEHOLDER_LIBRARY_FR'|translate}}" ng-disabled="librarySelected" required/>
+                                                <span class="input-group-btn"><button class="btn btn-default" type="submit" ng-click="addNewLib()" ng-disabled="newLibForm.$invalid">{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.ADD'|translate}}</button></span>
                                             </div>
                                         </div>
                                     </form>
