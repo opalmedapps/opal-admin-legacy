@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.question.delete', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns'])
 
-	.controller('question.delete', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
+	.controller('question.delete', function ($scope, $state, $filter, $uibModal, $uibModalInstance, $filter, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
 
 		// Submit delete
 		$scope.deleteQuestion = function () {
@@ -13,26 +13,26 @@ angular.module('opalAdmin.controllers.question.delete', ['ngAnimate', 'ngSanitiz
 					// Show success or failure depending on response
 					if (response.value) {
 						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = "Successfully deleted \"" + $scope.questionToDelete.text_EN + "/ " + $scope.questionToDelete.text_FR + "\"!";
+						$scope.$parent.bannerMessage = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_DELETE.DELETED');
 					}
 					else {
 						$scope.setBannerClass('danger');
 						var errMsg = "";
 						switch(response.message) {
 							case 401:
-								errMsg = "You are not authenticated!";
+								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_DELETE.AUTHENTICATED');
 								break;
 							case 403:
-								errMsg = "You do not have the permission to delete this question.";
+								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.NO_PERMISSION.DELETED');
 								break;
 							case 409:
-								errMsg = "The question was already modified by someone else. Please verify and try again.";
+								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.NO_PERMISSION.MODIFIED');
 								break;
 							case 423:
-								errMsg = "The question was already sent and is now locked.";
+								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.NO_PERMISSION.LOCKED');
 								break;
 							default:
-								errMsg = response.message;
+								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.NO_PERMISSION.UNKNOWN') + " " + response.message;
 						}
 
 						$scope.$parent.bannerMessage = errMsg;

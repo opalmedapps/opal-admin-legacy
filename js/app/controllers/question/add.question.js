@@ -15,6 +15,8 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	$scope.questionLibrarySection = { open: false, show: false };
 
 	$scope.list = ["one", "two", "three", "four", "five", "six"];
+	$scope.language = Session.retrieveObject('user').language;
+	$scope.responseType = [];
 
 	// get current user id
 	var user = Session.retrieveObject('user');
@@ -226,20 +228,35 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	// questionnaire API: retrieve data
 	questionnaireCollectionService.getTemplatesQuestions(OAUserId).then(function (response) {
 		$scope.atFilterList = response.data;
+		$scope.atFilterList.forEach(function(entry) {
+			if($scope.language.toUpperCase() === "FR") {
+				entry.name_display = entry.name_FR;
+				entry.category_display = entry.category_FR;
+			} else {
+				entry.name_display = entry.name_EN;
+				entry.category_display = entry.category_EN;
+			}
+		});
 	}).catch(function(response) {
-		alert('Error occurred getting response types: '+response.status +"\r\n"+ response.data);
+		alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_RESPONSE_TYPE') + "\r\n\r\n" + response.status + " - " + response.data);
 	});
 
 	questionnaireCollectionService.getLibraries(OAUserId).then(function (response) {
 		$scope.groupFilterList = response.data;
+		$scope.groupFilterList.forEach(function(entry) {
+			if($scope.language.toUpperCase() === "FR")
+				entry.name_display = entry.name_FR;
+			else
+				entry.name_display = entry.name_EN;
+		});
 	}).catch(function(response) {
-		alert('Error occurred getting question libraries: '+response.status +"\r\n"+ response.data);
+		alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_LIBRARY') + "\r\n\r\n" + response.status +" - "+ response.data);
 	});
 
 	questionnaireCollectionService.getTemplateQuestionCategory(OAUserId).then(function (response) {
 		$scope.atCatList = response.data;
 	}).catch(function(response) {
-		alert('Error occurred getting response type categories: '+response.status +"\r\n"+ response.data);
+		alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_CATEGORY') + "\r\n\r\n" + response.status +" - "+ response.data);
 	});
 
 	// add new types & write into DB
@@ -261,7 +278,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		$scope.newTemplateQuestion.OAUserId = Session.retrieveObject('user').id;
 		var toSend = $scope.newTemplateQuestion;
 		// Prompt to confirm user's action
-		var confirmation = confirm("Are you sure you want to create a new " + atCatSelected.category_EN.toLowerCase()  +  " response type named '" + $scope.newTemplateQuestion.name_EN + "'?");
+		var confirmation = confirm($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.CONFIRM_RESPONSE_TYPE') + "\r\n\r\n" + $scope.newTemplateQuestion.name_EN + " / " + $scope.newTemplateQuestion.name_FR);
 		if (confirmation) {
 			$.ajax({
 				type: "POST",
@@ -270,21 +287,29 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 				success: function (result) {
 					result = JSON.parse(result);
 					if(result.message === 200) {
-
-						alert('Successfully added the new response type. Please find your new response type in the form above.');
+						alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.SUCCESS_RESPONSE_TYPE'));
 						// update answer type list
 						questionnaireCollectionService.getTemplatesQuestions(OAUserId).then(function (response) {
 							$scope.atFilterList = response.data;
+							$scope.atFilterList.forEach(function(entry) {
+								if($scope.language.toUpperCase() === "FR") {
+									entry.name_display = entry.name_FR;
+									entry.category_display = entry.category_FR;
+								} else {
+									entry.name_display = entry.name_EN;
+									entry.category_display = entry.category_EN;
+								}
+							});
 						}).catch(function (response) {
-							alert('Error occurred while created response types: '+response.code +"\r\n"+ response.message);
+							alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_RESPONSE_TYPE') + "\r\n\r\n" + response.code +" - "+ response.message);
 						});
 					} else {
-						alert("Unable to create the response type. Code " + result.message + ".\r\nError message: " + result.details);
+						alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_RESPONSE_TYPE') + "\r\n\r\n" + result.message +" - "+ result.details);
 					}
 
 				},
-				error: function (request, status, err) {
-					alert("A problem occurred. Please try again.\r\n"+request.responseText);
+				error: function () {
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_RESPONSE_TYPE'));
 				}
 			});
 		}
@@ -317,7 +342,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	};
 	$scope.addNewLib = function () {
 		// Prompt to confirm user's action
-		var confirmation = confirm("Are you sure you want to create new library " + $scope.newLibrary.name_EN + " / "+$scope.newLibrary.name_FR+ "?");
+		var confirmation = confirm($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.CONFIRM_LIBRARY') + "\r\n\r\n" + $scope.newLibrary.name_EN + " / "+$scope.newLibrary.name_FR);
 		if (confirmation) {
 			// write in to db
 			$.ajax({
@@ -327,20 +352,26 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 				success: function (result) {
 					result = JSON.parse(result);
 					if(result.code === 200) {
-						alert('Successfully added the new library. Please find your new library in the panel above.');
+						alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.SUCCESS_LIBRARY'));
 						questionnaireCollectionService.getLibraries(OAUserId).then(function (response) {
 							$scope.libraries = [];
 							$scope.groupFilterList = response.data;
+							$scope.groupFilterList.forEach(function(entry) {
+								if($scope.language.toUpperCase() === "FR")
+									entry.name_display = entry.name_FR;
+								else
+									entry.name_display = entry.name_EN;
+							});
 						}).catch(function (response) {
-							alert('Error occurred getting libraries. Code '+ response.status +"\r\n" + response.data);
+							alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_LIBRARY') + "\r\n\r\n" + response.status +" - "+ response.data);
 						});
 					}
 					else {
-						alert("Unable to create the library. Code " + result.code + ".\r\nError message: " + result.message);
+						alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_LIBRARY') + "\r\n\r\n" + result.code +" - "+ result.message);
 					}
 				},
 				error: function () {
-					alert("Something went wrong.");
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_LIBRARY'));
 				}
 			});
 		}
@@ -367,11 +398,11 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 					if (result.code === 200) {
 						$state.go('questionnaire-question');
 					} else {
-						alert("Unable to create the question. Code " + result.code + ".\r\nError message: " + result.message);
+						alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_QUESTION') + "\r\n\r\n" + result.code +" - "+ result.message);
 					}
 				},
 				error: function () {
-					alert("Something went wrong.");
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_QUESTION'));
 				}
 			});
 		}
@@ -422,6 +453,4 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 			});
 		}
 	});
-
-
 });
