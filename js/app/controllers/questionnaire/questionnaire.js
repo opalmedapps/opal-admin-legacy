@@ -93,7 +93,7 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 			data: 'questionnaireList',
 			columnDefs: [
 				{ field: 'locked', displayName: '', cellTemplate: cellTemplateLocked, width: '2%', sortable: false, enableFiltering: false},
-				{ field: 'name_'+Session.retrieveObject('user').language, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.QUESTIONNAIRE'), cellTemplate: cellTemplateName, width: '47%' },
+				{ field: 'name_'+Session.retrieveObject('user').language, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.QUESTIONNAIRE'), cellTemplate: cellTemplateName, width: '49%' },
 				{
 					field: 'private', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.PRIVACY'), cellTemplate: cellTemplatePrivacy, width: '10%', filter: {
 						type: uiGridConstants.filter.SELECT,
@@ -101,7 +101,7 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 					}
 				},
 				{
-					field: 'publish', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.STATUS'), cellTemplate: cellTemplatePublish, width: '10%', filter: {
+					field: 'publish', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.STATUS'), cellTemplate: cellTemplatePublish, width: '8%', filter: {
 						type: uiGridConstants.filter.SELECT,
 						selectOptions: [{ value: '1', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.FINAL') }, { value: '0', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.DRAFT') }]
 					}
