@@ -16,11 +16,11 @@ angular.module('opalAdmin.controllers.questionnaire.delete', ['ngAnimate', 'ngSa
 					// Show success or failure depending on response
 					if (response.message === 200) {
 						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = "Successfully deleted \"" + $scope.questionnaireToDelete.name_EN + "/ " + $scope.questionnaireToDelete.name_FR + "\"!";
+						$scope.$parent.bannerMessage = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_DELETE.DELETED');
 					}
 					else {
 						$scope.setBannerClass('danger');
-						$scope.$parent.bannerMessage = "Code " + response.message + ". " + response.details;
+						$scope.$parent.bannerMessage = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_DELETE.UNKNOWN') + "\r\n\r\n" + response.message + " - " + response.details;
 					}
 					$scope.showBanner();
 					$uibModalInstance.close();
