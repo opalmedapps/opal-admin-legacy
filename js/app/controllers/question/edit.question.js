@@ -10,7 +10,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		$scope.libraries = [];
 		$scope.changesMade = false;
 		$scope.validSlider = true;
-
+		$scope.language = Session.retrieveObject('user').language;
 
 		// Initialize variables for holding selected answer type & group
 		$scope.selectedLibrary = [];
@@ -104,12 +104,23 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		questionnaireCollectionService.getQuestionDetails($scope.currentQuestion.serNum, OAUserId).then(function (response) {
 			questionnaireCollectionService.getLibraries(OAUserId).then(function (resp) {
 				$scope.libraryFilterList = resp.data;
+				$scope.libraryFilterList.forEach(function(entry) {
+					if($scope.language.toUpperCase() === "FR")
+						entry.name_display = entry.name_FR;
+					else
+						entry.name_display = entry.name_EN;
+				});
 			}).catch(function (response) {
 				alert('Error occurred getting libraries. Code '+ response.status +"\r\n" + response.data);
 			});
 
 			// Assign value
 			$scope.question = response.data;
+
+			if($scope.language.toUpperCase() === "FR")
+				$scope.question.type_display = $scope.question.type_FR;
+			else
+				$scope.question.type_display = $scope.question.type_EN;
 
 			if($scope.question.typeId === "2") {
 				$scope.question.options.minValue = parseInt($scope.question.options.minValue);
@@ -139,14 +150,6 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			alert('Error occurred getting question details.\r\nCode ' + err.status + " " + err.data);
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
-		});
-
-		// Call our API service to get the list of existing answer types
-
-		questionnaireCollectionService.getTemplatesQuestions(OAUserId).then(function (response) {
-			$scope.atFilterList = response.data;
-		}).catch(function (response){
-			alert('Error occurred getting response types:', response.status, response.data);
 		});
 
 		// Function to close modal dialog
@@ -188,12 +191,6 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			});
 		};
 
-		questionnaireCollectionService.getLibraries(OAUserId).then(function (response) {
-			$scope.groupFilterList = response.data;
-		}).catch(function(response) {
-			alert('Error occurred getting question libraries:', response.status, response.data);
-		});
-
 		$scope.newLibrary = {
 			name_EN: "",
 			name_FR: "",
@@ -203,7 +200,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 
 		$scope.addNewLib = function () {
 			// Prompt to confirm user's action
-			var confirmation = confirm("Are you sure you want to create new library " + $scope.newLibrary.name_EN + " / "+$scope.newLibrary.name_FR+ "?");
+			var confirmation = confirm($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.CONFIRM_LIBRARY') + "\r\n\r\n" + $scope.newLibrary.name_EN + " / "+$scope.newLibrary.name_FR);
 			if (confirmation) {
 				// write in to db
 				$.ajax({
@@ -213,21 +210,27 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 					success: function (result) {
 						result = JSON.parse(result);
 						if(result.code === 200) {
-							alert('Successfully added the new library. Please find your new library in the panel above.');
+							alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.SUCCESS_LIBRARY'));
 
 							questionnaireCollectionService.getLibraries(OAUserId).then(function (response) {
 								$scope.libraries = [];
 								$scope.libraryFilterList = response.data;
+								$scope.libraryFilterList.forEach(function(entry) {
+									if($scope.language.toUpperCase() === "FR")
+										entry.name_display = entry.name_FR;
+									else
+										entry.name_display = entry.name_EN;
+								});
 							}).catch(function (response) {
-								alert('Error occurred getting libraries. Code '+ response.status +"\r\n" + response.data);
+								alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_GET_LIBRARY') + "\r\n\r\n" + response.status +" - "+ response.data);
 							});
 						}
 						else {
-							alert("Unable to create the library. Code " + result.code + ".\r\nError message: " + result.message);
+							alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_SET_LIBRARY') + "\r\n\r\n" + result.code +" - "+ result.message);
 						}
 					},
-					error: function () {
-						alert("Something went wrong.");
+					error: function (result) {
+						alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_SET_LIBRARY') + "\r\n\r\n" + result.code +" - "+ result.message);
 					}
 				});
 			}
@@ -249,12 +252,12 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 					// Show success or failure depending on response
 					if (response.code === 200) {
 						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.question.question_EN.replace(/<(?:.|\n)*?>/gm, '') + " / " + $scope.question.question_FR.replace(/<(?:.|\n)*?>/gm, '') + "\"!";
+						$scope.$parent.bannerMessage = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.SUCCESS_QUESTION');
 						$uibModalInstance.close();
 						$scope.showBanner();
 					}
 					else
-						alert("An error occurred, code "+response.code+". Please review the error message below.\r\n" + response.message);
+						alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_UPDATE_QUESTION') + "\r\n\r\n" + response.code +" - "+ response.message);
 				}
 			});
 		};
