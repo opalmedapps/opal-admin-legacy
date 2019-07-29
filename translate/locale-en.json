@@ -61,7 +61,7 @@
       "MANAGE_QUESTIONS": "Manage Questions",
       "PUBLICATION_TOOLS": "Publication Tools"
     },
-      "DASHBOARD": {
+    "DASHBOARD": {
       "TITLE": "Questionnaires",
       "SUB_TITLE": "Questionnaire Tools",
       "MANAGE_QUESTIONNAIRES": "Manage Questionnaires",
@@ -221,6 +221,43 @@
       "ERROR_GET_QUESTION": "An error occurred while getting the question details.",
       "ERROR_UPDATE_QUESTION": "Unable to update the question.",
       "CONFIRM_LIBRARY": "Are you sure you want to create the following new library?"
+    },
+    "QUESTIONNAIRE_LIST" : {
+      "TITLE": "Manage Questionnaires",
+      "ADD": "Add",
+      "SEARCH": "Search...",
+      "QUESTIONNAIRE": "Title",
+      "PRIVACY": "Privacy",
+      "STATUS": "Status",
+      "AUTHOR": "Author",
+      "OPERATIONS": "Operations",
+      "PRIVATE": "Private",
+      "PUBLIC": "Public",
+      "DRAFT": "Draft",
+      "FINAL": "Final",
+      "EDIT": "Edit",
+      "DELETE": "Delete",
+      "ERROR_QUESTIONS": "An error occurred whille getting questionnaires list."
+    },
+    "QUESTIONNAIRE_ADD" : {
+
+    },
+    "QUESTIONNAIRE_DELETE": {
+      "TITLE": "Delete Questionnaire",
+      "WARNING": "WARNING!",
+      "WARNING_TEXT": "Are you sure you want to delete the following questionnaire? This action cannot be undone!",
+      "DELETE": "Delete",
+      "CANCEL": "Cancel",
+      "DELETED": "The questionnaire has being successfully deleted.",
+      "UNKNOWN": "Unknown error."
+    },
+    "QUESTIONNAIRE_LOCKED": {
+      "TITLE": "Questionnaire locked",
+      "WARNING": "Warning",
+      "LOCKED": "This questionnaire has being published already and cannot be deleted.",
+      "CLOSE": "Close"
+    },
+    "QUESTIONNAIRE_EDIT": {
     }
   },
   "PROFILE": {

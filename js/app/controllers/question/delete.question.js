@@ -23,16 +23,16 @@ angular.module('opalAdmin.controllers.question.delete', ['ngAnimate', 'ngSanitiz
 								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_DELETE.AUTHENTICATED');
 								break;
 							case 403:
-								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.NO_PERMISSION.DELETED');
+								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_DELETE.DELETED');
 								break;
 							case 409:
-								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.NO_PERMISSION.MODIFIED');
+								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_DELETE.MODIFIED');
 								break;
 							case 423:
-								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.NO_PERMISSION.LOCKED');
+								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_DELETE.LOCKED');
 								break;
 							default:
-								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.NO_PERMISSION.UNKNOWN') + " " + response.message;
+								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_DELETE.UNKNOWN') + " " + response.message;
 						}
 
 						$scope.$parent.bannerMessage = errMsg;

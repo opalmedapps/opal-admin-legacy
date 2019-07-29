@@ -54,7 +54,7 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 			var matcher = new RegExp($scope.filterValue, 'i');
 			renderableRows.forEach(function (row) {
 				var match = false;
-				['name_EN'].forEach(function (field) {
+				['name_'+Session.retrieveObject('user').language, 'created_by'].forEach(function (field) {
 					if (row.entity[field].match(matcher)) {
 						match = true;
 					}
@@ -76,15 +76,15 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 		// Table
 		// Templates
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editQuestionnaire(row.entity)">Edit</a></strong> ' +
-			'- <strong><a href="" ng-click="grid.appScope.deleteQuestionnaire(row.entity)">Delete</a></strong></div>';
+			'<strong><a href="" ng-click="grid.appScope.editQuestionnaire(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ' +
+			'- <strong><a href="" ng-click="grid.appScope.deleteQuestionnaire(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editQuestionnaire(row.entity)">' +
-			'<strong><a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></strong></div>';
-		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Public</p></div>' +
-			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Private</p></div>';
-		var cellTemplatePublish = '<div class="ui-grid-cell-contents" ng-show="row.entity.publish == 0"><p>Draft</p></div>' +
-			'<div class="ui-grid-cell-contents" ng-show="row.entity.publish == 1"><p>Final</p></div>';
+			'<strong><a href="">{{row.entity.name_' + Session.retrieveObject('user').language + '}}</a></strong></div>';
+		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.PUBLIC')+'</p></div>' +
+			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.PRIVATE')+'</p></div>';
+		var cellTemplatePublish = '<div class="ui-grid-cell-contents" ng-show="row.entity.publish == 0"><p>'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.DRAFT')+'</p></div>' +
+			'<div class="ui-grid-cell-contents" ng-show="row.entity.publish == 1"><p>'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.FINAL')+'</p></div>';
 		var cellTemplateLocked = '<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 1"><div class="fa fa-lock text-danger"></div></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 0"><div class="fa fa-unlock text-success"></div></div>';
 
@@ -93,21 +93,21 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 			data: 'questionnaireList',
 			columnDefs: [
 				{ field: 'locked', displayName: '', cellTemplate: cellTemplateLocked, width: '2%', sortable: false, enableFiltering: false},
-				{ field: 'name_EN', displayName: 'Title (EN / FR)', cellTemplate: cellTemplateName, width: '53%' },
+				{ field: 'name_'+Session.retrieveObject('user').language, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.QUESTIONNAIRE'), cellTemplate: cellTemplateName, width: '47%' },
 				{
-					field: 'private', displayName: 'Privacy', cellTemplate: cellTemplatePrivacy, width: '10%', filter: {
+					field: 'private', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.PRIVACY'), cellTemplate: cellTemplatePrivacy, width: '10%', filter: {
 						type: uiGridConstants.filter.SELECT,
-						selectOptions: [{ value: '1', label: 'Private' }, { value: '0', label: 'Public' }]
+						selectOptions: [{ value: '1', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.PRIVATE')}, { value: '0', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.PUBLIC') }]
 					}
 				},
 				{
-					field: 'publish', displayName: 'Final', cellTemplate: cellTemplatePublish, width: '10%', filter: {
+					field: 'publish', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.STATUS'), cellTemplate: cellTemplatePublish, width: '10%', filter: {
 						type: uiGridConstants.filter.SELECT,
-						selectOptions: [{ value: '1', label: 'Final' }, { value: '0', label: 'Draft' }]
+						selectOptions: [{ value: '1', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.FINAL') }, { value: '0', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.DRAFT') }]
 					}
 				},
-				{ field: 'created_by', displayName: 'Author', width: '10%' },
-				{ name: 'Operations', width: '15%', cellTemplate: cellTemplateOperations, enableFiltering: false, sortable: false }
+				{ field: 'created_by', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.AUTHOR'), width: '20%' },
+				{ name: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.OPERATIONS'), width: '10%', cellTemplate: cellTemplateOperations, enableFiltering: false, sortable: false }
 			],
 			enableFiltering: true,
 			enableSorting: true,

@@ -222,6 +222,42 @@
       "ERROR_GET_QUESTION": "Une erreur s'est produite lors de l'obtention des détails de la question.",
       "ERROR_UPDATE_QUESTION": "Impossible de mettre à jour la question.",
       "CONFIRM_LIBRARY": "Voulez-vous vraiment créer la librairie suivante?"
+    },
+    "QUESTIONNAIRE_LIST" : {
+      "TITLE": "Gérer les questionnaires",
+      "ADD": "Ajouter",
+      "SEARCH": "Rechercher",
+      "QUESTIONNAIRE": "Titre",
+      "PRIVACY": "Confidentialité",
+      "STATUS": "Statut",
+      "AUTHOR": "Auteur",
+      "OPERATIONS": "Opérations",
+      "PRIVATE": "Privé",
+      "PUBLIC": "Public",
+      "DRAFT": "Brouillon",
+      "FINAL": "Final",
+      "EDIT": "Modifier",
+      "DELETE": "Supprimer",
+      "ERROR_QUESTIONNAIRES": "Une erreur s'est produite lors de l'obtention de la liste des questionnaires."
+    },
+    "QUESTIONNAIRE_ADD" : {
+    },
+    "QUESTIONNAIRE_DELETE": {
+      "TITLE": "Supprimer le questionnaire",
+      "WARNING": "ATTENTION!",
+      "WARNING_TEXT": "Voulez-vous vraiment supprimer le questionnaire ci-dessous? Cette action est irreversible!",
+      "DELETE": "Supprimer",
+      "CANCEL": "Annuler",
+      "DELETED": "Le questionnaire a été supprimé avec succès.",
+      "UNKNOWN": "Erreur inconnue."
+    },
+    "QUESTIONNAIRE_LOCKED": {
+      "TITLE": "Questionnaire verrouillé",
+      "WARNING": "Attention",
+      "LOCKED": "Ce questionnaire a déjà été publié et ne peut être supprimé.",
+      "CLOSE": "Fermer"
+    },
+    "QUESTIONNAIRE_EDIT": {
     }
   },
   "PROFILE": {
