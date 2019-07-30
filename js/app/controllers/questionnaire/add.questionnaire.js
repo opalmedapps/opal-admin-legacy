@@ -225,10 +225,25 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		if (selectedNum === 0) {
 			$scope.newQuestionnaire.questions = [];
 		} else {
+			var indexDup = -1;
 
-			row.entity.order = $scope.newQuestionnaire.questions.length + 1;
-			row.entity.optional = '0';
-			$scope.newQuestionnaire.questions.push(row.entity);
+			$scope.newQuestionnaire.questions.forEach(function(entry, index) {
+				if(entry.ID === row.entity.ID) {
+					indexDup = index;
+				}
+			});
+
+			if(indexDup === -1){
+				row.entity.order = $scope.newQuestionnaire.questions.length + 1;
+				row.entity.optional = '0';
+				$scope.newQuestionnaire.questions.push(row.entity);
+			}
+			else {
+				$scope.newQuestionnaire.questions.splice(indexDup, 1);
+				$scope.newQuestionnaire.questions.forEach(function(entry, index) {
+					entry.order = index + 1;
+				});
+			}
 		}
 	};
 
