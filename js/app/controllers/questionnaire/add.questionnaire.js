@@ -76,6 +76,15 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		questions.forEach(function(entry) {
 			entry.question_EN = entry.question_EN.replace(/(<([^>]+)>)/ig,"");
 			entry.question_FR = entry.question_FR.replace(/(<([^>]+)>)/ig,"");
+			if (Session.retrieveObject('user').language.toUpperCase() === "FR") {
+				entry.questionDisplay = entry.question_FR;
+				entry.libraryDisplay = entry.library_name_FR;
+			}
+			else {
+				entry.questionDisplay = entry.question_EN;
+				entry.libraryDisplay = entry.library_name_EN;
+			}
+
 			if(entry.typeId === "2") {
 				var increment = parseFloat(entry.options.increment);
 				var minValue = parseFloat(entry.options.minValue);
@@ -181,9 +190,9 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 
 	// Template for table
 	var cellTemplateName = '<div class="ui-grid-cell-contents" ' +
-		'<p>{{row.entity.question_EN}} / {{row.entity.question_FR}}</p></div>';
+		'<p>{{row.entity.questionDisplay}}</p></div>';
 	var cellTemplateLib = '<div class="ui-grid-cell-contents" ' +
-		'<p>{{row.entity.library_name_EN}} / {{row.entity.library_name_FR}}</p></div>';
+		'<p>{{row.entity.libraryDisplay}}</p></div>';
 	var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Public</p></div>' +
 		'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Private</p></div>';
 
@@ -192,12 +201,12 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 	$scope.gridOptions = {
 		data: 'groupList',
 		columnDefs: [
-			{field: 'question_EN', displayName: 'Name (EN / FR)', cellTemplate: cellTemplateName, width: '50%'},
-			{field: 'question_EN', displayName: 'Library (EN / FR)', cellTemplate: cellTemplateLib, width: '38%'},
+			{field: 'questionDisplay', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.TITLE'), cellTemplate: cellTemplateName, width: '63%'},
+			{field: 'libraryDisplay', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.LIBRARY'), cellTemplate: cellTemplateLib, width: '20%'},
 			{
-				field: 'private', displayName: 'Privacy', cellTemplate: cellTemplatePrivacy, width: '10%', filter: {
+				field: 'private', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.PRIVACY'), cellTemplate: cellTemplatePrivacy, width: '15%', filter: {
 					type: uiGridConstants.filter.SELECT,
-					selectOptions: [{value: '1', label: 'Private'}, {value: '0', label: 'Public'}]
+					selectOptions: [{value: '1', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.PRIVATE')}, {value: '0', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.PUBLIC')}]
 				}
 			},
 		],
