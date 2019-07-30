@@ -2,23 +2,20 @@
 <div class="modal-header">
     <h2 class="modal-title col-xs-12" ng-if="questionnaire.readOnly == '0'">
         <span class="glyphicon glyphicon-pencil"></span>
-        Edit Questionnaire
+        {{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.TITLE'|translate}}
     </h2>
     <div class="row col-xs-12" ng-if="questionnaire.readOnly == 1">
         <h2 class="modal-title col-xs-12">
             <span class="text-danger fa fa-lock"></span>
-            View Questionnaire
+            {{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.TITLE'|translate}}
         </h2>
-        <p class="text-danger">This questionnaire has being already published.</p>
+        <p class="text-danger">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PUBLISHED'|translate}}</p>
     </div>
-    <p class="modal-title-caption col-xs-12">
-        {{questionnaire.title_EN}} / {{questionnaire.title_FR}}
-    </p>
     <div class="modal-buttons col-xs-12">
         <span>
             <form method="post" ng-submit="updateQuestionnaire()">
-                <input ng-if="questionnaire.readOnly == 0" class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
-                <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+                <input ng-if="questionnaire.readOnly == 0" class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.SAVE'|translate}}">
+                <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.CANCEL'|translate}}">
             </form>
         </span>
     </div>
@@ -29,20 +26,20 @@
         <div uib-accordion-group is-open="titleSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                    <strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.TITLES'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="row">
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div class="input-group">
-                        <span class="input-group-addon">EN</span>
-                        <textarea class="form-control" rows="1" ng-model="questionnaire.title_EN" placeholder="English Title" ng-change="setChangesMade()" ng-disabled="questionnaire.readOnly || questionnaire.final"></textarea>
+                        <span class="input-group-addon">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ENGLISH_TITLE'|translate}}</span>
+                        <textarea class="form-control" rows="1" ng-model="questionnaire.title_EN" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PLACEHOLDER_ENGLISH_TITLE'|translate}}" ng-change="setChangesMade()" ng-disabled="questionnaire.readOnly || questionnaire.final"></textarea>
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div class="input-group">
-                        <span class="input-group-addon">FR</span>
-                        <textarea class="form-control" rows="1" ng-model="questionnaire.title_FR" placeholder="Titre Français" ng-change="setChangesMade()" ng-disabled="questionnaire.readOnly || questionnaire.final"></textarea>
+                        <span class="input-group-addon">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.FRENCH_TITLE'|translate}}</span>
+                        <textarea class="form-control" rows="1" ng-model="questionnaire.title_FR" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PLACEHOLDER_FRENCH_TITLE'|translate}}" ng-change="setChangesMade()" ng-disabled="questionnaire.readOnly || questionnaire.final"></textarea>
                     </div>
                 </div>
             </div>
@@ -50,7 +47,7 @@
                 <div class="col-xs-6 col-md-6" style="margin-bottom: 20px;">
                 </div>
                 <div class="col-xs-6 col-md-6" style="margin-bottom: 20px;">
-                    <label style="font-size: 20px;">Finalize the questionnaire: <input ng-change="setChangesMade()" type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="questionnaire.final" ng-disabled="questionnaire.readOnly"></label>
+                    <label style="font-size: 20px;">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.FINALIZE'|translate}} <input ng-change="setChangesMade()" type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="questionnaire.final" ng-disabled="questionnaire.readOnly"></label>
                 </div>
             </div>
 
@@ -65,31 +62,31 @@
             <div class="row" ng-hide="questionnaire.readOnly || questionnaire.final">
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div style="text-align:center; margin-bottom: 10px;">
-                        <span style="font-size:20px;">HTML (English)</span>
+                        <span style="font-size:20px;">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.HTML_ENGLISH'|translate}}</span>
                     </div>
                     <div class="input-group">
-                        <div text-angular ng-model="questionnaire.description_EN" ng-change="setChangesMade()" placeholder="English Description" required="required" ta-toolbar="toolbar"  ng-change="setChangesMade()" ng-disabled="questionnaire.readOnly || questionnaire.final"></div>
+                        <div text-angular ng-model="questionnaire.description_EN" ng-change="setChangesMade()" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PLACEHOLDER_ENGLISH_DESCRIPTION'|translate}}" required="required" ta-toolbar="toolbar"  ng-change="setChangesMade()" ng-disabled="questionnaire.readOnly || questionnaire.final"></div>
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div style="text-align:center; margin-bottom: 10px;">
-                        <span style="font-size:20px;">HTML (Français)</span>
+                        <span style="font-size:20px;">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.HTML_FRENCH'|translate}}</span>
                     </div>
                     <div class="input-group">
-                        <div text-angular ng-model="questionnaire.description_FR" ng-change="setChangesMade()" placeholder="Description Français" required="required" ta-toolbar="toolbar" ></div>
+                        <div text-angular ng-model="questionnaire.description_FR" ng-change="setChangesMade()" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PLACEHOLDER_FRENCH_DESCRIPTION'|translate}}" required="required" ta-toolbar="toolbar" ></div>
                     </div>
                 </div>
             </div>
             <div class="row" ng-show="questionnaire.readOnly || questionnaire.final">
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div style="text-align:center; margin-bottom: 10px;">
-                        <span style="font-size:20px;">HTML (English)</span>
+                        <span style="font-size:20px;">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.HTML_ENGLISH'|translate}}</span>
                     </div>
                     <div ng-bind-html="questionnaire.description_EN"></div>
                 </div>
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div style="text-align:center; margin-bottom: 10px;">
-                        <span style="font-size:20px;">HTML (Français)</span>
+                        <span style="font-size:20px;">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.HTML_FRENCH'|translate}}</span>
                     </div>
                     <div ng-bind-html="questionnaire.description_FR"></div>
                 </div>
@@ -99,7 +96,7 @@
         <div uib-accordion-group is-open="privacySection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>Privacy </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': privacySection.open, 'glyphicon-chevron-right': !privacySection.open}"></i>
+                    <strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PRIVACY'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': privacySection.open, 'glyphicon-chevron-right': !privacySection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="row">
@@ -109,7 +106,7 @@
                         <div class="panel-info" ng-class="{active: questionnaire.private == 1}">
                             <div class="panel-content" style="text-align:center">
                                 <span style="font-size:30px;" class="fa fa-user-secret"></span>
-                                <div class="option-panel-title">Private</div>
+                                <div class="option-panel-title">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PRIVATE'|translate}}</div>
                             </div>
                         </div>
                     </div>
@@ -120,13 +117,13 @@
                         <div class="panel-info" ng-class="{active: questionnaire.private == 0}">
                             <div class="panel-content" style="text-align:center">
                                 <span style="font-size:30px;" class="fa fa-users"></span>
-                                <div class="option-panel-title">Public</div>
+                                <div class="option-panel-title">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PUBLIC'|translate}}</div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-12" ng-class="{invisible: !anyPrivate}">
-                    <p style="color:#d9534f;">Your questionnaire cannot be set as public when it contains at least one private question.</p>
+                    <p style="color:#d9534f;">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.CANNOT_BE_PUBLIC'|translate}}</p>
                 </div>
             </div>
         </div>
@@ -139,13 +136,13 @@
             </uib-accordion-heading>
             <div class="row" ng-hide="questionnaire.readOnly || questionnaire.final">
                 <div class="panel-container" style="margin:20px;">
-                    <h4 style="text-align:left;">Edit current question list: </h4>
+                    <h4 style="text-align:left;">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.EDIT_QUESTIONS_LIST'|translate}} </h4>
                     <div class="panel-info">
                         <table style="width:100%;">
                             <tr style="font-size:16px;">
-                                <td>Order</td>
-                                <td>Question</td>
-                                <td>Required/Optional</td>
+                                <td>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ORDER'|translate}}</td>
+                                <td>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.QUESTION'|translate}}</td>
+                                <td>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.REQUIRED_OPTIONAL'|translate}}</td>
                             </tr>
                             <tr>
                             </tr>
@@ -154,12 +151,12 @@
                                     <label><input type="number" min="1" ng-model="question.order" ng-change="setChangesMade();orderPreview();" ng-disabled="questionnaire.readOnly || questionnaire.final"></label>
                                 </td>
                                 <td>
-                                    {{question.question_EN}} / {{question.question_FR}}
+                                    {{question.questionDisplay}}
                                 </td>
                                 <td>
                                     <select name="groupOptional" ng-model="question.optional" ng-change="setChangesMade()" ng-init="question.optional" required ng-disabled="questionnaire.readOnly || questionnaire.final">
-                                        <option value="0">Required</option>
-                                        <option value="1">Optional</option>
+                                        <option value="0">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.REQUIRED'|translate}}</option>
+                                        <option value="1">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.OPTIONAL'|translate}}</option>
                                     </select>
                                 </td>
                             </tr>
@@ -168,20 +165,20 @@
                 </div>
             </div>
             <div class="row">
-                <h4 style="text-align:left; margin-left:20px" ng-hide="questionnaire.readOnly || questionnaire.final" >Edit questions selection: </h4>
+                <h4 style="text-align:left; margin-left:20px" ng-hide="questionnaire.readOnly || questionnaire.final" >{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.EDIT_QUESTIONS_SELECTION'|translate}} </h4>
                 <!-- Selected groups: change position -->
                 <div class="col-md-12" ng-show="newgroups.length" >
                     <div class="panel-container" style="margin:10px;">
                         <div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
-                            <span style="background-color: #fff; padding: 0 10px; font-size:16px;"> Edit selected question groups </span>
+                            <span style="background-color: #fff; padding: 0 10px; font-size:16px;"> {{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.EDIT_SELECTED_QUESTION'|translate}} </span>
                         </div>
                         <div class="panel-info">
                             <table style="width:100%;">
                                 <tr style="font-size:16px;">
-                                    <td>Current Position</td>
-                                    <td>Change Position</td>
-                                    <td>Question</td>
-                                    <td>Required/Optional</td>
+                                    <td>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.CURRENT_POSITION'|translate}}</td>
+                                    <td>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.CHANGE_POSITION'|translate}}</td>
+                                    <td>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.QUESTION'|translate}}</td>
+                                    <td>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.REQUIRED_OPTIONAL'|translate}}</td>
                                 </tr>
                                 <tr>
                                 </tr>
@@ -197,8 +194,8 @@
                                     </td>
                                     <td>
                                         <select name="groupOption" ng-model="newgroup.optional" required>
-                                            <option value=0 selected>Required</option>
-                                            <option value=1>Optional</option>
+                                            <option value=0 selected>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.REQUIRED'|translate}}</option>
+                                            <option value=1>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.OPTIONAL'|translate}}</option>
                                         </select>
                                     </td>
                                 </tr>
@@ -222,13 +219,12 @@
                     <!-- Preview -->
                     <div ng-class="questionnaire.readOnly || questionnaire.final ? 'col-lg-12' : 'col-md-4'" style="text-align:right">
                         <div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
-                            <span style="background-color: #fff; padding: 0 10px; font-size:16px;">
-                            Selected questions preview</span>
+                            <span style="background-color: #fff; padding: 0 10px; font-size:16px;">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.QUESTIONS_PREVIEW'|translate}}</span>
                         </div>
                         <div class="previewContainer">
                             <div ng-class="questionnaire.readOnly || questionnaire.final ? 'col-lg-6' : 'col-lg-12'">
                                 <div class="previewContent">
-                                    <h3>English</h3>
+                                    <h3>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ENGLISH'|translate}}</h3>
                                     <div ng-repeat="selectedGroupObj in questionnaire.questions">
                                         <h4>{{selectedGroupObj.type_EN}}:</h4>
                                         <p>{{selectedGroupObj.question_EN}} <span style="color:#d9534f;;">({{selectedGroupObj.optional == 1 ? 'optional' : 'required'}})</span></p>
@@ -251,7 +247,7 @@
                                             </div>
                                         </div>
                                         <div ng-if="selectedGroupObj.typeId == '3'">
-                                            <textarea rows="3" cols="40" disabled>Type in your answer.</textarea>
+                                            <textarea rows="3" cols="40" disabled>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.TYPE_ANSWER_EN'|translate}}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -276,7 +272,7 @@
                                             </div>
                                         </div>
                                         <div ng-if="selectedGroupObj.typeId == '3'">
-                                            <textarea rows="3" cols="40" disabled>Type in your answer.</textarea>
+                                            <textarea rows="3" cols="40" disabled>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.TYPE_ANSWER_FR'|translate}}</textarea>
                                         </div>
                                         <div ng-if="selectedGroupObj.typeId == '4'">
                                             <div ng-repeat="option in selectedGroupObj.subOptions">

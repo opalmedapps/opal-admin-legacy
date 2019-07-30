@@ -169,7 +169,7 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 			document.getElementById("btn-public").classList.remove("animated");
 			if(publicPrivateWarning && $scope.newQuestionnaire.private !== 1) {
 				publicPrivateWarning = false;
-				alert("When selecting a private question, a questionnaire has to be set to private.");
+				alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PRIVATE_QUESTION'));
 			}
 			$scope.newQuestionnaire.private = 1;
 		}
@@ -193,8 +193,8 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 		'<p>{{row.entity.questionDisplay}}</p></div>';
 	var cellTemplateLib = '<div class="ui-grid-cell-contents" ' +
 		'<p>{{row.entity.libraryDisplay}}</p></div>';
-	var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Public</p></div>' +
-		'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Private</p></div>';
+	var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PUBLIC')+'</p></div>' +
+		'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PRIVATE')+'</p></div>';
 
 
 	// Table Data binding

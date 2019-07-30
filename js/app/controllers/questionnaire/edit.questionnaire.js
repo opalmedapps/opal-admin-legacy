@@ -32,6 +32,17 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 
 		function decodeQuestions(questions) {
 			questions.forEach(function(entry) {
+				entry.question_EN = entry.question_EN.replace(/(<([^>]+)>)/ig,"");
+				entry.question_FR = entry.question_FR.replace(/(<([^>]+)>)/ig,"");
+				if (Session.retrieveObject('user').language.toUpperCase() === "FR") {
+					entry.questionDisplay = entry.question_FR;
+					entry.libraryDisplay = entry.library_name_FR;
+				}
+				else {
+					entry.questionDisplay = entry.question_EN;
+					entry.libraryDisplay = entry.library_name_EN;
+				}
+
 				if(entry.typeId === "2") {
 					var increment = parseFloat(entry.options.increment);
 					var minValue = parseFloat(entry.options.minValue);
@@ -57,7 +68,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 		questionnaireCollectionService.getFinalizedQuestions(OAUserId).then(function (response) {
 			$scope.groupList = decodeQuestions(response.data);
 		}).catch(function (response) {
-			alert('Error occurred getting group list. Code ' + response.status  + ".\r\n" + response.data);
+			alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ERROR_QUESTION_lIST') + response.status  + ".\r\n" + response.data);
 		});
 
 		// table
@@ -68,22 +79,22 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 
 		// Template for group table
 		var cellTemplateName = '<div class="ui-grid-cell-contents" ' +
-			'<p>{{row.entity.question_EN}} / {{row.entity.question_FR}}</p></div>';
+			'<p>{{row.entity.questionDisplay}}</p></div>';
 		var cellTemplateLib = '<div class="ui-grid-cell-contents" ' +
-			'<p>{{row.entity.library_name_EN}} / {{row.entity.library_name_FR}}</p></div>';
-		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Public</p></div>' +
-			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Private</p></div>';
+			'<p>{{row.entity.libraryDisplay}}</p></div>';
+		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PUBLIC')+'</p></div>' +
+			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PRIVATE')+'</p></div>';
 
 		// Table Data binding
 		$scope.gridGroups = {
 			data: 'groupList',
 			columnDefs: [
-				{ field: 'question_EN', displayName: 'Name (EN / FR)', cellTemplate: cellTemplateName, width: '54%' },
-				{ field: 'library_name_EN', displayName: 'Library (EN / FR)', cellTemplate: cellTemplateLib, width: '30%' },
+				{ field: 'questionDisplay', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.QUESTION'), cellTemplate: cellTemplateName, width: '57%' },
+				{ field: 'libraryDisplay', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.LIBRARY'), cellTemplate: cellTemplateLib, width: '20%' },
 				{
-					field: 'private', displayName: 'Privacy', cellTemplate: cellTemplatePrivacy, width: '13%', filter: {
+					field: 'private', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PRIVACY'), cellTemplate: cellTemplatePrivacy, width: '20%', filter: {
 						type: uiGridConstants.filter.SELECT,
-						selectOptions: [{ value: '1', label: 'Private' }, { value: '0', label: 'Public' }]
+						selectOptions: [{ value: '1', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PRIVATE') }, { value: '0', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PUBLIC') }]
 					}
 				},
 			],
@@ -163,7 +174,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 			if (anyPrivate) {
 				if(publicPrivateWarning && $scope.questionnaire.private !== 1) {
 					publicPrivateWarning = false;
-					alert("When selecting a private question, a questionnaire has to be set to private.");
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PRIVATE_QUESTION'));
 				}
 				$scope.questionnaire.private = 1;
 			}
@@ -194,7 +205,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 			$scope.questionnaire.questions = decodeQuestions($scope.questionnaire.questions);
 
 		}).catch(function (e) {
-			alert('Error occurred getting questionnaire details after modal open. Code ' + e.status + ".\r\n" + e.data);
+			alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ERROR_QUESTIONNAIRE_DETAILS') + "\r\n\r\n" + e.status + ".\r\n" + e.data);
 		}).finally(function () {
 			$timeout(function () {
 				if ($scope.gridApi.selection.selectRow) {
@@ -241,7 +252,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 			$scope.questionnaire.questions.sort(function(a,b){
 				return (a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0);
 			});
-		}
+		};
 
 		// Function to close edit modal dialog
 		$scope.cancel = function () {
@@ -272,12 +283,12 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 						response = JSON.parse(response);
 						if (response.code === 200) {
 							$scope.setBannerClass('success');
-							$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.questionnaire.title_EN + "/ " + $scope.questionnaire.title_FR + "\"!";
+							$scope.$parent.bannerMessage = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.SUCCESS_UPDATE');
 							$uibModalInstance.close();
 							$scope.showBanner();
 						}
 						else
-							alert("An error occurred, code "+response.code+". Please review the error message below.\r\n" + response.message);
+							alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ERROR_UPDATE_QUESTIONNAIRE') + "\r\n\r\n" + response.code + response.message);
 					}
 				});
 			}
