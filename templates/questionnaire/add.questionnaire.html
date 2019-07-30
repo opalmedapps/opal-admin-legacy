@@ -233,7 +233,7 @@
                         <div class="row">
                             <div class="col-xs-12 col-md-6">
                                 <div class="panel" ng-class="(newQuestionnaire.title_EN && newQuestionnaire.description_EN) ? 'panel-success': 'panel-danger'">
-                                    <div class="panel-heading"><strong>English</strong>
+                                    <div class="panel-heading"><strong>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.ENGLISH'|translate}}</strong>
                                         <span ng-hide="newQuestionnaire.title_EN && newQuestionnaire.description_EN" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.INCOMPLETE'|translate}}</em></span>
                                         <span ng-show="newQuestionnaire.title_EN && newQuestionnaire.description_EN" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.COMPLETE'|translate}}</em></span>
                                     </div>
@@ -445,7 +445,7 @@
                                                         <input type="number" min="1" max="{{newQuestionnaire.questions.length}}" ng-model="group.order" ng-change="orderPreview();" placeholder={{group.order}}>
                                                     </label>
                                                 </td>
-                                                <td>{{group.question_EN}} / {{group.question_FR}}</td>
+                                                <td>{{group.questionDisplay}}</td>
                                                 <td>
                                                     <select name="groupOptional" ng-model="group.optional" required ng-init="group.optional='0'">
                                                         <option value="0">{{'QUESTIONNAIRE_MODULE.QUESTIONNAIRE_ADD.REQUIRED'|translate}}</option>
