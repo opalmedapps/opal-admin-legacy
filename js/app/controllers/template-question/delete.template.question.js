@@ -13,25 +13,24 @@ angular.module('opalAdmin.controllers.template.question.delete', ['ngAnimate', '
 					// Show success or failure depending on response
 					if (response.value) {
 						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = "Successfully deleted \"" + $scope.templateQuestionToDelete.name_EN + "/ " + $scope.templateQuestionToDelete.name_FR + "\"!";
+						$scope.$parent.bannerMessage = $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_DELETE.DELETED');
 					}
 					else {
 						$scope.setBannerClass('danger');
 						var errMsg = "";
 						switch(response.message) {
 							case 401:
-								errMsg = "You are not authenticated!";
+								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_DELETE.ERROR_AUTHENTICATED');
 								break;
 							case 403:
-								errMsg = "You do not have the permission to delete this response type.";
+								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_DELETE.ERROR_PERMISSION');
 								break;
 							case 409:
-								errMsg = "The response type was already modified by someone else. Please verify and try again.";
+								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_DELETE.ERROR_MODIFIED');
 								break;
 							default:
-								errMsg = response.message;
+								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_DELETE.ERROR_UNKNOWN') + "\r\n\r\n" + response.message;
 						}
-
 						$scope.$parent.bannerMessage = errMsg;
 					}
 					$scope.showBanner();

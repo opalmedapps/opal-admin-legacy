@@ -12,6 +12,7 @@ controller('template.question.add', function ($scope, $state, $filter, $uibModal
 	// Default booleans
 	$scope.titleSection = { open: false, show: true };
 	$scope.answerTypeSection = { open: false, show: false };
+	$scope.language = Session.retrieveObject('user').language;
 
 	// get current user id
 	var user = Session.retrieveObject('user');
@@ -102,11 +103,11 @@ controller('template.question.add', function ($scope, $state, $filter, $uibModal
 					if (result.message === 200) {
 						$state.go('questionnaire-template-question');
 					} else {
-						alert("Unable to create the question type. Code " + result.code + ".\r\nError message: " + result.message);
+						alert($filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_ADD.ERROR_SET_TEMPLATE_QUESTION') + "\r\n\r\n" + result.code + " - " + result.message);
 					}
 				},
 				error: function () {
-					alert("Something went wrong.");
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_ADD.ERROR_SET_TEMPLATE_QUESTION'));
 				}
 			});
 		}
@@ -131,8 +132,14 @@ controller('template.question.add', function ($scope, $state, $filter, $uibModal
 	// questionnaire API: retrieve data
 	questionnaireCollectionService.getTemplateQuestionCategory(OAUserId).then(function (response) {
 		$scope.atCatList = response.data;
+		$scope.atCatList.forEach(function(entry) {
+			if($scope.language.toUpperCase() === "FR")
+				entry.category_display = entry.category_FR;
+			else
+				entry.category_display = entry.category_EN;
+		});
 	}).catch(function(response) {
-		alert('Error occurred getting response type categories: '+response.status +"\r\n"+ response.data);
+		alert($filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_ADD.ERROR_SET_TEMPLATE_QUESTION') + "\r\n\r\n" + response.status + " - " + response.data);
 	});
 
 	// add options
@@ -276,6 +283,4 @@ controller('template.question.add', function ($scope, $state, $filter, $uibModal
 			});
 		}
 	});
-
-
 });
