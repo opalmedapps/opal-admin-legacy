@@ -19,7 +19,7 @@ angular.module('opalAdmin.controllers.template.question', ['ngAnimate', 'ngSanit
 			var matcher = new RegExp($scope.filterValue, 'i');
 			renderableRows.forEach(function (row) {
 				var match = false;
-				['name_EN', 'name_FR', 'category_EN', 'category_FR'].forEach(function (field) {
+				['name_'+Session.retrieveObject('user').language, 'name_'+Session.retrieveObject('user').language, 'category_'+Session.retrieveObject('user').language, 'category_'+Session.retrieveObject('user').language].forEach(function (field) {
 					if (row.entity[field].match(matcher)) {
 						match = true;
 					}
@@ -38,32 +38,28 @@ angular.module('opalAdmin.controllers.template.question', ['ngAnimate', 'ngSanit
 		// Templates for main question table
 		var cellTemplateTextEn = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editTemplateQuestion(row.entity)">' +
-			'<strong><a href="">{{row.entity.name_EN}}</a></strong></div>';
-		var cellTemplateTextFr = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
-			'ng-click="grid.appScope.editTemplateQuestion(row.entity)">' +
-			'<strong><a href="">{{row.entity.name_FR}}</a></strong></div>';
+			'<strong><a href="">{{row.entity.name_'+Session.retrieveObject('user').language+'}}</a></strong></div>';
 		var cellTemplateAt = '<div class="ui-grid-cell-contents"> ' +
-			'{{row.entity.category_EN}} / {{row.entity.category_FR}}</div>';
+			'{{row.entity.category_'+Session.retrieveObject('user').language+'}}</div>';
 		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Public</p></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Private</p></div>';
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editTemplateQuestion(row.entity)">Edit</a></strong> ' +
-			'- <strong><a href="" ng-click="grid.appScope.deleteTemplateQuestion(row.entity)">Delete</a></strong></div>';
+			'<strong><a href="" ng-click="grid.appScope.editTemplateQuestion(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ' +
+			'- <strong><a href="" ng-click="grid.appScope.deleteTemplateQuestion(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
 
 		// Data binding for question table
 		$scope.gridLib = {
 			data: 'templateQuestionList',
 			columnDefs: [
-				{ field: 'name_EN', displayName: 'Name (EN)', cellTemplate: cellTemplateTextEn, width: '30%' },
-				{ field: 'name_FR', displayName: 'Name (FR)', cellTemplate: cellTemplateTextFr, width: '30%' },
-				{ field: 'category_EN', displayName: 'Response Category (EN / FR)', cellTemplate: cellTemplateAt, width: '23%' },
+				{ field: 'name_'+Session.retrieveObject('user').language, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_LIST.NAME'), cellTemplate: cellTemplateTextEn, width: '50%' },
+				{ field: 'category_'+Session.retrieveObject('user').language, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_LIST.CATEGORY'), cellTemplate: cellTemplateAt, width: '23%' },
 				{
-					field: 'private', displayName: 'Privacy', cellTemplate: cellTemplatePrivacy, width: '8%', filter: {
+					field: 'private', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_LIST.PRIVACY'), cellTemplate: cellTemplatePrivacy, width: '18%', filter: {
 						type: uiGridConstants.filter.SELECT,
-						selectOptions: [{ value: '1', label: 'Private' }, { value: '0', label: 'Public' }]
+						selectOptions: [{ value: '1', label: $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_LIST.PRIVATE') }, { value: '0', label: $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_LIST.PUBLIC') }]
 					}
 				},
-				{ name: 'Operations', width: '10%', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false }
+				{ name: $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_LIST.OPERATIONS'), width: '10%', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false }
 			],
 			enableFiltering: true,
 			enableColumnResizing: true,
