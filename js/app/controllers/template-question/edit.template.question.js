@@ -11,7 +11,7 @@ angular.module('opalAdmin.controllers.template.question.edit', ['ngAnimate', 'ng
 		$scope.changesMade = false;
 		$scope.validSlider = true;
 		$scope.preview = [];
-
+		$scope.language = Session.retrieveObject('user').language;
 
 		// Initialize variables for holding selected answer type & group
 		$scope.selectedLibrary = [];
@@ -99,6 +99,11 @@ angular.module('opalAdmin.controllers.template.question.edit', ['ngAnimate', 'ng
 		questionnaireCollectionService.getTemplateQuestionDetails($scope.currentTemplateQuestion.ID, OAUserId).then(function (response) {
 			// Assign value
 			$scope.templateQuestion = response.data;
+
+			if($scope.language.toUpperCase() === "FR")
+				$scope.templateQuestion.category_display = $scope.templateQuestion.category_FR;
+			else
+				$scope.templateQuestion.category_display = $scope.templateQuestion.category_EN;
 
 			if($scope.templateQuestion.typeId === "2") {
 				$scope.templateQuestion.options.minValue = parseInt($scope.templateQuestion.options.minValue);
