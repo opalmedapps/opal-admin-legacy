@@ -76,12 +76,12 @@ angular.module('opalAdmin.controllers.publication.tool', ['ngAnimate', 'ngSaniti
 		// Table
 		// Templates
 		var cellTemplateExpressions = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
-			'<strong><a href="">{{row.entity.expression_EN}} / {{row.entity.expression_FR}}</a></strong></div>';
+			'<strong><a href="">{{row.entity.expression_'+ Session.retrieveObject('user').language +'}}</a></strong></div>';
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editLegacyQuestionnaire(row.entity)">Edit</a></strong></div>';
+			'<strong><a href="" ng-click="grid.appScope.editLegacyQuestionnaire(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong></div>';
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editPublishedQuestionnaire(row.entity)">' +
-			'<strong><a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></strong></div>';
+			'<strong><a href="">{{row.entity.name_'+ Session.retrieveObject('user').language +'}}</a></strong></div>';
 		var cellTemplatePublish = '<div style="text-align: center; cursor: pointer;" ' +
 			'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
 			'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
@@ -93,15 +93,15 @@ angular.module('opalAdmin.controllers.publication.tool', ['ngAnimate', 'ngSaniti
 		$scope.gridOptions = {
 			data: 'publishedQuestionnaireList',
 			columnDefs: [
-				{ field: 'name_EN', displayName: 'Title (EN / FR)', cellTemplate: cellTemplateName, width: '25%' },
+				{ field: 'name_EN', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.NAME'), cellTemplate: cellTemplateName, width: '45%' },
 				{
-					field: 'publish', displayName: 'Publish', cellTemplate: cellTemplatePublish, width: '10%', filter: {
+					field: 'publish', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.PUBLISH'), cellTemplate: cellTemplatePublish, width: '10%', filter: {
 						type: uiGridConstants.filter.SELECT,
 						selectOptions: [{ value: '1', label: 'Yes' }, { value: '0', label: 'No' }]
 					}
 				},
-				{ field: 'expression_EN', name: 'Questionnaire name', cellTemplate: cellTemplateExpressions, filter: 'text'},
-				{ name: 'Operations', width: '15%', cellTemplate: cellTemplateOperations, enableFiltering: false, sortable: false }
+				{ field: 'expression_EN', name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.QUESTIONNAIRE'), cellTemplate: cellTemplateExpressions, filter: 'text'},
+				{ name: 'Operations', width: '10%', cellTemplate: cellTemplateOperations, enableFiltering: false, sortable: false }
 			],
 			enableFiltering: true,
 			enableSorting: true,
@@ -150,7 +150,7 @@ angular.module('opalAdmin.controllers.publication.tool', ['ngAnimate', 'ngSaniti
 		questionnaireCollectionService.getPublishedQuestionnaires(OAUserId).then(function (response) {
 			$scope.publishedQuestionnaireList = response.data;
 		}).catch(function(response) {
-			alert('Error occurred getting published questionnaire list: ' + response.status + " " + response.data);
+			alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.ERROR_PUBLICATION') + response.status + " " + response.data);
 		});
 
 		// Initialize a scope variable for a selected questionnaire
@@ -181,21 +181,20 @@ angular.module('opalAdmin.controllers.publication.tool', ['ngAnimate', 'ngSaniti
 						questionnaireCollectionService.getPublishedQuestionnaires(OAUserId).then(function (response) {
 							$scope.publishedQuestionnaireList = response.data;
 						}).catch(function(response) {
-							alert('Error occurred getting published questionnaire list: ' + response.status + " " + response.data);
+							alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.ERROR_PUBLICATION') + response.status + " " + response.data);
 						});
 						response = JSON.parse(response);
 						if (response.code === 200) {
 							$scope.setBannerClass('success');
-							$scope.bannerMessage = "Flag(s) Successfully Saved!";
+							$scope.bannerMessage = $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.SUCCESS_FLAGS');
 						}
 						else {
 							$scope.setBannerClass('danger');
-							$scope.bannerMessage = "A problem occurs. " + response.message;
+							alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.ERROR_FLAGS') + "\r\n\r\n" + response.status + " " + response.data);
 						}
 						$scope.showBanner();
 						$scope.changesMade = false;
 						$scope.publishedQuestionnaireFlags.flagList = [];
-
 					}
 				});
 			}
@@ -217,7 +216,7 @@ angular.module('opalAdmin.controllers.publication.tool', ['ngAnimate', 'ngSaniti
 				questionnaireCollectionService.getPublishedQuestionnaires(OAUserId).then(function (response) {
 					$scope.publishedQuestionnaireList = response.data;
 				}).catch(function(response) {
-					alert('Error occurred getting questionnaire list after modal close: ' + response.status + " " + response.data);
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.ERROR_PUBLICATION') + response.status + " " + response.data);
 				});
 			});
 		};

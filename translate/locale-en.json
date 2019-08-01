@@ -237,7 +237,7 @@
       "FINAL": "Final",
       "EDIT": "Edit",
       "DELETE": "Delete",
-      "ERROR_QUESTIONS": "An error occurred whille getting questionnaires list."
+      "ERROR_QUESTIONS": "An error occurred while getting questionnaires list."
     },
     "QUESTIONNAIRE_ADD" : {
       "BACK": "Back to Manage Questionnaires",
@@ -461,6 +461,27 @@
       "ERROR_GET_TEMPLATE_DETAILS": "An error occurred while getting the details of the response type.",
       "ERROR_SET_TEMPLATE_QUESTION": "An error occurred while updating the response type.",
       "SUCCESS": "The response type has being successfully updated."
+    },
+    "PUBLICATION_TOOL_LIST" : {
+      "TITLE": "Publication Tools",
+      "ADD": "Add",
+      "SAVE": "Save Changes",
+      "SEARCH": "Search...",
+      "EDIT": "Edit",
+      "DELETE": "Delete",
+      "NAME": "Name",
+      "PUBLISH": "Publish",
+      "QUESTIONNAIRE": "Questionnaire Name",
+      "OPERATIONS": "Operations",
+      "SUCCESS_FLAGS": "Flag(s) Successfully Saved!",
+      "ERROR_PUBLICATION": "An error occurred while getting publication list.",
+      "ERROR_FLAGS": "An error occurred while saving the publication flags."
+    },
+    "PUBLICATION_TOOL_ADD" : {
+
+    },
+    "PUBLICATION_TOOL_EDIT": {
+
     }
   },
   "PROFILE": {
