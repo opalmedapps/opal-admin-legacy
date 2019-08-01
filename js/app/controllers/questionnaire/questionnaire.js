@@ -76,8 +76,8 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 		// Table
 		// Templates
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editQuestionnaire(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ' +
-			'- <strong><a href="" ng-click="grid.appScope.deleteQuestionnaire(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
+			'<strong><a href="" ng-click="grid.appScope.editQuestionnaire(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ' +
+			'- <strong><a href="" ng-click="grid.appScope.deleteQuestionnaire(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editQuestionnaire(row.entity)">' +
 			'<strong><a href="">{{row.entity.name_' + Session.retrieveObject('user').language + '}}</a></strong></div>';
@@ -125,7 +125,7 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 		questionnaireCollectionService.getQuestionnaires(OAUserId).then(function (response) {
 			$scope.questionnaireList = response.data;
 		}).catch(function(response) {
-			alert('Error occurred getting questionnaire list: ' + response.status + " " + response.data);
+			alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS') + response.status + " " + response.data);
 		});
 
 		// Initialize the questionnaire to be deleted
@@ -160,7 +160,7 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 				questionnaireCollectionService.getQuestionnaires(OAUserId).then(function (response) {
 					$scope.questionnaireList = response.data;
 				}).catch(function(response) {
-					alert('Error occurred getting questionnaire list after modal close: ' + response.status + " " + response.data);
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS') + response.status + " " + response.data);
 				});
 			});
 		};
@@ -185,7 +185,7 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 				questionnaireCollectionService.getQuestionnaires(OAUserId).then(function (response) {
 					$scope.questionnaireList = response.data;
 				}).catch(function(response) {
-					alert('Error occurred getting questionnaire list after modal close: ' + response.status + " " + response.data);
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS') + response.status + " " + response.data);
 				});
 			});
 		};

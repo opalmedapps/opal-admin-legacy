@@ -125,7 +125,7 @@ angular.module('opalAdmin.controllers.template.question.edit', ['ngAnimate', 'ng
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
 		}).catch(function (err) {
-			alert('Error occurred getting question details.\r\nCode ' + err.status + " " + err.data);
+			alert($filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.ERROR_GET_TEMPLATE_DETAILS') + '\r\n\r\n' + err.status + " " + err.data);
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
 		});
@@ -168,12 +168,12 @@ angular.module('opalAdmin.controllers.template.question.edit', ['ngAnimate', 'ng
 					// Show success or failure depending on response
 					if (response.code === 200) {
 						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.templateQuestion.name_EN.replace(/<(?:.|\n)*?>/gm, '') + " / " + $scope.templateQuestion.name_FR.replace(/<(?:.|\n)*?>/gm, '') + "\"!";
+						$scope.$parent.bannerMessage = $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.SUCCESS');
 						$uibModalInstance.close();
 						$scope.showBanner();
 					}
 					else
-						alert("An error occurred, code "+response.code+". Please review the error message below.\r\n" + response.message);
+						alert($filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.ERROR_SET_TEMPLATE_QUESTION') + "\r\n\r\n" + response.message);
 				}
 			});
 		};
