@@ -54,7 +54,7 @@ angular.module('opalAdmin.controllers.publication.tool', ['ngAnimate', 'ngSaniti
 			var matcher = new RegExp($scope.filterValue, 'i');
 			renderableRows.forEach(function (row) {
 				var match = false;
-				['name_EN'].forEach(function (field) {
+				['name_'+Session.retrieveObject('user').language].forEach(function (field) {
 					if (row.entity[field].match(matcher)) {
 						match = true;
 					}
@@ -93,14 +93,14 @@ angular.module('opalAdmin.controllers.publication.tool', ['ngAnimate', 'ngSaniti
 		$scope.gridOptions = {
 			data: 'publishedQuestionnaireList',
 			columnDefs: [
-				{ field: 'name_EN', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.NAME'), cellTemplate: cellTemplateName, width: '45%' },
+				{ field: 'name_'+Session.retrieveObject('user').language, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.NAME'), cellTemplate: cellTemplateName, width: '45%' },
 				{
 					field: 'publish', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.PUBLISH'), cellTemplate: cellTemplatePublish, width: '10%', filter: {
 						type: uiGridConstants.filter.SELECT,
 						selectOptions: [{ value: '1', label: 'Yes' }, { value: '0', label: 'No' }]
 					}
 				},
-				{ field: 'expression_EN', name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.QUESTIONNAIRE'), cellTemplate: cellTemplateExpressions, filter: 'text'},
+				{ field: 'expression_EN', cellTemplate: cellTemplateExpressions, filter: 'text'},
 				{ name: 'Operations', width: '10%', cellTemplate: cellTemplateOperations, enableFiltering: false, sortable: false }
 			],
 			enableFiltering: true,

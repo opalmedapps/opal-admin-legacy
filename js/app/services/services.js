@@ -16,7 +16,7 @@ angular.module('opalAdmin.services', [])
 		this.update = function (user) {
 			this.destroy();
 			this.create(user);
-		}
+		};
 		this.destroy = function () {
 			$cookies.remove('user');
 		};
@@ -37,7 +37,7 @@ angular.module('opalAdmin.services', [])
 
 	.service('LogoutService', function (Session, $state, $http) {
 		this.logLogout = function () {
-			var user = Session.retrieveObject('user')
+			var user = Session.retrieveObject('user');
 			$http.post('user/logout', user );
 		};
 		this.logout = function () {
@@ -62,153 +62,153 @@ angular.module('opalAdmin.services', [])
 			}
 			// base 64 encode
 			return btoa(enc);
-		}
+		};
 	})
 
-	.service('FrequencyFilterService', function () {
+	.service('FrequencyFilterService', function ($filter) {
 		this.presetFrequencies = [
-		{
-			name: 'Every Day',
-			id: 'every_day',
-			meta_key: 'repeat_day',
-			meta_value: 1
-		},{
-			name: 'Every Other Day',
-			id: 'every_other_day',
-			meta_key: 'repeat_day',
-			meta_value: 2
-		},{
-			name: 'Every Week',
-			id: 'every_week',
-			meta_key: 'repeat_week',
-			meta_value: 1
-		},{
-			name: 'Every 2 Weeks',
-			id: 'every_2_weeks',
-			meta_key: 'repeat_week',
-			meta_value: 2
-		},{
-			name: 'Every Month',
-			id: 'every_month',
-			meta_key: 'repeat_month',
-			meta_value: 1
-		},{
-			name: 'Custom',
-			id: 'custom',
-			meta_key: null,
-			meta_value: null
-		}];
+			{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.EVERY_DAY'),
+				id: 'every_day',
+				meta_key: 'repeat_day',
+				meta_value: 1
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.EVERY_OTHER_DAY'),
+				id: 'every_other_day',
+				meta_key: 'repeat_day',
+				meta_value: 2
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.EVERY_WEEK'),
+				id: 'every_week',
+				meta_key: 'repeat_week',
+				meta_value: 1
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.EVERY_2_WEEK'),
+				id: 'every_2_weeks',
+				meta_key: 'repeat_week',
+				meta_value: 2
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.EVERY_MONTH'),
+				id: 'every_month',
+				meta_key: 'repeat_month',
+				meta_value: 1
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.CUSTOM'),
+				id: 'custom',
+				meta_key: null,
+				meta_value: null
+			}];
 
 		this.customFrequency = {
 			meta_value: 1,
 			unit:null
-		}
+		};
 
 		this.frequencyUnits = [
-		{
-			name: 'Day',
-			id: 'day',
-			meta_key: 'repeat_day'
-		},{
-			name: 'Week',
-			id: 'week',
-			meta_key: 'repeat_week'
-		},{
-			name: 'Month',
-			id: 'month',
-			meta_key: 'repeat_month'
-		},{
-			name: 'Year',
-			id: 'year',
-			meta_key: 'repeat_year'
-		}];
+			{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.DAY'),
+				id: 'day',
+				meta_key: 'repeat_day'
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.WEEK'),
+				id: 'week',
+				meta_key: 'repeat_week'
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.MONTH'),
+				id: 'month',
+				meta_key: 'repeat_month'
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.YEAR'),
+				id: 'year',
+				meta_key: 'repeat_year'
+			}];
 
 		this.daysInWeek = [
-		{
-			name: 'Sunday',
-			id: 1
-		},{
-			name: 'Monday',
-			id: 2
-		},{
-			name: 'Tuesday',
-			id: 3
-		},{
-			name: 'Wednesday',
-			id: 4
-		},{
-			name: 'Thursday',
-			id: 5
-		},{
-			name: 'Friday',
-			id: 6
-		},{
-			name: 'Saturday',
-			id: 7
-		}];
+			{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SUNDAY'),
+				id: 1
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.MONDAY'),
+				id: 2
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TUESDAY'),
+				id: 3
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.WEDNESDAY'),
+				id: 4
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.THURSDAY'),
+				id: 5
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.FRIDAY'),
+				id: 6
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SATURDAY'),
+				id: 7
+			}];
 
 		this.weekNumbersInMonth = [
-		{
-			name: '---',
-			id: null
-		},{
-			name: '1st',
-			id: 1
-		},{
-			name: '2nd',
-			id: 2
-		},{
-			name: '3rd',
-			id: 3
-		},{
-			name: '4th',
-			id: 4
-		},{
-			name: '5th',
-			id: 5
-		},{
-			name: 'Last',
-			id: 6
-		}];
+			{
+				name: '---',
+				id: null
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.1ST'),
+				id: 1
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.2ND'),
+				id: 2
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.3RD'),
+				id: 3
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.4TH'),
+				id: 4
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.5TH'),
+				id: 5
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.LAST'),
+				id: 6
+			}];
 
 		this.monthsInYear = [
-		{
-			name: 'January',
-			id: 1
-		},{
-			name: 'February',
-			id: 2
-		},{
-			name: 'March',
-			id: 3
-		},{
-			name: 'April',
-			id: 4
-		},{
-			name: 'May',
-			id: 5
-		},{
-			name: 'June',
-			id: 6
-		},{
-			name: 'July',
-			id: 7
-		},{
-			name: 'August',
-			id: 8
-		},{
-			name: 'September',
-			id: 9
-		},{ 
-			name: 'October',
-			id: 10
-		},{
-			name: 'November',
-			id: 11
-		},{
-			name: 'December',
-			id: 12
-		}];
+			{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.JANUARY'),
+				id: 1
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.FEBRUARY'),
+				id: 2
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.MARCH'),
+				id: 3
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.APRIL'),
+				id: 4
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.MAY'),
+				id: 5
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.JUNE'),
+				id: 6
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.JULY'),
+				id: 7
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.AUGUST'),
+				id: 8
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SEPTEMBER'),
+				id: 9
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.OCTOBER'),
+				id: 10
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.NOVEMBER'),
+				id: 11
+			},{
+				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.DECEMBER'),
+				id: 12
+			}];
 
 		this.additionalMeta = {
 			repeat_day_iw: [],
