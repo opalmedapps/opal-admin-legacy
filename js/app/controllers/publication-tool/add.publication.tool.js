@@ -208,9 +208,31 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 		$scope.machineTriggerList = response.data.machines;
 		$scope.patientTriggerList = response.data.patients;
 		$scope.appointmentStatusList = response.data.appointmentStatuses;
+		$scope.appointmentStatusList.forEach(function(entry) {
+			if($scope.language.toUpperCase() === "FR") {
 
+				switch(entry.name) {
+					case "Open":
+						entry.name_display = "Ouvert";
+						break;
+					case "Completed":
+						entry.name_display = "Complété";
+						break;
+					case "Cancelled":
+						entry.name_display = "Annulé";
+						break;
+					case "Checked In":
+						entry.name_display = "Enregistré";
+						break;
+					default:
+						entry.name_display = "Non traduit";
+				}
+			}
+			else
+				entry.name_display = entry.name;
+		});
 	}).catch(function(response) {
-		alert('Error occurred getting filter list.\r\n' + response.status + " " + response.data);
+		alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ERROR_FILTERS') + response.status + " " + response.data);
 	});
 
 	$scope.submitTemplateQuestion = function () {
@@ -269,6 +291,7 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 			$scope.newQuestionnaireToPublish.OAUserId = currentUser.id;
 			$scope.newQuestionnaireToPublish.sessionId = currentUser.sessionid;
 
+
 			// Submit
 			$.ajax({
 				type: "POST",
@@ -276,14 +299,12 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 				data: $scope.newQuestionnaireToPublish,
 				success: function (result) {
 					result = JSON.parse(result);
-					if (result.code === 200) {
-						$state.go('publication-tool');
-					} else {
-						alert("Unable to create the questionnaire. Code " + result.code + ".\r\nError message: " + result.message);
-					}
+					if (result.code !== 200)
+						alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ERROR_PUBLICATION') + result.code + ".\r\nError message: " + result.message);
+					$state.go('publication-tool');
 				},
 				error: function () {
-					alert("Something went wrong.");
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ERROR_PUBLICATION'));
 					$state.go('publication-tool');
 				}
 			});
@@ -316,7 +337,7 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 				entry.name_display = entry.name_EN;
 		});
 	}).catch(function (response) {
-		alert('Error occurred getting group list:' + response.status + response.data);
+		alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ERROR_QUESTIONNAIRE') + response.status + response.data);
 	});
 
 	// Responsible for "searching" in search bars
