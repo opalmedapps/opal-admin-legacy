@@ -33,6 +33,7 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 		questionnaire: { completed: false },
 	};
 
+	$scope.language = Session.retrieveObject('user').language;
 	$scope.numOfCompletedSteps = 0;
 	$scope.preview = [];
 	$scope.atEntered = '';
@@ -96,22 +97,37 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 	};
 
 	// Initialize a list of sexes
-	$scope.sexes = [
-		{
-			name: 'Male',
-			icon: 'male'
-		}, {
-			name: 'Female',
-			icon: 'female'
-		}
-	];
+	if ($scope.language.toUpperCase() === "FR")
+		$scope.sexes = [
+			{
+				name: 'Male',
+				display: "Homme",
+				icon: 'male'
+			}, {
+				name: 'Female',
+				display: "Femme",
+				icon: 'female'
+			}
+		];
+	else
+		$scope.sexes = [
+			{
+				name: 'Male',
+				display: "Male",
+				icon: 'male'
+			}, {
+				name: 'Female',
+				display: "Female",
+				icon: 'female'
+			}
+		];
 
 	// Initialize lists to hold triggers
 	$scope.demoTrigger = {
 		sex: null,
 		age: {
 			min: 0,
-			max: 100
+			max: 130
 		}
 	};
 	// Initialize lists to hold triggers
@@ -149,8 +165,9 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 			$scope.demoSection.show = true;
 			$scope.selectedAt = selectedAt;
 			steps.questionnaire.completed = true;
-			if (!selectedAt.locked)
-				alert("The questionnaire '"+selectedAt.name_EN+"' has never been published before. By doing so, it will be locked and can not be modified in the future.");
+			if (!selectedAt.locked) {
+				alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.WILL_BE_LOCKED').replace("%%QUESTIONNAIRE_NAME%%", selectedAt.name_display));
+			}
 		}
 		else {
 			$scope.triggerSection.show = false;
@@ -165,17 +182,33 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 	//search function
 	$scope.searchAtFilter = function (Filter) {
 		var keyword = new RegExp($scope.atEntered, 'i');
-		return !$scope.atEntered || keyword.test(Filter.name_EN);
+		return !$scope.atEntered || keyword.test(Filter.name_display);
 	};
 
 	// Call our API service to get each trigger
 	filterCollectionService.getFilters().then(function (response) {
+
+		response.data.appointments.forEach(function(entry) {
+			if($scope.language.toUpperCase() === "FR")
+				entry.name_display = entry.name_FR;
+			else
+				entry.name_display = entry.name;
+		});
+
 		$scope.appointmentTriggerList = response.data.appointments; // Assign value
 		$scope.dxTriggerList = response.data.dx;
+		$scope.dxTriggerList.forEach(function(entry) {
+			if($scope.language.toUpperCase() === "FR")
+				entry.name_display = entry.name_FR;
+			else
+				entry.name_display = entry.name;
+		});
+
 		$scope.doctorTriggerList = response.data.doctors;
 		$scope.machineTriggerList = response.data.machines;
 		$scope.patientTriggerList = response.data.patients;
 		$scope.appointmentStatusList = response.data.appointmentStatuses;
+
 	}).catch(function(response) {
 		alert('Error occurred getting filter list.\r\n' + response.status + " " + response.data);
 	});
@@ -188,8 +221,8 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 			// Add demographic triggers, if defined
 			if ($scope.demoTrigger.sex)
 				$scope.newQuestionnaireToPublish.triggers.push({ id: $scope.demoTrigger.sex, type: 'Sex' });
-			if ($scope.demoTrigger.age.min >= 0 && $scope.demoTrigger.age.max <= 100) { // i.e. not empty
-				if ($scope.demoTrigger.age.min !== 0 || $scope.demoTrigger.age.max !== 100) { // triggers were changed
+			if ($scope.demoTrigger.age.min >= 0 && $scope.demoTrigger.age.max <= 130) { // i.e. not empty
+				if ($scope.demoTrigger.age.min !== 0 || $scope.demoTrigger.age.max !== 130) { // triggers were changed
 					$scope.newQuestionnaireToPublish.triggers.push({
 						id: String($scope.demoTrigger.age.min).concat(',', String($scope.demoTrigger.age.max)),
 						type: 'Age'
@@ -251,6 +284,7 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 				},
 				error: function () {
 					alert("Something went wrong.");
+					$state.go('publication-tool');
 				}
 			});
 		}
@@ -275,6 +309,12 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 	// questionnaire API: retrieve data
 	questionnaireCollectionService.getFinalizedQuestionnaires(OAUserId).then(function (response) {
 		$scope.questionnaireList = response.data;
+		$scope.questionnaireList.forEach(function(entry) {
+			if($scope.language.toUpperCase() === "FR")
+				entry.name_display = entry.name_FR;
+			else
+				entry.name_display = entry.name_EN;
+		});
 	}).catch(function (response) {
 		alert('Error occurred getting group list:' + response.status + response.data);
 	});
@@ -283,38 +323,21 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 	$scope.filter = $filter('filter');
 
 
-	// Call our API service to get each trigger
-	filterCollectionService.getFilters().then(function (response) {
-
-		$scope.appointmentTriggerList = response.data.appointments; // Assign value
-		$scope.dxTriggerList = response.data.dx;
-		$scope.doctorTriggerList = response.data.doctors;
-		$scope.machineTriggerList = response.data.machines;
-		$scope.patientTriggerList = response.data.patients;
-		$scope.appointmentStatusList = response.data.appointmentStatuses;
-
-		// processingModal.close(); // hide modal
-		// processingModal = null; // remove reference
-		//
-		// $scope.formLoaded = true;
-		// $scope.loadForm();
-
-	}).catch(function(response) {
-		alert('Error occurred getting filter list.\r\n' + response.status + " " + response.data);
-	});
-
 	// Function to toggle necessary changes when updating the sex
 	$scope.sexUpdate = function (sex) {
 		$scope.demoSection.open = true;
 		if (!$scope.demoTrigger.sex) {
 			$scope.demoTrigger.sex = sex.name;
+			$scope.demoTrigger.sex_display = sex.display;
 		} else if ($scope.demoTrigger.sex == sex.name) {
 			$scope.demoTrigger.sex = null; // Toggle off
-			if ($scope.demoTrigger.age.min == 0 && $scope.demoTrigger.age.max == 100) {
+			$scope.demoTrigger.sex_display = null;
+			if ($scope.demoTrigger.age.min == 0 && $scope.demoTrigger.age.max == 130) {
 				$scope.demoSection.open = false;
 			}
 		} else {
 			$scope.demoTrigger.sex = sex.name;
+			$scope.demoTrigger.sex_display = sex.display;
 		}
 
 	};
@@ -323,7 +346,7 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 	$scope.ageUpdate = function () {
 
 		$scope.demoSection.open = true;
-		if ($scope.demoTrigger.age.min == 0 && $scope.demoTrigger.age.max == 100
+		if ($scope.demoTrigger.age.min == 0 && $scope.demoTrigger.age.max == 130
 			&& !$scope.demoTrigger.sex) {
 			$scope.demoSection.open = false;
 		}
@@ -433,11 +456,11 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 	// Function for search through the triggers
 	$scope.searchAppointmentFilter = function (Filter) {
 		var keyword = new RegExp($scope.appointmentSearchField, 'i');
-		return !$scope.appointmentSearchField || keyword.test(Filter.name);
+		return !$scope.appointmentSearchField || keyword.test(Filter.name_display);
 	};
 	$scope.searchDxFilter = function (Filter) {
 		var keyword = new RegExp($scope.dxSearchField, 'i');
-		return !$scope.dxSearchField || keyword.test(Filter.name);
+		return !$scope.dxSearchField || keyword.test(Filter.name_display);
 	};
 	$scope.searchDoctorFilter = function (Filter) {
 		var keyword = new RegExp($scope.doctorSearchField, 'i');
