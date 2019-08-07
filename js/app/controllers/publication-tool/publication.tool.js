@@ -100,7 +100,7 @@ angular.module('opalAdmin.controllers.publication.tool', ['ngAnimate', 'ngSaniti
 						selectOptions: [{ value: '1', label: 'Yes' }, { value: '0', label: 'No' }]
 					}
 				},
-				{ field: 'expression_EN', cellTemplate: cellTemplateExpressions, filter: 'text'},
+				{ field: 'expression_'+Session.retrieveObject('user').language, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.QUESTIONNAIRE'), cellTemplate: cellTemplateExpressions},
 				{ name: 'Operations', width: '10%', cellTemplate: cellTemplateOperations, enableFiltering: false, sortable: false }
 			],
 			enableFiltering: true,

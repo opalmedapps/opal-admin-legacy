@@ -547,7 +547,7 @@
       "DEMO_EXPLANATION": "Veuillez assigner un déclencheur démographique. Ne marquer rien pour aucun déclencheur.",
       "MIN": "MIN",
       "MAX": "MAX",
-      "TRIGGER APPT_STATUS": "Déclencheur par statut de rendez-vous",
+      "TRIGGER_APPT_STATUS": "Déclencheur par statut de rendez-vous",
       "TAS_EXPLANATION": "Sélectionnez un statut de rendez-vous. Cela ciblera les patients dont les rendez-vous ont ce statut le jour du rendez-vous. L'utilisation de ce déclencheur avec le déclencheur de rendez-vous ci-dessous ciblera les statuts pour des rendez-vous spécifiques.",
       "TRIGGER_APPOINTMENT": "Déclencheur par rendez-vous",
       "TA_EXPLANATION": "Sélectionnez l'un des déclencheurs par rendez-vous ci-dessous. Cela ciblera les patients avec ces rendez-vous spécifiques. Cliquer sur 'Tout sélectionner' pour marquer tous les rendez-vous. Laissez vide pour aucun déclencheur.",
