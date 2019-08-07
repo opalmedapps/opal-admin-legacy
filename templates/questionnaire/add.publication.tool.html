@@ -240,7 +240,7 @@
                                     <p>
                                     <ul style="max-height: 100px; overflow-y: auto;">
                                         <li ng-repeat="appointmentStatus in appointmentStatusList | filter: {added: 1} : 1">
-                                            {{appointmentStatus.name}}
+                                            {{appointmentStatus.name_display}}
                                         </li>
                                     </ul>
                                     </p>
@@ -785,7 +785,7 @@
                                         <div class="panel-content" style="text-align:center">
                                             <span ng-if="!appointmentStatus.added" style="font-size:30px;" class="glyphicon glyphicon-minus"></span>
                                             <span ng-if="appointmentStatus.added" style="font-size:30px;" class="glyphicon glyphicon-ok"></span>
-                                            <div class="option-panel-title">{{appointmentStatus.name}}</div>
+                                            <div class="option-panel-title">{{appointmentStatus.name_display}}</div>
                                         </div>
                                     </div>
                                 </div>
