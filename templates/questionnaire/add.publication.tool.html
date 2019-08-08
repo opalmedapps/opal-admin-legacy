@@ -123,7 +123,7 @@
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                                         <span ng-if="!showFrequency">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.NA'|translate}}</span>
                                         <span ng-if="frequencySelected.id != 'custom' && showFrequency">{{frequencySelected.name}}</span>
-                                        <span ng-if="frequencySelected.id == 'custom'">
+                                        <span ng-if="frequencySelected.id == 'custom' && language == 'EN'">
                                             {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.EVERY'|translate}}
                                             <span ng-if="customFrequency.meta_value != 1">{{customFrequency.meta_value}}</span>
                                             {{customFrequency.unit.name}}
@@ -138,6 +138,32 @@
                                                 <span ng-if="selectedMonthsInYear.length > 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.EACH'|translate}}</span>
                                                 <span ng-if="selectedMonthsInYear.length < 2">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.THE'|translate}}</span>
                                                 {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.THE_MONTH'|translate}}
+                                            </span>
+                                        </span>
+                                        <span ng-if="frequencySelected.id == 'custom' && language == 'FR'">
+                                            <span ng-show="customFrequency.unit.id == 'week'">
+                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TOUTES_LES'|translate}}
+                                            </span>
+                                            <span ng-hide="customFrequency.unit.id == 'week'">
+                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TOUS_LES'|translate}}
+                                            </span>
+                                            <span ng-if="customFrequency.meta_value != 1">{{customFrequency.meta_value}}</span>
+                                            {{customFrequency.unit.name_fr}}
+                                            <span ng-if="selectedDaysInWeek.length">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ON'|translate}} {{selectedDaysInWeekText}}.</span>
+                                            <span ng-if="selectedMonthsInYear.length">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.IN'|translate}} {{selectedMonthsInYearText}} </span>
+                                            <span ng-if="selectedDatesInMonth.length">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ON_THE'|translate}} {{selectedDatesInMonthText}} {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.OF_2'|translate}}
+                                                <span ng-if="selectedMonthsInYear.length > 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.EACH'|translate}}</span>
+                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.THE_MONTH'|translate}}.
+                                            </span>
+                                            <span ng-if="selectedWeekNumberInMonth.id && selectedSingleDayInWeek.id">
+                                                <span ng-if="setSelectedMonthsInYearText && customFrequency.unit.id != 'month'">-</span>
+                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ON_THE'|translate}} {{selectedWeekNumberInMonthText}} {{selectedSingleDayInWeekText}}
+
+                                                <span ng-if="setSelectedMonthsInYearText && selectedMonthsInYear.length <= 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.OF_2'|translate}}</span>
+                                                <span ng-if="!setSelectedMonthsInYearText || selectedMonthsInYear.length > 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.OF'|translate}}</span>
+
+                                                <span ng-if="selectedMonthsInYear.length > 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.EACH'|translate}}</span>
+                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.THE_MONTH'|translate}}.
                                             </span>
                                         </span>
                                     </p>
@@ -609,10 +635,10 @@
                                                 <span ng-if="customFrequency.unit.id == 'month' || customFrequency.unit.id == 'year'">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.REPEAT_OPTIONS'|translate}}</span>
                                             </label>
                                             <div class="col-xs-8" style="margin-bottom: 10px;" ng-if="customFrequency.unit.id == 'week'">
-                                                <div ng-dropdown-multiselect="" options="daysInWeek" selected-model="selectedDaysInWeek" extra-settings="weekDropdownSettings" events="weekDropdownEvents"></div>
+                                                <div ng-dropdown-multiselect="" options="daysInWeek" selected-model="selectedDaysInWeek" extra-settings="weekDropdownSettings" events="weekDropdownEvents" translation-texts="projectText"></div>
                                             </div>
                                             <div ng-if="customFrequency.unit.id == 'year'"class="col-xs-10" style="margin-bottom: 10px;">
-                                                <div ng-dropdown-multiselect="" options="monthsInYear" selected-model="selectedMonthsInYear" extra-settings="monthDropdownSettings" events="monthDropdownEvents"></div>
+                                                <div ng-dropdown-multiselect="" options="monthsInYear" selected-model="selectedMonthsInYear" extra-settings="monthDropdownSettings" events="monthDropdownEvents" translation-texts="projectText"></div>
                                             </div>
                                             <div ng-if="customFrequency.unit.id == 'month'" class="col-xs-12" style="margin-bottom: 10px;">
                                                 <div class="btn-group btn-group-justified" role="group">

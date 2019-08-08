@@ -108,19 +108,27 @@ angular.module('opalAdmin.services', [])
 			{
 				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.DAY'),
 				id: 'day',
-				meta_key: 'repeat_day'
+				meta_key: 'repeat_day',
+				every_fr: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TOUS_LES'),
+				name_fr: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.DAYS'),
 			},{
 				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.WEEK'),
 				id: 'week',
-				meta_key: 'repeat_week'
+				meta_key: 'repeat_week',
+				every_fr: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TOUTES_LES'),
+				name_fr: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.WEEKS'),
 			},{
 				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.MONTH'),
 				id: 'month',
-				meta_key: 'repeat_month'
+				meta_key: 'repeat_month',
+				every_fr: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TOUS_LES'),
+				name_fr: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.MONTHS'),
 			},{
 				name: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.YEAR'),
 				id: 'year',
-				meta_key: 'repeat_year'
+				meta_key: 'repeat_year',
+				every_fr: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TOUS_LES'),
+				name_fr: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.YEARS'),
 			}];
 
 		this.daysInWeek = [

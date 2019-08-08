@@ -52,6 +52,27 @@
   "BREADCRUMBS": {
     "HOME": "Home"
   },
+  "DATEPICKER": {
+    "SUNDAY_S": "Sun",
+    "MONDAY_S": "Mon",
+    "TUESDAY_S": "Tue",
+    "WEDNESDAY_S": "Wed",
+    "THURSDAY_S": "Thu",
+    "FRIDAY_S": "Fri",
+    "SATURDAY_S": "Sat",
+    "JANUARY": "January",
+    "FEBRUARY": "February",
+    "MARCH": "March",
+    "APRIL": "April",
+    "MAY": "May",
+    "JUNE": "June",
+    "JULY": "July",
+    "AUGUST": "August",
+    "SEPTEMBER": "September",
+    "OCTOBER": "October",
+    "NOVEMBER": "November",
+    "DECEMBER": "December"
+  },
   "QUESTIONNAIRE_MODULE": {
     "NAVIGATION_MENU": {
       "BACK": "Back",
@@ -595,10 +616,24 @@
       "SEPTEMBER": "September",
       "OCTOBER": "October",
       "NOVEMBER": "November",
-      "DECEMBER": "December"
+      "DECEMBER": "December",
+      "AND": " and ",
+      "1_DAY_SELECTED": "1 day selected",
+      "DAYS_SELECTED": " days selected",
+      "1_MONTH_SELECTED": "1 month selected",
+      "MONTHS_SELECTED": " months selected"
     },
     "PUBLICATION_TOOL_EDIT": {
-
+      "TITLE": "Edit Published Questionnaire",
+      "SAVE": "Save Changes",
+      "CANCEL": "Cancel",
+      "TITLES": "Titles",
+      "EN_TITLE": "EN",
+      "FRENCH_TITLE": "FR",
+      "PLACEHOLDER_ENGLISH_TITLE": "English Title",
+      "PLACEHOLDER_FRENCH_TITLE": "French Title",
+      "FREQUENCY": "Publish Frequency",
+      "SELECT": " Sélectionner"
     }
   },
   "PROFILE": {
