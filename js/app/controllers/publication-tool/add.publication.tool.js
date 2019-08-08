@@ -1,4 +1,4 @@
-angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('publication.tool.add', function ($scope, $state, $filter, $uibModal, questionnaireCollectionService, filterCollectionService, FrequencyFilterService, Session) {
+angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('publication.tool.add', function ($scope, $state, $filter, $uibModal, $locale, questionnaireCollectionService, filterCollectionService, FrequencyFilterService, Session) {
 	// navigation function
 	$scope.goBack = function () {
 		$state.go('questionnaire');
@@ -7,6 +7,7 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 	$scope.goBack = function () {
 		window.history.back();
 	};
+
 
 	// Default booleans
 	$scope.titleSection = { open: false, show: true };
@@ -34,6 +35,34 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 	};
 
 	$scope.language = Session.retrieveObject('user').language;
+
+	$locale["DATETIME_FORMATS"]["SHORTDAY"] = [
+		$filter('translate')('DATEPICKER.SUNDAY_S'),
+		$filter('translate')('DATEPICKER.MONDAY_S'),
+		$filter('translate')('DATEPICKER.TUESDAY_S'),
+		$filter('translate')('DATEPICKER.WEDNESDAY_S'),
+		$filter('translate')('DATEPICKER.THURSDAY_S'),
+		$filter('translate')('DATEPICKER.FRIDAY_S'),
+		$filter('translate')('DATEPICKER.SATURDAY_S')
+	];
+
+	$locale["DATETIME_FORMATS"]["MONTH"] = [
+		$filter('translate')('DATEPICKER.JANUARY'),
+		$filter('translate')('DATEPICKER.FEBRUARY'),
+		$filter('translate')('DATEPICKER.MARCH'),
+		$filter('translate')('DATEPICKER.APRIL'),
+		$filter('translate')('DATEPICKER.MAY'),
+		$filter('translate')('DATEPICKER.JUNE'),
+		$filter('translate')('DATEPICKER.JULY'),
+		$filter('translate')('DATEPICKER.AUGUST'),
+		$filter('translate')('DATEPICKER.SEPTEMBER'),
+		$filter('translate')('DATEPICKER.OCTOBER'),
+		$filter('translate')('DATEPICKER.NOVEMBER'),
+		$filter('translate')('DATEPICKER.DECEMBER')
+	];
+
+	console.log($locale["DATETIME_FORMATS"]);
+
 	$scope.numOfCompletedSteps = 0;
 	$scope.preview = [];
 	$scope.atEntered = '';
@@ -699,20 +728,30 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 	// Initialize object for repeat interval
 	$scope.customFrequency = FrequencyFilterService.customFrequency;
 	$scope.frequencyUnits = FrequencyFilterService.frequencyUnits;
-	$scope.customFrequency.unit = $scope.frequencyUnits[0]; // Default "1 Day"
+	$scope.defaultCustomFrequency = $scope.frequencyUnits[0];
+	$scope.customFrequency.unit = $scope.defaultCustomFrequency; // Default "1 Day"
 
 	// Custom watch to singularize/pluralize frequency unit names
 	$scope.$watch('customFrequency.meta_value', function(newValue, oldValue){
-
-		if ($scope.frequencySelected.id == 'custom') {
+		if ($scope.frequencySelected.id === 'custom') {
 			if (newValue === 1) { // Singular
 				angular.forEach($scope.frequencyUnits, function (unit) {
-					unit.name = unit.name.slice(0,-1); // remove plural 's'
+					if (unit.name !== "Mois")
+						unit.name = unit.name.slice(0,-1); // remove plural 's'
 				});
 			}
 			else if (newValue > 1 && oldValue === 1) { // Was singular now plural
 				angular.forEach($scope.frequencyUnits, function (unit) {
-					unit.name = unit.name + 's'; // pluralize words
+					if (unit.name !== "Mois")
+						unit.name = unit.name + 's'; // pluralize words
+				});
+			}
+		}
+		else {
+			if (newValue <= 1 && oldValue > 1) {
+				angular.forEach($scope.frequencyUnits, function (unit) {
+					if (unit.name !== "Mois")
+						unit.name = unit.name.slice(0,-1); // remove plural 's'
 				});
 			}
 		}
@@ -736,12 +775,17 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 		styleActive: true,
 		buttonClasses: 'btn btn-default btn-frequency-select',
 		smartButtonTextProvider: function (selectionArray) {
-			if (selectionArray.length == 1) {
-				return '1 Day Selected';
+			if (selectionArray.length === 1) {
+				return $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.1_DAY_SELECTED');
 			}
-			return selectionArray.length + " Days Selected";
+			return selectionArray.length + $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.DAYS_SELECTED');
 		}
 	};
+
+	$scope.projectText = {
+		buttonDefaultText: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SELECT'),
+	};
+
 	// event options for week dropdown menu
 	$scope.weekDropdownEvents = {
 		onItemSelect: function (dayInWeek) {$scope.selectDayInWeek(dayInWeek, $scope.customFrequency.unit.id);},
@@ -793,21 +837,23 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 
 	$scope.setSelectedDaysInWeekText = function (days) {
 		$scope.selectedDaysInWeekText = ""; // Destroy text
-
 		// Construct text for display of selected days
 		for (var i = 0; i < days.length; i++) {
-			if (days.length == 1) {
+
+			if (days.length === 1) {
 				// Eg. Sunday
-				$scope.selectedDaysInWeekText = days[i].name;
+				$scope.selectedDaysInWeekText = ($scope.language.toUpperCase() === "FR" ? days[i].name.toLowerCase() : days[i].name);
 			}
 			else if (i < days.length-1) {
 				// Eg. Sunday, Monday, etc.
-				$scope.selectedDaysInWeekText += days[i].name + ", ";
+				$scope.selectedDaysInWeekText += ($scope.language.toUpperCase() === "FR" ? days[i].name.toLowerCase() : days[i].name) + ", ";
 			}
 			else {
 				// Remove last comma and replace with "and"
 				// Eg. Sunday, Monday and Tuesday
-				$scope.selectedDaysInWeekText = $scope.selectedDaysInWeekText.slice(0,-2) + " and " + $scope.selectedDaysInWeek[i].name;
+				$scope.selectedDaysInWeekText = $scope.selectedDaysInWeekText.slice(0,-2) + $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.AND') +
+
+					($scope.language.toUpperCase() === "FR" ? $scope.selectedDaysInWeek[i].name.toLowerCase() : $scope.selectedDaysInWeek[i].name);
 			}
 		}
 	};
@@ -818,7 +864,7 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 	};
 
 	$scope.setSelectedSingleDayInWeekText = function (day) {
-		$scope.selectedSingleDayInWeekText = day.name;
+		$scope.selectedSingleDayInWeekText = ($scope.language.toUpperCase() === "FR" ? day.name.toLowerCase() : day.name);
 	};
 
 	$scope.setSelectedMonthsInYearText = function (months) {
@@ -826,19 +872,20 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 		for (var i = 0; i < months.length; i++) {
 			// Single month
 			// Eg. January
-			if (months.length == 1) {
-				$scope.selectedMonthsInYearText = months[i].name;
+			if (months.length === 1) {
+				$scope.selectedMonthsInYearText = ($scope.language.toUpperCase() === "FR" ? months[i].name.toLowerCase() : months[i].name);
 			}
 			// Concat months with commas
 			// Eg. January, March, April
 			else if (i < months.length-1) {
-				$scope.selectedMonthsInYearText += months[i].name + ", ";
+				$scope.selectedMonthsInYearText += ($scope.language.toUpperCase() === "FR" ? months[i].name.toLowerCase() : months[i].name) + ", ";
 			}
 
 			// Replace last comma with "and"
 			// Eg. January, March and April
 			else {
-				$scope.selectedMonthsInYearText = $scope.selectedMonthsInYearText.slice(0,-2) + " and " + $scope.selectedMonthsInYear[i].name;
+				$scope.selectedMonthsInYearText = $scope.selectedMonthsInYearText.slice(0,-2) + $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.AND')
+					+ ($scope.language.toUpperCase() === "FR" ? $scope.selectedMonthsInYear[i].name.toLowerCase() : $scope.selectedMonthsInYear[i].name);
 			}
 		}
 
@@ -848,21 +895,24 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 		// Construct text for display of selected dates
 		angular.forEach(dates, function (dateNumber,index) {
 			// Conditionals for proper suffix
-			if (dateNumber % 10 == 1 && dateNumber != 11) {
-				dateNumber += "st";
+			if (dateNumber === 1)
+				dateNumber += ($scope.language.toUpperCase() === "FR"?"er":"st");
+			else if (dateNumber % 10 === 1 && dateNumber !== 11) {
+				dateNumber += ($scope.language.toUpperCase() !== "FR"?"st":"");
 			}
-			else if (dateNumber % 10 == 2 && dateNumber != 12) {
-				dateNumber += "nd";
+			else if (dateNumber % 10 === 2 && dateNumber !== 12) {
+				dateNumber += ($scope.language.toUpperCase() !== "FR"?"nd":"");
+
 			}
-			else if (dateNumber % 10 == 3 && dateNumber != 13) {
-				dateNumber += "rd";
+			else if (dateNumber % 10 === 3 && dateNumber !== 13) {
+				dateNumber += ($scope.language.toUpperCase() !== "FR"?"rd":"");
 			}
 			else {
-				dateNumber += "th";
+				dateNumber += ($scope.language.toUpperCase() !== "FR"?"th":"");
 			}
 			// Single date chosen
 			// Eg. 4th
-			if (dates.length == 1) {
+			if (dates.length === 1) {
 				$scope.selectedDatesInMonthText = dateNumber;
 			}
 			// Concat commas
@@ -873,7 +923,7 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 			// Replace last comma with an "and"
 			// Eg. 1st, 2nd and 4th
 			else {
-				$scope.selectedDatesInMonthText = $scope.selectedDatesInMonthText.slice(0,-2) + " and " + dateNumber;
+				$scope.selectedDatesInMonthText = $scope.selectedDatesInMonthText.slice(0,-2) + $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.AND') + dateNumber;
 			}
 		});
 	};
@@ -994,10 +1044,10 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 		styleActive: true,
 		buttonClasses: 'btn btn-default btn-frequency-select',
 		smartButtonTextProvider: function (selectionArray) {
-			if (selectionArray.length == 1) {
-				return '1 Month Selected';
+			if (selectionArray.length === 1) {
+				return $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.1_MONTH_SELECTED');
 			}
-			return selectionArray.length + " Months Selected";
+			return selectionArray.length + $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.MONTHS_SELECTED');
 		}
 	};
 	// event options for month dropdown menu
