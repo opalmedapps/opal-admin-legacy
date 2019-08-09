@@ -629,7 +629,9 @@
       "DAYS_SELECTED": " journées sélectionnées",
       "1_MONTH_SELECTED": "1 mois sélectionné",
       "MONTHS_SELECTED": " mois sélectionnés",
-      "SELECT": " Sélectionner"
+      "SELECT": " Sélectionner",
+      "TODAY": "Aujourd'hui",
+      "RESET": "Vider"
     },
     "PUBLICATION_TOOL_EDIT": {
 
