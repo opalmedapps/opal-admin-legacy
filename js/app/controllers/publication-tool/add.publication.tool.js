@@ -61,8 +61,6 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 		$filter('translate')('DATEPICKER.DECEMBER')
 	];
 
-	console.log($locale["DATETIME_FORMATS"]);
-
 	$scope.numOfCompletedSteps = 0;
 	$scope.preview = [];
 	$scope.atEntered = '';
@@ -260,8 +258,8 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 			else
 				entry.name_display = entry.name;
 		});
-	}).catch(function(response) {
-		alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ERROR_FILTERS') + response.status + " " + response.data);
+	}).catch(function(err) {
+		alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ERROR_FILTERS') + err.status + " " + err.data);
 	});
 
 	$scope.submitTemplateQuestion = function () {
@@ -394,10 +392,8 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 
 	// Function to toggle necessary changes when updating the age
 	$scope.ageUpdate = function () {
-
 		$scope.demoSection.open = true;
-		if ($scope.demoTrigger.age.min == 0 && $scope.demoTrigger.age.max == 130
-			&& !$scope.demoTrigger.sex) {
+		if ($scope.demoTrigger.age.min === 0 && $scope.demoTrigger.age.max === 130 && !$scope.demoTrigger.sex) {
 			$scope.demoSection.open = false;
 		}
 
