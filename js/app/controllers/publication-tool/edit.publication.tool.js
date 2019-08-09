@@ -1,8 +1,9 @@
-angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('publication.tool.edit', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, filterCollectionService, FrequencyFilterService, Session) {
+angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('publication.tool.edit', function ($scope, $state, $filter, $uibModal, $uibModalInstance, $locale, questionnaireCollectionService, filterCollectionService, FrequencyFilterService, Session) {
 
 	// initialize default variables & lists
 	$scope.changesMade = false;
 	$scope.publishedQuestionnaire = {};
+	$scope.language = Session.retrieveObject('user').language;
 
 	// get current user id
 	var user = Session.retrieveObject('user');
@@ -16,9 +17,55 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 	$scope.filter = $filter('filter');
 
 	// Initialize a list of sexes
-	$scope.sexes = [
-		{ name: 'Male' },
-		{ name: 'Female' }
+	// Initialize a list of sexes
+	if ($scope.language.toUpperCase() === "FR")
+		$scope.sexes = [
+			{
+				name: 'Male',
+				display: "Homme",
+				icon: 'male'
+			}, {
+				name: 'Female',
+				display: "Femme",
+				icon: 'female'
+			}
+		];
+	else
+		$scope.sexes = [
+			{
+				name: 'Male',
+				display: "Male",
+				icon: 'male'
+			}, {
+				name: 'Female',
+				display: "Female",
+				icon: 'female'
+			}
+		];
+
+	$locale["DATETIME_FORMATS"]["SHORTDAY"] = [
+		$filter('translate')('DATEPICKER.SUNDAY_S'),
+		$filter('translate')('DATEPICKER.MONDAY_S'),
+		$filter('translate')('DATEPICKER.TUESDAY_S'),
+		$filter('translate')('DATEPICKER.WEDNESDAY_S'),
+		$filter('translate')('DATEPICKER.THURSDAY_S'),
+		$filter('translate')('DATEPICKER.FRIDAY_S'),
+		$filter('translate')('DATEPICKER.SATURDAY_S')
+	];
+
+	$locale["DATETIME_FORMATS"]["MONTH"] = [
+		$filter('translate')('DATEPICKER.JANUARY'),
+		$filter('translate')('DATEPICKER.FEBRUARY'),
+		$filter('translate')('DATEPICKER.MARCH'),
+		$filter('translate')('DATEPICKER.APRIL'),
+		$filter('translate')('DATEPICKER.MAY'),
+		$filter('translate')('DATEPICKER.JUNE'),
+		$filter('translate')('DATEPICKER.JULY'),
+		$filter('translate')('DATEPICKER.AUGUST'),
+		$filter('translate')('DATEPICKER.SEPTEMBER'),
+		$filter('translate')('DATEPICKER.OCTOBER'),
+		$filter('translate')('DATEPICKER.NOVEMBER'),
+		$filter('translate')('DATEPICKER.DECEMBER')
 	];
 
 	// Initialize to hold demographic triggers
@@ -26,8 +73,12 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 		sex: null,
 		age: {
 			min: 0,
-			max: 100
+			max: 130
 		}
+	};
+
+	$scope.projectText = {
+		buttonDefaultText: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SELECT'),
 	};
 
 	$scope.selectAll = {
@@ -140,7 +191,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 		}
 
 	}).catch(function (response) {
-		alert('Error occurred getting published questionnaire details after modal open:' + response.status + " " + response.data);
+		alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ERROR_DETAILS') + response.status + " " + response.data);
 
 	}).finally(function () {
 
@@ -150,6 +201,42 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 		// Call our API service to get each trigger
 		filterCollectionService.getFilters().then(function (response) {
 
+			response.data.appointments.forEach(function(entry) {
+				if($scope.language.toUpperCase() === "FR")
+					entry.name_display = entry.name_FR;
+				else
+					entry.name_display = entry.name;
+			});
+			response.data.dx.forEach(function(entry) {
+				if($scope.language.toUpperCase() === "FR")
+					entry.name_display = entry.name_FR;
+				else
+					entry.name_display = entry.name;
+			});
+			response.data.appointmentStatuses.forEach(function(entry) {
+				if($scope.language.toUpperCase() === "FR") {
+
+					switch(entry.name) {
+						case "Open":
+							entry.name_display = "Ouvert";
+							break;
+						case "Completed":
+							entry.name_display = "Complété";
+							break;
+						case "Cancelled":
+							entry.name_display = "Annulé";
+							break;
+						case "Checked In":
+							entry.name_display = "Enregistré";
+							break;
+						default:
+							entry.name_display = "Non traduit";
+					}
+				}
+				else
+					entry.name_display = entry.name;
+			});
+
 			$scope.appointmentTriggerList = checkAdded(response.data.appointments, $scope.selectAll.appointment); // Assign value
 			$scope.dxTriggerList = checkAdded(response.data.dx, $scope.selectAll.diagnosis);
 			$scope.doctorTriggerList = checkAdded(response.data.doctors, $scope.selectAll.doctor);
@@ -157,8 +244,8 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 			$scope.patientTriggerList = checkAdded(response.data.patients, $scope.selectAll.patient);
 			$scope.appointmentStatusList = checkAdded(response.data.appointmentStatuses);
 
-		}).catch(function(response) {
-			alert('Error occurred getting filter list:' + response.status + " " + response.data);
+		}).catch(function(err) {
+			alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ERROR_FILTERS') + err.status + " " + err.data);
 		});
 
 		processingModal.close(); // hide modal
@@ -375,17 +462,6 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 		}
 	};
 
-	// Initialize a list of sexes
-	$scope.sexes = [
-		{
-			name: 'Male',
-			icon: 'male'
-		}, {
-			name: 'Female',
-			icon: 'female'
-		}
-	];
-
 	// Function to toggle necessary changes when updating the sex
 	$scope.sexUpdate = function (sex) {
 
@@ -584,12 +660,21 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 		if ($scope.frequencySelected.id == 'custom') {
 			if (newValue === 1) { // Singular
 				angular.forEach($scope.frequencyUnits, function (unit) {
-					unit.name = unit.name.slice(0,-1); // remove plural 's'
+					if (unit.name !== "Mois")
+						unit.name = unit.name.slice(0,-1); // remove plural 's'
 				});
 			}
 			else if (newValue > 1 && oldValue === 1) { // Was singular now plural
 				angular.forEach($scope.frequencyUnits, function (unit) {
-					unit.name = unit.name + 's'; // pluralize words
+					if (unit.name !== "Mois")
+						unit.name = unit.name + 's'; // pluralize words
+				});
+			}
+		} else {
+			if (newValue <= 1 && oldValue > 1) {
+				angular.forEach($scope.frequencyUnits, function (unit) {
+					if (unit.name !== "Mois")
+						unit.name = unit.name.slice(0,-1); // remove plural 's'
 				});
 			}
 		}
@@ -614,9 +699,9 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 		buttonClasses: 'btn btn-default btn-frequency-select',
 		smartButtonTextProvider: function (selectionArray) {
 			if (selectionArray.length == 1) {
-				return '1 Day Selected';
+				return $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.1_DAY_SELECTED');
 			}
-			return selectionArray.length + " Days Selected";
+			return selectionArray.length + $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.DAYS_SELECTED');
 		}
 	};
 	// event options for week dropdown menu
@@ -872,9 +957,9 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 		buttonClasses: 'btn btn-default btn-frequency-select',
 		smartButtonTextProvider: function (selectionArray) {
 			if (selectionArray.length == 1) {
-				return '1 Month Selected';
+				return $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.1_MONTH_SELECTED');
 			}
-			return selectionArray.length + " Months Selected";
+			return selectionArray.length + $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.MONTHS_SELECTED');
 		}
 	};
 	// event options for month dropdown menu
@@ -919,8 +1004,8 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 			// Add demographic triggers, if defined
 			if ($scope.demoTrigger.sex)
 				$scope.publishedQuestionnaire.triggers.push({ id: $scope.demoTrigger.sex, type: 'Sex' });
-			if ($scope.demoTrigger.age.min >= 0 && $scope.demoTrigger.age.max <= 100) { // i.e. not empty
-				if ($scope.demoTrigger.age.min !== 0 || $scope.demoTrigger.age.max != 100) { // triggers were changed
+			if ($scope.demoTrigger.age.min >= 0 && $scope.demoTrigger.age.max <= 130) { // i.e. not empty
+				if ($scope.demoTrigger.age.min !== 0 || $scope.demoTrigger.age.max != 130) { // triggers were changed
 					$scope.publishedQuestionnaire.triggers.push({
 						id: String($scope.demoTrigger.age.min).concat(',', String($scope.demoTrigger.age.max)),
 						type: 'Age'
@@ -977,11 +1062,15 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 					if (response.code === 200) {
 						$scope.setBannerClass('success');
 						$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.publishedQuestionnaire.name_EN + "/ " + $scope.publishedQuestionnaire.name_FR + "\"!";
-						$uibModalInstance.close();
 						$scope.showBanner();
 					}
 					else
-						alert("An error occurred, code "+response.code+". Please review the error message below.\r\n" + response.message);
+						alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ERROR_PUBLICATION'));
+					$uibModalInstance.close();
+				},
+				error: function () {
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ERROR_PUBLICATION'));
+					$uibModalInstance.close();
 				}
 			});
 		}
