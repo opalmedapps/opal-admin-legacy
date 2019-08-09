@@ -621,7 +621,10 @@
       "1_DAY_SELECTED": "1 day selected",
       "DAYS_SELECTED": " days selected",
       "1_MONTH_SELECTED": "1 month selected",
-      "MONTHS_SELECTED": " months selected"
+      "MONTHS_SELECTED": " months selected",
+      "SELECT": "Select",
+      "TODAY": "Today",
+      "RESET": "Clear"
     },
     "PUBLICATION_TOOL_EDIT": {
       "TITLE": "Edit Published Questionnaire",

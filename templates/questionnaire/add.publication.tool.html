@@ -570,7 +570,7 @@
                                             </label>
                                             <div class="col-xs-12 col-lg-9">
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newQuestionnaireToPublish.occurrence.start_date" ng-change="setChangesMade()" is-open="popupStart.opened"datepicker-options="dateOptionsStart" ng-required="true" close-text="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.CLOSE'|translate}}" />
+                                                    <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newQuestionnaireToPublish.occurrence.start_date" ng-change="setChangesMade()" is-open="popupStart.opened"datepicker-options="dateOptionsStart" ng-required="true" close-text="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.CLOSE'|translate}}" current-text="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TODAY'|translate}}" clear-text="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.RESET'|translate}}" />
                                                     <span class="input-group-btn">
                                                         <button class="btn btn-default" ng-click="openStart($event)"><i class="glyphicon glyphicon-calendar"></i></button>
                                                     </span>
@@ -593,7 +593,7 @@
                                             </div>
                                             <div class="col-xs-12 col-lg-9" style="margin-bottom:10px;">
                                                 <div class="input-group">
-                                                    <input ng-if="addEndDate" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newQuestionnaireToPublish.occurrence.end_date" ng-change="setChangesMade()" is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true" close-text="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.CLOSE'|translate}}" />
+                                                    <input ng-if="addEndDate" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newQuestionnaireToPublish.occurrence.end_date" ng-change="setChangesMade()" is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true" close-text="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.CLOSE'|translate}}" current-text="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TODAY'|translate}}" clear-text="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.RESET'|translate}}" />
                                                     <span ng-if="addEndDate" class="input-group-btn">
                                                         <button class="btn btn-default" ng-click="openEnd($event)"><i class="glyphicon glyphicon-calendar"></i></button>
                                                     </span>
