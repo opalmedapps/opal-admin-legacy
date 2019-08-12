@@ -9,8 +9,10 @@
     <div class="modal-buttons col-xs-12 col-md-6">
         <span>
             <form method="post" ng-submit="updatePublishedQuestionnaire()">
-                <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SAVE'|translate}}">
-                <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.CANCEL'|translate}}">
+                <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit"
+                       value="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SAVE'|translate}}">
+                <input ng-click="cancel()" class="btn btn-danger cancel" type="button"
+                       value="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.CANCEL'|translate}}">
             </form>
         </span>
     </div>
@@ -21,20 +23,26 @@
         <div uib-accordion-group is-open="titleSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TITLES'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                    <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TITLES'|translate}} </strong><i
+                        class="pull-right glyphicon"
+                        ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="row">
                 <div class="col-xs-12 col-sm-6">
                     <div class="input-group">
                         <span class="input-group-addon">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ENGLISH_TITLE'|translate}}</span>
-                        <textarea class="form-control" rows="1" ng-model="publishedQuestionnaire.name_EN" placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.PLACEHOLDER_ENGLISH_TITLE'|translate}}" ng-change="detailsUpdated()"></textarea>
+                        <textarea class="form-control" rows="1" ng-model="publishedQuestionnaire.name_EN"
+                                  placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.PLACEHOLDER_ENGLISH_TITLE'|translate}}"
+                                  ng-change="detailsUpdated()"></textarea>
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6">
                     <div class="input-group">
                         <span class="input-group-addon">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.FRENCH_TITLE'|translate}}</span>
-                        <textarea class="form-control" rows="1" ng-model="publishedQuestionnaire.name_FR" placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.PLACEHOLDER_FRENCH_TITLE'|translate}}" ng-change="detailsUpdated()"></textarea>
+                        <textarea class="form-control" rows="1" ng-model="publishedQuestionnaire.name_FR"
+                                  placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.PLACEHOLDER_FRENCH_TITLE'|translate}}"
+                                  ng-change="detailsUpdated()"></textarea>
                     </div>
                 </div>
             </div>
@@ -43,40 +51,70 @@
         <div uib-accordion-group is-open="frequencySection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.FREQUENCY'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': frequencySection.open, 'glyphicon-chevron-right': !frequencySection.open}"></i>
+                    <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.FREQUENCY'|translate}} </strong><i
+                        class="pull-right glyphicon"
+                        ng-class="{'glyphicon-chevron-down': frequencySection.open, 'glyphicon-chevron-right': !frequencySection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
                 <div class="row">
                     <div class="col-xs-12 col-sm-4">
-                        <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.REPEAT'|translate}}</strong><br>
+                        <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.REPEAT'|translate}}</strong><br/>
                         <p>
                             <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                             <span ng-if="!showFrequency">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.NA'|translate}}</span>
                             <span ng-if="frequencySelected.id != 'custom' && showFrequency">{{frequencySelected.name}}</span>
-                            <span ng-if="frequencySelected.id == 'custom'">
-                            Every
-                            <span ng-if="customFrequency.meta_value != 1">{{customFrequency.meta_value}}</span>
-                            {{customFrequency.unit.name}}
-                            <span ng-if="selectedDaysInWeek.length">On {{selectedDaysInWeekText}}</span>
-                            <span ng-if="selectedMonthsInYear.length">in {{selectedMonthsInYearText}} </span>
-                            <span ng-if="selectedDatesInMonth.length">on the {{selectedDatesInMonthText}} of
-                            <span ng-if="selectedMonthsInYear.length > 1">each</span>
-                            <span ng-if="selectedMonthsInYear.length < 2">the</span>
-                            month</span>
-                            <span ng-if="selectedWeekNumberInMonth.id && selectedSingleDayInWeek.id">on the {{selectedWeekNumberInMonthText}} {{selectedSingleDayInWeekText}} of
-                            <span ng-if="selectedMonthsInYear.length > 1">each</span>
-                            <span ng-if="selectedMonthsInYear.length < 2">the</span>
-                            month</span>
+                            <span ng-if="frequencySelected.id == 'custom' && language == 'EN'">
+                                Every
+                                <span ng-if="customFrequency.meta_value != 1">{{customFrequency.meta_value}}</span>
+                                {{customFrequency.unit.name}}
+                                <span ng-if="selectedDaysInWeek.length">On {{selectedDaysInWeekText}}</span>
+                                <span ng-if="selectedMonthsInYear.length">in {{selectedMonthsInYearText}} </span>
+                                <span ng-if="selectedDatesInMonth.length">on the {{selectedDatesInMonthText}} of
+                                    <span ng-if="selectedMonthsInYear.length > 1">each</span>
+                                    <span ng-if="selectedMonthsInYear.length < 2">the</span>
+                                    month
+                                </span>
+                                <span ng-if="selectedWeekNumberInMonth.id && selectedSingleDayInWeek.id">on the {{selectedWeekNumberInMonthText}} {{selectedSingleDayInWeekText}} of
+                                    <span ng-if="selectedMonthsInYear.length > 1">each</span>
+                                    <span ng-if="selectedMonthsInYear.length < 2">the</span>
+                                    month
+                                </span>
+                            </span>
+                            <span ng-if="frequencySelected.id == 'custom' && language == 'FR'">
+                                <span ng-show="customFrequency.unit.id == 'week'">
+                                    {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TOUTES_LES'|translate}}
+                                </span>
+                                <span ng-hide="customFrequency.unit.id == 'week'">
+                                    {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TOUS_LES'|translate}}
+                                </span>
+                                <span ng-if="customFrequency.meta_value != 1">{{customFrequency.meta_value}}</span>
+                                {{customFrequency.unit.name_fr}}
+                                <span ng-if="selectedDaysInWeek.length">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ON'|translate}} {{selectedDaysInWeekText}}.</span>
+                                <span ng-if="selectedMonthsInYear.length">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.IN'|translate}} {{selectedMonthsInYearText}} </span>
+                                <span ng-if="selectedDatesInMonth.length">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ON_THE'|translate}} {{selectedDatesInMonthText}} {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.OF_2'|translate}}
+                                    <span ng-if="selectedMonthsInYear.length > 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.EACH'|translate}}</span>
+                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.THE_MONTH'|translate}}.
+                                            </span>
+                                            <span ng-if="selectedWeekNumberInMonth.id && selectedSingleDayInWeek.id">
+                                                <span ng-if="setSelectedMonthsInYearText && customFrequency.unit.id != 'month'">-</span>
+                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ON_THE'|translate}} {{selectedWeekNumberInMonthText}} {{selectedSingleDayInWeekText}}
+
+                                                <span ng-if="setSelectedMonthsInYearText && selectedMonthsInYear.length <= 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.OF_2'|translate}}</span>
+                                                <span ng-if="!setSelectedMonthsInYearText || selectedMonthsInYear.length > 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.OF'|translate}}</span>
+
+                                                <span ng-if="selectedMonthsInYear.length > 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.EACH'|translate}}</span>
+                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.THE_MONTH'|translate}}.
+                                            </span>
                             </span>
                         </p>
                     </div>
                     <div class="col-xs-12 col-sm-4">
-                        <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.REPEAT_START'|translate}}</strong><br>
+                        <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.REPEAT_START'|translate}}</strong><br/>
                         <p>
                             <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                             <span ng-if="publishedQuestionnaire.occurrence.start_date">
-                            {{publishedQuestionnaire.occurrence.start_date | date:'fullDate' }}
+                            {{publishedQuestionnaire.occurrence.start_date | date:'yyyy-MM-dd' }}
                             </span>
                             <span ng-if="!publishedQuestionnaire.occurrence.start_date">N/A</span>
                         </p>
@@ -86,7 +124,7 @@
                         <p>
                             <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                             <span ng-if="publishedQuestionnaire.occurrence.end_date">
-                            {{publishedQuestionnaire.occurrence.end_date | date:'fullDate' }}
+                            {{publishedQuestionnaire.occurrence.end_date | date:'yyyy-MM-dd' }}
                             </span>
                             <span ng-if="!publishedQuestionnaire.occurrence.end_date">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.NEVER'|translate}}</span>
                             </span>
@@ -114,7 +152,9 @@
                                 {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.REPEAT'|translate}}
                             </label>
                             <div class="col-xs-8">
-                                <select class="form-control" ng-options="presetFrequency as presetFrequency.name for presetFrequency in presetFrequencies track by presetFrequency.id" ng-model="frequencySelected" ng-change="selectFrequency(frequencySelected)">
+                                <select class="form-control"
+                                        ng-options="presetFrequency as presetFrequency.name for presetFrequency in presetFrequencies track by presetFrequency.id"
+                                        ng-model="frequencySelected" ng-change="selectFrequency(frequencySelected)">
                                 </select>
                             </div>
                         </div>
@@ -128,9 +168,16 @@
                             </label>
                             <div class="col-xs-12 col-lg-9">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="publishedQuestionnaire.occurrence.start_date" ng-change="setChangesMade()" is-open="popupStart.opened"datepicker-options="dateOptionsStart" ng-required="true" close-text="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.CLOSE'|translate}}" current-text="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TODAY'|translate}}" clear-text="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.RESET'|translate}}" />
+                                    <input type="text" class="form-control" uib-datepicker-popup="{{format}}"
+                                           ng-model="publishedQuestionnaire.occurrence.start_date"
+                                           ng-change="setChangesMade()" is-open="popupStart.opened"
+                                           datepicker-options="dateOptionsStart" ng-required="true"
+                                           close-text="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.CLOSE'|translate}}"
+                                           current-text="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TODAY'|translate}}"
+                                           clear-text="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.RESET'|translate}}"/>
                                     <span class="input-group-btn">
-                                    <button class="btn btn-default" ng-click="openStart($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                    <button class="btn btn-default" ng-click="openStart($event)"><i
+                                            class="glyphicon glyphicon-calendar"></i></button>
                                     </span>
                                 </div>
                             </div>
@@ -151,9 +198,17 @@
                             </div>
                             <div class="col-xs-12 col-lg-9" style="margin-bottom:10px;">
                                 <div class="input-group">
-                                    <input ng-if="addEndDate" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="publishedQuestionnaire.occurrence.end_date" ng-change="setChangesMade()" is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true" close-text="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.CLOSE'|translate}}" current-text="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TODAY'|translate}}" clear-text="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.RESET'|translate}}" />
+                                    <input ng-if="addEndDate" type="text" class="form-control"
+                                           uib-datepicker-popup="{{format}}"
+                                           ng-model="publishedQuestionnaire.occurrence.end_date"
+                                           ng-change="setChangesMade()" is-open="popupEnd.opened"
+                                           datepicker-options="dateOptionsEnd" ng-required="true"
+                                           close-text="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.CLOSE'|translate}}"
+                                           current-text="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TODAY'|translate}}"
+                                           clear-text="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.RESET'|translate}}"/>
                                     <span ng-if="addEndDate" class="input-group-btn">
-                                    <button class="btn btn-default" ng-click="openEnd($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                    <button class="btn btn-default" ng-click="openEnd($event)"><i
+                                            class="glyphicon glyphicon-calendar"></i></button>
                                     </span>
                                 </div>
                             </div>
@@ -175,47 +230,77 @@
                                 {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.REPEAT_INTERVAL'|translate}}
                             </label>
                             <div class="col-xs-3">
-                                <input class="form-control" ng-model="customFrequency.meta_value" ng-change="setChangesMade()" type="number" max="59" min="1">
+                                <input class="form-control" ng-model="customFrequency.meta_value"
+                                       ng-change="setChangesMade()" type="number" max="59" min="1">
                             </div>
                             <div class="col-xs-6">
-                                <select class="form-control" ng-options="unit as unit.name for unit in frequencyUnits track by unit.id" ng-model="customFrequency.unit" ng-change="selectRepeatInterval(customFrequency.unit)">
+                                <select class="form-control"
+                                        ng-options="unit as unit.name for unit in frequencyUnits track by unit.id"
+                                        ng-model="customFrequency.unit"
+                                        ng-change="selectRepeatInterval(customFrequency.unit)">
                                 </select>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-12 col-sm-4" ng-if="frequencySelected.id == 'custom' && customFrequency.unit.id != 'day'">
+                <div class="col-xs-12 col-sm-4"
+                     ng-if="frequencySelected.id == 'custom' && customFrequency.unit.id != 'day'">
                     <div class="form-horizontal">
                         <div class="form-group">
                             <label class="control-label col-xs-12">
                                 <span ng-if="customFrequency.unit.id == 'week'">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.REPEAT_ON_DAYS'|translate}}</span>
                                 <span ng-if="customFrequency.unit.id == 'month' || customFrequency.unit.id == 'year'">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.REPEAT_OPTIONS'|translate}}</span>
                             </label>
-                            <div class="col-xs-8" style="margin-bottom: 10px;" ng-if="customFrequency.unit.id == 'week'">
-                                <div ng-dropdown-multiselect="" options="daysInWeek" selected-model="selectedDaysInWeek" extra-settings="weekDropdownSettings" events="weekDropdownEvents" translation-texts="projectText"></div>
+                            <div class="col-xs-8" style="margin-bottom: 10px;"
+                                 ng-if="customFrequency.unit.id == 'week'">
+                                <div ng-dropdown-multiselect="" options="daysInWeek" selected-model="selectedDaysInWeek"
+                                     extra-settings="weekDropdownSettings" events="weekDropdownEvents"
+                                     translation-texts="projectText"></div>
                             </div>
-                            <div ng-if="customFrequency.unit.id == 'year'"class="col-xs-10" style="margin-bottom: 10px;">
-                                <div ng-dropdown-multiselect="" options="monthsInYear" selected-model="selectedMonthsInYear" extra-settings="monthDropdownSettings" events="monthDropdownEvents" translation-texts="projectText"></div>
+                            <div ng-if="customFrequency.unit.id == 'year'" class="col-xs-10"
+                                 style="margin-bottom: 10px;">
+                                <div ng-dropdown-multiselect="" options="monthsInYear"
+                                     selected-model="selectedMonthsInYear" extra-settings="monthDropdownSettings"
+                                     events="monthDropdownEvents" translation-texts="projectText"></div>
                             </div>
-                            <div ng-if="customFrequency.unit.id == 'month'" class="col-xs-12" style="margin-bottom: 10px;">
+                            <div ng-if="customFrequency.unit.id == 'month'" class="col-xs-12"
+                                 style="margin-bottom: 10px;">
                                 <div class="btn-group btn-group-justified" role="group">
                                     <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-default" ng-class="{active: repeatSub == 'onDate'}" ng-click="setRepeatSub('onDate')">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ON_DATE'|translate}}</button>
+                                        <button type="button" class="btn btn-default"
+                                                ng-class="{active: repeatSub == 'onDate'}"
+                                                ng-click="setRepeatSub('onDate')">
+                                            {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ON_DATE'|translate}}
+                                        </button>
                                     </div>
                                     <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-default" ng-class="{active: repeatSub == 'onWeek'}" ng-click="setRepeatSub('onWeek')">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ON_WEEK'|translate}}</button>
+                                        <button type="button" class="btn btn-default"
+                                                ng-class="{active: repeatSub == 'onWeek'}"
+                                                ng-click="setRepeatSub('onWeek')">
+                                            {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ON_WEEK'|translate}}
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                            <div ng-if="repeatSub == 'onDate' && customFrequency.unit.id == 'month'" class="no-calendar-header col-xs-12" style="margin-bottom: 10px;">
-                                <multiple-date-picker day-click="setChangesMade()" ng-model="selectedDatesInMonth" month="staticMonth"></multiple-date-picker>
+                            <div ng-if="repeatSub == 'onDate' && customFrequency.unit.id == 'month'"
+                                 class="no-calendar-header col-xs-12" style="margin-bottom: 10px;">
+                                <multiple-date-picker day-click="setChangesMade()" ng-model="selectedDatesInMonth"
+                                                      month="staticMonth"></multiple-date-picker>
                             </div>
-                            <div ng-if="repeatSub == 'onWeek' || customFrequency.unit.id == 'year'" class="col-xs-4" style="margin-bottom: 10px;">
-                                <select class="form-control" ng-options="week as week.name for week in weekNumbersInMonth track by week.id" ng-model="selectedWeekNumberInMonth" ng-change="selectWeekInMonth(selectedWeekNumberInMonth)" >
+                            <div ng-if="repeatSub == 'onWeek' || customFrequency.unit.id == 'year'" class="col-xs-4"
+                                 style="margin-bottom: 10px;">
+                                <select class="form-control"
+                                        ng-options="week as week.name for week in weekNumbersInMonth track by week.id"
+                                        ng-model="selectedWeekNumberInMonth"
+                                        ng-change="selectWeekInMonth(selectedWeekNumberInMonth)">
                                 </select>
                             </div>
-                            <div ng-if="repeatSub == 'onWeek' || customFrequency.unit.id == 'year'" class="col-xs-6" style="margin-bottom: 10px;">
-                                <select class="form-control" ng-options="day as day.name for day in daysInWeek track by day.id" ng-model="selectedSingleDayInWeek" ng-change="selectDayInWeek(selectedSingleDayInWeek, customFrequency.unit.id)">
+                            <div ng-if="repeatSub == 'onWeek' || customFrequency.unit.id == 'year'" class="col-xs-6"
+                                 style="margin-bottom: 10px;">
+                                <select class="form-control"
+                                        ng-options="day as day.name for day in daysInWeek track by day.id"
+                                        ng-model="selectedSingleDayInWeek"
+                                        ng-change="selectDayInWeek(selectedSingleDayInWeek, customFrequency.unit.id)">
                                     <option value="" selected="selected">---</option>
                                 </select>
                             </div>
@@ -228,13 +313,16 @@
         <div uib-accordion-group is-open="patientTriggerSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TRIGGER_PATIENT'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': patientTriggerSection.open, 'glyphicon-chevron-right': !patientTriggerSection.open}"></i>
+                    <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TRIGGER_PATIENT'|translate}} </strong><i
+                        class="pull-right glyphicon"
+                        ng-class="{'glyphicon-chevron-down': patientTriggerSection.open, 'glyphicon-chevron-right': !patientTriggerSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
                 <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.CURRENT_TRIGGER_PATIENT'|translate}}</strong><br>
                 <p>
-                    <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(patientTriggerList) || selectAll.patient.all"></span>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;"
+                          ng-if="!checkTriggers(patientTriggerList) || selectAll.patient.all"></span>
                     <span ng-if="!checkTriggers(patientTriggerList)">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.NO_TRIGGER'|translate}}</span>
                     <span ng-if="checkTriggers(patientTriggerList) && selectAll.patient.all">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ALL_PATIENTS'|translate}}</span>
                 <ul class="list-items" ng-if="checkTriggers(patientTriggerList) && !selectAll.patient.all">
@@ -247,17 +335,23 @@
             <div class="list-space">
                 <div class="input-group">
                     <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                    <input class="form-control" type="text" ng-model="patientSearchField" ng-change="searchPatient(patientSearchField)" placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SEARCH'|translate}}"/>
+                    <input class="form-control" type="text" ng-model="patientSearchField"
+                           ng-change="searchPatient(patientSearchField)"
+                           placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SEARCH'|translate}}"/>
                 </div>
                 <div style="padding: 7px;">
                     <label>
-                        <input type="checkbox" ng-click="selectAllTriggers(patientTriggerList, searchPatientFilter,selectAll.patient)" ng-checked="selectAll.patient.checked"> {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SELECT_ALL'|translate}}
+                        <input type="checkbox"
+                               ng-click="selectAllTriggers(patientTriggerList, searchPatientFilter,selectAll.patient)"
+                               ng-checked="selectAll.patient.checked">
+                        {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SELECT_ALL'|translate}}
                     </label>
                 </div>
                 <ul class="list-items">
                     <li ng-repeat="patient in patientTriggerList | filter: searchPatientFilter">
                         <label>
-                            <input type="checkbox" ng-click="selectTrigger(patient, selectAll.patient)" ng-checked="patient.added" /> {{patient.name}}
+                            <input type="checkbox" ng-click="selectTrigger(patient, selectAll.patient)"
+                                   ng-checked="patient.added"/> {{patient.name}}
                         </label>
                     </li>
                 </ul>
@@ -267,7 +361,9 @@
         <div uib-accordion-group is-open="demographicTriggerSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TRIGGER_DEMO'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': demographicTriggerSection.open, 'glyphicon-chevron-right': !demographicTriggerSection.open}"></i>
+                    <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TRIGGER_DEMO'|translate}} </strong><i
+                        class="pull-right glyphicon"
+                        ng-class="{'glyphicon-chevron-down': demographicTriggerSection.open, 'glyphicon-chevron-right': !demographicTriggerSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
@@ -288,11 +384,14 @@
             <div class="row">
                 <div class="col-xs-12 col-md-6">
                     <div class="row">
-                        <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SEX'|translate}}</h2>
+                        <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">
+                            {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SEX'|translate}}</h2>
                     </div>
                     <div class="row">
                         <div ng-repeat="sex in sexes" class="col-xs-12 col-sm-6">
-                            <div class="panel-container animated" style="cursor:pointer" ng-class="{pulse: hover, active: demoTrigger.sex == sex.name}" ng-click="sexUpdate(sex)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                            <div class="panel-container animated" style="cursor:pointer"
+                                 ng-class="{pulse: hover, active: demoTrigger.sex == sex.name}"
+                                 ng-click="sexUpdate(sex)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
                                 <div class="panel-info" ng-class="{active: demoTrigger.sex == sex.name}">
                                     <div class="panel-content" style="text-align:center">
                                         <span style="font-size:30px;" class="fa fa-{{sex.icon}}"></span>
@@ -305,19 +404,22 @@
                 </div>
                 <div class="col-xs-12 col-md-6">
                     <div class="row">
-                        <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.AGE_GROUP'|translate}}</h2>
+                        <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">
+                            {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.AGE_GROUP'|translate}}</h2>
                     </div>
                     <div class="row">
                         <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                             <div class="input-group">
                                 <span class="input-group-addon">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.MIN'|translate}}</span>
-                                <input class="form-control" ng-model="demoTrigger.age.min" ng-change="ageUpdate()" type="number" ng-max="demoTrigger.age.max" min="0">
+                                <input class="form-control" ng-model="demoTrigger.age.min" ng-change="ageUpdate()"
+                                       type="number" ng-max="demoTrigger.age.max" min="0">
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                             <div class="input-group">
                                 <span class="input-group-addon">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.MAX'|translate}}</span>
-                                <input class="form-control" ng-model="demoTrigger.age.max" ng-change="ageUpdate()" type="number" max="130" ng-min="demoTrigger.age.min">
+                                <input class="form-control" ng-model="demoTrigger.age.max" ng-change="ageUpdate()"
+                                       type="number" max="130" ng-min="demoTrigger.age.min">
                             </div>
                         </div>
                     </div>
@@ -328,7 +430,9 @@
         <div uib-accordion-group is-open="appointmentStatusTriggerSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TRIGGER_APPT_STATUS'|translate}}</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': appointmentStatusTriggerSection.open, 'glyphicon-chevron-right': !appointmentStatusTriggerSection.open}"></i>
+                    <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TRIGGER_APPT_STATUS'|translate}}</strong><i
+                        class="pull-right glyphicon"
+                        ng-class="{'glyphicon-chevron-down': appointmentStatusTriggerSection.open, 'glyphicon-chevron-right': !appointmentStatusTriggerSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
@@ -336,18 +440,25 @@
                 <p>
                     <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                     <span ng-if="!checkTriggers(appointmentStatusList)">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.NO_FILTER'|translate}}</span>
-                    <span ng-repeat="selectedAppointmentStatus in appointmentStatusList | filter: {added: 1} : 1" ng-if="checkTriggers(appointmentStatusList)">
+                    <span ng-repeat="selectedAppointmentStatus in appointmentStatusList | filter: {added: 1} : 1"
+                          ng-if="checkTriggers(appointmentStatusList)">
                     {{selectedAppointmentStatus.name_display}}
                     </span>
                 </p>
             </div>
             <div class="row">
-                <div ng-repeat="appointmentStatus in appointmentStatusList" class="col-xs-12 col-sm-4 col-md-3 item-panel-select">
-                    <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: appointmentStatus.added}" ng-click="appointmentStatusUpdate($index)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                <div ng-repeat="appointmentStatus in appointmentStatusList"
+                     class="col-xs-12 col-sm-4 col-md-3 item-panel-select">
+                    <div class="panel-container animated" style="cursor:pointer;"
+                         ng-class="{pulse: hover, active: appointmentStatus.added}"
+                         ng-click="appointmentStatusUpdate($index)" ng-mouseenter="hover=true"
+                         ng-mouseleave="hover=false">
                         <div class="panel-info" ng-class="{active: appointmentStatus.added}">
                             <div class="panel-content" style="text-align:center">
-                                <span ng-if="!appointmentStatus.added" style="font-size:30px;" class="glyphicon glyphicon-minus"></span>
-                                <span ng-if="appointmentStatus.added" style="font-size:30px;" class="glyphicon glyphicon-ok"></span>
+                                <span ng-if="!appointmentStatus.added" style="font-size:30px;"
+                                      class="glyphicon glyphicon-minus"></span>
+                                <span ng-if="appointmentStatus.added" style="font-size:30px;"
+                                      class="glyphicon glyphicon-ok"></span>
                                 <div class="option-panel-title">{{appointmentStatus.name_display}}</div>
                             </div>
                         </div>
@@ -359,13 +470,16 @@
         <div uib-accordion-group is-open="appointmentTriggerSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TRIGGER_APPT'|translate}}</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': appointmentTriggerSection.open, 'glyphicon-chevron-right': !appointmentTriggerSection.open}"></i>
+                    <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TRIGGER_APPT'|translate}}</strong><i
+                        class="pull-right glyphicon"
+                        ng-class="{'glyphicon-chevron-down': appointmentTriggerSection.open, 'glyphicon-chevron-right': !appointmentTriggerSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
                 <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.CURRENT_APPT'|translate}}</strong><br>
                 <p>
-                    <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(appointmentTriggerList) || selectAll.appointment.all"></span>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;"
+                          ng-if="!checkTriggers(appointmentTriggerList) || selectAll.appointment.all"></span>
                     <span ng-if="!checkTriggers(appointmentTriggerList)">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.NO_TRIGGER'|translate}}</span>
                     <span ng-if="checkTriggers(appointmentTriggerList) && selectAll.appointment.all">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ALL_APPT'|translate}}</span>
                 <ul class="list-items" ng-if="checkTriggers(appointmentTriggerList) && !selectAll.appointment.all">
@@ -378,17 +492,23 @@
             <div class="list-space">
                 <div class="input-group">
                     <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                    <input class="form-control" type="text" ng-model="appointmentSearchField" ng-change="searchAppointment(appointmentSearchField)" placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SEARCH'|translate}}"/>
+                    <input class="form-control" type="text" ng-model="appointmentSearchField"
+                           ng-change="searchAppointment(appointmentSearchField)"
+                           placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SEARCH'|translate}}"/>
                 </div>
                 <div style="padding: 7px;">
                     <label>
-                        <input type="checkbox" ng-click="selectAllTriggers(appointmentTriggerList, searchAppointmentFilter,selectAll.appointment)" ng-checked="selectAll.appointment.checked"> {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SELECT_ALL'|translate}}
+                        <input type="checkbox"
+                               ng-click="selectAllTriggers(appointmentTriggerList, searchAppointmentFilter,selectAll.appointment)"
+                               ng-checked="selectAll.appointment.checked">
+                        {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SELECT_ALL'|translate}}
                     </label>
                 </div>
                 <ul class="list-items">
                     <li ng-repeat="appointment in appointmentTriggerList | filter: searchAppointmentFilter">
                         <label>
-                            <input type="checkbox" ng-click="selectTrigger(appointment, selectAll.appointment)" ng-checked="appointment.added" /> {{appointment.name_display}}
+                            <input type="checkbox" ng-click="selectTrigger(appointment, selectAll.appointment)"
+                                   ng-checked="appointment.added"/> {{appointment.name_display}}
                         </label>
                     </li>
                 </ul>
@@ -398,13 +518,16 @@
         <div uib-accordion-group is-open="diagnosisTriggerSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TRIGGER_DIAGNOSIS'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': diagnosisTriggerSection.open, 'glyphicon-chevron-right': !diagnosisTriggerSection.open}"></i>
+                    <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TRIGGER_DIAGNOSIS'|translate}} </strong><i
+                        class="pull-right glyphicon"
+                        ng-class="{'glyphicon-chevron-down': diagnosisTriggerSection.open, 'glyphicon-chevron-right': !diagnosisTriggerSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
                 <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.CURRENT_TRIGGER_DIAGNOSIS'|translate}}</strong><br>
                 <p>
-                    <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(dxTriggerList) || selectAll.diagnosis.all"></span>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;"
+                          ng-if="!checkTriggers(dxTriggerList) || selectAll.diagnosis.all"></span>
                     <span ng-if="!checkTriggers(dxTriggerList)">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.NO_TRIGGER'|translate}}</span>
                     <span ng-if="checkTriggers(dxTriggerList) && selectAll.diagnosis.all">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ALL_DIAGNOSES'|translate}}</span>
                 <ul class="list-items" ng-if="checkTriggers(dxTriggerList) && !selectAll.diagnosis.all">
@@ -417,17 +540,23 @@
             <div class="list-space">
                 <div class="input-group">
                     <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                    <input class="form-control" type="text" ng-model="dxSearchField" ng-change="searchDiagnosis(dxSearchField)" placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SEARCH'|translate}}"/>
+                    <input class="form-control" type="text" ng-model="dxSearchField"
+                           ng-change="searchDiagnosis(dxSearchField)"
+                           placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SEARCH'|translate}}"/>
                 </div>
                 <div style="padding: 7px;">
                     <label>
-                        <input type="checkbox" ng-click="selectAllTriggers(dxTriggerList, searchDxFilter,selectAll.diagnosis)" ng-checked="selectAll.diagnosis.checked"> {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SELECT_ALL'|translate}}
+                        <input type="checkbox"
+                               ng-click="selectAllTriggers(dxTriggerList, searchDxFilter,selectAll.diagnosis)"
+                               ng-checked="selectAll.diagnosis.checked">
+                        {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SELECT_ALL'|translate}}
                     </label>
                 </div>
                 <ul class="list-items">
                     <li ng-repeat="dx in dxTriggerList | filter: searchDxFilter">
                         <label>
-                            <input type="checkbox" ng-click="selectTrigger(dx, selectAll.diagnosis)" ng-checked="dx.added" /> {{dx.name_display}}
+                            <input type="checkbox" ng-click="selectTrigger(dx, selectAll.diagnosis)"
+                                   ng-checked="dx.added"/> {{dx.name_display}}
                         </label>
                     </li>
                 </ul>
@@ -437,13 +566,16 @@
         <div uib-accordion-group is-open="doctorTriggerSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TRIGGER_DOCTOR'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': doctorTriggerSection.open, 'glyphicon-chevron-right': !doctorTriggerSection.open}"></i>
+                    <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TRIGGER_DOCTOR'|translate}} </strong><i
+                        class="pull-right glyphicon"
+                        ng-class="{'glyphicon-chevron-down': doctorTriggerSection.open, 'glyphicon-chevron-right': !doctorTriggerSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
                 <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.CURRENT_TRIGGER_DOCTOR'|translate}}</strong><br>
                 <p>
-                    <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(doctorTriggerList) || selectAll.doctor.all"></span>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;"
+                          ng-if="!checkTriggers(doctorTriggerList) || selectAll.doctor.all"></span>
                     <span ng-if="!checkTriggers(doctorTriggerList)">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.NO_TRIGGER'|translate}}</span>
                     <span ng-if="checkTriggers(doctorTriggerList) && selectAll.doctor.all">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ALL_DOCTORS'|translate}}</span>
                 <ul class="list-items" ng-if="checkTriggers(doctorTriggerList) && !selectAll.doctor.all">
@@ -456,17 +588,23 @@
             <div class="list-space">
                 <div class="input-group">
                     <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                    <input class="form-control" type="text" ng-model="doctorSearchField" ng-change="searchDoctor(doctorSearchField)" placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SEARCH'|translate}}"/>
+                    <input class="form-control" type="text" ng-model="doctorSearchField"
+                           ng-change="searchDoctor(doctorSearchField)"
+                           placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SEARCH'|translate}}"/>
                 </div>
                 <div style="padding: 7px;">
                     <label>
-                        <input type="checkbox" ng-click="selectAllTriggers(doctorTriggerList, searchDoctorFilter,selectAll.doctor)" ng-checked="selectAll.doctor.checked"> {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SELECT_ALL'|translate}}
+                        <input type="checkbox"
+                               ng-click="selectAllTriggers(doctorTriggerList, searchDoctorFilter,selectAll.doctor)"
+                               ng-checked="selectAll.doctor.checked">
+                        {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SELECT_ALL'|translate}}
                     </label>
                 </div>
                 <ul class="list-items">
                     <li ng-repeat="doctor in doctorTriggerList | filter: searchDoctorFilter">
                         <label>
-                            <input type="checkbox" ng-click="selectTrigger(doctor, selectAll.doctor)" ng-checked="doctor.added" /> {{doctor.name}}
+                            <input type="checkbox" ng-click="selectTrigger(doctor, selectAll.doctor)"
+                                   ng-checked="doctor.added"/> {{doctor.name}}
                         </label>
                     </li>
                 </ul>
@@ -476,13 +614,16 @@
         <div uib-accordion-group is-open="machineTriggerSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TRIGGER_TREATMENT'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': machineTriggerSection.open, 'glyphicon-chevron-right': !machineTriggerSection.open}"></i>
+                    <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.TRIGGER_TREATMENT'|translate}} </strong><i
+                        class="pull-right glyphicon"
+                        ng-class="{'glyphicon-chevron-down': machineTriggerSection.open, 'glyphicon-chevron-right': !machineTriggerSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
                 <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.CURRENT_TRIGGER_TREATMENT'|translate}}</strong><br>
                 <p>
-                    <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(machineTriggerList) || selectAll.machine.all"></span>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;"
+                          ng-if="!checkTriggers(machineTriggerList) || selectAll.machine.all"></span>
                     <span ng-if="!checkTriggers(machineTriggerList)">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.NO_TRIGGER'|translate}}</span>
                     <span ng-if="checkTriggers(machineTriggerList) && selectAll.machine.all">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ALL_TREATMENTS'|translate}}</span>
                 <ul class="list-items" ng-if="checkTriggers(machineTriggerList) && !selectAll.machine.all">
@@ -495,17 +636,23 @@
             <div class="list-space">
                 <div class="input-group">
                     <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                    <input class="form-control" type="text" ng-model="machineSearchField" ng-change="searchMachine(machineSearchField)" placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SEARCH'|translate}}"/>
+                    <input class="form-control" type="text" ng-model="machineSearchField"
+                           ng-change="searchMachine(machineSearchField)"
+                           placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SEARCH'|translate}}"/>
                 </div>
                 <div style="padding: 7px;">
                     <label>
-                        <input type="checkbox" ng-click="selectAllTriggers(machineTriggerList, searchMachineFilter,selectAll.machine)" ng-checked="selectAll.machine.checked"> {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SELECT_ALL'|translate}}
+                        <input type="checkbox"
+                               ng-click="selectAllTriggers(machineTriggerList, searchMachineFilter,selectAll.machine)"
+                               ng-checked="selectAll.machine.checked">
+                        {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.SELECT_ALL'|translate}}
                     </label>
                 </div>
                 <ul class="list-items">
                     <li ng-repeat="machine in machineTriggerList | filter: searchMachineFilter">
                         <label>
-                            <input type="checkbox" ng-click="selectTrigger(machine, selectAll.machine)" ng-checked="machine.added" /> {{machine.name}}
+                            <input type="checkbox" ng-click="selectTrigger(machine, selectAll.machine)"
+                                   ng-checked="machine.added"/> {{machine.name}}
                         </label>
                     </li>
                 </ul>
