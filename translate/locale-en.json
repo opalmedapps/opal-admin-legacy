@@ -690,7 +690,8 @@
       "SELECT": "Select",
       "TODAY": "Today",
       "RESET": "Clear",
-      "CLOSE": "Close"
+      "CLOSE": "Close",
+      "SUCCESS_UPDATE": "The publication has been updated successfully!"
     }
   },
   "PROFILE": {

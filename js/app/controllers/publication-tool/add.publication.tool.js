@@ -848,7 +848,6 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 				// Remove last comma and replace with "and"
 				// Eg. Sunday, Monday and Tuesday
 				$scope.selectedDaysInWeekText = $scope.selectedDaysInWeekText.slice(0,-2) + $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.AND') +
-
 					($scope.language.toUpperCase() === "FR" ? $scope.selectedDaysInWeek[i].name.toLowerCase() : $scope.selectedDaysInWeek[i].name);
 			}
 		}
@@ -893,19 +892,14 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 			// Conditionals for proper suffix
 			if (dateNumber === 1)
 				dateNumber += ($scope.language.toUpperCase() === "FR"?"er":"st");
-			else if (dateNumber % 10 === 1 && dateNumber !== 11) {
+			else if (dateNumber % 10 === 1 && dateNumber !== 11)
 				dateNumber += ($scope.language.toUpperCase() !== "FR"?"st":"");
-			}
-			else if (dateNumber % 10 === 2 && dateNumber !== 12) {
+			else if (dateNumber % 10 === 2 && dateNumber !== 12)
 				dateNumber += ($scope.language.toUpperCase() !== "FR"?"nd":"");
-
-			}
-			else if (dateNumber % 10 === 3 && dateNumber !== 13) {
+			else if (dateNumber % 10 === 3 && dateNumber !== 13)
 				dateNumber += ($scope.language.toUpperCase() !== "FR"?"rd":"");
-			}
-			else {
+			else
 				dateNumber += ($scope.language.toUpperCase() !== "FR"?"th":"");
-			}
 			// Single date chosen
 			// Eg. 4th
 			if (dates.length === 1) {

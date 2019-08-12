@@ -697,7 +697,19 @@
       "SELECT": " Sélectionner",
       "TODAY": "Aujourd'hui",
       "RESET": "Vider",
-      "CLOSE": "Fermer"
+      "CLOSE": "Fermer",
+      "TOUS_LES": "Tous les",
+      "TOUTES_LES": "Toutes les",
+      "ON": "le",
+      "IN": "",
+      "ON_THE": "le",
+      "OF": "de",
+      "OF_2": "du",
+      "EACH": "chaque",
+      "THE": "le",
+      "THE_MONTH": "mois",
+      "AND": " et ",
+      "SUCCESS_UPDATE": "La publication a été mise à jour avec succès!"
     }
   },
   "PROFILE": {
