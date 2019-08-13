@@ -90,14 +90,14 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 	$scope.gridOptions = {
 		data: 'postList',
 		columnDefs: [
-			{ field: 'name_'+ Session.retrieveObject('user').language, displayName: $filter('translate')('POSTS.LIST.TITLE_POST'), cellTemplate: cellTemplateName, width: '50%' },
+			{ field: 'name_'+ Session.retrieveObject('user').language, displayName: $filter('translate')('POSTS.LIST.TITLE_POST'), cellTemplate: cellTemplateName, width: '43%' },
 			{
-				field: 'type', displayName: $filter('translate')('POSTS.LIST.TYPE'), width: '15%', filter: {
+				field: 'type_display', displayName: $filter('translate')('POSTS.LIST.TYPE'), width: '25%', filter: {
 					type: uiGridConstants.filter.SELECT,
 					selectOptions: [{ value: 'Announcement', label: $filter('translate')('POSTS.LIST.ANNOUNCEMENT') }, { value: 'Patients for Patients', label: $filter('translate')('POSTS.LIST.PATIENTS_FOR_PATIENTS') }, { value: 'Treatment Team Message', label: $filter('translate')('POSTS.LIST.TREATMENT_TEAM_MESSAGE') }]
 				}
 			},
-			{ field: 'publish', displayName: $filter('translate')('POSTS.LIST.PUBLISH_FLAG'), width: '10%', cellTemplate: cellTemplatePublishCheckbox, enableFiltering: false },
+			{ field: 'publish', displayName: $filter('translate')('POSTS.LIST.PUBLISH_FLAG'), width: '7%', cellTemplate: cellTemplatePublishCheckbox, enableFiltering: false },
 			{ field: 'publish_date', displayName: $filter('translate')('POSTS.LIST.PUBLISH_DATE'), width: '15%' },
 //			{ field: 'disabled', displayName: 'Disabled Flag', width: '10%', cellTemplate: cellTemplateDisableCheckbox, filter: { term: 0 } },
 			{ name: $filter('translate')('POSTS.LIST.OPERATIONS'), cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '10%' }
@@ -193,12 +193,7 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 				data: $scope.postFlags,
 				success: function (response) {
 					// Call our API to get the list of existing posts
-					postCollectionService.getPosts().then(function (response) {
-						// Assign value
-						$scope.postList = response.data;
-					}).catch(function(response) {
-						alert($filter('translate')('POSTS.LIST.ERROR_POSTS') + "\r\n" + response.status + " - " + response.data);
-					});
+					getPostsList();
 					response = JSON.parse(response);
 					// Show success or failure depending on response
 					if (response.value) {
@@ -221,6 +216,33 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 		}
 	};
 
+	function getPostsList() {
+		postCollectionService.getPosts().then(function (response) {
+			response.data.forEach(function (row) {
+				if (Session.retrieveObject('user').language.toUpperCase() === "FR") {
+					switch(row.type) {
+						case "Treatment Team Message":
+							row.type_display = "Message de l'équipe soignante";
+							break;
+						case "Announcement":
+							row.type_display = "Annonce générale";
+							break;
+						case "Patients for Patients":
+							row.type_display = "Patients à votre aide";
+							break;
+						default:
+							row.type_display = "Non traduit";
+					}
+				}
+				else
+					row.type_display = row.type;
+			});
+			$scope.postList = response.data;
+		}).catch(function(response) {
+			alert($filter('translate')('POSTS.LIST.ERROR_POSTS') + "\r\n" + response.status + " - " + response.data);
+		});
+	}
+
 	$scope.switchDetailView = function (view) {
 		// only switch when there's no changes that have been made
 		if (!$scope.changesMade) {
@@ -231,12 +253,7 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 	$scope.$watch('detailView', function (view) {
 		if (view === 'list') {
 			// Call our API to get the list of existing posts
-			postCollectionService.getPosts().then(function (response) {
-				// Assign value
-				$scope.postList = response.data;
-			}).catch(function(response) {
-				alert($filter('translate')('POSTS.LIST.ERROR_POSTS') + "\r\n" + response.status + " - " + response.data);
-			});
+			getPostsList();
 			if ($scope.postListLogs.length) {
 				$scope.postListLogs = [];
 				$scope.gridApiLog.grid.refresh();
@@ -400,13 +417,7 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 		// After update, refresh the post list
 		modalInstance.result.then(function () {
 			// Call our API to get the list of existing posts
-			postCollectionService.getPosts().then(function (response) {
-
-				// Assign the retrieved response
-				$scope.postList = response.data;
-			}).catch(function(response) {
-				alert($filter('translate')('POSTS.LIST.ERROR_POSTS') + "\r\n" + response.status + " - " + response.data);
-			});
+			getPostsList();
 		});
 
 	};
@@ -428,12 +439,7 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 		// After delete, refresh the post list
 		modalInstance.result.then(function () {
 			// Call our API to get the list of existing posts
-			postCollectionService.getPosts().then(function (response) {
-				// Assign the retrieved response
-				$scope.postList = response.data;
-			}).catch(function(response) {
-				alert($filter('translate')('POSTS.LIST.ERROR_POSTS') + "\r\n" + response.status + " - " + response.data);
-			});
+			getPostsList();
 		});
 	};
 });
