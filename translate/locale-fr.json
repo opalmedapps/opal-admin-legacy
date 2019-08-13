@@ -712,6 +712,37 @@
       "SUCCESS_UPDATE": "La publication a été mise à jour avec succès!"
     }
   },
+  "LEGACY_QUESTIONNAIRE": {
+    "WARNING": "Ce module non traduit est obsolète et sera bientôt supprimé."
+  },
+  "POSTS": {
+    "LIST": {
+      "TITLE": "Publications",
+      "ADD": "Ajouter",
+      "SAVE": "Enregistrer",
+      "SEARCH": "Rechercher",
+      "LIST": "Liste",
+      "LOGS": "Journaux",
+      "NO_DATA": "Aucune donnée disponible",
+      "TITLE_POST": "Titre",
+      "TYPE": "Type",
+      "ANNOUNCEMENT": "Annonce",
+      "PATIENTS_FOR_PATIENTS": "Patients à votre aide",
+      "TREATMENT_TEAM_MESSAGE": "Message de l'équipe soignante",
+      "PUBLISH_FLAG": "Publier",
+      "PUBLISH_DATE": "Date de publication",
+      "OPERATIONS": "Opérations",
+      "EDIT": "Modifier",
+      "DELETE": "Supprimer",
+      "SUCCESS_FLAGS": "Les publications ont été mises à jour!",
+      "ERROR_POSTS": "Une erreur s'est produite lors de l'obtention de la liste des publications.",
+      "ERROR_POSTS_LOGS": "Une erreur s'est produite lors de l'obtention des journaux de publication."
+    },
+    "ADD": {},
+    "EDIT": {},
+    "GENERAL_LOGS": {},
+    "LOGS": {}
+  },
   "PROFILE": {
     "ACCOUNT": "Compte",
     "RESET_PASSWORD": "Réinitialiser le mot de passe",
