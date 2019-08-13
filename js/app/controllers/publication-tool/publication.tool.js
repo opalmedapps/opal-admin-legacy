@@ -93,15 +93,15 @@ angular.module('opalAdmin.controllers.publication.tool', ['ngAnimate', 'ngSaniti
 		$scope.gridOptions = {
 			data: 'publishedQuestionnaireList',
 			columnDefs: [
-				{ field: 'name_'+Session.retrieveObject('user').language, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.NAME'), cellTemplate: cellTemplateName, width: '45%' },
+				{ field: 'name_'+Session.retrieveObject('user').language, enableColumnMenu: false, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.NAME'), cellTemplate: cellTemplateName, width: '45%' },
 				{
-					field: 'publish', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.PUBLISH'), cellTemplate: cellTemplatePublish, width: '10%', filter: {
+					field: 'publish', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.PUBLISH'), enableColumnMenu: false, cellTemplate: cellTemplatePublish, width: '10%', filter: {
 						type: uiGridConstants.filter.SELECT,
-						selectOptions: [{ value: '1', label: 'Yes' }, { value: '0', label: 'No' }]
+						selectOptions: [{ value: '1', label: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.YES') }, { value: '0', label: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.NO') }]
 					}
 				},
-				{ field: 'expression_'+Session.retrieveObject('user').language, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.QUESTIONNAIRE'), cellTemplate: cellTemplateExpressions},
-				{ name: 'Operations', width: '10%', cellTemplate: cellTemplateOperations, enableFiltering: false, sortable: false }
+				{ field: 'expression_'+Session.retrieveObject('user').language, enableColumnMenu: false, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.QUESTIONNAIRE'), cellTemplate: cellTemplateExpressions},
+				{ name: 'Operations', width: '10%', cellTemplate: cellTemplateOperations, enableColumnMenu: false, enableFiltering: false, sortable: false }
 			],
 			enableFiltering: true,
 			enableSorting: true,

@@ -496,7 +496,9 @@
       "OPERATIONS": "Opérations",
       "SUCCESS_FLAGS": "Les publications des questionnaires ont été mises à jour!",
       "ERROR_PUBLICATION": "Une erreur est survenue lors de l'obtention de la liste de publications.",
-      "ERROR_FLAGS": "Une erreur est survenue lors de l'enregistrement des publications des questionnaires"
+      "ERROR_FLAGS": "Une erreur est survenue lors de l'enregistrement des publications des questionnaires",
+      "NO": "Non",
+      "YES": "Oui"
     },
     "PUBLICATION_TOOL_ADD" : {
       "BACK": "Retour",
@@ -729,6 +731,7 @@
       "ANNOUNCEMENT": "Annonce",
       "PATIENTS_FOR_PATIENTS": "Patients à votre aide",
       "TREATMENT_TEAM_MESSAGE": "Message de l'équipe soignante",
+      "NOT_TRANSLATED": "Non traduit",
       "PUBLISH_FLAG": "Publier",
       "PUBLISH_DATE": "Date de publication",
       "OPERATIONS": "Opérations",
