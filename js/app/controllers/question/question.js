@@ -58,23 +58,23 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 		$scope.gridLib = {
 			data: 'questionList',
 			columnDefs: [
-				{ field: 'locked', displayName: '', cellTemplate: cellTemplateLocked, width: '2%', sortable: false, enableFiltering: false},
-				{ field: 'question_'+Session.retrieveObject('user').language, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.QUESTION'), cellTemplate: cellTemplateText, width: '49%' },
-				{ field: 'questionType_'+Session.retrieveObject('user').language, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.RESPONSE_TYPE'), cellTemplate: cellTemplateAt, width: '13%' },
-				{ field: 'library_name_'+Session.retrieveObject('user').language, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.LIBRARY'), cellTemplate: cellTemplateLib, width: '10%' },
+				{ field: 'locked', enableColumnMenu: false, displayName: '', cellTemplate: cellTemplateLocked, width: '2%', sortable: false, enableFiltering: false},
+				{ field: 'question_'+Session.retrieveObject('user').language, enableColumnMenu: false, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.QUESTION'), cellTemplate: cellTemplateText, width: '49%' },
+				{ field: 'questionType_'+Session.retrieveObject('user').language, enableColumnMenu: false, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.RESPONSE_TYPE'), cellTemplate: cellTemplateAt, width: '13%' },
+				{ field: 'library_name_'+Session.retrieveObject('user').language, enableColumnMenu: false, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.LIBRARY'), cellTemplate: cellTemplateLib, width: '10%' },
 				{
-					field: 'private', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.PRIVACY'), cellTemplate: cellTemplatePrivacy, width: '10%', filter: {
+					field: 'private', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.PRIVACY'), enableColumnMenu: false, cellTemplate: cellTemplatePrivacy, width: '10%', filter: {
 						type: uiGridConstants.filter.SELECT,
 						selectOptions: [{ value: '1', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.PRIVATE') }, { value: '0', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.PUBLIC') }]
 					}
 				},
 				{
-					field: 'final', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.STATUS'), cellTemplate: cellTemplateFinal, width: '8%', filter: {
+					field: 'final', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.STATUS'), enableColumnMenu: false, cellTemplate: cellTemplateFinal, width: '8%', filter: {
 						type: uiGridConstants.filter.SELECT,
 						selectOptions: [{ value: '1', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.FINAL') }, { value: '0', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.DRAFT') }]
 					}
 				},
-				{ name: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.OPERATIONS'), width: '8%', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false }
+				{ name: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.OPERATIONS'), width: '8%', enableColumnMenu: false, cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false }
 			],
 			enableFiltering: true,
 			enableColumnResizing: true,
@@ -136,7 +136,6 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 				}).catch(function(response) {
 					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.ERROR_QUESTIONS') + "\r\n\r\n" + response.status + " - " + response.data);
 				});
-
 			});
 		};
 

@@ -51,15 +51,15 @@ angular.module('opalAdmin.controllers.template.question', ['ngAnimate', 'ngSanit
 		$scope.gridLib = {
 			data: 'templateQuestionList',
 			columnDefs: [
-				{ field: 'name_'+Session.retrieveObject('user').language, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_LIST.NAME'), cellTemplate: cellTemplateTextEn, width: '50%' },
-				{ field: 'category_'+Session.retrieveObject('user').language, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_LIST.CATEGORY'), cellTemplate: cellTemplateAt, width: '23%' },
+				{ field: 'name_'+Session.retrieveObject('user').language, enableColumnMenu: false, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_LIST.NAME'), cellTemplate: cellTemplateTextEn, width: '50%' },
+				{ field: 'category_'+Session.retrieveObject('user').language, enableColumnMenu: false, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_LIST.CATEGORY'), cellTemplate: cellTemplateAt, width: '23%' },
 				{
-					field: 'private', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_LIST.PRIVACY'), cellTemplate: cellTemplatePrivacy, width: '18%', filter: {
+					field: 'private', enableColumnMenu: false, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_LIST.PRIVACY'), cellTemplate: cellTemplatePrivacy, width: '18%', filter: {
 						type: uiGridConstants.filter.SELECT,
 						selectOptions: [{ value: '1', label: $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_LIST.PRIVATE') }, { value: '0', label: $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_LIST.PUBLIC') }]
 					}
 				},
-				{ name: $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_LIST.OPERATIONS'), width: '10%', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false }
+				{ name: $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_LIST.OPERATIONS'), enableColumnMenu: false, width: '10%', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false }
 			],
 			enableFiltering: true,
 			enableColumnResizing: true,
