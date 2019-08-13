@@ -66,7 +66,7 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 		var matcher = new RegExp($scope.filterValue, 'i');
 		renderableRows.forEach(function (row) {
 			var match = false;
-			['name_'+ Session.retrieveObject('user').language, 'type'].forEach(function (field) {
+			['name_'+ Session.retrieveObject('user').language, 'type_display'].forEach(function (field) {
 				if (row.entity[field].match(matcher)) {
 					match = true;
 				}
@@ -90,17 +90,17 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 	$scope.gridOptions = {
 		data: 'postList',
 		columnDefs: [
-			{ field: 'name_'+ Session.retrieveObject('user').language, displayName: $filter('translate')('POSTS.LIST.TITLE_POST'), cellTemplate: cellTemplateName, width: '43%' },
+			{ field: 'name_'+ Session.retrieveObject('user').language, displayName: $filter('translate')('POSTS.LIST.TITLE_POST'), cellTemplate: cellTemplateName, width: '43%', enableColumnMenu: false },
 			{
-				field: 'type_display', displayName: $filter('translate')('POSTS.LIST.TYPE'), width: '25%', filter: {
+				field: 'type_display', enableColumnMenu: false, displayName: $filter('translate')('POSTS.LIST.TYPE'), width: '25%', filter: {
 					type: uiGridConstants.filter.SELECT,
-					selectOptions: [{ value: 'Announcement', label: $filter('translate')('POSTS.LIST.ANNOUNCEMENT') }, { value: 'Patients for Patients', label: $filter('translate')('POSTS.LIST.PATIENTS_FOR_PATIENTS') }, { value: 'Treatment Team Message', label: $filter('translate')('POSTS.LIST.TREATMENT_TEAM_MESSAGE') }]
+					selectOptions: [{ value: $filter('translate')('POSTS.LIST.ANNOUNCEMENT'), label: $filter('translate')('POSTS.LIST.ANNOUNCEMENT') }, { value: $filter('translate')('POSTS.LIST.PATIENTS_FOR_PATIENTS'), label: $filter('translate')('POSTS.LIST.PATIENTS_FOR_PATIENTS') }, { value: $filter('translate')('POSTS.LIST.TREATMENT_TEAM_MESSAGE'), label: $filter('translate')('POSTS.LIST.TREATMENT_TEAM_MESSAGE') }]
 				}
 			},
-			{ field: 'publish', displayName: $filter('translate')('POSTS.LIST.PUBLISH_FLAG'), width: '7%', cellTemplate: cellTemplatePublishCheckbox, enableFiltering: false },
-			{ field: 'publish_date', displayName: $filter('translate')('POSTS.LIST.PUBLISH_DATE'), width: '15%' },
+			{ field: 'publish', enableColumnMenu: false, displayName: $filter('translate')('POSTS.LIST.PUBLISH_FLAG'), width: '7%', cellTemplate: cellTemplatePublishCheckbox, enableFiltering: false },
+			{ field: 'publish_date', enableColumnMenu: false, displayName: $filter('translate')('POSTS.LIST.PUBLISH_DATE'), width: '15%' },
 //			{ field: 'disabled', displayName: 'Disabled Flag', width: '10%', cellTemplate: cellTemplateDisableCheckbox, filter: { term: 0 } },
-			{ name: $filter('translate')('POSTS.LIST.OPERATIONS'), cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '10%' }
+			{ name: $filter('translate')('POSTS.LIST.OPERATIONS'), enableColumnMenu: false, cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '10%' }
 		],
 		//useExternalFiltering: true,
 		enableFiltering: true,
@@ -222,16 +222,16 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 				if (Session.retrieveObject('user').language.toUpperCase() === "FR") {
 					switch(row.type) {
 						case "Treatment Team Message":
-							row.type_display = "Message de l'équipe soignante";
+							row.type_display = $filter('translate')('POSTS.LIST.TREATMENT_TEAM_MESSAGE');
 							break;
 						case "Announcement":
-							row.type_display = "Annonce générale";
+							row.type_display = $filter('translate')('POSTS.LIST.ANNOUNCEMENT');
 							break;
 						case "Patients for Patients":
-							row.type_display = "Patients à votre aide";
+							row.type_display = $filter('translate')('POSTS.LIST.PATIENTS_FOR_PATIENTS');
 							break;
 						default:
-							row.type_display = "Non traduit";
+							row.type_display = $filter('translate')('POSTS.LIST.NOT_TRANSLATED');
 					}
 				}
 				else

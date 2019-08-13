@@ -496,7 +496,9 @@
       "OPERATIONS": "Operations",
       "SUCCESS_FLAGS": "Flag(s) Successfully Saved!",
       "ERROR_PUBLICATION": "An error occurred while getting publication list.",
-      "ERROR_FLAGS": "An error occurred while saving the publication flags."
+      "ERROR_FLAGS": "An error occurred while saving the publication flags.",
+      "NO": "No",
+      "YES": "Oui"
     },
     "PUBLICATION_TOOL_ADD" : {
       "BACK": "Back to the publication tools",
@@ -711,6 +713,7 @@
       "ANNOUNCEMENT": "Announcement",
       "PATIENTS_FOR_PATIENTS": "Patients for Patients",
       "TREATMENT_TEAM_MESSAGE": "Treatment Team Message",
+      "NOT_TRANSLATED": "Not Translated",
       "PUBLISH_FLAG": "Publish Flag",
       "PUBLISH_DATE": "Publish Date",
       "OPERATIONS": "Operations",
