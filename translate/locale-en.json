@@ -694,6 +694,37 @@
       "SUCCESS_UPDATE": "The publication has been updated successfully!"
     }
   },
+  "LEGACY_QUESTIONNAIRE": {
+    "WARNING": "This module is deprecated and will be deleted soon."
+  },
+  "POSTS": {
+    "LIST": {
+      "TITLE": "Posts",
+      "ADD": "Add",
+      "SAVE": "Save Changes",
+      "SEARCH": "Search...",
+      "LIST": "List",
+      "LOGS": "Logs",
+      "NO_DATA": "No data available",
+      "TITLE_POST": "Title",
+      "TYPE": "Type",
+      "ANNOUNCEMENT": "Announcement",
+      "PATIENTS_FOR_PATIENTS": "Patients for Patients",
+      "TREATMENT_TEAM_MESSAGE": "Treatment Team Message",
+      "PUBLISH_FLAG": "Publish Flag",
+      "PUBLISH_DATE": "Publish Date",
+      "OPERATIONS": "Operations",
+      "EDIT": "Edit",
+      "DELETE": "Delete",
+      "SUCCESS_FLAGS": "Flag(s) Successfully Saved!",
+      "ERROR_POSTS": "An error occurred while getting the list of posts.",
+      "ERROR_POSTS_LOGS": "An error occurred while getting the post logs."
+    },
+    "ADD": {},
+    "EDIT": {},
+    "GENERAL_LOGS": {},
+    "LOGS": {}
+  },
   "PROFILE": {
     "ACCOUNT": "Account",
     "RESET_PASSWORD": "Reset Password",

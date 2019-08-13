@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.account', ['ui.bootstrap']).
 /******************************************************************************
  * Controller for the account page
  *******************************************************************************/
-controller('account', function ($scope, $rootScope, $translate, $filter, Session, Encrypt) {
+controller('account', function ($scope, $rootScope, $translate, $route, $filter, Session, Encrypt) {
 
 	// Set current user
 	$scope.currentUser = Session.retrieveObject('user');
@@ -183,15 +183,15 @@ controller('account', function ($scope, $rootScope, $translate, $filter, Session
 			url: "user/update/language",
 			data: user,
 			success: function () {
-				$scope.setBannerClass('success');
-				$scope.bannerMessage = $filter('translate')('PROFILE.LANGUAGE_SUCCESS');
-				$scope.showBanner();
 				Session.update(user); // change language in cookies
-				$scope.$apply();
 				$translate.use($scope.currentUser.language.toLowerCase());
 			},
 			error: function () {
 				alert($filter('translate')('PROFILE.LANGUAGE_ERROR'));
+			},
+			complete: function () {
+				alert($filter('translate')('PROFILE.LANGUAGE_SUCCESS'));
+				location.reload();
 			}
 		});
 	};
