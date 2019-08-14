@@ -17,12 +17,11 @@ angular.module('opalAdmin.controllers.post.delete', ['ngAnimate', 'ngSanitize', 
 					if (response.value) {
 						$scope.setBannerClass('success');
 						$scope.$parent.bannerMessage = "Successfully deleted \"" + $scope.postToDelete.name_EN + "/ " + $scope.postToDelete.name_FR + "\"!";
+						$scope.showBanner();
 					}
 					else {
-						$scope.setBannerClass('danger');
-						$scope.$parent.bannerMessage = response.message;
+						alert($filter('translate')('POSTS.DELETE.ERROR') + "\r\n\r\n" + response.message);
 					}
-					$scope.showBanner();
 					$uibModalInstance.close();
 				}
 			});
