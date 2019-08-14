@@ -90,14 +90,14 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 	$scope.gridOptions = {
 		data: 'postList',
 		columnDefs: [
-			{ field: 'name_'+ Session.retrieveObject('user').language, displayName: $filter('translate')('POSTS.LIST.TITLE_POST'), cellTemplate: cellTemplateName, width: '43%', enableColumnMenu: false },
+			{ field: 'name_'+ Session.retrieveObject('user').language, displayName: $filter('translate')('POSTS.LIST.TITLE_POST'), cellTemplate: cellTemplateName, width: '40%', enableColumnMenu: false },
 			{
 				field: 'type_display', enableColumnMenu: false, displayName: $filter('translate')('POSTS.LIST.TYPE'), width: '25%', filter: {
 					type: uiGridConstants.filter.SELECT,
 					selectOptions: [{ value: $filter('translate')('POSTS.LIST.ANNOUNCEMENT'), label: $filter('translate')('POSTS.LIST.ANNOUNCEMENT') }, { value: $filter('translate')('POSTS.LIST.PATIENTS_FOR_PATIENTS'), label: $filter('translate')('POSTS.LIST.PATIENTS_FOR_PATIENTS') }, { value: $filter('translate')('POSTS.LIST.TREATMENT_TEAM_MESSAGE'), label: $filter('translate')('POSTS.LIST.TREATMENT_TEAM_MESSAGE') }]
 				}
 			},
-			{ field: 'publish', enableColumnMenu: false, displayName: $filter('translate')('POSTS.LIST.PUBLISH_FLAG'), width: '7%', cellTemplate: cellTemplatePublishCheckbox, enableFiltering: false },
+			{ field: 'publish', enableColumnMenu: false, displayName: $filter('translate')('POSTS.LIST.PUBLISH_FLAG'), width: '10%', cellTemplate: cellTemplatePublishCheckbox, enableFiltering: false },
 			{ field: 'publish_date', enableColumnMenu: false, displayName: $filter('translate')('POSTS.LIST.PUBLISH_DATE'), width: '15%' },
 //			{ field: 'disabled', displayName: 'Disabled Flag', width: '10%', cellTemplate: cellTemplateDisableCheckbox, filter: { term: 0 } },
 			{ name: $filter('translate')('POSTS.LIST.OPERATIONS'), enableColumnMenu: false, cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '10%' }
@@ -202,15 +202,16 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 						$scope.postFlags = {
 							flagList: []
 						};
+						$scope.showBanner();
 					}
 					else {
-						$scope.setBannerClass('danger');
-						$scope.bannerMessage = response.message;
+						alert(response.message);
 					}
-					$scope.showBanner();
 					$scope.changesMade = false;
 					$scope.postFlags.flagList = [];
-
+				},
+				error: function() {
+					alert($filter('translate')('POSTS.LIST.ERROR_FLAGS'));
 				}
 			});
 		}
@@ -281,15 +282,15 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 			className: 'logChart'
 		},
 		title: {
-			text: 'All post logs'
+			text: $filter('translate')('POSTS.LIST.ALL_POST_LOGS')
 		},
 		subtitle: {
-			text: 'Highlight the plot area to zoom in and show detailed data'
+			text: $filter('translate')('POSTS.LIST.HIGHLIGHT')
 		},
 		xAxis: {
 			type: 'datetime',
 			title: {
-				text: 'Datetime sent'
+				text: $filter('translate')('POSTS.LIST.DATETIME_SENT')
 			},
 			events: {
 				setExtremes: function (selection) {
@@ -326,7 +327,7 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 		},
 		yAxis: {
 			title: {
-				text: 'Number of posts published'
+				text: $filter('translate')('POSTS.LIST.NUMBER_POSTS_PUBLISHED')
 			},
 			tickInterval: 1,
 			min: 0
@@ -368,14 +369,14 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 	$scope.gridLogOptions = {
 		data: 'postListLogs',
 		columnDefs: [
-			{ field: 'post_control_name', displayName: 'Post' },
-			{ field: 'type', displayName: 'Type' },
-			{ field: 'revision', displayName: 'Revision No.' },
-			{ field: 'cron_serial', displayName: 'CronLogSer' },
-			{ field: 'patient_serial', displayName: 'PatientSer' },
-			{ field: 'read_status', displayName: 'Read Status' },
-			{ field: 'date_added', displayName: 'Datetime Sent' },
-			{ field: 'mod_action', displayName: 'Action' }
+			{ field: 'post_control_name', displayName: $filter('translate')('POSTS.LIST.POST') },
+			{ field: 'type', displayName: $filter('translate')('POSTS.LIST.TYPE') },
+			{ field: 'revision', displayName: $filter('translate')('POSTS.LIST.REVISION') },
+			{ field: 'cron_serial', displayName: $filter('translate')('POSTS.LIST.CRONLOGSER') },
+			{ field: 'patient_serial', displayName: $filter('translate')('POSTS.LIST.PATIENTSER') },
+			{ field: 'read_status', displayName: $filter('translate')('POSTS.LIST.READ_STATUS') },
+			{ field: 'date_added', displayName: $filter('translate')('POSTS.LIST.DATETIME_SENT') },
+			{ field: 'mod_action', displayName: $filter('translate')('POSTS.LIST.ACTION') }
 		],
 		rowHeight: 30,
 		useExternalFiltering: true,
@@ -428,6 +429,7 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 
 		// Assign selected post as the post to delete
 		$scope.postToDelete = currentPost;
+		$scope.postToDelete.name_display = (Session.retrieveObject('user').language.toUpperCase() === "FR"?currentPost.name_FR:currentPost.name_EN);
 		var modalInstance = $uibModal.open({
 			templateUrl: 'templates/post/delete.post.html',
 			controller: 'post.delete',

@@ -96,9 +96,9 @@ RewriteRule ^cron/update/cron php/cron/update.cron.php [QSA,L]
 
 # Diagnosis Translation Section
 RewriteRule ^diagnosis-translation/delete/diagnosis-translation php/diagnosis-translation/delete.diagnosis_translation.php [QSA,L]
-RewriteRule ^diagnosis-translation/get/diagnoses api/diagnosis-translation/get.diagnoses.php [QSA,L]
 RewriteRule ^diagnosis-translation/get/diagnosis-translation-details api/diagnosis-translation/get.diagnosis_translation_details.php [QSA,L]
 RewriteRule ^diagnosis-translation/get/diagnosis-translations api/diagnosis-translation/get.diagnosis_translations.php [QSA,L]
+RewriteRule ^diagnosis-translation/get/diagnoses api/diagnosis-translation/get.diagnoses.php [QSA,L]
 RewriteRule ^diagnosis-translation/insert/diagnosis-translation php/diagnosis-translation/insert.diagnosis_translation.php [QSA,L]
 RewriteRule ^diagnosis-translation/update/diagnosis-translation php/diagnosis-translation/update.diagnosis_translation.php [QSA,L]
 
@@ -112,8 +112,8 @@ RewriteRule ^educational-material/get/educational-material-types api/educational
 RewriteRule ^educational-material/get/educational-materials api/educational-material/get.educational_materials.php [QSA,L]
 RewriteRule ^educational-material/get/phases-in-treatment api/educational-material/get.phases_in_treatment.php [QSA,L]
 RewriteRule ^educational-material/insert/educational-material php/educational-material/insert.educational_material.php [QSA,L]
-RewriteRule ^educational-material/update/educational-material php/educational-material/update.educational_material.php [QSA,L]
 RewriteRule ^educational-material/update/educational-material-publish-flags php/educational-material/update.educational_material_publish_flags.php [QSA,L]
+RewriteRule ^educational-material/update/educational-material php/educational-material/update.educational_material.php [QSA,L]
 
 # Email Section
 RewriteRule ^email/delete/email php/email/delete.email.php [QSA,L]
@@ -150,10 +150,10 @@ RewriteRule ^legacy-questionnaire/get/legacy-questionnaire-details api/legacy-qu
 RewriteRule ^legacy-questionnaire/get/legacy-questionnaire-expressions api/legacy-questionnaire/get.legacy_questionnaire_expressions.php [QSA,L]
 RewriteRule ^legacy-questionnaire/get/legacy-questionnaire-list-logs api/legacy-questionnaire/get.legacy_questionnaire_list_logs.php [QSA,L]
 RewriteRule ^legacy-questionnaire/get/legacy-questionnaires api/legacy-questionnaire/get.legacy_questionnaires.php [QSA,L]
-RewriteRule ^legacy-questionnaire/get/legacy-questionnaires api/notification/get.notification_chart_logs.php [QSA,L]
+RewriteRule ^legacy-questionnaire/get/notification-chart-logs api/notification/get.notification_chart_logs.php [QSA,L]
 RewriteRule ^legacy-questionnaire/insert/legacy-questionnaire php/legacy-questionnaire/insert.legacy_questionnaire.php [QSA,L]
-RewriteRule ^legacy-questionnaire/update/legacy-questionnaire php/legacy-questionnaire/update.legacy_questionnaire.php [QSA,L]
 RewriteRule ^legacy-questionnaire/update/legacy-questionnaire-publish-flags php/legacy-questionnaire/update.legacy_questionnaire_publish_flags.php [QSA,L]
+RewriteRule ^legacy-questionnaire/update/legacy-questionnaire php/legacy-questionnaire/update.legacy_questionnaire.php [QSA,L]
 
 # Notification Section
 RewriteRule ^notification/delete/notification php/notification/delete.notification.php [QSA,L]
@@ -184,8 +184,8 @@ RewriteRule ^post/get/post-details api/post/get.post_details.php [QSA,L]
 RewriteRule ^post/get/post-list-logs api/post/get.post_list_logs.php [QSA,L]
 RewriteRule ^post/get/posts api/post/get.posts.php [QSA,L]
 RewriteRule ^post/insert/post php/post/insert.post.php [QSA,L]
-RewriteRule ^post/update/post php/post/update.post.php [QSA,L]
 RewriteRule ^post/update/post-publish-flags php/post/update.post_publish_flags.php [QSA,L]
+RewriteRule ^post/update/post php/post/update.post.php [QSA,L]
 
 # Question Section
 RewriteRule ^question/delete/question php/questionnaire/delete.question.php [QSA,L]
