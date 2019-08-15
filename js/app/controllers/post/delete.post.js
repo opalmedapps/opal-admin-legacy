@@ -16,7 +16,7 @@ angular.module('opalAdmin.controllers.post.delete', ['ngAnimate', 'ngSanitize', 
 					// Show success or failure depending on response
 					if (response.value) {
 						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = "Successfully deleted \"" + $scope.postToDelete.name_EN + "/ " + $scope.postToDelete.name_FR + "\"!";
+						$scope.$parent.bannerMessage = $filter('translate')('POSTS.DELETE.SUCCESS');
 						$scope.showBanner();
 					}
 					else {

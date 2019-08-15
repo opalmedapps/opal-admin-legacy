@@ -150,7 +150,6 @@ RewriteRule ^legacy-questionnaire/get/legacy-questionnaire-details api/legacy-qu
 RewriteRule ^legacy-questionnaire/get/legacy-questionnaire-expressions api/legacy-questionnaire/get.legacy_questionnaire_expressions.php [QSA,L]
 RewriteRule ^legacy-questionnaire/get/legacy-questionnaire-list-logs api/legacy-questionnaire/get.legacy_questionnaire_list_logs.php [QSA,L]
 RewriteRule ^legacy-questionnaire/get/legacy-questionnaires api/legacy-questionnaire/get.legacy_questionnaires.php [QSA,L]
-RewriteRule ^legacy-questionnaire/get/notification-chart-logs api/notification/get.notification_chart_logs.php [QSA,L]
 RewriteRule ^legacy-questionnaire/insert/legacy-questionnaire php/legacy-questionnaire/insert.legacy_questionnaire.php [QSA,L]
 RewriteRule ^legacy-questionnaire/update/legacy-questionnaire-publish-flags php/legacy-questionnaire/update.legacy_questionnaire_publish_flags.php [QSA,L]
 RewriteRule ^legacy-questionnaire/update/legacy-questionnaire php/legacy-questionnaire/update.legacy_questionnaire.php [QSA,L]
@@ -174,8 +173,8 @@ RewriteRule ^patient/get/patients api/patient/get.patients.php [QSA,L]
 RewriteRule ^patient/get/security-questions api/patient/get.security_questions.php [QSA,L]
 RewriteRule ^patient/insert/patient php/patient/insert.patient.php [QSA,L]
 RewriteRule ^patient/toggle/block php/patient/toggle_block.php [QSA,L]
-RewriteRule ^patient/update/patient php/patient/update.patient.php [QSA,L]
 RewriteRule ^patient/update/patient-publish-flags php/patient/update.patient_publish_flags.php [QSA,L]
+RewriteRule ^patient/update/patient php/patient/update.patient.php [QSA,L]
 
 # Post Section
 RewriteRule ^post/delete/post php/post/delete.post.php [QSA,L]
@@ -231,8 +230,8 @@ RewriteRule ^test-result/get/test-result-groups api/test-result/get.test_result_
 RewriteRule ^test-result/get/test-result-list-logs api/test-result/get.test_result_list_logs.php [QSA,L]
 RewriteRule ^test-result/get/test-results api/test-result/get.test_results.php [QSA,L]
 RewriteRule ^test-result/insert/test-result php/test-result/insert.test_result.php [QSA,L]
-RewriteRule ^test-result/update/test-result php/test-result/update.test_result.php [QSA,L]
 RewriteRule ^test-result/update/test-result-publish-flags php/test-result/update.test_result_publish_flags.php [QSA,L]
+RewriteRule ^test-result/update/test-result php/test-result/update.test_result.php [QSA,L]
 
 # User Section
 RewriteRule ^user/delete/user php/user/delete.user.php [QSA,L]
