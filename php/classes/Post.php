@@ -587,7 +587,8 @@ class Post {
                         anmh.CronLogSerNum,
                         COUNT(anmh.CronLogSerNum),
                         cl.CronDateTime,
-                        pc.PostName_EN
+                        pc.PostName_EN,
+                        pc.PostName_FR
                     FROM
                         AnnouncementMH anmh,
                         CronLog cl,
@@ -610,6 +611,7 @@ class Post {
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                     $seriesName = $data[3];
+                    $seriesName_FR = $data[4];
                     $postDetail = array (
                         'x' => $data[2],
                         'y' => intval($data[1]),
@@ -618,6 +620,7 @@ class Post {
                     if(!isset($postSeries[$seriesName])) {
                         $postSeries[$seriesName] = array(
                             'name'  => $seriesName,
+                            'name_FR'  => $seriesName_FR,
                             'data'  => array()
                         );
                     }
@@ -630,7 +633,8 @@ class Post {
                         ttmmh.CronLogSerNum,
                         COUNT(ttmmh.CronLogSerNum),
                         cl.CronDateTime,
-                        pc.PostName_EN
+                        pc.PostName_EN,
+                        pc.PostName_FR
                     FROM
                         TxTeamMessageMH ttmmh,
                         CronLog cl,
@@ -653,6 +657,7 @@ class Post {
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                     $seriesName = $data[3];
+                    $seriesName_FR = $data[4];
                     $postDetail = array (
                         'x' => $data[2],
                         'y' => intval($data[1]),
@@ -661,6 +666,7 @@ class Post {
                     if(!isset($postSeries[$seriesName])) {
                         $postSeries[$seriesName] = array(
                             'name'  => $seriesName,
+                            'name_FR'  => $seriesName_FR,
                             'data'  => array()
                         );
                     }
@@ -673,7 +679,8 @@ class Post {
                         pfpmh.CronLogSerNum,
                         COUNT(pfpmh.CronLogSerNum),
                         cl.CronDateTime,
-                        pc.PostName_EN
+                        pc.PostName_EN,
+                        pc.PostName_FR
                     FROM
                         PatientsForPatientsMH pfpmh,
                         CronLog cl,
@@ -696,6 +703,7 @@ class Post {
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                     $seriesName = $data[3];
+                    $seriesName_FR = $data[4];
                     $postDetail = array (
                         'x' => $data[2],
                         'y' => intval($data[1]),
@@ -704,6 +712,7 @@ class Post {
                     if(!isset($postSeries[$seriesName])) {
                         $postSeries[$seriesName] = array(
                             'name'  => $seriesName,
+                            'name_FR'  => $seriesName_FR,
                             'data'  => array()
                         );
                     }

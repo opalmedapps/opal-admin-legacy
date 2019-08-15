@@ -264,6 +264,7 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 			// Call our API to get post logs
 			postCollectionService.getPostChartLogs().then(function (response) {
 				$scope.postChartLogs = $scope.chartConfig.series = response.data;
+				console.log(response.data);
 				angular.forEach($scope.postChartLogs, function(serie) {
 					angular.forEach(serie.data, function(log) {
 						log.x = new Date(log.x);
@@ -314,6 +315,23 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 						// convert set to array
 						cronSerials = Array.from(cronSerials);
 						postCollectionService.getPostListLogs(cronSerials, $scope.currentPost.type).then(function(response){
+							response.data.forEach(function (row) {
+								if (Session.retrieveObject('user').language.toUpperCase() === "FR") {
+									switch(row.type) {
+										case "Treatment Team Message":
+											row.type = $filter('translate')('POSTS.LIST.TREATMENT_TEAM_MESSAGE');
+											break;
+										case "Announcement":
+											row.type = $filter('translate')('POSTS.LIST.ANNOUNCEMENT');
+											break;
+										case "Patients for Patients":
+											row.type = $filter('translate')('POSTS.LIST.PATIENTS_FOR_PATIENTS');
+											break;
+										// default:
+										// 	row.type = $filter('translate')('POSTS.LIST.NOT_TRANSLATED');
+									}
+								}
+							});
 							$scope.postListLogs = response.data;
 						});
 					}
@@ -333,7 +351,7 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 			min: 0
 		},
 		tooltip: {
-			headerFormat: '<b>{series.name}</b><br>',
+			headerFormat: '<b>{series.name_FR}</b><br>',
 			pointFormat: '{point.x:%e. %b}: {point.y:.2f} m'
 		},
 		plotOptions: {
@@ -349,6 +367,24 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 						select: function(point) {
 							var cronLogSerNum = [point.target.cron_serial];
 							postCollectionService.getPostListLogs(cronLogSerNum, $scope.currentPost.type).then(function(response){
+								response.data.forEach(function (row) {
+									if (Session.retrieveObject('user').language.toUpperCase() === "FR") {
+										switch(row.type) {
+											case "Treatment Team Message":
+												row.type = $filter('translate')('POSTS.LIST.TREATMENT_TEAM_MESSAGE');
+												break;
+											case "Announcement":
+												row.type = $filter('translate')('POSTS.LIST.ANNOUNCEMENT');
+												break;
+											case "Patients for Patients":
+												row.type = $filter('translate')('POSTS.LIST.PATIENTS_FOR_PATIENTS');
+												break;
+											// default:
+											// 	row.type = $filter('translate')('POSTS.LIST.NOT_TRANSLATED');
+										}
+									}
+								});
+
 								$scope.postListLogs = response.data;
 							});
 						},
