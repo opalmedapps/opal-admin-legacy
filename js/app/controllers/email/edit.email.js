@@ -57,7 +57,7 @@ angular.module('opalAdmin.controllers.email.edit', ['ngAnimate', 'ngSanitize', '
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/email/update.email.php",
+					url: "email/update/email",
 					data: $scope.email,
 					success: function (response) {
 						response = JSON.parse(response);

@@ -461,7 +461,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 				// Submit
 				$.ajax({
 					type: "POST",
-					url: "php/educational-material/insert.educational_material.php",
+					url: "educational-material/insert/educational-material",
 					data: $scope.newEduMat,
 					success: function (response) {
 						response = JSON.parse(response);

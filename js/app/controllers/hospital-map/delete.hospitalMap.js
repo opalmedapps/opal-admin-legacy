@@ -9,7 +9,7 @@ angular.module('opalAdmin.controllers.hospitalMap.delete', ['ngAnimate', 'ngSani
 			$scope.hosMapToDelete.user = currentUser;
 			$.ajax({
 				type: "POST",
-				url: "php/hospital-map/delete.hospital_map.php",
+				url: "hospital-map/delete/hospital-map",
 				data: $scope.hosMapToDelete,
 				success: function () {
 					$scope.$parent.bannerMessage = "Successfully deleted \"" + $scope.hosMapToDelete.name_EN + "/ " + $scope.hosMapToDelete.name_FR + "\"!";

@@ -1,17 +1,9 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get a list of existing test results */
-	include_once('test-result.inc');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
+header('Content-Type: application/javascript');
+include_once('test-result.inc');
 
-	$testResult = new TestResult; // Object
+$testResult = new TestResult; // Object
+$existingTestResultList = $testResult->getExistingTestResults();
 
-	// Call function
-	$existingTestResultList = $testResult->getExistingTestResults();
-
-	// Callback to http request
-	print $callback.'('.json_encode($existingTestResultList).')';
-
-?>
+echo json_encode($existingTestResultList);

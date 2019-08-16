@@ -47,7 +47,7 @@ angular.module('opalAdmin', [
 
 		authService.login = function (credentials) {
 			return $http
-				.post('php/user/validate_login.php', credentials)
+				.post('user/validate-login', credentials)
 				.then(function (response) {
 					if (response.data.user) {
 						Session.create(response.data.user);
@@ -60,7 +60,7 @@ angular.module('opalAdmin', [
 
 		authService.confirm = function (credentials) {
 			return $http
-				.post('php/user/validate_login.php', credentials)
+				.post('user/validate-login', credentials)
 				.then(function (response) {
 					if (response.data.success) {
 						return response.success;
@@ -116,8 +116,12 @@ angular.module('opalAdmin', [
 			.state('questionnaire-menu', { url: '/questionnaire/menu', templateUrl: "templates/questionnaire/questionnaire-main-menu.html", controller: "questionnaire", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: true } })
 			.state('questionnaire', { url: '/questionnaire', templateUrl: "templates/questionnaire/questionnaire.html", controller: "questionnaire", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: true } })
 			.state('questionnaire-add', { url: '/questionnaire/add', templateUrl: "templates/questionnaire/add.questionnaire.html", controller: "questionnaire.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: true } })
+			.state('publication-tool', { url: '/questionnaire/publication-tool', templateUrl: "templates/questionnaire/publication.tool.html", controller: "publication.tool", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: true } })
+			.state('publication-tool-add', { url: '/questionnaire/publication-tool/add', templateUrl: "templates/questionnaire/add.publication.tool.html", controller: "publication.tool.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: true } })
 			.state('questionnaire-question', { url: '/questionnaire/question', templateUrl: "templates/questionnaire/question.html", controller: "question", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: true } })
-      		.state('questionnaire-question-add', { url: '/questionnaire/question/add', templateUrl: "templates/questionnaire/add.question.html", controller: "question.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: true } })
+			.state('questionnaire-question-add', { url: '/questionnaire/question/add', templateUrl: "templates/questionnaire/add.question.html", controller: "question.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: true } })
+			.state('questionnaire-template-question', { url: '/questionnaire/template-question', templateUrl: "templates/questionnaire/template.question.html", controller: "template.question", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: true } })
+			.state('questionnaire-template-question-add', { url: '/questionnaire/template-question/add', templateUrl: "templates/questionnaire/add.template.question.html", controller: "template.question.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: true } })
 			.state('questionnaire-completed', { url: '/questionnaire/completed', templateUrl: "templates/questionnaire/completed.questionnaire.html", controller: "questionnaire", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: true } })
 			.state('legacy-questionnaire', { url: '/legacy-questionnaire', templateUrl: "templates/legacy-questionnaire/legacy-questionnaire.html", controller: "legacyQuestionnaire", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('legacy-questionnaire-add', { url: '/legacy-questionnaire/add', templateUrl: "templates/legacy-questionnaire/add.legacy-questionnaire.html", controller: "legacyQuestionnaire.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
@@ -142,7 +146,7 @@ angular.module('opalAdmin', [
 			suffix: '.json'
 		});
 		// load 'en' table on startup
-		$translateProvider.preferredLanguage('en');
+		$translateProvider.preferredLanguage('fr');
 		// Enable escaping of HTML
 		$translateProvider.useSanitizeValueStrategy('escaped');
 	})

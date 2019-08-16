@@ -205,7 +205,7 @@ angular.module('opalAdmin.controllers.hospitalMap.add', ['ngAnimate', 'ngSanitiz
 				// Submit
 				$.ajax({
 					type: "POST",
-					url: "php/hospital-map/insert.hospital_map.php",
+					url: "hospital-map/insert/hospital-map",
 					data: $scope.newHosMap,
 					success: function () {
 						$state.go('hospital-map');
