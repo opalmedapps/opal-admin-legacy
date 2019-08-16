@@ -1,19 +1,16 @@
 <?php
-	/* To insert a newly-created question */
-	include_once('questionnaire.inc');
+/* To insert a newly-created question */
+include_once('questionnaire.inc');
 
-	// Construct an array from FORM params
-	$questionArray = array(
-		'text_EN'								=> $_POST['text_EN'],
-		'text_FR'								=> $_POST['text_FR'],
-		'answertype_serNum'			=> $_POST['answertype_serNum'],
-		'questiongroup_serNum'	=> $_POST['questiongroup_serNum'],
-		'last_updated_by'				=> $_POST['last_updated_by'],
-		'created_by'						=> $_POST['created_by']
-	);
+$OAUserId = strip_tags($_POST['OAUserId']);
+$questionArray = Question::validateAndSanitize($_POST);
+if(!$questionArray)
+    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid question format");
 
-	$questionObj = new Question; // Object
+$questionObj = new Question($OAUserId);
+$questionObj->insertQuestion($questionArray);
 
-	// Call function
-	$questionObj->insertQuestion($questionArray);
+header('Content-Type: application/javascript');
+$response['code'] = HTTP_STATUS_SUCCESS;
+echo json_encode($response);
 ?>

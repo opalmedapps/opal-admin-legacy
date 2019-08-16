@@ -1,18 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get details on a particular post */
-	include_once('post.inc');
 
-	// Retrieve FORM params
-	$callback = $_GET['callback'];
-	$serial = $_GET['serial'];
+header('Content-Type: application/javascript');
+include_once('post.inc');
 
-	$post = new Post; // Object
+$serial = strip_tags($_POST['serial']);
+$post = new Post; // Object
+$postDetails = $post->getPostDetails($serial);
 
-	// Call function
-	$postDetails = $post->getPostDetails($serial);
-
-	// Callback to http request
-	print $callback.'('.json_encode($postDetails).')';
-
-?>
+echo json_encode($postDetails);

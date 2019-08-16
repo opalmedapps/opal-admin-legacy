@@ -7,7 +7,7 @@ angular.module('opalAdmin.controllers.post.edit', ['ngAnimate', 'ngSanitize', 'u
 			return $sce.trustAsHtml(text);
 		};
 	}).
-	controller('post.edit', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, postCollectionService, filterCollectionService, uiGridConstants, Session) {
+	controller('post.edit', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, $locale, postCollectionService, filterCollectionService, uiGridConstants, Session) {
 
 		// Default Booleans
 		$scope.changesMade = false; // changes have been made? 
@@ -62,7 +62,32 @@ angular.module('opalAdmin.controllers.post.edit', ['ngAnimate', 'ngSanitize', 'u
 			$scope.selectAll.patient.all = false;
 		};
 
-		// Function for search through the filters
+	$locale["DATETIME_FORMATS"]["SHORTDAY"] = [
+		$filter('translate')('DATEPICKER.SUNDAY_S'),
+		$filter('translate')('DATEPICKER.MONDAY_S'),
+		$filter('translate')('DATEPICKER.TUESDAY_S'),
+		$filter('translate')('DATEPICKER.WEDNESDAY_S'),
+		$filter('translate')('DATEPICKER.THURSDAY_S'),
+		$filter('translate')('DATEPICKER.FRIDAY_S'),
+		$filter('translate')('DATEPICKER.SATURDAY_S')
+	];
+
+	$locale["DATETIME_FORMATS"]["MONTH"] = [
+		$filter('translate')('DATEPICKER.JANUARY'),
+		$filter('translate')('DATEPICKER.FEBRUARY'),
+		$filter('translate')('DATEPICKER.MARCH'),
+		$filter('translate')('DATEPICKER.APRIL'),
+		$filter('translate')('DATEPICKER.MAY'),
+		$filter('translate')('DATEPICKER.JUNE'),
+		$filter('translate')('DATEPICKER.JULY'),
+		$filter('translate')('DATEPICKER.AUGUST'),
+		$filter('translate')('DATEPICKER.SEPTEMBER'),
+		$filter('translate')('DATEPICKER.OCTOBER'),
+		$filter('translate')('DATEPICKER.NOVEMBER'),
+		$filter('translate')('DATEPICKER.DECEMBER')
+	];
+
+	// Function for search through the filters
 		$scope.searchAppointmentFilter = function (Filter) {
 			var keyword = new RegExp($scope.appointmentSearchField, 'i');
 			return !$scope.appointmentSearchField || keyword.test(Filter.name);
@@ -125,6 +150,18 @@ angular.module('opalAdmin.controllers.post.edit', ['ngAnimate', 'ngSanitize', 'u
 
 			// Call our API service to get each filter
 			filterCollectionService.getFilters().then(function (response) {
+				response.data.appointments.forEach(function(entry) {
+					if(Session.retrieveObject('user').language.toUpperCase() === "FR")
+						entry.name_display = entry.name_FR;
+					else
+						entry.name_display = entry.name;
+				});
+				response.data.dx.forEach(function(entry) {
+					if(Session.retrieveObject('user').language.toUpperCase() === "FR")
+						entry.name_display = entry.name_FR;
+					else
+						entry.name_display = entry.name;
+				});
 
 				$scope.appointmentTriggerList = checkAdded(response.data.appointments, $scope.selectAll.appointment); // Assign value
 				$scope.dxTriggerList = checkAdded(response.data.dx, $scope.selectAll.diagnosis);
@@ -136,10 +173,10 @@ angular.module('opalAdmin.controllers.post.edit', ['ngAnimate', 'ngSanitize', 'u
 				processingModal = null; // remove reference
 
 			}).catch(function(response) {
-				console.error('Error occurred getting filter list:', response.status, response.data);
+				alert($filter('translate')('POSTS.EDIT.ERROR_TRIGGERS') + "\r\n\r\n" + response.status + " " + response.data);
 			});
 		}).catch(function(response) {
-			console.error('Error occurred getting post details:', response.status, response.data);
+			alert($filter('translate')('POSTS.EDIT.ERROR_DETAILS') + "\r\n\r\n" +  response.status + " " + response.data);
 		});
 
 		// Function to toggle trigger in a list on/off
@@ -270,21 +307,23 @@ angular.module('opalAdmin.controllers.post.edit', ['ngAnimate', 'ngSanitize', 'u
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/post/update.post.php",
+					url: "post/update/post",
 					data: $scope.post,
 					success: function (response) {
 						response = JSON.parse(response);
 						// Show success or failure depending on response
 						if (response.value) {
 							$scope.setBannerClass('success');
-							$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.post.name_EN + "/ " + $scope.post.name_FR + "\"!";
+							$scope.$parent.bannerMessage = $filter('translate')('POSTS.EDIT.SUCCESS_EDIT') ;
+							$scope.showBanner();
 						}
 						else {
-							$scope.setBannerClass('danger');
-							$scope.$parent.bannerMessage = response.message;
+							alert($filter('translate')('POSTS.EDIT.ERROR_EDIT'));
 						}
-
-						$scope.showBanner();
+						$uibModalInstance.close();
+					},
+					error: function(err) {
+						alert($filter('translate')('POSTS.EDIT.ERROR_EDIT') + "\r\n\r\n" + err.status + " - " + err.statusText);
 						$uibModalInstance.close();
 					}
 				});

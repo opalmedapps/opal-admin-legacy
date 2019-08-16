@@ -200,7 +200,8 @@ class Filter {
 				$sql = "
 					SELECT DISTINCT
 						dt.Name_EN,
-                        dt.DiagnosisTranslationSerNum
+                        dt.DiagnosisTranslationSerNum,
+						dt.Name_FR
 					FROM
 						DiagnosisTranslation dt
                     WHERE
@@ -212,6 +213,7 @@ class Filter {
 				while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 					$dxArray = array(
 						'name'  => $data[0],
+						'name_FR'  => $data[2],
 						'id'    => $data[1],
 						'type'  => 'Diagnosis',
 						'added' => 0
@@ -224,7 +226,8 @@ class Filter {
                 $sql = "
                     SELECT DISTINCT
 						Alias.AliasName_EN,
-						Alias.AliasSerNum
+						Alias.AliasSerNum,
+						Alias.AliasName_FR
                     FROM   
 						Alias
 					WHERE
@@ -240,6 +243,7 @@ class Filter {
              
                     $appointmentDetails = array(
                         'name'  => $data[0],
+                        'name_FR'  => $data[2],
                         'id'    => $data[1],
                         'type'  => 'Appointment',
                         'added' => 0
@@ -276,6 +280,62 @@ class Filter {
                     'added' => 0
                 );
                 array_push($filters['appointmentStatuses'], $statusDetails);
+
+                // Doctor Filters
+                $sql = "
+                    SELECT DISTINCT
+                        max(Doctor.DoctorAriaSer) ResourceSerNum,
+                        trim(Doctor.LastName) LastName,
+                        trim(Doctor.FirstName) FirstName
+                    FROM Doctor Doctor
+                    
+                    WHERE
+                        Doctor.ResourceSerNum > 0
+                    GROUP BY 
+                        Doctor.LastName
+                    ORDER BY
+                        Doctor.LastName, Doctor.FirstName;
+                ";
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                    $doctorArray = array(
+                        'name'  => preg_replace("/^[Dd][Rr]([.]?[ ]+){1}/", "", $data[2]) . " " . $data[1],
+                        'id'    => $data[0],
+                        'type'  => 'Doctor',
+                        'added' => 0
+                    );
+                    array_push($filters['doctors'], $doctorArray);
+                }
+
+                // Machine Filters
+                $sql = "
+                    SELECT DISTINCT
+                        ResourceAriaSer AS ResourceSerNum,
+                        ResourceName
+                    FROM    
+                        resource
+                    WHERE
+                        ResourceName     LIKE 'STX%'
+                        OR  ResourceName     LIKE 'TB%'
+                    ORDER BY 	
+                        ResourceName;
+                ";
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $machineArray = array(
+                        'name'  => $data[1],
+                        'id'    => $data[0],
+                        'type'  => 'Machine',
+                        'added' => 0
+                    );
+                    array_push($filters['machines'], $machineArray);
+                }
+
 			}
 
             return $filters;

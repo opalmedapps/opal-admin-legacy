@@ -248,7 +248,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.add', ['ngAnimate', '
 				// Submit form
 				$.ajax({
 					type: 'POST',
-					url: 'php/diagnosis-translation/insert.diagnosis_translation.php',
+					url: 'diagnosis-translation/insert/diagnosis-translation',
 					data: $scope.newDiagnosisTranslation,
 					success: function () {
 						$state.go('diagnosis-translation');
