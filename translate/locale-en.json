@@ -857,7 +857,20 @@
       "ERROR_EDIT": "An error occurred while saving the changes.",
       "SUCCESS_EDIT": "The post has being updated successfully."
     },
-    "LOGS": {}
+    "LOG": {
+      "TITLE": "Logs",
+      "CLOSE": "Close",
+      "NO_DATA": "No data available",
+      "REVISION": "Revision No.",
+      "CRONLOGSER": "CronLogSer",
+      "PATIENTSER": "PatientSer",
+      "READ_STATUS": "Read Status",
+      "ACTION": "Action",
+      "HIGHLIGHT": "Highlight the plot area to zoom in and show detailed data",
+      "DATETIME_SENT": "Datetime sent",
+      "LOGS_FOR": " logs for ",
+      "NUMBER": "Number of published messages"
+    }
   },
   "PROFILE": {
     "ACCOUNT": "Account",
