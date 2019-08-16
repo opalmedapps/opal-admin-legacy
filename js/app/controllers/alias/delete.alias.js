@@ -10,7 +10,7 @@ angular.module('opalAdmin.controllers.alias.delete', [])
 
 			$.ajax({
 				type: "POST",
-				url: "php/alias/delete.alias.php",
+				url: "alias/delete/alias",
 				data: $scope.aliasToDelete,
 				success: function (response) {
 					response = JSON.parse(response);

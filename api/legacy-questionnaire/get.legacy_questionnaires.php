@@ -1,18 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get a list of existing legacy questionnaires */
+header('Content-Type: application/javascript');
+/* To get a list of existing legacy questionnaires */
 
-	include_once('legacy-questionnaire.inc');
+include_once('legacy-questionnaire.inc');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
+$legacyQuestionnaire = new LegacyQuestionnaire; // Object
+$legacyQuestionnaireList = $legacyQuestionnaire->getLegacyQuestionnaires();
 
-	$legacyQuestionnaire = new LegacyQuestionnaire; // Object
-
-	// Call function
-	$legacyQuestionnaireList = $legacyQuestionnaire->getLegacyQuestionnaires();
-
-	// Callback to http request
-	print $callback.'('.json_encode($legacyQuestionnaireList).')';
-
-?>
+echo json_encode($legacyQuestionnaireList);

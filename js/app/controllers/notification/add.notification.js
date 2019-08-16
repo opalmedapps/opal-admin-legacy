@@ -131,7 +131,7 @@ angular.module('opalAdmin.controllers.notification.add', ['ngAnimate', 'ngSaniti
 				// Submit
 				$.ajax({
 					type: "POST",
-					url: "php/notification/insert.notification.php",
+					url: "notification/insert/notification",
 					data: $scope.newNotification,
 					success: function () {
 						$state.go('notification');

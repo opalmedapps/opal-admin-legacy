@@ -9,7 +9,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.delete', ['ngAnimate'
 			$scope.diagnosisTranslationToDelete.user = currentUser;
 			$.ajax({
 				type: "POST",
-				url: "php/diagnosis-translation/delete.diagnosis_translation.php",
+				url: "diagnosis-translation/delete/diagnosis-translation",
 				data: $scope.diagnosisTranslationToDelete,
 				success: function (response) {
 					response = JSON.parse(response);

@@ -145,7 +145,7 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "php/test-result/update.test_result_publish_flags.php",
+					url: "test-result/update/test-result-publish-flags",
 					data: $scope.testResultPublishes,
 					success: function (response) {
 						// Call our API to get the list of existing test results

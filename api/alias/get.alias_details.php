@@ -1,18 +1,12 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get details on a particular alias */
-	include_once('alias.inc');
+header('Content-Type: application/javascript');
+/* To get details on a particular alias */
+include_once('alias.inc');
 
-	// Retrieve FORM params
-	$callback = $_GET['callback'];
-	$serial = $_GET['serial'];
+// Retrieve FORM params
+$serial = strip_tags($_POST['serial']);
+$alias = new Alias; // Object
+$AliasDetails = $alias->getAliasDetails($serial);
 
-	$alias = new Alias; // Object
-
-	// Call function
-	$AliasDetails = $alias->getAliasDetails($serial);
-
-	// Callback to http request
-	print $callback.'('.json_encode($AliasDetails).')';
-
-?>
+// Callback to http request
+echo json_encode($AliasDetails);

@@ -1,0 +1,164 @@
+<!-- Modal title -->
+<div class="modal-header">
+    <div class="row col-xs-12">
+        <h2 class="modal-title col-xs-12"><span class="glyphicon glyphicon-pencil"></span>{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.TITLE'|translate}}</h2>
+    </div>
+    <div class="modal-buttons col-xs-12">
+        <span>
+            <form method="post" ng-submit="updateTemplateQuestion()">
+                <input class="btn btn-primary submit" type="submit" value="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.SAVE'|translate}}" ng-disabled="!checkForm()" />
+                <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.CANCEL'|translate}}" />
+            </form>
+        </span>
+    </div>
+</div>
+<div class="modal-body">
+    <uib-accordion>
+        <!-- SECTION: Title -->
+        <div uib-accordion-group is-open="titleSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.TITLES'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.ENGLISH_TITLE'|translate}}</span>
+                        <input type="text" class="form-control" ng-model="templateQuestion.name_EN" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.ENGLISH_NAME'|translate}}" ng-change="setChangesMade()"  />
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.FRENCH_TITLE'|translate}}</span>
+                        <input type="text" class="form-control" ng-model="templateQuestion.name_FR" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.FRENCH_NAME'|translate}}" ng-change="setChangesMade()"  />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 col-md-6" style="margin-bottom: 20px;">
+                    <label style="font-size: 20px;">{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PRIVATE'|translate}} <input ng-change="setChangesMade()" type="checkbox" ng-model="templateQuestion.private" ng-disabled="!templateQuestion.isOwner || templateQuestion.readOnly"  ng-true-value="1" ng-false-value="0"></label>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: Response type -->
+        <div uib-accordion-group is-open="answerTypeSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.TEMPLATE_QUESTION'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': answerTypeSection.open, 'glyphicon-chevron-right': !answerTypeSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="alert alert-info" role="alert">
+                <strong>{{templateQuestion.category_display}}</strong>
+            </div>
+
+            <div ng-hide="templateQuestion.readOnly">
+                <!-- Edit text box options -->
+                <div class="col-xs-12 col-md-8" ng-if="templateQuestion.typeId === '3'">
+                    <p>{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.NO_OPTION'|translate}}</p>
+                </div>
+
+                <!-- Edit radio button options -->
+                <div class="col-xs-12 col-md-8" ng-if="templateQuestion.typeId === '4' || templateQuestion.typeId === '1'">
+                    <div class="input-group" style="margin-top:5px; margin-bottom:5px;" ng-repeat="option in templateQuestion.subOptions">
+                        <input class="form-control" style="width:20%" ng-change="setChangesMade();orderPreview();" type="number" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PLACEHOLDER_POSITION'|translate}}" ng-model="option.order"  />
+                        <input class="form-control" style="width:40%" ng-change="setChangesMade();" type="text" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PLACEHOLDER_TEXT_EN'|translate}}" ng-model="option.description_EN"  />
+                        <input class="form-control" style="width:40%" ng-change="setChangesMade();" type="text" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PLACEHOLDER_TEXT_FR'|translate}}" ng-model="option.description_FR"  />
+                        <span class="input-group-btn"><button class="btn btn-default" ng-click="deleteOptions(option);orderPreview();" ><span class="fa fa-minus"></span> {{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.DELETE'|translate}}</button></span>
+                    </div>
+                    <button type="button" class="btn btn-default" style="float: left; margin-top:5px;" ng-click="addOptions()" ><span class="fa fa-plus"></span> {{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.ADD'|translate}}</button>
+                </div>
+
+                <!-- Edit Sliders options -->
+                <div class="col-xs-12 col-md-8" ng-if="templateQuestion.typeId === '2'">
+                    <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
+                        <div style="display: block; float: left;width: 22%;">
+                            &nbsp;
+                        </div>
+                        <div style="display: block; float: left;width: 8%;">{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.VALUE'|translate}}</div>
+                        <div style="display: block; float: left;width: 35%;">{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.ENGLISH'|translate}}</div>
+                        <div style="display: block; float: left;width: 35%;">{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.FRENCH'|translate}}</div>
+
+                    </div>
+                    <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
+                        <span class="input-group-addon">&nbsp;{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.MIN_SETTINGS'|translate}}</span>
+                        <input class="form-control" style="width:12%;" ng-change="setChangesMade();updateSlider();" min="1" type="number" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PLACEHOLDER_MIN_VALUE'|translate}}" ng-model="templateQuestion.options.minValue" />
+                        <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="templateQuestion.options.minCaption_EN" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PLACEHOLDER_MIN_CAPTION_EN'|translate}}" />
+                        <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="templateQuestion.options.minCaption_FR" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PLACEHOLDER_MIN_CAPTION_FR'|translate}}" />
+                    </div>
+                    <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
+                        <span class="input-group-addon">{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.MAX_SETTINGS'|translate}}</span>
+                        <input class="form-control" style="width:12%" ng-change="setChangesMade();updateSlider();" min="1" type="number" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PLACEHOLDER_MAX_VALUE'|translate}}" ng-model="templateQuestion.options.maxValue" />
+                        <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="templateQuestion.options.maxCaption_EN" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PLACEHOLDER_MAX_CAPTION_EN'|translate}}" />
+                        <input class="form-control" style="width:44%" ng-change="setChangesMade();updateSlider();" type="text" ng-model="templateQuestion.options.maxCaption_FR" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PLACEHOLDER_MAX_CAPTION_FR'|translate}}" />
+                    </div>
+                    <div class="input-group" style="margin-top:10px; margin-bottom:10px;width:100%;">
+                        <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.INCREMENT'|translate}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <input class="form-control" style="width:12%" ng-change="setChangesMade();updateSlider();" type="number" min="1" placeholder="{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PLACEHOLDER_INCREMENT_STEP'|translate}}" ng-model="templateQuestion.options.increment"  />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview -->
+            <div ng-class="templateQuestion.readOnly ? 'col-xs-12' : 'col-md-4'" style="text-align:right">
+                <div style="height:10px; border-bottom:1px solid #6f5499; text-align:center; margin-bottom:10px;">
+                    <span style="background-color: #fff; padding: 0 10px; font-size:16px;">{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.PREVIEW'|translate}}</span>
+                </div>
+                <div class="previewContainer" style="max-height: 300px;height:100%;">
+                    <div class="previewContent" ng-show="validSlider">
+                        <div class="row">
+                            <div ng-class="templateQuestion.readOnly ? 'col-lg-6' : 'col-lg-12'">
+                                <h4 style="margin-top:10px;">{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.ENGLISH'|translate}}</h4>
+                                <p style="margin-top:10px; margin-bottom:10px"; ng-bind-html="templateQuestion.name_EN"></p>
+                                <div ng-if="templateQuestion.typeId === '1'">
+                                    <div ng-repeat="option in templateQuestion.subOptions">
+                                        <label><input type="checkbox" disabled> {{option.description_EN}}</label>
+                                    </div>
+                                </div>
+                                <div ng-if="templateQuestion.typeId == '3'">
+                                    <textarea rows="3" cols="30" disabled>{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.TYPE_ANSWER_EN'|translate}}</textarea>
+                                </div>
+                                <div ng-if="templateQuestion.typeId == '2'">
+                                    <div ng-repeat="option in preview">
+                                        <label><input type="radio" disabled> {{option.description_EN}}</label>
+                                    </div>
+                                </div>
+                                <div ng-if="templateQuestion.typeId == '4'">
+                                    <div ng-repeat="option in templateQuestion.subOptions">
+                                        <label><input type="radio" disabled> {{option.description_EN}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-class="templateQuestion.readOnly ? 'col-lg-6' : 'col-lg-12'">
+                                <h4 style="margin-top:10px;">{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.FRENCH'|translate}}</h4>
+                                <p style="margin-top:10px; margin-bottom:10px"; ng-bind-html="templateQuestion.name_FR"></p>
+                                <div ng-if="templateQuestion.typeId === '1'">
+                                    <div ng-repeat="option in templateQuestion.subOptions">
+                                        <label><input type="checkbox" disabled> {{option.description_FR}}</label>
+                                    </div>
+                                </div>
+                                <div ng-if="templateQuestion.typeId == '2'">
+                                    <div ng-repeat="option in preview">
+                                        <label><input type="radio" disabled> {{option.description_FR}}</label>
+                                    </div>
+                                </div>
+                                <div ng-if="templateQuestion.typeId == '3'">
+                                    <textarea rows="3" cols="30" disabled>{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.TYPE_ANSWER_FR'|translate}}</textarea>
+                                </div>
+                                <div ng-if="templateQuestion.typeId == '4'">
+                                    <div ng-repeat="option in templateQuestion.subOptions">
+                                        <label><input type="radio" disabled> {{option.description_FR}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="previewContent" ng-hide="validSlider">
+                        <p>{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.INVALID_SLIDER'|translate}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </uib-accordion>
+</div>

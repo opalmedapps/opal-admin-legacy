@@ -1,18 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get a list of existing email templates */
+header('Content-Type: application/javascript');
+/* To get a list of existing email templates */
 
-	include_once('email.inc');
+include_once('email.inc');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
+$emailObj = new Email; // Object
+$existingEmailList = $emailObj->getEmailTemplates();
 
-	$emailObj = new Email; // Object
-
-	// Call function
-	$existingEmailList = $emailObj->getEmailTemplates();
-
-	// Callback to http request
-	print $callback.'('.json_encode($existingEmailList).')';
-
-?>
+echo json_encode($existingEmailList);
