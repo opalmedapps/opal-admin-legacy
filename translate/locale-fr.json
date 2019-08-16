@@ -878,7 +878,20 @@
       "ERROR_EDIT": "Une erreur s'est produite lors de l'enregistrement des modifications.",
       "SUCCESS_EDIT": "La publication a été mise à jour avec succès."
     },
-    "LOGS": {}
+    "LOG": {
+      "TITLE": "Journaux",
+      "CLOSE": "Fermer",
+      "NO_DATA": "Aucune donnée disponible",
+      "REVISION": "No. de révision.",
+      "CRONLOGSER": "ID journaux de cron",
+      "PATIENTSER": "ID Patient",
+      "READ_STATUS": "Statut de lecture",
+      "ACTION": "Action",
+      "HIGHLIGHT": "Mettez en surbrillance la zone de tracé pour effectuer un zoom et afficher des données détaillées",
+      "DATETIME_SENT": "Date et heure d'envoi",
+      "LOGS_FOR": " journaux pour ",
+      "NUMBER": "Nombre de messages publiés"
+    }
   },
   "PROFILE": {
     "ACCOUNT": "Compte",
