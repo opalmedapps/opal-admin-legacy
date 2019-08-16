@@ -264,7 +264,6 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 			// Call our API to get post logs
 			postCollectionService.getPostChartLogs().then(function (response) {
 				$scope.postChartLogs = $scope.chartConfig.series = response.data;
-				console.log(response.data);
 				angular.forEach($scope.postChartLogs, function(serie) {
 					angular.forEach(serie.data, function(log) {
 						log.x = new Date(log.x);
