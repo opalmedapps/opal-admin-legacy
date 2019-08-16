@@ -1,138 +1,138 @@
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation" ng-controller="navigation" ng-if="isAuthenticated()">
-  <!-- Brand and toggle get grouped for better mobile display -->
-  <div class="navbar-header">
-    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-      <span class="sr-only">Toggle navigation</span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-    </button>
-    <a class="navbar-brand" ui-sref="home">
-    	<img alt="Brand" src="images/opal_logo_transparent.png" height="35" width="35">
-    </a>
-    <p class="navbar-text"><a style="color: #fff" ui-sref="home">opal <strong>ADMIN</strong></a></p>
-  </div>
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" ui-sref="home">
+            <img alt="Brand" src="images/opal_logo_transparent.png" height="35" width="35">
+        </a>
+        <p class="navbar-text"><a style="color: #fff" ui-sref="home">opal <strong>ADMIN</strong></a></p>
+    </div>
 
-  <!-- Collect the nav links, forms, and other content for toggling -->
-  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-    <ul class="nav navbar-nav">
-      <li class="dropdown" ng-class="{active: currentActivePublishingTool()}" ng-if="isAuthorized([userRoles.admin])">
-        <a href="" class="dropdown-toggle"  data-toggle="dropdown">Publishing Tools <b class="caret"></b></a>
-        <ul class="dropdown-menu">
-          <li ui-sref-active="active">
-          	<a ui-sref="alias" ng-click="closeNav()">
-          		<span class="glyphicon glyphicon-cloud" aria-hidden="true"></span>
-          		Task - Appointments - Documents
-          	</a>
-          </li>
-          <li ui-sref-active="active">
-          	<a ui-sref="post" ng-click="closeNav()">
-          		<span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
-          		Posts
-          	</a>
-          </li>
-          <li ui-sref-active="active">
-          	<a ui-sref="educational-material" ng-click="closeNav()">
-          		<span class="glyphicon glyphicon-book" aria-hidden="true"></span>
-          		Educational Material
-          	</a>
-          </li>
-          <li ui-sref-active="active">
-          	<a ui-sref="hospital-map" ng-click="closeNav()">
-          		<span class="fa fa-map" aria-hidden="true"></span>
-          		Hospital Maps
-          	</a>
-          </li>
-          <li ui-sref-active="active">
-          	<a ui-sref="notification" ng-click="closeNav()">
-          		<span class="glyphicon glyphicon-bell" aria-hidden="true"></span>
-          		Notifications
-          	</a>
-          </li>
-          <li ui-sref-active="active">
-          	<a ui-sref="test-result" ng-click="closeNav()">
-          		<span class="fa fa-heartbeat" aria-hidden="true"></span>
-          		Test Results
-          	</a>
-          </li>
-          <li ui-sref-active="active">
-          	<a ui-sref="questionnaire-menu" ng-click="closeNav()">
-          		<span class="fa fa-pencil-square-o" aria-hidden="true"></span>
-          		Questionnaires
-          	</a>
-          </li>
-          <li ui-sref-active="active">
-          	<a ui-sref="email" ng-click="closeNav()">
-          		<span class="fa fa-envelope" aria-hidden="true"></span>
-          		Email
-          	</a>
-          </li>
-          <li ui-sref-active="active">
-          	<a ui-sref="legacy-questionnaire" ng-click="closeNav()">
-          		<span class="fa fa-pencil-square" aria-hidden="true"></span>
-          		Legacy Questionnaire
-          	</a>
-          </li>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+            <li class="dropdown" ng-class="{active: currentActivePublishingTool()}" ng-if="isAuthorized([userRoles.admin])">
+                <a href="" class="dropdown-toggle"  data-toggle="dropdown">{{'NAVIGATION_MENU.PUBLISHING_TOOLS'|translate}} <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li ui-sref-active="active">
+                        <a ui-sref="alias" ng-click="closeNav()">
+                            <span class="glyphicon glyphicon-cloud" aria-hidden="true"></span>
+                            {{'NAVIGATION_MENU.TASKS_APPTS_DOCS'|translate}}
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="post" ng-click="closeNav()">
+                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+                            {{'NAVIGATION_MENU.POSTS'|translate}}
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="educational-material" ng-click="closeNav()">
+                            <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+                            {{'NAVIGATION_MENU.EDU_MATERIAL'|translate}}
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="hospital-map" ng-click="closeNav()">
+                            <span class="fa fa-map" aria-hidden="true"></span>
+                            {{'NAVIGATION_MENU.HOSPITAL_MAPS'|translate}}
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="notification" ng-click="closeNav()">
+                            <span class="glyphicon glyphicon-bell" aria-hidden="true"></span>
+                            {{'NAVIGATION_MENU.NOTIFICATIONS'|translate}}
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="test-result" ng-click="closeNav()">
+                            <span class="fa fa-heartbeat" aria-hidden="true"></span>
+                            {{'NAVIGATION_MENU.TEST_RESULTS'|translate}}
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="questionnaire-menu" ng-click="closeNav()">
+                            <span class="fa fa-pencil-square-o" aria-hidden="true"></span>
+                            {{'NAVIGATION_MENU.QUESTIONNAIRES'|translate}}
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="email" ng-click="closeNav()">
+                            <span class="fa fa-envelope" aria-hidden="true"></span>
+                            {{'NAVIGATION_MENU.EMAIL'|translate}}
+                        </a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="legacy-questionnaire" ng-click="closeNav()">
+                            <span class="fa fa-pencil-square" aria-hidden="true"></span>
+                            {{'NAVIGATION_MENU.LEGACY_QUESTIONNAIRE'|translate}}
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="dropdown" ng-class="{active: currentActiveAdministration()}" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
+                <a href="" class="dropdown-toggle"  data-toggle="dropdown">{{'NAVIGATION_MENU.ADMINISTRATION'|translate}} <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
+                        <a ui-sref="diagnosis-translation" ng-click="closeNav()">
+                            <span class="fa fa-stethoscope" aria-hidden="true"></span>
+                            {{'NAVIGATION_MENU.DIAGNOSIS_TRANSLATION'|translate}}
+                        </a>
+                    </li>
+                    <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
+                        <a ui-sref="cron" ng-click="closeNav()">
+                            <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                            {{'NAVIGATION_MENU.CRON_LOGS'|translate}}
+                        </a>
+                    </li>
+                    <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
+                        <a ui-sref="patients" ng-click="closeNav()">
+                            <span class="fa fa-address-card" aria-hidden="true"></span>
+                            {{'NAVIGATION_MENU.PATIENTS'|translate}}
+                        </a>
+                    </li>
+                    <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
+                        <a ui-sref="patients-register" ng-click="closeNav()">
+                            <span class="fa fa-user-plus" aria-hidden="true"></span>
+                            {{'NAVIGATION_MENU.PATIENT_REGISTRATION'|translate}}
+                        </a>
+                    </li>
+                    <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
+                        <a ui-sref="patient-activity" ng-click="closeNav()">
+                            <span class="fa fa-hourglass-half" aria-hidden="true"></span>
+                            {{'NAVIGATION_MENU.PATIENT_ACTIVITY'|translate}}
+                        </a>
+                    </li>
+                    <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
+                        <a ui-sref="users" ng-click="closeNav()">
+                            <span class="fa fa-users" aria-hidden="true"></span>
+                            {{'NAVIGATION_MENU.USERS'|translate}}
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="dropdown" ng-class="{active: currentActiveProfile()}">
+                <a href="" class="dropdown-toggle"  data-toggle="dropdown">{{'NAVIGATION_MENU.PROFILE'|translate}} <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li ui-sref-active="active">
+                        <a ui-sref="account" ng-click="closeNav()">
+                            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                            {{'NAVIGATION_MENU.ACCOUNT'|translate}}
+                        </a>
+                    </li>
+                    <li>
+                        <a ng-click="goToLogout()">
+                            <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+                            {{'NAVIGATION_MENU.LOGOUT'|translate}}
+                        </a>
+                    </li>
+                </ul>
+            </li>
         </ul>
-      </li>
-      <li class="dropdown" ng-class="{active: currentActiveAdministration()}" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
-        <a href="" class="dropdown-toggle"  data-toggle="dropdown">Administration <b class="caret"></b></a>
-        <ul class="dropdown-menu">
-          <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
-          	<a ui-sref="diagnosis-translation" ng-click="closeNav()">
-          		<span class="fa fa-stethoscope" aria-hidden="true"></span>
-          		Diagnosis Translation
-          	</a>
-          </li>
-          <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
-          	<a ui-sref="cron" ng-click="closeNav()">
-          		<span class="glyphicon glyphicon-time" aria-hidden="true"></span>
-          		Cron Logs
-          	</a>
-          </li>
-          <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
-          	<a ui-sref="patients" ng-click="closeNav()">
-          		<span class="fa fa-address-card" aria-hidden="true"></span>
-          		Patients
-          	</a>
-          </li>
-          <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
-          	<a ui-sref="patients-register" ng-click="closeNav()">
-          		<span class="fa fa-user-plus" aria-hidden="true"></span>
-          		Patient Registration
-          	</a>
-          </li>
-          <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
-          	<a ui-sref="patient-activity" ng-click="closeNav()">
-          		<span class="fa fa-hourglass-half" aria-hidden="true"></span>
-          		Patient Activity
-          	</a>
-          </li>
-          <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
-          	<a ui-sref="users" ng-click="closeNav()">
-          		<span class="fa fa-users" aria-hidden="true"></span>
-          		Users
-          	</a>
-          </li>
-        </ul>
-      </li>
-      <li class="dropdown" ng-class="{active: currentActiveProfile()}">
-        <a href="" class="dropdown-toggle"  data-toggle="dropdown">Profile <b class="caret"></b></a>
-        <ul class="dropdown-menu">
-          <li ui-sref-active="active">
-          	<a ui-sref="account" ng-click="closeNav()">
-          		<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-          		Account
-          	</a>
-          </li>
-          <li>
-          	<a ng-click="goToLogout()">
-          		<span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
-          		Logout
-          	</a>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </div><!-- /.navbar-collapse -->
+    </div><!-- /.navbar-collapse -->
 </nav>
