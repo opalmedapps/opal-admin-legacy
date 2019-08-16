@@ -873,6 +873,34 @@
       "ERROR": "An error occurred while getting the logs."
     }
   },
+  "HOSPITAL_MAPS": {
+    "LIST": {
+      "TITLE": "Hospital Maps",
+      "ADD": "Add",
+      "SEARCH": "Search...",
+      "NAME": "Name",
+      "QR_IDENTIFIER": "QR Identifier",
+      "MAP_URL": "Map URL",
+      "OPERATIONS": "Operations",
+      "EDIT": "Edit",
+      "DELETE": "Delete",
+      "ERROR_LIST": "An error occurred while getting the list of hospital maps.",
+      "ERROR_QR": "An error occurred while generating the QR code."
+    },
+    "DELETE": {
+      "TITLE": "Delete Hospital Map",
+      "WARNING": "WARNING!",
+      "WARNING_TEXT": "Are you sure you want to delete the following hospital map? This action cannot be undone!",
+      "DELETE": "Delete",
+      "CANCEL": "Cancel",
+      "SUCCESS": "The hospital map has being successfully deleted.",
+      "ERROR": "An error occurred while deleting the hospital map."
+    },
+    "ADD": {
+    },
+    "EDIT": {
+    }
+  },
   "PROFILE": {
     "ACCOUNT": "Account",
     "RESET_PASSWORD": "Reset Password",
