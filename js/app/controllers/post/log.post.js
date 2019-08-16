@@ -5,9 +5,6 @@ angular.module('opalAdmin.controllers.post.log', ['ngAnimate', 'ngSanitize', 'ui
  * Controller for the post logs
  *******************************************************************************/
 controller('post.log', function ($scope, $uibModal, $filter, postCollectionService, Session, $uibModalInstance) {
-
-	console.log($scope.currentPost);
-	// Call our API to get post logs
 	postCollectionService.getPostChartLogs($scope.currentPost.serial, $scope.currentPost.type).then(function (response) {
 		$scope.postChartLogs = $scope.chartConfig.series = response.data;
 		angular.forEach($scope.postChartLogs, function(serie) {
@@ -16,7 +13,8 @@ controller('post.log', function ($scope, $uibModal, $filter, postCollectionServi
 			});
 		});
 	}).catch(function(response) {
-		console.error('Error occurred getting post logs:', response.status, response.data);
+		alert($filter('translate')('POSTS.LOG.ERROR') + "\r\n\r\n" + response.status);
+		$uibModalInstance.dismiss('cancel');
 	});
 
 	var chartConfig = $scope.chartConfig = {
