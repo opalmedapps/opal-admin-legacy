@@ -6,6 +6,7 @@ angular.module('opalAdmin.controllers.post.log', ['ngAnimate', 'ngSanitize', 'ui
  *******************************************************************************/
 controller('post.log', function ($scope, $uibModal, $filter, postCollectionService, Session, $uibModalInstance) {
 
+	console.log($scope.currentPost);
 	// Call our API to get post logs
 	postCollectionService.getPostChartLogs($scope.currentPost.serial, $scope.currentPost.type).then(function (response) {
 		$scope.postChartLogs = $scope.chartConfig.series = response.data;
@@ -25,15 +26,15 @@ controller('post.log', function ($scope, $uibModal, $filter, postCollectionServi
 			className: 'logChart'
 		},
 		title: {
-			text: $scope.currentPost.type + ' logs for ' + $scope.currentPost.name_EN + ' / ' + $scope.currentPost.name_FR
+			text: $scope.currentPost.name_EN + ' / ' + $scope.currentPost.name_FR
 		},
 		subtitle: {
-			text: 'Highlight the plot area to zoom in and show detailed data'
+			text: $filter('translate')('POSTS.LOG.HIGHLIGHT')
 		},
 		xAxis: {
 			type: 'datetime',
 			title: {
-				text: 'Datetime sent'
+				text: $filter('translate')('POSTS.LOG.DATETIME_SENT')
 			},
 			events: {
 				setExtremes: function (selection) {
@@ -70,7 +71,7 @@ controller('post.log', function ($scope, $uibModal, $filter, postCollectionServi
 		},
 		yAxis: {
 			title: {
-				text: 'Number of ' + $scope.currentPost.type + ' published'
+				text: $filter('translate')('POSTS.LOG.NUMBER')
 			},
 			tickInterval: 1,
 			min: 0
@@ -114,13 +115,13 @@ controller('post.log', function ($scope, $uibModal, $filter, postCollectionServi
 	$scope.gridLogOptions = {
 		data: 'postListLogs',
 		columnDefs: [
-			{ field: 'post_control_name', displayName: 'Post' },
-			{ field: 'revision', displayName: 'Revision No.' },
-			{ field: 'cron_serial', displayName: 'CronLogSer' },
-			{ field: 'patient_serial', displayName: 'PatientSer' },
-			{ field: 'read_status', displayName: 'Read Status' },
-			{ field: 'date_added', displayName: 'Datetime Sent' },
-			{ field: 'mod_action', displayName: 'Action' }
+			{ field: 'post_control_name', displayName: $filter('translate')('POSTS.LOG.POST') },
+			{ field: 'revision', displayName: $filter('translate')('POSTS.LOG.REVISION') },
+			{ field: 'cron_serial', displayName: $filter('translate')('POSTS.LOG.CRONLOGSER') },
+			{ field: 'patient_serial', displayName: $filter('translate')('POSTS.LOG.PATIENTSER') },
+			{ field: 'read_status', displayName: $filter('translate')('POSTS.LOG.READ_STATUS') },
+			{ field: 'date_added', displayName: $filter('translate')('POSTS.LOG.DATETIME_SENT') },
+			{ field: 'mod_action', displayName: $filter('translate')('POSTS.LOG.ACTION') }
 		],
 		rowHeight: 30,
 		useExternalFiltering: true,
@@ -134,5 +135,4 @@ controller('post.log', function ($scope, $uibModal, $filter, postCollectionServi
 	$scope.cancel = function () {
 		$uibModalInstance.dismiss('cancel');
 	};
-
 });

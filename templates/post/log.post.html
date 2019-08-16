@@ -3,15 +3,12 @@
     <div class="col-xs-12 col-md-6">
         <h2 class="modal-title">
             <span class="fa fa-area-chart"></span>
-            {{currentPost.type}} Logs
+            {{'POSTS.LOG.TITLE'|translate}} - {{currentPost.type_display}}
         </h2>
-        <p class="modal-title-caption">
-            {{currentPost.name_EN}} / {{currentPost.name_FR}}
-        </p>
     </div>
     <div class="modal-buttons col-xs-12 col-md-6">
     <span> 
-      <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Close">
+      <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'POSTS.LOG.CLOSE'|translate}}">
     </span>
     </div>
 </div>
@@ -19,7 +16,7 @@
     <div class="panel-container" ng-if="!postChartLogs.length">
         <div class="panel-info">
             <div class="jumbotron content" style="background-color: transparent; margin-bottom:0">
-                <p style="font-size:45px;">No data available</p>
+                <p style="font-size:45px;">{{'POSTS.LOG.NO_DATA'|translate}}</p>
             </div>
         </div>
     </div>
