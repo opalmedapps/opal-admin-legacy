@@ -869,7 +869,8 @@
       "HIGHLIGHT": "Highlight the plot area to zoom in and show detailed data",
       "DATETIME_SENT": "Datetime sent",
       "LOGS_FOR": " logs for ",
-      "NUMBER": "Number of published messages"
+      "NUMBER": "Number of published messages",
+      "ERROR": "An error occurred while getting the logs."
     }
   },
   "PROFILE": {
