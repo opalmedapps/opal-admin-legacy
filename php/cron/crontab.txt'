@@ -1,0 +1,5 @@
+15 10 25 07 * 
+mpp\htdocs\opalAdmin\publisher/dataControl.pl >/dev/null 2>>
+mpp\htdocs\opalAdmin\publisher/logs/executions.log
+15 10 25 07 * /usr/bin/php 
+mpp\htdocs\opalAdmin\php/cron/update.crontab.php 1 >/dev/null 2>&1
