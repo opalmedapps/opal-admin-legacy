@@ -894,6 +894,34 @@
       "ERROR": "Une erreur s'est produite lors de l'obtention des journaux."
     }
   },
+  "HOSPITAL_MAPS": {
+    "LIST": {
+      "TITLE": "Cartes de l'hôpital",
+      "ADD": "Ajouter",
+      "SEARCH": "Rechercher",
+      "NAME": "Nom",
+      "QR_IDENTIFIER": "Identificateur QR",
+      "MAP_URL": "URL de la carte",
+      "OPERATIONS": "Opérations",
+      "EDIT": "Modifier",
+      "DELETE": "Supprimer",
+      "ERROR_LIST": "Une erreur s'est produite lors de l'obtention de la liste des cartes de l'hôpital.",
+      "ERROR_QR": "Une erreur s'est produite lors de la génération du code QR."
+    },
+    "DELETE": {
+      "TITLE": "Supprimer la carte",
+      "WARNING": "ATTENTION!",
+      "WARNING_TEXT": "Voulez-vous vraiment supprimer la carte ci-dessous? Cette action est irreversible!",
+      "DELETE": "Supprimer",
+      "CANCEL": "Annuler",
+      "SUCCESS": "La carte a été supprimée avec succès.",
+      "ERROR": "Une erreur est survenue lors de la suppression de la carte."
+    },
+    "ADD": {
+    },
+    "EDIT": {
+    }
+  },
   "PROFILE": {
     "ACCOUNT": "Compte",
     "RESET_PASSWORD": "Réinitialiser le mot de passe",
