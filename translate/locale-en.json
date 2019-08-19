@@ -897,6 +897,27 @@
       "ERROR": "An error occurred while deleting the hospital map."
     },
     "ADD": {
+      "BACK": "Back to Hospital Maps",
+      "SUMMARY": "Summary",
+      "TITLE_DESCRIPTION": "Title & Description",
+      "ENGLISH": "English",
+      "FRENCH": "French",
+      "ENGLISH_ABRV": "EN",
+      "ENGLISH_TITLE": "English Title",
+      "ENGLISH_DESCRIPTION": "English Description",
+      "FRENCH_ABVR": "FR",
+      "FRENCH_TITLE": "French Title",
+      "FRENCH_DESCRIPTION": "French Description",
+      "SEE_DESCRIPTION": "See rendered output for description",
+      "MAP_URLS": "Map URLs",
+      "QR": "QR Identifier",
+      "SUBMIT": "Submit Hospital Map",
+      "TITLE": "Add Hospital Map",
+      "STEP": "Step",
+      "OF": "of",
+      "COMPLETED": "completed",
+      "REQUIRED": "Required field:",
+      "TITLE_EXPLANATION": "Please assign an english and french title and description.",
     },
     "EDIT": {
     }
