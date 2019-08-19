@@ -1,27 +1,24 @@
 <div class="modal-header">
-  <div class="col-xs-12">
-    <h2 class="modal-title">
-      <span class="glyphicon glyphicon-trash"></span> 
-      Delete Hospital Map 
+    <h2 class="modal-title col-xs-12">
+        <span class="glyphicon glyphicon-trash"></span> {{'HOSPITAL_MAPS.DELETE.TITLE'|translate}}
     </h2>
-    <p class="modal-title-caption">
-      {{hosMapToDelete.name_EN}} / {{hosMapToDelete.name_FR}}
-    </p>
-  </div>
 </div>
 <div class="modal-body">
-  <div class="alert alert-danger" role="alert">
-    <strong>Delete Hospital Map</strong><br>
-    <p>
-      Are you sure you want to delete the hospital map "{{hosMapToDelete.name_EN}}" ?
-    </p>
-  </div>
-  <div class="row">
-    <div class="modal-buttons col-xs-12">
-      <form method="post" ng-submit="deleteHospitalMap()">      
-        <input class="btn btn-primary submit" type="submit" value="Delete">
-        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
-      </form>
+    <div class="alert alert-danger" role="alert">
+        <p><b>{{'HOSPITAL_MAPS.DELETE.WARNING'|translate}}</b> {{'HOSPITAL_MAPS.DELETE.WARNING_TEXT'|translate}}</p>
     </div>
-  </div>
+    <div class="alert row">
+        <div class="col-xs-12">
+            <p ng-bind-html="hosMapToDelete.name_EN"></p>
+            <p ng-bind-html="hosMapToDelete.name_FR"></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="modal-buttons col-xs-12">
+            <form method="post" ng-submit="deleteHospitalMap()">
+                <input class="btn btn-primary submit" type="submit" value="{{'HOSPITAL_MAPS.DELETE.DELETE'|translate}}">
+                <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'HOSPITAL_MAPS.DELETE.CANCEL'|translate}}">
+            </form>
+        </div>
+    </div>
 </div>
