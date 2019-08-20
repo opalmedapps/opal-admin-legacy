@@ -211,7 +211,7 @@ controller('hospitalMap.add', function ($scope, $filter, $state, $sce, $uibModal
 					$state.go('hospital-map');
 				},
 				error: function (err) {
-					alert($filter('translate')('HOSPITAL_MAPS.ADD.ERROR_QR') + "\r\n\r\n" + err.status + " - " + err.statusText);
+					alert($filter('translate')('HOSPITAL_MAPS.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText);
 					$state.go('hospital-map');
 				}
 			});
@@ -220,10 +220,7 @@ controller('hospitalMap.add', function ($scope, $filter, $state, $sce, $uibModal
 
 	// Function to return boolean for form completion
 	$scope.checkForm = function () {
-		if (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) === 100)
-			return true;
-		else
-			return false;
+		return (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) === 100);
 	};
 
 	var fixmeTop = $('.summary-fix').offset().top;
