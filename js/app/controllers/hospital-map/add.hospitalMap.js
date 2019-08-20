@@ -164,7 +164,7 @@ controller('hospitalMap.add', function ($scope, $filter, $state, $sce, $uibModal
 				$scope.oldqrid = qrid;
 				$scope.qridUpdate();
 			}).catch(function(response) {
-				console.error('Error occurred generating QR code:', response.status, response.data);
+				alert($filter('translate')('HOSPITAL_MAPS.ADD.ERROR_QR') + "\r\n\r\n" + response.status + " - " + response.data);
 			});
 		}
 		else {
@@ -180,11 +180,11 @@ controller('hospitalMap.add', function ($scope, $filter, $state, $sce, $uibModal
 	$scope.mapURL_EN = "";
 	$scope.mapURL_FR = "";
 	$scope.showMap = function (url, language) {
-		if (language == 'EN') {
+		if (language === 'EN') {
 			$scope.showMapDisplay_EN = true;
 			$scope.mapURL_EN = url;
 		}
-		else if (language == 'FR') {
+		else if (language === 'FR') {
 			$scope.showMapDisplay_FR = true;
 			$scope.mapURL_FR = url;
 		}
@@ -209,6 +209,10 @@ controller('hospitalMap.add', function ($scope, $filter, $state, $sce, $uibModal
 				data: $scope.newHosMap,
 				success: function () {
 					$state.go('hospital-map');
+				},
+				error: function (err) {
+					alert($filter('translate')('HOSPITAL_MAPS.ADD.ERROR_QR') + "\r\n\r\n" + err.status + " - " + err.statusText);
+					$state.go('hospital-map');
 				}
 			});
 		}
@@ -216,7 +220,7 @@ controller('hospitalMap.add', function ($scope, $filter, $state, $sce, $uibModal
 
 	// Function to return boolean for form completion
 	$scope.checkForm = function () {
-		if (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) == 100)
+		if (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) === 100)
 			return true;
 		else
 			return false;

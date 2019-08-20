@@ -23,7 +23,7 @@
                                     <div class="side-panel-info-sm">
                                         <div class="panel-content">
                                             <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
-                                            <h6 class="side-panel-title"><strong>Back to Hospital Maps</strong></h6>
+                                            <h6 class="side-panel-title"><strong>{{'HOSPITAL_MAPS.ADD.BACK'|translate}}</strong></h6>
                                         </div>
                                     </div>
                                 </div>
@@ -32,7 +32,7 @@
                             <div class="side-menu-title col-lg-12">
                                 <div class="horz-line" style="height: 16px; text-align: center">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
-                                        <h2>Summary</h2>
+                                        <h2>{{'HOSPITAL_MAPS.ADD.SUMMARY'|translate}}</h2>
                                     </span>
                                 </div>
                             </div>
@@ -53,7 +53,7 @@
                                             <span ng-if="newHosMap.name_EN && newHosMap.name_FR && newHosMap.description_EN && newHosMap.description_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
-                                            <strong>Title & Description</strong>
+                                            <strong>{{'HOSPITAL_MAPS.ADD.TITLE_DESCRIPTION'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
                                             <i ng-if="newHosMap.name_EN || newHosMap.name_FR || newHosMap.description_EN || newHosMap.description_FR" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleDescriptionSection.open, 'glyphicon-chevron-right': !titleDescriptionSection.open}"></i>
@@ -62,19 +62,19 @@
                                 </uib-accordion-heading>
                                 <div ng-if="newHosMap.name_EN || newHosMap.description_EN" class="description">
                                     <p ng-if="newHosMap.name_EN" style="margin-bottom:5px;">
-                                        <strong>EN</strong>
+                                        <strong>{{'HOSPITAL_MAPS.ADD.ENGLISH_ABRV'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                                         {{newHosMap.name_EN}}
                                     </p>
-                                    <p ng-if="newHosMap.description_EN" style="padding-left: 10px; font-size: 10px;"><em>See rendered output for description</em></p>
+                                    <p ng-if="newHosMap.description_EN" style="padding-left: 10px; font-size: 10px;"><em>{{'HOSPITAL_MAPS.ADD.SEE_DESCRIPTION'|translate}}</em></p>
                                 </div>
                                 <div ng-if="newHosMap.name_FR || newHosMap.description_FR" class="description">
                                     <p ng-if="newHosMap.name_FR" style="margin-bottom:5px;">
-                                        <strong>FR</strong>
+                                        <strong>{{'HOSPITAL_MAPS.ADD.FRENCH_ABVR'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                                         {{newHosMap.name_FR}}
                                     </p>
-                                    <p ng-if="newHosMap.description_FR" style="padding-left: 10px; font-size: 10px;"><em>See rendered output for description</em></p>
+                                    <p ng-if="newHosMap.description_FR" style="padding-left: 10px; font-size: 10px;"><em>{{'HOSPITAL_MAPS.ADD.SEE_DESCRIPTION'|translate}}</em></p>
                                 </div>
                             </div>
                             <!-- SECTION: Map URL -->
@@ -85,7 +85,7 @@
                                             <span ng-if="newHosMap.url_EN && newHosMap.url_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
-                                            <strong>Map URLs</strong>
+                                            <strong>{{'HOSPITAL_MAPS.ADD.MAP_URLS'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
                                             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': urlSection.open, 'glyphicon-chevron-right': !urlSection.open}" ng-if="newHosMap.url_EN || newHosMap.url_FR"></i>
@@ -94,14 +94,14 @@
                                 </uib-accordion-heading>
                                 <div ng-if="newHosMap.url_EN" class="description">
                                     <p>
-                                        <strong>EN</strong>
+                                        <strong>{{'HOSPITAL_MAPS.ADD.ENGLISH_ABRV'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                                         {{newHosMap.url_EN}}
                                     </p>
                                 </div>
                                 <div ng-if="newHosMap.url_FR" class="description">
                                     <p>
-                                        <strong>FR</strong>
+                                        <strong>{{'HOSPITAL_MAPS.ADD.FRENCH_ABVR'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                                         {{newHosMap.url_FR}}
                                     </p>
@@ -115,7 +115,7 @@
                                             <span ng-if="newHosMap.qrid" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
-                                            <strong>QR Identifier</strong>
+                                            <strong>{{'HOSPITAL_MAPS.ADD.QR'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
                                             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': qrSection.open, 'glyphicon-chevron-right': !qrSection.open}" ng-if="newHosMap.qrid"></i>
@@ -124,7 +124,7 @@
                                 </uib-accordion-heading>
                                 <div ng-if="newHosMap.qrid" class="description">
                                     <p>
-                                        <strong>QR ID</strong>
+                                        <strong>{{'HOSPITAL_MAPS.ADD.QR_ID'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                                         {{newHosMap.qrid}}
                                     </p>
@@ -134,7 +134,7 @@
                         <!-- Submit button -->
                         <div class="panel-container">
                             <a href="" ng-click="submitHosMap()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
-                                <span style="font-size: 20px;"><strong>Submit Hospital Map</strong></span>
+                                <span style="font-size: 20px;"><strong>{{'HOSPITAL_MAPS.ADD.SUBMIT'|translate}}</strong></span>
                             </a>
                         </div>
                     </div>
@@ -145,16 +145,16 @@
                         <!-- Page title -->
                         <div class="col-xs-12 col-md-8 title-content">
                             <span class="glyphicon glyphicon-plus"></span>
-                            <h1><strong>Add Hospital Map</strong></h1>
+                            <h1><strong>{{'HOSPITAL_MAPS.ADD.TITLE'|translate}}</strong></h1>
                         </div>
                         <!-- Breadcrumbs -->
                         <div class="col-md-4 title-breadcrumbs">
                             <span>
-                                <span><a ui-sref="home">Home</a></span>
+                                <span><a ui-sref="home">{{'BREADCRUMBS.HOME'|translate}}</a></span>
                                 <span class="teflon glyphicon glyphicon-menu-right"></span>
-                                <span><a ui-sref="hospital-map">Hospital Maps</a></span>
+                                <span><a ui-sref="hospital-map">{{'HOSPITAL_MAPS.ADD.TITLE'|translate}}</a></span>
                                 <span class="teflon glyphicon glyphicon-menu-right"></span>
-                                <span><strong>Add Hospital Map</strong></span>
+                                <span><strong>{{'HOSPITAL_MAPS.TITLE'|translate}}</strong></span>
                             </span>
                         </div>
                     </div>
@@ -164,7 +164,7 @@
                                 <div class="side-panel-info-sm">
                                     <div class="panel-content">
                                         <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
-                                        <h6 class="side-panel-title"><strong>Back to Hospital Maps</strong></h6>
+                                        <h6 class="side-panel-title"><strong>{{'HOSPITAL_MAPS.BACK'|translate}}</strong></h6>
                                     </div>
                                 </div>
                             </div>
@@ -172,7 +172,7 @@
                         <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkForm()">
                             <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
                                 <span style="padding: 0 10px;">
-                                    <h2>Step {{numOfCompletedSteps}} of {{stepTotal}} Completed</h2>
+                                    <h2>{{'HOSPITAL_MAPS.STEP'|translate}} {{numOfCompletedSteps}} {{'HOSPITAL_MAPS.OF'|translate}} {{stepTotal}} {{'HOSPITAL_MAPS.COMPLETED'|translate}}</h2>
                                 </span>
                             </div>
                             <div class="progress progress-striped active">
@@ -183,7 +183,7 @@
                         <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkForm()">
                             <div class="panel-container">
                                 <a href="" ng-click="submitHosMap()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
-                                    <span style="font-size: 20px;"><strong>Submit Hospital Map</strong></span>
+                                    <span style="font-size: 20px;"><strong>{{'HOSPITAL_MAPS.SUBMIT'|translate}}</strong></span>
                                 </a>
                             </div>
                         </div>
@@ -195,7 +195,7 @@
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
                                         <span class="fas fa-dot-circle"></span>
-                                        <h2>Title & Description</h2>
+                                        <h2>{{'HOSPITAL_MAPS.ADD.TITLE_DESCRIPTION'|translate}}</h2>
                                     </span>
                                 </div>
                             </div>
@@ -203,33 +203,33 @@
                         <div class="row">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
-                                    <span style="color:#d9534f"><strong>Required field:</strong></span>
-                                    Please assign an english and french title and description.
+                                    <span style="color:#d9534f"><strong>{{'HOSPITAL_MAPS.ADD.REQUIRED'|translate}}</strong></span>
+                                    {{'HOSPITAL_MAPS.ADD.TITLE_EXPLANATION'|translate}}
                                 </p>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-xs-12 col-md-6">
                                 <div class="panel" ng-class="(newHosMap.name_EN && newHosMap.description_EN) ? 'panel-success': 'panel-danger'">
-                                    <div class="panel-heading"><strong>English</strong>
-                                        <span ng-hide="newHosMap.name_EN && newHosMap.description_EN" style="float:right"><em>Incomplete</em></span>
-                                        <span ng-show="newHosMap.name_EN && newHosMap.description_EN" style="float:right"><em>Complete</em></span>
+                                    <div class="panel-heading"><strong>{{'HOSPITAL_MAPS.ADD.ENGLISH'|translate}}</strong>
+                                        <span ng-hide="newHosMap.name_EN && newHosMap.description_EN" style="float:right"><em>{{'HOSPITAL_MAPS.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="newHosMap.name_EN && newHosMap.description_EN" style="float:right"><em>{{'HOSPITAL_MAPS.ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body form-horizontal">
                                         <div class="form-group">
                                             <label class="control-label col-xs-12 col-lg-2">
-                                                Title
+                                                {{'HOSPITAL_MAPS.ADD.TITLE_2'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
-                                                <input class="form-control" type="text" ng-model="newHosMap.name_EN" ng-change="titleDescriptionUpdate()" placeholder="English Title" required="required">
+                                                <input class="form-control" type="text" ng-model="newHosMap.name_EN" ng-change="titleDescriptionUpdate()" placeholder="{{'HOSPITAL_MAPS.ADD.ENGLISH_TITLE'|translate}}" required="required">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="control-label col-xs-12 col-lg-2">
-                                                Description
+                                                {{'HOSPITAL_MAPS.ADD.DESCRIPTION'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
-                                                <div text-angular ng-model="newHosMap.description_EN" ng-change="titleDescriptionUpdate()" placeholder="English Description" required="required" ta-toolbar="toolbar"></div>
+                                                <div text-angular ng-model="newHosMap.description_EN" ng-change="titleDescriptionUpdate()" placeholder="{{'HOSPITAL_MAPS.ADD.ENGLISH_DESCRIPTION'|translate}}" required="required" ta-toolbar="toolbar"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -237,25 +237,25 @@
                             </div>
                             <div class="col-xs-12 col-md-6">
                                 <div class="panel" ng-class="(newHosMap.name_FR && newHosMap.description_FR) ? 'panel-success': 'panel-danger'">
-                                    <div class="panel-heading"><strong>Français</strong>
-                                        <span ng-hide="newHosMap.name_FR && newHosMap.description_FR" style="float:right"><em>Incomplete</em></span>
-                                        <span ng-show="newHosMap.name_FR && newHosMap.description_FR" style="float:right"><em>Complete</em></span>
+                                    <div class="panel-heading"><strong>{{'HOSPITAL_MAPS.ADD.FRENCH'|translate}}</strong>
+                                        <span ng-hide="newHosMap.name_FR && newHosMap.description_FR" style="float:right"><em>{{'HOSPITAL_MAPS.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="newHosMap.name_FR && newHosMap.description_FR" style="float:right"><em>{{'HOSPITAL_MAPS.ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body form-horizontal">
                                         <div class="form-group">
                                             <label class="control-label col-xs-12 col-lg-2">
-                                                Titre
+                                                {{'HOSPITAL_MAPS.ADD.TITLE_2'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
-                                                <input class="form-control" type="text" ng-model="newHosMap.name_FR" ng-change="titleDescriptionUpdate()" placeholder="Titre Français" required="required">
+                                                <input class="form-control" type="text" ng-model="newHosMap.name_FR" ng-change="titleDescriptionUpdate()" placeholder="{{'HOSPITAL_MAPS.ADD.FRENCH_TITLE'|translate}}" required="required">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="control-label col-xs-12 col-lg-2">
-                                                Description
+                                                {{'HOSPITAL_MAPS.ADD.DESCRIPTION'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
-                                                <div text-angular ng-model="newHosMap.description_FR" ng-change="titleDescriptionUpdate()" placeholder="Description Français" required="required" ta-toolbar="toolbar"></div>
+                                                <div text-angular ng-model="newHosMap.description_FR" ng-change="titleDescriptionUpdate()" placeholder="{{'HOSPITAL_MAPS.ADD.FRENCH_DESCRIPTION'|translate}}" required="required" ta-toolbar="toolbar"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -266,36 +266,36 @@
                         <div class="row animated" ng-class="{fadeInUp: urlSection.show}" ng-if="urlSection.show">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                    <span style="background-color:#e6edfa; padding: 0 10px;">
-                      <span class="fas fa-dot-circle"></span>
-                      <h2>Map URLs</h2>
-                    </span>
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'HOSPITAL_MAPS.ADD.MAP_URLS'|translate}}</h2>
+                                    </span>
                                 </div>
                             </div>
                         </div>
                         <div class="row animated" ng-class="{fadeInUp: urlSection.show}" ng-if="urlSection.show">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
-                                    <span style="color:#d9534f"><strong>Required field:</strong></span>
-                                    Please specify the map details in the URL fields. Click <strong>Show Map</strong> to generate map thumbnail.
+                                    <span style="color:#d9534f"><strong>{{'HOSPITAL_MAPS.ADD.REQUIRED'|translate}}</strong></span>
+                                    <span ng-bind-html="'HOSPITAL_MAPS.ADD.MAP_EXPLANATION'|translate"></span>
                                 </p>
                             </div>
                         </div>
                         <div class="row animated" ng-class="{fadeInUp: urlSection.show}" ng-if="urlSection.show">
                             <div class="col-xs-12 col-md-6">
                                 <div class="panel" ng-class="newHosMap.url_EN ? 'panel-success': 'panel-danger'">
-                                    <div class="panel-heading"><strong>English Map URL</strong>
-                                        <span ng-hide="newHosMap.url_EN" style="float:right"><em>Incomplete</em></span>
-                                        <span ng-show="newHosMap.url_EN" style="float:right"><em>Complete</em></span>
+                                    <div class="panel-heading"><strong>{{'HOSPITAL_MAPS.ADD.ENGLISH_MAP_URL'|translate}}</strong>
+                                        <span ng-hide="newHosMap.url_EN" style="float:right"><em>{{'HOSPITAL_MAPS.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="newHosMap.url_EN" style="float:right"><em>{{'HOSPITAL_MAPS.ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body">
                                         <div class="row" style="margin-bottom:10px;">
                                             <div class="col-xs-12">
                                                 <div class="input-group">
-                                                    <input class="form-control" type="text" ng-model="newHosMap.url_EN" ng-change="urlUpdate()" placeholder="English URL" required="required">
+                                                    <input class="form-control" type="text" ng-model="newHosMap.url_EN" ng-change="urlUpdate()" placeholder="{{'HOSPITAL_MAPS.ADD.ENGLISH_URL'|translate}}" required="required">
                                                     <span class="input-group-btn">
-                              <button class="btn btn-default" type="button" ng-click="showMap(newHosMap.url_EN, 'EN')">Show Map</button>
-                            </span>
+                                                        <button class="btn btn-default" type="button" ng-click="showMap(newHosMap.url_EN, 'EN')">{{'HOSPITAL_MAPS.ADD.SHOW_MAP'|translate}}</button>
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
@@ -311,18 +311,18 @@
                             </div>
                             <div class="col-xs-12 col-md-6">
                                 <div class="panel" ng-class="newHosMap.url_FR ? 'panel-success': 'panel-danger'">
-                                    <div class="panel-heading"><strong>Map URL Français</strong>
-                                        <span ng-hide="newHosMap.url_FR" style="float:right"><em>Incomplete</em></span>
-                                        <span ng-show="newHosMap.url_FR" style="float:right"><em>Complete</em></span>
+                                    <div class="panel-heading"><strong>{{'HOSPITAL_MAPS.ADD.FRENCH_MAP_URL'|translate}}</strong>
+                                        <span ng-hide="newHosMap.url_FR" style="float:right"><em>{{'HOSPITAL_MAPS.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="newHosMap.url_FR" style="float:right"><em>{{'HOSPITAL_MAPS.ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body">
                                         <div class="row" style="margin-bottom:10px;">
                                             <div class="col-xs-12">
                                                 <div class="input-group">
-                                                    <input class="form-control" type="text" ng-model="newHosMap.url_FR" ng-change="urlUpdate()" placeholder="URL Français" required="required">
+                                                    <input class="form-control" type="text" ng-model="newHosMap.url_FR" ng-change="urlUpdate()" placeholder="{{'HOSPITAL_MAPS.ADD.FRENCH_URL'|translate}}" required="required">
                                                     <span class="input-group-btn">
-                              <button class="btn btn-default" type="button" ng-click="showMap(newHosMap.url_FR, 'FR')">Show Map</button>
-                            </span>
+                                                        <button class="btn btn-default" type="button" ng-click="showMap(newHosMap.url_FR, 'FR')">{{'HOSPITAL_MAPS.ADD.SHOW_MAP'|translate}}</button>
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
@@ -341,36 +341,36 @@
                         <div class="row animated" ng-class="{fadeInUp: qrSection.show}" ng-if="qrSection.show">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                    <span style="background-color:#e6edfa; padding: 0 10px;">
-                      <span class="fas fa-dot-circle"></span>
-                      <h2>QR Identifier</h2>
-                    </span>
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                    <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'HOSPITAL_MAPS.ADD.QR'|translate}}</h2>
+                                    </span>
                                 </div>
                             </div>
                         </div>
                         <div class="row animated" ng-class="{fadeInUp: qrSection.show}" ng-if="qrSection.show">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
-                                    <span style="color:#d9534f"><strong>Required field:</strong></span>
-                                    Please assign a unique identifier for this map and click <strong>Generate QR</strong>.
+                                    <span style="color:#d9534f"><strong>{{'HOSPITAL_MAPS.ADD.REQUIRED'|translate}}</strong></span>
+                                    <span ng-bind-html="'HOSPITAL_MAPS.ADD.QR_EXPLANATION'|translate"></span>
                                 </p>
                             </div>
                         </div>
                         <div class="row animated" ng-class="{fadeInUp: qrSection.show}" ng-if="qrSection.show">
                             <div class="col-xs-12 col-md-6">
                                 <div class="panel" ng-class="(newHosMap.qrid && newHosMap.qrcode) ? 'panel-success': 'panel-danger'">
-                                    <div class="panel-heading"><strong>QR Identifier</strong>
-                                        <span ng-hide="newHosMap.qrid && newHosMap.qrcode" style="float:right"><em>Incomplete</em></span>
-                                        <span ng-show="newHosMap.qrid && newHosMap.qrcode" style="float:right"><em>Complete</em></span>
+                                    <div class="panel-heading"><strong>{{'HOSPITAL_MAPS.ADD.QR'|translate}}</strong>
+                                        <span ng-hide="newHosMap.qrid && newHosMap.qrcode" style="float:right"><em>{{'HOSPITAL_MAPS.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="newHosMap.qrid && newHosMap.qrcode" style="float:right"><em>{{'HOSPITAL_MAPS.ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <div class="input-group">
-                                                    <input class="form-control" type="text" ng-model="newHosMap.qrid" ng-change="qridUpdate()" placeholder="QRID" required="required">
+                                                    <input class="form-control" type="text" ng-model="newHosMap.qrid" ng-change="qridUpdate()" placeholder="{{'HOSPITAL_MAPS.ADD.QR_ID'|translate}}" required="required">
                                                     <span class="input-group-btn">
-                              <button class="btn btn-default" type="button" ng-click="generateQRCode(newHosMap.qrid)">Generate QR</button>
-                            </span>
+                                                        <button class="btn btn-default" type="button" ng-click="generateQRCode(newHosMap.qrid)">{{'HOSPITAL_MAPS.ADD.GENERATE_QR'|translate}}</button>
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
@@ -394,7 +394,7 @@
     <!-- "Processing" modal template -->
     <script type="text/ng-template" id="processingModal.htm">
         <div class="modal-header">
-            <h1> Processing...</h1>
+            <h1>{{'HOSPITAL_MAPS.ADD.PROCESSING'|translate}}</h1>
         </div>
         <div class="modal-body">
             <div class="progress progress-striped active">
@@ -402,4 +402,4 @@
             </div>
         </div>
     </script>
-
+</div>
