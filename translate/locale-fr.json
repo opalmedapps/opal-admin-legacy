@@ -174,7 +174,7 @@
       "ERROR_GET_CATEGORY": "Une erreur s'est produite lors de l'obtention de la liste des catégories.",
       "ERROR_SET_RESPONSE_TYPE": "Une erreur s'est produite lors de la création du type de réponse.",
       "ERROR_SET_LIBRARY": "Une erreur s'est produite lors de la création de la librairie.",
-      "ERROR_SET_QUESTION": "Une erreur est survenue lors de la création de la question."
+      "ERROR_SET_QUESTION": "Une erreur s'est produite lors de la création de la question."
     },
     "QUESTION_DELETE": {
       "TITLE": "Supprimer la question",
@@ -310,8 +310,8 @@
       "OPTIONAL": "Facultatif",
       "PROCESSING": "En cours de traitement...",
       "PRIVATE_QUESTION": "Lors de la sélection d'une question privée, un questionnaire doit être défini privé.",
-      "ERROR_QUESTION_lIST": "Une erreur est survenue lors de l'obtention de la liste de questions.",
-      "ERROR_CREATION_QUESTIONNAIRE": "Une erreur est survenue lors de la création du questionnaire.",
+      "ERROR_QUESTION_lIST": "Une erreur s'est produite lors de l'obtention de la liste de questions.",
+      "ERROR_CREATION_QUESTIONNAIRE": "Une erreur s'est produite lors de la création du questionnaire.",
       "NAME": "Nom",
       "LIBRARY": "Librairie"
     },
@@ -366,7 +366,7 @@
       "FRENCH": "Français",
       "TYPE_ANSWER_EN": "Type in your answer.",
       "TYPE_ANSWER_FR": "Entrez votre réponse.",
-      "ERROR_QUESTION_lIST": "Une erreur est survenue lors de l'obtention de la liste de questions.",
+      "ERROR_QUESTION_lIST": "Une erreur s'est produite lors de l'obtention de la liste de questions.",
       "PRIVATE_QUESTION": "Lors de la sélection d'une question privée, un questionnaire doit être défini privé.",
       "ERROR_QUESTIONNAIRE_DETAILS": "Une erreur s'est produite lors de l'obtention des détails du questionnaire.",
       "ERROR_UPDATE_QUESTIONNAIRE": "Une erreur s'est produite lors de la mise à jour du questionnaire.",
@@ -498,8 +498,8 @@
       "QUESTIONNAIRE": "Nom du questionnaire",
       "OPERATIONS": "Opérations",
       "SUCCESS_FLAGS": "Les publications des questionnaires ont été mises à jour!",
-      "ERROR_PUBLICATION": "Une erreur est survenue lors de l'obtention de la liste de publications.",
-      "ERROR_FLAGS": "Une erreur est survenue lors de l'enregistrement des publications des questionnaires",
+      "ERROR_PUBLICATION": "Une erreur s'est produite lors de l'obtention de la liste de publications.",
+      "ERROR_FLAGS": "Une erreur s'est produite lors de l'enregistrement des publications des questionnaires",
       "NO": "Non",
       "YES": "Oui"
     },
@@ -762,7 +762,7 @@
       "WARNING": "ATTENTION!",
       "WARNING_TEXT": "Voulez-vous vraiment supprimer la question ci-dessous? Cette action est irreversible!",
       "SUCCESS": "La publication a été supprimée avec succès.",
-      "ERROR": "Une erreur est survenue lors de la suppression de la publication."
+      "ERROR": "Une erreur s'est produite lors de la suppression de la publication."
     },
     "ADD": {
       "BACK": "Retour",
@@ -915,7 +915,7 @@
       "DELETE": "Supprimer",
       "CANCEL": "Annuler",
       "SUCCESS": "La carte a été supprimée avec succès.",
-      "ERROR": "Une erreur est survenue lors de la suppression de la carte."
+      "ERROR": "Une erreur s'est produite lors de la suppression de la carte."
     },
     "ADD": {
       "BACK": "Retour",
@@ -987,6 +987,44 @@
       "SUCCESS": "La carte a été mise à jour avec succès."
     }
   },
+  "EDUCATION": {
+    "LIST": {
+      "TITLE": "Matériels éducatifs",
+      "ADD": "Ajouter",
+      "SAVE": "Enregistrer",
+      "SEARCH": "Rechercher",
+      "LIST": "Liste",
+      "LOGS": "Journaux",
+      "NO_DATA": "Aucune donnée disponible",
+      "EDIT": "Modifier",
+      "DELETE": "Supprimer",
+      "NO_RATING": "Aucune note",
+      "TITLE_2": "Titre",
+      "TYPE": "Type",
+      "PUBLISH_FLAG": "Publier",
+      "PHASE_IN_TREATMENT": "Phase de traitement",
+      "PRIOR": "Avant le traitement",
+      "DURING": "Pendant le traitement",
+      "AFTER": "Après le traitement",
+      "LAST_UPDATED": "Dernière mise à jour",
+      "OPERATIONS": "Opérations",
+      "ERROR_LIST": "An error occurred while getting the list of educational materials.",
+      "ERROR_LOGS": "An error occurred while getting the logs of educational materials.",
+      "ALL_LOGS": "All educational material logs",
+      "HIGHLIGHT": "Highlight the plot area to zoom in and show detailed data",
+      "DATETIME": "Datetime sent",
+      "NUMBER": "Number of posts published",
+      "NAME": "Name",
+      "REVISION": "Revision No.",
+      "CRONLOGSER": "CronLogSer",
+      "PATIENTSER": "PatientSer",
+      "READ_STATUS": "Read Status",
+      "ACTION": "Action"
+    },
+    "DELETE": {},
+    "ADD": {},
+    "EDIT": {}
+  },
   "PROFILE": {
     "ACCOUNT": "Compte",
     "RESET_PASSWORD": "Réinitialiser le mot de passe",
@@ -1007,7 +1045,7 @@
     "INVALID_PASSWORD": "Votre mot de passe actuel est erroné.",
     "PASSWORD_SUCCESS": "Mot de passe changé avec succès",
     "LANGUAGE_SUCCESS": "Language preference successfully changed.",
-    "LANGUAGE_ERROR": "Une erreur est survenue. Impossible de changer la langue."
+    "LANGUAGE_ERROR": "Une erreur s'est produite. Impossible de changer la langue."
   },
   "PATIENT_REGISTRATION_TITLE": "Enregistrement Patient",
   "PATIENT_REGISTRATION_SEARCH_HEADER": "Recherche",
