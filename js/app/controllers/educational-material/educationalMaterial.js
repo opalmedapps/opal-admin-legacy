@@ -58,18 +58,18 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 	$scope.gridOptions = {
 		data: 'eduMatList',
 		columnDefs: [
-			{ field: 'name_'+Session.retrieveObject('user').language.toUpperCase(), displayName: 'Title (EN / FR)', cellTemplate: cellTemplateName, width: '35%' },
-			{ field: 'rating', name: 'Average Rating', cellTemplate: ratingCellTemplate, width: '10%', enableFiltering: false },
-			{ field: 'type_'+Session.retrieveObject('user').language.toUpperCase(), displayName: 'Type (EN)', width: '15%' },
-			{ field: 'publish', displayName: 'Publish Flag', width: '10%', cellTemplate: checkboxCellTemplate, enableFiltering: false },
+			{ field: 'name_'+Session.retrieveObject('user').language.toUpperCase(), displayName: $filter('translate')('EDUCATION.LIST.TITLE_2'), cellTemplate: cellTemplateName, width: '35%', enableColumnMenu: false },
+			{ field: 'rating', enableColumnMenu: false, name: $filter('translate')('EDUCATION.LIST.RATING'), cellTemplate: ratingCellTemplate, width: '10%', enableFiltering: false },
+			{ field: 'type_'+Session.retrieveObject('user').language.toUpperCase(), enableColumnMenu: false, displayName: $filter('translate')('EDUCATION.LIST.TYPE'), width: '15%' },
+			{ field: 'publish', enableColumnMenu: false, displayName: $filter('translate')('EDUCATION.LIST.PUBLISH_FLAG'), width: '10%', cellTemplate: checkboxCellTemplate, enableFiltering: false },
 			{
-				field: 'phase_'+Session.retrieveObject('user').language.toUpperCase(), displayName: 'Phase In Treatment (EN)', width: '10%', filter: {
+				field: 'phase_'+Session.retrieveObject('user').language.toUpperCase(), enableColumnMenu: false, displayName: $filter('translate')('EDUCATION.LIST.PHASE_IN_TREATMENT'), width: '10%', filter: {
 					type: uiGridConstants.filter.SELECT,
-					selectOptions: [{ value: 'Prior To Treatment', label: 'Prior To Treatment' }, { value: 'During Treatment', label: 'During Treatment' }, { value: 'After Treatment', label: 'After Treatment' }]
+					selectOptions: [{ value: $filter('translate')('EDUCATION.LIST.PRIOR'), label: $filter('translate')('EDUCATION.LIST.PRIOR') }, { value: $filter('translate')('EDUCATION.LIST.DURING'), label: $filter('translate')('EDUCATION.LIST.DURING') }, { value: $filter('translate')('EDUCATION.LIST.AFTER'), label: $filter('translate')('EDUCATION.LIST.AFTER') }]
 				}
 			},
-			{ field: 'lastupdated', displayName: 'Last Updated', width: '10%' },
-			{ name: 'Operations', cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false }
+			{ field: 'lastupdated', enableColumnMenu: false, displayName: $filter('translate')('EDUCATION.LIST.LAST_UPDATED'), width: '10%' },
+			{ name: $filter('translate')('EDUCATION.LIST.OPERATIONS'), enableColumnMenu: false, cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false }
 		],
 		//useExternalFiltering: true,
 		enableFiltering: true,
@@ -120,12 +120,7 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 	// When this function is called, we set the "publish" field to checked
 	// or unchecked based on value in the argument
 	$scope.updatePublishFlag = function (value) {
-		value = parseInt(value);
-		if (value === 1) {
-			return 1;
-		} else {
-			return 0;
-		}
+		return (parseInt(value) === 1);
 	};
 
 	// Function for when the publish flag checkbox has been modified
@@ -157,34 +152,29 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 				}
 			});
 			// Log who updated publish flags
-			var currentUser = Session.retrieveObject('user');
-			$scope.eduMatPublishes.user = currentUser;
+			$scope.eduMatPublishes.user = Session.retrieveObject('user');
 			// Submit form
 			$.ajax({
 				type: "POST",
 				url: "educational-material/update/educational-material-publish-flags",
 				data: $scope.eduMatPublishes,
 				success: function (response) {
-					// Call our API to get the list of existing educational materials
-					educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
-						// Assign value
-						$scope.edumatList = response.data;
-					}).catch(function(response) {
-						console.error('Error occurred getting educational material list:', response.status, response.data);
-					});
+					getEducationalMaterialsList();
 					response = JSON.parse(response);
 					// Show success or failure depending on response
 					if (response.value) {
 						$scope.setBannerClass('success');
-						$scope.bannerMessage = "Publish Flags Saved!";
+						$scope.bannerMessage = $filter('translate')('EDUCATION.LIST.SUCCESS_FLAGS');
+						$scope.showBanner();
 					}
 					else {
-						$scope.setBannerClass('danger');
-						$scope.bannerMessage = response.message;
+						alert($filter('translate')('EDUCATION.LIST.ERROR_FLAGS') + "\r\n\r\n" + response.message);
 					}
-					$scope.showBanner();
 					$scope.changesMade = false;
 					$scope.eduMatPublishes.publishList = [];
+				},
+				error: function(err) {
+					alert($filter('translate')('EDUCATION.LIST.ERROR_FLAGS') + "\r\n\r\n" + err.status + " - " + err.statusText);
 				}
 			});
 		}
@@ -199,27 +189,7 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 
 	$scope.$watch('detailView', function (view) {
 		if (view === 'list') {
-			// Call our API to get the list of existing material
-			educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
-
-				var educationalMaterials = response.data;
-				// Assign value
-				for (var i = 0; i < educationalMaterials.length; i++) {
-					if (educationalMaterials[i].parentFlag === 1) {
-						educationalMaterials[i].subGridOptions = {
-							columnDefs: [
-								{ field: 'name_'+Session.retrieveObject('user').language.toUpperCase(), displayName: 'Name (EN)', width: '355' },
-								{ field: 'type_'+Session.retrieveObject('user').language.toUpperCase(), displayName: 'Type (EN)', width: '145' }
-							],
-							data: educationalMaterials[i].tocs
-						};
-						$scope.eduMatList.push(educationalMaterials[i]);
-					}
-				}
-
-			}).catch(function(response) {
-				console.error('Error occurred getting educational material list:', response.status, response.data);
-			});
+			getEducationalMaterialsList();
 			if ($scope.educationalMaterialListLogs.length) {
 				$scope.educationalMaterialListLogs = [];
 				$scope.gridApiLog.grid.refresh();
@@ -235,7 +205,7 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 					});
 				});
 			}).catch(function(response) {
-				console.error('Error occurred getting educational material logs:', response.status, response.data);
+				alert($filter('translate')('EDUCATION.LIST.ERROR_FLAGS') + "\r\n\r\n" + response.status + " - " + response.data);
 			});
 		}
 	}, true);
@@ -382,30 +352,8 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 		// After update, refresh the edu mat list
 		modalInstance.result.then(function () {
 			$scope.eduMatList = [];
-			// Call our API to get the list of existing educational material
-			educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
-
-				var educationalMaterials = response.data;
-
-				for (var i = 0; i < educationalMaterials.length; i++) {
-					if (educationalMaterials[i].parentFlag == 1) {
-						educationalMaterials[i].subGridOptions = {
-							columnDefs: [
-								{ field: 'name_'+Session.retrieveObject('user').language.toUpperCase(), displayName: 'Name (EN / FR)', width: '355' },
-								{ field: 'type_'+Session.retrieveObject('user').language.toUpperCase(), displayName: 'Type (EN)', width: '145' }
-							],
-							data: educationalMaterials[i].tocs,
-						};
-						$scope.eduMatList.push(educationalMaterials[i]);
-					}
-				}
-
-			}).catch(function(response) {
-				console.error('Error occurred getting educational material list:', response.status, response.data);
-			});
-
+			getEducationalMaterialsList();
 		});
-
 	};
 
 	// Function for when the edu material has been clicked for deletion
@@ -425,28 +373,32 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 		// After delete, refresh the eduMat list
 		modalInstance.result.then(function () {
 			$scope.eduMatList = [];
-			// Call our API to get the list of existing educational material
-			educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
-
-				var educationalMaterials = response.data;
-				for (var i = 0; i < educationalMaterials.length; i++) {
-					if (educationalMaterials[i].parentFlag === 1) {
-						educationalMaterials[i].subGridOptions = {
-							columnDefs: [
-								{ field: 'name_'+Session.retrieveObject('user').language.toUpperCase(), displayName: 'Name (EN / FR)', width: '355' },
-								{ field: 'type_'+Session.retrieveObject('user').language.toUpperCase(), displayName: 'Type (EN)', width: '145' }
-							],
-							data: educationalMaterials[i].tocs
-						};
-						$scope.eduMatList.push(educationalMaterials[i]);
-					}
-				}
-
-			}).catch(function(response) {
-				console.error('Error occurred getting educational material list:', response.status, response.data);
-			});
+			getEducationalMaterialsList();
 		});
 	};
+
+	function getEducationalMaterialsList() {
+		educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+
+			var educationalMaterials = response.data;
+			// Assign value
+			for (var i = 0; i < educationalMaterials.length; i++) {
+				if (parseInt(educationalMaterials[i].parentFlag) === 1) {
+					educationalMaterials[i].subGridOptions = {
+						columnDefs: [
+							{ field: 'name_'+Session.retrieveObject('user').language.toUpperCase(), displayName: 'Name (EN)', width: '355' },
+							{ field: 'type_'+Session.retrieveObject('user').language.toUpperCase(), displayName: 'Type (EN)', width: '145' }
+						],
+						data: educationalMaterials[i].tocs
+					};
+					$scope.eduMatList.push(educationalMaterials[i]);
+				}
+			}
+
+		}).catch(function(response) {
+			alert($filter('translate')('EDUCATION.LIST.ERROR_LIST') + "\r\n\r\n" + response.status + " - " + response.data);
+		});
+	}
 
 })
 
