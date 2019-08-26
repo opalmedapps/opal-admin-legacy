@@ -90,8 +90,8 @@
                         <span class="input-group-addon">{{'HOSPITAL_MAPS.EDIT.ENGLISH_ABRV'|translate}}</span>
                         <input class="form-control" type="text" ng-model="hosMap.url_EN" ng-change="setChangesMade()" placeholder="{{'HOSPITAL_MAPS.EDIT.ENGLISH_MAP_URL'|translate}}" required="required">
                         <span class="input-group-btn">
-              <button class="btn btn-default" type="button" ng-click="showMap(hosMap.url_EN, 'EN')">{{'HOSPITAL_MAPS.EDIT.SHOW_MAP'|translate}}</button>
-            </span>
+                            <button class="btn btn-default" type="button" ng-click="showMap(hosMap.url_EN, 'EN')">{{'HOSPITAL_MAPS.EDIT.SHOW_MAP'|translate}}</button>
+                        </span>
                     </div>
                     <div ng-show="hosMap.url_EN" style="text-align:center">
                         <img ng-src="{{mapURL_EN}}" style="width:200px;height:200px;">
