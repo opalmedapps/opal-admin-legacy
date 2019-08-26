@@ -217,15 +217,15 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 			className: 'logChart'
 		},
 		title: {
-			text: 'All educational material logs'
+			text: $filter('translate')('EDUCATION.LIST.ALL_LOGS')
 		},
 		subtitle: {
-			text: 'Highlight the plot area to zoom in and show detailed data'
+			text: $filter('translate')('EDUCATION.LIST.HIGHLIGHT')
 		},
 		xAxis: {
 			type: 'datetime',
 			title: {
-				text: 'Datetime sent'
+				text: $filter('translate')('EDUCATION.LIST.DATETIME')
 			},
 			events: {
 				setExtremes: function (selection) {
@@ -262,7 +262,7 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 		},
 		yAxis: {
 			title: {
-				text: 'Number of posts published'
+				text: $filter('translate')('EDUCATION.LIST.NUMBER')
 			},
 			tickInterval: 1,
 			min: 0
@@ -304,7 +304,7 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 	$scope.gridLogOptions = {
 		data: 'educationalMaterialListLogs',
 		columnDefs: [
-			{ field: 'material_name', displayName: 'Name' },
+			{ field: 'material_name', displayName: $filter('translate')('EDUCATION.LIST.NAME') },
 			{ field: 'revision', displayName: 'Revision No.' },
 			{ field: 'cron_serial', displayName: 'CronLogSer' },
 			{ field: 'patient_serial', displayName: 'PatientSer' },
