@@ -1001,6 +1001,7 @@
       "CRONLOGSER": "CronLogSer",
       "PATIENTSER": "PatientSer",
       "READ_STATUS": "Read Status",
+      "DATE_ADDED": "Date Added",
       "ACTION": "Action"
     },
     "DELETE": {},
