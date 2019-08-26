@@ -23,17 +23,17 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 	// Templates for the table
 	var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents"' +
 		'ng-click="grid.appScope.editEduMat(row.entity)"> ' +
-		'<strong><a href="">{{row.entity.name_'+Session.retrieveObject('user').language.toUpperCase()+'}}</a></strong></div>';
+		'<strong><a href="">{{row.entity.name_' + Session.retrieveObject('user').language.toUpperCase() + '}}</a></strong></div>';
 	var checkboxCellTemplate = '<div style="text-align: center; cursor: pointer;" ' +
 		'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
 		'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
 		'ng-checked="grid.appScope.updatePublishFlag(row.entity.publish)" ng-model="row.entity.publish"></div>';
 	var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-		'<strong><a href="" ng-click="grid.appScope.showEduMatLog(row.entity)"><i title="'+$filter('translate')('EDUCATION.LIST.LOGS')+'" class="fa fa-area-chart" aria-hidden="true"></i></a></strong> ' +
-		'- <strong><a href="" ng-click="grid.appScope.editEduMat(row.entity)"><i title="'+$filter('translate')('EDUCATION.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ' +
-		'- <strong><a href="" ng-click="grid.appScope.deleteEduMat(row.entity)"><i title="'+$filter('translate')('EDUCATION.LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
+		'<strong><a href="" ng-click="grid.appScope.showEduMatLog(row.entity)"><i title="' + $filter('translate')('EDUCATION.LIST.LOGS') + '" class="fa fa-area-chart" aria-hidden="true"></i></a></strong> ' +
+		'- <strong><a href="" ng-click="grid.appScope.editEduMat(row.entity)"><i title="' + $filter('translate')('EDUCATION.LIST.EDIT') + '" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ' +
+		'- <strong><a href="" ng-click="grid.appScope.deleteEduMat(row.entity)"><i title="' + $filter('translate')('EDUCATION.LIST.DELETE') + '" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
 	var expandableRowTemplate = '<div ui-grid="row.entity.subGridOptions"></div>';
-	var ratingCellTemplate = '<div class="ui-grid-cell-contents" ng-show="row.entity.rating == -1">'+ $filter('translate')('EDUCATION.LIST.NO_RATING') +'</div>' +
+	var ratingCellTemplate = '<div class="ui-grid-cell-contents" ng-show="row.entity.rating == -1">' + $filter('translate')('EDUCATION.LIST.NO_RATING') + '</div>' +
 		'<div class="ui-grid-cell-contents" ng-hide="row.entity.rating == -1"><stars number="{{row.entity.rating}}"></stars> </div>';
 
 	// Search engine for table
@@ -41,7 +41,7 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 		var matcher = new RegExp($scope.filterValue, 'i');
 		renderableRows.forEach(function (row) {
 			var match = false;
-			['name_'+Session.retrieveObject('user').language.toUpperCase(), 'type_'+Session.retrieveObject('user').language.toUpperCase()].forEach(function (field) {
+			['name_' + Session.retrieveObject('user').language.toUpperCase(), 'type_' + Session.retrieveObject('user').language.toUpperCase()].forEach(function (field) {
 				if (row.entity[field].match(matcher)) {
 					match = true;
 				}
@@ -58,18 +58,67 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 	$scope.gridOptions = {
 		data: 'eduMatList',
 		columnDefs: [
-			{ field: 'name_'+Session.retrieveObject('user').language.toUpperCase(), displayName: $filter('translate')('EDUCATION.LIST.TITLE_2'), cellTemplate: cellTemplateName, width: '35%', enableColumnMenu: false },
-			{ field: 'rating', enableColumnMenu: false, name: $filter('translate')('EDUCATION.LIST.RATING'), cellTemplate: ratingCellTemplate, width: '10%', enableFiltering: false },
-			{ field: 'type_'+Session.retrieveObject('user').language.toUpperCase(), enableColumnMenu: false, displayName: $filter('translate')('EDUCATION.LIST.TYPE'), width: '15%' },
-			{ field: 'publish', enableColumnMenu: false, displayName: $filter('translate')('EDUCATION.LIST.PUBLISH_FLAG'), width: '10%', cellTemplate: checkboxCellTemplate, enableFiltering: false },
 			{
-				field: 'phase_'+Session.retrieveObject('user').language.toUpperCase(), enableColumnMenu: false, displayName: $filter('translate')('EDUCATION.LIST.PHASE_IN_TREATMENT'), width: '10%', filter: {
+				field: 'name_' + Session.retrieveObject('user').language.toUpperCase(),
+				displayName: $filter('translate')('EDUCATION.LIST.TITLE_2'),
+				cellTemplate: cellTemplateName,
+				width: '35%',
+				enableColumnMenu: false
+			},
+			{
+				field: 'rating',
+				enableColumnMenu: false,
+				name: $filter('translate')('EDUCATION.LIST.RATING'),
+				cellTemplate: ratingCellTemplate,
+				width: '10%',
+				enableFiltering: false
+			},
+			{
+				field: 'type_' + Session.retrieveObject('user').language.toUpperCase(),
+				enableColumnMenu: false,
+				displayName: $filter('translate')('EDUCATION.LIST.TYPE'),
+				width: '15%'
+			},
+			{
+				field: 'publish',
+				enableColumnMenu: false,
+				displayName: $filter('translate')('EDUCATION.LIST.PUBLISH_FLAG'),
+				width: '10%',
+				cellTemplate: checkboxCellTemplate,
+				enableFiltering: false
+			},
+			{
+				field: 'phase_' + Session.retrieveObject('user').language.toUpperCase(),
+				enableColumnMenu: false,
+				displayName: $filter('translate')('EDUCATION.LIST.PHASE_IN_TREATMENT'),
+				width: '10%',
+				filter: {
 					type: uiGridConstants.filter.SELECT,
-					selectOptions: [{ value: $filter('translate')('EDUCATION.LIST.PRIOR'), label: $filter('translate')('EDUCATION.LIST.PRIOR') }, { value: $filter('translate')('EDUCATION.LIST.DURING'), label: $filter('translate')('EDUCATION.LIST.DURING') }, { value: $filter('translate')('EDUCATION.LIST.AFTER'), label: $filter('translate')('EDUCATION.LIST.AFTER') }]
+					selectOptions: [{
+						value: $filter('translate')('EDUCATION.LIST.PRIOR'),
+						label: $filter('translate')('EDUCATION.LIST.PRIOR')
+					}, {
+						value: $filter('translate')('EDUCATION.LIST.DURING'),
+						label: $filter('translate')('EDUCATION.LIST.DURING')
+					}, {
+						value: $filter('translate')('EDUCATION.LIST.AFTER'),
+						label: $filter('translate')('EDUCATION.LIST.AFTER')
+					}]
 				}
 			},
-			{ field: 'lastupdated', enableColumnMenu: false, displayName: $filter('translate')('EDUCATION.LIST.LAST_UPDATED'), width: '10%' },
-			{ name: $filter('translate')('EDUCATION.LIST.OPERATIONS'), enableColumnMenu: false, cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false }
+			{
+				field: 'lastupdated',
+				enableColumnMenu: false,
+				displayName: $filter('translate')('EDUCATION.LIST.LAST_UPDATED'),
+				width: '10%'
+			},
+			{
+				name: $filter('translate')('EDUCATION.LIST.OPERATIONS'),
+				enableColumnMenu: false,
+				cellTemplate: cellTemplateOperations,
+				sortable: false,
+				enableFiltering: false
+			}
 		],
 		//useExternalFiltering: true,
 		enableFiltering: true,
@@ -166,14 +215,13 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 						$scope.setBannerClass('success');
 						$scope.bannerMessage = $filter('translate')('EDUCATION.LIST.SUCCESS_FLAGS');
 						$scope.showBanner();
-					}
-					else {
+					} else {
 						alert($filter('translate')('EDUCATION.LIST.ERROR_FLAGS') + "\r\n\r\n" + response.message);
 					}
 					$scope.changesMade = false;
 					$scope.eduMatPublishes.publishList = [];
 				},
-				error: function(err) {
+				error: function (err) {
 					alert($filter('translate')('EDUCATION.LIST.ERROR_FLAGS') + "\r\n\r\n" + err.status + " - " + err.statusText);
 				}
 			});
@@ -185,7 +233,7 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 		if (!$scope.changesMade) {
 			$scope.detailView = view;
 		}
-	}
+	};
 
 	$scope.$watch('detailView', function (view) {
 		if (view === 'list') {
@@ -194,17 +242,16 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 				$scope.educationalMaterialListLogs = [];
 				$scope.gridApiLog.grid.refresh();
 			}
-		}
-		else if (view === 'chart') {
+		} else if (view === 'chart') {
 			// Call our API to get educational material logs
 			educationalMaterialCollectionService.getEducationalMaterialChartLogs().then(function (response) {
 				$scope.educationalMaterialChartLogs = $scope.chartConfig.series = response.data;
-				angular.forEach($scope.educationalMaterialChartLogs, function(serie) {
-					angular.forEach(serie.data, function(log) {
+				angular.forEach($scope.educationalMaterialChartLogs, function (serie) {
+					angular.forEach(serie.data, function (log) {
 						log.x = new Date(log.x);
 					});
 				});
-			}).catch(function(response) {
+			}).catch(function (response) {
 				alert($filter('translate')('EDUCATION.LIST.ERROR_FLAGS') + "\r\n\r\n" + response.status + " - " + response.data);
 			});
 		}
@@ -248,11 +295,10 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 						});
 						// convert set to array
 						cronSerials = Array.from(cronSerials);
-						educationalMaterialCollectionService.getEducationalMaterialListLogs(cronSerials).then(function(response){
+						educationalMaterialCollectionService.getEducationalMaterialListLogs(cronSerials).then(function (response) {
 							$scope.educationalMaterialListLogs = response.data;
 						});
-					}
-					else {
+					} else {
 						$scope.educationalMaterialListLogs = [];
 						$scope.gridApiLog.grid.refresh();
 
@@ -281,9 +327,9 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 				allowPointSelect: true,
 				point: {
 					events: {
-						select: function(point) {
+						select: function (point) {
 							var cronLogSerNum = [point.target.cron_serial];
-							educationalMaterialCollectionService.getEducationalMaterialListLogs(cronLogSerNum).then(function(response){
+							educationalMaterialCollectionService.getEducationalMaterialListLogs(cronLogSerNum).then(function (response) {
 								$scope.educationalMaterialListLogs = response.data;
 							});
 						},
@@ -304,13 +350,13 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 	$scope.gridLogOptions = {
 		data: 'educationalMaterialListLogs',
 		columnDefs: [
-			{ field: 'material_name', displayName: $filter('translate')('EDUCATION.LIST.NAME') },
-			{ field: 'revision', displayName: 'Revision No.' },
-			{ field: 'cron_serial', displayName: 'CronLogSer' },
-			{ field: 'patient_serial', displayName: 'PatientSer' },
-			{ field: 'read_status', displayName: 'Read Status' },
-			{ field: 'date_added', displayName: 'Datetime Sent' },
-			{ field: 'mod_action', displayName: 'Action' }
+			{field: 'material_name', displayName: $filter('translate')('EDUCATION.LIST.NAME')},
+			{field: 'revision', displayName: $filter('translate')('EDUCATION.LIST.REVISION')},
+			{field: 'cron_serial', displayName: $filter('translate')('EDUCATION.LIST.CRONLOGSER')},
+			{field: 'patient_serial', displayName: $filter('translate')('EDUCATION.LIST.PATIENTSER')},
+			{field: 'read_status', displayName: $filter('translate')('EDUCATION.LIST.READ_STATUS')},
+			{field: 'date_added', displayName: $filter('translate')('EDUCATION.LIST.PATIENTSER')},
+			{field: 'mod_action', displayName: $filter('translate')('EDUCATION.LIST.ACTION')}
 		],
 		rowHeight: 30,
 		useExternalFiltering: true,
@@ -386,8 +432,16 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 				if (parseInt(educationalMaterials[i].parentFlag) === 1) {
 					educationalMaterials[i].subGridOptions = {
 						columnDefs: [
-							{ field: 'name_'+Session.retrieveObject('user').language.toUpperCase(), displayName: 'Name (EN)', width: '355' },
-							{ field: 'type_'+Session.retrieveObject('user').language.toUpperCase(), displayName: 'Type (EN)', width: '145' }
+							{
+								field: 'name_' + Session.retrieveObject('user').language.toUpperCase(),
+								displayName: 'Name (EN)',
+								width: '355'
+							},
+							{
+								field: 'type_' + Session.retrieveObject('user').language.toUpperCase(),
+								displayName: 'Type (EN)',
+								width: '145'
+							}
 						],
 						data: educationalMaterials[i].tocs
 					};
@@ -395,7 +449,7 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 				}
 			}
 
-		}).catch(function(response) {
+		}).catch(function (response) {
 			alert($filter('translate')('EDUCATION.LIST.ERROR_LIST') + "\r\n\r\n" + response.status + " - " + response.data);
 		});
 	}
@@ -412,13 +466,14 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 			link: function (scope, element, attrs) {
 				scope.rate = [];
 				initRater();
+
 				function initRater() {
 					var number = Math.round(Number(attrs.number));
 					for (var i = 0; i < number; i++) {
-						scope.rate.push({ 'Icon': 'glyphicon-star' });
+						scope.rate.push({'Icon': 'glyphicon-star'});
 					}
 					for (var j = number; j < 5; j++) {
-						scope.rate.push({ 'Icon': 'glyphicon-star-empty' });
+						scope.rate.push({'Icon': 'glyphicon-star-empty'});
 					}
 				}
 			}
