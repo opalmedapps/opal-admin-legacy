@@ -1004,7 +1004,15 @@
       "DATE_ADDED": "Date Added",
       "ACTION": "Action"
     },
-    "DELETE": {},
+    "DELETE": {
+      "TITLE": "Delete Educational Material",
+      "WARNING": "WARNING!",
+      "WARNING_TEXT": "Are you sure you want to delete the following education material? This action cannot be undone!",
+      "DELETE": "Delete",
+      "CANCEL": "Cancel",
+      "SUCCESS": "The education material has being successfully deleted.",
+      "ERROR": "An error occurred while deleting the education material."
+    },
     "ADD": {},
     "EDIT": {}
   },

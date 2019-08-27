@@ -760,7 +760,7 @@
       "DELETE": "Supprimer",
       "CANCEL": "Annuler",
       "WARNING": "ATTENTION!",
-      "WARNING_TEXT": "Voulez-vous vraiment supprimer la question ci-dessous? Cette action est irreversible!",
+      "WARNING_TEXT": "Voulez-vous vraiment supprimer la publication ci-dessous? Cette action est irreversible!",
       "SUCCESS": "La publication a été supprimée avec succès.",
       "ERROR": "Une erreur s'est produite lors de la suppression de la publication."
     },
@@ -1025,7 +1025,15 @@
       "DATE_ADDED": "Date d'ajout",
       "ACTION": "Action"
     },
-    "DELETE": {},
+    "DELETE": {
+      "TITLE": "Supprimer le matériel éducatif",
+      "DELETE": "Supprimer",
+      "CANCEL": "Annuler",
+      "WARNING": "ATTENTION!",
+      "WARNING_TEXT": "Voulez-vous vraiment supprimer le matériel éducatif ci-dessous? Cette action est irreversible!",
+      "SUCCESS": "Le matériel éducatif a été supprimé avec succès.",
+      "ERROR": "Une erreur s'est produite lors de la suppression du matériel éducatif."
+    },
     "ADD": {},
     "EDIT": {}
   },
