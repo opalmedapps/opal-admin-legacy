@@ -350,13 +350,13 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 	$scope.gridLogOptions = {
 		data: 'educationalMaterialListLogs',
 		columnDefs: [
-			{field: 'material_name', displayName: $filter('translate')('EDUCATION.LIST.NAME')},
-			{field: 'revision', displayName: $filter('translate')('EDUCATION.LIST.REVISION')},
-			{field: 'cron_serial', displayName: $filter('translate')('EDUCATION.LIST.CRONLOGSER')},
-			{field: 'patient_serial', displayName: $filter('translate')('EDUCATION.LIST.PATIENTSER')},
-			{field: 'read_status', displayName: $filter('translate')('EDUCATION.LIST.READ_STATUS')},
-			{field: 'date_added', displayName: $filter('translate')('EDUCATION.LIST.PATIENTSER')},
-			{field: 'mod_action', displayName: $filter('translate')('EDUCATION.LIST.ACTION')}
+			{field: 'material_name', displayName: $filter('translate')('EDUCATION.LIST.NAME'), enableColumnMenu: false},
+			{field: 'revision', displayName: $filter('translate')('EDUCATION.LIST.REVISION'), enableColumnMenu: false},
+			{field: 'cron_serial', displayName: $filter('translate')('EDUCATION.LIST.CRONLOGSER'), enableColumnMenu: false},
+			{field: 'patient_serial', displayName: $filter('translate')('EDUCATION.LIST.PATIENTSER'), enableColumnMenu: false},
+			{field: 'read_status', displayName: $filter('translate')('EDUCATION.LIST.READ_STATUS'), enableColumnMenu: false},
+			{field: 'date_added', displayName: $filter('translate')('EDUCATION.LIST.PATIENTSER'), enableColumnMenu: false},
+			{field: 'mod_action', displayName: $filter('translate')('EDUCATION.LIST.ACTION'), enableColumnMenu: false}
 		],
 		rowHeight: 30,
 		useExternalFiltering: true,
@@ -425,7 +425,7 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 
 	function getEducationalMaterialsList() {
 		educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
-
+			$scope.eduMatList = [];
 			var educationalMaterials = response.data;
 			// Assign value
 			for (var i = 0; i < educationalMaterials.length; i++) {
@@ -435,12 +435,14 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 							{
 								field: 'name_' + Session.retrieveObject('user').language.toUpperCase(),
 								displayName: 'Name (EN)',
-								width: '355'
+								width: '355',
+								enableColumnMenu: false
 							},
 							{
 								field: 'type_' + Session.retrieveObject('user').language.toUpperCase(),
 								displayName: 'Type (EN)',
-								width: '145'
+								width: '145',
+								enableColumnMenu: false
 							}
 						],
 						data: educationalMaterials[i].tocs
