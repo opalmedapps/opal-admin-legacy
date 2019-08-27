@@ -48,10 +48,10 @@ controller('hospitalMap', function ($scope, $filter, $sce, $state, $uibModal, ho
 	$scope.gridOptions = {
 		data: 'hosMapList',
 		columnDefs: [
-			{ field: 'name_'+Session.retrieveObject('user').language.toUpperCase(), displayName: $filter('translate')('HOSPITAL_MAPS.LIST.NAME'), cellTemplate: cellTemplateName, width: '35%' },
-			{ field: 'qrid', displayName: $filter('translate')('HOSPITAL_MAPS.LIST.QR_IDENTIFIER'), width: '20%' },
-			{ field: 'url_'+Session.retrieveObject('user').language.toUpperCase(), displayName: $filter('translate')('HOSPITAL_MAPS.LIST.MAP_URL'), cellTemplate: cellTemplateURL, width: '35%' },
-			{ name: $filter('translate')('HOSPITAL_MAPS.LIST.OPERATIONS'), cellTemplate: cellTemplateOperations, sortable: false, width: '10%' }
+			{ field: 'name_'+Session.retrieveObject('user').language.toUpperCase(), displayName: $filter('translate')('HOSPITAL_MAPS.LIST.NAME'), cellTemplate: cellTemplateName, width: '35%', enableColumnMenu: false },
+			{ field: 'qrid', displayName: $filter('translate')('HOSPITAL_MAPS.LIST.QR_IDENTIFIER'), width: '20%', enableColumnMenu: false },
+			{ field: 'url_'+Session.retrieveObject('user').language.toUpperCase(), displayName: $filter('translate')('HOSPITAL_MAPS.LIST.MAP_URL'), cellTemplate: cellTemplateURL, width: '35%', enableColumnMenu: false },
+			{ name: $filter('translate')('HOSPITAL_MAPS.LIST.OPERATIONS'), cellTemplate: cellTemplateOperations, sortable: false, width: '10%', enableColumnMenu: false }
 		],
 		useExternalFiltering: true,
 		enableColumnResizing: true,
