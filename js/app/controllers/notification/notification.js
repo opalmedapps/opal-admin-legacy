@@ -34,7 +34,7 @@ controller('notification', function ($scope, $uibModal, $filter, $state, $sce, n
 		var matcher = new RegExp($scope.filterValue, 'i');
 		renderableRows.forEach(function (row) {
 			var match = false;
-			['name_EN'].forEach(function (field) {
+			['name_'+Session.retrieveObject('user').language.toUpperCase(), 'description_'+Session.retrieveObject('user').language.toUpperCase()].forEach(function (field) {
 				if (row.entity[field].match(matcher)) {
 					match = true;
 				}
@@ -98,6 +98,61 @@ controller('notification', function ($scope, $uibModal, $filter, $state, $sce, n
 
 	function getNotificationsList() {
 		notificationCollectionService.getNotifications().then(function (response) {
+			response.data.forEach(function(entry) {
+				switch (entry.type) {
+				case "Document":
+					entry.type = $filter('translate')('NOTIFICATIONS.ADD.DOCUMENT');
+					break;
+				case "TxTeamMessage":
+					entry.type = $filter('translate')('NOTIFICATIONS.ADD.TREATMENT_TEAM');
+					break;
+				case "Announcement":
+					entry.type = $filter('translate')('NOTIFICATIONS.ADD.ANNOUNCEMENT');
+					break;
+				case "EducationalMaterial":
+					entry.type = $filter('translate')('NOTIFICATIONS.ADD.EDUCATION_MATERIAL');
+					break;
+				case "NextAppointment":
+					entry.type = $filter('translate')('NOTIFICATIONS.ADD.NEXT_APPOINTMENT');
+					break;
+				case "AppointmentTimeChange":
+					entry.type = $filter('translate')('NOTIFICATIONS.ADD.APPOINTMENT_TIME_CHANGE');
+					break;
+				case "NewMessage":
+					entry.type = $filter('translate')('NOTIFICATIONS.ADD.NEW_MESSAGE');
+					break;
+				case "NewLabResult":
+					entry.type = $filter('translate')('NOTIFICATIONS.ADD.NEW_LAB_RESULT');
+					break;
+				case "UpdDocument":
+					entry.type = $filter('translate')('NOTIFICATIONS.ADD.UPDATED_DOCUMENT');
+					break;
+				case "RoomAssignment":
+					entry.type = $filter('translate')('NOTIFICATIONS.ADD.ROOM_ASSIGNMENT');
+					break;
+				case "PatientsForPatients":
+					entry.type = $filter('translate')('NOTIFICATIONS.ADD.PATIENTS_FOR_PATIENTS');
+					break;
+				case "Questionnaire":
+					entry.type = $filter('translate')('NOTIFICATIONS.ADD.QUESTIONNAIRE');
+					break;
+				case "LegacyQuestionnaire":
+					entry.type = $filter('translate')('NOTIFICATIONS.ADD.LEGACY_QUESTIONNAIRE');
+					break;
+				case "CheckInNotification":
+					entry.type = $filter('translate')('NOTIFICATIONS.ADD.CHECKIN');
+					break;
+				case "CheckInError":
+					entry.type = $filter('translate')('NOTIFICATIONS.ADD.CHECKINERROR');
+					break;
+				case "AppointmentCancelled":
+					entry.type = $filter('translate')('NOTIFICATIONS.ADD.CANCELLED');
+					break;
+				default:
+					entry.type = $filter('translate')('NOTIFICATIONS.ADD.NOT_TRANSLATED');
+				}
+			});
+
 
 			// Assign the retrieved response
 			$scope.notificationList = response.data;
