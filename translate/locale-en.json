@@ -1257,9 +1257,25 @@
       "CHECKINERROR": "Check In Error",
       "CANCELLED": "Cancelled Appointment",
       "NOT_TRANSLATED": "Non traduit"
-
     },
-    "EDIT": {},
+    "EDIT": {
+      "TITLE": "Edit Notification",
+      "SAVE": "Save Changes",
+      "CANCEL": "Cancel",
+      "TITLES": "Titles",
+      "MESSAGES": "Messages",
+      "ENGLISH": "English",
+      "FRENCH": "French",
+      "ENGLISH_ABRV": "EN",
+      "ENGLISH_TITLE": "English Title",
+      "ENGLISH_MESSAGE": "English Message",
+      "FRENCH_ABRV": "FR",
+      "FRENCH_TITLE": "French Title",
+      "FRENCH_MESSAGE": "French Message",
+      "ERROR_DETAILS": "An error occurred while getting the details of the education materials.",
+      "ERROR_EDIT": "An error occurred while saving the changes.",
+      "SUCCESS_EDIT": "The notification has being updated successfully."
+    },
     "LOG": {}
   },
   "PROFILE": {

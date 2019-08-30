@@ -34,7 +34,7 @@ controller('notification', function ($scope, $uibModal, $filter, $state, $sce, n
 		var matcher = new RegExp($scope.filterValue, 'i');
 		renderableRows.forEach(function (row) {
 			var match = false;
-			['name_'+Session.retrieveObject('user').language.toUpperCase(), 'description_'+Session.retrieveObject('user').language.toUpperCase()].forEach(function (field) {
+			['name_'+Session.retrieveObject('user').language.toUpperCase(), 'description_'+Session.retrieveObject('user').language.toUpperCase(), 'type'].forEach(function (field) {
 				if (row.entity[field].match(matcher)) {
 					match = true;
 				}
