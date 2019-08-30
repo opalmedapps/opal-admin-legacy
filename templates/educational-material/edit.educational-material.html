@@ -269,7 +269,7 @@
                     <span ng-if="checkTriggers(appointmentTriggerList) && selectAll.appointment.all">{{'EDUCATION.EDIT.ALL_APPOINTMENTS'|translate}}</span>
                     <ul class="list-items" ng-if="checkTriggers(appointmentTriggerList) && !selectAll.appointment.all">
                         <li ng-repeat="selectedAppointment in appointmentTriggerList | filter: {added: 1} : 1">
-                            {{selectedAppointment.name}}
+                            {{selectedAppointment.name_display}}
                         </li>
                     </ul>
                 </p>
@@ -287,7 +287,7 @@
                 <ul class="list-items">
                     <li ng-repeat="appointment in appointmentTriggerList | filter: searchAppointmentFilter">
                         <label>
-                            <input type="checkbox" ng-click="selectTrigger(appointment, selectAll.appointment)" ng-checked="appointment.added" /> {{appointment.name}}
+                            <input type="checkbox" ng-click="selectTrigger(appointment, selectAll.appointment)" ng-checked="appointment.added" /> {{appointment.name_display}}
                         </label>
                     </li>
                 </ul>
@@ -308,7 +308,7 @@
                     <span ng-if="checkTriggers(dxTriggerList) && selectAll.diagnosis.all">{{'EDUCATION.EDIT.ALL_DIAGNOSES'|translate}}</span>
                     <ul class="list-items" ng-if="checkTriggers(dxTriggerList) && !selectAll.diagnosis.all">
                         <li ng-repeat="dx in dxTriggerList | filter: {added: 1} : 1">
-                            {{dx.name}}
+                            {{dx.name_display}}
                         </li>
                     </ul>
                 </p>
@@ -326,7 +326,7 @@
                 <ul class="list-items">
                     <li ng-repeat="dx in dxTriggerList | filter: searchDxFilter">
                         <label>
-                            <input type="checkbox" ng-click="selectTrigger(dx, selectAll.diagnosis)" ng-checked="dx.added" /> {{dx.name}}
+                            <input type="checkbox" ng-click="selectTrigger(dx, selectAll.diagnosis)" ng-checked="dx.added" /> {{dx.name_display}}
                         </label>
                     </li>
                 </ul>

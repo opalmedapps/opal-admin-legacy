@@ -373,6 +373,12 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 	$scope.showEduMatLog = function (educationalMaterial) {
 
 		$scope.currentEduMat = educationalMaterial;
+
+		if(Session.retrieveObject('user').language.toUpperCase() === "FR")
+			$scope.currentEduMat.type_display = $scope.currentEduMat.type_FR;
+		else
+			$scope.currentEduMat.type_display = $scope.currentEduMat.type_EN;
+
 		var modalInstance = $uibModal.open({
 			templateUrl: 'templates/educational-material/log.educational-material.html',
 			controller: 'educationalMaterial.log',
