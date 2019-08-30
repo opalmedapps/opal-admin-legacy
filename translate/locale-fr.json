@@ -749,7 +749,7 @@
       "DATETIME_SENT": "Date et heure d'envoi",
       "NUMBER_POSTS_PUBLISHED": "Nombre de publication publiés",
       "POST": "Publication",
-      "REVISION": "No. de révision.",
+      "REVISION": "No. de révision",
       "CRONLOGSER": "ID journaux de cron",
       "PATIENTSER": "ID Patient",
       "READ_STATUS": "Statut de lecture",
@@ -878,6 +878,7 @@
       "SUCCESS_EDIT": "La publication a été mise à jour avec succès."
     },
     "LOG": {
+      "NAME": "Nom",
       "TITLE": "Journaux",
       "CLOSE": "Fermer",
       "NO_DATA": "Aucune donnée disponible",
@@ -1174,6 +1175,55 @@
       "MALE": "Homme",
       "FEMALE": "Femme"
     },
+    "LOG": {
+      "NAME": "Nom",
+      "TITLE": "Journaux",
+      "CLOSE": "Fermer",
+      "NO_DATA": "Aucune donnée disponible",
+      "REVISION": "No. de révision.",
+      "CRONLOGSER": "ID journaux de cron",
+      "PATIENTSER": "ID Patient",
+      "READ_STATUS": "Statut de lecture",
+      "ACTION": "Action",
+      "HIGHLIGHT": "Mettez en surbrillance la zone de tracé pour effectuer un zoom et afficher des données détaillées",
+      "DATETIME_SENT": "Date et heure d'envoi",
+      "LOGS_FOR": " journaux pour ",
+      "NUMBER": "Nombre de matériels éducatifs publiés",
+      "ERROR": "Une erreur s'est produite lors de l'obtention des journaux."
+    }
+  },
+  "NOTIFICATIONS": {
+    "LIST": {
+      "TITLE": "Notifications",
+      "ADD": "Ajouter",
+      "SEARCH": "Rechercher",
+      "LIST": "Liste",
+      "LOGS": "Journaux",
+      "EDIT": "Modifier",
+      "DELETE": "Supprimer",
+      "TITLE_2": "titre",
+      "TYPE": "Type",
+      "MESSAGE": "Message",
+      "OPERATIONS": "Opérations",
+      "ERROR_LIST": "Une erreur s'est produite lors de l'obtention de la liste des notifications.",
+      "ERROR_LOGS": "Une erreur s'est produite lors de l'obtention des journaux de notifications.",
+      "CONTROLSER": "ControlSer",
+      "REVISION": "No. de révision",
+      "CRONLOGSER": "ID journaux de cron",
+      "PATIENTSER": "ID Patient",
+      "NOTIFICATION_TYPE": "Type de notification",
+      "REF_TABLE_SER": "ID Table de référence",
+      "READ_STATUS": "Statut de lecture",
+      "DATETIME_SENT": "Date et heure d'envoi",
+      "ACTION": "Action",
+      "ALL_LOGS": "Tous les journaux de publication",
+      "HIGHLIGHT": "Mettez en surbrillance la zone de tracé pour effectuer un zoom et afficher des données détaillées",
+      "NOTIFICATIONS": "Nombre de notifications envoyées",
+      "NO_DATA": "Aucune donnée disponible"
+    },
+    "DELETE": {},
+    "ADD": {},
+    "EDIT": {},
     "LOG": {}
   },
   "PROFILE": {
