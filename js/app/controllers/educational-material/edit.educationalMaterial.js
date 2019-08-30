@@ -154,6 +154,8 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 		checkDemographicTriggers();
 
 		filterCollectionService.getFilters().then(function (response) {
+
+			console.log(response.data);
 			response.data.appointments.forEach(function(entry) {
 				if($scope.language.toUpperCase() === "FR")
 					entry.name_display = entry.name_FR;
