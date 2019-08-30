@@ -38,6 +38,8 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 	$scope.doctorTriggerList = [];
 	$scope.machineTriggerList = [];
 	$scope.patientTriggerList = [];
+	$scope.language = Session.retrieveObject('user').language;
+
 
 	$scope.selectAll = {
 		appointment: {all:false, checked:false},
@@ -152,9 +154,21 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 		checkDemographicTriggers();
 
 		filterCollectionService.getFilters().then(function (response) {
+			response.data.appointments.forEach(function(entry) {
+				if($scope.language.toUpperCase() === "FR")
+					entry.name_display = entry.name_FR;
+				else
+					entry.name_display = entry.name;
+			});
 
 			$scope.appointmentTriggerList = checkAdded(response.data.appointments, $scope.selectAll.appointment); // Assign value
 			$scope.dxTriggerList = checkAdded(response.data.dx, $scope.selectAll.diagnosis);
+			$scope.dxTriggerList.forEach(function(entry) {
+				if($scope.language.toUpperCase() === "FR")
+					entry.name_display = entry.name_FR;
+				else
+					entry.name_display = entry.name;
+			});
 			$scope.doctorTriggerList = checkAdded(response.data.doctors, $scope.selectAll.doctor);
 			$scope.machineTriggerList = checkAdded(response.data.machines, $scope.selectAll.machine);
 			$scope.patientTriggerList = checkAdded(response.data.patients, $scope.selectAll.patient);
@@ -229,7 +243,7 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 	$scope.detailsUpdated = function () {
 		$scope.eduMat.details_updated = 1;
 		$scope.setChangesMade();
-	}
+	};
 
 	// Function to assign 1 to existing triggers
 	function checkAdded(triggerList, selectAll) {

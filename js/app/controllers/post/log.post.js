@@ -113,7 +113,7 @@ controller('post.log', function ($scope, $uibModal, $filter, postCollectionServi
 	$scope.gridLogOptions = {
 		data: 'postListLogs',
 		columnDefs: [
-			{ field: 'post_control_name', displayName: $filter('translate')('POSTS.LOG.POST') },
+			{ field: 'post_control_name', displayName: $filter('translate')('POSTS.LOG.NAME') },
 			{ field: 'revision', displayName: $filter('translate')('POSTS.LOG.REVISION') },
 			{ field: 'cron_serial', displayName: $filter('translate')('POSTS.LOG.CRONLOGSER') },
 			{ field: 'patient_serial', displayName: $filter('translate')('POSTS.LOG.PATIENTSER') },
