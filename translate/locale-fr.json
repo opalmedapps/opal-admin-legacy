@@ -1221,8 +1221,18 @@
       "NOTIFICATIONS": "Nombre de notifications envoyées",
       "NO_DATA": "Aucune donnée disponible"
     },
-    "DELETE": {},
-    "ADD": {},
+    "DELETE": {
+      "TITLE": "Supprimer la notification",
+      "DELETE": "Supprimer",
+      "CANCEL": "Annuler",
+      "WARNING": "ATTENTION!",
+      "WARNING_TEXT": "Voulez-vous vraiment supprimer la notification ci-dessous? Cette action est irreversible!",
+      "SUCCESS": "La notification a été supprimée avec succès.",
+      "ERROR": "Une erreur s'est produite lors de la suppression de la notification."
+    },
+    "ADD": {
+
+    },
     "EDIT": {},
     "LOG": {}
   },
