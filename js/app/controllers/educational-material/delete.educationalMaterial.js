@@ -19,7 +19,6 @@ controller('educationalMaterial.delete', function ($scope, $filter, $sce, $uibMo
 					$scope.setBannerClass('success');
 					$scope.$parent.bannerMessage = $filter('translate')('EDUCATION.DELETE.SUCCESS');
 					$scope.showBanner();
-					$uibModalInstance.close();
 				}
 				else {
 					alert($filter('translate')('EDUCATION.DELETE.ERROR') + "\r\n\r\n" + response.message);

@@ -1203,7 +1203,15 @@
       "NOTIFICATIONS": "Number of notifications sent",
       "NO_DATA": "No data available"
     },
-    "DELETE": {},
+    "DELETE": {
+      "TITLE": "Delete Notification",
+      "WARNING": "WARNING!",
+      "WARNING_TEXT": "Are you sure you want to delete the following notification? This action cannot be undone!",
+      "DELETE": "Delete",
+      "CANCEL": "Cancel",
+      "SUCCESS": "The notification has being successfully deleted.",
+      "ERROR": "An error occurred while deleting the notification."
+    },
     "ADD": {},
     "EDIT": {},
     "LOG": {}
