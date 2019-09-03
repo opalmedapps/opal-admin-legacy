@@ -74,7 +74,11 @@
     "SEPTEMBER": "Septembre",
     "OCTOBER": "Octobre",
     "NOVEMBER": "Novembre",
-    "DECEMBER": "Décembre"
+    "DECEMBER": "Décembre",
+    "CLOSE": "Fermer",
+    "SELECT": "Sélectionner",
+    "TODAY": "Aujourd'hui",
+    "RESET": "Vider"
   },
   "QUESTIONNAIRE_MODULE": {
     "NAVIGATION_MENU": {
@@ -1314,7 +1318,23 @@
     }
   },
   "CRON": {
-
+    "PANEL": {
+      "TITLE": "Cron",
+      "DATE_TIME": "Date et heure du cron",
+      "DATE_TIME_EXPLANATION": "Utilisez ce champ pour définir manuellement la prochaine date et heure du cron. Pour désactiver le cron, définissez une date et une heure passées.",
+      "REPEAT": "Intervalle de répétition",
+      "REPEAT_EXPLANATION": "Utilisez ce champ pour définir l’intervalle de répétition cron. Intervalle de répétition actuel:",
+      "SAVE": "Enregistrer",
+      "ERROR_CRON_DETAILS": "Une erreur s'est produite lors de l'obtention des détails du cron.",
+      "ERROR_CRON_LOGS": "Une erreur s'est produite lors de l'obtention des journaux cron.",
+      "SUCCESS": "Les paramètres cron ont été mis à jour avec succès.",
+      "CRON_LOGS": "Journaux du cron",
+      "HIGHLIGHT": "Mettez en surbrillance la zone de tracé pour effectuer un zoom avant et afficher des données détaillées",
+      "DATETIME": "Date et heure du cron",
+      "CONTENTS": "Nombre de contenus publiés",
+      "HOURS": "Heures",
+      "MINUTES": "Minutes"
+    }
   },
   "PROFILE": {
     "ACCOUNT": "Compte",

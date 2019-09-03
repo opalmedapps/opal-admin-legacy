@@ -74,7 +74,11 @@
     "SEPTEMBER": "September",
     "OCTOBER": "October",
     "NOVEMBER": "November",
-    "DECEMBER": "December"
+    "DECEMBER": "December",
+    "CLOSE": "Close",
+    "SELECT": "Select",
+    "TODAY": "Today",
+    "RESET": "Clear"
   },
   "QUESTIONNAIRE_MODULE": {
     "NAVIGATION_MENU": {
@@ -1294,6 +1298,25 @@
       "READ_STATUS": "Read Status",
       "DATETIME_SENT": "Datetime Sent",
       "ACTION": "Action"
+    }
+  },
+  "CRON": {
+    "PANEL": {
+      "TITLE": "Cron",
+      "DATE_TIME": "Cron Date & Time",
+      "DATE_TIME_EXPLANATION": "Use this field to manually set the next cron date and time. To turn off cron, set a date and time in the past.",
+      "REPEAT": "Repeat Interval",
+      "REPEAT_EXPLANATION": "Use this field to set the cron repeat interval. Current repeat interval:",
+      "SAVE": "Save Changes",
+      "ERROR_CRON_DETAILS": "An error occurred while getting the cron details.",
+      "ERROR_CRON_LOGS": "An error occurred while getting the cron logs.",
+      "SUCCESS": "The cron settings has being updated successfully.",
+      "CRON_LOGS": "Cron logs",
+      "HIGHLIGHT": "Highlight the plot area to zoom in and show detailed data",
+      "DATETIME": "Cron Datetime",
+      "CONTENTS": "Number of contents published",
+      "HOURS": "Hours",
+      "MINUTES": "Minutes"
     }
   },
   "PROFILE": {
