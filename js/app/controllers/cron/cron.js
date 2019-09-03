@@ -3,9 +3,10 @@ angular.module('opalAdmin.controllers.cron', ['ngAnimate', 'ui.bootstrap', 'high
 /******************************************************************************
  * Cron Page controller
  *******************************************************************************/
-controller('cron', function ($scope, cronCollectionService, $uibModal) {
+controller('cron', function ($scope, $locale, $filter, $uibModal, cronCollectionService, Session) {
 
 	$scope.bannerMessage = "";
+	$scope.readyToDisplay = true;
 	// Function to show page banner
 	$scope.showBanner = function () {
 		$(".bannerMessage").slideDown(function () {
@@ -23,6 +24,31 @@ controller('cron', function ($scope, cronCollectionService, $uibModal) {
 		// Add class
 		$(".bannerMessage").addClass('alert-' + classname);
 	};
+
+	$locale["DATETIME_FORMATS"]["SHORTDAY"] = [
+		$filter('translate')('DATEPICKER.SUNDAY_S'),
+		$filter('translate')('DATEPICKER.MONDAY_S'),
+		$filter('translate')('DATEPICKER.TUESDAY_S'),
+		$filter('translate')('DATEPICKER.WEDNESDAY_S'),
+		$filter('translate')('DATEPICKER.THURSDAY_S'),
+		$filter('translate')('DATEPICKER.FRIDAY_S'),
+		$filter('translate')('DATEPICKER.SATURDAY_S')
+	];
+
+	$locale["DATETIME_FORMATS"]["MONTH"] = [
+		$filter('translate')('DATEPICKER.JANUARY'),
+		$filter('translate')('DATEPICKER.FEBRUARY'),
+		$filter('translate')('DATEPICKER.MARCH'),
+		$filter('translate')('DATEPICKER.APRIL'),
+		$filter('translate')('DATEPICKER.MAY'),
+		$filter('translate')('DATEPICKER.JUNE'),
+		$filter('translate')('DATEPICKER.JULY'),
+		$filter('translate')('DATEPICKER.AUGUST'),
+		$filter('translate')('DATEPICKER.SEPTEMBER'),
+		$filter('translate')('DATEPICKER.OCTOBER'),
+		$filter('translate')('DATEPICKER.NOVEMBER'),
+		$filter('translate')('DATEPICKER.DECEMBER')
+	];
 
 
 	$scope.changesMade = false;
@@ -59,8 +85,8 @@ controller('cron', function ($scope, cronCollectionService, $uibModal) {
 
 	// object for cron repeat units
 	$scope.repeatUnits = [
-		'Minutes',
-		'Hours'
+		$filter('translate')('CRON.PANEL.HOURS'),
+		$filter('translate')('CRON.PANEL.MINUTES')
 	];
 
 	// Initialize object for cron details
@@ -74,6 +100,7 @@ controller('cron', function ($scope, cronCollectionService, $uibModal) {
 		// Split the hours and minutes to display them in their respective text boxes
 		var hours = $scope.cronDetails.nextCronTime.split(":")[0];
 		var minutes = $scope.cronDetails.nextCronTime.split(":")[1];
+		var minutes = $scope.cronDetails.nextCronTime.split(":")[1];
 		var d = new Date();
 		d.setHours(hours);
 		d.setMinutes(minutes);
@@ -85,7 +112,7 @@ controller('cron', function ($scope, cronCollectionService, $uibModal) {
 		var day = parseInt($scope.cronDetailsMod.nextCronDate.split("-")[2]) + 1;
 		$scope.cronDetailsMod.nextCronDate = new Date(Date.UTC(year, month, day));
 	}).catch(function(response) {
-		console.error('Error occurred getting cron details:', response.status, response.data);
+		alert($filter('translate')('CRON.PANEL.ERROR_CRON_DETAILS') + "\r\n\r\n" + response.status + " - " + response.data);
 	});
 
 	// Ajax call when cron details are submitted
@@ -120,7 +147,7 @@ controller('cron', function ($scope, cronCollectionService, $uibModal) {
 						var day = parseInt($scope.cronDetailsMod.nextCronDate.split("-")[2]) + 1;
 						$scope.cronDetailsMod.nextCronDate = new Date(Date.UTC(year, month, day));
 					}).catch(function(response) {
-						console.error('Error occurred getting cron details:', response.status, response.data);
+						alert($filter('translate')('CRON.PANEL.ERROR_CRON_DETAILS') + "\r\n\r\n" + response.status + " - " + response.data);
 					});
 
 					$scope.bannerMessage = "Saved Cron Settings!";
@@ -155,7 +182,7 @@ controller('cron', function ($scope, cronCollectionService, $uibModal) {
 			});
 		});
 	}).catch(function(response) {
-		console.error('Error occurred getting cron logs:', response.status, response.data);
+		alert($filter('translate')('CRON.PANEL.ERROR_CRON_LOGS') + "\r\n\r\n" + response.status + " - " + response.data);
 	});
 
 	$scope.minSelection = new Date();
@@ -167,15 +194,15 @@ controller('cron', function ($scope, cronCollectionService, $uibModal) {
 			className: 'logChart'
 		},
 		title: {
-			text: 'Cron logs'
+			text: $filter('translate')('CRON.PANEL.CRON_LOGS')
 		},
 		subtitle: {
-			text: 'Highlight the plot area to zoom in'
+			text: $filter('translate')('CRON.PANEL.HIGHLIGHT')
 		},
 		xAxis: {
 			type: 'datetime',
 			title: {
-				text: 'Cron Datetime'
+				text: $filter('translate')('CRON.PANEL.DATETIME')
 			},
 			events: {
 				setExtremes: function (selection) {
@@ -205,17 +232,17 @@ controller('cron', function ($scope, cronCollectionService, $uibModal) {
 								contentNames[content] = Array.from(contentNames[content]);
 							}
 						}
-						$scope.getSelectedCronLogs(contentNames);
-					}
-					else {
-
+						if ($scope.readyToDisplay) {
+							$scope.getSelectedCronLogs(contentNames);
+							$scope.readyToDisplay = false;
+						}
 					}
 				}
 			}
 		},
 		yAxis: {
 			title: {
-				text: 'Number of contents published'
+				text: $filter('translate')('CRON.PANEL.CONTENTS')
 			},
 			tickInterval: 1,
 			min: 0
@@ -251,6 +278,7 @@ controller('cron', function ($scope, cronCollectionService, $uibModal) {
 
 		// After update
 		modalInstance.closed.then(function () {
+			$scope.readyToDisplay = true;
 			$scope.contentNames = [];
 			var chartObj = chartConfig.getChartObj();
 			chartObj.xAxis[0].setExtremes(undefined, undefined, true);
