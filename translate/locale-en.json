@@ -1276,7 +1276,25 @@
       "ERROR_EDIT": "An error occurred while saving the changes.",
       "SUCCESS_EDIT": "The notification has being updated successfully."
     },
-    "LOG": {}
+    "LOG": {
+      "TITLE": "Notification Logs",
+      "CLOSE": "Close",
+      "NO_DATA": "No data available",
+      "ERROR": "An error occurred while getting the notification log.",
+      "NOTIFICATION_LOGS": "Notification logs for",
+      "HIGHLIGHT": "Highlight the plot area to zoom in and show detailed data",
+      "LOGS_FOR": " logs for ",
+      "NUMBER": "Number of notifications sent",
+      "CONTROLSER": "ControlSer",
+      "REVISION": "Revision No.",
+      "CRONLOGSER": "CronLogSer",
+      "PATIENTSER": "PatientSer",
+      "NOTIFICATION_TYPE": "Notification Type",
+      "REF_TABLE_SER": "Ref Table Ser",
+      "READ_STATUS": "Read Status",
+      "DATETIME_SENT": "Datetime Sent",
+      "ACTION": "Action"
+    }
   },
   "PROFILE": {
     "ACCOUNT": "Account",

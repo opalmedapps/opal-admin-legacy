@@ -1189,7 +1189,7 @@
       "DATETIME_SENT": "Date et heure d'envoi",
       "LOGS_FOR": " journaux pour ",
       "NUMBER": "Nombre de matériels éducatifs publiés",
-      "ERROR": "Une erreur s'est produite lors de l'obtention des journaux."
+      "ERROR": "Une erreur s'est produite lors de l'obtention des journaux du matériel éducatif."
     }
   },
   "NOTIFICATIONS": {
@@ -1207,7 +1207,7 @@
       "OPERATIONS": "Opérations",
       "ERROR_LIST": "Une erreur s'est produite lors de l'obtention de la liste des notifications.",
       "ERROR_LOGS": "Une erreur s'est produite lors de l'obtention des journaux de notifications.",
-      "CONTROLSER": "ControlSer",
+      "CONTROLSER": "ID Contrôle",
       "REVISION": "No. de révision",
       "CRONLOGSER": "ID journaux de cron",
       "PATIENTSER": "ID Patient",
@@ -1294,7 +1294,24 @@
       "ERROR_EDIT": "Une erreur s'est produite lors de l'enregistrement des modifications.",
       "SUCCESS_EDIT": "La notification a été mise à jour avec succès."
     },
-    "LOG": {}
+    "LOG": {
+      "TITLE": "Journaux de la notification",
+      "CLOSE": "Fermer",
+      "NO_DATA": "Aucune donnée disponible",
+      "ERROR": "Une erreur s'est produite lors de l'obtention des journaux de la notification.",
+      "HIGHLIGHT": "Mettez en surbrillance la zone de tracé pour effectuer un zoom et afficher des données détaillées",
+      "LOGS_FOR": " journaux pour ",
+      "NUMBER": "Nombre de notifications envoyées",
+      "CONTROLSER": "ID Contrôle",
+      "REVISION": "No. de révision",
+      "CRONLOGSER": "ID journaux de cron",
+      "PATIENTSER": "ID Patient",
+      "NOTIFICATION_TYPE": "Type de notification",
+      "REF_TABLE_SER": "ID Table de référence",
+      "READ_STATUS": "Statut de lecture",
+      "DATETIME_SENT": "Date et heure d'envoi",
+      "ACTION": "Action"
+    }
   },
   "PROFILE": {
     "ACCOUNT": "Compte",
