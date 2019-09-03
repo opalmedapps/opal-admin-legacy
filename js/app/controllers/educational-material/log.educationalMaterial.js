@@ -14,7 +14,7 @@ controller('educationalMaterial.log', function ($scope, $uibModal, $filter, educ
 			});
 		});
 	}).catch(function(response) {
-		console.error('Error occurred getting educational material logs:', response.status, response.data);
+		alert($filter('translate')('EDUCATION.LOG.ERROR') + "\r\n\r\n" + response.status + " - " + response.data);
 	});
 
 	var chartConfig = $scope.chartConfig = {
@@ -92,8 +92,6 @@ controller('educationalMaterial.log', function ($scope, $uibModal, $filter, educ
 						select: function(point) {
 							var cronLogSerNum = [point.target.cron_serial];
 							educationalMaterialCollectionService.getEducationalMaterialListLogs(cronLogSerNum).then(function(response){
-								console.log(response.data);
-
 								$scope.educationalMaterialListLogs = response.data;
 							});
 						},
