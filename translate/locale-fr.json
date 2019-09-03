@@ -1313,6 +1313,9 @@
       "ACTION": "Action"
     }
   },
+  "CRON": {
+
+  },
   "PROFILE": {
     "ACCOUNT": "Compte",
     "RESET_PASSWORD": "Réinitialiser le mot de passe",
