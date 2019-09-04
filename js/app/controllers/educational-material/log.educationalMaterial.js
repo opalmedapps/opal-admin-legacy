@@ -113,13 +113,13 @@ controller('educationalMaterial.log', function ($scope, $uibModal, $filter, educ
 	$scope.gridLogOptions = {
 		data: 'educationalMaterialListLogs',
 		columnDefs: [
-			{ field: 'material_name', displayName: $filter('translate')('EDUCATION.LOG.NAME') },
-			{ field: 'revision', displayName: $filter('translate')('EDUCATION.LOG.REVISION') },
-			{ field: 'cron_serial', displayName: $filter('translate')('EDUCATION.LOG.CRONLOGSER') },
-			{ field: 'patient_serial', displayName: $filter('translate')('EDUCATION.LOG.PATIENTSER') },
-			{ field: 'read_status', displayName: $filter('translate')('EDUCATION.LOG.READ_STATUS') },
-			{ field: 'date_added', displayName: $filter('translate')('EDUCATION.LOG.DATETIME_SENT') },
-			{ field: 'mod_action', displayName: $filter('translate')('EDUCATION.LOG.ACTION') }
+			{ field: 'material_name', displayName: $filter('translate')('EDUCATION.LOG.NAME'), enableColumnMenu: false },
+			{ field: 'revision', displayName: $filter('translate')('EDUCATION.LOG.REVISION'), enableColumnMenu: false },
+			{ field: 'cron_serial', displayName: $filter('translate')('EDUCATION.LOG.CRONLOGSER'), enableColumnMenu: false },
+			{ field: 'patient_serial', displayName: $filter('translate')('EDUCATION.LOG.PATIENTSER'), enableColumnMenu: false },
+			{ field: 'read_status', displayName: $filter('translate')('EDUCATION.LOG.READ_STATUS'), enableColumnMenu: false },
+			{ field: 'date_added', displayName: $filter('translate')('EDUCATION.LOG.DATETIME_SENT'), enableColumnMenu: false },
+			{ field: 'mod_action', displayName: $filter('translate')('EDUCATION.LOG.ACTION'), enableColumnMenu: false }
 		],
 		rowHeight: 30,
 		useExternalFiltering: true,

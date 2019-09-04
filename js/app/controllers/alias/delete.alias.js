@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.alias.delete', [])
 
-	.controller('alias.delete', function ($scope, $uibModalInstance, Session) {
+	.controller('alias.delete', function ($scope, $uibModalInstance, $filter, Session) {
 		// Submit delete
 		$scope.deleteAlias = function () {
 
@@ -17,13 +17,16 @@ angular.module('opalAdmin.controllers.alias.delete', [])
 					// Show success or failure depending on response
 					if (response.value) {
 						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = "Successfully deleted \"" + $scope.aliasToDelete.name_EN + "/ " + $scope.aliasToDelete.name_FR + "\"!";
+						$scope.$parent.bannerMessage = $filter('translate')('ALIAS.DELETE.SUCCESS');
+						$scope.showBanner();
 					}
 					else {
-						$scope.setBannerClass('danger');
-						$scope.$parent.bannerMessage = response.message;
+						alert($filter('translate')('ALIAS.DELETE.ERROR') + "\r\n\r\n" + response.message);
 					}
-					$scope.showBanner();
+					$uibModalInstance.close();
+				},
+				error: function (err) {
+					alert($filter('translate')('ALIAS.DELETE.ERROR') + "\r\n\r\n" + err.status + " - " + err.statusText);
 					$uibModalInstance.close();
 				}
 			});
@@ -33,4 +36,4 @@ angular.module('opalAdmin.controllers.alias.delete', [])
 		$scope.cancel = function () {
 			$uibModalInstance.dismiss('cancel');
 		};
-});
+	});
