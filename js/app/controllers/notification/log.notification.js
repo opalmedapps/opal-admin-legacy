@@ -118,15 +118,15 @@ controller('notification.log', function ($scope, $uibModal, $filter, notificatio
 	$scope.gridLogOptions = {
 		data: 'notificationListLogs',
 		columnDefs: [
-			{ field: 'control_serial', displayName: $filter('translate')('NOTIFICATIONS.LOG.CONTROLSER') },
-			{ field: 'revision', displayName: $filter('translate')('NOTIFICATIONS.LOG.REVISION') },
-			{ field: 'cron_serial', displayName: $filter('translate')('NOTIFICATIONS.LOG.CRONLOGSER') },
-			{ field: 'patient_serial', displayName: $filter('translate')('NOTIFICATIONS.LOG.PATIENTSER') },
-			{ field: 'type', displayName: $filter('translate')('NOTIFICATIONS.LOG.NOTIFICATION_TYPE') },
-			{ field: 'ref_table_serial', displayName: $filter('translate')('NOTIFICATIONS.LOG.REF_TABLE_SER') },
-			{ field: 'read_status', displayName: $filter('translate')('NOTIFICATIONS.LOG.READ_STATUS') },
-			{ field: 'date_added', displayName: $filter('translate')('NOTIFICATIONS.LOG.DATETIME_SENT') },
-			{ field: 'mod_action', displayName: $filter('translate')('NOTIFICATIONS.LOG.ACTION') }
+			{ field: 'control_serial', displayName: $filter('translate')('NOTIFICATIONS.LOG.CONTROLSER'), enableColumnMenu: false },
+			{ field: 'revision', displayName: $filter('translate')('NOTIFICATIONS.LOG.REVISION'), enableColumnMenu: false },
+			{ field: 'cron_serial', displayName: $filter('translate')('NOTIFICATIONS.LOG.CRONLOGSER'), enableColumnMenu: false },
+			{ field: 'patient_serial', displayName: $filter('translate')('NOTIFICATIONS.LOG.PATIENTSER'), enableColumnMenu: false },
+			{ field: 'type', displayName: $filter('translate')('NOTIFICATIONS.LOG.NOTIFICATION_TYPE'), enableColumnMenu: false },
+			{ field: 'ref_table_serial', displayName: $filter('translate')('NOTIFICATIONS.LOG.REF_TABLE_SER'), enableColumnMenu: false },
+			{ field: 'read_status', displayName: $filter('translate')('NOTIFICATIONS.LOG.READ_STATUS'), enableColumnMenu: false },
+			{ field: 'date_added', displayName: $filter('translate')('NOTIFICATIONS.LOG.DATETIME_SENT'), enableColumnMenu: false },
+			{ field: 'mod_action', displayName: $filter('translate')('NOTIFICATIONS.LOG.ACTION'), enableColumnMenu: false }
 		],
 		rowHeight: 30,
 		useExternalFiltering: true,

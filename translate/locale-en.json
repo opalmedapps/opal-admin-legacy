@@ -1430,7 +1430,15 @@
       "ACTION": "Action",
       "NOT_TRANSLATED": "Not translated"
     },
-    "DELETE": {},
+    "DELETE": {
+      "TITLE": "Delete",
+      "WARNING": "WARNING!",
+      "WARNING_TEXT": "Are you sure you want to delete the following alias? This action cannot be undone!",
+      "DELETE": "Delete",
+      "CANCEL": "Cancel",
+      "SUCCESS": "The alias has being successfully deleted.",
+      "ERROR": "An error occurred while deleting the alias."
+    },
     "ADD": {},
     "EDIT": {},
     "LOG": {}
