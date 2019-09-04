@@ -51,10 +51,10 @@ controller('notification', function ($scope, $uibModal, $filter, $state, $sce, n
 	$scope.gridOptions = {
 		data: 'notificationList',
 		columnDefs: [
-			{ field: 'name_'+Session.retrieveObject('user').language.toUpperCase(), displayName: $filter('translate')('NOTIFICATIONS.LIST.TITLE_2'), cellTemplate: cellTemplateName, width: '40%' },
-			{ field: 'type', displayName: $filter('translate')('NOTIFICATIONS.LIST.TYPE'), width: '15%' },
-			{ field: 'description_'+Session.retrieveObject('user').language.toUpperCase(), displayName: $filter('translate')('NOTIFICATIONS.LIST.MESSAGE'), width: '30%' },
-			{ name: $filter('translate')('NOTIFICATIONS.LIST.OPERATIONS'), width: '15%', cellTemplate: cellTemplateOperations, sortable: false }
+			{ field: 'name_'+Session.retrieveObject('user').language.toUpperCase(), displayName: $filter('translate')('NOTIFICATIONS.LIST.TITLE_2'), cellTemplate: cellTemplateName, width: '40%', enableColumnMenu: false },
+			{ field: 'type', displayName: $filter('translate')('NOTIFICATIONS.LIST.TYPE'), width: '15%', enableColumnMenu: false },
+			{ field: 'description_'+Session.retrieveObject('user').language.toUpperCase(), displayName: $filter('translate')('NOTIFICATIONS.LIST.MESSAGE'), width: '30%', enableColumnMenu: false },
+			{ name: $filter('translate')('NOTIFICATIONS.LIST.OPERATIONS'), width: '15%', cellTemplate: cellTemplateOperations, sortable: false, enableColumnMenu: false }
 		],
 		useExternalFiltering: true,
 		enableColumnResizing: true,
