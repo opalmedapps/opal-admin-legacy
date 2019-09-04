@@ -209,8 +209,8 @@ controller('cron', function ($scope, $locale, $filter, $uibModal, cronCollection
 					if (selection.min !== undefined && selection.max !== undefined) {
 						var contentNames = {};
 						var allSeries = selection.target.series; // get all series
-						$scope.minSelection = moment.tz(new Date(selection.min), "").format("MMMM Do YYYY, h:mm:ss a");
-						$scope.maxSelection = moment.tz(new Date(selection.max), "").format("MMMM Do YYYY, h:mm:ss a");
+						$scope.minSelection = moment.tz(new Date(selection.min), "").format("YYYY-MM-DD, h:mm:ss a");
+						$scope.maxSelection = moment.tz(new Date(selection.max), "").format("YYYY-MM-DD, h:mm:ss a");
 						angular.forEach(allSeries, function (series) {
 							// check if series is visible (i.e. not disabled via the legend)
 							if (series.visible) {
