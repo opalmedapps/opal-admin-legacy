@@ -337,17 +337,17 @@ controller('alias', function ($scope, $uibModal, $filter, aliasCollectionService
 	$scope.gridLogOptions = {
 		data: 'aliasListLogs',
 		columnDefs: [
-			{ field: 'expression_name', displayName: $filter('translate')('ALIAS.LIST.CODE') },
-			{ field: 'expression_description', displayName: $filter('translate')('ALIAS.LIST.RESOURCE')},
-			{ field: 'type', displayName: $filter('translate')('ALIAS.LIST.TYPE') },
-			{ field: 'revision', displayName: $filter('translate')('ALIAS.LIST.REVISION') },
-			{ field: 'cron_serial', displayName: $filter('translate')('ALIAS.LIST.CRONLOGSER') },
-			{ field: 'patient_serial', displayName: $filter('translate')('ALIAS.LIST.PATIENTSER') },
-			{ field: 'source_db', displayName: $filter('translate')('ALIAS.LIST.DATABASE') },
-			{ field: 'source_uid', displayName: $filter('translate')('ALIAS.LIST.UID') },
-			{ field: 'read_status', displayName: $filter('translate')('ALIAS.LIST.READ') },
-			{ field: 'date_added', displayName: $filter('translate')('ALIAS.LIST.DATETIME_SENT') },
-			{ field: 'mod_action', displayName: $filter('translate')('ALIAS.LIST.ACTION') }
+			{ field: 'expression_name', displayName: $filter('translate')('ALIAS.LIST.CODE'), enableColumnMenu: false },
+			{ field: 'expression_description', displayName: $filter('translate')('ALIAS.LIST.RESOURCE'), enableColumnMenu: false },
+			{ field: 'type', displayName: $filter('translate')('ALIAS.LIST.TYPE'), enableColumnMenu: false },
+			{ field: 'revision', displayName: $filter('translate')('ALIAS.LIST.REVISION'), enableColumnMenu: false },
+			{ field: 'cron_serial', displayName: $filter('translate')('ALIAS.LIST.CRONLOGSER'), enableColumnMenu: false },
+			{ field: 'patient_serial', displayName: $filter('translate')('ALIAS.LIST.PATIENTSER'), enableColumnMenu: false },
+			{ field: 'source_db', displayName: $filter('translate')('ALIAS.LIST.DATABASE'), enableColumnMenu: false },
+			{ field: 'source_uid', displayName: $filter('translate')('ALIAS.LIST.UID'), enableColumnMenu: false },
+			{ field: 'read_status', displayName: $filter('translate')('ALIAS.LIST.READ'), enableColumnMenu: false },
+			{ field: 'date_added', displayName: $filter('translate')('ALIAS.LIST.DATETIME_SENT'), enableColumnMenu: false },
+			{ field: 'mod_action', displayName: $filter('translate')('ALIAS.LIST.ACTION'), enableColumnMenu: false }
 		],
 		rowHeight: 30,
 		useExternalFiltering: true,

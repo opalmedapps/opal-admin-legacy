@@ -1299,7 +1299,7 @@
       "SUCCESS_EDIT": "La notification a été mise à jour avec succès."
     },
     "LOG": {
-      "TITLE": "Journaux de la notification",
+      "TITLE": "Journaux de notification",
       "CLOSE": "Fermer",
       "NO_DATA": "Aucune donnée disponible",
       "ERROR": "Une erreur s'est produite lors de l'obtention des journaux de la notification.",
@@ -1447,7 +1447,15 @@
       "ACTION": "Action",
       "NOT_TRANSLATED": "Non traduit"
     },
-    "DELETE": {},
+    "DELETE": {
+      "TITLE": "Supprimer",
+      "DELETE": "Supprimer",
+      "CANCEL": "Annuler",
+      "WARNING": "ATTENTION!",
+      "WARNING_TEXT": "Voulez-vous vraiment supprimer l'alias ci-dessous? Cette action est irreversible!",
+      "SUCCESS": "L'alias a été supprimé avec succès.",
+      "ERROR": "Une erreur s'est produite lors de la suppression de l'alias."
+    },
     "ADD": {},
     "EDIT": {},
     "LOG": {}
