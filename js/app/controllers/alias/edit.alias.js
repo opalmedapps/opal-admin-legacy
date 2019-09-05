@@ -49,9 +49,15 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 		// Call our API service to get the list of educational material
 		educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+			response.data.forEach(function(entry) {
+				if($scope.language.toUpperCase() === "FR")
+					entry.name_display = entry.name_FR;
+				else
+					entry.name_display = entry.name;
+			});
 			$scope.eduMatList = response.data; // Assign value
 		}).catch(function(response) {
-			console.error('Error occurred getting educational material list:', response.status, response.data);
+			alert($filter('translate')('ALIAS.EDIT.ERROR_EDUCATION') + "\r\n\r\n" + response.status + " - " + response.data);
 		});
 
 		// Call our API to get the list of existing hospital maps

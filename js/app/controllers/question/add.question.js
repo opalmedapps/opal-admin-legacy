@@ -218,11 +218,11 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	// search function
 	$scope.searchAtFilter = function (Filter) {
 		var keyword = new RegExp($scope.atEntered, 'i');
-		return !$scope.atEntered || keyword.test(Filter.name_EN);
+		return !$scope.atEntered || keyword.test($scope.language.toUpperCase() === "FR"?Filter.name_FR:Filter.name_EN);
 	};
 	$scope.searchLibFilter = function (Filter) {
 		var keyword = new RegExp($scope.libEntered, 'i');
-		return !$scope.libEntered || keyword.test(Filter.name_EN);
+		return !$scope.libEntered || keyword.test($scope.language.toUpperCase() === "FR"?Filter.name_FR:Filter.name_EN);
 	};
 
 	// questionnaire API: retrieve data

@@ -33,7 +33,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		// search function
 		$scope.searchLibFilter = function (Filter) {
 			var keyword = new RegExp($scope.libEntered, 'i');
-			return !$scope.libEntered || keyword.test(Filter.name_EN);
+			return !$scope.libEntered || keyword.test($scope.language.toUpperCase() === "FR"?Filter.name_FR:Filter.name_EN);
 		};
 
 		$scope.orderPreview = function () {

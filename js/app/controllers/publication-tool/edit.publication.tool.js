@@ -121,11 +121,11 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 	// Function for search through the filters
 	$scope.searchAppointmentFilter = function (Filter) {
 		var keyword = new RegExp($scope.appointmentSearchField, 'i');
-		return !$scope.appointmentSearchField || keyword.test(Filter.name);
+		return !$scope.appointmentSearchField || keyword.test($scope.language.toUpperCase() === "FR"?Filter.name_FR:Filter.name);
 	};
 	$scope.searchDxFilter = function (Filter) {
 		var keyword = new RegExp($scope.dxSearchField, 'i');
-		return !$scope.dxSearchField || keyword.test(Filter.name);
+		return !$scope.dxSearchField || keyword.test($scope.language.toUpperCase() === "FR"?Filter.name_FR:Filter.name);
 	};
 	$scope.searchDoctorFilter = function (Filter) {
 		var keyword = new RegExp($scope.doctorSearchField, 'i');
