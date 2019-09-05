@@ -550,7 +550,7 @@ controller('educationalMaterial.add', function ($scope, $filter, $state, $sce, $
 	};
 
 	// Function to assign search fields when textbox changes
-	$scope.searchAppontment = function (field) {
+	$scope.searchAppointment = function (field) {
 		$scope.appointmentSearchField = field;
 		$scope.selectAll.appointment.all = false;
 	};
@@ -574,11 +574,11 @@ controller('educationalMaterial.add', function ($scope, $filter, $state, $sce, $
 	// Function for search through the triggers
 	$scope.searchAppointmentFilter = function (Filter) {
 		var keyword = new RegExp($scope.appointmentSearchField, 'i');
-		return !$scope.appointmentSearchField || keyword.test(Filter.name);
+		return !$scope.appointmentSearchField || keyword.test($scope.language.toUpperCase() === "FR"?Filter.name_FR:Filter.name);
 	};
 	$scope.searchDxFilter = function (Filter) {
 		var keyword = new RegExp($scope.dxSearchField, 'i');
-		return !$scope.dxSearchField || keyword.test(Filter.name);
+		return !$scope.dxSearchField || keyword.test($scope.language.toUpperCase() === "FR"?Filter.name_FR:Filter.name);
 	};
 	$scope.searchDoctorFilter = function (Filter) {
 		var keyword = new RegExp($scope.doctorSearchField, 'i');

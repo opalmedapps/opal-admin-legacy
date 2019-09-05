@@ -479,6 +479,10 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 				data: $scope.newAlias,
 				success: function () {
 					$state.go('alias');
+				},
+				error: function (err) {
+					alert($filter('translate')('ALIAS.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText);
+					$state.go('alias');
 				}
 			});
 		}
