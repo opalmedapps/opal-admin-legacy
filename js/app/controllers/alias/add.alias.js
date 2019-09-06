@@ -510,7 +510,7 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 	// Function for searching through the educational material list
 	$scope.searchEduMatsFilter = function (edumat) {
 		var keyword = new RegExp($scope.eduMatFilter, 'i');
-		return !$scope.eduMatFilter || keyword.test(edumat.name_EN);
+		return !$scope.eduMatFilter || keyword.test($scope.language.toUpperCase() === "FR"?edumat.name_FR:edumat.name_EN);
 	};
 
 	// Function to assign hospitalMapFilter when textbox is changing
@@ -521,7 +521,7 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 	// Function for searching through the hospital map list
 	$scope.searchHospitalMapsFilter = function (hospitalMap) {
 		var keyword = new RegExp($scope.hospitalMapFilter, 'i');
-		return !$scope.hospitalMapFilter || keyword.test(hospitalMap.name_EN);
+		return !$scope.hospitalMapFilter || keyword.test($scope.language.toUpperCase() === "FR"?hospitalMap.name_FR:hospitalMap.name_EN);
 	};
 
 	$scope.clinicalCodeFilter = 'all';

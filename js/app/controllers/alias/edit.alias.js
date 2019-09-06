@@ -12,6 +12,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		$scope.selectAll = false;
 		$scope.showAssigned = false;
 		$scope.hideAssigned = false;
+		$scope.language = Session.retrieveObject('user').language;
 
 		// Default toolbar for wysiwyg
 		$scope.toolbar = [
@@ -45,15 +46,39 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 		$scope.hideAlert = function () {
 			$scope.hiddenAlert = true;
-		}
+		};
+
+		// Function to check if triggers are added
+		$scope.checkTriggers = function (triggerList) {
+			var triggersAdded = false;
+			angular.forEach(triggerList, function (trigger) {
+				if (trigger.added)
+					triggersAdded = true;
+			});
+			return triggersAdded;
+		};
 
 		// Call our API service to get the list of educational material
 		educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
 			response.data.forEach(function(entry) {
-				if($scope.language.toUpperCase() === "FR")
+				if($scope.language.toUpperCase() === "FR") {
 					entry.name_display = entry.name_FR;
-				else
-					entry.name_display = entry.name;
+					entry.url_display = entry.url_FR;
+				}
+				else {
+					entry.name_display = entry.name_EN;
+					entry.url_display = entry.url_EN;
+				}
+				entry.tocs.forEach(function (sub) {
+					if($scope.language.toUpperCase() === "FR") {
+						sub.name_display = sub.name_FR;
+						sub.url_display = sub.url_FR;
+					}
+					else {
+						entry.name_display = sub.name_EN;
+						sub.url_display = sub.url_EN;
+					}
+				});
 			});
 			$scope.eduMatList = response.data; // Assign value
 		}).catch(function(response) {
@@ -62,9 +87,15 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 		// Call our API to get the list of existing hospital maps
 		hospitalMapCollectionService.getHospitalMaps().then(function (response) {
+			response.data.forEach(function(entry) {
+				if($scope.language.toUpperCase() === "FR")
+					entry.name_display = entry.name_FR;
+				else
+					entry.name_display = entry.name_EN;
+			});
 			$scope.hospitalMapList = response.data;
 		}).catch(function(response) {
-			console.error('Error occurred getting hospital map list:', response.status, response.data);
+			alert($filter('translate')('ALIAS.EDIT.ERROR_HOSPITAL') + "\r\n\r\n" + response.status + " - " + response.data);
 		});
 
 		// Function to assign termFilter when textbox is changing 
@@ -89,7 +120,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		// Function for searching through expression names
 		$scope.searchEduMatsFilter = function (edumat) {
 			var keyword = new RegExp($scope.eduMatFilter, 'i');
-			return !$scope.eduMatFilter || keyword.test(edumat.name_EN);
+			return !$scope.eduMatFilter || keyword.test($scope.language.toUpperCase() === "FR"?edumat.name_FR:edumat.name_EN);
 		};
 
 		// Function to assign hospitalMapFilter when textbox is changing 
@@ -100,14 +131,14 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		// Function for searching through the hospital map list
 		$scope.searchHospitalMapsFilter = function (hospitalMap) {
 			var keyword = new RegExp($scope.hospitalMapFilter, 'i');
-			return !$scope.hospitalMapFilter || keyword.test(hospitalMap.name_EN);
+			return !$scope.hospitalMapFilter || keyword.test($scope.language.toUpperCase() === "FR"?hospitalMap.name_FR:hospitalMap.name_EN);
 		};
 
 		$scope.clinicalCodeFilter = 'all';
 
 		$scope.setClinicalCodeFilter = function (filter) {
 			$scope.clinicalCodeFilter = filter;
-		}
+		};
 
 		/* Function for the "Processing" dialog */
 		var processingModal;
@@ -124,6 +155,41 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 		// Call our API service to get the current alias details
 		aliasCollectionService.getAliasDetails($scope.currentAlias.serial).then(function (response) {
+			if($scope.language.toUpperCase() === "FR") {
+				response.data.eduMat.name_display = response.data.eduMat.name_FR;
+				response.data.eduMat.url_display = response.data.eduMat.url_FR;
+				response.data.hospitalMap.name_display = response.data.hospitalMap.name_FR;
+			}
+			else {
+				response.data.eduMat.name_display = response.data.eduMat.name_EN;
+				response.data.eduMat.url_display = response.data.eduMat.url_EN;
+				response.data.hospitalMap.name_display = response.data.hospitalMap.name_EN;
+			}
+			if(typeof response.data.eduMat.tocs  !== 'undefined') {
+				response.data.eduMat.tocs.forEach(function (sub) {
+					if ($scope.language.toUpperCase() === "FR") {
+						sub.name_display = sub.name_FR;
+						sub.url_display = sub.url_FR;
+					} else {
+						sub.name_display = sub.name_EN;
+						sub.url_display = sub.url_EN;
+					}
+				});
+			}
+
+			switch (response.data.type) {
+			case "Appointment":
+				response.data.type_display = $filter('translate')('ALIAS.EDIT.APPOINTMENT');
+				break;
+			case "Task":
+				response.data.type_display = $filter('translate')('ALIAS.EDIT.TASK');
+				break;
+			case "Document":
+				response.data.type_display = $filter('translate')('ALIAS.EDIT.DOCUMENT');
+				break;
+			default:
+				response.data.type_display = $filter('translate')('ALIAS.EDIT.NOT_TRANSLATED');
+			}
 
 			// Assign value
 			$scope.alias = response.data;
@@ -142,8 +208,6 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 					angular.forEach($scope.termList, function (term) {
 						var termName = term.id; // get the id name
 						var termDesc = term.description;
-
-
 						if (selectedTermName == termName && selectedTermDesc == termDesc) { // If term is selected (from current alias)
 							term.added = 1; // term added?
 							term.assigned = null; // remove self assigned alias
@@ -157,7 +221,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 
 			}).catch(function(response) {
-				console.error('Error occurred getting expression list:', response.status, response.data);
+				alert($filter('translate')('ALIAS.EDIT.ERROR_ALIAS') + "\r\n\r\n" + response.status + " - " + response.data);
 			});
 
 			// Call our API service to get the list of existing color tags
@@ -165,11 +229,11 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 				$scope.existingColorTags = response.data; // Assign response
 
 			}).catch(function(response) {
-				console.error('Error occurred getting color tags:', response.status, response.data);
+				alert($filter('translate')('ALIAS.EDIT.ERROR_COLOR') + "\r\n\r\n" + response.status + " - " + response.data);
 			});
 
 		}).catch(function(response) {
-			console.error('Error occurred getting alias details:', response.status, response.data);
+			alert($filter('translate')('ALIAS.EDIT.ERROR_DETAILS') + "\r\n\r\n" + response.status + " - " + response.data);
 		});
 
 		// Function to add / remove a term to alias
@@ -249,7 +313,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 			$scope.changesMade = true;
 			$scope.alias.checkin_details_updated = 1;
-		}
+		};
 
 		// Function that triggers when the checkin possible option is updated
 		$scope.checkinPossibleUpdate = function (flag) {
@@ -258,13 +322,13 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			$scope.alias.checkin_details_updated = 1;
 
 			$scope.alias.checkin_details.checkin_possible = flag;
-		}
+		};
 
 		// Function to show/hide educational material table of contents when link is clicked
 		$scope.showTOCs = false;
 		$scope.toggleTOCDisplay = function () {
 			$scope.showTOCs = !$scope.showTOCs;
-		}
+		};
 
 		$scope.eduMatUpdate = function (event, eduMat) {
 
@@ -351,10 +415,8 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 				});
 
 				// Log who updated alias
-				var currentUser = Session.retrieveObject('user');
-				$scope.alias.user = currentUser;
+				$scope.alias.user = Session.retrieveObject('user');
 
-				// Submit form
 				$.ajax({
 					type: "POST",
 					url: "alias/update/alias",
@@ -364,14 +426,17 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 						// Show success or failure depending on response
 						if (response.value) {
 							$scope.setBannerClass('success');
-							$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.alias.name_EN + "/ " + $scope.alias.name_FR + "\"!";
+							$scope.$parent.bannerMessage = $filter('translate')('ALIAS.EDIT.SUCCESS_EDIT');
 							$scope.showBanner();
-							$uibModalInstance.close();
 						}
 						else {
-							$scope.showAlert('response');
-							$scope.$apply();
+							alert($filter('translate')('ALIAS.EDIT.ERROR_EDIT'));
 						}
+						$uibModalInstance.close();
+					},
+					error: function(err) {
+						alert($filter('translate')('ALIAS.EDIT.ERROR_EDIT') + "\r\n\r\n" + err.status + " - " + err.statusText);
+						$uibModalInstance.close();
 					}
 				});
 			}
@@ -434,6 +499,4 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			else
 				return false;
 		};
-
-
 	});
