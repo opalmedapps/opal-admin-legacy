@@ -3,17 +3,14 @@
     <div class="col-xs-12 col-md-6">
         <h2 class="modal-title">
             <span class="glyphicon glyphicon-pencil"></span>
-            Edit - {{alias.type}}
+            {{'ALIAS.EDIT.TITLE'|translate}} - {{alias.type_display}}
         </h2>
-        <p class="modal-title-caption">
-            {{alias.name_EN}} / {{alias.name_FR}}
-        </p>
     </div>
     <div class="modal-buttons col-xs-12 col-md-6">
         <span>
             <form method="post" ng-submit="updateAlias()">
-                <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
-                <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
+                <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="{{'ALIAS.EDIT.SAVE'|translate}}">
+                <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'ALIAS.EDIT.CANCEL'|translate}}">
             </form>
         </span>
     </div>
@@ -21,7 +18,7 @@
 <div class="modal-body">
     <div ng-hide="hiddenAlert" class="alert alertMessage alert-danger alert-dismissible" role="alert">
         <button type="button" class="close" ng-click="hideAlert()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <strong>Errors</strong><br>
+        <strong>{{'ALIAS.EDIT.ERRORS'|translate}}</strong><br>
         <p>
             {{alertMessage}}
         </p>
@@ -31,11 +28,11 @@
         <div uib-accordion-group is-open="expressionSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>Assigned Clinical {{alias.type}} Code(s)</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': expressionSection.open, 'glyphicon-chevron-right': !expressionSection.open}"></i>
+                    <strong>{{'ALIAS.EDIT.ASSIGNED_CODE'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': expressionSection.open, 'glyphicon-chevron-right': !expressionSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
-                <strong>Current Assigned Code(s)</strong><br>
+                <strong>{{'ALIAS.EDIT.CURRENT_CODE'|translate}}</strong><br>
                 <p>
                 <ul class="list-items">
                     <li ng-repeat="selectedTerm in termList | filter: {added: 1}">
@@ -47,25 +44,25 @@
             <div class="list-space">
                 <div class="input-group">
                     <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                    <input class="form-control" type="text" ng-model="termFilter" ng-change="changeTermFilter(termFilter)" placeholder="Search..."/>
+                    <input class="form-control" type="text" ng-model="termFilter" ng-change="changeTermFilter(termFilter)" placeholder="{{'ALIAS.EDIT.SEARCH'|translate}}"/>
                 </div>
                 <div style="padding: 10px;">
                     <label>
-                        <input type="checkbox" ng-click="selectAllFilteredTerms()" ng-checked="selectAll"> Select All
+                        <input type="checkbox" ng-click="selectAllFilteredTerms()" ng-checked="selectAll"> {{'ALIAS.EDIT.SELECT_ALL'|translate}}
                     </label>
                 </div>
                 <div class="btn-group btn-group-justified">
-                    <a class="btn btn-default" ng-class="{'active' : clinicalCodeFilter == 'all'}" ng-click="setClinicalCodeFilter('all')">Show all</a>
-                    <a class="btn btn-default" ng-class="{'active' : clinicalCodeFilter == 'current'}" ng-click="setClinicalCodeFilter('current')">Assigned to this {{newAlias.type}}</a>
-                    <a class="btn btn-default" ng-class="{'active' : clinicalCodeFilter == 'other'}" ng-click="setClinicalCodeFilter('other')">Assigned to others</a>
-                    <a class="btn btn-default" ng-class="{'active' : clinicalCodeFilter == 'none'}" ng-click="setClinicalCodeFilter('none')">Unassigned</a>
+                    <a class="btn btn-default" ng-class="{'active' : clinicalCodeFilter == 'all'}" ng-click="setClinicalCodeFilter('all')">{{'ALIAS.EDIT.SHOW_ALL'|translate}}</a>
+                    <a class="btn btn-default" ng-class="{'active' : clinicalCodeFilter == 'current'}" ng-click="setClinicalCodeFilter('current')">{{'ALIAS.EDIT.ASSIGN_TO_THIS'|translate}} {{newAlias.type}}</a>
+                    <a class="btn btn-default" ng-class="{'active' : clinicalCodeFilter == 'other'}" ng-click="setClinicalCodeFilter('other')">{{'ALIAS.EDIT.ASSIGN_OTHERS'|translate}}</a>
+                    <a class="btn btn-default" ng-class="{'active' : clinicalCodeFilter == 'none'}" ng-click="setClinicalCodeFilter('none')">{{'ALIAS.EDIT.UNASSIGNED'|translate}}</a>
                 </div>
                 <ul class="list-items">
                     <li ng-repeat="term in termList | filter: searchTermsFilter">
                         <label ng-class="{greenText: term.added, grayText: term.assigned && !term.added}">
                             <input type="checkbox" ng-click="toggleTermSelection(term)" ng-checked="term.added" /> {{term.name}}
-                            <span ng-class="{redText: term.assigned && !term.added}" ng-if="term.assigned && !term.added"><em> --- Assigned to: {{term.assigned.name_EN}}</em></span>
-                            <span ng-class="{redText: term.assigned}" ng-if="term.assigned && term.added"><em> --- Will replace assignment from: {{term.assigned.name_EN}}</em></span>
+                            <span ng-class="{redText: term.assigned && !term.added}" ng-if="term.assigned && !term.added"><em> --- {{'ALIAS.EDIT.ASSIGN_TO'|translate}} {{term.assigned.name_EN}}</em></span>
+                            <span ng-class="{redText: term.assigned}" ng-if="term.assigned && term.added"><em> --- {{'ALIAS.EDIT.WILL_REPLACE'|translate}} {{term.assigned.name_EN}}</em></span>
                         </label>
                     </li>
                 </ul>
@@ -75,20 +72,20 @@
         <div uib-accordion-group is-open="titleSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>Titles</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                    <strong>{{'ALIAS.EDIT.TITLES'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="row">
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div class="input-group">
-                        <span class="input-group-addon">EN</span>
-                        <input class="form-control" type="text" ng-model="alias.name_EN" ng-change="titleUpdate()" placeholder="English Title" required="required">
+                        <span class="input-group-addon">{{'ALIAS.EDIT.ENGLISH_ABRV'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="alias.name_EN" ng-change="titleUpdate()" placeholder="{{'ALIAS.EDIT.ENGLISH_TITLE'|translate}}" required="required">
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div class="input-group">
-                        <span class="input-group-addon">FR</span>
-                        <input class="form-control" type="text" ng-model="alias.name_FR" ng-change="titleUpdate()" placeholder="Titre Français" required="required">
+                        <span class="input-group-addon">{{'ALIAS.EDIT.FRENCH_ABRV'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="alias.name_FR" ng-change="titleUpdate()" placeholder="{{'ALIAS.EDIT.FRENCH_TITLE'|translate}}" required="required">
                     </div>
                 </div>
             </div>
@@ -97,24 +94,24 @@
         <div uib-accordion-group is-open="descriptionSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>Descriptions</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': descriptionSection.open, 'glyphicon-chevron-right': !descriptionSection.open}"></i>
+                    <strong>{{'ALIAS.EDIT.DESCRIPTION'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': descriptionSection.open, 'glyphicon-chevron-right': !descriptionSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="row">
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div style="text-align:center; margin-bottom: 10px;">
-                        <span style="font-size:20px;">HTML (English)</span>
+                        <span style="font-size:20px;">{{'ALIAS.EDIT.ENGLISH_HTML'|translate}}</span>
                     </div>
                     <div class="form-group">
-                        <div text-angular ng-model="alias.description_EN" ng-change="descriptionUpdate()" placeholder="English Description" ta-toolbar="toolbar"></div>
+                        <div text-angular ng-model="alias.description_EN" ng-change="descriptionUpdate()" placeholder="{{'ALIAS.EDIT.ENGLISH_DESCRIPTION'|translate}}" ta-toolbar="toolbar"></div>
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div style="text-align:center; margin-bottom: 10px;">
-                        <span style="font-size:20px;">HTML (Français)</span>
+                        <span style="font-size:20px;">{{'ALIAS.EDIT.FRENCH_HTML'|translate}}</span>
                     </div>
                     <div class="form-group">
-                        <div text-angular ng-model="alias.description_FR" ng-change="descriptionUpdate()" placeholder="Description Français" ta-toolbar="toolbar"></div>
+                        <div text-angular ng-model="alias.description_FR" ng-change="descriptionUpdate()" placeholder="{{'ALIAS.EDIT.FRENCH_DESCRIPTION'|translate}}" ta-toolbar="toolbar"></div>
                     </div>
                 </div>
             </div>
@@ -123,13 +120,13 @@
         <div uib-accordion-group is-open="checkinSection.open" ng-if="alias.type == 'Appointment'">
             <uib-accordion-heading>
                 <div>
-                    <strong>Checkin Details</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': checkinSection.open, 'glyphicon-chevron-right': !checkinSection.open}"></i>
+                    <strong>{{'ALIAS.EDIT.CHECKIN_DETAILS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': checkinSection.open, 'glyphicon-chevron-right': !checkinSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="row">
                 <div class="col-xs-12 col-md-6">
                     <div class="row">
-                        <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Checkin Possible?</h2>
+                        <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">{{'ALIAS.EDIT.POSSIBLE'|translate}}</h2>
                     </div>
                     <div class="row">
                         <div class="col-xs-12 col-sm-6">
@@ -137,7 +134,7 @@
                                 <div class="panel-info" ng-class="{active: alias.checkin_details.checkin_possible == 1}">
                                     <div class="panel-content" style="text-align:center">
                                         <span style="font-size:30px;" class="glyphicon glyphicon-ok"></span>
-                                        <div class="option-panel-title">Yes</div>
+                                        <div class="option-panel-title">{{'ALIAS.EDIT.YES'|translate}}</div>
                                     </div>
                                 </div>
                             </div>
@@ -147,7 +144,7 @@
                                 <div class="panel-info" ng-class="{active: alias.checkin_details.checkin_possible == 0}">
                                     <div class="panel-content" style="text-align:center">
                                         <span style="font-size:30px;" class="glyphicon glyphicon-remove"></span>
-                                        <div class="option-panel-title">No</div>
+                                        <div class="option-panel-title">{{'ALIAS.EDIT.NO'|translate}}</div>
                                     </div>
                                 </div>
                             </div>
@@ -158,18 +155,18 @@
             <div class="row">
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div style="text-align:center; margin-bottom: 10px;">
-                        <span style="font-size:20px;">Checkin Instructions (English)</span>
+                        <span style="font-size:20px;">{{'ALIAS.EDIT.ENGLISH_INSTRUCTIONS'|translate}}</span>
                     </div>
                     <div class="form-group">
-                        <div text-angular ng-model="alias.checkin_details.instruction_EN" ng-change="checkinInstructionsUpdate()" placeholder="English Description" ta-toolbar="toolbar"></div>
+                        <div text-angular ng-model="alias.checkin_details.instruction_EN" ng-change="checkinInstructionsUpdate()" placeholder="{{'ALIAS.EDIT.ENGLISH_DESCRIPTION'|translate}}" ta-toolbar="toolbar"></div>
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div style="text-align:center; margin-bottom: 10px;">
-                        <span style="font-size:20px;">Checkin Instructions (Français)</span>
+                        <span style="font-size:20px;">{{'ALIAS.EDIT.FRENCH_INSTRUCTIONS'|translate}}</span>
                     </div>
                     <div class="form-group">
-                        <div text-angular ng-model="alias.checkin_details.instruction_FR" ng-change="checkinInstructionsUpdate()" placeholder="Description Français" ta-toolbar="toolbar"></div>
+                        <div text-angular ng-model="alias.checkin_details.instruction_FR" ng-change="checkinInstructionsUpdate()" placeholder="{{'ALIAS.EDIT.FRENCH_DESCRIPTION'|translate}}" ta-toolbar="toolbar"></div>
                     </div>
                 </div>
             </div>
@@ -178,28 +175,28 @@
         <div uib-accordion-group is-open="hospitalMapSection.open" ng-if="alias.type == 'Appointment'">
             <uib-accordion-heading>
                 <div>
-                    <strong>Attached Hospital Map</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': hospitalMapSection.open, 'glyphicon-chevron-right': !hospitalMapSection.open}"></i>
+                    <strong>{{'ALIAS.EDIT.ATTACHED_MAP'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': hospitalMapSection.open, 'glyphicon-chevron-right': !hospitalMapSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
-                <strong>Current Hospital Map (EN / FR)</strong><br>
+                <strong>{{'ALIAS.EDIT.CURRENT_MAP'|translate}}</strong><br>
                 <p>
                 <div>
                     <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                    <span ng-if="alias.hospitalMap"><strong>{{alias.hospitalMap.name_EN}} / {{alias.hospitalMap.name_FR}}</strong></span>
-                    <span ng-if="!alias.hospitalMap">None</span>
+                    <span ng-if="alias.hospitalMap"><strong>{{alias.hospitalMap.name_display}}</strong></span>
+                    <span ng-if="!alias.hospitalMap">{{'ALIAS.EDIT.NONE'|translate}}</span>
                 </div>
                 </p>
             </div>
             <div class="list-space">
                 <div class="input-group">
                     <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                    <input class="form-control" type="text" ng-model="hospitalMapFilter" ng-change="changeHospitalMapFilter(hospitalMapFilter)" placeholder="Search Hospital Map..."/>
+                    <input class="form-control" type="text" ng-model="hospitalMapFilter" ng-change="changeHospitalMapFilter(hospitalMapFilter)" placeholder="{{'ALIAS.EDIT.SEARCH'|translate}}"/>
                 </div>
                 <ul class="list-items">
                     <li ng-repeat="hospitalMap in hospitalMapList | filter: searchHospitalMapsFilter">
                         <label>
-                            <input type="radio" ng-model="alias.hospitalMapSer" ng-click="hospitalMapUpdate($event,hospitalMap)" value="{{hospitalMap.serial}}" /> {{hospitalMap.name_EN}}
+                            <input type="radio" ng-model="alias.hospitalMapSer" ng-click="hospitalMapUpdate($event,hospitalMap)" value="{{hospitalMap.serial}}" /> {{hospitalMap.name_display}}
                         </label>
                     </li>
                 </ul>
@@ -209,11 +206,11 @@
         <div uib-accordion-group is-open="educationalMaterialSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>Attached Educational Material</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': educationalMaterialSection.open, 'glyphicon-chevron-right': !educationalMaterialSection.open}"></i>
+                    <strong>{{'ALIAS.EDIT.ATTACHED_EDUCATION'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': educationalMaterialSection.open, 'glyphicon-chevron-right': !educationalMaterialSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
-                <strong>Current Educational Material (EN / FR)</strong><br>
+                <strong>{{'ALIAS.EDIT.CURRENT_EDUCATION'|translate}}</strong><br>
                 <p>
                     <div>
                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
@@ -222,20 +219,20 @@
                                 <span style="cursor:pointer" ng-click="toggleTOCDisplay()"><strong>{{alias.eduMat.name_display}}</strong></span>
                                 <ul ng-if="showTOCs">
                                     <li ng-repeat="toc in alias.eduMat.tocs">
-                                        <strong><a target="_blank" href="{{toc.url_EN}}">{{toc.name_EN}}</a></strong> / <strong><a target="_blank" href="{{toc.url_FR}}">{{toc.name_FR}}</a></strong>
+                                        <strong><a target="_blank" href="{{toc.url_display}}">{{toc.name_display}}</a></strong></a></strong>
                                     </li>
                                 </ul>
                             </span>
-                            <span ng-if="!alias.eduMat.tocs.length"><strong><a target="_blank" href="{{alias.eduMat.url_EN}}">{{alias.eduMat.name_display}}</a> / <a target="_blank" href="{{alias.eduMat.url_FR}}">{{alias.eduMat.name_FR}}</a></strong></span>
+                            <span ng-if="!alias.eduMat.tocs.length"><strong><a target="_blank" href="{{alias.eduMat.url_display}}">{{alias.eduMat.name_display}}</a></strong></span>
                         </span>
-                        <span ng-if="!alias.eduMat">None</span>
+                        <span ng-if="!alias.eduMat">{{'ALIAS.EDIT.NONE'|translate}}</span>
                     </div>
                 </p>
             </div>
             <div class="list-space">
                 <div class="input-group">
                     <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                    <input class="form-control" type="text" ng-model="eduMatFilter" ng-change="changeEduMatFilter(eduMatFilter)" placeholder="Search Educational Material..."/>
+                    <input class="form-control" type="text" ng-model="eduMatFilter" ng-change="changeEduMatFilter(eduMatFilter)" placeholder="{{'ALIAS.EDIT.SEARCH'|translate}}"/>
                 </div>
                 <ul class="list-items">
                     <li ng-repeat="eduMat in eduMatList | filter: searchEduMatsFilter">
@@ -250,7 +247,7 @@
         <div uib-accordion-group is-open="colorSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>Color Tag</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': colorSection.open, 'glyphicon-chevron-right': !colorSection.open}"></i>
+                    <strong>{{'ALIAS.EDIT.COLOR_TAG'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': colorSection.open, 'glyphicon-chevron-right': !colorSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="row" style="padding-top: 15px;">
@@ -258,7 +255,7 @@
                     <div class="color-picker">
                         <div class="cp-description">
                             <p class="cp-header">
-                                Choose an icon color
+                                {{'ALIAS.EDIT.CHOOSE_COLOR'|translate}}
                             </p>
                         </div>
                         <div class="cp-main" ng-if="alias.color">
@@ -272,7 +269,7 @@
                             <div class="color-palette" ng-style="{'background-color': alias.color}"></div>
                         </div>
                         <div class="color-label hex">
-                            <h4>HEX</h4>
+                            <h4>{{'ALIAS.EDIT.HEX'|translate}}</h4>
                         </div>
                         <div class="color-code">
                             <h4>{{alias.color}}</h4>
