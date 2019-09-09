@@ -203,15 +203,15 @@ controller('testResult', function ($scope, $filter, $sce, $state, $uibModal, tes
 			className: 'logChart'
 		},
 		title: {
-			text: 'All test result logs'
+			text: $filter('translate')('TEST.LIST.ALL_LOGS')
 		},
 		subtitle: {
-			text: 'Highlight the plot area to zoom in and show detailed data'
+			text: $filter('translate')('TEST.LIST.HIGHLIGHT')
 		},
 		xAxis: {
 			type: 'datetime',
 			title: {
-				text: 'Datetime sent'
+				text: $filter('translate')('TEST.LIST.DATETIME')
 			},
 			events: {
 				setExtremes: function (selection) {
@@ -248,7 +248,7 @@ controller('testResult', function ($scope, $filter, $sce, $state, $uibModal, tes
 		},
 		yAxis: {
 			title: {
-				text: 'Number of test results published'
+				text: $filter('translate')('TEST.LIST.NUMBER')
 			},
 			tickInterval: 1,
 			min: 0
@@ -292,22 +292,22 @@ controller('testResult', function ($scope, $filter, $sce, $state, $uibModal, tes
 	$scope.gridLogOptions = {
 		data: 'testResultListLogs',
 		columnDefs: [
-			{ field: 'expression_name', displayName: 'Test Name', enableColumnMenu: false },
-			{ field: 'revision', displayName: 'Revision No.', enableColumnMenu: false },
-			{ field: 'cron_serial', displayName: 'CronLogSer', enableColumnMenu: false },
-			{ field: 'patient_serial', displayName: 'PatientSer', enableColumnMenu: false },
-			{ field: 'source_db', displayName: 'Database', enableColumnMenu: false },
-			{ field: 'source_uid', displayName: 'Clinical UID', enableColumnMenu: false },
-			{ field: 'abnormal_flag', displayName: 'Abnormal Flag', enableColumnMenu: false },
-			{ field: 'test_date', displayName: 'Test Date', enableColumnMenu: false },
-			{ field: 'max_norm', displayName: 'Max Norm', enableColumnMenu: false },
-			{ field: 'min_norm', displayName: 'Min Norm', enableColumnMenu: false },
-			{ field: 'test_value', displayName: 'Test Value', enableColumnMenu: false },
-			{ field: 'unit', displayName: 'Unit', enableColumnMenu: false },
-			{ field: 'valid', displayName: 'Valid', enableColumnMenu: false },
-			{ field: 'read_status', displayName: 'Read Status', enableColumnMenu: false },
-			{ field: 'date_added', displayName: 'Datetime Sent', enableColumnMenu: false },
-			{ field: 'mod_action', displayName: 'Action', enableColumnMenu: false }
+			{ field: 'expression_name', displayName: $filter('translate')('TEST.LIST.TEST_NAME'), enableColumnMenu: false },
+			{ field: 'revision', displayName: $filter('translate')('TEST.LIST.REVISION_NO'), enableColumnMenu: false },
+			{ field: 'cron_serial', displayName: $filter('translate')('TEST.LIST.CRONLOGSER'), enableColumnMenu: false },
+			{ field: 'patient_serial', displayName: $filter('translate')('TEST.LIST.PATIENTSER'), enableColumnMenu: false },
+			{ field: 'source_db', displayName: $filter('translate')('TEST.LIST.DATABASE'), enableColumnMenu: false },
+			{ field: 'source_uid', displayName: $filter('translate')('TEST.LIST.CLINICAL_UID'), enableColumnMenu: false },
+			{ field: 'abnormal_flag', displayName: $filter('translate')('TEST.LIST.ABNORMAL_FLAG'), enableColumnMenu: false },
+			{ field: 'test_date', displayName: $filter('translate')('TEST.LIST.TEST_DATE'), enableColumnMenu: false },
+			{ field: 'max_norm', displayName: $filter('translate')('TEST.LIST.MAX_NORM'), enableColumnMenu: false },
+			{ field: 'min_norm', displayName: $filter('translate')('TEST.LIST.MIN_NORM'), enableColumnMenu: false },
+			{ field: 'test_value', displayName: $filter('translate')('TEST.LIST.TEST_VALUE'), enableColumnMenu: false },
+			{ field: 'unit', displayName: $filter('translate')('TEST.LIST.UNIT'), enableColumnMenu: false },
+			{ field: 'valid', displayName: $filter('translate')('TEST.LIST.VALID'), enableColumnMenu: false },
+			{ field: 'read_status', displayName: $filter('translate')('TEST.LIST.READ_STATUS'), enableColumnMenu: false },
+			{ field: 'date_added', displayName: $filter('translate')('TEST.LIST.DATETIME'), enableColumnMenu: false },
+			{ field: 'mod_action', displayName: $filter('translate')('TEST.LIST.ACTION'), enableColumnMenu: false }
 		],
 		rowHeight: 30,
 		useExternalFiltering: true,
