@@ -1646,7 +1646,15 @@
       "READ_STATUS": "Read Status",
       "ACTION": "Action"
     },
-    "DELETE": {},
+    "DELETE": {
+      "DELETE_POST": "Delete Lab Result",
+      "DELETE": "Delete",
+      "CANCEL": "Cancel",
+      "WARNING": "WARNING!",
+      "WARNING_TEXT": "Are you sure you want to delete the following lab result? This action cannot be undone!",
+      "SUCCESS": "The lab result has being successfully deleted.",
+      "ERROR": "An error occurred while deleting the lab result."
+    },
     "ADD": {},
     "EDIT": {},
     "LOG": {}
