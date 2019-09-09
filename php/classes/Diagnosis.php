@@ -143,8 +143,8 @@ class Diagnosis {
                     $diagnosisDetails = array(
                     	'sourceuid'		=> $sourceUID,
                     	'code'			=> $diagnosisCode,
-                    	'description' 	=> $description,
-                        'name'      	=> "$diagnosisCode ($description)",
+                    	'description' 	=> utf8_encode($description),
+                        'name'      	=> utf8_encode("$diagnosisCode ($description)"),
                         'added'     	=> 0,
                         'assigned'		=> null
                     );
