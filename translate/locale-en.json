@@ -1814,7 +1814,15 @@
       "PAEDIATRIC": "Paediatric Patient Block",
       "NOT_TRANSLATED": "Not Translated"
     },
-    "DELETE": {},
+    "DELETE": {
+      "DELETE_POST": "Delete email",
+      "DELETE": "Delete",
+      "CANCEL": "Cancel",
+      "WARNING": "WARNING!",
+      "WARNING_TEXT": "Are you sure you want to delete the following email? This action cannot be undone!",
+      "SUCCESS": "The email has being successfully deleted.",
+      "ERROR": "An error occurred while deleting the email."
+    },
     "ADD": {
       "BACK": "Back to Emails",
       "SUMMARY": "Summary",
