@@ -1826,7 +1826,15 @@
       "PAEDIATRIC": "Bloc patient pédiatrique",
       "NOT_TRANSLATED": "Non traduit"
     },
-    "DELETE": {},
+    "DELETE": {
+      "TITLE": "Supprimer",
+      "DELETE": "Supprimer",
+      "CANCEL": "Annuler",
+      "WARNING": "ATTENTION!",
+      "WARNING_TEXT": "Voulez-vous vraiment supprimer le courriel ci-dessous? Cette action est irreversible!",
+      "SUCCESS": "Le courriel a été supprimé avec succès.",
+      "ERROR": "Une erreur s'est produite lors de la suppression du courriel."
+    },
     "ADD": {
       "BACK": "Retour",
       "SUMMARY": "sommaire",
