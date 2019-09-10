@@ -1773,7 +1773,30 @@
       "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour du résultat de laboratoire.",
       "SUCCESS_EDIT": "Le résultat du laboratoire a été mis à jour avec succès."
     },
-    "LOG": {}
+    "LOG": {
+      "TITLE": "Journal - Résultat de laboratoire",
+      "CLOSE": "Fermer",
+      "NO_DATA": "Aucune donnée disponible",
+      "ERROR_LOGS": "Une erreur s'est produite lors de l'obtention du journal.",
+      "HIGHLIGHT": "Mettez en surbrillance la zone de tracé pour effectuer un zoom et afficher des données détaillées",
+      "DATETIME_SENT": "Date et heure d'envoi",
+      "NUMBER": "Nombre de résultats de laboratoire publiés",
+      "TEST_NAME": "Nom du test",
+      "REVISION_NO": "No. de révision",
+      "CRONLOGSER": "ID journaux de cron",
+      "PATIENTSER": "ID Patient",
+      "DATABASE": "Base de données",
+      "CLINICAL_UID": "UID clinique",
+      "ABNORMAL_FLAG": "Drapeau anormal",
+      "TEST_DATE": "Date du test",
+      "MAX_NORM": "Norme max",
+      "MIN_NORM": "Norme min",
+      "TEST_VALUE": "Valeur du test",
+      "UNIT": "Unité",
+      "VALID": "Valide",
+      "READ_STATUS": "Statut de lecture",
+      "ACTION": "Action"
+    }
   },
   "PROFILE": {
     "ACCOUNT": "Compte",
