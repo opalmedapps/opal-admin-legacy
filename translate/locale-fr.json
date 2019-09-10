@@ -1798,6 +1798,41 @@
       "ACTION": "Action"
     }
   },
+  "EMAILS" : {
+    "LIST": {
+      "TITLE": "Courriel",
+      "ADD": "Ajouter",
+      "SEARCH": "Rechercher",
+      "LIST": "Liste",
+      "LOGS": "Journaux",
+      "NO_DATA": "Aucune donnée disponible",
+      "EDIT": "Modifier",
+      "DELETE": "Supprimer",
+      "TITLE_2": "Titre",
+      "TYPE": "Type",
+      "OPERATIONS": "Opérations",
+      "SUCCESS_FLAGS": "Les publications des courriels ont été mises à jour!",
+      "ERROR_FLAGS": "Une erreur s'est produite lors de la mise à jour des options de publication.",
+      "ERROR_LIST": "Une erreur s'est produite lors de l'obtention de la liste des courriels.",
+      "ERROR_LOGS": "Une erreur s'est produite lors de l'obtention des journaux des courriels.",
+      "ALL_LOGS": "Tous les journaux de courriels",
+      "HIGHLIGHT": "Mettez en surbrillance la zone de tracé pour effectuer un zoom et afficher des données détaillées",
+      "DATETIME_SENT": "Date et heure d'envoi",
+      "NUMBER": "Nombre de courriels envoyés",
+      "CONTROLSER": "ControlSer",
+      "REVISION": "Revision No.",
+      "CRONLOGSER": "ID journaux de cron",
+      "PATIENTSER": "ID Patient",
+      "EMAIL_TYPE": "Type de courriel",
+      "ACTION": "Action",
+      "PAEDIATRIC": "Bloc patient pédiatrique",
+      "NOT_TRANSLATED": "Non traduit"
+    },
+    "DELETE": {},
+    "ADD": {},
+    "EDIT": {},
+    "LOG": {}
+  },
   "PROFILE": {
     "ACCOUNT": "Compte",
     "RESET_PASSWORD": "Réinitialiser le mot de passe",
