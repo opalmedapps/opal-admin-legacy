@@ -1760,7 +1760,30 @@
       "ERROR_DETAILS": "An error occurred while getting the lab result details.",
       "SUCCESS_EDIT": "The lab result has being updated successfully."
     },
-    "LOG": {}
+    "LOG": {
+      "TITLE": "Log - Lab Result",
+      "CLOSE": "Close",
+      "NO_DATA": "No data available",
+      "ERROR_LOGS": "An error occurred while getting the logs.",
+      "HIGHLIGHT": "Highlight the plot area to zoom in and show detailed data",
+      "DATETIME_SENT": "Datetime Sent",
+      "NUMBER": "Number of lab results published",
+      "TEST_NAME": "Test Name",
+      "REVISION_NO": "Revision No.",
+      "CRONLOGSER": "CronLogSer",
+      "PATIENTSER": "PatientSer",
+      "DATABASE": "Database",
+      "CLINICAL_UID": "Clinical UID",
+      "ABNORMAL_FLAG": "Abnormal Flag",
+      "TEST_DATE": "Test Date",
+      "MAX_NORM": "Max Norm",
+      "MIN_NORM": "Min Norm",
+      "TEST_VALUE": "Test Value",
+      "UNIT": "Unit",
+      "VALID": "Valid",
+      "READ_STATUS": "Read Status",
+      "ACTION": "Action"
+    }
   },
   "PROFILE": {
     "ACCOUNT": "Account",
