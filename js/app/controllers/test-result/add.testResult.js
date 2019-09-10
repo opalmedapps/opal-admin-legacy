@@ -113,7 +113,7 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 			if(Session.retrieveObject('user').language.toUpperCase() === "FR")
 				entry.name_display = entry.name_FR;
 			else
-				entry.name_display = entry.name;
+				entry.name_display = entry.name_EN;
 		});
 		$scope.eduMatList = response.data;
 
