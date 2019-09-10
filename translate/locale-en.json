@@ -1261,7 +1261,7 @@
       "CHECKIN": "Check In Notification",
       "CHECKINERROR": "Check In Error",
       "CANCELLED": "Cancelled Appointment",
-      "NOT_TRANSLATED": "Non traduit"
+      "NOT_TRANSLATED": "Not Translated"
     },
     "EDIT": {
       "TITLE": "Edit Notification",
@@ -1784,6 +1784,40 @@
       "READ_STATUS": "Read Status",
       "ACTION": "Action"
     }
+  },
+  "EMAILS" : {
+    "LIST": {
+      "TITLE": "Email",
+      "ADD": "Add",
+      "SEARCH": "Search...",
+      "LIST": "List",
+      "LOGS": "Logs",
+      "NO_DATA": "No data available",
+      "EDIT": "Edit",
+      "DELETE": "Delete",
+      "TITLE_2": "Title",
+      "TYPE": "Type",
+      "OPERATIONS": "Operations",
+      "SUCCESS_FLAGS": "Flag(s) Successfully Saved!",
+      "ERROR_LIST": "An error occurred while getting the list of emails.",
+      "ERROR_LOGS": "An error occurred while getting the logs of emails.",
+      "ALL_LOGS": "All emails logs",
+      "HIGHLIGHT": "Highlight the plot area to zoom in and show detailed data",
+      "DATETIME_SENT": "Datetime sent",
+      "NUMBER": "Number of emails sent",
+      "CONTROLSER": "ControlSer",
+      "REVISION": "Revision No.",
+      "CRONLOGSER": "CronLogSer",
+      "PATIENTSER": "PatientSer",
+      "EMAIL_TYPE": "Email Type",
+      "ACTION": "Action",
+      "PAEDIATRIC": "Paediatric Patient Block",
+      "NOT_TRANSLATED": "Not Translated"
+    },
+    "DELETE": {},
+    "ADD": {},
+    "EDIT": {},
+    "LOG": {}
   },
   "PROFILE": {
     "ACCOUNT": "Account",
