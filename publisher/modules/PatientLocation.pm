@@ -305,6 +305,11 @@ sub getPatientLocationsFromSourceDB
 
 			my $plInfo_sql = $patientInfo_sql .
 				"
+				IF OBJECT_ID('tempdb.dbo.#temp1', 'U') IS NOT NULL
+				  DROP TABLE #temp1;
+				IF OBJECT_ID('tempdb.dbo.#temp2', 'U') IS NOT NULL
+				  DROP TABLE #temp2;
+
 					SELECT DISTINCT
 						sa.ScheduledActivitySer,
 						pl.PatientLocationSer,
