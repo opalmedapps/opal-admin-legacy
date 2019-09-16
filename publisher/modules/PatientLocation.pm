@@ -285,8 +285,6 @@ sub getPatientLocationsFromSourceDB
 			my $patientInfo_sql = "
                 IF OBJECT_ID('tempdb.dbo.#temp1', 'U') IS NOT NULL
                   DROP TABLE #temp1;
-                IF OBJECT_ID('tempdb.dbo.#temp2', 'U') IS NOT NULL
-                  DROP TABLE #temp2;
 
 				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
 			";
@@ -306,7 +304,11 @@ sub getPatientLocationsFromSourceDB
 					$patientInfo_sql .= "UNION";
 				}
 			}
-			$patientInfo_sql .= ")";
+			$patientInfo_sql .= ")
+			Select c.* into #temp1
+			from PatientInfo c;
+			Create Index temporaryindex on #temp1 (SSN);
+			";
 
 			my $plInfo_sql = $patientInfo_sql .
 				"
@@ -326,7 +328,7 @@ sub getPatientLocationsFromSourceDB
 						variansystem.dbo.ActivityInstance ai,
 						variansystem.dbo.Activity act,
 						variansystem.dbo.LookupTable lt,
-						PatientInfo
+						#temp1 as PatientInfo
 					WHERE
 						sa.ActivityInstanceSer 			= ai.ActivityInstanceSer
 					AND	sa.PatientSer 					= pt.PatientSer
