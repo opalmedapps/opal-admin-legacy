@@ -1867,7 +1867,21 @@
       "ERROR_DETAILS": "An error occurred while getting the email details.",
       "SUCCESS_EDIT": "The email has being updated successfully."
     },
-    "LOG": {}
+    "LOG": {
+      "TITLE": "Email Logs",
+      "CLOSE": "Close",
+      "NO_DATA": "No data available",
+      "ERROR_LOGS": "An error occurred while getting the logs.",
+      "HIGHLIGHT": "Highlight the plot area to zoom in and show detailed data",
+      "DATETIME_SENT": "Datetime Sent",
+      "NUMBER": "Number of emails sent",
+      "CONTROLSER": "ControlSer",
+      "REVISION": "Revision No.",
+      "CRONLOGSER": "CronLogSer",
+      "PATIENTSER": "PatientSer",
+      "EMAIL_TYPE": "Email Type",
+      "ACTION": "Action"
+    }
   },
   "PROFILE": {
     "ACCOUNT": "Account",
