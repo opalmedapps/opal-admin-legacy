@@ -146,7 +146,7 @@ class Diagnosis {
                     	'description' 	=> utf8_encode($description),
                         'name'      	=> utf8_encode("$diagnosisCode ($description)"),
                         'added'     	=> 0,
-                        'assigned'		=> null
+//                        'assigned'		=> null
                     );
 
                     $assignedDiagnosis = $this->assignedSearch($sourceUID, $assignedDiagnoses);
@@ -221,7 +221,8 @@ class Diagnosis {
 			$sql = "
 				SELECT DISTINCT 
 					dxc.SourceUID,
-					dxt.Name_EN
+					dxt.Name_EN,
+					dxt.Name_FR
 				FROM 
 					DiagnosisCode dxc,
 					DiagnosisTranslation dxt
@@ -235,7 +236,8 @@ class Diagnosis {
 
 				$diagnosisDetails = array(
 					'sourceuid'		=> $data[0],
-					'name_EN' 		=> "$data[1]"
+					'name_EN' 		=> "$data[1]",
+					'name_FR' 		=> "$data[2]"
                 );
 				array_push($diagnoses, $diagnosisDetails);
 			}
