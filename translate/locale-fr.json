@@ -1864,7 +1864,21 @@
       "ERROR_TYPE": "Une erreur s'est produite lors de l'obtention des types de courriels.",
       "ERROR_ADD": "Une erreur s'est produite lors de la création du courriel."
     },
-    "EDIT": {},
+    "EDIT": {
+      "TITLE": "Modifier le courriel",
+      "SAVE": "Enregistrer",
+      "CANCEL": "Annuler",
+      "SUBJECTS": "Sujets",
+      "MESSAGES": "Messages",
+      "ENGLISH_ABRV": "AN",
+      "ENGLISH_TITLE": "Titre anglais",
+      "FRENCH_ABRV": "FR",
+      "FRENCH_TITLE": "Titre français",
+      "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour du courriel.",
+      "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails du courriel",
+      "SUCCESS_EDIT": "Le courriel a été mis à jour avec succès."
+
+    },
     "LOG": {}
   },
   "PROFILE": {
