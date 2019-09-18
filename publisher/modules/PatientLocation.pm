@@ -283,8 +283,8 @@ sub getPatientLocationsFromSourceDB
 			}
 
 			my $patientInfo_sql = "
-                IF OBJECT_ID('tempdb.dbo.#temp1', 'U') IS NOT NULL
-                  DROP TABLE #temp1;
+                IF OBJECT_ID('tempdb.dbo.#tempPL', 'U') IS NOT NULL
+                  DROP TABLE #tempPL;
 
 				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
 			";
@@ -305,9 +305,9 @@ sub getPatientLocationsFromSourceDB
 				}
 			}
 			$patientInfo_sql .= ")
-			Select c.* into #temp1
+			Select c.* into #tempPL
 			from PatientInfo c;
-			Create Index temporaryindex on #temp1 (SSN);
+			Create Index temporaryindex on #tempPL (SSN);
 			";
 
 			my $plInfo_sql = $patientInfo_sql .
@@ -322,13 +322,13 @@ sub getPatientLocationsFromSourceDB
 						PatientInfo.PatientSerNum,
 						lt.Expression1
 					FROM
-						variansystem.dbo.Patient pt,
-						variansystem.dbo.ScheduledActivity sa,
-						variansystem.dbo.PatientLocation pl,
-						variansystem.dbo.ActivityInstance ai,
-						variansystem.dbo.Activity act,
-						variansystem.dbo.LookupTable lt,
-						#temp1 as PatientInfo
+						variansystem.dbo.Patient pt with(nolock),
+						variansystem.dbo.ScheduledActivity sa with(nolock),
+						variansystem.dbo.PatientLocation pl with(nolock),
+						variansystem.dbo.ActivityInstance ai with(nolock),
+						variansystem.dbo.Activity act with(nolock),
+						variansystem.dbo.LookupTable lt with(nolock),
+						#tempPL as PatientInfo
 					WHERE
 						sa.ActivityInstanceSer 			= ai.ActivityInstanceSer
 					AND	sa.PatientSer 					= pt.PatientSer
@@ -344,7 +344,6 @@ sub getPatientLocationsFromSourceDB
 			foreach my $lastTransferDate (keys %{$expressionHash{$sourceDBSer}}) {
 
 				# concatenate query
-							# YM SPOT
 				$plInfo_sql .= "
 					(REPLACE(lt.Expression1, '''', '') IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
 					AND pl.HstryDateTime > (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
