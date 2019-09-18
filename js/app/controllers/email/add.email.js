@@ -160,14 +160,14 @@ controller('email.add', function ($scope, $filter, $state, $sce, $uibModal, emai
 			// Submit
 			$.ajax({
 				type: "POST",
-				url: "email/insert/emSail",
+				url: "email/insert/email",
 				data: $scope.newEmail,
 				success: function () {
 					$state.go('email');
 				},
 				error: function (err) {
 					alert($filter('translate')('EMAILS.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText);
-					$state.go('alias');
+					$state.go('email');
 				}
 			});
 		}

@@ -1853,7 +1853,20 @@
       "ERROR_TYPE": "An error occurred while getting the email types list.",
       "ERROR_ADD": "An error occurred while creating the email."
     },
-    "EDIT": {},
+    "EDIT": {
+      "TITLE": "Edit Email",
+      "SAVE": "Save Changes",
+      "CANCEL": "Cancel",
+      "SUBJECTS": "Subjects",
+      "MESSAGES": "Messages",
+      "ENGLISH_ABRV": "EN",
+      "ENGLISH_TITLE": "English Title",
+      "FRENCH_ABRV": "FR",
+      "FRENCH_TITLE": "French Title",
+      "ERROR_UPDATE": "An error occurred while updating the email.",
+      "ERROR_DETAILS": "An error occurred while getting the email details.",
+      "SUCCESS_EDIT": "The email has being updated successfully."
+    },
     "LOG": {}
   },
   "PROFILE": {
