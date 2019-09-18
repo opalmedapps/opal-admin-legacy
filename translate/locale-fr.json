@@ -1879,7 +1879,21 @@
       "SUCCESS_EDIT": "Le courriel a été mis à jour avec succès."
 
     },
-    "LOG": {}
+    "LOG": {
+      "TITLE": "Journaux du courriel",
+      "CLOSE": "Fermer",
+      "NO_DATA": "Aucune donnée disponible",
+      "ERROR_LOGS": "Une erreur s'est produite lors de l'obtention des journaux.",
+      "HIGHLIGHT": "Mettez en surbrillance la zone de tracé pour effectuer un zoom et afficher des données détaillées",
+      "DATETIME_SENT": "Date et heure d'envoi",
+      "NUMBER": "Number of emails sent",
+      "CONTROLSER": "ID Contrôle",
+      "REVISION": "No. de révision",
+      "CRONLOGSER": "ID journaux de cron",
+      "PATIENTSER": "ID Patient",
+      "EMAIL_TYPE": "Type de courriel",
+      "ACTION": "Action"
+    }
   },
   "PROFILE": {
     "ACCOUNT": "Compte",
