@@ -1883,6 +1883,31 @@
       "ACTION": "Action"
     }
   },
+  "DIAGNOSIS" : {
+    "LIST": {
+      "TITLE": "Diagnosis Translation",
+      "ADD": "Add",
+      "SEARCH": "Search...",
+      "EDIT": "Edit",
+      "DELETE": "Delete",
+      "NAME": "Name",
+      "NUMBER": "Nbr of assigned codes",
+      "OPERATIONS": "Operations",
+      "ERROR_LIST": "An error occurred while getting the translations list."
+    },
+    "DELETE": {
+      "DELETE_POST": "Delete Diagnosis Translation",
+      "DELETE": "Delete",
+      "CANCEL": "Cancel",
+      "WARNING": "WARNING!",
+      "WARNING_TEXT": "Are you sure you want to delete the following diagnosis translation? This action cannot be undone!",
+      "SUCCESS": "The diagnosis translation has being successfully deleted.",
+      "ERROR": "An error occurred while deleting the diagnosis translation."
+    },
+    "ADD": {},
+    "EDIT": {},
+    "LOG": {}
+  },
   "PROFILE": {
     "ACCOUNT": "Account",
     "RESET_PASSWORD": "Reset Password",

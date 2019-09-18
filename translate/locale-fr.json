@@ -1895,6 +1895,30 @@
       "ACTION": "Action"
     }
   },
+  "DIAGNOSIS" : {
+    "LIST": {
+      "TITLE": "Traduction diagnostics",
+      "ADD": "Ajouter",
+      "SEARCH": "Rechercher",
+      "EDIT": "Modifier",
+      "DELETE": "Supprimer",
+      "NAME": "Nom",
+      "NUMBER": "Nbr de codes assignés",
+      "OPERATIONS": "Opérations",
+      "ERROR_LIST": "Une erreur s'est produite lors de l'obtention de la liste des traductions."
+    },
+    "DELETE": {
+      "TITLE": "Supprimer la traduction de diagnostics",
+      "DELETE": "Supprimer",
+      "CANCEL": "Annuler",
+      "WARNING": "ATTENTION!",
+      "WARNING_TEXT": "Voulez-vous vraiment supprimer la traduction ci-dessous? Cette action est irreversible!",
+      "SUCCESS": "La traduction de diagnostic a été supprimée avec succès.",
+      "ERROR": "Une erreur s'est produite lors de la suppression de la traduction."
+    },
+    "ADD": {},
+    "EDIT": {}
+  },
   "PROFILE": {
     "ACCOUNT": "Compte",
     "RESET_PASSWORD": "Réinitialiser le mot de passe",
