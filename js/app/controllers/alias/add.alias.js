@@ -121,7 +121,7 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 			if($scope.language.toUpperCase() === "FR")
 				entry.name_display = entry.name_FR;
 			else
-				entry.name_display = entry.name;
+				entry.name_display = entry.name_EN;
 		});
 		$scope.eduMatList = response.data; // Assign value
 	}).catch(function(response) {
