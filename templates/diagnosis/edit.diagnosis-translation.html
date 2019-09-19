@@ -124,16 +124,16 @@
                     <span ng-if="diagnosisTranslation.eduMat">
                         <span ng-if="diagnosisTranslation.eduMat.tocs.length">
                             <span style="cursor:pointer" ng-click="toggleTOCDisplay()">
-                                <strong>{{diagnosisTranslation.eduMat.name_EN}} / {{diagnosisTranslation.eduMat.name_FR}}</strong>
+                                <strong>{{diagnosisTranslation.eduMat.name_display}}</strong>
                             </span>
                             <ul ng-if="showTOCs">
                                 <li ng-repeat="toc in diagnosisTranslation.eduMat.tocs">
-                                    <strong><a target="_blank" href="{{toc.url_EN}}">{{toc.name_EN}}</a></strong> / <strong><a target="_blank" href="{{toc.url_FR}}">{{toc.name_FR}}</a></strong>
+                                    <strong><a target="_blank" href="{{toc.url_display}}">{{toc.name_display}}</a></strong>
                                 </li>
                             </ul>
                         </span>
                         <span ng-if="!diagnosisTranslation.eduMat.tocs.length">
-                            <strong><a target="_blank" href="{{diagnosisTranslation.eduMat.url_EN}}">{{diagnosisTranslation.eduMat.name_EN}}</a> / <a target="_blank" href="{{diagnosisTranslation.eduMat.url_FR}}">{{diagnosisTranslation.eduMat.name_FR}}</a></strong>
+                            <strong><a target="_blank" href="{{diagnosisTranslation.eduMat.url_display}}">{{diagnosisTranslation.eduMat.name_display}}</a>
                         </span>
 		            </span>
                     <span ng-if="!diagnosisTranslation.eduMat">{{'DIAGNOSIS.EDIT.NONE'|translate}}</span>
@@ -147,7 +147,7 @@
                 <ul class="list-items">
                     <li ng-repeat="eduMat in eduMatList | filter: searchEduMatsFilter">
                         <label>
-                            <input type="radio" ng-model="diagnosisTranslation.eduMatSer" ng-click="eduMatUpdate($event, eduMat)" value="{{eduMat.serial}}" /> {{eduMat.name_EN}}
+                            <input type="radio" ng-model="diagnosisTranslation.eduMatSer" ng-click="eduMatUpdate($event, eduMat)" value="{{eduMat.serial}}" /> {{eduMat.name_display}}
                         </label>
                     </li>
                 </ul>
