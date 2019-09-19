@@ -289,7 +289,7 @@ controller('diagnosisTranslation.add', function ($scope, $filter, $uibModal, dia
 	// Function for searching through the educational material list
 	$scope.searchEduMatsFilter = function (edumat) {
 		var keyword = new RegExp($scope.eduMatFilter, 'i');
-		return !$scope.eduMatFilter || keyword.test(edumat.name_EN);
+		return !$scope.eduMatFilter || keyword.test($scope.language.toUpperCase() === "FR"?edumat.name_FR:edumat.name_EN);
 	};
 
 	$scope.diagnosisCodeFilter = 'all';
