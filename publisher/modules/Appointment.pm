@@ -1441,8 +1441,13 @@ sub compareWith
 		        pattern   => '%s',
 		        time_zone => 'America/New_York'
 		    );
-			$SStartDateTime = $timestamp->format_datetime($strp->parse_datetime($SStartDateTime)); # convert to timestamp
-			$OStartDateTime = $timestamp->format_datetime($strp->parse_datetime($OStartDateTime)); # convert to timestamp
+
+			if ($SStartDateTime ne "") {
+				$SStartDateTime = $timestamp->format_datetime($strp->parse_datetime($SStartDateTime)); # convert to timestamp
+			}
+			if ($OStartDateTime ne "") {
+				$OStartDateTime = $timestamp->format_datetime($strp->parse_datetime($OStartDateTime)); # convert to timestamp
+			}
 
 			$patientSer = $OriginalAppt->getApptPatientSer();
 			$appointmentSer = $OriginalAppt->getApptSer();
