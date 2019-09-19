@@ -134,13 +134,9 @@ controller('testResult.edit', function ($scope, $filter, $sce, $state, $uibModal
 
 		// Call our API service to get the list of test names
 		testResultCollectionService.getTestNames().then(function (response) {
-
 			$scope.testList = checkAdded(response.data);
-
-
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
-
 		}).catch(function(response) {
 			alert($filter('translate')('TEST.EDIT.ERROR_TEST') + "\r\n\r\n" + response.status + " - " + response.data);
 		});
@@ -325,7 +321,7 @@ controller('testResult.edit', function ($scope, $filter, $sce, $state, $uibModal
 						$scope.showBanner();
 					}
 					else {
-						alert($filter('translate')('TEST.EDIT.ERROR_EDIT'));
+						alert($filter('translate')('TEST.EDIT.ERROR_UPDATE'));
 					}
 					$uibModalInstance.close();
 				},

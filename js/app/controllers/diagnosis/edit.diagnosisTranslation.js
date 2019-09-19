@@ -34,14 +34,28 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 	// Call our API service to get the list of educational material
 	educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
 		response.data.forEach(function(entry) {
-			if($scope.language.toUpperCase() === "FR")
+			if($scope.language.toUpperCase() === "FR") {
 				entry.name_display = entry.name_FR;
-			else
+				entry.url_display = entry.url_FR;
+			}
+			else {
 				entry.name_display = entry.name_EN;
+				entry.url_display = entry.url_EN;
+			}
+			entry.tocs.forEach(function (sub) {
+				if($scope.language.toUpperCase() === "FR") {
+					sub.name_display = sub.name_FR;
+					sub.url_display = sub.url_FR;
+				}
+				else {
+					entry.name_display = sub.name_EN;
+					sub.url_display = sub.url_EN;
+				}
+			});
 		});
 		$scope.eduMatList = response.data; // Assign value
 	}).catch(function(response) {
-		console.error('Error occurred getting educational material list:', response.status, response.data);
+		alert($filter('translate')('DIAGNOSIS.EDIT.ERROR_EDUCATION') + "\r\n\r\n" + response.status + " - " + response.data);
 	});
 
 	// Function to assign search field when textbox changes
@@ -89,14 +103,29 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 
 	// Call our API service to get the current diagnosis translation details
 	diagnosisCollectionService.getDiagnosisTranslationDetails($scope.currentDiagnosisTranslation.serial).then(function (response) {
-
+		if($scope.language.toUpperCase() === "FR") {
+			response.data.eduMat.name_display = response.data.eduMat.name_FR;
+			response.data.eduMat.url_display = response.data.eduMat.url_FR;
+		}
+		else {
+			response.data.eduMat.name_display = response.data.eduMat.name_EN;
+			response.data.eduMat.url_display = response.data.eduMat.url_EN;
+		}
+		if(typeof response.data.eduMat.tocs  !== 'undefined') {
+			response.data.eduMat.tocs.forEach(function (sub) {
+				if ($scope.language.toUpperCase() === "FR") {
+					sub.name_display = sub.name_FR;
+					sub.url_display = sub.url_FR;
+				} else {
+					sub.name_display = sub.name_EN;
+					sub.url_display = sub.url_EN;
+				}
+			});
+		}
 		$scope.diagnosisTranslation = response.data;
 
 		// Call our API service to get the list of diagnosis codes
 		diagnosisCollectionService.getDiagnoses().then(function (response) {
-			console.log(response.data);
-
-
 			response.data.forEach(function(entry) {
 				if (typeof entry.assigned !== 'undefined') {
 					if ($scope.language.toUpperCase() === "FR")
@@ -105,20 +134,16 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 						entry.assigned.name_display = entry.assigned.name_EN;
 				}
 			});
-
-
 			$scope.diagnosisList = checkAdded(response.data);
-
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
 
 		}).catch(function(response) {
-			console.error('Error occurred getting diagnoses:', response.status, response.data);
-			console.error(response);
+			alert($filter('translate')('DIAGNOSIS.EDIT.ERROR_DIAGNOSIS') + "\r\n\r\n" + response.status + " - " + response.data);
 		});
 
 	}).catch(function(response) {
-		console.error('Error occurred getting diagnosis translation details:', response.status, response.data);
+		alert($filter('translate')('DIAGNOSIS.EDIT.ERROR_DETAILS') + "\r\n\r\n" + response.status + " - " + response.data);
 	});
 
 	// Function to toggle Item in a list on/off
@@ -260,21 +285,23 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 			// Submit form
 			$.ajax({
 				type: "POST",
-				url: "diagnosis-translation/update/diagnosis-translation",
+				url: "diagnosis-translation/update/diagnosis-transalation",
 				data: $scope.diagnosisTranslation,
 				success: function (response) {
 					response = JSON.parse(response);
 					// Show success or failure depending on response
 					if (response.value) {
 						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.diagnosisTranslation.name_EN + "/ " + $scope.diagnosisTranslation.name_FR + "\"!";
+						$scope.$parent.bannerMessage = $filter('translate')('DIAGNOSIS.EDIT.SUCCESS_UPDATE');
+						$scope.showBanner();
 					}
 					else {
-						$scope.setBannerClass('danger');
-						$scope.$parent.bannerMessage = response.message;
+						alert($filter('translate')('DIAGNOSIS.EDIT.ERROR_UPDATE'));
 					}
-
-					$scope.showBanner();
+					$uibModalInstance.close();
+				},
+				error: function(err) {
+					alert($filter('translate')('DIAGNOSIS.EDIT.ERROR_UPDATE') + "\r\n\r\n" + err.status + " - " + err.statusText);
 					$uibModalInstance.close();
 				}
 			});
