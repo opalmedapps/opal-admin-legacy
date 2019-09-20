@@ -2044,6 +2044,25 @@
     "LANGUAGE_SUCCESS": "Language preference successfully changed.",
     "LANGUAGE_ERROR": "Une erreur s'est produite. Impossible de changer la langue."
   },
+  "USERS": {
+    "LIST": {
+      "TITLE": "Utilisateurs",
+      "ADD": "Ajouter",
+      "SEARCH": "Rechercher",
+      "LOGS": "Journaux",
+      "EDIT": "Modifier",
+      "DELETE": "Supprimer",
+      "USERNAME": "Nom d'utilisateur",
+      "ROLE": "Rôle",
+      "OPERATIONS": "Opérations",
+      "ERROR_USERS": "Une erreur s'est produite lors de l'obtention de la liste des utilisateurs."
+    },
+    "ADD": {
+
+    },
+    "EDIT": {},
+    "LOG": {}
+  },
   "PATIENT_REGISTRATION_TITLE": "Enregistrement Patient",
   "PATIENT_REGISTRATION_SEARCH_HEADER": "Recherche",
   "PATIENT_REGISTRATION_SEARCH_DESCRIPTION": "Veuillez entrer un numéro de carte soleil de 12 caractères avec l'identifiant dur patient pour lancer le processus d'incription.",
