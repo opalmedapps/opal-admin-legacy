@@ -12,29 +12,30 @@ class Patient {
      * Updates the patient transfer flags in the database
      *
      * @param array $patientList : a list of patients
-     * @return void
+     * @return array $response : response
      */
     public function updatePatientTransferFlags( $patientList ) {
+        $response = array(
+            'value'     => 0,
+            'message'   => ''
+        );
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             foreach ($patientList as $patient) {
                 $patientTransfer = $patient['transfer'];
                 $patientSer = $patient['serial'];
-                $sql = "
-          UPDATE
-            PatientControl
-					SET
-						PatientControl.PatientUpdate = $patientTransfer
-					WHERE
-						PatientControl.PatientSerNum = $patientSer
-          ";
+                $sql = "UPDATE PatientControl SET PatientControl.PatientUpdate = $patientTransfer WHERE PatientControl.PatientSerNum = $patientSer";
 
                 $query = $host_db_link->prepare( $sql );
                 $query->execute();
             }
+            $response['value'] = 1; // Success
+            return $response;
+
         } catch( PDOException $e) {
-            return $e->getMessage();
+            $response['message'] = $e->getMessage();
+            return $response; // Fail
         }
     }
 

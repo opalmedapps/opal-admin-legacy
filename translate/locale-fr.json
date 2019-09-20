@@ -2011,7 +2011,16 @@
       "ERROR_FLAGS": "Une erreur s'est produite lors de la mise à jour des publications."
     },
     "REGISTRATION": {},
-    "ACTIVITY": {}
+    "ACTIVITY": {
+      "TITLE": "Activités des patients",
+      "LOADING": "Chargement en cours...",
+      "PATIENTID": "ID Patient",
+      "NAME": "Nom",
+      "DEVICEID": "ID appareil",
+      "LOGIN": "Heure de connexion",
+      "LOGOUT": "Heure de déconnexion",
+      "ERROR_ACTIVITIES": "Une erreur s'est produite lors de l'obtention de la liste des activités des patients."
+    }
   },
   "PROFILE": {
     "ACCOUNT": "Compte",
