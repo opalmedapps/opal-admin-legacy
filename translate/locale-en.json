@@ -2010,6 +2010,23 @@
       "ERROR_ACTIVITIES": "An error occurred while getting the patients activities."
     }
   },
+  "USERS": {
+    "LIST": {
+      "TITLE": "Users",
+      "ADD": "Add",
+      "SEARCH": "Search...",
+      "LOGS": "Logs",
+      "EDIT": "Edit",
+      "DELETE": "Delete",
+      "USERNAME": "Username",
+      "ROLE": "Role",
+      "OPERATIONS": "Operations",
+      "ERROR_USERS": "An error occurred while getting the list of users."
+    },
+    "ADD": {},
+    "EDIT": {},
+    "LOG": {}
+  },
   "PROFILE": {
     "ACCOUNT": "Account",
     "RESET_PASSWORD": "Reset Password",
