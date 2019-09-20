@@ -46,6 +46,7 @@ controller('diagnosisTranslation', function ($scope, $filter, $uibModal, diagnos
 
 	// Diagnosis Translation table search textbox param
 	$scope.filterOptions = function (renderableRows) {
+		console.log($scope.filterValue);
 		var matcher = new RegExp($scope.filterValue, 'i');
 		renderableRows.forEach(function (row) {
 			var match = false;
