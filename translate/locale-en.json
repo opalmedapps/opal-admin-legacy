@@ -1999,7 +1999,16 @@
       "ERROR_FLAGS": "An error occurred while saving the flags."
     },
     "REGISTRATION": {},
-    "ACTIVITY": {}
+    "ACTIVITY": {
+      "TITLE": "Patient Activity",
+      "LOADING": "Loading Data...",
+      "PATIENTID": "Patient ID",
+      "NAME": "Name",
+      "DEVICEID": "Device ID",
+      "LOGIN": "Login Time",
+      "LOGOUT": "Logout Time",
+      "ERROR_ACTIVITIES": "An error occurred while getting the patients activities."
+    }
   },
   "PROFILE": {
     "ACCOUNT": "Account",

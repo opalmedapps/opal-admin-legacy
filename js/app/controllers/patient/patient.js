@@ -134,11 +134,22 @@ controller('patient', function ($scope, $filter, $sce, $state, $uibModal, patien
 				type: "POST",
 				url: "patient/update/patient-publish-flags",
 				data: $scope.patientTransfers,
-				success: function () {
-					getPatientsList();
-					$scope.bannerMessage = "Transfer Flags Saved!";
-					$scope.showBanner();
+				success: function (response) {
+					response = JSON.parse(response);
+					//Show success or failure depending on response
+					if (response.value) {
+						$scope.setBannerClass('success');
+						$scope.bannerMessage = $filter('translate')('PATIENTS.LIST.SUCCESS_FLAGS');
+						$scope.showBanner();
+					}
+					else {
+						alert($filter('translate')('PATIENTS.LIST.ERROR_FLAGS') + "\r\n\r\n" + response.messag);
+					}
 					$scope.changesMade = false;
+					getPatientsList();
+				},
+				error: function(err) {
+					alert($filter('translate')('PATIENTS.LIST.ERROR_FLAGS') + "\r\n\r\n" + err.status + " - " + err.statusText);
 				}
 			});
 		}
@@ -187,10 +198,9 @@ controller('patient', function ($scope, $filter, $sce, $state, $uibModal, patien
 
 	function getPatientsList() {
 		patientCollectionService.getPatients().then(function (response) {
-			console.log(response.data);
 			$scope.patientList = response.data;
 		}).catch(function(response) {
-			console.error('Error occurred getting patient list:', response.status, response.data);
+			alert($filter('translate')('PATIENTS.LIST.ERROR_PATIENTS') + "\r\n\r\n" + response.status + " - " + response.data);
 		});
 	}
 });
