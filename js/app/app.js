@@ -109,7 +109,7 @@ angular.module('opalAdmin', [
 			.state('cron', { url: '/cron', templateUrl: "templates/cron/cron.html", controller: "cron", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('patient-activity', { url: '/patient-activity', templateUrl: "templates/patient/patient-activity.html", controller: "patientActivity", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('account', { url: '/account', templateUrl: "templates/user/account.html", controller: "account", data: { authorizedRoles: [USER_ROLES.all], requireLogin: true } })
-			.state('users', { url: '/users', templateUrl: "templates/user/users.html", controller: "user", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+			.state('users', { url: '/users', templateUrl: "templates/user/user.html", controller: "user", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('user-register', { url: '/users/add', templateUrl: "templates/user/add.user.html", controller: "user.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('email', { url: '/email', templateUrl: "templates/email/email.html", controller: "email", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('email-add', { url: '/email/add', templateUrl: "templates/email/add.email.html", controller: "email.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
