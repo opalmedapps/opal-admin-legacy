@@ -41,7 +41,7 @@ controller('user', function ($scope, $uibModal, $filter, $sce, $state, userColle
 		var matcher = new RegExp($scope.filterValue, 'i');
 		renderableRows.forEach(function (row) {
 			var match = false;
-			['username'].forEach(function (field) {
+			['username', 'role_display'].forEach(function (field) {
 				if (row.entity[field].match(matcher)) {
 					match = true;
 				}
@@ -65,7 +65,7 @@ controller('user', function ($scope, $uibModal, $filter, $sce, $state, userColle
 		data: 'userList',
 		columnDefs: [
 			{ field: 'username', displayName: $filter('translate')('USERS.LIST.USERNAME'), width: '50%', enableColumnMenu: false },
-			{ field: 'role', displayName: $filter('translate')('USERS.LIST.ROLE'), width: '35%', enableColumnMenu: false },
+			{ field: 'role_display', displayName: $filter('translate')('USERS.LIST.ROLE'), width: '35%', enableColumnMenu: false },
 			{ name: $filter('translate')('USERS.LIST.OPERATIONS'), cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '15%', enableColumnMenu: false }
 		],
 		enableColumnResizing: true,
@@ -136,6 +136,33 @@ controller('user', function ($scope, $uibModal, $filter, $sce, $state, userColle
 	function getUsersList() {
 		userCollectionService.getUsers().then(function (response) {
 			$scope.userList = response.data;
+			response.data.forEach(function(row) {
+				switch (row.role) {
+				case "admin":
+					row.role_display = $filter('translate')('USERS.ADD.ADMIN');
+					break;
+				case "clinician":
+					row.role_display = $filter('translate')('USERS.ADD.CLINICIAN');
+					break;
+				case "editor":
+					row.role_display = $filter('translate')('USERS.ADD.EDITOR');
+					break;
+				case "education-creator":
+					row.role_display = $filter('translate')('USERS.ADD.EDUCATION_CREATOR');
+					break;
+				case "guest":
+					row.role_display = $filter('translate')('USERS.ADD.GUEST');
+					break;
+				case "manager":
+					row.role_display = $filter('translate')('USERS.ADD.MANAGER');
+					break;
+				case "registrant":
+					row.role_display = $filter('translate')('USERS.ADD.REGISTRANT');
+					break;
+				default:
+					row.role_display = $filter('translate')('USERS.ADD.NOT_TRANSLATED');
+				}
+			});
 		}).catch(function(response) {
 			alert($filter('translate')('USERS.LIST.ERROR_USERS') + "\r\n" + response.status + " - " + response.data);
 		});
