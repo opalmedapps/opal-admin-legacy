@@ -66,6 +66,7 @@ controller('user.add', function ($scope, userCollectionService, $state, $filter,
 		password: null,
 		confirmPassword: null,
 		role: null,
+		role_display: null,
 		language: null,
 		language_display: null
 	};
@@ -73,6 +74,36 @@ controller('user.add', function ($scope, userCollectionService, $state, $filter,
 	// Call our API service to get the list of possible roles
 	$scope.roles = [];
 	userCollectionService.getRoles().then(function (response) {
+		response.data.forEach(function(row) {
+			switch (row.name) {
+			case "admin":
+				row.name_display = $filter('translate')('USERS.ADD.ADMIN');
+				break;
+			case "clinician":
+				row.name_display = $filter('translate')('USERS.ADD.CLINICIAN');
+				break;
+			case "editor":
+				row.name_display = $filter('translate')('USERS.ADD.EDITOR');
+				break;
+			case "education-creator":
+				row.name_display = $filter('translate')('USERS.ADD.EDUCATION_CREATOR');
+				break;
+			case "guest":
+				row.name_display = $filter('translate')('USERS.ADD.GUEST');
+				break;
+			case "manager":
+				row.name_display = $filter('translate')('USERS.ADD.MANAGER');
+				break;
+			case "registrant":
+				row.name_display = $filter('translate')('USERS.ADD.REGISTRANT');
+				break;
+			default:
+				row.name_display = $filter('translate')('USERS.ADD.NOT_TRANSLATED');
+			}
+		});
+
+
+
 		$scope.roles = response.data;
 		console.log(response.data);
 	}).catch(function(response) {
@@ -185,6 +216,31 @@ controller('user.add', function ($scope, userCollectionService, $state, $filter,
 		if ($scope.newUser.role) {
 			steps.role.completed = true;
 			$scope.languageSection.show = true;
+			switch ($scope.newUser.role.name) {
+			case "admin":
+				$scope.newUser.role_display = $filter('translate')('USERS.ADD.ADMIN');
+				break;
+			case "clinician":
+				$scope.newUser.role_display = $filter('translate')('USERS.ADD.CLINICIAN');
+				break;
+			case "editor":
+				$scope.newUser.role_display = $filter('translate')('USERS.ADD.EDITOR');
+				break;
+			case "education-creator":
+				$scope.newUser.role_display = $filter('translate')('USERS.ADD.EDUCATION_CREATOR');
+				break;
+			case "guest":
+				$scope.newUser.role_display = $filter('translate')('USERS.ADD.GUEST');
+				break;
+			case "manager":
+				$scope.newUser.role_display = $filter('translate')('USERS.ADD.MANAGER');
+				break;
+			case "registrant":
+				$scope.newUser.role_display = $filter('translate')('USERS.ADD.REGISTRANT');
+				break;
+			default:
+				$scope.newUser.role_display = $filter('translate')('USERS.ADD.NOT_TRANSLATED');
+			}
 		}
 		else
 			steps.role.completed = false;
