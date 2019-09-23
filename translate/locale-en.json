@@ -2065,7 +2065,28 @@
       "EDUCATION_CREATOR": "Education - Creator",
       "NOT_TRANSLATED": "Not translated"
     },
-    "EDIT": {},
+    "EDIT": {
+      "TITLE": "Edit User",
+      "SAVE": "Save Changes",
+      "CANCEL": "Cancel",
+      "CHANGE_PASSWORD": "Change Password",
+      "PASSWORD": "Password",
+      "MIN": "(min: 6 characters)",
+      "CONFIRM": "Re-type Password",
+      "CHANGE_ROLE": "Change Role",
+      "SELECT_ROLE": "Select Role",
+      "CHANGE_LANGUAGE": "Change Language",
+      "ENGLISH": "English",
+      "FRENCH": "French",
+      "ENGLISH_ABRV": "EN",
+      "FRENCH_ABRV": "FR",
+      "ERROR_DETAILS": "An error occurred while getting the user details.",
+      "ERROR_ROLES": "An error occurred while getting the list of roles.",
+      "ERROR_PASSWORD_LENGTH": "The password must contains at least 6 characters.",
+      "ERROR_PASSWORD_INVALID": "The passwords do not match.",
+      "ERROR_UPDATE": "An error occurred while updating the user informations.",
+      "SUCCESS_EDIT": "The user has being updated successfully."
+    },
     "LOG": {}
   },
   "PROFILE": {
