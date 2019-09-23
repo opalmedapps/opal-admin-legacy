@@ -101,11 +101,7 @@ controller('user.add', function ($scope, userCollectionService, $state, $filter,
 				row.name_display = $filter('translate')('USERS.ADD.NOT_TRANSLATED');
 			}
 		});
-
-
-
 		$scope.roles = response.data;
-		console.log(response.data);
 	}).catch(function(response) {
 		alert($filter('translate')('USERS.ADD.ERROR_ROLES') + "\r\n\r\n" + response.status + " - " + response.data);
 	});
