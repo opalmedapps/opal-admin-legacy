@@ -315,7 +315,7 @@ class Filter {
                         ResourceAriaSer AS ResourceSerNum,
                         ResourceName
                     FROM    
-                        resource
+                        Resource
                     WHERE
                         ResourceName     LIKE 'STX%'
                         OR  ResourceName     LIKE 'TB%'
