@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 /******************************************************************************
  * Controller for user registration
  *******************************************************************************/
-controller('user.add', function ($scope, userCollectionService, $state, Encrypt) {
+controller('user.add', function ($scope, userCollectionService, $state, $filter, Encrypt) {
 
 	// Function to go to previous page
 	$scope.goBack = function () {
@@ -18,10 +18,10 @@ controller('user.add', function ($scope, userCollectionService, $state, Encrypt)
 
 	// Initialize a list of languages available
 	$scope.languages = [{
-		name: 'English',
+		name: $filter('translate')('USERS.ADD.ENGLISH'),
 		id: 'EN'
 	}, {
-		name: 'French',
+		name: $filter('translate')('USERS.ADD.FRENCH'),
 		id: 'FR'
 	}];
 
@@ -66,15 +66,17 @@ controller('user.add', function ($scope, userCollectionService, $state, Encrypt)
 		password: null,
 		confirmPassword: null,
 		role: null,
-		language: null
+		language: null,
+		language_display: null
 	};
 
 	// Call our API service to get the list of possible roles
 	$scope.roles = [];
 	userCollectionService.getRoles().then(function (response) {
 		$scope.roles = response.data;
+		console.log(response.data);
 	}).catch(function(response) {
-		console.error('Error occurred getting roles:', response.status, response.data);
+		alert($filter('translate')('USERS.ADD.ERROR_ROLES') + "\r\n\r\n" + response.status + " - " + response.data);
 	});
 
 	// Function to validate username
@@ -91,8 +93,8 @@ controller('user.add', function ($scope, userCollectionService, $state, Encrypt)
 		userCollectionService.usernameAlreadyInUse(username).then(function (response) {
 			response.data = !!+response.data.trim();
 			if (response.data) {
-				$scope.validUsername.status = 'warning';
-				$scope.validUsername.message = 'Username already in use';
+				$scope.validUsername.status = 'invalid';
+				$scope.validUsername.message = $filter('translate')('USERS.ADD.ERROR_USERNAME_USED');
 				$scope.usernameUpdate();
 				return;
 			} else {
@@ -102,7 +104,7 @@ controller('user.add', function ($scope, userCollectionService, $state, Encrypt)
 				return;
 			}
 		}).catch(function(response) {
-			console.error('Error occurred verifying username:', response.status, response.data);
+			alert($filter('translate')('USERS.ADD.ERROR_USERNAME_UNKNOWN') + "\r\n\r\n" + response.status + " - " + response.data);
 		});
 
 	};
@@ -119,7 +121,7 @@ controller('user.add', function ($scope, userCollectionService, $state, Encrypt)
 
 		if (password.length < 6) {
 			$scope.validPassword.status = 'invalid';
-			$scope.validPassword.message = 'Use greater than 6 characters';
+			$scope.validPassword.message = $filter('translate')('USERS.ADD.ERROR_PASSWORD_LENGTH');
 			$scope.passwordUpdate();
 			return;
 		} else {
@@ -141,7 +143,7 @@ controller('user.add', function ($scope, userCollectionService, $state, Encrypt)
 
 		if ($scope.validPassword.status != 'valid' || $scope.newUser.password != $scope.newUser.confirmPassword) {
 			$scope.validConfirmPassword.status = 'invalid';
-			$scope.validConfirmPassword.message = 'Enter same valid password';
+			$scope.validConfirmPassword.message = $filter('translate')('USERS.ADD.ERROR_PASSWORD_INVALID');
 			$scope.passwordUpdate();
 			return;
 		} else {
@@ -195,8 +197,10 @@ controller('user.add', function ($scope, userCollectionService, $state, Encrypt)
 	// Function to toggle steps when updating the language field
 	$scope.languageUpdate = function () {
 		$scope.languageSection.open = true;
-		if ($scope.newUser.language)
+		if ($scope.newUser.language) {
 			steps.language.completed = true;
+			$scope.newUser.language_display = ($scope.newUser.language === "FR"?$filter('translate')('USERS.ADD.FRENCH'):$filter('translate')('USERS.ADD.ENGLISH'));
+		}
 		else
 			steps.language.completed = false;
 
@@ -208,7 +212,7 @@ controller('user.add', function ($scope, userCollectionService, $state, Encrypt)
 	// Function to check registration form completion
 	$scope.checkRegistrationForm = function () {
 
-		if ($scope.stepProgress == 100)
+		if ($scope.stepProgress === 100)
 			return true;
 		else
 			return false;
@@ -284,7 +288,5 @@ controller('user.add', function ($scope, userCollectionService, $state, Encrypt)
 			});
 		}
 	});
-
-
 });
 
