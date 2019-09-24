@@ -103,24 +103,27 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 
 	// Call our API service to get the current diagnosis translation details
 	diagnosisCollectionService.getDiagnosisTranslationDetails($scope.currentDiagnosisTranslation.serial).then(function (response) {
-		if($scope.language.toUpperCase() === "FR") {
-			response.data.eduMat.name_display = response.data.eduMat.name_FR;
-			response.data.eduMat.url_display = response.data.eduMat.url_FR;
-		}
-		else {
-			response.data.eduMat.name_display = response.data.eduMat.name_EN;
-			response.data.eduMat.url_display = response.data.eduMat.url_EN;
-		}
-		if(typeof response.data.eduMat.tocs  !== 'undefined') {
-			response.data.eduMat.tocs.forEach(function (sub) {
-				if ($scope.language.toUpperCase() === "FR") {
-					sub.name_display = sub.name_FR;
-					sub.url_display = sub.url_FR;
-				} else {
-					sub.name_display = sub.name_EN;
-					sub.url_display = sub.url_EN;
-				}
-			});
+		if(response.data.eduMat !== null) {
+			if($scope.language.toUpperCase() === "FR") {
+				response.data.eduMat.name_display = response.data.eduMat.name_FR;
+				response.data.eduMat.url_display = response.data.eduMat.url_FR;
+			}
+			else {
+				response.data.eduMat.name_display = response.data.eduMat.name_EN;
+				response.data.eduMat.url_display = response.data.eduMat.url_EN;
+			}
+			if(response.data.eduMat.tocs  !== null)
+			{
+				response.data.eduMat.tocs.forEach(function (sub) {
+					if ($scope.language.toUpperCase() === "FR") {
+						sub.name_display = sub.name_FR;
+						sub.url_display = sub.url_FR;
+					} else {
+						sub.name_display = sub.name_EN;
+						sub.url_display = sub.url_EN;
+					}
+				});
+			}
 		}
 		$scope.diagnosisTranslation = response.data;
 
