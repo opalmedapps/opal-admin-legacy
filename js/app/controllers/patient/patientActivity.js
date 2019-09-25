@@ -51,7 +51,7 @@ controller('patientActivity', function ($scope, $uibModal, $filter, patientColle
 		data: 'patientActivityList',
 		columnDefs: [
 			{ field: 'patientid', displayName: $filter('translate')('PATIENTS.ACTIVITY.PATIENTID'), width: '15%', enableColumnMenu: false },
-			{ field: 'name', displayName: $filter('translate')('PATIENTS.ACTIVITY.PATIENTID'), width: '15%', enableColumnMenu: false },
+			{ field: 'name', displayName: $filter('translate')('PATIENTS.ACTIVITY.NAME'), width: '15%', enableColumnMenu: false },
 			{ field: 'deviceid', displayName: $filter('translate')('PATIENTS.ACTIVITY.DEVICEID'), width: '30%', enableColumnMenu: false },
 			{ field: 'login', displayName: $filter('translate')('PATIENTS.ACTIVITY.LOGIN'), width: '20%', enableColumnMenu: false },
 			{ field: 'logout', displayName: $filter('translate')('PATIENTS.ACTIVITY.LOGOUT'), width: '20%', enableColumnMenu: false }
