@@ -147,7 +147,7 @@ controller('educationalMaterial.add', function ($scope, $filter, $state, $sce, $
 		doctor: {all:false, checked:false},
 		machine: {all:false, checked:false},
 		patient: {all:false, checked:false}
-	}
+	};
 
 	// Initialize lists to hold the distinct edu material types
 	$scope.EduMatTypes = [];
@@ -217,7 +217,7 @@ controller('educationalMaterial.add', function ($scope, $filter, $state, $sce, $
 			if($scope.language.toUpperCase() === "FR")
 				entry.name_display = entry.name_FR;
 			else
-				entry.name_display = entry.name;
+				entry.name_display = entry.name_EN;
 		});
 	}).catch(function(response) {
 		alert($filter('translate')('EDUCATION.ADD.ERROR_PHASES') + "\r\n\r\n" + response.status + " - " + response.data);
@@ -292,6 +292,7 @@ controller('educationalMaterial.add', function ($scope, $filter, $state, $sce, $
 	$scope.typeUpdate = function (type, language) {
 
 		$scope.typeSection.open = true;
+		var typeCompare;
 
 		if (type) {
 			// Perform a string comparison to auto complete the other language field
