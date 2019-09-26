@@ -153,27 +153,17 @@ controller('notification.add', function ($scope, $uibModal, $state, $filter, $sc
 
 	// Function to toggle necessary changes when updating type
 	$scope.typeUpdate = function (type) {
-
 		$scope.newNotification.type = type;
-
 		$scope.typeSection.open = true;
 
 		if ($scope.newNotification.type) {
-
 			$scope.titleMessageSection.show = true;
-
-			// Toggle step completion
 			steps.type.completed = true;
-			// Count the number of completed steps
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			// Change progress bar
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 		} else {
-			// Toggle step completion
 			steps.type.completed = false;
-			// Count the number of completed steps
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			// Change progress bar
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 		}
 	};
