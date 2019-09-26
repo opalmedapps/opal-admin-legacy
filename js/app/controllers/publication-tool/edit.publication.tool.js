@@ -71,6 +71,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 	// Initialize to hold demographic triggers
 	$scope.demoTrigger = {
 		sex: null,
+		sex_display:null,
 		age: {
 			min: 0,
 			max: 130
@@ -467,12 +468,14 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 
 		if (!$scope.demoTrigger.sex) {
 			$scope.demoTrigger.sex = sex.name;
+			$scope.demoTrigger.sex_display = sex.display;
 		} else if ($scope.demoTrigger.sex == sex.name) {
 			$scope.demoTrigger.sex = null; // Toggle off
+			$scope.demoTrigger.sex_display = null; // Toggle off
 		} else {
 			$scope.demoTrigger.sex = sex.name;
+			$scope.demoTrigger.sex_display = sex.display;
 		}
-
 		$scope.setChangesMade();
 		$scope.publishedQuestionnaire.triggers_updated = 1;
 

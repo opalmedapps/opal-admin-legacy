@@ -94,18 +94,16 @@
                                 <span ng-if="selectedMonthsInYear.length">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.IN'|translate}} {{selectedMonthsInYearText}} </span>
                                 <span ng-if="selectedDatesInMonth.length">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ON_THE'|translate}} {{selectedDatesInMonthText}} {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.OF_2'|translate}}
                                     <span ng-if="selectedMonthsInYear.length > 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.EACH'|translate}}</span>
-                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.THE_MONTH'|translate}}.
-                                            </span>
-                                            <span ng-if="selectedWeekNumberInMonth.id && selectedSingleDayInWeek.id">
-                                                <span ng-if="setSelectedMonthsInYearText && customFrequency.unit.id != 'month'">-</span>
-                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ON_THE'|translate}} {{selectedWeekNumberInMonthText}} {{selectedSingleDayInWeekText}}
-
-                                                <span ng-if="setSelectedMonthsInYearText && selectedMonthsInYear.length <= 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.OF_2'|translate}}</span>
-                                                <span ng-if="!setSelectedMonthsInYearText || selectedMonthsInYear.length > 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.OF'|translate}}</span>
-
-                                                <span ng-if="selectedMonthsInYear.length > 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.EACH'|translate}}</span>
-                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.THE_MONTH'|translate}}.
-                                            </span>
+                                    {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.THE_MONTH'|translate}}.
+                                </span>
+                                <span ng-if="selectedWeekNumberInMonth.id && selectedSingleDayInWeek.id">
+                                    <span ng-if="setSelectedMonthsInYearText && customFrequency.unit.id != 'month'">-</span>
+                                    {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ON_THE'|translate}} {{selectedWeekNumberInMonthText}} {{selectedSingleDayInWeekText}}
+                                    <span ng-if="setSelectedMonthsInYearText && selectedMonthsInYear.length <= 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.OF_2'|translate}}</span>
+                                    <span ng-if="!setSelectedMonthsInYearText || selectedMonthsInYear.length > 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.OF'|translate}}</span>
+                                    <span ng-if="selectedMonthsInYear.length > 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.EACH'|translate}}</span>
+                                    {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.THE_MONTH'|translate}}.
+                                </span>
                             </span>
                         </p>
                     </div>
@@ -371,7 +369,7 @@
                 <p>
                     <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                     <span ng-if="!demoTrigger.sex">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.NONE'|translate}}</span>
-                    <span ng-if="demoTrigger.sex">{{demoTrigger.sex}}</span>
+                    <span ng-if="demoTrigger.sex">{{demoTrigger.sex_display}}</span>
                 </p>
                 <br>
                 <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.CURRENT_AGE'|translate}}</strong><br>
