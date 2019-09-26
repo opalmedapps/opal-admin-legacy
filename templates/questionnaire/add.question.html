@@ -129,14 +129,14 @@
                                 </uib-accordion-heading>
                                 <div ng-if="newQuestion.library_ID" class="description">
                                     <p style="margin-bottom:5px;">
-                                        <strong>EN</strong>
+                                        <strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.ENGLISH_TITLE'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                                         {{selectedGroup.name_EN}}
                                     </p>
                                 </div>
                                 <div ng-if="newQuestion.library_ID" class="description">
                                     <p style="margin-bottom:5px;">
-                                        <strong>FR</strong>
+                                        <strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.FRENCH_TITLE'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                                         {{selectedGroup.name_FR}}
                                     </p>
@@ -162,15 +162,13 @@
                         </div>
                         <!-- Breadcrumbs -->
                         <div class="col-md-6 title-breadcrumbs">
-                            <span>
-                                <a ui-sref="home">{{'BREADCRUMBS.HOME'|translate}}</a>
-                                <span class="glyphicon glyphicon-menu-right teflon"></span>
-                                <a ui-sref="questionnaire-menu">{{'QUESTIONNAIRE_MODULE.DASHBOARD.TITLE'|translate}}</a>
-                                <span class="glyphicon glyphicon-menu-right teflon"></span>
-                                <a ui-sref="questionnaire-question">{{'QUESTIONNAIRE_MODULE.QUESTION_LIST.TITLE'|translate}}</a>
-                                <span class="glyphicon glyphicon-menu-right teflon"></span>
-                                <strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.TITLE'|translate}}</strong>
-                            </span>
+                            <a ui-sref="home">{{'BREADCRUMBS.HOME'|translate}}</a>
+                            <span class="glyphicon glyphicon-menu-right teflon"></span>
+                            <a ui-sref="questionnaire-menu">{{'QUESTIONNAIRE_MODULE.DASHBOARD.TITLE'|translate}}</a>
+                            <span class="glyphicon glyphicon-menu-right teflon"></span>
+                            <a ui-sref="questionnaire-question">{{'QUESTIONNAIRE_MODULE.QUESTION_LIST.TITLE'|translate}}</a>
+                            <span class="glyphicon glyphicon-menu-right teflon"></span>
+                            <strong>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.TITLE'|translate}}</strong>
                         </div>
                     </div>
 
@@ -354,7 +352,7 @@
                             <div class="panel-container">
                                 <form name="newAtForm">
                                     <div class="col-md-2" style="margin-top:15px; margin-bottom:5px; font-size:20px;">
-                                        <label>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.PRIVATE_2'|translate}} <input type="checkbox" ng-model="newTemplateQuestion.private" ng-true-value="1" ng-false-value="0"></label>
+                                        <label>{{'QUESTIONNAIRE_MODULE.QUESTION_ADD.PRIVATE_3'|translate}} <input type="checkbox" ng-model="newTemplateQuestion.private" ng-true-value="1" ng-false-value="0"></label>
                                     </div>
 
                                     <div class="col-xs-12 col-md-8">
