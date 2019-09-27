@@ -15,8 +15,8 @@ define( "OPAL_DB_USERNAME", $config['databaseConfig']['opal']['username'] );
 define( "OPAL_DB_PASSWORD", $config['databaseConfig']['opal']['password'] );
 
 //Definition of all questionnaires table from the questionnaire DB
-define("OPAL_OAUSER_TABLE","oauser");
-define("OPAL_OAUSER_ROLE_TABLE","oauserrole");
+define("OPAL_OAUSER_TABLE","OAUser");
+define("OPAL_OAUSER_ROLE_TABLE","OAUserRole");
 define("OPAL_QUESTIONNAIRE_CONTROL_TABLE","QuestionnaireControl");
 define("OPAL_FILTERS_TABLE","Filters");
 define("OPAL_FILTERS_MODIFICATION_HISTORY_TABLE","FiltersMH");
