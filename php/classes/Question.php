@@ -41,7 +41,7 @@ class Question extends QuestionnaireModule {
         }
 
         $libraries = array();
-        if (count($questionToSanitize['libraries']) > 0)
+        if (is_array($questionToSanitize['libraries']) && count($questionToSanitize['libraries']) > 0)
             foreach($questionToSanitize['libraries'] as $library)
                 array_push($libraries, strip_tags($library));
 
@@ -87,8 +87,8 @@ class Question extends QuestionnaireModule {
 
     /**
      * Inserts a question into our database.
-     * @param   array $questionDetails, array containing all the questions details
-     * @return  ID of the new question
+     * param   array $questionDetails, array containing all the questions details
+     * return  ID of the new question
      */
     function insertQuestion($questionDetails){
         //If the question type template is invalid rejects the request
@@ -128,7 +128,7 @@ class Question extends QuestionnaireModule {
         $questionId = $this->questionnaireDB->insertQuestion($toInsert);
 
         //Add the question newly created to the specific libraries
-        if(count($librariesToAdd) > 0) {
+        if(is_array($librariesToAdd) && count($librariesToAdd) > 0) {
             $multipleInserts = array();
             foreach($librariesToAdd as $lib) {
                 array_push($multipleInserts, array("libraryId"=>$lib["ID"], "questionId"=>$questionId));
