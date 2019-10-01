@@ -78,7 +78,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * */
     function copyToDictionary($contentId, $tableName) {
         $toCopy = $this->_fetchAll(SQL_QUESTIONNAIRE_GET_DICTIONNARY_TEXT, array(array("parameter"=>":contentId", "variable"=>$contentId, "data_type"=>PDO::PARAM_INT)));
-        if (count($toCopy) <= 0) return false;
+        if (!is_array($toCopy) || count($toCopy) <= 0) return false;
         $tableId = $this->getTableId($tableName);
         $newContentId = $this->_getNextContentId();
 
@@ -449,7 +449,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
                 array("parameter"=>":ID","variable"=>$templateQuestionID,"data_type"=>PDO::PARAM_INT),
             ));
 
-        if(count($result) != 1) return false;
+        if(!is_array($result) || count($result) != 1) return false;
         $result = $result[0];
         if($result["ttcID"] != "")
             $result["options"] = $this->getTypeTemplateCheckboxOption($result["ttcID"]);
