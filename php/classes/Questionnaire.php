@@ -59,7 +59,7 @@ class Questionnaire extends QuestionnaireModule {
 
         //Sanitize the list of libraries associated to the questionnaire
         $libraries = array();
-        if (count($questionnaireToSanitize['libraries']) > 0)
+        if (is_array($questionnaireToSanitize['libraries']) && count($questionnaireToSanitize['libraries']) > 0)
             foreach($questionnaireToSanitize['libraries'] as $library)
                 array_push($libraries, strip_tags($library));
 

@@ -34,7 +34,7 @@ class DatabaseOpal extends DatabaseAccess {
                 array("parameter"=>":OAUserId","variable"=>$newOAUserId,"data_type"=>PDO::PARAM_INT),
             ));
 
-        if (count($result) != 1) {
+        if (!is_array($result) || count($result) != 1) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
         }
 
@@ -42,7 +42,7 @@ class DatabaseOpal extends DatabaseAccess {
             array(
                 array("parameter"=>":OAUserId","variable"=>$newOAUserId,"data_type"=>PDO::PARAM_INT),
             ));
-        if(count($resultRole) <= 0)
+        if(!is_array($resultRole) || count($resultRole) <= 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
 
         $result = $result[0];

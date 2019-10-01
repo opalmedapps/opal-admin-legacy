@@ -427,6 +427,7 @@ sub getPatientInfoFromSourceDBs
     if ($sourceDatabase) {
 
     	# mssql truncates texts to 4096 bytes so need to set textsize (for picture) to a high number
+    	$sourceDatabase->{LongReadLen} = 1048576; # 1024 KB -> 1024 * 1024 = 1048576
     	$sourceDatabase->do('set textsize 100000');
 
 	    my $sourcePatient  = undef;
@@ -439,7 +440,7 @@ sub getPatientInfoFromSourceDBs
 	            pt.PatientId,
 	            pt.PatientId2,
 	            CONVERT(VARCHAR, pt.DateOfBirth, 120),
-	            ph.Picture,
+                CONVERT(VARCHAR(max), ph.Picture, 2) Picture,
 	            RTRIM(pt.Sex),
 	            CONVERT(VARCHAR, ppt.DeathDate, 120),
 	            LEN(ph.Picture)
