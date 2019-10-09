@@ -30,6 +30,8 @@ class Question extends QuestionnaireModule {
         $validatedQuestion = array(
             "question_EN"=>strip_tags($questionToSanitize['question_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
             "question_FR"=>strip_tags($questionToSanitize['question_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "display_EN"=>strip_tags($questionToSanitize['display_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "display_FR"=>strip_tags($questionToSanitize['display_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
             "typeId"=>strip_tags($questionToSanitize['typeId']),
             "OAUserId"=>strip_tags($questionToSanitize['OAUserId']),
         );
@@ -50,7 +52,7 @@ class Question extends QuestionnaireModule {
         $validatedQuestion["private"] = strip_tags($questionToSanitize['private']) == PRIVATE_RECORD ?  PRIVATE_RECORD : PUBLIC_RECORD;
         $validatedQuestion["final"] = strip_tags($questionToSanitize['final']) == FINAL_RECORD ? FINAL_RECORD : NON_FINAL_RECORD;
 
-        if ($validatedQuestion["question_EN"] == "" || $validatedQuestion["question_FR"] == "" || $validatedQuestion["typeId"] == "")
+        if ($validatedQuestion["question_EN"] == "" || $validatedQuestion["question_FR"] == "" || $validatedQuestion["display_EN"] == "" || $validatedQuestion["display_FR"] == "" || $validatedQuestion["typeId"] == "")
             return false;
 
         $options = array();
@@ -107,9 +109,12 @@ class Question extends QuestionnaireModule {
         $toInsert = array(FRENCH_LANGUAGE=>$questionDetails['question_FR'], ENGLISH_LANGUAGE=>$questionDetails['question_EN']);
         $contentId = $this->questionnaireDB->addToDictionary($toInsert, QUESTION_TABLE);
 
-        //For now the display and definition texts are empty and not being used. But later it will be implemented
-        $toInsert = array(FRENCH_LANGUAGE=>"", ENGLISH_LANGUAGE=>"");
+        //Insert the display text into the dictionary
+        $toInsert = array(FRENCH_LANGUAGE=>$questionDetails['display_FR'], ENGLISH_LANGUAGE=>$questionDetails['display_EN']);
         $displayId = $this->questionnaireDB->addToDictionary($toInsert, QUESTION_TABLE);
+
+        //For now the definition texts are empty and not being used. But later it will be implemented
+        $toInsert = array(FRENCH_LANGUAGE=>"", ENGLISH_LANGUAGE=>"");
         $definitionId = $this->questionnaireDB->addToDictionary($toInsert, QUESTION_TABLE);
 
         //Prepare and insert the question into the question table
@@ -669,8 +674,22 @@ class Question extends QuestionnaireModule {
                 "contentId"=>$oldQuestion["question"],
             ),
         );
-
         $total += $this->questionnaireDB->updateDictionary($toUpdateDict, QUESTION_TABLE);
+
+        $toUpdateDict = array(
+            array(
+                "content"=>$updatedQuestion["display_FR"],
+                "languageId"=>FRENCH_LANGUAGE,
+                "contentId"=>$oldQuestion["display"],
+            ),
+            array(
+                "content"=>$updatedQuestion["display_EN"],
+                "languageId"=>ENGLISH_LANGUAGE,
+                "contentId"=>$oldQuestion["display"],
+            ),
+        );
+        $total += $this->questionnaireDB->updateDictionary($toUpdateDict, QUESTION_TABLE);
+
         $toUpdateQuestion = array(
             "ID"=>$oldQuestion["ID"],
             "private"=>$updatedQuestion["private"],
