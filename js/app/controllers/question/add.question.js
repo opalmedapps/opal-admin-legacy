@@ -81,6 +81,8 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 
 	// Initialize the new question object
 	$scope.newQuestion = {
+		display_EN: "",
+		display_FR: "",
 		question_EN: "",
 		question_FR: "",
 		library_ID: null,
@@ -111,10 +113,10 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	$scope.updateQuestionText = function () {
 
 		$scope.titleSection.open = true;
-		if (!$scope.newQuestion.question_EN && !$scope.newQuestion.question_FR) {
+		if (!$scope.newQuestion.question_EN && !$scope.newQuestion.question_FR && !$scope.newQuestion.display_EN && !$scope.newQuestion.display_FR) {
 			$scope.titleSection.open = false;
 		}
-		else if ($scope.newQuestion.question_EN && $scope.newQuestion.question_FR) {
+		else if ($scope.newQuestion.question_EN && $scope.newQuestion.question_FR && $scope.newQuestion.display_EN && $scope.newQuestion.display_FR) {
 
 			$scope.answerTypeSection.show = true;
 
@@ -123,11 +125,9 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
 		} else {
-
 			steps.question.completed = false;
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-
 		}
 	};
 
