@@ -53,6 +53,29 @@
             </div>
         </div>
 
+        <!-- SECTION: Summary -->
+        <div uib-accordion-group is-open="displaySection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'QUESTIONNAIRE_MODULE.QUESTION_EDIT.SUMMARIES'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': displaySection.open, 'glyphicon-chevron-right': !displaySection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'QUESTIONNAIRE_MODULE.QUESTION_EDIT.ENGLISH_ABRV'|translate}}</span>
+                        <input type="text" class="form-control" ng-model="question.display_EN" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTION_EDIT.ENGLISH_TITLE'|translate}}" ng-change="setChangesMade()" ng-disabled="question.readOnly || question.final" />
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'QUESTIONNAIRE_MODULE.QUESTION_EDIT.FRENCH_ABRV'|translate}}</span>
+                        <input type="text" class="form-control" ng-model="question.display_FR" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTION_EDIT.FRENCH_TITLE'|translate}}" ng-change="setChangesMade()" ng-disabled="question.readOnly || question.final" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- SECTION: Response type -->
         <div uib-accordion-group is-open="answerTypeSection.open">
             <uib-accordion-heading>
