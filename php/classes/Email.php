@@ -135,7 +135,7 @@
 			LEFT JOIN EmailControl ec
 			ON ec.EmailTypeSerNum = et.EmailTypeSerNum
 			WHERE
-				ec.EmailTypeSerNum IS NULL
+				ec.EmailTypeSerNum IS NOT NULL
 		";
 		$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 		$query->execute();

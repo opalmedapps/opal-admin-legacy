@@ -69,7 +69,7 @@ controller('template.question.add', function ($scope, $state, $filter, $uibModal
 	};
 
 	// Initialize variables for holding selected answer type & group
-	$scope.selectedAt = null;
+	$scope.selectedAt = [];
 
 	// Filter lists initialized
 	$scope.atCatList = [];
@@ -78,6 +78,11 @@ controller('template.question.add', function ($scope, $state, $filter, $uibModal
 		$scope.newTemplateQuestion.typeId = selected.ID;
 
 		$scope.newTemplateQuestion.options = {};
+		$scope.selectedAt.name_EN = selected.category_EN;
+		$scope.selectedAt.name_FR = selected.category_FR;
+
+		$scope.answerTypeSection.open = true;
+
 		if(selected.ID === "2") {
 			$scope.newTemplateQuestion.options.minValue = 1;
 			$scope.newTemplateQuestion.options.minCaption_EN = undefined;

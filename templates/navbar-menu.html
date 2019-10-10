@@ -52,7 +52,7 @@
                     <li ui-sref-active="active">
                         <a ui-sref="test-result" ng-click="closeNav()">
                             <span class="fa fa-heartbeat" aria-hidden="true"></span>
-                            {{'NAVIGATION_MENU.TEST_RESULTS'|translate}}
+                            {{'NAVIGATION_MENU.LAB_RESULTS'|translate}}
                         </a>
                     </li>
                     <li ui-sref-active="active">
@@ -61,18 +61,18 @@
                             {{'NAVIGATION_MENU.QUESTIONNAIRES'|translate}}
                         </a>
                     </li>
-                    <li ui-sref-active="active">
+<!--                    <li ui-sref-active="active">
                         <a ui-sref="email" ng-click="closeNav()">
                             <span class="fa fa-envelope" aria-hidden="true"></span>
                             {{'NAVIGATION_MENU.EMAIL'|translate}}
                         </a>
-                    </li>
-                    <li ui-sref-active="active">
+                    </li>-->
+<!--                    <li ui-sref-active="active">
                         <a ui-sref="legacy-questionnaire" ng-click="closeNav()">
                             <span class="fa fa-pencil-square" aria-hidden="true"></span>
                             {{'NAVIGATION_MENU.LEGACY_QUESTIONNAIRE'|translate}}
                         </a>
-                    </li>
+                    </li>-->
                 </ul>
             </li>
             <li class="dropdown" ng-class="{active: currentActiveAdministration()}" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">

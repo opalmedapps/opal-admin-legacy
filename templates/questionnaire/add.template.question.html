@@ -44,9 +44,7 @@
                                 </div>
                             </div>
                         </div>
-
                         <uib-accordion class="side-navbar">
-
                             <!-- SECTION: Question Text -->
                             <div uib-accordion-group is-open="titleSection.open" class="panel-container summary-box" is-disabled="!newTemplateQuestion.name_EN && !newTemplateQuestion.name_FR">
                                 <uib-accordion-heading>
@@ -98,14 +96,14 @@
                                         {{selectedAt.category_EN}}
                                     </p>
                                     <p style="margin-bottom:5px;">
-                                        <strong>EN</strong>
+                                        <strong>{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_ADD.ENGLISH_TITLE'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                                         {{selectedAt.name_EN}}
                                     </p>
                                 </div>
                                 <div ng-if="newTemplateQuestion.typeId" class="description">
                                     <p style="margin-bottom:5px;">
-                                        <strong>FR</strong>
+                                        <strong>{{'QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_ADD.FRENCH_TITLE'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                                         {{selectedAt.name_FR}}
                                     </p>

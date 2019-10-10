@@ -1,27 +1,26 @@
 <div class="modal-header">
-  <div class="col-xs-12">
-    <h2 class="modal-title">
-      <span class="glyphicon glyphicon-trash"></span> 
-      Delete opalAdmin User 
-    </h2>
-    <p class="modal-title-caption">
-      {{userToDelete.username}} 
-    </p>
-  </div>
+    <div class="col-xs-12">
+        <h2 class="modal-title">
+            <span class="glyphicon glyphicon-trash"></span>
+            {{'USERS.DELETE.TITLE'|translate}}
+        </h2>
+    </div>
 </div>
 <div class="modal-body">
-  <div class="alert alert-danger" role="alert">
-    <strong>Delete opalAdmin User</strong><br>
-    <p>
-      Are you sure you want to delete the user "{{userToDelete.username}}" ?
-    </p>
-  </div>
-  <div class="row">
-    <div class="modal-buttons col-xs-12">
-      <form method="post" ng-submit="deleteUser()">      
-        <input class="btn btn-primary submit" type="submit" value="Delete">
-        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
-      </form>
+    <div class="alert alert-danger" role="alert">
+        <p><b>{{'USERS.DELETE.WARNING'|translate}}</b> {{'USERS.DELETE.WARNING_TEXT'|translate}}</p>
     </div>
-  </div>
+    <div class="alert row">
+        <div class="col-xs-12">
+            {{userToDelete.username}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="modal-buttons col-xs-12">
+            <form method="post" ng-submit="deleteUser()">
+                <input class="btn btn-primary submit" type="submit" value="{{'USERS.DELETE.DELETE'|translate}}">
+                <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'USERS.DELETE.CANCEL'|translate}}">
+            </form>
+        </div>
+    </div>
 </div>
