@@ -25,7 +25,7 @@ angular.module('opalAdmin.controllers.notification.edit', ['ngAnimate', 'ngSanit
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
 		}).catch(function(response) {
-			console.error('Error occurred getting notification details:', response.status, response.data);
+			alert($filter('translate')('NOTIFICATIONS.EDIT.ERROR_DETAILS') + "\r\n\r\n" + response.status + " - " + response.data);
 		});
 
 		// Function to check necessary form fields are complete
@@ -59,13 +59,16 @@ angular.module('opalAdmin.controllers.notification.edit', ['ngAnimate', 'ngSanit
 						// Show success or failure depending on response
 						if (response.value) {
 							$scope.setBannerClass('success');
-							$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.notification.name_EN + "/ " + $scope.notification.name_FR + "\"!";
+							$scope.$parent.bannerMessage = $filter('translate')('NOTIFICATIONS.EDIT.SUCCESS_EDIT');
+							$scope.showBanner();
 						}
 						else {
-							$scope.setBannerClass('danger');
-							$scope.$parent.bannerMessage = response.message;
+							alert($filter('translate')('NOTIFICATIONS.EDIT.ERROR_EDIT') + "\r\n\r\n" + response.status + " - " + response.data);
 						}
-						$scope.showBanner();
+						$uibModalInstance.close();
+					},
+					error: function (err) {
+						alert($filter('translate')('NOTIFICATIONS.EDIT.ERROR_EDIT') + "\r\n\r\n" + err.status + " - " + err.statusText);
 						$uibModalInstance.close();
 					}
 				});

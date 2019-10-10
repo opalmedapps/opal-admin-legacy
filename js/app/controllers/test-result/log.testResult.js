@@ -15,7 +15,8 @@ controller('testResult.log', function ($scope, $uibModal, $filter, testResultCol
 			});
 		});
 	}).catch(function(response) {
-		console.error('Error occurred getting test result logs: ', response.status, response.data);
+		alert($filter('translate')('TEST.LOG.ERROR_LOGS') + "\r\n\r\n" + response.status);
+		$uibModalInstance.dismiss('cancel');
 	});
 
 	var chartConfig = $scope.chartConfig = {
@@ -25,15 +26,15 @@ controller('testResult.log', function ($scope, $uibModal, $filter, testResultCol
 			className: 'logChart'
 		},
 		title: {
-			text: 'Test result logs for ' + $scope.currentTestResult.name_EN + ' / ' + $scope.currentTestResult.name_FR
+			text: $scope.currentTestResult.name_EN + ' / ' + $scope.currentTestResult.name_FR
 		},
 		subtitle: {
-			text: 'Highlight the plot area to zoom in and show detailed data'
+			text: $filter('translate')('TEST.LOG.HIGHLIGHT')
 		},
 		xAxis: {
 			type: 'datetime',
 			title: {
-				text: 'Datetime sent'
+				text: $filter('translate')('TEST.LOG.DATETIME_SENT')
 			},
 			events: {
 				setExtremes: function (selection) {
@@ -70,7 +71,7 @@ controller('testResult.log', function ($scope, $uibModal, $filter, testResultCol
 		},
 		yAxis: {
 			title: {
-				text: 'Number of test results published'
+				text: $filter('translate')('TEST.LOG.NUMBER')
 			},
 			tickInterval: 1,
 			min: 0
@@ -114,22 +115,22 @@ controller('testResult.log', function ($scope, $uibModal, $filter, testResultCol
 	$scope.gridLogOptions = {
 		data: 'testResultListLogs',
 		columnDefs: [
-			{ field: 'expression_name', displayName: 'Test Name' },
-			{ field: 'revision', displayName: 'Revision No.' },
-			{ field: 'cron_serial', displayName: 'CronLogSer' },
-			{ field: 'patient_serial', displayName: 'PatientSer' },
-			{ field: 'source_db', displayName: 'Database' },
-			{ field: 'source_uid', displayName: 'Clinical UID' },
-			{ field: 'abnormal_flag', displayName: 'Abnormal Flag' },
-			{ field: 'test_date', displayName: 'Test Date' },
-			{ field: 'max_norm', displayName: 'Max Norm' },
-			{ field: 'min_norm', displayName: 'Min Norm' },
-			{ field: 'test_value', displayName: 'Test Value' },
-			{ field: 'unit', displayName: 'Unit' },
-			{ field: 'valid', displayName: 'Valid' },
-			{ field: 'read_status', displayName: 'Read Status' },
-			{ field: 'date_added', displayName: 'Datetime Sent' },
-			{ field: 'mod_action', displayName: 'Action' }
+			{ field: 'expression_name', displayName: $filter('translate')('TEST.LOG.TEST_NAME'), enableColumnMenu: false },
+			{ field: 'revision', displayName: $filter('translate')('TEST.LOG.REVISION_NO'), enableColumnMenu: false },
+			{ field: 'cron_serial', displayName: $filter('translate')('TEST.LOG.CRONLOGSER'), enableColumnMenu: false },
+			{ field: 'patient_serial', displayName: $filter('translate')('TEST.LOG.PATIENTSER'), enableColumnMenu: false },
+			{ field: 'source_db', displayName: $filter('translate')('TEST.LOG.DATABASE'), enableColumnMenu: false },
+			{ field: 'source_uid', displayName: $filter('translate')('TEST.LOG.CLINICAL_UID'), enableColumnMenu: false },
+			{ field: 'abnormal_flag', displayName: $filter('translate')('TEST.LOG.ABNORMAL_FLAG'), enableColumnMenu: false },
+			{ field: 'test_date', displayName: $filter('translate')('TEST.LOG.TEST_DATE'), enableColumnMenu: false },
+			{ field: 'max_norm', displayName: $filter('translate')('TEST.LOG.MAX_NORM'), enableColumnMenu: false },
+			{ field: 'min_norm', displayName: $filter('translate')('TEST.LOG.MIN_NORM'), enableColumnMenu: false },
+			{ field: 'test_value', displayName: $filter('translate')('TEST.LOG.TEST_VALUE'), enableColumnMenu: false },
+			{ field: 'unit', displayName: $filter('translate')('TEST.LOG.UNIT'), enableColumnMenu: false },
+			{ field: 'valid', displayName: $filter('translate')('TEST.LOG.VALID'), enableColumnMenu: false },
+			{ field: 'read_status', displayName: $filter('translate')('TEST.LOG.READ_STATUS'), enableColumnMenu: false },
+			{ field: 'date_added', displayName: $filter('translate')('TEST.LOG.DATETIME_SENT'), enableColumnMenu: false },
+			{ field: 'mod_action', displayName: $filter('translate')('TEST.LOG.ACTION'), enableColumnMenu: false }
 		],
 		rowHeight: 30,
 		useExternalFiltering: true,
@@ -143,6 +144,4 @@ controller('testResult.log', function ($scope, $uibModal, $filter, testResultCol
 	$scope.cancel = function () {
 		$uibModalInstance.dismiss('cancel');
 	};
-
-
 });

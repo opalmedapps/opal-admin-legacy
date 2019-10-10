@@ -33,7 +33,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		// search function
 		$scope.searchLibFilter = function (Filter) {
 			var keyword = new RegExp($scope.libEntered, 'i');
-			return !$scope.libEntered || keyword.test(Filter.name_EN);
+			return !$scope.libEntered || keyword.test($scope.language.toUpperCase() === "FR"?Filter.name_FR:Filter.name_EN);
 		};
 
 		$scope.orderPreview = function () {
@@ -76,7 +76,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 		};
 
 		$scope.checkForm = function () {
-			if ($scope.question.question_EN && $scope.question.question_FR && $scope.changesMade) {
+			if ($scope.question.question_EN && $scope.question.question_FR && $scope.question.display_EN && $scope.question.display_FR && $scope.changesMade) {
 				if($scope.question.typeId === "2") {
 					if ($scope.question.options.increment <= 0 || $scope.question.options.minValue <= 0 || $scope.question.options.maxValue <= 0 || $scope.question.options.minValue > $scope.question.options.maxValue || $scope.question.options.minCaption_EN === "" || $scope.question.options.minCaption_FR === "" || $scope.question.options.maxCaption_EN === "" || $scope.question.options.maxCaption_FR === "" )
 						return false;

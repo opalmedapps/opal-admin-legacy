@@ -261,7 +261,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 
 		// Function to check necessary form fields are complete
 		$scope.checkForm = function () {
-			if ($scope.questionnaire.title_EN && $scope.questionnaire.title_FR && $scope.questionnaire.questions.length && $scope.changesMade) {
+			if ($scope.questionnaire.title_EN && $scope.questionnaire.title_FR && $scope.questionnaire.description_EN && $scope.questionnaire.description_FR && $scope.questionnaire.questions.length && $scope.changesMade) {
 				return true;
 			}
 			else

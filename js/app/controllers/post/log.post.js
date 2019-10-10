@@ -113,13 +113,13 @@ controller('post.log', function ($scope, $uibModal, $filter, postCollectionServi
 	$scope.gridLogOptions = {
 		data: 'postListLogs',
 		columnDefs: [
-			{ field: 'post_control_name', displayName: $filter('translate')('POSTS.LOG.POST') },
-			{ field: 'revision', displayName: $filter('translate')('POSTS.LOG.REVISION') },
-			{ field: 'cron_serial', displayName: $filter('translate')('POSTS.LOG.CRONLOGSER') },
-			{ field: 'patient_serial', displayName: $filter('translate')('POSTS.LOG.PATIENTSER') },
-			{ field: 'read_status', displayName: $filter('translate')('POSTS.LOG.READ_STATUS') },
-			{ field: 'date_added', displayName: $filter('translate')('POSTS.LOG.DATETIME_SENT') },
-			{ field: 'mod_action', displayName: $filter('translate')('POSTS.LOG.ACTION') }
+			{ field: 'post_control_name', displayName: $filter('translate')('POSTS.LOG.NAME'), enableColumnMenu: false },
+			{ field: 'revision', displayName: $filter('translate')('POSTS.LOG.REVISION'), enableColumnMenu: false },
+			{ field: 'cron_serial', displayName: $filter('translate')('POSTS.LOG.CRONLOGSER'), enableColumnMenu: false },
+			{ field: 'patient_serial', displayName: $filter('translate')('POSTS.LOG.PATIENTSER'), enableColumnMenu: false },
+			{ field: 'read_status', displayName: $filter('translate')('POSTS.LOG.READ_STATUS'), enableColumnMenu: false },
+			{ field: 'date_added', displayName: $filter('translate')('POSTS.LOG.DATETIME_SENT'), enableColumnMenu: false },
+			{ field: 'mod_action', displayName: $filter('translate')('POSTS.LOG.ACTION'), enableColumnMenu: false }
 		],
 		rowHeight: 30,
 		useExternalFiltering: true,

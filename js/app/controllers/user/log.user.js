@@ -23,18 +23,15 @@ controller('user.log', function ($scope, $uibModal, $filter, userCollectionServi
 
 	// Call our API to get user logs
 	userCollectionService.getUserActivityLogs($scope.currentUser.serial).then(function (response) {
-
 		$scope.userListLogs = response.data;
-
-
 		if ($scope.userListLogs.login.length) {
 			$scope.gridLoginLogOptions = {
 				data: $scope.userListLogs.login,
 				columnDefs: [
-					{ field: 'sessionid', displayName: 'Session Id' },
-					{ field: 'login', displayName: 'Login Time' },
-					{ field: 'logout', displayName: 'Logout Time' },
-					{ field: 'session_duration', displayName: 'Session Duration'}
+					{ field: 'sessionid', displayName: $filter('translate')('USERS.LOG.SESSION_ID'), enableColumnMenu: false },
+					{ field: 'login', displayName: $filter('translate')('USERS.LOG.LOGIN'), enableColumnMenu: false },
+					{ field: 'logout', displayName: $filter('translate')('USERS.LOG.LOGOUT'), enableColumnMenu: false },
+					{ field: 'session_duration', displayName: $filter('translate')('USERS.LOG.DURATION'), enableColumnMenu: false }
 				],
 				enableFiltering: true,
 				enableColumnResizing: true,
@@ -45,247 +42,228 @@ controller('user.log', function ($scope, $uibModal, $filter, userCollectionServi
 			$scope.gridAliasLogOptions = {
 				data: $scope.userListLogs.alias,
 				columnDefs: [
-					{ field: 'serial', displayName: 'Serial' },
-					{ field: 'revision', displayName: 'Revision No.' },
-					{ field: 'sessionid', displayName: 'Session Id' },
-					{ field: 'type', displayName: 'Type' },
-					{ field: 'update', displayName: 'Update Flag' },
-					{ field: 'name_EN', displayName: 'Name EN' },
-					{ field: 'name_FR', displayName: 'Name FR' },
-					{ field: 'description_EN', displayName: 'Description EN' },
-					{ field: 'description_FR', displayName: 'Description FR' },
-					{ field: 'educational_material', displayName: 'Educational Material Ser' },
-					{ field: 'source_db', displayName: 'Database' },
-					{ field: 'color', displayName: 'Color' },
-					{ field: 'mod_action', displayName: 'Action' },
-					{ field: 'date_added', displayName: 'Datetime Modified' }
+					{ field: 'serial', displayName: $filter('translate')('USERS.LOG.SERIAL'), enableColumnMenu: false },
+					{ field: 'revision', displayName: $filter('translate')('USERS.LOG.REVISION_NO'), enableColumnMenu: false },
+					{ field: 'sessionid', displayName: $filter('translate')('USERS.LOG.SESSION_ID'), enableColumnMenu: false },
+					{ field: 'type', displayName: $filter('translate')('USERS.LOG.TYPE'), enableColumnMenu: false },
+					{ field: 'update', displayName: $filter('translate')('USERS.LOG.UPDATE_FLAG'), enableColumnMenu: false },
+					{ field: 'name_EN', displayName: $filter('translate')('USERS.LOG.NAME_EN'), enableColumnMenu: false },
+					{ field: 'name_FR', displayName: $filter('translate')('USERS.LOG.NAME_FR'), enableColumnMenu: false },
+					{ field: 'description_EN', displayName: $filter('translate')('USERS.LOG.DESCRIPTION_EN'), enableColumnMenu: false },
+					{ field: 'description_FR', displayName: $filter('translate')('USERS.LOG.DESCRIPTION_FR'), enableColumnMenu: false },
+					{ field: 'educational_material', displayName: $filter('translate')('USERS.LOG.ED_SER'), enableColumnMenu: false },
+					{ field: 'source_db', displayName: $filter('translate')('USERS.LOG.DATABASE'), enableColumnMenu: false },
+					{ field: 'color', displayName: $filter('translate')('USERS.LOG.COLOR'), enableColumnMenu: false },
+					{ field: 'mod_action', displayName: $filter('translate')('USERS.LOG.ACTION'), enableColumnMenu: false },
+					{ field: 'date_added', displayName: $filter('translate')('USERS.LOG.DATETIME_MODIFIED'), enableColumnMenu: false }
 				],
 				enableFiltering: true,
 				enableColumnResizing: true,
-			}
+			};
 		}
 
 		if ($scope.userListLogs.aliasExpression.length) {
 			$scope.gridAliasExpressionLogOptions = {
 				data: $scope.userListLogs.aliasExpression,
 				columnDefs: [
-					{ field: 'serial', displayName: 'Alias Serial' },
-					{ field: 'revision', displayName: 'Revision No.' },
-					{ field: 'sessionid', displayName: 'Session Id' },
-					{ field: 'expression', displayName: 'Clinical Code' },
-					{ field: 'resource_description', displayName: 'Resource Description' },
-					{ field: 'mod_action', displayName: 'Action' },
-					{ field: 'date_added', displayName: 'Datetime Modified' }
+					{ field: 'serial', displayName: $filter('translate')('USERS.LOG.ALIAS_SERIAL'), enableColumnMenu: false },
+					{ field: 'revision', displayName: $filter('translate')('USERS.LOG.REVISION_NO'), enableColumnMenu: false },
+					{ field: 'sessionid', displayName: $filter('translate')('USERS.LOG.SESSION_ID'), enableColumnMenu: false },
+					{ field: 'expression', displayName: $filter('translate')('USERS.LOG.CLINICAL_CODE'), enableColumnMenu: false },
+					{ field: 'resource_description', displayName: $filter('translate')('USERS.LOG.RESOURCE'), enableColumnMenu: false },
+					{ field: 'mod_action', displayName: $filter('translate')('USERS.LOG.ACTION'), enableColumnMenu: false },
+					{ field: 'date_added', displayName: $filter('translate')('USERS.LOG.DATETIME_MODIFIED'), enableColumnMenu: false }
 				],
 				enableFiltering: true,
 				enableColumnResizing: true,
-			}
+			};
 		}
 
 		if ($scope.userListLogs.diagnosisTranslation.length) {
 			$scope.gridDiagnosisTranslationLogOptions = {
 				data: $scope.userListLogs.diagnosisTranslation,
 				columnDefs: [
-					{ field: 'serial', displayName: 'Diagnosis Translation Serial' },
-					{ field: 'revision', displayName: 'Revision No.' },
-					{ field: 'sessionid', displayName: 'Session Id' },
-					{ field: 'educational_material', displayName: 'Educational Material Ser' },
-					{ field: 'name_EN', displayName: 'Name EN' },
-					{ field: 'name_FR', displayName: 'Name FR' },
-					{ field: 'description_EN', displayName: 'Description EN' },
-					{ field: 'description_FR', displayName: 'Description FR' },
-					{ field: 'mod_action', displayName: 'Action' },
-					{ field: 'date_added', displayName: 'Datetime Modified' }
+					{ field: 'serial', displayName: $filter('translate')('USERS.LOG.DIAG_TRANS_SERIAL'), enableColumnMenu: false },
+					{ field: 'revision', displayName: $filter('translate')('USERS.LOG.REVISION_NO'), enableColumnMenu: false },
+					{ field: 'sessionid', displayName: $filter('translate')('USERS.LOG.SESSION_ID'), enableColumnMenu: false },
+					{ field: 'educational_material', displayName: $filter('translate')('USERS.LOG.ED_SER'), enableColumnMenu: false },
+					{ field: 'name_EN', displayName: $filter('translate')('USERS.LOG.NAME_EN'), enableColumnMenu: false },
+					{ field: 'name_FR', displayName: $filter('translate')('USERS.LOG.NAME_FR'), enableColumnMenu: false },
+					{ field: 'description_EN', displayName: $filter('translate')('USERS.LOG.DESCRIPTION_EN'), enableColumnMenu: false },
+					{ field: 'description_FR', displayName: $filter('translate')('USERS.LOG.DESCRIPTION_FR'), enableColumnMenu: false },
+					{ field: 'mod_action', displayName: $filter('translate')('USERS.LOG.ACTION'), enableColumnMenu: false },
+					{ field: 'date_added', displayName: $filter('translate')('USERS.LOG.DATETIME_MODIFIED'), enableColumnMenu: false }
 				],
 				enableFiltering: true,
 				enableColumnResizing: true,
-			}
+			};
 		}
 
 		if ($scope.userListLogs.diagnosisCode.length) {
 			$scope.gridDiagnosisCodeLogOptions = {
 				data: $scope.userListLogs.diagnosisCode,
 				columnDefs: [
-					{ field: 'serial', displayName: 'Diagnosis Translation Serial' },
-					{ field: 'revision', displayName: 'Revision No.' },
-					{ field: 'sessionid', displayName: 'Session Id' },
-					{ field: 'sourceuid', displayName: 'Source UID' },
-					{ field: 'code', displayName: 'Diagnosis Code' },
-					{ field: 'description', displayName: 'Description' },
-					{ field: 'mod_action', displayName: 'Action' },
-					{ field: 'date_added', displayName: 'Datetime Modified' }
+					{ field: 'serial', displayName: $filter('translate')('USERS.LOG.DIAG_TRANS_SERIAL'), enableColumnMenu: false },
+					{ field: 'revision', displayName: $filter('translate')('USERS.LOG.REVISION_NO'), enableColumnMenu: false },
+					{ field: 'sessionid', displayName: $filter('translate')('USERS.LOG.SESSION_ID'), enableColumnMenu: false },
+					{ field: 'sourceuid', displayName: $filter('translate')('USERS.LOG.SOURCE_UID'), enableColumnMenu: false },
+					{ field: 'code', displayName: $filter('translate')('USERS.LOG.DIAGNOSIS_CODE'), enableColumnMenu: false },
+					{ field: 'description', displayName: $filter('translate')('USERS.LOG.DESCRIPTION'), enableColumnMenu: false },
+					{ field: 'mod_action', displayName: $filter('translate')('USERS.LOG.ACTION'), enableColumnMenu: false },
+					{ field: 'date_added', displayName: $filter('translate')('USERS.LOG.DATETIME_MODIFIED'), enableColumnMenu: false }
 				],
 				enableFiltering: true,
 				enableColumnResizing: true,
-			}
+			};
 		}
 
 		if ($scope.userListLogs.email.length) {
 			$scope.gridEmailLogOptions = {
 				data: $scope.userListLogs.email,
 				columnDefs: [
-					{ field: 'serial', displayName: 'Email Control Serial' },
-					{ field: 'revision', displayName: 'Revision No.' },
-					{ field: 'sessionid', displayName: 'Session Id' },
-					{ field: 'subject_EN', displayName: 'Subject EN' },
-					{ field: 'subject_FR', displayName: 'Subject FR' },
-					{ field: 'body_EN', displayName: 'Body EN' },
-					{ field: 'body_FR', displayName: 'Body FR' },
-					{ field: 'mod_action', displayName: 'Action' },
-					{ field: 'date_added', displayName: 'Datetime Modified' }
+					{ field: 'serial', displayName: $filter('translate')('USERS.LOG.EMAIL_SERIAL'), enableColumnMenu: false },
+					{ field: 'revision', displayName: $filter('translate')('USERS.LOG.REVISION_NO'), enableColumnMenu: false },
+					{ field: 'sessionid', displayName: $filter('translate')('USERS.LOG.SESSION_ID'), enableColumnMenu: false },
+					{ field: 'subject_EN', displayName: $filter('translate')('USERS.LOG.SUBJECT_EN'), enableColumnMenu: false },
+					{ field: 'subject_FR', displayName: $filter('translate')('USERS.LOG.SUBJECT_FR'), enableColumnMenu: false },
+					{ field: 'body_EN', displayName: $filter('translate')('USERS.LOG.BODY_EN'), enableColumnMenu: false },
+					{ field: 'body_FR', displayName: $filter('translate')('USERS.LOG.BODY_FR'), enableColumnMenu: false },
+					{ field: 'mod_action', displayName: $filter('translate')('USERS.LOG.ACTION'), enableColumnMenu: false },
+					{ field: 'date_added', displayName: $filter('translate')('USERS.LOG.DATETIME_MODIFIED'), enableColumnMenu: false }
 				],
 				enableFiltering: true,
 				enableColumnResizing: true,
-			}
+			};
 		}
 
 		if ($scope.userListLogs.trigger.length) {
 			$scope.gridTriggerLogOptions = {
 				data: $scope.userListLogs.trigger,
 				columnDefs: [
-					{ field: 'control_serial', displayName: 'Control Serial' },
-					{ field: 'control_table', displayName: 'Control Table' },
-					{ field: 'sessionid', displayName: 'Session Id' },
-					{ field: 'type', displayName: 'Trigger Type' },
-					{ field: 'filterid', displayName: 'Filter Id' },
-					{ field: 'mod_action', displayName: 'Action' },
-					{ field: 'date_added', displayName: 'Datetime Modified' }
+					{ field: 'control_serial', displayName: $filter('translate')('USERS.LOG.CONTROL_SERIAL'), enableColumnMenu: false },
+					{ field: 'control_table', displayName: $filter('translate')('USERS.LOG.CONTROL_TABLE'), enableColumnMenu: false },
+					{ field: 'sessionid', displayName: $filter('translate')('USERS.LOG.SESSION_ID'), enableColumnMenu: false },
+					{ field: 'type', displayName: $filter('translate')('USERS.LOG.TRIGGER_TYPE'), enableColumnMenu: false },
+					{ field: 'filterid', displayName: $filter('translate')('USERS.LOG.FILTER_ID'), enableColumnMenu: false },
+					{ field: 'mod_action', displayName: $filter('translate')('USERS.LOG.ACTION'), enableColumnMenu: false },
+					{ field: 'date_added', displayName: $filter('translate')('USERS.LOG.DATETIME_MODIFIED'), enableColumnMenu: false }
 				],
 				enableFiltering: true,
 				enableColumnResizing: true,
-			}
+			};
 		}
 
 		if ($scope.userListLogs.hospitalMap.length) {
 			$scope.gridHospitalMapLogOptions = {
 				data: $scope.userListLogs.hospitalMap,
 				columnDefs: [
-					{ field: 'serial', displayName: 'Serial' },
-					{ field: 'revision', displayName: 'Revision No.' },
-					{ field: 'sessionid', displayName: 'Session Id' },
-					{ field: 'url', displayName: 'Map URL' },
-					{ field: 'qrcode', displayName: 'QR Id' },
-					{ field: 'name_EN', displayName: 'Name EN' },
-					{ field: 'name_FR', displayName: 'Name FR' },
-					{ field: 'description_EN', displayName: 'Description EN' },
-					{ field: 'description_FR', displayName: 'Description FR' },
-					{ field: 'mod_action', displayName: 'Action' },
-					{ field: 'date_added', displayName: 'Datetime Modified' }
+					{ field: 'serial', displayName: $filter('translate')('USERS.LOG.SERIAL'), enableColumnMenu: false },
+					{ field: 'revision', displayName: $filter('translate')('USERS.LOG.REVISION_NO'), enableColumnMenu: false },
+					{ field: 'sessionid', displayName: $filter('translate')('USERS.LOG.SESSION_ID'), enableColumnMenu: false },
+					{ field: 'url', displayName: $filter('translate')('USERS.LOG.MAP_URL'), enableColumnMenu: false },
+					{ field: 'qrcode', displayName: $filter('translate')('USERS.LOG.QR_ID'), enableColumnMenu: false },
+					{ field: 'name_EN', displayName: $filter('translate')('USERS.LOG.NAME_EN'), enableColumnMenu: false },
+					{ field: 'name_FR', displayName: $filter('translate')('USERS.LOG.NAME_FR'), enableColumnMenu: false },
+					{ field: 'description_EN', displayName: $filter('translate')('USERS.LOG.DESCRIPTION_EN'), enableColumnMenu: false },
+					{ field: 'description_FR', displayName: $filter('translate')('USERS.LOG.DESCRIPTION_FR'), enableColumnMenu: false },
+					{ field: 'mod_action', displayName: $filter('translate')('USERS.LOG.ACTION'), enableColumnMenu: false },
+					{ field: 'date_added', displayName: $filter('translate')('USERS.LOG.DATETIME_MODIFIED'), enableColumnMenu: false }
 				],
 				enableFiltering: true,
 				enableColumnResizing: true,
-			}
+			};
 		}
 
 		if ($scope.userListLogs.post.length) {
 			$scope.gridPostLogOptions = {
 				data: $scope.userListLogs.post,
 				columnDefs: [
-					{ field: 'control_serial', displayName: 'Control Serial' },
-					{ field: 'revision', displayName: 'Revision No.' },
-					{ field: 'sessionid', displayName: 'Session Id' },
-					{ field: 'type', displayName: 'Post Type' },
-					{ field: 'publish', displayName: 'Publish Flag' },
-					{ field: 'disabled', displayName: 'Disabled Flag' },
-					{ field: 'publish_date', displayName: 'Publish Date' },
-					{ field: 'name_EN', displayName: 'Name EN' },
-					{ field: 'name_FR', displayName: 'Name FR' },
-					{ field: 'body_EN', displayName: 'Body EN' },
-					{ field: 'body_FR', displayName: 'Body FR' },
-					{ field: 'mod_action', displayName: 'Action' },
-					{ field: 'date_added', displayName: 'Datetime Modified' }
+					{ field: 'control_serial', displayName: $filter('translate')('USERS.LOG.CONTROL_SERIAL'), enableColumnMenu: false },
+					{ field: 'revision', displayName: $filter('translate')('USERS.LOG.REVISION_NO'), enableColumnMenu: false },
+					{ field: 'sessionid', displayName: $filter('translate')('USERS.LOG.SESSION_ID'), enableColumnMenu: false },
+					{ field: 'type', displayName: $filter('translate')('USERS.LOG.POST_TYPE'), enableColumnMenu: false },
+					{ field: 'publish', displayName: $filter('translate')('USERS.LOG.PUBLISH_FLAG'), enableColumnMenu: false },
+					{ field: 'disabled', displayName: $filter('translate')('USERS.LOG.DISABLED_FLAG'), enableColumnMenu: false },
+					{ field: 'publish_date', displayName: $filter('translate')('USERS.LOG.PUBLISH_DATE'), enableColumnMenu: false },
+					{ field: 'name_EN', displayName: $filter('translate')('USERS.LOG.NAME_EN'), enableColumnMenu: false },
+					{ field: 'name_FR', displayName: $filter('translate')('USERS.LOG.NAME_FR'), enableColumnMenu: false },
+					{ field: 'body_EN', displayName: $filter('translate')('USERS.LOG.BODY_EN'), enableColumnMenu: false },
+					{ field: 'body_FR', displayName: $filter('translate')('USERS.LOG.BODY_FR'), enableColumnMenu: false },
+					{ field: 'mod_action', displayName: $filter('translate')('USERS.LOG.ACTION'), enableColumnMenu: false },
+					{ field: 'date_added', displayName: $filter('translate')('USERS.LOG.DATETIME_MODIFIED'), enableColumnMenu: false }
 				],
 				enableFiltering: true,
 				enableColumnResizing: true,
-			}
+			};
 		}
 
 		if ($scope.userListLogs.notification.length) {
 			$scope.gridNotificationLogOptions = {
 				data: $scope.userListLogs.notification,
 				columnDefs: [
-					{ field: 'control_serial', displayName: 'Control Serial' },
-					{ field: 'revision', displayName: 'Revision No.' },
-					{ field: 'sessionid', displayName: 'Session Id' },
-					{ field: 'type', displayName: 'Notification Type' },
-					{ field: 'name_EN', displayName: 'Name EN' },
-					{ field: 'name_FR', displayName: 'Name FR' },
-					{ field: 'description_EN', displayName: 'Description EN' },
-					{ field: 'description_FR', displayName: 'Description FR' },
-					{ field: 'mod_action', displayName: 'Action' },
-					{ field: 'date_added', displayName: 'Datetime Modified' }
+					{ field: 'control_serial', displayName: $filter('translate')('USERS.LOG.CONTROL_SERIAL'), enableColumnMenu: false },
+					{ field: 'revision', displayName: $filter('translate')('USERS.LOG.REVISION_NO'), enableColumnMenu: false },
+					{ field: 'sessionid', displayName: $filter('translate')('USERS.LOG.SESSION_ID'), enableColumnMenu: false },
+					{ field: 'type', displayName: $filter('translate')('USERS.LOG.NOTIFICATION_TYPE'), enableColumnMenu: false },
+					{ field: 'name_EN', displayName: $filter('translate')('USERS.LOG.NAME_EN'), enableColumnMenu: false },
+					{ field: 'name_FR', displayName: $filter('translate')('USERS.LOG.NAME_FR'), enableColumnMenu: false },
+					{ field: 'description_EN', displayName: $filter('translate')('USERS.LOG.DESCRIPTION_EN'), enableColumnMenu: false },
+					{ field: 'description_FR', displayName: $filter('translate')('USERS.LOG.DESCRIPTION_FR'), enableColumnMenu: false },
+					{ field: 'mod_action', displayName: $filter('translate')('USERS.LOG.ACTION'), enableColumnMenu: false },
+					{ field: 'date_added', displayName: $filter('translate')('USERS.LOG.DATETIME_MODIFIED'), enableColumnMenu: false }
 				],
 				enableFiltering: true,
 				enableColumnResizing: true,
-			}
-		}
-
-		if ($scope.userListLogs.legacyQuestionnaire.length) {
-			$scope.gridLegacyQuestionnaireLogOptions = {
-				data: $scope.userListLogs.legacyQuestionnaire,
-				columnDefs: [
-					{ field: 'control_serial', displayName: 'Control Serial' },
-					{ field: 'revision', displayName: 'Revision No.' },
-					{ field: 'sessionid', displayName: 'Session Id' },
-					{ field: 'db_serial', displayName: 'Questionnaire DB Serial' },
-					{ field: 'name_EN', displayName: 'Name EN' },
-					{ field: 'name_FR', displayName: 'Name FR' },
-					{ field: 'intro_EN', displayName: 'Intro EN' },
-					{ field: 'intro_FR', displayName: 'Intro FR' },
-					{ field: 'publish', displayName: 'Publish Flag' },
-					{ field: 'mod_action', displayName: 'Action' },
-					{ field: 'date_added', displayName: 'Datetime Modified' }
-				],
-				enableFiltering: true,
-				enableColumnResizing: true,
-			}
+			};
 		}
 
 		if ($scope.userListLogs.testResult.length) {
 			$scope.gridTestResultLogOptions = {
 				data: $scope.userListLogs.testResult,
 				columnDefs: [
-					{ field: 'control_serial', displayName: 'Control Serial' },
-					{ field: 'revision', displayName: 'Revision No.' },
-					{ field: 'sessionid', displayName: 'Session Id' },
-					{ field: 'source_db', displayName: 'Source DB' },
-					{ field: 'educational_material', displayName: 'Educational Material Ser' },
-					{ field: 'name_EN', displayName: 'Name EN' },
-					{ field: 'name_FR', displayName: 'Name FR' },
-					{ field: 'description_EN', displayName: 'Description EN' },
-					{ field: 'description_FR', displayName: 'Description FR' },
-					{ field: 'group_EN', displayName: 'Group EN' },
-					{ field: 'group_FR', displayName: 'Group FR' },
-					{ field: 'publish', displayName: 'Publish Flag' },
-					{ field: 'mod_action', displayName: 'Action' },
-					{ field: 'date_added', displayName: 'Datetime Modified' }
+					{ field: 'control_serial', displayName: $filter('translate')('USERS.LOG.CONTROL_SERIAL'), enableColumnMenu: false },
+					{ field: 'revision', displayName: $filter('translate')('USERS.LOG.REVISION_NO'), enableColumnMenu: false },
+					{ field: 'sessionid', displayName: $filter('translate')('USERS.LOG.SESSION_ID'), enableColumnMenu: false },
+					{ field: 'source_db', displayName: $filter('translate')('USERS.LOG.SOURCE_DB'), enableColumnMenu: false },
+					{ field: 'educational_material', displayName: $filter('translate')('USERS.LOG.ED_SER'), enableColumnMenu: false },
+					{ field: 'name_EN', displayName: $filter('translate')('USERS.LOG.NAME_EN'), enableColumnMenu: false },
+					{ field: 'name_FR', displayName: $filter('translate')('USERS.LOG.NAME_FR'), enableColumnMenu: false },
+					{ field: 'description_EN', displayName: $filter('translate')('USERS.LOG.DESCRIPTION_EN'), enableColumnMenu: false },
+					{ field: 'description_FR', displayName: $filter('translate')('USERS.LOG.DESCRIPTION_FR'), enableColumnMenu: false },
+					{ field: 'group_EN', displayName: $filter('translate')('USERS.LOG.GROUP_EN'), enableColumnMenu: false },
+					{ field: 'group_FR', displayName: $filter('translate')('USERS.LOG.GROUP_FR'), enableColumnMenu: false },
+					{ field: 'publish', displayName: $filter('translate')('USERS.LOG.PUBLISH_FLAG'), enableColumnMenu: false },
+					{ field: 'mod_action', displayName: $filter('translate')('USERS.LOG.ACTION'), enableColumnMenu: false },
+					{ field: 'date_added', displayName: $filter('translate')('USERS.LOG.DATETIME_MODIFIED'), enableColumnMenu: false }
 				],
 				enableFiltering: true,
 				enableColumnResizing: true,
-			}
+			};
 		}
 
 		if ($scope.userListLogs.testResultExpression.length) {
 			$scope.gridTestResultExpressionLogOptions = {
 				data: $scope.userListLogs.testResultExpression,
 				columnDefs: [
-					{ field: 'control_serial', displayName: 'Control Serial' },
-					{ field: 'revision', displayName: 'Revision No.' },
-					{ field: 'sessionid', displayName: 'Session Id' },
-					{ field: 'expression', displayName: 'Test Name' },
-					{ field: 'mod_action', displayName: 'Action' },
-					{ field: 'date_added', displayName: 'Datetime Modified' }
+					{ field: 'control_serial', displayName: $filter('translate')('USERS.LOG.CONTROL_SERIAL'), enableColumnMenu: false },
+					{ field: 'revision', displayName: $filter('translate')('USERS.LOG.REVISION_NO'), enableColumnMenu: false },
+					{ field: 'sessionid', displayName: $filter('translate')('USERS.LOG.SESSION_ID'), enableColumnMenu: false },
+					{ field: 'expression', displayName: $filter('translate')('USERS.LOG.TEST_NAME'), enableColumnMenu: false },
+					{ field: 'mod_action', displayName: $filter('translate')('USERS.LOG.ACTION'), enableColumnMenu: false },
+					{ field: 'date_added', displayName: $filter('translate')('USERS.LOG.DATETIME_MODIFIED'), enableColumnMenu: false }
 				],
 				enableFiltering: true,
 				enableColumnResizing: true,
-			}
+			};
 		}
 
 		processingModal.close(); // hide modal
 		processingModal = null; // remove reference
 
 	}).catch(function(response) {
-		console.error('Error occurred getting user logs:', response.status, response.data);
+		alert($filter('translate')('USERS.LOG.ERROR_LOGS') + "\r\n\r\n" + response.status);
+		$uibModalInstance.dismiss('cancel');
+
 	});
 
 	// Function to close modal dialog
