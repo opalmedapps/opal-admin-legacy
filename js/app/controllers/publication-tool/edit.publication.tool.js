@@ -71,6 +71,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 	// Initialize to hold demographic triggers
 	$scope.demoTrigger = {
 		sex: null,
+		sex_display:null,
 		age: {
 			min: 0,
 			max: 130
@@ -121,11 +122,11 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 	// Function for search through the filters
 	$scope.searchAppointmentFilter = function (Filter) {
 		var keyword = new RegExp($scope.appointmentSearchField, 'i');
-		return !$scope.appointmentSearchField || keyword.test(Filter.name);
+		return !$scope.appointmentSearchField || keyword.test($scope.language.toUpperCase() === "FR"?Filter.name_FR:Filter.name);
 	};
 	$scope.searchDxFilter = function (Filter) {
 		var keyword = new RegExp($scope.dxSearchField, 'i');
-		return !$scope.dxSearchField || keyword.test(Filter.name);
+		return !$scope.dxSearchField || keyword.test($scope.language.toUpperCase() === "FR"?Filter.name_FR:Filter.name);
 	};
 	$scope.searchDoctorFilter = function (Filter) {
 		var keyword = new RegExp($scope.doctorSearchField, 'i');
@@ -467,12 +468,14 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 
 		if (!$scope.demoTrigger.sex) {
 			$scope.demoTrigger.sex = sex.name;
+			$scope.demoTrigger.sex_display = sex.display;
 		} else if ($scope.demoTrigger.sex == sex.name) {
 			$scope.demoTrigger.sex = null; // Toggle off
+			$scope.demoTrigger.sex_display = null; // Toggle off
 		} else {
 			$scope.demoTrigger.sex = sex.name;
+			$scope.demoTrigger.sex_display = sex.display;
 		}
-
 		$scope.setChangesMade();
 		$scope.publishedQuestionnaire.triggers_updated = 1;
 

@@ -23,6 +23,10 @@ angular.module('opalAdmin.controllers.post.delete', ['ngAnimate', 'ngSanitize', 
 						alert($filter('translate')('POSTS.DELETE.ERROR') + "\r\n\r\n" + response.message);
 					}
 					$uibModalInstance.close();
+				},
+				error: function (err) {
+					alert($filter('translate')('POSTS.DELETE.ERROR') + "\r\n\r\n" + err.status + " - " + err.statusText);
+					$uibModalInstance.close();
 				}
 			});
 		};

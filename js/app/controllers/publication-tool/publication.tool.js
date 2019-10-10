@@ -78,7 +78,7 @@ angular.module('opalAdmin.controllers.publication.tool', ['ngAnimate', 'ngSaniti
 		var cellTemplateExpressions = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'<strong><a href="">{{row.entity.expression_'+ Session.retrieveObject('user').language +'}}</a></strong></div>';
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editLegacyQuestionnaire(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong></div>';
+			'<strong><a href="" ng-click="grid.appScope.editPublishedQuestionnaire(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong></div>';
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editPublishedQuestionnaire(row.entity)">' +
 			'<strong><a href="">{{row.entity.name_'+ Session.retrieveObject('user').language +'}}</a></strong></div>';

@@ -90,7 +90,7 @@
                                 </div>
                                 <div ng-if="newPost.name_FR" class="description">
                                     <p style="margin-bottom:5px;">
-                                        <strong>{{'POSTS.ADD.FRENCH_ABVR'|translate}}</strong>
+                                        <strong>{{'POSTS.ADD.FRENCH_ABRV'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                                         {{newPost.name_FR}}
                                     </p>
@@ -547,7 +547,7 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-7 col-md-4" style="padding-top: 10px;margin-bottom:20px;">
                                         <p class="input-group">
-                                            <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newPost.publish_date" ng-change="publishDateUpdate()" is-open="popup.opened" min="minDate" datepicker-options="dateOptions" ng-required="true" close-text="{{'POSTS.ADD.CLOSE'|translate}}" current-text="{{'POSTS.ADD.TODAY'|translate}}" clear-text="{{'POSTS.ADD.RESET'|translate}}" />
+                                            <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newPost.publish_date" ng-change="publishDateUpdate()" is-open="popup.opened" min="minDate" datepicker-options="dateOptions" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
                                             <span class="input-group-btn">
                                                 <button class="btn btn-default" ng-click="open()"><i class="glyphicon glyphicon-calendar"></i></button>
                                             </span>

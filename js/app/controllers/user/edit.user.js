@@ -10,10 +10,10 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 
 	// Initialize a list of languages available
 	$scope.languages = [{
-		name: 'English',
+		name: $filter('translate')('USERS.ADD.ENGLISH'),
 		id: 'EN'
 	}, {
-		name: 'French',
+		name: $filter('translate')('USERS.ADD.FRENCH'),
 		id: 'FR'
 	}];
 
@@ -32,20 +32,46 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 
 	// Call our API service to get the current user's details
 	userCollectionService.getUserDetails($scope.currentUser.serial).then(function (response) {
-
 		$scope.user = response.data;
 		processingModal.close(); // hide modal
 		processingModal = null; // remove reference
 	}).catch(function(response) {
-		console.error('Error occurred getting user details:', response.status, response.data);
+		alert($filter('translate')('USERS.EDIT.ERROR_DETAILS') + "\r\n\r\n" + response.status + " " + response.data);
 	});
 
 	// Call our API service to get the list of possible roles
 	$scope.roles = [];
 	userCollectionService.getRoles().then(function (response) {
-		$scope.roles = response.data;
+		response.data.forEach(function(row) {
+			switch (row.name) {
+			case "admin":
+				row.name_display = $filter('translate')('USERS.ADD.ADMIN');
+				break;
+			case "clinician":
+				row.name_display = $filter('translate')('USERS.ADD.CLINICIAN');
+				break;
+			case "editor":
+				row.name_display = $filter('translate')('USERS.ADD.EDITOR');
+				break;
+			case "education-creator":
+				row.name_display = $filter('translate')('USERS.ADD.EDUCATION_CREATOR');
+				break;
+			case "guest":
+				row.name_display = $filter('translate')('USERS.ADD.GUEST');
+				break;
+			case "manager":
+				row.name_display = $filter('translate')('USERS.ADD.MANAGER');
+				break;
+			case "registrant":
+				row.name_display = $filter('translate')('USERS.ADD.REGISTRANT');
+				break;
+			default:
+				row.name_display = $filter('translate')('USERS.ADD.NOT_TRANSLATED');
+			}
+		});
+				$scope.roles = response.data;
 	}).catch(function(response) {
-		console.error('Error occurred getting roles:', response.status, response.data);
+		alert($filter('translate')('USERS.EDIT.ERROR_ROLES') + "\r\n\r\n" + response.status + " " + response.data);
 	});
 
 	// Function that triggers when the password fields are updated
@@ -152,16 +178,19 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 				data: user,
 				success: function (response) {
 					response = JSON.parse(response);
+					// Show success or failure depending on response
 					if (response.value) {
 						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.user.username + "\"";
+						$scope.$parent.bannerMessage = $filter('translate')('USERS.EDIT.SUCCESS_EDIT') ;
+						$scope.showBanner();
 					}
 					else {
-						$scope.setBannerClass('danger');
-						$scope.$parent.bannerMessage = response.error.message;
+						alert($filter('translate')('USERS.EDIT.ERROR_UPDATE'));
 					}
-
-					$scope.showBanner();
+					$uibModalInstance.close();
+				},
+				error: function(err) {
+					alert($filter('translate')('USERS.EDIT.ERROR_UPDATE') + "\r\n\r\n" + err.status + " - " + err.statusText);
 					$uibModalInstance.close();
 				}
 			});

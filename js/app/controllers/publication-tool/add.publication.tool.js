@@ -488,25 +488,14 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 		$scope.selectAll.patient.all = false;
 	};
 
-	// Function to assign legacy questionnaire when textbox is changing
-	$scope.changeLegacyQuestionnaireFilter = function (legacyQuestionnaireFilter) {
-		$scope.legacyQuestionnaireFilter = legacyQuestionnaireFilter;
-	};
-
-	// Function for searching through the educational material list
-	$scope.searchEduMatsFilter = function (legacy_questionnaire) {
-		var keyword = new RegExp($scope.legacyQuestionnaireFilter, 'i');
-		return !$scope.legacyQuestionnaireFilter || keyword.test(legacy_questionnaire.name);
-	};
-
 	// Function for search through the triggers
 	$scope.searchAppointmentFilter = function (Filter) {
 		var keyword = new RegExp($scope.appointmentSearchField, 'i');
-		return !$scope.appointmentSearchField || keyword.test(Filter.name_display);
+		return !$scope.appointmentSearchField || keyword.test($scope.language.toUpperCase() === "FR"?Filter.name_FR:Filter.name);
 	};
 	$scope.searchDxFilter = function (Filter) {
 		var keyword = new RegExp($scope.dxSearchField, 'i');
-		return !$scope.dxSearchField || keyword.test(Filter.name_display);
+		return !$scope.dxSearchField || keyword.test($scope.language.toUpperCase() === "FR"?Filter.name_FR:Filter.name);
 	};
 	$scope.searchDoctorFilter = function (Filter) {
 		var keyword = new RegExp($scope.doctorSearchField, 'i');
