@@ -101,7 +101,12 @@
                         <input class="form-control" style="width:40%" ng-change="setChangesMade();" type="text" placeholder="{{'QUESTIONNAIRE_MODULE.QUESTION_EDIT.PLACEHOLDER_TEXT_FR'|translate}}" ng-model="option.description_FR" ng-disabled="question.readOnly || question.final" />
                         <span class="input-group-btn"><button class="btn btn-default" ng-click="deleteOptions(option);orderPreview();" ng-disabled="question.readOnly || question.final"><span class="fa fa-minus"></span> {{'QUESTIONNAIRE_MODULE.QUESTION_EDIT.DELETE'|translate}}</button></span>
                     </div>
-                    <button type="button" class="btn btn-default" style="float: left; margin-top:5px;" ng-click="addOptions()" ng-disabled="question.readOnly || question.final"><span class="fa fa-plus"></span> {{'QUESTIONNAIRE_MODULE.QUESTION_EDIT.ADD_OPTION'|translate}}</button>
+                    <div style="display: table;"><button type="button" class="btn btn-default" style="float: left; margin-top:5px;" ng-click="addOptions()" ng-disabled="question.readOnly || question.final"><span class="fa fa-plus"></span> {{'QUESTIONNAIRE_MODULE.QUESTION_EDIT.ADD_OPTION'|translate}}</button></div>
+                    <div class="col-xs-12 col-md-12" style="padding-left: 0;" ng-show="question.typeId === '1'">
+                        <div class="panel panel-danger" style="margin-top: 5px;">
+                            <div class="panel-heading"><p style="color: #d9534f;text-align: left;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> {{'QUESTIONNAIRE_MODULE.QUESTION_ADD.WARNING'|translate}}</p></div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Edit Sliders options -->
