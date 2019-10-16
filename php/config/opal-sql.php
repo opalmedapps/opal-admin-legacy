@@ -141,18 +141,18 @@ define("SQL_OPAL_GET_QUESTIONNAIRE_CONTROL_DETAILS",
 
 define("SQL_OPAL_GET_FILTERS_QUESTIONNAIRE_CONTROL",
     "SELECT DISTINCT 
-    Filters.FilterType AS type,
-    Filters.FilterId AS id,
+    ".OPAL_FILTERS_TABLE.".FilterType AS type,
+    ".OPAL_FILTERS_TABLE.".FilterId AS id,
     1 AS added
 	FROM 
 	".OPAL_QUESTIONNAIRE_CONTROL_TABLE.", 
 	".OPAL_FILTERS_TABLE." 
 	WHERE 
-    QuestionnaireControl.QuestionnaireControlSerNum = :QuestionnaireControlSerNum
-    AND Filters.ControlTable = 'LegacyQuestionnaireControl'
-    AND Filters.ControlTableSerNum = QuestionnaireControl.QuestionnaireControlSerNum
-    AND Filters.FilterType != ''
-    AND Filters.FilterId != '';"
+    ".OPAL_QUESTIONNAIRE_CONTROL_TABLE.".QuestionnaireControlSerNum = :QuestionnaireControlSerNum
+    AND ".OPAL_FILTERS_TABLE.".ControlTable = 'LegacyQuestionnaireControl'
+    AND ".OPAL_FILTERS_TABLE.".ControlTableSerNum = ".OPAL_QUESTIONNAIRE_CONTROL_TABLE.".QuestionnaireControlSerNum
+    AND ".OPAL_FILTERS_TABLE.".FilterType != ''
+    AND ".OPAL_FILTERS_TABLE.".FilterId != '';"
 );
 
 define("SQL_OPAL_GET_FREQUENCY_EVENTS_QUESTIONNAIRE_CONTROL",
@@ -166,12 +166,12 @@ define("SQL_OPAL_UPDATE_QUESTIONNAIRE_CONTROL",
     "UPDATE 
     ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." 
     SET 
-    QuestionnaireControl.QuestionnaireName_EN = :QuestionnaireName_EN, 
-    QuestionnaireControl.QuestionnaireName_FR = :QuestionnaireName_FR,
-    QuestionnaireControl.LastUpdatedBy = :LastUpdatedBy,
-    QuestionnaireControl.SessionId = :SessionId
+    ".OPAL_QUESTIONNAIRE_CONTROL_TABLE.".QuestionnaireName_EN = :QuestionnaireName_EN, 
+    ".OPAL_QUESTIONNAIRE_CONTROL_TABLE.".QuestionnaireName_FR = :QuestionnaireName_FR,
+    ".OPAL_QUESTIONNAIRE_CONTROL_TABLE.".LastUpdatedBy = :LastUpdatedBy,
+    ".OPAL_QUESTIONNAIRE_CONTROL_TABLE.".SessionId = :SessionId
     WHERE 
-    QuestionnaireControl.QuestionnaireControlSerNum = :QuestionnaireControlSerNum;"
+    ".OPAL_QUESTIONNAIRE_CONTROL_TABLE.".QuestionnaireControlSerNum = :QuestionnaireControlSerNum;"
 );
 
 define("SQL_OPAL_DELETE_REPEAT_END_FROM_FREQUENCY_EVENTS",
