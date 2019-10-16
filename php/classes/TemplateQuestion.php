@@ -258,6 +258,7 @@ class TemplateQuestion extends QuestionnaireModule {
         unset($options["ID"]);
 
         $total += $this->questionnaireDB->updateOptionsForTemplateQuestion(TEMPLATE_QUESTION_CHECKBOX_TABLE, $tempId, $options);
+        $total += $this->questionnaireDB->updateLastCheckboxOption(TEMPLATE_QUESTION_CHECKBOX_OPTION_TABLE, $tempId);
         return $total;
     }
 
@@ -448,6 +449,10 @@ class TemplateQuestion extends QuestionnaireModule {
                 $opt["parentTableId"] = $parentTableId;
             }
             $this->questionnaireDB->addToTypeTemplateTableTypeOptions($subTableToInsert, $subOptions);
+
+            if($subTableToInsert == TEMPLATE_QUESTION_CHECKBOX_OPTION_TABLE)
+                $total += $this->questionnaireDB->updateLastCheckboxOption($subTableToInsert, $parentTableId);
+
         }
     }
 
