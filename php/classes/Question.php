@@ -536,7 +536,7 @@ class Question extends QuestionnaireModule {
         unset($options["ID"]);
 
         $total += $this->questionnaireDB->updateOptionsForQuestion(CHECKBOX_TABLE, $tempId, $options);
-        $total += $this->questionnaireDB->updateLastCheckboxOption(CHECKBOX_OPTION_TABLE, $options["ID"]);
+        $total += $this->questionnaireDB->updateLastCheckboxOption(CHECKBOX_OPTION_TABLE, $tempId);
 
         return $total;
     }
