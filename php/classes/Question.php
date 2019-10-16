@@ -188,6 +188,8 @@ class Question extends QuestionnaireModule {
                 ));
             }
             $this->questionnaireDB->insertCheckboxOption($recordsToInsert);
+            $this->questionnaireDB->updateLastCheckboxOption(CHECKBOX_OPTION_TABLE, $questionOptionId);
+
         }
         else if ($validTemplateQuestion["subTableName"] == RADIO_BUTTON_OPTION_TABLE) {
             if(count($validTemplateQuestion["options"]) <= 0)
@@ -534,6 +536,8 @@ class Question extends QuestionnaireModule {
         unset($options["ID"]);
 
         $total += $this->questionnaireDB->updateOptionsForQuestion(CHECKBOX_TABLE, $tempId, $options);
+        $total += $this->questionnaireDB->updateLastCheckboxOption(CHECKBOX_OPTION_TABLE, $options["ID"]);
+
         return $total;
     }
 
