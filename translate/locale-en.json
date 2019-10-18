@@ -15,11 +15,11 @@
     "TITLE": "Processing..."
   },
   "NAVIGATION_MENU": {
-    "PUBLISHING_TOOLS": "Publishing Tools",
+    "PUBLISHING_TOOLS": "Publications",
     "TASKS_APPTS_DOCS": "Tasks / Appts / Docs",
     "TASKS_APPTS_DOCS_SUB": "Tool for grouping, translating, and publishing tasks, appointments, and documents.",
     "POSTS": "Posts",
-    "POSTS_SUB": "Tool for publishing general announcements and treatment team messages.",
+    "POSTS_SUB": "Tool for creating general announcements and treatment team messages.",
     "EDU_MATERIAL": "Edu Material",
     "EDU_MATERIAL_SUB": "Tool for referencing educational material hosted on the web.",
     "HOSPITAL_MAPS": "Hospital Maps",
@@ -30,10 +30,12 @@
     "TEST_RESULTS_SUB": "Tool for publishing lab test results categorized by test group.",
     "QUESTIONNAIRES": "Questionnaires",
     "QUESTIONNAIRES_SUB": "Manage patient-reported outcome questionnaires.",
+    "PUBLICATIONS": "Publication Tools",
+    "PUBLICATIONS_SUB": "Manage the publications and their triggers associated.",
     "EMAIL": "Email",
     "EMAIL_SUB": "Tool for creating email templates.",
     "LEGACY_QUESTIONNAIRE": "Legacy Questionnaire",
-    "LEGACY_QUESTIONNAIRE_SUB": "Manage the lagacy version of the patient-reported outcome questionnaires.",
+    "LEGACY_QUESTIONNAIRE_SUB": "Manage the legacy version of the patient-reported outcome questionnaires.",
     "ADMINISTRATION": "Administration",
     "DIAGNOSIS_TRANSLATION": "Diagnosis Translation",
     "DIAGNOSIS_TRANSLATION_SUB": "Manage diagnosis codes for labelling, translating, and categorization.",
@@ -717,6 +719,21 @@
   },
   "LEGACY_QUESTIONNAIRE": {
     "WARNING": "This module is deprecated and will be deleted soon."
+  },
+  "PUBLICATION": {
+    "LIST": {
+    },
+    "DELETE": {
+    },
+    "ADD": {
+
+    },
+    "EDIT": {
+
+    },
+    "LOG": {
+
+    }
   },
   "POSTS": {
     "LIST": {
