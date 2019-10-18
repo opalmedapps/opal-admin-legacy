@@ -56,6 +56,10 @@ define("SQL_OPAL_GET_PUBLISHED_QUESTIONNAIRES",
     FROM ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." qc;"
 );
 
+define("SQL_OPAL_GET_PUBLICATIONS", "
+    SELECT * FROM v_publication
+");
+
 define("SQL_OPAL_GET_FILTERS",
     "SELECT DISTINCT 
     f.FilterType AS type,
