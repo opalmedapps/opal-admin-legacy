@@ -73,6 +73,10 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		$scope.goToQuestionnaireMainMenu = function () {
 			$state.go('questionnaire-menu');
 		};
+		// Function to go to publications page
+		$scope.goToPublication = function () {
+			$state.go('publication');
+		};
 		// Function to go to questionnaire page
 		$scope.goToQuestionnaire = function () {
 			$state.go('questionnaire');

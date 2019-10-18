@@ -18,7 +18,7 @@
     "PUBLISHING_TOOLS": "Outils de publication",
     "TASKS_APPTS_DOCS": "Tâches / Rv / Doc",
     "TASKS_APPTS_DOCS_SUB": "Outil de regroupement, de traduction et de publication de tâches, de rendez-vous et de documents.",
-    "POSTS": "Publications",
+    "POSTS": "Annonces et messages",
     "POSTS_SUB": "Outil de publication d'annonces générales et de messages de l'équipe de soin.",
     "EDU_MATERIAL": "Matériels éducatifs",
     "EDU_MATERIAL_SUB": "Pour gérer des matériels éducatifs hébergés sur le Web.",
@@ -28,6 +28,8 @@
     "NOTIFICATIONS_SUB": "Outil de gestion des notifications.",
     "LAB_RESULTS": "Résultats de laboratoire",
     "TEST_RESULTS_SUB": "Outil de publication des résultats de laboratoire classés par groupe de tests.",
+    "PUBLICATIONS": "Outils de publication",
+    "PUBLICATIONS_SUB": "Gestion des publications et de leurs déclencheurs.",
     "QUESTIONNAIRES": "Questionnaires",
     "QUESTIONNAIRES_SUB": "Gérer les questionnaires et les réponses des patients.",
     "EMAIL": "Courriels",
@@ -732,6 +734,21 @@
   },
   "LEGACY_QUESTIONNAIRE": {
     "WARNING": "Ce module non traduit est obsolète et sera bientôt supprimé."
+  },
+  "PUBLICATION": {
+    "LIST": {
+    },
+    "DELETE": {
+    },
+    "ADD": {
+
+    },
+    "EDIT": {
+
+    },
+    "LOG": {
+
+    }
   },
   "POSTS": {
     "LIST": {
