@@ -752,7 +752,7 @@
   },
   "POSTS": {
     "LIST": {
-      "TITLE": "Publications",
+      "TITLE": "Annonces et messages",
       "ADD": "Ajouter",
       "SAVE": "Enregistrer",
       "SEARCH": "Rechercher",
@@ -778,7 +778,7 @@
       "HIGHLIGHT": "Surlignez la zone de tracé pour effectuer un zoom et afficher des données détaillées",
       "DATETIME_SENT": "Date et heure d'envoi",
       "NUMBER_POSTS_PUBLISHED": "Nombre de publication publiés",
-      "POST": "Publication",
+      "POST": "Annonce",
       "REVISION": "No. de révision",
       "CRONLOGSER": "ID journaux de cron",
       "PATIENTSER": "ID Patient",
@@ -786,13 +786,13 @@
       "ACTION": "Action"
     },
     "DELETE": {
-      "DELETE_POST": "Supprimer la publication",
+      "DELETE_POST": "Supprimer l'annonce",
       "DELETE": "Supprimer",
       "CANCEL": "Annuler",
       "WARNING": "ATTENTION!",
-      "WARNING_TEXT": "Voulez-vous vraiment supprimer la publication ci-dessous? Cette action est irreversible!",
-      "SUCCESS": "La publication a été supprimée avec succès.",
-      "ERROR": "Une erreur s'est produite lors de la suppression de la publication."
+      "WARNING_TEXT": "Voulez-vous vraiment supprimer l'annonce ci-dessous? Cette action est irreversible!",
+      "SUCCESS": "L'annonce a été supprimée avec succès.",
+      "ERROR": "Une erreur s'est produite lors de la suppression de l'annonce."
     },
     "ADD": {
       "BACK": "Retour",
@@ -821,11 +821,11 @@
       "OPTIONAL_FIELD": "Champ facultatif:",
       "INCOMPLETE": "Incomplet",
       "COMPLETE": "Complet",
-      "TITLE": "Ajouter une publication",
+      "TITLE": "Ajouter une annonce",
       "ENGLISH": "Anglais",
       "FRENCH": "Français",
       "TRIGGER_PATIENT": "Déclencheur par patient",
-      "PATIENT_EXPLANATION": "Sélectionnez un ou plusieurs patients ci-dessous à qui envoyer la publication. Cliquer sur 'Tout sélectionner' pour envoyer à tous les patients. Laissez vide pour aucun déclencheur.",
+      "PATIENT_EXPLANATION": "Sélectionnez un ou plusieurs patients ci-dessous à qui envoyer l'annonce. Cliquer sur 'Tout sélectionner' pour envoyer à tous les patients. Laissez vide pour aucun déclencheur.",
       "SEARCH": "Rechercher",
       "SELECT_ALL": "Tout sélectionner",
       "TRIGGER_APPOINTMENT": "Déclencheur par rendez-vous",
@@ -838,9 +838,9 @@
       "MACHINE_EXPLANATION": "Sélectionnez l'un des déclencheurs par machine ci-dessous. Cela ciblera les patients avec ces machines de traitement spécifiques. Cliquer sur 'Tout sélectionner' pour marquer toutes les machines de traitement. Laissez vide pour aucun déclencheur.",
       "ERROR_FILTERS": "Une erreur s'est produite lors de l'obtention de la liste de filtres.",
       "ERROR_TRIGGERS": "Une erreur s'est produite lors de l'obtention de la liste de déclencheurs.",
-      "ERROR_PUBLICATION": "Une erreur s'est produite lors de la création de la publication.",
+      "ERROR_PUBLICATION": "Une erreur s'est produite lors de la création de l'annonce.",
       "ERROR_QUESTIONNAIRE": "Une erreur s'est produite lors de l'obtention de la liste de questionnaires.",
-      "ERROR_ADD": "Une erreur s'est produite lors de la création de la publication.",
+      "ERROR_ADD": "Une erreur s'est produite lors de la création de l'annonce.",
       "TYPE_EXPLANATION": "Veuillez sélectionner le type de message.",
       "TITLE_EXPLANATION": "Veuillez assigner un titre anglais et français.",
       "BODY_EXPLANATION": "Veuillez entrer le contenu du message en anglais et en français.",
@@ -862,7 +862,7 @@
       "RESET": "Vider"
     },
     "EDIT": {
-      "TITLE": "Modifier la publication",
+      "TITLE": "Modifier l'annonce",
       "SAVE": "Enregistrer",
       "CANCEL": "Annuler",
       "TITLES": "Titres",
@@ -903,9 +903,9 @@
       "ALL_TM": "Toutes les machines de traitement",
       "NO_TRIGGER": "Aucun déclencheur",
       "ERROR_TRIGGERS": "Une erreur s'est produite lors de l'obtention de la liste des déclencheurs.",
-      "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails de la publication.",
+      "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails de l'annonce.",
       "ERROR_EDIT": "Une erreur s'est produite lors de l'enregistrement des modifications.",
-      "SUCCESS_EDIT": "La publication a été mise à jour avec succès."
+      "SUCCESS_EDIT": "L'annonce a été mise à jour avec succès."
     },
     "LOG": {
       "NAME": "Nom",

@@ -6,27 +6,6 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 		var user = Session.retrieveObject('user');
 		var OAUserId = user.id;
 
-		// navigating functions
-		$scope.goToQuestionnaire = function () {
-			$state.go('questionnaire');
-		};
-		$scope.goToPublicationTool = function () {
-			$state.go('publication-tool');
-		};
-		$scope.goToAddPublicationTool = function () {
-			$state.go('publication-tool-add');
-		};
-		$scope.goToQuestionnaireQuestionBank = function () {
-			$state.go('questionnaire-question');
-		};
-		$scope.goToQuestionnaireCompleted = function () {
-			$state.go('questionnaire-completed');
-		};
-		// Function to go to question type page
-		$scope.goToTemplateQuestion = function () {
-			$state.go('questionnaire-template-question');
-		};
-
 		// Banner
 		$scope.bannerMessage = "";
 		// Function to show page banner
