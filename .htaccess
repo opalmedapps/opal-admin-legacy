@@ -209,6 +209,13 @@ RewriteRule ^publication-tool/get/published-questionnaire-details api/questionna
 RewriteRule ^publication-tool/get/published-questionnaires api/questionnaire/get.published_questionnaires.php [QSA,L]
 RewriteRule ^publication-tool/insert/published-questionnaire php/questionnaire/insert.published_questionnaire.php [QSA,L]
 
+# Publication Section
+RewriteRule ^publication/update/publication-publish-flag php/publication/update.questionnaire_publish_flag.php [QSA,L]
+RewriteRule ^publication/update/publication php/publication/update.publication.php [QSA,L]
+RewriteRule ^publication/get/publication-details api/publication/get.publications_details.php [QSA,L]
+RewriteRule ^publication/get/publications api/publication/get.publications.php [QSA,L]
+RewriteRule ^publication/insert/publication php/publication/insert.publication.php [QSA,L]
+
 # Library Section
 RewriteRule ^library/get/libraries api/questionnaire/get.libraries.php [QSA,L]
 RewriteRule ^library/insert/library php/questionnaire/insert.library.php [QSA,L]

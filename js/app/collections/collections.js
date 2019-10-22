@@ -908,6 +908,38 @@ angular.module('opalAdmin.collections', [])
 		return questionnaireAPI;
 	})
 
+	.factory('publicationCollectionService', function ($http) {
+		var publicationAPI = {};
+
+		publicationAPI.getPublications = function (OAUserId) {
+			return $http.post(
+				"publication/get/publications",
+				$.param({
+					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+
+		};
+
+		publicationAPI.getPublicationsDetails = function (publicationId, OAUserId) {
+			return $http.post(
+				"publication/get/publication-details",
+				$.param({
+					OAUserId: OAUserId,
+					publicationId: publicationId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		return publicationAPI;
+	})
+
 	// Legacy Questionnaire API service
 	.factory('legacyQuestionnaireCollectionService', function ($http) {
 
