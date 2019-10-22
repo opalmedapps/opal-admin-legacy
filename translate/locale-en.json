@@ -722,6 +722,26 @@
   },
   "PUBLICATION": {
     "LIST": {
+      "TITLE": "Publication Tools",
+      "ADD": "Add",
+      "SAVE": "Save Changes",
+      "SEARCH": "Search...",
+      "EDIT": "Edit",
+      "DELETE": "Delete",
+      "NAME": "Name",
+      "PUBLISH": "In service",
+      "DESCRIPTION": "Description",
+      "OPERATIONS": "Operations",
+      "SUCCESS_FLAGS": "Flag(s) Successfully Saved!",
+      "ERROR_PUBLICATION": "An error occurred while getting publication list.",
+      "ERROR_FLAGS": "An error occurred while saving the publication flags.",
+      "NO": "No",
+      "YES": "Yes",
+      "TYPE": "Type",
+      "EDUCATION": "Educational Material",
+      "PUBLICATION": "Publication",
+      "QUESTIONNAIRE": "Questionnaire",
+      "PUBLISH_DATE": "Date to be published"
     },
     "DELETE": {
     },

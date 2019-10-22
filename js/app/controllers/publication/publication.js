@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular'])
 
-	.controller('publication', function ($sce, $scope, $state, $filter, $timeout, $uibModal, questionnaireCollectionService, filterCollectionService, Session, uiGridConstants) {
+	.controller('publication', function ($sce, $scope, $state, $filter, $timeout, $uibModal, publicationCollectionService, filterCollectionService, Session, uiGridConstants) {
 
 		// get current user id
 		var user = Session.retrieveObject('user');
@@ -54,33 +54,37 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 
 		// Table
 		// Templates
-		var cellTemplateExpressions = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
-			'<strong><a href="">{{row.entity.expression_'+ Session.retrieveObject('user').language +'}}</a></strong></div>';
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editPublishedQuestionnaire(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong></div>';
+			'<strong><a href="" ng-click="grid.appScope.editPublishedQuestionnaire(row.entity)"><i title="'+$filter('translate')('PUBLICATION.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong></div>';
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editPublishedQuestionnaire(row.entity)">' +
 			'<strong><a href="">{{row.entity.name_'+ Session.retrieveObject('user').language +'}}</a></strong></div>';
 		var cellTemplatePublish = '<div style="text-align: center; cursor: pointer;" ' +
 			'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
 			'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
-			'ng-checked="grid.appScope.updatePublishFlag(row.entity.publish)" ng-model="row.entity.publish"></div>';
-
-
+			'ng-checked="grid.appScope.updatePublishFlag(row.entity.publishFlag)" ng-model="row.entity.publishFlag"></div>';
+		var cellTemplatePublication = '<div class="ui-grid-cell-contents" ng-if="row.entity.publication==1">'+$filter('translate')('PUBLICATION.LIST.PUBLICATION')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.publication==2">'+$filter('translate')('PUBLICATION.LIST.EDUCATION')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.publication==3">'+$filter('translate')('PUBLICATION.LIST.QUESTIONNAIRE')+'</div>';
 
 		// Data binding for main table
 		$scope.gridOptions = {
-			data: 'publishedQuestionnaireList',
+			data: 'publicationList',
 			columnDefs: [
-				{ field: 'name_'+Session.retrieveObject('user').language, enableColumnMenu: false, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.NAME'), cellTemplate: cellTemplateName, width: '45%' },
+				{ field: 'name_'+Session.retrieveObject('user').language, enableColumnMenu: false, displayName: $filter('translate')('PUBLICATION.LIST.NAME'), cellTemplate: cellTemplateName, width: '30%', sort: {direction: uiGridConstants.ASC, priority: 0} },
 				{
-					field: 'publish', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.PUBLISH'), enableColumnMenu: false, cellTemplate: cellTemplatePublish, width: '10%', filter: {
+					field: 'publication', displayName: $filter('translate')('PUBLICATION.LIST.TYPE'), enableColumnMenu: false, cellTemplate: cellTemplatePublication, width: '15%', filter: {
 						type: uiGridConstants.filter.SELECT,
-						selectOptions: [{ value: '1', label: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.YES') }, { value: '0', label: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.NO') }]
+						selectOptions: [{ value: '1', label: $filter('translate')('PUBLICATION.LIST.PUBLICATION') }, { value: '2', label: $filter('translate')('PUBLICATION.LIST.EDUCATION') }, { value: '3', label: $filter('translate')('PUBLICATION.LIST.QUESTIONNAIRE') }]
 					}
 				},
-				{ field: 'expression_'+Session.retrieveObject('user').language, enableColumnMenu: false, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.QUESTIONNAIRE'), cellTemplate: cellTemplateExpressions},
-				{ name: 'Operations', width: '10%', cellTemplate: cellTemplateOperations, enableColumnMenu: false, enableFiltering: false, sortable: false }
+				{ field: 'type_'+Session.retrieveObject('user').language, enableColumnMenu: false, displayName: $filter('translate')('PUBLICATION.LIST.DESCRIPTION')},
+				{
+					field: 'publishFlag', displayName: $filter('translate')('PUBLICATION.LIST.PUBLISH'), enableColumnMenu: false, cellTemplate: cellTemplatePublish, width: '10%', filter: {
+						type: uiGridConstants.filter.SELECT,
+						selectOptions: [{ value: '1', label: $filter('translate')('PUBLICATION.LIST.YES') }, { value: '0', label: $filter('translate')('PUBLICATION.LIST.NO') }]
+					}
+				},
+				{ field: "publishDate", displayName: $filter('translate')('PUBLICATION.LIST.PUBLISH_DATE'), enableColumnMenu: false , width: '15%'},
+				{ name: $filter('translate')('PUBLICATION.LIST.OPERATIONS'), width: '10%', cellTemplate: cellTemplateOperations, enableColumnMenu: false, enableFiltering: false, sortable: false }
 			],
 			enableFiltering: true,
 			enableSorting: true,
@@ -92,7 +96,7 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 		};
 
 		// Initialize object for storing questionnaires
-		$scope.publishedQuestionnaireList = [];
+		$scope.publicationList = [];
 		$scope.publishedQuestionnaireFlags = {
 			flagList: []
 		};
@@ -112,24 +116,25 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 		$scope.checkPublishFlag = function (publishedQuestionnaire) {
 
 			$scope.changesMade = true;
-			publishedQuestionnaire.publish = parseInt(publishedQuestionnaire.publish);
-			// If the "publish" column has been checked
-			if (publishedQuestionnaire.publish) {
-				publishedQuestionnaire.publish = 0; // set publish to "false"
+			publishedQuestionnaire.publish = parseInt(publishedQuestionnaire.publishFlag);
+			// If the "publishFlag" column has been checked
+			if (publishedQuestionnaire.publishFlag) {
+				publishedQuestionnaire.publishFlag = 0; // set publish to "false"
 			}
 
 			// Else the "Publish" column was unchecked
 			else {
-				publishedQuestionnaire.publish = 1; // set publish to "true"
+				publishedQuestionnaire.publishFlag = 1; // set publish to "true"
 			}
 			publishedQuestionnaire.changed = 1;
 		};
 		
 		// Call API to get the list of questionnaires
-		questionnaireCollectionService.getPublishedQuestionnaires(OAUserId).then(function (response) {
-			$scope.publishedQuestionnaireList = response.data;
+		publicationCollectionService.getPublications(OAUserId).then(function (response) {
+			$scope.publicationList = response.data;
+			console.log(response.data);
 		}).catch(function(response) {
-			alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.ERROR_PUBLICATION') + response.status + " " + response.data);
+			alert($filter('translate')('PUBLICATION.LIST.ERROR_PUBLICATION') + response.status + " " + response.data);
 		});
 
 		// Initialize a scope variable for a selected questionnaire
@@ -138,7 +143,7 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 		// Function to submit changes when flags have been modified
 		$scope.submitPublishFlags = function () {
 			if ($scope.changesMade) {
-				angular.forEach($scope.publishedQuestionnaireList, function (publishedQuestionnaire) {
+				angular.forEach($scope.publicationList, function (publishedQuestionnaire) {
 					if (publishedQuestionnaire.changed) {
 						$scope.publishedQuestionnaireFlags.flagList.push({
 							serial: publishedQuestionnaire.serial,
@@ -157,19 +162,19 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 					data: $scope.publishedQuestionnaireFlags,
 					success: function (response) {
 						// Call our API to get the list of existing legacy questionnaires
-						questionnaireCollectionService.getPublishedQuestionnaires(OAUserId).then(function (response) {
-							$scope.publishedQuestionnaireList = response.data;
+						publicationCollectionService.getPublishedQuestionnaires(OAUserId).then(function (response) {
+							$scope.publicationList = response.data;
 						}).catch(function(response) {
-							alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.ERROR_PUBLICATION') + response.status + " " + response.data);
+							alert($filter('translate')('PUBLICATION.LIST.ERROR_PUBLICATION') + response.status + " " + response.data);
 						});
 						response = JSON.parse(response);
 						if (response.code === 200) {
 							$scope.setBannerClass('success');
-							$scope.bannerMessage = $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.SUCCESS_FLAGS');
+							$scope.bannerMessage = $filter('translate')('PUBLICATION.LIST.SUCCESS_FLAGS');
 						}
 						else {
 							$scope.setBannerClass('danger');
-							alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.ERROR_FLAGS') + "\r\n\r\n" + response.status + " " + response.data);
+							alert($filter('translate')('PUBLICATION.LIST.ERROR_FLAGS') + "\r\n\r\n" + response.status + " " + response.data);
 						}
 						$scope.showBanner();
 						$scope.changesMade = false;
@@ -192,10 +197,10 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 
 			// After update, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				questionnaireCollectionService.getPublishedQuestionnaires(OAUserId).then(function (response) {
-					$scope.publishedQuestionnaireList = response.data;
+				publicationCollectionService.getPublishedQuestionnaires(OAUserId).then(function (response) {
+					$scope.publicationList = response.data;
 				}).catch(function(response) {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.ERROR_PUBLICATION') + response.status + " " + response.data);
+					alert($filter('translate')('PUBLICATION.LIST.ERROR_PUBLICATION') + response.status + " " + response.data);
 				});
 			});
 		};
