@@ -210,7 +210,7 @@ RewriteRule ^publication-tool/get/published-questionnaires api/questionnaire/get
 RewriteRule ^publication-tool/insert/published-questionnaire php/questionnaire/insert.published_questionnaire.php [QSA,L]
 
 # Publication Section
-RewriteRule ^publication/update/publication-publish-flag php/publication/update.questionnaire_publish_flag.php [QSA,L]
+RewriteRule ^publication/update/publish-flag php/publication/update.publish.flag.php [QSA,L]
 RewriteRule ^publication/update/publication php/publication/update.publication.php [QSA,L]
 RewriteRule ^publication/get/publication-details api/publication/get.publications_details.php [QSA,L]
 RewriteRule ^publication/get/publications api/publication/get.publications.php [QSA,L]

@@ -744,7 +744,7 @@
       "EDIT": "Modifier",
       "DELETE": "Supprimer",
       "NAME": "Nom",
-      "PUBLISH": "En service",
+      "PUBLISH": "Activée",
       "DESCRIPTION": "Description",
       "OPERATIONS": "Opérations",
       "SUCCESS_FLAGS": "Les publications ont été mises à jour!",

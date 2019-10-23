@@ -7,11 +7,11 @@
 
 class PublishedQuestionnaire extends Questionnaire {
 
-    public function __construct($OAUserId = false, $sessionId = false) {
-        parent::__construct($OAUserId);
-
-        $this->opalDB->setSessionId($sessionId);
-    }
+//    public function __construct($OAUserId = false, $sessionId = false) {
+//        parent::__construct($OAUserId);
+//
+//        $this->opalDB->setSessionId($sessionId);
+//    }
 
     /*
      * This function returns all the published questionnaires from the Questionnaire Control

@@ -21,5 +21,6 @@ class OpalProject
             OPAL_DB_PASSWORD,
             $OAUserId
         );
+        $this->opalDB->setSessionId($sessionId);
     }
 }
