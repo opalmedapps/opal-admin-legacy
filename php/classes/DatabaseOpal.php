@@ -78,6 +78,10 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(SQL_OPAL_GET_PUBLICATIONS, array());
     }
 
+    function getPublicationModules() {
+        return $this->_fetchAll(SQL_OPAL_GET_ALL_PUBLICATION_MODULES, array());
+    }
+
     /*
      * Get all the details of a specific published questionnaire.
      * @params  Questionnaire serial number (int)
@@ -210,6 +214,26 @@ class DatabaseOpal extends DatabaseAccess {
         }
 
         return $this->_execute($sqlToUpdate, $toInsert);
+    }
+
+    /*
+     * update the publication flag of a specific module.
+     * @params  id of questionnaire, and value of the status (both integers)
+     * @return  number of record affected
+     *
+     *     SET PublishFlag = :PublishFlag, LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId
+
+     *
+     * */
+    function updatePublicationFlag($tableName, $primaryKey, $publishFlag, $primaryId) {
+        $sqlToUpdate = str_replace("%%ID_FIELD%%", $primaryKey, str_replace("%%TABLE_NAME%%", $tableName, SQL_OPAL_UPDATE_PUBLICATION_STATUS_FLAG));
+        $toUpdate = array(
+            array("parameter"=>":PublishFlag","variable"=>$publishFlag,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":ID","variable"=>$primaryId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":LastUpdatedBy","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SessionId","variable"=>$this->getSessionId(),"data_type"=>PDO::PARAM_STR),
+        );
+        return $this->_execute($sqlToUpdate, $toUpdate);
     }
 
     /*

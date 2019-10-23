@@ -729,7 +729,7 @@
       "EDIT": "Edit",
       "DELETE": "Delete",
       "NAME": "Name",
-      "PUBLISH": "In service",
+      "PUBLISH": "Active",
       "DESCRIPTION": "Description",
       "OPERATIONS": "Operations",
       "SUCCESS_FLAGS": "Flag(s) Successfully Saved!",
@@ -739,7 +739,7 @@
       "YES": "Yes",
       "TYPE": "Type",
       "EDUCATION": "Educational Material",
-      "PUBLICATION": "Publication",
+      "PUBLICATION": "Post",
       "QUESTIONNAIRE": "Questionnaire",
       "PUBLISH_DATE": "Date to be published"
     },
