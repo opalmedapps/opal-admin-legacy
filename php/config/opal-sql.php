@@ -57,7 +57,7 @@ define("SQL_OPAL_GET_PUBLISHED_QUESTIONNAIRES",
 );
 
 define("SQL_OPAL_GET_PUBLICATIONS", "
-    SELECT * FROM v_publication
+    SELECT * FROM v_publication;
 ");
 
 define("SQL_OPAL_GET_FILTERS",
@@ -127,6 +127,17 @@ define("SQL_OPAL_UPDATE_PUBLISHED_QUESTIONNAIRES_STATUS",
     SET PublishFlag = :PublishFlag, LastUpdatedBy = :LastUpdatedBy
     WHERE QuestionnaireControlSerNum = :QuestionnaireControlSerNum
     AND (PublishFlag != :PublishFlag);"
+);
+
+define("SQL_OPAL_UPDATE_PUBLICATION_STATUS_FLAG",
+    "UPDATE %%TABLE_NAME%%
+    SET PublishFlag = :PublishFlag, LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId
+    WHERE %%ID_FIELD%% = :ID
+    AND (PublishFlag != :PublishFlag);"
+);
+
+define("SQL_OPAL_GET_ALL_PUBLICATION_MODULES",
+    "SELECT * FROM module m WHERE m.active = 1 AND m.publication = 1 ORDER BY m.order;"
 );
 
 define("SQL_OPAL_GET_QUESTIONNAIRE_CONTROL_DETAILS",

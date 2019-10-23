@@ -63,7 +63,7 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 			'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
 			'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
 			'ng-checked="grid.appScope.updatePublishFlag(row.entity.publishFlag)" ng-model="row.entity.publishFlag"></div>';
-		var cellTemplatePublication = '<div class="ui-grid-cell-contents" ng-if="row.entity.publication==1">'+$filter('translate')('PUBLICATION.LIST.PUBLICATION')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.publication==2">'+$filter('translate')('PUBLICATION.LIST.EDUCATION')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.publication==3">'+$filter('translate')('PUBLICATION.LIST.QUESTIONNAIRE')+'</div>';
+		var cellTemplatePublication = '<div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==2">'+$filter('translate')('PUBLICATION.LIST.PUBLICATION')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==3">'+$filter('translate')('PUBLICATION.LIST.EDUCATION')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==7">'+$filter('translate')('PUBLICATION.LIST.QUESTIONNAIRE')+'</div>';
 
 		// Data binding for main table
 		$scope.gridOptions = {
@@ -71,9 +71,9 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 			columnDefs: [
 				{ field: 'name_'+Session.retrieveObject('user').language, enableColumnMenu: false, displayName: $filter('translate')('PUBLICATION.LIST.NAME'), cellTemplate: cellTemplateName, width: '30%', sort: {direction: uiGridConstants.ASC, priority: 0} },
 				{
-					field: 'publication', displayName: $filter('translate')('PUBLICATION.LIST.TYPE'), enableColumnMenu: false, cellTemplate: cellTemplatePublication, width: '15%', filter: {
+					field: 'moduleId', displayName: $filter('translate')('PUBLICATION.LIST.TYPE'), enableColumnMenu: false, cellTemplate: cellTemplatePublication, width: '15%', filter: {
 						type: uiGridConstants.filter.SELECT,
-						selectOptions: [{ value: '1', label: $filter('translate')('PUBLICATION.LIST.PUBLICATION') }, { value: '2', label: $filter('translate')('PUBLICATION.LIST.EDUCATION') }, { value: '3', label: $filter('translate')('PUBLICATION.LIST.QUESTIONNAIRE') }]
+						selectOptions: [{ value: '2', label: $filter('translate')('PUBLICATION.LIST.PUBLICATION') }, { value: '3', label: $filter('translate')('PUBLICATION.LIST.EDUCATION') }, { value: '7', label: $filter('translate')('PUBLICATION.LIST.QUESTIONNAIRE') }]
 					}
 				},
 				{ field: 'type_'+Session.retrieveObject('user').language, enableColumnMenu: false, displayName: $filter('translate')('PUBLICATION.LIST.DESCRIPTION')},
@@ -97,7 +97,7 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 
 		// Initialize object for storing questionnaires
 		$scope.publicationList = [];
-		$scope.publishedQuestionnaireFlags = {
+		$scope.publicationFlags = {
 			flagList: []
 		};
 
@@ -116,7 +116,7 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 		$scope.checkPublishFlag = function (publishedQuestionnaire) {
 
 			$scope.changesMade = true;
-			publishedQuestionnaire.publish = parseInt(publishedQuestionnaire.publishFlag);
+			publishedQuestionnaire.publishFlag = parseInt(publishedQuestionnaire.publishFlag);
 			// If the "publishFlag" column has been checked
 			if (publishedQuestionnaire.publishFlag) {
 				publishedQuestionnaire.publishFlag = 0; // set publish to "false"
@@ -132,7 +132,7 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 		// Call API to get the list of questionnaires
 		publicationCollectionService.getPublications(OAUserId).then(function (response) {
 			$scope.publicationList = response.data;
-			console.log(response.data);
+			console.log($scope.publicationList);
 		}).catch(function(response) {
 			alert($filter('translate')('PUBLICATION.LIST.ERROR_PUBLICATION') + response.status + " " + response.data);
 		});
@@ -145,24 +145,29 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 			if ($scope.changesMade) {
 				angular.forEach($scope.publicationList, function (publishedQuestionnaire) {
 					if (publishedQuestionnaire.changed) {
-						$scope.publishedQuestionnaireFlags.flagList.push({
-							serial: publishedQuestionnaire.serial,
-							publish: publishedQuestionnaire.publish
+						$scope.publicationFlags.flagList.push({
+							ID: publishedQuestionnaire.ID,
+							moduleId: publishedQuestionnaire.moduleId,
+							publishFlag: publishedQuestionnaire.publishFlag
 						});
 					}
 				});
 				// Log who updated legacy questionnaire flags
 				var currentUser = Session.retrieveObject('user');
-				$scope.publishedQuestionnaireFlags.OAUserId = currentUser.id;
-				$scope.publishedQuestionnaireFlags.sessionId = currentUser.sessionid;
+				$scope.publicationFlags.OAUserId = currentUser.id;
+				$scope.publicationFlags.sessionId = currentUser.sessionid;
+
+				console.log($scope.publicationFlags);
+
 				// Submit form
+
 				$.ajax({
 					type: "POST",
-					url: "publication-tool/update/published-questionnaire-publish-flag",
-					data: $scope.publishedQuestionnaireFlags,
+					url: "publication/update/publish-flag",
+					data: $scope.publicationFlags,
 					success: function (response) {
 						// Call our API to get the list of existing legacy questionnaires
-						publicationCollectionService.getPublishedQuestionnaires(OAUserId).then(function (response) {
+						publicationCollectionService.getPublications(OAUserId).then(function (response) {
 							$scope.publicationList = response.data;
 						}).catch(function(response) {
 							alert($filter('translate')('PUBLICATION.LIST.ERROR_PUBLICATION') + response.status + " " + response.data);
@@ -178,9 +183,12 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 						}
 						$scope.showBanner();
 						$scope.changesMade = false;
-						$scope.publishedQuestionnaireFlags.flagList = [];
+						$scope.publicationFlags.flagList = [];
 					}
 				});
+
+
+
 			}
 		};
 		
