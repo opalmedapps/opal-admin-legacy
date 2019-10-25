@@ -263,6 +263,7 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 		else if (view === 'chart') {
 			// Call our API to get post logs
 			postCollectionService.getPostChartLogs().then(function (response) {
+				console.log("1");
 				$scope.postChartLogs = $scope.chartConfig.series = response.data;
 				angular.forEach($scope.postChartLogs, function(serie) {
 					angular.forEach(serie.data, function(log) {
@@ -314,6 +315,7 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 						// convert set to array
 						cronSerials = Array.from(cronSerials);
 						postCollectionService.getPostListLogs(cronSerials, $scope.currentPost.type).then(function(response){
+							console.log("5: " + cronSerials + " " + $scope.currentPost.type);
 							response.data.forEach(function (row) {
 								if (Session.retrieveObject('user').language.toUpperCase() === "FR") {
 									switch(row.type) {
@@ -366,6 +368,7 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 						select: function(point) {
 							var cronLogSerNum = [point.target.cron_serial];
 							postCollectionService.getPostListLogs(cronLogSerNum, $scope.currentPost.type).then(function(response){
+								console.log("6: " + cronLogSerNum + " " + $scope.currentPost.type);
 								response.data.forEach(function (row) {
 									if (Session.retrieveObject('user').language.toUpperCase() === "FR") {
 										switch(row.type) {

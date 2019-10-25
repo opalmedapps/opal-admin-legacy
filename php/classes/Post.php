@@ -722,6 +722,8 @@ class Post {
                 foreach ($postSeries as $seriesName => $series) {
                     array_push($postLogs, $series);
                 }
+
+                print_r($postSeries);
             }
             // get logs for specific alias
             else {

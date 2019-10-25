@@ -75,7 +75,12 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     function getPublications() {
-        return $this->_fetchAll(SQL_OPAL_GET_PUBLICATIONS, array());
+        $sqlModule = array();
+        $moduleSQLCode = $this->_fetchAll(SQL_OPAL_BUILD_PUBLICATION_VIEW, array());
+        foreach ($moduleSQLCode as $module)
+            array_push($sqlModule, $module["sqlPublication"]);
+        $sqlModule = implode(" UNION ALL ", $sqlModule);
+        return $this->_fetchAll($sqlModule, array());
     }
 
     function getPublicationModules() {
@@ -234,6 +239,10 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":SessionId","variable"=>$this->getSessionId(),"data_type"=>PDO::PARAM_STR),
         );
         return $this->_execute($sqlToUpdate, $toUpdate);
+    }
+
+    function getPublicationModulesUser(){
+        return $this->_fetchAll(SQL_OPAL_GET_ALL_PUBLICATION_MODULES_USER, array());
     }
 
     /*

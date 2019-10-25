@@ -33,7 +33,7 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 			var matcher = new RegExp($scope.filterValue, 'i');
 			renderableRows.forEach(function (row) {
 				var match = false;
-				['name_'+Session.retrieveObject('user').language].forEach(function (field) {
+				['name_'+Session.retrieveObject('user').language, 'module_'+Session.retrieveObject('user').language, 'type_'+Session.retrieveObject('user').language, 'publishDate'].forEach(function (field) {
 					if (row.entity[field].match(matcher)) {
 						match = true;
 					}
@@ -71,9 +71,9 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 			columnDefs: [
 				{ field: 'name_'+Session.retrieveObject('user').language, enableColumnMenu: false, displayName: $filter('translate')('PUBLICATION.LIST.NAME'), cellTemplate: cellTemplateName, width: '30%', sort: {direction: uiGridConstants.ASC, priority: 0} },
 				{
-					field: 'moduleId', displayName: $filter('translate')('PUBLICATION.LIST.TYPE'), enableColumnMenu: false, cellTemplate: cellTemplatePublication, width: '15%', filter: {
+					field: 'module_'+Session.retrieveObject('user').language, displayName: $filter('translate')('PUBLICATION.LIST.TYPE'), enableColumnMenu: false, width: '15%', filter: {
 						type: uiGridConstants.filter.SELECT,
-						selectOptions: [{ value: '2', label: $filter('translate')('PUBLICATION.LIST.PUBLICATION') }, { value: '3', label: $filter('translate')('PUBLICATION.LIST.EDUCATION') }, { value: '7', label: $filter('translate')('PUBLICATION.LIST.QUESTIONNAIRE') }]
+						selectOptions: [{ value: $filter('translate')('PUBLICATION.LIST.PUBLICATION'), label: $filter('translate')('PUBLICATION.LIST.PUBLICATION') }, { value: $filter('translate')('PUBLICATION.LIST.EDUCATION'), label: $filter('translate')('PUBLICATION.LIST.EDUCATION') }, { value: $filter('translate')('PUBLICATION.LIST.QUESTIONNAIRE'), label: $filter('translate')('PUBLICATION.LIST.QUESTIONNAIRE') }]
 					}
 				},
 				{ field: 'type_'+Session.retrieveObject('user').language, enableColumnMenu: false, displayName: $filter('translate')('PUBLICATION.LIST.DESCRIPTION')},
