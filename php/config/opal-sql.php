@@ -56,10 +56,6 @@ define("SQL_OPAL_GET_PUBLISHED_QUESTIONNAIRES",
     FROM ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." qc;"
 );
 
-define("SQL_OPAL_GET_PUBLICATIONS", "
-    SELECT * FROM v_publication;
-");
-
 define("SQL_OPAL_GET_FILTERS",
     "SELECT DISTINCT 
     f.FilterType AS type,
@@ -138,6 +134,14 @@ define("SQL_OPAL_UPDATE_PUBLICATION_STATUS_FLAG",
 
 define("SQL_OPAL_GET_ALL_PUBLICATION_MODULES",
     "SELECT * FROM module m WHERE m.active = 1 AND m.publication = 1 ORDER BY m.order;"
+);
+
+define("SQL_OPAL_BUILD_PUBLICATION_VIEW",
+    "SELECT m.sqlPublication FROM module m WHERE m.active = 1 AND m.publication = 1 ORDER BY m.order"
+);
+
+define("SQL_OPAL_GET_ALL_PUBLICATION_MODULES_USER",
+    "SELECT m.ID, m.name_EN, m.name_FR, m.iconClass FROM module m WHERE m.active = 1 AND m.publication = 1 ORDER BY m.order;"
 );
 
 define("SQL_OPAL_GET_QUESTIONNAIRE_CONTROL_DETAILS",

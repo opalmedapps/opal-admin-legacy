@@ -23,4 +23,8 @@ class OpalProject
         );
         $this->opalDB->setSessionId($sessionId);
     }
+
+    public function getPublicationModulesUser() {
+        return $this->opalDB->getPublicationModulesUser();
+    }
 }

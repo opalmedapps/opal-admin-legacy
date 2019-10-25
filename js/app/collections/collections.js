@@ -924,6 +924,19 @@ angular.module('opalAdmin.collections', [])
 
 		};
 
+		publicationAPI.getPublicationModules = function (OAUserId) {
+			return $http.post(
+				"publication/get/publication-modules",
+				$.param({
+					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+
+		};
+
 		publicationAPI.getPublicationsDetails = function (publicationId, OAUserId) {
 			return $http.post(
 				"publication/get/publication-details",

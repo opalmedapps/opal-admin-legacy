@@ -214,6 +214,7 @@ RewriteRule ^publication/update/publish-flag php/publication/update.publish.flag
 RewriteRule ^publication/update/publication php/publication/update.publication.php [QSA,L]
 RewriteRule ^publication/get/publication-details api/publication/get.publications_details.php [QSA,L]
 RewriteRule ^publication/get/publications api/publication/get.publications.php [QSA,L]
+RewriteRule ^publication/get/publication-modules api/publication/get.publication.modules.php [QSA,L]
 RewriteRule ^publication/insert/publication php/publication/insert.publication.php [QSA,L]
 
 # Library Section
