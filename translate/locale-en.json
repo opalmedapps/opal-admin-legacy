@@ -737,10 +737,10 @@
       "ERROR_FLAGS": "An error occurred while saving the publication flags.",
       "NO": "No",
       "YES": "Yes",
-      "TYPE": "Type",
-      "EDUCATION": "Educational Material",
-      "PUBLICATION": "Post",
-      "QUESTIONNAIRE": "Questionnaire",
+      "TYPE": "Module",
+      "EDUCATION": "Educational Materials",
+      "PUBLICATION": "Posts",
+      "QUESTIONNAIRE": "Questionnaires",
       "PUBLISH_DATE": "Date to be published"
     },
     "DELETE": {

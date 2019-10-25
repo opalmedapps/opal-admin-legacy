@@ -752,10 +752,10 @@
       "ERROR_FLAGS": "Une erreur s'est produite lors de la mise à jour des options de publication.",
       "NO": "Non",
       "YES": "Oui",
-      "TYPE": "Type",
-      "EDUCATION": "Matériel éducatif",
-      "PUBLICATION": "Annonce / message",
-      "QUESTIONNAIRE": "Questionnaire",
+      "TYPE": "Module",
+      "EDUCATION": "Matériels éducatifs",
+      "PUBLICATION": "Annonces et messages",
+      "QUESTIONNAIRE": "Questionnaires",
       "PUBLISH_DATE": "Date à publier"
     },
     "DELETE": {
