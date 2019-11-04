@@ -21,6 +21,7 @@ define("OPAL_QUESTIONNAIRE_CONTROL_TABLE","QuestionnaireControl");
 define("OPAL_FILTERS_TABLE","Filters");
 define("OPAL_FILTERS_MODIFICATION_HISTORY_TABLE","FiltersMH");
 define("OPAL_FREQUENCY_EVENTS_TABLE","FrequencyEvents");
+define("OPAL_MODULE_TABLE","module");
 
 /*
  * Listing of all SQL queries for the Opal database
@@ -133,15 +134,19 @@ define("SQL_OPAL_UPDATE_PUBLICATION_STATUS_FLAG",
 );
 
 define("SQL_OPAL_GET_ALL_PUBLICATION_MODULES",
-    "SELECT * FROM module m WHERE m.active = 1 AND m.publication = 1 ORDER BY m.order;"
+    "SELECT * FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.publication = 1 ORDER BY m.order;"
 );
 
 define("SQL_OPAL_BUILD_PUBLICATION_VIEW",
-    "SELECT m.sqlPublication FROM module m WHERE m.active = 1 AND m.publication = 1 ORDER BY m.order"
+    "SELECT m.sqlPublicationList, m.sqlPublicationChartLog FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.publication = 1 ORDER BY m.order"
 );
 
+define("SQL_OPAL_GET_MODULE_BY_ID", "
+    SELECT * FROM ".OPAL_MODULE_TABLE." WHERE ID = :ID;
+");
+
 define("SQL_OPAL_GET_ALL_PUBLICATION_MODULES_USER",
-    "SELECT m.ID, m.name_EN, m.name_FR, m.iconClass FROM module m WHERE m.active = 1 AND m.publication = 1 ORDER BY m.order;"
+    "SELECT m.ID, m.name_EN, m.name_FR, m.iconClass FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.publication = 1 ORDER BY m.order;"
 );
 
 define("SQL_OPAL_GET_QUESTIONNAIRE_CONTROL_DETAILS",

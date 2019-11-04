@@ -743,10 +743,17 @@
       "QUESTIONNAIRE": "Questionnaires",
       "PUBLISH_DATE": "Date to be published"
     },
-    "DELETE": {
-    },
     "ADD": {
-
+      "TITLE": "Add a publication",
+      "BACK": "Back to publication",
+      "SUMMARY": "Summary",
+      "TYPE": "Type",
+      "SOURCE_EXPLANATION": "Please choose the type of publication",
+      "REQUIRED": "Required field:",
+      "OPTIONAL_FIELD": "Optional field:",
+      "PUBLICATION": "Publication",
+      "PUBLICATION_EXPLANATION": "Please choose the publication",
+      "ERROR_MODULE": "An error occurred while getting the list of modules."
     },
     "EDIT": {
 

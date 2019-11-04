@@ -11,6 +11,7 @@ class HelpSetup {
      * Basic functions to return an error message to the caller
      * */
     public static function returnErrorMessage($errcode, $details) {
+        http_response_code($errcode);
         header('Content-Type: application/javascript');
         $response['code'] = $errcode;
         $response['message'] = $details;
