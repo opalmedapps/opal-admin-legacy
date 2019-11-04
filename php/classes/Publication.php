@@ -13,6 +13,33 @@ class Publication extends OpalProject
         return $this->opalDB->getPublications();
     }
 
+    public function getPublicationsPerModule($moduleId) {
+        return $this->opalDB->getPublicationsPerModule($moduleId);
+    }
+
+    public function getPublicationChartLogs() {
+        $result = $this->opalDB->getPublicationChartLogs();
+
+        $arrResult = array();
+        $tempResult = array();
+
+        $currentModule = "-1";
+        $currentID = "-1";
+        foreach($result as $row) {
+           // print_r($row); print "<br/><br/>";
+            if($currentModule != $row["moduleId"] || $currentID != $row["ID"]) {
+                if (!empty($tempResult))
+                    array_push($arrResult, array("name"=>$row["name_EN"], "data"=>$tempResult));
+                $tempResult = array();
+                $currentModule = $row["moduleId"];
+                $currentID = $row["ID"];
+            }
+            array_push($tempResult, array("x"=>$row["x"],"y"=>$row["y"],"cron_serial"=>$row["cron_serial"]));
+        }
+        array_push($arrResult, array("name"=>$row["name_EN"], "data"=>$tempResult));
+        return $arrResult;
+    }
+
     /*
      * Validate and sanitize the list of publish flag of publications
      * @params  array of publications to mark as published or not ($_POST)
@@ -47,7 +74,7 @@ class Publication extends OpalProject
         foreach($list as $row) {
             foreach($publicationModules as $module) {
                 if ($module["ID"] == $row["moduleId"]) {
-                    $this->opalDB->updatePublicationFlag($module["tableName"], $module["primaryKeyName"], $row["publishFlag"], $row["ID"]);
+                    $this->opalDB->updatePublicationFlag($module["tableName"], $module["primaryKey"], $row["publishFlag"], $row["ID"]);
                     break;
                 }
             }

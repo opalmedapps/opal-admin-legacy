@@ -78,8 +78,30 @@ class DatabaseOpal extends DatabaseAccess {
         $sqlModule = array();
         $moduleSQLCode = $this->_fetchAll(SQL_OPAL_BUILD_PUBLICATION_VIEW, array());
         foreach ($moduleSQLCode as $module)
-            array_push($sqlModule, $module["sqlPublication"]);
-        $sqlModule = implode(" UNION ALL ", $sqlModule);
+            if (strip_tags($module["sqlPublicationList"]) != "")
+                array_push($sqlModule, $module["sqlPublicationList"]);
+        $sqlModule = implode(SQL_GENERAL_UNION_ALL, $sqlModule);
+        return $this->_fetchAll($sqlModule, array());
+    }
+
+    function getPublicationsPerModule($moduleId) {
+        if($moduleId == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Module cannot be found. Access denied.");
+        $module = $this->_fetch(SQL_OPAL_GET_MODULE_BY_ID, array(array("parameter"=>":ID","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
+        $sqlFetchPerModule = $module["unique"] == 1 ? $module["sqlUnique"] : $module["sqlPublicationList"];
+        if($sqlFetchPerModule == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing code. Access denied.");
+        return $this->_fetchAll($sqlFetchPerModule);
+    }
+
+    function getPublicationChartLogs() {
+        $sqlModule = array();
+        $moduleSQLCode = $this->_fetchAll(SQL_OPAL_BUILD_PUBLICATION_VIEW, array());
+        foreach ($moduleSQLCode as $module) {
+            if (strip_tags($module["sqlPublicationChartLog"]) != "")
+                array_push($sqlModule, $module["sqlPublicationChartLog"]);
+        }
+        $sqlModule = "SELECT * FROM (" . implode( SQL_GENERAL_UNION_ALL, $sqlModule) . ") AS i ORDER BY moduleId, ID, x";
         return $this->_fetchAll($sqlModule, array());
     }
 
