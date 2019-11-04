@@ -1268,7 +1268,6 @@ class EduMaterial {
                 foreach ($eduMatSeries as $seriesName => $series) {
                     array_push($educationalMaterialLogs, $series);
                 }
-
             }
             // get logs for specific alias
             else {

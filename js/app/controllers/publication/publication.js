@@ -5,6 +5,11 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 		// get current user id
 		var user = Session.retrieveObject('user');
 		var OAUserId = user.id;
+		$scope.detailView = "list";
+
+		$scope.goToAddPublication = function () {
+			$state.go('publication-add');
+		};
 
 		// Banner
 		$scope.bannerMessage = "";
@@ -52,6 +57,126 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 
 		};
 
+		$scope.switchDetailView = function (view) {
+			// only switch when there's no changes that have been made
+			if (!$scope.changesMade) {
+				$scope.detailView = view;
+			}
+		};
+
+		$scope.$watch('detailView', function (view) {
+			if (view === 'list') {
+				// Call our API to get the list of existing posts
+				getPublicationsList();
+				if ($scope.publicationListLogs.length) {
+					$scope.publicationListLogs = [];
+					$scope.gridApiLog.grid.refresh();
+				}
+			}
+			else if (view === 'chart') {
+				// Call our API to get post logs
+				publicationCollectionService.getPublicationsChartLogs(OAUserId).then(function (response) {
+					console.log(response.data);
+					$scope.publicationChartLogs = $scope.chartConfig.series = response.data;
+					angular.forEach($scope.publicationChartLogs, function(serie) {
+						angular.forEach(serie.data, function(log) {
+							log.x = new Date(log.x);
+						});
+					});
+				}).catch(function(response) {
+					alert($filter('translate')('POSTS.LIST.ERROR_POSTS_LOGS') + "\r\n" + response.status + " - " + response.data);
+				});
+			}
+		}, true);
+
+		var chartConfig = $scope.chartConfig = {
+			chart: {
+				type: 'spline',
+				zoomType: 'x',
+				className: 'logChart'
+			},
+			title: {
+				text: $filter('translate')('EDUCATION.LIST.ALL_LOGS')
+			},
+			subtitle: {
+				text: $filter('translate')('EDUCATION.LIST.HIGHLIGHT')
+			},
+			xAxis: {
+				type: 'datetime',
+				title: {
+					text: $filter('translate')('EDUCATION.LIST.DATETIME')
+				},
+				events: {
+					// setExtremes: function (selection) {
+					// 	if (selection.min !== undefined && selection.max !== undefined) {
+					// 		var cronSerials = new Set();
+					// 		var allSeries = selection.target.series; // get all series
+					// 		angular.forEach(allSeries, function (series) {
+					// 			// check if series is visible (i.e. not disabled via the legend)
+					// 			if (series.visible) {
+					// 				var points = series.points;
+					// 				angular.forEach(points, function (point) {
+					// 					timeInMilliSeconds = point.x.getTime();
+					// 					if (timeInMilliSeconds >= selection.min && timeInMilliSeconds <= selection.max) {
+					// 						if (!cronSerials.has(point.cron_serial)) {
+					// 							cronSerials.add(point.cron_serial);
+					// 						}
+					// 					}
+					// 				});
+					// 			}
+					// 		});
+					// 		// convert set to array
+					// 		cronSerials = Array.from(cronSerials);
+					// 		educationalMaterialCollectionService.getEducationalMaterialListLogs(cronSerials).then(function (response) {
+					// 			$scope.educationalMaterialListLogs = response.data;
+					// 		});
+					// 	} else {
+					// 		$scope.educationalMaterialListLogs = [];
+					// 		$scope.gridApiLog.grid.refresh();
+					//
+					// 	}
+					// }
+				}
+			},
+			yAxis: {
+				title: {
+					text: $filter('translate')('EDUCATION.LIST.NUMBER')
+				},
+				tickInterval: 1,
+				min: 0
+			},
+			tooltip: {
+				headerFormat: '<b>{series.name}</b><br>',
+				pointFormat: '{point.x:%e. %b}: {point.y:.2f} m'
+			},
+			plotOptions: {
+				// spline: {
+				// 	marker: {
+				// 		enabled: true
+				// 	}
+				// },
+				// series: {
+				// 	allowPointSelect: true,
+				// 	point: {
+				// 		events: {
+				// 			select: function (point) {
+				// 				var cronLogSerNum = [point.target.cron_serial];
+				// 				educationalMaterialCollectionService.getEducationalMaterialListLogs(cronLogSerNum).then(function (response) {
+				// 					$scope.educationalMaterialListLogs = response.data;
+				// 				});
+				// 			},
+				// 			unselect: function (point) {
+				// 				$scope.educationalMaterialListLogs = [];
+				// 				$scope.gridApiLog.grid.refresh();
+				//
+				// 			}
+				// 		}
+				// 	}
+				// }
+			},
+			series: []
+		};
+
 		// Table
 		// Templates
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
@@ -95,6 +220,27 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 			},
 		};
 
+		$scope.publicationListLogs = [];
+		// Table options for educational material logs
+		$scope.gridLogOptions = {
+			data: 'publicationListLogs',
+			columnDefs: [
+				{field: 'material_name', displayName: $filter('translate')('EDUCATION.LIST.NAME'), enableColumnMenu: false},
+				{field: 'revision', displayName: $filter('translate')('EDUCATION.LIST.REVISION'), enableColumnMenu: false},
+				{field: 'cron_serial', displayName: $filter('translate')('EDUCATION.LIST.CRONLOGSER'), enableColumnMenu: false},
+				{field: 'patient_serial', displayName: $filter('translate')('EDUCATION.LIST.PATIENTSER'), enableColumnMenu: false},
+				{field: 'read_status', displayName: $filter('translate')('EDUCATION.LIST.READ_STATUS'), enableColumnMenu: false},
+				{field: 'date_added', displayName: $filter('translate')('EDUCATION.LIST.PATIENTSER'), enableColumnMenu: false},
+				{field: 'mod_action', displayName: $filter('translate')('EDUCATION.LIST.ACTION'), enableColumnMenu: false}
+			],
+			rowHeight: 30,
+			useExternalFiltering: true,
+			enableColumnResizing: true,
+			onRegisterApi: function (gridApi) {
+				$scope.gridApiLog = gridApi;
+			},
+		};
+
 		// Initialize object for storing questionnaires
 		$scope.publicationList = [];
 		$scope.publicationFlags = {
@@ -128,14 +274,9 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 			}
 			publishedQuestionnaire.changed = 1;
 		};
-		
+
 		// Call API to get the list of questionnaires
-		publicationCollectionService.getPublications(OAUserId).then(function (response) {
-			$scope.publicationList = response.data;
-			console.log($scope.publicationList);
-		}).catch(function(response) {
-			alert($filter('translate')('PUBLICATION.LIST.ERROR_PUBLICATION') + response.status + " " + response.data);
-		});
+		getPublicationsList();
 
 		// Initialize a scope variable for a selected questionnaire
 		$scope.currentPublishedQuestionnaire = {};
@@ -157,21 +298,13 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 				$scope.publicationFlags.OAUserId = currentUser.id;
 				$scope.publicationFlags.sessionId = currentUser.sessionid;
 
-				console.log($scope.publicationFlags);
-
 				// Submit form
-
 				$.ajax({
 					type: "POST",
 					url: "publication/update/publish-flag",
 					data: $scope.publicationFlags,
 					success: function (response) {
-						// Call our API to get the list of existing legacy questionnaires
-						publicationCollectionService.getPublications(OAUserId).then(function (response) {
-							$scope.publicationList = response.data;
-						}).catch(function(response) {
-							alert($filter('translate')('PUBLICATION.LIST.ERROR_PUBLICATION') + response.status + " " + response.data);
-						});
+						getPublicationsList();
 						response = JSON.parse(response);
 						if (response.code === 200) {
 							$scope.setBannerClass('success');
@@ -191,7 +324,15 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 
 			}
 		};
-		
+
+		function getPublicationsList() {
+			publicationCollectionService.getPublications(OAUserId).then(function (response) {
+				$scope.publicationList = response.data;
+			}).catch(function(response) {
+				alert($filter('translate')('PUBLICATION.LIST.ERROR_PUBLICATION') + response.status + " " + response.data);
+			});
+		}
+
 		// Function to edit questionnaire
 		$scope.editPublishedQuestionnaire = function (questionnaire) {
 			$scope.currentPublishedQuestionnaire = questionnaire;

@@ -937,12 +937,38 @@ angular.module('opalAdmin.collections', [])
 
 		};
 
+		publicationAPI.getPublicationsPerModule = function (OAUserId, moduleId) {
+			return $http.post(
+				"publication/get/publications-per-module",
+				$.param({
+					OAUserId: OAUserId,
+					moduleId: moduleId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+
+		};
+
 		publicationAPI.getPublicationsDetails = function (publicationId, OAUserId) {
 			return $http.post(
 				"publication/get/publication-details",
 				$.param({
 					OAUserId: OAUserId,
 					publicationId: publicationId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		publicationAPI.getPublicationsChartLogs = function (OAUserId) {
+			return $http.post(
+				"publication/get/publication-chart-logs",
+				$.param({
+					OAUserId: OAUserId,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
