@@ -1,0 +1,988 @@
+<div id="main">
+    <div id="top">
+        <div class="clearfix">
+            <div class="row">
+                <!-- side bar: summary -->
+                <div class="col-lg-2">
+                    <!-- Home logo-->
+                    <div class="side-navbar" ng-controller="navigation">
+                        <div class="row side-logo" ng-click="goToHome()">
+                            <div class="col-md-12">
+                                <div class="logo">
+                                    <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+                                </div>
+                                <h1 class="animated fadeIn">opal <strong>ADMIN</strong></h1>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="summary-fix">
+                        <!-- Back button -->
+                        <div class="row side-panel-menu">
+                            <div class="col-xs-12 col-sm-5 col-lg-12">
+                                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                                    <div class="side-panel-info-sm">
+                                        <div class="panel-content">
+                                            <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                                            <h6 class="side-panel-title" style="display:inline-block;margin:0;font-size:14px;"><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.BACK'|translate}}</strong></h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Summary -->
+                            <div class="side-menu-title col-lg-12">
+                                <div class="horz-line" style="height: 10px; text-align: center">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <h2>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SUMMARY'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="progress progress-striped active">
+                                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <uib-accordion class="side-navbar">
+                            <!-- SECTION: Title -->
+                            <div uib-accordion-group is-open="titleSection.open" class="panel-container summary-box" is-disabled="!newQuestionnaireToPublish.name_EN && !newQuestionnaireToPublish.name_FR">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="newQuestionnaireToPublish.name_EN && newQuestionnaireToPublish.name_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.NAME'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i ng-if="newQuestionnaireToPublish.name_EN || newQuestionnaireToPublish.name_FR" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="newQuestionnaireToPublish.name_EN" class="description">
+                                    <p style="margin-botton:5px">
+                                        <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ENGLISH_TITLE'|translate}}</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{newQuestionnaireToPublish.name_EN}}
+                                    </p>
+                                </div>
+                                <div ng-if="newQuestionnaireToPublish.name_FR" class="description">
+                                    <p style="margin-botton:5px">
+                                        <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.FRENCH_TITLE'|translate}}</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{newQuestionnaireToPublish.name_FR}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Questionnaire -->
+                            <div uib-accordion-group is-open="questionnaireSection.open" class="panel-container summary-box" is-disabled="!newQuestionnaireToPublish.questionnaireId" ng-class="{fadeInUp: questionnaireSection.show}" ng-if="questionnaireSection.show">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="newQuestionnaireToPublish.questionnaireId" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.QUESTIONNAIRE'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i ng-if="newQuestionnaireToPublish.name_EN || newQuestionnaireToPublish.name_FR" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': questionnaireSection.open, 'glyphicon-chevron-right': !questionnaireSection.open}"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="newQuestionnaireToPublish.name_EN" class="description">
+                                    <p style="margin-botton:5px">
+                                        <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ENGLISH_TITLE'|translate}}</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{selectedAt.name_EN}}
+                                    </p>
+                                </div>
+                                <div ng-if="newQuestionnaireToPublish.name_FR" class="description">
+                                    <p style="margin-botton:5px">
+                                        <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.FRENCH_TITLE'|translate}}</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{selectedAt.name_FR}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Publish Frequency -->
+                            <div uib-accordion-group is-open="publishFrequencySection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:publishFrequencySection.show}" is-disabled="!showFrequency" ng-if="showFrequency">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2"><span ng-if="checkFrequencyFilter() && showFrequency" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span></div>
+                                        <div class="col-md-8"><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.PUBLISH_FREQUENCY'|translate}}</strong></div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': publishFrequencySection.open, 'glyphicon-chevron-right': !publishFrequencySection.open}" ng-if="showFrequency"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="showFrequency" class="description">
+                                    <p style="margin-bottom:5px;">
+                                        <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.REPEAT'|translate}}</strong><br>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        <span ng-if="!showFrequency">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.NA'|translate}}</span>
+                                        <span ng-if="frequencySelected.id != 'custom' && showFrequency">{{frequencySelected.name}}</span>
+                                        <span ng-if="frequencySelected.id == 'custom' && language == 'EN'">
+                                            {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.EVERY'|translate}}
+                                            <span ng-if="customFrequency.meta_value != 1">{{customFrequency.meta_value}}</span>
+                                            {{customFrequency.unit.name}}
+                                            <span ng-if="selectedDaysInWeek.length">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ON'|translate}} {{selectedDaysInWeekText}}</span>
+                                            <span ng-if="selectedMonthsInYear.length">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.IN'|translate}} {{selectedMonthsInYearText}} </span>
+                                            <span ng-if="selectedDatesInMonth.length">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ON_THE'|translate}} {{selectedDatesInMonthText}} {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.OF'|translate}}
+                                                <span ng-if="selectedMonthsInYear.length > 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.EACH'|translate}}</span>
+                                                <span ng-if="selectedMonthsInYear.length < 2">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.THE'|translate}}</span>
+                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.THE_MONTH'|translate}}
+                                            </span>
+                                            <span ng-if="selectedWeekNumberInMonth.id && selectedSingleDayInWeek.id">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ON_THE'|translate}} {{selectedWeekNumberInMonthText}} {{selectedSingleDayInWeekText}} {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.OF'|translate}}
+                                                <span ng-if="selectedMonthsInYear.length > 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.EACH'|translate}}</span>
+                                                <span ng-if="selectedMonthsInYear.length < 2">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.THE'|translate}}</span>
+                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.THE_MONTH'|translate}}
+                                            </span>
+                                        </span>
+                                        <span ng-if="frequencySelected.id == 'custom' && language == 'FR'">
+                                            <span ng-show="customFrequency.unit.id == 'week'">
+                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TOUTES_LES'|translate}}
+                                            </span>
+                                            <span ng-hide="customFrequency.unit.id == 'week'">
+                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TOUS_LES'|translate}}
+                                            </span>
+                                            <span ng-if="customFrequency.meta_value != 1">{{customFrequency.meta_value}}</span>
+                                            {{customFrequency.unit.name_fr}}
+                                            <span ng-if="selectedDaysInWeek.length">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ON'|translate}} {{selectedDaysInWeekText}}.</span>
+                                            <span ng-if="selectedMonthsInYear.length">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.IN'|translate}} {{selectedMonthsInYearText}} </span>
+                                            <span ng-if="selectedDatesInMonth.length">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ON_THE'|translate}} {{selectedDatesInMonthText}} {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.OF_2'|translate}}
+                                                <span ng-if="selectedMonthsInYear.length > 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.EACH'|translate}}</span>
+                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.THE_MONTH'|translate}}.
+                                            </span>
+                                            <span ng-if="selectedWeekNumberInMonth.id && selectedSingleDayInWeek.id">
+                                                <span ng-if="setSelectedMonthsInYearText && customFrequency.unit.id != 'month'">-</span>
+                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ON_THE'|translate}} {{selectedWeekNumberInMonthText}} {{selectedSingleDayInWeekText}}
+
+                                                <span ng-if="setSelectedMonthsInYearText && selectedMonthsInYear.length <= 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.OF_2'|translate}}</span>
+                                                <span ng-if="!setSelectedMonthsInYearText || selectedMonthsInYear.length > 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.OF'|translate}}</span>
+
+                                                <span ng-if="selectedMonthsInYear.length > 1">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.EACH'|translate}}</span>
+                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.THE_MONTH'|translate}}.
+                                            </span>
+                                        </span>
+                                    </p>
+                                </div>
+                                <div ng-if="showFrequency" class="description">
+                                    <p style="margin-bottom:5px;">
+                                        <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.REPEAT_START'|translate}}</strong><br>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        <span ng-if="newQuestionnaireToPublish.occurrence.start_date">{{newQuestionnaireToPublish.occurrence.start_date|date:'yyyy-MM-dd'}}</span>
+                                        <span ng-if="!newQuestionnaireToPublish.occurrence.start_date">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.NA'|translate}}</span>
+                                    </p>
+                                </div>
+                                <div ng-if="showFrequency" class="description">
+                                    <p style="margin-bottom:5px;">
+                                        <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.REPEAT_END'|translate}}</strong><br>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        <span ng-if="newQuestionnaireToPublish.occurrence.end_date">{{newQuestionnaireToPublish.occurrence.end_date | date: 'yyyy-MM-dd' }}</span>
+                                        <span ng-if="!newQuestionnaireToPublish.occurrence.end_date">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.NEVER'|translate}}</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- SECTION: Patient triggers -->
+                            <div uib-accordion-group is-open="triggerSection.patient.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(patientTriggerList)" ng-if="checkTriggers(patientTriggerList)">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="checkTriggers(patientTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.PATIENT_TRIGGERS'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.patient.open, 'glyphicon-chevron-right': !triggerSection.patient.open}" ng-if="checkTriggers(patientTriggerList)"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="checkTriggers(patientTriggerList) && !selectAll.patient.all" class="description">
+                                    <p>
+                                    <ul style="max-height: 100px; overflow-y: auto;">
+                                        <li ng-repeat="patient in patientTriggerList | filter: {added: 1} : 1">
+                                            {{patient.name}}
+                                        </li>
+                                    </ul>
+                                    </p>
+                                </div>
+                                <div ng-if="selectAll.patient.all" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SEND_ALL_PATIENTS'|translate}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Demographic trigger -->
+                            <div uib-accordion-group is-open="demoSection.open "class="panel-container summary-box animated" ng-class="{fadeInUp:demoSection.open}" is-disabled="!demoTrigger.sex && demoTrigger.age.min == 0 && demoTrigger.age.max == 130" ng-if="demoTrigger.sex || demoTrigger.age.min !== 0 || demoTrigger.age.max !== 130">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="demoTrigger.sex || demoTrigger.age.min != 0 || demoTrigger.age.max != 130" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.DEMO_TRIGGERS'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':demoSection.open , 'glyphicon-chevron-right':!demoSection.open }" ng-if="demoTrigger.sex || demoTrigger.age.min != 0 || demoTrigger.age.max != 130"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="demoTrigger.sex_display" class="description">
+                                    <p>
+                                        <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SEX'|translate}}</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{demoTrigger.sex_display}}
+                                    </p>
+                                </div>
+                                <div ng-if="demoTrigger.age.min != 0 || demoTrigger.age.max != 130" class="description">
+                                    <p>
+                                        <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.AGE_GROUP'|translate}}</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{demoTrigger.age.min}} {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TO'|translate}} {{demoTrigger.age.max}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Appointment Status trigger -->
+                            <div uib-accordion-group is-open="triggerSection.appointmentStatus.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(appointmentStatusList)" ng-if="checkTriggers(appointmentStatusList)">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="checkTriggers(appointmentStatusList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.APPT_STATUS_TRIGGER'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.appointmentStatus.open, 'glyphicon-chevron-right': !triggerSection.appointmentStatus.open}" ng-if="checkTriggers(appointmentStatusList)"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="checkTriggers(appointmentStatusList)" class="description">
+                                    <p>
+                                    <ul style="max-height: 100px; overflow-y: auto;">
+                                        <li ng-repeat="appointmentStatus in appointmentStatusList | filter: {added: 1} : 1">
+                                            {{appointmentStatus.name_display}}
+                                        </li>
+                                    </ul>
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Appointment triggers -->
+                            <div uib-accordion-group is-open="triggerSection.appointment.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(appointmentTriggerList)" ng-if="checkTriggers(appointmentTriggerList)">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="checkTriggers(appointmentTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.APPT_TRIGGERS'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.appointment.open, 'glyphicon-chevron-right': !triggerSection.appointment.open}" ng-if="checkTriggers(appointmentTriggerList)"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="checkTriggers(appointmentTriggerList) && !selectAll.appointment.all" class="description">
+                                    <p><ul style="max-height: 100px; overflow-y: auto;"><li ng-repeat="appointment in appointmentTriggerList | filter: {added: 1} : 1">{{appointment.name_display}}</li></ul></p>
+                                </div>
+                                <div ng-if="selectAll.appointment.all" class="description">
+                                    <p><span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ALL_APPT'|translate}}</p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Diagnosis triggers -->
+                            <div uib-accordion-group is-open="triggerSection.diagnosis.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(dxTriggerList)" ng-if="checkTriggers(dxTriggerList)">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="checkTriggers(dxTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.DIAGNOSIS_TRIGGERS'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.diagnosis.open, 'glyphicon-chevron-right': !triggerSection.diagnosis.open}" ng-if="checkTriggers(dxTriggerList)"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="checkTriggers(dxTriggerList) && !selectAll.diagnosis.all" class="description">
+                                    <p><ul style="max-height: 100px; overflow-y: auto;"><li ng-repeat="dx in dxTriggerList | filter: {added: 1} : 1">{{dx.name_display}}</li></ul></p>
+                                </div>
+                                <div ng-if="selectAll.diagnosis.all" class="description">
+                                    <p><span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ALL_DIAGNOSES'|translate}}</p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Doctor triggers -->
+                            <div uib-accordion-group is-open="triggerSection.doctor.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(doctorTriggerList)" ng-if="checkTriggers(doctorTriggerList)">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="checkTriggers(doctorTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.DOCTOR_TRIGGERS'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.doctor.open, 'glyphicon-chevron-right': !triggerSection.doctor.open}" ng-if="checkTriggers(doctorTriggerList)"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="checkTriggers(doctorTriggerList) && !selectAll.doctor.all" class="description">
+                                    <p>
+                                    <ul style="max-height: 100px; overflow-y: auto;">
+                                        <li ng-repeat="doctor in doctorTriggerList | filter: {added: 1} : 1">
+                                            {{doctor.name}}
+                                        </li>
+                                    </ul>
+                                    </p>
+                                </div>
+                                <div ng-if="selectAll.doctor.all" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ALL_DOCTORS'|translate}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Treatment Machine triggers -->
+                            <div uib-accordion-group is-open="triggerSection.machine.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(machineTriggerList)" ng-if="checkTriggers(machineTriggerList)">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="checkTriggers(machineTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TREATMENT_MACHINE_TRIGGERS'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.machine.open, 'glyphicon-chevron-right': !triggerSection.machine.open}" ng-if="checkTriggers(machineTriggerList)"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="checkTriggers(machineTriggerList) && !selectAll.machine.all" class="description">
+                                    <p><ul style="max-height: 100px; overflow-y: auto;"><li ng-repeat="machine in machineTriggerList | filter: {added: 1} : 1">{{machine.name}}</li></ul></p>
+                                </div>
+                                <div ng-if="selectAll.machine.all" class="description">
+                                    <p><span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ALL_TREATMENT_MACHINES'|translate}}</p>
+                                </div>
+                            </div>
+                        </uib-accordion>
+                        <!-- Submit button -->
+                        <div class="panel-container">
+                            <a href="" ng-click="submitTemplateQuestion()" ng-show="checkForm()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" style="width: 100%;">
+                                <span style="font-size: 20px;"><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SUBMIT'|translate}}</strong></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right side detail view -->
+                <div class="col-xs-12 col-lg-10 animated fadeInRight">
+                    <div class="row main-title">
+                        <!-- Page title -->
+                        <div class="col-xs-12 col-md-6 title-content">
+                            <span class="fa fa-plus"></span>
+                            <h1><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ADD'|translate}}</strong></h1>
+                        </div>
+                        <!-- Breadcrumbs -->
+                        <div class="col-md-6 title-breadcrumbs">
+                            <span>
+                                <a ui-sref="home">{{'QUESTIONNAIRE_MODULE.BREADCRUMBS.HOME'|translate}}</a>
+                                <span class="glyphicon glyphicon-menu-right teflon"></span>
+                                <a ui-sref="questionnaire-menu">{{'QUESTIONNAIRE_MODULE.DASHBOARD.TITLE'|translate}}</a>
+                                <span class="glyphicon glyphicon-menu-right teflon"></span>
+                                <a ui-sref="questionnaire-question">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_LIST.TITLE'|translate}}</a>
+                                <span class="glyphicon glyphicon-menu-right teflon"></span>
+                                <strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TITLE'|translate}}</strong>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="row mobile-side-panel-menu">
+                        <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
+                            <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                                <div class="side-panel-info-sm">
+                                    <div class="panel-content">
+                                        <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                                        <h6 class="side-panel-title"><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.BACK'|translate}}</strong></h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkForm()">
+                            <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
+                                <span style="padding: 0 10px;">
+                                    <h2>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.STEP'|translate}} {{numOfCompletedSteps}} {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.OF'|translate}} {{stepTotal}} {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.COMPLETED'|translate}}</h2>
+                                </span>
+                            </div>
+                            <div class="progress progress-striped active">
+                                <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-content">
+                        <!-- SECTION: Question text -->
+                        <div class="row">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span><h2>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.NAME'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 5px;">
+                                    <span style="color:#d9534f"><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.REQUIRED'|translate}}</strong></span>
+                                    {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.NAME_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="panel" ng-class="(newQuestionnaireToPublish.name_EN) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ENGLISH'|translate}}</strong>
+                                        <span ng-hide="newQuestionnaireToPublish.name_EN" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="newQuestionnaireToPublish.name_EN" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.COMPLETE'|translate}}</em></span>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <textarea class="form-control" rows="2" ng-model="newQuestionnaireToPublish.name_EN" ng-change="updateQuestionText()"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                                <div class="panel" ng-class="(newQuestionnaireToPublish.name_FR) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.FRENCH'|translate}}</strong>
+                                        <span ng-hide="newQuestionnaireToPublish.name_FR" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="newQuestionnaireToPublish.name_FR" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.COMPLETE'|translate}}</em></span>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <textarea class="form-control" rows="2" ng-model="newQuestionnaireToPublish.name_FR" ng-change="updateQuestionText()"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row animated" ng-class="{fadeInUp: questionnaireSection.show}" ng-if="questionnaireSection.show">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.QUESTIONNAIRE_PUBLISH'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: questionnaireSection.show}" ng-if="questionnaireSection.show" style="margin-bottom:20px;">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 5px;"><span style="color:#d9534f"><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.REQUIRED'|translate}}</strong></span> {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.QUESTIONNAIRE_PUBLISH_EXP'|translate}}</p>
+                            </div>
+                        </div>
+
+                        <div class="row animated" ng-class="{fadeInUp: questionnaireSection.show}" ng-if="questionnaireSection.show">
+                            <div class="col-xs-12 col-md-8">
+                                <div class="panel" ng-class="newQuestionnaireToPublish.questionnaireId ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.LIST_QUESTIONNAIRES'|translate}}</strong>
+                                        <span ng-hide="newQuestionnaireToPublish.questionnaireId" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="newQuestionnaireToPublish.questionnaireId" style="float:right"><em>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.COMPLETE'|translate}}</em></span>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                            <input class="form-control" type="text" ng-model="atEntered" ng-change="searchAt(atEntered)" placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SEARCH'|translate}}"/>
+                                        </div>
+                                        <ul class="list-items">
+                                            <li ng-repeat="at in questionnaireList | filter: searchAtFilter">
+                                                <label>
+                                                    <input type="radio" name="{{at.name_display}}" value="{{at.ID}}" ng-model="newQuestionnaireToPublish.questionnaireId" ng-change="updateAt(at)"/> {{at.name_display}}
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Publish frequency -->
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.PUBLISH_FRENQUENCY'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.OPTIONAL_FIELD'|translate}}</strong></span>
+                                    {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.PUBLISH_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show" style="margin-bottom:10px;position:relative;z-index:50">
+                            <div style="margin-bottom:10px;">
+                                <div class="col-xs-12">
+                                    <button class="btn btn-success" ng-if="!showFrequency" ng-click="addFrequencyFilter()">
+                                        <span style="font-size: 17px;" class="fa fa-plus"></span>
+                                        <span style="font-size: 20px;"><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ADD_2'|translate}}</strong></span>
+                                    </button>
+                                    <button class="btn btn-danger" ng-if="showFrequency" ng-click="removeFrequencyFilter()">
+                                        <span style="font-size: 17px;" class="glyphicon glyphicon-minus"></span>
+                                        <span style="font-size: 20px;"><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.REMOVE'|translate}}</strong></span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12" style="margin-bottom:10px;" ng-if="showFrequency">
+                                <div class="col-xs-12 col-sm-4">
+                                    <div class="form-horizontal">
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12">
+                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.REPEAT'|translate}}
+                                            </label>
+                                            <div class="col-xs-8">
+                                                <select class="form-control" ng-options="presetFrequency as presetFrequency.name for presetFrequency in presetFrequencies track by presetFrequency.id" ng-model="frequencySelected" ng-change="selectFrequency(frequencySelected)">
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-sm-4">
+                                    <div class="form-horizontal">
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12">
+                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.REPEAT_START'|translate}}
+                                            </label>
+                                            <div class="col-xs-12 col-lg-9">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newQuestionnaireToPublish.occurrence.start_date" ng-change="setChangesMade()" is-open="popupStart.opened"datepicker-options="dateOptionsStart" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
+                                                    <span class="input-group-btn">
+                                                        <button class="btn btn-default" ng-click="openStart($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-sm-4">
+                                    <div class="form-horizontal">
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12">
+                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.REPEAT_END'|translate}}
+                                            </label>
+                                            <div ng-if="!addEndDate" class="col-xs-12 col-lg-9">
+                                                <button class="btn btn-default" ng-click="toggleEndDate()">
+                                                    <span class="fa fa-plus"></span>
+                                                    <span><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ADD_END_DATE'|translate}}</strong></span>
+                                                </button>
+                                            </div>
+                                            <div class="col-xs-12 col-lg-9" style="margin-bottom:10px;">
+                                                <div class="input-group">
+                                                    <input ng-if="addEndDate" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newQuestionnaireToPublish.occurrence.end_date" ng-change="setChangesMade()" is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
+                                                    <span ng-if="addEndDate" class="input-group-btn">
+                                                        <button class="btn btn-default" ng-click="openEnd($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12">
+                                                <button class="btn btn-default" ng-if="addEndDate" ng-click="toggleEndDate()">
+                                                    <span class="glyphicon glyphicon-minus"></span>
+                                                    <span><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.REMOVE_END_DATE'|translate}}</strong></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12">
+                                <div class="col-xs-12 col-sm-4" ng-if="frequencySelected.id == 'custom'">
+                                    <div class="form-horizontal">
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12">
+                                                {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.REPEAT_INTERVAL'|translate}}
+                                            </label>
+                                            <div class="col-xs-3">
+                                                <input class="form-control" ng-model="customFrequency.meta_value" type="number" max="59" min="1">
+                                            </div>
+                                            <div class="col-xs-6">
+                                                <select class="form-control" ng-options="unit as unit.name for unit in frequencyUnits track by unit.id" ng-model="customFrequency.unit" ng-change="selectRepeatInterval(customFrequency.unit)">
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-12 col-sm-4" ng-if="frequencySelected.id == 'custom' && customFrequency.unit.id != 'day'">
+                                    <div class="form-horizontal">
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12">
+                                                <span ng-if="customFrequency.unit.id == 'week'">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.REPEAT_ON_DAYS'|translate}}</span>
+                                                <span ng-if="customFrequency.unit.id == 'month' || customFrequency.unit.id == 'year'">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.REPEAT_OPTIONS'|translate}}</span>
+                                            </label>
+                                            <div class="col-xs-8" style="margin-bottom: 10px;" ng-if="customFrequency.unit.id == 'week'">
+                                                <div ng-dropdown-multiselect="" options="daysInWeek" selected-model="selectedDaysInWeek" extra-settings="weekDropdownSettings" events="weekDropdownEvents" translation-texts="projectText"></div>
+                                            </div>
+                                            <div ng-if="customFrequency.unit.id == 'year'"class="col-xs-10" style="margin-bottom: 10px;">
+                                                <div ng-dropdown-multiselect="" options="monthsInYear" selected-model="selectedMonthsInYear" extra-settings="monthDropdownSettings" events="monthDropdownEvents" translation-texts="projectText"></div>
+                                            </div>
+                                            <div ng-if="customFrequency.unit.id == 'month'" class="col-xs-12" style="margin-bottom: 10px;">
+                                                <div class="btn-group btn-group-justified" role="group">
+                                                    <div class="btn-group" role="group">
+                                                        <button type="button" class="btn btn-default" ng-class="{active: repeatSub == 'onDate'}" ng-click="setRepeatSub('onDate')">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ON_DATE'|translate}}</button>
+                                                    </div>
+                                                    <div class="btn-group" role="group">
+                                                        <button type="button" class="btn btn-default" ng-class="{active: repeatSub == 'onWeek'}" ng-click="setRepeatSub('onWeek')">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ON_WEEK'|translate}}</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div ng-if="repeatSub == 'onDate' && customFrequency.unit.id == 'month'" class="no-calendar-header col-xs-12" style="margin-bottom: 10px;">
+                                                <multiple-date-picker day-click="setChangesMade()" ng-model="selectedDatesInMonth" month="staticMonth"></multiple-date-picker>
+                                            </div>
+                                            <div ng-if="repeatSub == 'onWeek' || customFrequency.unit.id == 'year'" class="col-xs-4" style="margin-bottom: 10px;">
+                                                <select class="form-control" ng-options="week as week.name for week in weekNumbersInMonth track by week.id" ng-model="selectedWeekNumberInMonth" ng-change="selectWeekInMonth(selectedWeekNumberInMonth)" >
+                                                </select>
+                                            </div>
+                                            <div ng-if="repeatSub == 'onWeek' || customFrequency.unit.id == 'year'" class="col-xs-6" style="margin-bottom: 10px;">
+                                                <select class="form-control" ng-options="day as day.name for day in daysInWeek track by day.id" ng-model="selectedSingleDayInWeek" ng-change="selectDayInWeek(selectedSingleDayInWeek, customFrequency.unit.id)">
+                                                    <option value="" selected="selected">---</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- SECTION: Patient triggers -->
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                      <span class="fas fa-dot-circle"></span>
+                                      <h2>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TRIGGER_PATIENT'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.OPTIONAL_FIELD'|translate}}</strong></span>
+                                    {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.PATIENT_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                            <div class="col-xs-12 col-lg-8">
+                                <div class="panel-container">
+                                    <div class="panel-info">
+                                        <div class="panel-content">
+                                            <div class="panel-input">
+                                                <div class="list-space">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                        <input class="form-control" type="text" ng-model="patientSearchField" ng-change="searchPatient(patientSearchField)" placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SEARCH'|translate}}"/>
+                                                    </div>
+                                                    <div style="padding: 10px;">
+                                                        <label>
+                                                            <input type="checkbox" ng-click="selectAllTriggers(patientTriggerList, searchPatientFilter, selectAll.patient)" ng-checked="selectAll.patient.checked"> {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SELECT_ALL'|translate}}
+                                                        </label>
+                                                    </div>
+                                                    <ul class="list-items">
+                                                        <li ng-repeat="patient in patientTriggerList | filter: searchPatientFilter">
+                                                            <label>
+                                                                <input type="checkbox" ng-click="selectTrigger(patient, selectAll.patient)" ng-checked="patient.added"/> {{patient.name}}
+                                                            </label>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Demographic triggers -->
+                        <div class="row animated" ng-class="{fadeInUp:demoSection.show }" ng-if="demoSection.show ">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TRIGGER_DEMO'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp:demoSection.show }" ng-if="demoSection.show ">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;"><span><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.OPTIONAL_FIELD'|translate}}</strong></span> {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.DEMO_EXPLANATION'|translate}}</p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp:demoSection.show }" ng-if="demoSection.show ">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="row">
+                                    <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SEX'|translate}}</h2>
+                                </div>
+                                <div class="row">
+                                    <div ng-repeat="sex in sexes" class="col-xs-12 col-sm-6">
+                                        <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: demoTrigger.sex == sex.name}" ng-click="sexUpdate(sex)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                            <div class="panel-info" ng-class="{active: demoTrigger.sex == sex.name}">
+                                                <div class="panel-content" style="text-align:center">
+                                                    <span style="font-size:30px;" class="fa fa-{{sex.icon}}"></span>
+                                                    <div class="option-panel-title">{{sex.display}}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                                <div class="row">
+                                    <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.AGE_GROUP'|translate}}</h2>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                                        <div class="panel">
+                                            <div class="panel-body form-horizontal">
+                                                <div class="form-group">
+                                                    <label class="control-label col-xs-12 col-lg-2">
+                                                        {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.MIN'|translate}}
+                                                    </label>
+                                                    <div class="col-xs-12 col-lg-10">
+                                                        <input class="form-control" ng-model="demoTrigger.age.min" type="number" ng-change="ageUpdate()" ng-max="demoTrigger.age.max" min="0">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                                        <div class="panel">
+                                            <div class="panel-body form-horizontal">
+                                                <div class="form-group">
+                                                    <label class="control-label col-xs-12 col-lg-2">
+                                                        {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.MAX'|translate}}
+                                                    </label>
+                                                    <div class="col-xs-12 col-lg-10">
+                                                        <input class="form-control" ng-model="demoTrigger.age.max" type="number" ng-change="ageUpdate()" max="130" ng-min="demoTrigger.age.min">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Appointment Status trigger -->
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TRIGGER_APPT_STATUS'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;"><span><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.OPTIONAL_FIELD'|translate}}</strong></span> {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TAS_EXPLANATION'|translate}}</p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                            <div ng-repeat="appointmentStatus in appointmentStatusList" class="col-xs-12 col-sm-4 col-md-3 item-panel-select">
+                                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: appointmentStatus.added}" ng-click="appointmentStatusUpdate($index)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                    <div class="panel-info" ng-class="{active: appointmentStatus.added}">
+                                        <div class="panel-content" style="text-align:center">
+                                            <span ng-if="!appointmentStatus.added" style="font-size:30px;" class="glyphicon glyphicon-minus"></span>
+                                            <span ng-if="appointmentStatus.added" style="font-size:30px;" class="glyphicon glyphicon-ok"></span>
+                                            <div class="option-panel-title">{{appointmentStatus.name_display}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Appointment triggers -->
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;"><span class="fas fa-dot-circle"></span><h2>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TRIGGER_APPOINTMENT'|translate}}</h2></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;"><span><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.OPTIONAL_FIELD'|translate}}</strong></span> {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TA_EXPLANATION'|translate}}</p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                            <div class="col-xs-12 col-lg-8">
+                                <div class="panel-container">
+                                    <div class="panel-info">
+                                        <div class="panel-content">
+                                            <div class="panel-input">
+                                                <div class="list-space">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                        <input class="form-control" type="text" ng-model="appointmentSearchField" ng-change="searchAppointment(appointmentSearchField)" placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SEARCH'|translate}}"/>
+                                                    </div>
+                                                    <div style="padding: 10px;">
+                                                        <label><input type="checkbox" ng-click="selectAllTriggers(appointmentTriggerList, searchAppointmentFilter, selectAll.appointment)" ng-checked="selectAll.appointment.checked"> {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SELECT_ALL'|translate}}</label>
+                                                    </div>
+                                                    <ul class="list-items">
+                                                        <li ng-repeat="appointment in appointmentTriggerList | filter: searchAppointmentFilter">
+                                                            <label><input type="checkbox" ng-click="selectTrigger(appointment, selectAll.appointment)" ng-checked="appointment.added"/>{{appointment.name_display}}</label>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Diagnosis trigger -->
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;"><span class="fas fa-dot-circle"></span><h2>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TRIGGER_DIAGNOSIS'|translate}}</h2></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;"><span><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.OPTIONAL_FIELD'|translate}}</strong></span> {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.DIAGNOSIS_EXPLANATION'|translate}}</p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                            <div class="col-xs-12 col-lg-8">
+                                <div class="panel-container">
+                                    <div class="panel-info">
+                                        <div class="panel-content">
+                                            <div class="panel-input">
+                                                <div class="list-space">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                        <input class="form-control" type="text" ng-model="dxSearchField" ng-change="searchDiagnosis(dxSearchField)" placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SEARCH'|translate}}"/>
+                                                    </div>
+                                                    <div style="padding: 10px;">
+                                                        <label><input type="checkbox" ng-click="selectAllTriggers(dxTriggerList, searchDxFilter, selectAll.diagnosis)" ng-checked="selectAll.diagnosis.checked"> {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SELECT_ALL'|translate}}</label>
+                                                    </div>
+                                                    <ul class="list-items">
+                                                        <li ng-repeat="diagnosis in dxTriggerList | filter: searchDxFilter">
+                                                            <label>
+                                                                <input type="checkbox" ng-click="selectTrigger(diagnosis, selectAll.diagnosis)" ng-checked="diagnosis.added"/> {{diagnosis.name_display}}
+                                                            </label>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Doctor triggers -->
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;"><span class="fas fa-dot-circle"></span><h2>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TRIGGER_DOCTOR'|translate}}</h2></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;"><span><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.OPTIONAL_FIELD'|translate}}</strong></span> {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.DOCTOR_EXPLANATION'|translate}}</p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                            <div class="col-xs-12 col-lg-8">
+                                <div class="panel-container">
+                                    <div class="panel-info">
+                                        <div class="panel-content">
+                                            <div class="panel-input">
+                                                <div class="list-space">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                        <input class="form-control" type="text" ng-model="doctorSearchField" ng-change="searchDoctor(doctorSearchField)" placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SEARCH'|translate}}"/>
+                                                    </div>
+                                                    <div style="padding: 10px;">
+                                                        <label><input type="checkbox" ng-click="selectAllTriggers(doctorTriggerList, searchDoctorFilter, selectAll.doctor)" ng-checked="selectAll.doctor.checked"> {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SELECT_ALL'|translate}}</label>
+                                                    </div>
+                                                    <ul class="list-items">
+                                                        <li ng-repeat="doctor in doctorTriggerList | filter: searchDoctorFilter">
+                                                            <label>
+                                                                <input type="checkbox" ng-click="selectTrigger(doctor, selectAll.doctor)" ng-checked="doctor.added"/> {{doctor.name}}
+                                                            </label>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Treatment machine triggers -->
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span><h2>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TRIGGER_MACHINE'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;"><span><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.OPTIONAL_FIELD'|translate}}</strong></span> {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.MACHINE_EXPLANATION'|translate}}</p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                            <div class="col-xs-12 col-lg-8">
+                                <div class="panel-container">
+                                    <div class="panel-info">
+                                        <div class="panel-content">
+                                            <div class="panel-input">
+                                                <div class="list-space">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                        <input class="form-control" type="text" ng-model="machineSearchField" ng-change="searchMachine(machineSearchField)" placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SEARCH'|translate}}"/>
+                                                    </div>
+                                                    <div style="padding: 10px;">
+                                                        <label><input type="checkbox" ng-click="selectAllTriggers(machineTriggerList, searchMachineFilter, selectAll.machine)" ng-checked="selectAll.machine.checked"> {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SELECT_ALL'|translate}}</label>
+                                                    </div>
+                                                    <ul class="list-items">
+                                                        <li ng-repeat="machine in machineTriggerList | filter: searchMachineFilter">
+                                                            <label><input type="checkbox" ng-click="selectTrigger(machine, selectAll.machine)" ng-checked="machine.added"/> {{machine.name}}</label>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- END SECTION -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,21 +1,16 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To update a question */
-	include_once('questionnaire.inc');
 
-	// Construct array from FORM params
-	$questionArray = array(
-		'serNum'								=> $_POST['serNum'],
-		'text_EN'								=> $_POST['text_EN'],
-		'text_FR'								=> $_POST['text_FR'],
-		'answertype_serNum'			=> $_POST['answertype_serNum'],
-		'questiongroup_serNum'	=> $_POST['questiongroup_serNum'],
-		'last_updated_by'				=> $_POST['last_updated_by']
-	);
+include_once('questionnaire.inc');
 
-	$questionObj = new Question; // Object
+$questionArray = Question::validateAndSanitize($_POST);
+if(!$questionArray)
+    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid question format");
 
-	// Call function
-	$response = $questionObj->updateQuestion($questionArray);
-	print json_encode($response); // Return response
-?>
+$OAUserId = $questionArray["OAUserId"];
+
+$questionObj = new Question($OAUserId);
+$questionObj->updateQuestion($questionArray);
+
+header('Content-Type: application/javascript');
+$response['code'] = HTTP_STATUS_SUCCESS;
+echo json_encode($response);

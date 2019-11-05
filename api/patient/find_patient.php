@@ -1,19 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* Find patient given an SSN */
-	include_once('patient.inc');
 
-	// Retrieve FORM param
-	$callback 	= $_GET['callback'];
-	$ssn 		= $_GET['ssn'];
-	$id  		= $_GET['id'];
+header('Content-Type: application/javascript');
+include_once('patient.inc');
 
-	$patientObj = new Patient; // Object
-
-	// Call function
-	$patientResponse = $patientObj->findPatient($ssn, $id);
-
-	// Callback to http request
-	print $callback.'('.json_encode($patientResponse).')';
-
-?>
+$ssn = strip_tags($_POST['ssn']);
+$id = strip_tags($_POST['id']);
+$patientObj = new Patient; // Object
+$patientResponse = $patientObj->findPatient($ssn, $id);
+echo json_encode($patientResponse);

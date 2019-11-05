@@ -1,17 +1,9 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get a list of existing hospital maps */
-	include_once('hospital-map.inc');
+header('Content-Type: application/javascript');
+/* To get a list of existing hospital maps */
+include_once('hospital-map.inc');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
+$hosMap = new HospitalMap; // Object
+$existingHosMapList = $hosMap->getHospitalMaps();
 
-	$hosMap = new HospitalMap; // Object
-
-	// Call function
-	$existingHosMapList = $hosMap->getHospitalMaps();
-
-	// Callback to http request
-	print $callback.'('.json_encode($existingHosMapList).')';
-
-?>
+echo json_encode($existingHosMapList);
