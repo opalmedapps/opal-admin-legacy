@@ -1,19 +1,11 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get details of a particular email template */
+header('Content-Type: application/javascript');
+/* To get details of a particular email template */
 
-	include_once('email.inc');
+include_once('email.inc');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
-	$serial = $_GET['serial'];
+$serial = strip_tags($_POST['serial']);
+$emailObj = new Email; // Object
+$emailDetails = $emailObj->getEmailDetails($serial);
 
-	$emailObj = new Email; // Object
-
-	// Call function
-	$emailDetails = $emailObj->getEmailDetails($serial);
-
-	// Callback to http request
-	print $callback.'('.json_encode($emailDetails).')';
-
-?>
+echo json_encode($emailDetails);

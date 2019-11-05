@@ -980,7 +980,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaire.edit', ['ngAnimate', '
 				// ajax POST
 				$.ajax({
 					type: "POST",
-					url: "php/legacy-questionnaire/update.legacy_questionnaire.php",
+					url: "legacy-questionnaire/update/legacy-questionnaire",
 					data: $scope.legacyQuestionnaire,
 					success: function (response) {
 						response = JSON.parse(response);

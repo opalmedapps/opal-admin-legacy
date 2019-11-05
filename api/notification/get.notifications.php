@@ -1,17 +1,9 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get a list of existing notification */
-	include_once('notification.inc');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
+header('Content-Type: application/javascript');
+include_once('notification.inc');
 
-	$notification = new Notification; // Object
+$notification = new Notification; // Object
+$existingNotificationList = $notification->getNotifications();
 
-	// Call function
-	$existingNotificationList = $notification->getNotifications();
-
-	// Callback to http request
-	print $callback.'('.json_encode($existingNotificationList).')';
-
-?>
+echo json_encode($existingNotificationList);
