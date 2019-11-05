@@ -1,17 +1,8 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get a list of distinct test names */
-	include_once('test-result.inc');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
+header('Content-Type: application/javascript');
+include_once('test-result.inc');
 
-	$testResultObject = new TestResult; // Object
-
-	// Call function
-	$testNames = $testResultObject->getTestNames();
-
-	// Callback to http request
-	print $callback.'('.json_encode($testNames).')';
-
-?>
+$testResultObject = new TestResult; // Object
+$testNames = $testResultObject->getTestNames();
+echo json_encode($testNames);

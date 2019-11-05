@@ -1,18 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* Determine if email is taken */
-	include_once('patient.inc');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
-	$email = $_GET['email'];
+header('Content-Type: application/javascript');
+include_once('patient.inc');
 
-	$patientObj = new Patient; // Object
+$email = $_POST['email'];
+$patientObj = new Patient; // Object
+$Response = $patientObj->emailAlreadyInUse($email);
 
-	// Call function
-	$Response = $patientObj->emailAlreadyInUse($email);
-
-	// Callback to http request
-	print $callback.'('.json_encode($Response).')';
-
-?>
+echo json_encode($Response);

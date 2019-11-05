@@ -1,18 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get details on a particular diagnosis translation */
-	include_once('diagnosis-translation.inc');
+header('Content-Type: application/javascript');
 
-	// Retrieve FORM params
-	$callback = $_GET['callback'];
-	$serial = $_GET['serial'];
+include_once('diagnosis-translation.inc');
 
-	$Diagnosis = new Diagnosis; // Object
+$serial = $_POST['serial'];
+$Diagnosis = new Diagnosis; // Object
+$diagnosisTranslationDetails = $Diagnosis->getDiagnosisTranslationDetails($serial);
 
-	// Call function
-	$diagnosisTranslationDetails = $Diagnosis->getDiagnosisTranslationDetails($serial);
-
-	// Callback to http request
-	print $callback.'('.json_encode($diagnosisTranslationDetails).')';
-
-?>
+echo json_encode($diagnosisTranslationDetails);

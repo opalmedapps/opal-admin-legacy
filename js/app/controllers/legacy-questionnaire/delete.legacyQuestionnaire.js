@@ -9,7 +9,7 @@ angular.module('opalAdmin.controllers.legacyQuestionnaire.delete', ['ngAnimate',
 			$scope.legacyQuestionnaireToDelete.user = currentUser;
 			$.ajax({
 				type: "POST",
-				url: "php/legacy-questionnaire/delete.legacy_questionnaire.php",
+				url: "legacy-questionnaire/delete/legacy-questionnaire",
 				data: $scope.legacyQuestionnaireToDelete,
 				success: function (response) {
 					response = JSON.parse(response);
