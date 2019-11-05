@@ -1,16 +1,12 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get a list of existing questions */
-	include_once('questionnaire.inc');
+include_once('questionnaire.inc');
 
-	// Retrieve form param
-	$callback = $_GET['callback'];
+// Retrieve form param
+$OAUserId = strip_tags($_POST["OAUserId"]);
 
-	$question = new Question(); // Object
+$question = new Question($OAUserId);
+$questionList = $question->getQuestions();
 
-	// Call function
-	$questionList = $question->getQuestions();
-
-	// Callback to http request
-	print $callback.'('.json_encode($questionList).')';
+header('Content-Type: application/javascript');
+echo json_encode($questionList);
 ?>

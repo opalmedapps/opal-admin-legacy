@@ -1,17 +1,9 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get a list of existing patients */
-	include_once('patient.inc');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
+header('Content-Type: application/javascript');
+include_once('patient.inc');
 
-	$patient = new Patient; // Object
+$patient = new Patient; // Object
+$existingPatientList = $patient->getPatients();
 
-	// Call function
-	$existingPatientList = $patient->getPatients();
-
-	// Callback to http request
-	print $callback.'('.json_encode($existingPatientList).')';
-
-?>
+echo json_encode($existingPatientList);

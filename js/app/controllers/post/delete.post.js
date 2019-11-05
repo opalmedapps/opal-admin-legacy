@@ -9,20 +9,23 @@ angular.module('opalAdmin.controllers.post.delete', ['ngAnimate', 'ngSanitize', 
 			$scope.postToDelete.user = currentUser;
 			$.ajax({
 				type: "POST",
-				url: "php/post/delete.post.php",
+				url: "post/delete/post",
 				data: $scope.postToDelete,
 				success: function (response) {
 					response = JSON.parse(response);
 					// Show success or failure depending on response
 					if (response.value) {
 						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = "Successfully deleted \"" + $scope.postToDelete.name_EN + "/ " + $scope.postToDelete.name_FR + "\"!";
+						$scope.$parent.bannerMessage = $filter('translate')('POSTS.DELETE.SUCCESS');
+						$scope.showBanner();
 					}
 					else {
-						$scope.setBannerClass('danger');
-						$scope.$parent.bannerMessage = response.message;
+						alert($filter('translate')('POSTS.DELETE.ERROR') + "\r\n\r\n" + response.message);
 					}
-					$scope.showBanner();
+					$uibModalInstance.close();
+				},
+				error: function (err) {
+					alert($filter('translate')('POSTS.DELETE.ERROR') + "\r\n\r\n" + err.status + " - " + err.statusText);
 					$uibModalInstance.close();
 				}
 			});

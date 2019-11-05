@@ -1,20 +1,14 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get list logs on a particular alias */
-	include_once('alias.inc');
+header('Content-Type: application/javascript');
+/* To get list logs on a particular alias */
+include_once('alias.inc');
 
-	// Retrieve FORM params
-	$callback = $_GET['callback'];
-	$serials = json_decode($_GET['serials']);
-	$type = ( $_GET['type'] === 'undefined' ) ? null : $_GET['type'];
+// Retrieve FORM params
+$serials = json_decode($_POST['serials']);
+$type = ( $_POST['type'] === 'undefined' ) ? null : $_POST['type'];
 
+$alias = new Alias; // Object
+$aliasLogs = $alias->getAliasListLogs($serials, $type);
 
-	$alias = new Alias; // Object
-
-	// Call function
-	$aliasLogs = $alias->getAliasListLogs($serials, $type);
-
-	// // Callback to http request
-	print $callback.'('.json_encode($aliasLogs).')';
-
-?>
+// // Callback to http request
+echo json_encode($aliasLogs);

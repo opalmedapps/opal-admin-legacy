@@ -1,422 +1,414 @@
 <!-- Modal title -->
 <div class="modal-header">
-  <div class="col-xs-12 col-md-6">
-    <h2 class="modal-title">
-      <span class="glyphicon glyphicon-pencil"></span> 
-        Edit Educational Material 
-    </h2>
-    <p class="modal-title-caption">
-      {{eduMat.name_EN}} / {{eduMat.name_FR}}
-    </p>
-  </div>
-  <div class="modal-buttons col-xs-12 col-md-6">
-    <span> 
-      <form method="post" ng-submit="updateEduMat()">
-        <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="Save Changes">
-        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
-      </form>
-    </span>
-  </div>
+    <div class="col-xs-12 col-md-6">
+        <h2 class="modal-title">
+            <span class="glyphicon glyphicon-pencil"></span>
+            {{'EDUCATION.EDIT.TITLE'|translate}}
+        </h2>
+    </div>
+    <div class="modal-buttons col-xs-12 col-md-6">
+        <span>
+            <form method="post" ng-submit="updateEduMat()">
+                <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="{{'EDUCATION.EDIT.SAVE'|translate}}">
+                <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'EDUCATION.EDIT.CANCEL'|translate}}">
+            </form>
+        </span>
+    </div>
 </div>
 <div class="modal-body">
-  <div class="bannerMessageModal alert-success">{{bannerMessageModal}}</div>
-  <uib-accordion>
-    <!-- SECTION: Titles -->
-    <div uib-accordion-group is-open="titleSection.open">
-      <uib-accordion-heading>
-        <div>
-          <strong>Titles </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
-        </div>
-      </uib-accordion-heading>
-      <div class="row">
-        <div class="col-xs-12 col-sm-6 col-md-5" style="margin-bottom: 10px;">
-          <div class="input-group">
-            <span class="input-group-addon">EN</span>
-            <input class="form-control" type="text" ng-model="eduMat.name_EN" ng-change="detailsUpdated()" placeholder="English Title" required="required">
-          </div>
-        </div>
-        <div class="col-xs-12 col-sm-6 col-md-offset-1 col-md-5" style="margin-bottom: 10px;">
-          <div class="input-group">
-            <span class="input-group-addon">FR</span>
-            <input class="form-control" type="text" ng-model="eduMat.name_FR" ng-change="detailsUpdated()" placeholder="Titre Français" required="required">
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- SECTION: Single URL --> 
-    <div uib-accordion-group is-open="urlSection.open" ng-show="!eduMat.tocs.length">
-      <uib-accordion-heading>
-        <div>
-          <strong>URLs</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': urlSection.open, 'glyphicon-chevron-right': !urlSection.open}"></i>
-        </div>
-      </uib-accordion-heading>
-      <div class="alert alert-info" role="alert">
-        <strong>Current URLs</strong><br>
-        <p>
-          <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-          <span style="word-wrap: break-word">
-            <strong>EN </strong> -- {{eduMat.url_EN}} <br> 
-          </span>
-          <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-          <span style="word-wrap: break-word">
-            <strong>FR </strong> -- {{eduMat.url_FR}}
-          </span>
-        </p>
-      </div>
-      <div class="row">
-        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-          <div class="input-group">
-            <span class="input-group-addon">EN</span>
-            <input class="form-control" type="text" ng-model="eduMat.url_EN" ng-change="detailsUpdated()" placeholder="English URL" required="required">
-          </div>
-        </div>
-        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-          <div class="input-group">
-            <span class="input-group-addon">FR</span>
-            <input class="form-control" type="text" ng-model="eduMat.url_FR" ng-change="detailsUpdated()" placeholder="URL Français" required="required">
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- SECTION: Table of contents -->
-    <div uib-accordion-group is-open="tocSection.open" ng-hide="eduMat.url_EN || eduMat.url_FR">
-      <uib-accordion-heading>
-        <div>
-          <strong>Table of Contents</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tocSection.open, 'glyphicon-chevron-right': !tocSection.open}"></i>
-        </div>
-      </uib-accordion-heading>
-      <div class="row" ng-repeat="toc in eduMat.tocs" style="margin-bottom:7px; border-bottom:1px solid #ddd;">
-        <h2 style="margin:0 0 7px 0; padding:0 15px; font-size:30px;">Order: {{toc.order}}
-        <span style="float:right; cursor:pointer;" ng-click="removeTOC(toc.order)"><span class="glyphicon glyphicon-remove"></span></span>
-        </h2>
-        <div class="col-xs-12 col-md-6">
-          <div class="input-group" style="margin-bottom: 7px;">
-            <span class="input-group-addon">Title EN</span>
-            <input class="form-control" type="text" ng-model="toc.name_EN" ng-change="validateTOCs()" placeholder="English Title" required="required">
-          </div>
-          <div class="input-group" style="margin-bottom: 7px;">
-            <span class="input-group-addon">URL EN</span>
-            <input class="form-control" type="text" ng-model="toc.url_EN" ng-change="validateTOCs()" placeholder="English URL" required="required">
-          </div>
-          <div class="input-group" style="margin-bottom: 20px;">
-            <span class="input-group-addon">Type EN</span>
-            <input class="form-control" type="text" ng-model="toc.type_EN" ng-change="validateTOCs()" typeahead-on-select="validateTOCs()" uib-typeahead="type for type in EduMatTypes_EN | filter:$viewValue" typeahead-min-length="0" placeholder="English Type" required="required"> 
-          </div>
-        </div>  
-        <div class="col-xs-12 col-md-6">           
-          <div class="input-group" style="margin-bottom: 7px;">
-            <span class="input-group-addon">Titre FR</span>
-            <input class="form-control" type="text" ng-model="toc.name_FR" ng-change="validateTOCs()" placeholder="Titre Français" required="required">
-          </div>
-          <div class="input-group" style="margin-bottom: 7px;">
-            <span class="input-group-addon">URL FR</span>
-            <input class="form-control" type="text" ng-model="toc.url_FR" ng-change="validateTOCs()" placeholder="URL Français" required="required">
-          </div>
-          <div class="input-group" style="margin-bottom: 20px;">
-            <span class="input-group-addon">Type FR</span>
-            <input class="form-control" type="text" ng-model="toc.type_FR" ng-change="validateTOCs()" typeahead-on-select="validateTOCs()" uib-typeahead="type for type in EduMatTypes_FR | filter:$viewValue" typeahead-min-length="0" placeholder="Type Francais" required="required"> 
-           </div>
-        </div>
-      </div>
-      <div class="table-buttons">
-        <button class="btn btn-primary" ng-click="addTOC()">Add another TOC</button>
-      </div>
-    </div>  
-    <!-- SECTION: Supporting PDF -->
-    <div uib-accordion-group is-open="pdfSection.open">
-      <uib-accordion-heading>
-        <div>
-          <strong>Supporting PDF Document</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': pdfSection.open, 'glyphicon-chevron-right': !pdfSection.open}"></i>
-        </div>
-      </uib-accordion-heading>
-      <div class="alert alert-info" role="alert">
-        <strong>Current Supporting PDFs</strong><br>
-        <p>
-          <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-          <span style="word-wrap: break-word">
-            <strong>EN </strong> -- {{eduMat.share_url_EN}} <br>
-          </span>
-          <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-          <span style="word-wrap: break-word">
-            <strong>FR </strong> -- {{eduMat.share_url_FR}}
-          </span>
-        </p>
-      </div>
-      <div class="row">
-        <div class="col-xs-12 col-md-6" style="margin-bottom: 10px;">
-          <div class="input-group">
-            <span class="input-group-addon">EN</span>
-            <input class="form-control" type="text" ng-model="eduMat.share_url_EN" ng-change="detailsUpdated()" placeholder="English URL" required="required">
-          </div>
-        </div>
-        <div class="col-xs-12 col-md-6" style="margin-bottom: 10px;">
-          <div class="input-group">
-            <span class="input-group-addon">FR</span>
-            <input class="form-control" type="text" ng-model="eduMat.share_url_FR" ng-change="detailsUpdated()" placeholder="URL Français" required="required">
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SECTION: Patient trigger -->
-    <div uib-accordion-group is-open="patientTriggerSection.open">
-      <uib-accordion-heading>
-        <div>
-          <strong>Trigger to Send By Patient </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': patientTriggerSection.open, 'glyphicon-chevron-right': !patientTriggerSection.open}"></i>
-        </div>
-      </uib-accordion-heading>
-      <div class="alert alert-info" role="alert">
-        <strong>Current Patient Triggers</strong><br>
-        <p>
-          <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(patientTriggerList) || selectAll.patient.all"></span>
-          <span ng-if="!checkTriggers(patientTriggerList)">No trigger</span>
-          <span ng-if="checkTriggers(patientTriggerList) && selectAll.patient.all">All patients</span>
-          <ul class="list-items" ng-if="checkTriggers(patientTriggerList) && !selectAll.patient.all">
-            <li ng-repeat="patient in patientTriggerList | filter: {added: 1} : 1">
-              {{patient.name}}
-            </li>
-          </ul>
-        </p>
-      </div>
-      <div class="list-space">
-        <div class="input-group">
-          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-          <input class="form-control" type="text" ng-model="patientSearchField" ng-change="searchPatient(patientSearchField)" placeholder="Search..."/>
-        </div>
-        <div style="padding: 7px;">
-          <label>
-            <input type="checkbox" ng-click="selectAllTriggers(patientTriggerList, searchPatientFilter,selectAll.patient)" ng-checked="selectAll.patient.checked"> Select All
-          </label>
-        </div>
-        <ul class="list-items">
-          <li ng-repeat="patient in patientTriggerList | filter: searchPatientFilter">
-            <label>
-              <input type="checkbox" ng-click="selectTrigger(patient, selectAll.patient)" ng-checked="patient.added" /> {{patient.name}}
-            </label>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- SECTION: Demographic trigger -->
-    <div uib-accordion-group is-open="demographicTriggerSection.open"> 
-      <uib-accordion-heading>
-        <div>
-          <strong>Trigger to Send By Demographics </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': demographicTriggerSection.open, 'glyphicon-chevron-right': !demographicTriggerSection.open}"></i>
-        </div>
-      </uib-accordion-heading>
-      <div class="alert alert-info" role="alert">
-        <strong>Current Sex Triggers</strong><br>
-        <p>
-          <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-          <span ng-if="!demoTrigger.sex">None</span>
-          <span ng-if="demoTrigger.sex">{{demoTrigger.sex}}</span> 
-        </p> <br>
-        <strong>Current Age Group Triggers</strong><br>
-        <p>
-          <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-          <span ng-if="!demoTrigger.age">None</span>
-          <span ng-if="demoTrigger.age">{{demoTrigger.age.min}} to {{demoTrigger.age.max}}</span>
-        </p>
-      </div>
-      <div class="row">
-        <div class="col-xs-12 col-md-6">
-          <div class="row">
-            <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Sex</h2>
-          </div>
-          <div class="row">
-            <div ng-repeat="sex in sexes" class="col-xs-12 col-sm-6">
-              <div class="panel-container animated" style="cursor:pointer" ng-class="{pulse: hover, active: demoTrigger.sex == sex.name}" ng-click="sexUpdate(sex)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                <div class="panel-info" ng-class="{active: demoTrigger.sex == sex.name}">
-                  <div class="panel-content" style="text-align:center">
-                    <span style="font-size:30px;" class="fa fa-{{sex.icon}}"></span>
-                    <div class="option-panel-title">{{sex.name}}</div>
-                  </div>
+    <div class="bannerMessageModal alert-success">{{bannerMessageModal}}</div>
+    <uib-accordion>
+        <!-- SECTION: Titles -->
+        <div uib-accordion-group is-open="titleSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'EDUCATION.EDIT.TITLES'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
                 </div>
-              </div> 
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-5" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'EDUCATION.EDIT.ENGLISH_ABRV'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="eduMat.name_EN" ng-change="detailsUpdated()" placeholder="{{'EDUCATION.EDIT.ENGLISH_TITLE'|translate}}" required="required">
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-offset-1 col-md-5" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'EDUCATION.EDIT.FRENCH_ABRV'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="eduMat.name_FR" ng-change="detailsUpdated()" placeholder="{{'EDUCATION.EDIT.FRENCH_TITLE'|translate}}" required="required">
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-        <div class="col-xs-12 col-md-6">
-          <div class="row">
-            <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Age Group</h2>
-          </div>
-          <div class="row">
-            <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-              <div class="input-group">
-                <span class="input-group-addon">MIN</span>
-                <input class="form-control" ng-model="demoTrigger.age.min" ng-change="ageUpdate()" type="number" ng-max="demoTrigger.age.max" min="0">
-              </div> 
+        <!-- SECTION: Single URL -->
+        <div uib-accordion-group is-open="urlSection.open" ng-show="!eduMat.tocs.length">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'EDUCATION.EDIT.URLS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': urlSection.open, 'glyphicon-chevron-right': !urlSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="alert alert-info" role="alert">
+                <strong>{{'EDUCATION.EDIT.CURRENT_URLS'|translate}}</strong><br>
+                <p>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                    <span style="word-wrap: break-word">
+                    <strong>{{'EDUCATION.EDIT.ENGLISH_ABRV'|translate}} </strong> -- {{eduMat.url_EN}} <br>
+                    </span>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                    <span style="word-wrap: break-word">
+                        <strong>{{'EDUCATION.EDIT.FRENCH_ABRV'|translate}} </strong> -- {{eduMat.url_FR}}
+                    </span>
+                </p>
             </div>
-            <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-              <div class="input-group">
-                <span class="input-group-addon">MAX</span>
-                <input class="form-control" ng-model="demoTrigger.age.max" ng-change="ageUpdate()" type="number" max="100" ng-min="demoTrigger.age.min">
-              </div> 
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'EDUCATION.EDIT.ENGLISH_ABRV'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="eduMat.url_EN" ng-change="detailsUpdated()" placeholder="{{'EDUCATION.EDIT.ENGLISH_URL'|translate}}" required="required">
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'EDUCATION.EDIT.FRENCH_ABRV'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="eduMat.url_FR" ng-change="detailsUpdated()" placeholder="{{'EDUCATION.EDIT.FRENCH_URL'|translate}}" required="required">
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div> 
-
-    <!-- SECTION: Appointment trigger -->
-    <div uib-accordion-group is-open="appointmentTriggerSection.open">
-      <uib-accordion-heading>
-        <div>
-          <strong>Trigger to Send By Appointment</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': appointmentTriggerSection.open, 'glyphicon-chevron-right': !appointmentTriggerSection.open}"></i>
+        <!-- SECTION: Table of contents -->
+        <div uib-accordion-group is-open="tocSection.open" ng-hide="eduMat.url_EN || eduMat.url_FR">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'EDUCATION.EDIT.TABLE_CONTENTS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': tocSection.open, 'glyphicon-chevron-right': !tocSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row" ng-repeat="toc in eduMat.tocs" style="margin-bottom:7px; border-bottom:1px solid #ddd;">
+                <h2 style="margin:0 0 7px 0; padding:0 15px; font-size:30px;">{{'EDUCATION.EDIT.ORDER'|translate}} {{toc.order}}
+                    <span style="float:right; cursor:pointer;" ng-click="removeTOC(toc.order)"><span class="glyphicon glyphicon-remove"></span></span>
+                </h2>
+                <div class="col-xs-12 col-md-6">
+                    <div class="input-group" style="margin-bottom: 7px;">
+                        <span class="input-group-addon">{{'EDUCATION.EDIT.ENGLISH_TITLE_ABVR'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="toc.name_EN" ng-change="validateTOCs()" placeholder="{{'EDUCATION.EDIT.ENGLISH_TITLE'|translate}}" required="required">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 7px;">
+                        <span class="input-group-addon">{{'EDUCATION.EDIT.ENGLISH_URL_ABVR'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="toc.url_EN" ng-change="validateTOCs()" placeholder="{{'EDUCATION.EDIT.ENGLISH_URL'|translate}}" required="required">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 20px;">
+                        <span class="input-group-addon">{{'EDUCATION.EDIT.ENGLISH_TYPE_ABVR'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="toc.type_EN" ng-change="validateTOCs()" typeahead-on-select="validateTOCs()" uib-typeahead="type for type in EduMatTypes_EN | filter:$viewValue" typeahead-min-length="0" placeholder="{{'EDUCATION.EDIT.ENGLISH_TYPE'|translate}}" required="required">
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-6">
+                    <div class="input-group" style="margin-bottom: 7px;">
+                        <span class="input-group-addon">{{'EDUCATION.EDIT.FRENCH_TITLE_ABVR'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="toc.name_FR" ng-change="validateTOCs()" placeholder="{{'EDUCATION.EDIT.FRENCH_TITLE'|translate}}" required="required">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 7px;">
+                        <span class="input-group-addon">{{'EDUCATION.EDIT.FRENCH_URL_ABVR'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="toc.url_FR" ng-change="validateTOCs()" placeholder="{{'EDUCATION.EDIT.FRENCH_URL'|translate}}" required="required">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 20px;">
+                        <span class="input-group-addon">{{'EDUCATION.EDIT.FRENCH_TYPE_ABVR'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="toc.type_FR" ng-change="validateTOCs()" typeahead-on-select="validateTOCs()" uib-typeahead="type for type in EduMatTypes_FR | filter:$viewValue" typeahead-min-length="0" placeholder="{{'EDUCATION.EDIT.FRENCH_TYPE'|translate}}" required="required">
+                    </div>
+                </div>
+            </div>
+            <div class="table-buttons">
+                <button class="btn btn-primary" ng-click="addTOC()">{{'EDUCATION.EDIT.ADD_TOC'|translate}}</button>
+            </div>
         </div>
-      </uib-accordion-heading>
-      <div class="alert alert-info" role="alert">
-        <strong>Current Appointment Triggers</strong><br>
-        <p>
-          <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(appointmentTriggerList) || selectAll.appointment.all"></span>
-          <span ng-if="!checkTriggers(appointmentTriggerList)">No trigger</span>
-          <span ng-if="checkTriggers(appointmentTriggerList) && selectAll.appointment.all">All appointments</span>
-          <ul class="list-items" ng-if="checkTriggers(appointmentTriggerList) && !selectAll.appointment.all">
-            <li ng-repeat="selectedAppointment in appointmentTriggerList | filter: {added: 1} : 1">
-              {{selectedAppointment.name}}
-            </li>
-          </ul>
-        </p>
-      </div>
-      <div class="list-space">
-        <div class="input-group">
-          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-          <input class="form-control" type="text" ng-model="appointmentSearchField" ng-change="searchAppointment(appointmentSearchField)" placeholder="Search..."/>
+        <!-- SECTION: Supporting PDF -->
+        <div uib-accordion-group is-open="pdfSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'EDUCATION.EDIT.PDF_DOCUMENT'|translate}}</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': pdfSection.open, 'glyphicon-chevron-right': !pdfSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="alert alert-info" role="alert">
+                <strong>{{'EDUCATION.EDIT.CURRENT_PDF'|translate}}</strong><br>
+                <p>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                    <span style="word-wrap: break-word">
+                    <strong>{{'EDUCATION.EDIT.ENGLISH_ABRV'|translate}} </strong> -- {{eduMat.share_url_EN}} <br>
+                    </span>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                    <span style="word-wrap: break-word">
+                        <strong>{{'EDUCATION.EDIT.FRENCH_ABRV'|translate}} </strong> -- {{eduMat.share_url_FR}}
+                    </span>
+                </p>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'EDUCATION.EDIT.ENGLISH_ABRV'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="eduMat.share_url_EN" ng-change="detailsUpdated()" placeholder="{{'EDUCATION.EDIT.ENGLISH_URL'|translate}}" required="required">
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'EDUCATION.EDIT.FRENCH_ABRV'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="eduMat.share_url_FR" ng-change="detailsUpdated()" placeholder="{{'EDUCATION.EDIT.FRENCH_URL'|translate}}" required="required">
+                    </div>
+                </div>
+            </div>
         </div>
-        <div style="padding: 7px;">
-          <label>
-            <input type="checkbox" ng-click="selectAllTriggers(appointmentTriggerList, searchAppointmentFilter,selectAll.appointment)" ng-checked="selectAll.appointment.checked"> Select All
-          </label>
+        <!-- SECTION: Patient trigger -->
+        <div uib-accordion-group is-open="patientTriggerSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'EDUCATION.EDIT.TRIGGER_PATIENT'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': patientTriggerSection.open, 'glyphicon-chevron-right': !patientTriggerSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="alert alert-info" role="alert">
+                <strong>{{'EDUCATION.EDIT.CURRENT_PATIENT_TRIGGERS'|translate}}</strong><br>
+                <p>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(patientTriggerList) || selectAll.patient.all"></span>
+                    <span ng-if="!checkTriggers(patientTriggerList)">{{'EDUCATION.EDIT.NO_TRIGGER'|translate}}</span>
+                    <span ng-if="checkTriggers(patientTriggerList) && selectAll.patient.all">All patients</span>
+                    <ul class="list-items" ng-if="checkTriggers(patientTriggerList) && !selectAll.patient.all">
+                        <li ng-repeat="patient in patientTriggerList | filter: {added: 1} : 1">
+                            {{patient.name}}
+                        </li>
+                    </ul>
+                </p>
+            </div>
+            <div class="list-space">
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                    <input class="form-control" type="text" ng-model="patientSearchField" ng-change="searchPatient(patientSearchField)" placeholder="{{'EDUCATION.EDIT.SEARCH'|translate}}"/>
+                </div>
+                <div style="padding: 7px;">
+                    <label>
+                        <input type="checkbox" ng-click="selectAllTriggers(patientTriggerList, searchPatientFilter,selectAll.patient)" ng-checked="selectAll.patient.checked"> {{'EDUCATION.EDIT.SELECT_ALL'|translate}}
+                    </label>
+                </div>
+                <ul class="list-items">
+                    <li ng-repeat="patient in patientTriggerList | filter: searchPatientFilter">
+                        <label>
+                            <input type="checkbox" ng-click="selectTrigger(patient, selectAll.patient)" ng-checked="patient.added" /> {{patient.name}}
+                        </label>
+                    </li>
+                </ul>
+            </div>
         </div>
-        <ul class="list-items">
-          <li ng-repeat="appointment in appointmentTriggerList | filter: searchAppointmentFilter">
-            <label>
-              <input type="checkbox" ng-click="selectTrigger(appointment, selectAll.appointment)" ng-checked="appointment.added" /> {{appointment.name}}
-            </label>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- SECTION: Diagnosis trigger -->
-    <div uib-accordion-group is-open="diagnosisTriggerSection.open">
-      <uib-accordion-heading>
-        <div>
-          <strong>Trigger to Send By Diagnosis </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': diagnosisTriggerSection.open, 'glyphicon-chevron-right': !diagnosisTriggerSection.open}"></i>
+        <!-- SECTION: Demographic trigger -->
+        <div uib-accordion-group is-open="demographicTriggerSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'EDUCATION.EDIT.TRIGGER_DEMO'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': demographicTriggerSection.open, 'glyphicon-chevron-right': !demographicTriggerSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="alert alert-info" role="alert">
+                <strong>{{'EDUCATION.EDIT.CURRENT_SEX'|translate}}</strong><br>
+                <p>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                    <span ng-if="!demoTrigger.sex">{{'EDUCATION.EDIT.NO_TRIGGER'|translate}}</span>
+                    <span ng-if="demoTrigger.sex">{{demoTrigger.display}}</span>
+                </p>
+                <br>
+                <strong>{{'EDUCATION.EDIT.CURRENT_AGE'|translate}}</strong><br>
+                <p>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                    <span ng-if="!demoTrigger.age">{{'EDUCATION.EDIT.NONE'|translate}}</span>
+                    <span ng-if="demoTrigger.age">{{demoTrigger.age.min}} {{'EDUCATION.EDIT.TO'|translate}} {{demoTrigger.age.max}}</span>
+                </p>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-6">
+                    <div class="row">
+                        <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">{{'EDUCATION.EDIT.SEX'|translate}}</h2>
+                    </div>
+                    <div class="row">
+                        <div ng-repeat="sex in sexes" class="col-xs-12 col-sm-6">
+                            <div class="panel-container animated" style="cursor:pointer" ng-class="{pulse: hover, active: demoTrigger.sex == sex.name}" ng-click="sexUpdate(sex)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                <div class="panel-info" ng-class="{active: demoTrigger.sex == sex.name}">
+                                    <div class="panel-content" style="text-align:center">
+                                        <span style="font-size:30px;" class="fa fa-{{sex.icon}}"></span>
+                                        <div class="option-panel-title">{{sex.name_display}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-6">
+                    <div class="row">
+                        <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">{{'EDUCATION.EDIT.AGE_GROUP'|translate}}</h2>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                            <div class="input-group">
+                                <span class="input-group-addon">{{'EDUCATION.EDIT.MIN'|translate}}</span>
+                                <input class="form-control" ng-model="demoTrigger.age.min" ng-change="ageUpdate()" type="number" ng-max="demoTrigger.age.max" min="0">
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                            <div class="input-group">
+                                <span class="input-group-addon">{{'EDUCATION.EDIT.MAX'|translate}}</span>
+                                <input class="form-control" ng-model="demoTrigger.age.max" ng-change="ageUpdate()" type="number" max="130" ng-min="demoTrigger.age.min">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </uib-accordion-heading>
-      <div class="alert alert-info" role="alert">
-        <strong>Current Diagnosis Triggers</strong><br>
-        <p>
-          <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(dxTriggerList) || selectAll.diagnosis.all"></span>
-          <span ng-if="!checkTriggers(dxTriggerList)">No trigger</span>
-          <span ng-if="checkTriggers(dxTriggerList) && selectAll.diagnosis.all">All diagnoses</span>
-          <ul class="list-items" ng-if="checkTriggers(dxTriggerList) && !selectAll.diagnosis.all">
-              <li ng-repeat="dx in dxTriggerList | filter: {added: 1} : 1">
-              {{dx.name}}
-            </li>
-          </ul>
-        </p>
-      </div>
-      <div class="list-space">
-        <div class="input-group">
-          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-          <input class="form-control" type="text" ng-model="dxSearchField" ng-change="searchDiagnosis(dxSearchField)" placeholder="Search..."/>
+        <!-- SECTION: Appointment trigger -->
+        <div uib-accordion-group is-open="appointmentTriggerSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'EDUCATION.EDIT.TRIGGER_APPOINTMENT'|translate}}</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': appointmentTriggerSection.open, 'glyphicon-chevron-right': !appointmentTriggerSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="alert alert-info" role="alert">
+                <strong>{{'EDUCATION.EDIT.CURRENT_APPOINTMENT_TRIGGERS'|translate}}</strong><br>
+                <p>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(appointmentTriggerList) || selectAll.appointment.all"></span>
+                    <span ng-if="!checkTriggers(appointmentTriggerList)">{{'EDUCATION.EDIT.NO_TRIGGER'|translate}}</span>
+                    <span ng-if="checkTriggers(appointmentTriggerList) && selectAll.appointment.all">{{'EDUCATION.EDIT.ALL_APPOINTMENTS'|translate}}</span>
+                    <ul class="list-items" ng-if="checkTriggers(appointmentTriggerList) && !selectAll.appointment.all">
+                        <li ng-repeat="selectedAppointment in appointmentTriggerList | filter: {added: 1} : 1">
+                            {{selectedAppointment.name_display}}
+                        </li>
+                    </ul>
+                </p>
+            </div>
+            <div class="list-space">
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                    <input class="form-control" type="text" ng-model="appointmentSearchField" ng-change="searchAppointment(appointmentSearchField)" placeholder="{{'EDUCATION.EDIT.SEARCH'|translate}}"/>
+                </div>
+                <div style="padding: 7px;">
+                    <label>
+                        <input type="checkbox" ng-click="selectAllTriggers(appointmentTriggerList, searchAppointmentFilter,selectAll.appointment)" ng-checked="selectAll.appointment.checked"> {{'EDUCATION.EDIT.SELECT_ALL'|translate}}
+                    </label>
+                </div>
+                <ul class="list-items">
+                    <li ng-repeat="appointment in appointmentTriggerList | filter: searchAppointmentFilter">
+                        <label>
+                            <input type="checkbox" ng-click="selectTrigger(appointment, selectAll.appointment)" ng-checked="appointment.added" /> {{appointment.name_display}}
+                        </label>
+                    </li>
+                </ul>
+            </div>
         </div>
-        <div style="padding: 7px;">
-          <label>
-            <input type="checkbox" ng-click="selectAllTriggers(dxTriggerList, searchDxFilter,selectAll.diagnosis)" ng-checked="selectAll.diagnosis.checked"> Select All
-          </label>
+        <!-- SECTION: Diagnosis trigger -->
+        <div uib-accordion-group is-open="diagnosisTriggerSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'EDUCATION.EDIT.TRIGGER_DIAGNOSIS'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': diagnosisTriggerSection.open, 'glyphicon-chevron-right': !diagnosisTriggerSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="alert alert-info" role="alert">
+                <strong>{{'EDUCATION.EDIT.CURRENT_DIAGNOSIS_TRIGGERS'|translate}}</strong><br>
+                <p>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(dxTriggerList) || selectAll.diagnosis.all"></span>
+                    <span ng-if="!checkTriggers(dxTriggerList)">{{'EDUCATION.EDIT.NO_TRIGGER'|translate}}</span>
+                    <span ng-if="checkTriggers(dxTriggerList) && selectAll.diagnosis.all">{{'EDUCATION.EDIT.ALL_DIAGNOSES'|translate}}</span>
+                    <ul class="list-items" ng-if="checkTriggers(dxTriggerList) && !selectAll.diagnosis.all">
+                        <li ng-repeat="dx in dxTriggerList | filter: {added: 1} : 1">
+                            {{dx.name_display}}
+                        </li>
+                    </ul>
+                </p>
+            </div>
+            <div class="list-space">
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                    <input class="form-control" type="text" ng-model="dxSearchField" ng-change="searchDiagnosis(dxSearchField)" placeholder="{{'EDUCATION.EDIT.SEARCH'|translate}}"/>
+                </div>
+                <div style="padding: 7px;">
+                    <label>
+                        <input type="checkbox" ng-click="selectAllTriggers(dxTriggerList, searchDxFilter,selectAll.diagnosis)" ng-checked="selectAll.diagnosis.checked"> {{'EDUCATION.EDIT.SELECT_ALL'|translate}}
+                    </label>
+                </div>
+                <ul class="list-items">
+                    <li ng-repeat="dx in dxTriggerList | filter: searchDxFilter">
+                        <label>
+                            <input type="checkbox" ng-click="selectTrigger(dx, selectAll.diagnosis)" ng-checked="dx.added" /> {{dx.name_display}}
+                        </label>
+                    </li>
+                </ul>
+            </div>
         </div>
-        <ul class="list-items">
-          <li ng-repeat="dx in dxTriggerList | filter: searchDxFilter">
-            <label>
-              <input type="checkbox" ng-click="selectTrigger(dx, selectAll.diagnosis)" ng-checked="dx.added" /> {{dx.name}}
-            </label>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- SECTION: Doctor trigger -->
-    <div uib-accordion-group is-open="doctorTriggerSection.open">
-      <uib-accordion-heading>
-        <div>
-          <strong>Trigger to Send By Doctor </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': doctorTriggerSection.open, 'glyphicon-chevron-right': !doctorTriggerSection.open}"></i>
+        <!-- SECTION: Doctor trigger -->
+        <div uib-accordion-group is-open="doctorTriggerSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'EDUCATION.EDIT.TRIGGER_DOCTOR'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': doctorTriggerSection.open, 'glyphicon-chevron-right': !doctorTriggerSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="alert alert-info" role="alert">
+                <strong>{{'EDUCATION.EDIT.CURRENT_DOCTOR_TRIGGERS'|translate}}</strong><br>
+                <p>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(doctorTriggerList) || selectAll.doctor.all"></span>
+                    <span ng-if="!checkTriggers(doctorTriggerList)">{{'EDUCATION.EDIT.NO_TRIGGER'|translate}}</span>
+                    <span ng-if="checkTriggers(doctorTriggerList) && selectAll.doctor.all">{{'EDUCATION.EDIT.ALL_DOCTORS'|translate}}</span>
+                    <ul class="list-items" ng-if="checkTriggers(doctorTriggerList) && !selectAll.doctor.all">
+                        <li ng-repeat="doctor in doctorTriggerList | filter: {added: 1} : 1">
+                            {{doctor.name}}
+                        </li>
+                    </ul>
+                </p>
+            </div>
+            <div class="list-space">
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                    <input class="form-control" type="text" ng-model="doctorSearchField" ng-change="searchDoctor(doctorSearchField)" placeholder="{{'EDUCATION.EDIT.SEARCH'|translate}}"/>
+                </div>
+                <div style="padding: 7px;">
+                    <label>
+                        <input type="checkbox" ng-click="selectAllTriggers(doctorTriggerList, searchDoctorFilter,selectAll.doctor)" ng-checked="selectAll.doctor.checked"> {{'EDUCATION.EDIT.SELECT_ALL'|translate}}
+                    </label>
+                </div>
+                <ul class="list-items">
+                    <li ng-repeat="doctor in doctorTriggerList | filter: searchDoctorFilter">
+                        <label>
+                            <input type="checkbox" ng-click="selectTrigger(doctor, selectAll.doctor)" ng-checked="doctor.added" /> {{doctor.name}}
+                        </label>
+                    </li>
+                </ul>
+            </div>
         </div>
-      </uib-accordion-heading>
-      <div class="alert alert-info" role="alert">
-        <strong>Current Doctor Triggers</strong><br>
-        <p>
-          <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(doctorTriggerList) || selectAll.doctor.all"></span>
-          <span ng-if="!checkTriggers(doctorTriggerList)">No trigger</span>
-          <span ng-if="checkTriggers(doctorTriggerList) && selectAll.doctor.all">All doctors</span>
-          <ul class="list-items" ng-if="checkTriggers(doctorTriggerList) && !selectAll.doctor.all">
-              <li ng-repeat="doctor in doctorTriggerList | filter: {added: 1} : 1">
-              {{doctor.name}}
-            </li>
-          </ul>
-        </p>
-      </div>
-      <div class="list-space">
-        <div class="input-group">
-          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-          <input class="form-control" type="text" ng-model="doctorSearchField" ng-change="searchDoctor(doctorSearchField)" placeholder="Search..."/>
+        <!-- SECTION: Machine Trigger -->
+        <div uib-accordion-group is-open="machineTriggerSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'EDUCATION.EDIT.TRIGGER_MACHINE'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': machineTriggerSection.open, 'glyphicon-chevron-right': !machineTriggerSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="alert alert-info" role="alert">
+                <strong>{{'EDUCATION.EDIT.CURRENT_TM_TRIGGERS'|translate}}</strong><br>
+                <p>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(machineTriggerList) || selectAll.machine.all"></span>
+                    <span ng-if="!checkTriggers(machineTriggerList)">{{'EDUCATION.EDIT.NO_TRIGGER'|translate}}</span>
+                    <span ng-if="checkTriggers(machineTriggerList) && selectAll.machine.all">{{'EDUCATION.EDIT.ALL_TM'|translate}}</span>
+                    <ul class="list-items" ng-if="checkTriggers(machineTriggerList) && !selectAll.machine.all">
+                        <li ng-repeat="machine in machineTriggerList | filter: {added: 1} : 1">
+                            {{machine.name}}
+                        </li>
+                    </ul>
+                </p>
+            </div>
+            <div class="list-space">
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                    <input class="form-control" type="text" ng-model="machineSearchField" ng-change="searchMachine(machineSearchField)" placeholder="{{'EDUCATION.EDIT.SEARCH'|translate}}"/>
+                </div>
+                <div style="padding: 7px;">
+                    <label>
+                        <input type="checkbox" ng-click="selectAllTriggers(machineTriggerList, searchMachineFilter,selectAll.machine)" ng-checked="selectAll.machine.checked"> {{'EDUCATION.EDIT.SELECT_ALL'|translate}}
+                    </label>
+                </div>
+                <ul class="list-items">
+                    <li ng-repeat="machine in machineTriggerList | filter: searchMachineFilter">
+                        <label>
+                            <input type="checkbox" ng-click="selectTrigger(machine, selectAll.machine)" ng-checked="machine.added" /> {{machine.name}}
+                        </label>
+                    </li>
+                </ul>
+            </div>
         </div>
-        <div style="padding: 7px;">
-          <label>
-            <input type="checkbox" ng-click="selectAllTriggers(doctorTriggerList, searchDoctorFilter,selectAll.doctor)" ng-checked="selectAll.doctor.checked"> Select All
-          </label>
-        </div>
-        <ul class="list-items">
-          <li ng-repeat="doctor in doctorTriggerList | filter: searchDoctorFilter">
-            <label>
-              <input type="checkbox" ng-click="selectTrigger(doctor, selectAll.doctor)" ng-checked="doctor.added" /> {{doctor.name}}
-            </label>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- SECTION: Machine Trigger -->
-    <div uib-accordion-group is-open="machineTriggerSection.open">
-      <uib-accordion-heading>
-        <div>
-          <strong>Trigger to Send By Treatment Machine </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': machineTriggerSection.open, 'glyphicon-chevron-right': !machineTriggerSection.open}"></i>
-        </div>
-      </uib-accordion-heading>
-      <div class="alert alert-info" role="alert">
-        <strong>Current Treatment Machine Triggers</strong><br>
-        <p>
-          <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(machineTriggerList) || selectAll.machine.all"></span>
-          <span ng-if="!checkTriggers(machineTriggerList)">No trigger</span>
-          <span ng-if="checkTriggers(machineTriggerList) && selectAll.machine.all">All treatment machines</span>
-          <ul class="list-items" ng-if="checkTriggers(machineTriggerList) && !selectAll.machine.all">
-              <li ng-repeat="machine in machineTriggerList | filter: {added: 1} : 1">
-              {{machine.name}}
-            </li>
-          </ul>
-        </p>
-      </div>
-      <div class="list-space">
-        <div class="input-group">
-          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-          <input class="form-control" type="text" ng-model="machineSearchField" ng-change="searchMachine(machineSearchField)" placeholder="Search..."/>
-        </div>
-        <div style="padding: 7px;">
-          <label>
-            <input type="checkbox" ng-click="selectAllTriggers(machineTriggerList, searchMachineFilter,selectAll.machine)" ng-checked="selectAll.machine.checked"> Select All
-          </label>
-        </div>
-        <ul class="list-items">
-          <li ng-repeat="machine in machineTriggerList | filter: searchMachineFilter">
-            <label>
-              <input type="checkbox" ng-click="selectTrigger(machine, selectAll.machine)" ng-checked="machine.added" /> {{machine.name}}
-            </label>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </uib-accordion>
+    </uib-accordion>
 </div>

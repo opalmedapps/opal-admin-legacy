@@ -1,18 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get a list of existing color tags */
-	include_once('alias.inc');
+/* To get a list of existing color tags */
+include_once('alias.inc');
 
-	// Retrieve FORM param
-    $callback   = $_GET['callback'];
-    $type       = $_GET['type'];
+$type = strip_tags($_POST['type']);
+$alias = new Alias; // Object
+$colorTags = $alias->getColorTags($type);
 
-	$alias = new Alias; // Object
-
-	// Call function
-	$colorTags = $alias->getColorTags($type);
-
-	// Callback to http request
-	print $callback.'('.json_encode($colorTags).')';
-
-?>
+header('Content-Type: application/javascript');
+echo json_encode($colorTags);
