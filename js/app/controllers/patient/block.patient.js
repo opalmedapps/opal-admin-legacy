@@ -18,7 +18,7 @@ angular.module('opalAdmin.controllers.patient.block', ['ngAnimate', 'ngSanitize'
 				// Database (un)block
 				$.ajax({
 					type: "POST",
-					url: "php/patient/toggle_block.php",
+					url: "patient/toggle/block",
 					data: $scope.currentPatient,
 					success: function (response) {
 						response = JSON.parse(response);

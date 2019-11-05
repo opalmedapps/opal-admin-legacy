@@ -1,18 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get a list email types */
+header('Content-Type: application/javascript');
+/* To get a list email types */
 
-	include_once('email.inc');
+include_once('email.inc');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
+$emailObj = new Email; // Object
+$types = $emailObj->getEmailTypes();
 
-	$emailObj = new Email; // Object
-
-	// Call function
-	$types = $emailObj->getEmailTypes();
-
-	// Callback to http request
-	print $callback.'('.json_encode($types).')';
-
-?>
+echo json_encode($types);

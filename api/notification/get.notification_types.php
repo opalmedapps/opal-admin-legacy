@@ -1,17 +1,9 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get a list of *unused* notification types */
-	include_once('notification.inc');
+header('Content-Type: application/javascript');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
+include_once('notification.inc');
 
-	$notification = new Notification; // Object
+$notification = new Notification; // Object
+$types = $notification->getNotificationTypes();
 
-	// Call function
-	$types = $notification->getNotificationTypes();
-
-	// Callback to http request
-	print $callback.'('.json_encode($types).')';
-
-?>
+echo json_encode($types);

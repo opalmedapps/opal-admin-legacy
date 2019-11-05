@@ -1,18 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get details on a legacy questionnaire */
-	include_once('legacy-questionnaire.inc');
+header('Content-Type: application/javascript');
+/* To get details on a legacy questionnaire */
+include_once('legacy-questionnaire.inc');
 
-	// Retrieve FORM params
-	$callback = $_GET['callback'];
-	$serial = $_GET['serial'];
+$serial = strip_tags($_POST['serial']);
+$legacyQuestionnaire = new LegacyQuestionnaire; // Object
+$legacyQuestionnaireDetails = $legacyQuestionnaire->getLegacyQuestionnaireDetails($serial);
 
-	$legacyQuestionnaire = new LegacyQuestionnaire; // Object
-
-	// Call function
-	$legacyQuestionnaireDetails = $legacyQuestionnaire->getLegacyQuestionnaireDetails($serial);
-
-	// Callback to http request
-	print $callback.'('.json_encode($legacyQuestionnaireDetails).')';
-
-?>
+echo json_encode($legacyQuestionnaireDetails);

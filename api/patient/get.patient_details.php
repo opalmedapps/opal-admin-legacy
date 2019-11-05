@@ -1,18 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* Get patient details */
-	include_once('patient.inc');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
-	$serial = $_GET['serial'];
+header('Content-Type: application/javascript');
+include_once('patient.inc');
 
-	$patientObj = new Patient; // Object
+$serial = strip_tags($_POST['serial']);
+$patientObj = new Patient; // Object
+$patientDetails = $patientObj->getPatientDetails($serial);
 
-	// Call function
-	$patientDetails = $patientObj->getPatientDetails($serial);
-
-	// Callback to http request
-	print $callback.'('.json_encode($patientDetails).')';
-
-?>
+echo json_encode($patientDetails);

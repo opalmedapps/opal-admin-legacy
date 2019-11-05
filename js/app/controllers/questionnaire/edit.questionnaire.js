@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 
 		// get current user id
 		var user = Session.retrieveObject('user');
-		var userId = user.id;
+		var OAUserId = user.id;
 
 		// initialize default variables & lists
 		$scope.changesMade = false;
@@ -13,129 +13,90 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 		// Responsible for "searching" in search bars
 		$scope.filter = $filter('filter');
 
-		// Initialize a list of sexes
-		$scope.sexes = [
-			{
-				name: 'Male',
-				icon: 'male'
-			}, {
-				name: 'Female',
-				icon: 'female'
-			}
+		// Default toolbar for wysiwyg
+		$scope.toolbar = [
+			['h1', 'h2', 'h3', 'p'],
+			['bold', 'italics', 'underline', 'ul', 'ol'],
+			['justifyLeft', 'justifyCenter', 'indent', 'outdent'],
+			['html', 'insertLink']
 		];
 
-		// Initialize to hold demographic filters
-		$scope.demoFilter = {
-			sex: null,
-			age: {
-				min: 0,
-				max: 100
-			}
-		};
-
-		// Initialize search field variables
-		$scope.appointmentSearchField = "";
-		$scope.dxSearchField = "";
-		$scope.doctorSearchField = "";
-		$scope.resourceSearchField = "";
-		$scope.patientSearchField = "";
-
-		// Function to assign search fields when textbox changes
-		$scope.searchAppointment = function (field) {
-			$scope.appointmentSearchField = field;
-		};
-		$scope.searchDiagnosis = function (field) {
-			$scope.dxSearchField = field;
-		};
-		$scope.searchDoctor = function (field) {
-			$scope.doctorSearchField = field;
-		};
-		$scope.searchResource = function (field) {
-			$scope.resourceSearchField = field;
-		};
-		$scope.searchPatient = function (field) {
-			$scope.patientSearchField = field;
-		};
-
-		// Function for search through the filters
-		$scope.searchAppointmentFilter = function (Filter) {
-			var keyword = new RegExp($scope.appointmentSearchField, 'i');
-			return !$scope.appointmentSearchField || keyword.test(Filter.name);
-		};
-		$scope.searchDxFilter = function (Filter) {
-			var keyword = new RegExp($scope.dxSearchField, 'i');
-			return !$scope.dxSearchField || keyword.test(Filter.name);
-		};
-		$scope.searchDoctorFilter = function (Filter) {
-			var keyword = new RegExp($scope.doctorSearchField, 'i');
-			return !$scope.doctorSearchField || keyword.test(Filter.name);
-		};
-		$scope.searchResourceFilter = function (Filter) {
-			var keyword = new RegExp($scope.resourceSearchField, 'i');
-			return !$scope.resourceSearchField || keyword.test(Filter.name);
-		};
-		$scope.searchPatientFilter = function (Filter) {
-			var keyword = new RegExp($scope.patientSearchField, 'i');
-			return !$scope.patientSearchField || keyword.test(Filter.name);
-		};
-
-		// Initialize lists to hold filters
-		$scope.appointmentList = [];
-		$scope.dxFilterList = [];
-		$scope.doctorFilterList = [];
-		$scope.resourceFilterList = [];
-		$scope.patientFilterList = [];
-
 		// initialize variables
-		$scope.tagList = [];
 		$scope.groupList = [];
+		$scope.groupListReferenced = [];
 		$scope.selectedGroups;
+		$scope.previewQuestions = [];
 		$scope.tagFilter = "";
+		$scope.anyPrivate = false;
+		var publicPrivateWarning = false;
+
+		function decodeQuestions(questions) {
+			questions.forEach(function(entry) {
+				entry.question_EN = entry.question_EN.replace(/(<([^>]+)>)/ig,"");
+				entry.question_FR = entry.question_FR.replace(/(<([^>]+)>)/ig,"");
+				if (Session.retrieveObject('user').language.toUpperCase() === "FR") {
+					entry.questionDisplay = entry.question_FR;
+					entry.libraryDisplay = entry.library_name_FR;
+				}
+				else {
+					entry.questionDisplay = entry.question_EN;
+					entry.libraryDisplay = entry.library_name_EN;
+				}
+
+				if(entry.typeId === "2") {
+					var increment = parseFloat(entry.options.increment);
+					var minValue = parseFloat(entry.options.minValue);
+					if (minValue === 0.0) minValue = increment;
+					var maxValue = parseFloat(entry.options.maxValue);
+
+					var radiostep = new Array();
+					for(var i = minValue; i <= maxValue; i += increment) {
+						radiostep.push({"description":" " + i,"description_EN":" " + i,"description_FR":" " + i});
+					}
+					radiostep[0]["description"] += " " + entry.options.minCaption_EN + " / " + entry.options.minCaption_FR;
+					radiostep[0]["description_EN"] += " " + entry.options.minCaption_EN;
+					radiostep[0]["description_FR"] += " " + entry.options.minCaption_FR;
+					radiostep[radiostep.length - 1]["description"] += " " + entry.options.maxCaption_EN + " / " + entry.options.maxCaption_FR;
+					radiostep[radiostep.length - 1]["description_EN"] += " " + entry.options.maxCaption_EN;
+					radiostep[radiostep.length - 1]["description_FR"] += " " + entry.options.maxCaption_FR;
+					entry.subOptions = radiostep;
+				}
+			});
+			return questions;
+		}
+
+		questionnaireCollectionService.getFinalizedQuestions(OAUserId).then(function (response) {
+			$scope.groupList = decodeQuestions(response.data);
+		}).catch(function (response) {
+			alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ERROR_QUESTION_lIST') + response.status  + ".\r\n" + response.data);
+		});
 
 		// table
 		// Filter in table
 		$scope.filterOptions = function (renderableRows) {
-			var matcher = new RegExp($scope.filterValue, 'i');
-			renderableRows.forEach(function (row) {
-				var match = false;
-				['name_EN'].forEach(function (field) {
-					if (row.entity[field].match(matcher)) {
-						match = true;
-					}
-				});
-				if (!match) {
-					row.visible = false;
-				}
-			});
 			return renderableRows;
 		};
 
 		// Template for group table
 		var cellTemplateName = '<div class="ui-grid-cell-contents" ' +
-			'<p>{{row.entity.name_EN}} / {{row.entity.name_FR}}</p></div>';
-		var cellTemplateCat = '<div class="ui-grid-cell-contents" ' +
-			'<p>{{row.entity.category_EN}} / {{row.entity.category_FR}}</p></div>';
+			'<p>{{row.entity.questionDisplay}}</p></div>';
 		var cellTemplateLib = '<div class="ui-grid-cell-contents" ' +
-			'<p>{{row.entity.library_name_EN}} / {{row.entity.library_name_FR}}</p></div>';
-		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Public</p></div>' +
-			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Private</p></div>';
-		var cellTemplateTags = '<div class="ui-grid-cell-contents">' +
-			'<span ng-repeat="tag in row.entity.tags">{{tag.name_EN}} / {{tag.name_FR}} ; </span></div>';
+			'<p>{{row.entity.libraryDisplay}}</p></div>';
+		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PUBLIC')+'</p></div>' +
+			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PRIVATE')+'</p></div>';
 
 		// Table Data binding
 		$scope.gridGroups = {
 			data: 'groupList',
 			columnDefs: [
-				{ field: 'name_EN', displayName: 'Group (EN / FR)', cellTemplate: cellTemplateName, width: '20%' },
-				{ field: 'category_EN', displayName: 'Category (EN / FR)', cellTemplate: cellTemplateCat, width: '25%' },
-				{ field: 'library_name_EN', displayName: 'Library (EN / FR)', cellTemplate: cellTemplateLib, width: '15%' },
+				{ field: 'questionDisplay', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.QUESTION'), cellTemplate: cellTemplateName, width: '57%' },
+				{ field: 'libraryDisplay', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.LIBRARY'), cellTemplate: cellTemplateLib, width: '20%' },
 				{
-					field: 'private', displayName: 'Privacy', cellTemplate: cellTemplatePrivacy, width: '10%', filter: {
+					field: 'private', displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PRIVACY'), cellTemplate: cellTemplatePrivacy, width: '20%', filter: {
 						type: uiGridConstants.filter.SELECT,
-						selectOptions: [{ value: '1', label: 'Private' }, { value: '0', label: 'Public' }]
+						selectOptions: [{ value: '1', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PRIVATE') }, { value: '0', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PUBLIC') }]
 					}
 				},
-				{ field: 'tags', displayName: 'Tags (EN / FR)', cellTemplate: cellTemplateTags, enableFiltering: true, width: '30%' }
 			],
 			enableColumnResizing: true,
 			enableFiltering: true,
@@ -143,7 +104,7 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 			enableRowSelection: true,
 			enableSelectAll: true,
 			enableSelectionBatchEvent: true,
-			showGridFooter: true,
+			showGridFooter: false,
 			onRegisterApi: function (gridApi) {
 				$scope.gridApi = gridApi;
 				gridApi.grid.registerRowsProcessor($scope.filterOptions, 300);
@@ -154,62 +115,71 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 			},
 		};
 
-		// Function to update the newQuestionnaire groups after changing selection
+		// Function to update the questionnaire after changing selection
 		var selectUpdate = function (row) {
 
 			// get selected rows
 			$scope.selectedGroups = $scope.gridApi.selection.getSelectedGridRows();
 
 			// sort question groups by retrieved position
-			$scope.questionnaire.groups.sort(function(a,b){
-				return (a.position > b.position) ? 1 : ((b.position > a.position) ? -1 : 0);
+			$scope.questionnaire.questions.sort(function(a,b){
+				return (a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0);
 			});
 
 			// Check to see if current row was (de)selected
 			var wasSelected = false;
 			angular.forEach($scope.selectedGroups, function(selectedGroup) {
-				if (row.entity.serNum == selectedGroup.entity.serNum) {
+				if (row.entity.ID == selectedGroup.entity.ID) {
 					wasSelected = true;
 				}
 			});
 
 			var groupIndex = null;
 			if (!wasSelected) {  // Deselected
-				angular.forEach($scope.questionnaire.groups, function(group, index) {
-					if(group.serNum == row.entity.serNum) {
+				angular.forEach($scope.questionnaire.questions, function(group, index) {
+					if(group.ID == row.entity.ID) {
 						groupIndex = index; // array index of the group that was removed
 					}
 				});
-				$scope.questionnaire.groups.splice(groupIndex, 1); // Take it out of the array
-				angular.forEach($scope.questionnaire.groups, function(group, index) {
-					group.position = index + 1; // Refactor the positions of the leftover groups
+				$scope.questionnaire.questions.splice(groupIndex, 1); // Take it out of the array
+				angular.forEach($scope.questionnaire.questions, function(group, index) {
+					group.order = index + 1; // Refactor the positions of the leftover groups
 				});
 				$scope.changesMade = true; // set changes made
 			}
 			else {
 				// Check to see if added row exists already in the groups
 				var inGroups = false;
-				angular.forEach($scope.questionnaire.groups, function(group){
-					if (row.entity.serNum == group.serNum) {
+				angular.forEach($scope.questionnaire.questions, function(group){
+					if (row.entity.ID == group.ID) {
 						inGroups = true;
 					}
 				});
 
 				if (!inGroups) { // If not, append it to existing groups
-					var currentPosition = $scope.questionnaire.groups.length + 1;
-					var group = {
-						questionnaire_serNum: $scope.questionnaire.serNum,
-						created_by: userId,
-						last_updated_by: userId,
-						serNum: row.entity.serNum,
-						optional: 0,
-						position: currentPosition,
-						name_EN: row.entity.name_EN,
-						name_FR: row.entity.name_FR
-					};
-					$scope.questionnaire.groups.push(group);
+					row.entity.order = $scope.questionnaire.questions.length + 1;
+					row.entity.optional = '0';
+					$scope.questionnaire.questions.push(row.entity);
 					$scope.changesMade = true; // set changes made
 				}
+			}
+
+			var anyPrivate = false;
+			$scope.questionnaire.questions.forEach(function(entry) {
+				if(parseInt(entry.private) === 1)
+					anyPrivate = true;
+			});
+
+			$scope.anyPrivate = anyPrivate;
+			if (anyPrivate) {
+				if(publicPrivateWarning && $scope.questionnaire.private !== 1) {
+					publicPrivateWarning = false;
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.PRIVATE_QUESTION'));
+				}
+				$scope.questionnaire.private = 1;
+			}
+			else {
+				publicPrivateWarning = true;
 			}
 		};
 
@@ -228,59 +198,25 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 		$scope.showProcessingModal();
 
 		// Call our API service to get questionnaire details
-		questionnaireCollectionService.getQuestionnaireDetails($scope.currentQuestionnaire.serNum).then(function (response) {
+		questionnaireCollectionService.getQuestionnaireDetails($scope.currentQuestionnaire.ID, OAUserId).then(function (response) {
 
 			// Assign value
 			$scope.questionnaire = response.data;
+			$scope.questionnaire.questions = decodeQuestions($scope.questionnaire.questions);
 
-		}).catch(function (response) {
-			console.error('Error occurred getting questionnaire details after modal open:', response.status, response.data);
-			
+		}).catch(function (e) {
+			alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ERROR_QUESTIONNAIRE_DETAILS') + "\r\n\r\n" + e.status + ".\r\n" + e.data);
 		}).finally(function () {
-
-			// Call our API service to get the list of possible question groups
-			questionnaireCollectionService.getQuestionGroupWithLibraries(userId).then(function (response) {
-
-				$scope.groupList = response.data; // Assign response data
-
-				// This preselects the existing question groups in the table
-				$timeout(function () {
-					if ($scope.gridApi.selection.selectRow) {
-						angular.forEach($scope.questionnaire.groups, function (selectedGroup) {
-							angular.forEach($scope.groupList, function (group) {
-								if (selectedGroup.serNum == group.serNum) {
-									$scope.gridApi.selection.selectRow(group);
-								}
-							});
+			$timeout(function () {
+				if ($scope.gridApi.selection.selectRow) {
+					angular.forEach($scope.questionnaire.questions, function (selectedGroup) {
+						angular.forEach($scope.groupList, function (group) {
+							if (selectedGroup.ID == group.ID) {
+								$scope.gridApi.selection.selectRow(group);
+							}
 						});
-					}
-				});
-
-			}).catch(function (response){
-				console.error('Error occurred getting question groups:', response.status, response.data);
-			});
-
-			// Call our API service to get the list of possible tags
-			questionnaireCollectionService.getTags().then(function (response) {
-				$scope.tagList = checkAdded(response.data); // Assign value and check those that were already added
-			}).catch(function(response) {
-				console.error('Error occurred getting tags:', response.status, response.data);
-			});
-
-			// Assign demographic filters
-			checkDemographicFilters();
-
-			// Call our API service to get each filter
-			filterCollectionService.getFilters().then(function (response) {
-
-				$scope.appointmentList = checkAddedFilter(response.data.appointments); // Assign value
-				$scope.dxFilterList = checkAddedFilter(response.data.dx);
-				$scope.doctorFilterList = checkAddedFilter(response.data.doctors);
-				$scope.resourceFilterList = checkAddedFilter(response.data.resources);
-				$scope.patientFilterList = checkAddedFilter(response.data.patients);
-
-			}).catch(function(response) {
-				console.error('Error occurred getting filter list:', response.status, response.data);
+					});
+				}
 			});
 
 			processingModal.close(); // hide modal
@@ -296,126 +232,26 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 				item.added = 1;
 		};
 
-		// Function to assign '1' to existing filters 
-		function checkAddedFilter(filterList) {
-			angular.forEach($scope.questionnaire.filters, function (selectedFilter) {
-				var selectedFilterId = selectedFilter.id;
-				var selectedFilterType = selectedFilter.type;
-				angular.forEach(filterList, function (filter) {
-					var filterId = filter.id;
-					var filterType = filter.type;
-					if (filterId == selectedFilterId && filterType == selectedFilterType) {
-						console.log("HERE");
-						filter.added = 1;
-					}
-				});
-			});
-
-			return filterList;
-		}
-
-		// Function to check demographic filters
-		function checkDemographicFilters() {
-			var demoFilter = {
-				sex: null,
-				age: {
-					min: 0,
-					max: 100
-				}
-			};
-			angular.forEach($scope.questionnaire.filters, function (selectedFilter) {
-				if (selectedFilter.type == 'Sex')
-					$scope.demoFilter.sex = selectedFilter.id;
-				if (selectedFilter.type == 'Age') {
-					$scope.demoFilter.age.min = parseInt(selectedFilter.id.split(',')[0]);
-					$scope.demoFilter.age.max = parseInt(selectedFilter.id.split(',')[1]);
-				}
-			});
-
-			return demoFilter;
-		}
-
-		// Function to toggle necessary changes when updating the sex
-		$scope.sexUpdate = function (sex) {
-
-			if (!$scope.demoFilter.sex) {
-				$scope.demoFilter.sex = sex.name;
-			} else if ($scope.demoFilter.sex == sex.name) {
-				$scope.demoFilter.sex = null; // Toggle off
-			} else {
-				$scope.demoFilter.sex = sex.name;
-			}
-
-			$scope.changesMade = true;
-
-		};
-
-		// Function to assign a "1" to existing tags
-		function checkAdded(filterList) {
-			angular.forEach($scope.questionnaire.tags, function (selectedFilter) {
-				var selectedFilterId = selectedFilter.serNum;
-				angular.forEach(filterList, function (filter) {
-					var filterId = filter.serNum;
-					if (filterId == selectedFilterId) {
-						filter.added = 1;
-					}
-				});
-			});
-			return filterList;
-		}
-
-		// assign search field for tags
-		$scope.searchTag = function (field) {
-			$scope.tagFilter = field;
-		};
-
-		// search filter for tags
-		$scope.searchTagFilter = function (Filter) {
-			var keyword = new RegExp($scope.tagFilter, 'i');
-			return !$scope.tagFilter || keyword.test(Filter.name_EN);
-		};
-
-		// Function to toggle Tag in a list on/off
-		$scope.selectTag = function (tag) {
-			$scope.changesMade = true;
-			if (tag.added) {
-				tag.added = 0;
-			} else {
-				tag.added = 1;
-			}
-		};
-
-		// add tags to the questionnaire tag array
-		function addTags(tagList) {
-			angular.forEach(tagList, function (Filter) {
-				if (Filter.added) {
-					$scope.questionnaire.tags.push(Filter);
-				}
-			});
-		}
-
-		// check if there's any tag added
-		$scope.checkTags = function (tagList) {
-			var tagsAdded = false;
-			angular.forEach(tagList, function (Filter) {
-				if (Filter.added)
-					tagsAdded = true;
-			});
-			return tagsAdded;
-		};
-
 		// Function called when changing the questionnaire privacy flag
 		$scope.privacyUpdate = function (value) {
-			if (value == 0 || value == 1) {
-				// update value
-				$scope.questionnaire.private = value;
+			if(!$scope.anyPrivate && !$scope.questionnaire.readOnly && !$scope.questionnaire.final) {
+				if (value == 0 || value == 1) {
+					// update value
+					$scope.questionnaire.private = value;
+				}
+				$scope.changesMade = true;
 			}
-			$scope.changesMade = true;
 		};
 
 		// Function called whenever there has been a change in the form
 		$scope.setChangesMade = function () {
 			$scope.changesMade = true;
+		};
+
+		$scope.orderPreview = function () {
+			$scope.questionnaire.questions.sort(function(a,b){
+				return (a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0);
+			});
 		};
 
 		// Function to close edit modal dialog
@@ -425,81 +261,34 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 
 		// Function to check necessary form fields are complete
 		$scope.checkForm = function () {
-			if ($scope.questionnaire.name_EN && $scope.questionnaire.name_FR && $scope.questionnaire.tags.length && $scope.questionnaire.groups.length && $scope.changesMade) {
+			if ($scope.questionnaire.title_EN && $scope.questionnaire.title_FR && $scope.questionnaire.description_EN && $scope.questionnaire.description_FR && $scope.questionnaire.questions.length && $scope.changesMade) {
 				return true;
 			}
 			else
 				return false;
 		};
 
-		// Function to return filters that have been checked
-		function addFilters(filterList) {
-			angular.forEach(filterList, function (Filter) {
-				if (Filter.added)
-					$scope.questionnaire.filters.push({ id: Filter.id, type: Filter.type });
-			});
-		}
-
-		// Function to check if all filters are added
-		$scope.allFilters = function (filterList) {
-			var allFiltersAdded = true;
-			angular.forEach(filterList, function (Filter) {
-				if (Filter.added)
-					allFiltersAdded = false;
-			});
-			return allFiltersAdded;
-		};
-
 		// Function for updating the questionnaire 
 		$scope.updateQuestionnaire = function () {
 
 			if ($scope.checkForm()) {
+				$scope.questionnaire.OAUserId = OAUserId;
 
-				// Initialize filter
-				$scope.questionnaire.filters = [];
-
-				// Add demographic filters, if defined
-				if ($scope.demoFilter.sex)
-					$scope.questionnaire.filters.push({ id: $scope.demoFilter.sex, type: 'Sex' });
-				if ($scope.demoFilter.age.min >= 0 && $scope.demoFilter.age.max <= 100) { // i.e. not empty
-					if ($scope.demoFilter.age.min !== 0 || $scope.demoFilter.age.max != 100) { // Filters were changed
-						$scope.questionnaire.filters.push({
-							id: String($scope.demoFilter.age.min).concat(',', String($scope.demoFilter.age.max)),
-							type: 'Age'
-						});
-					}
-				}
-
-				// Add filters to edu material
-				addFilters($scope.appointmentList);
-				addFilters($scope.dxFilterList);
-				addFilters($scope.doctorFilterList);
-				addFilters($scope.resourceFilterList);
-				addFilters($scope.patientFilterList);
-
-				addTags($scope.tagList); // Add tags to questionnaire object
-
-				// Log who updated questionnaire
-				var currentUser = Session.retrieveObject('user');
-				$scope.questionnaire.user = currentUser;
 				// ajax POST
 				$.ajax({
 					type: "POST",
-					url: "php/questionnaire/update.questionnaire.php",
+					url: "questionnaire/update/questionnaire",
 					data: $scope.questionnaire,
 					success: function (response) {
 						response = JSON.parse(response);
-						if (response.value) {
+						if (response.code === 200) {
 							$scope.setBannerClass('success');
-							$scope.$parent.bannerMessage = "Successfully updated \"" + $scope.questionnaire.name_EN + "/ " + $scope.questionnaire.name_FR + "\"!";
+							$scope.$parent.bannerMessage = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.SUCCESS_UPDATE');
+							$uibModalInstance.close();
+							$scope.showBanner();
 						}
-						else {
-							$scope.setBannerClass('danger');
-							$scope.$parent.bannerMessage = response.message;
-						}
-
-						$scope.showBanner();
-						$uibModalInstance.close();
+						else
+							alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ERROR_UPDATE_QUESTIONNAIRE') + "\r\n\r\n" + response.code + response.message);
 					}
 				});
 			}

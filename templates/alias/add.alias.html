@@ -1,751 +1,748 @@
-  <div id="main">
+<div id="main">
     <div id="top">
-      <div class="clearfix">
-        <div class="row">
-					<!-- Left side detail view -->
-          <div class="col-lg-2">
-						<!-- Logo -->
-            <div class="side-navbar" ng-controller="navigation">
-              <div class="row side-logo" ng-click="goToHome()">
-                <div class="col-md-12">
-                  <div class="logo">
-                    <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
-                  </div>
-                  <h1 class="animated fadeIn">opal <strong>ADMIN</strong></h1>
-                </div>
-              </div>   
-						</div>
-            <div class="summary-fix">
-  						<!-- Back button -->
-  						<div class="row side-panel-menu">
-  							<div class="col-xs-12 col-sm-5 col-lg-12">
-  								<div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
-  									<div class="side-panel-info-sm">
-  										<div class="panel-content">
-  											<span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
-  											<h6 class="side-panel-title"><strong>Back to Tasks/Appts/Documents</strong></h6>
-  										</div>
-  									</div>
-  								</div>
-  							</div>
-    						<!-- Summary -->
-                <div class="side-menu-title col-lg-12">
-                  <div class="horz-line" style="height: 16px; text-align: center">
-                    <span style="background-color:#e6edfa; padding: 0 10px;">
-                      <h2>Summary</h2>
-                    </span>  
-                  </div>  
-                </div>
-                <div class="col-lg-12">
-                  <div class="progress progress-striped active">
-                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+        <div class="clearfix">
+            <div class="row">
+                <!-- Left side detail view -->
+                <div class="col-lg-2">
+                    <!-- Logo -->
+                    <div class="side-navbar" ng-controller="navigation">
+                        <div class="row side-logo" ng-click="goToHome()">
+                            <div class="col-md-12">
+                                <div class="logo">
+                                    <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+                                </div>
+                                <h1 class="animated fadeIn">opal <strong>ADMIN</strong></h1>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-              <uib-accordion class="side-navbar">
-								<!-- SECTION: Source database -->
-                <div uib-accordion-group is-open="sourceSection.open" class="panel-container summary-box" is-disabled="!newAlias.source_db">
-                  <uib-accordion-heading>
-                    <div class="row" style="align-items: center">
-                      <div class="col-md-2">
-                        <span ng-if="newAlias.source_db" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </div>
-                      <div class="col-md-8">
-                        <strong>Source Database</strong>
-                      </div>
-                      <div class="col-md-2">
-                        <i ng-if="newAlias.source_db" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sourceSection.open, 'glyphicon-chevron-right': !sourceSection.open}"></i>
-                      </div> 
+                    <div class="summary-fix">
+                        <!-- Back button -->
+                        <div class="row side-panel-menu">
+                            <div class="col-xs-12 col-sm-5 col-lg-12">
+                                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                                    <div class="side-panel-info-sm">
+                                        <div class="panel-content">
+                                            <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                                            <h6 class="side-panel-title"><strong>{{'ALIAS.ADD.BACK'|translate}}</strong></h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Summary -->
+                            <div class="side-menu-title col-lg-12">
+                                <div class="horz-line" style="height: 16px; text-align: center">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <h2>{{'ALIAS.ADD.SUMMARY'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="progress progress-striped active">
+                                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <uib-accordion class="side-navbar">
+                            <!-- SECTION: Source database -->
+                            <div uib-accordion-group is-open="sourceSection.open" class="panel-container summary-box" is-disabled="!newAlias.source_db">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="newAlias.source_db" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'ALIAS.ADD.SOURCE'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i ng-if="newAlias.source_db" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': sourceSection.open, 'glyphicon-chevron-right': !sourceSection.open}"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="newAlias.source_db.name" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{newAlias.source_db.name}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Type -->
+                            <div uib-accordion-group is-open="typeSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: typeSection.show}" is-disabled="!newAlias.type" ng-if="typeSection.show">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="newAlias.type" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'ALIAS.ADD.TYPE'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': typeSection.open, 'glyphicon-chevron-right': !typeSection.open}" ng-if="newAlias.type"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="newAlias.type" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{newAlias.type.name_display}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Clinical codes -->
+                            <div uib-accordion-group is-open="clinicalCodeSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: clinicalCodeSection.show}" is-disabled="!checkTermsAdded(termList)" ng-if="clinicalCodeSection.show">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="checkTermsAdded(termList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'ALIAS.ADD.ASSIGNED_CODE'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': clinicalCodeSection.open, 'glyphicon-chevron-right': !clinicalCodeSection.open}" ng-if="checkTermsAdded(termList)"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="checkTermsAdded(termList)" class="description">
+                                    <p>
+                                    <ul style="max-height: 100px; overflow-y: auto;">
+                                        <li ng-repeat="term in termList | filter: {added: 1}">
+                                            {{term.name}}
+                                        </li>
+                                    </ul>
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Title & description -->
+                            <div uib-accordion-group is-open="titleDescriptionSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: titleDescriptionSection.show}" ng-if="titleDescriptionSection.show" is-disabled="!newAlias.name_EN && !newAlias.name_FR && !newAlias.description_EN && !newAlias.description_FR">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="newAlias.name_EN && newAlias.name_FR && newAlias.description_EN && newAlias.description_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'ALIAS.ADD.TITLE_DESCRIPTION'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleDescriptionSection.open, 'glyphicon-chevron-right': !titleDescriptionSection.open}" ng-if="newAlias.name_EN || newAlias.name_FR || newAlias.description_EN || newAlias.description_FR"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="newAlias.name_EN || newAlias.description_EN" class="description">
+                                    <p ng-if="newAlias.name_EN" style="margin-bottom:5px;">
+                                        <strong>{{'ALIAS.ADD.ENGLISH'|translate}} </strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{newAlias.name_EN}}
+                                    </p>
+                                    <p ng-if="newAlias.description_EN" style="padding-left: 10px; font-size: 10px;"><em>{{'ALIAS.ADD.SEE_DESCRIPTION'|translate}} </em></p>
+                                </div>
+                                <div ng-if="newAlias.name_FR || newAlias.description_FR" class="description">
+                                    <p ng-if="newAlias.name_FR" style="margin-bottom:5px;">
+                                        <strong>{{'ALIAS.ADD.FRENCH'|translate}} </strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{newAlias.name_FR}}
+                                    </p>
+                                    <p ng-if="newAlias.description_FR" style="padding-left: 10px; font-size: 10px;"><em>{{'ALIAS.ADD.SEE_DESCRIPTION'|translate}} </em></p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Checkin Details -->
+                            <div uib-accordion-group is-open="checkinSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: checkinSection.show}" ng-if="checkinSection.show && newAlias.type.name == 'Appointment'" is-disabled="newAlias.checkin_details.checkin_possible == null && !newAlias.checkin_details.instruction_EN && !newAlias.checkin_details.instruction_FR">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="newAlias.checkin_details.checkin_possible != null && newAlias.checkin_details.instruction_EN && newAlias.checkin_details.instruction_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'ALIAS.ADD.CHECKIN'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': checkinSection.open, 'glyphicon-chevron-right': !checkinSection.open}" ng-if="newAlias.checkin_details.checkin_possible != null || newAlias.checkin_details.instruction_EN || newAlias.checkin_details.instruction_FR"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="newAlias.checkin_details.checkin_possible != null" class="description">
+                                    <p>
+                                        <strong>{{'ALIAS.ADD.POSSIBLE'|translate}}</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        <span ng-if="newAlias.checkin_details.checkin_possible == 1">{{'ALIAS.ADD.YES'|translate}} </span>
+                                        <span ng-if="newAlias.checkin_details.checkin_possible == 0">{{'ALIAS.ADD.NO'|translate}} </span>
+                                    </p>
+                                </div>
+                                <div ng-if="newAlias.checkin_details.instruction_EN" class="description">
+                                    <p style="margin-bottom:5px;">
+                                        <strong>{{'ALIAS.ADD.ENGLISH_INSTRUCTIONS_ABRV'|translate}} </strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        <em>{{'ALIAS.ADD.SEE_RENDERED_OUTPUT'|translate}} </em>
+                                    </p>
+                                </div>
+                                <div ng-if="newAlias.checkin_details.instruction_FR" class="description">
+                                    <p style="margin-bottom:5px;">
+                                        <strong>{{'ALIAS.ADD.FRENCH_INSTRUCTIONS_ABRV'|translate}} </strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        <em>{{'ALIAS.ADD.SEE_RENDERED_OUTPUT'|translate}} </em>
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Hospital map -->
+                            <div uib-accordion-group is-open="hospitalMapSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: hospitalMapSection.show}" is-disabled="!newAlias.hospitalMap" ng-if="hospitalMapSection.show && newAlias.type.name == 'Appointment'">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="newAlias.hospitalMap" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'ALIAS.ADD.HOSPITAL_MAP'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': hospitalMapSection.open, 'glyphicon-chevron-right': !hospitalMapSection.open}" ng-if="newAlias.hospitalMap"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="newAlias.hospitalMap" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{newAlias.hospitalMap.name_display}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Educational material -->
+                            <div uib-accordion-group is-open="educationalMaterialSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: educationalMaterialSection.show}" is-disabled="!newAlias.eduMat" ng-if="educationalMaterialSection.show">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="newAlias.eduMat" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'ALIAS.ADD.EDUCATIONAL_MATERIAL'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': educationalMaterialSection.open, 'glyphicon-chevron-right': !educationalMaterialSection.open}" ng-if="newAlias.eduMat"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="newAlias.eduMat" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{newAlias.eduMat.name_display}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Icon color -->
+                            <div uib-accordion-group is-open="colorSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: colorSection.show}" is-disabled="!newAlias.color" ng-if="colorSection.show">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="newAlias.color" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'ALIAS.ADD.ICON_COLOR'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': colorSection.open, 'glyphicon-chevron-right': !colorSection.open}" ng-if="newAlias.color"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="newAlias.color" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{newAlias.color}} <br/>
+                                        <span style="margin-top: 10px; display: block; border: 1px solid rgba(85, 85, 85, 0.2);"  class="color-palette" ng-style="{'background-color': newAlias.color}"></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </uib-accordion>
+
+                        <!-- Submit button -->
+                        <div class="panel-container">
+                            <a href="" ng-click="submitAlias()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                                <span style="font-size: 20px;"><strong>{{'ALIAS.ADD.SUBMIT'|translate}}</strong></span>
+                            </a>
+                        </div>
                     </div>
-                  </uib-accordion-heading>
-                  <div ng-if="newAlias.source_db.name" class="description">
-                    <p>
-                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                      {{newAlias.source_db.name}}
-                    </p>
-                  </div> 
                 </div>
-                <!-- SECTION: Type -->
-                <div uib-accordion-group is-open="typeSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: typeSection.show}" is-disabled="!newAlias.type" ng-if="typeSection.show">
-                  <uib-accordion-heading>
-                    <div class="row" style="align-items: center">
-                      <div class="col-md-2">
-                        <span ng-if="newAlias.type" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </div>
-                      <div class="col-md-8">
-                        <strong>Type</strong>
-                      </div>
-                      <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': typeSection.open, 'glyphicon-chevron-right': !typeSection.open}" ng-if="newAlias.type"></i>
-                      </div>
+                <!-- Right detail panel view -->
+                <div class="col-xs-12 col-lg-10 animated fadeInRight">
+                    <div class="main-title">
+                        <div class="row">
+                            <!-- Page title -->
+                            <div class="col-xs-12 col-md-9 title-content">
+                                <span class="glyphicon glyphicon-plus"></span>
+                                <h1><strong>{{'ALIAS.ADD.TITLE'|translate}}</strong></h1>
+                            </div>
+                            <!-- Breadcrumbs -->
+                            <div class="col-md-3 title-breadcrumbs">
+                                <span>
+                                    <span><a ui-sref="home">{{'BREADCRUMBS.HOME'|translate}}</a></span>
+                                    <span class="teflon glyphicon glyphicon-menu-right"></span>
+                                    <span><a ui-sref="alias">{{'ALIAS.LIST.TITLE'|translate}}</a></span>
+                                    <span class="teflon glyphicon glyphicon-menu-right"></span>
+                                    <span><strong>{{'ALIAS.ADD.TITLE'|translate}}</strong></span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row mobile-side-panel-menu">
+                            <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
+                                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                                    <div class="side-panel-info-sm">
+                                        <div class="panel-content">
+                                            <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                                            <h6 class="side-panel-title"><strong>{{'ALIAS.ADD.BACK'|translate}}</strong></h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkForm()">
+                                <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
+                                    <span style="padding: 0 10px;">
+                                        <h2>{{'ALIAS.ADD.STEP'|translate}} {{numOfCompletedSteps}} {{'ALIAS.ADD.OF'|translate}} {{stepTotal}} {{'ALIAS.ADD.COMPLETED'|translate}}</h2>
+                                    </span>
+                                </div>
+                                <div class="progress progress-striped active">
+                                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkForm()">
+                                <div class="panel-container">
+                                    <a href="" ng-click="submitAlias()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                                        <span style="font-size: 20px;"><strong>Submit {{newAlias.type.name_display}}</strong></span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </uib-accordion-heading> 
-                  <div ng-if="newAlias.type" class="description">
-                    <p>
-                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                      {{newAlias.type.name}}
-                    </p>
-                  </div>
-                </div>
-                <!-- SECTION: Clinical codes -->
-                 <div uib-accordion-group is-open="clinicalCodeSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: clinicalCodeSection.show}" is-disabled="!checkTermsAdded(termList)" ng-if="clinicalCodeSection.show">
-                  <uib-accordion-heading>
-                    <div class="row" style="align-items: center">
-                      <div class="col-md-2">
-                        <span ng-if="checkTermsAdded(termList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </div>
-                      <div class="col-md-8">
-                        <strong>Assigned Clinical {{newAlias.type.name}} Code(s)</strong>
-                      </div>
-                      <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': clinicalCodeSection.open, 'glyphicon-chevron-right': !clinicalCodeSection.open}" ng-if="checkTermsAdded(termList)"></i>
-                      </div>
+                    <div class="section-content">
+                        <!-- SECTION: Source database -->
+                        <div class="row">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'ALIAS.ADD.SOURCE'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span style="color:#d9534f"><strong>{{'ALIAS.ADD.REQUIRED'|translate}}</strong></span>
+                                    {{'ALIAS.ADD.SOURCE_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div ng-repeat="sourceDB in sourceDBList" class="col-xs-4 col-lg-2 item-panel-select">
+                                    <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: newAlias.source_db.name == sourceDB.name}" ng-click="sourceDBUpdate(sourceDB)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                        <div class="panel-info" ng-class="{active: newAlias.source_db.name == sourceDB.name}">
+                                            <div class="panel-content" style="text-align:center">
+                                                <span style="font-size:30px;" class="fa fa-database"></span>
+                                                <div class="option-panel-title">{{sourceDB.name}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Type -->
+                        <div class="row animated" ng-class="{fadeInUp: typeSection.show}" ng-if="typeSection.show">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'ALIAS.ADD.TYPE'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: typeSection.show}" ng-if="typeSection.show">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span style="color:#d9534f"><strong>{{'ALIAS.ADD.REQUIRED'|translate}} </strong></span>
+                                    {{'ALIAS.ADD.TYPE_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: typeSection.show}" ng-if="typeSection.show">
+                            <div ng-repeat="type in aliasTypes" class="col-xs-4 col-lg-2 item-panel-select">
+                                <div class="panel-container animated" ng-style="{cursor: newAlias.source_db ? 'pointer' : ''}" ng-class="{pulse: hover && newAlias.source_db, active: newAlias.type.name == type.name, 'disabled': !newAlias.source_db}" ng-click="typeUpdate(type)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                    <div class="panel-info" ng-class="{active: newAlias.type.name == type.name}">
+                                        <div class="panel-content" style="text-align:center">
+                                            <span style="font-size:30px;" class="glyphicon glyphicon-{{type.icon}}"></span>
+                                            <div class="option-panel-title">{{type.name_display}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Clinical codes -->
+                        <div class="row animated" ng-class="{fadeInUp: clinicalCodeSection.show}" ng-if="clinicalCodeSection.show">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'ALIAS.ADD.CLINICAL_CODES'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: clinicalCodeSection.show}" ng-if="clinicalCodeSection.show">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span style="color:#d9534f"><strong>{{'ALIAS.ADD.REQUIRED'|translate}} </strong></span>
+                                    {{'ALIAS.ADD.CLINICAL_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: clinicalCodeSection.show}" ng-if="clinicalCodeSection.show">
+                            <div class="col-xs-12 col-lg-9">
+                                <div class="panel" ng-class="checkTermsAdded(termList) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'ALIAS.ADD.CLINICAL_CODES'|translate}}</strong>
+                                        <span ng-hide="checkTermsAdded(termList)" style="float:right"><em>{{'ALIAS.ADD.INCOMPLETE'|translate}} </em></span>
+                                        <span ng-show="checkTermsAdded(termList)" style="float:right"><em>{{'ALIAS.ADD.COMPLETE'|translate}} </em></span>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="list-space" ng-show="newAlias.source_db && newAlias.type">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                <input class="form-control" type="text" ng-model="termFilter" ng-change="changeTermFilter(termFilter)" placeholder="{{'ALIAS.ADD.SEARCH'|translate}}"/>
+                                            </div>
+                                            <div style="padding: 10px;">
+                                                <label>
+                                                    <input type="checkbox" ng-click="selectAllFilteredTerms()" ng-checked="selectAll"> {{'ALIAS.ADD.SELECT_ALL'|translate}}
+                                                </label>
+                                            </div>
+                                            <div class="btn-group btn-group-justified">
+                                                <a class="btn btn-default" ng-class="{'active' : clinicalCodeFilter == 'all'}" ng-click="setClinicalCodeFilter('all')">{{'ALIAS.ADD.SHOW_ALL'|translate}}</a>
+                                                <a class="btn btn-default" ng-class="{'active' : clinicalCodeFilter == 'current'}" ng-click="setClinicalCodeFilter('current')">{{'ALIAS.ADD.ASSIGN_TO_THIS'|translate}} {{alias.type}}</a>
+                                                <a class="btn btn-default" ng-class="{'active' : clinicalCodeFilter == 'other'}" ng-click="setClinicalCodeFilter('other')">{{'ALIAS.ADD.ASSIGN_OTHERS'|translate}}</a>
+                                                <a class="btn btn-default" ng-class="{'active' : clinicalCodeFilter == 'none'}" ng-click="setClinicalCodeFilter('none')">{{'ALIAS.ADD.UNASSIGNED'|translate}}</a>
+                                            </div>
+                                            <ul class="list-items">
+                                                <li ng-repeat="term in termList | filter: searchTermsFilter">
+                                                    <label ng-class="{greenText: term.added, grayText: term.assigned && !term.added}">
+                                                        <input type="checkbox" ng-click="toggleTermSelection(term)" ng-checked="term.added" /> {{term.name}}
+                                                        <span ng-class="{redText: term.assigned && !term.added}" ng-if="term.assigned && !term.added"><em> --- {{'ALIAS.ADD.ASSIGN_TO'|translate}} {{term.assigned.name_EN}}</em></span>
+                                                        <span ng-class="{redText: term.assigned}" ng-if="term.assigned && term.added"><em> --- {{'ALIAS.ADD.WILL_REPLACE'|translate}} {{term.assigned.name_EN}}</em></span>
+                                                    </label>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div style="text-align:center" ng-hide="newAlias.source_db && newAlias.type">
+                                            <h1>{{'ALIAS.ADD.SELECT_SOURCE_ASSIGN_CODE_TYPE'|translate}}</h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Title & description -->
+                        <div class="row animated" ng-class="{fadeInUp: titleDescriptionSection.show}" ng-if="titleDescriptionSection.show">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'ALIAS.ADD.TITLE_DESCRIPTION'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: titleDescriptionSection.show}" ng-if="titleDescriptionSection.show">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span style="color:#d9534f"><strong>{{'ALIAS.ADD.REQUIRED'|translate}} </strong></span>
+                                    {{'ALIAS.ADD.TITLE_DESCRIPTION_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: titleDescriptionSection.show}" ng-if="titleDescriptionSection.show">
+                            <div class="col-xs-12 col-md-6 col-lg-6">
+                                <div class="panel" ng-class="(newAlias.name_EN && newAlias.description_EN) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'ALIAS.ADD.ENGLISH'|translate}} </strong>
+                                        <span ng-hide="newAlias.name_EN && newAlias.description_EN" style="float:right"><em>{{'ALIAS.ADD.INCOMPLETE'|translate}} </em></span>
+                                        <span ng-show="newAlias.name_EN && newAlias.description_EN" style="float:right"><em>{{'ALIAS.ADD.COMPLETE'|translate}} </em></span>
+                                    </div>
+                                    <div class="panel-body form-horizontal">
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12 col-lg-2">
+                                                {{'ALIAS.ADD.TITLE_2'|translate}}
+                                            </label>
+                                            <div class="col-xs-12 col-lg-10">
+                                                <input class="form-control" type="text" ng-model="newAlias.name_EN" ng-change="titleDescriptionUpdate()" placeholder="{{'ALIAS.ADD.ENGLISH_TITLE'|translate}} " required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12 col-lg-2">
+                                                {{'ALIAS.ADD.DESCRIPTION'|translate}}
+                                            </label>
+                                            <div class="col-xs-12 col-lg-10">
+                                                <div text-angular ng-model="newAlias.description_EN" ng-change="titleDescriptionUpdate()" placeholder="{{'ALIAS.ADD.ENGLISH_DESCRIPTION'|translate}} " required="required" ta-toolbar="toolbar"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6 col-lg-6">
+                                <div class="panel" ng-class="(newAlias.name_FR && newAlias.description_FR) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'ALIAS.ADD.FRENCH'|translate}} </strong>
+                                        <span ng-hide="newAlias.name_FR && newAlias.description_FR" style="float:right"><em>{{'ALIAS.ADD.INCOMPLETE'|translate}} </em></span>
+                                        <span ng-show="newAlias.name_FR && newAlias.description_FR" style="float:right"><em>{{'ALIAS.ADD.COMPLETE'|translate}} </em></span>
+                                    </div>
+                                    <div class="panel-body form-horizontal">
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12 col-lg-2">
+                                                {{'ALIAS.ADD.TITLE_2'|translate}}
+                                            </label>
+                                            <div class="col-xs-12 col-lg-10">
+                                                <input class="form-control" type="text" ng-model="newAlias.name_FR" ng-change="titleDescriptionUpdate()" placeholder="{{'ALIAS.ADD.FRENCH_TITLE'|translate}} " required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12 col-lg-2">
+                                                {{'ALIAS.ADD.DESCRIPTION'|translate}}
+                                            </label>
+                                            <div class="col-xs-12 col-lg-10">
+                                                <div text_angular ng-model="newAlias.description_FR" ng-change="titleDescriptionUpdate()" placeholder="{{'ALIAS.ADD.FRENCH_DESCRIPTION'|translate}} " required="required" ta-toolbar="toolbar"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Checkin instructions -->
+                        <div class="row animated" ng-class="{fadeInUp: checkinSection.show}" ng-if="checkinSection.show && newAlias.type.name == 'Appointment'">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'ALIAS.ADD.CHECKIN_DETAILS'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: checkinSection.show}" ng-if="checkinSection.show && newAlias.type.name == 'Appointment'">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span style="color:#d9534f"><strong>{{'ALIAS.ADD.REQUIRED'|translate}} </strong></span>
+                                    {{'ALIAS.ADD.CHECKIN_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: checkinSection.show}" ng-if="checkinSection.show && newAlias.type.name == 'Appointment'">
+                            <div class="col-xs-12">
+                                <div class="col-xs-12 col-md-6">
+                                    <div class="row">
+                                        <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">{{'ALIAS.ADD.CHECKIN_POSSIBLE'|translate}}</h2>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-6">
+                                            <div class="panel-container animated" style="cursor:pointer" ng-class="{pulse: hoverYesOption, active: newAlias.checkin_details.checkin_possible == 1 }" ng-click="newAlias.checkin_details.checkin_possible = 1; checkinDetailsUpdate()" ng-mouseenter="hoverYesOption=true" ng-mouseleave="hoverYesOption=false">
+                                                <div class="panel-info" ng-class="{active: newAlias.checkin_details.checkin_possible == 1}">
+                                                    <div class="panel-content" style="text-align:center">
+                                                        <span style="font-size:30px;" class="glyphicon glyphicon-ok"></span>
+                                                        <div class="option-panel-title">{{'ALIAS.ADD.YES'|translate}} </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-6">
+                                            <div class="panel-container animated" style="cursor:pointer" ng-class="{pulse: hoverNoOption, active: newAlias.checkin_details.checkin_possible == 0 }" ng-click="newAlias.checkin_details.checkin_possible = 0; checkinDetailsUpdate()" ng-mouseenter="hoverNoOption=true" ng-mouseleave="hoverNoOption=false">
+                                                <div class="panel-info" ng-class="{active: newAlias.checkin_details.checkin_possible == 0}">
+                                                    <div class="panel-content" style="text-align:center">
+                                                        <span style="font-size:30px;" class="glyphicon glyphicon-remove"></span>
+                                                        <div class="option-panel-title">{{'ALIAS.ADD.NO'|translate}} </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6 col-lg-6">
+                                <div class="panel" ng-class="(newAlias.checkin_details.instruction_EN) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'ALIAS.ADD.ENGLISH'|translate}} </strong>
+                                        <span ng-hide="newAlias.checkin_details.instruction_EN" style="float:right"><em>{{'ALIAS.ADD.INCOMPLETE'|translate}} </em></span>
+                                        <span ng-show="newAlias.checkin_details.instruction_EN" style="float:right"><em>{{'ALIAS.ADD.COMPLETE'|translate}} </em></span>
+                                    </div>
+                                    <div class="panel-body form-horizontal">
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12 col-lg-2">
+                                                {{'ALIAS.ADD.CHECKIN_INSTRUCTIONS'|translate}}
+                                            </label>
+                                            <div class="col-xs-12 col-lg-10">
+                                                <div text-angular ng-model="newAlias.checkin_details.instruction_EN" ng-change="checkinDetailsUpdate()" placeholder="{{'ALIAS.ADD.ENGLISH_INSTRUCTIONS'|translate}} " required="required" ta-toolbar="toolbar"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6 col-lg-6">
+                                <div class="panel" ng-class="(newAlias.checkin_details.instruction_FR) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'ALIAS.ADD.FRENCH'|translate}} </strong>
+                                        <span ng-hide="newAlias.checkin_details.instruction_FR" style="float:right"><em>{{'ALIAS.ADD.INCOMPLETE'|translate}} </em></span>
+                                        <span ng-show="newAlias.checkin_details.instruction_FR" style="float:right"><em>{{'ALIAS.ADD.COMPLETE'|translate}} </em></span>
+                                    </div>
+                                    <div class="panel-body form-horizontal">
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12 col-lg-2">
+                                                {{'ALIAS.ADD.INSTRUCTIONS'|translate}}
+                                            </label>
+                                            <div class="col-xs-12 col-lg-10">
+                                                <div text_angular ng-model="newAlias.checkin_details.instruction_FR" ng-change="checkinDetailsUpdate()" placeholder="{{'ALIAS.ADD.FRENCH_INSTRUCTIONS'|translate}} " required="required" ta-toolbar="toolbar"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Hospital Map -->
+                        <div class="row animated" ng-class="{fadeInUp: hospitalMapSection.show}" ng-if="hospitalMapSection.show && newAlias.type.name == 'Appointment'">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'ALIAS.ADD.HOSPITAL_MAP'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: hospitalMapSection.show}" ng-if="hospitalMapSection.show && newAlias.type.name == 'Appointment'">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span><strong>{{'ALIAS.ADD.OPTIONAL_FIELD'|translate}} </strong></span>
+                                    {{'ALIAS.ADD.HOSPITAL_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: hospitalMapSection.show}" ng-if="hospitalMapSection.show && newAlias.type.name == 'Appointment'">
+                            <div class="col-xs-12 col-lg-8">
+                                <div class="panel-container">
+                                    <div class="panel-info">
+                                        <div class="panel-content">
+                                            <div class="panel-input">
+                                                <div class="list-space">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                        <input class="form-control" type="text" ng-model="hospitalMapFilter" ng-change="changeHospitalMapFilter(hospitalMapFilter)" placeholder="{{'ALIAS.ADD.SEARCH'|translate}} "/>
+                                                    </div>
+                                                    <ul class="list-items">
+                                                        <li ng-repeat="hospitalMap in hospitalMapList | filter: searchHospitalMapsFilter">
+                                                            <label>
+                                                                <input type="radio" ng-model="newAlias.hospitalMapSer" ng-click="hospitalMapUpdate($event, hospitalMap)" value="{{hospitalMap.serial}}" /> {{hospitalMap.name_display}}
+                                                            </label>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Educational material -->
+                        <div class="row animated" ng-class="{fadeInUp: educationalMaterialSection.show}" ng-if="educationalMaterialSection.show">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'ALIAS.ADD.EDUCATIONAL_MATERIAL'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: educationalMaterialSection.show}" ng-if="educationalMaterialSection.show">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span><strong>{{'ALIAS.ADD.OPTIONAL_FIELD'|translate}} </strong></span>
+                                    {{'ALIAS.ADD.EDUCATION_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: educationalMaterialSection.show}" ng-if="educationalMaterialSection.show">
+                            <div class="col-xs-12 col-lg-8">
+                                <div class="panel-container">
+                                    <div class="panel-info">
+                                        <div class="panel-content">
+                                            <div class="panel-input">
+                                                <div class="list-space">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                        <input class="form-control" type="text" ng-model="eduMatFilter" ng-change="changeEduMatFilter(eduMatFilter)" placeholder="{{'ALIAS.ADD.SEARCH'|translate}} "/>
+                                                    </div>
+                                                    <ul class="list-items">
+                                                        <li ng-repeat="eduMat in eduMatList | filter: searchEduMatsFilter">
+                                                            <label>
+                                                                <input type="radio" ng-model="newAlias.eduMatSer" ng-click="eduMatUpdate($event, eduMat)" value="{{eduMat.serial}}" /> {{eduMat.name_display}}
+                                                            </label>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SECTION: Icon color -->
+                        <div class="row animated" ng-class="{fadeInUp: colorSection.show}" ng-if="colorSection.show">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'ALIAS.ADD.ICON_COLOR'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: colorSection.show}" ng-if="colorSection.show">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span style="color:#d9534f"><strong>{{'ALIAS.ADD.REQUIRED'|translate}} </strong></span>
+                                    {{'ALIAS.ADD.ICON_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row animated" ng-class="{fadeInUp: colorSection.show}" ng-if="colorSection.show">
+                            <div class="col-xs-6">
+                                <div class="panel-content">
+                                    <div class="panel-input">
+                                        <div class="color-picker">
+                                            <div class="cp-main">
+                                                <material-picker ng-model="newAlias.color" format="'hex'" size="20" hover-model="hoverColor" ng-click="colorUpdate()"></material-picker>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="right-color-picker col-xs-6">
+                                <div ng-if="newAlias.color" class="color-data" style="height: 285px; line-height: 285px;">
+                                    <div class="color-picked">
+                                        <div class="color-palette" ng-style="{'background-color': newAlias.color}"></div>
+                                    </div>
+                                    <div class="color-label hex">
+                                        <h4>{{'ALIAS.ADD.HEX'|translate}}</h4>
+                                    </div>
+                                    <div class="color-code">
+                                        <h4>{{newAlias.color}}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- END SECTION-->
                     </div>
-                  </uib-accordion-heading> 
-                  <div ng-if="checkTermsAdded(termList)" class="description">
-                    <p>
-                      <ul style="max-height: 100px; overflow-y: auto;">
-                        <li ng-repeat="term in termList | filter: {added: 1}">
-                          {{term.name}}
-                        </li>
-                      </ul>
-                    </p>
-                  </div>
                 </div>
-								<!-- SECTION: Title & description -->
-                <div uib-accordion-group is-open="titleDescriptionSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: titleDescriptionSection.show}" ng-if="titleDescriptionSection.show" is-disabled="!newAlias.name_EN && !newAlias.name_FR && !newAlias.description_EN && !newAlias.description_FR">
-                  <uib-accordion-heading>
-                    <div class="row" style="align-items: center">
-                      <div class="col-md-2">
-                        <span ng-if="newAlias.name_EN && newAlias.name_FR && newAlias.description_EN && newAlias.description_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </div>
-                      <div class="col-md-8">
-                        <strong>Title & Description</strong>
-                      </div>
-                      <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleDescriptionSection.open, 'glyphicon-chevron-right': !titleDescriptionSection.open}" ng-if="newAlias.name_EN || newAlias.name_FR || newAlias.description_EN || newAlias.description_FR"></i>
-                      </div> 
-                    </div>
-                  </uib-accordion-heading>
-                  <div ng-if="newAlias.name_EN || newAlias.description_EN" class="description">
-                    <p ng-if="newAlias.name_EN" style="margin-bottom:5px;">
-                      <strong>EN</strong>
-                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                      {{newAlias.name_EN}}
-                    </p>
-                    <p ng-if="newAlias.description_EN" style="padding-left: 10px; font-size: 10px;"><em>See rendered output for description</em></p>  
-                  </div>
-                  <div ng-if="newAlias.name_FR || newAlias.description_FR" class="description">
-                    <p ng-if="newAlias.name_FR" style="margin-bottom:5px;">
-                      <strong>FR</strong>
-                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                      {{newAlias.name_FR}}
-                    </p>
-                    <p ng-if="newAlias.description_FR" style="padding-left: 10px; font-size: 10px;"><em>See rendered output for description</em></p>  
-                  </div>
-                </div>
-                <!-- SECTION: Checkin Details -->
-                <div uib-accordion-group is-open="checkinSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: checkinSection.show}" ng-if="checkinSection.show && newAlias.type.name == 'Appointment'" is-disabled="newAlias.checkin_details.checkin_possible == null && !newAlias.checkin_details.instruction_EN && !newAlias.checkin_details.instruction_FR">
-                  <uib-accordion-heading>
-                    <div class="row" style="align-items: center">
-                      <div class="col-md-2">
-                        <span ng-if="newAlias.checkin_details.checkin_possible != null && newAlias.checkin_details.instruction_EN && newAlias.checkin_details.instruction_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </div>
-                      <div class="col-md-8">
-                        <strong>Checkin Details</strong>
-                      </div>
-                      <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': checkinSection.open, 'glyphicon-chevron-right': !checkinSection.open}" ng-if="newAlias.checkin_details.checkin_possible != null || newAlias.checkin_details.instruction_EN || newAlias.checkin_details.instruction_FR"></i>
-                      </div> 
-                    </div>
-                  </uib-accordion-heading>
-                  <div ng-if="newAlias.checkin_details.checkin_possible != null" class="description">
-                    <p>
-                      <strong>Checkin possible</strong>
-                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                      <span ng-if="newAlias.checkin_details.checkin_possible == 1">Yes</span>
-                      <span ng-if="newAlias.checkin_details.checkin_possible == 0">No</span>
-                    </p>
-                  </div>
-                  <div ng-if="newAlias.checkin_details.instruction_EN" class="description">
-                    <p style="margin-bottom:5px;">
-                      <strong>EN Instructions</strong>
-                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                      <em>See rendered output</em>  
-                    </p>
-                  </div>
-                  <div ng-if="newAlias.checkin_details.instruction_FR" class="description">
-                    <p style="margin-bottom:5px;">
-                      <strong>FR Instructions</strong>
-                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                      <em>See rendered output</em>
-                    </p>
-                  </div>
-                </div>
-                <!-- SECTION: Hospital map -->
-                <div uib-accordion-group is-open="hospitalMapSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: hospitalMapSection.show}" is-disabled="!newAlias.hospitalMap" ng-if="hospitalMapSection.show && newAlias.type.name == 'Appointment'">
-                  <uib-accordion-heading>
-                    <div class="row" style="align-items: center">
-                      <div class="col-md-2">
-                        <span ng-if="newAlias.hospitalMap" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </div>
-                      <div class="col-md-8">
-                        <strong>Hospital Map</strong>
-                      </div>
-                      <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': hospitalMapSection.open, 'glyphicon-chevron-right': !hospitalMapSection.open}" ng-if="newAlias.hospitalMap"></i>
-                      </div>
-                    </div>
-                  </uib-accordion-heading> 
-                  <div ng-if="newAlias.hospitalMap" class="description">
-                    <p>
-                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                      {{newAlias.hospitalMap.name_EN}}
-                    </p>
-                  </div>
-                </div>
-								<!-- SECTION: Educational material -->
-                <div uib-accordion-group is-open="educationalMaterialSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: educationalMaterialSection.show}" is-disabled="!newAlias.eduMat" ng-if="educationalMaterialSection.show">
-                  <uib-accordion-heading>
-                    <div class="row" style="align-items: center">
-                      <div class="col-md-2">
-                        <span ng-if="newAlias.eduMat" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </div>
-                      <div class="col-md-8">
-                        <strong>Educational Material</strong>
-                      </div>
-                      <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': educationalMaterialSection.open, 'glyphicon-chevron-right': !educationalMaterialSection.open}" ng-if="newAlias.eduMat"></i>
-                      </div>
-                    </div>
-                  </uib-accordion-heading> 
-                  <div ng-if="newAlias.eduMat" class="description">
-                    <p>
-                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                      {{newAlias.eduMat.name_EN}}
-                    </p>
-                  </div>
-                </div>
-								<!-- SECTION: Icon color -->
-                 <div uib-accordion-group is-open="colorSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: colorSection.show}" is-disabled="!newAlias.color" ng-if="colorSection.show">
-                  <uib-accordion-heading>
-                    <div class="row" style="align-items: center">
-                      <div class="col-md-2">
-                        <span ng-if="newAlias.color" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
-                      </div>
-                      <div class="col-md-8">
-                        <strong>Icon Color</strong>
-                      </div>
-                      <div class="col-md-2">
-                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': colorSection.open, 'glyphicon-chevron-right': !colorSection.open}" ng-if="newAlias.color"></i>
-                      </div>
-                    </div>
-                  </uib-accordion-heading> 
-                  <div ng-if="newAlias.color" class="description">
-                    <p>
-                      <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                      {{newAlias.color}} <br>
-                      <span style="margin-top: 10px; display: block; border: 1px solid rgba(85, 85, 85, 0.2);"  class="color-palette" ng-style="{'background-color': newAlias.color}"></span>
-                    </p>
-                  </div>
-                </div>
-              </uib-accordion>
-           
-							<!-- Submit button -->
-              <div class="panel-container">
-                <a href="" ng-click="submitAlias()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
-                  <span style="font-size: 20px;"><strong>Submit {{newAlias.type.name}}</strong></span>
-                </a>
-              </div>
             </div>
-					</div>
-					<!-- Right detail panel view -->
-          <div class="col-xs-12 col-lg-10 animated fadeInRight">
-            <div class="main-title">
-              <div class="row">
-  							<!-- Page title -->
-                <div class="col-xs-12 col-md-9 title-content">
-                  <span class="glyphicon glyphicon-plus"></span>
-                  <h1><strong>Add Task, Appointment, or Document</strong></h1>
-  							</div>
-  							<!-- Breadcrumbs -->
-                <div class="col-md-3 title-breadcrumbs"> 
-                  <span>
-                    <span><a ui-sref="home">Home</a></span>
-                    <span class="teflon glyphicon glyphicon-menu-right"></span> 
-                    <span><a ui-sref="alias">TAD</a></span>
-                    <span class="teflon glyphicon glyphicon-menu-right"></span> 
-                    <span><strong>Add TAD</strong></span>
-                  </span>
-                </div>
-  						</div> 
-              <div class="row mobile-side-panel-menu">
-                <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
-                  <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
-                    <div class="side-panel-info-sm">
-                      <div class="panel-content">
-                        <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
-                        <h6 class="side-panel-title"><strong>Back to Tasks/Appts/Documents</strong></h6>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkForm()">
-                  <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
-                    <span style="padding: 0 10px;">
-                      <h2>Step {{numOfCompletedSteps}} of {{stepTotal}} Completed</h2>
-                    </span>  
-                  </div>  
-                  <div class="progress progress-striped active">
-                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
-                    </div>
-                  </div>
-                </div>
-                <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkForm()">
-                  <div class="panel-container">
-                    <a href="" ng-click="submitAlias()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
-                      <span style="font-size: 20px;"><strong>Submit {{newAlias.type.name}}</strong></span>
-                    </a>
-                  </div>
-                </div> 
-              </div>
-            </div>
-            <div class="section-content">
-  						<!-- SECTION: Source database -->  
-              <div class="row">
-                <div class="col-xs-12 side-menu-title">
-                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                    <span style="background-color:#e6edfa; padding: 0 10px;">
-                      <span class="fas fa-dot-circle"></span>
-                      <h2>Source Database</h2>
-                    </span>  
-                  </div>  
-                </div>
-              </div>   
-              <div class="row">
-                <div class="col-xs-12">
-                  <p style="margin-bottom: 10px;">
-                    <span style="color:#d9534f"><strong>Required field:</strong></span>
-                    Please select a source database.
-                  </p>
-                </div>
-              </div>    
-              <div class="row">
-                <div class="col-xs-12">
-                  <div ng-repeat="sourceDB in sourceDBList" class="col-xs-4 col-lg-2 item-panel-select"> 
-                    <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: newAlias.source_db.name == sourceDB.name}" ng-click="sourceDBUpdate(sourceDB)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                      <div class="panel-info" ng-class="{active: newAlias.source_db.name == sourceDB.name}">
-                        <div class="panel-content" style="text-align:center">
-                          <span style="font-size:30px;" class="fa fa-database"></span>
-                          <div class="option-panel-title">{{sourceDB.name}}</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-  						</div> 
-              <!-- SECTION: Type -->
-              <div class="row animated" ng-class="{fadeInUp: typeSection.show}" ng-if="typeSection.show">
-                <div class="col-xs-12 side-menu-title">
-                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                    <span style="background-color:#e6edfa; padding: 0 10px;">
-                      <span class="fas fa-dot-circle"></span>
-                      <h2>Type</h2>
-                    </span>  
-                  </div>  
-                </div>
-              </div>   
-              <div class="row animated" ng-class="{fadeInUp: typeSection.show}" ng-if="typeSection.show">
-                <div class="col-xs-12">
-                  <p style="margin-bottom: 10px;">
-                    <span style="color:#d9534f"><strong>Required field:</strong></span>
-                    Please select the alias type.
-                  </p>
-                </div>
-              </div>    
-              <div class="row animated" ng-class="{fadeInUp: typeSection.show}" ng-if="typeSection.show">
-                <div ng-repeat="type in aliasTypes" class="col-xs-4 col-lg-2 item-panel-select"> 
-                  <div class="panel-container animated" ng-style="{cursor: newAlias.source_db ? 'pointer' : ''}" ng-class="{pulse: hover && newAlias.source_db, active: newAlias.type.name == type.name, 'disabled': !newAlias.source_db}" ng-click="typeUpdate(type)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                    <div class="panel-info" ng-class="{active: newAlias.type.name == type.name}">
-                      <div class="panel-content" style="text-align:center">
-                        <span style="font-size:30px;" class="glyphicon glyphicon-{{type.icon}}"></span>
-                        <div class="option-panel-title">{{type.name}}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>  
-              <!-- SECTION: Clinical codes -->
-              <div class="row animated" ng-class="{fadeInUp: clinicalCodeSection.show}" ng-if="clinicalCodeSection.show">
-                <div class="col-xs-12 side-menu-title">
-                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                    <span style="background-color:#e6edfa; padding: 0 10px;">
-                      <span class="fas fa-dot-circle"></span>
-                      <h2>Clinical Codes</h2>
-                    </span>  
-                  </div>  
-                </div>
-              </div>   
-              <div class="row animated" ng-class="{fadeInUp: clinicalCodeSection.show}" ng-if="clinicalCodeSection.show">
-                <div class="col-xs-12">
-                  <p style="margin-bottom: 10px;">
-                    <span style="color:#d9534f"><strong>Required field:</strong></span>
-                    Please assign clinical {{newAlias.type.name}} code(s).
-                  </p>
-                </div>
-              </div>  
-              <div class="row animated" ng-class="{fadeInUp: clinicalCodeSection.show}" ng-if="clinicalCodeSection.show"> 
-                <div class="col-xs-12 col-lg-9">
-                  <div class="panel" ng-class="checkTermsAdded(termList) ? 'panel-success': 'panel-danger'">
-                    <div class="panel-heading"><strong>Clinical Codes</strong>
-                      <span ng-hide="checkTermsAdded(termList)" style="float:right"><em>Incomplete</em></span>
-                      <span ng-show="checkTermsAdded(termList)" style="float:right"><em>Complete</em></span>
-                    </div>
-                    <div class="panel-body">
-                      <div class="list-space" ng-show="newAlias.source_db && newAlias.type">
-                        <div class="input-group">
-                          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                          <input class="form-control" type="text" ng-model="termFilter" ng-change="changeTermFilter(termFilter)" placeholder="Search Codes"/>
-                        </div>
-                      <div style="padding: 10px;">
-                          <label>
-                            <input type="checkbox" ng-click="selectAllFilteredTerms()" ng-checked="selectAll"> Select All
-                          </label>
-                        </div>
-                        <div class="btn-group btn-group-justified">
-                          <a class="btn btn-default" ng-class="{'active' : clinicalCodeFilter == 'all'}" ng-click="setClinicalCodeFilter('all')">Show all</a>
-                          <a class="btn btn-default" ng-class="{'active' : clinicalCodeFilter == 'current'}" ng-click="setClinicalCodeFilter('current')">Assigned to this {{alias.type}}</a>
-                          <a class="btn btn-default" ng-class="{'active' : clinicalCodeFilter == 'other'}" ng-click="setClinicalCodeFilter('other')">Assigned to others</a>
-                          <a class="btn btn-default" ng-class="{'active' : clinicalCodeFilter == 'none'}" ng-click="setClinicalCodeFilter('none')">Unassigned</a>
-                        </div>
-                        <ul class="list-items">
-                          <li ng-repeat="term in termList | filter: searchTermsFilter">
-                            <label ng-class="{greenText: term.added, grayText: term.assigned && !term.added}">
-                              <input type="checkbox" ng-click="toggleTermSelection(term)" ng-checked="term.added" /> {{term.name}}
-                              <span ng-class="{redText: term.assigned && !term.added}" ng-if="term.assigned && !term.added"><em> --- Assigned to: {{term.assigned.name_EN}}</em></span>
-                              <span ng-class="{redText: term.assigned}" ng-if="term.assigned && term.added"><em> --- Will replace assignment from: {{term.assigned.name_EN}}</em></span>
-                            </label>
-                          </li>
-                        </ul>
-                      </div>
-                      <div style="text-align:center" ng-hide="newAlias.source_db && newAlias.type">
-                        <h1>Please select a source database AND assign an internal hospital code type!</h1>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>   
-  						<!-- SECTION: Title & description -->        
-              <div class="row animated" ng-class="{fadeInUp: titleDescriptionSection.show}" ng-if="titleDescriptionSection.show">
-                <div class="col-xs-12 side-menu-title">
-                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                    <span style="background-color:#e6edfa; padding: 0 10px;">
-                      <span class="fas fa-dot-circle"></span>
-                      <h2>Title & Description</h2>
-                    </span>  
-                  </div>  
-                </div>
-              </div>   
-              <div class="row animated" ng-class="{fadeInUp: titleDescriptionSection.show}" ng-if="titleDescriptionSection.show">
-                <div class="col-xs-12">
-                  <p style="margin-bottom: 10px;">
-                    <span style="color:#d9534f"><strong>Required field:</strong></span>
-                    Please assign an english and french title and description.
-                  </p>
-                </div>
-              </div>  
-              <div class="row animated" ng-class="{fadeInUp: titleDescriptionSection.show}" ng-if="titleDescriptionSection.show"> 
-                <div class="col-xs-12 col-md-6 col-lg-6">
-                  <div class="panel" ng-class="(newAlias.name_EN && newAlias.description_EN) ? 'panel-success': 'panel-danger'">
-                    <div class="panel-heading"><strong>English</strong>
-                      <span ng-hide="newAlias.name_EN && newAlias.description_EN" style="float:right"><em>Incomplete</em></span>
-                      <span ng-show="newAlias.name_EN && newAlias.description_EN" style="float:right"><em>Complete</em></span>
-                    </div>
-                    <div class="panel-body form-horizontal">
-                      <div class="form-group">
-                        <label class="control-label col-xs-12 col-lg-2">
-                          Title
-                        </label>
-                        <div class="col-xs-12 col-lg-10">
-                          <input class="form-control" type="text" ng-model="newAlias.name_EN" ng-change="titleDescriptionUpdate()" placeholder="English Title" required="required">
-                        </div>
-                      </div>    
-                      <div class="form-group">
-                        <label class="control-label col-xs-12 col-lg-2">
-                          Description
-                        </label>
-                        <div class="col-xs-12 col-lg-10">
-                          <div text-angular ng-model="newAlias.description_EN" ng-change="titleDescriptionUpdate()" placeholder="English Description" required="required" ta-toolbar="toolbar"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>          
-                <div class="col-xs-12 col-md-6 col-lg-6">
-                  <div class="panel" ng-class="(newAlias.name_FR && newAlias.description_FR) ? 'panel-success': 'panel-danger'">
-                    <div class="panel-heading"><strong>Français</strong>
-                      <span ng-hide="newAlias.name_FR && newAlias.description_FR" style="float:right"><em>Incomplete</em></span>
-                      <span ng-show="newAlias.name_FR && newAlias.description_FR" style="float:right"><em>Complete</em></span>
-                    </div>
-                    <div class="panel-body form-horizontal">
-                      <div class="form-group">
-                        <label class="control-label col-xs-12 col-lg-2">
-                          Titre
-                        </label>
-                        <div class="col-xs-12 col-lg-10">
-                          <input class="form-control" type="text" ng-model="newAlias.name_FR" ng-change="titleDescriptionUpdate()" placeholder="Titre Français" required="required">
-                        </div>
-                      </div>    
-                      <div class="form-group">
-                        <label class="control-label col-xs-12 col-lg-2">
-                          Description
-                        </label>
-                        <div class="col-xs-12 col-lg-10">
-                          <div text_angular ng-model="newAlias.description_FR" ng-change="titleDescriptionUpdate()" placeholder="Description Français" required="required" ta-toolbar="toolbar"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>          
-  						</div>
-              <!-- SECTION: Checkin instructions -->        
-              <div class="row animated" ng-class="{fadeInUp: checkinSection.show}" ng-if="checkinSection.show && newAlias.type.name == 'Appointment'">
-                <div class="col-xs-12 side-menu-title">
-                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                    <span style="background-color:#e6edfa; padding: 0 10px;">
-                      <span class="fas fa-dot-circle"></span>
-                      <h2>Checkin Details</h2>
-                    </span>  
-                  </div>  
-                </div>
-              </div>   
-              <div class="row animated" ng-class="{fadeInUp: checkinSection.show}" ng-if="checkinSection.show && newAlias.type.name == 'Appointment'">
-                <div class="col-xs-12">
-                  <p style="margin-bottom: 10px;">
-                    <span style="color:#d9534f"><strong>Required field:</strong></span>
-                    Please indicate whether check-in is possible or not for this appointment and provide the check-in instructions.
-                  </p>
-                </div>
-              </div>  
-              <div class="row animated" ng-class="{fadeInUp: checkinSection.show}" ng-if="checkinSection.show && newAlias.type.name == 'Appointment'"> 
-                <div class="col-xs-12">
-                  <div class="col-xs-12 col-md-6">
-                    <div class="row">
-                      <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">Check-in possible?</h2>
-                    </div>
-                    <div class="row">
-                      <div class="col-xs-12 col-sm-6">
-                        <div class="panel-container animated" style="cursor:pointer" ng-class="{pulse: hoverYesOption, active: newAlias.checkin_details.checkin_possible == 1 }" ng-click="newAlias.checkin_details.checkin_possible = 1; checkinDetailsUpdate()" ng-mouseenter="hoverYesOption=true" ng-mouseleave="hoverYesOption=false">
-                          <div class="panel-info" ng-class="{active: newAlias.checkin_details.checkin_possible == 1}">
-                            <div class="panel-content" style="text-align:center">
-                              <span style="font-size:30px;" class="glyphicon glyphicon-ok"></span>
-                              <div class="option-panel-title">Yes</div>
-                            </div>
-                          </div>
-                        </div> 
-                      </div>
-                      <div class="col-xs-12 col-sm-6">
-                        <div class="panel-container animated" style="cursor:pointer" ng-class="{pulse: hoverNoOption, active: newAlias.checkin_details.checkin_possible == 0 }" ng-click="newAlias.checkin_details.checkin_possible = 0; checkinDetailsUpdate()" ng-mouseenter="hoverNoOption=true" ng-mouseleave="hoverNoOption=false">
-                          <div class="panel-info" ng-class="{active: newAlias.checkin_details.checkin_possible == 0}">
-                            <div class="panel-content" style="text-align:center">
-                              <span style="font-size:30px;" class="glyphicon glyphicon-remove"></span>
-                              <div class="option-panel-title">No</div>
-                            </div>
-                          </div>
-                        </div> 
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-xs-12 col-md-6 col-lg-6">
-                  <div class="panel" ng-class="(newAlias.checkin_details.instruction_EN) ? 'panel-success': 'panel-danger'">
-                    <div class="panel-heading"><strong>English</strong>
-                      <span ng-hide="newAlias.checkin_details.instruction_EN" style="float:right"><em>Incomplete</em></span>
-                      <span ng-show="newAlias.checkin_details.instruction_EN" style="float:right"><em>Complete</em></span>
-                    </div>
-                    <div class="panel-body form-horizontal">
-                      <div class="form-group">
-                        <label class="control-label col-xs-12 col-lg-2">
-                          Checkin Instructions
-                        </label>
-                        <div class="col-xs-12 col-lg-10">
-                          <div text-angular ng-model="newAlias.checkin_details.instruction_EN" ng-change="checkinDetailsUpdate()" placeholder="English Instructions" required="required" ta-toolbar="toolbar"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>          
-                <div class="col-xs-12 col-md-6 col-lg-6">
-                  <div class="panel" ng-class="(newAlias.checkin_details.instruction_FR) ? 'panel-success': 'panel-danger'">
-                    <div class="panel-heading"><strong>Français</strong>
-                      <span ng-hide="newAlias.checkin_details.instruction_FR" style="float:right"><em>Incomplete</em></span>
-                      <span ng-show="newAlias.checkin_details.instruction_FR" style="float:right"><em>Complete</em></span>
-                    </div>
-                    <div class="panel-body form-horizontal">
-                      <div class="form-group">
-                        <label class="control-label col-xs-12 col-lg-2">
-                          Instructions
-                        </label>
-                        <div class="col-xs-12 col-lg-10">
-                          <div text_angular ng-model="newAlias.checkin_details.instruction_FR" ng-change="checkinDetailsUpdate()" placeholder="Instruction Français" required="required" ta-toolbar="toolbar"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>          
-              </div>
-              <!-- SECTION: Hospital Map -->
-              <div class="row animated" ng-class="{fadeInUp: hospitalMapSection.show}" ng-if="hospitalMapSection.show && newAlias.type.name == 'Appointment'">
-                <div class="col-xs-12 side-menu-title">
-                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                    <span style="background-color:#e6edfa; padding: 0 10px;">
-                      <span class="fas fa-dot-circle"></span>
-                      <h2>Hospital Map</h2>
-                    </span>  
-                  </div>  
-                </div>
-              </div>   
-              <div class="row animated" ng-class="{fadeInUp: hospitalMapSection.show}" ng-if="hospitalMapSection.show && newAlias.type.name == 'Appointment'">
-                <div class="col-xs-12">
-                  <p style="margin-bottom: 10px;">
-                    <span><strong>Optional field:</strong></span>
-                    Assigning a hospital map will provide a map display for the appointment.
-                  </p>
-                </div>
-              </div>  
-              <div class="row animated" ng-class="{fadeInUp: hospitalMapSection.show}" ng-if="hospitalMapSection.show && newAlias.type.name == 'Appointment'"> 
-                <div class="col-xs-12 col-lg-8">
-                  <div class="panel-container">
-                    <div class="panel-info">
-                      <div class="panel-content">
-                        <div class="panel-input">  
-                          <div class="list-space">
-                            <div class="input-group">
-                              <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                              <input class="form-control" type="text" ng-model="hospitalMapFilter" ng-change="changeHospitalMapFilter(hospitalMapFilter)" placeholder="Search Hospital Map"/>
-                            </div>
-                            <ul class="list-items">
-                              <li ng-repeat="hospitalMap in hospitalMapList | filter: searchHospitalMapsFilter">
-                                <label>
-                                  <input type="radio" ng-model="newAlias.hospitalMapSer" ng-click="hospitalMapUpdate($event, hospitalMap)" value="{{hospitalMap.serial}}" /> {{hospitalMap.name_EN}}
-                                </label>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-  						<!-- SECTION: Educational material -->
-              <div class="row animated" ng-class="{fadeInUp: educationalMaterialSection.show}" ng-if="educationalMaterialSection.show">
-                <div class="col-xs-12 side-menu-title">
-                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                    <span style="background-color:#e6edfa; padding: 0 10px;">
-                      <span class="fas fa-dot-circle"></span>
-                      <h2>Educational Material</h2>
-                    </span>  
-                  </div>  
-                </div>
-              </div>   
-              <div class="row animated" ng-class="{fadeInUp: educationalMaterialSection.show}" ng-if="educationalMaterialSection.show">
-                <div class="col-xs-12">
-                  <p style="margin-bottom: 10px;">
-                    <span><strong>Optional field:</strong></span>
-                    Assigning an educational material will provide a rich-text description of the alias.
-                  </p>
-                </div>
-              </div>  
-              <div class="row animated" ng-class="{fadeInUp: educationalMaterialSection.show}" ng-if="educationalMaterialSection.show"> 
-                <div class="col-xs-12 col-lg-8">
-                  <div class="panel-container">
-                    <div class="panel-info">
-                      <div class="panel-content">
-                        <div class="panel-input">  
-                          <div class="list-space">
-                            <div class="input-group">
-                              <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                              <input class="form-control" type="text" ng-model="eduMatFilter" ng-change="changeEduMatFilter(eduMatFilter)" placeholder="Search Educational Material"/>
-                            </div>
-                            <ul class="list-items">
-                              <li ng-repeat="eduMat in eduMatList | filter: searchEduMatsFilter">
-                                <label>
-                                  <input type="radio" ng-model="newAlias.eduMatSer" ng-click="eduMatUpdate($event, eduMat)" value="{{eduMat.serial}}" /> {{eduMat.name_EN}}
-                                </label>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-  						</div>
-  						<!-- SECTION: Icon color -->   
-              <div class="row animated" ng-class="{fadeInUp: colorSection.show}" ng-if="colorSection.show">
-                <div class="col-xs-12 side-menu-title">
-                  <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                    <span style="background-color:#e6edfa; padding: 0 10px;">
-                      <span class="fas fa-dot-circle"></span>
-                      <h2>Icon Color</h2>
-                    </span>  
-                  </div>  
-                </div>
-              </div>   
-              <div class="row animated" ng-class="{fadeInUp: colorSection.show}" ng-if="colorSection.show">
-                <div class="col-xs-12">
-                  <p style="margin-bottom: 10px;">
-                    <span style="color:#d9534f"><strong>Required field:</strong></span>
-                    Please select the icon color to be displayed.
-                  </p>
-                </div>
-              </div>  
-              <div class="row animated" ng-class="{fadeInUp: colorSection.show}" ng-if="colorSection.show">
-                <div class="col-xs-6">
-                  <div class="panel-content">
-                    <div class="panel-input">  
-                      <div class="color-picker">
-                        <div class="cp-main">
-                          <material-picker ng-model="newAlias.color" format="'hex'" size="20" hover-model="hoverColor" ng-click="colorUpdate()"></material-picker>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="right-color-picker col-xs-6">
-                  <div ng-if="newAlias.color" class="color-data" style="height: 285px; line-height: 285px;">
-                    <div class="color-picked">
-                      <div class="color-palette" ng-style="{'background-color': newAlias.color}"></div>
-                    </div>
-                    <div class="color-label hex">
-                      <h4>HEX</h4>
-                    </div>
-                    <div class="color-code">
-                      <h4>{{newAlias.color}}</h4>
-                    </div>
-                  </div>
-                </div>
-  						</div>
-  						<!-- END SECTION-->  
-            </div>     
-          </div>
         </div>
-      </div>
-		</div>
-		<!-- "Processing" modal template -->
-<script type="text/ng-template" id="processingModal.htm">
-  <div class="modal-header">
-    <h1> Processing...</h1>
-  </div>
-  <div class="modal-body">
-    <div class="progress progress-striped active">
-      <div class="progress-bar" style="width: 100%"></div>        
     </div>
-  </div>
-</script>
-
-
-
-
+    <!-- "Processing" modal template -->
+    <script type="text/ng-template" id="processingModal.htm">
+        <div class="modal-header">
+            <h1>{{'ALIAS.ADD.PROCESSING'|translate}}</h1>
+        </div>
+        <div class="modal-body">
+            <div class="progress progress-striped active">
+                <div class="progress-bar" style="width: 100%"></div>
+            </div>
+        </div>
+    </script>
+</div>

@@ -1,16 +1,12 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To delete a questionnaire */
-	include_once('questionnaire.inc');
+include_once('questionnaire.inc');
 
-	// Retrieve FORM param
-	$questionnaire_serNum	= $_POST['serNum'];
-	$user 								= $_POST['user'];
+$questionnaireId = strip_tags($_POST['ID']);
+$OAUserId = strip_tags($_POST['OAUserId']);
+$questionnaireObj = new Questionnaire($OAUserId);
 
-	$questionnaireObj = new Questionnaire; // Object
+$response = $questionnaireObj->deleteQuestionnaire($questionnaireId);
 
-	// Call function
-	$response = $questionnaireObj->deleteQuestionnaire($questionnaire_serNum, $user);
-
-	print json_encode($response); // Return response
+header('Content-Type: application/javascript');
+print json_encode($response); // Return response
 ?>
