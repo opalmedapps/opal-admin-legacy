@@ -1,17 +1,8 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get a list of existing posts */
-	include_once('post.inc');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
+header('Content-Type: application/javascript');
+include_once('post.inc');
 
-	$post = new Post; // Object
-
-	// Call function
-	$existingPostList = $post->getPosts();
-
-	// Callback to http request
-	print $callback.'('.json_encode($existingPostList).')';
-
-?>
+$post = new Post; // Object
+$existingPostList = $post->getPosts();
+echo json_encode($existingPostList);

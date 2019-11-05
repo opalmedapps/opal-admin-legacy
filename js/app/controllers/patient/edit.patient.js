@@ -138,7 +138,7 @@ angular.module('opalAdmin.controllers.patient.edit', ['ngAnimate', 'ngSanitize',
 
 								$.ajax({
 									type: "POST",
-									url: "php/patient/update.patient.php",
+									url: "patient/update/patient",
 									data: patient,
 									success: function (response) {
 										response = JSON.parse(response);

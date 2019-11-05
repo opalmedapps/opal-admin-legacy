@@ -682,17 +682,25 @@ class Cron {
     public function getCronListLogs ($contents) {
     	$cronLogs = array();
 
-   		$cronLogs['appointment'] = (!empty($contents['Appointment'])) ? Alias::getAliasListLogs($contents['Appointment'], 'Appointment') : array();
-   		$cronLogs['document'] = (!empty($contents['Document'])) ? Alias::getAliasListLogs($contents['Document'], 'Document') : array();
-   		$cronLogs['task'] = (!empty($contents['Task'])) ? Alias::getAliasListLogs($contents['Task'], 'Task') : array();
-   		$cronLogs['announcement'] = (!empty($contents['Announcement'])) ? Post::getPostListLogs($contents['Announcement'], 'Announcement') : array();
-   		$cronLogs['txTeamMessage'] = (!empty($contents['Treatment Team Message'])) ? Post::getPostListLogs($contents['Treatment Team Message'], 'Treatment Team Message') : array();
-   		$cronLogs['pfp'] = (!empty($contents['Patients for Patients'])) ? Post::getPostListLogs($contents['Patients for Patients'], 'Patients for Patients') : array();
-   		$cronLogs['educationalMaterial'] = (!empty($contents['Educational Material'])) ? EduMaterial::getEducationalMaterialListLogs($contents['Educational Material']) : array();
-   		$cronLogs['email'] = (!empty($contents['Email'])) ? Email::getEmailListLogs($contents['Email']) : array();
-   		$cronLogs['legacyQuestionnaire'] = (!empty($contents['Legacy Questionnaire'])) ? LegacyQuestionnaire::getLegacyQuestionnaireListLogs($contents['Legacy Questionnaire']) : array();
-   		$cronLogs['notification'] = (!empty($contents['Notification'])) ? Notification::getNotificationListLogs($contents['Notification']) : array();
-   		$cronLogs['testResult'] = (!empty($contents['Test Result'])) ? TestResult::getTestResultListLogs($contents['Test Result']) : array();
+    	$anAlias = new Alias();
+    	$aPost = new Post();
+    	$anEduMaterial = new EduMaterial();
+    	$anEmail = new Email();
+    	$aLegacyQuestionnaire = new LegacyQuestionnaire();
+    	$aNotification = new Notification();
+    	$aTestResult = new TestResult();
+
+   		$cronLogs['appointment'] = (!empty($contents['Appointment'])) ? $anAlias->getAliasListLogs($contents['Appointment'], 'Appointment') : array();
+   		$cronLogs['document'] = (!empty($contents['Document'])) ? $anAlias->getAliasListLogs($contents['Document'], 'Document') : array();
+   		$cronLogs['task'] = (!empty($contents['Task'])) ? $anAlias->getAliasListLogs($contents['Task'], 'Task') : array();
+   		$cronLogs['announcement'] = (!empty($contents['Announcement'])) ? $aPost->getPostListLogs($contents['Announcement'], 'Announcement') : array();
+   		$cronLogs['txTeamMessage'] = (!empty($contents['Treatment Team Message'])) ? $aPost->getPostListLogs($contents['Treatment Team Message'], 'Treatment Team Message') : array();
+   		$cronLogs['pfp'] = (!empty($contents['Patients for Patients'])) ? $aPost->getPostListLogs($contents['Patients for Patients'], 'Patients for Patients') : array();
+   		$cronLogs['educationalMaterial'] = (!empty($contents['Educational Material'])) ? $anEduMaterial->getEducationalMaterialListLogs($contents['Educational Material']) : array();
+   		$cronLogs['email'] = (!empty($contents['Email'])) ? $anEmail->getEmailListLogs($contents['Email']) : array();
+   		$cronLogs['legacyQuestionnaire'] = (!empty($contents['Legacy Questionnaire'])) ? $aLegacyQuestionnaire->getLegacyQuestionnaireListLogs($contents['Legacy Questionnaire']) : array();
+   		$cronLogs['notification'] = (!empty($contents['Notification'])) ? $aNotification->getNotificationListLogs($contents['Notification']) : array();
+   		$cronLogs['testResult'] = (!empty($contents['Test Result'])) ? $aTestResult->getTestResultListLogs($contents['Test Result']) : array();
 
    		return $cronLogs;
     }

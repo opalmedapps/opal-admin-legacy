@@ -77,6 +77,10 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		$scope.goToQuestionnaire = function () {
 			$state.go('questionnaire');
 		};
+		// Function to go to publication tool page
+		$scope.goToPublicationTool = function () {
+			$state.go('publication-tool');
+		};
 		// Function to go to questionnaire question bank
 		$scope.goToQuestionnaireQuestionBank = function () {
 			$state.go('questionnaire-question');
@@ -84,6 +88,10 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		// Function to go to completed questionnaires page
 		$scope.goToQuestionnaireCompleted = function () {
 			$state.go('questionnaire-completed');
+		};
+		// Function to go to question type page
+		$scope.goToTemplateQuestion = function () {
+			$state.go('questionnaire-template-question');
 		};
 		// Function to go to legacy questionnaires page
 		$scope.goToLegacyQuestionnaire = function () {

@@ -1,18 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get logs on a particular educational material for highcharts */
-	include_once('educational-material.inc');
+header('Content-Type: application/javascript');
+/* To get logs on a particular educational material for highcharts */
+include_once('educational-material.inc');
 
-	// Retrieve FORM params
-	$callback = $_GET['callback'];
-	$serial = ( $_GET['serial'] === 'undefined' ) ? null : $_GET['serial'];
+$serial = ( strip_tags($_POST['serial']) === 'undefined' ) ? null : strip_tags($_POST['serial']);
+$eduMat = new EduMaterial;
+$educationalMaterialLogs = $eduMat->getEducationalMaterialChartLogs($serial);
 
-	$eduMat = new EduMaterial; // Object
-
-	// Call function
-	$educationalMaterialLogs = $eduMat->getEducationalMaterialChartLogs($serial);
-
-	// Callback to http request
-	print $callback.'('.json_encode($educationalMaterialLogs).')';
-
-?>
+echo json_encode($educationalMaterialLogs);

@@ -1,18 +1,10 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get a list of source databases */
-	include_once('alias.inc');
+header('Content-Type: application/javascript');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
-	$type = $_GET['type'];
+include_once('alias.inc');
 
-	$alias = new Alias; // Object
+$type = $_POST['type'];
+$alias = new Alias; // Object
+$sourceDBList = $alias->getSourceDatabases();
 
-	// Call function
-	$sourceDBList = $alias->getSourceDatabases();
-
-	// Callback to http request
-	print $callback.'('.json_encode($sourceDBList).')';
-
-?>
+echo json_encode($sourceDBList);

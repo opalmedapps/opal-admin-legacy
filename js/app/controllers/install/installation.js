@@ -96,7 +96,7 @@ angular.module('opalAdmin.controllers.installation', ['ui.bootstrap']).
 				// Ajax call
 				$.ajax({
 					type: "POST",
-					url: 'php/install/check_opal_connection.php',
+					url: 'install/check-opal-connection',
 					data: $scope.opal_setup,
 					success: function (response) {
 						response = JSON.parse(response);
@@ -164,7 +164,7 @@ angular.module('opalAdmin.controllers.installation', ['ui.bootstrap']).
 				// Ajax call
 				$.ajax({
 					type: "POST",
-					url: 'php/install/check_aria_connection.php',
+					url: 'install/check-aria-connection',
 					data: $scope.clinical_setup.aria,
 					success: function (response) {
 						response = JSON.parse(response);
@@ -219,7 +219,7 @@ angular.module('opalAdmin.controllers.installation', ['ui.bootstrap']).
 				// Ajax call
 				$.ajax({
 					type: "POST",
-					url: 'php/install/check_medivisit_connection.php',
+					url: 'install/check-opal-connection',
 					data: $scope.clinical_setup.medivisit,
 					success: function (response) {
 						response = JSON.parse(response);
@@ -274,7 +274,7 @@ angular.module('opalAdmin.controllers.installation', ['ui.bootstrap']).
 				// Ajax call
 				$.ajax({
 					type: "POST",
-					url: 'php/install/check_mosaiq_connection.php',
+					url: 'install/check-mosaiq-connection',
 					data: $scope.clinical_setup.mosaiq,
 					success: function (response) {
 						response = JSON.parse(response);
@@ -335,7 +335,7 @@ angular.module('opalAdmin.controllers.installation', ['ui.bootstrap']).
 			// Ajax call
 			$.ajax({
 				type: "POST",
-				url: 'php/install/write_configurations.php',
+				url: 'install/write-configurations',
 				data: $scope.configs,
 				success: function (response) {
 					response = JSON.parse(response);
@@ -436,7 +436,7 @@ angular.module('opalAdmin.controllers.installation', ['ui.bootstrap']).
 				// Ajax call
 				$.ajax({
 					type: "POST",
-					url: 'php/install/register_admin.php',
+					url: 'install/register-admin',
 					data: $scope.adminUser,
 					success: function (response) {
 						response = JSON.parse(response);
