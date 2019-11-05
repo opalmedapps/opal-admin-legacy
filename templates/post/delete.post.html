@@ -1,27 +1,27 @@
 <div class="modal-header">
-  <div class="col-xs-12">
-    <h2 class="modal-title">
-      <span class="glyphicon glyphicon-trash"></span> 
-      Delete Post 
-    </h2>
-    <p class="modal-title-caption">
-      {{postToDelete.name_EN}} / {{postToDelete.name_FR}}
-    </p>
-  </div>
+    <div class="col-xs-12">
+        <h2 class="modal-title">
+            <span class="glyphicon glyphicon-trash"></span>
+            {{'POSTS.DELETE.DELETE_POST'|translate}}
+        </h2>
+    </div>
 </div>
 <div class="modal-body">
-  <div class="alert alert-danger" role="alert">
-    <strong>Delete Post</strong><br>
-    <p>
-      Are you sure you want to delete the post "{{postToDelete.name_EN}}" ?
-    </p>
-  </div>
-  <div class="row">
-    <div class="modal-buttons col-xs-12">
-      <form method="post" ng-submit="deletePost()">      
-        <input class="btn btn-primary submit" type="submit" value="Delete">
-        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="Cancel">
-      </form>
+    <div class="alert alert-danger" role="alert">
+        <p><b>{{'POSTS.DELETE.WARNING'|translate}}</b> {{'POSTS.DELETE.WARNING_TEXT'|translate}}</p>
     </div>
-  </div>
+    <div class="alert row">
+        <div class="col-xs-12">
+            <p ng-bind-html="postToDelete.name_EN"></p>
+            <p ng-bind-html="postToDelete.name_FR"></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="modal-buttons col-xs-12">
+            <form method="post" ng-submit="deletePost()">
+                <input class="btn btn-primary submit" type="submit" value="{{'POSTS.DELETE.DELETE'|translate}}">
+                <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'POSTS.DELETE.CANCEL'|translate}}">
+            </form>
+        </div>
+    </div>
 </div>

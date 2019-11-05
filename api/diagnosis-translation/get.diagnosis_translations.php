@@ -1,17 +1,9 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get a list of existing diagnosis translations */
-	include_once('diagnosis-translation.inc');
+header('Content-Type: application/javascript');
+/* To get a list of existing diagnosis translations */
+include_once('diagnosis-translation.inc');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
+$Diagnosis = new Diagnosis; // Object
+$existingDiagnosisTranslationList = $Diagnosis->getExistingDiagnosisTranslations();
 
-	$Diagnosis = new Diagnosis; // Object
-
-	// Call function
-	$existingDiagnosisTranslationList = $Diagnosis->getExistingDiagnosisTranslations();
-
-	// Callback to http request
-	print $callback.'('.json_encode($existingDiagnosisTranslationList).')';
-
-?>
+echo json_encode($existingDiagnosisTranslationList);
