@@ -1,18 +1,8 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get a list of existing alias */
+include_once('alias.inc');
+header('Content-Type: application/javascript');
 
-	include_once('alias.inc');
+$alias = new Alias; // Object
+$existingAliasList = $alias->getAliases();
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
-
-	$alias = new Alias; // Object
-
-	// Call function
-	$existingAliasList = $alias->getAliases();
-
-	// Callback to http request
-	print $callback.'('.json_encode($existingAliasList).')';
-
-?>
+echo json_encode($existingAliasList);

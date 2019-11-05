@@ -1637,11 +1637,11 @@ class Alias {
                         docmh.PatientSerNum,
                         sd.SourceDatabaseName,
                         docmh.DocumentId,
-                        Staff1.LastName,
+                        (SELECT LastName FROM Staff Staff1 WHERE Staff1.StaffSerNum = docmh.CreatedBySerNum) AS LastName,
                         docmh.CreatedTimeStamp,
-                        Staff2.LastName,
+                        (SELECT LastName FROM Staff Staff2 WHERE Staff2.StaffSerNum = docmh.ApprovedBySerNum) AS LastName,
                         docmh.ApprovedTimeStamp,
-                        Staff3.LastName,
+                        (SELECT LastName FROM Staff Staff3 WHERE Staff3.StaffSerNum = docmh.AuthoredBySerNum) AS LastName,
                         docmh.DateOfService,
                         docmh.Revised,
                         docmh.ValidEntry,
@@ -1656,15 +1656,6 @@ class Alias {
                         DocumentMH docmh,
                         AliasExpression ae,
                         SourceDatabase sd
-                    LEFT JOIN
-                        Staff Staff1
-                    ON Staff1.StaffSerNum = docmh.CreatedBySerNum
-                    LEFT JOIN
-                        Staff Staff2
-                    ON Staff2.StaffSerNum = docmh.ApprovedBySerNum
-                    LEFT JOIN
-                        Staff Staff3
-                    ON Staff3.StaffSerNum = docmh.AuthoredBySerNum
                     WHERE
                         docmh.AliasExpressionSerNum  = ae.AliasExpressionSerNum
                     AND docmh.SourceDatabaseSerNum   = sd.SourceDatabaseSerNum

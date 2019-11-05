@@ -1,14 +1,17 @@
 angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular'])
 
 	.controller('questionnaire', function ($sce, $scope, $state, $filter, $timeout, $uibModal, questionnaireCollectionService, filterCollectionService, Session, uiGridConstants) {
-		
+
 		// get current user id
 		var user = Session.retrieveObject('user');
-		var userId = user.id;
+		var OAUserId = user.id;
 
 		// navigating functions
 		$scope.goToQuestionnaire = function () {
 			$state.go('questionnaire');
+		};
+		$scope.goToPublicationTool = function () {
+			$state.go('publication-tool');
 		};
 		$scope.goToAddQuestionnaire = function () {
 			$state.go('questionnaire-add');
@@ -18,6 +21,10 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 		};
 		$scope.goToQuestionnaireCompleted = function () {
 			$state.go('questionnaire-completed');
+		};
+		// Function to go to question type page
+		$scope.goToTemplateQuestion = function () {
+			$state.go('questionnaire-template-question');
 		};
 
 		// Banner
@@ -47,7 +54,7 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 			var matcher = new RegExp($scope.filterValue, 'i');
 			renderableRows.forEach(function (row) {
 				var match = false;
-				['name_EN'].forEach(function (field) {
+				['name_'+Session.retrieveObject('user').language, 'created_by'].forEach(function (field) {
 					if (row.entity[field].match(matcher)) {
 						match = true;
 					}
@@ -69,38 +76,38 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 		// Table
 		// Templates
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editQuestionnaire(row.entity)">Edit</a></strong> ' +
-			'- <strong><a href="" ng-click="grid.appScope.deleteQuestionnaire(row.entity)">Delete</a></strong></div>';
+			'<strong><a href="" ng-click="grid.appScope.editQuestionnaire(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ' +
+			'- <strong><a href="" ng-click="grid.appScope.deleteQuestionnaire(row.entity)"><i title="'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editQuestionnaire(row.entity)">' +
-			'<strong><a href="">{{row.entity.name_EN}} / {{row.entity.name_FR}}</a></strong></div>';
-		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>Public</p></div>' +
-			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>Private</p></div>';
-		var cellTemplatePublish = '<div class="ui-grid-cell-contents" ng-show="row.entity.publish == 0"><p>No</p></div>' +
-			'<div class="ui-grid-cell-contents" ng-show="row.entity.publish == 1"><p>Yes</p></div>';
-		var cellTemplateTags = '<div class="ui-grid-cell-contents">' +
-			'<span ng-repeat="tag in row.entity.tags">{{tag.name_EN}} / {{tag.name_FR}} ; </span></div>';
+			'<strong><a href="">{{row.entity.name_' + Session.retrieveObject('user').language + '}}</a></strong></div>';
+		var cellTemplatePrivacy = '<div class="ui-grid-cell-contents" ng-show="row.entity.private == 0"><p>'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.PUBLIC')+'</p></div>' +
+			'<div class="ui-grid-cell-contents" ng-show="row.entity.private == 1"><p>'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.PRIVATE')+'</p></div>';
+		var cellTemplatePublish = '<div class="ui-grid-cell-contents" ng-show="row.entity.publish == 0"><p>'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.DRAFT')+'</p></div>' +
+			'<div class="ui-grid-cell-contents" ng-show="row.entity.publish == 1"><p>'+$filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.FINAL')+'</p></div>';
+		var cellTemplateLocked = '<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 1"><div class="fa fa-lock text-danger"></div></div>' +
+			'<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 0"><div class="fa fa-unlock text-success"></div></div>';
 
 		// Data binding for main table
 		$scope.gridOptions = {
 			data: 'questionnaireList',
 			columnDefs: [
-				{ field: 'name_EN', displayName: 'Title (EN / FR)', cellTemplate: cellTemplateName, width: '25%' },
+				{ field: 'locked', enableColumnMenu: false, displayName: '', cellTemplate: cellTemplateLocked, width: '2%', sortable: false, enableFiltering: false},
+				{ field: 'name_'+Session.retrieveObject('user').language, enableColumnMenu: false, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.QUESTIONNAIRE'), cellTemplate: cellTemplateName, width: '49%' },
 				{
-					field: 'private', displayName: 'Privacy', cellTemplate: cellTemplatePrivacy, width: '10%', filter: {
+					field: 'private', enableColumnMenu: false, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.PRIVACY'), cellTemplate: cellTemplatePrivacy, width: '10%', filter: {
 						type: uiGridConstants.filter.SELECT,
-						selectOptions: [{ value: '1', label: 'Private' }, { value: '0', label: 'Public' }]
+						selectOptions: [{ value: '1', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.PRIVATE')}, { value: '0', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.PUBLIC') }]
 					}
 				},
 				{
-					field: 'publish', displayName: 'Publish', cellTemplate: cellTemplatePublish, width: '10%', filter: {
+					field: 'publish', enableColumnMenu: false, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.STATUS'), cellTemplate: cellTemplatePublish, width: '8%', filter: {
 						type: uiGridConstants.filter.SELECT,
-						selectOptions: [{ value: '1', label: 'Yes' }, { value: '0', label: 'No' }]
+						selectOptions: [{ value: '1', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.FINAL') }, { value: '0', label: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.DRAFT') }]
 					}
 				},
-				{ field: 'created_by', displayName: 'Author', width: '10%' },
-				{ field: 'tags', displayName: 'Tags (EN / FR)', cellTemplate: cellTemplateTags, width: '30%', enableFiltering: false },
-				{ name: 'Operations', width: '15%', cellTemplate: cellTemplateOperations, enableFiltering: false, sortable: false }
+				{ field: 'created_by', enableColumnMenu: false, displayName: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.AUTHOR'), width: '20%' },
+				{ name: $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.OPERATIONS'), enableColumnMenu: false, width: '10%', cellTemplate: cellTemplateOperations, enableFiltering: false, sortable: false }
 			],
 			enableFiltering: true,
 			enableSorting: true,
@@ -115,11 +122,11 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 		$scope.questionnaireList = [];
 
 		// Call API to get the list of questionnaires
-		questionnaireCollectionService.getQuestionnaires(userId).then(function (response) {
+		questionnaireCollectionService.getQuestionnaires(OAUserId).then(function (response) {
 			$scope.questionnaireList = response.data;
 		}).catch(function(response) {
-			console.error('Error occurred getting questionnaire list:', response.status, response.data);
-		});	
+			alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS') + response.status + " " + response.data);
+		});
 
 		// Initialize the questionnaire to be deleted
 		$scope.questionnaireToDelete = {};
@@ -128,20 +135,32 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 		$scope.deleteQuestionnaire = function (questionnaire) {
 			$scope.questionnaireToDelete = questionnaire;
 
-			var modalInstance = $uibModal.open({ // open modal
-				templateUrl: 'templates/questionnaire/delete.questionnaire.html',
-				controller: 'questionnaire.delete',
-				windowClass: 'deleteModal',
-				scope: $scope,
-				backdrop: 'static',
-			});
+			if (questionnaire.locked) {
+				modalInstance = $uibModal.open({
+					templateUrl: 'templates/questionnaire/cannot.delete.questionnaire.html',
+					controller: 'question.delete',
+					windowClass: 'deleteModal',
+					scope: $scope,
+					backdrop: 'static',
+				});
+			}
+			else
+			{
+				var modalInstance = $uibModal.open({ // open modal
+					templateUrl: 'templates/questionnaire/delete.questionnaire.html',
+					controller: 'questionnaire.delete',
+					windowClass: 'deleteModal',
+					scope: $scope,
+					backdrop: 'static',
+				});
+			}
 
 			// After delete, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				questionnaireCollectionService.getQuestionnaires(userId).then(function (response) {
+				questionnaireCollectionService.getQuestionnaires(OAUserId).then(function (response) {
 					$scope.questionnaireList = response.data;
 				}).catch(function(response) {
-					console.error('Error occurred getting questionnaire list after modal close:', response.status, response.data);
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS') + response.status + " " + response.data);
 				});
 			});
 		};
@@ -163,10 +182,10 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 
 			// After update, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				questionnaireCollectionService.getQuestionnaires(userId).then(function (response) {
+				questionnaireCollectionService.getQuestionnaires(OAUserId).then(function (response) {
 					$scope.questionnaireList = response.data;
 				}).catch(function(response) {
-					console.error('Error occurred getting questionnaire list after modal close:', response.status, response.data);
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS') + response.status + " " + response.data);
 				});
 			});
 		};

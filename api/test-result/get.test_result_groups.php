@@ -1,17 +1,8 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To get a list of existing test result groups */
-	include_once('test-result.inc');
 
-	// Retrieve FORM param
-	$callback = $_GET['callback'];
+header('Content-Type: application/javascript');
+include_once('test-result.inc');
 
-	$testResult = new TestResult; // Object
-
-	// Call function
-	$groups = $testResult->getTestResultGroups();
-
-	// Callback to http request
-	print $callback.'('.json_encode($groups).')';
-
-?>
+$testResult = new TestResult; // Object
+$groups = $testResult->getTestResultGroups();
+echo json_encode($groups);
