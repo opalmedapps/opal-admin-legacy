@@ -748,12 +748,20 @@
       "BACK": "Back to publication",
       "SUMMARY": "Summary",
       "TYPE": "Type",
-      "SOURCE_EXPLANATION": "Please choose the type of publication",
+      "TITLE_2": "Title",
+      "SOURCE_EXPLANATION": "Please choose the type of material you want to publish.",
       "REQUIRED": "Required field:",
       "OPTIONAL_FIELD": "Optional field:",
-      "PUBLICATION": "Publication",
-      "PUBLICATION_EXPLANATION": "Please choose the publication",
-      "ERROR_MODULE": "An error occurred while getting the list of modules."
+      "MATERIAL": "Material",
+      "MATERIAL_EXPLANATION": "Please choose the material to publish.",
+      "SEARCH": "Search...",
+      "ERROR_MODULE": "An error occurred while getting the list of modules.",
+      "NAME": "Name",
+      "NAME_EXPLANATION": "Please give a name to the publication.",
+      "INCOMPLETE": "Incomplete",
+      "COMPLETE": "Complete",
+      "ENGLISH": "English",
+      "FRENCH": "French"
     },
     "EDIT": {
 
