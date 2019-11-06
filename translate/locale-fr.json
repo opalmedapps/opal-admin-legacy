@@ -763,12 +763,20 @@
       "BACK": "Retour",
       "SUMMARY": "Sommaire",
       "TYPE": "Type",
-      "SOURCE_EXPLANATION": "Veuillez choisir le type de publication",
+      "TITLE_2": "Titre",
+      "SOURCE_EXPLANATION": "Veuillez choisir le type de matériel à publier.",
       "REQUIRED": "Champ requis:",
       "OPTIONAL_FIELD": "Champ facultatif:",
-      "PUBLICATION": "Publication",
-      "PUBLICATION_EXPLANATION": "Veuillez choisir la publication",
-      "ERROR_MODULE": "Une erreur s'est produite lors de l'obtention de la liste des modules."
+      "MATERIAL": "Matériel",
+      "MATERIAL_EXPLANATION": "Veuillez choisir le matériel à publier.",
+      "SEARCH": "Rechercher",
+      "ERROR_MODULE": "Une erreur s'est produite lors de l'obtention de la liste des modules.",
+      "NAME": "Nom",
+      "NAME_EXPLANATION": "Veuillez donner un nom à votre publication.",
+      "INCOMPLETE": "Incomplet",
+      "COMPLETE": "Complet",
+      "ENGLISH": "Anglais",
+      "FRENCH": "Français"
     },
     "EDIT": {
 

@@ -22,6 +22,7 @@ define("OPAL_FILTERS_TABLE","Filters");
 define("OPAL_FILTERS_MODIFICATION_HISTORY_TABLE","FiltersMH");
 define("OPAL_FREQUENCY_EVENTS_TABLE","FrequencyEvents");
 define("OPAL_MODULE_TABLE","module");
+define("OPAL_MODULE_TRIGGER_SETTING_TABLE","moduleTriggerSetting");
 
 /*
  * Listing of all SQL queries for the Opal database
@@ -143,6 +144,10 @@ define("SQL_OPAL_BUILD_PUBLICATION_VIEW",
 
 define("SQL_OPAL_GET_MODULE_BY_ID", "
     SELECT * FROM ".OPAL_MODULE_TABLE." WHERE ID = :ID;
+");
+
+define("SQL_OPAL_GET_TRIGGERS_PER_MODULE", "
+    SELECT triggerSettingId FROM ".OPAL_MODULE_TRIGGER_SETTING_TABLE." WHERE moduleId = :moduleId;
 ");
 
 define("SQL_OPAL_GET_ALL_PUBLICATION_MODULES_USER",
