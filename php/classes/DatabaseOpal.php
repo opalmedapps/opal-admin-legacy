@@ -85,13 +85,16 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     function getPublicationsPerModule($moduleId) {
+        $result = array();
         if($moduleId == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Module cannot be found. Access denied.");
         $module = $this->_fetch(SQL_OPAL_GET_MODULE_BY_ID, array(array("parameter"=>":ID","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
         $sqlFetchPerModule = $module["unique"] == 1 ? $module["sqlUnique"] : $module["sqlPublicationList"];
         if($sqlFetchPerModule == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing code. Access denied.");
-        return $this->_fetchAll($sqlFetchPerModule);
+        $result["publications"] = $this->_fetchAll($sqlFetchPerModule);
+        $result["triggers"] = $this->_fetchAll(SQL_OPAL_GET_TRIGGERS_PER_MODULE, array(array("parameter"=>":moduleId","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
+        return $result;
     }
 
     function getPublicationChartLogs() {

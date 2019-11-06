@@ -7,12 +7,17 @@ class Publication extends OpalProject
     /*
      * Return the list of all available publications
      * params   none
-     * return#  array of data
+     * returns  array of data
      * */
     public function getPublications() {
         return $this->opalDB->getPublications();
     }
 
+    /*
+     * Get the list of materials that can be published based on the module request
+     * params   module ID
+     * returns  array of data
+     * */
     public function getPublicationsPerModule($moduleId) {
         return $this->opalDB->getPublicationsPerModule($moduleId);
     }
