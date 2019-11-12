@@ -304,6 +304,7 @@ class Question extends QuestionnaireModule {
      * @return  $questionLocked (boolean)
      * */
     function isQuestionLocked($questionId) {
+        return false;
         $questionnairesList = array();
         $questionnaires = $this->questionnaireDB->fetchQuestionnairesIdQuestion($questionId);
 
