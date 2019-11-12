@@ -679,14 +679,14 @@ class Cron {
      * @param array $contents : a list of each content with their cron serials
      * @return array $cronLogs : the cron logs for table view
      */
-    public function getCronListLogs ($contents) {
+    public function getCronListLogs ($contents, $OAUserId) {
     	$cronLogs = array();
 
     	$anAlias = new Alias();
     	$aPost = new Post();
     	$anEduMaterial = new EduMaterial();
     	$anEmail = new Email();
-    	$aLegacyQuestionnaire = new LegacyQuestionnaire();
+    	$aQuestionnaire = new Questionnaire($OAUserId);
     	$aNotification = new Notification();
     	$aTestResult = new TestResult();
 
@@ -698,8 +698,8 @@ class Cron {
    		$cronLogs['pfp'] = (!empty($contents['Patients for Patients'])) ? $aPost->getPostListLogs($contents['Patients for Patients'], 'Patients for Patients') : array();
    		$cronLogs['educationalMaterial'] = (!empty($contents['Educational Material'])) ? $anEduMaterial->getEducationalMaterialListLogs($contents['Educational Material']) : array();
    		$cronLogs['email'] = (!empty($contents['Email'])) ? $anEmail->getEmailListLogs($contents['Email']) : array();
-   		$cronLogs['legacyQuestionnaire'] = (!empty($contents['Legacy Questionnaire'])) ? $aLegacyQuestionnaire->getLegacyQuestionnaireListLogs($contents['Legacy Questionnaire']) : array();
-   		$cronLogs['notification'] = (!empty($contents['Notification'])) ? $aNotification->getNotificationListLogs($contents['Notification']) : array();
+        $cronLogs['legacyQuestionnaire'] = (!empty($contents['Legacy Questionnaire'])) ? $aQuestionnaire->getQuestionnaireListLogs($contents['Legacy Questionnaire']) : array();
+        $cronLogs['notification'] = (!empty($contents['Notification'])) ? $aNotification->getNotificationListLogs($contents['Notification']) : array();
    		$cronLogs['testResult'] = (!empty($contents['Test Result'])) ? $aTestResult->getTestResultListLogs($contents['Test Result']) : array();
 
    		return $cronLogs;

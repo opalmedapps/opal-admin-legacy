@@ -143,17 +143,6 @@ RewriteRule ^install/check-opal-connection php/install/check_opal_connection.php
 RewriteRule ^install/write-configurations php/install/write_configurations.php [QSA,L]
 RewriteRule ^install/register-admin php/install/register_admin.php [QSA,L]
 
-# Legacy Questionnaire Section
-RewriteRule ^legacy-questionnaire/delete/legacy-questionnaire php/legacy-questionnaire/delete.legacy_questionnaire.php [QSA,L]
-RewriteRule ^legacy-questionnaire/get/legacy-questionnaire-chart-logs api/legacy-questionnaire/get.legacy_questionnaire_chart_logs.php [QSA,L]
-RewriteRule ^legacy-questionnaire/get/legacy-questionnaire-details api/legacy-questionnaire/get.legacy_questionnaire_details.php [QSA,L]
-RewriteRule ^legacy-questionnaire/get/legacy-questionnaire-expressions api/legacy-questionnaire/get.legacy_questionnaire_expressions.php [QSA,L]
-RewriteRule ^legacy-questionnaire/get/legacy-questionnaire-list-logs api/legacy-questionnaire/get.legacy_questionnaire_list_logs.php [QSA,L]
-RewriteRule ^legacy-questionnaire/get/legacy-questionnaires api/legacy-questionnaire/get.legacy_questionnaires.php [QSA,L]
-RewriteRule ^legacy-questionnaire/insert/legacy-questionnaire php/legacy-questionnaire/insert.legacy_questionnaire.php [QSA,L]
-RewriteRule ^legacy-questionnaire/update/legacy-questionnaire-publish-flags php/legacy-questionnaire/update.legacy_questionnaire_publish_flags.php [QSA,L]
-RewriteRule ^legacy-questionnaire/update/legacy-questionnaire php/legacy-questionnaire/update.legacy_questionnaire.php [QSA,L]
-
 # Notification Section
 RewriteRule ^notification/delete/notification php/notification/delete.notification.php [QSA,L]
 RewriteRule ^notification/get/notification-chart-logs api/notification/get.notification_chart_logs.php [QSA,L]

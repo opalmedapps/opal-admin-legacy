@@ -603,11 +603,12 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// Function to get selected cron logs
-		cronAPI.getSelectedCronListLogs = function (contents) {
+		cronAPI.getSelectedCronListLogs = function (contents, OAUserId) {
 			return $http.post(
 				"cron/get/cron-list-logs",
 				$.param({
 					contents: JSON.stringify(contents),
+					OAUserId: OAUserId,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -977,73 +978,6 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		return publicationAPI;
-	})
-
-	// Legacy Questionnaire API service
-	.factory('legacyQuestionnaireCollectionService', function ($http) {
-
-		var legacyQuestionnaireAPI = {};
-
-		// Function to get the list of legacy questionnaires
-		legacyQuestionnaireAPI.getLegacyQuestionnaires = function () {
-			return $http.post(
-				"legacy-questionnaire/get/legacy-questionnaires",
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		// Function to get legacy questionnaire details given a serial
-		legacyQuestionnaireAPI.getLegacyQuestionnaireDetails = function (serial) {
-			return $http.post(
-				"legacy-questionnaire/get/legacy-questionnaire-details",
-				$.param({
-					serial: serial,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		// Function to get legacy questionnaire expressions
-		legacyQuestionnaireAPI.getLegacyQuestionnaireExpressions = function () {
-			return $http.post(
-				"legacy-questionnaire/get/legacy-questionnaire-expressions",
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		// Function to get legacy questionnaire chart logs given a serial
-		legacyQuestionnaireAPI.getLegacyQuestionnaireChartLogs = function (serial) {
-			return $http.post(
-				"legacy-questionnaire/get/legacy-questionnaire-chart-logs",
-				$.param({
-					serial: serial,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		// Function to get legacy questionnaire log list details given an array of serial numbers
-		legacyQuestionnaireAPI.getLegacyQuestionnaireListLogs = function (serials) {
-			return $http.post(
-				"legacy-questionnaire/get/legacy-questionnaire-list-logs",
-				$.param({
-					serials: JSON.stringify(serials),
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		return legacyQuestionnaireAPI;
 	})
 
 	// Diagnosis API service

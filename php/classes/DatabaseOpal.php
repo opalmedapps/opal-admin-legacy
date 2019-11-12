@@ -112,6 +112,11 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(SQL_OPAL_GET_ALL_PUBLICATION_MODULES, array());
     }
 
+    function getQuestionnaireListLogs($ids) {
+        $sqlToFetch = str_replace("%%IDS%%", implode(", ", $ids), SQL_OPAL_GET_QUESTIONNAIRE_LIST_LOGS);
+        return $this->_fetchAll($sqlToFetch, array());
+    }
+
     /*
      * Get all the details of a specific published questionnaire.
      * @params  Questionnaire serial number (int)

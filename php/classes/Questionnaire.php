@@ -5,7 +5,6 @@
  */
 class Questionnaire extends QuestionnaireModule {
 
-
     /*
      * This function returns a list of questionnaire an user can access
      * @param   void
@@ -226,6 +225,17 @@ class Questionnaire extends QuestionnaireModule {
             $question["sectionId"] = $sectionId;
 
         $this->questionnaireDB->insertQuestionsIntoSection($newQuestionnaire["questions"]);
+    }
+
+    /**
+     *
+     * Gets list logs of legacy questionnaires during one or many cron sessions
+     *
+     * @param array $serials : a list of cron log serial numbers
+     * @return array $questionnaireLogs : the legacy questionnaire logs for table view
+     */
+    public function getQuestionnaireListLogs($ids) {
+        return $this->opalDB->getQuestionnaireListLogs($ids);
     }
 
     /**

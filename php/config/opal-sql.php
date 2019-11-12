@@ -18,6 +18,7 @@ define( "OPAL_DB_PASSWORD", $config['databaseConfig']['opal']['password'] );
 define("OPAL_OAUSER_TABLE","OAUser");
 define("OPAL_OAUSER_ROLE_TABLE","OAUserRole");
 define("OPAL_QUESTIONNAIRE_CONTROL_TABLE","QuestionnaireControl");
+define("OPAL_QUESTIONNAIRE_MH_TABLE","QuestionnaireMH");
 define("OPAL_FILTERS_TABLE","Filters");
 define("OPAL_FILTERS_MODIFICATION_HISTORY_TABLE","FiltersMH");
 define("OPAL_FREQUENCY_EVENTS_TABLE","FrequencyEvents");
@@ -217,3 +218,21 @@ define("SQL_OPAL_DELETE_OTHER_METAS_FROM_FREQUENCY_EVENTS",
     AND MetaKey != 'repeat_start'
     AND MetaKey != 'repeat_end';"
 );
+
+define("SQL_OPAL_GET_QUESTIONNAIRE_LIST_LOGS","
+    SELECT DISTINCT
+    qc.QuestionnaireName_EN AS control_name,
+    lqmh.QuestionnaireControlSerNum AS control_serial,
+    lqmh.QuestionnaireRevSerNum AS revision,
+    lqmh.CronLogSerNum AS cron_serial,
+    lqmh.PatientSerNum AS patient_serial,
+    lqmh.PatientQuestionnaireDBSerNum AS pt_questionnaire_db,
+    lqmh.CompletedFlag AS completed,
+    lqmh.CompletionDate AS completion_date,
+    lqmh.DateAdded AS date_added,
+    lqmh.ModificationAction AS mod_action
+    FROM ".OPAL_QUESTIONNAIRE_MH_TABLE." lqmh, ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." qc
+    WHERE
+    lqmh.QuestionnaireControlSerNum = qc.QuestionnaireControlSerNum
+    AND lqmh.CronLogSerNum IN (%%IDS%%)
+");
