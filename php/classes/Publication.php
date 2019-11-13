@@ -19,7 +19,13 @@ class Publication extends OpalProject
      * returns  array of data
      * */
     public function getPublicationsPerModule($moduleId) {
-        return $this->opalDB->getPublicationsPerModule($moduleId);
+        $results = $this->opalDB->getPublicationsPerModule($moduleId);
+        $tempArray = array();
+        foreach($results["triggers"] as $trigger) {
+            array_push($tempArray, $trigger["triggerSettingId"]);
+        }
+        $results["triggers"] = $tempArray;
+        return $results;
     }
 
     public function getPublicationChartLogs() {
