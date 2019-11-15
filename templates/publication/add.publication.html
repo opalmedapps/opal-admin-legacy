@@ -88,14 +88,7 @@
                                     </p>
                                 </div>
                             </div>
-
-
-
                             <!-- SECTION: Name -->
-
-
-
-
                             <div uib-accordion-group is-open="publicationNameSections.open" class="panel-container summary-box animated" ng-class="{fadeInUp: publicationNameSections.show}" ng-if="publicationNameSections.show" is-disabled="!newPublication.name_EN && !newPublication.name_FR">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
@@ -123,6 +116,290 @@
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                                         {{newPublication.name_FR}}
                                     </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Publish date -->
+                            <div uib-accordion-group is-open="publishDate.open" class="panel-container summary-box animated" ng-class="{fadeInUp: publishDate.show}" is-disabled="!newPublication.publish_date && !newPublication.publish_time" ng-if="publishDate.show">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="newPublication.publish_date && newPublication.publish_time" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'POSTS.ADD.PUBLISH_DATE'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': publishDate.open, 'glyphicon-chevron-right': !publishDate.open}" ng-if="newPublication.publish_date || newPublication.publish_time"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="newPublication.publish_date || newPublication.publish_time" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{newPublication.publish_date | date:'yyyy-MM-dd'}} {{'POSTS.ADD.AT'|translate}} {{newPublication.publish_time | date:'HH:mm'}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Publish Frequency -->
+                            <div uib-accordion-group is-open="publishFrequencySection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:publishFrequencySection.show}" is-disabled="!showFrequency" ng-if="showFrequency">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2"><span ng-if="checkFrequencyFilter() && showFrequency" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span></div>
+                                        <div class="col-md-8"><strong>{{'PUBLICATION.ADD.PUBLISH_FREQUENCY'|translate}}</strong></div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': publishFrequencySection.open, 'glyphicon-chevron-right': !publishFrequencySection.open}" ng-if="showFrequency"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="showFrequency" class="description">
+                                    <p style="margin-bottom:5px;">
+                                        <strong>{{'PUBLICATION.ADD.REPEAT'|translate}}</strong><br>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        <span ng-if="!showFrequency">{{'PUBLICATION.ADD.NA'|translate}}</span>
+                                        <span ng-if="frequencySelected.id != 'custom' && showFrequency">{{frequencySelected.name}}</span>
+                                        <span ng-if="frequencySelected.id == 'custom' && language == 'EN'">
+                                            {{'PUBLICATION.ADD.EVERY'|translate}}
+                                            <span ng-if="customFrequency.meta_value != 1">{{customFrequency.meta_value}}</span>
+                                            {{customFrequency.unit.name}}
+                                            <span ng-if="selectedDaysInWeek.length">{{'PUBLICATION.ADD.ON'|translate}} {{selectedDaysInWeekText}}</span>
+                                            <span ng-if="selectedMonthsInYear.length">{{'PUBLICATION.ADD.IN'|translate}} {{selectedMonthsInYearText}} </span>
+                                            <span ng-if="selectedDatesInMonth.length">{{'PUBLICATION.ADD.ON_THE'|translate}} {{selectedDatesInMonthText}} {{'PUBLICATION.ADD.OF'|translate}}
+                                                <span ng-if="selectedMonthsInYear.length > 1">{{'PUBLICATION.ADD.EACH'|translate}}</span>
+                                                <span ng-if="selectedMonthsInYear.length < 2">{{'PUBLICATION.ADD.THE'|translate}}</span>
+                                                {{'PUBLICATION.ADD.THE_MONTH'|translate}}
+                                            </span>
+                                            <span ng-if="selectedWeekNumberInMonth.id && selectedSingleDayInWeek.id">{{'PUBLICATION.ADD.ON_THE'|translate}} {{selectedWeekNumberInMonthText}} {{selectedSingleDayInWeekText}} {{'PUBLICATION.ADD.OF'|translate}}
+                                                <span ng-if="selectedMonthsInYear.length > 1">{{'PUBLICATION.ADD.EACH'|translate}}</span>
+                                                <span ng-if="selectedMonthsInYear.length < 2">{{'PUBLICATION.ADD.THE'|translate}}</span>
+                                                {{'PUBLICATION.ADD.THE_MONTH'|translate}}
+                                            </span>
+                                        </span>
+                                        <span ng-if="frequencySelected.id == 'custom' && language == 'FR'">
+                                            <span ng-show="customFrequency.unit.id == 'week'">
+                                                {{'PUBLICATION.ADD.TOUTES_LES'|translate}}
+                                            </span>
+                                            <span ng-hide="customFrequency.unit.id == 'week'">
+                                                {{'PUBLICATION.ADD.TOUS_LES'|translate}}
+                                            </span>
+                                            <span ng-if="customFrequency.meta_value != 1">{{customFrequency.meta_value}}</span>
+                                            {{customFrequency.unit.name_fr}}
+                                            <span ng-if="selectedDaysInWeek.length">{{'PUBLICATION.ADD.ON'|translate}} {{selectedDaysInWeekText}}.</span>
+                                            <span ng-if="selectedMonthsInYear.length">{{'PUBLICATION.ADD.IN'|translate}} {{selectedMonthsInYearText}} </span>
+                                            <span ng-if="selectedDatesInMonth.length">{{'PUBLICATION.ADD.ON_THE'|translate}} {{selectedDatesInMonthText}} {{'PUBLICATION.ADD.OF_2'|translate}}
+                                                <span ng-if="selectedMonthsInYear.length > 1">{{'PUBLICATION.ADD.EACH'|translate}}</span>
+                                                {{'PUBLICATION.ADD.THE_MONTH'|translate}}.
+                                            </span>
+                                            <span ng-if="selectedWeekNumberInMonth.id && selectedSingleDayInWeek.id">
+                                                <span ng-if="setSelectedMonthsInYearText && customFrequency.unit.id != 'month'">-</span>
+                                                {{'PUBLICATION.ADD.ON_THE'|translate}} {{selectedWeekNumberInMonthText}} {{selectedSingleDayInWeekText}}
+
+                                                <span ng-if="setSelectedMonthsInYearText && selectedMonthsInYear.length <= 1">{{'PUBLICATION.ADD.OF_2'|translate}}</span>
+                                                <span ng-if="!setSelectedMonthsInYearText || selectedMonthsInYear.length > 1">{{'PUBLICATION.ADD.OF'|translate}}</span>
+
+                                                <span ng-if="selectedMonthsInYear.length > 1">{{'PUBLICATION.ADD.EACH'|translate}}</span>
+                                                {{'PUBLICATION.ADD.THE_MONTH'|translate}}.
+                                            </span>
+                                        </span>
+                                    </p>
+                                </div>
+                                <div ng-if="showFrequency" class="description">
+                                    <p style="margin-bottom:5px;">
+                                        <strong>{{'PUBLICATION.ADD.REPEAT_START'|translate}}</strong><br>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        <span ng-if="newPublication.occurrence.start_date">{{newPublication.occurrence.start_date|date:'yyyy-MM-dd'}}</span>
+                                        <span ng-if="!newPublication.occurrence.start_date">{{'PUBLICATION.ADD.NA'|translate}}</span>
+                                    </p>
+                                </div>
+                                <div ng-if="showFrequency" class="description">
+                                    <p style="margin-bottom:5px;">
+                                        <strong>{{'PUBLICATION.ADD.REPEAT_END'|translate}}</strong><br>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        <span ng-if="newPublication.occurrence.end_date">{{newPublication.occurrence.end_date | date: 'yyyy-MM-dd' }}</span>
+                                        <span ng-if="!newPublication.occurrence.end_date">{{'PUBLICATION.ADD.NEVER'|translate}}</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Patient triggers -->
+                            <div uib-accordion-group is-open="triggerSection.patient.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(patientTriggerList)" ng-if="checkTriggers(patientTriggerList)">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="checkTriggers(patientTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'PUBLICATION.ADD.PATIENT_TRIGGERS'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.patient.open, 'glyphicon-chevron-right': !triggerSection.patient.open}" ng-if="checkTriggers(patientTriggerList)"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="checkTriggers(patientTriggerList) && !selectAll.patient.all" class="description">
+                                    <p>
+                                    <ul style="max-height: 100px; overflow-y: auto;">
+                                        <li ng-repeat="patient in patientTriggerList | filter: {added: 1} : 1">
+                                            {{patient.name}}
+                                        </li>
+                                    </ul>
+                                    </p>
+                                </div>
+                                <div ng-if="selectAll.patient.all" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{'PUBLICATION.ADD.SEND_ALL_PATIENTS'|translate}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Demographic trigger -->
+                            <div uib-accordion-group is-open="demoSection.open "class="panel-container summary-box animated" ng-class="{fadeInUp:demoSection.open}" is-disabled="!demoTrigger.sex && demoTrigger.age.min == 0 && demoTrigger.age.max == 130" ng-if="demoTrigger.sex || demoTrigger.age.min !== 0 || demoTrigger.age.max !== 130">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="demoTrigger.sex || demoTrigger.age.min != 0 || demoTrigger.age.max != 130" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'PUBLICATION.ADD.DEMO_TRIGGERS'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':demoSection.open , 'glyphicon-chevron-right':!demoSection.open }" ng-if="demoTrigger.sex || demoTrigger.age.min != 0 || demoTrigger.age.max != 130"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="demoTrigger.sex_display" class="description">
+                                    <p>
+                                        <strong>{{'PUBLICATION.ADD.SEX'|translate}}</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{demoTrigger.sex_display}}
+                                    </p>
+                                </div>
+                                <div ng-if="demoTrigger.age.min != 0 || demoTrigger.age.max != 130" class="description">
+                                    <p>
+                                        <strong>{{'PUBLICATION.ADD.AGE_GROUP'|translate}}</strong>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{demoTrigger.age.min}} {{'PUBLICATION.ADD.TO'|translate}} {{demoTrigger.age.max}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Appointment Status trigger -->
+                            <div uib-accordion-group is-open="triggerSection.appointmentStatus.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(appointmentStatusList)" ng-if="checkTriggers(appointmentStatusList)">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="checkTriggers(appointmentStatusList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'PUBLICATION.ADD.APPT_STATUS_TRIGGER'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.appointmentStatus.open, 'glyphicon-chevron-right': !triggerSection.appointmentStatus.open}" ng-if="checkTriggers(appointmentStatusList)"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="checkTriggers(appointmentStatusList)" class="description">
+                                    <p>
+                                    <ul style="max-height: 100px; overflow-y: auto;">
+                                        <li ng-repeat="appointmentStatus in appointmentStatusList | filter: {added: 1} : 1">
+                                            {{appointmentStatus.name_display}}
+                                        </li>
+                                    </ul>
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Appointment triggers -->
+                            <div uib-accordion-group is-open="triggerSection.appointment.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(appointmentTriggerList)" ng-if="checkTriggers(appointmentTriggerList)">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="checkTriggers(appointmentTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'PUBLICATION.ADD.APPT_TRIGGERS'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.appointment.open, 'glyphicon-chevron-right': !triggerSection.appointment.open}" ng-if="checkTriggers(appointmentTriggerList)"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="checkTriggers(appointmentTriggerList) && !selectAll.appointment.all" class="description">
+                                    <p><ul style="max-height: 100px; overflow-y: auto;"><li ng-repeat="appointment in appointmentTriggerList | filter: {added: 1} : 1">{{appointment.name_display}}</li></ul></p>
+                                </div>
+                                <div ng-if="selectAll.appointment.all" class="description">
+                                    <p><span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>{{'PUBLICATION.ADD.ALL_APPT'|translate}}</p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Diagnosis triggers -->
+                            <div uib-accordion-group is-open="triggerSection.diagnosis.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(dxTriggerList)" ng-if="checkTriggers(dxTriggerList)">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="checkTriggers(dxTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'PUBLICATION.ADD.DIAGNOSIS_TRIGGERS'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.diagnosis.open, 'glyphicon-chevron-right': !triggerSection.diagnosis.open}" ng-if="checkTriggers(dxTriggerList)"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="checkTriggers(dxTriggerList) && !selectAll.diagnosis.all" class="description">
+                                    <p><ul style="max-height: 100px; overflow-y: auto;"><li ng-repeat="dx in dxTriggerList | filter: {added: 1} : 1">{{dx.name_display}}</li></ul></p>
+                                </div>
+                                <div ng-if="selectAll.diagnosis.all" class="description">
+                                    <p><span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>{{'PUBLICATION.ADD.ALL_DIAGNOSES'|translate}}</p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Doctor triggers -->
+                            <div uib-accordion-group is-open="triggerSection.doctor.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(doctorTriggerList)" ng-if="checkTriggers(doctorTriggerList)">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="checkTriggers(doctorTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'PUBLICATION.ADD.DOCTOR_TRIGGERS'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.doctor.open, 'glyphicon-chevron-right': !triggerSection.doctor.open}" ng-if="checkTriggers(doctorTriggerList)"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="checkTriggers(doctorTriggerList) && !selectAll.doctor.all" class="description">
+                                    <p>
+                                    <ul style="max-height: 100px; overflow-y: auto;">
+                                        <li ng-repeat="doctor in doctorTriggerList | filter: {added: 1} : 1">
+                                            {{doctor.name}}
+                                        </li>
+                                    </ul>
+                                    </p>
+                                </div>
+                                <div ng-if="selectAll.doctor.all" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{'PUBLICATION.ADD.ALL_DOCTORS'|translate}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Treatment Machine triggers -->
+                            <div uib-accordion-group is-open="triggerSection.machine.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(machineTriggerList)" ng-if="checkTriggers(machineTriggerList)">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="checkTriggers(machineTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'PUBLICATION.ADD.TREATMENT_MACHINE_TRIGGERS'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.machine.open, 'glyphicon-chevron-right': !triggerSection.machine.open}" ng-if="checkTriggers(machineTriggerList)"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="checkTriggers(machineTriggerList) && !selectAll.machine.all" class="description">
+                                    <p><ul style="max-height: 100px; overflow-y: auto;"><li ng-repeat="machine in machineTriggerList | filter: {added: 1} : 1">{{machine.name}}</li></ul></p>
+                                </div>
+                                <div ng-if="selectAll.machine.all" class="description">
+                                    <p><span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>{{'PUBLICATION.ADD.ALL_TREATMENT_MACHINES'|translate}}</p>
                                 </div>
                             </div>
                         </uib-accordion>
@@ -317,11 +594,11 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>                            
-                            
+                            </div>
+
                         </div>
                         <!-- SECTION: Publish date -->
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: publishDate.show}" ng-if="publishDate.show">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                 <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -331,21 +608,21 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: publishDate.show}" ng-if="publishDate.show">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
-                                    <span ng-hide="newPost.type.name =='Announcement'"><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
-                                    <span ng-show="newPost.type.name =='Announcement'" style="color:#d9534f"><strong>{{'PUBLICATION.ADD.REQUIRED'|translate}}</strong></span>
+                                    <span ng-hide="newPublication.type =='Announcement'"><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
+                                    <span ng-show="newPublication.type =='Announcement'" style="color:#d9534f"><strong>{{'PUBLICATION.ADD.REQUIRED'|translate}}</strong></span>
                                     {{'PUBLICATION.ADD.PUBLISH_DATE_EXPLANATION'|translate}}
                                 </p>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show" style="margin-bottom: 15px;">
+                        <div class="row animated" ng-class="{fadeInUp: publishDate.show}" ng-if="publishDate.show" style="margin-bottom: 15px;">
                             <div class="col-xs-12">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-7 col-md-4" style="padding-top: 10px;margin-bottom:20px;">
                                         <p class="input-group">
-                                            <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newPost.publish_date" ng-change="publishDateUpdate()" is-open="popup.opened" min="minDate" datepicker-options="dateOptions" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
+                                            <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newPublication.publish_date" ng-change="publishDateUpdate()" is-open="popup.opened" min="minDate" datepicker-options="dateOptions" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
                                             <span class="input-group-btn">
                                                 <button class="btn btn-default" ng-click="open()"><i class="glyphicon glyphicon-calendar"></i></button>
                                             </span>
@@ -353,7 +630,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-5 col-md-4" style="margin-top: -24px;">
                                         <div>
-                                            <div uib-timepicker ng-model="newPost.publish_time" ng-change="publishDateUpdate()" minute-step="5" show-meridian="false"></div>
+                                            <div uib-timepicker ng-model="newPublication.publish_time" ng-change="publishDateUpdate()" minute-step="5" show-meridian="false"></div>
                                         </div>
                                     </div>
                                 </div>
