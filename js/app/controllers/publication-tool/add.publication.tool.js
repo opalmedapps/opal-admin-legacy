@@ -1,4 +1,4 @@
-angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular', 'multipleDatePicker', 'angularjs-dropdown-multiselect']).controller('publication.tool.add', function ($scope, $state, $filter, $uibModal, $locale, questionnaireCollectionService, filterCollectionService, FrequencyFilterService, Session) {
+angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('publication.tool.add', function ($scope, $state, $filter, $uibModal, $locale, questionnaireCollectionService, filterCollectionService, FrequencyFilterService, Session) {
 	// navigation function
 	$scope.goBack = function () {
 		$state.go('questionnaire');

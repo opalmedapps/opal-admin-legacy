@@ -1,4 +1,4 @@
-angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.bootstrap.materialPicker']).
+angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.bootstrap.materialPicker', 'textAngular', 'multipleDatePicker', 'angularjs-dropdown-multiselect']).
 
 /******************************************************************************
  * Add Publication Page controller
@@ -16,6 +16,9 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 	$scope.moduleSection = {open:false, show:true};
 	$scope.materialSection = {open:false, show:false};
 	$scope.publicationNameSections = {open:false, show:false};
+	$scope.publishDate = {open:false, show:false, mandatory:false};
+	$scope.publishFrequencySection = {open:false, show:false};
+	$scope.showFrequency = false;
 
 	$scope.language = Session.retrieveObject('user').language;
 
@@ -79,7 +82,7 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 		patient: {all:false, checked:false}
 	};
 
-		$locale["DATETIME_FORMATS"]["SHORTDAY"] = [
+	$locale["DATETIME_FORMATS"]["SHORTDAY"] = [
 		$filter('translate')('DATEPICKER.SUNDAY_S'),
 		$filter('translate')('DATEPICKER.MONDAY_S'),
 		$filter('translate')('DATEPICKER.TUESDAY_S'),
@@ -141,6 +144,9 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 		moduleId: null,
 		moduleName: null,
 		materialName: null,
+		type: null,
+		publish_date: null,
+		publish_time: null,
 		OAUserId: Session.retrieveObject('user').id,
 		triggers: [],
 		occurrence: {
@@ -160,7 +166,6 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 	$scope.publishFrequencySection = {open: false, show:false};
 	$scope.triggerSection = {
 		show:false,
-		publishDate: {open:false},
 		patient: {open:false},
 		appointment: {open:false},
 		appointmentStatus: {open:false},
@@ -259,11 +264,24 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 			$scope.materialSection.show = true;
 			$scope.newPublication.materialName = null;
 			steps.type.completed = true;
+
+
+			steps.material.completed = false;
+			$scope.publicationNameSections.show = false;
+			$scope.newPublication.name_EN = null;
+			$scope.newPublication.name_FR = null;
+			$scope.newPublication.publish_date = null;
+			$scope.newPublication.publish_time = null;
+			$scope.triggerSection.show = false;
+			$scope.publishDate.show = false;
+			steps.publicationName.completed = false;
+			$scope.numOfCompletedSteps = stepsCompleted(steps);
+			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
 			publicationCollectionService.getPublicationsPerModule(Session.retrieveObject('user').id, moduleSelected).then(function (response) {
-				console.log(response.data);
 				response.data["publications"].forEach(function(entry) {
 					if($scope.language.toUpperCase() === "FR")
 						entry.name_display = entry.name_FR;
@@ -286,9 +304,32 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 
 	$scope.updateMaterial = function (selectedAt) {
 		$scope.newPublication.ID = selectedAt.ID;
+		$scope.newPublication.type = selectedAt.type_EN;
 		$scope.materialSection.open = true;
-		 $scope.publicationNameSections.show = true;
-		 $scope.newPublication.materialName = selectedAt.name_display;
+		steps.material.completed = true;
+		$scope.publicationNameSections.show = true;
+		$scope.newPublication.materialName = selectedAt.name_display;
+
+		if($scope.newPublication.type === 'Announcement') {
+			$scope.stepTotal = 4;
+			$scope.publishDate.mandatory = true;
+			steps["publishDate"] = { completed: false };
+		}
+		else {
+			$scope.stepTotal = 3;
+			delete steps["publishDate"];
+			$scope.publishDate.mandatory = false;
+		}
+
+		$scope.newPublication.name_EN = null;
+		$scope.newPublication.name_FR = null;
+		$scope.newPublication.publish_date = null;
+		$scope.newPublication.publish_time = null;
+		$scope.triggerSection.show = false;
+		$scope.publishDate.show = false;
+		steps.publicationName.completed = false;
+		$scope.numOfCompletedSteps = stepsCompleted(steps);
+		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 	};
 
 	// Function to toggle necessary changes when updating publication name
@@ -296,12 +337,16 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 		$scope.publicationNameSections.open = true;
 
 		if ($scope.newPublication.name_EN && $scope.newPublication.name_FR) {
-			$scope.triggerSection.show = true;
+			$scope.triggerSection.show = !$scope.publishDate.mandatory || ($scope.publishDate.mandatory && steps.publishDate.completed);
 			steps.publicationName.completed = true;
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+			$scope.publishFrequencySection.show = true;
+			$scope.publishDate.show = true;
 		} else {
 			$scope.triggerSection.show = false;
+			$scope.publishDate.show = false;
+			$scope.publishFrequencySection.show = false;
 			steps.publicationName.completed = false;
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -309,16 +354,25 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 	};
 
 	$scope.publishDateUpdate = function () {
-		if ($scope.newPost.publish_date && $scope.newPost.publish_time) {
-			// $scope.triggerSection.show = true;
-			// steps.publish_date.completed = true;
-			// $scope.numOfCompletedSteps = stepsCompleted(steps);
-			// $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-		} else {
-			// steps.publish_date.completed = false;
-			// $scope.numOfCompletedSteps = stepsCompleted(steps);
-			// $scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+		if ($scope.newPublication.publish_date || $scope.newPublication.publish_time)
+			$scope.publishDate.open = true;
+		else
+			$scope.publishDate.open = false;
+		if ($scope.newPublication.type === 'Announcement') {
+			if ($scope.newPublication.publish_date && $scope.newPublication.publish_time) {
+				$scope.triggerSection.show = true;
+				steps.publishDate.completed = true;
+				$scope.numOfCompletedSteps = stepsCompleted(steps);
+				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+			} else {
+				$scope.triggerSection.show = false;
+				steps.publishDate.completed = false;
+				$scope.numOfCompletedSteps = stepsCompleted(steps);
+				$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
+			}
 		}
+		else
+			$scope.triggerSection.show = true;
 	};
 
 	// Submit new publication
@@ -614,9 +668,6 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 		}
 	};
 
-	// Default boolean for showing frequency section details
-	$scope.showFrequency = false;
-
 	// Function for adding new frequency filter
 	$scope.addFrequencyFilter = function () {
 		$scope.showFrequency = true;
@@ -787,7 +838,6 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 
 	// Initialize days of the week
 	$scope.daysInWeek = FrequencyFilterService.daysInWeek;
-	console.log($scope.daysInWeek);
 	$scope.selectedSingleDayInWeek = null; // Default
 	$scope.selectedSingleDayInWeekText = "";
 
@@ -800,14 +850,14 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 		buttonClasses: 'btn btn-default btn-frequency-select',
 		smartButtonTextProvider: function (selectionArray) {
 			if (selectionArray.length === 1) {
-				return $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.1_DAY_SELECTED');
+				return $filter('translate')('PUBLICATION.ADD.1_DAY_SELECTED');
 			}
-			return selectionArray.length + $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.DAYS_SELECTED');
+			return selectionArray.length + $filter('translate')('PUBLICATION.ADD.DAYS_SELECTED');
 		}
 	};
 
 	$scope.projectText = {
-		buttonDefaultText: $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SELECT'),
+		buttonDefaultText: $filter('translate')('PUBLICATION.ADD.SELECT'),
 	};
 
 	// event options for week dropdown menu
@@ -875,7 +925,7 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 			else {
 				// Remove last comma and replace with "and"
 				// Eg. Sunday, Monday and Tuesday
-				$scope.selectedDaysInWeekText = $scope.selectedDaysInWeekText.slice(0,-2) + $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.AND') +
+				$scope.selectedDaysInWeekText = $scope.selectedDaysInWeekText.slice(0,-2) + $filter('translate')('PUBLICATION.ADD.AND') +
 					($scope.language.toUpperCase() === "FR" ? $scope.selectedDaysInWeek[i].name.toLowerCase() : $scope.selectedDaysInWeek[i].name);
 			}
 		}
@@ -907,7 +957,7 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 			// Replace last comma with "and"
 			// Eg. January, March and April
 			else {
-				$scope.selectedMonthsInYearText = $scope.selectedMonthsInYearText.slice(0,-2) + $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.AND')
+				$scope.selectedMonthsInYearText = $scope.selectedMonthsInYearText.slice(0,-2) + $filter('translate')('PUBLICATION.ADD.AND')
 					+ ($scope.language.toUpperCase() === "FR" ? $scope.selectedMonthsInYear[i].name.toLowerCase() : $scope.selectedMonthsInYear[i].name);
 			}
 		}
@@ -941,7 +991,7 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 			// Replace last comma with an "and"
 			// Eg. 1st, 2nd and 4th
 			else {
-				$scope.selectedDatesInMonthText = $scope.selectedDatesInMonthText.slice(0,-2) + $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.AND') + dateNumber;
+				$scope.selectedDatesInMonthText = $scope.selectedDatesInMonthText.slice(0,-2) + $filter('translate')('PUBLICATION.ADD.AND') + dateNumber;
 			}
 		});
 	};
@@ -1063,9 +1113,9 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 		buttonClasses: 'btn btn-default btn-frequency-select',
 		smartButtonTextProvider: function (selectionArray) {
 			if (selectionArray.length === 1) {
-				return $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.1_MONTH_SELECTED');
+				return $filter('translate')('PUBLICATION.ADD.1_MONTH_SELECTED');
 			}
-			return selectionArray.length + $filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.MONTHS_SELECTED');
+			return selectionArray.length + $filter('translate')('PUBLICATION.ADD.MONTHS_SELECTED');
 		}
 	};
 	// event options for month dropdown menu
