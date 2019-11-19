@@ -13,9 +13,9 @@ class HelpSetup {
     public static function returnErrorMessage($errcode, $details) {
         http_response_code($errcode);
         header('Content-Type: application/javascript');
-        $response['code'] = $errcode;
-        $response['message'] = $details;
-        echo json_encode($response);
+//        $response['code'] = $errcode;
+//        $response['message'] = $details;
+        echo json_encode($details);
         die();
     }
 }

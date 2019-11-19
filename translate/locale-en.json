@@ -875,7 +875,8 @@
       "ADD": "Add a questionnaire for publication",
       "STEP": "Step",
       "COMPLETED": "completed",
-      "PUBLISH_DATE_EXPLANATION": "Please select the publish date."
+      "PUBLISH_DATE_EXPLANATION": "Please select the publish date.",
+      "ERROR_ADD": "An error occurred while creating the publication."
     },
     "EDIT": {
 
