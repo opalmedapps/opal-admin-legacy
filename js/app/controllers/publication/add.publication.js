@@ -16,9 +16,19 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 	$scope.moduleSection = {open:false, show:true};
 	$scope.materialSection = {open:false, show:false};
 	$scope.publicationNameSections = {open:false, show:false};
-	$scope.publishDate = {open:false, show:false, mandatory:false};
-	$scope.publishFrequencySection = {open:false, show:false};
+	$scope.publishDate = {available:false, open:false, show:false, mandatory:false};
 	$scope.showFrequency = false;
+	$scope.demoSection = {available:false, open:false, show:false};
+	$scope.publishFrequencySection = {available:false, open: false, show:false};
+	$scope.triggerSection = {
+		show:false,
+		patient: {available:false,open:false},
+		appointment: {available:false,open:false},
+		appointmentStatus: {available:false,open:false},
+		doctor: {available:false,open:false},
+		machine: {available:false,open:false},
+		diagnosis: {available:false,open:false}
+	};
 
 	$scope.language = Session.retrieveObject('user').language;
 
@@ -59,7 +69,7 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 			max: 130
 		}
 	};
-
+	resetPublication();
 	// Initialize search field variables
 	$scope.appointmentSearchField = null;
 	$scope.dxSearchField = null;
@@ -74,13 +84,7 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 	$scope.patientTriggerList = [];
 	$scope.appointmentStatusList = [];
 
-	$scope.selectAll = {
-		appointment: {all:false, checked:false},
-		diagnosis: {all:false, checked:false},
-		doctor: {all:false, checked:false},
-		machine: {all:false, checked:false},
-		patient: {all:false, checked:false}
-	};
+
 
 	$locale["DATETIME_FORMATS"]["SHORTDAY"] = [
 		$filter('translate')('DATEPICKER.SUNDAY_S'),
@@ -137,42 +141,40 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 	$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
 	// Initialize the new publication object
-	$scope.newPublication = {
-		ID: null,
-		name_EN: null,
-		name_FR: null,
-		moduleId: null,
-		moduleName: null,
-		materialName: null,
-		type: null,
-		publish_date: null,
-		publish_time: null,
-		OAUserId: Session.retrieveObject('user').id,
-		triggers: [],
-		occurrence: {
-			start_date: null,
-			end_date: null,
-			set: 0,
-			frequency: {
-				custom: 0,
-				meta_key: null,
-				meta_value: null,
-				additionalMeta: []
+	function resetPublication() {
+		$scope.selectAll = {
+			appointment: {all:false, checked:false},
+			diagnosis: {all:false, checked:false},
+			doctor: {all:false, checked:false},
+			machine: {all:false, checked:false},
+			patient: {all:false, checked:false}
+		};
+		$scope.newPublication = {
+			ID: null,
+			name_EN: null,
+			name_FR: null,
+			moduleId: null,
+			moduleName: null,
+			materialName: null,
+			type: null,
+			publish_date: null,
+			publish_time: null,
+			OAUserId: Session.retrieveObject('user').id,
+			triggers: [],
+			occurrence: {
+				start_date: null,
+				end_date: null,
+				set: 0,
+				frequency: {
+					custom: 0,
+					meta_key: null,
+					meta_value: null,
+					additionalMeta: []
+				}
 			}
-		}
+		};
 	};
 
-	$scope.demoSection = {open:false, show:false};
-	$scope.publishFrequencySection = {open: false, show:false};
-	$scope.triggerSection = {
-		show:false,
-		patient: {open:false},
-		appointment: {open:false},
-		appointmentStatus: {open:false},
-		doctor: {open:false},
-		machine: {open:false},
-		diagnosis: {open:false}
-	};
 
 	$scope.publicationList = [];
 
@@ -237,7 +239,10 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 				entry.name_display = entry.name;
 		});
 	}).catch(function(err) {
-		alert($filter('translate')('PUBLICATION.ADD.ERROR_FILTERS') + err.status + " " + err.data);
+		console.log(err);
+
+		alert($filter('translate')('PUBLICATION.ADD.ERROR_FILTERS') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+		$state.go('publication');
 	});
 
 	// Call our API service to get the list of source databases
@@ -249,24 +254,46 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 				entry.name_display = entry.name_EN;
 		});
 		$scope.moduleList = response.data; // Assign value
-	}).catch(function(response) {
-		alert($filter('translate')('PUBLICATION.ADD.ERROR_DATABASE') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		console.log(err);
+
+		alert($filter('translate')('PUBLICATION.ADD.ERROR_DATABASE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+		$state.go('publication');
 	});
 
 	// Function to toggle necessary changes when click on module buttons
 	$scope.moduleUpdate = function (moduleSelected, moduleName) {
 		if(moduleSelected !== $scope.newPublication.moduleId) {
+			resetPublication();
 			$scope.showProcessingModal();
 			$scope.newPublication.moduleId = moduleSelected;
 			$scope.newPublication.moduleName = moduleName;
 			$scope.newPublication.ID = null;
+			$scope.newPublication.type = null;
+			$scope.newPublication.publicationId = null;
+			$scope.newPublication.publish_date = null;
+			$scope.newPublication.publish_time = null;
+
+			$scope.showFrequency = false; // Hide form
+			$scope.newPublication.occurrence.set = 0; // Not set anymore
+			$scope.flushAllFrequencyFilters();
+			$scope.publishFrequencySection.open = false;
+
+			$scope.patientSearchField = null;
+			$scope.checkTriggers($scope.patientTriggerList);
+			$scope.patientTriggerList.forEach(function(entry) {entry.added = 0;});
+			$scope.appointmentStatusList.forEach(function(entry) {entry.added = 0;});
+			$scope.appointmentTriggerList.forEach(function(entry) {entry.added = 0;});
+			$scope.dxTriggerList.forEach(function(entry) {entry.added = 0;});
+			$scope.doctorTriggerList.forEach(function(entry) {entry.added = 0;});
+			$scope.machineTriggerList.forEach(function(entry) {entry.added = 0;});
+			$scope.demoTrigger.sex = false;
+			$scope.demoTrigger.age.min = 0;
+			$scope.demoTrigger.age.max = 130;
+
 			$scope.moduleSection.open = true;
 			$scope.materialSection.show = true;
 			$scope.newPublication.materialName = null;
-			steps.type.completed = true;
-
-
-			steps.material.completed = false;
 			$scope.publicationNameSections.show = false;
 			$scope.newPublication.name_EN = null;
 			$scope.newPublication.name_FR = null;
@@ -275,9 +302,8 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 			$scope.triggerSection.show = false;
 			$scope.publishDate.show = false;
 			steps.publicationName.completed = false;
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-
+			steps.type.completed = true;
+			steps.material.completed = false;
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
 
@@ -289,14 +315,28 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 						entry.name_display = entry.name_EN;
 				});
 
+				$scope.publishFrequencySection.available = response.data["triggers"].indexOf("1") !== -1 ? true: false;
+				$scope.triggerSection.patient.available = response.data["triggers"].indexOf("2") !== -1 ? true: false;
+				$scope.demoSection.available = response.data["triggers"].indexOf("3") !== -1 ? true: false;
+				$scope.triggerSection.appointmentStatus.available = response.data["triggers"].indexOf("4") !== -1 ? true: false;
+				$scope.triggerSection.appointment.available = response.data["triggers"].indexOf("5") !== -1 ? true: false;
+				$scope.triggerSection.diagnosis.available = response.data["triggers"].indexOf("6") !== -1 ? true: false;
+				$scope.triggerSection.doctor.available = response.data["triggers"].indexOf("7") !== -1 ? true: false;
+				$scope.triggerSection.machine.available = response.data["triggers"].indexOf("8") !== -1 ? true: false;
+				$scope.publishDate.available = response.data["triggers"].indexOf("9") !== -1 ? true: false;
+
+				console.log($scope.publishDate);
+
+
 				$scope.publicationList = response.data["publications"]; // Assign value
 				processingModal.close(); // hide modal
 				processingModal = null; // remove reference
 
-			}).catch(function(response) {
+			}).catch(function(err) {
 				processingModal.close(); // hide modal
 				processingModal = null; // remove reference
-				alert($filter('translate')('PUBLICATION.ADD.ERROR_MODULE') + "\r\n\r\n" + response.status + " - " + response.statusText + " - " + response.data.message);
+				console.log(err);
+				alert($filter('translate')('PUBLICATION.ADD.ERROR_MODULE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
 				$state.go('publication');
 			});
 		}
@@ -380,33 +420,84 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 
 		if ($scope.checkForm()) {
 
+			if ($scope.demoTrigger.sex)
+				$scope.newPublication.triggers.push({ id: $scope.demoTrigger.sex, type: 'Sex' });
+			if ($scope.demoTrigger.age.min >= 0 && $scope.demoTrigger.age.max <= 130) { // i.e. not empty
+				if ($scope.demoTrigger.age.min !== 0 || $scope.demoTrigger.age.max !== 130) { // triggers were changed
+					$scope.newPublication.triggers.push({
+						id: String($scope.demoTrigger.age.min).concat(',', String($scope.demoTrigger.age.max)),
+						type: 'Age'
+					});
+				}
+			}
+
+			addTriggers($scope.appointmentTriggerList, $scope.selectAll.appointment.all);
+			addTriggers($scope.dxTriggerList, $scope.selectAll.diagnosis.all);
+			addTriggers($scope.doctorTriggerList, $scope.selectAll.doctor.all);
+			addTriggers($scope.machineTriggerList, $scope.selectAll.machine.all);
+			addTriggers($scope.patientTriggerList, $scope.selectAll.patient.all);
+			addTriggers($scope.appointmentStatusList);
+
+			if ($scope.showFrequency) {
+				$scope.newPublication.occurrence.set = 1;
+				// convert dates to timestamps
+				$scope.newPublication.occurrence.start_date = moment($scope.newPublication.occurrence.start_date).format('X');
+				if ($scope.newPublication.occurrence.end_date) {
+					$scope.newPublication.occurrence.end_date = moment($scope.newPublication.occurrence.end_date).format('X');
+				}
+				if ($scope.newPublication.occurrence.frequency.custom) {
+					$scope.newPublication.occurrence.frequency.meta_key = $scope.customFrequency.unit.meta_key;
+					$scope.newPublication.occurrence.frequency.meta_value = $scope.customFrequency.meta_value;
+					$scope.newPublication.occurrence.frequency.additionalMeta = [];
+					angular.forEach(Object.keys($scope.additionalMeta), function(meta_key){
+						if ($scope.additionalMeta[meta_key].length) {
+							var metaDetails = {
+								meta_key: meta_key,
+								meta_value: $scope.additionalMeta[meta_key]
+							};
+							$scope.newPublication.occurrence.frequency.additionalMeta.push(metaDetails);
+						}
+					});
+				}
+				else {
+					$scope.newPublication.occurrence.frequency.additionalMeta = [];
+				}
+			}
+
 			// For some reason the HTML text fields add a zero-width-space
 			// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
-			$scope.newPublication.description_EN = $scope.newPublication.description_EN.replace(/\u200B/g,'');
-			$scope.newPublication.description_FR = $scope.newPublication.description_FR.replace(/\u200B/g,'');
+			$scope.newPublication.name_EN = $scope.newPublication.name_EN.replace(/\u200B/g,'');
+			$scope.newPublication.name_FR = $scope.newPublication.name_FR.replace(/\u200B/g,'');
 
 			angular.forEach($scope.termList, function (term) {
 				if (term.added)
 					$scope.newPublication.terms.push(term);
 			});
 
-			if ($scope.newPublication.type == "Appointment") {
-				$scope.newPublication.checkin_details.instruction_EN = $scope.newPublication.checkin_details.instruction_EN.replace(/\u200B/g,'');
-				$scope.newPublication.checkin_details.instruction_FR = $scope.newPublication.checkin_details.instruction_FR.replace(/\u200B/g,'');
+			var currentUser = Session.retrieveObject('user');
+
+			if (!$scope.publishDate.available) {
+				delete $scope.newPublication["publish_date"];
+				delete $scope.newPublication["publish_time"];
 			}
 
-			var currentUser = Session.retrieveObject('user');
+			if (!$scope.publishFrequencySection.available) {
+				delete $scope.newPublication["occurrence"];
+			}
+
 			$scope.newPublication.user = currentUser;
 			$.ajax({
 				type: "POST",
 				url: "publication/insert/publication",
 				data: $scope.newPublication,
 				success: function () {
-					$state.go('publication');
 				},
 				error: function (err) {
-					alert($filter('translate')('PUBLICATION.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText);
-					$state.go('publication');
+					alert($filter('translate')('PUBLICATION.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					//$state.go('publication');
+				},
+				complete: function() {
+					//$state.go('publication');
 				}
 			});
 		}

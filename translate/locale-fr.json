@@ -896,7 +896,8 @@
       "SEX": "Sexe",
       "AGE_GROUP": "Tranche d'âge",
       "TO": "à",
-      "APPT_STATUS_TRIGGER": "Déclencheur par statut de rendez-vous"
+      "APPT_STATUS_TRIGGER": "Déclencheur par statut de rendez-vous",
+      "ERROR_ADD": "Une erreur s'est produite lors de la création de la publication."
     },
     "EDIT": {
 

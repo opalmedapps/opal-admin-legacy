@@ -76,15 +76,14 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 			else if (view === 'chart') {
 				// Call our API to get post logs
 				publicationCollectionService.getPublicationsChartLogs(OAUserId).then(function (response) {
-					console.log(response.data);
 					$scope.publicationChartLogs = $scope.chartConfig.series = response.data;
 					angular.forEach($scope.publicationChartLogs, function(serie) {
 						angular.forEach(serie.data, function(log) {
 							log.x = new Date(log.x);
 						});
 					});
-				}).catch(function(response) {
-					alert($filter('translate')('POSTS.LIST.ERROR_POSTS_LOGS') + "\r\n" + response.status + " - " + response.data);
+				}).catch(function(err) {
+					alert($filter('translate')('POSTS.LIST.ERROR_POSTS_LOGS') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
 				});
 			}
 		}, true);
@@ -275,9 +274,6 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 			publishedQuestionnaire.changed = 1;
 		};
 
-		// Call API to get the list of questionnaires
-		getPublicationsList();
-
 		// Initialize a scope variable for a selected questionnaire
 		$scope.currentPublishedQuestionnaire = {};
 
@@ -310,13 +306,13 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 							$scope.setBannerClass('success');
 							$scope.bannerMessage = $filter('translate')('PUBLICATION.LIST.SUCCESS_FLAGS');
 						}
-						else {
-							$scope.setBannerClass('danger');
-							alert($filter('translate')('PUBLICATION.LIST.ERROR_FLAGS') + "\r\n\r\n" + response.status + " " + response.data);
-						}
+
 						$scope.showBanner();
 						$scope.changesMade = false;
 						$scope.publicationFlags.flagList = [];
+					},
+					error: function (err) {
+						alert($filter('translate')('PUBLICATION.LIST.ERROR_FLAGS') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
 					}
 				});
 
@@ -328,17 +324,17 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 		function getPublicationsList() {
 			publicationCollectionService.getPublications(OAUserId).then(function (response) {
 				$scope.publicationList = response.data;
-			}).catch(function(response) {
-				alert($filter('translate')('PUBLICATION.LIST.ERROR_PUBLICATION') + response.status + " " + response.data);
+			}).catch(function(err) {
+				alert($filter('translate')('PUBLICATION.LIST.ERROR_PUBLICATION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
 			});
 		}
 
 		// Function to edit questionnaire
-		$scope.editPublishedQuestionnaire = function (questionnaire) {
+		$scope.editPublication = function (questionnaire) {
 			$scope.currentPublishedQuestionnaire = questionnaire;
 			var modalInstance = $uibModal.open({ // open modal
-				templateUrl: 'templates/questionnaire/edit.publication.tool.html',
-				controller: 'publication.tool.edit',
+				templateUrl: 'templates/questionnaire/edit.publication.html',
+				controller: 'publication.edit',
 				scope: $scope,
 				windowClass: 'customModal',
 				backdrop: 'static',
@@ -346,11 +342,7 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 
 			// After update, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				publicationCollectionService.getPublishedQuestionnaires(OAUserId).then(function (response) {
-					$scope.publicationList = response.data;
-				}).catch(function(response) {
-					alert($filter('translate')('PUBLICATION.LIST.ERROR_PUBLICATION') + response.status + " " + response.data);
-				});
+				getPublicationsList();
 			});
 		};
 

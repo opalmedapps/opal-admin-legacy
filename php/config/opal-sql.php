@@ -155,6 +155,10 @@ define("SQL_OPAL_GET_ALL_PUBLICATION_MODULES_USER",
     "SELECT m.ID, m.name_EN, m.name_FR, m.iconClass FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.publication = 1 ORDER BY m.order;"
 );
 
+define("SQL_OPAL_GET_PUBLICATION_MODULES_USER_DETAILS",
+    "SELECT m.ID, m.name_EN, m.name_FR, m.iconClass FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.publication = 1 AND ID = :ID;"
+);
+
 define("SQL_OPAL_GET_QUESTIONNAIRE_CONTROL_DETAILS",
     "SELECT DISTINCT
     QuestionnaireControlSerNum AS serial,

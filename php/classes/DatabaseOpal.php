@@ -275,6 +275,10 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(SQL_OPAL_GET_ALL_PUBLICATION_MODULES_USER, array());
     }
 
+    function getPublicationModuleUserDetails($moduleId){
+        return $this->_fetch(SQL_OPAL_GET_PUBLICATION_MODULES_USER_DETAILS, array(array("parameter"=>":ID","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
+    }
+
     /*
     * Update questionnaireControl table with changes made by user
     * @params  SerNum of the QuestionnaireControl table updated

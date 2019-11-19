@@ -108,7 +108,7 @@ class PublishedQuestionnaire extends Questionnaire {
     }
 
     /*
-     * Validate and saniteze the list of published flags for questionnaire
+     * Validate and sanitize the list of published flags for questionnaire
      * @params  array of questionnaire to mark as published or not ($_POST)
      * @return  array of sanitize data
      * */
@@ -262,7 +262,6 @@ class PublishedQuestionnaire extends Questionnaire {
                 return true;
         return false;
     }
-
 
     /*
      * Updates the triggers and filters of published questionnaires.
