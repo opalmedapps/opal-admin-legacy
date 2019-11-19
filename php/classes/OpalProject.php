@@ -27,4 +27,7 @@ class OpalProject
     public function getPublicationModulesUser() {
         return $this->opalDB->getPublicationModulesUser();
     }
+    public function getPublicationModuleUserDetails($moduleId) {
+        return $this->opalDB->getPublicationModuleUserDetails();
+    }
 }

@@ -119,7 +119,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Publish date -->
-                            <div uib-accordion-group is-open="publishDate.open" class="panel-container summary-box animated" ng-class="{fadeInUp: publishDate.show}" is-disabled="!newPublication.publish_date && !newPublication.publish_time" ng-if="publishDate.show">
+                            <div uib-accordion-group is-open="publishDate.open" class="panel-container summary-box animated" ng-class="{fadeInUp: publishDate.show && publishDate.available}" is-disabled="!newPublication.publish_date && !newPublication.publish_time" ng-if="publishDate.show && publishDate.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -141,7 +141,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Publish Frequency -->
-                            <div uib-accordion-group is-open="publishFrequencySection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:publishFrequencySection.show}" is-disabled="!showFrequency" ng-if="showFrequency">
+                            <div uib-accordion-group is-open="publishFrequencySection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:publishFrequencySection.show}" is-disabled="!showFrequency" ng-if="showFrequency && publishFrequencySection.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2"><span ng-if="checkFrequencyFilter() && showFrequency" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span></div>
@@ -220,7 +220,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Patient triggers -->
-                            <div uib-accordion-group is-open="triggerSection.patient.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(patientTriggerList)" ng-if="checkTriggers(patientTriggerList)">
+                            <div uib-accordion-group is-open="triggerSection.patient.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(patientTriggerList)" ng-if="checkTriggers(patientTriggerList) && triggerSection.patient.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -237,7 +237,7 @@
                                 <div ng-if="checkTriggers(patientTriggerList) && !selectAll.patient.all" class="description">
                                     <p>
                                     <ul style="max-height: 100px; overflow-y: auto;">
-                                        <li ng-repeat="patient in patientTriggerList | filter: {added: 1} : 1">
+                                        <li ng-repeat="patient in zx | filter: {added: 1} : 1">
                                             {{patient.name}}
                                         </li>
                                     </ul>
@@ -251,7 +251,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Demographic trigger -->
-                            <div uib-accordion-group is-open="demoSection.open "class="panel-container summary-box animated" ng-class="{fadeInUp:demoSection.open}" is-disabled="!demoTrigger.sex && demoTrigger.age.min == 0 && demoTrigger.age.max == 130" ng-if="demoTrigger.sex || demoTrigger.age.min !== 0 || demoTrigger.age.max !== 130">
+                            <div uib-accordion-group is-open="demoSection.open "class="panel-container summary-box animated" ng-class="{fadeInUp:demoSection.open}" is-disabled="!demoTrigger.sex && demoTrigger.age.min == 0 && demoTrigger.age.max == 130" ng-if="(demoTrigger.sex || demoTrigger.age.min !== 0 || demoTrigger.age.max !== 130) && demoSection.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -281,7 +281,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Appointment Status trigger -->
-                            <div uib-accordion-group is-open="triggerSection.appointmentStatus.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(appointmentStatusList)" ng-if="checkTriggers(appointmentStatusList)">
+                            <div uib-accordion-group is-open="triggerSection.appointmentStatus.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(appointmentStatusList)" ng-if="checkTriggers(appointmentStatusList) && triggerSection.appointmentStatus.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -306,7 +306,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Appointment triggers -->
-                            <div uib-accordion-group is-open="triggerSection.appointment.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(appointmentTriggerList)" ng-if="checkTriggers(appointmentTriggerList)">
+                            <div uib-accordion-group is-open="triggerSection.appointment.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(appointmentTriggerList)" ng-if="checkTriggers(appointmentTriggerList) && triggerSection.appointment.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -328,7 +328,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Diagnosis triggers -->
-                            <div uib-accordion-group is-open="triggerSection.diagnosis.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(dxTriggerList)" ng-if="checkTriggers(dxTriggerList)">
+                            <div uib-accordion-group is-open="triggerSection.diagnosis.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(dxTriggerList)" ng-if="checkTriggers(dxTriggerList) && triggerSection.diagnosis.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -350,7 +350,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Doctor triggers -->
-                            <div uib-accordion-group is-open="triggerSection.doctor.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(doctorTriggerList)" ng-if="checkTriggers(doctorTriggerList)">
+                            <div uib-accordion-group is-open="triggerSection.doctor.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(doctorTriggerList)" ng-if="checkTriggers(doctorTriggerList) && triggerSection.doctor.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -381,7 +381,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Treatment Machine triggers -->
-                            <div uib-accordion-group is-open="triggerSection.machine.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(machineTriggerList)" ng-if="checkTriggers(machineTriggerList)">
+                            <div uib-accordion-group is-open="triggerSection.machine.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(machineTriggerList)" ng-if="checkTriggers(machineTriggerList) && triggerSection.machine.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -598,7 +598,7 @@
 
                         </div>
                         <!-- SECTION: Publish date -->
-                        <div class="row animated" ng-class="{fadeInUp: publishDate.show}" ng-if="publishDate.show">
+                        <div class="row animated" ng-class="{fadeInUp: publishDate.show}" ng-if="publishDate.show && publishDate.available">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                 <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -608,7 +608,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: publishDate.show}" ng-if="publishDate.show">
+                        <div class="row animated" ng-class="{fadeInUp: publishDate.show}" ng-if="publishDate.show && publishDate.available">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
                                     <span ng-hide="newPublication.type =='Announcement'"><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
@@ -617,7 +617,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: publishDate.show}" ng-if="publishDate.show" style="margin-bottom: 15px;">
+                        <div class="row animated" ng-class="{fadeInUp: publishDate.show}" ng-if="publishDate.show && publishDate.available" style="margin-bottom: 15px;">
                             <div class="col-xs-12">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-7 col-md-4" style="padding-top: 10px;margin-bottom:20px;">
@@ -637,7 +637,7 @@
                             </div>
                         </div>
                         <!-- SECTION: Publish frequency -->
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && publishFrequencySection.available">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -647,7 +647,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && publishFrequencySection.available">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
                                     <span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
@@ -655,7 +655,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show" style="margin-bottom:10px;position:relative;z-index:50">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && publishFrequencySection.available" style="margin-bottom:10px;position:relative;z-index:50">
                             <div style="margin-bottom:10px;">
                                 <div class="col-xs-12">
                                     <button class="btn btn-success" ng-if="!showFrequency" ng-click="addFrequencyFilter()">
@@ -790,7 +790,7 @@
 
                         </div>
                         <!-- SECTION: Patient triggers -->
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.patient.available">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                 <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -800,7 +800,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.patient.available">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
                                     <span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
@@ -808,7 +808,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.patient.available">
                             <div class="col-xs-12 col-lg-8">
                                 <div class="panel-container">
                                     <div class="panel-info">
@@ -839,7 +839,7 @@
                             </div>
                         </div>
                         <!-- SECTION: Demographic triggers -->
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show }" ng-if="triggerSection.show ">
+                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show }" ng-if="triggerSection.show && demoSection.available">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -849,12 +849,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show }" ng-if="triggerSection.show ">
+                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show }" ng-if="triggerSection.show && demoSection.available">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;"><span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span> {{'PUBLICATION.ADD.DEMO_EXPLANATION'|translate}}</p>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show }" ng-if="triggerSection.show ">
+                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show }" ng-if="triggerSection.show && demoSection.available">
                             <div class="col-xs-12 col-md-6">
                                 <div class="row">
                                     <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">{{'PUBLICATION.ADD.SEX'|translate}}</h2>
@@ -909,7 +909,7 @@
                             </div>
                         </div>
                         <!-- SECTION: Appointment Status trigger -->
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.appointmentStatus.available">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -919,12 +919,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.appointmentStatus.available">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;"><span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span> {{'PUBLICATION.ADD.TAS_EXPLANATION'|translate}}</p>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.appointmentStatus.available">
                             <div ng-repeat="appointmentStatus in appointmentStatusList" class="col-xs-12 col-sm-4 col-md-3 item-panel-select">
                                 <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: appointmentStatus.added}" ng-click="appointmentStatusUpdate($index)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
                                     <div class="panel-info" ng-class="{active: appointmentStatus.added}">
@@ -938,7 +938,7 @@
                             </div>
                         </div>
                         <!-- SECTION: Appointment triggers -->
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.appointment.available">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                 <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -948,7 +948,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.appointment.available">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
                                     <span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
@@ -956,7 +956,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.appointment.available">
                             <div class="col-xs-12 col-lg-8">
                                 <div class="panel-container">
                                     <div class="panel-info">
@@ -987,7 +987,7 @@
                             </div>
                         </div>
                         <!-- SECTION: Diagnosis trigger -->
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.diagnosis.available">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -997,7 +997,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.diagnosis.available">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
                                     <span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
@@ -1005,7 +1005,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.diagnosis.available">
                             <div class="col-xs-12 col-lg-8">
                                 <div class="panel-container">
                                     <div class="panel-info">
@@ -1036,7 +1036,7 @@
                             </div>
                         </div>
                         <!-- SECTION: Doctor triggers -->
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.doctor.available">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -1046,7 +1046,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.doctor.available">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
                                     <span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
@@ -1054,7 +1054,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.doctor.available">
                             <div class="col-xs-12 col-lg-8">
                                 <div class="panel-container">
                                     <div class="panel-info">
@@ -1085,7 +1085,7 @@
                             </div>
                         </div>
                         <!-- SECTION: Treatment machine triggers -->
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.machine.available">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                 <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -1095,7 +1095,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.machine.available">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
                                     <span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
@@ -1103,7 +1103,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show">
+                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.machine.available">
                             <div class="col-xs-12 col-lg-8">
                                 <div class="panel-container">
                                     <div class="panel-info">

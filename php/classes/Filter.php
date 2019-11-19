@@ -92,7 +92,7 @@ class Filter {
             // ***********************************
             // WaitRoomManagement 
             // ***********************************
-            $sourceDBSer = 2;
+/*            $sourceDBSer = 2;
             $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
             if ($source_db_link) {
 
@@ -121,12 +121,12 @@ class Filter {
                 //     );
                 //     array_push($filters['machines'], $machineArray);
                 // }
-            }
+            }*/
 
             // ***********************************
             // Mosaiq 
             // ***********************************
-            $sourceDBSer = 3;
+/*            $sourceDBSer = 3;
             $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
             if ($source_db_link) {
 
@@ -155,7 +155,7 @@ class Filter {
                 //     );
                 //     array_push($filters['machines'], $machineArray);
                 // }
-			}
+			}*/
 			
 			// ***********************************
             // OpalDB 
@@ -341,8 +341,7 @@ class Filter {
             return $filters;
 
         } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $filters;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Connection to the database failed.\r\nError : ". $e->getMessage());
 		}
     }
 
