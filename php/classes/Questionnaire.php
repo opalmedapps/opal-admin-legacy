@@ -278,15 +278,12 @@ class Questionnaire extends QuestionnaireModule {
             $response['message'] = 200;
             return $response;
         }
-        else if (!$nobodyUpdated) {
-            $response['value'] = false; // conflict error. Somebody already updated the question or record does not exists.
-            $response['message'] = 409;
-            return $response;
-        } else {
-            $response['value'] = false; // Question locked.
-            $response['message'] = 423;
-            return $response;
-        }
+        else if (!$nobodyUpdated)
+            // conflict error. Somebody already updated the question or record does not exists.
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Conflict error with the questionnaire.");
+        else
+            // Questionnaire locked.
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Questionnaire locked.");
     }
 
     /*
