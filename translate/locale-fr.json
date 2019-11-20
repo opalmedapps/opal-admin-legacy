@@ -119,7 +119,7 @@
       "FINAL": "Final",
       "EDIT": "Modifier",
       "DELETE": "Supprimer",
-      "ERROR_QUESTIONS": "Une erreur s'est produite lors de l'obtention de la liste de questions. Réponse du serveur:\r\n\r\n"
+      "ERROR_QUESTIONS": "Une erreur s'est produite lors de l'obtention de la liste de questions."
     },
     "QUESTION_ADD" : {
       "BACK": "Retour à la liste des questions",
@@ -198,7 +198,7 @@
       "NOT_AUTHENTICATED": "Votre identité n'est pas reconnue. Veuillez vous reconnecter.",
       "MODIFIED": "La question a déjà été modifiée par quelqu'un d'autre. Veuillez vérifier et essayer de nouveau.",
       "PUBLISHED": "La question est désormais publiée et est verrouillée.",
-      "UNKNOWN": "Erreur inconnue."
+      "ERROR": "Une erreur est survenue lors de la suppression de la question."
     },
     "QUESTION_LOCKED": {
       "TITLE": "Question verrouillée",
@@ -335,7 +335,7 @@
       "DELETE": "Supprimer",
       "CANCEL": "Annuler",
       "DELETED": "Le questionnaire a été supprimé avec succès.",
-      "UNKNOWN": "Erreur inconnue."
+      "ERROR": "Une erreur est survenue lors de la suppression du questionnaire."
     },
     "QUESTIONNAIRE_LOCKED": {
       "TITLE": "Questionnaire verrouillé",
@@ -456,10 +456,7 @@
       "DELETE": "Supprimer",
       "CANCEL": "Annuler",
       "DELETED": "Le type de réponse a été supprimé avec succès.",
-      "ERROR_AUTHENTICATED": "Vous n'êtes pas authentifié(e)!",
-      "ERROR_PERMISSION": "Vous n'avez pas la permission de supprimer ce type de réponse.",
-      "ERROR_MODIFIED": "Le type de réponse a déjà été modifié par quelqu'un d'autre. Veuillez vérifier et essayer de nouveau.",
-      "ERROR_UNKNOWN": "Erreur inconnue."
+      "ERROR": "Une erreur est survenue pendant la suppression du type de réponse."
     },
     "TEMPLATE_QUESTION_EDIT": {
       "TITLE": "Modifier le type de réponse",
@@ -499,6 +496,7 @@
       "FRENCH": "Français",
       "ERROR_GET_TEMPLATE_DETAILS": "Une erreur s'est produite lors de l'obtention des détails du type de réponse.",
       "ERROR_SET_TEMPLATE_QUESTION": "Une erreur s'est produite lors de la mise à jour du type de réponse.",
+      "ERROR_GET_LIBRARIES": "Une erreur s'est produite lors de l'obtention des librairies.",
       "SUCCESS": "Le type de réponse a été mis à jour avec succès."
     },
     "PUBLICATION_TOOL_LIST" : {

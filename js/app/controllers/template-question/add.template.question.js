@@ -103,16 +103,13 @@ controller('template.question.add', function ($scope, $state, $filter, $uibModal
 				type: "POST",
 				url: "template-question/insert/template-question",
 				data: $scope.newTemplateQuestion,
-				success: function (result) {
-					result = JSON.parse(result);
-					if (result.message === 200) {
-						$state.go('questionnaire-template-question');
-					} else {
-						alert($filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_ADD.ERROR_SET_TEMPLATE_QUESTION') + "\r\n\r\n" + result.code + " - " + result.message);
-					}
+				success: function () {
 				},
-				error: function () {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_ADD.ERROR_SET_TEMPLATE_QUESTION'));
+				error: function (err) {
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_ADD.ERROR_SET_TEMPLATE_QUESTION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+				},
+				complete: function(err) {
+					$state.go('questionnaire-template-question');
 				}
 			});
 		}
@@ -143,8 +140,9 @@ controller('template.question.add', function ($scope, $state, $filter, $uibModal
 			else
 				entry.category_display = entry.category_EN;
 		});
-	}).catch(function(response) {
-		alert($filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_ADD.ERROR_SET_TEMPLATE_QUESTION') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		alert($filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_ADD.ERROR_SET_TEMPLATE_QUESTION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+		$state.go('questionnaire-template-question');
 	});
 
 	// add options

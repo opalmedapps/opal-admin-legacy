@@ -8,32 +8,15 @@ angular.module('opalAdmin.controllers.template.question.delete', ['ngAnimate', '
 				type: "POST",
 				url: "template-question/delete/template-question",
 				data: {"ID": $scope.templateQuestionToDelete.ID, "OAUserId": Session.retrieveObject('user').id},
-				success: function (response) {
-					response = JSON.parse(response);
-					// Show success or failure depending on response
-					if (response.value) {
-						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_DELETE.DELETED');
-					}
-					else {
-						$scope.setBannerClass('danger');
-						var errMsg = "";
-						switch(response.message) {
-							case 401:
-								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_DELETE.ERROR_AUTHENTICATED');
-								break;
-							case 403:
-								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_DELETE.ERROR_PERMISSION');
-								break;
-							case 409:
-								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_DELETE.ERROR_MODIFIED');
-								break;
-							default:
-								errMsg = $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_DELETE.ERROR_UNKNOWN') + "\r\n\r\n" + response.message;
-						}
-						$scope.$parent.bannerMessage = errMsg;
-					}
+				success: function () {
+					$scope.setBannerClass('success');
+					$scope.$parent.bannerMessage = $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_DELETE.DELETED');
 					$scope.showBanner();
+				},
+				error: function(err) {
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_DELETE.ERROR') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+				},
+				complete: function () {
 					$uibModalInstance.close();
 				}
 			});
