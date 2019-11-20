@@ -119,7 +119,7 @@
       "FINAL": "Final",
       "EDIT": "Edit",
       "DELETE": "Delete",
-      "ERROR_QUESTIONS": "An error occurred whille getting question list. Answer from the server:\r\n\r\n"
+      "ERROR_QUESTIONS": "An error occurred whille getting question list."
     },
     "QUESTION_ADD" : {
       "BACK": "Back to Manage Questions",
@@ -199,7 +199,7 @@
       "NOT_AUTHENTICATED": "You are not authenticated.",
       "MODIFIED": "The question was already modified by someone else. Please verify and try again.",
       "PUBLISHED": "The question was already published and is now locked.",
-      "UNKNOWN": "Unknown error."
+      "ERROR": "An error occured while deleting the question."
     },
     "QUESTION_LOCKED": {
       "TITLE": "Question locked",
@@ -337,7 +337,7 @@
       "DELETE": "Delete",
       "CANCEL": "Cancel",
       "DELETED": "The questionnaire has being successfully deleted.",
-      "UNKNOWN": "Unknown error."
+      "ERROR": "An error occured while deleting the questionnaire."
     },
     "QUESTIONNAIRE_LOCKED": {
       "TITLE": "Questionnaire locked",
@@ -399,7 +399,7 @@
       "PUBLIC": "Public",
       "EDIT": "Edit",
       "DELETE": "Delete",
-      "ERROR_RESPONSE_TYPES_LIST": "An error occurred while getting the response types:"
+      "ERROR_RESPONSE_TYPES_LIST": "An error occurred while getting the response types."
     },
     "TEMPLATE_QUESTION_ADD" : {
       "BACK": "Back to Manage types of response",
@@ -460,10 +460,7 @@
       "DELETE": "Delete",
       "CANCEL": "Cancel",
       "DELETED": "The response type has being successfully deleted.",
-      "ERROR_AUTHENTICATED": "You are not authenticated!",
-      "ERROR_PERMISSION": "You do not have the permission to delete this response type.",
-      "ERROR_MODIFIED": "The response type was already modified by someone else. Please verify and try again.",
-      "ERROR_UNKNOWN": "Unknown error."
+      "ERROR": "An error occured while deleting the response type."
     },
     "TEMPLATE_QUESTION_EDIT": {
       "TITLE": "Edit Response Type Template",
@@ -502,6 +499,7 @@
       "FRENCH": "French",
       "ERROR_GET_TEMPLATE_DETAILS": "An error occurred while getting the details of the response type.",
       "ERROR_SET_TEMPLATE_QUESTION": "An error occurred while updating the response type.",
+      "ERROR_GET_LIBRARIES": "An error occurred while getting the list of libraries.",
       "SUCCESS": "The response type has being successfully updated."
     },
     "PUBLICATION_TOOL_LIST" : {

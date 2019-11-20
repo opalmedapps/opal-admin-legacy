@@ -250,7 +250,6 @@ class Question extends QuestionnaireModule {
         return $questions;
     }
 
-
     /*
      * List all the finalized questions ready to be sent to patients. We do not want to include draft or deleted
      * questions.
@@ -304,7 +303,6 @@ class Question extends QuestionnaireModule {
      * @return  $questionLocked (boolean)
      * */
     function isQuestionLocked($questionId) {
-        return false;
         $questionnairesList = array();
         $questionnaires = $this->questionnaireDB->fetchQuestionnairesIdQuestion($questionId);
 
@@ -716,7 +714,7 @@ class Question extends QuestionnaireModule {
 
     /**
      * Mark a question as deleted. First, it get the last time it was updated, check if the user has the proper
-     * authorization, and check if the question was already sent to a patient. Then it checked if the record was
+     * authorization, and check if the question was already published. Then it checked if the record was
      * updated in the meantime, and if not, it marks the question as being deleted.
      *
      * WARNING!!! No record should be EVER be removed from the questionnaire database! It should only being marked as
@@ -774,15 +772,12 @@ class Question extends QuestionnaireModule {
             $response['message'] = 200;
             return $response;
         }
-        else if (!$nobodyUpdated) {
-            $response['value'] = false; // conflict error. Somebody already updated the question or record does not exists.
-            $response['message'] = 409;
-            return $response;
-        } else {
-            $response['value'] = false; // Question locked.
-            $response['message'] = 423;
-            return $response;
-        }
+        else if (!$nobodyUpdated)
+            // conflict error. Somebody already updated the question or record does not exists.
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Conflict error on the question.");
+        else
+            // Question has being already published, it is now locked.
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Question locked.");
     }
 }
 ?>
