@@ -148,9 +148,12 @@ angular.module('opalAdmin.collections', [])
 		var postAPI = {};
 
 		// Function to get the list of posts
-		postAPI.getPosts = function () {
+		postAPI.getPosts = function (OAUserId) {
 			return $http.post(
 				"post/get/posts",
+				$.param({
+					OAUserId: OAUserId,
+				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
@@ -158,11 +161,12 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// Function to get a post detail given a serial
-		postAPI.getPostDetails = function (serial) {
+		postAPI.getPostDetails = function (postId, OAUserId) {
 			return $http.post(
 				"post/get/post-details",
 				$.param({
-					serial: serial,
+					OAUserId: OAUserId,
+					postId: postId,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},

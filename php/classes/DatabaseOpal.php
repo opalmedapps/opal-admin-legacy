@@ -89,10 +89,10 @@ class DatabaseOpal extends DatabaseAccess {
         if($moduleId == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Module cannot be found. Access denied.");
         $module = $this->_fetch(SQL_OPAL_GET_MODULE_BY_ID, array(array("parameter"=>":ID","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
-        $sqlFetchPerModule = $module["unique"] == 1 ? $module["sqlUnique"] : $module["sqlPublicationList"];
+        $sqlFetchPerModule = $module["unique"] == 1 ? $module["sqlPublicationUnique"] : $module["sqlPublicationMultiple"];
         if($sqlFetchPerModule == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing code. Access denied.");
-        $result["publications"] = $this->_fetchAll($sqlFetchPerModule);
+        $result["publications"] = $this->_fetchAll($sqlFetchPerModule,  array(array("parameter"=>":OAUserId","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT)));
         $result["triggers"] = $this->_fetchAll(SQL_OPAL_GET_TRIGGERS_PER_MODULE, array(array("parameter"=>":moduleId","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
         return $result;
     }
@@ -257,7 +257,6 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  number of record affected
      *
      *     SET PublishFlag = :PublishFlag, LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId
-
      *
      * */
     function updatePublicationFlag($tableName, $primaryKey, $publishFlag, $primaryId) {
@@ -328,5 +327,72 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":ControlTableSerNum","variable"=>$controlTableSerNum,"data_type"=>PDO::PARAM_INT),
         );
         return $this->_execute(SQL_OPAL_DELETE_OTHER_METAS_FROM_FREQUENCY_EVENTS, $toInsert);
+    }
+
+    /*
+     * Returns all the non deleted posts
+     * TODO implement pagination/lazy loading system
+     * @params  void
+     * @returns array of post
+     * */
+    function getPosts() {
+        return $this->_fetchAll(SQL_OPAL_GET_POSTS);
+    }
+
+    /*
+     * Inserts a new post with the info of the user/sessionId and datetime.
+     * @params  array with post info
+     * @returns new id of the post
+     * */
+    function insertPost($toInsert) {
+        $toInsert["LastUpdatedBy"] = $this->getOAUserId();
+        $toInsert["SessionId"] = $this->getSessionId();
+        $toInsert["DateAdded"] = date("Y-m-d H:i:s");
+        return $this->_insertRecordIntoTable(OPAL_POST_TABLE, $toInsert);
+    }
+
+    /*
+     * Gets the post details with a single ID/Serial
+     * @params  ID/serial of the post
+     * @returns array with details of the post
+     * */
+    function getPostDetails($postId) {
+        return $this->_fetch(SQL_OPAL_GET_POST_DETAILS,
+            array(array("parameter"=>":PostControlSerNum","variable"=>$postId,"data_type"=>PDO::PARAM_INT))
+        );
+    }
+
+    /*
+     * Updates a post details into the database after they were validated/sanitized
+     * @params  array with post details (sanitized/validated)
+     * @returns number of lines modified.
+     * */
+    function updatePost($toUpdate) {
+        $toUpdate["LastUpdatedBy"] = $this->getOAUserId();
+        $toUpdate["SessionId"] = $this->getSessionId();
+        return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_POST, $toUpdate);
+    }
+
+    /*
+     * This function marks a specific record in a specific table as deleted.
+     *
+     * WARNING!!! No record should be EVER be removed from the opalDB database! It should only being marked as
+     * being deleted ONLY after it was verified the record is not locked, the user has the proper authorization and
+     * no more than one user is doing modification on it at a specific moment. Not following the proper procedure will
+     * have some serious impact on the integrity of the database and its records.
+     *
+     * REMEMBER !!! NO DELETE STATEMENT EVER !!! YOU HAVE BEING WARNED !!!
+     *
+     * @param   Table name (string)
+     *          record to mark as deleted in the table (BIGINT)
+     * @return  result of deletion (boolean)
+     * */
+    function markAsDeleted($tableName, $primaryKey, $recordId) {
+        $sql = str_replace("%%PRIMARY_KEY%%", strip_tags($primaryKey),str_replace("%%TABLENAME%%", strip_tags($tableName),SQL_OPAL_MARK_RECORD_AS_DELETED));
+        return $this->_execute($sql, array(
+            array("parameter"=>":LastUpdatedBy","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":recordId","variable"=>$recordId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":SessionId","variable"=>$this->getSessionId(),"data_type"=>PDO::PARAM_STR),
+        ));
     }
 }

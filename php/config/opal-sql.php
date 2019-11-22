@@ -14,7 +14,7 @@ define( "OPAL_DB_DSN", "mysql:host=" . OPAL_DB_HOST . ";port=" . OPAL_DB_PORT . 
 define( "OPAL_DB_USERNAME", $config['databaseConfig']['opal']['username'] );
 define( "OPAL_DB_PASSWORD", $config['databaseConfig']['opal']['password'] );
 
-//Definition of all questionnaires table from the questionnaire DB
+//Definition of all the tables from the opalDB database
 define("OPAL_OAUSER_TABLE","OAUser");
 define("OPAL_OAUSER_ROLE_TABLE","OAUserRole");
 define("OPAL_QUESTIONNAIRE_CONTROL_TABLE","QuestionnaireControl");
@@ -24,6 +24,11 @@ define("OPAL_FILTERS_MODIFICATION_HISTORY_TABLE","FiltersMH");
 define("OPAL_FREQUENCY_EVENTS_TABLE","FrequencyEvents");
 define("OPAL_MODULE_TABLE","module");
 define("OPAL_MODULE_TRIGGER_SETTING_TABLE","moduleTriggerSetting");
+define("OPAL_POST_TABLE","PostControl");
+
+//Definition of the primary keys of the opalDB database
+define("OPAL_POST_PK","PostControlSerNum");
+
 
 /*
  * Listing of all SQL queries for the Opal database
@@ -239,4 +244,47 @@ define("SQL_OPAL_GET_QUESTIONNAIRE_LIST_LOGS","
     WHERE
     lqmh.QuestionnaireControlSerNum = qc.QuestionnaireControlSerNum
     AND lqmh.CronLogSerNum IN (%%IDS%%)
+");
+
+define("SQL_OPAL_GET_POSTS", "
+    SELECT DISTINCT
+    PostControlSerNum AS serial,
+    PostType AS type,
+    PostName_EN AS name_EN,
+    PostName_FR AS name_FR,
+    (SELECT COUNT(*) from ".OPAL_FILTERS_TABLE." f WHERE f.ControlTableSerNum = pc.PostControlSerNum and ControlTable = '".OPAL_POST_TABLE."') AS locked
+    FROM 
+	".OPAL_POST_TABLE." pc
+	WHERE deleted != ".DELETED_RECORD.";
+");
+
+define("SQL_OPAL_GET_POST_DETAILS", "
+    SELECT DISTINCT
+    PostControlSerNum AS serial,
+    PostType AS type,
+    PostName_EN AS name_EN,
+    PostName_FR AS name_FR,
+    body_EN,
+    body_FR,
+    (SELECT COUNT(*) from ".OPAL_FILTERS_TABLE." f WHERE f.ControlTableSerNum = pc.PostControlSerNum and ControlTable = '".OPAL_POST_TABLE."') AS locked
+    FROM ".OPAL_POST_TABLE." pc
+    WHERE PostControlSerNum = :PostControlSerNum;
+");
+
+define("SQL_OPAL_UPDATE_POST",
+    "UPDATE ".OPAL_POST_TABLE."
+    SET LastUpdatedBy = :LastUpdatedBy,
+    SessionId = :SessionId,
+    PostName_EN = :PostName_EN,
+    PostName_FR = :PostName_FR,
+    PostType = :PostType,
+    Body_EN = :Body_EN,
+    Body_FR = :Body_FR
+    WHERE PostControlSerNum = :PostControlSerNum
+    AND deleted = ".NON_DELETED_RECORD.";"
+);
+
+define("SQL_OPAL_MARK_RECORD_AS_DELETED", "
+    UPDATE %%TABLENAME%% SET deleted = ".DELETED_RECORD.", LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId
+    WHERE %%PRIMARY_KEY%% = :recordId AND deleted = ".NON_DELETED_RECORD.";
 ");

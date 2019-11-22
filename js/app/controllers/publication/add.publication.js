@@ -84,8 +84,6 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 	$scope.patientTriggerList = [];
 	$scope.appointmentStatusList = [];
 
-
-
 	$locale["DATETIME_FORMATS"]["SHORTDAY"] = [
 		$filter('translate')('DATEPICKER.SUNDAY_S'),
 		$filter('translate')('DATEPICKER.MONDAY_S'),
@@ -239,8 +237,6 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 				entry.name_display = entry.name;
 		});
 	}).catch(function(err) {
-		console.log(err);
-
 		alert($filter('translate')('PUBLICATION.ADD.ERROR_FILTERS') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
 		$state.go('publication');
 	});
@@ -255,8 +251,6 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 		});
 		$scope.moduleList = response.data; // Assign value
 	}).catch(function(err) {
-		console.log(err);
-
 		alert($filter('translate')('PUBLICATION.ADD.ERROR_DATABASE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
 		$state.go('publication');
 	});
@@ -325,9 +319,6 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 				$scope.triggerSection.machine.available = response.data["triggers"].indexOf("8") !== -1 ? true: false;
 				$scope.publishDate.available = response.data["triggers"].indexOf("9") !== -1 ? true: false;
 
-				console.log($scope.publishDate);
-
-
 				$scope.publicationList = response.data["publications"]; // Assign value
 				processingModal.close(); // hide modal
 				processingModal = null; // remove reference
@@ -335,8 +326,7 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 			}).catch(function(err) {
 				processingModal.close(); // hide modal
 				processingModal = null; // remove reference
-				console.log(err);
-				alert($filter('translate')('PUBLICATION.ADD.ERROR_MODULE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+				alert($filter('translate')('PUBLICATION.ADD.ERROR_MODULE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
 				$state.go('publication');
 			});
 		}
@@ -490,8 +480,7 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 				type: "POST",
 				url: "publication/insert/publication",
 				data: $scope.newPublication,
-				success: function () {
-				},
+				success: function () {},
 				error: function (err) {
 					alert($filter('translate')('PUBLICATION.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
 					//$state.go('publication');
