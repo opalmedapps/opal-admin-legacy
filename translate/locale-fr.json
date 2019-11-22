@@ -948,6 +948,12 @@
       "SUCCESS": "L'annonce a été supprimée avec succès.",
       "ERROR": "Une erreur s'est produite lors de la suppression de l'annonce."
     },
+    "LOCKED": {
+      "TITLE": "Annonce verrouillée",
+      "WARNING": "Attention",
+      "LOCKED": "Cette annonce a déjà été publiée et ne peut être supprimée.",
+      "CLOSE": "Fermer"
+    },
     "ADD": {
       "BACK": "Retour",
       "SUMMARY": "Sommaire",
@@ -1059,7 +1065,8 @@
       "ERROR_TRIGGERS": "Une erreur s'est produite lors de l'obtention de la liste des déclencheurs.",
       "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails de l'annonce.",
       "ERROR_EDIT": "Une erreur s'est produite lors de l'enregistrement des modifications.",
-      "SUCCESS_EDIT": "L'annonce a été mise à jour avec succès."
+      "SUCCESS_EDIT": "L'annonce a été mise à jour avec succès.",
+      "PUBLISHED": "Cette annonce a déjà été publiée."
     },
     "LOG": {
       "NAME": "Nom",

@@ -137,11 +137,26 @@ class Publication extends OpalProject
      * @return  void
      * */
     function insertPublication($publication) {
-        $moduleDetails = $this->opalDB->getPublicationModuleUserDetails(567);
+        $moduleDetails = $this->opalDB->getPublicationModuleUserDetails($publication["moduleId"]);
 
-        if($moduleDetails["ID"] == "")
+        if($moduleDetails["ID"] == MODULE_QUESTIONNAIRE) {
+            print "questionnaire goes here\r\n";
+
+            $this->_connectQuestionnaireDB($this->opalDB->getOAUserId());
+            $currentQuestionnaire = $this->questionnaireDB->getQuestionnaireDetails($publication["publicationId"]);
+            print_r($currentQuestionnaire);
+
+        }
+        else if($moduleDetails["ID"] == MODULE_POST) {
+            print "Post goes here";
+        }
+        else if($moduleDetails["ID"] == MODULE_EDU_MAT) {
+            print "educational materials goes here";
+        }
+        else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module");
 
+        print_r($publication);
         print_r($moduleDetails);
 
         return false;

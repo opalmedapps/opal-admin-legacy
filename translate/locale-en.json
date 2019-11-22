@@ -927,6 +927,12 @@
       "SUCCESS": "The post has being successfully deleted.",
       "ERROR": "An error occurred while deleting the post."
     },
+    "LOCKED": {
+      "TITLE": "Post locked",
+      "WARNING": "Warning",
+      "LOCKED": "This post has being published already and cannot be deleted.",
+      "CLOSE": "Close"
+    },
     "ADD": {
       "BACK": "Back to Posts",
       "SUMMARY": "Summary",
@@ -1037,7 +1043,8 @@
       "ERROR_TRIGGERS": "An error occurred while getting the triggers list.",
       "ERROR_DETAILS": "An error occurred while getting the details of the publication.",
       "ERROR_EDIT": "An error occurred while saving the changes.",
-      "SUCCESS_EDIT": "The post has being updated successfully."
+      "SUCCESS_EDIT": "The post has being updated successfully.",
+      "PUBLISHED": "This post has being already published."
     },
     "LOG": {
       "NAME": "Name",

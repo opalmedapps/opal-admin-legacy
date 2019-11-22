@@ -38,7 +38,7 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 			var matcher = new RegExp($scope.filterValue, 'i');
 			renderableRows.forEach(function (row) {
 				var match = false;
-				['name_'+Session.retrieveObject('user').language, 'module_'+Session.retrieveObject('user').language, 'type_'+Session.retrieveObject('user').language, 'publishDate'].forEach(function (field) {
+				['name_'+Session.retrieveObject('user').language, 'module_'+Session.retrieveObject('user').language, 'type_'+Session.retrieveObject('user').language].forEach(function (field) {
 					if (row.entity[field].match(matcher)) {
 						match = true;
 					}
