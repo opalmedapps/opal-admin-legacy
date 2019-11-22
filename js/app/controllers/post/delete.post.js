@@ -6,26 +6,22 @@ angular.module('opalAdmin.controllers.post.delete', ['ngAnimate', 'ngSanitize', 
 		$scope.deletePost = function () {
 			// Log who updated post 
 			var currentUser = Session.retrieveObject('user');
-			$scope.postToDelete.user = currentUser;
+			$scope.postToDelete.OAUser = currentUser;
+
+			console.log($scope.postToDelete);
 			$.ajax({
 				type: "POST",
 				url: "post/delete/post",
 				data: $scope.postToDelete,
 				success: function (response) {
-					response = JSON.parse(response);
-					// Show success or failure depending on response
-					if (response.value) {
 						$scope.setBannerClass('success');
 						$scope.$parent.bannerMessage = $filter('translate')('POSTS.DELETE.SUCCESS');
 						$scope.showBanner();
-					}
-					else {
-						alert($filter('translate')('POSTS.DELETE.ERROR') + "\r\n\r\n" + response.message);
-					}
-					$uibModalInstance.close();
 				},
 				error: function (err) {
-					alert($filter('translate')('POSTS.DELETE.ERROR') + "\r\n\r\n" + err.status + " - " + err.statusText);
+					alert($filter('translate')('POSTS.DELETE.ERROR') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+				},
+				complete: function() {
 					$uibModalInstance.close();
 				}
 			});

@@ -128,6 +128,14 @@ define("LEGACY_YESNO", 9);
 define("DEFAULT_TYPE", TEXT_BOX);
 
 /*
+ * Module ID of each module in the opolAdmin
+ * */
+define("MODULE_POST", 2);
+define("MODULE_EDU_MAT", 3);
+define("MODULE_QUESTIONNAIRE", 7);
+
+
+/*
  * List of HTTP status codes
  * */
 define("HTTP_STATUS_SUCCESS",200);
