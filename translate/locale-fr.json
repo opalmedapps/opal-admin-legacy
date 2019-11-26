@@ -823,7 +823,7 @@
       "MAX": "MAX",
       "TRIGGER_APPT_STATUS": "Déclencheur par statut de rendez-vous",
       "TAS_EXPLANATION": "Sélectionnez un statut de rendez-vous. Cela ciblera les patients dont les rendez-vous ont ce statut le jour du rendez-vous. L'utilisation de ce déclencheur avec le déclencheur de rendez-vous ci-dessous ciblera les statuts pour des rendez-vous spécifiques.",
-      "WILL_BE_LOCKED": "Le questionnaire %%QUESTIONNAIRE_NAME%% n'a jamais été publié auparavant. Ce faisant, il sera verrouillé et ne pourra plus être modifié.",
+      "WILL_BE_LOCKED": "Le matériel \"%%MATERIAL_NAME%%\" n'a jamais été publié auparavant. En étant publié, il sera verrouillé et ne pourra plus être modifié.",
       "ERROR_PUBLICATION": "Une erreur s'est produite lors de la création de la publication.",
       "ERROR_QUESTIONNAIRE": "Une erreur s'est produite lors de l'obtention de la liste de questionnaires.",
       "EVERY_DAY": "Tous les jours",
@@ -895,7 +895,8 @@
       "AGE_GROUP": "Tranche d'âge",
       "TO": "à",
       "APPT_STATUS_TRIGGER": "Déclencheur par statut de rendez-vous",
-      "ERROR_ADD": "Une erreur s'est produite lors de la création de la publication."
+      "ERROR_ADD": "Une erreur s'est produite lors de la création de la publication.",
+      "TRIGGER_REQUIRED": "Pour que la publication soit envoyée, au moins un déclencheur doit être sélectionné. Veuillez en sélectionner un et essayer de nouveau."
     },
     "EDIT": {
 
