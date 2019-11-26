@@ -39,6 +39,8 @@ class Publication extends OpalProject
      * returns  array of data
      * */
     public function getPublicationsPerModule($moduleId) {
+        if($moduleId == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Module cannot be found. Access denied.");
         $results = $this->opalDB->getPublicationsPerModule($moduleId);
         $tempArray = array();
         foreach($results["triggers"] as $trigger) {
@@ -144,7 +146,26 @@ class Publication extends OpalProject
 
             $this->_connectQuestionnaireDB($this->opalDB->getOAUserId());
             $currentQuestionnaire = $this->questionnaireDB->getQuestionnaireDetails($publication["publicationId"]);
+            if(count($currentQuestionnaire) != 1)
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire");
+            $currentQuestionnaire = $currentQuestionnaire[0];
             print_r($currentQuestionnaire);
+
+
+            $toInsert = array(
+                "QuestionnaireDBSerNum"=>$currentQuestionnaire["ID"],
+                "QuestionnaireName_EN"=>$publication["name_EN"],
+                "QuestionnaireName_FR"=>$publication["name_FR"],
+                "Intro_EN"=>htmlspecialchars_decode($currentQuestionnaire["description_EN"]),
+                "Intro_FR"=>htmlspecialchars_decode($currentQuestionnaire["description_FR"]),
+                "SessionId"=>$this->opalDB->getSessionId(),
+                "DateAdded"=>date("Y-m-d H:i:s"),
+                "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
+            );
+
+            print_r($toInsert);
+
+            $controlTable = "LegacyQuestionnaireControl";
 
         }
         else if($moduleDetails["ID"] == MODULE_POST) {
@@ -156,17 +177,20 @@ class Publication extends OpalProject
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module");
 
+        $publication = $this->validateAndSanitize($publication);
+
         print_r($publication);
         print_r($moduleDetails);
 
         return false;
+
+        /* OLD PUBLICATION TOOL FROM QUESTIONNAIRE */
         $currentQuestionnaire = $this->questionnaireDB->getQuestionnaireDetails($publication["questionnaireId"]);
 
         if(count($currentQuestionnaire) != 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire");
         $currentQuestionnaire = $currentQuestionnaire[0];
 
-        $publication = $this->validateAndSanitize($publication);
 
         $toInsert = array(
             "QuestionnaireDBSerNum"=>$currentQuestionnaire["ID"],

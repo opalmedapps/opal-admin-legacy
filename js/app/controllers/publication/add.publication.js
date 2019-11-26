@@ -62,13 +62,6 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 		];
 
 	// Initialize lists to hold triggers
-	$scope.demoTrigger = {
-		sex: null,
-		age: {
-			min: 0,
-			max: 130
-		}
-	};
 	resetPublication();
 	// Initialize search field variables
 	$scope.appointmentSearchField = null;
@@ -77,12 +70,19 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 	$scope.machineSearchField = null;
 	$scope.patientSearchField = null;
 
+	$scope.patientTriggerList = [];
+	$scope.demoTrigger = {
+		sex: null,
+		age: {
+			min: 0,
+			max: 130
+		}
+	};
+	$scope.appointmentStatusList = [];
 	$scope.appointmentTriggerList = [];
 	$scope.dxTriggerList = [];
 	$scope.doctorTriggerList = [];
 	$scope.machineTriggerList = [];
-	$scope.patientTriggerList = [];
-	$scope.appointmentStatusList = [];
 
 	$locale["DATETIME_FORMATS"]["SHORTDAY"] = [
 		$filter('translate')('DATEPICKER.SUNDAY_S'),
@@ -172,7 +172,6 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 			}
 		};
 	};
-
 
 	$scope.publicationList = [];
 
@@ -351,6 +350,10 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 			$scope.publishDate.mandatory = false;
 		}
 
+		if (selectedAt.locked <= 0) {
+			alert($filter('translate')('PUBLICATION.ADD.WILL_BE_LOCKED').replace("%%MATERIAL_NAME%%", selectedAt.name_display));
+		}
+
 		$scope.newPublication.name_EN = null;
 		$scope.newPublication.name_FR = null;
 		$scope.newPublication.publish_date = null;
@@ -408,8 +411,8 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 	// Submit new publication
 	$scope.submitPublication = function () {
 
+		$scope.newPublication.triggers = [];
 		if ($scope.checkForm()) {
-
 			if ($scope.demoTrigger.sex)
 				$scope.newPublication.triggers.push({ id: $scope.demoTrigger.sex, type: 'Sex' });
 			if ($scope.demoTrigger.age.min >= 0 && $scope.demoTrigger.age.max <= 130) { // i.e. not empty
@@ -475,20 +478,27 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 				delete $scope.newPublication["occurrence"];
 			}
 
-			$scope.newPublication.user = currentUser;
-			$.ajax({
-				type: "POST",
-				url: "publication/insert/publication",
-				data: $scope.newPublication,
-				success: function () {},
-				error: function (err) {
-					alert($filter('translate')('PUBLICATION.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
-					//$state.go('publication');
-				},
-				complete: function() {
-					//$state.go('publication');
-				}
-			});
+			console.log($scope.newPublication["triggers"]);
+
+			if(typeof $scope.newPublication["triggers"] === 'undefined' || $scope.newPublication["triggers"].length <= 0)
+				alert($filter('translate')('PUBLICATION.ADD.TRIGGER_REQUIRED'));
+			else {
+
+				$scope.newPublication.user = currentUser;
+				$.ajax({
+					type: "POST",
+					url: "publication/insert/publication",
+					data: $scope.newPublication,
+					success: function () {},
+					error: function (err) {
+						alert($filter('translate')('PUBLICATION.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+						//$state.go('publication');
+					},
+					complete: function() {
+						//$state.go('publication');
+					}
+				});
+			}
 		}
 	};
 
@@ -598,7 +608,6 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 
 	// Function for selecting all triggers in a trigger list
 	$scope.selectAllTriggers = function (triggerList,triggerFilter,selectAll) {
-
 		var filtered = $scope.filter(triggerList,triggerFilter);
 
 		if (filtered.length == triggerList.length) { // search field wasn't used
@@ -910,6 +919,10 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 			}
 		}
 	});
+	//
+	// $scope.$watch('patientTriggerList', function(data){
+	// 	console.log(data);
+	// }, true);
 
 	// Default
 	$scope.selectedDaysInWeek = [];
@@ -1233,8 +1246,7 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 
 	// Function to return boolean for form completion
 	$scope.checkForm = function () {
-		if (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) == 100
-			&& $scope.checkFrequencyTrigger())
+		if (trackProgress($scope.numOfCompletedSteps, $scope.stepTotal) == 100)
 			return true;
 		else
 			return false;

@@ -25,6 +25,11 @@ define("OPAL_FREQUENCY_EVENTS_TABLE","FrequencyEvents");
 define("OPAL_MODULE_TABLE","module");
 define("OPAL_MODULE_TRIGGER_SETTING_TABLE","moduleTriggerSetting");
 define("OPAL_POST_TABLE","PostControl");
+define("OPAL_TX_TEAM_MESSAGE_TABLE","TxTeamMessage");
+define("OPAL_ANNOUNCEMENT_TABLE","Announcement");
+define("OPAL_PATIENTS_FOR_PATIENTS_TABLE","PatientsForPatients");
+define("OPAL_EDUCATION_MATERIAL_TABLE","EducationalMaterialControl");
+define("OPAL_PHASE_IN_TREATMENT_TABLE","PhaseInTreatment");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");

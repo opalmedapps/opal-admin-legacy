@@ -808,7 +808,7 @@
       "MAX": "MAX",
       "TRIGGER_APPT_STATUS": "Trigger to Send By Appointment Status",
       "TAS_EXPLANATION": "Select an appointment status. This will target patients with appointments having this status on the day of the appointment. Using this trigger with the appointment trigger below will target statuses for specific appointments.",
-      "WILL_BE_LOCKED": "The questionnaire %%QUESTIONNAIRE_NAME%% has never been published before. By doing so, it will be locked and can not be modified in the future.",
+      "WILL_BE_LOCKED": "The material \"%%MATERIAL_NAME%%\" has never been published before. By being published, it will be locked and can not be modified.",
       "ERROR_PUBLICATION": "An error occurred while creating the publication.",
       "ERROR_QUESTIONNAIRE": "An error occurred while getting the questionnaires list.",
       "EVERY_DAY": "Every Day",
@@ -874,7 +874,8 @@
       "STEP": "Step",
       "COMPLETED": "completed",
       "PUBLISH_DATE_EXPLANATION": "Please select the publish date.",
-      "ERROR_ADD": "An error occurred while creating the publication."
+      "ERROR_ADD": "An error occurred while creating the publication.",
+      "TRIGGER_REQUIRED": "In order the publication to be sent, at least one trigger has to be selected. Please select one and try again."
     },
     "EDIT": {
 
