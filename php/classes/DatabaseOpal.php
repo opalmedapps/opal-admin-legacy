@@ -81,19 +81,41 @@ class DatabaseOpal extends DatabaseAccess {
             if (strip_tags($module["sqlPublicationList"]) != "")
                 array_push($sqlModule, $module["sqlPublicationList"]);
         $sqlModule = implode(SQL_GENERAL_UNION_ALL, $sqlModule);
+        $sqlModule = str_replace("%%QUESTIONNAIRE_DB%%", QUESTIONNAIRE_DB_2019_NAME, $sqlModule);
+        $sqlModule = str_replace("%%DICTIONARY%%", DICTIONARY_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%QUESTIONNAIRE%%", QUESTIONNAIRE_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%FILTERS%%", OPAL_FILTERS_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%QUESTIONNAIRECONTROL%%", OPAL_QUESTIONNAIRE_CONTROL_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%POSTCONTROL%%", OPAL_POST_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%MODULE%%", OPAL_MODULE_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%EDUCATIONALMATERIAL%%", OPAL_EDUCATION_MATERIAL_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%PHASEINTREATMENT%%", OPAL_PHASE_IN_TREATMENT_TABLE, $sqlModule);
         return $this->_fetchAll($sqlModule, array());
     }
 
     function getPublicationsPerModule($moduleId) {
         $result = array();
-        if($moduleId == "")
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Module cannot be found. Access denied.");
         $module = $this->_fetch(SQL_OPAL_GET_MODULE_BY_ID, array(array("parameter"=>":ID","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
         $sqlFetchPerModule = $module["unique"] == 1 ? $module["sqlPublicationUnique"] : $module["sqlPublicationMultiple"];
         if($sqlFetchPerModule == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing code. Access denied.");
+
+        $sqlFetchPerModule = str_replace("%%QUESTIONNAIRE_DB%%", QUESTIONNAIRE_DB_2019_NAME, $sqlFetchPerModule);
+        $sqlFetchPerModule = str_replace("%%DICTIONARY%%", DICTIONARY_TABLE, $sqlFetchPerModule);
+        $sqlFetchPerModule = str_replace("%%QUESTIONNAIRE%%", QUESTIONNAIRE_TABLE, $sqlFetchPerModule);
+        $sqlFetchPerModule = str_replace("%%FILTERS%%", OPAL_FILTERS_TABLE, $sqlFetchPerModule);
+        $sqlFetchPerModule = str_replace("%%QUESTIONNAIRECONTROL%%", OPAL_QUESTIONNAIRE_CONTROL_TABLE, $sqlFetchPerModule);
+        $sqlFetchPerModule = str_replace("%%POSTCONTROL%%", OPAL_POST_TABLE, $sqlFetchPerModule);
+        $sqlFetchPerModule = str_replace("%%TXTEAMMESSAGE%%", OPAL_TX_TEAM_MESSAGE_TABLE, $sqlFetchPerModule);
+        $sqlFetchPerModule = str_replace("%%ANNOUNCEMENT%%", OPAL_ANNOUNCEMENT_TABLE, $sqlFetchPerModule);
+        $sqlFetchPerModule = str_replace("%%PATIENTSFORPATIENTS%%", OPAL_PATIENTS_FOR_PATIENTS_TABLE, $sqlFetchPerModule);
+        $sqlFetchPerModule = str_replace("%%EDUCATIONALMATERIAL%%", OPAL_EDUCATION_MATERIAL_TABLE, $sqlFetchPerModule);
+        $sqlFetchPerModule = str_replace("%%PHASEINTREATMENT%%", OPAL_PHASE_IN_TREATMENT_TABLE, $sqlFetchPerModule);
+
         $result["publications"] = $this->_fetchAll($sqlFetchPerModule,  array(array("parameter"=>":OAUserId","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT)));
         $result["triggers"] = $this->_fetchAll(SQL_OPAL_GET_TRIGGERS_PER_MODULE, array(array("parameter"=>":moduleId","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
+        $result["sql"] = $sqlFetchPerModule;
+
         return $result;
     }
 
