@@ -23,7 +23,7 @@ define("OPAL_FILTERS_TABLE","Filters");
 define("OPAL_FILTERS_MODIFICATION_HISTORY_TABLE","FiltersMH");
 define("OPAL_FREQUENCY_EVENTS_TABLE","FrequencyEvents");
 define("OPAL_MODULE_TABLE","module");
-define("OPAL_MODULE_TRIGGER_SETTING_TABLE","moduleTriggerSetting");
+define("OPAL_MODULE_PUBLICATION_SETTING_TABLE","modulePublicationSetting");
 define("OPAL_POST_TABLE","PostControl");
 define("OPAL_TX_TEAM_MESSAGE_TABLE","TxTeamMessage");
 define("OPAL_ANNOUNCEMENT_TABLE","Announcement");
@@ -158,7 +158,7 @@ define("SQL_OPAL_GET_MODULE_BY_ID", "
 ");
 
 define("SQL_OPAL_GET_TRIGGERS_PER_MODULE", "
-    SELECT triggerSettingId FROM ".OPAL_MODULE_TRIGGER_SETTING_TABLE." WHERE moduleId = :moduleId;
+    SELECT publicationSettingId FROM ".OPAL_MODULE_PUBLICATION_SETTING_TABLE." WHERE moduleId = :moduleId;
 ");
 
 define("SQL_OPAL_GET_ALL_PUBLICATION_MODULES_USER",
