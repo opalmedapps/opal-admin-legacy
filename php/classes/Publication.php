@@ -43,9 +43,8 @@ class Publication extends OpalProject
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Module cannot be found. Access denied.");
         $results = $this->opalDB->getPublicationsPerModule($moduleId);
         $tempArray = array();
-        foreach($results["triggers"] as $trigger) {
-            array_push($tempArray, $trigger["triggerSettingId"]);
-        }
+        foreach($results["triggers"] as $trigger)
+            array_push($tempArray, $trigger["publicationSettingId"]);
         $results["triggers"] = $tempArray;
         return $results;
     }
@@ -139,6 +138,11 @@ class Publication extends OpalProject
      * @return  void
      * */
     function insertPublication($publication) {
+        $publicationControlId = "-1";
+        $publication = $this->validateAndSanitize($publication);
+
+        print_r($publication);
+
         $moduleDetails = $this->opalDB->getPublicationModuleUserDetails($publication["moduleId"]);
 
         if($moduleDetails["ID"] == MODULE_QUESTIONNAIRE) {
@@ -149,7 +153,6 @@ class Publication extends OpalProject
             if(count($currentQuestionnaire) != 1)
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire");
             $currentQuestionnaire = $currentQuestionnaire[0];
-            print_r($currentQuestionnaire);
 
 
             $toInsert = array(
@@ -166,18 +169,43 @@ class Publication extends OpalProject
             print_r($toInsert);
 
             $controlTable = "LegacyQuestionnaireControl";
+            //$publicationControlId = $this->opalDB->insertPublishedQuestionnaire($toInsert);
 
         }
         else if($moduleDetails["ID"] == MODULE_POST) {
-            print "Post goes here";
+            $controlTable = OPAL_POST_TABLE;
         }
         else if($moduleDetails["ID"] == MODULE_EDU_MAT) {
-            print "educational materials goes here";
+            $controlTable = OPAL_EDUCATION_MATERIAL_TABLE;
         }
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module");
 
-        $publication = $this->validateAndSanitize($publication);
+
+
+
+
+        $toInsertTriggers = array();
+        if(!empty($publication['triggers'])) {
+            foreach($publication['triggers'] as $trigger) {
+                array_push($toInsertTriggers, array(
+                    "ControlTable"=>$controlTable,
+                    "ControlTableSerNum"=>$publicationControlId,
+                    "FilterType"=>$trigger['type'],
+                    "FilterId"=>$trigger['id'],
+                    "DateAdded"=>date("Y-m-d H:i:s"),
+                    "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
+                    "SessionId"=>$this->opalDB->getSessionId(),
+                ));
+            }
+            print_r($toInsertTriggers);
+            //$this->opalDB->insertMultipleFilters($toInsertTriggers);
+        }
+
+
+
+        die();
+
 
         print_r($publication);
         print_r($moduleDetails);
@@ -190,7 +218,6 @@ class Publication extends OpalProject
         if(count($currentQuestionnaire) != 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire");
         $currentQuestionnaire = $currentQuestionnaire[0];
-
 
         $toInsert = array(
             "QuestionnaireDBSerNum"=>$currentQuestionnaire["ID"],

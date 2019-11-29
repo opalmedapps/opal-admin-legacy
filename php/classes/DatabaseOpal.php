@@ -114,7 +114,8 @@ class DatabaseOpal extends DatabaseAccess {
 
         $result["publications"] = $this->_fetchAll($sqlFetchPerModule,  array(array("parameter"=>":OAUserId","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT)));
         $result["triggers"] = $this->_fetchAll(SQL_OPAL_GET_TRIGGERS_PER_MODULE, array(array("parameter"=>":moduleId","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
-        $result["sql"] = $sqlFetchPerModule;
+        $result["unique"] = $module["unique"];
+        $result["subModule"] = $module["subModule"];
 
         return $result;
     }
