@@ -9,9 +9,9 @@
                         <div class="row side-logo" ng-click="goToHome()">
                             <div class="col-md-12">
                                 <div class="logo">
-                                    <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+                                    <img style="margin-top: -20px;" class=" rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
                                 </div>
-                                <h1 class="animated fadeIn">opal <strong>ADMIN</strong></h1>
+                                <h1 class=" fadeIn">opal <strong>ADMIN</strong></h1>
                             </div>
                         </div>
                     </div>
@@ -19,7 +19,7 @@
                         <!-- Back button -->
                         <div class="row side-panel-menu">
                             <div class="col-xs-12 col-sm-5 col-lg-12">
-                                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                                <div class="panel-container " ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
                                     <div class="side-panel-info-sm">
                                         <div class="panel-content">
                                             <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
@@ -67,7 +67,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Material -->
-                            <div uib-accordion-group is-open="materialSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp: materialSection.show}" is-disabled="!newPublication.materialName" ng-if="materialSection.show">
+                            <div uib-accordion-group is-open="materialSection.open" class="panel-container summary-box " ng-class="{fadeIn: materialSection.show}" is-disabled="!newPublication.materialName" ng-if="materialSection.show">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -89,7 +89,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Name -->
-                            <div uib-accordion-group is-open="publicationNameSections.open" class="panel-container summary-box animated" ng-class="{fadeInUp: publicationNameSections.show}" ng-if="publicationNameSections.show" is-disabled="!newPublication.name_EN && !newPublication.name_FR">
+                            <div uib-accordion-group is-open="publicationNameSections.open" class="panel-container summary-box " ng-class="{fadeIn: publicationNameSections.show}" ng-if="publicationNameSections.show" is-disabled="!newPublication.name_EN && !newPublication.name_FR">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -119,7 +119,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Publish date -->
-                            <div uib-accordion-group is-open="publishDate.open" class="panel-container summary-box animated" ng-class="{fadeInUp: publishDate.show && publishDate.available}" is-disabled="!newPublication.publish_date && !newPublication.publish_time" ng-if="publishDate.show && publishDate.available">
+                            <div uib-accordion-group is-open="publishDate.open" class="panel-container summary-box " ng-class="{fadeIn: publishDate.show && publishDate.available}" is-disabled="!newPublication.publish_date && !newPublication.publish_time" ng-if="publishDate.show && publishDate.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -141,7 +141,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Publish Frequency -->
-                            <div uib-accordion-group is-open="publishFrequencySection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:publishFrequencySection.show}" is-disabled="!showFrequency" ng-if="showFrequency && publishFrequencySection.available">
+                            <div uib-accordion-group is-open="publishFrequencySection.open" class="panel-container summary-box " ng-class="{fadeIn:publishFrequencySection.show}" is-disabled="!showFrequency" ng-if="showFrequency && publishFrequencySection.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2"><span ng-if="checkFrequencyFilter() && showFrequency" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span></div>
@@ -220,7 +220,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Patient triggers -->
-                            <div uib-accordion-group is-open="triggerSection.patient.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(patientTriggerList)" ng-if="checkTriggers(patientTriggerList) && triggerSection.patient.available">
+                            <div uib-accordion-group is-open="triggerSection.patient.open" class="panel-container summary-box " ng-class="{fadeIn:triggerSection.show}" is-disabled="!checkTriggers(patientTriggerList)" ng-if="checkTriggers(patientTriggerList) && triggerSection.patient.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -251,7 +251,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Demographic trigger -->
-                            <div uib-accordion-group is-open="demoSection.open "class="panel-container summary-box animated" ng-class="{fadeInUp:demoSection.open}" is-disabled="!demoTrigger.sex && demoTrigger.age.min == 0 && demoTrigger.age.max == 130" ng-if="(demoTrigger.sex || demoTrigger.age.min !== 0 || demoTrigger.age.max !== 130) && demoSection.available">
+                            <div uib-accordion-group is-open="demoSection.open "class="panel-container summary-box " ng-class="{fadeIn:demoSection.open}" is-disabled="!demoTrigger.sex && demoTrigger.age.min == 0 && demoTrigger.age.max == 130" ng-if="(demoTrigger.sex || demoTrigger.age.min !== 0 || demoTrigger.age.max !== 130) && demoSection.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -281,7 +281,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Appointment Status trigger -->
-                            <div uib-accordion-group is-open="triggerSection.appointmentStatus.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(appointmentStatusList)" ng-if="checkTriggers(appointmentStatusList) && triggerSection.appointmentStatus.available">
+                            <div uib-accordion-group is-open="triggerSection.appointmentStatus.open" class="panel-container summary-box " ng-class="{fadeIn:triggerSection.show}" is-disabled="!checkTriggers(appointmentStatusList)" ng-if="checkTriggers(appointmentStatusList) && triggerSection.appointmentStatus.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -306,7 +306,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Appointment triggers -->
-                            <div uib-accordion-group is-open="triggerSection.appointment.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(appointmentTriggerList)" ng-if="checkTriggers(appointmentTriggerList) && triggerSection.appointment.available">
+                            <div uib-accordion-group is-open="triggerSection.appointment.open" class="panel-container summary-box " ng-class="{fadeIn:triggerSection.show}" is-disabled="!checkTriggers(appointmentTriggerList)" ng-if="checkTriggers(appointmentTriggerList) && triggerSection.appointment.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -328,7 +328,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Diagnosis triggers -->
-                            <div uib-accordion-group is-open="triggerSection.diagnosis.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(dxTriggerList)" ng-if="checkTriggers(dxTriggerList) && triggerSection.diagnosis.available">
+                            <div uib-accordion-group is-open="triggerSection.diagnosis.open" class="panel-container summary-box " ng-class="{fadeIn:triggerSection.show}" is-disabled="!checkTriggers(dxTriggerList)" ng-if="checkTriggers(dxTriggerList) && triggerSection.diagnosis.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -350,7 +350,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Doctor triggers -->
-                            <div uib-accordion-group is-open="triggerSection.doctor.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(doctorTriggerList)" ng-if="checkTriggers(doctorTriggerList) && triggerSection.doctor.available">
+                            <div uib-accordion-group is-open="triggerSection.doctor.open" class="panel-container summary-box " ng-class="{fadeIn:triggerSection.show}" is-disabled="!checkTriggers(doctorTriggerList)" ng-if="checkTriggers(doctorTriggerList) && triggerSection.doctor.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -381,7 +381,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Treatment Machine triggers -->
-                            <div uib-accordion-group is-open="triggerSection.machine.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(machineTriggerList)" ng-if="checkTriggers(machineTriggerList) && triggerSection.machine.available">
+                            <div uib-accordion-group is-open="triggerSection.machine.open" class="panel-container summary-box " ng-class="{fadeIn:triggerSection.show}" is-disabled="!checkTriggers(machineTriggerList)" ng-if="checkTriggers(machineTriggerList) && triggerSection.machine.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -405,20 +405,22 @@
                         </uib-accordion>
                         <!-- Submit button -->
                         <div class="panel-container">
-                            <a href="" ng-click="submitPublication()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                            <a href="" ng-click="submitPublication()" class="btn btn-md item-button-success " ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
                                 <span style="font-size: 20px;"><strong>{{'PUBLICATION.ADD.SUBMIT'|translate}}</strong></span>
                             </a>
                         </div>
                     </div>
                 </div>
                 <!-- Right detail panel view -->
-                <div class="col-xs-12 col-lg-10 animated fadeInRight">
+                <div class="col-xs-12 col-lg-10  fadeIn">
                     <div class="main-title">
                         <div class="row">
                             <!-- Page title -->
                             <div class="col-xs-12 col-md-9 title-content">
                                 <span class="glyphicon glyphicon-plus"></span>
                                 <h1><strong>{{'PUBLICATION.ADD.TITLE'|translate}}</strong></h1>
+                                {{completedSteps}}
+                                {{totalSteps}}
                             </div>
                             <!-- Breadcrumbs -->
                             <div class="col-md-3 title-breadcrumbs">
@@ -433,7 +435,7 @@
                         </div>
                         <div class="row mobile-side-panel-menu">
                             <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
-                                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                                <div class="panel-container " ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
                                     <div class="side-panel-info-sm">
                                         <div class="panel-content">
                                             <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
@@ -455,8 +457,8 @@
                             </div>
                             <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkForm()">
                                 <div class="panel-container">
-                                    <a href="" ng-click="submitPublication()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
-                                        <span style="font-size: 20px;"><strong>Submit {{newPublication.type.name_display}}</strong></span>
+                                    <a href="" ng-click="submitPublication()" class="btn btn-md item-button-success " ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                                        <span style="font-size: 20px;"><strong>Submit {{toSubmit.materialId.type.name_display}}</strong></span>
                                     </a>
                                 </div>
                             </div>
@@ -473,20 +475,16 @@
                                     </span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
                                     <span style="color:#d9534f"><strong>{{'PUBLICATION.ADD.REQUIRED'|translate}}</strong></span>
                                     {{'PUBLICATION.ADD.SOURCE_EXPLANATION'|translate}}
                                 </p>
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="col-xs-12">
                                 <div ng-repeat="aModule in moduleList" class="col-xs-4 col-lg-2 item-panel-select">
-                                    <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: newPublication.moduleId == aModule.ID}" ng-click="moduleUpdate(aModule.ID, aModule.name_display)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                                        <div class="panel-info" ng-class="{active: newPublication.moduleId == aModule.ID}">
+                                    <div class="panel-container " style="cursor:pointer;" ng-class="{pulse: hover, active: toSubmit.moduleId.value == aModule.ID}" ng-click="moduleUpdate(aModule.ID)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                        <div class="panel-info" ng-class="{active: toSubmit.moduleId.value == aModule.ID}">
                                             <div class="panel-content" style="text-align:center">
                                                 <span style="font-size:30px;" ng-class="aModule.iconClass"></span>
                                                 <div class="option-panel-title">{{aModule.name_display}}</div>
@@ -497,7 +495,7 @@
                             </div>
                         </div>
                         <!-- SECTION: Material -->
-                        <div class="row animated" ng-class="{fadeInUp: materialSection.show}" ng-if="materialSection.show">
+                        <div class="row  fadeIn" ng-if="validator.moduleId.completed">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -506,21 +504,17 @@
                                     </span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: materialSection.show}" ng-if="materialSection.show">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
                                     <span style="color:#d9534f"><strong>{{'PUBLICATION.ADD.REQUIRED'|translate}} </strong></span>
                                     {{'PUBLICATION.ADD.MATERIAL_EXPLANATION'|translate}}
                                 </p>
                             </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: materialSection.show}" ng-if="materialSection.show">
                             <div class="col-xs-12">
-                                <div class="panel" ng-class="newPublication.ID ? 'panel-success': 'panel-danger'">
+                                <div class="panel" ng-class="toSubmit.materialId.value ? 'panel-success': 'panel-danger'">
                                     <div class="panel-heading"><strong>{{'PUBLICATION.ADD.MATERIAL'|translate}}</strong>
-                                        <span ng-hide="newPublication.ID" style="float:right"><em>{{'PUBLICATION.ADD.INCOMPLETE'|translate}}</em></span>
-                                        <span ng-show="newPublication.ID" style="float:right"><em>{{'PUBLICATION.ADD.COMPLETE'|translate}}</em></span>
+                                        <span ng-hide="toSubmit.materialId.value" style="float:right"><em>{{'PUBLICATION.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="toSubmit.materialId.value" style="float:right"><em>{{'PUBLICATION.ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body">
                                         <div class="input-group">
@@ -530,7 +524,7 @@
                                         <ul class="list-items">
                                             <li ng-repeat="at in publicationList | filter: searchAtFilter">
                                                 <label>
-                                                    <input type="radio" name="publicationName" value="{{at.ID}}" ng-model="newPublication.publicationId" ng-change="updateMaterial(at)"/> {{at.name_display}}
+                                                    <input type="radio" name="publicationName" value="{{at.ID}}" ng-model="toSubmit.materialId.value" ng-change="updateMaterial(at)"/> {{at.name_display}}
                                                 </label>
                                             </li>
                                         </ul>
@@ -539,7 +533,7 @@
                             </div>
                         </div>
                         <!-- SECTION: Names -->
-                        <div class="row animated" ng-class="{fadeInUp: publicationNameSections.show}" ng-if="publicationNameSections.show">
+                        <div class="row  fadeIn" ng-if="validator.materialId.completed && !unique;" >
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -548,22 +542,17 @@
                                     </span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: publicationNameSections.show}" ng-if="publicationNameSections.show">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
                                     <span style="color:#d9534f"><strong>{{'PUBLICATION.ADD.REQUIRED'|translate}} </strong></span>
                                     {{'PUBLICATION.ADD.NAME_EXPLANATION'|translate}}
                                 </p>
                             </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: publicationNameSections.show}" ng-if="publicationNameSections.show">
-
                             <div class="col-xs-12 col-md-6">
-                                <div class="panel" ng-class="(newPublication.name_EN) ? 'panel-success': 'panel-danger'">
+                                <div class="panel" ng-class="(toSubmit.name.name_EN) ? 'panel-success': 'panel-danger'">
                                     <div class="panel-heading"><strong>{{'PUBLICATION.ADD.ENGLISH'|translate}}</strong>
-                                        <span ng-hide="newPublication.name_EN" style="float:right"><em>{{'PUBLICATION.ADD.INCOMPLETE'|translate}}</em></span>
-                                        <span ng-show="newPublication.name_EN" style="float:right"><em>{{'PUBLICATION.ADD.COMPLETE'|translate}}</em></span>
+                                        <span ng-hide="toSubmit.name.name_EN" style="float:right"><em>{{'PUBLICATION.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="toSubmit.name.name_EN" style="float:right"><em>{{'PUBLICATION.ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body form-horizontal">
                                         <div class="form-group">
@@ -571,17 +560,17 @@
                                                 {{'PUBLICATION.ADD.TITLE_2'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
-                                                <input class="form-control" type="text" ng-model="newPublication.name_EN" ng-change="nameUpdate()" placeholder="{{'PUBLICATION.ADD.ENGLISH_TITLE'|translate}}" required="required">
+                                                <input class="form-control" type="text" ng-model="toSubmit.name.name_EN" ng-change="nameUpdate()" placeholder="{{'PUBLICATION.ADD.ENGLISH_TITLE'|translate}}" required="required">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-xs-12 col-md-6">
-                                <div class="panel" ng-class="(newPublication.name_FR) ? 'panel-success': 'panel-danger'">
+                                <div class="panel" ng-class="(toSubmit.name.name_FR) ? 'panel-success': 'panel-danger'">
                                     <div class="panel-heading"><strong>{{'PUBLICATION.ADD.FRENCH'|translate}}</strong>
-                                        <span ng-hide="newPublication.name_FR" style="float:right"><em>{{'PUBLICATION.ADD.INCOMPLETE'|translate}}</em></span>
-                                        <span ng-show="newPublication.name_FR" style="float:right"><em>{{'PUBLICATION.ADD.COMPLETE'|translate}}</em></span>
+                                        <span ng-hide="toSubmit.name.name_FR" style="float:right"><em>{{'PUBLICATION.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="toSubmit.name.name_FR" style="float:right"><em>{{'PUBLICATION.ADD.COMPLETE'|translate}}</em></span>
                                     </div>
                                     <div class="panel-body form-horizontal">
                                         <div class="form-group">
@@ -589,16 +578,19 @@
                                                 {{'PUBLICATION.ADD.TITLE_2'|translate}}
                                             </label>
                                             <div class="col-xs-12 col-lg-10">
-                                                <input class="form-control" type="text" ng-model="newPublication.name_FR" ng-change="nameUpdate()" placeholder="{{'PUBLICATION.ADD.FRENCH_TITLE'|translate}}" required="required">
+                                                <input class="form-control" type="text" ng-model="toSubmit.name.name_FR" ng-change="nameUpdate()" placeholder="{{'PUBLICATION.ADD.FRENCH_TITLE'|translate}}" required="required">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                         <!-- SECTION: Publish date -->
-                        <div class="row animated" ng-class="{fadeInUp: publishDate.show}" ng-if="publishDate.show && publishDate.available">
+
+
+
+
+                        <div ng-if="toSubmit.publishDateTime && validator.materialId.completed" style="margin-bottom: 15px;">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                 <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -607,22 +599,18 @@
                                 </span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: publishDate.show}" ng-if="publishDate.show && publishDate.available">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
-                                    <span ng-hide="newPublication.type =='Announcement'"><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
-                                    <span ng-show="newPublication.type =='Announcement'" style="color:#d9534f"><strong>{{'PUBLICATION.ADD.REQUIRED'|translate}}</strong></span>
+                                    <span ng-hide="toSubmit.materialId.type =='Announcement'"><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
+                                    <span ng-show="toSubmit.materialId.type =='Announcement'" style="color:#d9534f"><strong>{{'PUBLICATION.ADD.REQUIRED'|translate}}</strong></span>
                                     {{'PUBLICATION.ADD.PUBLISH_DATE_EXPLANATION'|translate}}
                                 </p>
                             </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: publishDate.show}" ng-if="publishDate.show && publishDate.available" style="margin-bottom: 15px;">
                             <div class="col-xs-12">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-7 col-md-4" style="padding-top: 10px;margin-bottom:20px;">
                                         <p class="input-group">
-                                            <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newPublication.publish_date" ng-change="publishDateUpdate()" is-open="popup.opened" min="minDate" datepicker-options="dateOptions" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
+                                            <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="toSubmit.publishDateTime.publish_date" ng-change="publishDateUpdate()" is-open="popup.opened" min="minDate" datepicker-options="dateOptions" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
                                             <span class="input-group-btn">
                                                 <button class="btn btn-default" ng-click="open()"><i class="glyphicon glyphicon-calendar"></i></button>
                                             </span>
@@ -630,511 +618,484 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-5 col-md-4" style="margin-top: -24px;">
                                         <div>
-                                            <div uib-timepicker ng-model="newPublication.publish_time" ng-change="publishDateUpdate()" minute-step="5" show-meridian="false"></div>
+                                            <div uib-timepicker ng-model="toSubmit.publishDateTime.publish_time" ng-change="publishDateUpdate()" minute-step="5" show-meridian="false"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- SECTION: Publish frequency -->
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && publishFrequencySection.available">
-                            <div class="col-xs-12 side-menu-title">
-                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+
+
+
+                        <!-- SECTION: publications options -->
+                        <div ng-if="triggerSection.show">
+                            <!-- SECTION: Publish frequency -->
+                            <div ng-if="publishFrequencySection.available" style="margin-bottom:10px;position:relative;z-index:50">
+                                <div class="col-xs-12 side-menu-title">
+                                    <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
                                         <span class="fas fa-dot-circle"></span>
                                         <h2>{{'PUBLICATION.ADD.PUBLISH_FRENQUENCY'|translate}}</h2>
                                     </span>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && publishFrequencySection.available">
-                            <div class="col-xs-12">
-                                <p style="margin-bottom: 10px;">
-                                    <span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
-                                    {{'PUBLICATION.ADD.PUBLISH_EXPLANATION'|translate}}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && publishFrequencySection.available" style="margin-bottom:10px;position:relative;z-index:50">
-                            <div style="margin-bottom:10px;">
                                 <div class="col-xs-12">
-                                    <button class="btn btn-success" ng-if="!showFrequency" ng-click="addFrequencyFilter()">
-                                        <span style="font-size: 17px;" class="fa fa-plus"></span>
-                                        <span style="font-size: 20px;"><strong>{{'PUBLICATION.ADD.ADD_2'|translate}}</strong></span>
-                                    </button>
-                                    <button class="btn btn-danger" ng-if="showFrequency" ng-click="removeFrequencyFilter()">
-                                        <span style="font-size: 17px;" class="glyphicon glyphicon-minus"></span>
-                                        <span style="font-size: 20px;"><strong>{{'PUBLICATION.ADD.REMOVE'|translate}}</strong></span>
-                                    </button>
+                                    <p style="margin-bottom: 10px;">
+                                        <span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
+                                        {{'PUBLICATION.ADD.PUBLISH_EXPLANATION'|translate}}
+                                    </p>
                                 </div>
-                            </div>
-
-                            <div class="col-xs-12" style="margin-bottom:10px;" ng-if="showFrequency">
-                                <div class="col-xs-12 col-sm-4">
-                                    <div class="form-horizontal">
-                                        <div class="form-group">
-                                            <label class="control-label col-xs-12">
-                                                {{'PUBLICATION.ADD.REPEAT'|translate}}
-                                            </label>
-                                            <div class="col-xs-8">
-                                                <select class="form-control" ng-options="presetFrequency as presetFrequency.name for presetFrequency in presetFrequencies track by presetFrequency.id" ng-model="frequencySelected" ng-change="selectFrequency(frequencySelected)">
-                                                </select>
+                                <div style="margin-bottom:10px;">
+                                    <div class="col-xs-12">
+                                        <button class="btn btn-success" ng-if="!showFrequency" ng-click="addFrequencyFilter()">
+                                            <span style="font-size: 17px;" class="fa fa-plus"></span>
+                                            <span style="font-size: 20px;"><strong>{{'PUBLICATION.ADD.ADD_2'|translate}}</strong></span>
+                                        </button>
+                                        <button class="btn btn-danger" ng-if="showFrequency" ng-click="removeFrequencyFilter()">
+                                            <span style="font-size: 17px;" class="glyphicon glyphicon-minus"></span>
+                                            <span style="font-size: 20px;"><strong>{{'PUBLICATION.ADD.REMOVE'|translate}}</strong></span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12" style="margin-bottom:10px;" ng-if="showFrequency">
+                                    <div class="col-xs-12 col-sm-4">
+                                        <div class="form-horizontal">
+                                            <div class="form-group">
+                                                <label class="control-label col-xs-12">
+                                                    {{'PUBLICATION.ADD.REPEAT'|translate}}
+                                                </label>
+                                                <div class="col-xs-8">
+                                                    <select class="form-control" ng-options="presetFrequency as presetFrequency.name for presetFrequency in presetFrequencies track by presetFrequency.id" ng-model="frequencySelected" ng-change="selectFrequency(frequencySelected)">
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-xs-12 col-sm-4">
-                                    <div class="form-horizontal">
-                                        <div class="form-group">
-                                            <label class="control-label col-xs-12">
-                                                {{'PUBLICATION.ADD.REPEAT_START'|translate}}
-                                            </label>
-                                            <div class="col-xs-12 col-lg-9">
-                                                <div class="input-group">
-                                                    <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newPublication.occurrence.start_date" is-open="popupStart.opened"datepicker-options="dateOptionsStart" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
-                                                    <span class="input-group-btn">
+                                    <div class="col-xs-12 col-sm-4">
+                                        <div class="form-horizontal">
+                                            <div class="form-group">
+                                                <label class="control-label col-xs-12">
+                                                    {{'PUBLICATION.ADD.REPEAT_START'|translate}}
+                                                </label>
+                                                <div class="col-xs-12 col-lg-9">
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newPublication.occurrence.start_date" is-open="popupStart.opened"datepicker-options="dateOptionsStart" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
+                                                        <span class="input-group-btn">
                                                         <button class="btn btn-default" ng-click="openStart($event)"><i class="glyphicon glyphicon-calendar"></i></button>
                                                     </span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-xs-12 col-sm-4">
-                                    <div class="form-horizontal">
-                                        <div class="form-group">
-                                            <label class="control-label col-xs-12">
-                                                {{'PUBLICATION.ADD.REPEAT_END'|translate}}
-                                            </label>
-                                            <div ng-if="!addEndDate" class="col-xs-12 col-lg-9">
-                                                <button class="btn btn-default" ng-click="toggleEndDate()">
-                                                    <span class="fa fa-plus"></span>
-                                                    <span><strong>{{'PUBLICATION.ADD.ADD_END_DATE'|translate}}</strong></span>
-                                                </button>
-                                            </div>
-                                            <div class="col-xs-12 col-lg-9" style="margin-bottom:10px;">
-                                                <div class="input-group">
-                                                    <input ng-if="addEndDate" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newPublication.occurrence.end_date" is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
-                                                    <span ng-if="addEndDate" class="input-group-btn">
+                                    <div class="col-xs-12 col-sm-4">
+                                        <div class="form-horizontal">
+                                            <div class="form-group">
+                                                <label class="control-label col-xs-12">
+                                                    {{'PUBLICATION.ADD.REPEAT_END'|translate}}
+                                                </label>
+                                                <div ng-if="!addEndDate" class="col-xs-12 col-lg-9">
+                                                    <button class="btn btn-default" ng-click="toggleEndDate()">
+                                                        <span class="fa fa-plus"></span>
+                                                        <span><strong>{{'PUBLICATION.ADD.ADD_END_DATE'|translate}}</strong></span>
+                                                    </button>
+                                                </div>
+                                                <div class="col-xs-12 col-lg-9" style="margin-bottom:10px;">
+                                                    <div class="input-group">
+                                                        <input ng-if="addEndDate" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newPublication.occurrence.end_date" is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
+                                                        <span ng-if="addEndDate" class="input-group-btn">
                                                         <button class="btn btn-default" ng-click="openEnd($event)"><i class="glyphicon glyphicon-calendar"></i></button>
                                                     </span>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12">
-                                                <button class="btn btn-default" ng-if="addEndDate" ng-click="toggleEndDate()">
-                                                    <span class="glyphicon glyphicon-minus"></span>
-                                                    <span><strong>{{'PUBLICATION.ADD.REMOVE_END_DATE'|translate}}</strong></span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xs-12">
-                                <div class="col-xs-12 col-sm-4" ng-if="frequencySelected.id == 'custom'">
-                                    <div class="form-horizontal">
-                                        <div class="form-group">
-                                            <label class="control-label col-xs-12">
-                                                {{'PUBLICATION.ADD.REPEAT_INTERVAL'|translate}}
-                                            </label>
-                                            <div class="col-xs-3">
-                                                <input class="form-control" ng-model="customFrequency.meta_value" type="number" max="59" min="1">
-                                            </div>
-                                            <div class="col-xs-6">
-                                                <select class="form-control" ng-options="unit as unit.name for unit in frequencyUnits track by unit.id" ng-model="customFrequency.unit" ng-change="selectRepeatInterval(customFrequency.unit)">
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-xs-12 col-sm-4" ng-if="frequencySelected.id == 'custom' && customFrequency.unit.id != 'day'">
-                                    <div class="form-horizontal">
-                                        <div class="form-group">
-                                            <label class="control-label col-xs-12">
-                                                <span ng-if="customFrequency.unit.id == 'week'">{{'PUBLICATION.ADD.REPEAT_ON_DAYS'|translate}}</span>
-                                                <span ng-if="customFrequency.unit.id == 'month' || customFrequency.unit.id == 'year'">{{'PUBLICATION.ADD.REPEAT_OPTIONS'|translate}}</span>
-                                            </label>
-                                            <div class="col-xs-8" style="margin-bottom: 10px;" ng-if="customFrequency.unit.id == 'week'">
-                                                <div ng-dropdown-multiselect="" options="daysInWeek" selected-model="selectedDaysInWeek" extra-settings="weekDropdownSettings" events="weekDropdownEvents" translation-texts="projectText"></div>
-                                            </div>
-                                            <div ng-if="customFrequency.unit.id == 'year'"class="col-xs-10" style="margin-bottom: 10px;">
-                                                <div ng-dropdown-multiselect="" options="monthsInYear" selected-model="selectedMonthsInYear" extra-settings="monthDropdownSettings" events="monthDropdownEvents" translation-texts="projectText"></div>
-                                            </div>
-                                            <div ng-if="customFrequency.unit.id == 'month'" class="col-xs-12" style="margin-bottom: 10px;">
-                                                <div class="btn-group btn-group-justified" role="group">
-                                                    <div class="btn-group" role="group">
-                                                        <button type="button" class="btn btn-default" ng-class="{active: repeatSub == 'onDate'}" ng-click="setRepeatSub('onDate')">{{'PUBLICATION.ADD.ON_DATE'|translate}}</button>
-                                                    </div>
-                                                    <div class="btn-group" role="group">
-                                                        <button type="button" class="btn btn-default" ng-class="{active: repeatSub == 'onWeek'}" ng-click="setRepeatSub('onWeek')">{{'PUBLICATION.ADD.ON_WEEK'|translate}}</button>
                                                     </div>
                                                 </div>
+                                                <div class="col-xs-12">
+                                                    <button class="btn btn-default" ng-if="addEndDate" ng-click="toggleEndDate()">
+                                                        <span class="glyphicon glyphicon-minus"></span>
+                                                        <span><strong>{{'PUBLICATION.ADD.REMOVE_END_DATE'|translate}}</strong></span>
+                                                    </button>
+                                                </div>
                                             </div>
-                                            <div ng-if="repeatSub == 'onDate' && customFrequency.unit.id == 'month'" class="no-calendar-header col-xs-12" style="margin-bottom: 10px;">
-                                                <multiple-date-picker ng-model="selectedDatesInMonth" month="staticMonth"></multiple-date-picker>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <div class="col-xs-12 col-sm-4" ng-if="frequencySelected.id == 'custom'">
+                                        <div class="form-horizontal">
+                                            <div class="form-group">
+                                                <label class="control-label col-xs-12">
+                                                    {{'PUBLICATION.ADD.REPEAT_INTERVAL'|translate}}
+                                                </label>
+                                                <div class="col-xs-3">
+                                                    <input class="form-control" ng-model="customFrequency.meta_value" type="number" max="59" min="1">
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <select class="form-control" ng-options="unit as unit.name for unit in frequencyUnits track by unit.id" ng-model="customFrequency.unit" ng-change="selectRepeatInterval(customFrequency.unit)">
+                                                    </select>
+                                                </div>
                                             </div>
-                                            <div ng-if="repeatSub == 'onWeek' || customFrequency.unit.id == 'year'" class="col-xs-4" style="margin-bottom: 10px;">
-                                                <select class="form-control" ng-options="week as week.name for week in weekNumbersInMonth track by week.id" ng-model="selectedWeekNumberInMonth" ng-change="selectWeekInMonth(selectedWeekNumberInMonth)" >
-                                                </select>
-                                            </div>
-                                            <div ng-if="repeatSub == 'onWeek' || customFrequency.unit.id == 'year'" class="col-xs-6" style="margin-bottom: 10px;">
-                                                <select class="form-control" ng-options="day as day.name for day in daysInWeek track by day.id" ng-model="selectedSingleDayInWeek" ng-change="selectDayInWeek(selectedSingleDayInWeek, customFrequency.unit.id)">
-                                                    <option value="" selected="selected">---</option>
-                                                </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-4" ng-if="frequencySelected.id == 'custom' && customFrequency.unit.id != 'day'">
+                                        <div class="form-horizontal">
+                                            <div class="form-group">
+                                                <label class="control-label col-xs-12">
+                                                    <span ng-if="customFrequency.unit.id == 'week'">{{'PUBLICATION.ADD.REPEAT_ON_DAYS'|translate}}</span>
+                                                    <span ng-if="customFrequency.unit.id == 'month' || customFrequency.unit.id == 'year'">{{'PUBLICATION.ADD.REPEAT_OPTIONS'|translate}}</span>
+                                                </label>
+                                                <div class="col-xs-8" style="margin-bottom: 10px;" ng-if="customFrequency.unit.id == 'week'">
+                                                    <div ng-dropdown-multiselect="" options="daysInWeek" selected-model="selectedDaysInWeek" extra-settings="weekDropdownSettings" events="weekDropdownEvents" translation-texts="projectText"></div>
+                                                </div>
+                                                <div ng-if="customFrequency.unit.id == 'year'"class="col-xs-10" style="margin-bottom: 10px;">
+                                                    <div ng-dropdown-multiselect="" options="monthsInYear" selected-model="selectedMonthsInYear" extra-settings="monthDropdownSettings" events="monthDropdownEvents" translation-texts="projectText"></div>
+                                                </div>
+                                                <div ng-if="customFrequency.unit.id == 'month'" class="col-xs-12" style="margin-bottom: 10px;">
+                                                    <div class="btn-group btn-group-justified" role="group">
+                                                        <div class="btn-group" role="group">
+                                                            <button type="button" class="btn btn-default" ng-class="{active: repeatSub == 'onDate'}" ng-click="setRepeatSub('onDate')">{{'PUBLICATION.ADD.ON_DATE'|translate}}</button>
+                                                        </div>
+                                                        <div class="btn-group" role="group">
+                                                            <button type="button" class="btn btn-default" ng-class="{active: repeatSub == 'onWeek'}" ng-click="setRepeatSub('onWeek')">{{'PUBLICATION.ADD.ON_WEEK'|translate}}</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div ng-if="repeatSub == 'onDate' && customFrequency.unit.id == 'month'" class="no-calendar-header col-xs-12" style="margin-bottom: 10px;">
+                                                    <multiple-date-picker ng-model="selectedDatesInMonth" month="staticMonth"></multiple-date-picker>
+                                                </div>
+                                                <div ng-if="repeatSub == 'onWeek' || customFrequency.unit.id == 'year'" class="col-xs-4" style="margin-bottom: 10px;">
+                                                    <select class="form-control" ng-options="week as week.name for week in weekNumbersInMonth track by week.id" ng-model="selectedWeekNumberInMonth" ng-change="selectWeekInMonth(selectedWeekNumberInMonth)" >
+                                                    </select>
+                                                </div>
+                                                <div ng-if="repeatSub == 'onWeek' || customFrequency.unit.id == 'year'" class="col-xs-6" style="margin-bottom: 10px;">
+                                                    <select class="form-control" ng-options="day as day.name for day in daysInWeek track by day.id" ng-model="selectedSingleDayInWeek" ng-change="selectDayInWeek(selectedSingleDayInWeek, customFrequency.unit.id)">
+                                                        <option value="" selected="selected">---</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                        </div>
-                        <!-- SECTION: Patient triggers -->
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.patient.available">
-                            <div class="col-xs-12 side-menu-title">
-                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                                <span style="background-color:#e6edfa; padding: 0 10px;">
-                                    <span class="fas fa-dot-circle"></span>
-                                    <h2>{{'PUBLICATION.ADD.TRIGGER_PATIENT'|translate}}</h2>
-                                </span>
+                            <!-- SECTION: Patient triggers -->
+                            <div ng-if="triggerSection.patient.available">
+                                <div class="col-xs-12 side-menu-title">
+                                    <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                        <span style="background-color:#e6edfa; padding: 0 10px;">
+                                            <span class="fas fa-dot-circle"></span>
+                                            <h2>{{'PUBLICATION.ADD.TRIGGER_PATIENT'|translate}}</h2>
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.patient.available">
-                            <div class="col-xs-12">
-                                <p style="margin-bottom: 10px;">
-                                    <span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
-                                    {{'PUBLICATION.ADD.PATIENT_EXPLANATION'|translate}}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.patient.available">
-                            <div class="col-xs-12 col-lg-8">
-                                <div class="panel-container">
-                                    <div class="panel-info">
-                                        <div class="panel-content">
-                                            <div class="panel-input">
-                                                <div class="list-space">
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                                                        <input class="form-control" type="text" ng-model="patientSearchField" ng-change="searchPatient(patientSearchField)" placeholder="{{'PUBLICATION.ADD.SEARCH'|translate}}"/>
-                                                    </div>
-                                                    <div style="padding: 10px;">
-                                                        <label>
-                                                            <input type="checkbox" ng-click="selectAllTriggers(patientTriggerList, searchPatientFilter, selectAll.patient)" ng-checked="selectAll.patient.checked"> {{'PUBLICATION.ADD.SELECT_ALL'|translate}}
-                                                        </label>
-                                                    </div>
-                                                    <ul class="list-items">
-                                                        <li ng-repeat="patient in patientTriggerList | filter: searchPatientFilter">
+                                <div class="col-xs-12">
+                                    <p style="margin-bottom: 10px;">
+                                        <span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
+                                        {{'PUBLICATION.ADD.PATIENT_EXPLANATION'|translate}}
+                                    </p>
+                                </div>
+                                <div class="col-xs-12 col-lg-8">
+                                    <div class="panel-container">
+                                        <div class="panel-info">
+                                            <div class="panel-content">
+                                                <div class="panel-input">
+                                                    <div class="list-space">
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                            <input class="form-control" type="text" ng-model="patientSearchField" ng-change="searchPatient(patientSearchField)" placeholder="{{'PUBLICATION.ADD.SEARCH'|translate}}"/>
+                                                        </div>
+                                                        <div style="padding: 10px;">
                                                             <label>
-                                                                <input type="checkbox" ng-click="selectTrigger(patient, selectAll.patient)" ng-checked="patient.added" /> {{patient.name}}
+                                                                <input type="checkbox" ng-click="selectAllTriggers(patientTriggerList, searchPatientFilter, selectAll.patient)" ng-checked="selectAll.patient.checked"> {{'PUBLICATION.ADD.SELECT_ALL'|translate}}
                                                             </label>
-                                                        </li>
-                                                    </ul>
+                                                        </div>
+                                                        <ul class="list-items">
+                                                            <li ng-repeat="patient in patientTriggerList | filter: searchPatientFilter">
+                                                                <label>
+                                                                    <input type="checkbox" ng-click="selectTrigger(patient, selectAll.patient)" ng-checked="patient.added" /> {{patient.name}}
+                                                                </label>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- SECTION: Demographic triggers -->
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show }" ng-if="triggerSection.show && demoSection.available">
-                            <div class="col-xs-12 side-menu-title">
-                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                            <!-- SECTION: Demographic triggers -->
+                            <div ng-if="demoSection.available">
+                                <div class="col-xs-12 side-menu-title">
+                                    <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
                                         <span class="fas fa-dot-circle"></span>
                                         <h2>{{'PUBLICATION.ADD.TRIGGER_DEMO'|translate}}</h2>
                                     </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show }" ng-if="triggerSection.show && demoSection.available">
-                            <div class="col-xs-12">
-                                <p style="margin-bottom: 10px;"><span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span> {{'PUBLICATION.ADD.DEMO_EXPLANATION'|translate}}</p>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp:triggerSection.show }" ng-if="triggerSection.show && demoSection.available">
-                            <div class="col-xs-12 col-md-6">
-                                <div class="row">
-                                    <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">{{'PUBLICATION.ADD.SEX'|translate}}</h2>
-                                </div>
-                                <div class="row">
-                                    <div ng-repeat="sex in sexes" class="col-xs-12 col-sm-6">
-                                        <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: demoTrigger.sex == sex.name}" ng-click="sexUpdate(sex)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                                            <div class="panel-info" ng-class="{active: demoTrigger.sex == sex.name}">
-                                                <div class="panel-content" style="text-align:center">
-                                                    <span style="font-size:30px;" class="fa fa-{{sex.icon}}"></span>
-                                                    <div class="option-panel-title">{{sex.display}}</div>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-xs-12 col-md-6">
-                                <div class="row">
-                                    <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">{{'PUBLICATION.ADD.AGE_GROUP'|translate}}</h2>
+                                <div class="col-xs-12">
+                                    <p style="margin-bottom: 10px;"><span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span> {{'PUBLICATION.ADD.DEMO_EXPLANATION'|translate}}</p>
                                 </div>
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-                                        <div class="panel">
-                                            <div class="panel-body form-horizontal">
-                                                <div class="form-group">
-                                                    <label class="control-label col-xs-12 col-lg-2">
-                                                        {{'PUBLICATION.ADD.MIN'|translate}}
-                                                    </label>
-                                                    <div class="col-xs-12 col-lg-10">
-                                                        <input class="form-control" ng-model="demoTrigger.age.min" type="number" ng-change="ageUpdate()" ng-max="demoTrigger.age.max" min="0">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                <div class="col-xs-12 col-md-6">
+                                    <div class="row">
+                                        <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">{{'PUBLICATION.ADD.SEX'|translate}}</h2>
                                     </div>
-                                    <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-                                        <div class="panel">
-                                            <div class="panel-body form-horizontal">
-                                                <div class="form-group">
-                                                    <label class="control-label col-xs-12 col-lg-2">
-                                                        {{'PUBLICATION.ADD.MAX'|translate}}
-                                                    </label>
-                                                    <div class="col-xs-12 col-lg-10">
-                                                        <input class="form-control" ng-model="demoTrigger.age.max" type="number" ng-change="ageUpdate()" max="130" ng-min="demoTrigger.age.min">
+                                    <div class="row">
+                                        <div ng-repeat="sex in sexes" class="col-xs-12 col-sm-6">
+                                            <div class="panel-container" style="cursor:pointer;" ng-class="{pulse: hover, active: demoTrigger.sex == sex.name}" ng-click="sexUpdate(sex)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                                <div class="panel-info" ng-class="{active: demoTrigger.sex == sex.name}">
+                                                    <div class="panel-content" style="text-align:center">
+                                                        <span style="font-size:30px;" class="fa fa-{{sex.icon}}"></span>
+                                                        <div class="option-panel-title">{{sex.display}}</div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-xs-12 col-md-6">
+                                    <div class="row">
+                                        <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">{{'PUBLICATION.ADD.AGE_GROUP'|translate}}</h2>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                                            <div class="panel">
+                                                <div class="panel-body form-horizontal">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-xs-12 col-lg-2">
+                                                            {{'PUBLICATION.ADD.MIN'|translate}}
+                                                        </label>
+                                                        <div class="col-xs-12 col-lg-10">
+                                                            <input class="form-control" ng-model="demoTrigger.age.min" type="number" ng-change="ageUpdate()" ng-max="demoTrigger.age.max" min="0">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                                            <div class="panel">
+                                                <div class="panel-body form-horizontal">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-xs-12 col-lg-2">
+                                                            {{'PUBLICATION.ADD.MAX'|translate}}
+                                                        </label>
+                                                        <div class="col-xs-12 col-lg-10">
+                                                            <input class="form-control" ng-model="demoTrigger.age.max" type="number" ng-change="ageUpdate()" max="130" ng-min="demoTrigger.age.min">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <!-- SECTION: Appointment Status trigger -->
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.appointmentStatus.available">
-                            <div class="col-xs-12 side-menu-title">
-                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                            <!-- SECTION: Appointment Status trigger -->
+                            <div ng-if="triggerSection.appointmentStatus.available">
+                                <div class="col-xs-12 side-menu-title">
+                                    <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
                                         <span class="fas fa-dot-circle"></span>
                                         <h2>{{'PUBLICATION.ADD.TRIGGER_APPT_STATUS'|translate}}</h2>
                                     </span>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.appointmentStatus.available">
-                            <div class="col-xs-12">
-                                <p style="margin-bottom: 10px;"><span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span> {{'PUBLICATION.ADD.TAS_EXPLANATION'|translate}}</p>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.appointmentStatus.available">
-                            <div ng-repeat="appointmentStatus in appointmentStatusList" class="col-xs-12 col-sm-4 col-md-3 item-panel-select">
-                                <div class="panel-container animated" style="cursor:pointer;" ng-class="{pulse: hover, active: appointmentStatus.added}" ng-click="appointmentStatusUpdate($index)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                                    <div class="panel-info" ng-class="{active: appointmentStatus.added}">
-                                        <div class="panel-content" style="text-align:center">
-                                            <span ng-if="!appointmentStatus.added" style="font-size:30px;" class="glyphicon glyphicon-minus"></span>
-                                            <span ng-if="appointmentStatus.added" style="font-size:30px;" class="glyphicon glyphicon-ok"></span>
-                                            <div class="option-panel-title">{{appointmentStatus.name_display}}</div>
+                                .available">
+                                <div class="col-xs-12">
+                                    <p style="margin-bottom: 10px;"><span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span> {{'PUBLICATION.ADD.TAS_EXPLANATION'|translate}}</p>
+                                </div>
+                                .available">
+                                <div ng-repeat="appointmentStatus in appointmentStatusList" class="col-xs-12 col-sm-4 col-md-3 item-panel-select">
+                                    <div class="panel-container " style="cursor:pointer;" ng-class="{pulse: hover, active: appointmentStatus.added}" ng-click="appointmentStatusUpdate($index)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                        <div class="panel-info" ng-class="{active: appointmentStatus.added}">
+                                            <div class="panel-content" style="text-align:center">
+                                                <span ng-if="!appointmentStatus.added" style="font-size:30px;" class="glyphicon glyphicon-minus"></span>
+                                                <span ng-if="appointmentStatus.added" style="font-size:30px;" class="glyphicon glyphicon-ok"></span>
+                                                <div class="option-panel-title">{{appointmentStatus.name_display}}</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- SECTION: Appointment triggers -->
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.appointment.available">
-                            <div class="col-xs-12 side-menu-title">
-                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                            <!-- SECTION: Appointment triggers -->
+                            <div ng-if="triggerSection.appointment.available">
+                                <div class="col-xs-12 side-menu-title">
+                                    <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                 <span style="background-color:#e6edfa; padding: 0 10px;">
                                     <span class="fas fa-dot-circle"></span>
                                     <h2>{{'PUBLICATION.ADD.TRIGGER_APPOINTMENT'|translate}}</h2>
                                 </span>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.appointment.available">
-                            <div class="col-xs-12">
-                                <p style="margin-bottom: 10px;">
-                                    <span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
-                                    {{'PUBLICATION.ADD.TA_EXPLANATION'|translate}}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.appointment.available">
-                            <div class="col-xs-12 col-lg-8">
-                                <div class="panel-container">
-                                    <div class="panel-info">
-                                        <div class="panel-content">
-                                            <div class="panel-input">
-                                                <div class="list-space">
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                                                        <input class="form-control" type="text" ng-model="appointmentSearchField" ng-change="searchAppointment(appointmentSearchField)" placeholder="{{'PUBLICATION.ADD.SEARCH'|translate}}"/>
-                                                    </div>
-                                                    <div style="padding: 10px;">
-                                                        <label>
-                                                            <input type="checkbox" ng-click="selectAllTriggers(appointmentTriggerList, searchAppointmentFilter, selectAll.appointment)" ng-checked="selectAll.appointment.checked"> {{'PUBLICATION.ADD.SELECT_ALL'|translate}}
-                                                        </label>
-                                                    </div>
-                                                    <ul class="list-items">
-                                                        <li ng-repeat="appointment in appointmentTriggerList | filter: searchAppointmentFilter">
+                                <div class="col-xs-12">
+                                    <p style="margin-bottom: 10px;">
+                                        <span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
+                                        {{'PUBLICATION.ADD.TA_EXPLANATION'|translate}}
+                                    </p>
+                                </div>
+                                <div class="col-xs-12 col-lg-8">
+                                    <div class="panel-container">
+                                        <div class="panel-info">
+                                            <div class="panel-content">
+                                                <div class="panel-input">
+                                                    <div class="list-space">
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                            <input class="form-control" type="text" ng-model="appointmentSearchField" ng-change="searchAppointment(appointmentSearchField)" placeholder="{{'PUBLICATION.ADD.SEARCH'|translate}}"/>
+                                                        </div>
+                                                        <div style="padding: 10px;">
                                                             <label>
-                                                                <input type="checkbox" ng-click="selectTrigger(appointment, selectAll.appointment)" ng-checked="appointment.added" /> {{appointment.name_display}}
+                                                                <input type="checkbox" ng-click="selectAllTriggers(appointmentTriggerList, searchAppointmentFilter, selectAll.appointment)" ng-checked="selectAll.appointment.checked"> {{'PUBLICATION.ADD.SELECT_ALL'|translate}}
                                                             </label>
-                                                        </li>
-                                                    </ul>
+                                                        </div>
+                                                        <ul class="list-items">
+                                                            <li ng-repeat="appointment in appointmentTriggerList | filter: searchAppointmentFilter">
+                                                                <label>
+                                                                    <input type="checkbox" ng-click="selectTrigger(appointment, selectAll.appointment)" ng-checked="appointment.added" /> {{appointment.name_display}}
+                                                                </label>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- SECTION: Diagnosis trigger -->
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.diagnosis.available">
-                            <div class="col-xs-12 side-menu-title">
-                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                            <!-- SECTION: Diagnosis trigger -->
+                            <div ng-if="triggerSection.diagnosis.available">
+                                <div class="col-xs-12 side-menu-title">
+                                    <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
                                         <span class="fas fa-dot-circle"></span>
                                         <h2>{{'PUBLICATION.ADD.TRIGGER_DIAGNOSIS'|translate}}</h2>
                                     </span>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.diagnosis.available">
-                            <div class="col-xs-12">
-                                <p style="margin-bottom: 10px;">
-                                    <span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
-                                    {{'PUBLICATION.ADD.DIAGNOSIS_EXPLANATION'|translate}}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.diagnosis.available">
-                            <div class="col-xs-12 col-lg-8">
-                                <div class="panel-container">
-                                    <div class="panel-info">
-                                        <div class="panel-content">
-                                            <div class="panel-input">
-                                                <div class="list-space">
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                                                        <input class="form-control" type="text" ng-model="dxSearchField" ng-change="searchDiagnosis(dxSearchField)" placeholder="{{'PUBLICATION.ADD.SEARCH'|translate}}"/>
-                                                    </div>
-                                                    <div style="padding: 10px;">
-                                                        <label>
-                                                            <input type="checkbox" ng-click="selectAllTriggers(dxTriggerList, searchDxFilter, selectAll.diagnosis)" ng-checked="selectAll.diagnosis.checked"> {{'PUBLICATION.ADD.SELECT_ALL'|translate}}
-                                                        </label>
-                                                    </div>
-                                                    <ul class="list-items">
-                                                        <li ng-repeat="diagnosis in dxTriggerList | filter: searchDxFilter">
+                                <div class="col-xs-12">
+                                    <p style="margin-bottom: 10px;">
+                                        <span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
+                                        {{'PUBLICATION.ADD.DIAGNOSIS_EXPLANATION'|translate}}
+                                    </p>
+                                </div>
+                                <div class="col-xs-12 col-lg-8">
+                                    <div class="panel-container">
+                                        <div class="panel-info">
+                                            <div class="panel-content">
+                                                <div class="panel-input">
+                                                    <div class="list-space">
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                            <input class="form-control" type="text" ng-model="dxSearchField" ng-change="searchDiagnosis(dxSearchField)" placeholder="{{'PUBLICATION.ADD.SEARCH'|translate}}"/>
+                                                        </div>
+                                                        <div style="padding: 10px;">
                                                             <label>
-                                                                <input type="checkbox" ng-click="selectTrigger(diagnosis, selectAll.diagnosis)" ng-checked="diagnosis.added" /> {{diagnosis.name_display}}
+                                                                <input type="checkbox" ng-click="selectAllTriggers(dxTriggerList, searchDxFilter, selectAll.diagnosis)" ng-checked="selectAll.diagnosis.checked"> {{'PUBLICATION.ADD.SELECT_ALL'|translate}}
                                                             </label>
-                                                        </li>
-                                                    </ul>
+                                                        </div>
+                                                        <ul class="list-items">
+                                                            <li ng-repeat="diagnosis in dxTriggerList | filter: searchDxFilter">
+                                                                <label>
+                                                                    <input type="checkbox" ng-click="selectTrigger(diagnosis, selectAll.diagnosis)" ng-checked="diagnosis.added" /> {{diagnosis.name_display}}
+                                                                </label>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- SECTION: Doctor triggers -->
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.doctor.available">
-                            <div class="col-xs-12 side-menu-title">
-                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                            <!-- SECTION: Doctor triggers -->
+                            <div ng-if="triggerSection.doctor.available">
+                                <div class="col-xs-12 side-menu-title">
+                                    <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
                                         <span class="fas fa-dot-circle"></span>
                                         <h2>{{'PUBLICATION.ADD.TRIGGER_DOCTOR'|translate}}</h2>
                                     </span>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.doctor.available">
-                            <div class="col-xs-12">
-                                <p style="margin-bottom: 10px;">
-                                    <span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
-                                    {{'PUBLICATION.ADD.DOCTOR_EXPLANATION'|translate}}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.doctor.available">
-                            <div class="col-xs-12 col-lg-8">
-                                <div class="panel-container">
-                                    <div class="panel-info">
-                                        <div class="panel-content">
-                                            <div class="panel-input">
-                                                <div class="list-space">
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                                                        <input class="form-control" type="text" ng-model="doctorSearchField" ng-change="searchDoctor(doctorSearchField)" placeholder="{{'PUBLICATION.ADD.SEARCH'|translate}}"/>
-                                                    </div>
-                                                    <div style="padding: 10px;">
-                                                        <label>
-                                                            <input type="checkbox" ng-click="selectAllTriggers(doctorTriggerList, searchDoctorFilter, selectAll.doctor)" ng-checked="selectAll.doctor.checked"> {{'PUBLICATION.ADD.SELECT_ALL'|translate}}
-                                                        </label>
-                                                    </div>
-                                                    <ul class="list-items">
-                                                        <li ng-repeat="doctor in doctorTriggerList | filter: searchDoctorFilter">
+                                <div class="col-xs-12">
+                                    <p style="margin-bottom: 10px;">
+                                        <span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
+                                        {{'PUBLICATION.ADD.DOCTOR_EXPLANATION'|translate}}
+                                    </p>
+                                </div>
+                                <div class="col-xs-12 col-lg-8">
+                                    <div class="panel-container">
+                                        <div class="panel-info">
+                                            <div class="panel-content">
+                                                <div class="panel-input">
+                                                    <div class="list-space">
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                            <input class="form-control" type="text" ng-model="doctorSearchField" ng-change="searchDoctor(doctorSearchField)" placeholder="{{'PUBLICATION.ADD.SEARCH'|translate}}"/>
+                                                        </div>
+                                                        <div style="padding: 10px;">
                                                             <label>
-                                                                <input type="checkbox" ng-click="selectTrigger(doctor, selectAll.doctor)" ng-checked="doctor.added" /> {{doctor.name}}
+                                                                <input type="checkbox" ng-click="selectAllTriggers(doctorTriggerList, searchDoctorFilter, selectAll.doctor)" ng-checked="selectAll.doctor.checked"> {{'PUBLICATION.ADD.SELECT_ALL'|translate}}
                                                             </label>
-                                                        </li>
-                                                    </ul>
+                                                        </div>
+                                                        <ul class="list-items">
+                                                            <li ng-repeat="doctor in doctorTriggerList | filter: searchDoctorFilter">
+                                                                <label>
+                                                                    <input type="checkbox" ng-click="selectTrigger(doctor, selectAll.doctor)" ng-checked="doctor.added" /> {{doctor.name}}
+                                                                </label>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- SECTION: Treatment machine triggers -->
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.machine.available">
-                            <div class="col-xs-12 side-menu-title">
-                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                            <!-- SECTION: Treatment machine triggers -->
+                            <div ng-if="triggerSection.machine.available">
+                                <div class="col-xs-12 side-menu-title">
+                                    <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                 <span style="background-color:#e6edfa; padding: 0 10px;">
                                     <span class="fas fa-dot-circle"></span>
                                     <h2>{{'PUBLICATION.ADD.TRIGGER_MACHINE'|translate}}</h2>
                                 </span>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.machine.available">
-                            <div class="col-xs-12">
-                                <p style="margin-bottom: 10px;">
-                                    <span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
-                                    {{'PUBLICATION.ADD.MACHINE_EXPLANATION'|translate}}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="row animated" ng-class="{fadeInUp: triggerSection.show}" ng-if="triggerSection.show && triggerSection.machine.available">
-                            <div class="col-xs-12 col-lg-8">
-                                <div class="panel-container">
-                                    <div class="panel-info">
-                                        <div class="panel-content">
-                                            <div class="panel-input">
-                                                <div class="list-space">
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                                                        <input class="form-control" type="text" ng-model="machineSearchField" ng-change="searchMachine(machineSearchField)" placeholder="{{'PUBLICATION.ADD.SEARCH'|translate}}"/>
-                                                    </div>
-                                                    <div style="padding: 10px;">
-                                                        <label>
-                                                            <input type="checkbox" ng-click="selectAllTriggers(machineTriggerList, searchMachineFilter, selectAll.machine)" ng-checked="selectAll.machine.checked"> {{'PUBLICATION.ADD.SELECT_ALL'|translate}}
-                                                        </label>
-                                                    </div>
-                                                    <ul class="list-items">
-                                                        <li ng-repeat="machine in machineTriggerList | filter: searchMachineFilter">
+                                <div class="col-xs-12">
+                                    <p style="margin-bottom: 10px;">
+                                        <span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
+                                        {{'PUBLICATION.ADD.MACHINE_EXPLANATION'|translate}}
+                                    </p>
+                                </div>
+                                <div class="col-xs-12 col-lg-8">
+                                    <div class="panel-container">
+                                        <div class="panel-info">
+                                            <div class="panel-content">
+                                                <div class="panel-input">
+                                                    <div class="list-space">
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                            <input class="form-control" type="text" ng-model="machineSearchField" ng-change="searchMachine(machineSearchField)" placeholder="{{'PUBLICATION.ADD.SEARCH'|translate}}"/>
+                                                        </div>
+                                                        <div style="padding: 10px;">
                                                             <label>
-                                                                <input type="checkbox" ng-click="selectTrigger(machine, selectAll.machine)" ng-checked="machine.added" /> {{machine.name}}
+                                                                <input type="checkbox" ng-click="selectAllTriggers(machineTriggerList, searchMachineFilter, selectAll.machine)" ng-checked="selectAll.machine.checked"> {{'PUBLICATION.ADD.SELECT_ALL'|translate}}
                                                             </label>
-                                                        </li>
-                                                    </ul>
+                                                        </div>
+                                                        <ul class="list-items">
+                                                            <li ng-repeat="machine in machineTriggerList | filter: searchMachineFilter">
+                                                                <label>
+                                                                    <input type="checkbox" ng-click="selectTrigger(machine, selectAll.machine)" ng-checked="machine.added" /> {{machine.name}}
+                                                                </label>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <!-- END SECTION-->
                         </div>
-
-                        <!-- END SECTION-->
                     </div>
                 </div>
             </div>
