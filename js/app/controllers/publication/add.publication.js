@@ -12,7 +12,15 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 
 
 		// Default boolean variables
-		$scope.selectAll = false; // select All button checked?
+		// $scope.selectAll = false; // select All button checked?
+
+		$scope.selectAll = {
+			appointment: {all:false, checked:false},
+			diagnosis: {all:false, checked:false},
+			doctor: {all:false, checked:false},
+			machine: {all:false, checked:false},
+			patient: {all:false, checked:false}
+		};
 
 		$scope.moduleSection = {open:false, show:true};
 		$scope.materialSection = {open:false, show:false};
@@ -296,7 +304,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 				patient: {
 					display: false,
 					open: false,
-					preview: false,
+					preview: [],
 				},
 				demo: {
 					display: false,
@@ -774,52 +782,129 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 
 		// Function to toggle trigger in a list on/off
 		$scope.selectTrigger = function (trigger, selectAll) {
+
+
+			// if(selectAll) {
+			// 	var removeAll = false;
+			// 	angular.forEach($scope.toSubmit.triggers, function(entry) {
+			// 		if(trigger.type === entry.type) {
+			// 			if (entry.id === 'ALL')
+			// 				removeAll = true;
+			// 			delete entry;
+			// 		}
+			// 	});
+			// 	if(!removeAll)
+			// 		$scope.toSubmit.triggers.push({id: 'ALL', type: trigger.type});
+			// }
+			// else {
+
 			selectAll.all = false;
 			selectAll.checked = false;
-			if (trigger.added)
-				trigger.added = 0;
-			else
-				trigger.added = 1;
+			if (($scope.toSubmit.triggers.findIndex(x => x.id === trigger.id)) != -1)
+			{
+				$scope.toSubmit.triggers.splice($scope.toSubmit.triggers.findIndex(x => x.id === trigger.id), 1);
+			} else {
+				$scope.toSubmit.triggers.push({id: trigger.id, type: trigger.type});
+			}
+			// }
+
+
+			console.log("selectTrigger");
+			// console.log(selectAll);
+			// console.log(trigger);
+
+			console.log($scope.toSubmit.triggers);
+			// selectAll.all = false;
+			// selectAll.checked = false;
+			// if (trigger.added)
+			// 	trigger.added = 0;
+			// else
+			// 	trigger.added = 1;
+
+
 		};
+
+
+
+
+
+
+
+		// Fruits
+		$scope.fruits = [
+			{ name: 'apple',    selected: true },
+			{ name: 'orange',   selected: false },
+			{ name: 'pear',     selected: true },
+			{ name: 'naartjie', selected: false }
+		];
+
+		// Selected fruits
+		$scope.selection = [];
+
+		// Helper method to get selected fruits
+		$scope.selectedFruits = function selectedFruits() {
+			return filterFilter($scope.fruits, { selected: true });
+		};
+
+		// Watch fruits for changes
+		$scope.$watch('fruits|filter:{selected:true}', function (nv) {
+			$scope.selection = nv.map(function (fruit) {
+				return fruit.name;
+			});
+		}, true);
+
+
+
+
+
+
+
 
 		// Function for selecting all triggers in a trigger list
 		$scope.selectAllTriggers = function (triggerList,triggerFilter,selectAll) {
-			var filtered = $scope.filter(triggerList,triggerFilter);
 
-			if (filtered.length == triggerList.length) { // search field wasn't used
-				if (selectAll.checked) {
-					angular.forEach(filtered, function (trigger) {
-						trigger.added = 0;
-					});
-					selectAll.checked = false; // toggle off
-					selectAll.all = false;
-				}
-				else {
-					angular.forEach(filtered, function (trigger) {
-						trigger.added = 1;
-					});
+			console.log("selectAllTriggers");
+			// console.log(triggerList);
+			// console.log(triggerFilter);
+			// console.log(selectAll);
 
-					selectAll.checked = true; // toggle on
-					selectAll.all = true;
-				}
-			}
-			else {
-				if (selectAll.checked) { // was checked
-					angular.forEach(filtered, function (trigger) {
-						trigger.added = 0;
-					});
-					selectAll.checked = false; // toggle off
-					selectAll.all = false;
-				}
-				else { // was not checked
-					angular.forEach(filtered, function (trigger) {
-						trigger.added = 1;
-					});
-
-					selectAll.checked = true; // toggle on
-
-				}
-			}
+			// var filtered = $scope.filter(triggerList,triggerFilter);
+			// console.log(filtered);
+			//
+			// if (filtered.length == triggerList.length) { // search field wasn't used
+			// 	if (selectAll.checked) {
+			// 		angular.forEach(filtered, function (trigger) {
+			// 			trigger.added = 0;
+			// 		});
+			// 		selectAll.checked = false; // toggle off
+			// 		selectAll.all = false;
+			// 	}
+			// 	else {
+			// 		angular.forEach(filtered, function (trigger) {
+			// 			trigger.added = 1;
+			// 		});
+			//
+			// 		selectAll.checked = true; // toggle on
+			// 		selectAll.all = true;
+			// 	}
+			// }
+			// else {
+			// 	if (selectAll.checked) { // was checked
+			// 		angular.forEach(filtered, function (trigger) {
+			// 			trigger.added = 0;
+			// 		});
+			// 		selectAll.checked = false; // toggle off
+			// 		selectAll.all = false;
+			// 	}
+			// 	else { // was not checked
+			// 		angular.forEach(filtered, function (trigger) {
+			// 			trigger.added = 1;
+			// 		});
+			//
+			// 		selectAll.checked = true; // toggle on
+			//
+			// 	}
+			// }
 
 		};
 
