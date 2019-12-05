@@ -45,109 +45,109 @@
                         </div>
                         <uib-accordion class="side-navbar">
                             <!-- SECTION: Module -->
-                            <div uib-accordion-group is-open="moduleSection.open" class="panel-container summary-box" is-disabled="!newPublication.moduleId">
+                            <div uib-accordion-group is-open="leftMenu.moduleId.open" class="panel-container summary-box" is-disabled="!validator.moduleId.completed">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
-                                            <span ng-if="newPublication.moduleName" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                            <span ng-if="validator.moduleId.completed" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
                                             <strong>{{'PUBLICATION.ADD.TYPE'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i ng-if="newPublication.moduleName" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': moduleSection.open, 'glyphicon-chevron-right': !moduleSection.open}"></i>
+                                            <i ng-if="validator.moduleId.completed" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.moduleId.open, 'glyphicon-chevron-right': !leftMenu.moduleId.open}"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
-                                <div ng-if="newPublication.moduleName" class="description">
+                                <div ng-if="validator.moduleId.completed" class="description">
                                     <p>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{newPublication.moduleName}}
+                                        {{leftMenu.moduleId.preview}}
                                     </p>
                                 </div>
                             </div>
                             <!-- SECTION: Material -->
-                            <div uib-accordion-group is-open="materialSection.open" class="panel-container summary-box " ng-class="{fadeIn: materialSection.show}" is-disabled="!newPublication.materialName" ng-if="materialSection.show">
+                            <div uib-accordion-group is-open="leftMenu.materialId.open" class="panel-container summary-box " ng-class="{fadeIn: validator.moduleId.completed}" is-disabled="!validator.materialId.completed" ng-if="validator.moduleId.completed">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
-                                            <span ng-if="newPublication.materialName" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                            <span ng-if="validator.materialId.completed" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
                                             <strong>{{'PUBLICATION.ADD.MATERIAL'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': materialSection.open, 'glyphicon-chevron-right': !materialSection.open}" ng-if="newPublication.materialName"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.materialId.open, 'glyphicon-chevron-right': !leftMenu.materialId.open}" ng-if="validator.materialId.completed"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
-                                <div ng-if="newPublication.materialName" class="description">
+                                <div ng-if="validator.materialId.completed" class="description">
                                     <p>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{newPublication.materialName}}
+                                        {{leftMenu.materialId.preview}}
                                     </p>
                                 </div>
                             </div>
                             <!-- SECTION: Name -->
-                            <div uib-accordion-group is-open="publicationNameSections.open" class="panel-container summary-box " ng-class="{fadeIn: publicationNameSections.show}" ng-if="publicationNameSections.show" is-disabled="!newPublication.name_EN && !newPublication.name_FR">
+                            <div uib-accordion-group is-open="leftMenu.name.open" class="panel-container summary-box " ng-class="{fadeIn: validator.materialId.completed && !unique}" ng-if="validator.materialId.completed && !unique;" is-disabled="!toSubmit.name.name_EN && !toSubmit.name.name_FR">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
-                                            <span ng-if="newPublication.name_EN && newPublication.name_FR" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                            <span ng-if="validator.name.completed" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
                                             <strong>{{'PUBLICATION.ADD.NAME'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':publicationNameSections.open, 'glyphicon-chevron-right':!publicationNameSections.open}" ng-if="newPublication.name_EN || newPublication.name_FR"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.name.open, 'glyphicon-chevron-right':!leftMenu.name.open}" ng-if="leftMenu.name.display"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
-                                <div ng-if="newPublication.name_EN" class="description">
+                                <div ng-if="toSubmit.name.name_EN" class="description">
                                     <p style="margin-bottom:5px;">
                                         <strong>{{'PUBLICATION.ADD.ENGLISH_ABRV'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{newPublication.name_EN}}
+                                        {{toSubmit.name.name_EN}}
                                     </p>
                                 </div>
-                                <div ng-if="newPublication.name_FR" class="description">
+                                <div ng-if="toSubmit.name.name_FR" class="description">
                                     <p style="margin-bottom:5px;">
                                         <strong>{{'PUBLICATION.ADD.FRENCH_ABRV'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{newPublication.name_FR}}
+                                        {{toSubmit.name.name_FR}}
                                     </p>
                                 </div>
                             </div>
                             <!-- SECTION: Publish date -->
-                            <div uib-accordion-group is-open="publishDate.open" class="panel-container summary-box " ng-class="{fadeIn: publishDate.show && publishDate.available}" is-disabled="!newPublication.publish_date && !newPublication.publish_time" ng-if="publishDate.show && publishDate.available">
+                            <div uib-accordion-group is-open="leftMenu.publishDateTime.open" class="panel-container summary-box " ng-class="{fadeIn: publishDate.show && publishDate.available}" is-disabled="!toSubmit.publishDateTime.publish_date && !toSubmit.publishDateTime.publish_time" ng-if="leftMenu.publishDateTime.display">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
-                                            <span ng-if="newPublication.publish_date && newPublication.publish_time" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                            <span ng-if="toSubmit.publishDateTime.publish_date && toSubmit.publishDateTime.publish_time" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
                                             <strong>{{'POSTS.ADD.PUBLISH_DATE'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': publishDate.open, 'glyphicon-chevron-right': !publishDate.open}" ng-if="newPublication.publish_date || newPublication.publish_time"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.publishDateTime.open, 'glyphicon-chevron-right': !leftMenu.publishDateTime.open}" ng-if="toSubmit.publishDateTime.publish_date || toSubmit.publishDateTime.publish_time"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
-                                <div ng-if="newPublication.publish_date || newPublication.publish_time" class="description">
+                                <div ng-if="toSubmit.publishDateTime.publish_date || toSubmit.publishDateTime.publish_time" class="description">
                                     <p>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{newPublication.publish_date | date:'yyyy-MM-dd'}} {{'POSTS.ADD.AT'|translate}} {{newPublication.publish_time | date:'HH:mm'}}
+                                        {{toSubmit.publishDateTime.publish_date | date:'yyyy-MM-dd'}} {{'POSTS.ADD.AT'|translate}} {{toSubmit.publishDateTime.publish_time | date:'HH:mm'}}
                                     </p>
                                 </div>
                             </div>
                             <!-- SECTION: Publish Frequency -->
-                            <div uib-accordion-group is-open="publishFrequencySection.open" class="panel-container summary-box " ng-class="{fadeIn:publishFrequencySection.show}" is-disabled="!showFrequency" ng-if="showFrequency && publishFrequencySection.available">
+                            <div uib-accordion-group is-open="leftMenu.publishFrequency.open" class="panel-container summary-box " ng-class="{fadeIn:leftMenu.publishFrequency.display}" ng-if="leftMenu.publishFrequency.display">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
-                                        <div class="col-md-2"><span ng-if="checkFrequencyFilter() && showFrequency" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span></div>
+                                        <div class="col-md-2"><span ng-if="validator.occurrence.completed" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span></div>
                                         <div class="col-md-8"><strong>{{'PUBLICATION.ADD.PUBLISH_FREQUENCY'|translate}}</strong></div>
                                         <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': publishFrequencySection.open, 'glyphicon-chevron-right': !publishFrequencySection.open}" ng-if="showFrequency"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.publishFrequency.open, 'glyphicon-chevron-right': !leftMenu.publishFrequency.open}" ng-if="showFrequency"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
@@ -206,16 +206,16 @@
                                     <p style="margin-bottom:5px;">
                                         <strong>{{'PUBLICATION.ADD.REPEAT_START'|translate}}</strong><br>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        <span ng-if="newPublication.occurrence.start_date">{{newPublication.occurrence.start_date|date:'yyyy-MM-dd'}}</span>
-                                        <span ng-if="!newPublication.occurrence.start_date">{{'PUBLICATION.ADD.NA'|translate}}</span>
+                                        <span ng-if="toSubmit.occurrence.start_date">{{toSubmit.occurrence.start_date|date:'yyyy-MM-dd'}}</span>
+                                        <span ng-if="!toSubmit.occurrence.start_date">{{'PUBLICATION.ADD.NA'|translate}}</span>
                                     </p>
                                 </div>
                                 <div ng-if="showFrequency" class="description">
                                     <p style="margin-bottom:5px;">
                                         <strong>{{'PUBLICATION.ADD.REPEAT_END'|translate}}</strong><br>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        <span ng-if="newPublication.occurrence.end_date">{{newPublication.occurrence.end_date | date: 'yyyy-MM-dd' }}</span>
-                                        <span ng-if="!newPublication.occurrence.end_date">{{'PUBLICATION.ADD.NEVER'|translate}}</span>
+                                        <span ng-if="toSubmit.occurrence.end_date">{{toSubmit.occurrence.end_date | date: 'yyyy-MM-dd' }}</span>
+                                        <span ng-if="!toSubmit.occurrence.end_date">{{'PUBLICATION.ADD.NEVER'|translate}}</span>
                                     </p>
                                 </div>
                             </div>
@@ -251,7 +251,7 @@
                                 </div>
                             </div>
                             <!-- SECTION: Demographic trigger -->
-                            <div uib-accordion-group is-open="demoSection.open "class="panel-container summary-box " ng-class="{fadeIn:demoSection.open}" is-disabled="!demoTrigger.sex && demoTrigger.age.min == 0 && demoTrigger.age.max == 130" ng-if="(demoTrigger.sex || demoTrigger.age.min !== 0 || demoTrigger.age.max !== 130) && demoSection.available">
+                            <div uib-accordion-group is-open="triggerSection.demo.open" class="panel-container summary-box fadeIn" ng-if="(demoTrigger.sex || demoTrigger.age.min !== 0 || demoTrigger.age.max !== 130) && triggerSection.demo.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -261,7 +261,7 @@
                                             <strong>{{'PUBLICATION.ADD.DEMO_TRIGGERS'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':demoSection.open , 'glyphicon-chevron-right':!demoSection.open }" ng-if="demoTrigger.sex || demoTrigger.age.min != 0 || demoTrigger.age.max != 130"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down':triggerSection.demo.open , 'glyphicon-chevron-right':!triggerSection.demo.open }" ng-if="demoTrigger.sex || demoTrigger.age.min != 0 || demoTrigger.age.max != 130"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
@@ -281,27 +281,24 @@
                                 </div>
                             </div>
                             <!-- SECTION: Appointment Status trigger -->
-                            <div uib-accordion-group is-open="triggerSection.appointmentStatus.open" class="panel-container summary-box " ng-class="{fadeIn:triggerSection.show}" is-disabled="!checkTriggers(appointmentStatusList)" ng-if="checkTriggers(appointmentStatusList) && triggerSection.appointmentStatus.available">
+                            <div uib-accordion-group is-open="leftMenu.appointmentStatus.open" class="panel-container summary-box " ng-class="{fadeIn:leftMenu.appointmentStatus.show}" ng-if="leftMenu.appointmentStatus.show">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
-                                            <span ng-if="checkTriggers(appointmentStatusList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                            <span ng-if="leftMenu.appointmentStatus.open" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
                                             <strong>{{'PUBLICATION.ADD.APPT_STATUS_TRIGGER'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.appointmentStatus.open, 'glyphicon-chevron-right': !triggerSection.appointmentStatus.open}" ng-if="checkTriggers(appointmentStatusList)"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.appointmentStatus.open, 'glyphicon-chevron-right': !leftMenu.appointmentStatus.open}"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
-                                <div ng-if="checkTriggers(appointmentStatusList)" class="description">
+                                <div class="description">
                                     <p>
-                                    <ul style="max-height: 100px; overflow-y: auto;">
-                                        <li ng-repeat="appointmentStatus in appointmentStatusList | filter: {added: 1} : 1">
-                                            {{appointmentStatus.name_display}}
-                                        </li>
-                                    </ul>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{leftMenu.appointmentStatus.value}}
                                     </p>
                                 </div>
                             </div>
@@ -404,8 +401,8 @@
                             </div>
                         </uib-accordion>
                         <!-- Submit button -->
-                        <div class="panel-container">
-                            <a href="" ng-click="submitPublication()" class="btn btn-md item-button-success " ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                        <div class="panel-container" ng-if="formReady">
+                            <a href="" ng-click="submitPublication()" class="btn btn-md item-button-success " ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" style="width: 100%;">
                                 <span style="font-size: 20px;"><strong>{{'PUBLICATION.ADD.SUBMIT'|translate}}</strong></span>
                             </a>
                         </div>
@@ -419,8 +416,6 @@
                             <div class="col-xs-12 col-md-9 title-content">
                                 <span class="glyphicon glyphicon-plus"></span>
                                 <h1><strong>{{'PUBLICATION.ADD.TITLE'|translate}}</strong></h1>
-                                {{completedSteps}}
-                                {{totalSteps}}
                             </div>
                             <!-- Breadcrumbs -->
                             <div class="col-md-3 title-breadcrumbs">
@@ -483,7 +478,7 @@
                             </div>
                             <div class="col-xs-12">
                                 <div ng-repeat="aModule in moduleList" class="col-xs-4 col-lg-2 item-panel-select">
-                                    <div class="panel-container " style="cursor:pointer;" ng-class="{pulse: hover, active: toSubmit.moduleId.value == aModule.ID}" ng-click="moduleUpdate(aModule.ID)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                    <div class="panel-container " style="cursor:pointer;" ng-class="{pulse: hover, active: toSubmit.moduleId.value == aModule.ID}" ng-click="moduleUpdate(aModule)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
                                         <div class="panel-info" ng-class="{active: toSubmit.moduleId.value == aModule.ID}">
                                             <div class="panel-content" style="text-align:center">
                                                 <span style="font-size:30px;" ng-class="aModule.iconClass"></span>
@@ -586,10 +581,6 @@
                             </div>
                         </div>
                         <!-- SECTION: Publish date -->
-
-
-
-
                         <div ng-if="toSubmit.publishDateTime && validator.materialId.completed" style="margin-bottom: 15px;">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
@@ -624,9 +615,6 @@
                                 </div>
                             </div>
                         </div>
-
-
-
                         <!-- SECTION: publications options -->
                         <div ng-if="triggerSection.show">
                             <!-- SECTION: Publish frequency -->
@@ -679,7 +667,7 @@
                                                 </label>
                                                 <div class="col-xs-12 col-lg-9">
                                                     <div class="input-group">
-                                                        <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newPublication.occurrence.start_date" is-open="popupStart.opened"datepicker-options="dateOptionsStart" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
+                                                        <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="toSubmit.occurrence.start_date" is-open="popupStart.opened"datepicker-options="dateOptionsStart" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
                                                         <span class="input-group-btn">
                                                         <button class="btn btn-default" ng-click="openStart($event)"><i class="glyphicon glyphicon-calendar"></i></button>
                                                     </span>
@@ -702,7 +690,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-lg-9" style="margin-bottom:10px;">
                                                     <div class="input-group">
-                                                        <input ng-if="addEndDate" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="newPublication.occurrence.end_date" is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
+                                                        <input ng-if="addEndDate" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="toSubmit.occurrence.end_date" is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
                                                         <span ng-if="addEndDate" class="input-group-btn">
                                                         <button class="btn btn-default" ng-click="openEnd($event)"><i class="glyphicon glyphicon-calendar"></i></button>
                                                     </span>
@@ -776,20 +764,28 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- SECTION: Danger panel for triggers -->
+                            <div class="col-xs-12" style="margin-top: 20px;">
+                                <div class="panel panel-danger">
+                                    <div class="panel-heading">
+                                        <p style="color: #d9534f;text-align: left;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> {{'PUBLICATION.ADD.TRIGGER_REQUIRED'|translate}}</p>
+                                    </div>
+                                </div>
+                            </div>
                             <!-- SECTION: Patient triggers -->
                             <div ng-if="triggerSection.patient.available">
                                 <div class="col-xs-12 side-menu-title">
                                     <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
-                                        <span style="background-color:#e6edfa; padding: 0 10px;">
-                                            <span class="fas fa-dot-circle"></span>
-                                            <h2>{{'PUBLICATION.ADD.TRIGGER_PATIENT'|translate}}</h2>
-                                        </span>
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                      <span class="fas fa-dot-circle"></span>
+                                      <h2>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.TRIGGER_PATIENT'|translate}}</h2>
+                                    </span>
                                     </div>
                                 </div>
                                 <div class="col-xs-12">
                                     <p style="margin-bottom: 10px;">
-                                        <span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
-                                        {{'PUBLICATION.ADD.PATIENT_EXPLANATION'|translate}}
+                                        <span><strong>{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.OPTIONAL_FIELD'|translate}}</strong></span>
+                                        {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.PATIENT_EXPLANATION'|translate}}
                                     </p>
                                 </div>
                                 <div class="col-xs-12 col-lg-8">
@@ -800,17 +796,17 @@
                                                     <div class="list-space">
                                                         <div class="input-group">
                                                             <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                                                            <input class="form-control" type="text" ng-model="patientSearchField" ng-change="searchPatient(patientSearchField)" placeholder="{{'PUBLICATION.ADD.SEARCH'|translate}}"/>
+                                                            <input class="form-control" type="text" ng-model="patientSearchField" ng-change="searchPatient(patientSearchField)" placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SEARCH'|translate}}"/>
                                                         </div>
                                                         <div style="padding: 10px;">
                                                             <label>
-                                                                <input type="checkbox" ng-click="selectAllTriggers(patientTriggerList, searchPatientFilter, selectAll.patient)" ng-checked="selectAll.patient.checked"> {{'PUBLICATION.ADD.SELECT_ALL'|translate}}
+                                                                <input type="checkbox" ng-click="selectAllTriggers(patientTriggerList, searchPatientFilter, selectAll.patient)" ng-checked="selectAll.patient.checked"> {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SELECT_ALL'|translate}}
                                                             </label>
                                                         </div>
                                                         <ul class="list-items">
                                                             <li ng-repeat="patient in patientTriggerList | filter: searchPatientFilter">
                                                                 <label>
-                                                                    <input type="checkbox" ng-click="selectTrigger(patient, selectAll.patient)" ng-checked="patient.added" /> {{patient.name}}
+                                                                    <input type="checkbox" ng-click="selectTrigger(patient, selectAll.patient)" ng-checked="patient.added"/> {{patient.name}}
                                                                 </label>
                                                             </li>
                                                         </ul>
@@ -822,8 +818,8 @@
                                 </div>
                             </div>
                             <!-- SECTION: Demographic triggers -->
-                            <div ng-if="demoSection.available">
-                                <div class="col-xs-12 side-menu-title">
+                            <div ng-if="triggerSection.demo.available">
+                                <div class="col-xs-12 side-menu-title" style="margin-top: 20px;">
                                     <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
                                         <span class="fas fa-dot-circle"></span>
@@ -889,7 +885,7 @@
                             </div>
                             <!-- SECTION: Appointment Status trigger -->
                             <div ng-if="triggerSection.appointmentStatus.available">
-                                <div class="col-xs-12 side-menu-title">
+                                <div class="col-xs-12 side-menu-title" style="margin-top: 20px;">
                                     <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
                                         <span class="fas fa-dot-circle"></span>
@@ -897,17 +893,15 @@
                                     </span>
                                     </div>
                                 </div>
-                                .available">
                                 <div class="col-xs-12">
                                     <p style="margin-bottom: 10px;"><span><strong>{{'PUBLICATION.ADD.OPTIONAL_FIELD'|translate}}</strong></span> {{'PUBLICATION.ADD.TAS_EXPLANATION'|translate}}</p>
                                 </div>
-                                .available">
                                 <div ng-repeat="appointmentStatus in appointmentStatusList" class="col-xs-12 col-sm-4 col-md-3 item-panel-select">
-                                    <div class="panel-container " style="cursor:pointer;" ng-class="{pulse: hover, active: appointmentStatus.added}" ng-click="appointmentStatusUpdate($index)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
-                                        <div class="panel-info" ng-class="{active: appointmentStatus.added}">
+                                    <div class="panel-container " style="cursor:pointer;" ng-class="{pulse: hover, active: apptSelected == appointmentStatus.id}" ng-click="appointmentStatusUpdate(appointmentStatus)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                        <div class="panel-info" ng-class="{active: apptSelected == appointmentStatus.id}">
                                             <div class="panel-content" style="text-align:center">
-                                                <span ng-if="!appointmentStatus.added" style="font-size:30px;" class="glyphicon glyphicon-minus"></span>
-                                                <span ng-if="appointmentStatus.added" style="font-size:30px;" class="glyphicon glyphicon-ok"></span>
+                                                <span ng-if="apptSelected != appointmentStatus.id" style="font-size:30px;" class="glyphicon glyphicon-minus"></span>
+                                                <span ng-if="apptSelected == appointmentStatus.id" style="font-size:30px;" class="glyphicon glyphicon-ok"></span>
                                                 <div class="option-panel-title">{{appointmentStatus.name_display}}</div>
                                             </div>
                                         </div>
@@ -916,7 +910,7 @@
                             </div>
                             <!-- SECTION: Appointment triggers -->
                             <div ng-if="triggerSection.appointment.available">
-                                <div class="col-xs-12 side-menu-title">
+                                <div class="col-xs-12 side-menu-title" style="margin-top: 20px;">
                                     <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                 <span style="background-color:#e6edfa; padding: 0 10px;">
                                     <span class="fas fa-dot-circle"></span>
@@ -961,7 +955,7 @@
                             </div>
                             <!-- SECTION: Diagnosis trigger -->
                             <div ng-if="triggerSection.diagnosis.available">
-                                <div class="col-xs-12 side-menu-title">
+                                <div class="col-xs-12 side-menu-title" style="margin-top: 20px;">
                                     <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
                                         <span class="fas fa-dot-circle"></span>
@@ -1006,7 +1000,7 @@
                             </div>
                             <!-- SECTION: Doctor triggers -->
                             <div ng-if="triggerSection.doctor.available">
-                                <div class="col-xs-12 side-menu-title">
+                                <div class="col-xs-12 side-menu-title" style="margin-top: 20px;">
                                     <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
                                         <span class="fas fa-dot-circle"></span>
@@ -1051,7 +1045,7 @@
                             </div>
                             <!-- SECTION: Treatment machine triggers -->
                             <div ng-if="triggerSection.machine.available">
-                                <div class="col-xs-12 side-menu-title">
+                                <div class="col-xs-12 side-menu-title" style="margin-top: 20px;">
                                     <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                 <span style="background-color:#e6edfa; padding: 0 10px;">
                                     <span class="fas fa-dot-circle"></span>

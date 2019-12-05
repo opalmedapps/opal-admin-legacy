@@ -875,7 +875,7 @@
       "COMPLETED": "completed",
       "PUBLISH_DATE_EXPLANATION": "Please select the publish date.",
       "ERROR_ADD": "An error occurred while creating the publication.",
-      "TRIGGER_REQUIRED": "In order the publication to be sent, at least one trigger has to be selected. Please select one and try again."
+      "TRIGGER_REQUIRED": "Please select a trigger for the publication. Remember! You need at least ONE trigger to be able to finish the publication process!"
     },
     "EDIT": {
 
