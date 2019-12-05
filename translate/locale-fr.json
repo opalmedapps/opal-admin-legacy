@@ -896,7 +896,7 @@
       "TO": "à",
       "APPT_STATUS_TRIGGER": "Déclencheur par statut de rendez-vous",
       "ERROR_ADD": "Une erreur s'est produite lors de la création de la publication.",
-      "TRIGGER_REQUIRED": "Pour que la publication soit envoyée, au moins un déclencheur doit être sélectionné. Veuillez en sélectionner un et essayer de nouveau."
+      "TRIGGER_REQUIRED": "Veuillez sélectionner un déclencheur pour la publication. Rappelez-vous! Vous devez avoir au moins UN déclencheur pour pouvoir terminer le processus de publication!"
     },
     "EDIT": {
 
