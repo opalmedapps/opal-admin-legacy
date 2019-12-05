@@ -418,6 +418,26 @@
                                 <h1><strong>{{'PUBLICATION.ADD.TITLE'|translate}}</strong></h1>
                             </div>
                             <!-- Breadcrumbs -->
+                            <div class="col-xs-12">
+                                <label ng-repeat="fruit in patientTriggerList">
+                                    <!--
+                                      - Use `value="{{fruit.name}}"` to give the input a real value, in case the form gets submitted
+                                        traditionally
+
+                                      - Use `ng-checked="fruit.selected"` to have the checkbox checked based on some angular expression
+                                        (no two-way-data-binding)
+
+                                      - Use `ng-model="fruit.selected"` to utilize two-way-data-binding. Note that `.selected`
+                                        is arbitrary. The property name could be anything and will be created on the object if not present.
+                                    -->
+                                    <input
+                                            type="checkbox"
+                                            name="selectedFruits[]"
+                                            value="{{fruit.id}}"
+                                            ng-model="fruit.added"
+                                    > {{fruit.name}}
+                                </label>
+                            </div>
                             <div class="col-md-3 title-breadcrumbs">
                                 <span>
                                     <span><a ui-sref="home">{{'BREADCRUMBS.HOME'|translate}}</a></span>
