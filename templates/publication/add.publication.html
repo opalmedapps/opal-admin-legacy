@@ -418,9 +418,43 @@
                                 <h1><strong>{{'PUBLICATION.ADD.TITLE'|translate}}</strong></h1>
                             </div>
                             <!-- Breadcrumbs -->
-                            <div class="col-xs-12">
+
+
+
+                            <div class="col-xs-12 col-lg-8">
+                                <div class="panel-container">
+                                    <div class="panel-info">
+                                        <div class="panel-content">
+                                            <div class="panel-input">
+                                                <div class="list-space">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                        <input class="form-control" type="text" ng-model="patientSearchField" ng-change="searchPatient(patientSearchField)" placeholder="{{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SEARCH'|translate}}"/>
+                                                    </div>
+                                                    <div style="padding: 10px;">
+                                                        <label>
+                                                            <input type="checkbox" ng-click="toggleAllTriggers(patientTriggerList, patientSearchField, selectAll.patient)" ng-checked="selectAll.patient.checked"> {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.SELECT_ALL'|translate}}
+                                                        </label>
+                                                    </div>
+                                                    <ul class="list-items">
+                                                        <li ng-repeat="patient in patientTriggerList | filter: patientSearchField">
+                                                            <label>
+                                                                <input type="checkbox" ng-model="patient.added" ng-click="selectTrigger(patient, selectAll.patient)"> {{patient.name}}
+                                                            </label>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+  <!--                          <div class="col-xs-12">
                                 <label ng-repeat="fruit in patientTriggerList">
-                                    <!--
+                                    &lt;!&ndash;
                                       - Use `value="{{fruit.name}}"` to give the input a real value, in case the form gets submitted
                                         traditionally
 
@@ -429,15 +463,10 @@
 
                                       - Use `ng-model="fruit.selected"` to utilize two-way-data-binding. Note that `.selected`
                                         is arbitrary. The property name could be anything and will be created on the object if not present.
-                                    -->
-                                    <input
-                                            type="checkbox"
-                                            name="selectedFruits[]"
-                                            value="{{fruit.id}}"
-                                            ng-model="fruit.added"
-                                    > {{fruit.name}}
+                                    &ndash;&gt;
+                                    <input type="checkbox" name="selectedFruits[]" value="{{fruit.id}}" ng-model="fruit.added"> {{fruit.name}}
                                 </label>
-                            </div>
+                            </div>-->
                             <div class="col-md-3 title-breadcrumbs">
                                 <span>
                                     <span><a ui-sref="home">{{'BREADCRUMBS.HOME'|translate}}</a></span>
@@ -808,7 +837,7 @@
                                         {{'QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.PATIENT_EXPLANATION'|translate}}
                                     </p>
                                 </div>
-                                <div class="col-xs-12 col-lg-8">
+<!--                                <div class="col-xs-12 col-lg-8">
                                     <div class="panel-container">
                                         <div class="panel-info">
                                             <div class="panel-content">
@@ -835,7 +864,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div>-->
                             </div>
                             <!-- SECTION: Demographic triggers -->
                             <div ng-if="triggerSection.demo.available">
