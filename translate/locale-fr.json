@@ -898,8 +898,8 @@
       "ERROR_ADD": "Une erreur s'est produite lors de la création de la publication.",
       "TRIGGER_REQUIRED": "Veuillez sélectionner un déclencheur pour la publication. Rappelez-vous! Vous devez avoir au moins UN déclencheur pour pouvoir terminer le processus de publication!",
       "ERROR_AGE": "Tranche d'âge invalide.",
-      "RESET_AGE": "Reset age range"
-
+      "RESET_AGE": "Réinitialiser la tranche d'âge",
+      "RESET_DATE": "Réinitialiser la date de publication"
     },
     "EDIT": {
 

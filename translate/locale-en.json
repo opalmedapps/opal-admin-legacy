@@ -877,7 +877,8 @@
       "ERROR_ADD": "An error occurred while creating the publication.",
       "TRIGGER_REQUIRED": "Please select a trigger for the publication. Remember! You need at least ONE trigger to be able to finish the publication process!",
       "ERROR_AGE": "Invalid age range.",
-      "RESET_AGE": "Reset age range"
+      "RESET_AGE": "Reset age range",
+      "RESET_DATE": "Reset publish date"
     },
     "EDIT": {
 
