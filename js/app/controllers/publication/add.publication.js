@@ -10,17 +10,8 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 		window.history.back();
 	};
 
-
 	// Default boolean variables
 	// $scope.selectAll = false; // select All button checked?
-
-	$scope.selectAll = {
-		appointment: {all:false, checked:false},
-		diagnosis: {all:false, checked:false},
-		doctor: {all:false, checked:false},
-		machine: {all:false, checked:false},
-		patient: {all:false, checked:false, ignore:false}
-	};
 
 	$scope.moduleSection = {open:false, show:true};
 	$scope.materialSection = {open:false, show:false};
@@ -37,6 +28,9 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 		machine: {available:false,open:false, show:false},
 		diagnosis: {available:false,open:false, show:false}
 	};
+
+	$scope.firstInit = false;
+
 
 	$scope.language = Session.retrieveObject('user').language;
 
@@ -174,7 +168,7 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 
 	// Call our API service to get each trigger
 	filterCollectionService.getFilters().then(function (response) {
-
+		response.data = angular.copy(response.data);
 		response.data.appointments.forEach(function(entry) {
 			if($scope.language.toUpperCase() === "FR")
 				entry.name_display = entry.name_FR;
@@ -238,16 +232,7 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 	});
 
 	function initialization() {
-		$scope.unique = false;
-		$scope.apptSelected = null;
-
-		$scope.demoTrigger = {
-			sex: null,
-			age: {
-				min: 0,
-				max: 130
-			}
-		};
+		console.log("i init");
 
 		$scope.toSubmit = {
 			moduleId: {
@@ -259,6 +244,24 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 			},
 			triggers: []
 		};
+
+		angular.forEach($scope.patientTriggerList, function(item) {
+			item.added = false;
+		});
+
+		$scope.unique = false;
+		$scope.apptSelected = null;
+
+		$scope.demoTrigger = {
+			sex: null,
+			age: {
+				min: 0,
+				max: 130,
+				valid: true,
+			}
+		};
+
+
 
 		$scope.validator = {
 			moduleId: {
@@ -351,11 +354,19 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 
 	initialization();
 
-	$scope.$watch('toSubmit', function(newValue, oldValue, scope) {
-	}, true);
+/*
+	$scope.$watchGroup(['demoTrigger.age.min', 'demoTrigger.age.max'], function(){
+		if($scope.demoTrigger.age.min > $scope.demoTrigger.age.max || $scope.demoTrigger.age.min < 0 || $scope.demoTrigger.age.max > 130)
+			$scope.demoTrigger.age.valid = false;
+		else
+			$scope.demoTrigger.age.valid = true;
+	});
+*/
 
 	$scope.$watch('toSubmit.triggers', function() {
+		console.log("watch toSubmit.triggers");
 		console.log($scope.toSubmit.triggers);
+		console.log($scope.patientTriggerList);
 		$scope.validator.triggers.completed = ($scope.toSubmit.triggers.length > 0);
 	}, true);
 
@@ -391,6 +402,19 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 	// Function to toggle necessary changes when click on module buttons
 	$scope.moduleUpdate = function (moduleSelected) {
 		initialization();
+
+		$scope.selectAll = {
+			appointment: {all:false, checked:false},
+			diagnosis: {all:false, checked:false},
+			doctor: {all:false, checked:false},
+			machine: {all:false, checked:false},
+			patient: {all:false, checked:false, ignore:$scope.firstInit}
+		};
+
+		$scope.firstInit = true;
+
+
+
 		if(moduleSelected.ID !== $scope.toSubmit.moduleId.value) {
 			publicationCollectionService.getPublicationsPerModule(Session.retrieveObject('user').id, moduleSelected.ID).then(function (response) {
 				response.data["publications"].forEach(function(entry) {
@@ -563,15 +587,15 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 
 	// Function to toggle necessary changes when updating the age
 	$scope.ageUpdate = function () {
+		if($scope.demoTrigger.age.min == undefined || $scope.demoTrigger.age.max == undefined || $scope.demoTrigger.age.min > $scope.demoTrigger.age.max || $scope.demoTrigger.age.min < 0 || $scope.demoTrigger.age.max > 130)
+			$scope.demoTrigger.age.valid = false;
+		else
+			$scope.demoTrigger.age.valid = true;
 
 		$scope.triggerSection.demo.open = ($scope.demoTrigger.age.min !== 0 || $scope.demoTrigger.age.max !== 130 || $scope.demoTrigger.sex);
-
-		if ($scope.demoTrigger.age.min === 0 && $scope.demoTrigger.age.max === 130) {
-			angular.forEach($scope.toSubmit.triggers, function (item, index, object) {
-				if (item["type"] === "Age") {
-					object.splice(index, 1);
-				}
-			});
+		if (($scope.demoTrigger.age.min === 0 && $scope.demoTrigger.age.max === 130) || !$scope.demoTrigger.age.valid) {
+			if ($scope.toSubmit.triggers.findIndex(x => x.type === "Age") !== -1)
+				$scope.toSubmit.triggers.splice($scope.toSubmit.triggers.findIndex(x => x.type === "Age"), 1);
 		} else {
 			var agePresent = false;
 			angular.forEach($scope.toSubmit.triggers, function (item) {
@@ -588,7 +612,6 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 			}
 		}
 	};
-
 
 	// Function to toggle appointment status filter
 	$scope.appointmentStatusUpdate = function (entrySelected) {
@@ -774,65 +797,92 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 	$scope.filter = $filter('filter');
 
 	// Function to toggle trigger in a list on/off
-	$scope.selectTrigger = function (trigger, selectAll) {
+	$scope.selectTrigger = function (trigger, selectAll, menu) {
 		selectAll.all = false;
 		selectAll.checked = false;
+		menu.open = true;
 	};
 
-	// Watch fruits for changes
-	$scope.$watch('patientTriggerList|filter:{added:true}', function (nv) {
+	$scope.$watch('patientTriggerList|filter:{added:true}', function (nv, ov) {
+		nv = angular.copy(nv);
+		ov = angular.copy(ov);
+		var pos = -1;
+		if ($scope.selectAll === undefined) return;
 		if (!$scope.selectAll.patient.ignore) {
-			$scope.toSubmit.triggers = nv.map(function (patient) {
-				return {id: patient.id, type: patient.type};
+			angular.forEach(nv.filter(x => !ov.includes(x)).concat(ov.filter(x => !nv.includes(x))), function (newItem) {
+				pos = $scope.toSubmit.triggers.findIndex(x => x.id === newItem.id && x.type === newItem.type);
+				if(pos == -1 && (ov.length - nv.length != $scope.patientTriggerList.length)) {
+					$scope.toSubmit.triggers.push({id: newItem.id, type: newItem.type});
+					console.log("push 1");
+				}
+				else if (pos != -1) {
+					$scope.toSubmit.triggers.splice(pos, 1);
+				}
 			});
 		}
 		$scope.selectAll.patient.ignore = false;
 	}, true);
 
-	$scope.toggleAllTriggers = function(triggerList,searchField,selectAll) {
+	$scope.toggleAllTriggers = function(triggerList,searchField,selectAll,menu) {
 		var type = triggerList[0].type;
 		var filtered = $scope.filter(triggerList,searchField);
 		if (filtered.length === triggerList.length) { // search field wasn't used
 			angular.forEach(filterFilter($scope.toSubmit.triggers, { type: type }), function(item) {
 				$scope.toSubmit.triggers.splice($scope.toSubmit.triggers.findIndex(x => x.id === item.id && x.type === item.type), 1);
-
 			});
+			angular.forEach(filtered, function (trigger) {trigger.added = false;});
 			if (selectAll.checked) {
 				selectAll.checked = false; // toggle off
 				selectAll.all = false;
-				$scope.toSubmit.triggers.splice($scope.toSubmit.triggers.findIndex(x => x.id === 'ALL' && x.type === type), 1);
-				angular.forEach(filtered, function (trigger) {trigger.added = false;});
+				selectAll.ignore = false;
+				menu.open = false;
 			}
 			else {
 				selectAll.checked = true; // toggle on
 				selectAll.all = true;
-				angular.forEach(filtered, function (trigger) {trigger.added = true;});
-				$scope.toSubmit.triggers.push({id: 'ALL', type: type});
 				selectAll.ignore = true;
+				menu.open = true;
+				// angular.forEach(filtered, function (trigger) {trigger.added = true;});
+				$scope.toSubmit.triggers.push({id: 'ALL', type: type});
+				console.log("push 2");
 			}
+			$scope.firstInit = false;
 		}
 		else {
 			if (selectAll.checked) {
 				selectAll.checked = false; // toggle off
 				selectAll.all = false;
+				selectAll.ignore = false;
+				menu.open = false;
 				angular.forEach(filtered, function (trigger) {
-					if ($scope.toSubmit.triggers.findIndex(x => x.id === trigger.id && x.type === trigger.type) === -1) {
+					if ($scope.toSubmit.triggers.findIndex(x => x.id === trigger.id && x.type === trigger.type) === -1)
 						$scope.toSubmit.triggers.splice($scope.toSubmit.triggers.findIndex(x => x.id === trigger.id && x.type === trigger.type), 1);
-					}
 					trigger.added = false;
 				});
 			}
 			else {
 				selectAll.checked = true; // toggle on
+				selectAll.ignore = true;
+				menu.open = true;
 				angular.forEach(filtered, function (trigger) {
 					if ($scope.toSubmit.triggers.findIndex(x => x.id === trigger.id && x.type === trigger.type) === -1) {
 						$scope.toSubmit.triggers.push({id: trigger.id, type: trigger.type});
+						console.log("push 3");
 					}
 					trigger.added = true;
 				});
 			}
+			$scope.firstInit = true;
 		}
 	};
+
+	$scope.resetAgeRange = function() {
+		$scope.demoTrigger.age.max = 130;
+		$scope.demoTrigger.age.min = 0;
+		$scope.demoTrigger.age.valid = true;
+		if ($scope.toSubmit.triggers.findIndex(x => x.type === "Age") !== -1)
+			$scope.toSubmit.triggers.splice($scope.toSubmit.triggers.findIndex(x => x.type === "Age"), 1);
+	}
 
 	// Function for selecting all triggers in a trigger list
 	$scope.selectAllTriggers = function (triggerList,triggerFilter,selectAll) {
@@ -924,11 +974,15 @@ controller('publication.add', function ($scope, $filter, $uibModal, $state, $loc
 	function addTriggers(triggerList, selectAll) {
 		if(selectAll) {
 			$scope.toSubmit.triggers.push({id: 'ALL', type: triggerList[0].type});
+			console.log("push 5");
 		}
 		else {
 			angular.forEach(triggerList, function (trigger) {
-				if (trigger.added)
-					$scope.toSubmit.triggers.push({ id: trigger.id, type: trigger.type });
+				if (trigger.added) {
+					$scope.toSubmit.triggers.push({id: trigger.id, type: trigger.type});
+					console.log("push 6");
+
+				}
 			});
 		}
 	}
