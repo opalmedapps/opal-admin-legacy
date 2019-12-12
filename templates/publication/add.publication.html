@@ -235,13 +235,7 @@
                                     </div>
                                 </uib-accordion-heading>
                                 <div ng-if="(patientTriggerList|filter:{added:true}).length && !selectAll.patient.all" class="description">
-                                    <p>
-                                    <ul style="max-height: 100px; overflow-y: auto;">
-                                        <li ng-repeat="patient in patientTriggerList | filter: {added: true} : 1">
-                                            {{patient.name}}
-                                        </li>
-                                    </ul>
-                                    </p>
+                                    <p><ul style="max-height: 100px; overflow-y: auto;"><li ng-repeat="patient in patientTriggerList | filter: {added: true} : 1">{{patient.name}}</li></ul></p>
                                 </div>
                                 <div ng-if="selectAll.patient.all" class="description">
                                     <p>
@@ -303,44 +297,44 @@
                                 </div>
                             </div>
                             <!-- SECTION: Appointment triggers -->
-                            <div uib-accordion-group is-open="triggerSection.appointment.open" class="panel-container summary-box " ng-class="{fadeIn:triggerSection.show}" is-disabled="!checkTriggers(appointmentTriggerList)" ng-if="checkTriggers(appointmentTriggerList) && triggerSection.appointment.available">
+                            <div uib-accordion-group is-open="triggerSection.appointment.open" class="panel-container summary-box " ng-class="{fadeIn:triggerSection.show}" ng-if="(toSubmit.triggers|filter:{type:'Appointment'}).length && triggerSection.appointment.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
-                                            <span ng-if="checkTriggers(appointmentTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                            <span ng-if="(toSubmit.triggers|filter:{type:'Appointment'}).length" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
                                             <strong>{{'PUBLICATION.ADD.APPT_TRIGGERS'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.appointment.open, 'glyphicon-chevron-right': !triggerSection.appointment.open}" ng-if="checkTriggers(appointmentTriggerList)"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.appointment.open, 'glyphicon-chevron-right': !triggerSection.appointment.open}" ng-if="(toSubmit.triggers|filter:{type:'Appointment'}).length"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
-                                <div ng-if="checkTriggers(appointmentTriggerList) && !selectAll.appointment.all" class="description">
-                                    <p><ul style="max-height: 100px; overflow-y: auto;"><li ng-repeat="appointment in appointmentTriggerList | filter: {added: 1} : 1">{{appointment.name_display}}</li></ul></p>
+                                <div ng-if="(appointmentTriggerList|filter:{added:true}).length && !selectAll.appointment.all" class="description">
+                                    <p><ul style="max-height: 100px; overflow-y: auto;"><li ng-repeat="appointment in appointmentTriggerList | filter: {added: true} : 1">{{appointment.name_display}}</li></ul></p>
                                 </div>
                                 <div ng-if="selectAll.appointment.all" class="description">
                                     <p><span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>{{'PUBLICATION.ADD.ALL_APPT'|translate}}</p>
                                 </div>
                             </div>
                             <!-- SECTION: Diagnosis triggers -->
-                            <div uib-accordion-group is-open="triggerSection.diagnosis.open" class="panel-container summary-box " ng-class="{fadeIn:triggerSection.show}" is-disabled="!checkTriggers(dxTriggerList)" ng-if="checkTriggers(dxTriggerList) && triggerSection.diagnosis.available">
+                            <div uib-accordion-group is-open="triggerSection.diagnosis.open" class="panel-container summary-box " ng-class="{fadeIn:triggerSection.show}" ng-if="(toSubmit.triggers|filter:{type:'Diagnosis'}).length && triggerSection.diagnosis.available">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
-                                            <span ng-if="checkTriggers(dxTriggerList)" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                            <span ng-if="(toSubmit.triggers|filter:{type:'Diagnosis'}).length" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
                                             <strong>{{'PUBLICATION.ADD.DIAGNOSIS_TRIGGERS'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.diagnosis.open, 'glyphicon-chevron-right': !triggerSection.diagnosis.open}" ng-if="checkTriggers(dxTriggerList)"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.diagnosis.open, 'glyphicon-chevron-right': !triggerSection.diagnosis.open}" ng-if="(toSubmit.triggers|filter:{type:'Diagnosis'}).length"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
-                                <div ng-if="checkTriggers(dxTriggerList) && !selectAll.diagnosis.all" class="description">
-                                    <p><ul style="max-height: 100px; overflow-y: auto;"><li ng-repeat="dx in dxTriggerList | filter: {added: 1} : 1">{{dx.name_display}}</li></ul></p>
+                                <div ng-if="(dxTriggerList|filter:{added:true}).length && !selectAll.diagnosis.all" class="description">
+                                    <p><ul style="max-height: 100px; overflow-y: auto;"><li ng-repeat="dx in dxTriggerList | filter: {added: true} : 1">{{dx.name_display}}</li></ul></p>
                                 </div>
                                 <div ng-if="selectAll.diagnosis.all" class="description">
                                     <p><span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>{{'PUBLICATION.ADD.ALL_DIAGNOSES'|translate}}</p>
@@ -442,11 +436,11 @@
                             <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkForm()">
                                 <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
                                     <span style="padding: 0 10px;">
-                                        <h2>{{'PUBLICATION.ADD.STEP'|translate}} {{numOfCompletedSteps}} {{'PUBLICATION.ADD.OF'|translate}} {{stepTotal}} {{'PUBLICATION.ADD.COMPLETED'|translate}}</h2>
+                                        <h2>{{'PUBLICATION.ADD.STEP'|translate}} {{completedSteps}} {{'PUBLICATION.ADD.OF'|translate}} {{totalSteps}} {{'PUBLICATION.ADD.COMPLETED'|translate}}</h2>
                                     </span>
                                 </div>
                                 <div class="progress progress-striped active">
-                                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                                    <div class="progress-bar" ng-class="{'progress-bar-success': formReady}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
                                     </div>
                                 </div>
                             </div>
@@ -613,9 +607,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row" ng-if="leftMenu.publishDateTime.display">
                                     <div class="col-xs-12">
-                                        <button class="btn btn-default" ng-click="">{{'PUBLICATION.ADD.RESET_DATE'|translate}}</button>
+                                        <button class="btn btn-danger" ng-click="resetPublishDate()"><span style="font-size: 20px;">{{'PUBLICATION.ADD.RESET_DATE'|translate}}</span></button>
                                     </div>
                                 </div>
                             </div>
@@ -945,24 +939,22 @@
                                         <div class="panel-info">
                                             <div class="panel-content">
                                                 <div class="panel-input">
-                                                    <div class="list-space">
-                                                        <div class="input-group">
-                                                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                                                            <input maxlength="100" class="form-control" type="text" ng-model="appointmentSearchField" ng-change="searchAppointment(appointmentSearchField)" placeholder="{{'PUBLICATION.ADD.SEARCH'|translate}}"/>
-                                                        </div>
-                                                        <div style="padding: 10px;">
-                                                            <label>
-                                                                <input type="checkbox" ng-click="selectAllTriggers(appointmentTriggerList, searchAppointmentFilter, selectAll.appointment)" ng-checked="selectAll.appointment.checked"> {{'PUBLICATION.ADD.SELECT_ALL'|translate}}
-                                                            </label>
-                                                        </div>
-                                                        <ul class="list-items">
-                                                            <li ng-repeat="appointment in appointmentTriggerList | filter: searchAppointmentFilter">
-                                                                <label>
-                                                                    <input type="checkbox" ng-click="selectTrigger(appointment, selectAll.appointment)" ng-checked="appointment.added" /> {{appointment.name_display}}
-                                                                </label>
-                                                            </li>
-                                                        </ul>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                        <input maxlength="100" class="form-control" type="text" ng-model="appointmentSearchField" ng-change="selectAll.appointment.checked = false;" ng-disabled="selectAll.appointment.checked && selectAll.appointment.all" placeholder="{{'PUBLICATION.ADD.SEARCH'|translate}}"/>
                                                     </div>
+                                                    <div style="padding: 10px;">
+                                                        <label>
+                                                            <input type="checkbox" ng-click="toggleAllTriggers(appointmentTriggerList, appointmentSearchField, selectAll.appointment, triggerSection.appointment)" ng-checked="selectAll.appointment.checked"> {{'PUBLICATION.ADD.SELECT_ALL'|translate}}
+                                                        </label>
+                                                    </div>
+                                                    <ul class="list-items" ng-show="!selectAll.appointment.checked || !selectAll.appointment.all">
+                                                        <li ng-repeat="appointment in appointmentTriggerList | filter: appointmentSearchField">
+                                                            <label>
+                                                                <input ng-disabled="selectAll.appointment.checked && selectAll.appointment.all" type="checkbox" ng-click="selectTrigger(appointment, selectAll.appointment, triggerSection.appointment)" ng-model="appointment.added" /> {{appointment.name_display}}
+                                                            </label>
+                                                        </li>
+                                                    </ul>
                                                 </div>
                                             </div>
                                         </div>
@@ -990,24 +982,22 @@
                                         <div class="panel-info">
                                             <div class="panel-content">
                                                 <div class="panel-input">
-                                                    <div class="list-space">
-                                                        <div class="input-group">
-                                                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                                                            <input maxlength="100" class="form-control" type="text" ng-model="dxSearchField" ng-change="searchDiagnosis(dxSearchField)" placeholder="{{'PUBLICATION.ADD.SEARCH'|translate}}"/>
-                                                        </div>
-                                                        <div style="padding: 10px;">
-                                                            <label>
-                                                                <input type="checkbox" ng-click="selectAllTriggers(dxTriggerList, searchDxFilter, selectAll.diagnosis)" ng-checked="selectAll.diagnosis.checked"> {{'PUBLICATION.ADD.SELECT_ALL'|translate}}
-                                                            </label>
-                                                        </div>
-                                                        <ul class="list-items">
-                                                            <li ng-repeat="diagnosis in dxTriggerList | filter: searchDxFilter">
-                                                                <label>
-                                                                    <input type="checkbox" ng-click="selectTrigger(diagnosis, selectAll.diagnosis)" ng-checked="diagnosis.added" /> {{diagnosis.name_display}}
-                                                                </label>
-                                                            </li>
-                                                        </ul>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                        <input maxlength="100" class="form-control" type="text" ng-model="dxSearchField" ng-change="selectAll.diagnosis.checked = false;" ng-disabled="selectAll.diagnosis.checked && selectAll.diagnosis.all" placeholder="{{'PUBLICATION.ADD.SEARCH'|translate}}"/>
                                                     </div>
+                                                    <div style="padding: 10px;">
+                                                        <label>
+                                                            <input type="checkbox" ng-click="toggleAllTriggers(dxTriggerList, dxSearchField, selectAll.diagnosis, triggerSection.diagnosis)" ng-checked="selectAll.diagnosis.checked"> {{'PUBLICATION.ADD.SELECT_ALL'|translate}}
+                                                        </label>
+                                                    </div>
+                                                    <ul class="list-items" ng-show="!selectAll.diagnosis.checked || !selectAll.diagnosis.all">
+                                                        <li ng-repeat="diagnosis in dxTriggerList | filter: dxSearchField">
+                                                            <label>
+                                                                <input ng-disabled="selectAll.diagnosis.checked && selectAll.diagnosis.all" type="checkbox" ng-click="selectTrigger(diagnosis, selectAll.diagnosis, triggerSection.diagnosis)" ng-model="diagnosis.added" /> {{diagnosis.name_display}}
+                                                            </label>
+                                                        </li>
+                                                    </ul>
                                                 </div>
                                             </div>
                                         </div>
@@ -1035,24 +1025,22 @@
                                         <div class="panel-info">
                                             <div class="panel-content">
                                                 <div class="panel-input">
-                                                    <div class="list-space">
-                                                        <div class="input-group">
-                                                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                                                            <input maxlength="100" class="form-control" type="text" ng-model="doctorSearchField" ng-change="searchDoctor(doctorSearchField)" placeholder="{{'PUBLICATION.ADD.SEARCH'|translate}}"/>
-                                                        </div>
-                                                        <div style="padding: 10px;">
-                                                            <label>
-                                                                <input type="checkbox" ng-click="selectAllTriggers(doctorTriggerList, searchDoctorFilter, selectAll.doctor)" ng-checked="selectAll.doctor.checked"> {{'PUBLICATION.ADD.SELECT_ALL'|translate}}
-                                                            </label>
-                                                        </div>
-                                                        <ul class="list-items">
-                                                            <li ng-repeat="doctor in doctorTriggerList | filter: searchDoctorFilter">
-                                                                <label>
-                                                                    <input type="checkbox" ng-click="selectTrigger(doctor, selectAll.doctor)" ng-checked="doctor.added" /> {{doctor.name}}
-                                                                </label>
-                                                            </li>
-                                                        </ul>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                                                        <input maxlength="100" class="form-control" type="text" ng-model="doctorSearchField" ng-change="selectAll.doctor.checked = false;" ng-disabled="selectAll.doctor.checked && selectAll.doctor.all" placeholder="{{'PUBLICATION.ADD.SEARCH'|translate}}"/>
                                                     </div>
+                                                    <div style="padding: 10px;">
+                                                        <label>
+                                                            <input type="checkbox" ng-click="toggleAllTriggers(doctorTriggerList, doctorSearchField, selectAll.doctor, triggerSection.doctor)" ng-checked="selectAll.doctor.checked"> {{'PUBLICATION.ADD.SELECT_ALL'|translate}}
+                                                        </label>
+                                                    </div>
+                                                    <ul class="list-items" ng-show="!selectAll.doctor.checked || !selectAll.doctor.all">
+                                                        <li ng-repeat="doctor in doctorTriggerList | filter: doctorSearchField">
+                                                            <label>
+                                                                <input ng-disabled="selectAll.doctor.checked && selectAll.doctor.all" type="checkbox" ng-click="selectTrigger(doctor, selectAll.doctor, triggerSection.doctor)" ng-model="doctor.added" /> {{doctor.name}}
+                                                            </label>
+                                                        </li>
+                                                    </ul>
                                                 </div>
                                             </div>
                                         </div>
