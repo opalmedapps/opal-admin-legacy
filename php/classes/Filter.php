@@ -23,6 +23,9 @@ class Filter {
         );
         $databaseObj = new Database();
 
+        $idDoctors = array();
+        $idMachines = array();
+
         try {
 
             // ***********************************
@@ -35,7 +38,8 @@ class Filter {
                 $sql = "
                     SELECT DISTINCT
                         Doctor.ResourceSer,
-                        Doctor.LastName
+                        Doctor.LastName,
+                        Doctor.FirstName
                     FROM
                         variansystem.dbo.Doctor Doctor,
                         variansystem.dbo.PatientDoctor PatientDoctor
@@ -53,12 +57,13 @@ class Filter {
                 
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
                     $doctorArray = array(
-                        'name'  => $data[1],
+                        'name'  => $data[2] . " " . $data[1] . " (" . $data[0] . ")",
                         'id'    => $data[0],
                         'type'  => 'Doctor',
                         'added' => 0
                     );
                     array_push($filters['doctors'], $doctorArray);
+                    array_push($idDoctors, $data[0]);
                 }
 
                 $sql = "
@@ -79,12 +84,14 @@ class Filter {
                 
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
                     $machineArray = array(
-                        'name'  => $data[1],
+                        'name'  => $data[1] . " (" . $data[0] . ")",
                         'id'    => $data[0],
                         'type'  => 'Machine',
                         'added' => 0
                     );
                     array_push($filters['machines'], $machineArray);
+                    array_push($idMachines, $data[0]);
+
                 }
 
             }
@@ -291,6 +298,8 @@ class Filter {
                     
                     WHERE
                         Doctor.ResourceSerNum > 0
+                    AND
+                       Doctor.DoctorAriaSer NOT IN (".implode(", " , $idDoctors).") 
                     GROUP BY 
                         Doctor.LastName
                     ORDER BY
@@ -300,12 +309,16 @@ class Filter {
                 $query->execute();
 
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+
                     $doctorArray = array(
-                        'name'  => preg_replace("/^[Dd][Rr]([.]?[ ]+){1}/", "", $data[2]) . " " . $data[1],
+                        'name'  => preg_replace("/^[Dd][Rr]([.]?[ ]+){1}/", "", $data[2]) . " " . $data[1] . " (" . $data[0] . ")",
                         'id'    => $data[0],
                         'type'  => 'Doctor',
                         'added' => 0
                     );
+
+
                     array_push($filters['doctors'], $doctorArray);
                 }
 
@@ -317,8 +330,10 @@ class Filter {
                     FROM    
                         Resource
                     WHERE
-                        ResourceName     LIKE 'STX%'
-                        OR  ResourceName     LIKE 'TB%'
+                        (ResourceName     LIKE 'STX%'
+                        OR  ResourceName     LIKE 'TB%')
+                        AND
+                       ResourceAriaSer NOT IN (".implode(", " , $idMachines).") 
                     ORDER BY 	
                         ResourceName;
                 ";
@@ -328,7 +343,7 @@ class Filter {
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                     $machineArray = array(
-                        'name'  => $data[1],
+                        'name'  => $data[1] . " (" . $data[0] . ")",
                         'id'    => $data[0],
                         'type'  => 'Machine',
                         'added' => 0
@@ -345,6 +360,10 @@ class Filter {
 		}
     }
 
+
+    function id_sort($a, $b) {
+
+    }
 }
             
 

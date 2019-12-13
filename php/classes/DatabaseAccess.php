@@ -8,15 +8,10 @@
 
 class DatabaseAccess extends HelpSetup
 {
-    /*
-     * The following constants are used by the database class to manually insert the creation date by creating an array
-     * of exception fields. WARNING!!! THIS METHOD BYPASS THE BINDPARAM METHOD OF PHP AND CAN CAUSE A SERIOUS SECURITY
-     * RISK! ONLY USE IT IF YOU HAVE THE APPROVAL OF THE TEAM!
-     * */
-
     protected $connection;
     protected $serverName;
     protected $port;
+    protected $dsn;
     protected $usernameDB;
     protected $password;
     protected $databaseName;
@@ -26,7 +21,11 @@ class DatabaseAccess extends HelpSetup
     protected $userRole;
 
     /* constructor that connects to the database */
-    function __construct($newServer = "localhost", $newDB = "", $newPort = "3306", $newUserDB = "root", $newPass = "", $newUserId = false) {
+    function __construct($newServer = "localhost", $newDB = "", $newPort = "3306", $newUserDB = "root", $newPass = "", $dsn = false, $newUserId = false) {
+        if(!$dsn)
+            $this->dsn = "mysql:host=$newServer;port=$newPort;dbname=$newDB";
+        else
+            $this->dsn = $dsn;
         $this->serverName = $newServer;
         $this->port = $newPort;
         $this->usernameDB = $newUserDB;
@@ -114,9 +113,7 @@ class DatabaseAccess extends HelpSetup
      * */
     protected function _connectTo() {
         try {
-            $this->connection = new PDO(
-                "mysql:host=$this->serverName;port=$this->port;dbname=$this->databaseName", $this->usernameDB, $this->password,
-                array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+            $this->connection = new PDO($this->dsn, $this->usernameDB, $this->password, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
         catch(PDOException $e) {
@@ -241,23 +238,17 @@ class DatabaseAccess extends HelpSetup
      * Exit:    ID of last entry
      */
     protected function _queryInsert($sqlInsert, $paramList = array()) {
-//        foreach($paramList as $value) {
-//            if (in_array(substr($value["parameter"], 1), $this->exception_fields))
-//                $sqlInsert = str_replace($value["parameter"], $value["variable"], $sqlInsert);
-//        }
         $cpt = 0;
         try {
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $stmt = $this->connection->prepare($sqlInsert);
             if(count($paramList) > 0) {
                 foreach($paramList as $value) {
-//                    if(!in_array(substr($value["parameter"], 1), $this->exception_fields)) {
-                        $cpt++;
-                        if(isset($value["data_type"]) &&  $value["data_type"] != "")
-                            $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
-                        else
-                            $stmt->bindParam($value["parameter"], $value["variable"], self::_getTypeOf($value["variable"]));
-//                    }
+                    $cpt++;
+                    if(isset($value["data_type"]) &&  $value["data_type"] != "")
+                        $stmt->bindParam($value["parameter"], $value["variable"], $value["data_type"]);
+                    else
+                        $stmt->bindParam($value["parameter"], $value["variable"], self::_getTypeOf($value["variable"]));
                 }
             }
             $stmt->execute();

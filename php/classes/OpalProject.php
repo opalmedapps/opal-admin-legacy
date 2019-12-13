@@ -19,6 +19,7 @@ class OpalProject
             OPAL_DB_PORT,
             OPAL_DB_USERNAME,
             OPAL_DB_PASSWORD,
+            false,
             $OAUserId
         );
         $this->opalDB->setSessionId($sessionId);

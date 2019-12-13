@@ -11,8 +11,8 @@ class DatabaseOpal extends DatabaseAccess {
     /*
      * Constructor of the class
      * */
-    public function __construct($newServer = "localhost", $newDB = "", $newPort = "3306", $newUserDB = "root", $newPass = "", $newOAUserId = false) {
-        parent::__construct($newServer, $newDB, $newPort, $newUserDB, $newPass, $newOAUserId);
+    public function __construct($newServer = "localhost", $newDB = "", $newPort = "3306", $newUserDB = "root", $newPass = "", $dsn = false, $newOAUserId = false) {
+        parent::__construct($newServer, $newDB, $newPort, $newUserDB, $newPass, $dsn, $newOAUserId);
         $newOAUserId = strip_tags($newOAUserId);
         $userInfo = $this->_getUserInfoFromDB($newOAUserId);
         $this->OAUserId = $userInfo["OAUserId"];
