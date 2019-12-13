@@ -22,6 +22,8 @@ $json = file_get_contents($abspath . 'config.json');
 // Decode json to variable
 $config = json_decode($json, true);
 
+$localHostAddr = array('127.0.0.1','localhost','::1');
+
 // DEFINE LEGACY QUESTIONNAIRE SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MySQL setup.
 define( "QUESTIONNAIRE_DB_HOST", $config['databaseConfig']['questionnaire']['host'] );
@@ -35,8 +37,10 @@ define( "QUESTIONNAIRE_DB_PASSWORD", $config['databaseConfig']['questionnaire'][
 // NOTE: This works for a MicrosoftSQL (MSSQL) setup.
 define( "ARIA_DB_HOST", $config['databaseConfig']['aria']['host'] );
 define( "ARIA_DB_PORT", $config['databaseConfig']['aria']['port']);
-//define( "ARIA_DB_DSN", "dblib:host=" . ARIA_DB_HOST . ":" . ARIA_DB_PORT . "\\database" . ";charset=utf8");
-define( "ARIA_DB_DSN", "odbc:Driver={SQL Server};Server=" . ARIA_DB_HOST);
+if(in_array($_SERVER['REMOTE_ADDR'], $localHostAddr))
+    define( "ARIA_DB_DSN", "odbc:Driver={SQL Server};Server=" . ARIA_DB_HOST);
+else
+    define( "ARIA_DB_DSN", "dblib:host=" . ARIA_DB_HOST . ":" . ARIA_DB_PORT . "\\database" . ";charset=utf8");
 define( "ARIA_DB_USERNAME", $config['databaseConfig']['aria']['username'] );
 define( "ARIA_DB_PASSWORD", $config['databaseConfig']['aria']['password'] );
 
@@ -127,8 +131,12 @@ define("LEGACY_CHECKBOX", 4);
 define("LEGACY_YESNO", 9);
 define("DEFAULT_TYPE", TEXT_BOX);
 
+define("ARIA_SOURCE_DB", 1);
+define("MEDIVISIT_SOURCE_DB", 2);
+define("MOSAIQ_SOURCE_DB", 3);
+
 /*
- * Module ID of each module in the opolAdmin
+ * Module ID of each module in the opalAdmin
  * */
 define("MODULE_POST", 2);
 define("MODULE_EDU_MAT", 3);
