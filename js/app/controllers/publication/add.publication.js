@@ -12,11 +12,8 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 
 		// Default boolean variables
 
-		$scope.moduleSection = {open:false, show:true};
-		$scope.materialSection = {open:false, show:false};
-		$scope.publicationNameSections = {open:false, show:false};
-		$scope.publishDate = {available:false, open:false, show:false, mandatory:false};
-		$scope.publishFrequencySection = {available:false, open: false, show:false};
+		$scope.publishDate = {available:false};
+		$scope.publishFrequencySection = {available:false};
 		$scope.triggerSection = {
 			show:false,
 			patient: {available:false,open:false, show:false},
@@ -31,6 +28,15 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		$scope.language = Session.retrieveObject('user').language;
 		$scope.showAssigned = false;
 		$scope.hideAssigned = false;
+
+		$scope.popup = {
+			opened: false
+		};
+
+		$scope.dateOptions = {
+			'year-format': "'yy'",
+			'starting-day': 1
+		};
 
 		// Initialize a list of sexes
 		if ($scope.language.toUpperCase() === "FR")
@@ -226,8 +232,6 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		});
 
 		function initialization() {
-			console.log("i init");
-
 			$scope.toSubmit = {
 				moduleId: {
 					value: null,
@@ -348,9 +352,12 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 
 		initialization();
 
+		// $scope.$watch('toSubmit', function() {
+		// 	console.log("watch toSubmit");
+		// 	console.log($scope.toSubmit);
+		// }, true);
+
 		$scope.$watch('toSubmit.triggers', function() {
-			console.log("watch toSubmit.triggers");
-			console.log($scope.toSubmit.triggers);
 			$scope.validator.triggers.completed = ($scope.toSubmit.triggers.length > 0);
 		}, true);
 
@@ -476,32 +483,53 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			delete $scope.validator.occurrence;
 		};
 
+		$scope.preparePublishDate = function() {
+			$scope.leftMenu.publishDateTime.display = true;
+			if ($scope.toSubmit.publishDateTime != "undefined") {
+				$scope.toSubmit.publishDateTime = {
+					publish_date: null,
+					publish_time: null,
+				};
+			}
+			if ($scope.validator.publishDateTime != "undefined") {
+				$scope.validator.publishDateTime = {
+					completed: false,
+					mandatory: false,
+				};
+			}
+		};
+
+		$scope.deletePublishDate = function() {
+			$scope.leftMenu.publishDateTime.display = false;
+			delete $scope.toSubmit.publishDateTime;
+			delete $scope.validator.publishDateTime;
+		};
+
 		$scope.updateMaterial = function (selectedAt) {
-			//leftMenu.name.display
+			$scope.deletePublishDate();
+
 			$scope.leftMenu.materialId.display = (selectedAt.ID != null);
 			$scope.toSubmit.materialId.type = selectedAt.type_EN;
 			$scope.leftMenu.materialId.preview = selectedAt.name_display;
 
 			if ($scope.subModule !== null) {
-				if ($scope.toSubmit.publishDateTime != "undefined") {
-					$scope.toSubmit.publishDateTime = {
-						publish_date: null,
-						publish_time: null,
-					};
-				}
-				if ($scope.validator.publishDateTime != "undefined") {
-					$scope.validator.publishDateTime = {
-						completed: false,
-						mandatory: false,
-					};
-				}
 				angular.forEach($scope.subModule, function (sub) {
 					if (sub.name_EN === $scope.toSubmit.materialId.type) {
 						if (sub.publicationDate === 1) {
-							$scope.validator.publishDateTime.mandatory = true;
-						}
-						else {
-							$scope.validator.publishDateTime.mandatory = false;
+
+
+							if ($scope.toSubmit.publishDateTime != "undefined") {
+								$scope.toSubmit.publishDateTime = {
+									publish_date: null,
+									publish_time: null,
+								};
+							}
+							if ($scope.validator.publishDateTime != "undefined") {
+								$scope.validator.publishDateTime = {
+									completed: false,
+									mandatory: true,
+								};
+							}
 						}
 					}
 				});
@@ -509,9 +537,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 				delete $scope.toSubmit.publishDateTime;
 				delete $scope.validator.publishDateTime;
 			}
-
 			$scope.leftMenu.materialId.open = true;
-
 			$scope.validator.materialId.completed = true;
 		};
 
@@ -527,12 +553,6 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			$scope.leftMenu.publishDateTime.display = $scope.toSubmit.publishDateTime.publish_date || $scope.toSubmit.publishDateTime.publish_time;
 			$scope.leftMenu.publishDateTime.open = $scope.leftMenu.publishDateTime.display;
 		};
-
-		$scope.resetPublishDate = function() {
-			$scope.toSubmit.publishDateTime.publish_date = null;
-			$scope.toSubmit.publishDateTime.publish_time = null;
-			$scope.publishDateUpdate();
-		}
 
 		// Function to toggle necessary changes when updating the sex
 		$scope.sexUpdate = function (sex) {
@@ -633,78 +653,6 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 
 		// Submit new publication
 		$scope.submitPublication = function () {
-			// if ($scope.checkForm()) {
-			// if ($scope.demoTrigger.sex)
-			// 	$scope.toSubmit.triggers.push({ id: $scope.demoTrigger.sex, type: 'Sex' });
-			// if ($scope.demoTrigger.age.min >= 0 && $scope.demoTrigger.age.max <= 130) { // i.e. not empty
-			// 	if ($scope.demoTrigger.age.min !== 0 || $scope.demoTrigger.age.max !== 130) { // triggers were changed
-			// 		$scope.toSubmit.triggers.push({
-			// 			id: String($scope.demoTrigger.age.min).concat(',', String($scope.demoTrigger.age.max)),
-			// 			type: 'Age'
-			// 		});
-			// 	}
-			// }
-
-			// addTriggers($scope.appointmentStatusList);
-			// addTriggers($scope.appointmentTriggerList, $scope.selectAll.appointment.all);
-			// addTriggers($scope.dxTriggerList, $scope.selectAll.diagnosis.all);
-			// addTriggers($scope.doctorTriggerList, $scope.selectAll.doctor.all);
-			// addTriggers($scope.machineTriggerList, $scope.selectAll.machine.all);
-			// addTriggers($scope.patientTriggerList, $scope.selectAll.patient.all);
-			/*			if ($scope.showFrequency) {
-							$scope.toSubmit.occurrence.set = 1;
-							// convert dates to timestamps
-							$scope.toSubmit.occurrence.start_date = moment($scope.toSubmit.occurrence.start_date).format('X');
-							if ($scope.toSubmit.occurrence.end_date) {
-								$scope.toSubmit.occurrence.end_date = moment($scope.toSubmit.occurrence.end_date).format('X');
-							}
-							if ($scope.toSubmit.occurrence.frequency.custom) {
-								$scope.toSubmit.occurrence.frequency.meta_key = $scope.customFrequency.unit.meta_key;
-								$scope.toSubmit.occurrence.frequency.meta_value = $scope.customFrequency.meta_value;
-								$scope.toSubmit.occurrence.frequency.additionalMeta = [];
-								angular.forEach(Object.keys($scope.additionalMeta), function(meta_key){
-									if ($scope.additionalMeta[meta_key].length) {
-										var metaDetails = {
-											meta_key: meta_key,
-											meta_value: $scope.additionalMeta[meta_key]
-										};
-										$scope.toSubmit.occurrence.frequency.additionalMeta.push(metaDetails);
-									}
-								});
-							}
-							else {
-								$scope.toSubmit.occurrence.frequency.additionalMeta = [];
-							}
-						}
-
-						// For some reason the HTML text fields add a zero-width-space
-						// https://stackoverflow.com/questions/24205193/javascript-remove-zero-width-space-unicode-8203-from-string
-						$scope.toSubmit.name_EN = $scope.toSubmit.name_EN.replace(/\u200B/g,'');
-						$scope.toSubmit.name_FR = $scope.toSubmit.name_FR.replace(/\u200B/g,'');
-
-						angular.forEach($scope.termList, function (term) {
-							if (term.added)
-								$scope.toSubmit.terms.push(term);
-						});
-
-						var currentUser = Session.retrieveObject('user');
-
-						if (!$scope.publishDate.available) {
-							delete $scope.toSubmit["publish_date"];
-							delete $scope.toSubmit["publish_time"];
-						}
-
-						if (!$scope.publishFrequencySection.available) {
-							delete $scope.toSubmit["occurrence"];
-						}
-
-						//console.log($scope.toSubmit["triggers"]);
-
-						if(typeof $scope.toSubmit["triggers"] === 'undefined' || $scope.toSubmit["triggers"].length <= 0)
-							alert($filter('translate')('PUBLICATION.ADD.TRIGGER_REQUIRED'));
-						else {*/
-
-
 			if ($scope.showFrequency) {
 				$scope.toSubmit.occurrence.set = 1;
 				$scope.toSubmit.occurrence.start_date = moment($scope.toSubmit.occurrence.start_date).format('X');
@@ -727,8 +675,15 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 				}
 			}
 
+			if ($scope.publishDate.available) {
+				if (typeof $scope.toSubmit.publishDateTime !== "undefined") {
+					$scope.toSubmit.publishDateTime.publish_date = String(moment($scope.toSubmit.publishDateTime.publish_date).format("YYYY-MM-DD")) + " " +
+						String(moment($scope.toSubmit.publishDateTime.publish_time).format("HH:mm"));
+					delete $scope.toSubmit.publishDateTime.publish_time;
+				}
+			}
 
-			$scope.toSubmit.user = Session.retrieveObject('user').id;
+			console.log( $scope.toSubmit);
 			$.ajax({
 				type: "POST",
 				url: "publication/insert/publication",
@@ -742,8 +697,6 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 					//$state.go('publication');
 				}
 			});
-			// }
-			// }
 		};
 
 		$scope.searchAt = function (field) {
@@ -756,37 +709,13 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			return !$scope.atEntered || keyword.test(Filter.name_display);
 		};
 
-		$scope.popup = {
-			opened: false
-		};
-
 		// Open popup calendar
 		$scope.open = function () {
 			$scope.popup.opened = true;
 		};
 
-		$scope.dateOptions = {
-			'year-format': "'yy'",
-			'starting-day': 1
-		};
-
-		// Date format
-		$scope.format = 'yyyy-MM-dd';
-
-		// object for cron repeat units
-		$scope.repeatUnits = [
-			'Minutes',
-			'Hours'
-		];
-
-		// Responsible for "searching" in search bars
-		$scope.filter = $filter('filter');
-
 		// Function to toggle trigger in a list on/off
 		$scope.selectTrigger = function (trigger, selectAll, menu) {
-
-			console.log(trigger);
-
 			selectAll.all = false;
 			selectAll.checked = false;
 			menu.open = true;
@@ -801,22 +730,15 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		$scope.changeTriggers = function(triggerList) {
 			triggerList = angular.copy(triggerList);
 			var pos = -1;
-
-			console.log(triggerList);
-
 			angular.forEach(triggerList, function (item) {
 				pos = $scope.toSubmit.triggers.findIndex(x => x.id === item.id && x.type === item.type);
 				if(item.added) {
 					if (pos == -1) {
-						console.log("not found and pushed");
-						console.log(item.name + " " + item.id + " " + item.type);
 						$scope.toSubmit.triggers.push({id: item.id, type: item.type});
 					}
 				}
 				else {
 					if (pos != -1) {
-						console.log("found and removed");
-						console.log(item.name + " " + item.id + " " + item.type);
 						$scope.toSubmit.triggers.splice(pos, 1);
 					}
 				}
@@ -841,7 +763,6 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 					selectAll.all = true;
 					menu.open = true;
 					$scope.toSubmit.triggers.push({id: 'ALL', type: type});
-					console.log("push 2");
 				}
 			} else {
 				if (selectAll.checked) {
@@ -860,7 +781,6 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 					angular.forEach(filtered, function (trigger) {
 						if ($scope.toSubmit.triggers.findIndex(x => x.id === trigger.id && x.type === trigger.type) === -1) {
 							$scope.toSubmit.triggers.push({id: trigger.id, type: trigger.type});
-							console.log("push 3");
 						}
 						trigger.added = true;
 					});
@@ -875,119 +795,6 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			if ($scope.toSubmit.triggers.findIndex(x => x.type === "Age") !== -1)
 				$scope.toSubmit.triggers.splice($scope.toSubmit.triggers.findIndex(x => x.type === "Age"), 1);
 		}
-
-		// Function for selecting all triggers in a trigger list
-		$scope.selectAllTriggers = function (triggerList,triggerFilter,selectAll) {
-			// var filtered = $scope.filter(triggerList,triggerFilter);
-			// console.log(filtered);
-			//
-			// if (filtered.length == triggerList.length) { // search field wasn't used
-			// 	if (selectAll.checked) {
-			// 		angular.forEach(filtered, function (trigger) {
-			// 			trigger.added = 0;
-			// 		});
-			// 		selectAll.checked = false; // toggle off
-			// 		selectAll.all = false;
-			// 	}
-			// 	else {
-			// 		angular.forEach(filtered, function (trigger) {
-			// 			trigger.added = 1;
-			// 		});
-			//
-			// 		selectAll.checked = true; // toggle on
-			// 		selectAll.all = true;
-			// 	}
-			// }
-			// else {
-			// 	if (selectAll.checked) { // was checked
-			// 		angular.forEach(filtered, function (trigger) {
-			// 			trigger.added = 0;
-			// 		});
-			// 		selectAll.checked = false; // toggle off
-			// 		selectAll.all = false;
-			// 	}
-			// 	else { // was not checked
-			// 		angular.forEach(filtered, function (trigger) {
-			// 			trigger.added = 1;
-			// 		});
-			//
-			// 		selectAll.checked = true; // toggle on
-			//
-			// 	}
-			// }
-
-		};
-
-		// Function to assign search fields when textbox changes
-		// $scope.searchAppointment = function (field) {
-		// 	$scope.appointmentSearchField = field;
-		// 	$scope.selectAll.appointment.all = false;
-		// };
-		// $scope.searchDiagnosis = function (field) {
-		// 	$scope.dxSearchField = field;
-		// 	$scope.selectAll.diagnosis.all = false;
-		// };
-		// $scope.searchDoctor = function (field) {
-		// 	$scope.doctorSearchField = field;
-		// 	$scope.selectAll.doctor.all = false;
-		// };
-		// $scope.searchMachine = function (field) {
-		// 	$scope.machineSearchField = field;
-		// 	$scope.selectAll.machine.all = false;
-		// };
-		// $scope.searchPatient = function (field) {
-		// 	$scope.patientSearchField = field;
-		// 	$scope.selectAll.patient.all = false;
-		// };
-
-		// Function for search through the triggers
-		// $scope.searchAppointmentFilter = function (Filter) {
-		// 	var keyword = new RegExp($scope.appointmentSearchField, 'i');
-		// 	return !$scope.appointmentSearchField || keyword.test($scope.language.toUpperCase() === "FR"?Filter.name_FR:Filter.name);
-		// };
-		// $scope.searchDxFilter = function (Filter) {
-		// 	var keyword = new RegExp($scope.dxSearchField, 'i');
-		// 	return !$scope.dxSearchField || keyword.test($scope.language.toUpperCase() === "FR"?Filter.name_FR:Filter.name);
-		// };
-		// $scope.searchDoctorFilter = function (Filter) {
-		// 	var keyword = new RegExp($scope.doctorSearchField, 'i');
-		// 	return !$scope.doctorSearchField || keyword.test(Filter.name);
-		// };
-		// $scope.searchMachineFilter = function (Filter) {
-		// 	var keyword = new RegExp($scope.machineSearchField, 'i');
-		// 	return !$scope.machineSearchField || keyword.test(Filter.name);
-		// };
-		// $scope.searchPatientFilter = function (Filter) {
-		// 	var keyword = new RegExp($scope.patientSearchField, 'i');
-		// 	return !$scope.patientSearchField || keyword.test(Filter.name);
-		// };
-
-		// Function to return triggers that have been checked
-		function addTriggers(triggerList, selectAll) {
-			if(selectAll) {
-				$scope.toSubmit.triggers.push({id: 'ALL', type: triggerList[0].type});
-				console.log("push 5");
-			}
-			else {
-				angular.forEach(triggerList, function (trigger) {
-					if (trigger.added) {
-						$scope.toSubmit.triggers.push({id: trigger.id, type: trigger.type});
-						console.log("push 6");
-
-					}
-				});
-			}
-		}
-
-		// Function to check if triggers are added
-		$scope.checkTriggers = function (triggerList) {
-			var triggersAdded = false;
-			angular.forEach(triggerList, function (trigger) {
-				if (trigger.added)
-					triggersAdded = true;
-			});
-			return triggersAdded;
-		};
 
 		// Function to check frequency trigger forms are complete
 		$scope.checkFrequencyTrigger = function () {
@@ -1150,7 +957,6 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 
 		$scope.selectFrequency = function (frequency) {
 			$scope.frequencySelected = frequency;
-			$scope.publishFrequencySection.open = true;
 			if (frequency.id != 'custom') {
 				$scope.toSubmit.occurrence.frequency.meta_value = $scope.frequencySelected.meta_value;
 				$scope.toSubmit.occurrence.frequency.meta_key = $scope.frequencySelected.meta_key;
@@ -1233,7 +1039,6 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		// Function when selecting the days on the week
 		$scope.selectDayInWeek = function (day, unit) {
 			$scope.selectedSingleDayInWeek = day;
-			$scope.publishFrequencySection.open = true;
 			if (day) {
 				if (unit == 'week') { // Selecting multiple days from week repeat interval
 
@@ -1451,7 +1256,6 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		// Function to set week of the month
 		$scope.selectWeekInMonth = function (week) {
 			$scope.selectedWeekNumberInMonth = week;
-			$scope.publishFrequencySection.open = true;
 			// If a single day was chosen
 			if (week.id && $scope.selectedSingleDayInWeek) {
 				// Manage meta data
@@ -1501,7 +1305,6 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 
 		// Function to place appropriate meta data from the month in the year
 		$scope.selectMonthInYear = function (month) {
-			$scope.publishFrequencySection.open = true;
 			if (month) {
 				$scope.selectedMonthsInYearText = ""; // Destroy text
 
