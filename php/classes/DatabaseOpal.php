@@ -386,6 +386,17 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
+     * Gets the post details with a single ID/Serial
+     * @params  ID/serial of the post
+     * @returns array with details of the post
+     * */
+    function getTriggersPerModule($moduleId) {
+        return $this->_fetchAll(SQL_OPAL_GET_TRIGGERS_NAME_PER_MODULE,
+            array(array("parameter"=>":moduleId","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT))
+        );
+    }
+
+    /*
      * Updates a post details into the database after they were validated/sanitized
      * @params  array with post details (sanitized/validated)
      * @returns number of lines modified.

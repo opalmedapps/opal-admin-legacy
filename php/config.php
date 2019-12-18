@@ -33,17 +33,6 @@ define( "QUESTIONNAIRE_DB_DSN", "mysql:host=" . QUESTIONNAIRE_DB_HOST . ";port="
 define( "QUESTIONNAIRE_DB_USERNAME", $config['databaseConfig']['questionnaire']['username'] );
 define( "QUESTIONNAIRE_DB_PASSWORD", $config['databaseConfig']['questionnaire']['password'] );
 
-// DEFINE ARIA SERVER/DATABASE CREDENTIALS HERE
-// NOTE: This works for a MicrosoftSQL (MSSQL) setup.
-define( "ARIA_DB_HOST", $config['databaseConfig']['aria']['host'] );
-define( "ARIA_DB_PORT", $config['databaseConfig']['aria']['port']);
-if(in_array($_SERVER['REMOTE_ADDR'], $localHostAddr))
-    define( "ARIA_DB_DSN", "odbc:Driver={SQL Server};Server=" . ARIA_DB_HOST);
-else
-    define( "ARIA_DB_DSN", "dblib:host=" . ARIA_DB_HOST . ":" . ARIA_DB_PORT . "\\database" . ";charset=utf8");
-define( "ARIA_DB_USERNAME", $config['databaseConfig']['aria']['username'] );
-define( "ARIA_DB_PASSWORD", $config['databaseConfig']['aria']['password'] );
-
 // DEFINE Waiting Room Management SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MySQL setup.
 define( "WRM_DB_HOST", $config['databaseConfig']['wrm']['host'] );
@@ -74,6 +63,7 @@ define( "UPLOAD_REL_PATH", FRONTEND_REL_URL . "uploads/" );
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql.php");
+require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."aria-sql.php");
 
 // Include the classes
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "OpalProject.php" );
@@ -105,6 +95,7 @@ include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseAccess.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseQuestionnaire.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseOpal.php" );
+include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseAria.php" );
 //include_once( FRONTEND_ABS_PATH . "php/classes/Upload.php");
 
 // Push Notification FCM and APN credientials.
