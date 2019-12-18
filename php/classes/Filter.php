@@ -84,7 +84,7 @@ class Filter {
                 
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
                     $machineArray = array(
-                        'name'  => $data[1] . " (" . $data[0] . ")",
+                        'name'  => $data[1],
                         'id'    => $data[0],
                         'type'  => 'Machine',
                         'added' => 0
@@ -343,7 +343,7 @@ class Filter {
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                     $machineArray = array(
-                        'name'  => $data[1] . " (" . $data[0] . ")",
+                        'name'  => $data[1],
                         'id'    => $data[0],
                         'type'  => 'Machine',
                         'added' => 0
@@ -358,11 +358,6 @@ class Filter {
         } catch (PDOException $e) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Connection to the database failed.\r\nError : ". $e->getMessage());
 		}
-    }
-
-
-    function id_sort($a, $b) {
-
     }
 }
             
