@@ -165,7 +165,7 @@ class PublishedQuestionnaire extends Questionnaire {
      * @params  array of questionnaire settings and triggers
      * @return  void
      * */
-    function insertPublXishedQuestionnaire($questionnaire) {
+    function insertPublishedQuestionnaire($questionnaire) {
         $currentQuestionnaire = $this->questionnaireDB->getQuestionnaireDetails($questionnaire["questionnaireId"]);
 
         if(count($currentQuestionnaire) != 1)

@@ -24,6 +24,7 @@ define("OPAL_FILTERS_MODIFICATION_HISTORY_TABLE","FiltersMH");
 define("OPAL_FREQUENCY_EVENTS_TABLE","FrequencyEvents");
 define("OPAL_MODULE_TABLE","module");
 define("OPAL_MODULE_PUBLICATION_SETTING_TABLE","modulePublicationSetting");
+define("OPAL_PUBLICATION_SETTING_TABLE","PublicationSetting");
 define("OPAL_POST_TABLE","PostControl");
 define("OPAL_TX_TEAM_MESSAGE_TABLE","TxTeamMessage");
 define("OPAL_ANNOUNCEMENT_TABLE","Announcement");
@@ -292,4 +293,10 @@ define("SQL_OPAL_UPDATE_POST",
 define("SQL_OPAL_MARK_RECORD_AS_DELETED", "
     UPDATE %%TABLENAME%% SET deleted = ".DELETED_RECORD.", LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId
     WHERE %%PRIMARY_KEY%% = :recordId AND deleted = ".NON_DELETED_RECORD.";
+");
+
+define("SQL_OPAL_GET_TRIGGERS_NAME_PER_MODULE", "
+    SELECT * FROM ".OPAL_PUBLICATION_SETTING_TABLE." ps
+    LEFT JOIN ".OPAL_MODULE_PUBLICATION_SETTING_TABLE." mps ON mps.publicationSettingId = ps.ID
+    WHERE mps.moduleId = :moduleId AND isTrigger = 1;
 ");

@@ -393,4 +393,17 @@ class DatabaseAccess extends HelpSetup
 
         return $this->_execute($sqlQuery, $ready);
     }
+
+    /*
+     * Fetch a specific query for the triggers
+     * @params  void
+     * @return  array of questionnaires
+     * */
+    function fetchTriggersData($sqlToFetch, $id) {
+        $results = array();
+        foreach($this->_fetchAll($sqlToFetch, array()) as $item) {
+            $results[strval($item[$id])] = $item;
+        }
+        return $results;
+    }
 }

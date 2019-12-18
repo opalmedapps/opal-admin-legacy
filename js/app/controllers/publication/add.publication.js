@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 	/******************************************************************************
 	 * Add Publication Page controller
 	 *******************************************************************************/
-	controller('publication.add', function ($scope, $filter, $uibModal, $state, $locale, publicationCollectionService, Session, filterCollectionService, FrequencyFilterService, filterFilter ) {
+	controller('publication.add', function ($scope, $filter, $uibModal, $state, $locale, publicationCollectionService, Session, filterCollectionService, FrequencyFilterService ) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -233,6 +233,8 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 
 		function initialization() {
 			$scope.toSubmit = {
+				OAUserId: Session.retrieveObject('user').id,
+				sessionid: Session.retrieveObject('user').sessionid,
 				moduleId: {
 					value: null,
 				},
@@ -749,8 +751,13 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			var type = triggerList[0].type;
 			var filtered = $scope.filter(triggerList,searchField);
 			if (filtered.length === triggerList.length) { // search field wasn't used
-				angular.forEach(filterFilter($scope.toSubmit.triggers, { type: type }), function(item) {
-					$scope.toSubmit.triggers.splice($scope.toSubmit.triggers.findIndex(x => x.id === item.id && x.type === item.type), 1);
+				angular.forEach($scope.toSubmit.triggers, function(item) {
+					if(item.type === type) {
+						pos = $scope.toSubmit.triggers.findIndex(x => x.id === item.id && x.type === item.type);
+						if (pos != -1) {
+							$scope.toSubmit.triggers.splice(pos, 1);
+						}
+					}
 				});
 				angular.forEach(filtered, function (trigger) {trigger.added = false;});
 				if (selectAll.checked) {
