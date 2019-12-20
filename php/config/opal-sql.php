@@ -295,8 +295,14 @@ define("SQL_OPAL_MARK_RECORD_AS_DELETED", "
     WHERE %%PRIMARY_KEY%% = :recordId AND deleted = ".NON_DELETED_RECORD.";
 ");
 
-define("SQL_OPAL_GET_TRIGGERS_NAME_PER_MODULE", "
+define("SQL_OPAL_GET_TRIGGERS_SETTINGS_PER_MODULE", "
     SELECT * FROM ".OPAL_PUBLICATION_SETTING_TABLE." ps
     LEFT JOIN ".OPAL_MODULE_PUBLICATION_SETTING_TABLE." mps ON mps.publicationSettingId = ps.ID
     WHERE mps.moduleId = :moduleId AND isTrigger = 1;
+");
+
+define("SQL_OPAL_GET_PUBLICATION_SETTINGS_PER_MODULE", "
+    SELECT * FROM ".OPAL_PUBLICATION_SETTING_TABLE." ps
+    LEFT JOIN ".OPAL_MODULE_PUBLICATION_SETTING_TABLE." mps ON mps.publicationSettingId = ps.ID
+    WHERE mps.moduleId = :moduleId AND isTrigger = 0;
 ");

@@ -119,6 +119,9 @@ class DatabaseOpal extends DatabaseAccess {
 
         return $result;
     }
+    function getModuleSettings($moduleId) {
+        return $this->_fetch(SQL_OPAL_GET_MODULE_BY_ID, array(array("parameter"=>":ID","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
+    }
 
     function getPublicationChartLogs() {
         $sqlModule = array();
@@ -391,7 +394,18 @@ class DatabaseOpal extends DatabaseAccess {
      * @returns array with details of the post
      * */
     function getTriggersPerModule($moduleId) {
-        return $this->_fetchAll(SQL_OPAL_GET_TRIGGERS_NAME_PER_MODULE,
+        return $this->_fetchAll(SQL_OPAL_GET_TRIGGERS_SETTINGS_PER_MODULE,
+            array(array("parameter"=>":moduleId","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT))
+        );
+    }
+
+    /*
+     * Gets the post details with a single ID/Serial
+     * @params  ID/serial of the post
+     * @returns array with details of the post
+     * */
+    function getPublicationSettingsPerModule($moduleId) {
+        return $this->_fetchAll(SQL_OPAL_GET_PUBLICATION_SETTINGS_PER_MODULE,
             array(array("parameter"=>":moduleId","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT))
         );
     }
