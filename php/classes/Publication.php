@@ -144,11 +144,15 @@ class Publication extends OpalProject
      * */
     protected function _validateTriggers(&$triggersToValidate, &$moduleId) {
         $validatedTriggers = array();
-        $listTriggers = $this->opalDB->getTriggersPerModule($moduleId);
-        if (count($listTriggers) <= 0) return false;
+        $isValid = true;                                                //By default triggers are valid
+        $errMsgs = array();                                             //By default, no error message
+        $listTriggers = $this->opalDB->getTriggersPerModule($moduleId); //Get lists of triggers and their settings
+        if (count($listTriggers) <= 0) {
+            array_push($errMsgs, "Invalid Module.");
+            return $errMsgs;
+        }
 
-        $isValid = true;
-
+        //Prepare the validated triggers list and their validation settings
         foreach($listTriggers as $item) {
             $temp = explode(",", $item["internalName"]);
             $tempCustom = explode(";", $item["custom"]);
@@ -159,62 +163,94 @@ class Publication extends OpalProject
             }
         }
 
+        //Copy the list of triggers into the list to validate
         foreach($triggersToValidate as $trigger) {
             if ($validatedTriggers[$trigger["type"]]["data"] !== null)
                 array_push($validatedTriggers[$trigger["type"]]["data"], $trigger["id"]);
             else {
-                return false;
+                array_push($errMsgs, $trigger["type"] . " is an invalid trigger.");
                 break;
             }
         }
 
+        if (count($errMsgs) > 0) return $errMsgs;
+
+        //Validate the triggers
         foreach($validatedTriggers as $key => $trigger) {
             $allTriggersData = array();
             $selectAllChecked = false;
             $idsFound = 0;
             $ariaData = array();
+
+            //If the trigger should be unique but data indicates it's not, stop the processing and returns false
             if ($trigger["unique"]) {
-                if (count($trigger["data"]) > 1)
+                if (count($trigger["data"]) > 1) {
                     $isValid = false;
+                    array_push($errMsgs, "$key: value for this trigger must be unique.");
+                }
             }
-            if ($trigger["custom"]) {
-                if ($trigger["custom"]["range"]) {
-                    $dataRange = explode(",", $trigger["data"][0]);
-                    if ($dataRange[0] < $trigger["custom"]["range"][0] || $dataRange[1] > $trigger["custom"]["range"][1] || $dataRange[0] > $dataRange[1])
-                        $isValid = false;
-                }
-                else if ($trigger["custom"]["enum"]) {
-                    if(!in_array($trigger["data"][0], $trigger["custom"]["enum"]))
-                        $isValid = false;
-                }
-            } else {
-                if ($trigger["ariaDB"] != "")
-                    $ariaData = $this->ariaDB->fetchTriggersData($trigger["ariaDB"], $trigger["ariaPK"]);
-                if ($trigger["opalDB"] != "") {
-                    $idsToIgnore = array(-1);
-                    if (count($ariaData > 0)) {
-                        $idsToIgnore = array();
-                        foreach ($ariaData as $item) {
-                            array_push($idsToIgnore, $item[$trigger["ariaPK"]]);
+
+            if(count($trigger["data"]) > 0) {
+                //If the trigger requires custom checkup (like looking into a list or with a range)
+                if ($trigger["custom"]) {
+                    if ($trigger["custom"]["range"]) {
+                        $dataRange = explode(",", $trigger["data"][0]);
+                        if ($dataRange[0] < $trigger["custom"]["range"][0] || $dataRange[1] > $trigger["custom"]["range"][1] || $dataRange[0] > $dataRange[1]) {
+                            $isValid = false;
+                            array_push($errMsgs, "$key: invalid range value.");
                         }
                     }
-                    $opalData = $this->opalDB->fetchTriggersData(str_replace("%%ARIA_ID%%", implode(", ", $idsToIgnore), $trigger["opalDB"]), $trigger["opalPK"]);
-                    $allTriggersData = $opalData + $ariaData;
+                    else if ($trigger["custom"]["enum"]) {
+                        if(!in_array($trigger["data"][0], $trigger["custom"]["enum"])) {
+                            $isValid = false;
+                            array_push($errMsgs, "$key: non-existant value requested.");
+                        }
+                    }
                 }
+                //Standard process of the checkup by getting data from OpalDB and Aria
+                else {
+                    if ($trigger["ariaDB"] != "")
+                        $ariaData = $this->ariaDB->fetchTriggersData($trigger["ariaDB"], $trigger["ariaPK"]);
+                    if ($trigger["opalDB"] != "") {
+                        $idsToIgnore = array(-1);
+                        if (count($ariaData > 0)) {
+                            $idsToIgnore = array();
+                            foreach ($ariaData as $item) {
+                                array_push($idsToIgnore, $item[$trigger["ariaPK"]]);
+                            }
+                        }
+                        $opalData = $this->opalDB->fetchTriggersData(str_replace("%%ARIA_ID%%", implode(", ", $idsToIgnore), $trigger["opalDB"]), $trigger["opalPK"]);
+                    }
 
-                foreach ($trigger["data"] as $item) {
-                    if (strtolower($item) == "all") {
-                        $selectAllChecked = true;
-                    } else if (array_key_exists($item, $allTriggersData))
-                        $idsFound++;
+                    $uniqueIdList = array();
+                    foreach ($trigger["data"] as $item) {
+                        if (strtolower($item) == "all") {
+                            $selectAllChecked = true;
+                        } else if (array_key_exists($item, $opalData) || array_key_exists($item, $ariaData))
+                            $idsFound++;
+                        if(!in_array($item, $uniqueIdList)) array_push($uniqueIdList, $item);
+                    }
 
+                    if(count($uniqueIdList) == count($trigger["data"])) {
+                        if($selectAllChecked) {
+                            if ($idsFound != 0) {
+                                $isValid = false;
+                                array_push($errMsgs, "$key: cannot use the word 'all' and have another value associated to this trigger.");
+                            }
+                        }
+                        else if($idsFound != count($trigger["data"])) {
+                            $isValid = false;
+                            array_push($errMsgs, "$key: invalid IDs found.");
+                        }
+                    }
+                    else {
+                        array_push($errMsgs, "$key: duplicated value found.");
+                        $isValid = false;
+                    }
                 }
-
-                if (!$selectAllChecked && $idsFound != count($trigger["data"]))
-                    $isValid = false;
             }
         }
-        return $isValid;
+        return $errMsgs;
     }
 
     /*
@@ -226,24 +262,65 @@ class Publication extends OpalProject
     function insertPublication($publication) {
 
 
-        $testTriggers = array(array("id"=>"all", type=>"Patient"), array("id"=>"Opal2", type=>"Patient"), array("id"=>"Opal4", type=>"Patient"), array("id"=>"Male", type=>"Sex"), array("id"=>"20,40", type=>"Age"), array("id"=>"Open", type=>"AppointmentStatus"), array("id"=>"ALL", type=>"Appointment"), array("id"=>"1132", type=>"Diagnosis"), array("id"=>"1133", type=>"Diagnosis"), array("id"=>"1134", type=>"Diagnosis"), array("id"=>"1135", type=>"Diagnosis"), array("id"=>"1136", type=>"Diagnosis"), array("id"=>"1137", type=>"Diagnosis"), array("id"=>"1138", type=>"Diagnosis"), array("id"=>"5631", type=>"Doctor"), array("id"=>"8169", type=>"Doctor"), array("id"=>"7737", type=>"Machine"), array("id"=>"7739", type=>"Machine"), array("id"=>"7738", type=>"Machine"), array("id"=>"7740", type=>"Machine"));
+//        $publication["triggers"] = array(array("id"=>"Opal1", type=>"Patient"), array("id"=>"Opal2", type=>"Patient"), array("id"=>"Opal4", type=>"Patient"), array("id"=>"Male", type=>"Sex"), array("id"=>"0,40", type=>"Age"), array("id"=>"Open", type=>"AppointmentStatus"), array("id"=>"ALL", type=>"Appointment"), array("id"=>"1132", type=>"Diagnosis"), array("id"=>"1133", type=>"Diagnosis"), array("id"=>"1134", type=>"Diagnosis"), array("id"=>"1135", type=>"Diagnosis"), array("id"=>"1136", type=>"Diagnosis"), array("id"=>"1137", type=>"Diagnosis"), array("id"=>"1138", type=>"Diagnosis"), array("id"=>"5631", type=>"Doctor"), array("id"=>"8169", type=>"Doctor"), array("id"=>"7737", type=>"Machine"), array("id"=>"7739", type=>"Machine"), array("id"=>"7738", type=>"Machine"), array("id"=>"7740", type=>"Machine"));
 
         $this->_connectAriaDB();
         $publicationControlId = "-1";
         $publication = $this->arraySanitization($publication);
 
-        //print_R($publication);
+        $moduleDetails = $this->opalDB->getModuleSettings($publication["moduleId"]["value"]);
 
-        $moduleDetails = $this->opalDB->getPublicationModuleUserDetails($publication["moduleId"]["value"]);
-
-//        print_R($moduleDetails);
 
         $result = $this->_validateTriggers($publication["triggers"], $moduleDetails["ID"]);
-        if($result)
-            echo "triggers are good";
-        else
-            echo "triggers are bad";
-        die();
+
+        if(count($result) > 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Trigger validation failed. " . implode(" ", $result));
+
+        $pubSettings = $this->opalDB->getPublicationSettingsPerModule($publication["moduleId"]["value"]);
+        $subModule = json_decode($moduleDetails["subModule"], true);
+
+        foreach($pubSettings as $setting) {
+            $mandatory = false;
+            if(count($subModule) > 0) {
+                foreach($subModule as $sub) {
+                    if ($sub["name_EN"] == $publication["materialId"]["type"] && array_key_exists($setting["internalName"], $sub)) {
+                        $mandatory = ($sub[$setting["internalName"]] == 1);
+                    }
+                }
+            }
+            if($mandatory && !array_key_exists($setting["internalName"], $publication)) {
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Publication setting " . $setting["internalName"] . " not found.");
+                break;
+            }
+
+            if($setting["custom"] != "") {
+                $custom = json_decode($setting["custom"], true);
+                if (array_key_exists("dateTime", $custom)) {
+                    if(!HelpSetup::verifyDate($publication[$setting["internalName"]], true, $custom["dateTime"]))
+                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publishing date");
+                }
+                if (array_key_exists("occurence", $custom)) {
+                    echo "Occurence goes here\r\n";
+                    echo "publication\r\n";
+                    print_r($publication);
+                    echo "setting\r\n";
+                    print_r($setting);
+                }
+            }
+
+
+        }
+
+        die("done");
+
+        if(!HelpSetup::verifyDate($publication["publishDateTime"], true))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publishing date");
+
+
+
+
+
+
 
 
         if($moduleDetails["ID"] == MODULE_QUESTIONNAIRE) {

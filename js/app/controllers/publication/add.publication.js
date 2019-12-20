@@ -517,7 +517,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			if ($scope.subModule !== null) {
 				angular.forEach($scope.subModule, function (sub) {
 					if (sub.name_EN === $scope.toSubmit.materialId.type) {
-						if (sub.publicationDate === 1) {
+						if (sub.publishDateTime === 1) {
 
 
 							if ($scope.toSubmit.publishDateTime != "undefined") {
@@ -679,9 +679,10 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 
 			if ($scope.publishDate.available) {
 				if (typeof $scope.toSubmit.publishDateTime !== "undefined") {
-					$scope.toSubmit.publishDateTime.publish_date = String(moment($scope.toSubmit.publishDateTime.publish_date).format("YYYY-MM-DD")) + " " +
+					var tempDate = String(moment($scope.toSubmit.publishDateTime.publish_date).format("YYYY-MM-DD")) + " " +
 						String(moment($scope.toSubmit.publishDateTime.publish_time).format("HH:mm"));
-					delete $scope.toSubmit.publishDateTime.publish_time;
+					delete $scope.toSubmit.publishDateTime;
+					$scope.toSubmit.publishDateTime = tempDate;
 				}
 			}
 
