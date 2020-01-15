@@ -36,4 +36,15 @@ class HelpSetup {
         }
         return $dateTime !== false;
     }
+
+    /*
+     * This function validates an Unix timestamp
+     * @params  $timestamp (any) the value to validate.
+     * @returns boolean true or false if timestamp
+     * */
+    public static function isValidTimeStamp($timestamp){
+        return ((string) (int) $timestamp === $timestamp)
+            && ($timestamp <= PHP_INT_MAX)
+            && ($timestamp >= ~PHP_INT_MAX);
+    }
 }
