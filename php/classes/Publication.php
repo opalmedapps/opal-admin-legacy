@@ -269,8 +269,6 @@ class Publication extends OpalProject
         $publication = $this->arraySanitization($publication);
 
         $moduleDetails = $this->opalDB->getModuleSettings($publication["moduleId"]["value"]);
-
-
         $result = $this->_validateTriggers($publication["triggers"], $moduleDetails["ID"]);
 
         if(count($result) > 0)
@@ -299,17 +297,67 @@ class Publication extends OpalProject
                     if(!HelpSetup::verifyDate($publication[$setting["internalName"]], true, $custom["dateTime"]))
                         HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publishing date");
                 }
-                if (array_key_exists("occurence", $custom)) {
-                    echo "Occurence goes here\r\n";
+                if (array_key_exists("occurrence", $custom) && $publication['occurrence']['set']) {
+                    $validOccurrence = true;
+                    $errorMsg = null;
+
+                    if (!HelpSetup::isValidTimeStamp($publication["occurrence"]["start_date"]) || (int) $publication["occurrence"]["start_date"] < strtotime(date("Y-m-d"))) {
+                        $validOccurrence = false;
+                        $errorMsg .= "\r\nInvalid start date.";
+                    }
+
+                    if ($publication["occurrence"]["end_date"] != "" && (!HelpSetup::isValidTimeStamp($publication["occurrence"]["end_date"]) || (int) $publication["occurrence"]["end_date"] < strtotime(date("Y-m-d")))) {
+                        $validOccurrence = false;
+                        $errorMsg .= "\r\nInvalid end date.";
+                    }
+
+                    if ($publication["occurrence"]["end_date"] != "" && (int) $publication["occurrence"]["end_date"] < (int) $publication["occurrence"]["start_date"]) {
+                        $validOccurrence = false;
+                        $errorMsg .= "\r\nInvalid date range.";
+                    }
+
+                    if (array_key_exists("frequency", $publication["occurrence"]) && array_key_exists("custom", $publication["occurrence"]["frequency"]) && array_key_exists("meta_key", $publication["occurrence"]["frequency"]) && array_key_exists("meta_value", $publication["occurrence"]["frequency"])) {
+
+                        if(intval($publication["occurrence"]["frequency"]["meta_value"]) > 366 || intval($publication["occurrence"]["frequency"]["meta_value"]) < 1 ) {
+                            $validOccurrence = false;
+                            $errorMsg .= "\r\nInvalid meta value.";
+                        }
+                        if($publication["occurrence"]["frequency"]["custom"] == "0") {
+                            if(!in_array($publication["occurrence"]["frequency"]["meta_key"], $metaKey))  {
+                                $validOccurrence = false;
+                                $errorMsg .= "\r\nInvalid meta key.";
+                            }
+                            if(array_key_exists("additionalMeta", $publication["occurrence"]["frequency"])) {
+                                $validOccurrence = false;
+                                $errorMsg .= "\r\nInvalid meta.";
+                            }
+                        }
+                        else if($publication["occurrence"]["frequency"]["custom"] == "1") {
+                            if(!in_array($publication["occurrence"]["frequency"]["meta_key"], $customMetaKey))  {
+                                $validOccurrence = false;
+                                $errorMsg .= "\r\nInvalid meta key.";
+                            }
+                        }
+                        else {
+                            $validOccurrence = false;
+                            $errorMsg .= "\r\nInvalid custom settings.";
+                        }
+
+                    }
+                    else {
+                        $validOccurrence = false;
+                        $errorMsg .= "\r\nMissing frequency data.";
+                    }
+
+                    echo "occurrence goes here: $errorMsg\r\n";
                     echo "publication\r\n";
-                    print_r($publication);
+                    print_r($publication["occurrence"]);
                     echo "setting\r\n";
                     print_r($setting);
                 }
             }
-
-
         }
+
 
         die("done");
 
