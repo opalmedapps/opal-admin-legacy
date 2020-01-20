@@ -144,7 +144,6 @@ class Publication extends OpalProject
      * */
     protected function _validateTriggers(&$triggersToValidate, &$moduleId) {
         $validatedTriggers = array();
-        $isValid = true;                                                //By default triggers are valid
         $errMsgs = array();                                             //By default, no error message
         $listTriggers = $this->opalDB->getTriggersPerModule($moduleId); //Get lists of triggers and their settings
         if (count($listTriggers) <= 0) {
@@ -185,7 +184,6 @@ class Publication extends OpalProject
             //If the trigger should be unique but data indicates it's not, stop the processing and returns false
             if ($trigger["unique"]) {
                 if (count($trigger["data"]) > 1) {
-                    $isValid = false;
                     array_push($errMsgs, "$key: value for this trigger must be unique.");
                 }
             }
@@ -196,13 +194,11 @@ class Publication extends OpalProject
                     if ($trigger["custom"]["range"]) {
                         $dataRange = explode(",", $trigger["data"][0]);
                         if ($dataRange[0] < $trigger["custom"]["range"][0] || $dataRange[1] > $trigger["custom"]["range"][1] || $dataRange[0] > $dataRange[1]) {
-                            $isValid = false;
                             array_push($errMsgs, "$key: invalid range value.");
                         }
                     }
                     else if ($trigger["custom"]["enum"]) {
                         if(!in_array($trigger["data"][0], $trigger["custom"]["enum"])) {
-                            $isValid = false;
                             array_push($errMsgs, "$key: non-existant value requested.");
                         }
                     }
@@ -234,18 +230,15 @@ class Publication extends OpalProject
                     if(count($uniqueIdList) == count($trigger["data"])) {
                         if($selectAllChecked) {
                             if ($idsFound != 0) {
-                                $isValid = false;
                                 array_push($errMsgs, "$key: cannot use the word 'all' and have another value associated to this trigger.");
                             }
                         }
                         else if($idsFound != count($trigger["data"])) {
-                            $isValid = false;
                             array_push($errMsgs, "$key: invalid IDs found.");
                         }
                     }
                     else {
                         array_push($errMsgs, "$key: duplicated value found.");
-                        $isValid = false;
                     }
                 }
             }
@@ -253,29 +246,177 @@ class Publication extends OpalProject
         return $errMsgs;
     }
 
-    /*
-     * Insert a questionnaire ready to be published in the questionnaire control, filter and frequency events table
-     * after validating and sanitizing the data.
-     * @params  array of questionnaire settings and triggers
-     * @return  void
-     * */
-    function insertPublication($publication) {
+    protected function _validateStandardRepeat($frequency, &$errMsgs) {
+        $metaKey = array("repeat_day", "repeat_week", "repeat_month");
+        if(!in_array($frequency["meta_key"], $metaKey))
+            array_push($errMsgs, "Invalid occurrence regular frequency meta key.");
+        if(array_key_exists("additionalMeta", $frequency))
+            array_push($errMsgs, "Invalid occurrence regular frequency value.");
+    }
 
+    protected function _validateDateAndRange(&$occurrence, &$errMsgs, $strictEnforcement = true) {
+        $currentDate = false;
+        if($strictEnforcement)
+            $currentDate = (int) $occurrence["start_date"] < strtotime(date("Y-m-d"));
 
-//        $publication["triggers"] = array(array("id"=>"Opal1", type=>"Patient"), array("id"=>"Opal2", type=>"Patient"), array("id"=>"Opal4", type=>"Patient"), array("id"=>"Male", type=>"Sex"), array("id"=>"0,40", type=>"Age"), array("id"=>"Open", type=>"AppointmentStatus"), array("id"=>"ALL", type=>"Appointment"), array("id"=>"1132", type=>"Diagnosis"), array("id"=>"1133", type=>"Diagnosis"), array("id"=>"1134", type=>"Diagnosis"), array("id"=>"1135", type=>"Diagnosis"), array("id"=>"1136", type=>"Diagnosis"), array("id"=>"1137", type=>"Diagnosis"), array("id"=>"1138", type=>"Diagnosis"), array("id"=>"5631", type=>"Doctor"), array("id"=>"8169", type=>"Doctor"), array("id"=>"7737", type=>"Machine"), array("id"=>"7739", type=>"Machine"), array("id"=>"7738", type=>"Machine"), array("id"=>"7740", type=>"Machine"));
+        if (!HelpSetup::isValidTimeStamp($occurrence["start_date"]) || $currentDate)
+            array_push($errMsgs, "Invalid start date.");
 
-        $this->_connectAriaDB();
-        $publicationControlId = "-1";
-        $publication = $this->arraySanitization($publication);
+        if ($occurrence["end_date"] != "" && (!HelpSetup::isValidTimeStamp($occurrence["end_date"]) || $currentDate))
+            array_push($errMsgs, "Invalid end date.");
 
-        $moduleDetails = $this->opalDB->getModuleSettings($publication["moduleId"]["value"]);
-        $result = $this->_validateTriggers($publication["triggers"], $moduleDetails["ID"]);
+        if ($occurrence["end_date"] != "" && (int) $occurrence["end_date"] < (int) $occurrence["start_date"])
+            array_push($errMsgs, "Invalid date range.");
+    }
 
-        if(count($result) > 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Trigger validation failed. " . implode(" ", $result));
+    protected function _validateCustomRepeatPerDay(&$frequency, &$errMsgs) {
+        if (array_key_exists("additionalMeta", $frequency))
+            array_push($errMsgs, "Invalid custom occurrence frequency meta key with additional meta.");
+    }
 
+    protected function _validateCustomRepeatPerWeek(&$frequency, &$errMsgs) {
+        if(isset($frequency['additionalMeta'])) {
+            if(count($frequency['additionalMeta']) == 1 && isset($frequency['additionalMeta'][0]['meta_key']) && $frequency['additionalMeta'][0]['meta_key'] == "repeat_day_iw" && isset($frequency['additionalMeta'][0]['meta_value']) && count($frequency['additionalMeta'][0]['meta_value']) >= 1 && count($frequency['additionalMeta'][0]['meta_value']) <= 7)
+            {
+                $tempVerif = true;
+                foreach($frequency['additionalMeta'][0]['meta_value'] as $mv) {
+                    if(intval($mv) < 1 || intval($mv) > 7)
+                        $tempVerif = false;
+                }
+                if(!$tempVerif)
+                    array_push($errMsgs, "Invalid meta data data for week.");
+            }
+            else
+                array_push($errMsgs, "Invalid meta key structure for week.");
+        }
+    }
+
+    protected function _validateCustomRepeatPerMonth(&$frequency, &$errMsgs) {
+        if(isset($frequency['additionalMeta'])) {
+            if(count($frequency['additionalMeta']) == 1) {
+                if(isset($frequency['additionalMeta'][0]['meta_key'])
+                    && $frequency['additionalMeta'][0]['meta_key'] == "repeat_date_im"
+                    && isset($frequency['additionalMeta'][0]['meta_value'])
+                    && count($frequency['additionalMeta'][0]['meta_value']) >= 1
+                    && count($frequency['additionalMeta'][0]['meta_value']) <= 31
+                ) {
+                    $tempVerif = true;
+                    foreach ($frequency['additionalMeta'][0]['meta_value'] as $mv) {
+                        if(intval($mv) < 1 || intval($mv) > 31)
+                            $tempVerif = false;
+                    }
+                    if(!$tempVerif)
+                        array_push($errMsgs, "Invalid meta value data for month.");
+                }
+                else
+                    array_push($errMsgs, "Invalid meta data structure for month.");
+            } else if(count($frequency['additionalMeta']) == 2) {
+                $repeatDayIsOk = true;
+                $repeatWeekIsOk = true;
+                foreach ($frequency['additionalMeta'] as $ad) {
+                    if(isset($ad['meta_key']) && $ad['meta_key'] == 'repeat_day_iw') {
+                        if(isset($ad['meta_value'])) {
+                            foreach($ad['meta_value'] as $mv) {
+                                if(intval($mv) < 1 || intval($mv) > 7)
+                                    $repeatDayIsOk = false;
+                            }
+                        }
+                        else
+                            $repeatDayIsOk = false;
+                    }
+                    else if(isset($ad['meta_key']) && $ad['meta_key'] == 'repeat_week_im') {
+                        if(isset($ad['meta_value'])) {
+                            foreach($ad['meta_value'] as $mv) {
+                                if(intval($mv) < 1 || intval($mv) > 6)
+                                    $repeatWeekIsOk = false;
+                            }
+                        }
+                        else
+                            $repeatWeekIsOk = false;
+                    }
+                }
+                if(!$repeatDayIsOk || !$repeatWeekIsOk)
+                    array_push($errMsgs, "Invalid meta value data for month.");
+            }
+            else
+                array_push($errMsgs, "Invalid meta key structure for month.");
+        }
+    }
+
+    protected function _validateCustomRepeatPerYear(&$frequency, &$errMsgs) {
+        $totalMeta = count($frequency['additionalMeta']);
+        if(isset($frequency['additionalMeta']) && is_array($frequency['additionalMeta']) && ($totalMeta >= 1 || $totalMeta <=3)) {
+            $repeatMonthIyIsOk = true;
+            $repeatWeekImIsOk = true;
+            $repeatDayIwIsOk = true;
+            foreach($frequency['additionalMeta'] as $av) {
+                if(isset($av['meta_key']) && $av['meta_key'] == "repeat_month_iy") {
+                    if(isset($av['meta_value']) && count($av['meta_value']) >= 1 && count($av['meta_value']) <= 12) {
+                        $tempVerif = true;
+                        foreach ($av['meta_value'] as $mv) {
+                            if(intval($mv) < 1 || intval($mv) > 12)
+                                $tempVerif = false;
+                        }
+                        if(!$tempVerif)
+                            $repeatMonthIyIsOk = false;
+                    } else
+                        $repeatMonthIyIsOk = false;
+                }
+                else if(isset($av['meta_key']) && $av['meta_key'] == "repeat_week_im") {
+                    if(isset($av['meta_value']) && count($av['meta_value']) == 1) {
+                        $tempVerif = true;
+                        foreach ($av['meta_value'] as $mv) {
+                            if(intval($mv) < 1 || intval($mv) > 6)
+                                $tempVerif = false;
+                        }
+                        if(!$tempVerif)
+                            $repeatWeekImIsOk = false;
+                    } else
+                        $repeatWeekImIsOk = false;
+                }
+                else if(isset($av['meta_key']) && $av['meta_key'] == "repeat_day_iw") {
+                    if(isset($av['meta_value']) && count($av['meta_value']) == 1) {
+                        $tempVerif = true;
+                        foreach ($av['meta_value'] as $mv) {
+                            if(intval($mv) < 1 || intval($mv) > 7)
+                                $tempVerif = false;
+                        }
+                        if(!$tempVerif)
+                            $repeatDayIwIsOk = false;
+                    } else
+                        $repeatDayIwIsOk = false;
+                }
+                else {
+                    $repeatMonthIyIsOk = false;
+                    $repeatWeekImIsOk = false;
+                    $repeatDayIwIsOk = false;
+                }
+            }
+            if(!$repeatMonthIyIsOk || !$repeatWeekImIsOk || !$repeatDayIwIsOk)
+                array_push($errMsgs, "Invalid occurrence frequency additional meta structure.");
+        }
+    }
+
+    protected function _validateCustomRepeat(&$frequency, &$errMsgs) {
+        if(!in_array($frequency["meta_key"], array("repeat_day", "repeat_week", "repeat_month", "repeat_year")))
+            array_push($errMsgs, "Invalid custom occurrence frequency meta key.");
+
+        if($frequency["meta_key"] == "repeat_day")
+            $this->_validateCustomRepeatPerDay($frequency, $errMsgs);
+        else if($frequency["meta_key"] == "repeat_week")
+            $this->_validateCustomRepeatPerWeek($frequency, $errMsgs);
+        else if($frequency["meta_key"] == "repeat_month")
+            $this->_validateCustomRepeatPerMonth($frequency, $errMsgs);
+        else if($frequency["meta_key"] == "repeat_year")
+            $this->_validateCustomRepeatPerYear($frequency, $errMsgs);
+        else
+            array_push($errMsgs, "Invalid occurrence frequency.");
+    }
+
+    protected function _validateFrequency(&$publication, &$subModule) {
+        $errMsgs = array();                                             //By default, no error message
         $pubSettings = $this->opalDB->getPublicationSettingsPerModule($publication["moduleId"]["value"]);
-        $subModule = json_decode($moduleDetails["subModule"], true);
+        $subModule = json_decode($subModule, true);
 
         foreach($pubSettings as $setting) {
             $mandatory = false;
@@ -298,146 +439,36 @@ class Publication extends OpalProject
                         HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publishing date");
                 }
                 if (array_key_exists("occurrence", $custom) && $publication['occurrence']['set']) {
-                    $validOccurrence = true;
-                    $errorMsg = null;
+                    $this->_validateDateAndRange($publication['occurrence'], $errMsgs);
 
-                    if (!HelpSetup::isValidTimeStamp($publication["occurrence"]["start_date"]) || (int) $publication["occurrence"]["start_date"] < strtotime(date("Y-m-d"))) {
-                        $validOccurrence = false;
-                        $errorMsg .= "\r\nInvalid start date.";
-                    }
-
-                    if ($publication["occurrence"]["end_date"] != "" && (!HelpSetup::isValidTimeStamp($publication["occurrence"]["end_date"]) || (int) $publication["occurrence"]["end_date"] < strtotime(date("Y-m-d")))) {
-                        $validOccurrence = false;
-                        $errorMsg .= "\r\nInvalid end date.";
-                    }
-
-                    if ($publication["occurrence"]["end_date"] != "" && (int) $publication["occurrence"]["end_date"] < (int) $publication["occurrence"]["start_date"]) {
-                        $validOccurrence = false;
-                        $errorMsg .= "\r\nInvalid date range.";
-                    }
-
-                    if (array_key_exists("frequency", $publication["occurrence"]) && array_key_exists("custom", $publication["occurrence"]["frequency"]) && array_key_exists("meta_key", $publication["occurrence"]["frequency"]) && array_key_exists("meta_value", $publication["occurrence"]["frequency"])) {
-
-                        if(intval($publication["occurrence"]["frequency"]["meta_value"]) > 366 || intval($publication["occurrence"]["frequency"]["meta_value"]) < 1 ) {
-                            $validOccurrence = false;
-                            $errorMsg .= "\r\nInvalid meta value.";
+                    if (array_key_exists("frequency", $publication['occurrence']) && array_key_exists("custom", $publication['occurrence']['frequency']) && array_key_exists("meta_key", $publication['occurrence']['frequency']) && array_key_exists("meta_value", $publication['occurrence']['frequency'])) {
+                        if(intval($publication['occurrence']['frequency']["meta_value"]) > 59 || intval($publication['occurrence']['frequency']["meta_value"]) < 1 )
+                            array_push($errMsgs, "Invalid occurrence frequency meta value.");
+                        if($publication['occurrence']['frequency']["custom"] == "0") {
+                            $this->_validateStandardRepeat($publication['occurrence']['frequency'], $errMsgs);
                         }
-                        if($publication["occurrence"]["frequency"]["custom"] == "0") {
-                            if(!in_array($publication["occurrence"]["frequency"]["meta_key"], $metaKey))  {
-                                $validOccurrence = false;
-                                $errorMsg .= "\r\nInvalid meta key.";
-                            }
-                            if(array_key_exists("additionalMeta", $publication["occurrence"]["frequency"])) {
-                                $validOccurrence = false;
-                                $errorMsg .= "\r\nInvalid meta.";
-                            }
+                        else if($publication['occurrence']['frequency']["custom"] == "1") {
+                            $this->_validateCustomRepeat($publication['occurrence']['frequency'],$errMsgs);
                         }
-                        else if($publication["occurrence"]["frequency"]["custom"] == "1") {
-                            if(!in_array($publication["occurrence"]["frequency"]["meta_key"], $customMetaKey))  {
-                                $validOccurrence = false;
-                                $errorMsg .= "\r\nInvalid meta key.";
-                            }
-                        }
-                        else {
-                            $validOccurrence = false;
-                            $errorMsg .= "\r\nInvalid custom settings.";
-                        }
-
+                        else
+                            array_push($errMsgs, "Invalid custom settings.");
                     }
-                    else {
-                        $validOccurrence = false;
-                        $errorMsg .= "\r\nMissing frequency data.";
-                    }
-
-                    echo "occurrence goes here: $errorMsg\r\n";
-                    echo "publication\r\n";
-                    print_r($publication["occurrence"]);
-                    echo "setting\r\n";
-                    print_r($setting);
+                    else
+                        array_push($errMsgs, "Missing frequency data.");
                 }
             }
         }
 
+        return $errMsgs;
+    }
 
-        die("done");
+    protected function _insertPublicationPost(&$publication) {
 
-        if(!HelpSetup::verifyDate($publication["publishDateTime"], true))
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publishing date");
+    }
 
-
-
-
-
-
-
-
-        if($moduleDetails["ID"] == MODULE_QUESTIONNAIRE) {
-            print "questionnaire goes here\r\n";
-
-            $this->_connectQuestionnaireDB($this->opalDB->getOAUserId());
-            $currentQuestionnaire = $this->questionnaireDB->getQuestionnaireDetails($publication["materialId"]["value"]);
-            if(count($currentQuestionnaire) != 1)
-                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire");
-            $currentQuestionnaire = $currentQuestionnaire[0];
-
-
-            $toInsert = array(
-                "QuestionnaireDBSerNum"=>$currentQuestionnaire["ID"],
-                "QuestionnaireName_EN"=>$publication["name_EN"],
-                "QuestionnaireName_FR"=>$publication["name_FR"],
-                "Intro_EN"=>htmlspecialchars_decode($currentQuestionnaire["description_EN"]),
-                "Intro_FR"=>htmlspecialchars_decode($currentQuestionnaire["description_FR"]),
-                "SessionId"=>$this->opalDB->getSessionId(),
-                "DateAdded"=>date("Y-m-d H:i:s"),
-                "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
-            );
-
-            print_r($toInsert);
-
-            $controlTable = "LegacyQuestionnaireControl";
-            //$publicationControlId = $this->opalDB->insertPublishedQuestionnaire($toInsert);
-
-        }
-        else if($moduleDetails["ID"] == MODULE_POST) {
-            $controlTable = OPAL_POST_TABLE;
-        }
-        else if($moduleDetails["ID"] == MODULE_EDU_MAT) {
-            $controlTable = OPAL_EDUCATION_MATERIAL_TABLE;
-        }
-        else
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module");
-
-
-
-
-
-        $toInsertTriggers = array();
-        if(!empty($publication['triggers'])) {
-            foreach($publication['triggers'] as $trigger) {
-                array_push($toInsertTriggers, array(
-                    "ControlTable"=>$controlTable,
-                    "ControlTableSerNum"=>$publicationControlId,
-                    "FilterType"=>$trigger['type'],
-                    "FilterId"=>$trigger['id'],
-                    "DateAdded"=>date("Y-m-d H:i:s"),
-                    "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
-                    "SessionId"=>$this->opalDB->getSessionId(),
-                ));
-            }
-            print_r($toInsertTriggers);
-            //$this->opalDB->insertMultipleFilters($toInsertTriggers);
-        }
-
-
-
-
-        print_r($publication);
-        print_r($moduleDetails);
-
-        return false;
-
-        /* OLD PUBLICATION TOOL FROM QUESTIONNAIRE */
-        $currentQuestionnaire = $this->questionnaireDB->getQuestionnaireDetails($publication["questionnaireId"]);
+    protected function _insertPublicationQuestionnaire(&$publication) {
+        $this->_connectQuestionnaireDB($this->opalDB->getOAUserId());
+        $currentQuestionnaire = $this->questionnaireDB->getQuestionnaireDetails($publication["materialId"]["value"]);
 
         if(count($currentQuestionnaire) != 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire");
@@ -445,11 +476,11 @@ class Publication extends OpalProject
 
         $toInsert = array(
             "QuestionnaireDBSerNum"=>$currentQuestionnaire["ID"],
-            "QuestionnaireName_EN"=>$publication["name_EN"],
-            "QuestionnaireName_FR"=>$publication["name_FR"],
+            "QuestionnaireName_EN"=>$publication["name"]["name_EN"],
+            "QuestionnaireName_FR"=>$publication["name"]["name_FR"],
             "Intro_EN"=>htmlspecialchars_decode($currentQuestionnaire["description_EN"]),
             "Intro_FR"=>htmlspecialchars_decode($currentQuestionnaire["description_FR"]),
-            "SessionId"=>$publication["sessionId"],
+            "SessionId"=>$this->opalDB->getSessionId(),
             "DateAdded"=>date("Y-m-d H:i:s"),
             "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
         );
@@ -465,7 +496,7 @@ class Publication extends OpalProject
                     "FilterId"=>$trigger['id'],
                     "DateAdded"=>date("Y-m-d H:i:s"),
                     "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
-                    "SessionId"=>$publication["sessionId"],
+                    "SessionId"=>$this->opalDB->getSessionId(),
                 ));
             }
             $this->opalDB->insertMultipleFilters($toInsert);
@@ -516,6 +547,41 @@ class Publication extends OpalProject
             }
             $this->opalDB->insertMultipleFrequencyEvents($toInsert);
         }
+    }
+
+    /*
+     * Insert a publication into the matching control, filter and frequency events table after validating and
+     * sanitizing the data.
+     * @params  array of publication settings and triggers
+     * @return  void
+     * */
+    function insertPublication($publication) {
+        $this->_connectAriaDB();
+        $publication = $this->arraySanitization($publication);
+
+        $moduleDetails = $this->opalDB->getModuleSettings($publication["moduleId"]["value"]);
+
+        $result = $this->_validateTriggers($publication["triggers"], $moduleDetails["ID"]);
+        if(count($result) > 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Trigger validation failed. " . implode(" ", $result));
+
+        $result = $this->_validateFrequency($publication, $moduleDetails["subModule"]);
+        if(count($result) > 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Frequency validation failed. " . implode(" ", $result));
+
+        if($moduleDetails["ID"] == MODULE_QUESTIONNAIRE) {
+            $this->_insertPublicationQuestionnaire($publication);
+        }
+        else if($moduleDetails["ID"] == MODULE_POST) {
+            $this->_insertPublicationPost($publication);
+        }
+        else
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module");
+
+
+
+        return false;
+
     }
 
 }

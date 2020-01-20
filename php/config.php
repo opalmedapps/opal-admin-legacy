@@ -133,9 +133,6 @@ define("MODULE_POST", 2);
 define("MODULE_EDU_MAT", 3);
 define("MODULE_QUESTIONNAIRE", 7);
 
-$metaKey = array("repeat_day", "repeat_week", "repeat_month");
-$customMetaKey = array("repeat_day", "repeat_week", "repeat_month", "repeat_year");
-
 /*
  * List of HTTP status codes
  * */
