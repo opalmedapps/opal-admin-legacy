@@ -246,6 +246,11 @@ class Publication extends OpalProject
         return $errMsgs;
     }
 
+    /*
+     * Function that validates if a series of keyword is present or not to validate a standard frequency.
+     * @params  $frequency (array) array of frequencies to check
+     *          $errMsgs (array) array of error messages where to store errors if found.
+     * */
     protected function _validateStandardRepeat($frequency, &$errMsgs) {
         $metaKey = array("repeat_day", "repeat_week", "repeat_month");
         if(!in_array($frequency["meta_key"], $metaKey))
@@ -254,6 +259,14 @@ class Publication extends OpalProject
             array_push($errMsgs, "Invalid occurrence regular frequency value.");
     }
 
+    /*
+     * Validates the date time and insure it is a valid timestamp, and check if the timestamp are setup in the past.
+     *
+     * @params  $occurence (array) date and time to validate
+     *          $errMsgs (array) list of current error messages
+     *          $strictEnforcement (boolean) if a dateTime can be set in the past or not.
+     * @returns void
+     * */
     protected function _validateDateAndRange(&$occurrence, &$errMsgs, $strictEnforcement = true) {
         $currentDate = false;
         if($strictEnforcement)
@@ -269,11 +282,25 @@ class Publication extends OpalProject
             array_push($errMsgs, "Invalid date range.");
     }
 
+    /*
+     * Validate a custom frequency per day. Make sure the specific keyword is present.
+     *
+     * @params  $frequency (array)  list of frequency per day to validate
+     *          $errMsgs (array) List of error message.
+     * @returns void
+     * */
     protected function _validateCustomRepeatPerDay(&$frequency, &$errMsgs) {
         if (array_key_exists("additionalMeta", $frequency))
             array_push($errMsgs, "Invalid custom occurrence frequency meta key with additional meta.");
     }
 
+    /*
+     * Validate a custom frequency per week. Check if the frequency for the days if set up is between 1 and 7.
+     *
+     * @params  $frequency (array)  list of frequency per week to validate
+     *          $errMsgs (array) List of error message.
+     * @returns void
+     * */
     protected function _validateCustomRepeatPerWeek(&$frequency, &$errMsgs) {
         if(isset($frequency['additionalMeta'])) {
             if(count($frequency['additionalMeta']) == 1 && isset($frequency['additionalMeta'][0]['meta_key']) && $frequency['additionalMeta'][0]['meta_key'] == "repeat_day_iw" && isset($frequency['additionalMeta'][0]['meta_value']) && count($frequency['additionalMeta'][0]['meta_value']) >= 1 && count($frequency['additionalMeta'][0]['meta_value']) <= 7)
@@ -291,6 +318,16 @@ class Publication extends OpalProject
         }
     }
 
+    /*
+     * Validate a custom frequency per month. Check if the repeat option is on date or on week. On date, check the
+     * value of each date and make sure they are between the range of 1 and 31. On week, make sure the number of week
+     * is in range of 1 to 6 (5 = 5th week, 6 = last week) and the day range is between 1 and 7. If there is a problem
+     * add it to the error messages array.
+     *
+     * @params  $frequency (array)  list of frequency per month to validate
+     *          $errMsgs (array) List of error message.
+     * @returns void
+     * */
     protected function _validateCustomRepeatPerMonth(&$frequency, &$errMsgs) {
         if(isset($frequency['additionalMeta'])) {
             if(count($frequency['additionalMeta']) == 1) {
@@ -343,6 +380,15 @@ class Publication extends OpalProject
         }
     }
 
+    /*
+     * Validate a custom frequency per year. If there is no data or more than 3 block of data, rejects the validation.
+     * Next, check if there is a repeat options per month, week and day and validate each of them. Finally, update the
+     * error message list if needed.
+     *
+     * @params  $frequency (array)  list of frequency per year to validate
+     *          $errMsgs (array) List of error message.
+     * @returns void
+     * */
     protected function _validateCustomRepeatPerYear(&$frequency, &$errMsgs) {
         $totalMeta = count($frequency['additionalMeta']);
         if(isset($frequency['additionalMeta']) && is_array($frequency['additionalMeta']) && ($totalMeta >= 1 || $totalMeta <=3)) {
@@ -397,6 +443,13 @@ class Publication extends OpalProject
         }
     }
 
+    /*
+     * Function that call the specific function to validate per day, week, month or year for custom settings.
+     *
+     * @params  $frequency (array) the frequency to validate
+     *          $errMsgs (array) the list of error messages where to add new ones if needed
+     * @returns void
+     * */
     protected function _validateCustomRepeat(&$frequency, &$errMsgs) {
         if(!in_array($frequency["meta_key"], array("repeat_day", "repeat_week", "repeat_month", "repeat_year")))
             array_push($errMsgs, "Invalid custom occurrence frequency meta key.");
@@ -413,11 +466,20 @@ class Publication extends OpalProject
             array_push($errMsgs, "Invalid occurrence frequency.");
     }
 
+    /*
+     * Validation of the frequency of a publication. for each setting of a publication, the functions doest the
+     * following: 1) Check if the setting is mandatory or not. 2) If it is datetime, check if is valid and required.
+     * 3) If the occurence is a regular, call the function _validateStandardRepeat but if it is not, call the function
+     * _validateCustomRepeat.
+     *
+     * @params  $publication(array) details of the publication to validate
+     *          $subModule(array) list of the sub-modules details to validate the obligation of specific settings
+     * @returns $errMsgs(array) List of error messages if the validation failed.
+     * */
     protected function _validateFrequency(&$publication, &$subModule) {
         $errMsgs = array();                                             //By default, no error message
         $pubSettings = $this->opalDB->getPublicationSettingsPerModule($publication["moduleId"]["value"]);
         $subModule = json_decode($subModule, true);
-
         foreach($pubSettings as $setting) {
             $mandatory = false;
             if(count($subModule) > 0) {
@@ -435,8 +497,15 @@ class Publication extends OpalProject
             if($setting["custom"] != "") {
                 $custom = json_decode($setting["custom"], true);
                 if (array_key_exists("dateTime", $custom)) {
-                    if(!HelpSetup::verifyDate($publication[$setting["internalName"]], true, $custom["dateTime"]))
-                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publishing date");
+                    if(isset($publication["materialId"]["type"]) && $publication["materialId"]["type"] == "Announcement") {
+                        if(!HelpSetup::verifyDate($publication[$setting["internalName"]], true, $custom["dateTime"]))
+                            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publishing date.");
+                    }
+                    else if(isset($publication[$setting["internalName"]])) {
+                        if(!HelpSetup::verifyDate($publication[$setting["internalName"]], true, $custom["dateTime"]))
+                            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publishing date.");
+
+                    }
                 }
                 if (array_key_exists("occurrence", $custom) && $publication['occurrence']['set']) {
                     $this->_validateDateAndRange($publication['occurrence'], $errMsgs);
@@ -462,8 +531,47 @@ class Publication extends OpalProject
         return $errMsgs;
     }
 
+    /*
+     * For publication of a new post only. This function updates the publication date and time of the post (if it
+     * exists) before inserting the post itself in the Filters table.
+     * @params  $publication (array) the details of the publication to insert
+     * @return  void
+     * */
     protected function _insertPublicationPost(&$publication) {
+        $postDetails = $this->opalDB->getPostDetails($publication["materialId"]["value"]);
 
+        print_r($publication);
+        print_r($postDetails);
+
+        if(count($postDetails) <= 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid post.");
+
+        if(isset($publication["publishDateTime"]) && $publication["publishDateTime"] != "")
+            $count = $this->opalDB->updatePostPublishDateTime(
+                array("PostControlSerNum"=>$publication["materialId"]["value"],"PublishDate"=>$publication["publishDateTime"])
+            );
+
+        if(!empty($publication['triggers']))
+            $this->_insertFilters($publication, $publication["materialId"]["value"], "PostControl");
+
+
+        die("That's all folks!");
+    }
+
+    protected function _insertFilters(&$publication, &$publicationControlId, $controlTableName) {
+        $toInsert = array();
+        foreach($publication['triggers'] as $trigger) {
+            array_push($toInsert, array(
+                "ControlTable"=>$controlTableName,
+                "ControlTableSerNum"=>$publicationControlId,
+                "FilterType"=>$trigger['type'],
+                "FilterId"=>$trigger['id'],
+                "DateAdded"=>date("Y-m-d H:i:s"),
+                "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
+                "SessionId"=>$this->opalDB->getSessionId(),
+            ));
+        }
+        $this->opalDB->insertMultipleFilters($toInsert);
     }
 
     protected function _insertPublicationQuestionnaire(&$publication) {
@@ -471,7 +579,7 @@ class Publication extends OpalProject
         $currentQuestionnaire = $this->questionnaireDB->getQuestionnaireDetails($publication["materialId"]["value"]);
 
         if(count($currentQuestionnaire) != 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire.");
         $currentQuestionnaire = $currentQuestionnaire[0];
 
         $toInsert = array(
