@@ -119,6 +119,7 @@ class DatabaseOpal extends DatabaseAccess {
 
         return $result;
     }
+
     function getModuleSettings($moduleId) {
         return $this->_fetch(SQL_OPAL_GET_MODULE_BY_ID, array(array("parameter"=>":ID","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
     }
@@ -419,6 +420,17 @@ class DatabaseOpal extends DatabaseAccess {
         $toUpdate["LastUpdatedBy"] = $this->getOAUserId();
         $toUpdate["SessionId"] = $this->getSessionId();
         return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_POST, $toUpdate);
+    }
+
+    /*
+     * Updates a post publishing date into the database after they were validated/sanitized
+     * @params  array with post details (sanitized/validated)
+     * @returns number of lines modified.
+     * */
+    function updatePostPublishDateTime($toUpdate) {
+        $toUpdate["LastUpdatedBy"] = $this->getOAUserId();
+        $toUpdate["SessionId"] = $this->getSessionId();
+        return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_POST_PUBLISH_DATE, $toUpdate);
     }
 
     /*
