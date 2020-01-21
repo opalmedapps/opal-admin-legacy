@@ -290,6 +290,15 @@ define("SQL_OPAL_UPDATE_POST",
     AND deleted = ".NON_DELETED_RECORD.";"
 );
 
+define("SQL_OPAL_UPDATE_POST_PUBLISH_DATE",
+    "UPDATE ".OPAL_POST_TABLE."
+    SET LastUpdatedBy = :LastUpdatedBy,
+    SessionId = :SessionId,
+    PublishDate = :PublishDate
+    WHERE PostControlSerNum = :PostControlSerNum
+    AND deleted = ".NON_DELETED_RECORD.";"
+);
+
 define("SQL_OPAL_MARK_RECORD_AS_DELETED", "
     UPDATE %%TABLENAME%% SET deleted = ".DELETED_RECORD.", LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId
     WHERE %%PRIMARY_KEY%% = :recordId AND deleted = ".NON_DELETED_RECORD.";
