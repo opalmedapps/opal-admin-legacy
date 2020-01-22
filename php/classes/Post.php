@@ -96,6 +96,24 @@ class Post extends OpalProject {
     }
 
     /*
+     * Returns all the chart logs from a list of post IDs depending if it is announcement, treatment team message or
+     * patients for patients.
+     * @params  $serials (array) list of serials to look for
+     *          $type (string) type of post
+     * @return  array of chrat log value
+     * */
+    public function getPostListLogs($serials, $type) {
+        if ($type == 'Announcement')
+            return  $this->opalDB->getAnnouncementChartLogsByIds($serials);
+        else if ($type == "Treatment Team Message")
+            return $this->opalDB->getTTMChartLogsByIds($serials);
+        else if ($type == "Patients for Patients")
+            return $this->opalDB->getPFPChartLogsByIds($serials);
+        else
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Unknown type of post.");
+    }
+
+    /*
      * Marks a post as deleted if the post was not locked (means published) before.
      *
      * WARNING!!! No record should be EVER be removed from the opalDB database! It should only being marked as
