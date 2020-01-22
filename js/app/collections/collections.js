@@ -175,10 +175,11 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// Function to get post chart logs given a serial
-		postAPI.getPostChartLogs = function (serial, type) {
+		postAPI.getPostChartLogs = function (serial, type, OAUserId) {
 			return $http.post(
 				"post/get/post-chart-logs",
 				$.param({
+					OAUserId: OAUserId,
 					serial: serial,
 					type: type,
 				}),

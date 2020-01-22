@@ -297,12 +297,58 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_execute($sqlToUpdate, $toUpdate);
     }
 
+    /*
+     * Returns the list of modules.
+     * @params  void
+     * @returns array of modules found and active
+     * */
     function getPublicationModulesUser(){
         return $this->_fetchAll(SQL_OPAL_GET_ALL_PUBLICATION_MODULES_USER, array());
     }
 
+    /*
+     * Returns the details of a publication module
+     * @params  $moduleId (int) Id of the module
+     * @return  array of records found
+     * */
     function getPublicationModuleUserDetails($moduleId){
         return $this->_fetch(SQL_OPAL_GET_PUBLICATION_MODULES_USER_DETAILS, array(array("parameter"=>":ID","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
+    }
+
+    /*
+     * Get all the chart logs for a specific announcement
+     * @params  $postControlSerNum (int) bID of the announcement
+     * @return  array of records found
+     * */
+    function getAnnouncementChartLogs($postControlSerNum) {
+        return $this->_fetchAll(SQL_OPAL_GET_ANNOUNCEMENT_CHART,
+            array(
+                array("parameter"=>":PostControlSerNum","variable"=>$postControlSerNum,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    /*
+     * Get all the chart logs for a specific treatment team message
+     * @params  $postControlSerNum (int) bID of the announcement
+     * @return  array of records found
+     * */
+    function getTTMChartLogs($postControlSerNum) {
+        return $this->_fetchAll(SQL_OPAL_GET_TTM_CHART,
+            array(
+                array("parameter"=>":PostControlSerNum","variable"=>$postControlSerNum,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    /*
+     * Get all the chart logs for a specific treatment team message
+     * @params  $postControlSerNum (int) bID of the announcement
+     * @return  array of records found
+     * */
+    function getPFPChartLogs($postControlSerNum) {
+        return $this->_fetchAll(SQL_OPAL_GET_PFP_CHART,
+            array(
+                array("parameter"=>":PostControlSerNum","variable"=>$postControlSerNum,"data_type"=>PDO::PARAM_INT),
+            ));
     }
 
     /*

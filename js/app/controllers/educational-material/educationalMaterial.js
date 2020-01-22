@@ -29,8 +29,8 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 		'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
 		'ng-checked="grid.appScope.updatePublishFlag(row.entity.publish)" ng-model="row.entity.publish"></div>';
 	var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-		'<strong><a href="" ng-click="grid.appScope.showEduMatLog(row.entity)"><i title="' + $filter('translate')('EDUCATION.LIST.LOGS') + '" class="fa fa-area-chart" aria-hidden="true"></i></a></strong> ' +
-		'- <strong><a href="" ng-click="grid.appScope.editEduMat(row.entity)"><i title="' + $filter('translate')('EDUCATION.LIST.EDIT') + '" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ' +
+		'<strong><a href="" ng-click="grid.appScope.showEduMatLog(row.entity)"><i title="' + $filter('translate')('EDUCATION.LIST.LOGS') + '" class="fa fa-area-chart" aria-hidden="true"></i></a></strong> - ' +
+		'<strong><a href="" ng-click="grid.appScope.editEduMat(row.entity)"><i title="' + $filter('translate')('EDUCATION.LIST.EDIT') + '" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ' +
 		'- <strong><a href="" ng-click="grid.appScope.deleteEduMat(row.entity)"><i title="' + $filter('translate')('EDUCATION.LIST.DELETE') + '" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
 	var expandableRowTemplate = '<div ui-grid="row.entity.subGridOptions"></div>';
 	var ratingCellTemplate = '<div class="ui-grid-cell-contents" ng-show="row.entity.rating == -1">' + $filter('translate')('EDUCATION.LIST.NO_RATING') + '</div>' +
@@ -79,19 +79,19 @@ controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $s
 				displayName: $filter('translate')('EDUCATION.LIST.TYPE'),
 				width: '15%'
 			},
-			{
+/*			{
 				field: 'publish',
 				enableColumnMenu: false,
 				displayName: $filter('translate')('EDUCATION.LIST.PUBLISH_FLAG'),
 				width: '10%',
 				cellTemplate: checkboxCellTemplate,
 				enableFiltering: false
-			},
+			},*/
 			{
 				field: 'phase_' + Session.retrieveObject('user').language.toUpperCase(),
 				enableColumnMenu: false,
 				displayName: $filter('translate')('EDUCATION.LIST.PHASE_IN_TREATMENT'),
-				width: '10%',
+				width: '20%',
 				filter: {
 					type: uiGridConstants.filter.SELECT,
 					selectOptions: [{
