@@ -63,10 +63,43 @@ class Post extends OpalProject {
     }
 
     /*
+     * Get the chart logs of a specific post
+     * @param   $post (array) $_POST that contains serial and type
+     * @return  $data (array) array of chart log results.
+     * */
+    public function getPostChartLogs ($post) {
+        $data = array();
+        $serial = strip_tags($post["serial"]);
+        $type = strip_tags($post["type"]);
+
+        if($serial == "" || $type == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid settings for chart log.");
+
+        if ($type == 'Announcement')
+            $result = $this->opalDB->getAnnouncementChartLogs($serial);
+        else if ($type == 'Treatment Team Message')
+            $result = $this->opalDB->getTTMChartLogs($serial);
+        else if ($type == 'Patients for Patients')
+            $result = $this->opalDB->getPFPChartLogs($serial);
+        else
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Unknown type of post.");
+
+        //The Y value has to be converted to an int, or the chart log will reject it on the front end.
+        foreach ($result as &$item) {
+            $item["y"] = intval($item["y"]);
+        }
+
+        if (count($result) > 0)
+            array_push($data, array("name"=>$type, "data"=>$result));
+
+        return $data;
+    }
+
+    /*
      * Marks a post as deleted if the post was not locked (means published) before.
      *
      * WARNING!!! No record should be EVER be removed from the opalDB database! It should only being marked as
-     * being deleted ONLY  after it was verified the record is not locked. Not following the proper procedure will
+     * being deleted ONLY after it was verified the record is not locked. Not following the proper procedure will
      * have some serious impact on the integrity of the database and its records.
      *
      * REMEMBER !!! NO DELETE STATEMENT EVER !!! YOU HAVE BEING WARNED !!!
@@ -81,7 +114,6 @@ class Post extends OpalProject {
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Post locked.");
     }
-
 
     /*
      * Updates a post's details if it was not locked before (means published) or deleted.

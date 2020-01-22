@@ -290,8 +290,8 @@ define("SQL_OPAL_UPDATE_POST",
     AND deleted = ".NON_DELETED_RECORD.";"
 );
 
-define("SQL_OPAL_UPDATE_POST_PUBLISH_DATE",
-    "UPDATE ".OPAL_POST_TABLE."
+define("SQL_OPAL_UPDATE_POST_PUBLISH_DATE", "
+    UPDATE ".OPAL_POST_TABLE."
     SET LastUpdatedBy = :LastUpdatedBy,
     SessionId = :SessionId,
     PublishDate = :PublishDate
@@ -314,4 +314,25 @@ define("SQL_OPAL_GET_PUBLICATION_SETTINGS_PER_MODULE", "
     SELECT * FROM ".OPAL_PUBLICATION_SETTING_TABLE." ps
     LEFT JOIN ".OPAL_MODULE_PUBLICATION_SETTING_TABLE." mps ON mps.publicationSettingId = ps.ID
     WHERE mps.moduleId = :moduleId AND isTrigger = 0;
+");
+
+define("SQL_OPAL_GET_ANNOUNCEMENT_CHART","
+    SELECT DISTINCT anmh.CronLogSerNum AS cron_serial, COUNT(anmh.CronLogSerNum) AS y, cl.CronDateTime AS x
+    FROM AnnouncementMH anmh, CronLog cl WHERE cl.CronStatus = 'Started' AND cl.CronLogSerNum = anmh.CronLogSerNum
+    AND anmh.CronLogSerNum IS NOT NULL AND anmh.PostControlSerNum = :PostControlSerNum
+    GROUP BY anmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC 
+");
+
+define("SQL_OPAL_GET_TTM_CHART","
+    SELECT DISTINCT ttmmh.CronLogSerNum AS cron_serial, COUNT(ttmmh.CronLogSerNum) AS y, cl.CronDateTime AS x
+    FROM TxTeamMessageMH ttmmh, CronLog cl WHERE cl.CronStatus = 'Started' AND cl.CronLogSerNum = ttmmh.CronLogSerNum
+    AND ttmmh.CronLogSerNum IS NOT NULL AND ttmmh.PostControlSerNum = :PostControlSerNum
+    GROUP BY ttmmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC
+");
+
+define("SQL_OPAL_GET_PFP_CHART","
+    SELECT DISTINCT pfpmh.CronLogSerNum AS cron_serial, COUNT(pfpmh.CronLogSerNum) AS y, cl.CronDateTime AS x
+    FROM PatientsForPatientsMH pfpmh, CronLog cl WHERE cl.CronStatus = 'Started' AND cl.CronLogSerNum = pfpmh.CronLogSerNum
+    AND pfpmh.CronLogSerNum IS NOT NULL AND pfpmh.PostControlSerNum = $serial GROUP BY pfpmh.CronLogSerNum, cl.CronDateTime
+    ORDER BY cl.CronDateTime ASC 
 ");
