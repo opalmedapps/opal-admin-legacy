@@ -46,7 +46,8 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 		'ng-click="grid.appScope.editPost(row.entity)">' +
 		'<strong><a href="">{{row.entity.name_'+ Session.retrieveObject('user').language +'}}</a></strong></div>';
 	var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-		'<strong><a href="" ng-click="grid.appScope.editPost(row.entity)"><i title="'+$filter('translate')('POSTS.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ' +
+		'<strong><a href="" ng-click="grid.appScope.showPostLog(row.entity)"><i title="'+$filter('translate')('POSTS.LIST.LOGS')+'" class="fa fa-area-chart" aria-hidden="true"></i></a></strong> ' +
+		'- <strong><a href="" ng-click="grid.appScope.editPost(row.entity)"><i title="'+$filter('translate')('POSTS.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ' +
 		'- <strong><a href="" ng-click="grid.appScope.deletePost(row.entity)"><i title="'+$filter('translate')('POSTS.LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
 	var rowTemplate = '<div ng-class="{\'grid-disabled-row\':row.entity.disabled==1}"> ' +
 		'<div ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" ' +
@@ -257,7 +258,6 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 		else if (view === 'chart') {
 			// Call our API to get post logs
 			postCollectionService.getPostChartLogs().then(function (response) {
-				console.log("1");
 				$scope.postChartLogs = $scope.chartConfig.series = response.data;
 				angular.forEach($scope.postChartLogs, function(serie) {
 					angular.forEach(serie.data, function(log) {
@@ -309,7 +309,6 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 						// convert set to array
 						cronSerials = Array.from(cronSerials);
 						postCollectionService.getPostListLogs(cronSerials, $scope.currentPost.type).then(function(response){
-							console.log("5: " + cronSerials + " " + $scope.currentPost.type);
 							response.data.forEach(function (row) {
 								if (Session.retrieveObject('user').language.toUpperCase() === "FR") {
 									switch(row.type) {
@@ -362,7 +361,6 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 						select: function(point) {
 							var cronLogSerNum = [point.target.cron_serial];
 							postCollectionService.getPostListLogs(cronLogSerNum, $scope.currentPost.type).then(function(response){
-								console.log("6: " + cronLogSerNum + " " + $scope.currentPost.type);
 								response.data.forEach(function (row) {
 									if (Session.retrieveObject('user').language.toUpperCase() === "FR") {
 										switch(row.type) {
@@ -458,8 +456,6 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 	// Function for when the post has been clicked for deletion
 	// Open a modal
 	$scope.deletePost = function (currentPost) {
-
-
 
 		// Assign selected post as the post to delete
 		$scope.postToDelete = currentPost;

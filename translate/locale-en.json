@@ -1064,7 +1064,7 @@
       "DATETIME_SENT": "Datetime sent",
       "LOGS_FOR": " logs for ",
       "NUMBER": "Number of published messages",
-      "ERROR": "An error occurred while getting the logs."
+      "ERROR": "An error occurred while getting the post logs."
     }
   },
   "HOSPITAL_MAPS": {
