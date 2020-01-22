@@ -683,7 +683,7 @@ class Cron {
     	$cronLogs = array();
 
     	$anAlias = new Alias();
-    	$aPost = new Post();
+    	$aPost = new Post($OAUserId);
     	$anEduMaterial = new EduMaterial();
     	$anEmail = new Email();
     	$aQuestionnaire = new Questionnaire($OAUserId);

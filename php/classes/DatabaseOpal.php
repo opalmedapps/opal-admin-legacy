@@ -317,7 +317,7 @@ class DatabaseOpal extends DatabaseAccess {
 
     /*
      * Get all the chart logs for a specific announcement
-     * @params  $postControlSerNum (int) bID of the announcement
+     * @params  $postControlSerNum (int) ID of the announcement
      * @return  array of records found
      * */
     function getAnnouncementChartLogs($postControlSerNum) {
@@ -325,6 +325,16 @@ class DatabaseOpal extends DatabaseAccess {
             array(
                 array("parameter"=>":PostControlSerNum","variable"=>$postControlSerNum,"data_type"=>PDO::PARAM_INT),
             ));
+    }
+
+    /*
+     * Get all the chart logs for a list of announcements
+     * @params  $ids (array) list of IDs of the announcements
+     * @return  array of records found
+     * */
+    function getAnnouncementChartLogsByIds($ids) {
+        $sqlFetch = str_replace("%%CRON_LOG_IDS%%", implode(", ", $ids), SQL_OPAL_GET_ANNOUNCEMENT_CHART_PER_IDS);
+        return $this->_fetchAll($sqlFetch, array());
     }
 
     /*
@@ -340,7 +350,17 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Get all the chart logs for a specific treatment team message
+     * Get all the chart logs for a list of treatment team messages
+     * @params  $ids (array) list of IDs of the treatment team messages
+     * @return  array of records found
+     * */
+    function getTTMChartLogsByIds($ids) {
+        $sqlFetch = str_replace("%%CRON_LOG_IDS%%", implode(", ", $ids), SQL_OPAL_GET_TTM_CHART_PER_IDS);
+        return $this->_fetchAll($sqlFetch, array());
+    }
+
+    /*
+     * Get all the chart logs for a specific treatment Patients for Patients message
      * @params  $postControlSerNum (int) bID of the announcement
      * @return  array of records found
      * */
@@ -349,6 +369,16 @@ class DatabaseOpal extends DatabaseAccess {
             array(
                 array("parameter"=>":PostControlSerNum","variable"=>$postControlSerNum,"data_type"=>PDO::PARAM_INT),
             ));
+    }
+
+    /*
+     * Get all the chart logs for a list of patients for patients
+     * @params  $ids (array) list of IDs of the patients for patients
+     * @return  array of records found
+     * */
+    function getPFPChartLogsByIds($ids) {
+        $sqlFetch = str_replace("%%CRON_LOG_IDS%%", implode(", ", $ids), SQL_OPAL_GET_PFP_CHART_PER_IDS);
+        return $this->_fetchAll($sqlFetch, array());
     }
 
     /*

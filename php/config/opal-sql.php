@@ -31,6 +31,10 @@ define("OPAL_ANNOUNCEMENT_TABLE","Announcement");
 define("OPAL_PATIENTS_FOR_PATIENTS_TABLE","PatientsForPatients");
 define("OPAL_EDUCATION_MATERIAL_TABLE","EducationalMaterialControl");
 define("OPAL_PHASE_IN_TREATMENT_TABLE","PhaseInTreatment");
+define("OPAL_ANNOUNCEMENT_MH_TABLE","AnnouncementMH");
+define("OPAL_TXT_TEAM_MSG_MH_TABLE","TxTeamMessageMH");
+define("OPAL_PATIENTS_FOR_PATIENTS_MH_TABLE","PatientsForPatientsMH");
+define("OPAL_CRON_LOG_TABLE","CronLog");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -318,21 +322,73 @@ define("SQL_OPAL_GET_PUBLICATION_SETTINGS_PER_MODULE", "
 
 define("SQL_OPAL_GET_ANNOUNCEMENT_CHART","
     SELECT DISTINCT anmh.CronLogSerNum AS cron_serial, COUNT(anmh.CronLogSerNum) AS y, cl.CronDateTime AS x
-    FROM AnnouncementMH anmh, CronLog cl WHERE cl.CronStatus = 'Started' AND cl.CronLogSerNum = anmh.CronLogSerNum
-    AND anmh.CronLogSerNum IS NOT NULL AND anmh.PostControlSerNum = :PostControlSerNum
-    GROUP BY anmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC 
+    FROM ".OPAL_ANNOUNCEMENT_MH_TABLE." anmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started'
+    AND cl.CronLogSerNum = anmh.CronLogSerNum AND anmh.CronLogSerNum IS NOT NULL
+    AND anmh.PostControlSerNum = :PostControlSerNum GROUP BY anmh.CronLogSerNum, cl.CronDateTime
+    ORDER BY cl.CronDateTime ASC 
+");
+
+define("SQL_OPAL_GET_ANNOUNCEMENT_CHART_PER_IDS","
+                        SELECT DISTINCT
+                            pc.PostName_EN AS post_control_name,
+                            anmh.AnnouncementRevSerNum AS revision,
+                            anmh.CronLogSerNum AS cron_serial,
+                            anmh.PatientSerNum AS patient_serial,
+                            anmh.DateAdded AS date_added,
+                            anmh.ReadStatus AS read_status,
+                            anmh.ModificationAction AS mod_action
+                        FROM
+                            AnnouncementMH anmh,
+                            PostControl pc 
+                        WHERE
+                            pc.PostControlSerNum = anmh.PostControlSerNum
+                        AND anmh.CronLogSerNum IN (%%CRON_LOG_IDS%%)
+");
+define("SQL_OPAL_GET_TTM_CHART_PER_IDS","
+                        SELECT DISTINCT
+                            pc.PostName_EN AS post_control_name,
+                            ttmmh.TxTeamMessageRevSerNum AS revision,
+                            ttmmh.CronLogSerNum AS cron_serial,
+                            ttmmh.PatientSerNum AS patient_serial,
+                            ttmmh.DateAdded AS date_added,
+                            ttmmh.ReadStatus AS read_status,
+                            ttmmh.ModificationAction AS mod_action
+                        FROM
+                            TxTeamMessageMH ttmmh,
+                            PostControl pc 
+                        WHERE
+                            pc.PostControlSerNum = ttmmh.PostControlSerNum
+                        AND ttmmh.CronLogSerNum IN (%%CRON_LOG_IDS%%)
+");
+define("SQL_OPAL_GET_PFP_CHART_PER_IDS","
+                        SELECT DISTINCT
+                            pc.PostName_EN AS post_control_name,
+                            pfpmh.PatientsForPatientsRevSerNum AS revision,
+                            pfpmh.CronLogSerNum AS cron_serial,
+                            pfpmh.PatientSerNum AS patient_serial,
+                            pfpmh.DateAdded AS date_added,
+                            pfpmh.ReadStatus AS read_status,
+                            pfpmh.ModificationAction AS mod_action
+                        FROM
+                            PatientsForPatientsMH pfpmh,
+                            PostControl pc 
+                        WHERE
+                            pc.PostControlSerNum = pfpmh.PostControlSerNum
+                        AND pfpmh.CronLogSerNum IN (%%CRON_LOG_IDS%%)
 ");
 
 define("SQL_OPAL_GET_TTM_CHART","
     SELECT DISTINCT ttmmh.CronLogSerNum AS cron_serial, COUNT(ttmmh.CronLogSerNum) AS y, cl.CronDateTime AS x
-    FROM TxTeamMessageMH ttmmh, CronLog cl WHERE cl.CronStatus = 'Started' AND cl.CronLogSerNum = ttmmh.CronLogSerNum
-    AND ttmmh.CronLogSerNum IS NOT NULL AND ttmmh.PostControlSerNum = :PostControlSerNum
-    GROUP BY ttmmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC
+    FROM ".OPAL_TXT_TEAM_MSG_MH_TABLE." ttmmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started'
+    AND cl.CronLogSerNum = ttmmh.CronLogSerNum AND ttmmh.CronLogSerNum IS NOT NULL
+    AND ttmmh.PostControlSerNum = :PostControlSerNum GROUP BY ttmmh.CronLogSerNum, cl.CronDateTime
+    ORDER BY cl.CronDateTime ASC
 ");
 
 define("SQL_OPAL_GET_PFP_CHART","
     SELECT DISTINCT pfpmh.CronLogSerNum AS cron_serial, COUNT(pfpmh.CronLogSerNum) AS y, cl.CronDateTime AS x
-    FROM PatientsForPatientsMH pfpmh, CronLog cl WHERE cl.CronStatus = 'Started' AND cl.CronLogSerNum = pfpmh.CronLogSerNum
-    AND pfpmh.CronLogSerNum IS NOT NULL AND pfpmh.PostControlSerNum = $serial GROUP BY pfpmh.CronLogSerNum, cl.CronDateTime
+    FROM ".OPAL_PATIENTS_FOR_PATIENTS_MH_TABLE." pfpmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started'
+    AND cl.CronLogSerNum = pfpmh.CronLogSerNum AND pfpmh.CronLogSerNum IS NOT NULL
+    AND pfpmh.PostControlSerNum = :PostControlSerNum GROUP BY pfpmh.CronLogSerNum, cl.CronDateTime
     ORDER BY cl.CronDateTime ASC 
 ");
