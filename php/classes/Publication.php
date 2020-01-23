@@ -539,10 +539,6 @@ class Publication extends OpalProject
      * */
     protected function _insertPublicationPost(&$publication) {
         $postDetails = $this->opalDB->getPostDetails($publication["materialId"]["value"]);
-
-        print_r($publication);
-        print_r($postDetails);
-
         if(count($postDetails) <= 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid post.");
 
@@ -553,9 +549,16 @@ class Publication extends OpalProject
 
         if(!empty($publication['triggers']))
             $this->_insertFilters($publication, $publication["materialId"]["value"], "PostControl");
+    }
 
-
-        die("That's all folks!");
+    /*
+     * For publication of a new educational material.
+     * @params  $publication (array) the details of the publication to insert
+     * @return  void
+     * */
+    protected function _insertPublicationEduMaterial(&$publication) {
+        if(!empty($publication['triggers']))
+            $this->_insertFilters($publication, $publication["materialId"]["value"], "EducationalMaterialControl");
     }
 
     protected function _insertFilters(&$publication, &$publicationControlId, $controlTableName) {
@@ -571,9 +574,16 @@ class Publication extends OpalProject
                 "SessionId"=>$this->opalDB->getSessionId(),
             ));
         }
+
         $this->opalDB->insertMultipleFilters($toInsert);
     }
 
+    /*
+     * For publication of a questionnaire (new or current). It adds the questionnaire to the questionnaire control,
+     * inserts the triggers and if it exists, the frequency.
+     * @params  $publication (array) the details of the publication to insert
+     * @return  void
+     * */
     protected function _insertPublicationQuestionnaire(&$publication) {
         $this->_connectQuestionnaireDB($this->opalDB->getOAUserId());
         $currentQuestionnaire = $this->questionnaireDB->getQuestionnaireDetails($publication["materialId"]["value"]);
@@ -683,13 +693,12 @@ class Publication extends OpalProject
         else if($moduleDetails["ID"] == MODULE_POST) {
             $this->_insertPublicationPost($publication);
         }
+        else if($moduleDetails["ID"] == MODULE_EDU_MAT) {
+            $this->_insertPublicationEduMaterial($publication);
+        }
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module");
 
-
-
         return false;
-
     }
-
 }

@@ -694,10 +694,9 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 				success: function () {},
 				error: function (err) {
 					alert($filter('translate')('PUBLICATION.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
-					//$state.go('publication');
 				},
 				complete: function() {
-					//$state.go('publication');
+					$state.go('publication');
 				}
 			});
 		};
