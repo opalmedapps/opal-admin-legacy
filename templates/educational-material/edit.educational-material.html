@@ -154,7 +154,7 @@
                 </div>
             </div>
         </div>
-        <!-- SECTION: Patient trigger -->
+<!--        &lt;!&ndash; SECTION: Patient trigger &ndash;&gt;
         <div uib-accordion-group is-open="patientTriggerSection.open">
             <uib-accordion-heading>
                 <div>
@@ -167,11 +167,11 @@
                     <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(patientTriggerList) || selectAll.patient.all"></span>
                     <span ng-if="!checkTriggers(patientTriggerList)">{{'EDUCATION.EDIT.NO_TRIGGER'|translate}}</span>
                     <span ng-if="checkTriggers(patientTriggerList) && selectAll.patient.all">All patients</span>
-                    <ul class="list-items" ng-if="checkTriggers(patientTriggerList) && !selectAll.patient.all">
-                        <li ng-repeat="patient in patientTriggerList | filter: {added: 1} : 1">
-                            {{patient.name}}
-                        </li>
-                    </ul>
+                <ul class="list-items" ng-if="checkTriggers(patientTriggerList) && !selectAll.patient.all">
+                    <li ng-repeat="patient in patientTriggerList | filter: {added: 1} : 1">
+                        {{patient.name}}
+                    </li>
+                </ul>
                 </p>
             </div>
             <div class="list-space">
@@ -193,7 +193,7 @@
                 </ul>
             </div>
         </div>
-        <!-- SECTION: Demographic trigger -->
+        &lt;!&ndash; SECTION: Demographic trigger &ndash;&gt;
         <div uib-accordion-group is-open="demographicTriggerSection.open">
             <uib-accordion-heading>
                 <div>
@@ -254,7 +254,7 @@
                 </div>
             </div>
         </div>
-        <!-- SECTION: Appointment trigger -->
+        &lt;!&ndash; SECTION: Appointment trigger &ndash;&gt;
         <div uib-accordion-group is-open="appointmentTriggerSection.open">
             <uib-accordion-heading>
                 <div>
@@ -267,11 +267,11 @@
                     <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(appointmentTriggerList) || selectAll.appointment.all"></span>
                     <span ng-if="!checkTriggers(appointmentTriggerList)">{{'EDUCATION.EDIT.NO_TRIGGER'|translate}}</span>
                     <span ng-if="checkTriggers(appointmentTriggerList) && selectAll.appointment.all">{{'EDUCATION.EDIT.ALL_APPOINTMENTS'|translate}}</span>
-                    <ul class="list-items" ng-if="checkTriggers(appointmentTriggerList) && !selectAll.appointment.all">
-                        <li ng-repeat="selectedAppointment in appointmentTriggerList | filter: {added: 1} : 1">
-                            {{selectedAppointment.name_display}}
-                        </li>
-                    </ul>
+                <ul class="list-items" ng-if="checkTriggers(appointmentTriggerList) && !selectAll.appointment.all">
+                    <li ng-repeat="selectedAppointment in appointmentTriggerList | filter: {added: 1} : 1">
+                        {{selectedAppointment.name_display}}
+                    </li>
+                </ul>
                 </p>
             </div>
             <div class="list-space">
@@ -293,7 +293,7 @@
                 </ul>
             </div>
         </div>
-        <!-- SECTION: Diagnosis trigger -->
+        &lt;!&ndash; SECTION: Diagnosis trigger &ndash;&gt;
         <div uib-accordion-group is-open="diagnosisTriggerSection.open">
             <uib-accordion-heading>
                 <div>
@@ -306,11 +306,11 @@
                     <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(dxTriggerList) || selectAll.diagnosis.all"></span>
                     <span ng-if="!checkTriggers(dxTriggerList)">{{'EDUCATION.EDIT.NO_TRIGGER'|translate}}</span>
                     <span ng-if="checkTriggers(dxTriggerList) && selectAll.diagnosis.all">{{'EDUCATION.EDIT.ALL_DIAGNOSES'|translate}}</span>
-                    <ul class="list-items" ng-if="checkTriggers(dxTriggerList) && !selectAll.diagnosis.all">
-                        <li ng-repeat="dx in dxTriggerList | filter: {added: 1} : 1">
-                            {{dx.name_display}}
-                        </li>
-                    </ul>
+                <ul class="list-items" ng-if="checkTriggers(dxTriggerList) && !selectAll.diagnosis.all">
+                    <li ng-repeat="dx in dxTriggerList | filter: {added: 1} : 1">
+                        {{dx.name_display}}
+                    </li>
+                </ul>
                 </p>
             </div>
             <div class="list-space">
@@ -332,7 +332,7 @@
                 </ul>
             </div>
         </div>
-        <!-- SECTION: Doctor trigger -->
+        &lt;!&ndash; SECTION: Doctor trigger &ndash;&gt;
         <div uib-accordion-group is-open="doctorTriggerSection.open">
             <uib-accordion-heading>
                 <div>
@@ -345,11 +345,11 @@
                     <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(doctorTriggerList) || selectAll.doctor.all"></span>
                     <span ng-if="!checkTriggers(doctorTriggerList)">{{'EDUCATION.EDIT.NO_TRIGGER'|translate}}</span>
                     <span ng-if="checkTriggers(doctorTriggerList) && selectAll.doctor.all">{{'EDUCATION.EDIT.ALL_DOCTORS'|translate}}</span>
-                    <ul class="list-items" ng-if="checkTriggers(doctorTriggerList) && !selectAll.doctor.all">
-                        <li ng-repeat="doctor in doctorTriggerList | filter: {added: 1} : 1">
-                            {{doctor.name}}
-                        </li>
-                    </ul>
+                <ul class="list-items" ng-if="checkTriggers(doctorTriggerList) && !selectAll.doctor.all">
+                    <li ng-repeat="doctor in doctorTriggerList | filter: {added: 1} : 1">
+                        {{doctor.name}}
+                    </li>
+                </ul>
                 </p>
             </div>
             <div class="list-space">
@@ -371,7 +371,7 @@
                 </ul>
             </div>
         </div>
-        <!-- SECTION: Machine Trigger -->
+        &lt;!&ndash; SECTION: Machine Trigger &ndash;&gt;
         <div uib-accordion-group is-open="machineTriggerSection.open">
             <uib-accordion-heading>
                 <div>
@@ -384,11 +384,11 @@
                     <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!checkTriggers(machineTriggerList) || selectAll.machine.all"></span>
                     <span ng-if="!checkTriggers(machineTriggerList)">{{'EDUCATION.EDIT.NO_TRIGGER'|translate}}</span>
                     <span ng-if="checkTriggers(machineTriggerList) && selectAll.machine.all">{{'EDUCATION.EDIT.ALL_TM'|translate}}</span>
-                    <ul class="list-items" ng-if="checkTriggers(machineTriggerList) && !selectAll.machine.all">
-                        <li ng-repeat="machine in machineTriggerList | filter: {added: 1} : 1">
-                            {{machine.name}}
-                        </li>
-                    </ul>
+                <ul class="list-items" ng-if="checkTriggers(machineTriggerList) && !selectAll.machine.all">
+                    <li ng-repeat="machine in machineTriggerList | filter: {added: 1} : 1">
+                        {{machine.name}}
+                    </li>
+                </ul>
                 </p>
             </div>
             <div class="list-space">
@@ -409,6 +409,6 @@
                     </li>
                 </ul>
             </div>
-        </div>
+        </div>-->
     </uib-accordion>
 </div>
