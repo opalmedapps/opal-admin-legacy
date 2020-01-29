@@ -67,7 +67,6 @@ class PublishedQuestionnaire extends Questionnaire {
         $publishedQuestionnaire = $publishedQuestionnaire[0];
         $questionnaireTriggers = $this->opalDB->getPublishedQuestionnaireTriggers($id);
         $publishedQuestionnaire["triggers"] = $questionnaireTriggers;
-        $publishedQuestionnaire["triggers"] = $questionnaireTriggers;
         $frequencyEvents = $this->opalDB->getPublishedQuestionnaireFrequencyEvents($id);
 
         foreach($frequencyEvents as $data) {

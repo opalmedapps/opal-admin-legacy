@@ -244,6 +244,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 			$scope.machineTriggerList = checkAdded(response.data.machines, $scope.selectAll.machine);
 			$scope.patientTriggerList = checkAdded(response.data.patients, $scope.selectAll.patient);
 			$scope.appointmentStatusList = checkAdded(response.data.appointmentStatuses);
+			console.log($scope.patientTriggerList);
 
 		}).catch(function(err) {
 			alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ERROR_FILTERS') + err.status + " " + err.data);
