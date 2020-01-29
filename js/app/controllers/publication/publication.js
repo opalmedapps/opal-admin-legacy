@@ -179,9 +179,9 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 		// Table
 		// Templates
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editPublishedQuestionnaire(row.entity)"><i title="'+$filter('translate')('PUBLICATION.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong></div>';
+			'<strong><a href="" ng-click="grid.appScope.editPublication(row.entity)"<i title="'+$filter('translate')('PUBLICATION.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong></div>';
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
-			'ng-click="grid.appScope.editPublishedQuestionnaire(row.entity)">' +
+			'ng-click="grid.appScope.editPublication(row.entity)">' +
 			'<strong><a href="">{{row.entity.name_'+ Session.retrieveObject('user').language +'}}</a></strong></div>';
 		var cellTemplatePublish = '<div style="text-align: center; cursor: pointer;" ' +
 			'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
@@ -315,9 +315,6 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 						alert($filter('translate')('PUBLICATION.LIST.ERROR_FLAGS') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
 					}
 				});
-
-
-
 			}
 		};
 
@@ -330,10 +327,10 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 		}
 
 		// Function to edit questionnaire
-		$scope.editPublication = function (questionnaire) {
-			$scope.currentPublishedQuestionnaire = questionnaire;
+		$scope.editPublication = function (publication) {
+			$scope.currentPublication = publication;
 			var modalInstance = $uibModal.open({ // open modal
-				templateUrl: 'templates/questionnaire/edit.publication.html',
+				templateUrl: 'templates/publication/edit.publication.html',
 				controller: 'publication.edit',
 				scope: $scope,
 				windowClass: 'customModal',

@@ -202,7 +202,7 @@ RewriteRule ^publication-tool/insert/published-questionnaire php/questionnaire/i
 RewriteRule ^publication/update/publish-flag php/publication/update.publish.flag.php [QSA,L]
 RewriteRule ^publication/update/publication php/publication/update.publication.php [QSA,L]
 RewriteRule ^publication/get/publication-chart-logs api/publication/get.publication.chart.logs.php [QSA,L]
-RewriteRule ^publication/get/publication-details api/publication/get.publications_details.php [QSA,L]
+RewriteRule ^publication/get/publication-details api/publication/get.publication.details.php [QSA,L]
 RewriteRule ^publication/get/publications-per-module api/publication/get.publications.per.module.php [QSA,L]
 RewriteRule ^publication/get/publications api/publication/get.publications.php [QSA,L]
 RewriteRule ^publication/get/publication-modules api/publication/get.publication.modules.php [QSA,L]
