@@ -133,6 +133,8 @@ define("MODULE_POST", 2);
 define("MODULE_EDU_MAT", 3);
 define("MODULE_QUESTIONNAIRE", 7);
 
+define("PUBLICATION_PUBLISH_DATE", 9);
+
 /*
  * List of HTTP status codes
  * */

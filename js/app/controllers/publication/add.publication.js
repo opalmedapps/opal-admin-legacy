@@ -354,11 +354,6 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 
 		initialization();
 
-		// $scope.$watch('toSubmit', function() {
-		// 	console.log("watch toSubmit");
-		// 	console.log($scope.toSubmit);
-		// }, true);
-
 		$scope.$watch('toSubmit.triggers', function() {
 			$scope.validator.triggers.completed = ($scope.toSubmit.triggers.length > 0);
 		}, true);
@@ -434,6 +429,8 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 						delete $scope.toSubmit.name;
 						delete $scope.validator.name;
 					}
+
+					console.log(response.data);
 
 					$scope.publishFrequencySection.available = response.data["triggers"].indexOf("1") !== -1 ? true: false;
 					$scope.triggerSection.patient.available = response.data["triggers"].indexOf("2") !== -1 ? true: false;
@@ -685,8 +682,6 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 					$scope.toSubmit.publishDateTime = tempDate;
 				}
 			}
-
-			console.log( $scope.toSubmit);
 			$.ajax({
 				type: "POST",
 				url: "publication/insert/publication",
@@ -1375,8 +1370,4 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 				});
 			}
 		});
-
 	});
-
-
-

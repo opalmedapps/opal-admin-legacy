@@ -162,7 +162,16 @@ define("SQL_OPAL_GET_MODULE_BY_ID", "
     SELECT * FROM ".OPAL_MODULE_TABLE." WHERE ID = :ID;
 ");
 
-define("SQL_OPAL_GET_TRIGGERS_PER_MODULE", "
+define("SQL_OPAL_GET_FILTERS_DETAILS", "
+    SELECT DISTINCT FilterType AS type, FilterId AS id
+    FROM ".OPAL_FILTERS_TABLE." WHERE ControlTableSerNum = :ControlTableSerNum AND ControlTable = :ControlTable;
+");
+
+//define("SQL_OPAL_GET_FILTERS_DETAILS", "
+//    SELECT FilterSerNum, FilterType, FilterId FROM ".OPAL_FILTERS_TABLE." WHERE ControlTableSerNum = :ControlTableSerNum AND ControlTable = :ControlTable;
+//");
+
+define("SQL_OPAL_GET_PUBLICATION_SETTINGS_ID_PER_MODULE", "
     SELECT publicationSettingId FROM ".OPAL_MODULE_PUBLICATION_SETTING_TABLE." WHERE moduleId = :moduleId;
 ");
 
@@ -208,6 +217,13 @@ define("SQL_OPAL_GET_FREQUENCY_EVENTS_QUESTIONNAIRE_CONTROL",
     "SELECT DISTINCT CustomFlag, MetaKey, MetaValue 
     FROM ".OPAL_FREQUENCY_EVENTS_TABLE."
     WHERE ControlTable = 'LegacyQuestionnaireControl'
+    AND ControlTableSerNum = :ControlTableSerNum;"
+);
+
+define("SQL_OPAL_GET_FREQUENCY_EVENTS",
+    "SELECT DISTINCT CustomFlag, MetaKey, MetaValue 
+    FROM ".OPAL_FREQUENCY_EVENTS_TABLE."
+    WHERE ControlTable = :ControlTable
     AND ControlTableSerNum = :ControlTableSerNum;"
 );
 
@@ -308,16 +324,26 @@ define("SQL_OPAL_MARK_RECORD_AS_DELETED", "
     WHERE %%PRIMARY_KEY%% = :recordId AND deleted = ".NON_DELETED_RECORD.";
 ");
 
-define("SQL_OPAL_GET_TRIGGERS_SETTINGS_PER_MODULE", "
+define("SQL_OPAL_GET_PUBLICATION_SETTINGS_PER_MODULE", "
+    SELECT * FROM ".OPAL_PUBLICATION_SETTING_TABLE." ps
+    LEFT JOIN ".OPAL_MODULE_PUBLICATION_SETTING_TABLE." mps ON mps.publicationSettingId = ps.ID
+    WHERE mps.moduleId = :moduleId;
+");
+
+define("SQL_OPAL_GET_PUBLICATION_TRIGGERS_SETTINGS_PER_MODULE", "
     SELECT * FROM ".OPAL_PUBLICATION_SETTING_TABLE." ps
     LEFT JOIN ".OPAL_MODULE_PUBLICATION_SETTING_TABLE." mps ON mps.publicationSettingId = ps.ID
     WHERE mps.moduleId = :moduleId AND isTrigger = 1;
 ");
 
-define("SQL_OPAL_GET_PUBLICATION_SETTINGS_PER_MODULE", "
+define("SQL_OPAL_GET_PUBLICATION_NON_TRIGGERS_SETTINGS_PER_MODULE", "
     SELECT * FROM ".OPAL_PUBLICATION_SETTING_TABLE." ps
     LEFT JOIN ".OPAL_MODULE_PUBLICATION_SETTING_TABLE." mps ON mps.publicationSettingId = ps.ID
     WHERE mps.moduleId = :moduleId AND isTrigger = 0;
+");
+
+define("SQL_OPAL_GET_PUBLISH_DATE_TIME", "
+    SELECT PublishDate FROM %%TABLE_NAME%% WHERE %%PRIMARY_KEY%% = :primaryKey;
 ");
 
 define("SQL_OPAL_GET_ANNOUNCEMENT_CHART","

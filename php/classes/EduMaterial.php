@@ -288,13 +288,10 @@ class EduMaterial {
 		}
 	}
 
-     /**
-     *            (SELECT COUNT(*) AS locked FROM Filters f WHERE f.ControlTableSerNum = em.EducationalMaterialControlSerNum and ControlTable = 'EducationalMaterialControl') AS locked
-
+     /*
       * Gets a list of existing educational materials
-     *
-     * @return array $eduMatList : the list of existing educational materials 
-     */                  
+      * @return array $eduMatList : the list of existing educational materials
+      */
     public function getEducationalMaterials() {
         $eduMatList = array();
  		try {
@@ -1115,21 +1112,6 @@ class EduMaterial {
 			return $response; // Fail
 		}
 	}
-
-	protected function _isEduMaterialLocked($id) {
-        $result = 0;
-        try {
-            $sql = "SELECT COUNT(*) AS locked FROM ".OPAL_FILTERS_TABLE." f WHERE f.ControlTableSerNum = ".$id." and ControlTable = '".OPAL_EDUCATION_MATERIAL_TABLE."'";
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-            $result = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
-        } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response;
-        }
-    }
 
     /**
      *

@@ -51,6 +51,89 @@ class Publication extends OpalProject
         return $this->opalDB->getPublications();
     }
 
+    public function getPublicationDetails($publicationId, $moduleId) {
+        if($publicationId == "" || $moduleId == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publication settings.");
+
+        $results = array();
+        $results["module"]["publicationId"] =  $publicationId;
+        $results["module"]["moduleId"] =  $moduleId;
+        $module = $this->opalDB->getModuleSettings($moduleId);
+
+        if(!isset($module["ID"]) || $module["ID"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publication settings.");
+
+        $results["publicationSettings"] = $this->opalDB->getPublicationSettingsIDsPerModule($moduleId);
+        $tempArray = array();
+        foreach($results["publicationSettings"] as $trigger)
+            array_push($tempArray, $trigger["publicationSettingId"]);
+        $results["publicationSettings"] = $tempArray;
+
+        if(in_array(PUBLICATION_PUBLISH_DATE, $results["publicationSettings"])) {
+            $results["publish_date"] = $this->opalDB->getPublishDateTime($module["tableName"], $module["primaryKey"], $publicationId);
+        }
+
+        if($moduleId == MODULE_QUESTIONNAIRE) {
+            $questionnaire = $this->opalDB->getPublishedQuestionnaireDetails($publicationId);
+            if(count($questionnaire) != 1)
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire publication.");
+            $results["name_EN"] = $questionnaire[0]["name_EN"];
+            $results["name_FR"] = $questionnaire[0]["name_FR"];
+        }
+
+        $frequencyEvents = $this->opalDB->getFrequencyEvents($publicationId, $module["controlTableName"]);
+
+        $occurrenceArray = array(
+            'start_date' => null,
+            'end_date' => null,
+            'set' => 0,
+            'frequency' => array (
+                'custom' => 0,
+                'meta_key' => null,
+                'meta_value' => null,
+                'additionalMeta' => array()
+            )
+        );
+
+        foreach($frequencyEvents as $data) {
+            // if we've entered, then a frequency has been set
+            $occurrenceArray['set'] = 1;
+
+            $customFlag     = $data["CustomFlag"];
+            // the type of meta key and which content it belongs to is separated by the | delimeter
+            list($metaKey, $dontNeed) = explode('|', $data["MetaKey"]);
+            $metaValue      = $data["MetaValue"];
+
+            if ($metaKey == 'repeat_start') {
+                $occurrenceArray['start_date'] = $metaValue;
+            }
+            else if ($metaKey == 'repeat_end') {
+                $occurrenceArray['end_date'] = $metaValue;
+            }
+            // custom non-additional meta (eg. repeat_day, repeat_week ... any meta with one underscore that was custom made)
+            else if ($customFlag == 1 and count(explode('_', $metaKey)) == 2) {
+                $occurrenceArray['frequency']['custom'] = 1;
+                $occurrenceArray['frequency']['meta_key'] = $metaKey;
+                $occurrenceArray['frequency']['meta_value'] = intval($metaValue);
+            }
+            // additional meta (eg. repeat_day_iw, repeat_week_im ... any meta with two underscores)
+            else if ($customFlag == 1 and count(explode('_', $metaKey)) == 3) {
+                $occurrenceArray['frequency']['custom'] = 1;
+                $occurrenceArray['frequency']['additionalMeta'][$metaKey] = array_map('intval', explode(',', $metaValue));
+                sort($occurrenceArray['frequency']['additionalMeta'][$metaKey]);
+            }
+            else { // should only be one predefined frequency chosen, if chosen
+                $occurrenceArray['frequency']['meta_key'] = $metaKey;
+                $occurrenceArray['frequency']['meta_value'] = intval($metaValue);
+            }
+        }
+
+        $results["occurrence"] = $occurrenceArray;
+
+        $results["triggers"] = $this->opalDB->getTriggersDetails($publicationId, $module["controlTableName"]);
+        return $results;
+    }
+
     /*
      * Get the list of materials that can be published based on the module request
      * params   module ID
@@ -60,6 +143,7 @@ class Publication extends OpalProject
         if($moduleId == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Module cannot be found. Access denied.");
         $results = $this->opalDB->getPublicationsPerModule($moduleId);
+
         $tempArray = array();
         foreach($results["triggers"] as $trigger)
             array_push($tempArray, $trigger["publicationSettingId"]);
@@ -141,11 +225,14 @@ class Publication extends OpalProject
      * an enum. If it is a regular validation, get the list of different values from opalDB and Aria (if any) and count
      * the total.
      *
+     * @params  $triggersToValidate (array) contains the triggers received from the user to validate
+     *          $moduleId (int) ID of the module with the triggers to validate
+     * @returns $errMsgs (array) Array containing all the errors messages received during the validation
      * */
     protected function _validateTriggers(&$triggersToValidate, &$moduleId) {
         $validatedTriggers = array();
         $errMsgs = array();                                             //By default, no error message
-        $listTriggers = $this->opalDB->getTriggersPerModule($moduleId); //Get lists of triggers and their settings
+        $listTriggers = $this->opalDB->getPublicationSettingsPerModule($moduleId); //Get lists of triggers and their settings
         if (count($listTriggers) <= 0) {
             array_push($errMsgs, "Invalid Module.");
             return $errMsgs;
@@ -202,6 +289,8 @@ class Publication extends OpalProject
                             array_push($errMsgs, "$key: non-existant value requested.");
                         }
                     }
+                    else
+                        array_push($errMsgs, "Unknown trigger settings.");
                 }
                 //Standard process of the checkup by getting data from OpalDB and Aria
                 else {
@@ -478,7 +567,7 @@ class Publication extends OpalProject
      * */
     protected function _validateFrequency(&$publication, &$subModule) {
         $errMsgs = array();                                             //By default, no error message
-        $pubSettings = $this->opalDB->getPublicationSettingsPerModule($publication["moduleId"]["value"]);
+        $pubSettings = $this->opalDB->getPublicationNonTriggerSettingsPerModule($publication["moduleId"]["value"]);
         $subModule = json_decode($subModule, true);
         foreach($pubSettings as $setting) {
             $mandatory = false;

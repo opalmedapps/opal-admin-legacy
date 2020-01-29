@@ -113,15 +113,42 @@ class DatabaseOpal extends DatabaseAccess {
         $sqlFetchPerModule = str_replace("%%PHASEINTREATMENT%%", OPAL_PHASE_IN_TREATMENT_TABLE, $sqlFetchPerModule);
 
         $result["publications"] = $this->_fetchAll($sqlFetchPerModule,  array(array("parameter"=>":OAUserId","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT)));
-        $result["triggers"] = $this->_fetchAll(SQL_OPAL_GET_TRIGGERS_PER_MODULE, array(array("parameter"=>":moduleId","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
+        $result["triggers"] = $this->getPublicationSettingsPerModule($moduleId);
         $result["unique"] = $module["unique"];
         $result["subModule"] = $module["subModule"];
 
         return $result;
     }
 
+    /*
+     * Gets the triggers of a specific module
+     * @params  $moduleId (int) ID of a module
+     * @returns array with details of the settings for the module
+     * */
+    function getPublicationSettingsIDsPerModule($moduleId) {
+        return $this->_fetchAll(SQL_OPAL_GET_PUBLICATION_SETTINGS_ID_PER_MODULE, array(array("parameter"=>":moduleId","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
+    }
+
+    function getPublicationSettingsPerModule($moduleId) {
+        return $this->_fetchAll(SQL_OPAL_GET_PUBLICATION_SETTINGS_PER_MODULE, array(array("parameter"=>":moduleId","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
+    }
+
     function getModuleSettings($moduleId) {
         return $this->_fetch(SQL_OPAL_GET_MODULE_BY_ID, array(array("parameter"=>":ID","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
+    }
+
+    function getPublishDateTime($tableName, $primaryKey, $id) {
+        $sqlFetch = str_replace("%%TABLE_NAME%%", $tableName,SQL_OPAL_GET_PUBLISH_DATE_TIME);
+        $sqlFetch = str_replace("%%PRIMARY_KEY%%", $primaryKey, $sqlFetch);
+        $result = $this->_fetch($sqlFetch, array(array("parameter"=>":primaryKey","variable"=>$id,"data_type"=>PDO::PARAM_INT)));
+        return $result["PublishDate"];
+    }
+
+    function getTriggersDetails($publicationId, $controlTableName) {
+        return $this->_fetchAll(SQL_OPAL_GET_FILTERS_DETAILS, array(
+            array("parameter"=>":ControlTableSerNum","variable"=>$publicationId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":ControlTable","variable"=>$controlTableName,"data_type"=>PDO::PARAM_STR)
+        ));
     }
 
     function getPublicationChartLogs() {
@@ -177,6 +204,19 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(SQL_OPAL_GET_FREQUENCY_EVENTS_QUESTIONNAIRE_CONTROL,
             array(
                 array("parameter"=>":ControlTableSerNum","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    /*
+     * Get all the triggers of a specific publication.
+     * @params  Questionnaire serial number (int)
+     * @return  array of details of the published questionnaire itself
+     * */
+    function getFrequencyEvents($publicationId, $controlTableName) {
+        return $this->_fetchAll(SQL_OPAL_GET_FREQUENCY_EVENTS,
+            array(
+                array("parameter"=>":ControlTableSerNum","variable"=>$publicationId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":ControlTable","variable"=>$controlTableName,"data_type"=>PDO::PARAM_STR),
             ));
     }
 
@@ -466,23 +506,12 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Gets the post details with a single ID/Serial
-     * @params  ID/serial of the post
-     * @returns array with details of the post
+     * Gets the publication settings (non trigger) of a specific module
+     * @params  $moduleId (int) ID of a module
+     * @returns array with details of the settings for the module
      * */
-    function getTriggersPerModule($moduleId) {
-        return $this->_fetchAll(SQL_OPAL_GET_TRIGGERS_SETTINGS_PER_MODULE,
-            array(array("parameter"=>":moduleId","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT))
-        );
-    }
-
-    /*
-     * Gets the post details with a single ID/Serial
-     * @params  ID/serial of the post
-     * @returns array with details of the post
-     * */
-    function getPublicationSettingsPerModule($moduleId) {
-        return $this->_fetchAll(SQL_OPAL_GET_PUBLICATION_SETTINGS_PER_MODULE,
+    function getPublicationNonTriggerSettingsPerModule($moduleId) {
+        return $this->_fetchAll(SQL_OPAL_GET_PUBLICATION_NON_TRIGGERS_SETTINGS_PER_MODULE,
             array(array("parameter"=>":moduleId","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT))
         );
     }

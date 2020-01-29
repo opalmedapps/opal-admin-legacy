@@ -397,7 +397,7 @@ class DatabaseAccess extends HelpSetup
     /*
      * Fetch a specific query for the triggers
      * @params  void
-     * @return  array of questionnaires
+     * @return  array of triggers
      * */
     function fetchTriggersData($sqlToFetch, $id) {
         $results = array();
