@@ -9,46 +9,57 @@
     <div class="modal-buttons col-xs-12 col-md-6">
         <span>
             <form method="post" ng-submit="updatePublishedQuestionnaire()">
-                <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit"
-                       value="{{'PUBLICATION.EDIT.SAVE'|translate}}">
-                <input ng-click="cancel()" class="btn btn-danger cancel" type="button"
-                       value="{{'PUBLICATION.EDIT.CANCEL'|translate}}">
+                <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="{{'PUBLICATION.EDIT.SAVE'|translate}}">
+                <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'PUBLICATION.EDIT.CANCEL'|translate}}">
             </form>
         </span>
     </div>
 </div>
 <div class="modal-body">
     <uib-accordion close-others="false">
-        <!-- SECTION: Titles -->
-        <div uib-accordion-group is-open="titleSection.open">
+        <!-- SECTION: General infos -->
+        <div uib-accordion-group is-open="generalSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>{{'PUBLICATION.EDIT.TITLES'|translate}} </strong><i
-                        class="pull-right glyphicon"
-                        ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                    <strong>{{'PUBLICATION.EDIT.GENERAL'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': generalSection.open, 'glyphicon-chevron-right': !generalSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12">
+                    <label><strong>{{'PUBLICATION.EDIT.NAME'|translate}}</strong></label> : {{generalInfo.name}}
+                </div>
+                <div class="col-xs-12">
+                    <label><strong>{{'PUBLICATION.EDIT.MODULE'|translate}}</strong></label> : {{generalInfo.module}}
+                </div>
+                <div class="col-xs-12">
+                    <label><strong>{{'PUBLICATION.EDIT.DESCRIPTION'|translate}}</strong></label> : {{generalInfo.description}}
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Titles -->
+        <div ng-if="title.available" uib-accordion-group is-open="titleSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'PUBLICATION.EDIT.TITLES'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="row">
                 <div class="col-xs-12 col-sm-6">
                     <div class="input-group">
                         <span class="input-group-addon">{{'PUBLICATION.EDIT.ENGLISH_TITLE'|translate}}</span>
-                        <textarea class="form-control" rows="1" ng-model="publication.name_EN"
-                                  placeholder="{{'PUBLICATION.EDIT.PLACEHOLDER_ENGLISH_TITLE'|translate}}"
-                                  ng-change="detailsUpdated()"></textarea>
+                        <textarea class="form-control" rows="1" ng-model="toSubmit.name_EN" placeholder="{{'PUBLICATION.EDIT.PLACEHOLDER_ENGLISH_TITLE'|translate}}" ng-change="detailsUpdated()"></textarea>
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6">
                     <div class="input-group">
                         <span class="input-group-addon">{{'PUBLICATION.EDIT.FRENCH_TITLE'|translate}}</span>
-                        <textarea class="form-control" rows="1" ng-model="publication.name_FR"
-                                  placeholder="{{'PUBLICATION.EDIT.PLACEHOLDER_FRENCH_TITLE'|translate}}"
-                                  ng-change="detailsUpdated()"></textarea>
+                        <textarea class="form-control" rows="1" ng-model="toSubmit.name_FR" placeholder="{{'PUBLICATION.EDIT.PLACEHOLDER_FRENCH_TITLE'|translate}}" ng-change="detailsUpdated()"></textarea>
                     </div>
                 </div>
             </div>
         </div>
         <!-- SECTION: Publish date -->
-        <div ng-if="publishDate.available" uib-accordion-group>
+        <div ng-if="publishDate.available" uib-accordion-group is-open="publishDateSection.open">
             <uib-accordion-heading>
                 <div>
                     <strong>{{'POSTS.EDIT.PUBLISH_DATE'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': publishDateSection.open, 'glyphicon-chevron-right': !publishDateSection.open}"></i>
@@ -58,16 +69,16 @@
                 <strong>{{'POSTS.EDIT.CURRENT_DATE'|translate}}</strong><br>
                 <p>
                     <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                    <span ng-hide="publication.publish_date && publication.publish_time"> {{'POSTS.EDIT.NONE'|translate}}</span>
-                    <span ng-show="publication.publish_date && publication.publish_time">
-                        {{publication.publish_date | date:'yyyy-MM-dd'}} {{'POSTS.EDIT.AT'|translate}} {{publication.publish_time | date:'HH:mm'}}
+                    <span ng-hide="toSubmit.publishDateTime.publish_date && toSubmit.publishDateTime.publish_time && dateEntered"> {{'POSTS.EDIT.NONE'|translate}}</span>
+                    <span ng-show="toSubmit.publishDateTime.publish_date && toSubmit.publishDateTime.publish_time && dateEntered">
+                        {{toSubmit.publishDateTime.publish_date | date:'yyyy-MM-dd'}} {{'POSTS.EDIT.AT'|translate}} {{toSubmit.publishDateTime.publish_time | date:'HH:mm'}}
                     </span>
                 </p>
             </div>
-            <div class="row">
+            <div class="row" ng-show="publishDateTimeActive">
                 <div class="col-xs-12 col-sm-7 col-lg-6" style="padding-top: 10px;margin-bottom: 20px;">
                     <p class="input-group">
-                        <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="publication.publish_date" is-open="popup.opened" min="minDate" ng-change="detailsUpdated()" datepicker-options="dateOptions" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
+                        <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="toSubmit.publish_date" is-open="popup.opened" min="minDate" ng-change="detailsUpdated()" datepicker-options="dateOptions" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
                         <span class="input-group-btn">
                             <button class="btn btn-default" ng-click="open()"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
@@ -75,13 +86,13 @@
                 </div>
                 <div class="col-xs-12 col-sm-5 col-lg-6" style="margin-top: -24px;">
                     <div>
-                        <div uib-timepicker ng-change="detailsUpdated()" ng-model="publication.publish_time" minute-step="5" show-meridian="false"></div>
+                        <div uib-timepicker ng-change="detailsUpdated()" ng-model="toSubmit.publishDateTime.publish_time" minute-step="5" show-meridian="false"></div>
                     </div>
                 </div>
             </div>
         </div>
         <!-- SECTION: Publish Frequency -->
-        <div ng-if="publishFrequencySection.available" uib-accordion-group>
+        <div ng-if="publishFrequencySection.available" uib-accordion-group is-open="frequencySection.open">
             <uib-accordion-heading>
                 <div>
                     <strong>{{'PUBLICATION.EDIT.FREQUENCY'|translate}} </strong><i
@@ -144,20 +155,20 @@
                         <strong>{{'PUBLICATION.EDIT.REPEAT_START'|translate}}</strong><br/>
                         <p>
                             <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                            <span ng-if="publication.occurrence.start_date">
-                            {{publication.occurrence.start_date | date:'yyyy-MM-dd' }}
+                            <span ng-if="toSubmit.occurrence.start_date">
+                            {{toSubmit.occurrence.start_date | date:'yyyy-MM-dd' }}
                             </span>
-                            <span ng-if="!publication.occurrence.start_date">N/A</span>
+                            <span ng-if="!toSubmit.occurrence.start_date">N/A</span>
                         </p>
                     </div>
                     <div class="col-xs-12 col-sm-4">
                         <strong>{{'PUBLICATION.EDIT.REPEAT_END'|translate}}</strong><br>
                         <p>
                             <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                            <span ng-if="publication.occurrence.end_date">
-                            {{publication.occurrence.end_date | date:'yyyy-MM-dd' }}
+                            <span ng-if="toSubmit.occurrence.end_date">
+                            {{toSubmit.occurrence.end_date | date:'yyyy-MM-dd' }}
                             </span>
-                            <span ng-if="!publication.occurrence.end_date">{{'PUBLICATION.EDIT.NEVER'|translate}}</span>
+                            <span ng-if="!toSubmit.occurrence.end_date">{{'PUBLICATION.EDIT.NEVER'|translate}}</span>
                             </span>
                         </p>
                     </div>
@@ -199,13 +210,7 @@
                             </label>
                             <div class="col-xs-12 col-lg-9">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" uib-datepicker-popup="{{format}}"
-                                           ng-model="publication.occurrence.start_date"
-                                           ng-change="setChangesMade()" is-open="popupStart.opened"
-                                           datepicker-options="dateOptionsStart" ng-required="true"
-                                           close-text="{{'DATEPICKER.CLOSE'|translate}}"
-                                           current-text="{{'DATEPICKER.TODAY'|translate}}"
-                                           clear-text="{{'DATEPICKER.RESET'|translate}}"/>
+                                    <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="toSubmit.occurrence.start_date" is-open="popupStart.opened" datepicker-options="dateOptionsStart" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}"/>
                                     <span class="input-group-btn">
                                     <button class="btn btn-default" ng-click="openStart($event)"><i
                                             class="glyphicon glyphicon-calendar"></i></button>
@@ -231,8 +236,8 @@
                                 <div class="input-group">
                                     <input ng-if="addEndDate" type="text" class="form-control"
                                            uib-datepicker-popup="{{format}}"
-                                           ng-model="publication.occurrence.end_date"
-                                           ng-change="setChangesMade()" is-open="popupEnd.opened"
+                                           ng-model="toSubmit.occurrence.end_date"
+                                           is-open="popupEnd.opened"
                                            datepicker-options="dateOptionsEnd" ng-required="true"
                                            close-text="{{'DATEPICKER.CLOSE'|translate}}"
                                            current-text="{{'DATEPICKER.TODAY'|translate}}"
@@ -261,8 +266,7 @@
                                 {{'PUBLICATION.EDIT.REPEAT_INTERVAL'|translate}}
                             </label>
                             <div class="col-xs-3">
-                                <input class="form-control" ng-model="customFrequency.meta_value"
-                                       ng-change="setChangesMade()" type="number" max="59" min="1">
+                                <input class="form-control" ng-model="customFrequency.meta_value" type="number" max="59" min="1">
                             </div>
                             <div class="col-xs-6">
                                 <select class="form-control"
@@ -315,8 +319,7 @@
                             </div>
                             <div ng-if="repeatSub == 'onDate' && customFrequency.unit.id == 'month'"
                                  class="no-calendar-header col-xs-12" style="margin-bottom: 10px;">
-                                <multiple-date-picker day-click="setChangesMade()" ng-model="selectedDatesInMonth"
-                                                      month="staticMonth"></multiple-date-picker>
+                                <multiple-date-picker ng-model="selectedDatesInMonth" month="staticMonth"></multiple-date-picker>
                             </div>
                             <div ng-if="repeatSub == 'onWeek' || customFrequency.unit.id == 'year'" class="col-xs-4"
                                  style="margin-bottom: 10px;">
@@ -341,7 +344,7 @@
             </div>
         </div>
         <!-- SECTION: Patient trigger -->
-        <div ng-if="triggerSection.patient.available" uib-accordion-group>
+        <div ng-if="triggerSection.patient.available" uib-accordion-group is-open="patientTriggerSection.open">
             <uib-accordion-heading>
                 <div>
                     <strong>{{'PUBLICATION.EDIT.TRIGGER_PATIENT'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': patientTriggerSection.open, 'glyphicon-chevron-right': !patientTriggerSection.open}"></i>
@@ -378,7 +381,7 @@
             </div>
         </div>
         <!-- SECTION: Demographic trigger -->
-        <div ng-if="triggerSection.demo.available" uib-accordion-group>
+        <div ng-if="triggerSection.demo.available" uib-accordion-group is-open="demographicTriggerSection.open">
             <uib-accordion-heading>
                 <div>
                     <strong>{{'PUBLICATION.EDIT.TRIGGER_DEMO'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': demographicTriggerSection.open, 'glyphicon-chevron-right': !demographicTriggerSection.open}"></i>
@@ -422,30 +425,39 @@
                 </div>
                 <div class="col-xs-12 col-md-6">
                     <div class="row">
-                        <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">
-                            {{'PUBLICATION.EDIT.AGE_GROUP'|translate}}</h2>
+                        <h2 class="col-xs-12" style="margin:0 0 7px 0; padding: 0 15px; font-size:30px;">{{'PUBLICATION.EDIT.AGE_GROUP'|translate}}</h2>
                     </div>
                     <div class="row">
                         <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-                            <div class="input-group">
+                            <div class="input-group" ng-class="!demoTrigger.age.valid ? 'panel-danger':''">
                                 <span class="input-group-addon">{{'PUBLICATION.EDIT.MIN'|translate}}</span>
-                                <input class="form-control" ng-model="demoTrigger.age.min" ng-change="ageUpdate()"
-                                       type="number" ng-max="demoTrigger.age.max" min="0">
+                                <input class="form-control" ng-model="demoTrigger.age.min" ng-change="ageUpdate()" type="number" ng-max="demoTrigger.age.max" min="0">
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-                            <div class="input-group">
+                            <div class="input-group" ng-class="!demoTrigger.age.valid ? 'panel-danger':''">
                                 <span class="input-group-addon">{{'PUBLICATION.EDIT.MAX'|translate}}</span>
-                                <input class="form-control" ng-model="demoTrigger.age.max" ng-change="ageUpdate()"
-                                       type="number" max="130" ng-min="demoTrigger.age.min">
+                                <input class="form-control" ng-model="demoTrigger.age.max" ng-change="ageUpdate()" type="number" max="130" ng-min="demoTrigger.age.min">
                             </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12" style="margin-bottom: 10px;" >
+                            <button class="btn btn-danger" ng-if="demoTrigger.age.max != 130 || demoTrigger.age.min != 0" ng-click="resetAgeRange();">
+                                <span style="font-size: 20px;"><strong>{{'PUBLICATION.ADD.RESET_AGE'|translate}}</strong></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12" ng-if="!demoTrigger.age.valid">
+                            <p style="color: #d9534f; font-weight: bold;">{{'PUBLICATION.ADD.ERROR_AGE'|translate}}</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <!-- SECTION: Appointment status trigger -->
-        <div ng-if="triggerSection.appointmentStatus.available" uib-accordion-group>
+        <div ng-if="triggerSection.appointmentStatus.available" uib-accordion-group is-open="appointmentStatusTriggerSection.open">
             <uib-accordion-heading>
                 <div>
                     <strong>{{'PUBLICATION.EDIT.TRIGGER_APPT_STATUS'|translate}}</strong><i
@@ -458,7 +470,7 @@
                 <p>
                     <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
                     <span ng-if="!checkTriggers(appointmentStatusList)">{{'PUBLICATION.EDIT.NO_FILTER'|translate}}</span>
-                    <span ng-repeat="selectedAppointmentStatus in appointmentStatusList | filter: {added: 1} : 1"
+                    <span ng-repeat="selectedAppointmentStatus in appointmentStatusList | filter: {added: true} : 1"
                           ng-if="checkTriggers(appointmentStatusList)">
                     {{selectedAppointmentStatus.name_display}}
                     </span>
@@ -485,51 +497,44 @@
             </div>
         </div>
         <!-- SECTION: Appointment trigger -->
-        <div ng-if="triggerSection.appointment.available" uib-accordion-group>
+        <div ng-if="triggerSection.appointment.available" uib-accordion-group is-open="appointmentTriggerSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>{{'PUBLICATION.EDIT.TRIGGER_APPT'|translate}}</strong><i
-                        class="pull-right glyphicon"
-                        ng-class="{'glyphicon-chevron-down': appointmentTriggerSection.open, 'glyphicon-chevron-right': !appointmentTriggerSection.open}"></i>
+                    <strong>{{'PUBLICATION.EDIT.TRIGGER_APPT'|translate}}</strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': appointmentTriggerSection.open, 'glyphicon-chevron-right': !appointmentTriggerSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="alert alert-info" role="alert">
                 <strong>{{'PUBLICATION.EDIT.CURRENT_APPT'|translate}}</strong><br>
                 <p>
-                    <span class="fa fa-angle-double-right" style="padding-right: 7px;"
-                          ng-if="!checkTriggers(appointmentTriggerList) || selectAll.appointment.all"></span>
-                    <span ng-if="!checkTriggers(appointmentTriggerList)">{{'PUBLICATION.EDIT.NO_TRIGGER'|translate}}</span>
-                    <span ng-if="checkTriggers(appointmentTriggerList) && selectAll.appointment.all">{{'PUBLICATION.EDIT.ALL_APPT'|translate}}</span>
-                <ul class="list-items" ng-if="checkTriggers(appointmentTriggerList) && !selectAll.appointment.all">
-                    <li ng-repeat="selectedAppointment in appointmentTriggerList | filter: {added: 1} : 1">
-                        {{selectedAppointment.name_display}}
-                    </li>
+                    <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!(appointmentTriggerList|filter:{added:true}).length || selectAll.appointment.all"></span>
+                    <span ng-if="!(appointmentTriggerList|filter:{added:true}).length && !selectAll.appointment.all">{{'PUBLICATION.EDIT.NO_TRIGGER'|translate}}</span>
+                    <span ng-if="!(appointmentTriggerList|filter:{added:true}).length && selectAll.appointment.all">{{'PUBLICATION.EDIT.ALL_PATIENTS'|translate}}</span>
+                <ul class="list-items" ng-if="(appointmentTriggerList|filter:{added:true}).length && !selectAll.appointment.all">
+                    <li ng-repeat="appointment in appointmentTriggerList | filter: {added: true} : 1">{{appointment.name_display}}</li>
                 </ul>
                 </p>
             </div>
             <div>
                 <div class="input-group">
                     <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                    <input class="form-control" type="text" ng-model="appointmentSearchField"
-                           ng-change="searchAppointment(appointmentSearchField)"
-                           placeholder="{{'PUBLICATION.EDIT.SEARCH'|translate}}"/>
+                    <input class="form-control" maxlength="100" type="text" ng-model="appointmentSearchField" ng-change="selectAll.appointment.checked = false;" placeholder="{{'PUBLICATION.EDIT.SEARCH'|translate}}" ng-disabled="selectAll.appointment.checked && selectAll.appointment.all" />
                 </div>
                 <div style="padding: 7px;">
                     <label>
-                        <input type="checkbox" ng-click="toggleAllTriggers(appointmentTriggerList, appointmentSearchField, selectAll.appointment, triggerSection.appointment)" ng-checked="selectAll.appointment.checked"> {{'PUBLICATION.ADD.SELECT_ALL'|translate}}
+                        <input type="checkbox" ng-click="toggleAllTriggers(appointmentTriggerList, appointmentSearchField, selectAll.appointment, triggerSection.appointment)" ng-checked="selectAll.appointment.checked"> {{'PUBLICATION.EDIT.SELECT_ALL'|translate}}
                     </label>
                 </div>
                 <ul class="list-items" ng-show="!selectAll.appointment.checked || !selectAll.appointment.all">
                     <li ng-repeat="appointment in appointmentTriggerList | filter: appointmentSearchField">
                         <label>
-                            <input ng-disabled="selectAll.appointment.checked && selectAll.appointment.all" type="checkbox" ng-click="selectTrigger(appointment, selectAll.appointment, triggerSection.appointment)" ng-model="appointment.added" /> {{appointment.name_display}}
+                            <input ng-disabled="selectAll.appointment.checked && selectAll.appointment.all" type="checkbox" ng-model="appointment.added" ng-click="selectTrigger(appointment, selectAll.appointment, triggerSection.appointment)"> {{appointment.name_display}}
                         </label>
                     </li>
                 </ul>
             </div>
         </div>
         <!-- SECTION: Diagnosis trigger -->
-        <div ng-if="triggerSection.diagnosis.available" uib-accordion-group>
+        <div ng-if="triggerSection.diagnosis.available" uib-accordion-group is-open="diagnosisTriggerSection.open">
             <uib-accordion-heading>
                 <div>
                     <strong>{{'PUBLICATION.EDIT.TRIGGER_DIAGNOSIS'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': diagnosisTriggerSection.open, 'glyphicon-chevron-right': !diagnosisTriggerSection.open}"></i>
@@ -566,7 +571,7 @@
             </div>
         </div>
         <!-- SECTION: Doctor trigger -->
-        <div ng-if="triggerSection.doctor.available" uib-accordion-group>
+        <div ng-if="triggerSection.doctor.available" uib-accordion-group is-open="doctorTriggerSection.open">
             <uib-accordion-heading>
                 <div>
                     <strong>{{'PUBLICATION.EDIT.TRIGGER_DOCTOR'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': doctorTriggerSection.open, 'glyphicon-chevron-right': !doctorTriggerSection.open}"></i>
@@ -603,7 +608,7 @@
             </div>
         </div>
         <!-- SECTION: Machine Trigger -->
-        <div ng-if="triggerSection.machine.available" uib-accordion-group>
+        <div ng-if="triggerSection.machine.available" uib-accordion-group is-open="machineTriggerSection.open">
             <uib-accordion-heading>
                 <div>
                     <strong>{{'PUBLICATION.EDIT.TRIGGER_TREATMENT'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': machineTriggerSection.open, 'glyphicon-chevron-right': !machineTriggerSection.open}"></i>

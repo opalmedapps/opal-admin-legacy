@@ -120,6 +120,28 @@ class DatabaseOpal extends DatabaseAccess {
         return $result;
     }
 
+    function getPublicationDetails($publicationId, $moduleId) {
+        $module = $this->_fetch(SQL_OPAL_GET_MODULE_BY_ID, array(array("parameter"=>":ID","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
+        $sqlFetchDetails = $module["sqlDetails"];
+        if($sqlFetchDetails == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing code. Access denied.");
+
+        $sqlFetchDetails = str_replace("%%QUESTIONNAIRE_DB%%", QUESTIONNAIRE_DB_2019_NAME, $sqlFetchDetails);
+        $sqlFetchDetails = str_replace("%%MODULE%%", OPAL_MODULE_TABLE, $sqlFetchDetails);
+        $sqlFetchDetails = str_replace("%%DICTIONARY%%", DICTIONARY_TABLE, $sqlFetchDetails);
+        $sqlFetchDetails = str_replace("%%QUESTIONNAIRE%%", QUESTIONNAIRE_TABLE, $sqlFetchDetails);
+        $sqlFetchDetails = str_replace("%%FILTERS%%", OPAL_FILTERS_TABLE, $sqlFetchDetails);
+        $sqlFetchDetails = str_replace("%%QUESTIONNAIRECONTROL%%", OPAL_QUESTIONNAIRE_CONTROL_TABLE, $sqlFetchDetails);
+        $sqlFetchDetails = str_replace("%%POSTCONTROL%%", OPAL_POST_TABLE, $sqlFetchDetails);
+        $sqlFetchDetails = str_replace("%%TXTEAMMESSAGE%%", OPAL_TX_TEAM_MESSAGE_TABLE, $sqlFetchDetails);
+        $sqlFetchDetails = str_replace("%%ANNOUNCEMENT%%", OPAL_ANNOUNCEMENT_TABLE, $sqlFetchDetails);
+        $sqlFetchDetails = str_replace("%%PATIENTSFORPATIENTS%%", OPAL_PATIENTS_FOR_PATIENTS_TABLE, $sqlFetchDetails);
+        $sqlFetchDetails = str_replace("%%EDUCATIONALMATERIAL%%", OPAL_EDUCATION_MATERIAL_TABLE, $sqlFetchDetails);
+        $sqlFetchDetails = str_replace("%%PHASEINTREATMENT%%", OPAL_PHASE_IN_TREATMENT_TABLE, $sqlFetchDetails);
+
+        return $this->_fetch($sqlFetchDetails,  array(array("parameter"=>":ID","variable"=>$publicationId,"data_type"=>PDO::PARAM_INT)));
+    }
+
     /*
      * Gets the triggers of a specific module
      * @params  $moduleId (int) ID of a module

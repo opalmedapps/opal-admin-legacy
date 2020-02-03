@@ -902,7 +902,11 @@
       "RESET_DATE": "Réinitialiser la date de publication"
     },
     "EDIT": {
+      "GENERAL": "Informations générales",
       "TITLE": "Modifier la publication",
+      "NAME": "Nom",
+      "MODULE": "Module",
+      "DESCRIPTION": "Description",
       "SAVE": "Enregistrer",
       "CANCEL": "Annuler",
       "TITLES": "Titres",
