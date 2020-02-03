@@ -385,11 +385,10 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 				d.setMinutes(minutes);
 				$scope.toSubmit.publishDateTime.publish_time = d;
 
-/*				var year = $scope.toSubmit.publishDateTime.publish_date.split("-")[0];
+				var year = $scope.toSubmit.publishDateTime.publish_date.split("-")[0];
 				var month = parseInt($scope.toSubmit.publishDateTime.publish_date.split("-")[1]) - 1;
 				var day = parseInt($scope.toSubmit.publishDateTime.publish_date.split("-")[2]);
-				$scope.toSubmit.publishDateTime.publish_date = new Date(year, month, day);*/
-				console.log($scope.toSubmit);
+				$scope.toSubmit.publishDateTime.publish_date = new Date(year, month, day);
 			}
 
 			// if(!$scope.dateEntered || !$scope.publishDateTimeActive) {
@@ -910,6 +909,9 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 	$scope.selectedDaysInWeek = [];
 	$scope.selectedDaysInWeekText = "";
 
+	$scope.open = function () {
+		$scope.popup.opened = true;
+	};
 
 	// Initialize days of the week
 	$scope.daysInWeek = FrequencyFilterService.daysInWeek;
