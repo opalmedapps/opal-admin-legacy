@@ -881,7 +881,11 @@
       "RESET_DATE": "Reset publish date"
     },
     "EDIT": {
-      "TITLE": "Edit",
+      "GENERAL": "General informations",
+      "TITLE": "Edit the publication",
+      "NAME": "Name",
+      "MODULE": "Module",
+      "DESCRIPTION": "Description",
       "SAVE": "Save Changes",
       "CANCEL": "Cancel",
       "TITLES": "Titles",
