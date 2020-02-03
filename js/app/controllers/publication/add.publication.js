@@ -430,8 +430,6 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 						delete $scope.validator.name;
 					}
 
-					console.log(response.data);
-
 					$scope.publishFrequencySection.available = response.data["triggers"].indexOf("1") !== -1 ? true: false;
 					$scope.triggerSection.patient.available = response.data["triggers"].indexOf("2") !== -1 ? true: false;
 					$scope.triggerSection.demo.available = response.data["triggers"].indexOf("3") !== -1 ? true: false;
@@ -457,7 +455,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			$scope.leftMenu.moduleId.open = true;
 		};
 
-		$scope.prepareFrequencyOccurence = function() {
+		$scope.prepareFrequencyOccurrence = function() {
 			if ($scope.toSubmit.occurrence != "undefined") {
 				$scope.toSubmit.occurrence = {
 					start_date: null,
@@ -477,7 +475,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			}
 		};
 
-		$scope.deleteFrequencyOccurence = function() {
+		$scope.deleteFrequencyOccurrence = function() {
 			delete $scope.toSubmit.occurrence;
 			delete $scope.validator.occurrence;
 		};
@@ -843,7 +841,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 
 		// Function for adding new frequency filter
 		$scope.addFrequencyFilter = function () {
-			$scope.prepareFrequencyOccurence();
+			$scope.prepareFrequencyOccurrence();
 			$scope.showFrequency = true;
 			$scope.toSubmit.occurrence.frequency.meta_value = $scope.frequencySelected.meta_value;
 			$scope.toSubmit.occurrence.frequency.meta_key = $scope.frequencySelected.meta_key;
@@ -858,7 +856,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			$scope.flushAllFrequencyFilters();
 			$scope.leftMenu.publishFrequency.display = false;
 			$scope.leftMenu.publishFrequency.open = false;
-			$scope.deleteFrequencyOccurence();
+			$scope.deleteFrequencyOccurrence();
 		};
 
 		// Function to reset all frequency filters

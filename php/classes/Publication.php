@@ -56,12 +56,38 @@ class Publication extends OpalProject
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publication settings.");
 
         $results = array();
-        $results["module"]["publicationId"] =  $publicationId;
-        $results["module"]["moduleId"] =  $moduleId;
-        $module = $this->opalDB->getModuleSettings($moduleId);
+        $results["publication"]["publicationId"] =  $publicationId;
+        $results["publication"]["moduleId"] =  $moduleId;
 
+        $module = $this->opalDB->getModuleSettings($moduleId);
         if(!isset($module["ID"]) || $module["ID"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module ID.");
+
+        $publicationDetails = $this->opalDB->getPublicationDetails($publicationId, $moduleId);
+        if(!isset($publicationDetails["ID"]) || $publicationDetails["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publication settings.");
+
+        $results["publication"]["name"]["EN"] = $publicationDetails["name_EN"];
+        $results["publication"]["name"]["FR"] = $publicationDetails["name_FR"];
+        $results["publication"]["module"]["EN"] = $publicationDetails["module_EN"];
+        $results["publication"]["module"]["FR"] = $publicationDetails["module_FR"];
+        $results["publication"]["description"]["EN"] = $publicationDetails["type_EN"];
+        $results["publication"]["description"]["FR"] = $publicationDetails["type_FR"];
+
+        $subModuleList =  json_decode($module["subModule"]);
+        $results["publication"]["unique"] =  $module["unique"];
+
+        if($moduleId == MODULE_POST) {
+            $postDetails = $this->opalDB->getPostDetails($publicationId);
+            foreach($subModuleList as $subModule) {
+                if($postDetails["type"] == $subModule->name_EN) {
+                    $results["publication"]["subModule"] = json_decode(json_encode($subModule), true);
+                    //$results["publication"]["modifyPublishDateTime"] = $subModule["publishDateTime"];
+                    break;
+                }
+            }
+        }
+
 
         $results["publicationSettings"] = $this->opalDB->getPublicationSettingsIDsPerModule($moduleId);
         $tempArray = array();
@@ -70,7 +96,7 @@ class Publication extends OpalProject
         $results["publicationSettings"] = $tempArray;
 
         if(in_array(PUBLICATION_PUBLISH_DATE, $results["publicationSettings"])) {
-            $results["publish_date"] = $this->opalDB->getPublishDateTime($module["tableName"], $module["primaryKey"], $publicationId);
+            $results["publishDateTime"] = $this->opalDB->getPublishDateTime($module["tableName"], $module["primaryKey"], $publicationId);
         }
 
         if($moduleId == MODULE_QUESTIONNAIRE) {
