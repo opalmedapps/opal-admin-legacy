@@ -10,11 +10,10 @@ class HelpSetup {
     /*
      * Basic functions to return an error message to the caller
      * */
-    public static function returnErrorMessage($errcode, $details) {
+    public static function returnErrorMessage($errcode = HTTP_STATUS_INTERNAL_SERVER_ERROR, $details) {
+        http_response_code($errcode);
         header('Content-Type: application/javascript');
-        $response['code'] = $errcode;
-        $response['message'] = $details;
-        echo json_encode($response);
+        echo json_encode($details);
         die();
     }
 }

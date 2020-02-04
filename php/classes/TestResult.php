@@ -1129,10 +1129,3 @@ class TestResult {
         return $assignedTest;
     }
 }
-
-?>
-
-
-
-
-
