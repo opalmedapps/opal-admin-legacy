@@ -359,11 +359,6 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 			}
 
 			if ($scope.toSubmit.publishDateTime) {
-				$scope.validator.publishDateTime = {
-					completed: true,
-					changed: false,
-					mandatory: true,
-				};
 
 				if($scope.toSubmit.publishDateTime !== "0000-00-00 00:00:00")
 					$scope.dateEntered = true;
@@ -391,10 +386,17 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 				$scope.toSubmit.publishDateTime.publish_date = new Date(year, month, day);
 			}
 
-			// if(!$scope.dateEntered || !$scope.publishDateTimeActive) {
-			// 	delete $scope.toSubmit.publishDateTime;
-			// }
-			// console.log($scope.validator);
+			if(!$scope.dateEntered || !$scope.publishDateTimeActive) {
+				delete $scope.toSubmit.publishDateTime;
+			}
+			else {
+				$scope.validator.publishDateTime = {
+					completed: true,
+					changed: false,
+					mandatory: true,
+				};
+			}
+			console.log($scope.validator);
 
 			checkDemographicTriggers();
 			$scope.toSubmit.triggers = $scope.toSubmit.triggers;
@@ -909,6 +911,11 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 	$scope.selectedDaysInWeek = [];
 	$scope.selectedDaysInWeekText = "";
 
+	$scope.popup = {
+		opened: false
+	};
+
+	// Open popup calendar
 	$scope.open = function () {
 		$scope.popup.opened = true;
 	};
@@ -1216,8 +1223,10 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 
 	// Function for updating the published questionnaire
 	$scope.updatePublishedQuestionnaire = function () {
+		console.log($scope.toSubmit);
 
-		if ($scope.checkForm()) {
+
+/*		if ($scope.checkForm()) {
 			// Initialize filter
 			$scope.toSubmit.triggers = [];
 
@@ -1293,7 +1302,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 					$uibModalInstance.close();
 				}
 			});
-		}
+		}*/
 	};
 
 });
