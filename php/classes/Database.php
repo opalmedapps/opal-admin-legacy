@@ -56,6 +56,28 @@ class Database {
 		return $enabled;
 	}
 
+	public static function getActiveSourceDatabases() {
+		$enabled = false;
+
+		try {
+		$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+        $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+		$sql = "SELECT SourceDatabaseSerNum FROM SourceDatabase WHERE Enabled = 1";
+
+		$query = $host_db_link->prepare( $sql );
+		$query->execute();
+		$activeSources = array();
+
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+		    array_push($activeSources, $data[0]);
+        }
+        return $activeSources;
+		} catch (PDOException $e) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Active source database error. " . $e->getMessage());
+        }
+	}
+
 	/**
 	 *
 	 * Fetches/Sets the source database credentials

@@ -83,6 +83,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			$scope.eduMatList = response.data; // Assign value
 		}).catch(function(response) {
 			alert($filter('translate')('ALIAS.EDIT.ERROR_EDUCATION') + "\r\n\r\n" + response.status + " - " + response.data);
+			$scope.cancel();
 		});
 
 		// Call our API to get the list of existing hospital maps
@@ -96,6 +97,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 			$scope.hospitalMapList = response.data;
 		}).catch(function(response) {
 			alert($filter('translate')('ALIAS.EDIT.ERROR_HOSPITAL') + "\r\n\r\n" + response.status + " - " + response.data);
+			$scope.cancel();
 		});
 
 		// Function to assign termFilter when textbox is changing 
@@ -215,13 +217,12 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 					});
 
 				});
-
+			}).catch(function(response) {
+				alert($filter('translate')('ALIAS.EDIT.ERROR_ALIAS') + "\r\n\r\n" + response.status + " - " +  response.data);
+				$scope.cancel();
+			}).finally(function() {
 				processingModal.close(); // hide modal
 				processingModal = null; // remove reference
-
-
-			}).catch(function(response) {
-				alert($filter('translate')('ALIAS.EDIT.ERROR_ALIAS') + "\r\n\r\n" + response.status + " - " + response.data);
 			});
 
 			// Call our API service to get the list of existing color tags
@@ -230,10 +231,12 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 
 			}).catch(function(response) {
 				alert($filter('translate')('ALIAS.EDIT.ERROR_COLOR') + "\r\n\r\n" + response.status + " - " + response.data);
+				$scope.cancel
 			});
 
 		}).catch(function(response) {
 			alert($filter('translate')('ALIAS.EDIT.ERROR_DETAILS') + "\r\n\r\n" + response.status + " - " + response.data);
+			$scope.cancel
 		});
 
 		// Function to add / remove a term to alias
