@@ -1725,6 +1725,7 @@
       "ERROR_EDUCATION": "An error occurred while getting the education materials list.",
       "ERROR_GROUP": "An error occurred while getting the test result groups.",
       "ERROR_TEST": "An error occurred while getting the test names.",
+      "ERROR_NO_TEST_FOUND": "The list of lab results is empty. Please check the connection with the different databases and try again.",
       "ERROR_ADD": "An error occurred while creating the lab result."
     },
     "EDIT": {
@@ -1767,6 +1768,7 @@
       "ERROR_EDUCATION": "An error occurred while getting the education materials list.",
       "ERROR_GROUP": "An error occurred while getting the test result groups.",
       "ERROR_TEST": "An error occurred while getting the test names.",
+      "ERROR_NO_TEST_FOUND": "The list of lab results is empty. Please check the connection with the different databases and try again.",
       "ERROR_UPDATE": "An error occurred while updating the lab result.",
       "ERROR_DETAILS": "An error occurred while getting the lab result details.",
       "SUCCESS_EDIT": "The lab result has being updated successfully."
