@@ -181,7 +181,7 @@ class Alias {
 			return $expressionList;
 
 		} catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error. " . $e->getMessage());
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
 		}
 	}
 
