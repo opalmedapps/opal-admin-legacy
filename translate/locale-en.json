@@ -790,7 +790,7 @@
       "ERROR_FILTERS": "An error occurred while getting the filters list.",
       "ERROR_TRIGGERS": "An error occurred while getting the triggers list.",
       "PUBLISH_FRENQUENCY": "Publish Frequency",
-      "PUBLISH_EXPLANATION": "Select a frequency at which this questionnaire will be published.",
+      "PUBLISH_EXPLANATION": "Select a frequency at which this material will be published.",
       "ADD_2": "Add",
       "REMOVE": "Remove",
       "CLOSE": "Close",
