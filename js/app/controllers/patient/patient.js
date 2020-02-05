@@ -7,9 +7,9 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 controller('patient', function ($scope, $filter, $sce, $state, $uibModal, patientCollectionService) {
 
 	// Function to go to register new patient
-	$scope.goToAddPatient = function () {
+/*	$scope.goToAddPatient = function () {
 		$state.go('patients-register');
-	};
+	};*/
 
 	$scope.bannerMessage = "";
 	// Function to show page banner

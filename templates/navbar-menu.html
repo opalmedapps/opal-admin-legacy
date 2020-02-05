@@ -67,12 +67,6 @@
                             {{'NAVIGATION_MENU.EMAIL'|translate}}
                         </a>
                     </li>-->
-<!--                    <li ui-sref-active="active">
-                        <a ui-sref="legacy-questionnaire" ng-click="closeNav()">
-                            <span class="fa fa-pencil-square" aria-hidden="true"></span>
-                            {{'NAVIGATION_MENU.LEGACY_QUESTIONNAIRE'|translate}}
-                        </a>
-                    </li>-->
                 </ul>
             </li>
             <li class="dropdown" ng-class="{active: currentActiveAdministration()}" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
@@ -97,7 +91,7 @@
                         </a>
                     </li>
                     <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
-                        <a ui-sref="patients-register" ng-click="closeNav()">
+                        <a ng-click="closeNav();patientRegistration();">
                             <span class="fa fa-user-plus" aria-hidden="true"></span>
                             {{'NAVIGATION_MENU.PATIENT_REGISTRATION'|translate}}
                         </a>

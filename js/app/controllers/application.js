@@ -60,13 +60,15 @@ controller('application', function ($scope, $rootScope, $state, $filter, Idle, K
 				});
 			}
 		}).catch(function(response) {
-			console.error('Error occured getting source databases: ', response.status, response.data);
+			console.error('Error occurred getting source databases: ', response.status, response.data);
 		});
 	}).catch(function(response) {
-		console.error('Error occured getting configs: ', response.status, response.data);
+		console.error('Error occurred getting configs: ', response.status, response.data);
 	});
 
-
+	$scope.patientRegistration = function(){
+		window.open($scope.configs.url.registration, '_blank');
+	};
 
 	// Set the site language
 	$rootScope.setSiteLanguage = function (user) {
