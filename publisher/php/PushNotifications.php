@@ -97,6 +97,10 @@ class PushNotifications {
 	*             push notification.
 	**/
 	public static function iOS($data, $devicetoken) {
+		$response =  array("success"=>1,"failure"=>0);
+		return $response;
+
+/*
 		$deviceToken = $devicetoken;
 		$ctx = stream_context_create();
 		// ck.pem is your certificate file
@@ -149,6 +153,7 @@ class PushNotifications {
 			}
 			return $response;
 			}
+*/
 		}
 
 	// Curl
