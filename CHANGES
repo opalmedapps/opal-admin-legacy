@@ -1,3 +1,10 @@
+Version 0.19.1.1:
+ -     -- Removed the print statement
+
+Version 0.19.1.0:
+ -     -- comment out the iOS push notification test
+ -     -- Removed the filter for the lab results to fetch all     -- Small changes to the push notification to work with PHP7
+
 Version 0.19.0.0:
  - Merge branch 'staging-questionnaire-translation' of https://gitlab.com/akimosupremo/opalAdmin into staging
  - Added visualization field for questionnaire
