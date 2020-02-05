@@ -101,19 +101,20 @@ class Diagnosis {
     public function getDiagnoses() {
         $diagnoses = array();
         $databaseObj = new Database();
+        $activeDBSources = $databaseObj->getActiveSourceDatabases();
 
         try {
             // ***********************************
             // ARIA
             // ***********************************
-            $sourceDBSer = ARIA_SOURCE_DB;
-            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
-            if ($source_db_link) {
+            if(in_array(ARIA_SOURCE_DB, $activeDBSources)) {
+                $source_db_link = $databaseObj->connectToSourceDatabase(ARIA_SOURCE_DB);
+                if ($source_db_link) {
 
-                // get already assigned diagnoses from our database
-                $assignedDiagnoses = $this->getAssignedDiagnoses();
+                    // get already assigned diagnoses from our database
+                    $assignedDiagnoses = $this->getAssignedDiagnoses();
 
-                $sql = "
+                    $sql = "
 					SELECT DISTINCT
 						-- get min because for some reason there are multiple diagnosis ser for many codes
 						-- min will never change so its good enough as a unique id
@@ -130,70 +131,72 @@ class Diagnosis {
 					ORDER BY
 						dx.DiagnosisId
 				";
-                $query = $source_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
+                    $query = $source_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                    $query->execute();
 
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-                    $sourceUID = $data[0];
-                    $diagnosisCode = $data[1];
-                    $description = $data[2];
+                        $sourceUID = $data[0];
+                        $diagnosisCode = $data[1];
+                        $description = $data[2];
 
-                    $diagnosisDetails = array(
-                        'sourceuid' => $sourceUID,
-                        'code' => $diagnosisCode,
-                        'description' => utf8_encode($description),
-                        'name' => utf8_encode("$diagnosisCode ($description)"),
-                        'added' => 0,
+                        $diagnosisDetails = array(
+                            'sourceuid' => $sourceUID,
+                            'code' => $diagnosisCode,
+                            'description' => utf8_encode($description),
+                            'name' => utf8_encode("$diagnosisCode ($description)"),
+                            'added' => 0,
 //                        'assigned'		=> null
-                    );
+                        );
 
-                    $assignedDiagnosis = $this->assignedSearch($sourceUID, $assignedDiagnoses);
-                    if ($assignedDiagnosis) {
-                        $diagnosisDetails['added'] = 0;
-                        $diagnosisDetails['assigned'] = $assignedDiagnosis;
+                        $assignedDiagnosis = $this->assignedSearch($sourceUID, $assignedDiagnoses);
+                        if ($assignedDiagnosis) {
+                            $diagnosisDetails['added'] = 0;
+                            $diagnosisDetails['assigned'] = $assignedDiagnosis;
+                        }
+                        array_push($diagnoses, $diagnosisDetails);
                     }
-                    array_push($diagnoses, $diagnosisDetails);
+
+
                 }
-
-
             }
 
             // ***********************************
             // WaitRoomManagement
             // ***********************************
-            $sourceDBSer = MEDIVISIT_SOURCE_DB;
-            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
-            if ($source_db_link) {
+            if(in_array(MEDIVISIT_SOURCE_DB, $activeDBSources)) {
+                $source_db_link = $databaseObj->connectToSourceDatabase(MEDIVISIT_SOURCE_DB);
+                if ($source_db_link) {
 
-                $sql = "SELECT 'QUERY_HERE'";
-                $query = $source_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                    $sql = "SELECT 'QUERY_HERE'";
+                    $query = $source_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                    $query->execute();
+                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-                    // Set appropriate diagnosis data here from query
+                        // Set appropriate diagnosis data here from query
 
-                    //array_push($diagnoses, $diagnosisDetails); // Uncomment for use
+                        //array_push($diagnoses, $diagnosisDetails); // Uncomment for use
+                    }
                 }
-
             }
 
             // ***********************************
             // Mosaiq
             // ***********************************
-            $sourceDBSer = MOSAIQ_SOURCE_DB;
-            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
-            if ($source_db_link) {
+            if(in_array(MOSAIQ_SOURCE_DB, $activeDBSources)) {
+                $source_db_link = $databaseObj->connectToSourceDatabase(MOSAIQ_SOURCE_DB);
+                if ($source_db_link) {
 
-                $sql = "SELECT 'QUERY_HERE'";
-                $query = $source_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $query->execute();
+                    $sql = "SELECT 'QUERY_HERE'";
+                    $query = $source_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                    $query->execute();
 
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-                    // Set appropriate diagnosis data here from query
+                        // Set appropriate diagnosis data here from query
 
-                    //array_push($diagnoses, $diagnosisDetails); // Uncomment for use
+                        //array_push($diagnoses, $diagnosisDetails); // Uncomment for use
+                    }
                 }
             }
 

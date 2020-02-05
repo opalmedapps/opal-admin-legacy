@@ -10,6 +10,7 @@
 // DEFINE ARIA SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MicrosoftSQL (MSSQL) setup.
 define( "ARIA_DB_HOST", $config['databaseConfig']['aria']['host'] );
+define( "ARIA_DB_HOST", $config['databaseConfig']['aria']['host'] );
 define( "ARIA_DB_PORT", $config['databaseConfig']['aria']['port']);
 
 // Different drivers are loaded depending if the code runs locally (127.0.0.1) or on the server so it can connect to

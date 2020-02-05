@@ -294,7 +294,7 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 			// Submit form
 			$.ajax({
 				type: "POST",
-				url: "diagnosis-translation/update/diagnosis-transalation",
+				url: "diagnosis-translation/update/diagnosis-translation",
 				data: $scope.diagnosisTranslation,
 				success: function (response) {
 					response = JSON.parse(response);
