@@ -503,10 +503,10 @@ define("SQL_QUESTIONNAIRE_FORCE_UPDATE_UPDATEDBY",
 
 define("SQL_QUESTIONNAIRE_UPDATE_QUESTIONNAIRE",
     "UPDATE ".QUESTIONNAIRE_TABLE."
-    SET updatedBy = :updatedBy, private = :private, final = :final
+    SET updatedBy = :updatedBy, private = :private, final = :final, visualization = :visualization
     WHERE ID = :ID
     AND (private = 0 OR OAUserId = :OAUserId)
-    AND (private != :private OR final != :final) 
+    AND (private != :private OR final != :final OR visualization != :visualization) 
     AND deleted = ".NON_DELETED_RECORD.";"
 );
 
