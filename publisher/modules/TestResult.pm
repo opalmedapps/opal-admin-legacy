@@ -517,10 +517,16 @@ sub getTestResultsFromSourceDB
 			foreach my $lastTransferDate (keys %{$expressionHash{$sourceDBSer}}) {
 
 				# concatenate query
+				
+				# 2020-02-05 YM: removed the filter so that we get all of the lab results as per John's request
+				# $trInfo_sql .= "
+				# (tr.comp_name IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
+					# AND tr.trans_log_mtstamp > (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
+				# ";
 				$trInfo_sql .= "
-				(tr.comp_name IN ($expressionHash{$sourceDBSer}{$lastTransferDate})
-					AND tr.trans_log_mtstamp > (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
+				( tr.trans_log_mtstamp > (SELECT CASE WHEN '$lastTransferDate' > PatientInfo.LastTransfer THEN PatientInfo.LastTransfer ELSE '$lastTransferDate' END) )
 				";
+				
 				$counter++;
 				# concat "UNION" until we've reached the last query
 				if ($counter < $numOfExpressions) {
@@ -532,7 +538,7 @@ sub getTestResultsFromSourceDB
 				}
 			}
 
-			#print "query: $trInfo_sql\n";
+			print "query: $trInfo_sql\n";
 			# prepare query
 
 			my $query = $sourceDatabase->prepare($trInfo_sql)
