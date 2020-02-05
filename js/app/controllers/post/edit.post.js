@@ -171,14 +171,17 @@ controller('post.edit', function ($scope, $filter, $sce, $state, $uibModal, $uib
 			$scope.machineTriggerList = checkAdded(response.data.machines, $scope.selectAll.machine);
 			$scope.patientTriggerList = checkAdded(response.data.patients, $scope.selectAll.patient);
 
-			processingModal.close(); // hide modal
-			processingModal = null; // remove reference
 
 		}).catch(function(response) {
 			alert($filter('translate')('POSTS.EDIT.ERROR_TRIGGERS') + "\r\n\r\n" + response.status + " " + response.data);
+			$uibModalInstance.close();
+		}).finally(function () {
+			processingModal.close(); // hide modal
+			processingModal = null; // remove reference
 		});
 	}).catch(function(response) {
 		alert($filter('translate')('POSTS.EDIT.ERROR_DETAILS') + "\r\n\r\n" +  response.status + " " + response.data);
+		$uibModalInstance.close();
 	});
 
 	// Function to toggle trigger in a list on/off
@@ -319,13 +322,13 @@ controller('post.edit', function ($scope, $filter, $sce, $state, $uibModal, $uib
 						$scope.$parent.bannerMessage = $filter('translate')('POSTS.EDIT.SUCCESS_EDIT') ;
 						$scope.showBanner();
 					}
-					else {
+					else
 						alert($filter('translate')('POSTS.EDIT.ERROR_EDIT'));
-					}
-					$uibModalInstance.close();
 				},
 				error: function(err) {
 					alert($filter('translate')('POSTS.EDIT.ERROR_EDIT') + "\r\n\r\n" + err.status + " - " + err.statusText);
+				},
+				complete: function () {
 					$uibModalInstance.close();
 				}
 			});
