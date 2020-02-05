@@ -43,7 +43,7 @@
         *    Returns: Array of Objects, each object has keys of success, failure,
         *    RegistrationId, DeviceType and error if any.
         **/
-       public function sendNotificationToMultipleDevices($devices, $title, $description)
+       public static function sendNotificationToMultipleDevices($devices, $title, $description)
        {
            //Create message
            $message = array(
@@ -85,7 +85,7 @@
         *             registrationId, deviceId) for each device, and Message array containing
         *             (title,description),  NotificationSerNum, and error if any.
         **/
-       public function sendCallPatientNotification($patientId, $room, $appointmentAriaSer)
+       public static function sendCallPatientNotification($patientId, $room, $appointmentAriaSer)
        {
            global $pdo;
 
@@ -198,7 +198,7 @@
        *    Returns: Object with success, failure, responseDevices
        *            (array of response for each device), and the message array sent.
        **/
-       public function sendNotificationUsingPatientId($patientId, $title, $description)
+       public static function sendNotificationUsingPatientId($patientId, $title, $description)
        {
            //Creating message
            $message = array(
