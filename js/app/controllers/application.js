@@ -66,9 +66,7 @@ controller('application', function ($scope, $rootScope, $state, $filter, Idle, K
 		console.error('Error occurred getting configs: ', response.status, response.data);
 	});
 
-	$scope.patientRegistration = function(){
-		window.open($scope.configs.url.registration, '_blank');
-	};
+
 
 	// Set the site language
 	$rootScope.setSiteLanguage = function (user) {

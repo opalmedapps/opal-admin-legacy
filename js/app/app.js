@@ -103,7 +103,7 @@ angular.module('opalAdmin', [
 			.state('notification', { url: '/notification', templateUrl: "templates/notification/notification.html", controller: "notification", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('notification-add', { url: '/notification/add', templateUrl: "templates/notification/add.notification.html", controller: "notification.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('patients', { url: '/patients', templateUrl: "templates/patient/patient.html", controller: "patient", data: { authorizedRoles: [USER_ROLES.admin, USER_ROLES.registrant], requireLogin: true } })
-			// .state('patients-register', { url: '/patients/register', templateUrl: "templates/patient/patient-registration.html", controller: "patientRegistration", data: { authorizedRoles: [USER_ROLES.admin, USER_ROLES.registrant], requireLogin: true } })
+			.state('patients-register', { url: '/patients/register', templateUrl: "templates/patient/patient-registration.html", controller: "patientRegistration", data: { authorizedRoles: [USER_ROLES.admin, USER_ROLES.registrant], requireLogin: true } })
 			.state('test-result', { url: '/test-result', templateUrl: "templates/test-result/test-result.html", controller: "testResult", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('test-result-add', { url: '/test-result/add', templateUrl: "templates/test-result/add.test-result.html", controller: "testResult.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('cron', { url: '/cron', templateUrl: "templates/cron/cron.html", controller: "cron", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
