@@ -38,9 +38,9 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 			$state.go('patients');
 		};
 		// Function to go to patient registration page
-/*		$scope.goToPatientRegistration = function () {
+		$scope.goToPatientRegistration = function () {
 			$state.go('patients-register');
-		};*/
+		};
 		// Function to go to test results page
 		$scope.goToTestResult = function () {
 			$state.go('test-result');
