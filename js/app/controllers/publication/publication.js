@@ -5,7 +5,6 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 		// get current user id
 		var user = Session.retrieveObject('user');
 		var OAUserId = user.id;
-		$scope.detailView = "list";
 
 		$scope.goToAddPublication = function () {
 			$state.go('publication-add');
@@ -21,6 +20,8 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 				}, 3000);
 			});
 		};
+
+		getPublicationsList();
 
 		// Function to set banner class
 		$scope.setBannerClass = function (classname) {
@@ -55,125 +56,6 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 			$scope.filterValue = filterValue;
 			$scope.gridApi.grid.refresh();
 
-		};
-
-		$scope.switchDetailView = function (view) {
-			// only switch when there's no changes that have been made
-			if (!$scope.changesMade) {
-				$scope.detailView = view;
-			}
-		};
-
-		$scope.$watch('detailView', function (view) {
-			if (view === 'list') {
-				// Call our API to get the list of existing posts
-				getPublicationsList();
-				if ($scope.publicationListLogs.length) {
-					$scope.publicationListLogs = [];
-					$scope.gridApiLog.grid.refresh();
-				}
-			}
-			else if (view === 'chart') {
-				// Call our API to get post logs
-				publicationCollectionService.getPublicationsChartLogs(OAUserId).then(function (response) {
-					$scope.publicationChartLogs = $scope.chartConfig.series = response.data;
-					angular.forEach($scope.publicationChartLogs, function(serie) {
-						angular.forEach(serie.data, function(log) {
-							log.x = new Date(log.x);
-						});
-					});
-				}).catch(function(err) {
-					alert($filter('translate')('POSTS.LIST.ERROR_POSTS_LOGS') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
-				});
-			}
-		}, true);
-
-		var chartConfig = $scope.chartConfig = {
-			chart: {
-				type: 'spline',
-				zoomType: 'x',
-				className: 'logChart'
-			},
-			title: {
-				text: $filter('translate')('EDUCATION.LIST.ALL_LOGS')
-			},
-			subtitle: {
-				text: $filter('translate')('EDUCATION.LIST.HIGHLIGHT')
-			},
-			xAxis: {
-				type: 'datetime',
-				title: {
-					text: $filter('translate')('EDUCATION.LIST.DATETIME')
-				},
-				events: {
-					// setExtremes: function (selection) {
-					// 	if (selection.min !== undefined && selection.max !== undefined) {
-					// 		var cronSerials = new Set();
-					// 		var allSeries = selection.target.series; // get all series
-					// 		angular.forEach(allSeries, function (series) {
-					// 			// check if series is visible (i.e. not disabled via the legend)
-					// 			if (series.visible) {
-					// 				var points = series.points;
-					// 				angular.forEach(points, function (point) {
-					// 					timeInMilliSeconds = point.x.getTime();
-					// 					if (timeInMilliSeconds >= selection.min && timeInMilliSeconds <= selection.max) {
-					// 						if (!cronSerials.has(point.cron_serial)) {
-					// 							cronSerials.add(point.cron_serial);
-					// 						}
-					// 					}
-					// 				});
-					// 			}
-					// 		});
-					// 		// convert set to array
-					// 		cronSerials = Array.from(cronSerials);
-					// 		educationalMaterialCollectionService.getEducationalMaterialListLogs(cronSerials).then(function (response) {
-					// 			$scope.educationalMaterialListLogs = response.data;
-					// 		});
-					// 	} else {
-					// 		$scope.educationalMaterialListLogs = [];
-					// 		$scope.gridApiLog.grid.refresh();
-					//
-					// 	}
-					// }
-				}
-			},
-			yAxis: {
-				title: {
-					text: $filter('translate')('EDUCATION.LIST.NUMBER')
-				},
-				tickInterval: 1,
-				min: 0
-			},
-			tooltip: {
-				headerFormat: '<b>{series.name}</b><br>',
-				pointFormat: '{point.x:%e. %b}: {point.y:.2f} m'
-			},
-			plotOptions: {
-				// spline: {
-				// 	marker: {
-				// 		enabled: true
-				// 	}
-				// },
-				// series: {
-				// 	allowPointSelect: true,
-				// 	point: {
-				// 		events: {
-				// 			select: function (point) {
-				// 				var cronLogSerNum = [point.target.cron_serial];
-				// 				educationalMaterialCollectionService.getEducationalMaterialListLogs(cronLogSerNum).then(function (response) {
-				// 					$scope.educationalMaterialListLogs = response.data;
-				// 				});
-				// 			},
-				// 			unselect: function (point) {
-				// 				$scope.educationalMaterialListLogs = [];
-				// 				$scope.gridApiLog.grid.refresh();
-				//
-				// 			}
-				// 		}
-				// 	}
-				// }
-			},
-			series: []
 		};
 
 		// Table
