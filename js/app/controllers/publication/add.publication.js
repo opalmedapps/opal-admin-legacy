@@ -716,11 +716,11 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			menu.open = true;
 		};
 
-		$scope.$watch('patientTriggerList', function (nv) {$scope.changeTriggers(nv);}, true);
-		$scope.$watch('appointmentTriggerList', function (nv) {$scope.changeTriggers(nv);}, true);
-		$scope.$watch('dxTriggerList', function (nv) {$scope.changeTriggers(nv);}, true);
-		$scope.$watch('doctorTriggerList', function (nv) {$scope.changeTriggers(nv);}, true);
-		$scope.$watch('machineTriggerList', function (nv) {$scope.changeTriggers(nv);}, true);
+		$scope.$watch('patientTriggerList',		function (nv) {$scope.changeTriggers(nv);}, true);
+		$scope.$watch('appointmentTriggerList',	function (nv) {$scope.changeTriggers(nv);}, true);
+		$scope.$watch('dxTriggerList',			function (nv) {$scope.changeTriggers(nv);}, true);
+		$scope.$watch('doctorTriggerList',		function (nv) {$scope.changeTriggers(nv);}, true);
+		$scope.$watch('machineTriggerList',		function (nv) {$scope.changeTriggers(nv);}, true);
 
 		$scope.changeTriggers = function(triggerList) {
 			triggerList = angular.copy(triggerList);
@@ -899,13 +899,13 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 			$scope.selectedMonthsInYearText = "";
 		};
 
-
 		// Watch to restrict the end calendar to not choose an earlier date than the start date
 		$scope.$watch('toSubmit.occurrence.start_date', function(startDate){
 			if (startDate !== undefined) {
 				$scope.dateOptionsEnd.minDate = startDate;
 			}
 		});
+
 		// Watch to restrict the start calendar to not choose a start after the end date
 		$scope.$watch('toSubmit.occurrence.end_date', function(endDate){
 			if (endDate !== undefined) {

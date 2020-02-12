@@ -103,8 +103,8 @@ class Publication extends OpalProject
             $questionnaire = $this->opalDB->getPublishedQuestionnaireDetails($publicationId);
             if(count($questionnaire) != 1)
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire publication.");
-            $results["name_EN"] = $questionnaire[0]["name_EN"];
-            $results["name_FR"] = $questionnaire[0]["name_FR"];
+            $results["name"]["name_EN"] = $questionnaire[0]["name_EN"];
+            $results["name"]["name_FR"] = $questionnaire[0]["name_FR"];
         }
 
         $frequencyEvents = $this->opalDB->getFrequencyEvents($publicationId, $module["controlTableName"]);
@@ -121,40 +121,37 @@ class Publication extends OpalProject
             )
         );
 
-        foreach($frequencyEvents as $data) {
-            // if we've entered, then a frequency has been set
-            $occurrenceArray['set'] = 1;
+        if(count($frequencyEvents) > 0) {
+            foreach ($frequencyEvents as $data) {
+                // if we've entered, then a frequency has been set
+                $occurrenceArray['set'] = 1;
 
-            $customFlag     = $data["CustomFlag"];
-            // the type of meta key and which content it belongs to is separated by the | delimeter
-            list($metaKey, $dontNeed) = explode('|', $data["MetaKey"]);
-            $metaValue      = $data["MetaValue"];
+                $customFlag = $data["CustomFlag"];
+                // the type of meta key and which content it belongs to is separated by the | delimeter
+                list($metaKey, $dontNeed) = explode('|', $data["MetaKey"]);
+                $metaValue = $data["MetaValue"];
 
-            if ($metaKey == 'repeat_start') {
-                $occurrenceArray['start_date'] = $metaValue;
+                if ($metaKey == 'repeat_start') {
+                    $occurrenceArray['start_date'] = $metaValue;
+                } else if ($metaKey == 'repeat_end') {
+                    $occurrenceArray['end_date'] = $metaValue;
+                } // custom non-additional meta (eg. repeat_day, repeat_week ... any meta with one underscore that was custom made)
+                else if ($customFlag == 1 and count(explode('_', $metaKey)) == 2) {
+                    $occurrenceArray['frequency']['custom'] = 1;
+                    $occurrenceArray['frequency']['meta_key'] = $metaKey;
+                    $occurrenceArray['frequency']['meta_value'] = intval($metaValue);
+                } // additional meta (eg. repeat_day_iw, repeat_week_im ... any meta with two underscores)
+                else if ($customFlag == 1 and count(explode('_', $metaKey)) == 3) {
+                    $occurrenceArray['frequency']['custom'] = 1;
+                    $occurrenceArray['frequency']['additionalMeta'][$metaKey] = array_map('intval', explode(',', $metaValue));
+                    sort($occurrenceArray['frequency']['additionalMeta'][$metaKey]);
+                } else { // should only be one predefined frequency chosen, if chosen
+                    $occurrenceArray['frequency']['meta_key'] = $metaKey;
+                    $occurrenceArray['frequency']['meta_value'] = intval($metaValue);
+                }
             }
-            else if ($metaKey == 'repeat_end') {
-                $occurrenceArray['end_date'] = $metaValue;
-            }
-            // custom non-additional meta (eg. repeat_day, repeat_week ... any meta with one underscore that was custom made)
-            else if ($customFlag == 1 and count(explode('_', $metaKey)) == 2) {
-                $occurrenceArray['frequency']['custom'] = 1;
-                $occurrenceArray['frequency']['meta_key'] = $metaKey;
-                $occurrenceArray['frequency']['meta_value'] = intval($metaValue);
-            }
-            // additional meta (eg. repeat_day_iw, repeat_week_im ... any meta with two underscores)
-            else if ($customFlag == 1 and count(explode('_', $metaKey)) == 3) {
-                $occurrenceArray['frequency']['custom'] = 1;
-                $occurrenceArray['frequency']['additionalMeta'][$metaKey] = array_map('intval', explode(',', $metaValue));
-                sort($occurrenceArray['frequency']['additionalMeta'][$metaKey]);
-            }
-            else { // should only be one predefined frequency chosen, if chosen
-                $occurrenceArray['frequency']['meta_key'] = $metaKey;
-                $occurrenceArray['frequency']['meta_value'] = intval($metaValue);
-            }
+            $results["occurrence"] = $occurrenceArray;
         }
-
-        $results["occurrence"] = $occurrenceArray;
 
         $results["triggers"] = $this->opalDB->getTriggersDetails($publicationId, $module["controlTableName"]);
         return $results;
