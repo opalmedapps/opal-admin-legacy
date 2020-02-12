@@ -399,11 +399,7 @@ class DatabaseAccess extends HelpSetup
      * @params  void
      * @return  array of triggers
      * */
-    function fetchTriggersData($sqlToFetch, $id) {
-        $results = array();
-        foreach($this->_fetchAll($sqlToFetch, array()) as $item) {
-            $results[strval($item[$id])] = $item;
-        }
-        return $results;
+    function fetchTriggersData($sqlToFetch) {
+        return $this->_fetchAll($sqlToFetch, array());
     }
 }
