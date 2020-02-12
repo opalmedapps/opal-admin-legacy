@@ -238,6 +238,18 @@ class Publication extends OpalProject
         }
     }
 
+
+    protected function _reassignData($data, $id)  {
+        $results = array();
+        foreach($data as $item) {
+            if($item[$id] == "1")
+                $results["Checked In"] = $item;
+            else
+                $results[strval($item[$id])] = $item;
+        }
+        return $results;
+    }
+
     /*
      * Validate a list of triggers by connecting to the opalDB and ariaDB and get all the settings of the triggers.
      * First, it loads the triggers from opalDB, then it populates the trigger to validate in the different arrays that
@@ -273,9 +285,15 @@ class Publication extends OpalProject
         }
 
         //Copy the list of triggers into the list to validate
+        //CheckedInFlag has being hardcoded because somebody thought it will be faster and simpler to manually
+        //add 'Checked In' option as an appointment status then adding it in the database and by not following the
+        //same data structure and naming convention. This is the result: hardcoded solution to bypass this mess.
         foreach($triggersToValidate as $trigger) {
             if ($validatedTriggers[$trigger["type"]]["data"] !== null)
                 array_push($validatedTriggers[$trigger["type"]]["data"], $trigger["id"]);
+            else if($trigger["type"] == "CheckedInFlag") {
+                array_push($validatedTriggers["AppointmentStatus"]["data"], "Checked In");
+            }
             else {
                 array_push($errMsgs, $trigger["type"] . " is an invalid trigger.");
                 break;
@@ -318,7 +336,7 @@ class Publication extends OpalProject
                 //Standard process of the checkup by getting data from OpalDB and Aria
                 else {
                     if ($trigger["ariaDB"] != "")
-                        $ariaData = $this->ariaDB->fetchTriggersData($trigger["ariaDB"], $trigger["ariaPK"]);
+                        $ariaData = $this->_reassignData($this->ariaDB->fetchTriggersData($trigger["ariaDB"]), $trigger["ariaPK"]);
                     if ($trigger["opalDB"] != "") {
                         $idsToIgnore = array(-1);
                         if (count($ariaData > 0)) {
@@ -327,11 +345,12 @@ class Publication extends OpalProject
                                 array_push($idsToIgnore, $item[$trigger["ariaPK"]]);
                             }
                         }
-                        $opalData = $this->opalDB->fetchTriggersData(str_replace("%%ARIA_ID%%", implode(", ", $idsToIgnore), $trigger["opalDB"]), $trigger["opalPK"]);
+                        $opalData = $this->_reassignData($this->opalDB->fetchTriggersData(str_replace("%%ARIA_ID%%", implode(", ", $idsToIgnore), $trigger["opalDB"])), $trigger["opalPK"]);
                     }
 
                     $uniqueIdList = array();
                     foreach ($trigger["data"] as $item) {
+                        print $item ."\r\n";
                         if (strtolower($item) == "all") {
                             $selectAllChecked = true;
                         } else if (array_key_exists($item, $opalData) || array_key_exists($item, $ariaData))
@@ -346,6 +365,10 @@ class Publication extends OpalProject
                             }
                         }
                         else if($idsFound != count($trigger["data"])) {
+                            print $idsFound ." ". count($trigger["data"])."\r\n";
+                            print_r($trigger["data"]);
+                            print_r($opalData);
+                            die();
                             array_push($errMsgs, "$key: invalid IDs found.");
                         }
                     }
@@ -588,7 +611,7 @@ class Publication extends OpalProject
      *          $subModule(array) list of the sub-modules details to validate the obligation of specific settings
      * @returns $errMsgs(array) List of error messages if the validation failed.
      * */
-    protected function _validateFrequency(&$publication, &$subModule) {
+    protected function _validateFrequency(&$publication, &$subModule, $strictEnforcement = true) {
         $errMsgs = array();                                             //By default, no error message
         $pubSettings = $this->opalDB->getPublicationNonTriggerSettingsPerModule($publication["moduleId"]["value"]);
         $subModule = json_decode($subModule, true);
@@ -620,7 +643,7 @@ class Publication extends OpalProject
                     }
                 }
                 if (array_key_exists("occurrence", $custom) && $publication['occurrence']['set']) {
-                    $this->_validateDateAndRange($publication['occurrence'], $errMsgs);
+                    $this->_validateDateAndRange($publication['occurrence'], $errMsgs, $strictEnforcement);
 
                     if (array_key_exists("frequency", $publication['occurrence']) && array_key_exists("custom", $publication['occurrence']['frequency']) && array_key_exists("meta_key", $publication['occurrence']['frequency']) && array_key_exists("meta_value", $publication['occurrence']['frequency'])) {
                         if(intval($publication['occurrence']['frequency']["meta_value"]) > 59 || intval($publication['occurrence']['frequency']["meta_value"]) < 1 )
@@ -688,6 +711,20 @@ class Publication extends OpalProject
         }
 
         $this->opalDB->insertMultipleFilters($toInsert);
+    }
+
+    /*
+     * This function search specific ID and type in an array
+     * @params  ID and types to search in an array
+     * return   boolean
+     * */
+    protected function _nestedSearch($id, $type, $array) {
+        if(empty($array) || !$id || !$type)
+            return false;
+        foreach ($array as $key => $val)
+            if ($val['id'] === $id and $val['type'] === $type)
+                return true;
+        return false;
     }
 
     /*
@@ -779,11 +816,119 @@ class Publication extends OpalProject
         }
     }
 
+    protected function _updatePublicationQuestionnaire($questionnaire) {
+
+        $toUpdate = array(
+            "QuestionnaireName_EN"=>$questionnaire["name"]["name_EN"],
+            "QuestionnaireName_FR"=>$questionnaire["name"]["name_FR"],
+            "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
+            "SessionId"=>$questionnaire["sessionId"],
+            "QuestionnaireControlSerNum"=>$questionnaire["materialId"]["value"],
+        );
+        $total = $this->opalDB->updateQuestionnaireControl($toUpdate);
+
+        print "1\r\n";
+
+        //Delete and update triggers
+        if(!empty($questionnaire["triggers_updated"])) {
+            $existingTriggers = $this->opalDB->getFiltersByControlTableSerNum($questionnaire["materialId"]["value"]);
+            foreach($existingTriggers as $trigger) {
+                if(!$this->_nestedSearch($trigger["id"], $trigger["type"], $questionnaire["triggers"])) {
+                    $total += $this->opalDB->deleteFilters($trigger["id"], $trigger["type"], $questionnaire["materialId"]["value"]);
+                    $toUpdate = array(
+                        "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
+                        "SessionId"=>$questionnaire["sessionId"],
+                        "FilterId"=>$trigger["id"],
+                        "FilterType"=>$trigger["type"],
+                        "ControlTableSerNum"=>$questionnaire["materialId"]["value"],
+                    );
+                    $total += $this->opalDB->updateFiltersModificationHistory($toUpdate);
+                }
+            }
+        }
+        print "2\r\n";
+
+        //Add new triggers
+        if(!empty($questionnaire["triggers"])) {
+            $toInsert = array();
+            foreach($questionnaire["triggers"] as $trigger) {
+                if (!$this->_nestedSearch($trigger["id"], $trigger["type"], $existingTriggers))
+                    array_push($toInsert, array(
+                        "ControlTable"=>"LegacyQuestionnaireControl",
+                        "ControlTableSerNum"=>$questionnaire["materialId"]["value"],
+                        "FilterType"=>$trigger['type'],
+                        "FilterId"=>$trigger['id'],
+                        "DateAdded"=>date("Y-m-d H:i:s"),
+                        "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
+                        "SessionId"=>$questionnaire["sessionId"],
+                    ));
+            }
+            $this->opalDB->insertMultipleFilters($toInsert);
+        }
+        print "3\r\n";
+
+        if(!$questionnaire["occurrence"]["set"]) {
+            $total += $this->opalDB->deleteFrequencyEvent($questionnaire["materialId"]["value"]);
+        }
+        else {
+            $toInsert = array(
+                "ControlTable"=>'LegacyQuestionnaireControl',
+                "ControlTableSerNum"=>$questionnaire["materialId"]["value"],
+                "MetaKey"=>'repeat_start',
+                "MetaValue"=>$questionnaire["occurrence"]["start_date"],
+                "CustomFlag"=>'0',
+                "DateAdded"=>date("Y-m-d H:i:s"),
+            );
+            $result = $this->opalDB->insertReplaceFrequencyEvent($toInsert);
+            if(!$questionnaire["occurrence"]["end_date"]) {
+                $result = $this->opalDB->deleteRepeatEndFromFrequencyEvents($questionnaire["materialId"]["value"]);
+            }
+            else {
+                $toInsert = array(
+                    "ControlTable" => 'LegacyQuestionnaireControl',
+                    "ControlTableSerNum" => $questionnaire["materialId"]["value"],
+                    "MetaKey" => 'repeat_end',
+                    "MetaValue" => $questionnaire["occurrence"]["end_date"],
+                    "CustomFlag" => '0',
+                    "DateAdded" => date("Y-m-d H:i:s"),
+                );
+                $result = $this->opalDB->insertReplaceFrequencyEvent($toInsert);
+            }
+
+            $result = $this->opalDB->deleteOtherMetasFromFrequencyEvents($questionnaire["materialId"]["value"]);
+            $toInsert = array(
+                "ControlTable"=>'LegacyQuestionnaireControl',
+                "ControlTableSerNum"=>$questionnaire["materialId"]["value"],
+                "MetaKey"=>$questionnaire['occurrence']['frequency']['meta_key']."|lqc_".$questionnaire["materialId"]["value"],
+                "MetaValue"=>$questionnaire['occurrence']['frequency']['meta_value'],
+                "CustomFlag"=>$questionnaire['occurrence']['frequency']['custom'],
+                "DateAdded"=>date("Y-m-d H:i:s"),
+            );
+            $result = $this->opalDB->insertReplaceFrequencyEvent($toInsert);
+
+            if(!empty($questionnaire['occurrence']['frequency']['additionalMeta'])) {
+                foreach($questionnaire['occurrence']['frequency']['additionalMeta'] as $meta) {
+                    $toInsert = array(
+                        "ControlTable"=>'LegacyQuestionnaireControl',
+                        "ControlTableSerNum"=>$questionnaire["materialId"]["value"],
+                        "MetaKey"=>$meta['meta_key']."|lqc_".$questionnaire["materialId"]["value"],
+                        "MetaValue"=>implode(',', $meta['meta_value']),
+                        "CustomFlag"=>'1',
+                        "DateAdded"=>date("Y-m-d H:i:s"),
+                    );
+                    $result = $this->opalDB->insertReplaceFrequencyEvent($toInsert);
+                }
+            }
+        }
+        print "4\r\n";
+
+    }
+
     /*
      * Insert a publication into the matching control, filter and frequency events table after validating and
      * sanitizing the data.
      * @params  array of publication settings and triggers
-     * @return  void
+     * @return  false
      * */
     function insertPublication($publication) {
         $this->_connectAriaDB();
@@ -810,6 +955,42 @@ class Publication extends OpalProject
         }
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module");
+
+        return false;
+    }
+
+    /*
+     * Update a publication into the matching control, filter and frequency events table after validating and
+     * sanitizing the data.
+     * @params  array of publication settings and triggers
+     * @return  false
+     * */
+    function updatePublication($publication) {
+        $this->_connectAriaDB();
+        $publication = $this->arraySanitization($publication);
+
+        $moduleDetails = $this->opalDB->getModuleSettings($publication["moduleId"]["value"]);
+
+        $result = $this->_validateTriggers($publication["triggers"], $moduleDetails["ID"]);
+        if(count($result) > 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Trigger validation failed. " . implode(" ", $result));
+
+        $result = $this->_validateFrequency($publication, $moduleDetails["subModule"], false);
+        if(count($result) > 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Frequency validation failed. " . implode(" ", $result));
+
+        if($moduleDetails["ID"] == MODULE_QUESTIONNAIRE) {
+            $this->_updatePublicationQuestionnaire($publication);
+        }
+        else if($moduleDetails["ID"] == MODULE_POST) {
+//            $this->_insertPublicationPost($publication);
+        }
+        else if($moduleDetails["ID"] == MODULE_EDU_MAT) {
+//            $this->_insertPublicationEduMaterial($publication);
+        }
+        else
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module");
+
 
         return false;
     }

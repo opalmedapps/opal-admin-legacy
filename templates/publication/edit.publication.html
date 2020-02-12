@@ -499,7 +499,7 @@
                 <p>
                     <span class="fa fa-angle-double-right" style="padding-right: 7px;" ng-if="!(appointmentTriggerList|filter:{added:true}).length || selectAll.appointment.all"></span>
                     <span ng-if="!(appointmentTriggerList|filter:{added:true}).length && !selectAll.appointment.all">{{'PUBLICATION.EDIT.NO_TRIGGER'|translate}}</span>
-                    <span ng-if="!(appointmentTriggerList|filter:{added:true}).length && selectAll.appointment.all">{{'PUBLICATION.EDIT.ALL_PATIENTS'|translate}}</span>
+                    <span ng-if="!(appointmentTriggerList|filter:{added:true}).length && selectAll.appointment.all">{{'PUBLICATION.EDIT.ALL_APPT'|translate}}</span>
                 <ul class="list-items" ng-if="(appointmentTriggerList|filter:{added:true}).length && !selectAll.appointment.all">
                     <li ng-repeat="appointment in appointmentTriggerList | filter: {added: true} : 1">{{appointment.name_display}}</li>
                 </ul>
