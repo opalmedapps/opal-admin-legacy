@@ -12,7 +12,11 @@ $OAUserId = strip_tags(preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $_POST['OAUser
 $sessionId = strip_tags(preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $_POST['sessionid']));
 
 $publication = new Publication($OAUserId, $sessionId);
-//$publication->insertPublication($_POST);
+
+
+
+$publication->updatePublication($_POST);
+
 
 header('Content-Type: application/javascript');
 $response['code'] = HTTP_STATUS_SUCCESS;

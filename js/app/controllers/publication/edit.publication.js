@@ -476,6 +476,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 
 	// Function to toggle trigger in a list on/off
 	$scope.selectTrigger = function (trigger, selectAll, menu) {
+		$scope.toSubmit.triggers_updated = 1;
 		selectAll.all = false;
 		selectAll.checked = false;
 	};
@@ -616,6 +617,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 
 	// Function for selecting all triggers in a trigger list
 	$scope.toggleAllTriggers = function(triggerList,searchField,selectAll,menu) {
+		$scope.toSubmit.triggers_updated = 1;
 		var type = triggerList[0].type;
 		var filtered = $scope.filter(triggerList,searchField);
 		if (filtered.length === triggerList.length) { // search field wasn't used
@@ -665,6 +667,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 
 	// Function to toggle appointment status trigger
 	$scope.appointmentStatusUpdate = function (entrySelected) {
+		$scope.toSubmit.triggers_updated = 1;
 		var entryFound = false;
 		angular.forEach($scope.appointmentStatusList, function(item){
 			if (($scope.toSubmit.triggers.findIndex(x => x.id === item.id)) != -1) {
@@ -750,6 +753,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 
 	// Function to toggle necessary changes when updating the sex
 	$scope.sexUpdate = function (sex) {
+		$scope.toSubmit.triggers_updated = 1;
 		$scope.triggerSection.demo.open = true;
 		if (!$scope.demoTrigger.sex) {
 			$scope.demoTrigger.sex = sex.name;
@@ -787,6 +791,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 
 	// Function to toggle necessary changes when updating the age
 	$scope.ageUpdate = function () {
+		$scope.toSubmit.triggers_updated = 1;
 		if($scope.demoTrigger.age.min == undefined || $scope.demoTrigger.age.max == undefined || $scope.demoTrigger.age.min > $scope.demoTrigger.age.max || $scope.demoTrigger.age.min < 0 || $scope.demoTrigger.age.max > 130)
 			$scope.demoTrigger.age.valid = false;
 		else
@@ -1368,6 +1373,9 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 			}
 		}
 
+		console.log($scope.toSubmit);
+
+/*
 		$.ajax({
 			type: "POST",
 			url: "publication/update/publication",
@@ -1377,9 +1385,10 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 				alert($filter('translate')('PUBLICATION.EDIT.ERROR_PUBLICATION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
 			},
 			complete: function() {
-				$uibModalInstance.close();
+				// $uibModalInstance.close();
 			}
 		});
+*/
 
 	};
 
