@@ -219,9 +219,10 @@
 
             <!-- SECTION: Patient registration -->
             <div class="col-md-12" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
-                <div class="panel-container animated" ng-click="patientRegistration();"
+                <div class="panel-container animated"
                      ng-class="{pulse: hoverPatRegMenu, active: currentPage == 'patients-register'}"
-                     ng-mouseenter="hoverPatRegMenu=true" ng-mouseleave="hoverPatRegMenu=false" style="cursor:pointer;">
+                     ng-mouseenter="hoverPatRegMenu=true" ng-mouseleave="hoverPatRegMenu=false" style="cursor:pointer;"
+                     ng-click="goToPatientRegistration()">
                     <div class="side-panel-info-sm" ng-class="{active: currentPage == 'patients-register'}">
                         <div class="panel-content">
                             <span style="font-size: 21px; vertical-align:middle" class="fa fa-user-plus"

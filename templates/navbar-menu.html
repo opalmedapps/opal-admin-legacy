@@ -91,7 +91,7 @@
                         </a>
                     </li>
                     <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
-                        <a ng-click="closeNav();patientRegistration();">
+                        <a ui-sref="patients-register" ng-click="closeNav()">
                             <span class="fa fa-user-plus" aria-hidden="true"></span>
                             {{'NAVIGATION_MENU.PATIENT_REGISTRATION'|translate}}
                         </a>
