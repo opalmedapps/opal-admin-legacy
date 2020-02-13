@@ -350,7 +350,6 @@ class Publication extends OpalProject
 
                     $uniqueIdList = array();
                     foreach ($trigger["data"] as $item) {
-                        print $item ."\r\n";
                         if (strtolower($item) == "all") {
                             $selectAllChecked = true;
                         } else if (array_key_exists($item, $opalData) || array_key_exists($item, $ariaData))
@@ -365,10 +364,6 @@ class Publication extends OpalProject
                             }
                         }
                         else if($idsFound != count($trigger["data"])) {
-                            print $idsFound ." ". count($trigger["data"])."\r\n";
-                            print_r($trigger["data"]);
-                            print_r($opalData);
-                            die();
                             array_push($errMsgs, "$key: invalid IDs found.");
                         }
                     }
@@ -378,6 +373,7 @@ class Publication extends OpalProject
                 }
             }
         }
+
         return $errMsgs;
     }
 

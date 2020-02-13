@@ -282,7 +282,7 @@ class Filter {
                 // Manually add checked in flag
                 $statusDetails = array(
                     'name'  => 'Checked In',
-                    'id'    => 1,
+                    'id'    => "1",
                     'type'  => 'CheckedInFlag',
                     'added' => 0
                 );
