@@ -1383,7 +1383,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 				alert($filter('translate')('PUBLICATION.EDIT.ERROR_PUBLICATION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
 			},
 			complete: function() {
-				// $uibModalInstance.close();
+				$uibModalInstance.close();
 			}
 		});
 	};
