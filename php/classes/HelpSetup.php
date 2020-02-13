@@ -15,7 +15,7 @@ class HelpSetup {
         {
             function http_response_code($newcode = NULL)
             {
-                static $code = 200;
+                static $code = HTTP_STATUS_SUCCESS;
                 if($newcode !== NULL)
                 {
                     header('X-PHP-Response-Code: '.$newcode, true, $newcode);
