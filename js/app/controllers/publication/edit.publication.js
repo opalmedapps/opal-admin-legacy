@@ -292,6 +292,8 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 					$scope.toSubmit[key] = response.data[key];
 			}
 
+			console.log($scope.toSubmit);
+
 			$scope.toSubmit.moduleId.value = $scope.currentPublication.moduleId;
 			$scope.toSubmit.materialId.value = $scope.currentPublication.ID;
 			$scope.toSubmit.materialId.type = response.data["publication"]["module"]["EN"];
@@ -1372,10 +1374,6 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 				$scope.toSubmit.publishDateTime = tempDate;
 			}
 		}
-
-		console.log($scope.toSubmit);
-
-/*
 		$.ajax({
 			type: "POST",
 			url: "publication/update/publication",
@@ -1388,8 +1386,6 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 				// $uibModalInstance.close();
 			}
 		});
-*/
-
 	};
 
 });
