@@ -280,16 +280,17 @@ class PublishedQuestionnaire extends Questionnaire {
 
         //Delete and update triggers
         if(!empty($questionnaire["triggers_updated"])) {
-            $existingTriggers = $this->opalDB->getFiltersByControlTableSerNum($questionnaire["serial"]);
+            $existingTriggers = $this->opalDB->getFiltersByControlTableSerNum($questionnaire["serial"], "LegacyQuestionnaireControl");
             foreach($existingTriggers as $trigger) {
                 if(!$this->_nestedSearch($trigger["id"], $trigger["type"], $questionnaire["triggers"])) {
-                    $total += $this->opalDB->deleteFilters($trigger["id"], $trigger["type"], $questionnaire["serial"]);
+                    $total += $this->opalDB->deleteFilters($trigger["id"], $trigger["type"], $questionnaire["serial"], "LegacyQuestionnaireControl");
                     $toUpdate = array(
                         "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
                         "SessionId"=>$questionnaire["sessionId"],
                         "FilterId"=>$trigger["id"],
                         "FilterType"=>$trigger["type"],
                         "ControlTableSerNum"=>$questionnaire["serial"],
+                        "ControlTable"=>"LegacyQuestionnaireControl",
                     );
                     $total += $this->opalDB->updateFiltersModificationHistory($toUpdate);
                 }
@@ -315,7 +316,7 @@ class PublishedQuestionnaire extends Questionnaire {
         }
 
         if(!$questionnaire["occurrence"]["set"]) {
-            $total += $this->opalDB->deleteFrequencyEvent($questionnaire["serial"]);
+            $total += $this->opalDB->deleteFrequencyEvent($questionnaire["serial"], "LegacyQuestionnaireControl");
         }
         else {
             $toInsert = array(
@@ -328,7 +329,7 @@ class PublishedQuestionnaire extends Questionnaire {
             );
             $result = $this->opalDB->insertReplaceFrequencyEvent($toInsert);
             if(!$questionnaire["occurrence"]["end_date"]) {
-                $result = $this->opalDB->deleteRepeatEndFromFrequencyEvents($questionnaire["serial"]);
+                $result = $this->opalDB->deleteRepeatEndFromFrequencyEvents($questionnaire["serial"], "LegacyQuestionnaireControl");
             }
             else {
                 $toInsert = array(
@@ -342,7 +343,7 @@ class PublishedQuestionnaire extends Questionnaire {
                 $result = $this->opalDB->insertReplaceFrequencyEvent($toInsert);
             }
 
-            $result = $this->opalDB->deleteOtherMetasFromFrequencyEvents($questionnaire["serial"]);
+            $result = $this->opalDB->deleteOtherMetasFromFrequencyEvents($questionnaire["serial"], "LegacyQuestionnaireControl");
             $toInsert = array(
                 "ControlTable"=>'LegacyQuestionnaireControl',
                 "ControlTableSerNum"=>$questionnaire["serial"],

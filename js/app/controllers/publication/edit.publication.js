@@ -292,8 +292,6 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 					$scope.toSubmit[key] = response.data[key];
 			}
 
-			console.log($scope.toSubmit);
-
 			$scope.toSubmit.moduleId.value = $scope.currentPublication.moduleId;
 			$scope.toSubmit.materialId.value = $scope.currentPublication.ID;
 			$scope.toSubmit.materialId.type = response.data["publication"]["module"]["EN"];
@@ -535,7 +533,6 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 			else if(!value.mandatory && value.completed)
 				nonMandatoryCompleted++;
 		});
-
 		$scope.formReady = (completedSteps >= totalsteps) && (nonMandatoryCompleted >= nonMandatoryTotal);
 	}, true);
 
@@ -756,16 +753,12 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 	// Function to toggle necessary changes when updating the sex
 	$scope.sexUpdate = function (sex) {
 		$scope.toSubmit.triggers_updated = 1;
-		$scope.triggerSection.demo.open = true;
 		if (!$scope.demoTrigger.sex) {
 			$scope.demoTrigger.sex = sex.name;
 			$scope.demoTrigger.sex_display = sex.display;
 		} else if ($scope.demoTrigger.sex == sex.name) {
 			$scope.demoTrigger.sex = null; // Toggle off
 			$scope.demoTrigger.sex_display = null;
-			if ($scope.demoTrigger.age.min == 0 && $scope.demoTrigger.age.max == 130) {
-				$scope.triggerSection.demo.open = false;
-			}
 		} else {
 			$scope.demoTrigger.sex = sex.name;
 			$scope.demoTrigger.sex_display = sex.display;
@@ -799,7 +792,6 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 		else
 			$scope.demoTrigger.age.valid = true;
 
-		$scope.triggerSection.demo.open = ($scope.demoTrigger.age.min !== 0 || $scope.demoTrigger.age.max !== 130 || $scope.demoTrigger.sex);
 		if (($scope.demoTrigger.age.min === 0 && $scope.demoTrigger.age.max === 130) || !$scope.demoTrigger.age.valid) {
 			if ($scope.toSubmit.triggers.findIndex(x => x.type === "Age") !== -1)
 				$scope.toSubmit.triggers.splice($scope.toSubmit.triggers.findIndex(x => x.type === "Age"), 1);
@@ -1344,15 +1336,28 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 
 	// Function for updating the published questionnaire
 	$scope.updatePublishedQuestionnaire = function () {
+		var invalidDate = false;
+
+		var oldOccurrenceStart_date = null;
+		var oldOccurrenceEnd_date = null;
+		var oldOccurrenceFrequencyMeta_key = null;
+		var oldOccurrenceFrequencyMeta_value = null;
+		var oldPublishDate = null;
+		var oldPublishTime = null;
+
 		if ($scope.showFrequency) {
 			$scope.toSubmit.occurrence.set = 1;
+			oldOccurrenceStart_date = $scope.toSubmit.occurrence.start_date;
 			$scope.toSubmit.occurrence.start_date = moment($scope.toSubmit.occurrence.start_date).format('X');
 			if ($scope.toSubmit.occurrence.end_date) {
+				oldOccurrenceEnd_date = $scope.toSubmit.occurrence.end_date;
 				$scope.toSubmit.occurrence.end_date = moment($scope.toSubmit.occurrence.end_date).format('X');
 			}
 			$scope.toSubmit.occurrence.frequency.additionalMeta = [];
 			if ($scope.toSubmit.occurrence.frequency.custom) {
+				oldOccurrenceFrequencyMeta_key = $scope.toSubmit.occurrence.frequency.meta_key;
 				$scope.toSubmit.occurrence.frequency.meta_key = $scope.customFrequency.unit.meta_key;
+				oldOccurrenceFrequencyMeta_value = $scope.toSubmit.occurrence.frequency.meta_value;
 				$scope.toSubmit.occurrence.frequency.meta_value = $scope.customFrequency.meta_value;
 				angular.forEach(Object.keys($scope.additionalMeta), function(meta_key){
 					if ($scope.additionalMeta[meta_key].length) {
@@ -1368,24 +1373,46 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 
 		if ($scope.publishDate.available) {
 			if (typeof $scope.toSubmit.publishDateTime !== "undefined") {
+				oldPublishTime = $scope.toSubmit.publishDateTime.publish_time;
+				oldPublishDate = $scope.toSubmit.publishDateTime.publish_date;
+
 				var tempDate = String(moment($scope.toSubmit.publishDateTime.publish_date).format("YYYY-MM-DD")) + " " +
 					String(moment($scope.toSubmit.publishDateTime.publish_time).format("HH:mm"));
 				delete $scope.toSubmit.publishDateTime;
 				$scope.toSubmit.publishDateTime = tempDate;
+				if(((new Date()).getTime() - Date.parse($scope.toSubmit.publishDateTime)) >= 0)
+					invalidDate = true;
 			}
 		}
-		$.ajax({
-			type: "POST",
-			url: "publication/update/publication",
-			data: $scope.toSubmit,
-			success: function () {},
-			error: function (err) {
-				alert($filter('translate')('PUBLICATION.EDIT.ERROR_PUBLICATION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
-			},
-			complete: function() {
-				$uibModalInstance.close();
+
+		if(invalidDate) {
+			alert($filter('translate')('PUBLICATION.EDIT.ERROR_DATE'));
+			if ($scope.showFrequency) {
+				$scope.toSubmit.occurrence.start_date = oldOccurrenceStart_date;
+				$scope.toSubmit.occurrence.end_date = oldOccurrenceEnd_date;
+				$scope.toSubmit.occurrence.frequency.meta_key = oldOccurrenceFrequencyMeta_key;
+				$scope.toSubmit.occurrence.frequency.meta_value = oldOccurrenceFrequencyMeta_value;
 			}
-		});
+			if ($scope.publishDate.available) {
+				$scope.toSubmit.publishDateTime = {
+					publish_date: oldPublishDate,
+					publish_time: oldPublishTime,
+				};
+			}
+		}
+		else
+			$.ajax({
+				type: "POST",
+				url: "publication/update/publication",
+				data: $scope.toSubmit,
+				success: function () {},
+				error: function (err) {
+					alert($filter('translate')('PUBLICATION.EDIT.ERROR_PUBLICATION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+				},
+				complete: function() {
+					$uibModalInstance.close();
+				}
+			});
 	};
 
 });
