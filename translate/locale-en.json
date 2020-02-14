@@ -930,6 +930,7 @@
       "ERROR_FILTERS": "An error occurred while getting the filters list.",
       "ERROR_PUBLICATION": "An error occurred while updating the publication.",
       "ERROR_DETAILS": "An error occurred while getting the details of the publication.",
+      "ERROR_DATE": "The publishing date is incorrect and cannot be set in the past.",
       "1_DAY_SELECTED": "1 day selected",
       "DAYS_SELECTED": " days selected",
       "1_MONTH_SELECTED": "1 month selected",
