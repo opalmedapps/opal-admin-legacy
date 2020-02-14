@@ -145,4 +145,3 @@ define("HTTP_STATUS_INTERNAL_SERVER_ERROR",500);
  * Miscellaneous constants
  * */
 define("DEFAULT_FIELD", "");
-?>

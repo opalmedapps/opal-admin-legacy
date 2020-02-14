@@ -74,6 +74,7 @@ define("SQL_OPAL_GET_PUBLISHED_QUESTIONNAIRES",
     FROM ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." qc;"
 );
 
+//TODO to remove - useless with new publication
 define("SQL_OPAL_GET_FILTERS",
     "SELECT DISTINCT 
     f.FilterType AS type,
@@ -97,7 +98,7 @@ define("SQL_OPAL_GET_FILTERS_BY_CONTROL_TABLE_SERNUM",
     FROM 
     ".OPAL_FILTERS_TABLE."
     WHERE ControlTableSerNum = :ControlTableSerNum
-    AND ControlTable = 'LegacyQuestionnaireControl'
+    AND ControlTable = :ControlTable
     AND FilterType != ''
     AND FilterId != '';"
 );
@@ -107,7 +108,7 @@ define("SQL_OPAL_DELETE_FILTERS",
     WHERE FilterId = :FilterId
     AND FilterType = :FilterType
     AND ControlTableSerNum = :ControlTableSerNum
-    AND ControlTable = 'LegacyQuestionnaireControl';"
+    AND ControlTable = :ControlTable;"
 );
 
 define("SQL_OPAL_UPDATE_FILTERSMH",
@@ -118,22 +119,15 @@ define("SQL_OPAL_UPDATE_FILTERSMH",
     WHERE FilterId = :FilterId
     AND FilterType = :FilterType
     AND ControlTableSerNum = :ControlTableSerNum
-    AND ControlTable = 'LegacyQuestionnaireControl'
+    AND ControlTable = :ControlTable
     ORDER BY DateAdded DESC 
     LIMIT 1;"
 );
 
 define("SQL_OPAL_DELETE_FREQUENCY_EVENTS_TABLE",
     "DELETE FROM ".OPAL_FREQUENCY_EVENTS_TABLE." 
-    WHERE ControlTable = 'LegacyQuestionnaireControl'
+    WHERE ControlTable = :ControlTable
     AND ControlTableSerNum = :ControlTableSerNum;"
-);
-
-define("SQL_OPAL_UPDATE_PUBLISHED_QUESTIONNAIRES_STATUS_LAST_PUBLISHED",
-    "UPDATE ".OPAL_QUESTIONNAIRE_CONTROL_TABLE."
-    SET PublishFlag = :PublishFlag, LastUpdatedBy = :LastUpdatedBy, LastPublished = :LastPublished
-    WHERE QuestionnaireControlSerNum = :QuestionnaireControlSerNum
-    AND (PublishFlag != :PublishFlag);"
 );
 
 define("SQL_OPAL_UPDATE_PUBLISHED_QUESTIONNAIRES_STATUS",
@@ -197,6 +191,7 @@ define("SQL_OPAL_GET_QUESTIONNAIRE_CONTROL_DETAILS",
     WHERE QuestionnaireControlSerNum = :QuestionnaireControlSerNum;"
 );
 
+//TODO to remove - useless with new publication
 define("SQL_OPAL_GET_FILTERS_QUESTIONNAIRE_CONTROL",
     "SELECT DISTINCT 
     ".OPAL_FILTERS_TABLE.".FilterType AS type,
@@ -213,6 +208,7 @@ define("SQL_OPAL_GET_FILTERS_QUESTIONNAIRE_CONTROL",
     AND ".OPAL_FILTERS_TABLE.".FilterId != '';"
 );
 
+//TODO to remove - useless with new publication
 define("SQL_OPAL_GET_FREQUENCY_EVENTS_QUESTIONNAIRE_CONTROL",
     "SELECT DISTINCT CustomFlag, MetaKey, MetaValue 
     FROM ".OPAL_FREQUENCY_EVENTS_TABLE."
@@ -239,16 +235,25 @@ define("SQL_OPAL_UPDATE_QUESTIONNAIRE_CONTROL",
     ".OPAL_QUESTIONNAIRE_CONTROL_TABLE.".QuestionnaireControlSerNum = :QuestionnaireControlSerNum;"
 );
 
+define("SQL_OPAL_UPDATE_POST_CONTROL",
+    "UPDATE ".OPAL_POST_TABLE." SET 
+    PublishDate = :PublishDate, 
+    LastUpdatedBy = :LastUpdatedBy,
+    SessionId = :SessionId
+    WHERE 
+    PostControlSerNum = :PostControlSerNum;"
+);
+
 define("SQL_OPAL_DELETE_REPEAT_END_FROM_FREQUENCY_EVENTS",
     "DELETE FROM ".OPAL_FREQUENCY_EVENTS_TABLE."
-    WHERE ControlTable = 'LegacyQuestionnaireControl'
+    WHERE ControlTable = :ControlTable
     AND ControlTableSerNum = :ControlTableSerNum
     AND MetaKey = 'repeat_end';"
 );
 
 define("SQL_OPAL_DELETE_OTHER_METAS_FROM_FREQUENCY_EVENTS",
     "DELETE FROM ".OPAL_FREQUENCY_EVENTS_TABLE."
-    WHERE ControlTable = 'LegacyQuestionnaireControl'
+    WHERE ControlTable = :ControlTable
     AND ControlTableSerNum = :ControlTableSerNum
     AND MetaKey != 'repeat_start'
     AND MetaKey != 'repeat_end';"
