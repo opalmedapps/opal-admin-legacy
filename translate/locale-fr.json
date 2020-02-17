@@ -1736,6 +1736,7 @@
       "ERROR_EDUCATION": "Une erreur s'est produite lors de l'obtention de la liste des matériels éducatifs.",
       "ERROR_GROUP": "Une erreur s'est produite lors de l'obtention de la liste des groupes de laboratoire.",
       "ERROR_TEST": "Une erreur s'est produite lors de l'obtention de la liste des noms des tests.",
+      "ERROR_NO_TEST_FOUND": "La liste des résultats de laboratoire est vide. Veuillez vérifier la connexion avec les différentes bases de données et essayer de nouveau.",
       "ERROR_ADD": "Une erreur s'est produite lors de la création du résultat de laboratoire."
     },
     "EDIT": {
@@ -1778,6 +1779,7 @@
       "ERROR_EDUCATION": "Une erreur s'est produite lors de l'obtention de la liste des matériels éducatifs.",
       "ERROR_GROUP": "Une erreur s'est produite lors de l'obtention de la liste des groupes de laboratoire.",
       "ERROR_TEST": "Une erreur s'est produite lors de l'obtention de la liste des noms des tests.",
+      "ERROR_NO_TEST_FOUND": "La liste des résultats de laboratoire est vide. Veuillez vérifier la connexion avec les différentes bases de données et essayer de nouveau.",
       "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails du résultat de laboratoire.",
       "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour du résultat de laboratoire.",
       "SUCCESS_EDIT": "Le résultat du laboratoire a été mis à jour avec succès."
@@ -1967,6 +1969,7 @@
       "PROCESSING": "En traitement...",
       "ERROR_EDUCATION": "Une erreur s'est produite lors de l'obtention de la liste des matériels éducatifs.",
       "ERROR_DIAGNOSIS": "Une erreur s'est produite lors de l'obtention de la liste des diagnostics.",
+      "ERROR_NO_DIAGNOSIS_FOUND": "La liste des diagnostics est vide. Veuillez vérifier la connexion avec les différentes bases de données et essayer de nouveau.",
       "ERROR_ADD": "Une erreur s'est produite lors de l'ajout de la traduction."
     },
     "EDIT": {
@@ -1999,6 +2002,7 @@
       "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails de la traduction de diagnostics.",
       "ERROR_EDUCATION": "Une erreur s'est produite lors de l'obtention de la liste des matériels éducatifs.",
       "ERROR_DIAGNOSIS": "Une erreur s'est produite lors de l'obtention de la liste des diagnostics.",
+      "ERROR_NO_DIAGNOSIS_FOUND": "La liste des diagnostics est vide. Veuillez vérifier la connexion avec les différentes bases de données et essayer de nouveau.",
       "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour de la traduction.",
       "SUCCESS_UPDATE": "La traduction de diagnostic a été mise à jour avec succès."
     }

@@ -21,8 +21,8 @@ class TestResult {
         );
         $userSer = $user['id'];
         $sessionId = $user['sessionid'];
-		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             foreach ($testResultList as $testResult) {
                 $publishFlag = $testResult['publish'];
@@ -37,19 +37,19 @@ class TestResult {
                     WHERE
                         TestResultControl.TestResultControlSerNum = $serial
                 ";
-	            $query = $host_db_link->prepare( $sql );
-				$query->execute();
+                $query = $host_db_link->prepare( $sql );
+                $query->execute();
             }
 
             $this->sanitizeEmptyTestResults($user);
 
             $response['value'] = 1; // Success
             return $response;
-		} catch( PDOException $e) {
-		    $response['message'] = $e->getMessage();
-			return $response; // Fail
-		}
-	}
+        } catch( PDOException $e) {
+            $response['message'] = $e->getMessage();
+            return $response; // Fail
+        }
+    }
 
     /**
      *
@@ -60,8 +60,8 @@ class TestResult {
      */
     public function getTestResultDetails ($serial) {
         $testResultDetails = array();
- 		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
@@ -77,10 +77,10 @@ class TestResult {
                 WHERE
                     tr.TestResultControlSerNum = $serial
             ";
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
 
-			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
+            $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
 
             $name_EN            = $data[0];
             $name_FR            = $data[1];
@@ -103,7 +103,7 @@ class TestResult {
                     tre.TestResultControlSerNum = $serial
             ";
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-	    	$query->execute();
+            $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
@@ -169,10 +169,10 @@ class TestResult {
             );
             return $testResultDetails;
         } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $testResultDetails;
-		}
-	}
+            echo $e->getMessage();
+            return $testResultDetails;
+        }
+    }
 
     /**
      *
@@ -184,7 +184,7 @@ class TestResult {
 
         $groups = array();
         try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
@@ -193,10 +193,10 @@ class TestResult {
                 FROM
                     TestResultControl trc
             ";
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
 
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
                 $groupDetails = array(
                     'EN'    => $data[0],
                     'FR'    => $data[1]
@@ -206,9 +206,9 @@ class TestResult {
 
             return $groups;
         } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $groups;
-		}
+            echo $e->getMessage();
+            return $groups;
+        }
     }
 
     /**
@@ -229,7 +229,7 @@ class TestResult {
             // ***********************************
             // ARIA
             // ***********************************
-            $sourceDBSer = 1;
+            $sourceDBSer = ARIA_SOURCE_DB;
             $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
             if ($source_db_link) {
 
@@ -264,7 +264,7 @@ class TestResult {
             // ***********************************
             // WaitRoomManagement
             // ***********************************
-            $sourceDBSer = 2;
+            $sourceDBSer = MEDIVISIT_SOURCE_DB;
             $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
             if ($source_db_link) {
 
@@ -283,29 +283,25 @@ class TestResult {
             // ***********************************
             // Mosaiq
             // ***********************************
-            $sourceDBSer = 3;
+            $sourceDBSer = MOSAIQ_SOURCE_DB;
             $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
             if ($source_db_link) {
 
                 $sql = "SELECT 'QUERY_HERE'";
                 $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
                 $query->execute();
-                
+
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
                     // Set appropriate test result data here from query
-
                     //array_push($testNames, $testArray); // Uncomment for use
                 }
 
             }
 
-
             return $testNames;
-  	  	} catch (PDOException $e) {
-            echo $e->getMessage();
-            return $testNames;
-		}
+        } catch (PDOException $e) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for lab results. " . $e->getMessage());
+        }
     }
 
     /**
@@ -354,7 +350,7 @@ class TestResult {
      * Inserts a test result into the database
      *
      * @param array $testResultDetails : the test result details
-	 * @return void
+     * @return void
      */
     public function insertTestResult ($testResultDetails) {
 
@@ -373,9 +369,9 @@ class TestResult {
             $eduMatSer = $testResultDetails['edumat']['serial'];
         }
 
-		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 INSERT INTO
                     TestResultControl (
@@ -405,8 +401,8 @@ class TestResult {
                     '$sessionId'
                 )
             ";
-			$query = $host_db_link->prepare( $sql );
-			$query->execute();
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
 
             $testResultSer = $host_db_link->lastInsertId();
 
@@ -435,13 +431,13 @@ class TestResult {
                         LastUpdatedBy = '$userSer',
                         SessionId = '$sessionId'
                 ";
-	            $query = $host_db_link->prepare( $sql );
-				$query->execute();
+                $query = $host_db_link->prepare( $sql );
+                $query->execute();
             }
 
             if ($additionalLinks) {
                 foreach ($additionalLinks as $link) {
-                    
+
                     $linkName_EN        = $link['name_EN'];
                     $linkName_FR        = $link['name_FR'];
                     $linkURL_EN         = $link['url_EN'];
@@ -474,8 +470,8 @@ class TestResult {
             $this->sanitizeEmptyTestResults($testResultDetails['user']);
 
         } catch( PDOException $e) {
-			return $e->getMessage();
-		}
+            return $e->getMessage();
+        }
 
     }
 
@@ -483,14 +479,14 @@ class TestResult {
      *
      * Gets a list of existing test results in the database
      *
-     * @return array $testResultList : the list of existing test results 
+     * @return array $testResultList : the list of existing test results
      */
     public function getExistingTestResults () {
 
         $testResultList = array();
 
- 		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
                 SELECT DISTINCT
@@ -506,10 +502,10 @@ class TestResult {
                 FROM
                     TestResultControl tr
             ";
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
 
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                 $testResultSer          = $data[0];
                 $name_EN                = $data[1];
@@ -534,9 +530,9 @@ class TestResult {
                 ";
 
                 $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-				$secondQuery->execute();
+                $secondQuery->execute();
 
-				while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                     $testNameArray = array(
                         'name'  => $secondData[0],
@@ -605,10 +601,10 @@ class TestResult {
             }
             return $testResultList;
         } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $testResultList;
-		}
-	}
+            echo $e->getMessage();
+            return $testResultList;
+        }
+    }
 
     /**
      *
@@ -642,10 +638,10 @@ class TestResult {
             'value'     => 0,
             'message'   => ''
         );
-		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
             if ($detailsUpdated) {
                 $sql = "
                     UPDATE
@@ -665,7 +661,7 @@ class TestResult {
                 ";
 
                 $query = $host_db_link->prepare( $sql );
-    			$query->execute();
+                $query->execute();
             }
 
             if (testNamesUpdated) {
@@ -678,10 +674,10 @@ class TestResult {
                     WHERE
                         tre.TestResultControlSerNum = $serial
                 ";
-    			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-    			$query->execute();
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
 
-    			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
                     array_push($existingTests, $data[0]);
                 }
 
@@ -696,8 +692,8 @@ class TestResult {
                             AND TestResultExpression.TestResultControlSerNum = $serial
                         ";
 
-    					$query = $host_db_link->prepare( $sql );
-    					$query->execute();
+                        $query = $host_db_link->prepare( $sql );
+                        $query->execute();
 
                         $sql = "
                             UPDATE TestResultExpressionMH
@@ -711,8 +707,8 @@ class TestResult {
                         ";
                         $query = $host_db_link->prepare( $sql );
                         $query->execute();
-    				}
-    			}
+                    }
+                }
 
                 // If new test names, insert into database
                 foreach ($tests as $test) {
@@ -737,10 +733,10 @@ class TestResult {
                                 SessionId = '$sessionId'
                         ";
 
-    	                $query = $host_db_link->prepare( $sql );
-    					$query->execute();
-    				}
-    			}
+                        $query = $host_db_link->prepare( $sql );
+                        $query->execute();
+                    }
+                }
             }
 
             if ($additionalLinksUpdated) {
@@ -758,7 +754,7 @@ class TestResult {
                 if ($additionalLinks) {
                     // add new links
                     foreach ($additionalLinks as $link) {
-                        
+
                         $linkName_EN        = $link['name_EN'];
                         $linkName_FR        = $link['name_FR'];
                         $linkURL_EN         = $link['url_EN'];
@@ -794,11 +790,11 @@ class TestResult {
             $response['value'] = 1; // Success
             return $response;
 
-		} catch( PDOException $e) {
-		    $response['message'] = $e->getMessage();
-			return $response; // Fail
-		}
-	}
+        } catch( PDOException $e) {
+            $response['message'] = $e->getMessage();
+            return $response; // Fail
+        }
+    }
 
     /**
      *
@@ -818,10 +814,10 @@ class TestResult {
         $userSer = $user['id'];
         $sessionId = $user['sessionid'];
 
-	    try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-                
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
             $sql = "
                 DELETE FROM
                     TestResultExpression
@@ -847,7 +843,7 @@ class TestResult {
                     TestResultControl.TestResultControlSerNum = $testResultSer
             ";
 
-	        $query = $host_db_link->prepare( $sql );
+            $query = $host_db_link->prepare( $sql );
             $query->execute();
 
             $sql = "
@@ -862,16 +858,16 @@ class TestResult {
             ";
             $query = $host_db_link->prepare( $sql );
             $query->execute();
-    
+
 
             $response['value'] = 1;
             return $response;
 
-	    } catch( PDOException $e) {
-		    $response['message'] = $e->getMessage();
-			return $response;
-		}
-	}
+        } catch( PDOException $e) {
+            $response['message'] = $e->getMessage();
+            return $response;
+        }
+    }
 
     /**
      *
@@ -1032,7 +1028,7 @@ class TestResult {
         }
     }
 
-     /**
+    /**
      *
      * Gets list logs of test results during one or many cron sessions
      *
@@ -1071,29 +1067,29 @@ class TestResult {
                     trmh.TestResultExpressionSerNum     = tre.TestResultExpressionSerNum
                 AND trmh.SourceDatabaseSerNum           = sd.SourceDatabaseSerNum
                 AND trmh.CronLogSerNum                  IN ($serials)
-            "; 
+            ";
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                 $logDetails = array (
-                   'expression_name'        => $data[0],
-                   'revision'               => $data[1],
-                   'cron_serial'            => $data[2],
-                   'patient_serial'         => $data[3],
-                   'source_db'              => $data[4],
-                   'source_uid'             => $data[5],
-                   'abnormal_flag'          => $data[6],
-                   'test_date'              => $data[7],
-                   'max_norm'               => $data[8],
-                   'min_norm'               => $data[9],
-                   'test_value'             => $data[10],
-                   'unit'                   => $data[11],
-                   'valid'                  => $data[12],
-                   'date_added'             => $data[13],
-                   'read_status'            => $data[14],
-                   'mod_action'             => $data[15]
+                    'expression_name'        => $data[0],
+                    'revision'               => $data[1],
+                    'cron_serial'            => $data[2],
+                    'patient_serial'         => $data[3],
+                    'source_db'              => $data[4],
+                    'source_uid'             => $data[5],
+                    'abnormal_flag'          => $data[6],
+                    'test_date'              => $data[7],
+                    'max_norm'               => $data[8],
+                    'min_norm'               => $data[9],
+                    'test_value'             => $data[10],
+                    'unit'                   => $data[11],
+                    'valid'                  => $data[12],
+                    'date_added'             => $data[13],
+                    'read_status'            => $data[14],
+                    'mod_action'             => $data[15]
                 );
                 array_push($testResultLogs, $logDetails);
             }
@@ -1104,8 +1100,7 @@ class TestResult {
             echo $e->getMessage();
             return $testResultLogs;
         }
-    }  
-
+    }
 
     /**
      *
@@ -1129,10 +1124,3 @@ class TestResult {
         return $assignedTest;
     }
 }
-
-?>
-
-
-
-
-
