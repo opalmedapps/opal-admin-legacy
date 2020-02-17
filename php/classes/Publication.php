@@ -51,6 +51,11 @@ class Publication extends OpalProject
         return $this->opalDB->getPublications();
     }
 
+    /*
+     * Get the details of a publication, plus the module associated it, its name and its description
+     * @params  $publicationId (int) and $moduleId (int)
+     * @return  $results (array) array that contains all the details
+     * */
     public function getPublicationDetails($publicationId, $moduleId) {
         if($publicationId == "" || $moduleId == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publication settings.");
@@ -87,7 +92,6 @@ class Publication extends OpalProject
                 }
             }
         }
-
 
         $results["publicationSettings"] = $this->opalDB->getPublicationSettingsIDsPerModule($moduleId);
         $tempArray = array();
@@ -174,8 +178,15 @@ class Publication extends OpalProject
         return $results;
     }
 
-    public function getPublicationChartLogs() {
-        $result = $this->opalDB->getPublicationChartLogs();
+    public function getPublicationChartLogs($moduleId, $publicationId) {
+        $result = $this->opalDB->getSqlChartLogs($moduleId);
+
+        print "$moduleId $publicationId\r\n";
+        print_r($result);
+
+
+
+        die();
 
         $arrResult = array();
         $tempResult = array();
@@ -238,7 +249,11 @@ class Publication extends OpalProject
         }
     }
 
-
+    /*
+     * This function reassign the correct appointment status when treating "Checked In". This function only exists
+     * because it was decided to add it manually to the status list by hard-coding it while using incorrect values.
+     * Once it will be fixed (if it is), this function will be totally useless. See ticket OPAL-74 for more details
+     * */
     protected function _reassignData($data, $id)  {
         $results = array();
         foreach($data as $item) {
@@ -696,6 +711,11 @@ class Publication extends OpalProject
             $this->_insertFilters($publication, $publication["materialId"]["value"], "EducationalMaterialControl");
     }
 
+    /*
+     * Insert new filters for a publication.
+     * @params  $publication(reference of array), $publicationControlId (reference of int), $controlTableName (string)
+     * @return  void
+     * */
     protected function _insertFilters(&$publication, &$publicationControlId, $controlTableName) {
         $toInsert = array();
         foreach($publication['triggers'] as $trigger) {
@@ -816,29 +836,48 @@ class Publication extends OpalProject
         }
     }
 
+    /*
+     * Update the publication of a questionnaire regarding the names. Then update the triggers.
+     * @params  $questionnaire (array) details of the publication of the questionnaire
+     *          $controlTableName (string) name of the control table for the questionnaires
+     * @return  void
+     * */
     protected function _updatePublicationQuestionnaire($questionnaire, $controlTableName) {
         $toUpdate = array(
             "QuestionnaireName_EN"=>$questionnaire["name"]["name_EN"],
             "QuestionnaireName_FR"=>$questionnaire["name"]["name_FR"],
             "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
-            "SessionId"=>$questionnaire["sessionId"],
+            "SessionId"=>$this->opalDB->getSessionId(),
             "QuestionnaireControlSerNum"=>$questionnaire["materialId"]["value"],
         );
         $total = $this->opalDB->updateQuestionnaireControl($toUpdate);
         $this->_updateTriggers($questionnaire, $controlTableName);
     }
 
+    /*
+     * Update the publication of a post regarding the publish date. Then update the triggers.
+     * @params  $post (array) details of the publication of the post
+     *          $controlTableName (string) name of the control table for the posts
+     * @return  void
+     * */
     protected function _updatePublicationPost($post, $controlTableName) {
         $toUpdate = array(
             "PublishDate"=>$post["publishDateTime"],
             "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
-            "SessionId"=>$post["sessionid"],
+            "SessionId"=>$this->opalDB->getSessionId(),
             "PostControlSerNum"=>$post["materialId"]["value"],
         );
         $total = $this->opalDB->updatePostControl($toUpdate);
         $this->_updateTriggers($post, $controlTableName);
     }
 
+    /*
+     * Update the triggers of a publications. First it deletes and updates the triggers, then add the new ones. Then
+     * it updates the occurrence if there are some.
+     * @params  $publication (array) details of the triggers to update
+     *          $controlTableName (string) name of the control table for the posts
+     * @return  void
+     * */
     protected function _updateTriggers($publication, $controlTableName) {
         //Delete and update triggers
         if(!empty($publication["triggers_updated"])) {
@@ -848,7 +887,7 @@ class Publication extends OpalProject
                     $total += $this->opalDB->deleteFilters($trigger["id"], $trigger["type"], $publication["materialId"]["value"], $controlTableName);
                     $toUpdate = array(
                         "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
-                        "SessionId"=>$publication["sessionId"],
+                        "SessionId"=>$this->opalDB->getSessionId(),
                         "FilterId"=>$trigger["id"],
                         "FilterType"=>$trigger["type"],
                         "ControlTableSerNum"=>$publication["materialId"]["value"],
@@ -871,7 +910,7 @@ class Publication extends OpalProject
                         "FilterId"=>$trigger['id'],
                         "DateAdded"=>date("Y-m-d H:i:s"),
                         "LastUpdatedBy"=>$this->opalDB->getOAUserId(),
-                        "SessionId"=>$publication["sessionId"],
+                        "SessionId"=>$this->opalDB->getSessionId(),
                     ));
             }
             $this->opalDB->insertMultipleFilters($toInsert);

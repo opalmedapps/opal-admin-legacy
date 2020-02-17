@@ -61,7 +61,8 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 		// Table
 		// Templates
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editPublication(row.entity)"<i title="'+$filter('translate')('PUBLICATION.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong></div>';
+			'<strong><a href="" ng-click="grid.appScope.showPublicationLog(row.entity)"><i title="'+$filter('translate')('PUBLICATION.LIST.LOGS')+'" class="fa fa-area-chart" aria-hidden="true"></i></a></strong> ' +
+			'- <strong><a href="" ng-click="grid.appScope.editPublication(row.entity)"<i title="'+$filter('translate')('PUBLICATION.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong></div>';
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editPublication(row.entity)">' +
 			'<strong><a href="">{{row.entity.name_'+ Session.retrieveObject('user').language +'}}</a></strong></div>';
@@ -222,6 +223,19 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 			// After update, refresh the questionnaire list
 			modalInstance.result.then(function () {
 				getPublicationsList();
+			});
+		};
+
+		// Function for when the post has been clicked for viewing logs
+		$scope.showPublicationLog = function (publication) {
+			$scope.currentPublication = publication;
+			console.log($scope.currentPublication);
+			var modalInstance = $uibModal.open({
+				templateUrl: 'templates/post/log.publication.html',
+				controller: 'publication.log',
+				scope: $scope,
+				windowClass: 'logModal',
+				backdrop: 'static',
 			});
 		};
 
