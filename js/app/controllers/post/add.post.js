@@ -169,10 +169,10 @@ controller('post.add', function ($scope, $filter, $state, $sce, $uibModal, $loca
 		$scope.doctorTriggerList = response.data.doctors;
 		$scope.machineTriggerList = response.data.machines;
 		$scope.patientTriggerList = response.data.patients;
-		processingModal.close(); // hide modal
-		processingModal = null; // remove reference
 	}).catch(function(response) {
 		alert($filter('translate')('POSTS.ADD.ERROR_TRIGGERS') + "\r\n\r\n" + response.status + " - " + response.data);
+		$state.go('post');
+	}).finally(function () {
 		processingModal.close(); // hide modal
 		processingModal = null; // remove reference
 	});
@@ -308,12 +308,13 @@ controller('post.add', function ($scope, $filter, $state, $sce, $uibModal, $loca
 				type: "POST",
 				url: "post/insert/post",
 				data: $scope.newPost,
-				success: function () {
-					$state.go('post');
-				},
+				success: function () {},
 				error: function() {
 					alert($filter('translate')('POSTS.ADD.ERROR_ADD'));
 				},
+				complete: function () {
+					$state.go('post');
+				}
 			});
 		}
 	};

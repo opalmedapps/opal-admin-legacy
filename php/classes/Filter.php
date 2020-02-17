@@ -22,17 +22,18 @@ class Filter {
             'appointmentStatuses'   => array()
         );
         $databaseObj = new Database();
+        $activeDBSources = $databaseObj->getActiveSourceDatabases();
 
         try {
 
             // ***********************************
             // ARIA 
             // ***********************************
-            $sourceDBSer = 1;
-            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
-            if ($source_db_link) {
+            if(in_array(ARIA_SOURCE_DB, $activeDBSources)) {
+                $source_db_link = $databaseObj->connectToSourceDatabase(ARIA_SOURCE_DB);
+                if ($source_db_link) {
 
-                $sql = "
+                    $sql = "
                     SELECT DISTINCT
                         Doctor.ResourceSer,
                         Doctor.LastName
@@ -48,20 +49,20 @@ class Filter {
                     ORDER BY
                         Doctor.LastName
                 ";
-                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                $query->execute();
-                
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                    $doctorArray = array(
-                        'name'  => $data[1],
-                        'id'    => $data[0],
-                        'type'  => 'Doctor',
-                        'added' => 0
-                    );
-                    array_push($filters['doctors'], $doctorArray);
-                }
+                    $query = $source_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                    $query->execute();
 
-                $sql = "
+                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                        $doctorArray = array(
+                            'name' => $data[1],
+                            'id' => $data[0],
+                            'type' => 'Doctor',
+                            'added' => 0
+                        );
+                        array_push($filters['doctors'], $doctorArray);
+                    }
+
+                    $sql = "
                     SELECT DISTINCT
                         vr.ResourceSer,
                         vr.ResourceName
@@ -74,88 +75,92 @@ class Filter {
                     ORDER BY 
                         vr.ResourceName
                 ";
-                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                $query->execute();
-                
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                    $machineArray = array(
-                        'name'  => $data[1],
-                        'id'    => $data[0],
-                        'type'  => 'Machine',
-                        'added' => 0
-                    );
-                    array_push($filters['machines'], $machineArray);
-                }
+                    $query = $source_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                    $query->execute();
 
+                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                        $machineArray = array(
+                            'name' => $data[1],
+                            'id' => $data[0],
+                            'type' => 'Machine',
+                            'added' => 0
+                        );
+                        array_push($filters['machines'], $machineArray);
+                    }
+
+                }
             }
 
-            // ***********************************
-            // WaitRoomManagement 
-            // ***********************************
-            $sourceDBSer = 2;
-            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
-            if ($source_db_link) {
+            if(in_array(MEDIVISIT_SOURCE_DB, $activeDBSources)) {
 
-                $sql = "SELECT 'DOCTOR_QUERY_HERE'";
-                // $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                // $query->execute();
-                // while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                //     $doctorArray = array(
-                //         'name'  => $data[0],
-                //         'id'    => $data[0],
-                //         'type'  => 'Doctor',
-                //         'added' => 0
-                //     );
-                //     array_push($filters['doctors'], $doctorArray);
-                // }
+                // ***********************************
+                // WaitRoomManagement
+                // ***********************************
+                $source_db_link = $databaseObj->connectToSourceDatabase(MEDIVISIT_SOURCE_DB);
+                if ($source_db_link) {
 
-                $sql = "SELECT 'MACHINE_QUERY_HERE'";
-                // $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                // $query->execute();
-                // while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                //     $machineArray = array(
-                //         'name'  => $data[0],
-                //         'id'    => $data[0],
-                //         'type'  => 'Machine',
-                //         'added' => 0
-                //     );
-                //     array_push($filters['machines'], $machineArray);
-                // }
+                    $sql = "SELECT 'DOCTOR_QUERY_HERE'";
+                    // $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                    // $query->execute();
+                    // while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                    //     $doctorArray = array(
+                    //         'name'  => $data[0],
+                    //         'id'    => $data[0],
+                    //         'type'  => 'Doctor',
+                    //         'added' => 0
+                    //     );
+                    //     array_push($filters['doctors'], $doctorArray);
+                    // }
+
+                    $sql = "SELECT 'MACHINE_QUERY_HERE'";
+                    // $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                    // $query->execute();
+                    // while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                    //     $machineArray = array(
+                    //         'name'  => $data[0],
+                    //         'id'    => $data[0],
+                    //         'type'  => 'Machine',
+                    //         'added' => 0
+                    //     );
+                    //     array_push($filters['machines'], $machineArray);
+                    // }
+                }
             }
 
             // ***********************************
             // Mosaiq 
             // ***********************************
-            $sourceDBSer = 3;
-            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
-            if ($source_db_link) {
+            if(in_array(MOSAIQ_SOURCE_DB, $activeDBSources)) {
+                $source_db_link = $databaseObj->connectToSourceDatabase(MOSAIQ_SOURCE_DB);
+                if ($source_db_link) {
 
-                $sql = "SELECT 'DOCTOR_QUERY_HERE'";
-                // $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                // $query->execute();
-                // while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                //     $doctorArray = array(
-                //         'name'  => $data[1],
-                //         'id'    => $data[0],
-                //         'type'  => 'Doctor',
-                //         'added' => 0
-                //     );
-                //     array_push($filters['doctors'], $doctorArray);
-                // }
+                    $sql = "SELECT 'DOCTOR_QUERY_HERE'";
+                    // $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                    // $query->execute();
+                    // while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                    //     $doctorArray = array(
+                    //         'name'  => $data[1],
+                    //         'id'    => $data[0],
+                    //         'type'  => 'Doctor',
+                    //         'added' => 0
+                    //     );
+                    //     array_push($filters['doctors'], $doctorArray);
+                    // }
 
-                $sql = "SELECT 'MACHINE_QUERY_HERE'";
-                // $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                // $query->execute();
-                // while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                //     $machineArray = array(
-                //         'name'  => $data[1],
-                //         'id'    => $data[0],
-                //         'type'  => 'Machine',
-                //         'added' => 0
-                //     );
-                //     array_push($filters['machines'], $machineArray);
-                // }
-			}
+                    $sql = "SELECT 'MACHINE_QUERY_HERE'";
+                    // $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                    // $query->execute();
+                    // while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                    //     $machineArray = array(
+                    //         'name'  => $data[1],
+                    //         'id'    => $data[0],
+                    //         'type'  => 'Machine',
+                    //         'added' => 0
+                    //     );
+                    //     array_push($filters['machines'], $machineArray);
+                    // }
+                }
+            }
 			
 			// ***********************************
             // OpalDB 
@@ -341,8 +346,7 @@ class Filter {
             return $filters;
 
         } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $filters;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for filters. " . $e->getMessage());
 		}
     }
 
