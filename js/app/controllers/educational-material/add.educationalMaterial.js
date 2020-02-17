@@ -193,14 +193,15 @@ controller('educationalMaterial.add', function ($scope, $filter, $state, $sce, $
 		$scope.machineTriggerList = response.data.machines;
 		$scope.patientTriggerList = response.data.patients;
 
-		processingModal.close(); // hide modal
-		processingModal = null; // remove reference
-
 		$scope.formLoaded = true;
 		$scope.loadForm();
 
 	}).catch(function(response) {
 		alert($filter('translate')('EDUCATION.ADD.ERROR_TRIGGERS') + "\r\n\r\n" + response.status + " - " + response.data);
+		$state.go('educational-material');
+	}).finally(function () {
+		processingModal.close(); // hide modal
+		processingModal = null; // remove reference
 	});
 
 	// Call our API to get the list of edu material types
@@ -486,13 +487,14 @@ controller('educationalMaterial.add', function ($scope, $filter, $state, $sce, $
 				data: $scope.newEduMat,
 				success: function (response) {
 					response = JSON.parse(response);
-					if (response.value)
-						$state.go('educational-material');
-					else
+					if (!response.value)
 						alert($filter('translate')('EDUCATION.ADD.ERROR_INSERT') + "\r\n\r\n" + response.message);
 				},
 				error: function (err) {
 					alert($filter('translate')('EDUCATION.ADD.ERROR_INSERT') + "\r\n\r\n" + err.status + " - " + err.statusText);
+				},
+				complete: function () {
+					$state.go('educational-material');
 				}
 			});
 		}

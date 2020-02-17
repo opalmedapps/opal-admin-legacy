@@ -23,17 +23,19 @@ class Alias {
             // get already assigned expressions from our database
             $assignedExpressions = $this->getAssignedExpressions($sourceDBSer, $expressionType);
 
-            // ***********************************
-            // ARIA
-            // ***********************************
-            if ($sourceDBSer == 1) {
+            if($databaseObj->sourceDatabaseIsEnabled($sourceDBSer)) {
 
-                $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
+                // ***********************************
+                // ARIA
+                // ***********************************
+                if ($sourceDBSer == ARIA_SOURCE_DB) {
 
-                if ($source_db_link) {
+                    $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
 
-                    if ($expressionType != "Document") {
-                        $sql = "
+                    if ($source_db_link) {
+
+                        if ($expressionType != "Document") {
+                            $sql = "
                             SELECT DISTINCT
     			    	        vv_ActivityLng.Expression1
         			        FROM
@@ -42,33 +44,33 @@ class Alias {
                                 vv_ActivityLng.Expression1
                         ";
 
-                        $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                        $query->execute();
+                            $query = $source_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                            $query->execute();
 
-                        while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-                            $termName = $data[0];
-                            $termArray = array(
-    				           	'name'      => $termName,
-                                'id'        => $termName,
-                                'description' => $termName,
-    			        	    'added'     => 0,
-                                'assigned'  => null
-    		    	        );
+                                $termName = $data[0];
+                                $termArray = array(
+                                    'name' => $termName,
+                                    'id' => $termName,
+                                    'description' => $termName,
+                                    'added' => 0,
+                                    'assigned' => null
+                                );
 
-                            $assignedExpression = $this->assignedSearch($termName, $termName, $assignedExpressions);
-                            if ($assignedExpression) {
-                                $termArray['added'] = 0;
-                                $termArray['assigned'] = $assignedExpression;
+                                $assignedExpression = $this->assignedSearch($termName, $termName, $assignedExpressions);
+                                if ($assignedExpression) {
+                                    $termArray['added'] = 0;
+                                    $termArray['assigned'] = $assignedExpression;
+                                }
+
+                                array_push($expressionList, $termArray);
+
                             }
 
-                            array_push($expressionList, $termArray);
+                        } else {
 
-                        }
-
-                    } else {
-
-                        $sql = "
+                            $sql = "
                             SELECT DISTINCT
                                 RTRIM(note_typ.note_typ_desc)
                             FROM
@@ -77,44 +79,44 @@ class Alias {
                                 RTRIM(note_typ.note_typ_desc)
                         ";
 
-                        $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                        $query->execute();
+                            $query = $source_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                            $query->execute();
 
-                        while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-                            $termName = $data[0];
+                                $termName = $data[0];
 
-                            $termArray = array(
-    				           	'name'      => $termName,
-                                'id'        => $termName,
-                                'description'   => $termName,
-    			            	'added'     => 0,
-                                'assigned'  => null
-        			        );
+                                $termArray = array(
+                                    'name' => $termName,
+                                    'id' => $termName,
+                                    'description' => $termName,
+                                    'added' => 0,
+                                    'assigned' => null
+                                );
 
-                            $assignedExpression = $this->assignedSearch($termName, $termName, $assignedExpressions);
-                            if ($assignedExpression) {
-                                $termArray['added'] = 0;
-                                $termArray['assigned'] = $assignedExpression;
+                                $assignedExpression = $this->assignedSearch($termName, $termName, $assignedExpressions);
+                                if ($assignedExpression) {
+                                    $termArray['added'] = 0;
+                                    $termArray['assigned'] = $assignedExpression;
+                                }
+
+                                array_push($expressionList, $termArray);
                             }
-
-                            array_push($expressionList, $termArray);
                         }
                     }
+
                 }
 
-            }
+                // ***********************************
+                // WaitRoomManagement
+                // ***********************************
+                if ($sourceDBSer == MEDIVISIT_SOURCE_DB) {
 
-            // ***********************************
-            // WaitRoomManagement
-            // ***********************************
-            if ($sourceDBSer == 2) {
+                    $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
 
-                $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
+                    if ($source_db_link) {
 
-                if ($source_db_link) {
-
-                    $sql = "
+                        $sql = "
                         SELECT DISTINCT
                             mval.AppointmentCode,
                             mval.ResourceDescription
@@ -124,62 +126,62 @@ class Alias {
                             mval.AppointmentCode
                     ";
 
-                    $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                    $query->execute();
+                        $query = $source_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                        $query->execute();
 
-                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                        while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-                        $termName   = $data[0];
-                        $termDesc   = $data[1];
+                            $termName = $data[0];
+                            $termDesc = $data[1];
 
-                        $termArray = array(
-    				       	'name'          => "$termName ($termDesc)",
-                            'id'            => $termName,
-                            'description'   => $termDesc,
-    			        	'added'         => 0,
-                            'assigned'      => null
-    			        );
+                            $termArray = array(
+                                'name' => "$termName ($termDesc)",
+                                'id' => $termName,
+                                'description' => $termDesc,
+                                'added' => 0,
+                                'assigned' => null
+                            );
 
-                        $assignedExpression = $this->assignedSearch($termName, $termDesc, $assignedExpressions);
-                        if ($assignedExpression) {
-                            $termArray['added'] = 0;
-                            $termArray['assigned'] = $assignedExpression;
+                            $assignedExpression = $this->assignedSearch($termName, $termDesc, $assignedExpressions);
+                            if ($assignedExpression) {
+                                $termArray['added'] = 0;
+                                $termArray['assigned'] = $assignedExpression;
+                            }
+
+                            array_push($expressionList, $termArray);
                         }
-
-                        array_push($expressionList, $termArray);
-                    }
-                }
-            }
-
-            // ***********************************
-            // Mosaiq
-            // ***********************************
-            if ($sourceDBSer == 3) {
-
-                $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
-
-                if ($source_db_link) {
-
-                    $sql = "SELECT 'QUERY_HERE'";
-
-                    $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                    $query->execute();
-
-                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                        // Set data from query here
-
-                        //array_push($expressionList, $termArray); // Uncomment for use
                     }
                 }
 
+                // ***********************************
+                // Mosaiq
+                // ***********************************
+                if ($sourceDBSer == MOSAIQ_SOURCE_DB) {
+
+                    $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
+
+                    if ($source_db_link) {
+
+                        $sql = "SELECT 'QUERY_HERE'";
+
+                        $query = $source_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                        $query->execute();
+
+                        while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                            // Set data from query here
+
+                            //array_push($expressionList, $termArray); // Uncomment for use
+                        }
+                    }
+
+                }
             }
 
 			return $expressionList;
 
 		} catch (PDOException $e) {
-			echo $e->getMessage();
-			return $expressionList;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
 		}
 	}
 
@@ -399,6 +401,8 @@ class Alias {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
+            $activeDB = Database::getActiveSourceDatabases();
+
 			$sql = "
 				SELECT DISTINCT
 					Alias.AliasSerNum,
@@ -419,6 +423,9 @@ class Alias {
                 WHERE
                     Alias.SourceDatabaseSerNum = SourceDatabase.SourceDatabaseSerNum
 			";
+
+			if(count($activeDB) > 0)
+                $sql .= " AND Alias.SourceDatabaseSerNum IN (".implode(", ", $activeDB).")";
 
 			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
@@ -1801,4 +1808,3 @@ class Alias {
     }
 
 }
-?>
