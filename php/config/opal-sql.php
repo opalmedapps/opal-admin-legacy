@@ -34,6 +34,7 @@ define("OPAL_PHASE_IN_TREATMENT_TABLE","PhaseInTreatment");
 define("OPAL_ANNOUNCEMENT_MH_TABLE","AnnouncementMH");
 define("OPAL_TXT_TEAM_MSG_MH_TABLE","TxTeamMessageMH");
 define("OPAL_PATIENTS_FOR_PATIENTS_MH_TABLE","PatientsForPatientsMH");
+define("OPAL_EDUCATION_MATERIAL_MH_TABLE","EducationalMaterialMH");
 define("OPAL_CRON_LOG_TABLE","CronLog");
 
 //Definition of the primary keys of the opalDB database
@@ -150,6 +151,10 @@ define("SQL_OPAL_GET_ALL_PUBLICATION_MODULES",
 
 define("SQL_OPAL_BUILD_PUBLICATION_VIEW",
     "SELECT m.sqlPublicationList, m.sqlPublicationChartLog FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.publication = 1 ORDER BY m.order"
+);
+
+define("SQL_GET_QUERY_CHART_LOG",
+    "SELECT m.sqlPublicationChartLog FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.publication = 1 AND ID = :ID"
 );
 
 define("SQL_OPAL_GET_MODULE_BY_ID", "
@@ -356,6 +361,7 @@ define("SQL_OPAL_GET_ANNOUNCEMENT_CHART","
     FROM ".OPAL_ANNOUNCEMENT_MH_TABLE." anmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started'
     AND cl.CronLogSerNum = anmh.CronLogSerNum AND anmh.CronLogSerNum IS NOT NULL
     AND anmh.PostControlSerNum = :PostControlSerNum GROUP BY anmh.CronLogSerNum, cl.CronDateTime
+    AND cl.CronDateTime >= DATE_SUB(NOW(),INTERVAL 1 YEAR)
     ORDER BY cl.CronDateTime ASC 
 ");
 
@@ -413,6 +419,7 @@ define("SQL_OPAL_GET_TTM_CHART","
     FROM ".OPAL_TXT_TEAM_MSG_MH_TABLE." ttmmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started'
     AND cl.CronLogSerNum = ttmmh.CronLogSerNum AND ttmmh.CronLogSerNum IS NOT NULL
     AND ttmmh.PostControlSerNum = :PostControlSerNum GROUP BY ttmmh.CronLogSerNum, cl.CronDateTime
+    AND cl.CronDateTime >= DATE_SUB(NOW(),INTERVAL 1 YEAR)
     ORDER BY cl.CronDateTime ASC
 ");
 
@@ -421,5 +428,15 @@ define("SQL_OPAL_GET_PFP_CHART","
     FROM ".OPAL_PATIENTS_FOR_PATIENTS_MH_TABLE." pfpmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started'
     AND cl.CronLogSerNum = pfpmh.CronLogSerNum AND pfpmh.CronLogSerNum IS NOT NULL
     AND pfpmh.PostControlSerNum = :PostControlSerNum GROUP BY pfpmh.CronLogSerNum, cl.CronDateTime
+    AND cl.CronDateTime >= DATE_SUB(NOW(),INTERVAL 1 YEAR)
+    ORDER BY cl.CronDateTime ASC 
+");
+
+define("SQL_OPAL_GET_EDUCATIONAL_CHART","
+    SELECT DISTINCT emmh.CronLogSerNum AS cron_serial, COUNT(emmh.CronLogSerNum) AS y, cl.CronDateTime AS x
+    FROM ".OPAL_EDUCATION_MATERIAL_MH_TABLE." emmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started'
+    AND cl.CronLogSerNum = emmh.CronLogSerNum AND emmh.CronLogSerNum IS NOT NULL
+    AND emmh.EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum GROUP BY emmh.CronLogSerNum, cl.CronDateTime
+    AND cl.CronDateTime >= DATE_SUB(NOW(),INTERVAL 1 YEAR)
     ORDER BY cl.CronDateTime ASC 
 ");

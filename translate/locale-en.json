@@ -727,6 +727,7 @@
       "PUBLISH": "Active",
       "DESCRIPTION": "Description",
       "OPERATIONS": "Operations",
+      "LOGS": "Logs",
       "SUCCESS_FLAGS": "Flag(s) Successfully Saved!",
       "ERROR_PUBLICATION": "An error occurred while getting publication list.",
       "ERROR_FLAGS": "An error occurred while saving the publication flags.",

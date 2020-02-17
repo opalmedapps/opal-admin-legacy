@@ -705,7 +705,3 @@ class Cron {
    		return $cronLogs;
     }
 }
-?>
-
-
-
