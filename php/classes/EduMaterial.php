@@ -320,6 +320,8 @@ class EduMaterial {
                     PhaseInTreatment phase
                 WHERE
                     phase.PhaseInTreatmentSerNum = em.PhaseInTreatmentSerNum
+                AND
+                    em.deleted = 0;
             ";
 			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();

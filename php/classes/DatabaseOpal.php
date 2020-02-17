@@ -173,15 +173,9 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-    function getPublicationChartLogs() {
+    function getSqlChartLogs($moduleId) {
         $sqlModule = array();
-        $moduleSQLCode = $this->_fetchAll(SQL_OPAL_BUILD_PUBLICATION_VIEW, array());
-        foreach ($moduleSQLCode as $module) {
-            if (strip_tags($module["sqlPublicationChartLog"]) != "")
-                array_push($sqlModule, $module["sqlPublicationChartLog"]);
-        }
-        $sqlModule = "SELECT * FROM (" . implode( SQL_GENERAL_UNION_ALL, $sqlModule) . ") AS i ORDER BY moduleId, ID, x";
-        return $this->_fetchAll($sqlModule, array());
+        return $this->_fetch(SQL_GET_QUERY_CHART_LOG, array(array("parameter"=>":ID","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
     }
 
     function getPublicationModules() {
@@ -419,13 +413,25 @@ class DatabaseOpal extends DatabaseAccess {
 
     /*
      * Get all the chart logs for a specific treatment Patients for Patients message
-     * @params  $postControlSerNum (int) bID of the announcement
+     * @params  $postControlSerNum (int) ID of the announcement
      * @return  array of records found
      * */
     function getPFPChartLogs($postControlSerNum) {
         return $this->_fetchAll(SQL_OPAL_GET_PFP_CHART,
             array(
                 array("parameter"=>":PostControlSerNum","variable"=>$postControlSerNum,"data_type"=>PDO::PARAM_INT),
+            ));
+    }
+
+    /*
+     * Get all the chart logs for a specific educational material
+     * @params  $postControlSerNum (int) ID of the educational material
+     * @return  array of records found
+     * */
+    function getEducationalChartLogs($educationalMaterialControlSerNum) {
+        return $this->_fetchAll(SQL_OPAL_GET_EDUCATIONAL_CHART,
+            array(
+                array("parameter"=>":EducationalMaterialControlSerNum","variable"=>$educationalMaterialControlSerNum,"data_type"=>PDO::PARAM_INT),
             ));
     }
 

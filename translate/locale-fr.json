@@ -741,6 +741,7 @@
       "NAME": "Nom",
       "PUBLISH": "Activée",
       "DESCRIPTION": "Description",
+      "LOGS": "Journaux",
       "OPERATIONS": "Opérations",
       "SUCCESS_FLAGS": "Les publications ont été mises à jour!",
       "ERROR_PUBLICATION": "Une erreur s'est produite lors de l'obtention de la liste de publications.",
