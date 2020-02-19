@@ -958,7 +958,20 @@
       "SUCCESS_UPDATE": "The publication has been updated successfully!"
     },
     "LOG": {
-
+      "NAME": "Name",
+      "TITLE": "Logs",
+      "CLOSE": "Close",
+      "NO_DATA": "No data available",
+      "REVISION": "Revision No.",
+      "CRONLOGSER": "CronLogSer",
+      "PATIENTSER": "PatientSer",
+      "READ_STATUS": "Read Status",
+      "ACTION": "Action",
+      "HIGHLIGHT": "Highlight the plot area to zoom in and show detailed data",
+      "DATETIME_SENT": "Datetime sent",
+      "LOGS_FOR": " logs for ",
+      "NUMBER": "Number of published messages",
+      "ERROR": "An error occurred while getting the post logs."
     }
   },
   "POSTS": {
