@@ -5,7 +5,15 @@ angular.module('opalAdmin.controllers.publication.log', ['ngAnimate', 'ngSanitiz
 	 * Controller for the post logs
 	 *******************************************************************************/
 	controller('publication.log', function ($scope, $uibModal, $filter, publicationCollectionService, Session, $uibModalInstance) {
-		postCollectionService.getPostChartLogs($scope.currentPost.serial, $scope.currentPost.type, Session.retrieveObject('user').id).then(function (response) {
+
+		console.log($scope.currentPublication);
+
+		if(Session.retrieveObject('user').language === "FR")
+			$scope.currentPublication.module_display = $scope.currentPublication.module_FR;
+		else
+			$scope.currentPublication.module_display = $scope.currentPublication.module_EN;
+
+		publicationCollectionService.getPublicationsChartLogs($scope.currentPublication.ID, $scope.currentPublication.moduleId, Session.retrieveObject('user').id).then(function (response) {
 			$scope.postChartLogs = $scope.chartConfig.series = response.data;
 			angular.forEach($scope.postChartLogs, function(serie) {
 				angular.forEach(serie.data, function(log) {
@@ -24,7 +32,7 @@ angular.module('opalAdmin.controllers.publication.log', ['ngAnimate', 'ngSanitiz
 				className: 'logChart'
 			},
 			title: {
-				text: $scope.currentPost.name_EN + ' / ' + $scope.currentPost.name_FR
+				text: $scope.currentPublication.name_EN + ' / ' + $scope.currentPublication.name_FR
 			},
 			subtitle: {
 				text: $filter('translate')('POSTS.LOG.HIGHLIGHT')
@@ -55,8 +63,9 @@ angular.module('opalAdmin.controllers.publication.log', ['ngAnimate', 'ngSanitiz
 							});
 							// convert set to array
 							cronSerials = Array.from(cronSerials);
-							postCollectionService.getPostListLogs(cronSerials, $scope.currentPost.type).then(function(response){
-								console.log("4: " + cronSerials + " " + $scope.currentPost.type);
+							/* publicationId, moduleId, OAUserId, cronIds */
+							publicationCollectionService.getPublicationListLogs($scope.currentPublication.ID, $scope.currentPublication.moduleId, Session.retrieveObject('user').id, cronSerials).then(function(response){
+								console.log("4: " + cronSerials + " " + $scope.currentPublication.type);
 								$scope.postListLogs = response.data;
 							});
 						}
@@ -92,8 +101,8 @@ angular.module('opalAdmin.controllers.publication.log', ['ngAnimate', 'ngSanitiz
 						events: {
 							select: function(point) {
 								var cronLogSerNum = [point.target.cron_serial];
-								postCollectionService.getPostListLogs(cronLogSerNum, $scope.currentPost.type).then(function(response){
-									console.log("3: " + cronLogSerNum + " " + $scope.currentPost.type);
+								publicationCollectionService.getPublicationListLogs($scope.currentPublication.ID, $scope.currentPublication.moduleId, Session.retrieveObject('user').id, cronSerials).then(function(response){
+									console.log("3: " + cronLogSerNum + " " + $scope.currentPublication.type);
 									$scope.postListLogs = response.data;
 								});
 							},
@@ -115,7 +124,7 @@ angular.module('opalAdmin.controllers.publication.log', ['ngAnimate', 'ngSanitiz
 		$scope.gridLogOptions = {
 			data: 'postListLogs',
 			columnDefs: [
-				{ field: 'post_control_name', displayName: $filter('translate')('POSTS.LOG.NAME'), enableColumnMenu: false },
+				{ field: 'name', displayName: $filter('translate')('POSTS.LOG.NAME'), enableColumnMenu: false },
 				{ field: 'revision', displayName: $filter('translate')('POSTS.LOG.REVISION'), enableColumnMenu: false },
 				{ field: 'cron_serial', displayName: $filter('translate')('POSTS.LOG.CRONLOGSER'), enableColumnMenu: false },
 				{ field: 'patient_serial', displayName: $filter('translate')('POSTS.LOG.PATIENTSER'), enableColumnMenu: false },

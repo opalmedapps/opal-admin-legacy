@@ -178,33 +178,30 @@ class Publication extends OpalProject
         return $results;
     }
 
+    /*
+     * Returns the chart log of a specific publication.
+     * @params  $moduleId (int) ID of the module to get the logs
+     *          $publicationId (int) ID of the publication of the module to get the chart logs
+     * @return  (array) list of the chart logs found
+     * */
     public function getPublicationChartLogs($moduleId, $publicationId) {
-        $result = $this->opalDB->getSqlChartLogs($moduleId);
-
-        print "$moduleId $publicationId\r\n";
-        print_r($result);
-
-
-
-        die();
-
-        $arrResult = array();
-        $tempResult = array();
-
-        $currentModule = "-1";
-        $currentID = "-1";
-        foreach($result as $row) {
-            if($currentModule != $row["moduleId"] || $currentID != $row["ID"]) {
-                if (!empty($tempResult))
-                    array_push($arrResult, array("name"=>$row["name_EN"], "data"=>$tempResult));
-                $tempResult = array();
-                $currentModule = $row["moduleId"];
-                $currentID = $row["ID"];
-            }
-            array_push($tempResult, array("x"=>$row["x"],"y"=>$row["y"],"cron_serial"=>$row["cron_serial"]));
+        $data = array();
+        $result = $this->opalDB->getPublicationChartLogs($moduleId, $publicationId);
+        //The Y value has to be converted to an int, or the chart log will reject it on the front end.
+        foreach ($result as &$item) {
+            $item["y"] = intval($item["y"]);
         }
-        array_push($arrResult, array("name"=>$row["name_EN"], "data"=>$tempResult));
-        return $arrResult;
+
+        if (count($result) > 0)
+            array_push($data, array("name"=>$type, "data"=>$result));
+
+        return $data;
+    }
+
+    public function getPublicationListLogs($moduleId, $publicationId, $cronIds) {
+        if($moduleId == "" || $publicationId == "" || count($cronIds) <= 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "List Logs error. Invalid data.");
+        return $this->opalDB->getPublicationListLogs($moduleId, $publicationId, $cronIds);
     }
 
     /*
@@ -292,7 +289,7 @@ class Publication extends OpalProject
             return $errMsgs;
         }
 
-            //Prepare the validated triggers list and their validation settings
+        //Prepare the validated triggers list and their validation settings
         foreach($listTriggers as $item) {
             $temp = explode(",", $item["internalName"]);
             $tempCustom = explode(";", $item["custom"]);

@@ -154,7 +154,7 @@ define("SQL_OPAL_BUILD_PUBLICATION_VIEW",
 );
 
 define("SQL_GET_QUERY_CHART_LOG",
-    "SELECT m.sqlPublicationChartLog FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.publication = 1 AND ID = :ID"
+    "SELECT sqlPublicationChartLog, sqlPublicationListLog FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.publication = 1 AND ID = :ID"
 );
 
 define("SQL_OPAL_GET_MODULE_BY_ID", "

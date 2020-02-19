@@ -190,10 +190,11 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// Function to get post log list details given an array of serial numbers
-		postAPI.getPostListLogs = function (serials, type) {
+		postAPI.getPostListLogs = function (serials, type, OAUserId) {
 			return $http.post(
 				"post/get/post-list-logs",
 				$.param({
+					OAUserId: OAUserId,
 					serials: JSON.stringify(serials),
 					type: type,
 				}),
@@ -580,7 +581,6 @@ angular.module('opalAdmin.collections', [])
 
 		return testResultAPI;
 	})
-
 
 	// Cron API service
 	.factory('cronCollectionService', function ($http) {
@@ -971,11 +971,29 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		publicationAPI.getPublicationsChartLogs = function (OAUserId) {
+		publicationAPI.getPublicationsChartLogs = function (publicationId, moduleId, OAUserId) {
 			return $http.post(
 				"publication/get/publication-chart-logs",
 				$.param({
+					publicationId: publicationId,
+					moduleId: moduleId,
 					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		// Function to get post log list details given an array of serial numbers
+		publicationAPI.getPublicationListLogs = function (publicationId, moduleId, OAUserId, cronIds) {
+			return $http.post(
+				"publication/get/publication-list-logs",
+				$.param({
+					publicationId: publicationId,
+					moduleId: moduleId,
+					OAUserId: OAUserId,
+					cronIds: JSON.stringify(cronIds),
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -1025,7 +1043,6 @@ angular.module('opalAdmin.collections', [])
 		};
 		return diagnosisAPI;
 	})
-
 
 	// install API service
 	.factory('installCollectionService', function ($http) {
