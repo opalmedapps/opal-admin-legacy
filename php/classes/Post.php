@@ -81,6 +81,29 @@ class Post extends OpalProject {
     }
 
     /*
+     * Get the chart logs of a specific post
+     * @param   $serial (int) SerNum of the Post
+     *          $type (string) type of post
+     * @return  $data (array) array of chart log results.
+     * */
+    public function getPostChartLogs($serial, $type) {
+        $data = array();
+        if($serial == "" || $type == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid settings for chart log.");
+        $result = $this->opalDB->getPublicationChartLogs(MODULE_POST, $serial);
+
+        //The Y value has to be converted to an int, or the chart log will reject it on the front end.
+        foreach ($result as &$item) {
+            $item["y"] = intval($item["y"]);
+        }
+
+        if (count($result) > 0)
+            array_push($data, array("name"=>$type, "data"=>$result));
+
+        return $data;
+    }
+
+    /*
      * Marks a post as deleted if the post was not locked (means published) before.
      *
      * WARNING!!! No record should be EVER be removed from the opalDB database! It should only being marked as

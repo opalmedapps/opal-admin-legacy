@@ -202,6 +202,7 @@ RewriteRule ^questionnaire/update/questionnaire php/questionnaire/update.questio
 RewriteRule ^publication/update/publish-flag php/publication/update.publish.flag.php [QSA,L]
 RewriteRule ^publication/update/publication php/publication/update.publication.php [QSA,L]
 RewriteRule ^publication/get/publication-chart-logs api/publication/get.publication.chart.logs.php [QSA,L]
+RewriteRule ^publication/get/publication-list-logs api/publication/get.publication.list.logs.php [QSA,L]
 RewriteRule ^publication/get/publication-details api/publication/get.publication.details.php [QSA,L]
 RewriteRule ^publication/get/publications-per-module api/publication/get.publications.per.module.php [QSA,L]
 RewriteRule ^publication/get/publications api/publication/get.publications.php [QSA,L]

@@ -308,7 +308,7 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 						});
 						// convert set to array
 						cronSerials = Array.from(cronSerials);
-						postCollectionService.getPostListLogs(cronSerials, $scope.currentPost.type).then(function(response){
+						postCollectionService.getPostListLogs(cronSerials, $scope.currentPost.type, Session.retrieveObject('user').id).then(function(response){
 							response.data.forEach(function (row) {
 								if (Session.retrieveObject('user').language.toUpperCase() === "FR") {
 									switch(row.type) {
@@ -360,7 +360,7 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 					events: {
 						select: function(point) {
 							var cronLogSerNum = [point.target.cron_serial];
-							postCollectionService.getPostListLogs(cronLogSerNum, $scope.currentPost.type).then(function(response){
+							postCollectionService.getPostListLogs(cronLogSerNum, $scope.currentPost.type, Session.retrieveObject('user').id).then(function(response){
 								response.data.forEach(function (row) {
 									if (Session.retrieveObject('user').language.toUpperCase() === "FR") {
 										switch(row.type) {

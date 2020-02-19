@@ -74,6 +74,12 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(SQL_OPAL_GET_PUBLISHED_QUESTIONNAIRES, array());
     }
 
+    /*
+     * This function fetches the SQL list of the different modules associated to the publication. It replaces the flags
+     * with the correct table names, and fetch all the publications.
+     * @params  none
+     * @returns array of ressults
+     * */
     function getPublications() {
         $sqlModule = array();
         $moduleSQLCode = $this->_fetchAll(SQL_OPAL_BUILD_PUBLICATION_VIEW, array());
@@ -93,6 +99,12 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll($sqlModule, array());
     }
 
+    /*
+     * This function fetches the SQL list of a specific module associated to the publication. It replaces the flags
+     * with the correct table names, and fetch all the publications for the module.
+     * @params  $moduleId (int) ID of the specific module
+     * @returns array of ressults
+     * */
     function getPublicationsPerModule($moduleId) {
         $result = array();
         $module = $this->_fetch(SQL_OPAL_GET_MODULE_BY_ID, array(array("parameter"=>":ID","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
@@ -173,9 +185,76 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
-    function getSqlChartLogs($moduleId) {
+    /*
+     * This function get the appropriate chart log sql query. It fills the tables name, locate the sql query and runn
+     * it before returning the results.
+     * @params  $moduleId (int) ID of the module to get the logs
+     *          $publicationId (int) ID of the publication of the module to get the chart logs
+     * @return  (array) list of the chart logs found
+     * */
+    function getPublicationChartLogs($moduleId, $publicationId) {
         $sqlModule = array();
-        return $this->_fetch(SQL_GET_QUERY_CHART_LOG, array(array("parameter"=>":ID","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
+        $queryChartLog = $this->_fetch(SQL_GET_QUERY_CHART_LOG, array(array("parameter"=>":ID","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
+
+        if(!$queryChartLog)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Chart Logs error. Invalid module.");
+
+        $sqlPublicationChartLog = str_replace("%%ANNOUNCEMENT_MH_TABLE%%", OPAL_ANNOUNCEMENT_MH_TABLE, $queryChartLog["sqlPublicationChartLog"]);
+        $sqlPublicationChartLog = str_replace("%%CRON_LOG_TABLE%%", OPAL_CRON_LOG_TABLE, $sqlPublicationChartLog);
+        $sqlPublicationChartLog = str_replace("%%TXT_TEAM_MSG_MH_TABLE%%", OPAL_TXT_TEAM_MSG_MH_TABLE, $sqlPublicationChartLog);
+        $sqlPublicationChartLog = str_replace("%%PATIENTS_FOR_PATIENTS_MH_TABLE%%", OPAL_PATIENTS_FOR_PATIENTS_MH_TABLE, $sqlPublicationChartLog);
+        $sqlPublicationChartLog = str_replace("%%EDUCATION_MATERIAL_MH_TABLE%%", OPAL_EDUCATION_MATERIAL_MH_TABLE, $sqlPublicationChartLog);
+        $sqlPublicationChartLog = str_replace("%%QUESTIONNAIRE_MH_TABLE%%", OPAL_QUESTIONNAIRE_MH_TABLE, $sqlPublicationChartLog);
+        $sqlPublicationChartLog = json_decode($sqlPublicationChartLog, true);
+
+        if($moduleId == MODULE_POST) {
+            $postDetails = $this->getPostDetails($publicationId);
+            if (!array_key_exists($postDetails["type"], $sqlPublicationChartLog))
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Chart Logs error. No sub-module found.");
+            $sqlPublicationChartLog = $sqlPublicationChartLog[$postDetails["type"]];
+        }
+        else
+            $sqlPublicationChartLog = $sqlPublicationChartLog[0];
+
+        return $this->_fetchAll($sqlPublicationChartLog, array(array("parameter"=>":cron_serial","variable"=>$publicationId,"data_type"=>PDO::PARAM_INT)));
+    }
+
+    /*
+     * This function get the appropriate list log sql query. It fills the tables name, locate the sql query and runn
+     * it before returning the results.
+     * @params  $moduleId (int) ID of the module to get the logs
+     *          $publicationId (int) ID of the publication of the module to get the chart logs
+     *          $cronIds (array of int) list of IDs from the cron log we want details
+     * @return  (array) list of the chart logs found
+     * */
+    function getPublicationListLogs($moduleId, $publicationId, $cronIds) {
+        $sqlModule = array();
+        $queryListLog = $this->_fetch(SQL_GET_QUERY_CHART_LOG, array(array("parameter"=>":ID","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
+
+        if(!$queryListLog)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Chart Logs error. Invalid module.");
+
+        $sqlPublicationListLog = str_replace("%%ANNOUNCEMENT_MH_TABLE%%", OPAL_ANNOUNCEMENT_MH_TABLE, $queryListLog["sqlPublicationListLog"]);
+        $sqlPublicationListLog = str_replace("%%POST_CONTROL_TABLE%%", OPAL_POST_TABLE, $sqlPublicationListLog);
+        $sqlPublicationListLog = str_replace("%%TXT_TEAM_MSG_MH_TABLE%%", OPAL_TXT_TEAM_MSG_MH_TABLE, $sqlPublicationListLog);
+        $sqlPublicationListLog = str_replace("%%PATIENTS_FOR_PATIENTS_MH_TABLE%%", OPAL_PATIENTS_FOR_PATIENTS_MH_TABLE, $sqlPublicationListLog);
+        $sqlPublicationListLog = str_replace("%%EDUCATION_MATERIAL_MH_TABLE%%", OPAL_EDUCATION_MATERIAL_MH_TABLE, $sqlPublicationListLog);
+        $sqlPublicationListLog = str_replace("%%EDUCATION_MATERIAL_CONTROL_TABLE%%", OPAL_EDUCATION_MATERIAL_TABLE, $sqlPublicationListLog);
+        $sqlPublicationListLog = str_replace("%%QUESTIONNAIRE_MH_TABLE%%", OPAL_QUESTIONNAIRE_MH_TABLE, $sqlPublicationListLog);
+        $sqlPublicationListLog = str_replace("%%QUESTIONNAIRE_CONTROL_TABLE%%", OPAL_QUESTIONNAIRE_CONTROL_TABLE, $sqlPublicationListLog);
+        $sqlPublicationListLog = str_replace("%%CRON_LOG_IDS%%", implode(", ", $cronIds), $sqlPublicationListLog);
+        $sqlPublicationListLog = json_decode($sqlPublicationListLog, true);
+
+        if($moduleId == MODULE_POST) {
+            $postDetails = $this->getPostDetails($publicationId);
+            if (!array_key_exists($postDetails["type"], $sqlPublicationListLog))
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Chart Logs error. No sub-module found.");
+            $sqlPublicationListLog = $sqlPublicationListLog[$postDetails["type"]];
+        }
+        else
+            $sqlPublicationListLog = $sqlPublicationListLog[0];
+
+        return $this->_fetchAll($sqlPublicationListLog, array(array("parameter"=>":cron_serial","variable"=>$publicationId,"data_type"=>PDO::PARAM_INT)));
     }
 
     function getPublicationModules() {
@@ -368,18 +447,6 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Get all the chart logs for a specific announcement
-     * @params  $postControlSerNum (int) ID of the announcement
-     * @return  array of records found
-     * */
-    function getAnnouncementChartLogs($postControlSerNum) {
-        return $this->_fetchAll(SQL_OPAL_GET_ANNOUNCEMENT_CHART,
-            array(
-                array("parameter"=>":PostControlSerNum","variable"=>$postControlSerNum,"data_type"=>PDO::PARAM_INT),
-            ));
-    }
-
-    /*
      * Get all the chart logs for a list of announcements
      * @params  $ids (array) list of IDs of the announcements
      * @return  array of records found
@@ -390,18 +457,6 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Get all the chart logs for a specific treatment team message
-     * @params  $postControlSerNum (int) bID of the announcement
-     * @return  array of records found
-     * */
-    function getTTMChartLogs($postControlSerNum) {
-        return $this->_fetchAll(SQL_OPAL_GET_TTM_CHART,
-            array(
-                array("parameter"=>":PostControlSerNum","variable"=>$postControlSerNum,"data_type"=>PDO::PARAM_INT),
-            ));
-    }
-
-    /*
      * Get all the chart logs for a list of treatment team messages
      * @params  $ids (array) list of IDs of the treatment team messages
      * @return  array of records found
@@ -409,18 +464,6 @@ class DatabaseOpal extends DatabaseAccess {
     function getTTMChartLogsByIds($ids) {
         $sqlFetch = str_replace("%%CRON_LOG_IDS%%", implode(", ", $ids), SQL_OPAL_GET_TTM_CHART_PER_IDS);
         return $this->_fetchAll($sqlFetch, array());
-    }
-
-    /*
-     * Get all the chart logs for a specific treatment Patients for Patients message
-     * @params  $postControlSerNum (int) ID of the announcement
-     * @return  array of records found
-     * */
-    function getPFPChartLogs($postControlSerNum) {
-        return $this->_fetchAll(SQL_OPAL_GET_PFP_CHART,
-            array(
-                array("parameter"=>":PostControlSerNum","variable"=>$postControlSerNum,"data_type"=>PDO::PARAM_INT),
-            ));
     }
 
     /*

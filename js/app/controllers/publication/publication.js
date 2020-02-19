@@ -229,9 +229,8 @@ angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 
 		// Function for when the post has been clicked for viewing logs
 		$scope.showPublicationLog = function (publication) {
 			$scope.currentPublication = publication;
-			console.log($scope.currentPublication);
 			var modalInstance = $uibModal.open({
-				templateUrl: 'templates/post/log.publication.html',
+				templateUrl: 'templates/publication/log.publication.html',
 				controller: 'publication.log',
 				scope: $scope,
 				windowClass: 'logModal',
