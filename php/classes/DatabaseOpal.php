@@ -170,14 +170,31 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(SQL_OPAL_GET_PUBLICATION_SETTINGS_ID_PER_MODULE, array(array("parameter"=>":moduleId","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
     }
 
+    /*
+     * Returns the list of publication settings for a specific module
+     * @params  $moduleId (int) ID of the module
+     * @returns array of publication settings
+     * */
     function getPublicationSettingsPerModule($moduleId) {
         return $this->_fetchAll(SQL_OPAL_GET_PUBLICATION_SETTINGS_PER_MODULE, array(array("parameter"=>":moduleId","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
     }
 
+    /*
+     * Returns the list of module settings for a specific module
+     * @params  $moduleId (int) ID of the module
+     * @returns array of module settings
+     * */
     function getModuleSettings($moduleId) {
         return $this->_fetch(SQL_OPAL_GET_MODULE_BY_ID, array(array("parameter"=>":ID","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
     }
 
+    /*
+     * Get a publish date and time from a specific table. The name of the field should be PublishDate to make it work.
+     * @params  $tableName (string) name of the table where to get the data
+     *          $primaryKey (string) name of the primary key
+     *          $id (int) ID of the record we need the date.
+     * @return  (string) publish date
+     * */
     function getPublishDateTime($tableName, $primaryKey, $id) {
         $sqlFetch = str_replace("%%TABLE_NAME%%", $tableName,SQL_OPAL_GET_PUBLISH_DATE_TIME);
         $sqlFetch = str_replace("%%PRIMARY_KEY%%", $primaryKey, $sqlFetch);
@@ -185,6 +202,12 @@ class DatabaseOpal extends DatabaseAccess {
         return $result["PublishDate"];
     }
 
+    /*
+     * returns the list of triggers details for a specific publication.
+     * @params  $publicationId (int) ID of the publication
+     *          $controlTableName (string) name of the table (module) we want the data
+     * @return  array of triggers
+     * */
     function getTriggersDetails($publicationId, $controlTableName) {
         return $this->_fetchAll(SQL_OPAL_GET_FILTERS_DETAILS, array(
             array("parameter"=>":ControlTableSerNum","variable"=>$publicationId,"data_type"=>PDO::PARAM_INT),
@@ -264,10 +287,20 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll($sqlPublicationListLog, array(array("parameter"=>":cron_serial","variable"=>$publicationId,"data_type"=>PDO::PARAM_INT)));
     }
 
+    /*
+     * get the list of publication modules
+     * @params  void
+     * @return  array of modules
+     * */
     function getPublicationModules() {
         return $this->_fetchAll(SQL_OPAL_GET_ALL_PUBLICATION_MODULES, array());
     }
 
+    /*
+     * Get the list of logs for a specific array of ids of questionnaires
+     * @params  $ids (array of int) cron ids
+     * @return  array of data
+     * */
     function getQuestionnaireListLogs($ids) {
         $sqlToFetch = str_replace("%%IDS%%", implode(", ", $ids), SQL_OPAL_GET_QUESTIONNAIRE_LIST_LOGS);
         return $this->_fetchAll($sqlToFetch, array());
