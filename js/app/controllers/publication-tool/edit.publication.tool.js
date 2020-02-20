@@ -5,6 +5,19 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 	$scope.publishedQuestionnaire = {};
 	$scope.language = Session.retrieveObject('user').language;
 
+	/* Function for the "Processing" dialog */
+	var processingModal;
+	$scope.showProcessingModal = function () {
+
+		processingModal = $uibModal.open({
+			templateUrl: 'templates/processingModal.html',
+			backdrop: 'static',
+			keyboard: false,
+		});
+	};
+	// Show processing dialog
+	$scope.showProcessingModal();
+
 	// get current user id
 	var user = Session.retrieveObject('user');
 	var OAUserId = user.id;
@@ -189,7 +202,7 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 
 	}).catch(function (response) {
 		alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ERROR_DETAILS') + response.status + " " + response.data);
-
+		$uibModalInstance.close();
 	}).finally(function () {
 
 		// Assign demographic triggers
@@ -242,10 +255,11 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 			$scope.appointmentStatusList = checkAdded(response.data.appointmentStatuses);
 		}).catch(function(err) {
 			alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ERROR_FILTERS') + err.status + " " + err.data);
+			$uibModalInstance.close();
+		}).finally(function () {
+			processingModal.close(); // hide modal
+			processingModal = null; // remove reference
 		});
-
-		processingModal.close(); // hide modal
-		processingModal = null; // remove reference
 	});
 
 	// Function to set repeat options in frequency filter
@@ -1062,10 +1076,11 @@ angular.module('opalAdmin.controllers.publication.tool.edit', ['ngAnimate', 'ngS
 					}
 					else
 						alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ERROR_PUBLICATION'));
-					$uibModalInstance.close();
 				},
 				error: function () {
 					alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_EDIT.ERROR_PUBLICATION'));
+				},
+				complete: function () {
 					$uibModalInstance.close();
 				}
 			});

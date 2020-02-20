@@ -134,11 +134,17 @@ controller('testResult.edit', function ($scope, $filter, $sce, $state, $uibModal
 
 		// Call our API service to get the list of test names
 		testResultCollectionService.getTestNames().then(function (response) {
+			if(response.data.length <= 0) {
+				alert($filter('translate')('TEST.EDIT.ERROR_NO_TEST_FOUND'));
+				$scope.cancel();
+			}
 			$scope.testList = checkAdded(response.data);
-			processingModal.close(); // hide modal
-			processingModal = null; // remove reference
 		}).catch(function(response) {
 			alert($filter('translate')('TEST.EDIT.ERROR_TEST') + "\r\n\r\n" + response.status + " - " + response.data);
+			$scope.cancel();
+		}).finally(function () {
+			processingModal.close(); // hide modal
+			processingModal = null; // remove reference
 		});
 
 	}).catch(function(response) {
