@@ -208,7 +208,7 @@
                                     </p>
                                 </div>
                             </div>
-                            <!-- SECTION: Patient trigger -->
+<!--                            &lt;!&ndash; SECTION: Patient trigger &ndash;&gt;
                             <div uib-accordion-group is-open="triggerSection.patient.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(patientTriggerList)" ng-if="checkTriggers(patientTriggerList)">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
@@ -239,7 +239,7 @@
                                     </p>
                                 </div>
                             </div>
-                            <!-- SECTION: Demographic triggers -->
+                            &lt;!&ndash; SECTION: Demographic triggers &ndash;&gt;
                             <div uib-accordion-group is-open="demoSection.open" class="panel-container summary-box animated" ng-class="{fadeInUp:demoSection.open}" is-disabled="!demoTrigger.sex && demoTrigger.age.min == 0 && demoTrigger.age.max == 130" ng-if="demoTrigger.sex || demoTrigger.age.min !== 0 || demoTrigger.age.max !== 130">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
@@ -269,7 +269,7 @@
                                     </p>
                                 </div>
                             </div>
-                            <!-- SECTION: Appointment triggers -->
+                            &lt;!&ndash; SECTION: Appointment triggers &ndash;&gt;
                             <div uib-accordion-group is-open="triggerSection.appointment.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(appointmentTriggerList)" ng-if="checkTriggers(appointmentTriggerList)">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
@@ -294,7 +294,7 @@
                                     </p>
                                 </div>
                             </div>
-                            <!-- SECTION: Diagnosis triggers -->
+                            &lt;!&ndash; SECTION: Diagnosis triggers &ndash;&gt;
                             <div uib-accordion-group is-open="triggerSection.diagnosis.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(dxTriggerList)" ng-if="checkTriggers(dxTriggerList)">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
@@ -319,7 +319,7 @@
                                     </p>
                                 </div>
                             </div>
-                            <!-- SECTION: Doctor triggers -->
+                            &lt;!&ndash; SECTION: Doctor triggers &ndash;&gt;
                             <div uib-accordion-group is-open="triggerSection.doctor.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(doctorTriggerList)" ng-if="checkTriggers(doctorTriggerList)">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
@@ -344,7 +344,7 @@
                                     </p>
                                 </div>
                             </div>
-                            <!-- SECTION: Treatment Machine triggers -->
+                            &lt;!&ndash; SECTION: Treatment Machine triggers &ndash;&gt;
                             <div uib-accordion-group is-open="triggerSection.machine.open" class="panel-container summary-box animated" ng-class="{fadeInUp:triggerSection.show}" is-disabled="!checkTriggers(machineTriggerList)" ng-if="checkTriggers(machineTriggerList)">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
@@ -368,7 +368,7 @@
                                     </ul>
                                     </p>
                                 </div>
-                            </div>
+                            </div>-->
                         </uib-accordion>
                         <!-- Submit button -->
                         <div class="panel-container">
@@ -784,7 +784,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- SECTION: Patient triggers -->
+<!--                        &lt;!&ndash; SECTION: Patient triggers &ndash;&gt;
                         <div class="row animated" ng-class="{fadeInUp:triggerSection.show}" ng-if="triggerSection.show">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
@@ -833,7 +833,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- SECTION: Demographic triggers -->
+                        &lt;!&ndash; SECTION: Demographic triggers &ndash;&gt;
                         <div class="row animated" ng-class="{fadeInUp:demoSection.show}" ng-if="demoSection.show">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
@@ -906,7 +906,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- SECTION: Appointment triggers -->
+                        &lt;!&ndash; SECTION: Appointment triggers &ndash;&gt;
                         <div class="row animated" ng-class="{fadeInUp:triggerSection.show}" ng-if="triggerSection.show">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
@@ -955,7 +955,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- SECTION: Diagnosis triggers -->
+                        &lt;!&ndash; SECTION: Diagnosis triggers &ndash;&gt;
                         <div class="row animated" ng-class="{fadeInUp:triggerSection.show}" ng-if="triggerSection.show">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
@@ -1004,7 +1004,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- SECTION: Doctor triggers -->
+                        &lt;!&ndash; SECTION: Doctor triggers &ndash;&gt;
                         <div class="row animated" ng-class="{fadeInUp:triggerSection.show}" ng-if="triggerSection.show">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
@@ -1053,7 +1053,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- SECTION: Treatment Machine triggers -->
+                        &lt;!&ndash; SECTION: Treatment Machine triggers &ndash;&gt;
                         <div class="row animated" ng-class="{fadeInUp:triggerSection.show}" ng-if="triggerSection.show">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
@@ -1101,7 +1101,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div>-->
                         <!-- END SECTION -->
                     </div>
                 </div>

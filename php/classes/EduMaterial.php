@@ -288,12 +288,10 @@ class EduMaterial {
 		}
 	}
 
-     /**
-     *
-     * Gets a list of existing educational materials
-     *
-     * @return array $eduMatList : the list of existing educational materials 
-     */                  
+     /*
+      * Gets a list of existing educational materials
+      * @return array $eduMatList : the list of existing educational materials
+      */
     public function getEducationalMaterials() {
         $eduMatList = array();
  		try {
@@ -315,12 +313,15 @@ class EduMaterial {
                     em.ParentFlag,
                     em.ShareURL_EN,
                     em.ShareURL_FR,
-                    em.LastUpdated
+                    em.LastUpdated,
+                    (SELECT COUNT(*) AS locked FROM Filters f WHERE f.ControlTableSerNum = em.EducationalMaterialControlSerNum and ControlTable = 'EducationalMaterialControl') AS locked
                 FROM
                     EducationalMaterialControl em,
                     PhaseInTreatment phase
                 WHERE
                     phase.PhaseInTreatmentSerNum = em.PhaseInTreatmentSerNum
+                AND
+                    em.deleted = 0;
             ";
 			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$query->execute();
@@ -342,6 +343,7 @@ class EduMaterial {
                 $shareURL_EN            = $data[12];
                 $shareURL_FR            = $data[13];
                 $lastUpdated            = $data[14];
+                $locked                 = $data[15];
                 $rating                 = -1;
                 $triggers               = array();
                 $tocs                   = array();
@@ -460,7 +462,8 @@ class EduMaterial {
                     'lastupdated'       => $lastUpdated,
                     'rating'            => $rating,
                     'triggers'          => $triggers,
-                    'tocs'              => $tocs
+                    'tocs'              => $tocs,
+                    'locked'            => $locked
                 );
 
                 array_push($eduMatList, $eduMatArray);
@@ -614,7 +617,7 @@ class EduMaterial {
 
 			$eduMatSer = $host_db_link->lastInsertId();
 
-            if ($triggers) {
+/*            if ($triggers) {
                 foreach ($triggers as $trigger) {
     
                     $triggerType = $trigger['type'];
@@ -644,7 +647,7 @@ class EduMaterial {
 			    	$query = $host_db_link->prepare( $sql );
 				    $query->execute();
                 }
-            }
+            }*/
 
             if($tocs) {
                 foreach ($tocs as $toc) {
@@ -734,7 +737,6 @@ class EduMaterial {
             $response['message'] = $e->getMessage();
             return $response; // Fail
         }
-
     }
 
     /**
@@ -766,7 +768,7 @@ class EduMaterial {
 
         $detailsUpdated     = $eduMatDetails['details_updated'];
         $tocsUpdated        = $eduMatDetails['tocs_updated'];
-        $triggersUpdated    = $eduMatDetails['triggers_updated'];
+//        $triggersUpdated    = $eduMatDetails['triggers_updated'];
 
         $response = array(
             'value'     => 0,
@@ -887,7 +889,7 @@ class EduMaterial {
                 }
             }
 
-            if ($triggersUpdated) {
+/*            if ($triggersUpdated) {
         
                 $sql = "
     		        SELECT DISTINCT 
@@ -986,7 +988,7 @@ class EduMaterial {
         			    }
     	    		}
                 }
-            }
+            }*/
 
             if ($tocsUpdated) {
                 $sql = "
@@ -1268,7 +1270,6 @@ class EduMaterial {
                 foreach ($eduMatSeries as $seriesName => $series) {
                     array_push($educationalMaterialLogs, $series);
                 }
-
             }
             // get logs for specific alias
             else {
