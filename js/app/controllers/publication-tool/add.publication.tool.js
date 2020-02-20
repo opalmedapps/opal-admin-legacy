@@ -74,7 +74,6 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 	$scope.machineSearchField = null;
 	$scope.patientSearchField = null;
 
-	/* Function for the "Processing" dialog */
 	var processingModal;
 	$scope.showProcessingModal = function () {
 
@@ -84,6 +83,7 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 			keyboard: false,
 		});
 	};
+	$scope.showProcessingModal(); // Calling function
 
 	// Function to calculate / return step progress
 	function trackProgress(value, total) {
@@ -260,6 +260,10 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 		});
 	}).catch(function(err) {
 		alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ERROR_FILTERS') + err.status + " " + err.data);
+		$state.go('publication-tool');
+	}).finally(function () {
+		processingModal.close(); // hide modal
+		processingModal = null; // remove reference
 	});
 
 	$scope.submitTemplateQuestion = function () {
@@ -328,10 +332,11 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 					result = JSON.parse(result);
 					if (result.code !== 200)
 						alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ERROR_PUBLICATION') + result.code + ".\r\nError message: " + result.message);
-					$state.go('publication-tool');
 				},
 				error: function () {
 					alert($filter('translate')('QUESTIONNAIRE_MODULE.PUBLICATION_TOOL_ADD.ERROR_PUBLICATION'));
+				},
+				complete: function () {
 					$state.go('publication-tool');
 				}
 			});

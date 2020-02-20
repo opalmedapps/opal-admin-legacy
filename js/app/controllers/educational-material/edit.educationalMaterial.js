@@ -65,6 +65,7 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 		$scope.EduMatTypes_FR = response.data.FR;
 	}).catch(function(response) {
 		alert($filter('translate')('EDUCATION.EDIT.ERROR_TYPE') + "\r\n\r\n" + response.status + " - " + response.data);
+		$uibModalInstance.close();
 	});
 
 	$scope.bannerMessageModal = "";
@@ -176,7 +177,10 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 			$scope.doctorTriggerList = checkAdded(response.data.doctors, $scope.selectAll.doctor);
 			$scope.machineTriggerList = checkAdded(response.data.machines, $scope.selectAll.machine);
 			$scope.patientTriggerList = checkAdded(response.data.patients, $scope.selectAll.patient);
-
+		}).catch(function(response) {
+			alert($filter('translate')('EDUCATION.EDIT.ERROR_TRIGGERS') + "\r\n\r\n" + response.status + " - " + response.data);
+			$uibModalInstance.close();
+		}).finally(function () {
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
 
@@ -185,6 +189,7 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 		});*/
 	}).catch(function(response) {
 		alert($filter('translate')('EDUCATION.EDIT.ERROR_DETAILS') + "\r\n\r\n" + response.status + " - " + response.data);
+		$uibModalInstance.close();
 	});
 
 	// Function to toggle trigger in a list on/off
@@ -448,7 +453,6 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 						$scope.setBannerClass('success');
 						$scope.$parent.bannerMessage = $filter('translate')('EDUCATION.EDIT.SUCCESS_EDIT');
 						$scope.showBanner();
-						$uibModalInstance.close();
 					}
 					else {
 						alert($filter('translate')('EDUCATION.EDIT.ERROR_EDIT') + "\r\n\r\n" + response.message);
@@ -456,6 +460,9 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 				},
 				error: function (err) {
 					alert($filter('translate')('EDUCATION.EDIT.ERROR_EDIT') + "\r\n\r\n" + err.status + " - " + err.statusText);
+				},
+				complete: function () {
+					$uibModalInstance.close();
 				}
 			});
 		}
