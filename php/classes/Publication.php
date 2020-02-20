@@ -201,6 +201,13 @@ class Publication extends OpalProject
         return $data;
     }
 
+
+    /*
+     * Returns the chart log of a specific publication.
+     * @params  $moduleId (int) ID of the module to get the logs
+     *          $publicationId (int) ID of the publication of the module to get the chart logs
+     * @return  (array) list of the chart logs found
+     * */
     public function getPublicationListLogs($moduleId, $publicationId, $cronIds) {
         if($moduleId == "" || $publicationId == "" || count($cronIds) <= 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "List Logs error. Invalid data.");
