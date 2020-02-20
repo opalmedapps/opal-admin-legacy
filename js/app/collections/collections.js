@@ -148,9 +148,12 @@ angular.module('opalAdmin.collections', [])
 		var postAPI = {};
 
 		// Function to get the list of posts
-		postAPI.getPosts = function () {
+		postAPI.getPosts = function (OAUserId) {
 			return $http.post(
 				"post/get/posts",
+				$.param({
+					OAUserId: OAUserId,
+				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
@@ -158,11 +161,12 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// Function to get a post detail given a serial
-		postAPI.getPostDetails = function (serial) {
+		postAPI.getPostDetails = function (postId, OAUserId) {
 			return $http.post(
 				"post/get/post-details",
 				$.param({
-					serial: serial,
+					OAUserId: OAUserId,
+					postId: postId,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -171,10 +175,11 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// Function to get post chart logs given a serial
-		postAPI.getPostChartLogs = function (serial, type) {
+		postAPI.getPostChartLogs = function (serial, type, OAUserId) {
 			return $http.post(
 				"post/get/post-chart-logs",
 				$.param({
+					OAUserId: OAUserId,
 					serial: serial,
 					type: type,
 				}),
@@ -185,10 +190,11 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// Function to get post log list details given an array of serial numbers
-		postAPI.getPostListLogs = function (serials, type) {
+		postAPI.getPostListLogs = function (serials, type, OAUserId) {
 			return $http.post(
 				"post/get/post-list-logs",
 				$.param({
+					OAUserId: OAUserId,
 					serials: JSON.stringify(serials),
 					type: type,
 				}),
@@ -576,7 +582,6 @@ angular.module('opalAdmin.collections', [])
 		return testResultAPI;
 	})
 
-
 	// Cron API service
 	.factory('cronCollectionService', function ($http) {
 
@@ -603,11 +608,12 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// Function to get selected cron logs
-		cronAPI.getSelectedCronListLogs = function (contents) {
+		cronAPI.getSelectedCronListLogs = function (contents, OAUserId) {
 			return $http.post(
 				"cron/get/cron-list-logs",
 				$.param({
 					contents: JSON.stringify(contents),
+					OAUserId: OAUserId,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -908,27 +914,56 @@ angular.module('opalAdmin.collections', [])
 		return questionnaireAPI;
 	})
 
-	// Legacy Questionnaire API service
-	.factory('legacyQuestionnaireCollectionService', function ($http) {
+	.factory('publicationCollectionService', function ($http) {
+		var publicationAPI = {};
 
-		var legacyQuestionnaireAPI = {};
-
-		// Function to get the list of legacy questionnaires
-		legacyQuestionnaireAPI.getLegacyQuestionnaires = function () {
+		publicationAPI.getPublications = function (OAUserId) {
 			return $http.post(
-				"legacy-questionnaire/get/legacy-questionnaires",
+				"publication/get/publications",
+				$.param({
+					OAUserId: OAUserId,
+				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
+
 		};
 
-		// Function to get legacy questionnaire details given a serial
-		legacyQuestionnaireAPI.getLegacyQuestionnaireDetails = function (serial) {
+		publicationAPI.getPublicationModules = function (OAUserId) {
 			return $http.post(
-				"legacy-questionnaire/get/legacy-questionnaire-details",
+				"publication/get/publication-modules",
 				$.param({
-					serial: serial,
+					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+
+		};
+
+		publicationAPI.getPublicationsPerModule = function (OAUserId, moduleId) {
+			return $http.post(
+				"publication/get/publications-per-module",
+				$.param({
+					OAUserId: OAUserId,
+					moduleId: moduleId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+
+		};
+
+		publicationAPI.getPublicationDetails = function (publicationId, moduleId, OAUserId) {
+			return $http.post(
+				"publication/get/publication-details",
+				$.param({
+					OAUserId: OAUserId,
+					publicationId: publicationId,
+					moduleId: moduleId,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -936,22 +971,13 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		// Function to get legacy questionnaire expressions
-		legacyQuestionnaireAPI.getLegacyQuestionnaireExpressions = function () {
+		publicationAPI.getPublicationsChartLogs = function (publicationId, moduleId, OAUserId) {
 			return $http.post(
-				"legacy-questionnaire/get/legacy-questionnaire-expressions",
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		// Function to get legacy questionnaire chart logs given a serial
-		legacyQuestionnaireAPI.getLegacyQuestionnaireChartLogs = function (serial) {
-			return $http.post(
-				"legacy-questionnaire/get/legacy-questionnaire-chart-logs",
+				"publication/get/publication-chart-logs",
 				$.param({
-					serial: serial,
+					publicationId: publicationId,
+					moduleId: moduleId,
+					OAUserId: OAUserId,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -959,12 +985,15 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		// Function to get legacy questionnaire log list details given an array of serial numbers
-		legacyQuestionnaireAPI.getLegacyQuestionnaireListLogs = function (serials) {
+		// Function to get post log list details given an array of serial numbers
+		publicationAPI.getPublicationListLogs = function (publicationId, moduleId, OAUserId, cronIds) {
 			return $http.post(
-				"legacy-questionnaire/get/legacy-questionnaire-list-logs",
+				"publication/get/publication-list-logs",
 				$.param({
-					serials: JSON.stringify(serials),
+					publicationId: publicationId,
+					moduleId: moduleId,
+					OAUserId: OAUserId,
+					cronIds: JSON.stringify(cronIds),
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -972,7 +1001,7 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		return legacyQuestionnaireAPI;
+		return publicationAPI;
 	})
 
 	// Diagnosis API service
@@ -1014,7 +1043,6 @@ angular.module('opalAdmin.collections', [])
 		};
 		return diagnosisAPI;
 	})
-
 
 	// install API service
 	.factory('installCollectionService', function ($http) {

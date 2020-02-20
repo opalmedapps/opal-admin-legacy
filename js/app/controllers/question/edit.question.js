@@ -102,21 +102,8 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 
 		// Call our API service to get the questionnaire details
 		questionnaireCollectionService.getQuestionDetails($scope.currentQuestion.serNum, OAUserId).then(function (response) {
-			questionnaireCollectionService.getLibraries(OAUserId).then(function (resp) {
-				$scope.libraryFilterList = resp.data;
-				$scope.libraryFilterList.forEach(function(entry) {
-					if($scope.language.toUpperCase() === "FR")
-						entry.name_display = entry.name_FR;
-					else
-						entry.name_display = entry.name_EN;
-				});
-			}).catch(function (response) {
-				alert('Error occurred getting libraries. Code '+ response.status +"\r\n" + response.data);
-			});
-
-			// Assign value
+			getLibrariesList();
 			$scope.question = response.data;
-
 			if($scope.language.toUpperCase() === "FR")
 				$scope.question.type_display = $scope.question.type_FR;
 			else
@@ -147,9 +134,10 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
 		}).catch(function (err) {
-			alert('Error occurred getting question details.\r\nCode ' + err.status + " " + err.data);
+			alert('Error occurred getting question details.' + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
+			$uibModalInstance.close();
 		});
 
 		// Function to close modal dialog
@@ -198,6 +186,21 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			OAUserId: OAUserId
 		};
 
+		function getLibrariesList() {
+			questionnaireCollectionService.getLibraries(OAUserId).then(function (response) {
+				$scope.libraryFilterList = response.data;
+				$scope.libraryFilterList.forEach(function(entry) {
+					if($scope.language.toUpperCase() === "FR")
+						entry.name_display = entry.name_FR;
+					else
+						entry.name_display = entry.name_EN;
+				});
+			}).catch(function (err) {
+				alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_GET_LIBRARY') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+				$uibModalInstance.close();
+			});
+		};
+
 		$scope.addNewLib = function () {
 			// Prompt to confirm user's action
 			var confirmation = confirm($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.CONFIRM_LIBRARY') + "\r\n\r\n" + $scope.newLibrary.name_EN + " / "+$scope.newLibrary.name_FR);
@@ -207,30 +210,12 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 					type: "POST",
 					url: "library/insert/library",
 					data: $scope.newLibrary,
-					success: function (result) {
-						result = JSON.parse(result);
-						if(result.code === 200) {
-							alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.SUCCESS_LIBRARY'));
-
-							questionnaireCollectionService.getLibraries(OAUserId).then(function (response) {
-								$scope.libraries = [];
-								$scope.libraryFilterList = response.data;
-								$scope.libraryFilterList.forEach(function(entry) {
-									if($scope.language.toUpperCase() === "FR")
-										entry.name_display = entry.name_FR;
-									else
-										entry.name_display = entry.name_EN;
-								});
-							}).catch(function (response) {
-								alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_GET_LIBRARY') + "\r\n\r\n" + response.status +" - "+ response.data);
-							});
-						}
-						else {
-							alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_SET_LIBRARY') + "\r\n\r\n" + result.code +" - "+ result.message);
-						}
+					success: function () {
+						$scope.libraries = [];
+						getLibrariesList();
 					},
-					error: function (result) {
-						alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_SET_LIBRARY') + "\r\n\r\n" + result.code +" - "+ result.message);
+					error: function (err) {
+						alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_SET_LIBRARY') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
 					}
 				});
 			}
@@ -246,18 +231,16 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 				type: "POST",
 				url: "question/update/question",
 				data: toSubmit,
-				success: function (response) {
-					response = JSON.parse(response);
-
-					// Show success or failure depending on response
-					if (response.code === 200) {
-						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.SUCCESS_QUESTION');
-						$uibModalInstance.close();
-						$scope.showBanner();
-					}
-					else
-						alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_UPDATE_QUESTION') + "\r\n\r\n" + response.code +" - "+ response.message);
+				success: function () {
+					$scope.setBannerClass('success');
+					$scope.$parent.bannerMessage = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.SUCCESS_QUESTION');
+					$scope.showBanner();
+				},
+				error: function(err) {
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_UPDATE_QUESTION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+				},
+				complete: function() {
+					$uibModalInstance.close();
 				}
 			});
 		};
