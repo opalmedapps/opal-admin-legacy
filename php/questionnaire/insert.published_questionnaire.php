@@ -8,6 +8,8 @@
 include_once('questionnaire.inc');
 $OAUserId = strip_tags($_POST['OAUserId']);
 
+print_R($_POST);die();
+
 $questionnaire = new PublishedQuestionnaire($OAUserId);
 $questionnaire->insertPublishedQuestionnaire($_POST);
 

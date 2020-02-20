@@ -22,6 +22,8 @@ $json = file_get_contents($abspath . 'config.json');
 // Decode json to variable
 $config = json_decode($json, true);
 
+$localHostAddr = array('127.0.0.1','localhost','::1');
+
 // DEFINE LEGACY QUESTIONNAIRE SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MySQL setup.
 define( "QUESTIONNAIRE_DB_HOST", $config['databaseConfig']['questionnaire']['host'] );
@@ -30,14 +32,6 @@ define( "QUESTIONNAIRE_DB_NAME", $config['databaseConfig']['questionnaire']['nam
 define( "QUESTIONNAIRE_DB_DSN", "mysql:host=" . QUESTIONNAIRE_DB_HOST . ";port=" . QUESTIONNAIRE_DB_PORT . ";dbname=" . QUESTIONNAIRE_DB_NAME . ";charset=utf8" );
 define( "QUESTIONNAIRE_DB_USERNAME", $config['databaseConfig']['questionnaire']['username'] );
 define( "QUESTIONNAIRE_DB_PASSWORD", $config['databaseConfig']['questionnaire']['password'] );
-
-// DEFINE ARIA SERVER/DATABASE CREDENTIALS HERE
-// NOTE: This works for a MicrosoftSQL (MSSQL) setup.
-define( "ARIA_DB_HOST", $config['databaseConfig']['aria']['host'] );
-define( "ARIA_DB_PORT", $config['databaseConfig']['aria']['port']);
-define( "ARIA_DB_DSN", "dblib:host=" . ARIA_DB_HOST . ":" . ARIA_DB_PORT . "\\database" . ";charset=utf8");
-define( "ARIA_DB_USERNAME", $config['databaseConfig']['aria']['username'] );
-define( "ARIA_DB_PASSWORD", $config['databaseConfig']['aria']['password'] );
 
 // DEFINE Waiting Room Management SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MySQL setup.
@@ -69,6 +63,7 @@ define( "UPLOAD_REL_PATH", FRONTEND_REL_URL . "uploads/" );
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql.php");
+require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."aria-sql.php");
 
 // Include the classes
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "OpalProject.php" );
@@ -89,10 +84,10 @@ include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "QuestionnaireModule.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Questionnaire.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "PublishedQuestionnaire.php");
+include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Publication.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Question.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TemplateQuestion.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Library.php");
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "LegacyQuestionnaire.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Diagnosis.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Application.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Encrypt.php");
@@ -100,6 +95,8 @@ include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseAccess.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseQuestionnaire.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseOpal.php" );
+include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseAria.php" );
+include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseDisconnected.php" );
 //include_once( FRONTEND_ABS_PATH . "php/classes/Upload.php");
 
 // Push Notification FCM and APN credientials.
@@ -126,6 +123,19 @@ define("LEGACY_CHECKBOX", 4);
 define("LEGACY_YESNO", 9);
 define("DEFAULT_TYPE", TEXT_BOX);
 
+define("ARIA_SOURCE_DB", 1);
+define("MEDIVISIT_SOURCE_DB", 2);
+define("MOSAIQ_SOURCE_DB", 3);
+
+/*
+ * Module ID of each module in the opalAdmin
+ * */
+define("MODULE_POST", 2);
+define("MODULE_EDU_MAT", 3);
+define("MODULE_QUESTIONNAIRE", 7);
+
+define("PUBLICATION_PUBLISH_DATE", 9);
+
 /*
  * List of HTTP status codes
  * */
@@ -136,4 +146,3 @@ define("HTTP_STATUS_INTERNAL_SERVER_ERROR",500);
  * Miscellaneous constants
  * */
 define("DEFAULT_FIELD", "");
-?>
