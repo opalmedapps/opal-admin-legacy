@@ -150,7 +150,7 @@ class DatabaseAccess extends HelpSetup
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
         catch(PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Fetch all failed.\r\nError : ". $e->getMessage());
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Fetch all failed:\r\n$sqlFetchAll\r\nError : ". $e->getMessage());
         }
     }
 
