@@ -201,12 +201,12 @@ RewriteRule ^questionnaire/update/questionnaire php/questionnaire/update.questio
 # Publication Section
 RewriteRule ^publication/update/publish-flag php/publication/update.publish.flag.php [QSA,L]
 RewriteRule ^publication/update/publication php/publication/update.publication.php [QSA,L]
-RewriteRule ^publication/get/publication-chart-logs api/publication/get.publication.chart.logs.php [QSA,L]
-RewriteRule ^publication/get/publication-list-logs api/publication/get.publication.list.logs.php [QSA,L]
-RewriteRule ^publication/get/publication-details api/publication/get.publication.details.php [QSA,L]
-RewriteRule ^publication/get/publications-per-module api/publication/get.publications.per.module.php [QSA,L]
-RewriteRule ^publication/get/publications api/publication/get.publications.php [QSA,L]
-RewriteRule ^publication/get/publication-modules api/publication/get.publication.modules.php [QSA,L]
+RewriteRule ^publication/get/publication-chart-logs php/publication/get.publication.chart.logs.php [QSA,L]
+RewriteRule ^publication/get/publication-list-logs php/publication/get.publication.list.logs.php [QSA,L]
+RewriteRule ^publication/get/publication-details php/publication/get.publication.details.php [QSA,L]
+RewriteRule ^publication/get/publications-per-module php/publication/get.publications.per.module.php [QSA,L]
+RewriteRule ^publication/get/publications php/publication/get.publications.php [QSA,L]
+RewriteRule ^publication/get/publication-modules php/publication/get.publication.modules.php [QSA,L]
 RewriteRule ^publication/insert/publication php/publication/insert.publication.php [QSA,L]
 
 # Library Section
