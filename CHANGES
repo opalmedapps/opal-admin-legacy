@@ -1,3 +1,7 @@
+Version 0.20.0.1:
+ - Merge branch 'staging-publication' into staging
+ - OPAL-179 - Fixed type in table name
+
 Version 0.20.0.0:
  - Merge branch 'staging-publication' into staging
  - OPAL-179 - pulled changes from master
