@@ -368,13 +368,14 @@ controller('educationalMaterial.add', function ($scope, $filter, $state, $sce, $
 				data: $scope.newEduMat,
 				success: function (response) {
 					response = JSON.parse(response);
-					if (response.value)
-						$state.go('educational-material');
-					else
+					if (!response.value)
 						alert($filter('translate')('EDUCATION.ADD.ERROR_INSERT') + "\r\n\r\n" + response.message);
 				},
 				error: function (err) {
 					alert($filter('translate')('EDUCATION.ADD.ERROR_INSERT') + "\r\n\r\n" + err.status + " - " + err.statusText);
+				},
+				complete: function () {
+					$state.go('educational-material');
 				}
 			});
 		}
