@@ -63,7 +63,7 @@ class Post extends OpalProject {
     }
 
     /*
-     * Returns all the chart logs from a list of post IDs depending if it is announcement, treatment team message or
+     * Returns all the chart list from a list of cron IDs depending if it is announcement, treatment team message or
      * patients for patients.
      * @params  $serials (array) list of serials to look for
      *          $type (string) type of post
