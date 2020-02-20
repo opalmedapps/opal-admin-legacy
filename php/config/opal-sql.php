@@ -24,7 +24,7 @@ define("OPAL_FILTERS_MODIFICATION_HISTORY_TABLE","FiltersMH");
 define("OPAL_FREQUENCY_EVENTS_TABLE","FrequencyEvents");
 define("OPAL_MODULE_TABLE","module");
 define("OPAL_MODULE_PUBLICATION_SETTING_TABLE","modulePublicationSetting");
-define("OPAL_PUBLICATION_SETTING_TABLE","PublicationSetting");
+define("OPAL_PUBLICATION_SETTING_TABLE","publicationSetting");
 define("OPAL_POST_TABLE","PostControl");
 define("OPAL_TX_TEAM_MESSAGE_TABLE","TxTeamMessage");
 define("OPAL_ANNOUNCEMENT_TABLE","Announcement");
