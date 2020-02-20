@@ -69,13 +69,7 @@ angular.module('opalAdmin.controllers.template.question', ['ngAnimate', 'ngSanit
 			},
 		};
 
-		// Call our API service to get the list of existing questions types
-		questionnaireCollectionService.getTemplatesQuestions(Session.retrieveObject('user').id).then(function (response) {
-			$scope.templateQuestionList = response.data;
-		}).catch(function(response) {
-			alert('Error occurred getting response types: '+response.status +"\r\n"+ response.data);
-		});
-
+		getTemplateQuestionsList();
 
 		// Banner
 		$scope.bannerMessage = "";
@@ -115,12 +109,7 @@ angular.module('opalAdmin.controllers.template.question', ['ngAnimate', 'ngSanit
 			// after update, refresh data
 			modalInstance.result.then(function () {
 				$scope.templateQuestionList = [];
-				// Call our API service to get the list of existing questions
-				questionnaireCollectionService.getTemplatesQuestions(Session.retrieveObject('user').id).then(function (response) {
-					$scope.templateQuestionList = response.data;
-				}).catch(function(response) {
-					alert('Error occurred getting response types: '+response.status +"\r\n"+ response.data);
-				});
+				getTemplateQuestionsList();
 			});
 		};
 
@@ -142,13 +131,15 @@ angular.module('opalAdmin.controllers.template.question', ['ngAnimate', 'ngSanit
 			// After delete, refresh the eduMat list
 			modalInstance.result.then(function () {
 				$scope.templateQuestionList = [];
-				// update data
-				questionnaireCollectionService.getTemplatesQuestions(Session.retrieveObject('user').id).then(function (response) {
-					$scope.templateQuestionList = response.data;
-				}).catch(function(response) {
-					alert('Error occurred getting response types: '+response.status +"\r\n"+ response.data);
-				});
+				getTemplateQuestionsList();
 			});
 		};
 
+		function getTemplateQuestionsList() {
+			questionnaireCollectionService.getTemplatesQuestions(Session.retrieveObject('user').id).then(function (response) {
+				$scope.templateQuestionList = response.data;
+			}).catch(function(err) {
+				alert($filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_LIST.ERROR_RESPONSE_TYPES_LIST') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+			});
+		}
 	});

@@ -375,7 +375,6 @@ angular.module('opalAdmin.controllers.publication.tool.add', ['ngAnimate', 'ngSa
 	// Responsible for "searching" in search bars
 	$scope.filter = $filter('filter');
 
-
 	// Function to toggle necessary changes when updating the sex
 	$scope.sexUpdate = function (sex) {
 		$scope.demoSection.open = true;

@@ -214,5 +214,3 @@ class CrontabManager {
 		die("<pre style='color:#EE2711'>ERROR: {$error}</pre>");
 	}
 }
-
-?>
