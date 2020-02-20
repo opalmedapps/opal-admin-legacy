@@ -9,6 +9,7 @@
 
 // DEFINE ARIA SERVER/DATABASE CREDENTIALS HERE
 // NOTE: This works for a MicrosoftSQL (MSSQL) setup.
+define( "ARIA_DB_ENABLED", (intval($config['databaseConfig']['aria']['enabled']) == 0?false:true));
 define( "ARIA_DB_HOST", $config['databaseConfig']['aria']['host'] );
 define( "ARIA_DB_PORT", $config['databaseConfig']['aria']['port']);
 if(in_array($_SERVER['REMOTE_ADDR'], $localHostAddr))

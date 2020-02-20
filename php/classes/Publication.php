@@ -32,14 +32,17 @@ class Publication extends OpalProject
      * @returns None
      * */
     protected function _connectAriaDB() {
-        $this->ariaDB = new DatabaseAria(
-            ARIA_DB_HOST,
-            "",
-            ARIA_DB_PORT,
-            ARIA_DB_USERNAME,
-            ARIA_DB_PASSWORD,
-            ARIA_DB_DSN
-        );
+        if(ARIA_DB_ENABLED)
+            $this->ariaDB = new DatabaseAria(
+                ARIA_DB_HOST,
+                "",
+                ARIA_DB_PORT,
+                ARIA_DB_USERNAME,
+                ARIA_DB_PASSWORD,
+                ARIA_DB_DSN
+            );
+        else
+            $this->ariaDB = new DatabaseDisconnected();
     }
 
     /*
@@ -68,7 +71,7 @@ class Publication extends OpalProject
         if(!isset($module["ID"]) || $module["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module ID.");
 
-        $publicationDetails = $this->opalDB->getPublicationDetails($publicationId, $moduleId);
+        $publicationDetails = $this->opalDB->getPublicationDetails($moduleId, $publicationId);
         if(!isset($publicationDetails["ID"]) || $publicationDetails["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publication settings.");
 
@@ -351,16 +354,21 @@ class Publication extends OpalProject
                 }
                 //Standard process of the checkup by getting data from OpalDB and Aria
                 else {
-                    if ($trigger["ariaDB"] != "")
-                        $ariaData = $this->_reassignData($this->ariaDB->fetchTriggersData($trigger["ariaDB"]), $trigger["ariaPK"]);
+                    if ($trigger["ariaDB"] != "") {
+                        $test = $this->ariaDB->fetchTriggersData($trigger["ariaDB"]);
+                        $ariaData = $this->_reassignData($test, $trigger["ariaPK"]);
+                    }
                     if ($trigger["opalDB"] != "") {
-                        $idsToIgnore = array(-1);
                         if (count($ariaData > 0)) {
                             $idsToIgnore = array();
                             foreach ($ariaData as $item) {
                                 array_push($idsToIgnore, $item[$trigger["ariaPK"]]);
                             }
                         }
+
+                        if (count($idsToIgnore) <= 0)
+                            $idsToIgnore = array(-1);
+
                         $opalData = $this->_reassignData($this->opalDB->fetchTriggersData(str_replace("%%ARIA_ID%%", implode(", ", $idsToIgnore), $trigger["opalDB"])), $trigger["opalPK"]);
                     }
 

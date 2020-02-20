@@ -78,7 +78,7 @@ class DatabaseOpal extends DatabaseAccess {
      * This function fetches the SQL list of the different modules associated to the publication. It replaces the flags
      * with the correct table names, and fetch all the publications.
      * @params  none
-     * @returns array of ressults
+     * @returns array of results
      * */
     function getPublications() {
         $sqlModule = array();
@@ -103,7 +103,7 @@ class DatabaseOpal extends DatabaseAccess {
      * This function fetches the SQL list of a specific module associated to the publication. It replaces the flags
      * with the correct table names, and fetch all the publications for the module.
      * @params  $moduleId (int) ID of the specific module
-     * @returns array of ressults
+     * @returns array of results
      * */
     function getPublicationsPerModule($moduleId) {
         $result = array();
@@ -132,7 +132,14 @@ class DatabaseOpal extends DatabaseAccess {
         return $result;
     }
 
-    function getPublicationDetails($publicationId, $moduleId) {
+    /*
+     * This function fetches the data of the specified module of a publication, to get the specific SQL query for the
+     * details. It then replaces the flags with the table names, fetch the details and return the result.
+     * @params  $moduleId (int) ID of the specific module
+     * @params  $publicationId (int) ID of the publication
+     * @returns array with details of the publication
+     * */
+    function getPublicationDetails($moduleId, $publicationId) {
         $module = $this->_fetch(SQL_OPAL_GET_MODULE_BY_ID, array(array("parameter"=>":ID","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
         $sqlFetchDetails = $module["sqlDetails"];
         if($sqlFetchDetails == "")
