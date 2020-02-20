@@ -264,8 +264,9 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 
 	questionnaireCollectionService.getFinalizedQuestions(OAUserId).then(function (response) {
 		$scope.groupList = decodeQuestions(response.data);
-	}).catch(function (response) {
-		alert('Error occurred getting group list:' + response.status + response.data);
+	}).catch(function (err) {
+		alert('Error occurred getting group list:' + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+		$state.go('questionnaire');
 	});
 
 	// Function to return boolean for form completion
@@ -284,16 +285,13 @@ angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanit
 				type: "POST",
 				url: "questionnaire/insert/questionnaire",
 				data: $scope.newQuestionnaire,
-				success: function (result) {
-					result = JSON.parse(result);
-					if (result.code === 200) {
-						$state.go('questionnaire');
-					} else {
-						alert("Unable to create the questionnaire. Code " + result.code + ".\r\nError message: " + result.message);
-					}
+				success: function () {
 				},
-				error: function () {
-					alert("Something went wrong.");
+				error: function (err) {
+					alert("Something went wrong." + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+				},
+				complete: function() {
+					$state.go('questionnaire');
 				}
 			});
 		}

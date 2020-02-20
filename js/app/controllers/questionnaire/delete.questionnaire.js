@@ -11,18 +11,15 @@ angular.module('opalAdmin.controllers.questionnaire.delete', ['ngAnimate', 'ngSa
 				type: "POST",
 				url: "questionnaire/delete/questionnaire",
 				data: $scope.questionnaireToDelete,
-				success: function (response) {
-					response = JSON.parse(response);
-					// Show success or failure depending on response
-					if (response.message === 200) {
-						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_DELETE.DELETED');
-					}
-					else {
-						$scope.setBannerClass('danger');
-						$scope.$parent.bannerMessage = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_DELETE.UNKNOWN') + "\r\n\r\n" + response.message + " - " + response.details;
-					}
+				success: function () {
+					$scope.setBannerClass('success');
+					$scope.$parent.bannerMessage = $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_DELETE.DELETED');
 					$scope.showBanner();
+				},
+				error: function(err) {
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_DELETE.ERROR') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+				},
+				complete: function() {
 					$uibModalInstance.close();
 				}
 			});

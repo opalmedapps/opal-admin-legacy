@@ -746,5 +746,3 @@ class Patient {
         }
     }
 }
-
-?>

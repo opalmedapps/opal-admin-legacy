@@ -225,38 +225,16 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		return !$scope.libEntered || keyword.test($scope.language.toUpperCase() === "FR"?Filter.name_FR:Filter.name_EN);
 	};
 
-	// questionnaire API: retrieve data
-	questionnaireCollectionService.getTemplatesQuestions(OAUserId).then(function (response) {
-		$scope.atFilterList = response.data;
-		$scope.atFilterList.forEach(function(entry) {
-			if($scope.language.toUpperCase() === "FR") {
-				entry.name_display = entry.name_FR;
-				entry.category_display = entry.category_FR;
-			} else {
-				entry.name_display = entry.name_EN;
-				entry.category_display = entry.category_EN;
-			}
-		});
-	}).catch(function(response) {
-		alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_RESPONSE_TYPE') + "\r\n\r\n" + response.status + " - " + response.data);
-	});
+	// questionnaire API: retrieve the template of questions
+	getTemplatesQuestionsList();
 
-	questionnaireCollectionService.getLibraries(OAUserId).then(function (response) {
-		$scope.groupFilterList = response.data;
-		$scope.groupFilterList.forEach(function(entry) {
-			if($scope.language.toUpperCase() === "FR")
-				entry.name_display = entry.name_FR;
-			else
-				entry.name_display = entry.name_EN;
-		});
-	}).catch(function(response) {
-		alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_LIBRARY') + "\r\n\r\n" + response.status +" - "+ response.data);
-	});
+	getLibrariesList();
 
 	questionnaireCollectionService.getTemplateQuestionCategory(OAUserId).then(function (response) {
 		$scope.atCatList = response.data;
-	}).catch(function(response) {
-		alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_CATEGORY') + "\r\n\r\n" + response.status +" - "+ response.data);
+	}).catch(function(err) {
+		alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_CATEGORY') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+		$state.go('questionnaire-question');
 	});
 
 	// add new types & write into DB
@@ -284,35 +262,34 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 				type: "POST",
 				url: "template-question/insert/template-question",
 				data: toSend,
-				success: function (result) {
-					result = JSON.parse(result);
-					if(result.message === 200) {
-						alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.SUCCESS_RESPONSE_TYPE'));
-						// update answer type list
-						questionnaireCollectionService.getTemplatesQuestions(OAUserId).then(function (response) {
-							$scope.atFilterList = response.data;
-							$scope.atFilterList.forEach(function(entry) {
-								if($scope.language.toUpperCase() === "FR") {
-									entry.name_display = entry.name_FR;
-									entry.category_display = entry.category_FR;
-								} else {
-									entry.name_display = entry.name_EN;
-									entry.category_display = entry.category_EN;
-								}
-							});
-						}).catch(function (response) {
-							alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_RESPONSE_TYPE') + "\r\n\r\n" + response.code +" - "+ response.message);
-						});
-					} else {
-						alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_RESPONSE_TYPE') + "\r\n\r\n" + result.message +" - "+ result.details);
-					}
-
+				success: function () {
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.SUCCESS_RESPONSE_TYPE'));
+					getTemplatesQuestionsList();
 				},
-				error: function () {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_RESPONSE_TYPE'));
+				error: function (err) {
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_RESPONSE_TYPE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					$state.go('questionnaire-question');
 				}
 			});
 		}
+	};
+
+	function getTemplatesQuestionsList() {
+		questionnaireCollectionService.getTemplatesQuestions(OAUserId).then(function (response) {
+			$scope.atFilterList = response.data;
+			$scope.atFilterList.forEach(function(entry) {
+				if($scope.language.toUpperCase() === "FR") {
+					entry.name_display = entry.name_FR;
+					entry.category_display = entry.category_FR;
+				} else {
+					entry.name_display = entry.name_EN;
+					entry.category_display = entry.category_EN;
+				}
+			});
+		}).catch(function (err) {
+			alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_RESPONSE_TYPE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+			$state.go('questionnaire-question');
+		});
 	};
 
 	// add options
@@ -349,33 +326,33 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 				type: "POST",
 				url: "library/insert/library",
 				data: $scope.newLibrary,
-				success: function (result) {
-					result = JSON.parse(result);
-					if(result.code === 200) {
-						alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.SUCCESS_LIBRARY'));
-						questionnaireCollectionService.getLibraries(OAUserId).then(function (response) {
-							$scope.libraries = [];
-							$scope.groupFilterList = response.data;
-							$scope.groupFilterList.forEach(function(entry) {
-								if($scope.language.toUpperCase() === "FR")
-									entry.name_display = entry.name_FR;
-								else
-									entry.name_display = entry.name_EN;
-							});
-						}).catch(function (response) {
-							alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_LIBRARY') + "\r\n\r\n" + response.status +" - "+ response.data);
-						});
-					}
-					else {
-						alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_LIBRARY') + "\r\n\r\n" + result.code +" - "+ result.message);
-					}
+				success: function () {
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.SUCCESS_LIBRARY'));
+					getLibrariesList();
 				},
-				error: function () {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_LIBRARY'));
+				error: function (err) {
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_LIBRARY') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					$state.go('questionnaire-question');
 				}
 			});
 		}
 	};
+
+	function getLibrariesList() {
+		questionnaireCollectionService.getLibraries(OAUserId).then(function (response) {
+			$scope.libraries = [];
+			$scope.groupFilterList = response.data;
+			$scope.groupFilterList.forEach(function(entry) {
+				if($scope.language.toUpperCase() === "FR")
+					entry.name_display = entry.name_FR;
+				else
+					entry.name_display = entry.name_EN;
+			});
+		}).catch(function (err) {
+			alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_LIBRARY') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+			$state.go('questionnaire-question');
+		});
+	}
 
 	// check if form is completed
 	$scope.checkForm = function () {
@@ -393,16 +370,12 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 				type: "POST",
 				url: "question/insert/question",
 				data: $scope.newQuestion,
-				success: function (result) {
-					result = JSON.parse(result);
-					if (result.code === 200) {
-						$state.go('questionnaire-question');
-					} else {
-						alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_QUESTION') + "\r\n\r\n" + result.code +" - "+ result.message);
-					}
+				success: function () {},
+				error: function (err) {
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_QUESTION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
 				},
-				error: function () {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_QUESTION'));
+				complete: function() {
+					$state.go('questionnaire-question');
 				}
 			});
 		}

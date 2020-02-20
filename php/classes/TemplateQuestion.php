@@ -543,7 +543,7 @@ class TemplateQuestion extends QuestionnaireModule {
      * being deleted.
      *
      * WARNING!!! No record should be EVER be removed from the questionnaire database! It should only being marked as
-     * being deleted ONLY  if the user has the proper authorization and no more than one user is doing modification
+     * being deleted ONLY if the user has the proper authorization and no more than one user is doing modification
      * on it at a specific moment. Not following the proper procedure will have some serious impact on the integrity
      * of the database and its records.
      *
@@ -554,8 +554,6 @@ class TemplateQuestion extends QuestionnaireModule {
      */
     function deleteTemplateQuestion($templateQuestionId) {
         $templateQuestionToDelete = $this->questionnaireDB->getTypeTemplate($templateQuestionId);
-
-
         if ($this->questionnaireDB->getOAUserId() <= 0 || $templateQuestionToDelete["deleted"] == 1 || ($templateQuestionToDelete["private"] == 1 && $this->questionnaireDB->getOAUserId() != $templateQuestionToDelete["OAUserId"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
 
@@ -570,11 +568,8 @@ class TemplateQuestion extends QuestionnaireModule {
             $response['message'] = 200;
             return $response;
         }
-        else {
-            $response['value'] = false; // conflict error. Somebody already updated the question or record does not exists.
-            $response['message'] = 409;
-            return $response;
-        }
+        else
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Conflict error.");
     }
 }
 
