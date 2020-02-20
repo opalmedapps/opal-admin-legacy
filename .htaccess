@@ -143,17 +143,6 @@ RewriteRule ^install/check-opal-connection php/install/check_opal_connection.php
 RewriteRule ^install/write-configurations php/install/write_configurations.php [QSA,L]
 RewriteRule ^install/register-admin php/install/register_admin.php [QSA,L]
 
-# Legacy Questionnaire Section
-RewriteRule ^legacy-questionnaire/delete/legacy-questionnaire php/legacy-questionnaire/delete.legacy_questionnaire.php [QSA,L]
-RewriteRule ^legacy-questionnaire/get/legacy-questionnaire-chart-logs api/legacy-questionnaire/get.legacy_questionnaire_chart_logs.php [QSA,L]
-RewriteRule ^legacy-questionnaire/get/legacy-questionnaire-details api/legacy-questionnaire/get.legacy_questionnaire_details.php [QSA,L]
-RewriteRule ^legacy-questionnaire/get/legacy-questionnaire-expressions api/legacy-questionnaire/get.legacy_questionnaire_expressions.php [QSA,L]
-RewriteRule ^legacy-questionnaire/get/legacy-questionnaire-list-logs api/legacy-questionnaire/get.legacy_questionnaire_list_logs.php [QSA,L]
-RewriteRule ^legacy-questionnaire/get/legacy-questionnaires api/legacy-questionnaire/get.legacy_questionnaires.php [QSA,L]
-RewriteRule ^legacy-questionnaire/insert/legacy-questionnaire php/legacy-questionnaire/insert.legacy_questionnaire.php [QSA,L]
-RewriteRule ^legacy-questionnaire/update/legacy-questionnaire-publish-flags php/legacy-questionnaire/update.legacy_questionnaire_publish_flags.php [QSA,L]
-RewriteRule ^legacy-questionnaire/update/legacy-questionnaire php/legacy-questionnaire/update.legacy_questionnaire.php [QSA,L]
-
 # Notification Section
 RewriteRule ^notification/delete/notification php/notification/delete.notification.php [QSA,L]
 RewriteRule ^notification/get/notification-chart-logs api/notification/get.notification_chart_logs.php [QSA,L]
@@ -202,12 +191,23 @@ RewriteRule ^questionnaire/insert/questionnaire php/questionnaire/insert.questio
 RewriteRule ^questionnaire/update/questionnaire php/questionnaire/update.questionnaire.php [QSA,L]
 
 # Publication Tool Section
-RewriteRule ^publication-tool/update/published-questionnaire-publish-flag php/questionnaire/update.questionnaire_publish_flag.php [QSA,L]
-RewriteRule ^publication-tool/update/published-questionnaire php/questionnaire/update.published_questionnaire.php [QSA,L]
-RewriteRule ^publication-tool/get/finalized-questionnaires api/questionnaire/get.finalizedQuestionnaires.php [QSA,L]
-RewriteRule ^publication-tool/get/published-questionnaire-details api/questionnaire/get.published_questionnaires_details.php [QSA,L]
-RewriteRule ^publication-tool/get/published-questionnaires api/questionnaire/get.published_questionnaires.php [QSA,L]
-RewriteRule ^publication-tool/insert/published-questionnaire php/questionnaire/insert.published_questionnaire.php [QSA,L]
+#RewriteRule ^publication-tool/update/published-questionnaire-publish-flag php/questionnaire/update.questionnaire_publish_flag.php [QSA,L]
+#RewriteRule ^publication-tool/update/published-questionnaire php/questionnaire/update.published_questionnaire.php [QSA,L]
+#RewriteRule ^publication-tool/get/finalized-questionnaires api/questionnaire/get.finalizedQuestionnaires.php [QSA,L]
+#RewriteRule ^publication-tool/get/published-questionnaire-details api/questionnaire/get.published_questionnaires_details.php [QSA,L]
+#RewriteRule ^publication-tool/get/published-questionnaires api/questionnaire/get.published_questionnaires.php [QSA,L]
+#RewriteRule ^publication-tool/insert/published-questionnaire php/questionnaire/insert.published_questionnaire.php [QSA,L]
+
+# Publication Section
+RewriteRule ^publication/update/publish-flag php/publication/update.publish.flag.php [QSA,L]
+RewriteRule ^publication/update/publication php/publication/update.publication.php [QSA,L]
+RewriteRule ^publication/get/publication-chart-logs php/publication/get.publication.chart.logs.php [QSA,L]
+RewriteRule ^publication/get/publication-list-logs php/publication/get.publication.list.logs.php [QSA,L]
+RewriteRule ^publication/get/publication-details php/publication/get.publication.details.php [QSA,L]
+RewriteRule ^publication/get/publications-per-module php/publication/get.publications.per.module.php [QSA,L]
+RewriteRule ^publication/get/publications php/publication/get.publications.php [QSA,L]
+RewriteRule ^publication/get/publication-modules php/publication/get.publication.modules.php [QSA,L]
+RewriteRule ^publication/insert/publication php/publication/insert.publication.php [QSA,L]
 
 # Library Section
 RewriteRule ^library/get/libraries api/questionnaire/get.libraries.php [QSA,L]

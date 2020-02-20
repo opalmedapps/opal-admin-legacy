@@ -18,6 +18,7 @@ class QuestionnaireModule extends OpalProject
             QUESTIONNAIRE_DB_2019_PORT,
             QUESTIONNAIRE_DB_2019_USERNAME,
             QUESTIONNAIRE_DB_2019_PASSWORD,
+            false,
             $OAUserId
         );
 

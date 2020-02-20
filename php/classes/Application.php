@@ -132,7 +132,6 @@ class Application {
 						WHERE
 							SourceDatabase.SourceDatabaseSerNum = $serial
 					";
-					print "$sql";
 					$query = $host_db_link->prepare( $sql );
 					$query->execute();
 				}

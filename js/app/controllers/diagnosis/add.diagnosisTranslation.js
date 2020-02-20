@@ -115,6 +115,10 @@ controller('diagnosisTranslation.add', function ($scope, $filter, $uibModal, dia
 
 	// Call our API to ge the list of diagnoses
 	diagnosisCollectionService.getDiagnoses().then(function (response) {
+		if(response.data.length <= 0) {
+			alert($filter('translate')('DIAGNOSIS.ADD.ERROR_NO_DIAGNOSIS_FOUND'));
+			$state.go('diagnosis-translation');
+		}
 		response.data.forEach(function(entry) {
 			if (typeof entry.assigned !== 'undefined') {
 				if ($scope.language.toUpperCase() === "FR")
@@ -124,12 +128,14 @@ controller('diagnosisTranslation.add', function ($scope, $filter, $uibModal, dia
 			}
 		});
 		$scope.diagnosisList = response.data;
-		processingModal.close(); // hide modal
-		processingModal = null; // remove reference
 		$scope.formLoaded = true;
 		$scope.loadForm();
 	}).catch(function(response) {
 		alert($filter('translate')('DIAGNOSIS.ADD.ERROR_DIAGNOSIS') + "\r\n\r\n" + response.status + " - " + response.data);
+		$state.go('diagnosis-translation');
+	}).finally(function() {
+		processingModal.close(); // hide modal
+		processingModal = null; // remove reference
 	});
 
 	// Function to return boolean for # of added diagnoses
@@ -249,11 +255,11 @@ controller('diagnosisTranslation.add', function ($scope, $filter, $uibModal, dia
 				type: 'POST',
 				url: 'diagnosis-translation/insert/diagnosis-translation',
 				data: $scope.newDiagnosisTranslation,
-				success: function () {
-					$state.go('diagnosis-translation');
-				},
+				success: function () {},
 				error: function (err) {
 					alert($filter('translate')('DIAGNOSIS.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText);
+				},
+				complete: function () {
 					$state.go('diagnosis-translation');
 				}
 			});

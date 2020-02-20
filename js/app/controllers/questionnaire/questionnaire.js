@@ -124,8 +124,8 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 		// Call API to get the list of questionnaires
 		questionnaireCollectionService.getQuestionnaires(OAUserId).then(function (response) {
 			$scope.questionnaireList = response.data;
-		}).catch(function(response) {
-			alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS') + response.status + " " + response.data);
+		}).catch(function(err) {
+			alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
 		});
 
 		// Initialize the questionnaire to be deleted
@@ -159,8 +159,8 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 			modalInstance.result.then(function () {
 				questionnaireCollectionService.getQuestionnaires(OAUserId).then(function (response) {
 					$scope.questionnaireList = response.data;
-				}).catch(function(response) {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS') + response.status + " " + response.data);
+				}).catch(function(err) {
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
 				});
 			});
 		};
@@ -184,8 +184,8 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 			modalInstance.result.then(function () {
 				questionnaireCollectionService.getQuestionnaires(OAUserId).then(function (response) {
 					$scope.questionnaireList = response.data;
-				}).catch(function(response) {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS') + response.status + " " + response.data);
+				}).catch(function(err) {
+					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_LIST.ERROR_QUESTIONS') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
 				});
 			});
 		};
