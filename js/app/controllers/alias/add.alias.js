@@ -181,11 +181,13 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 
 				$scope.termList = response.data; // Assign value
 
-				processingModal.close(); // hide modal
-				processingModal = null; // remove reference
 
 			}).catch(function(response) {
 				alert($filter('translate')('ALIAS.ADD.ERROR_ALIAS') + "\r\n\r\n" + response.status + " - " + response.data);
+				$state.go('alias');
+			}).finally(function() {
+				processingModal.close(); // hide modal
+				processingModal = null; // remove reference
 			});
 		}
 
@@ -320,11 +322,13 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 
 				$scope.termList = response.data; // Assign value
 
-				processingModal.close(); // hide modal
-				processingModal = null; // remove reference
 
 			}).catch(function(response) {
 				alert($filter('translate')('ALIAS.ADD.ERROR_ALIAS') + "\r\n\r\n" + response.status + " - " + response.data);
+				$state.go('alias');
+			}).finally(function() {
+				processingModal.close(); // hide modal
+				processingModal = null; // remove reference
 			});
 		}
 
@@ -477,11 +481,11 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 				type: "POST",
 				url: "alias/insert/alias",
 				data: $scope.newAlias,
-				success: function () {
-					$state.go('alias');
-				},
+				success: function () {},
 				error: function (err) {
 					alert($filter('translate')('ALIAS.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText);
+				},
+				complete: function() {
 					$state.go('alias');
 				}
 			});

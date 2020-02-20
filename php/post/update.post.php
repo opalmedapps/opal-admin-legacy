@@ -1,28 +1,17 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To update a post for any changes */
-	include_once('post.inc');
 
-	$postObject = new Post; // Object
+include_once('post.inc');
 
-	// Construct array from FORM params
-	$postArray	= array(
-		'name_EN'						=> $_POST['name_EN'],
-		'name_FR'						=> $_POST['name_FR'],
-		'body_EN'						=> filter_var($_POST['body_EN'], FILTER_SANITIZE_MAGIC_QUOTES),
-		'body_FR'						=> filter_var($_POST['body_FR'], FILTER_SANITIZE_MAGIC_QUOTES),
-		'publish_date'			=> $_POST['publish_date'],
-		'triggers'					=> $_POST['triggers'],
-		'serial'						=> $_POST['serial'],
-		'type'							=> $_POST['type'],
-		'user'							=> $_POST['user'],
-		'details_updated'		=> $_POST['details_updated'],
-		'triggers_updated'	=> $_POST['triggers_updated']
-	);
+$OAUserId = strip_tags($_POST["OAUser"]["id"]);
+$sessionId = strip_tags($_POST["OAUser"]["sessionid"]);
 
-	// Call function
-  $response = $postObject->updatePost($postArray);
+$sanitizedPost = Post::validateAndSanitize($_POST);
+if(!$sanitizedPost)
+    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid post format");
 
-  print json_encode($response); // Return response
+$postObject = new Post($OAUserId, $sessionId);
+$response["message"] = $postObject->updatePost($sanitizedPost);
+$response["code"] = HTTP_STATUS_SUCCESS;
 
-?>
+header('Content-Type: application/javascript');
+echo json_encode($response);

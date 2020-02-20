@@ -149,22 +149,14 @@ class Patient {
             'data'      => ''
         );
         $databaseObj = new Database();
+        $activeDBSources = $databaseObj->getActiveSourceDatabases();
 
         try{
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             // First make a lookup in our database
-            $sql = "
-        SELECT DISTINCT
-          Patient.SSN
-        FROM
-          Patient
-        WHERE
-          Patient.SSN         LIKE '$ssn%'
-          AND Patient.PatientId   = '$id'
-        LIMIT 1
-      ";
+            $sql = "SELECT DISTINCT Patient.SSN FROM Patient WHERE Patient.SSN         LIKE '$ssn%' AND Patient.PatientId   = '$id' LIMIT 1";
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
@@ -182,119 +174,120 @@ class Patient {
             // ***********************************
             // ARIA
             // ***********************************
-            $sourceDBSer = 1;
-            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
-            if ($source_db_link) {
-                $sql = "
-          SELECT DISTINCT TOP 1
-            pt.SSN,
-            pt.PatientSer,
-            pt.FirstName,
-            pt.LastName,
-            pt.PatientId,
-            pt.PatientId2,
-            pt.DateOfBirth,
-            ph.Picture,
-            RTRIM(pt.Sex)
-          FROM
-            variansystem.dbo.Patient pt
-            LEFT JOIN variansystem.dbo.Photo ph
-            ON ph.PatientSer = pt.PatientSer
-          WHERE
-            pt.SSN          LIKE '$ssn%'
-            AND pt.PatientId    = '$id'
-        ";
-                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                $query->execute();
+            if(in_array(ARIA_SOURCE_DB, $activeDBSources)) {
+                $source_db_link = $databaseObj->connectToSourceDatabase(ARIA_SOURCE_DB);
+                if ($source_db_link) {
+                    $sql = "
+                      SELECT DISTINCT TOP 1
+                        pt.SSN,
+                        pt.PatientSer,
+                        pt.FirstName,
+                        pt.LastName,
+                        pt.PatientId,
+                        pt.PatientId2,
+                        pt.DateOfBirth,
+                        ph.Picture,
+                        RTRIM(pt.Sex)
+                      FROM
+                        variansystem.dbo.Patient pt
+                        LEFT JOIN variansystem.dbo.Photo ph
+                        ON ph.PatientSer = pt.PatientSer
+                      WHERE
+                        pt.SSN          LIKE '$ssn%'
+                        AND pt.PatientId    = '$id'
+                    ";
+                    $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                    $query->execute();
 
-                $lookupSSN = null;
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                    $lookupSSN = $data[0];
+                    $lookupSSN = null;
+                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                        $lookupSSN = $data[0];
 
-                    $patientArray = array(
-                        'SSN'           => $data[0],
-                        'sourceuid'     => $data[1],
-                        'firstname'     => $data[2],
-                        'lastname'      => $data[3],
-                        'id'            => $data[4],
-                        'id2'           => $data[5],
-                        'dob'           => $data[6],
-                        // YM 2018-12-07
-                        // Using base64base64_encode as a temporary patch for now so that the user is able to create an account
-                        // Need to fine a better solution to inserting an image
-                        'picture'       => base64_encode($data[7]),
-                        'sex'           => $data[8]
-                    );
+                        $patientArray = array(
+                            'SSN'           => $data[0],
+                            'sourceuid'     => $data[1],
+                            'firstname'     => $data[2],
+                            'lastname'      => $data[3],
+                            'id'            => $data[4],
+                            'id2'           => $data[5],
+                            'dob'           => $data[6],
+                            // YM 2018-12-07
+                            // Using base64base64_encode as a temporary patch for now so that the user is able to create an account
+                            // Need to fine a better solution to inserting an image
+                            'picture'       => base64_encode($data[7]),
+                            'sex'           => $data[8]
+                        );
 
-                    $patientResponse['data'] = $patientArray;
+                        $patientResponse['data'] = $patientArray;
+                    }
+
+                    if (is_null($lookupSSN)) { // Could not find the ssn
+                        $patientResponse['status'] = 'PatientNotFound';
+                    }
+
+                    return $patientResponse;
                 }
-
-                if (is_null($lookupSSN)) { // Could not find the ssn
-                    $patientResponse['status'] = 'PatientNotFound';
-                }
-
-                return $patientResponse;
             }
 
             // ***********************************
             // WaitRoomManagement
             // ***********************************
-            $sourceDBSer = 2;
-            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
-            if ($source_db_link) {
+            if(in_array(MEDIVISIT_SOURCE_DB, $activeDBSources)) {
+                $source_db_link = $databaseObj->connectToSourceDatabase(MEDIVISIT_SOURCE_DB);
+                if ($source_db_link) {
 
-                $sql = "SELECT 'QUERY_HERE'";
-                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                $query->execute();
+                    $sql = "SELECT 'QUERY_HERE'";
+                    $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                    $query->execute();
 
-                $lookupSSN = null;
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                    //$lookupSSN = $data[0];
+                    $lookupSSN = null;
+                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                        //$lookupSSN = $data[0];
 
-                    // Set appropriate patient information here from query
+                        // Set appropriate patient information here from query
 
-                    //$patientResponse['data'] = $patientArray; // Uncomment for use
+                        //$patientResponse['data'] = $patientArray; // Uncomment for use
+                    }
+
+                    if (is_null($lookupSSN)) { // Could not find the ssn
+                        $patientResponse['status'] = 'PatientNotFound';
+                    }
+
+                    return $patientResponse;
                 }
-
-                if (is_null($lookupSSN)) { // Could not find the ssn
-                    $patientResponse['status'] = 'PatientNotFound';
-                }
-
-                return $patientResponse;
             }
 
             // ***********************************
             // Mosaiq
             // ***********************************
-            $sourceDBSer = 3;
-            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
-            if ($source_db_link) {
+            if(in_array(MOSAIQ_SOURCE_DB, $activeDBSources)) {
+                $source_db_link = $databaseObj->connectToSourceDatabase(MOSAIQ_SOURCE_DB);
+                if ($source_db_link) {
 
-                $sql = "SELECT 'QUERY_HERE'";
-                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-                $query->execute();
+                    $sql = "SELECT 'QUERY_HERE'";
+                    $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                    $query->execute();
 
-                $lookupSSN = null;
-                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                    //$lookupSSN = $data[0];
+                    $lookupSSN = null;
+                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                        //$lookupSSN = $data[0];
 
-                    // Set appropriate patient information here from query
+                        // Set appropriate patient information here from query
 
-                    //$patientResponse['data'] = $patientArray; // Uncomment for use
+                        //$patientResponse['data'] = $patientArray; // Uncomment for use
+                    }
+
+                    if (is_null($lookupSSN)) { // Could not find the ssn
+                        $patientResponse['status'] = 'PatientNotFound';
+                    }
+
+                    return $patientResponse;
                 }
-
-                if (is_null($lookupSSN)) { // Could not find the ssn
-                    $patientResponse['status'] = 'PatientNotFound';
-                }
-
-                return $patientResponse;
             }
 
             return $patientResponse; // return found data
         } catch (PDOException $e) {
-            $patientResponse['status'] = 'Error';
-            $patientResponse['message'] = $e->getMessage();
-            return $patientResponse;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patients list. " . $e->getMessage());
         }
     }
 
@@ -311,14 +304,14 @@ class Patient {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             $sql = "
-      SELECT DISTINCT
-        sq.SecurityQuestionSerNum,
-        sq.QuestionText_$language
-      FROM
-        SecurityQuestion sq
-      WHERE
-        Active = 1
-      ";
+              SELECT DISTINCT
+                sq.SecurityQuestionSerNum,
+                sq.QuestionText_$language
+              FROM
+                SecurityQuestion sq
+              WHERE
+                Active = 1
+              ";
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
@@ -529,7 +522,7 @@ class Patient {
           AND Users.UserType  = 'Patient'
           AND pal.Request     = 'Login'
         ORDER BY
-          pal.DateTime DESC
+          pal.DateTime DESC LIMIT 20000
       ";
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
@@ -753,5 +746,3 @@ class Patient {
         }
     }
 }
-
-?>

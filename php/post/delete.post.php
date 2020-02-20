@@ -1,17 +1,14 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To delete a post */
-	include_once('post.inc');
 
-	$post = new Post; // Object
+include_once('post.inc');
 
-	// Retrieve FORM param
-	$serial = $_POST['serial'];
-	$user 	= $_POST['user'];
+$OAUserId = strip_tags($_POST["OAUser"]["id"]);
+$sessionId = strip_tags($_POST["OAUser"]["sessionid"]);
+$postId = strip_tags($_POST["serial"]);
 
-	// Call function
-	$response = $post->deletePost($serial, $user);
+$postObject = new Post($OAUserId, $sessionId);
+$response["message"] = $postObject->deletePost($postId);
+$response["code"] = HTTP_STATUS_SUCCESS;
 
-	print json_encode($response); // Return response
-
-?>
+header('Content-Type: application/javascript');
+echo json_encode($response);
