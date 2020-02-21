@@ -71,13 +71,13 @@ AddType text/plain .pl .py .cgi
 
 # Tasks/Appts/Docs Section (Alias)
 RewriteRule ^alias/delete/alias php/alias/delete.alias.php [QSA,L]
-RewriteRule ^alias/get/alias-chart-logs api/alias/get.alias_chart_logs.php [QSA,L]
-RewriteRule ^alias/get/alias-details api/alias/get.alias_details.php [QSA,L]
-RewriteRule ^alias/get/alias-list-logs api/alias/get.alias_list_logs.php [QSA,L]
-RewriteRule ^alias/get/aliases api/alias/get.aliases.php [QSA,L]
-RewriteRule ^alias/get/color-tags api/alias/get.color_tags.php [QSA,L]
-RewriteRule ^alias/get/expressions api/alias/get.expressions.php [QSA,L]
-RewriteRule ^alias/get/source-databases api/alias/get.source_databases.php [QSA,L]
+RewriteRule ^alias/get/alias-chart-logs php/alias/get.alias_chart_logs.php [QSA,L]
+RewriteRule ^alias/get/alias-details php/alias/get.alias_details.php [QSA,L]
+RewriteRule ^alias/get/alias-list-logs php/alias/get.alias_list_logs.php [QSA,L]
+RewriteRule ^alias/get/aliases php/alias/get.aliases.php [QSA,L]
+RewriteRule ^alias/get/color-tags php/alias/get.color_tags.php [QSA,L]
+RewriteRule ^alias/get/expressions php/alias/get.expressions.php [QSA,L]
+RewriteRule ^alias/get/source-databases php/alias/get.source_databases.php [QSA,L]
 RewriteRule ^alias/insert/alias php/alias/insert.alias.php [QSA,L]
 RewriteRule ^alias/update/alias php/alias/update.alias.php [QSA,L]
 RewriteRule ^alias/update/publish-flags php/alias/update.alias_publish_flags.php [QSA,L]
@@ -189,14 +189,6 @@ RewriteRule ^questionnaire/get/questionnaires api/questionnaire/get.questionnair
 RewriteRule ^questionnaire/get/questionnaire-details api/questionnaire/get.questionnaire_details.php [QSA,L]
 RewriteRule ^questionnaire/insert/questionnaire php/questionnaire/insert.questionnaire.php [QSA,L]
 RewriteRule ^questionnaire/update/questionnaire php/questionnaire/update.questionnaire.php [QSA,L]
-
-# Publication Tool Section
-#RewriteRule ^publication-tool/update/published-questionnaire-publish-flag php/questionnaire/update.questionnaire_publish_flag.php [QSA,L]
-#RewriteRule ^publication-tool/update/published-questionnaire php/questionnaire/update.published_questionnaire.php [QSA,L]
-#RewriteRule ^publication-tool/get/finalized-questionnaires api/questionnaire/get.finalizedQuestionnaires.php [QSA,L]
-#RewriteRule ^publication-tool/get/published-questionnaire-details api/questionnaire/get.published_questionnaires_details.php [QSA,L]
-#RewriteRule ^publication-tool/get/published-questionnaires api/questionnaire/get.published_questionnaires.php [QSA,L]
-#RewriteRule ^publication-tool/insert/published-questionnaire php/questionnaire/insert.published_questionnaire.php [QSA,L]
 
 # Publication Section
 RewriteRule ^publication/update/publish-flag php/publication/update.publish.flag.php [QSA,L]
