@@ -1,5 +1,6 @@
 <?php
 /**
+ * General SQL config file that is common to all database accesses
  * User: Dominic Bourdua
  * Date: 4/12/2019
  * Time: 3:02 PM

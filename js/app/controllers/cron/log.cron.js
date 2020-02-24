@@ -7,7 +7,7 @@ angular.module('opalAdmin.controllers.cron.log', ['ngAnimate', 'ngSanitize', 'ui
 controller('cron.log', function ($scope, $uibModal, $filter, cronCollectionService, Session, $uibModalInstance) {
 
 	// Call our API to get cron logs based on highlighted section
-	cronCollectionService.getSelectedCronListLogs($scope.contentNames).then(function (response) {
+	cronCollectionService.getSelectedCronListLogs($scope.contentNames, Session.retrieveObject('user').id).then(function (response) {
 		$scope.cronListLogs = response.data;
 
 		if ($scope.cronListLogs.appointment || $scope.cronListLogs.document || $scope.cronListLogs.task) {

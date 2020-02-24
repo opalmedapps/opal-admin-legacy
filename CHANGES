@@ -1,3 +1,132 @@
+Version 0.20.0.1:
+ - Merge branch 'staging-publication' into staging
+ - OPAL-179 - Fixed type in table name
+
+Version 0.20.0.0:
+ - Merge branch 'staging-publication' into staging
+ - OPAL-179 - pulled changes from master
+ - Merge branches 'master' and 'staging-publication' of https://gitlab.com/akimosupremo/opalAdmin into staging-publication
+ - OPAL-179 - moved the publication code and added comments
+ - OPAL-179 - make the publications independent of ARIA.
+ - OPAL-179 - finished chart logs and list logs.
+ - Merge branch 'preproduction'
+ - opal-109 - coding publication chart log underway
+ - opal-109 Finished coding the edit front-end and back-end
+ - opal-109 used constant for all clear 200 code
+ - Reactivated submit for edit publication
+ - opal-109 - updated error msg function to be compatible with php 5.3
+ - Fixed bug with hardcoded checkin validation
+ - Reactivated old patient registration module.
+ - Roll back to old patient registration module.
+ - Finished coding the front end of edit publication
+ - Finished coding the front end of edit publication
+ - Merge branches 'master' and 'staging-publication' of https://gitlab.com/akimosupremo/opalAdmin into staging-publication
+ - OPAL-196. Decoupling the Aria connection from the Patient class.
+ - Merge branch 'master' of https://gitlab.com/akimosupremo/opalAdmin into opal-109
+ - Merge branch 'preproduction'
+ - Merge branch 'staging' into preproduction
+ - OPAL-195. Decoupling the Aria connection from the Filter class.
+ - Merge branch 'preproduction'
+ - Merge branch 'staging' into preproduction
+ - OPAL-194. Decoupling the Aria connection from the Lab Results module.
+ - OPAL-193. Decoupling the Aria connection from the Diagnosis module.
+ - OPAL-109. Decoupling the Aria connection from the Alias module.
+ - Changes to the edit publications for the publish date
+ - Coding for loading some triggers when edition publication still underway.
+ - Coding for loading some triggers when edition publication still underway.
+ - Coding for loading some triggers when edition publication still underway.
+ - Finished add publication section.
+ - Removed triggers section from Educational Material.
+ - Fixed a bug with the cron logs where post logs cannot being displayed.
+ - Modified the Post front end and refactor Post chart logs
+ - insertion of publication for post done.
+ - insertion of publication for questionnaire done.
+ - Adding publication validation on the frequency/occurrence
+ - Adding publication validation
+ - Validating triggers integrity
+ - Coding of add publication done.
+ - Removed duplicates from doctors and machines triggers.
+ - Fixing diagnosis and appoitment listing.
+ - Redone patient section selection
+ - Redone patient section selection
+ - Debugging filter manupilation list
+ - Separated validation and menu display in left in a different sets of watch controller.
+ - Separated validation and menu display in left in a different sets of watch controller.
+ - Refactoring the code of the add publication page
+ - Updated publication front-end to make at least one trigger required
+ - Separated the triggers from the post structure.
+ - Updated error mesg from server side and hiding publication tools section the questionnaire module.
+ - Adding missing components to the angularJS module.
+ - Adding missing components to the angularJS module.
+ - Adding missing components to the angularJS module.
+ - Coding triggers condition in add publication
+ - Fixed config files
+ - Deleted all legacy questionnaire references and code.
+ - Working on the add publication tool.
+ - Merge branch 'preproduction'
+ - Merge branch 'develop' into preproduction
+ - Merge branch 'staging' into develop
+ - Merge branch 'preproduction'
+ - Merge branch 'develop' into preproduction
+ - Merge branch 'staging' into develop
+ - Add publication page in development
+ - Updated code for modules
+ - Coded publish flag for publication.
+ - Updated publication view.
+ - Updated config files
+ - Updated config files
+ - Updating for publication tools and changed names of post in french
+ - Creating files for publication tools
+ - Merge branch 'staging'
+ - Merge branch 'staging' into preproduction
+ - Merge branch 'staging' into develop
+ - Merge branch 'staging'
+ - Merge branch 'staging' into preproduction
+ - Merge branch 'staging' into develop
+ - Merge branch 'staging' into develop
+ - Merge branch 'preproduction'
+ - Merge branch 'staging' into preproduction
+ - Merge branch 'preproduction'
+ - Merge branch 'staging' into preproduction
+ - Merge branch 'hotfix-0.18.19.2'
+ - Merge branch 'hotfix-0.18.19.2' into preproduction
+ - Merge branch 'hotfix-0.18.19.2' into develop
+ - Merge branch 'hotfix-0.18.19.1' into preproduction
+ - Merge branch 'hotfix-0.18.19.1' into develop
+ - Merge branch 'staging' into preproduction
+ - Merge branch 'staging' into develop
+ - Merge branch 'hotfix-0.18.17.7' into preproduction
+ - Merge branch 'staging' into preproduction
+ - Merge branch 'staging' into preproduction
+ - Merge branch 'master' into preproduction
+ - Merge branch 'hotfix-0.18.17.6' into preproduction
+ - Merge branch 'hotfix-0.18.17.5' into preproduction
+ - Merge branch 'hotfix-0.18.17.4' into preproduction
+ - Merge branch 'hotfix-0.18.17.3' into preproduction
+ - Merge branch 'hotfix-0.18.17.2' into preproduction
+ - Merge remote-tracking branch 'origin/master' into preproduction
+ - Merge branch 'master' into preproduction
+ - Merge branch 'hotfix-0.18.16.17' into preproduction
+ - Merge branch 'hotfix-0.18.16.16' into preproduction
+ - Merge branch 'hotfix-0.18.16.15' into preproduction
+ - Merge branch 'hotfix-0.18.16.14' into preproduction
+ - Merge branch 'hotfix-0.18.16.13' into preproduction
+ - Merge branch 'hotfix-0.18.16.12' into preproduction
+ - Merge branch 'hotfix-0.18.16.11' into preproduction
+ - Merge branch 'hotfix-0.18.16.10' into preproduction
+ - Merge branch 'hotfix-0.18.16.9' into preproduction
+ - Merge branch 'hotfix-0.18.16.8' into preproduction
+ - Merge branch 'hotfix-0.18.16.7' into preproduction
+ - Merge branch 'hotfix-0.18.16.6' into preproduction
+ - Merge branch 'hotfix-0.18.16.5' into preproduction
+ - Merge branch 'hotfix-0.18.16.4' into preproduction
+ -    --- remove file
+ - Merge branch 'hotfix-0.18.16.3' into preproduction
+ - Merge branch 'hotfix-0.18.16.2' into preproduction
+ - Merge branch 'hotfix-0.18.16.1' into preproduction
+ - Merge branch 'preproduction' of https://gitlab.com/akimosupremo/opalAdmin into preproduction
+ - Merge branch 'hotfix-0.18.16.1' into preproduction
+
 Version 0.19.1.1:
  -     -- Removed the print statement
 

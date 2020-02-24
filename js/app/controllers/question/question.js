@@ -84,13 +84,15 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 			},
 		};
 
-		// Call our API service to get the list of existing questions
-		questionnaireCollectionService.getQuestions(Session.retrieveObject('user').id).then(function (response) {
-			$scope.questionList = response.data;
+		function getQuestionsList() {
+			questionnaireCollectionService.getQuestions(Session.retrieveObject('user').id).then(function (response) {
+				$scope.questionList = response.data;
+			}).catch(function(err) {
+				alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.ERROR_QUESTIONS') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+			});
+		}
 
-		}).catch(function(response) {
-			alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.ERROR_QUESTIONS') + "\r\n\r\n" + response.status + " - " + response.data);
-		});
+		getQuestionsList();
 
 		// Banner
 		$scope.bannerMessage = "";
@@ -130,12 +132,7 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 			// after update, refresh data
 			modalInstance.result.then(function () {
 				$scope.questionList = [];
-				// Call our API service to get the list of existing questions
-				questionnaireCollectionService.getQuestions(Session.retrieveObject('user').id).then(function (response) {
-					$scope.questionList = response.data;
-				}).catch(function(response) {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.ERROR_QUESTIONS') + "\r\n\r\n" + response.status + " - " + response.data);
-				});
+				getQuestionsList();
 			});
 		};
 
@@ -166,12 +163,7 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 			// After delete, refresh the eduMat list
 			modalInstance.result.then(function () {
 				$scope.questionList = [];
-				// update data
-				questionnaireCollectionService.getQuestions(Session.retrieveObject('user').id).then(function (response) {
-					$scope.questionList = response.data;
-				}).catch(function (response) {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_LIST.ERROR_QUESTIONS') + "\r\n\r\n" + response.status + " - " + response.data);
-				});
+				getQuestionsList();
 			});
 		};
 
