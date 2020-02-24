@@ -245,6 +245,17 @@ class Questionnaire extends QuestionnaireModule {
     }
 
     /**
+     *
+     * Gets list logs of legacy questionnaires during one or many cron sessions
+     *
+     * @param array $serials : a list of cron log serial numbers
+     * @return array $questionnaireLogs : the legacy questionnaire logs for table view
+     */
+    public function getQuestionnaireListLogs($ids) {
+        return $this->opalDB->getQuestionnaireListLogs($ids);
+    }
+
+    /**
      * Mark a questionnaire as deleted. First, it get the last time it was updated, check if the user has the proper
      * authorization, and check if the questionnaire was already sent to a patient. Then it checked if the record was
      * updated in the meantime, and if not, it marks the questionnaire as being deleted.
@@ -284,15 +295,12 @@ class Questionnaire extends QuestionnaireModule {
             $response['message'] = 200;
             return $response;
         }
-        else if (!$nobodyUpdated) {
-            $response['value'] = false; // conflict error. Somebody already updated the question or record does not exists.
-            $response['message'] = 409;
-            return $response;
-        } else {
-            $response['value'] = false; // Question locked.
-            $response['message'] = 423;
-            return $response;
-        }
+        else if (!$nobodyUpdated)
+            // conflict error. Somebody already updated the question or record does not exists.
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Conflict error with the questionnaire.");
+        else
+            // Questionnaire locked.
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Questionnaire locked.");
     }
 
     /*

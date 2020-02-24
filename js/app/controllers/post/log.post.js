@@ -5,7 +5,7 @@ angular.module('opalAdmin.controllers.post.log', ['ngAnimate', 'ngSanitize', 'ui
  * Controller for the post logs
  *******************************************************************************/
 controller('post.log', function ($scope, $uibModal, $filter, postCollectionService, Session, $uibModalInstance) {
-	postCollectionService.getPostChartLogs($scope.currentPost.serial, $scope.currentPost.type).then(function (response) {
+	postCollectionService.getPostChartLogs($scope.currentPost.serial, $scope.currentPost.type, Session.retrieveObject('user').id).then(function (response) {
 		$scope.postChartLogs = $scope.chartConfig.series = response.data;
 		angular.forEach($scope.postChartLogs, function(serie) {
 			angular.forEach(serie.data, function(log) {
@@ -55,7 +55,8 @@ controller('post.log', function ($scope, $uibModal, $filter, postCollectionServi
 						});
 						// convert set to array
 						cronSerials = Array.from(cronSerials);
-						postCollectionService.getPostListLogs(cronSerials, $scope.currentPost.type).then(function(response){
+						postCollectionService.getPostListLogs(cronSerials, $scope.currentPost.type, Session.retrieveObject('user').id).then(function(response){
+							console.log("4: " + cronSerials + " " + $scope.currentPost.type);
 							$scope.postListLogs = response.data;
 						});
 					}
@@ -91,7 +92,8 @@ controller('post.log', function ($scope, $uibModal, $filter, postCollectionServi
 					events: {
 						select: function(point) {
 							var cronLogSerNum = [point.target.cron_serial];
-							postCollectionService.getPostListLogs(cronLogSerNum, $scope.currentPost.type).then(function(response){
+							postCollectionService.getPostListLogs(cronLogSerNum, $scope.currentPost.type, Session.retrieveObject('user').id).then(function(response){
+								console.log("3: " + cronLogSerNum + " " + $scope.currentPost.type);
 								$scope.postListLogs = response.data;
 							});
 						},
