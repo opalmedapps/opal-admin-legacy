@@ -1,10 +1,12 @@
 <?php
 
-header('Content-Type: application/javascript');
 include_once('post.inc');
 
-$serial = strip_tags($_POST['serial']);
-$post = new Post; // Object
-$postDetails = $post->getPostDetails($serial);
+$postId = strip_tags($_POST['postId']);
+$OAUserId = strip_tags($_POST['OAUserId']);
+$post = new Post($OAUserId); // Object
+$response = $post->getPostDetails($postId);
 
-echo json_encode($postDetails);
+header('Content-Type: application/javascript');
+$response['code'] = HTTP_STATUS_SUCCESS;
+echo json_encode($response);

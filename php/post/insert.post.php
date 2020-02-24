@@ -1,23 +1,17 @@
 <?php
 
-	/* To insert a newly created post */
-	include_once('post.inc');
+include_once('post.inc');
 
-	// Construct array from FORM params
-	$postArray	= array(
-		'name_EN'				=> $_POST['name_EN'],
-		'name_FR'				=> $_POST['name_FR'],
-		'body_EN'				=> filter_var($_POST['body_EN'], FILTER_SANITIZE_MAGIC_QUOTES),
-		'body_FR'				=> filter_var($_POST['body_FR'], FILTER_SANITIZE_MAGIC_QUOTES),
-		'publish_date'	=> $_POST['publish_date'],
-		'triggers'			=> $_POST['triggers'],
-		'type'					=> $_POST['type']['name'],
-		'user'					=> $_POST['user']
-	);
+$OAUserId = strip_tags($_POST["OAUser"]["id"]);
+$sessionId = strip_tags($_POST["OAUser"]["sessionid"]);
 
-	$postObject = new Post; // Object
+$sanitizedPost = Post::validateAndSanitize($_POST);
+if(!$sanitizedPost)
+    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid post format");
 
-	// Call function
-	$postObject->insertPost($postArray);
+$postObject = new Post($OAUserId, $sessionId);
+$postObject->insertPost($sanitizedPost);
 
-?>
+header('Content-Type: application/javascript');
+$response['code'] = HTTP_STATUS_SUCCESS;
+echo json_encode($response);
