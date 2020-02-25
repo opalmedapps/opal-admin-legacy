@@ -831,6 +831,26 @@ class DatabaseQuestionnaire extends DatabaseAccess
         return $this->_execute($sqlSelect, $optionsToUpdate);
     }
 
+    function updateLastCheckboxOption($tableName, $parentTableId) {
+        $result = 0;
+        $hardCodedLastOption = array(
+            array("id"=>1,"content"=>"Aucune de ces réponses"),
+            array("id"=>2,"content"=>"None of the above"),
+        );
+
+        foreach($hardCodedLastOption as $option) {
+            $sqlUpdate = str_replace("%%TABLENAME%%", $tableName, SQL_QUESTIONNAIRE_UPDATE_LAST_CHECKBOX_OPTION);
+            $optionsToUpdate = array(
+                array("parameter"=>":parentTableId","variable"=>$parentTableId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":content","variable"=>$option["content"],"data_type"=>PDO::PARAM_STR),
+                array("parameter"=>":languageID","variable"=>$option["id"],"data_type"=>PDO::PARAM_INT)
+            );
+
+            $result += $this->_execute($sqlUpdate, $optionsToUpdate);
+        }
+        return $result;
+    }
+
     /*
      * This function removes all tags associated with a question. Used when deleting a question.
      * @params  Id the question (int)

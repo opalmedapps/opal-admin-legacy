@@ -129,6 +129,10 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 
 		// Call our API service to get the list of diagnosis codes
 		diagnosisCollectionService.getDiagnoses().then(function (response) {
+			if(response.data.length <= 0) {
+				alert($filter('translate')('DIAGNOSIS.ADD.ERROR_NO_DIAGNOSIS_FOUND'));
+				$uibModalInstance.close();
+			}
 			response.data.forEach(function(entry) {
 				if (typeof entry.assigned !== 'undefined') {
 					if ($scope.language.toUpperCase() === "FR")
@@ -138,11 +142,13 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 				}
 			});
 			$scope.diagnosisList = checkAdded(response.data);
-			processingModal.close(); // hide modal
-			processingModal = null; // remove reference
 
 		}).catch(function(response) {
 			alert($filter('translate')('DIAGNOSIS.EDIT.ERROR_DIAGNOSIS') + "\r\n\r\n" + response.status + " - " + response.data);
+			$uibModalInstance.close();
+		}).finally(function() {
+			processingModal.close(); // hide modal
+			processingModal = null; // remove reference
 		});
 
 	}).catch(function(response) {
@@ -288,7 +294,7 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 			// Submit form
 			$.ajax({
 				type: "POST",
-				url: "diagnosis-translation/update/diagnosis-transalation",
+				url: "diagnosis-translation/update/diagnosis-translation",
 				data: $scope.diagnosisTranslation,
 				success: function (response) {
 					response = JSON.parse(response);
@@ -301,10 +307,11 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 					else {
 						alert($filter('translate')('DIAGNOSIS.EDIT.ERROR_UPDATE'));
 					}
-					$uibModalInstance.close();
 				},
 				error: function(err) {
 					alert($filter('translate')('DIAGNOSIS.EDIT.ERROR_UPDATE') + "\r\n\r\n" + err.status + " - " + err.statusText);
+				},
+				complete: function () {
 					$uibModalInstance.close();
 				}
 			});
