@@ -36,6 +36,7 @@ define("OPAL_TXT_TEAM_MSG_MH_TABLE","TxTeamMessageMH");
 define("OPAL_PATIENTS_FOR_PATIENTS_MH_TABLE","PatientsForPatientsMH");
 define("OPAL_EDUCATION_MATERIAL_MH_TABLE","EducationalMaterialMH");
 define("OPAL_CRON_LOG_TABLE","CronLog");
+define("OPAL_SETTING_TABLE","setting");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -305,6 +306,11 @@ define("SQL_OPAL_GET_POST_DETAILS", "
     (SELECT COUNT(*) from ".OPAL_FILTERS_TABLE." f WHERE f.ControlTableSerNum = pc.PostControlSerNum and ControlTable = '".OPAL_POST_TABLE."') AS locked
     FROM ".OPAL_POST_TABLE." pc
     WHERE PostControlSerNum = :PostControlSerNum;
+");
+
+define("SQL_OPAL_GET_SETTINGS", "
+    SELECT * FROM ".OPAL_SETTING_TABLE."
+    WHERE ID = :ID;
 ");
 
 define("SQL_OPAL_UPDATE_POST",
