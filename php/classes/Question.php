@@ -30,6 +30,8 @@ class Question extends QuestionnaireModule {
         $validatedQuestion = array(
             "question_EN"=>strip_tags($questionToSanitize['question_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
             "question_FR"=>strip_tags($questionToSanitize['question_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "display_EN"=>strip_tags($questionToSanitize['display_EN'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+            "display_FR"=>strip_tags($questionToSanitize['display_FR'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),
             "typeId"=>strip_tags($questionToSanitize['typeId']),
             "OAUserId"=>strip_tags($questionToSanitize['OAUserId']),
         );
@@ -50,7 +52,7 @@ class Question extends QuestionnaireModule {
         $validatedQuestion["private"] = strip_tags($questionToSanitize['private']) == PRIVATE_RECORD ?  PRIVATE_RECORD : PUBLIC_RECORD;
         $validatedQuestion["final"] = strip_tags($questionToSanitize['final']) == FINAL_RECORD ? FINAL_RECORD : NON_FINAL_RECORD;
 
-        if ($validatedQuestion["question_EN"] == "" || $validatedQuestion["question_FR"] == "" || $validatedQuestion["typeId"] == "")
+        if ($validatedQuestion["question_EN"] == "" || $validatedQuestion["question_FR"] == "" || $validatedQuestion["display_EN"] == "" || $validatedQuestion["display_FR"] == "" || $validatedQuestion["typeId"] == "")
             return false;
 
         $options = array();
@@ -107,9 +109,12 @@ class Question extends QuestionnaireModule {
         $toInsert = array(FRENCH_LANGUAGE=>$questionDetails['question_FR'], ENGLISH_LANGUAGE=>$questionDetails['question_EN']);
         $contentId = $this->questionnaireDB->addToDictionary($toInsert, QUESTION_TABLE);
 
-        //For now the display and definition texts are empty and not being used. But later it will be implemented
-        $toInsert = array(FRENCH_LANGUAGE=>"", ENGLISH_LANGUAGE=>"");
+        //Insert the display text into the dictionary
+        $toInsert = array(FRENCH_LANGUAGE=>$questionDetails['display_FR'], ENGLISH_LANGUAGE=>$questionDetails['display_EN']);
         $displayId = $this->questionnaireDB->addToDictionary($toInsert, QUESTION_TABLE);
+
+        //For now the definition texts are empty and not being used. But later it will be implemented
+        $toInsert = array(FRENCH_LANGUAGE=>"", ENGLISH_LANGUAGE=>"");
         $definitionId = $this->questionnaireDB->addToDictionary($toInsert, QUESTION_TABLE);
 
         //Prepare and insert the question into the question table
@@ -183,6 +188,8 @@ class Question extends QuestionnaireModule {
                 ));
             }
             $this->questionnaireDB->insertCheckboxOption($recordsToInsert);
+            $this->questionnaireDB->updateLastCheckboxOption(CHECKBOX_OPTION_TABLE, $questionOptionId);
+
         }
         else if ($validTemplateQuestion["subTableName"] == RADIO_BUTTON_OPTION_TABLE) {
             if(count($validTemplateQuestion["options"]) <= 0)
@@ -242,7 +249,6 @@ class Question extends QuestionnaireModule {
         }
         return $questions;
     }
-
 
     /*
      * List all the finalized questions ready to be sent to patients. We do not want to include draft or deleted
@@ -529,6 +535,8 @@ class Question extends QuestionnaireModule {
         unset($options["ID"]);
 
         $total += $this->questionnaireDB->updateOptionsForQuestion(CHECKBOX_TABLE, $tempId, $options);
+        $total += $this->questionnaireDB->updateLastCheckboxOption(CHECKBOX_OPTION_TABLE, $tempId);
+
         return $total;
     }
 
@@ -669,8 +677,22 @@ class Question extends QuestionnaireModule {
                 "contentId"=>$oldQuestion["question"],
             ),
         );
-
         $total += $this->questionnaireDB->updateDictionary($toUpdateDict, QUESTION_TABLE);
+
+        $toUpdateDict = array(
+            array(
+                "content"=>$updatedQuestion["display_FR"],
+                "languageId"=>FRENCH_LANGUAGE,
+                "contentId"=>$oldQuestion["display"],
+            ),
+            array(
+                "content"=>$updatedQuestion["display_EN"],
+                "languageId"=>ENGLISH_LANGUAGE,
+                "contentId"=>$oldQuestion["display"],
+            ),
+        );
+        $total += $this->questionnaireDB->updateDictionary($toUpdateDict, QUESTION_TABLE);
+
         $toUpdateQuestion = array(
             "ID"=>$oldQuestion["ID"],
             "private"=>$updatedQuestion["private"],
@@ -692,7 +714,7 @@ class Question extends QuestionnaireModule {
 
     /**
      * Mark a question as deleted. First, it get the last time it was updated, check if the user has the proper
-     * authorization, and check if the question was already sent to a patient. Then it checked if the record was
+     * authorization, and check if the question was already published. Then it checked if the record was
      * updated in the meantime, and if not, it marks the question as being deleted.
      *
      * WARNING!!! No record should be EVER be removed from the questionnaire database! It should only being marked as
@@ -750,15 +772,12 @@ class Question extends QuestionnaireModule {
             $response['message'] = 200;
             return $response;
         }
-        else if (!$nobodyUpdated) {
-            $response['value'] = false; // conflict error. Somebody already updated the question or record does not exists.
-            $response['message'] = 409;
-            return $response;
-        } else {
-            $response['value'] = false; // Question locked.
-            $response['message'] = 423;
-            return $response;
-        }
+        else if (!$nobodyUpdated)
+            // conflict error. Somebody already updated the question or record does not exists.
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Conflict error on the question.");
+        else
+            // Question has being already published, it is now locked.
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Question locked.");
     }
 }
 ?>

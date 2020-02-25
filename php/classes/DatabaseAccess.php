@@ -8,15 +8,10 @@
 
 class DatabaseAccess extends HelpSetup
 {
-    /*
-     * The following constants are used by the database class to manually insert the creation date by creating an array
-     * of exception fields. WARNING!!! THIS METHOD BYPASS THE BINDPARAM METHOD OF PHP AND CAN CAUSE A SERIOUS SECURITY
-     * RISK! ONLY USE IT IF YOU HAVE THE APPROVAL OF THE TEAM!
-     * */
-
     protected $connection;
     protected $serverName;
     protected $port;
+    protected $dsn;
     protected $usernameDB;
     protected $password;
     protected $databaseName;
@@ -26,7 +21,11 @@ class DatabaseAccess extends HelpSetup
     protected $userRole;
 
     /* constructor that connects to the database */
-    function __construct($newServer = "localhost", $newDB = "", $newPort = "3306", $newUserDB = "root", $newPass = "", $newUserId = false) {
+    function __construct($newServer = "localhost", $newDB = "", $newPort = "3306", $newUserDB = "root", $newPass = "", $dsn = false, $newUserId = false) {
+        if(!$dsn)
+            $this->dsn = "mysql:host=$newServer;port=$newPort;dbname=$newDB";
+        else
+            $this->dsn = $dsn;
         $this->serverName = $newServer;
         $this->port = $newPort;
         $this->usernameDB = $newUserDB;
@@ -114,9 +113,7 @@ class DatabaseAccess extends HelpSetup
      * */
     protected function _connectTo() {
         try {
-            $this->connection = new PDO(
-                "mysql:host=$this->serverName;port=$this->port;dbname=$this->databaseName", $this->usernameDB, $this->password,
-                array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+            $this->connection = new PDO($this->dsn, $this->usernameDB, $this->password, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
         catch(PDOException $e) {
@@ -401,5 +398,14 @@ class DatabaseAccess extends HelpSetup
         }
 
         return $this->_execute($sqlQuery, $ready);
+    }
+
+    /*
+     * Fetch a specific query for the triggers
+     * @params  void
+     * @return  array of triggers
+     * */
+    function fetchTriggersData($sqlToFetch) {
+        return $this->_fetchAll($sqlToFetch, array());
     }
 }

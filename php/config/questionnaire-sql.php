@@ -351,6 +351,8 @@ define("SQL_QUESTIONNAIRE_GET_QUESTION_DETAILS",
     q.question,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.question AND d.languageId = ".ENGLISH_LANGUAGE.") AS question_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.question AND d.languageId = ".FRENCH_LANGUAGE.") AS question_FR,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.display AND d.languageId = ".ENGLISH_LANGUAGE.") AS display_EN,
+    (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = q.display AND d.languageId = ".FRENCH_LANGUAGE.") AS display_FR,
     q.typeId,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = t.description AND d.languageId = ".ENGLISH_LANGUAGE.") AS type_EN,
     (SELECT d.content FROM ".DICTIONARY_TABLE." d WHERE d.contentId = t.description AND d.languageId = ".FRENCH_LANGUAGE.") AS type_FR,
@@ -501,10 +503,10 @@ define("SQL_QUESTIONNAIRE_FORCE_UPDATE_UPDATEDBY",
 
 define("SQL_QUESTIONNAIRE_UPDATE_QUESTIONNAIRE",
     "UPDATE ".QUESTIONNAIRE_TABLE."
-    SET updatedBy = :updatedBy, private = :private, final = :final
+    SET updatedBy = :updatedBy, private = :private, final = :final, visualization = :visualization
     WHERE ID = :ID
     AND (private = 0 OR OAUserId = :OAUserId)
-    AND (private != :private OR final != :final) 
+    AND (private != :private OR final != :final OR visualization != :visualization) 
     AND deleted = ".NON_DELETED_RECORD.";"
 );
 
@@ -593,3 +595,8 @@ define("SQL_QUESTIONNAIRE_FETCH_ALL_FINAL_QUESTIONNAIRES",
     FROM ".QUESTIONNAIRE_TABLE." q
     WHERE q.final = ".FINAL_RECORD." AND q.deleted = ".NON_DELETED_RECORD." AND (OAUserId = :OAUserId OR private = 0);"
 );
+
+define("SQL_QUESTIONNAIRE_UPDATE_LAST_CHECKBOX_OPTION",
+    "UPDATE dictionary d RIGHT JOIN %%TABLENAME%% tn ON d.contentId = tn.description SET d.content = :content WHERE tn.parentTableId = :parentTableId AND d.languageID = :languageID AND tn.order = (SELECT MAX(tn.order) FROM %%TABLENAME%% tn WHERE tn.parentTableId = :parentTableId) and d.content != :content;"
+);
+

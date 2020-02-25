@@ -45,14 +45,6 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 	var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 		'ng-click="grid.appScope.editPost(row.entity)">' +
 		'<strong><a href="">{{row.entity.name_'+ Session.retrieveObject('user').language +'}}</a></strong></div>';
-	var cellTemplatePublishCheckbox = '<div style="text-align: center; cursor: pointer;" ' +
-		'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
-		'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
-		'ng-checked="grid.appScope.updateFlag(row.entity.publish)" ng-model="row.entity.publish"></div>';
-	// var cellTemplateDisableCheckbox = '<div style="text-align:center; cursor:pointer;" ' +
-	// 	'ng-click="grid.appScope.checkDisabledFlag(row.entity)" ' +
-	// 	'class="ui-grid-cell-contents"><input style="margin:4px;" type="checkbox" ' +
-	// 	'ng-checked="grid.appScope.updateFlag(row.entity.disabled)" ng-model="row.entity.disabled"></div>';
 	var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
 		'<strong><a href="" ng-click="grid.appScope.showPostLog(row.entity)"><i title="'+$filter('translate')('POSTS.LIST.LOGS')+'" class="fa fa-area-chart" aria-hidden="true"></i></a></strong> ' +
 		'- <strong><a href="" ng-click="grid.appScope.editPost(row.entity)"><i title="'+$filter('translate')('POSTS.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ' +
@@ -60,6 +52,9 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 	var rowTemplate = '<div ng-class="{\'grid-disabled-row\':row.entity.disabled==1}"> ' +
 		'<div ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" ' +
 		'class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }" ui-grid-cell></div></div>';
+	var cellTemplateLocked = '<div class="ui-grid-cell-contents" ng-show="row.entity.locked > 0"><div class="fa fa-lock text-danger"></div></div>' +
+		'<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 0"><div class="fa fa-unlock text-success"></div></div>';
+
 
 	// post table search textbox param
 	$scope.filterOptions = function (renderableRows) {
@@ -90,16 +85,16 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 	$scope.gridOptions = {
 		data: 'postList',
 		columnDefs: [
-			{ field: 'name_'+ Session.retrieveObject('user').language, displayName: $filter('translate')('POSTS.LIST.TITLE_POST'), cellTemplate: cellTemplateName, width: '40%', enableColumnMenu: false },
+			{ field: 'locked', enableColumnMenu: false, displayName: '', cellTemplate: cellTemplateLocked, width: '2%', sortable: false, enableFiltering: false},
+			{ field: 'name_'+ Session.retrieveObject('user').language, displayName: $filter('translate')('POSTS.LIST.TITLE_POST'), cellTemplate: cellTemplateName, width: '63%', enableColumnMenu: false },
 			{
 				field: 'type_display', enableColumnMenu: false, displayName: $filter('translate')('POSTS.LIST.TYPE'), width: '25%', filter: {
 					type: uiGridConstants.filter.SELECT,
 					selectOptions: [{ value: $filter('translate')('POSTS.LIST.ANNOUNCEMENT'), label: $filter('translate')('POSTS.LIST.ANNOUNCEMENT') }, { value: $filter('translate')('POSTS.LIST.PATIENTS_FOR_PATIENTS'), label: $filter('translate')('POSTS.LIST.PATIENTS_FOR_PATIENTS') }, { value: $filter('translate')('POSTS.LIST.TREATMENT_TEAM_MESSAGE'), label: $filter('translate')('POSTS.LIST.TREATMENT_TEAM_MESSAGE') }]
 				}
 			},
-			{ field: 'publish', enableColumnMenu: false, displayName: $filter('translate')('POSTS.LIST.PUBLISH_FLAG'), width: '10%', cellTemplate: cellTemplatePublishCheckbox, enableFiltering: false },
-			{ field: 'publish_date', enableColumnMenu: false, displayName: $filter('translate')('POSTS.LIST.PUBLISH_DATE'), width: '15%' },
-//			{ field: 'disabled', displayName: 'Disabled Flag', width: '10%', cellTemplate: cellTemplateDisableCheckbox, filter: { term: 0 } },
+			// { field: 'publish', enableColumnMenu: false, displayName: $filter('translate')('POSTS.LIST.PUBLISH_FLAG'), width: '10%', cellTemplate: cellTemplatePublishCheckbox, enableFiltering: false },
+			// { field: 'publish_date', enableColumnMenu: false, displayName: $filter('translate')('POSTS.LIST.PUBLISH_DATE'), width: '15%' },
 			{ name: $filter('translate')('POSTS.LIST.OPERATIONS'), enableColumnMenu: false, cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '10%' }
 		],
 		//useExternalFiltering: true,
@@ -218,7 +213,7 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 	};
 
 	function getPostsList() {
-		postCollectionService.getPosts().then(function (response) {
+		postCollectionService.getPosts(Session.retrieveObject('user').id).then(function (response) {
 			response.data.forEach(function (row) {
 				if (Session.retrieveObject('user').language.toUpperCase() === "FR") {
 					switch(row.type) {
@@ -313,7 +308,7 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 						});
 						// convert set to array
 						cronSerials = Array.from(cronSerials);
-						postCollectionService.getPostListLogs(cronSerials, $scope.currentPost.type).then(function(response){
+						postCollectionService.getPostListLogs(cronSerials, $scope.currentPost.type, Session.retrieveObject('user').id).then(function(response){
 							response.data.forEach(function (row) {
 								if (Session.retrieveObject('user').language.toUpperCase() === "FR") {
 									switch(row.type) {
@@ -365,7 +360,7 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 					events: {
 						select: function(point) {
 							var cronLogSerNum = [point.target.cron_serial];
-							postCollectionService.getPostListLogs(cronLogSerNum, $scope.currentPost.type).then(function(response){
+							postCollectionService.getPostListLogs(cronLogSerNum, $scope.currentPost.type, Session.retrieveObject('user').id).then(function(response){
 								response.data.forEach(function (row) {
 									if (Session.retrieveObject('user').language.toUpperCase() === "FR") {
 										switch(row.type) {
@@ -465,13 +460,26 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 		// Assign selected post as the post to delete
 		$scope.postToDelete = currentPost;
 		$scope.postToDelete.name_display = (Session.retrieveObject('user').language.toUpperCase() === "FR"?currentPost.name_FR:currentPost.name_EN);
-		var modalInstance = $uibModal.open({
-			templateUrl: 'templates/post/delete.post.html',
-			controller: 'post.delete',
-			windowClass: 'deleteModal',
-			scope: $scope,
-			backdrop: 'static',
-		});
+
+
+		if(currentPost.locked > 0) {
+			var modalInstance = $uibModal.open({
+				templateUrl: 'templates/post/cannot.delete.post.html',
+				controller: 'post.delete',
+				windowClass: 'deleteModal',
+				scope: $scope,
+				backdrop: 'static',
+			});
+		}
+		else {
+			var modalInstance = $uibModal.open({
+				templateUrl: 'templates/post/delete.post.html',
+				controller: 'post.delete',
+				windowClass: 'deleteModal',
+				scope: $scope,
+				backdrop: 'static',
+			});
+		}
 
 		// After delete, refresh the post list
 		modalInstance.result.then(function () {
