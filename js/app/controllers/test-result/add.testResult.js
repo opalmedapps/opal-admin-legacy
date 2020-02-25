@@ -130,13 +130,19 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 
 	// Call our API to get the list of tests
 	testResultCollectionService.getTestNames().then(function (response) {
+		if(response.data.length <= 0) {
+			alert($filter('translate')('TEST.ADD.ERROR_NO_TEST_FOUND'));
+			$state.go('test-result');
+		}
 		$scope.testList = response.data;
-		processingModal.close(); // hide modal
-		processingModal = null; // remove reference
 		$scope.formLoaded = true;
 		$scope.loadForm();
 	}).catch(function(response) {
 		alert($filter('translate')('TEST.ADD.ERROR_TEST') + "\r\n\r\n" + response.status + " - " + response.data);
+		$state.go('test-result');
+	}).finally(function () {
+		processingModal.close(); // hide modal
+		processingModal = null; // remove reference
 	});
 
 	// Function to toggle necessary changes when updating title and description

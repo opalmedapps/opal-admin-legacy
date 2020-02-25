@@ -5,7 +5,6 @@
  */
 class Questionnaire extends QuestionnaireModule {
 
-
     /*
      * This function returns a list of questionnaire an user can access
      * @param   void
@@ -77,13 +76,14 @@ class Questionnaire extends QuestionnaireModule {
                 if ($questionId != 0)
                     array_push($arrIds, $questionId);
                 $optional = intval(strip_tags($question["optional"]));
+                $typeId = intval(strip_tags($question["typeId"]));
 
-                if($order <= 0 || $questionId <= 0) {
+                if($order <= 0 || $questionId <= 0 || $typeId <= 0) {
                     return false;
                     break;
                 }
 
-                array_push($options, array("order"=>$order,"questionId"=>$questionId,"optional"=>$optional));
+                array_push($options, array("order"=>$order,"questionId"=>$questionId,"optional"=>$optional,"typeId"=>$typeId));
             }
         else
             return false;
@@ -201,6 +201,9 @@ class Questionnaire extends QuestionnaireModule {
         $nickname = $this->questionnaireDB->addToDictionary($toInsert, QUESTIONNAIRE_TABLE);
         $instruction = $this->questionnaireDB->addToDictionary($toInsert, QUESTIONNAIRE_TABLE);
 
+        foreach($newQuestionnaire["questions"] as &$question)
+            $question["sectionId"] = $sectionId;
+
         $toInsert = array(
             "title"=>$title,
             "nickname"=>$nickname,
@@ -208,6 +211,17 @@ class Questionnaire extends QuestionnaireModule {
             "instruction"=>$instruction,
             "private"=>$newQuestionnaire["private"],
         );
+
+        /*
+         * Because the ORMS system is unable to recognize what kind of format of visualization it must use for any new
+         * questionnaire created (because an array was hardcoded manually with the questionnaire IDs on ORMS side which
+         * is a VERY BAD IDEA), we have to change the visualization type here. This section of code should be changed
+         * ASAP once the code will be properly on ORMS side (which means probably never)
+         * */
+        foreach($newQuestionnaire["questions"] as &$question) {
+            if ($question["typeId"] == SLIDERS)
+                $toInsert["visualization"] = 1;
+        }
 
         $questionnaireId = $this->questionnaireDB->insertQuestionnaire($toInsert);
 
@@ -222,10 +236,23 @@ class Questionnaire extends QuestionnaireModule {
         );
 
         $sectionId = $this->questionnaireDB->insertSection($toInsert);
-        foreach($newQuestionnaire["questions"] as &$question)
+        foreach($newQuestionnaire["questions"] as &$question) {
+            unset($question["typeId"]);
             $question["sectionId"] = $sectionId;
+        }
 
         $this->questionnaireDB->insertQuestionsIntoSection($newQuestionnaire["questions"]);
+    }
+
+    /**
+     *
+     * Gets list logs of legacy questionnaires during one or many cron sessions
+     *
+     * @param array $serials : a list of cron log serial numbers
+     * @return array $questionnaireLogs : the legacy questionnaire logs for table view
+     */
+    public function getQuestionnaireListLogs($ids) {
+        return $this->opalDB->getQuestionnaireListLogs($ids);
     }
 
     /**
@@ -268,15 +295,12 @@ class Questionnaire extends QuestionnaireModule {
             $response['message'] = 200;
             return $response;
         }
-        else if (!$nobodyUpdated) {
-            $response['value'] = false; // conflict error. Somebody already updated the question or record does not exists.
-            $response['message'] = 409;
-            return $response;
-        } else {
-            $response['value'] = false; // Question locked.
-            $response['message'] = 423;
-            return $response;
-        }
+        else if (!$nobodyUpdated)
+            // conflict error. Somebody already updated the question or record does not exists.
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Conflict error with the questionnaire.");
+        else
+            // Questionnaire locked.
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Questionnaire locked.");
     }
 
     /*
@@ -296,6 +320,7 @@ class Questionnaire extends QuestionnaireModule {
         $updatedQuestions = array();
         $questionsToKeep = array();
         $questionCheckPrivacy = array();
+        $visualization = 0;
 
         //Get current questionnaire infos
         $oldQuestionnaire = $this->getQuestionnaireDetails($updatedQuestionnaire["ID"]);
@@ -309,7 +334,16 @@ class Questionnaire extends QuestionnaireModule {
                 array_push($oldQuestions, $question["ID"]);
 
         //Prepare the list of questions to keep, to update and to insert
+        /*
+         * Because the ORMS system is unable to recognize what kind of format of visualization it must use for any new
+         * questionnaire created (because an array was hardcoded manually with the questionnaire IDs on ORMS side which
+         * is a VERY BAD IDEA), we have to change the visualization type here. This section of code should be changed
+         * ASAP once the code will be properly on ORMS side (which means probably never)
+         * */
         foreach($updatedQuestionnaire["questions"] as $question) {
+            if ($question["typeId"] == SLIDERS)
+                $visualization = 1;
+            unset($question["typeId"]);
             array_push($questionCheckPrivacy, $question["questionId"]);
             if (!in_array($question["questionId"], $questionsToKeep))
                 array_push($questionsToKeep, $question["questionId"]);
@@ -381,6 +415,7 @@ class Questionnaire extends QuestionnaireModule {
             "ID"=>$oldQuestionnaire["ID"],
             "private"=>$updatedQuestionnaire["private"],
             "final"=>$updatedQuestionnaire["final"],
+            "visualization"=>$visualization,
         );
         $questionnaireUpdated = $this->questionnaireDB->updateQuestionnaire($toUpdate);
 

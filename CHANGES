@@ -1,3 +1,363 @@
+Version 0.20.0.1:
+ - Merge branch 'staging-publication' into staging
+ - OPAL-179 - Fixed type in table name
+
+Version 0.20.0.0:
+ - Merge branch 'staging-publication' into staging
+ - OPAL-179 - pulled changes from master
+ - Merge branches 'master' and 'staging-publication' of https://gitlab.com/akimosupremo/opalAdmin into staging-publication
+ - OPAL-179 - moved the publication code and added comments
+ - OPAL-179 - make the publications independent of ARIA.
+ - OPAL-179 - finished chart logs and list logs.
+ - Merge branch 'preproduction'
+ - opal-109 - coding publication chart log underway
+ - opal-109 Finished coding the edit front-end and back-end
+ - opal-109 used constant for all clear 200 code
+ - Reactivated submit for edit publication
+ - opal-109 - updated error msg function to be compatible with php 5.3
+ - Fixed bug with hardcoded checkin validation
+ - Reactivated old patient registration module.
+ - Roll back to old patient registration module.
+ - Finished coding the front end of edit publication
+ - Finished coding the front end of edit publication
+ - Merge branches 'master' and 'staging-publication' of https://gitlab.com/akimosupremo/opalAdmin into staging-publication
+ - OPAL-196. Decoupling the Aria connection from the Patient class.
+ - Merge branch 'master' of https://gitlab.com/akimosupremo/opalAdmin into opal-109
+ - Merge branch 'preproduction'
+ - Merge branch 'staging' into preproduction
+ - OPAL-195. Decoupling the Aria connection from the Filter class.
+ - Merge branch 'preproduction'
+ - Merge branch 'staging' into preproduction
+ - OPAL-194. Decoupling the Aria connection from the Lab Results module.
+ - OPAL-193. Decoupling the Aria connection from the Diagnosis module.
+ - OPAL-109. Decoupling the Aria connection from the Alias module.
+ - Changes to the edit publications for the publish date
+ - Coding for loading some triggers when edition publication still underway.
+ - Coding for loading some triggers when edition publication still underway.
+ - Coding for loading some triggers when edition publication still underway.
+ - Finished add publication section.
+ - Removed triggers section from Educational Material.
+ - Fixed a bug with the cron logs where post logs cannot being displayed.
+ - Modified the Post front end and refactor Post chart logs
+ - insertion of publication for post done.
+ - insertion of publication for questionnaire done.
+ - Adding publication validation on the frequency/occurrence
+ - Adding publication validation
+ - Validating triggers integrity
+ - Coding of add publication done.
+ - Removed duplicates from doctors and machines triggers.
+ - Fixing diagnosis and appoitment listing.
+ - Redone patient section selection
+ - Redone patient section selection
+ - Debugging filter manupilation list
+ - Separated validation and menu display in left in a different sets of watch controller.
+ - Separated validation and menu display in left in a different sets of watch controller.
+ - Refactoring the code of the add publication page
+ - Updated publication front-end to make at least one trigger required
+ - Separated the triggers from the post structure.
+ - Updated error mesg from server side and hiding publication tools section the questionnaire module.
+ - Adding missing components to the angularJS module.
+ - Adding missing components to the angularJS module.
+ - Adding missing components to the angularJS module.
+ - Coding triggers condition in add publication
+ - Fixed config files
+ - Deleted all legacy questionnaire references and code.
+ - Working on the add publication tool.
+ - Merge branch 'preproduction'
+ - Merge branch 'develop' into preproduction
+ - Merge branch 'staging' into develop
+ - Merge branch 'preproduction'
+ - Merge branch 'develop' into preproduction
+ - Merge branch 'staging' into develop
+ - Add publication page in development
+ - Updated code for modules
+ - Coded publish flag for publication.
+ - Updated publication view.
+ - Updated config files
+ - Updated config files
+ - Updating for publication tools and changed names of post in french
+ - Creating files for publication tools
+ - Merge branch 'staging'
+ - Merge branch 'staging' into preproduction
+ - Merge branch 'staging' into develop
+ - Merge branch 'staging'
+ - Merge branch 'staging' into preproduction
+ - Merge branch 'staging' into develop
+ - Merge branch 'staging' into develop
+ - Merge branch 'preproduction'
+ - Merge branch 'staging' into preproduction
+ - Merge branch 'preproduction'
+ - Merge branch 'staging' into preproduction
+ - Merge branch 'hotfix-0.18.19.2'
+ - Merge branch 'hotfix-0.18.19.2' into preproduction
+ - Merge branch 'hotfix-0.18.19.2' into develop
+ - Merge branch 'hotfix-0.18.19.1' into preproduction
+ - Merge branch 'hotfix-0.18.19.1' into develop
+ - Merge branch 'staging' into preproduction
+ - Merge branch 'staging' into develop
+ - Merge branch 'hotfix-0.18.17.7' into preproduction
+ - Merge branch 'staging' into preproduction
+ - Merge branch 'staging' into preproduction
+ - Merge branch 'master' into preproduction
+ - Merge branch 'hotfix-0.18.17.6' into preproduction
+ - Merge branch 'hotfix-0.18.17.5' into preproduction
+ - Merge branch 'hotfix-0.18.17.4' into preproduction
+ - Merge branch 'hotfix-0.18.17.3' into preproduction
+ - Merge branch 'hotfix-0.18.17.2' into preproduction
+ - Merge remote-tracking branch 'origin/master' into preproduction
+ - Merge branch 'master' into preproduction
+ - Merge branch 'hotfix-0.18.16.17' into preproduction
+ - Merge branch 'hotfix-0.18.16.16' into preproduction
+ - Merge branch 'hotfix-0.18.16.15' into preproduction
+ - Merge branch 'hotfix-0.18.16.14' into preproduction
+ - Merge branch 'hotfix-0.18.16.13' into preproduction
+ - Merge branch 'hotfix-0.18.16.12' into preproduction
+ - Merge branch 'hotfix-0.18.16.11' into preproduction
+ - Merge branch 'hotfix-0.18.16.10' into preproduction
+ - Merge branch 'hotfix-0.18.16.9' into preproduction
+ - Merge branch 'hotfix-0.18.16.8' into preproduction
+ - Merge branch 'hotfix-0.18.16.7' into preproduction
+ - Merge branch 'hotfix-0.18.16.6' into preproduction
+ - Merge branch 'hotfix-0.18.16.5' into preproduction
+ - Merge branch 'hotfix-0.18.16.4' into preproduction
+ -    --- remove file
+ - Merge branch 'hotfix-0.18.16.3' into preproduction
+ - Merge branch 'hotfix-0.18.16.2' into preproduction
+ - Merge branch 'hotfix-0.18.16.1' into preproduction
+ - Merge branch 'preproduction' of https://gitlab.com/akimosupremo/opalAdmin into preproduction
+ - Merge branch 'hotfix-0.18.16.1' into preproduction
+
+Version 0.19.1.1:
+ -     -- Removed the print statement
+
+Version 0.19.1.0:
+ -     -- comment out the iOS push notification test
+ -     -- Removed the filter for the lab results to fetch all     -- Small changes to the push notification to work with PHP7
+
+Version 0.19.0.0:
+ - Merge branch 'staging-questionnaire-translation' of https://gitlab.com/akimosupremo/opalAdmin into staging
+ - Added visualization field for questionnaire
+ - Merge branch 'staging-questionnaire-translation' of https://gitlab.com/akimosupremo/opalAdmin into staging
+ - Fixed a bug with wrong ID sent
+ - Merge branch 'staging-questionnaire-translation' of https://gitlab.com/akimosupremo/opalAdmin into staging
+ - Forcing last option of checkbox list to be "none of the above" because of the qplus app which requires it.
+ - Changed french text warning for checkbox question.
+ - Merge branch 'staging-questionnaire-translation' into staging
+ - Added warning message for checkbox options
+ - Merge branch 'staging-test-merge' into staging
+ - Hide legacy questionnaire section
+ - Made sure questionnaire descriptions exist.
+ - Added display support for questions
+ - Fixed a bug in question edit
+ - Updated SQL field and table names
+ - Translated users logs page
+ - Translated users logs page
+ - Fixed translation typos and mistakes
+ - Fixed translation typos in French and English.
+ - Fixed bugs in the translation diagnosis details with educational materials
+ - Merge branch 'staging_patientlocation' of https://gitlab.com/akimosupremo/opalAdmin into staging-questionnaire-translation
+ - Checked the language of the browser.
+ - Translated users logs page
+ - Translated users editing page
+ - Translated users adding page
+ - Using temp table an nolock feature in PatientLocation.pm
+ - Translated users adding page
+ - Translated users list page
+ - Translated patients section.
+ - Translated diagnosis translation editing page and Patient list
+ - Translated diagnosis translation editing page
+ - Merge branch 'staging' of https://gitlab.com/akimosupremo/opalAdmin into staging-questionnaire-translation
+ - Merge branch 'staging_patientlocation' into staging
+ - Translated diagnosis translation editing page
+ - Using temp table an nolock feature in PatientLocation.pm
+ - Translated diagnosis translation adding page
+ - Test if we can create a temp table in Aria
+ - Translated diagnosis translation listing and delete page
+ - Translated Email logs page and hide email section for now
+ - Translated Email edit page
+ - Test if we can create a temp table in Aria
+ - Test if we can create a temp table in Aria
+ - Test if we can create a temp table in Aria
+ - Translated Email delete page
+ - Translated Email delete page
+ - Translated Email delete page
+ - Translated Email delete page
+ - Translated Email add page
+ - Translated Email list page
+ - Translated Email list page
+ - Translated Lab Results log page
+ - Translated Lab Results list page
+ - Translated Lab Results add page and updated diagnosis get list to avoid conversion error.
+ - Translated Lab Results delete page and updating database structure
+ - Translated Lab Results list page
+ - Translated aliases log detail page
+ - Translated aliases edit page
+ - Fixed bugs with search fields
+ - Translated aliases add page
+ - Translated aliases delete page
+ - Translated aliases list page
+ - Changed back config files
+ - Translated Cron logs details page
+ - Translated Cron logs main page
+ - Fixed PHP error in getting logs (non static methods) and SQL issue.
+ - Translated notifications log page
+ - Translated notifications edit page
+ - Translated notifications add page
+ - Translated notifications delete page
+ - Translated notifications list page
+ - Translated educational materials edit page.
+ - Translated educational materials add page.
+ - Translated educational materials listing and deletion message.
+ - Finished translating list of edu material
+ - Translated list educational materials
+ - Translated list educational materials
+ - Translating educational material list
+ - Translated edit hospital map section.
+ - Translated add hospital map section.
+ - Merge remote-tracking branch 'origin/staging-questionnaire-translation' into staging
+ - Translated error message while login fails
+ - Merge remote-tracking branch 'origin/staging-questionnaire-translation' into staging
+ - Removed a comma
+ - Merge remote-tracking branch 'origin/staging-questionnaire-translation' into staging
+ - Fixed french typos.
+ - Translated listing and delete of hospital map.
+ - Merge remote-tracking branch 'origin/staging-questionnaire-translation' into staging
+ - Removed junk files
+ - Translated nav bar menu in responsive environment
+ - Updated french/english languages changes
+ - Merge remote-tracking branch 'origin/staging-questionnaire-translation' into staging
+ - Removed console log and added error popup.
+ - Finished translating the Posts module.
+ - Translated edit post page
+ - Translating edit post page
+ - Fixing a bug with htaccess file
+ - Finished translating Posts section.
+ - Translating Post section
+ - Translating Post section
+ - Finished translation of the questionnaire module
+ - Translating updating publication tools.
+ - Finished translating adding a published questionnaire.
+ - Translating update publication tools
+ - Finished translating adding a published questionnaire.
+ - Finished add publication tool
+ - Finished add publication tool
+ - Translating Publication Tools
+ - Translating Publication Tools
+ - Translating Publication Tools
+ - Translated question type listing, delete, add.
+ - Translated question type listing, delete, add.
+ - Finished translating questionnaire section.
+ - Finished translating add questionnaire section and fixed bug with questions selection.
+ - Merge branch 'staging-questionnaire-2019' of https://gitlab.com/akimosupremo/opalAdmin into staging-questionnaire-translation
+ - Fixed a bug where questions where not removed correctly.
+ - Translating add questionnaire section
+ - Finished translating questionnaire listing and deletion
+ - Questions section translation completed
+ - Finished translating question list, adding and deletion.
+ - Adding translation to question list page
+ - Translated login page and account page
+ - Start working the translation
+ - Start working the translation
+ - removed the trigger list from questionnaire
+ - Fixed a bug in htaccess that prevent updating the publication flag
+ - Fixed a bug in question template checkbox when updating the tex
+ - Fixed htaccess entries for templates questions and user.
+ - Update htaccess entries for questionnaire project for questionnaire and template-question sections
+ - Fixed htaccess entries for questionnaire project
+ - Updated htaccess entries for questionnaire project
+ - Merge branch 'staging-security' into staging-questionnaire-2019
+ - Updated database structure
+ - Masked php url for POST method
+ - Changed method of data from GET to POST for post, test-result, user.
+ - Changed method of data from GET to POST for notifications and patients.
+ - Changed method of data from GET to POST for email, filter, hospital-map and legacy-questionnaire.
+ - Changed method of data from GET to POST for application, cron, diagnosis-translation and educational-material.
+ - Changed method of data from GET to POST for all the alias folder.
+ - Changed method of data from GET to POST for all the questionnaire section.
+ - Added warning message and fixed text field.
+ - Hiding completed questionnaires for now since it's not coded yet.
+ - Fixed minor bug and commented code
+ - Finished code to update publication tools
+ - Fixed a bug where SQL variable name was making the system crash on preprod
+ - Fixed a bug where a questionnaire/question was published twice it was not counted as locked.
+ - Finishing the add portion of publication tools
+ - Merge branch 'staging' of https://gitlab.com/akimosupremo/opalAdmin into staging-questionnaire-2019
+ - Removed constants in php classes because the prod and preprod are not supporting them
+ - Changed the path for config classes
+ - Added save changes on the publication tools list.
+ - Modified the fields creationDate from TimeStamp to DateTime because our servers dont support multiple triggers in a same table.
+ - Modified the fields creationDate from TimeStamp to DateTime because our servers dont support multiple triggers in a same table.
+ - Creation of the files for the Publication Tools
+ - Creation of the files for the Publication Tools
+ - Finished coding the template questions tools
+ - Updated bug with getting template question details
+ - Added deletion of section when deleting questionnaire.
+ - Finished renaming type template to template question structures and DB
+ - Renamed type template to template question structures and DB
+ - Finished updated variable names and cleaned up the code
+ - Updated variable names and cleaned up the code
+ - Updated variable names and cleaned up the code
+ - Fixed the code of typos
+ - Finished coding edit response type
+ - Finished coding add response type
+ - Coding the add a response type.
+ - Added listing view and deletion for Question Type
+ - Started creating the question type section
+ - Fixed bugs with wrong re-ordering
+ - Reverted back without HTML support for questions for now
+ - Reverted back without HTML support for questions for now
+ - Added HTML support
+ - Added questionnaire description.
+ - Added comments to the code and did some cleaned-up
+ - Finished editing questionnaire tool.
+ - Added ordering tools when creating questionnaire
+ - changed userId for OAUserId
+ - Finished editing questionnaire on front-end. Working now on the back end part.
+ - Editing questionnaire, getting data in the back-end
+ - Editing questionnaire, getting data in the back-end
+ - Adding and deleting questionnaires done.
+ - Adding questionnaire listing and creation (not completed yet).
+ - Force update a question if any external fields are modified (libraries, options, etc) but not the question table itself.
+ - Updated database structure and removed fake data
+ - Finished editing question for sliders
+ - Securing transmitted data and validating integrity of ids
+ - Updating the options of questions for checkbox and radio buttons in progress
+ - Updating the options of questions in progress
+ - Refactor the code in modules and separated classes
+ - Too much change to track down. Still working on updating libraries when some are private to another users.
+ - Updating the dictionary and question details
+ - Updating the libraries of a question
+ - Validation on client side for editing a question done.
+ - Edition of libraries and checkbox/radio changed
+ - Edition of libraries and checkbox/radio changed
+ - Merge branch 'staging' of https://gitlab.com/akimosupremo/opalAdmin into staging-questionnaire-2019
+ - Added slider edition support
+ - Coding edit question, library section.
+ - Returning all details of a question
+ - Adjusted html of the private section.
+ - Removed test and console code
+ - Added multiple libraries support when creating a question
+ - Started getting info for the edit questions
+ - Added private setting for questions
+ - Removed test code
+ - Added question insert code into api.
+ - Cleaned up the code and updated status codes
+ - Almost done with insertion of questions
+ - Starting coding the libraries section when adding a question
+ - Finished coding the new question types
+ - Completed insert type questions for checkbox
+ - Adding question types saving options
+ - Added verification check on server and returning error code to the client
+ - Added verification check on server and returning error code to the client
+ - Added database access classes to opalAdmin
+ - Configured the question type template when creating a question.
+ - Added verification check on server and returning error code to the client
+ - Preparing changes for questions types and adding a question
+ - Preparing changes for questions types and adding a question
+ - Finished modifying the questions listings
+ - Modified the listing of the questions and deletion
+ - Started modifying the questions listings and fixed filter bug
+
 Version 0.18.19.6:
  - Enabled push notificaiton for appointment changes
 
