@@ -97,6 +97,7 @@ include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseOpal.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseAria.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseDisconnected.php" );
+include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "CronJob.php" );
 //include_once( FRONTEND_ABS_PATH . "php/classes/Upload.php");
 
 // Push Notification FCM and APN credientials.
@@ -126,6 +127,13 @@ define("DEFAULT_TYPE", TEXT_BOX);
 define("ARIA_SOURCE_DB", 1);
 define("MEDIVISIT_SOURCE_DB", 2);
 define("MOSAIQ_SOURCE_DB", 3);
+
+/*
+ * Cron Job configuration
+ * */
+define("SETTING_CRONJOB",1);
+define("ROLE_CRONJOB",8);
+define("OAUSER_CRONJOB",23);
 
 /*
  * Module ID of each module in the opalAdmin
