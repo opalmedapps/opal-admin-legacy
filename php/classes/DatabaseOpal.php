@@ -656,6 +656,12 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_POST_PUBLISH_DATE, $toUpdate);
     }
 
+    function getSettings($settingId) {
+        return $this->_fetch(SQL_OPAL_GET_SETTINGS,
+            array(array("parameter"=>":ID","variable"=>$settingId,"data_type"=>PDO::PARAM_INT))
+        );
+    }
+
     /*
      * This function marks a specific record in a specific table as deleted.
      *
