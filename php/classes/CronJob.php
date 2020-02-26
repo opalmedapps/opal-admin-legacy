@@ -6,13 +6,14 @@
 class CronJob extends OpalProject {
 
     protected $ariaDB;
+    protected $ormsDB;
 
     public function __construct($OAUserId = false, $sessionId = false) {
         if(!$sessionId)
             $sessionId = HelpSetup::makeSessionId();
         parent::__construct($OAUserId);
 
-        if(ARIA_DB_ENABLED)
+        if(ARIA_DB_ENABLED) {
             $this->ariaDB = new DatabaseAria(
                 ARIA_DB_HOST,
                 "",
@@ -21,12 +22,30 @@ class CronJob extends OpalProject {
                 ARIA_DB_PASSWORD,
                 ARIA_DB_DSN
             );
+        }
         else
             $this->ariaDB = new DatabaseDisconnected();
 
         $this->ariaDB->setUsername($this->opalDB->getUsername());
         $this->ariaDB->setOAUserId($this->opalDB->getOAUserId());
         $this->ariaDB->setUserRole($this->opalDB->getUserRole());
+
+        if(WRM_DB_ENABLED) {
+            $this->ormsDB = new DatabaseOrms(
+                WRM_DB_HOST,
+                "",
+                WRM_DB_PORT,
+                WRM_DB_USERNAME,
+                WRM_DB_PASSWORD,
+                WRM_DB_DSN
+            );
+        }
+        else
+            $this->ormsDB = new DatabaseDisconnected();
+
+        $this->ormsDB->setUsername($this->opalDB->getUsername());
+        $this->ormsDB->setOAUserId($this->opalDB->getOAUserId());
+        $this->ormsDB->setUserRole($this->opalDB->getUserRole());
     }
 
     public function incrementLogFile($functionName) {
@@ -57,33 +76,10 @@ class CronJob extends OpalProject {
      * This function updates the aliases lists by connecting to ARIA
      * */
     public function updateAliasesList() {
-
-
-        $this->incrementLogFile(__FUNCTION__);
-
-
-
-
-        echo __FUNCTION__ ."\r\n";
-
-
-
-
-        //Get the last time the source where updated
-        $settings = $this->opalDB->getSettings(SETTING_CRONJOB);
-        $settings = json_decode($settings["setting"], true);
-        $result = HelpSetup::verifyDate($settings["lastUpdated"], false, "Y-m-d H:i:s");
-
-        print_r($this->opalDB->getUserRole());
-        print_r($this->ariaDB->getUserRole());
-
-        if(!$result)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot run the cron job for the alias import. Invalid date format in the setting table.");
-
-
-//       $settings["lastUpdated"]
-
-
+        $toInsert = $this->ariaDB->getAllAliasesToInsert();
+        return $this->opalDB->insertAliases($toInsert);
+        $toInsert = $this->ormsDB->getAppointmentForAlias();
+        return $this->opalDB->insertAliases($toInsert);
     }
 
 

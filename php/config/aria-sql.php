@@ -29,11 +29,11 @@ SELECT DISTINCT
 	act.ObjectStatus AS status,
 	act.HstryDateTime AS lastUpdated
 FROM
-	vv_Activity vva
-	INNER JOIN Activity act ON act.ActivityCode = vva.LookupValue
-	INNER JOIN ActivityCategory ON ActivityCategory.ActivityCategorySer = act.ActivityCategorySer
+	variansystem.dbo.vv_Activity vva
+	INNER JOIN variansystem.dbo.Activity act ON act.ActivityCode = vva.LookupValue
+	INNER JOIN variansystem.dbo.ActivityCategory ON ActivityCategory.ActivityCategorySer = act.ActivityCategorySer
 		AND ActivityCategory.DepartmentSer = vva.SubSelector
-	INNER JOIN ActivityInstance ai ON ai.ActivitySer = act.ActivitySer
+	INNER JOIN variansystem.dbo.ActivityInstance ai ON ai.ActivitySer = act.ActivitySer
 	INNER JOIN (
 		SELECT
 			'2' AS type,
@@ -41,17 +41,16 @@ FROM
 			sa.ActivityInstanceSer,
 			sa.ObjectStatus
 		FROM
-			ScheduledActivity sa
+			variansystem.dbo.ScheduledActivity sa
 		UNION
 		SELECT
 			'1' AS type,
 			nsa.CreationDate,
 			nsa.ActivityInstanceSer,
 			nsa.ObjectStatus
-		FROM NonScheduledActivity nsa
+		FROM variansystem.dbo.NonScheduledActivity nsa
 	) AS Scheduled ON Scheduled.ActivityInstanceSer = ai.ActivityInstanceSer
 		AND Scheduled.CreationDate >= '2018-01-01'
-		AND act.HstryDateTime >= '%%LASTUPDATED%%'
 		AND Scheduled.ObjectStatus = 'Active'
 ORDER BY
 	vva.Expression1
@@ -59,16 +58,14 @@ ORDER BY
 
 define("ARIA_GET_ALIASES_DOC", "
 SELECT DISTINCT
-	note_typ.note_typ AS ID,
-			'3' AS Type,
-	note_typ.note_typ_desc AS Name,
-	note_typ.trans_log_tstamp AS CreationTimestamp,
-	note_typ.trans_log_mtstamp AS ModifiedTimestamp
+	nt.note_typ AS ID,
+			'3' AS type,
+	nt.note_typ_desc AS Name,
+	nt.trans_log_tstamp AS CreationTimestamp,
+	nt.trans_log_mtstamp AS ModifiedTimestamp
 FROM
-	varianenm.dbo.note_typ
-	INNER JOIN varianenm.dbo.visit_note ON visit_note.note_typ = note_typ.note_typ
-		AND visit_note.valid_entry_ind = 'Y'
-WHERE
-	note_typ.trans_log_mtstamp >= '%%LASTUPDATED%%'
+	varianenm.dbo.note_typ nt
+	INNER JOIN varianenm.dbo.visit_note vn ON vn.note_typ = nt.note_typ
+		AND vn.valid_entry_ind = 'Y'
 ORDER BY note_typ_desc;
 ");
