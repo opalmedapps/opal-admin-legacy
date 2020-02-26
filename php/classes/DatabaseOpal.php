@@ -684,4 +684,8 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":SessionId","variable"=>$this->getSessionId(),"data_type"=>PDO::PARAM_STR),
         ));
     }
+
+    function insertAliases($toInsert) {
+        return $this->_insertMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_ALIAS_TABLE, $toInsert);
+    }
 }
