@@ -99,11 +99,23 @@ class Diagnosis {
      * @return array $diagnoses : the list of diagnoses
      */
     public function getDiagnoses() {
-        $diagnoses = array();
-        $databaseObj = new Database();
-        $activeDBSources = $databaseObj->getActiveSourceDatabases();
-
         try {
+            $diagnoses = array();
+            $databaseObj = new Database();
+            $activeDBSources = $databaseObj->getActiveSourceDatabases();
+
+
+            $sql = "SELECT externalId AS sourceuid, diagnosticId AS code FROM masterSourceDiagnostic WHERE deleted = 0 ORDER BY diagnosisId";
+
+
+
+            $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD);
+            $host_db_link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+            $results = $query->fetchAll(PDO::FETCH_ASSOC);
+
+
             // ***********************************
             // ARIA
             // ***********************************
