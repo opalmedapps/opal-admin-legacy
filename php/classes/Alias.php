@@ -14,8 +14,8 @@ class Alias {
      * @param string $expressionType : the type of expressions to look out for
      * @return array $expressionList : the list of existing expressions
      */
-	public function getExpressions ($sourceDBSer, $expressionType) {
-        $expressionList = array();
+    public function getExpressions ($sourceDBSer, $expressionType) {
+        $results = array();
         $databaseObj = new Database();
 
         try {
@@ -23,167 +23,55 @@ class Alias {
             // get already assigned expressions from our database
             $assignedExpressions = $this->getAssignedExpressions($sourceDBSer, $expressionType);
 
-            if($databaseObj->sourceDatabaseIsEnabled($sourceDBSer)) {
+            if ($expressionType == "Task")
+                $type = 1;
+            else if ($expressionType == "Appointment")
+                $type = 2;
+            else
+                $type = 3;
 
-                // ***********************************
-                // ARIA
-                // ***********************************
-                if ($sourceDBSer == ARIA_SOURCE_DB) {
+            if ($sourceDBSer != ARIA_SOURCE_DB && $sourceDBSer != ORMS_SOURCE_DB && $sourceDBSer != MOSAIQ_SOURCE_DB)
+                $sourceDBSer = ARIA_SOURCE_DB;
 
-                    $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
+            if($sourceDBSer == ORMS_SOURCE_DB)
+                $sql = "SELECT code,  CONCAT(code, ' (', expression, ')') AS name, code AS id, expression AS description FROM masterSourceAlias WHERE type = " . $type . " AND source = " . $sourceDBSer . " ORDER BY code";
+            else
+                $sql = "SELECT expression AS name, code AS id, expression AS description FROM masterSourceAlias WHERE type = " . $type . " AND source = " . $sourceDBSer . " ORDER BY code";
 
-                    if ($source_db_link) {
+            $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD);
+            $host_db_link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
+            $results = $query->fetchAll(PDO::FETCH_ASSOC);
 
-                        if ($expressionType != "Document") {
-                            $sql = "
-                            SELECT DISTINCT
-    			    	        vv_ActivityLng.Expression1
-        			        FROM
-    	    			        variansystem.dbo.vv_ActivityLng vv_ActivityLng
-                            ORDER BY
-                                vv_ActivityLng.Expression1
-                        ";
 
-                            $query = $source_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                            $query->execute();
-
-                            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                                $termName = $data[0];
-                                $termArray = array(
-                                    'name' => $termName,
-                                    'id' => $termName,
-                                    'description' => $termName,
-                                    'added' => 0,
-                                    'assigned' => null
-                                );
-
-                                $assignedExpression = $this->assignedSearch($termName, $termName, $assignedExpressions);
-                                if ($assignedExpression) {
-                                    $termArray['added'] = 0;
-                                    $termArray['assigned'] = $assignedExpression;
-                                }
-
-                                array_push($expressionList, $termArray);
-
-                            }
-
-                        } else {
-
-                            $sql = "
-                            SELECT DISTINCT
-                                RTRIM(note_typ.note_typ_desc)
-                            FROM
-                                varianenm.dbo.note_typ note_typ
-                            ORDER BY
-                                RTRIM(note_typ.note_typ_desc)
-                        ";
-
-                            $query = $source_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                            $query->execute();
-
-                            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                                $termName = $data[0];
-
-                                $termArray = array(
-                                    'name' => $termName,
-                                    'id' => $termName,
-                                    'description' => $termName,
-                                    'added' => 0,
-                                    'assigned' => null
-                                );
-
-                                $assignedExpression = $this->assignedSearch($termName, $termName, $assignedExpressions);
-                                if ($assignedExpression) {
-                                    $termArray['added'] = 0;
-                                    $termArray['assigned'] = $assignedExpression;
-                                }
-
-                                array_push($expressionList, $termArray);
-                            }
-                        }
-                    }
-
+            if($sourceDBSer == ORMS_SOURCE_DB)
+                foreach ($results as &$item) {
+                    $assignedExpression = $this->assignedSearch($item["code"], $item["description"], $assignedExpressions);
+                    $item["added"] = 0;
+                    if ($assignedExpression)
+                        $item['assigned'] = $assignedExpression;
+                    else
+                        $item['assigned'] = null;
+                    unset($item["code"]);
+                }
+            else
+                foreach ($results as &$item) {
+                    $assignedExpression = $this->assignedSearch($item["description"], $item["description"], $assignedExpressions);
+                    $item["added"] = 0;
+                    if ($assignedExpression)
+                        $item['assigned'] = $assignedExpression;
+                    else
+                        $item['assigned'] = null;
+                    unset($item["code"]);
                 }
 
-                // ***********************************
-                // WaitRoomManagement
-                // ***********************************
-                if ($sourceDBSer == MEDIVISIT_SOURCE_DB) {
+            return $results;
 
-                    $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
-
-                    if ($source_db_link) {
-
-                        $sql = "
-                        SELECT DISTINCT
-                            mval.AppointmentCode,
-                            mval.ResourceDescription
-                        FROM
-                            MediVisitAppointmentList mval
-                        ORDER BY
-                            mval.AppointmentCode
-                    ";
-
-                        $query = $source_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                        $query->execute();
-
-                        while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                            $termName = $data[0];
-                            $termDesc = $data[1];
-
-                            $termArray = array(
-                                'name' => "$termName ($termDesc)",
-                                'id' => $termName,
-                                'description' => $termDesc,
-                                'added' => 0,
-                                'assigned' => null
-                            );
-
-                            $assignedExpression = $this->assignedSearch($termName, $termDesc, $assignedExpressions);
-                            if ($assignedExpression) {
-                                $termArray['added'] = 0;
-                                $termArray['assigned'] = $assignedExpression;
-                            }
-
-                            array_push($expressionList, $termArray);
-                        }
-                    }
-                }
-
-                // ***********************************
-                // Mosaiq
-                // ***********************************
-                if ($sourceDBSer == MOSAIQ_SOURCE_DB) {
-
-                    $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
-
-                    if ($source_db_link) {
-
-                        $sql = "SELECT 'QUERY_HERE'";
-
-                        $query = $source_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                        $query->execute();
-
-                        while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                            // Set data from query here
-
-                            //array_push($expressionList, $termArray); // Uncomment for use
-                        }
-                    }
-
-                }
-            }
-
-			return $expressionList;
-
-		} catch (PDOException $e) {
+        } catch (PDOException $e) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
-		}
-	}
+        }
+    }
 
     /**
      *
@@ -250,16 +138,16 @@ class Alias {
         );
         $userSer = $user['id'];
         $sessionId = $user['sessionid'];
-		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             foreach ($aliasList as $alias) {
 
-				$aliasUpdate    = $alias['update'];
+                $aliasUpdate    = $alias['update'];
                 $aliasSer       = $alias['serial'];
 
-				$sql = "
+                $sql = "
 					UPDATE
 						Alias
 					SET
@@ -270,8 +158,8 @@ class Alias {
 						Alias.AliasSerNum = $aliasSer
 				";
 
-				$query = $host_db_link->prepare( $sql );
-				$query->execute();
+                $query = $host_db_link->prepare( $sql );
+                $query->execute();
             }
 
             $this->sanitizeEmptyAliases($user);
@@ -279,11 +167,11 @@ class Alias {
             $response['value'] = 1; // Success
             return $response;
 
-		} catch( PDOException $e) {
-			$response['message'] = $e->getMessage();
-			return $response; // Fail
-		}
-	}
+        } catch( PDOException $e) {
+            $response['message'] = $e->getMessage();
+            return $response; // Fail
+        }
+    }
 
     /**
      *
@@ -341,13 +229,13 @@ class Alias {
      *
      * Gets a list of existing color tags
      *
-	 * @param string $aliasType : the alias type
+     * @param string $aliasType : the alias type
      * @return array $colorTags : the list of existing color tags
      */
     public function getColorTags($aliasType) {
         $colorTags = array();
-		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             $sql = "
@@ -363,10 +251,10 @@ class Alias {
                     Alias.AliasName_EN
             ";
 
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
 
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                 $aliasName_EN       = $data[0];
                 $aliasName_FR       = $data[1];
@@ -383,10 +271,10 @@ class Alias {
 
             return $colorTags;
 
-		} catch (PDOException $e) {
-			echo $e->getMessage();
-			return $colorTags;
-		}
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return $colorTags;
+        }
     }
 
     /**
@@ -395,15 +283,15 @@ class Alias {
      *
      * @return array $aliasList : the list of existing aliases
      */
-	public function getAliases() {
-		$aliasList = array();
-		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+    public function getAliases() {
+        $aliasList = array();
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             $activeDB = Database::getActiveSourceDatabases();
 
-			$sql = "
+            $sql = "
 				SELECT DISTINCT
 					Alias.AliasSerNum,
 					Alias.AliasType,
@@ -424,19 +312,19 @@ class Alias {
                     Alias.SourceDatabaseSerNum = SourceDatabase.SourceDatabaseSerNum
 			";
 
-			if(count($activeDB) > 0)
+            if(count($activeDB) > 0)
                 $sql .= " AND Alias.SourceDatabaseSerNum IN (".implode(", ", $activeDB).")";
 
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
 
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-				$aliasSer 	    = $data[0];
-				$aliasType	    = $data[1];
-				$aliasName_FR	= $data[2];
-				$aliasName_EN	= $data[3];
-				$aliasDesc_FR	= $data[4];
+                $aliasSer 	    = $data[0];
+                $aliasType	    = $data[1];
+                $aliasName_FR	= $data[2];
+                $aliasName_EN	= $data[3];
+                $aliasDesc_FR	= $data[4];
                 $aliasDesc_EN	= $data[5];
                 $aliasUpdate    = $data[6];
                 $aliasEduMatSer = $data[7];
@@ -449,7 +337,7 @@ class Alias {
                 $aliasTerms	    = array();
                 $aliasEduMat    = "";
 
-				$sql = "
+                $sql = "
 					SELECT DISTINCT
 						AliasExpression.ExpressionName,
                         AliasExpression.Description
@@ -461,54 +349,54 @@ class Alias {
 					AND AliasExpression.AliasSerNum 	= Alias.AliasSerNum
 				";
 
-				$secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-				$secondQuery->execute();
+                $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $secondQuery->execute();
 
-				while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-					$termName = $secondData[0];
+                    $termName = $secondData[0];
                     $termDesc = $secondData[1];
-					$termArray = array(
-						'id' => $termName,
+                    $termArray = array(
+                        'id' => $termName,
                         'description' => $termDesc,
-						'added'=> 1
-					);
+                        'added'=> 1
+                    );
 
-					array_push($aliasTerms, $termArray);
-				}
+                    array_push($aliasTerms, $termArray);
+                }
 
                 if ($aliasEduMatSer != 0) {
                     $eduMatObj = new EduMaterial();
                     $aliasEduMat = $eduMatObj->getEducationalMaterialDetails($aliasEduMatSer);
                 }
 
-				$aliasArray = array(
-					'name_FR' 		    => $aliasName_FR,
-					'name_EN' 		    => $aliasName_EN,
-					'serial' 		    => $aliasSer,
+                $aliasArray = array(
+                    'name_FR' 		    => $aliasName_FR,
+                    'name_EN' 		    => $aliasName_EN,
+                    'serial' 		    => $aliasSer,
                     'type'			    => $aliasType,
                     'color'             => $aliasColorTag,
                     'update'            => $aliasUpdate,
                     'changed'           => 0,
                     'eduMatSer'         => $aliasEduMatSer,
                     'eduMat'            => $aliasEduMat,
-					'description_EN' 	=> $aliasDesc_EN,
+                    'description_EN' 	=> $aliasDesc_EN,
                     'description_FR' 	=> $aliasDesc_FR,
                     'source_db'         => $sourceDatabase,
                     'lastupdated'       => $aliasLU,
-					'count' 		    => count($aliasTerms),
-					'terms' 		    => $aliasTerms
-				);
+                    'count' 		    => count($aliasTerms),
+                    'terms' 		    => $aliasTerms
+                );
 
-				array_push($aliasList, $aliasArray);
+                array_push($aliasList, $aliasArray);
             }
             return $aliasList;
 
-		} catch (PDOException $e) {
-			echo $e->getMessage();
-			return $aliasList;
-		}
-	}
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return $aliasList;
+        }
+    }
 
     /**
      *
@@ -519,12 +407,12 @@ class Alias {
      */
     public function getAliasDetails ($aliasSer) {
 
-		$aliasDetails = array();
-		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+        $aliasDetails = array();
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-			$sql = "
+            $sql = "
 				SELECT DISTINCT
 					Alias.AliasType,
 					Alias.AliasName_FR,
@@ -546,15 +434,15 @@ class Alias {
 
 			";
 
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
 
-			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
+            $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
 
-			$aliasType	    = $data[0];
-			$aliasName_FR	= $data[1];
-			$aliasName_EN	= $data[2];
-			$aliasDesc_FR	= $data[3];
+            $aliasType	    = $data[0];
+            $aliasName_FR	= $data[1];
+            $aliasName_EN	= $data[2];
+            $aliasDesc_FR	= $data[3];
             $aliasDesc_EN	= $data[4];
             $aliasUpdate    = $data[5];
             $aliasEduMatSer = $data[6];
@@ -567,11 +455,11 @@ class Alias {
 
             $aliasEduMat    = "";
             $hospitalMap    = "";
-			$aliasTerms	    = array();
+            $aliasTerms	    = array();
 
             $checkinDetails = $this->getCheckinDetails($aliasSer, $aliasType);
 
-			$sql = "
+            $sql = "
 				SELECT DISTINCT
 					AliasExpression.ExpressionName,
                     AliasExpression.Description
@@ -581,21 +469,21 @@ class Alias {
 					AliasExpression.AliasSerNum = $aliasSer
 			";
 
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
 
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-					$termName = $data[0];
-                    $termDesc = $data[1];
-					$termArray = array(
-						'id' => $termName,
-                        'description' => $termDesc,
-						'added'=> 1
-					);
+                $termName = $data[0];
+                $termDesc = $data[1];
+                $termArray = array(
+                    'id' => $termName,
+                    'description' => $termDesc,
+                    'added'=> 1
+                );
 
-					array_push($aliasTerms, $termArray);
-			}
+                array_push($aliasTerms, $termArray);
+            }
 
             if ($aliasEduMatSer) {
                 $eduMatObj = new EduMaterial();
@@ -607,32 +495,32 @@ class Alias {
                 $hospitalMap = $hospitalMapObj->getHospitalMapDetails($hospitalMapSer);
             }
 
-			$aliasDetails = array(
-				'name_FR' 		    => $aliasName_FR,
-				'name_EN' 		    => $aliasName_EN,
-				'serial' 		    => $aliasSer,
+            $aliasDetails = array(
+                'name_FR' 		    => $aliasName_FR,
+                'name_EN' 		    => $aliasName_EN,
+                'serial' 		    => $aliasSer,
                 'type'			    => $aliasType,
                 'color'             => $aliasColorTag,
                 'update'            => $aliasUpdate,
                 'eduMatSer'         => $aliasEduMatSer,
                 'eduMat'            => $aliasEduMat,
-				'description_EN' 	=> $aliasDesc_EN,
+                'description_EN' 	=> $aliasDesc_EN,
                 'description_FR' 	=> $aliasDesc_FR,
                 'source_db'         => $sourceDatabase,
-				'count' 		    => count($aliasTerms),
-				'terms' 		    => $aliasTerms,
+                'count' 		    => count($aliasTerms),
+                'terms' 		    => $aliasTerms,
                 'checkin_details'   => $checkinDetails,
                 'hospitalMapSer'    => $hospitalMapSer,
                 'hospitalMap'       => $hospitalMap
-			);
+            );
 
             return $aliasDetails;
 
-		} catch (PDOException $e) {
-			echo $e->getMessage();
-			return $aliasDetails;
-		}
-	}
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return $aliasDetails;
+        }
+    }
 
     /**
      *
@@ -641,15 +529,15 @@ class Alias {
      * @param array $aliasDetails : the alias details
      * @return void
      */
-	public function insertAlias( $aliasDetails ) {
+    public function insertAlias( $aliasDetails ) {
 
-		$aliasName_EN 	= $aliasDetails['name_EN'];
-		$aliasName_FR 	= $aliasDetails['name_FR'];
-		$aliasDesc_EN	= $aliasDetails['description_EN'];
-		$aliasDesc_FR	= $aliasDetails['description_FR'];
+        $aliasName_EN 	= $aliasDetails['name_EN'];
+        $aliasName_FR 	= $aliasDetails['name_FR'];
+        $aliasDesc_EN	= $aliasDetails['description_EN'];
+        $aliasDesc_FR	= $aliasDetails['description_FR'];
         $aliasType	    = $aliasDetails['type']['name'];
         $aliasColorTag  = $aliasDetails['color'];
-		$aliasTerms	    = $aliasDetails['terms'];
+        $aliasTerms	    = $aliasDetails['terms'];
         $userSer        = $aliasDetails['user']['id'];
         $sessionId      = $aliasDetails['user']['sessionid'];
         $checkinDetails = isset($aliasDetails['checkin_details']) ? $aliasDetails['checkin_details'] : null;
@@ -665,10 +553,10 @@ class Alias {
 
         $lastTransferred = ( in_array($aliasType, array('Appointment', 'Task') ) ?  "'2000-01-01 00:00:00'" : "'2019-01-01 00:00:00'" );
 
-		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-			$sql = "
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
 				INSERT INTO
 					Alias (
 						AliasSerNum,
@@ -703,16 +591,16 @@ class Alias {
                     $lastTransferred
 				)
 			";
-			$query = $host_db_link->prepare( $sql );
-			$query->execute();
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
 
-			$aliasSer = $host_db_link->lastInsertId();
+            $aliasSer = $host_db_link->lastInsertId();
 
-			foreach ($aliasTerms as $aliasTerm) {
+            foreach ($aliasTerms as $aliasTerm) {
 
                 $termName = $aliasTerm['id'];
                 $termDesc = $aliasTerm['description'];
-				$sql = "
+                $sql = "
                     INSERT INTO
                         AliasExpression (
                             AliasSerNum,
@@ -735,9 +623,9 @@ class Alias {
                         LastUpdatedBy = '$userSer',
                         SessionId = '$sessionId'
 				";
-				$query = $host_db_link->prepare( $sql );
-				$query->execute();
-			}
+                $query = $host_db_link->prepare( $sql );
+                $query->execute();
+            }
 
             $this->sanitizeEmptyAliases($aliasDetails['user']);
 
@@ -772,10 +660,10 @@ class Alias {
             }
 
 
-		} catch( PDOException $e) {
-			return $e->getMessage();
-		}
-	}
+        } catch( PDOException $e) {
+            return $e->getMessage();
+        }
+    }
 
     /**
      *
@@ -795,9 +683,9 @@ class Alias {
 
         $userSer    = $user['id'];
         $sessionId  = $user['sessionid'];
-		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             $sql = "
                 DELETE FROM
@@ -806,18 +694,18 @@ class Alias {
                     AliasExpression.AliasSerNum = $aliasSer
 			";
 
-			$query = $host_db_link->prepare( $sql );
+            $query = $host_db_link->prepare( $sql );
             $query->execute();
 
-			$sql = "
+            $sql = "
 				DELETE FROM
 					Alias
 				WHERE
 					Alias.AliasSerNum = $aliasSer
 			";
 
-			$query = $host_db_link->prepare( $sql );
-			$query->execute();
+            $query = $host_db_link->prepare( $sql );
+            $query->execute();
 
             $sql = "
                 UPDATE AliasMH
@@ -835,11 +723,11 @@ class Alias {
             $response['value'] = 1; // Success
             return $response;
 
-		} catch( PDOException $e) {
+        } catch( PDOException $e) {
             $response['message'] = $e->getMessage();
-			return $response; // Fail
-		}
-	}
+            return $response; // Fail
+        }
+    }
 
     /**
      *
@@ -850,11 +738,11 @@ class Alias {
      */
     public function updateAlias( $aliasDetails ) {
 
-		$aliasName_EN 	= $aliasDetails['name_EN'];
-		$aliasName_FR 	= $aliasDetails['name_FR'];
-		$aliasDesc_EN	= $aliasDetails['description_EN'];
-		$aliasDesc_FR	= $aliasDetails['description_FR'];
-		$aliasSer	    = $aliasDetails['serial'];
+        $aliasName_EN 	= $aliasDetails['name_EN'];
+        $aliasName_FR 	= $aliasDetails['name_FR'];
+        $aliasDesc_EN	= $aliasDetails['description_EN'];
+        $aliasDesc_FR	= $aliasDetails['description_FR'];
+        $aliasSer	    = $aliasDetails['serial'];
         $aliasTerms	    = $aliasDetails['terms'];
         $aliasEduMatSer = $aliasDetails['edumatser'] ? $aliasDetails['edumatser'] : 'NULL';
         $hospitalMapSer = $aliasDetails['hospitalMapSer'] ? $aliasDetails['hospitalMapSer'] : 'NULL';
@@ -877,12 +765,12 @@ class Alias {
             'message'   => ''
         );
 
-		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             if ($detailsUpdated) {
-    			$sql = "
+                $sql = "
     				UPDATE
     					Alias
     				SET
@@ -899,8 +787,8 @@ class Alias {
     					Alias.AliasSerNum = $aliasSer
     			";
 
-    			$query = $host_db_link->prepare( $sql );
-    			$query->execute();
+                $query = $host_db_link->prepare( $sql );
+                $query->execute();
             }
 
             if ($checkinDetailsUpdated) {
@@ -908,7 +796,7 @@ class Alias {
                 $instruction_EN = $checkinDetails['instruction_EN'];
                 $instruction_FR = $checkinDetails['instruction_FR'];
 
-								$sql = "
+                $sql = "
                     INSERT INTO
                         AppointmentCheckin (
                             AliasSerNum,
@@ -956,7 +844,7 @@ class Alias {
 
             if ($expressionsUpdated) {
 
-    			$sql = "
+                $sql = "
     				SELECT DISTINCT
     					AliasExpression.ExpressionName,
                         AliasExpression.Description
@@ -966,10 +854,10 @@ class Alias {
     					AliasExpression.AliasSerNum = $aliasSer
     			";
 
-    			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-    			$query->execute();
+                $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $query->execute();
 
-    			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                     $termArray = array(
                         'id'          => $data[0],
@@ -977,15 +865,15 @@ class Alias {
                     );
                     array_push($existingTerms, $termArray);
 
-    			}
+                }
 
                 // This loop compares the old terms with the new
                 // If old terms not in new, then remove old
-    			foreach ($existingTerms as $existingTerm) {
+                foreach ($existingTerms as $existingTerm) {
                     $existingTermName = $existingTerm['id'];
                     $existingTermDesc = $existingTerm['description'];
-    				if (!$this->nestedSearch($existingTermName, $existingTermDesc, $aliasTerms)) {
-    					$sql = "
+                    if (!$this->nestedSearch($existingTermName, $existingTermDesc, $aliasTerms)) {
+                        $sql = "
                             DELETE FROM
     							AliasExpression
     						WHERE
@@ -996,8 +884,8 @@ class Alias {
 
                         //echo $sql;
 
-    					$query = $host_db_link->prepare( $sql );
-    					$query->execute();
+                        $query = $host_db_link->prepare( $sql );
+                        $query->execute();
 
                         $sql = "
                             UPDATE AliasExpressionMH
@@ -1012,14 +900,14 @@ class Alias {
                         ";
                         $query = $host_db_link->prepare( $sql );
                         $query->execute();
-    				}
-    			}
+                    }
+                }
 
                 // If new terms, then insert
-    			foreach ($aliasTerms as $term) {
+                foreach ($aliasTerms as $term) {
                     $termName = $term['id'];
                     $termDesc = $term['description'];
-    				if (!$this->nestedSearch($termName, $termDesc, $existingTerms)) {
+                    if (!$this->nestedSearch($termName, $termDesc, $existingTerms)) {
                         $sql = "
                             INSERT INTO
                                 AliasExpression (
@@ -1043,9 +931,9 @@ class Alias {
                                 LastUpdatedBy = '$userSer',
                                 SessionId = '$sessionId'
     					";
-    					$query = $host_db_link->prepare( $sql );
-    					$query->execute();
-    				}
+                        $query = $host_db_link->prepare( $sql );
+                        $query->execute();
+                    }
                 }
             }
 
@@ -1054,11 +942,11 @@ class Alias {
             $response['value'] = 1; // Success
             return $response;
 
-		} catch( PDOException $e) {
-		    $response['message'] = $e->getMessage();
-			return $response; // Fail
-		}
-	}
+        } catch( PDOException $e) {
+            $response['message'] = $e->getMessage();
+            return $response; // Fail
+        }
+    }
 
     /**
      *
@@ -1066,10 +954,10 @@ class Alias {
      *
      * @return array $sourceDBList : the list of source databases
      */
-	public function getSourceDatabases () {
+    public function getSourceDatabases () {
         $sourceDBList = array();
         try {
- 	        $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             $sql = "
@@ -1085,7 +973,7 @@ class Alias {
             ";
 
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
+            $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
@@ -1101,10 +989,10 @@ class Alias {
             return $sourceDBList;
 
         } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $sourceDBList;
-		}
-	}
+            echo $e->getMessage();
+            return $sourceDBList;
+        }
+    }
 
     /**
      *
@@ -1611,25 +1499,25 @@ class Alias {
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                     $logDetails = array (
-                       'expression_name'        => $data[0],
-                       'expression_description' => $data[1],
-                       'revision'               => $data[2],
-                       'cron_serial'            => $data[3],
-                       'patient_serial'         => $data[4],
-                       'source_db'              => $data[5],
-                       'source_uid'             => $data[6],
-                       'status'                 => $data[7],
-                       'state'                  => $data[8],
-                       'scheduled_start'        => $data[9],
-                       'scheduled_end'          => $data[10],
-                       'actual_start'           => $data[11],
-                       'actual_end'             => $data[12],
-                       'room_EN'                => $data[13],
-                       'room_FR'                => $data[14],
-                       'checkin'                => $data[15],
-                       'date_added'             => $data[16],
-                       'read_status'            => $data[17],
-                       'mod_action'             => $data[18]
+                        'expression_name'        => $data[0],
+                        'expression_description' => $data[1],
+                        'revision'               => $data[2],
+                        'cron_serial'            => $data[3],
+                        'patient_serial'         => $data[4],
+                        'source_db'              => $data[5],
+                        'source_uid'             => $data[6],
+                        'status'                 => $data[7],
+                        'state'                  => $data[8],
+                        'scheduled_start'        => $data[9],
+                        'scheduled_end'          => $data[10],
+                        'actual_start'           => $data[11],
+                        'actual_end'             => $data[12],
+                        'room_EN'                => $data[13],
+                        'room_FR'                => $data[14],
+                        'checkin'                => $data[15],
+                        'date_added'             => $data[16],
+                        'read_status'            => $data[17],
+                        'mod_action'             => $data[18]
                     );
                     array_push($aliasLogs, $logDetails);
                 }
@@ -1675,28 +1563,28 @@ class Alias {
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                     $logDetails = array (
-                       'expression_name'        => $data[0],
-                       'expression_description' => $data[1],
-                       'revision'               => $data[2],
-                       'cron_serial'            => $data[3],
-                       'patient_serial'         => $data[4],
-                       'source_db'              => $data[5],
-                       'source_uid'             => $data[6],
-                       'created_by'             => $data[7],
-                       'created_time'           => $data[8],
-                       'approved_by'            => $data[9],
-                       'approved_time'          => $data[10],
-                       'authored_by'            => $data[11],
-                       'dateofservice'          => $data[12],
-                       'revised'                => $data[13],
-                       'valid'                  => $data[14],
-                       'original_file'          => $data[15],
-                       'final_file'             => $data[16],
-                       'transfer'               => $data[17],
-                       'transfer_log'           => $data[18],
-                       'date_added'             => $data[19],
-                       'read_status'            => $data[20],
-                       'mod_action'             => $data[21]
+                        'expression_name'        => $data[0],
+                        'expression_description' => $data[1],
+                        'revision'               => $data[2],
+                        'cron_serial'            => $data[3],
+                        'patient_serial'         => $data[4],
+                        'source_db'              => $data[5],
+                        'source_uid'             => $data[6],
+                        'created_by'             => $data[7],
+                        'created_time'           => $data[8],
+                        'approved_by'            => $data[9],
+                        'approved_time'          => $data[10],
+                        'authored_by'            => $data[11],
+                        'dateofservice'          => $data[12],
+                        'revised'                => $data[13],
+                        'valid'                  => $data[14],
+                        'original_file'          => $data[15],
+                        'final_file'             => $data[16],
+                        'transfer'               => $data[17],
+                        'transfer_log'           => $data[18],
+                        'date_added'             => $data[19],
+                        'read_status'            => $data[20],
+                        'mod_action'             => $data[21]
                     );
                     array_push($aliasLogs, $logDetails);
                 }
@@ -1733,21 +1621,21 @@ class Alias {
                 while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
                     $logDetails = array (
-                       'expression_name'        => $data[0],
-                       'expression_description' => $data[1],
-                       'revision'               => $data[2],
-                       'cron_serial'            => $data[3],
-                       'patient_serial'         => $data[4],
-                       'source_db'              => $data[5],
-                       'source_uid'             => $data[6],
-                       'status'                 => $data[7],
-                       'state'                  => $data[8],
-                       'due_date'               => $data[9],
-                       'creation'               => $data[10],
-                       'completed'              => $data[11],
-                       'date_added'             => $data[12],
-                       'read_status'            => 'N/A',
-                       'mod_action'             => $data[13]
+                        'expression_name'        => $data[0],
+                        'expression_description' => $data[1],
+                        'revision'               => $data[2],
+                        'cron_serial'            => $data[3],
+                        'patient_serial'         => $data[4],
+                        'source_db'              => $data[5],
+                        'source_uid'             => $data[6],
+                        'status'                 => $data[7],
+                        'state'                  => $data[8],
+                        'due_date'               => $data[9],
+                        'creation'               => $data[10],
+                        'completed'              => $data[11],
+                        'date_added'             => $data[12],
+                        'read_status'            => 'N/A',
+                        'mod_action'             => $data[13]
                     );
 
                     array_push($aliasLogs, $logDetails);

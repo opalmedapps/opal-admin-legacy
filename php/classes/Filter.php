@@ -97,12 +97,12 @@ class Filter {
                 }
             }
 
-            if(in_array(MEDIVISIT_SOURCE_DB, $activeDBSources)) {
+            if(in_array(ORMS_SOURCE_DB, $activeDBSources)) {
 
                 // ***********************************
                 // WaitRoomManagement
                 // ***********************************
-                $source_db_link = $databaseObj->connectToSourceDatabase(MEDIVISIT_SOURCE_DB);
+                $source_db_link = $databaseObj->connectToSourceDatabase(ORMS_SOURCE_DB);
                 if ($source_db_link) {
 
                     $sql = "SELECT 'DOCTOR_QUERY_HERE'";

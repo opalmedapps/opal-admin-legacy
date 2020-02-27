@@ -264,7 +264,7 @@ class TestResult {
             // ***********************************
             // WaitRoomManagement
             // ***********************************
-            $sourceDBSer = MEDIVISIT_SOURCE_DB;
+            $sourceDBSer = ORMS_SOURCE_DB;
             $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
             if ($source_db_link) {
 
