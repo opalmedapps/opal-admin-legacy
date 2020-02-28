@@ -103,10 +103,9 @@ class Diagnosis {
             $diagnoses = array();
             $databaseObj = new Database();
             $activeDBSources = $databaseObj->getActiveSourceDatabases();
+            $assignedDiagnoses = $this->getAssignedDiagnoses();
 
-
-            $sql = "SELECT externalId AS sourceuid, diagnosticId AS code FROM masterSourceDiagnostic WHERE deleted = 0 ORDER BY diagnosisId";
-
+            $sql = "SELECT externalId AS sourceuid, diagnosticId AS code, description, CONCAT(diagnosticId, ' (', description, ')') AS name FROM masterSourceDiagnostic WHERE deleted = 0 AND source IN(".implode(",", $activeDBSources).") ORDER BY diagnosticId";
 
 
             $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD);
@@ -115,104 +114,14 @@ class Diagnosis {
             $query->execute();
             $results = $query->fetchAll(PDO::FETCH_ASSOC);
 
-
-            // ***********************************
-            // ARIA
-            // ***********************************
-            if(in_array(ARIA_SOURCE_DB, $activeDBSources)) {
-                $source_db_link = $databaseObj->connectToSourceDatabase(ARIA_SOURCE_DB);
-                if ($source_db_link) {
-
-                    // get already assigned diagnoses from our database
-                    $assignedDiagnoses = $this->getAssignedDiagnoses();
-
-                    $sql = "
-					SELECT DISTINCT
-						-- get min because for some reason there are multiple diagnosis ser for many codes
-						-- min will never change so its good enough as a unique id
-						MIN(dx.DiagnosisSer),
-						dx.DiagnosisId,
-						RTRIM(REPLACE(REPLACE(dx.Description,'Malignant neoplasm','malignant neoplasm'),'malignant neoplasm','Ca'))
-					FROM
-						variansystem.dbo.Diagnosis dx
-					WHERE
-						dx.ObjectStatus = 'Active'
-					GROUP BY 
-						dx.DiagnosisId,
-						RTRIM(REPLACE(REPLACE(dx.Description,'Malignant neoplasm','malignant neoplasm'),'malignant neoplasm','Ca'))
-					ORDER BY
-						dx.DiagnosisId
-				";
-                    $query = $source_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                    $query->execute();
-
-                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                        $sourceUID = $data[0];
-                        $diagnosisCode = $data[1];
-                        $description = $data[2];
-
-                        $diagnosisDetails = array(
-                            'sourceuid' => $sourceUID,
-                            'code' => $diagnosisCode,
-                            'description' => utf8_encode($description),
-                            'name' => utf8_encode("$diagnosisCode ($description)"),
-                            'added' => 0,
-//                        'assigned'		=> null
-                        );
-
-                        $assignedDiagnosis = $this->assignedSearch($sourceUID, $assignedDiagnoses);
-                        if ($assignedDiagnosis) {
-                            $diagnosisDetails['added'] = 0;
-                            $diagnosisDetails['assigned'] = $assignedDiagnosis;
-                        }
-                        array_push($diagnoses, $diagnosisDetails);
-                    }
-
-
-                }
+            foreach($results as &$item) {
+                $assignedDiagnosis = $this->assignedSearch($item["sourceuid"], $assignedDiagnoses);
+                $item['added'] = 0;
+                if ($assignedDiagnosis)
+                    $item['assigned'] = $assignedDiagnosis;
             }
 
-            // ***********************************
-            // WaitRoomManagement
-            // ***********************************
-            if(in_array(ORMS_SOURCE_DB, $activeDBSources)) {
-                $source_db_link = $databaseObj->connectToSourceDatabase(ORMS_SOURCE_DB);
-                if ($source_db_link) {
-
-                    $sql = "SELECT 'QUERY_HERE'";
-                    $query = $source_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                    $query->execute();
-                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                        // Set appropriate diagnosis data here from query
-
-                        //array_push($diagnoses, $diagnosisDetails); // Uncomment for use
-                    }
-                }
-            }
-
-            // ***********************************
-            // Mosaiq
-            // ***********************************
-            if(in_array(MOSAIQ_SOURCE_DB, $activeDBSources)) {
-                $source_db_link = $databaseObj->connectToSourceDatabase(MOSAIQ_SOURCE_DB);
-                if ($source_db_link) {
-
-                    $sql = "SELECT 'QUERY_HERE'";
-                    $query = $source_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                    $query->execute();
-
-                    while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                        // Set appropriate diagnosis data here from query
-
-                        //array_push($diagnoses, $diagnosisDetails); // Uncomment for use
-                    }
-                }
-            }
-
-            return $diagnoses;
+            return $results;
         } catch (PDOException $e) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for diagnostics. " . $e->getMessage());
         }
