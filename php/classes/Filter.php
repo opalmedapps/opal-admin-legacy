@@ -41,8 +41,8 @@ class Filter {
                         Doctor.LastName,
                         Doctor.FirstName
                     FROM
-                        variansystem.dbo.Doctor Doctor,
-                        variansystem.dbo.PatientDoctor PatientDoctor
+                        Doctor Doctor,
+                        PatientDoctor PatientDoctor
                     WHERE 
                         PatientDoctor.PrimaryFlag       = 1
                     AND PatientDoctor.OncologistFlag    = 1
@@ -71,7 +71,7 @@ class Filter {
                         vr.ResourceSer,
                         vr.ResourceName
                     FROM    
-                        variansystem.dbo.vv_ResourceName vr
+                        vv_ResourceName vr
                     WHERE
                         vr.ResourceName     LIKE 'STX%'
                     OR  vr.ResourceName     LIKE 'TB%'

@@ -235,16 +235,16 @@ sub getResourceAppointmentsFromSourceDB
 						PatientInfo.PatientSerNum,
 						lt.Expression1
 					FROM
-						variansystem.dbo.Patient pt,
-						variansystem.dbo.Attendee att,
-						variansystem.dbo.ScheduledActivity sa,
-						variansystem.dbo.ActivityInstance ai,
-						variansystem.dbo.Activity Activity,
-						variansystem.dbo.LookupTable lt,
+						Patient pt,
+						Attendee att,
+						ScheduledActivity sa,
+						ActivityInstance ai,
+						Activity Activity,
+						LookupTable lt,
 						PatientInfo
 					WHERE
 						sa.ActivityInstanceSer		= ai.ActivityInstanceSer
-					AND sa.PatientSer = (select pt.PatientSer from variansystem.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+					AND sa.PatientSer = (select pt.PatientSer from Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
 					AND ai.ActivitySer			    = Activity.ActivitySer
 					AND	Activity.ActivityCode		= lt.LookupValue
 					AND	ai.ActivityInstanceSer		= att.ActivityInstanceSer
