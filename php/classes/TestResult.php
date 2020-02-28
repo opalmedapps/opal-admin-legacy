@@ -237,7 +237,7 @@ class TestResult {
                     SELECT DISTINCT
                         tr.comp_name
                     FROM
-                        varianenm.dbo.test_result tr
+                        test_result tr
                 ";
                 $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
                 $query->execute();

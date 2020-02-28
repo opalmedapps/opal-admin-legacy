@@ -230,10 +230,10 @@ class OpalCheckin{
         // The first subquery gets the list of todays Schedule Activity of a patient
         // The top query gets the list of Schedule Activity Serial Number that exist in the patient location table (indicate that the patient have successfully checked in)
         $sql = "SELECT ScheduledActivitySer AS AppointmentSerNum
-                FROM variansystem.dbo.PatientLocation
+                FROM PatientLocation
                 WHERE ScheduledActivitySer IN
                   (SELECT ScheduledActivity.ScheduledActivitySer
-                  FROM variansystem.dbo.Patient, variansystem.dbo.ScheduledActivity
+                  FROM Patient, ScheduledActivity
                   WHERE Patient.PatientSer = ScheduledActivity.PatientSer
                     AND Patient.PatientId = '$patientId'
                     AND LEFT(CONVERT(VARCHAR, ScheduledActivity.ScheduledStartTime, 120), 10) = LEFT(CONVERT(VARCHAR, getdate() - 0, 120), 10)
