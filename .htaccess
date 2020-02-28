@@ -102,6 +102,13 @@ RewriteRule ^diagnosis-translation/get/diagnoses api/diagnosis-translation/get.d
 RewriteRule ^diagnosis-translation/insert/diagnosis-translation php/diagnosis-translation/insert.diagnosis_translation.php [QSA,L]
 RewriteRule ^diagnosis-translation/update/diagnosis-translation php/diagnosis-translation/update.diagnosis_translation.php [QSA,L]
 
+# Custom Codes Section
+RewriteRule ^custom-codes/delete/custom-code php/custom-code/delete.custom_code.php [QSA,L]
+RewriteRule ^custom-codes/get/custom-code-details php/custom-code/get.custom_code_details.php [QSA,L]
+RewriteRule ^custom-codes/get/custom-codes php/custom-code/get.custom_code.php [QSA,L]
+RewriteRule ^custom-codes/insert/custom-code php/custom-code/insert.custom_code.php [QSA,L]
+RewriteRule ^custom-codes/update/custom-code php/custom-code/update.custom_code.php [QSA,L]
+
 # Educational Material Section
 RewriteRule ^educational-material/delete/educational-material php/educational-material/delete.educational_material.php [QSA,L]
 RewriteRule ^educational-material/get/educational-material-chart-logs api/educational-material/get.educational_material_chart_logs.php [QSA,L]
