@@ -102,7 +102,6 @@ class OpalCheckin{
         $apts = self::getTodaysAppointments($patientId);
         if($apts['failure']) return self::ErrorResponse($apts['error']);
 		else $apts = $apts['data'];
-
         //If aria appointments exist...
         if(count($apts[0]) > 0){
 
@@ -226,33 +225,31 @@ class OpalCheckin{
      * @throws Exception
      */
     private static function getCheckedInAriaAppointments($patientId){
-
-        // Create DB connection  **** CURRENTLY OPAL_DB POINTS TO ARIA ****
-        $conn = mssql_connect(ARIA_DB_HOST, ARIA_DB_USERNAME, ARIA_DB_PASSWORD);
-
-        // Check connections
-        if (!$conn) {
-            throw new Exception('Something went wrong while connecting to MSSQL');
-        }
+        $host_db_link = new PDO(ARIA_DB_DSN, ARIA_DB_USERNAME, ARIA_DB_PASSWORD);
 
         // The first subquery gets the list of todays Schedule Activity of a patient
         // The top query gets the list of Schedule Activity Serial Number that exist in the patient location table (indicate that the patient have successfully checked in)
-        $sql = "Select ScheduledActivitySer as AppointmentSerNum
-                From variansystem.dbo.PatientLocation
-                Where ScheduledActivitySer IN
-                  (Select ScheduledActivity.ScheduledActivitySer
-                  From variansystem.dbo.Patient, variansystem.dbo.ScheduledActivity
-                  Where Patient.PatientSer = ScheduledActivity.PatientSer
+        $sql = "SELECT ScheduledActivitySer AS AppointmentSerNum
+                FROM variansystem.dbo.PatientLocation
+                WHERE ScheduledActivitySer IN
+                  (SELECT ScheduledActivity.ScheduledActivitySer
+                  FROM variansystem.dbo.Patient, variansystem.dbo.ScheduledActivity
+                  WHERE Patient.PatientSer = ScheduledActivity.PatientSer
                     AND Patient.PatientId = '$patientId'
-                    AND left(convert(varchar, ScheduledActivity.ScheduledStartTime, 120), 10) = left(convert(varchar, getdate() - 0, 120), 10)
+                    AND LEFT(CONVERT(VARCHAR, ScheduledActivity.ScheduledStartTime, 120), 10) = LEFT(CONVERT(VARCHAR, getdate() - 0, 120), 10)
                   )
                 AND CheckedInFlag = 1";
 
-        $resultAria = mssql_query($sql);
+
+        $host_db_link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+        $query->execute();
+        $resultAria = $query->fetchAll(PDO::FETCH_ASSOC);
+
 
         $apts = array();
 
-        while($row = mssql_fetch_array($resultAria )){
+        foreach($resultAria as $row){
             $apts[] = $row['AppointmentSerNum'];
         }
 
