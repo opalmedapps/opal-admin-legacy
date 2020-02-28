@@ -56,9 +56,6 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.questionnaire.add',
 	'opalAdmin.controllers.questionnaire.edit',
 	'opalAdmin.controllers.questionnaire.delete',
-	// 'opalAdmin.controllers.publication.tool',
-	// 'opalAdmin.controllers.publication.tool.add',
-	// 'opalAdmin.controllers.publication.tool.edit',
 	'opalAdmin.controllers.publication',
 	'opalAdmin.controllers.publication.add',
 	'opalAdmin.controllers.publication.edit',
@@ -74,7 +71,11 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.diagnosisTranslation',
 	'opalAdmin.controllers.diagnosisTranslation.add',
 	'opalAdmin.controllers.diagnosisTranslation.edit',
-	'opalAdmin.controllers.diagnosisTranslation.delete'
+	'opalAdmin.controllers.diagnosisTranslation.delete',
+	'opalAdmin.controllers.customCodes',
+	'opalAdmin.controllers.customCodes.add',
+	'opalAdmin.controllers.customCodes.edit',
+	'opalAdmin.controllers.customCodes.delete'
 ]);
 
 

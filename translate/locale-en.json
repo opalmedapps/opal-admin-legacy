@@ -15,6 +15,8 @@
     "TITLE": "Processing..."
   },
   "NAVIGATION_MENU": {
+    "CUSTOM_CODES": "Custom Codes",
+    "CUSTOM_CODES_SUB": "Manage custom codes for diagnosis, test results and aliases.",
     "PUBLISHING_TOOLS": "Publications",
     "TASKS_APPTS_DOCS": "Tasks / Appts / Docs",
     "TASKS_APPTS_DOCS_SUB": "Tool for grouping, translating, and publishing tasks, appointments, and documents.",
@@ -2258,6 +2260,30 @@
       "ERROR_NO_DIAGNOSIS_FOUND": "The list of diagnostics is empty. Please check the connection with the different databases and try again.",
       "ERROR_UPDATE": "An error occurred while updating the translation.",
       "SUCCESS_UPDATE": "The diagnostic translation has being successfully updated."
+    }
+  },
+  "CUSTOM_CODES" : {
+    "LIST": {
+      "TITLE": "Diagnosis Translation",
+      "ADD": "Add",
+      "SEARCH": "Search...",
+      "EDIT": "Edit",
+      "DELETE": "Delete",
+      "NAME": "Name",
+      "ERROR_LIST": "An error occurred while getting the translations list."
+    },
+    "DELETE": {
+      "DELETE_POST": "Delete custom code",
+      "DELETE": "Delete",
+      "CANCEL": "Cancel",
+      "WARNING": "WARNING!",
+      "WARNING_TEXT": "Are you sure you want to delete the following custom code? This action cannot be undone!",
+      "SUCCESS": "The custom code has being successfully deleted.",
+      "ERROR": "An error occurred while deleting the custom code."
+    },
+    "ADD": {
+    },
+    "EDIT": {
     }
   },
   "PATIENTS": {
