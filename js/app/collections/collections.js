@@ -1044,6 +1044,46 @@ angular.module('opalAdmin.collections', [])
 		return diagnosisAPI;
 	})
 
+	// Diagnosis API service
+	.factory('customCodesCollectionService', function ($http) {
+
+		var diagnosisAPI = {};
+
+		// Function to get distinct diagnosis codes
+		diagnosisAPI.getDiagnoses = function () {
+			return $http.post(
+				"diagnosis-translation/get/diagnoses",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		// Function to get existing diagnosis translations
+		diagnosisAPI.getDiagnosisTranslations = function () {
+			return $http.post(
+				"diagnosis-translation/get/diagnosis-translations",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		// Function to get diagnosis translation details
+		diagnosisAPI.getDiagnosisTranslationDetails = function (serial) {
+			return $http.post(
+				"diagnosis-translation/get/diagnosis-translation-details",
+				$.param({
+					serial: serial,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+		return diagnosisAPI;
+	})
+
 	// install API service
 	.factory('installCollectionService', function ($http) {
 

@@ -97,13 +97,13 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		$scope.goToTemplateQuestion = function () {
 			$state.go('questionnaire-template-question');
 		};
-		// Function to go to legacy questionnaires page
-		$scope.goToLegacyQuestionnaire = function () {
-			$state.go('legacy-questionnaire');
-		};
 		// Function to go to diagnosis translation page
 		$scope.goToDiagnosisTranslation = function () {
 			$state.go('diagnosis-translation');
+		};
+		// Function to go to diagnosis translation page
+		$scope.goToCustomCodes = function () {
+			$state.go('custom-codes');
 		};
 		// Function to go to user activity page
 		$scope.goToUserActivity = function () {
@@ -118,7 +118,7 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		// Function to set dropdown active for publishing tools
 		$scope.currentActivePublishingTool = function () {
 			var publishingToolPages = ['alias','post','educational-material','hospital-map','notification',
-			'test-result','questionnaire-menu','email','legacy-questionnaire'];
+			'test-result','questionnaire-menu','email','custom-codes'];
 			if (publishingToolPages.indexOf($state.current.name) !== -1) {
 				return true;
 			}
