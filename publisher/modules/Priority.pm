@@ -209,16 +209,16 @@ sub getPrioritiesFromSourceDB
 				    lt.Expression1,
 					PatientInfo.PatientSerNum
     			FROM
-		    		variansystem.dbo.NonScheduledActivity nsa,
-			    	variansystem.dbo.ActivityInstance ai,
-				    variansystem.dbo.Activity act,
-    				variansystem.dbo.LookupTable lt,
+		    		NonScheduledActivity nsa,
+			    	ActivityInstance ai,
+				    Activity act,
+    				LookupTable lt,
 					PatientInfo
 	    		WHERE
 		    	    nsa.ActivityInstanceSer 	= ai.ActivityInstanceSer
 	            AND ai.ActivitySer 			    = act.ActivitySer
     	        AND act.ActivityCode 			= lt.LookupValue
-	    	   	AND nsa.PatientSer 				= (select pt.PatientSer from variansystem.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+	    	   	AND nsa.PatientSer 				= (select pt.PatientSer from Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
 			    AND nsa.ObjectStatus 		    != 'Deleted'
     			AND lt.Expression1			    IN ('SGAS_P1','SGAS_P2','SGAS_P3','SGAS_P4')
 	    		AND	nsa.HstryDateTime		    > PatientInfo.LastTransfer

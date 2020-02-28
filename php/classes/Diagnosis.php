@@ -122,7 +122,7 @@ class Diagnosis {
 						dx.DiagnosisId,
 						RTRIM(REPLACE(REPLACE(dx.Description,'Malignant neoplasm','malignant neoplasm'),'malignant neoplasm','Ca'))
 					FROM
-						variansystem.dbo.Diagnosis dx
+						Diagnosis dx
 					WHERE
 						dx.ObjectStatus = 'Active'
 					GROUP BY 

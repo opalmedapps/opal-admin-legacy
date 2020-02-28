@@ -322,12 +322,12 @@ sub getPatientLocationsFromSourceDB
 						PatientInfo.PatientSerNum,
 						lt.Expression1
 					FROM
-						variansystem.dbo.Patient pt with(nolock),
-						variansystem.dbo.ScheduledActivity sa with(nolock),
-						variansystem.dbo.PatientLocation pl with(nolock),
-						variansystem.dbo.ActivityInstance ai with(nolock),
-						variansystem.dbo.Activity act with(nolock),
-						variansystem.dbo.LookupTable lt with(nolock),
+						Patient pt with(nolock),
+						ScheduledActivity sa with(nolock),
+						PatientLocation pl with(nolock),
+						ActivityInstance ai with(nolock),
+						Activity act with(nolock),
+						LookupTable lt with(nolock),
 						#tempPL as PatientInfo
 					WHERE
 						sa.ActivityInstanceSer 			= ai.ActivityInstanceSer
@@ -658,9 +658,9 @@ sub getPatientLocationsMHFromSourceDB
 						plmh.ResourceSer,
 						CONVERT(VARCHAR, plmh.HstryDateTime, 120)
 					FROM
-						variansystem.dbo.Patient pt,
-						variansystem.dbo.ScheduledActivity sa,
-						variansystem.dbo.PatientLocationMH plmh
+						Patient pt,
+						ScheduledActivity sa,
+						PatientLocationMH plmh
 					WHERE
 						sa.PatientSer 					= pt.PatientSer
 					AND	LEFT(LTRIM(pt.SSN), 12)			= '$patientSSN'
