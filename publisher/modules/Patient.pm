@@ -444,10 +444,10 @@ sub getPatientInfoFromSourceDBs
 	            CONVERT(VARCHAR, ppt.DeathDate, 120),
 	            LEN(ph.Picture)
 	        FROM 
-	            Patient pt
-	        LEFT JOIN Photo ph
+	            VARIAN.Patient pt
+	        LEFT JOIN VARIAN.Photo ph
 	        ON pt.PatientSer       	= ph.PatientSer
-	        LEFT JOIN PatientParticular ppt 
+	        LEFT JOIN VARIAN.PatientParticular ppt 
 	        ON ppt.PatientSer 		= pt.PatientSer
 	        WHERE
 	            LEFT(LTRIM(pt.SSN), 12)   = '$patientSSN'

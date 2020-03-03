@@ -182,7 +182,7 @@ sub getStaffInfoFromSourceDB
 		    	userid.user_last_name,
 			    userid.user_initial
     		FROM 
-	    		userid userid
+	    		VARIAN.userid userid
 		    WHERE
 			    userid.stkh_id = '$id'
     	";

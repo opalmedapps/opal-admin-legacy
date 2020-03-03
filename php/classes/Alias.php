@@ -39,7 +39,7 @@ class Alias {
                             SELECT DISTINCT
     			    	        vv_ActivityLng.Expression1
         			        FROM
-    	    			        vv_ActivityLng vv_ActivityLng
+    	    			        VARIAN.vv_ActivityLng vv_ActivityLng
                             ORDER BY
                                 vv_ActivityLng.Expression1
                         ";
@@ -74,7 +74,7 @@ class Alias {
                             SELECT DISTINCT
                                 RTRIM(note_typ.note_typ_desc)
                             FROM
-                                note_typ note_typ
+                                VARIAN.note_typ note_typ
                             ORDER BY
                                 RTRIM(note_typ.note_typ_desc)
                         ";
