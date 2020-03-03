@@ -283,6 +283,8 @@ sub getPatientLocationsFromSourceDB
 			}
 
 			my $patientInfo_sql = "
+				use VARIAN;
+
                 IF OBJECT_ID('tempdb.dbo.#tempPL', 'U') IS NOT NULL
                   DROP TABLE #tempPL;
 
@@ -658,9 +660,9 @@ sub getPatientLocationsMHFromSourceDB
 						plmh.ResourceSer,
 						CONVERT(VARCHAR, plmh.HstryDateTime, 120)
 					FROM
-						Patient pt,
-						ScheduledActivity sa,
-						PatientLocationMH plmh
+						VARIAN.Patient pt,
+						VARIAN.ScheduledActivity sa,
+						VARIAN.PatientLocationMH plmh
 					WHERE
 						sa.PatientSer 					= pt.PatientSer
 					AND	LEFT(LTRIM(pt.SSN), 12)			= '$patientSSN'
@@ -752,29 +754,6 @@ sub getPatientLocationsMHFromSourceDB
 					AND pl.CheckinVenueName  		= Venue.VenueId
 					AND pl.PatientLocationSerNum 	= '$sourceuid'					
 					";
-				
-				# Keep this as a backup for now
-				# my $plInfo_sql = "
-				# 	SELECT DISTINCT
-				# 		plmh.PatientLocationSerNum,
-				# 		plmh.PatientLocationRevCount,
-				# 		'1' as CheckedInFlag,
-				# 		plmh.ArrivalDateTime,
-				# 		Venue.ResourceSer,
-				# 		plmh.DichargeThisLocationDateTime
-				# 	FROM
-				# 		Patient pt,
-				# 		MediVisitAppointmentList mval,
-				# 		PatientLocation pl,
-				# 		PatientLocationMH plmh,
-				# 		Venue
-				# 	WHERE
-				# 		mval.PatientSerNum 			= pt.PatientSerNum
-				# 	AND	LEFT(LTRIM(pt.SSN), 12)		= '$patientSSN'
-				# 	AND mval.AppointmentSerNum		= plmh.AppointmentSerNum
-				# 	AND plmh.CheckinVenueName  		= Venue.VenueId
-				# 	AND pl.PatientLocationSerNum 	= '$sourceuid'
-				# ";
 
                 # print "$plInfo_sql\n";
 		        # prepare query

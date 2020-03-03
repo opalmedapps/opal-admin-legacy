@@ -169,9 +169,9 @@ sub getPatientDoctorsFromSourceDB
 			    	pd.OncologistFlag,
 				    pd.PrimaryFlag
     			FROM	
-	    			Doctor dr,
-		    		PatientDoctor pd,
-		    		Patient pt
+	    			VARIAN.Doctor dr,
+		    		VARIAN.PatientDoctor pd,
+		    		VARIAN.Patient pt
 			    WHERE
 			    	pt.PatientSer 			= pd.PatientSer
     			AND	LEFT(LTRIM(pt.SSN), 12)	= '$patientSSN'

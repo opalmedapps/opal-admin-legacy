@@ -500,7 +500,7 @@ sub getDocsFromSourceDB
 						Expression.note_typ,
 						Expression.note_typ_desc
 					FROM
-						note_typ Expression
+						VARIAN.note_typ Expression
 				)
 				SELECT DISTINCT
 					visit_note.pt_id,
@@ -519,13 +519,13 @@ sub getDocsFromSourceDB
 					RTRIM(note_typ.note_typ_desc),
 					PatientInfo.PatientSerNum
 				FROM
-					visit_note visit_note,
-					note_typ,
-					pt pt,
+					VARIAN.visit_note visit_note,
+					VARIAN.note_typ,
+					VARIAN.pt pt,
 					PatientInfo
 				WHERE
 					pt.pt_id 			            = visit_note.pt_id
-				AND pt.patient_ser			        = (select pt.PatientSer from Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+				AND pt.patient_ser			        = (select pt.PatientSer from VARIAN.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
 				AND visit_note.note_typ		        = note_typ.note_typ
 				AND visit_note.appr_flag		    = 'A'
 				AND (
@@ -905,7 +905,7 @@ sub transferPatientDocuments
 	            				CONVERT(VARCHAR, visit_note.trans_log_mtstamp, 120),
 				            	RTRIM(visit_note.trans_log_muserid)
 	            			FROM
-				            	visit_note visit_note
+				            	VARIAN.visit_note visit_note
 	            			WHERE
 				            	visit_note.doc_file_loc = '$finalfileloc'
 	            		";
@@ -1058,7 +1058,7 @@ END
 	            				CONVERT(VARCHAR, visit_note.trans_log_mtstamp, 120),
 				            	RTRIM(visit_note.trans_log_muserid)
 	            			FROM
-				            	visit_note visit_note
+				            	VARIAN.visit_note visit_note
 	            			WHERE
 				            	visit_note.doc_file_loc = '$finalfileloc'
 	            		";
