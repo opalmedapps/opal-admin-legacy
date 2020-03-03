@@ -189,8 +189,8 @@ class Patient {
                         ph.Picture,
                         RTRIM(pt.Sex)
                       FROM
-                        Patient pt
-                        LEFT JOIN Photo ph
+                        VARIAN.Patient pt
+                        LEFT JOIN VARIAN.Photo ph
                         ON ph.PatientSer = pt.PatientSer
                       WHERE
                         pt.SSN          LIKE '$ssn%'

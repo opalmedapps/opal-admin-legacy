@@ -235,16 +235,16 @@ sub getResourceAppointmentsFromSourceDB
 						PatientInfo.PatientSerNum,
 						lt.Expression1
 					FROM
-						Patient pt,
-						Attendee att,
-						ScheduledActivity sa,
-						ActivityInstance ai,
-						Activity Activity,
-						LookupTable lt,
+						VARIAN.Patient pt,
+						VARIAN.Attendee att,
+						VARIAN.ScheduledActivity sa,
+						VARIAN.ActivityInstance ai,
+						VARIAN.Activity Activity,
+						VARIAN.LookupTable lt,
 						PatientInfo
 					WHERE
 						sa.ActivityInstanceSer		= ai.ActivityInstanceSer
-					AND sa.PatientSer = (select pt.PatientSer from Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+					AND sa.PatientSer = (select pt.PatientSer from VARIAN.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
 					AND ai.ActivitySer			    = Activity.ActivitySer
 					AND	Activity.ActivityCode		= lt.LookupValue
 					AND	ai.ActivityInstanceSer		= att.ActivityInstanceSer
