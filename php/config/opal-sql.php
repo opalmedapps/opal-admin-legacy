@@ -186,6 +186,10 @@ define("SQL_OPAL_GET_ALL_PUBLICATION_MODULES_USER",
     "SELECT m.ID, m.name_EN, m.name_FR, m.iconClass FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.publication = 1 ORDER BY m.order;"
 );
 
+define("SQL_OPAL_GET_ALL_CUSTOM_CODE_MODULES_USER",
+    "SELECT m.ID, m.name_EN, m.name_FR, m.iconClass FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.customCode = 1 ORDER BY m.order;"
+);
+
 define("SQL_OPAL_GET_PUBLICATION_MODULES_USER_DETAILS",
     "SELECT m.ID, m.name_EN, m.name_FR, m.iconClass FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.publication = 1 AND ID = :ID;"
 );

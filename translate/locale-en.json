@@ -2283,6 +2283,21 @@
     "LOCKED": {
     },
     "ADD": {
+      "BACK": "Back to Custom Codes",
+      "SUMMARY": "Summary",
+      "TITLE": "Add Custom Code",
+      "DETAILS_TITLE": "Details",
+      "MODULE": "Select a module",
+      "REQUIRED": "Required field:",
+      "SOURCE_EXPLANATION": "Please choose a module to which the new custom code will be attached.",
+      "CUSTOM_CODE": "Custom code information",
+      "CUSTOM_CODE_EXPLANATION": "Please enter a code and a description.",
+      "DETAILS": "Details",
+      "INCOMPLETE": "Incomplete",
+      "COMPLETE": "Complete",
+      "CODE": "Code",
+      "DESCRIPTION": "Description",
+      "ERROR_MODULE": "An error occurred while getting the modules list."
     },
     "EDIT": {
     }

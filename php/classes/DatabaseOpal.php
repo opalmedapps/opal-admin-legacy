@@ -500,6 +500,15 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
+     * Returns the list of modules.
+     * @params  void
+     * @returns array of modules found and active
+     * */
+    function getAvailableModules(){
+        return $this->_fetchAll(SQL_OPAL_GET_ALL_CUSTOM_CODE_MODULES_USER, array());
+    }
+
+    /*
      * Returns the details of a publication module
      * @params  $moduleId (int) Id of the module
      * @return  array of records found

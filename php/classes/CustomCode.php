@@ -11,4 +11,14 @@ class CustomCode extends OpalProject {
         //print_r($results);
         return $results;
     }
+
+    /*
+     * gets the list of modules availables where adding custom codes
+     * @params  void
+     * @return  array of modules
+     * */
+    public function getAvailableModules() {
+        return $this->opalDB->getAvailableModules();
+    }
+
 }

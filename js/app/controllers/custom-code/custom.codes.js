@@ -6,7 +6,7 @@ angular.module('opalAdmin.controllers.customCode', ['ngAnimate', 'ngSanitize', '
 		var user = Session.retrieveObject('user');
 		var OAUserId = user.id;
 
-		$scope.goToAddPublication = function () {
+		$scope.goToAddCustomCode = function () {
 			$state.go('custom-code-add');
 		};
 
@@ -97,7 +97,6 @@ angular.module('opalAdmin.controllers.customCode', ['ngAnimate', 'ngSanitize', '
 		function getCustomCodesList() {
 			customCodeCollectionService.getCustomCodes(OAUserId).then(function (response) {
 				$scope.customCodesList = response.data;
-				console.log(response.data);
 			}).catch(function(err) {
 				alert($filter('translate')('CUSTOM_CODE.LIST.ERROR_PUBLICATION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
 			});
