@@ -201,7 +201,6 @@ class Publication extends OpalProject
         return $data;
     }
 
-
     /*
      * Returns the chart log of a specific publication.
      * @params  $moduleId (int) ID of the module to get the logs
