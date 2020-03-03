@@ -2262,24 +2262,25 @@
       "SUCCESS_UPDATE": "The diagnostic translation has being successfully updated."
     }
   },
-  "CUSTOM_CODES" : {
+  "CUSTOM_CODE" : {
     "LIST": {
-      "TITLE": "Diagnosis Translation",
+      "TITLE": "Custom Codes",
       "ADD": "Add",
       "SEARCH": "Search...",
       "EDIT": "Edit",
       "DELETE": "Delete",
-      "NAME": "Name",
-      "ERROR_LIST": "An error occurred while getting the translations list."
+      "CODE": "Code",
+      "DESCRIPTION": "Description",
+      "MODULE": "Module",
+      "ALIAS": "Tasks / Appointments / Documents",
+      "DIAGNOSTIC": "Diagnosis Translation",
+      "TEST": "Lab Result",
+      "OPERATIONS": "Operations",
+      "ERROR_LIST": "An error occurred while getting the custom codes list."
     },
     "DELETE": {
-      "DELETE_POST": "Delete custom code",
-      "DELETE": "Delete",
-      "CANCEL": "Cancel",
-      "WARNING": "WARNING!",
-      "WARNING_TEXT": "Are you sure you want to delete the following custom code? This action cannot be undone!",
-      "SUCCESS": "The custom code has being successfully deleted.",
-      "ERROR": "An error occurred while deleting the custom code."
+    },
+    "LOCKED": {
     },
     "ADD": {
     },

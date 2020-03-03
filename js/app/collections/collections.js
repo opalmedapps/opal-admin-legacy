@@ -759,6 +759,7 @@ angular.module('opalAdmin.collections', [])
 		return emailAPI;
 	})
 
+	// Questionnaire API service
 	.factory('questionnaireCollectionService', function ($http) {
 		var questionnaireAPI = {};
 
@@ -914,6 +915,7 @@ angular.module('opalAdmin.collections', [])
 		return questionnaireAPI;
 	})
 
+	// Publication API service
 	.factory('publicationCollectionService', function ($http) {
 		var publicationAPI = {};
 
@@ -1004,48 +1006,42 @@ angular.module('opalAdmin.collections', [])
 		return publicationAPI;
 	})
 
-	// Diagnosis API service
-	.factory('diagnosisCollectionService', function ($http) {
+	// Publication API service
+	.factory('customCodeCollectionService', function ($http) {
+		var customCodeAPI = {};
 
-		var diagnosisAPI = {};
-
-		// Function to get distinct diagnosis codes
-		diagnosisAPI.getDiagnoses = function () {
+		customCodeAPI.getCustomCodes = function (OAUserId) {
 			return $http.post(
-				"diagnosis-translation/get/diagnoses",
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		// Function to get existing diagnosis translations
-		diagnosisAPI.getDiagnosisTranslations = function () {
-			return $http.post(
-				"diagnosis-translation/get/diagnosis-translations",
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		// Function to get diagnosis translation details
-		diagnosisAPI.getDiagnosisTranslationDetails = function (serial) {
-			return $http.post(
-				"diagnosis-translation/get/diagnosis-translation-details",
+				"custom-code/get/custom-codes",
 				$.param({
-					serial: serial,
+					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+
+		};
+
+		customCodeAPI.getCustomCodeDetails = function (customCodeId, moduleId, OAUserId) {
+			return $http.post(
+				"custom-code/get/custom-code-details",
+				$.param({
+					OAUserId: OAUserId,
+					customCodeId: customCodeId,
+					moduleId: moduleId,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
 		};
-		return diagnosisAPI;
+
+		return customCodeAPI;
 	})
 
 	// Diagnosis API service
-	.factory('customCodesCollectionService', function ($http) {
+	.factory('diagnosisCollectionService', function ($http) {
 
 		var diagnosisAPI = {};
 
