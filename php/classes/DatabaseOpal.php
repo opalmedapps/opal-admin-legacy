@@ -96,6 +96,28 @@ class DatabaseOpal extends DatabaseAccess {
         $sqlModule = str_replace("%%MODULE%%", OPAL_MODULE_TABLE, $sqlModule);
         $sqlModule = str_replace("%%EDUCATIONALMATERIAL%%", OPAL_EDUCATION_MATERIAL_TABLE, $sqlModule);
         $sqlModule = str_replace("%%PHASEINTREATMENT%%", OPAL_PHASE_IN_TREATMENT_TABLE, $sqlModule);
+
+        return $this->_fetchAll($sqlModule, array());
+    }
+
+    /*
+     * This function fetches the SQL list of the different modules associated to the custom codes. It replaces the flags
+     * with the correct table names, and fetch all the custom codes.
+     * @params  none
+     * @returns array of results
+     * */
+    function getCustomCodes() {
+        $sqlModule = array();
+        $moduleSQLCode = $this->_fetchAll(SQL_OPAL_BUILD_CUSOM_CODE_VIEW, array());
+        foreach ($moduleSQLCode as $module)
+            if (strip_tags($module["sqlCustomCode"]) != "")
+                array_push($sqlModule, $module["sqlCustomCode"]);
+        $sqlModule = implode(SQL_GENERAL_UNION_ALL, $sqlModule);
+        $sqlModule = str_replace("%%MASTER_SOURCE_ALIAS%%", OPAL_MASTER_SOURCE_ALIAS_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%MASTER_SOURCE_DIAGNOSTIC%%", OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%MASTER_SOURCE_TEST_RESULT%%", OPAL_MASTER_SOURCE_TEST_RESULT_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%MODULE%%", OPAL_MODULE_TABLE, $sqlModule);
+
         return $this->_fetchAll($sqlModule, array());
     }
 

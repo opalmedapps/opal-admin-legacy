@@ -38,6 +38,8 @@ define("OPAL_EDUCATION_MATERIAL_MH_TABLE","EducationalMaterialMH");
 define("OPAL_CRON_LOG_TABLE","CronLog");
 define("OPAL_SETTING_TABLE","setting");
 define("OPAL_MASTER_SOURCE_ALIAS_TABLE","masterSourceAlias");
+define("OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE","masterSourceDiagnostic");
+define("OPAL_MASTER_SOURCE_TEST_RESULT_TABLE","masterSourceTestResult");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -153,6 +155,10 @@ define("SQL_OPAL_GET_ALL_PUBLICATION_MODULES",
 
 define("SQL_OPAL_BUILD_PUBLICATION_VIEW",
     "SELECT m.sqlPublicationList, m.sqlPublicationChartLog FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.publication = 1 ORDER BY m.order"
+);
+
+define("SQL_OPAL_BUILD_CUSOM_CODE_VIEW",
+    "SELECT m.sqlCustomCode FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.customCode = 1 ORDER BY m.order"
 );
 
 define("SQL_GET_QUERY_CHART_LOG",

@@ -1,9 +1,9 @@
-angular.module('opalAdmin.controllers.customCodes.add', ['ngAnimate', 'ui.bootstrap']).
+angular.module('opalAdmin.controllers.customCode.add', ['ngAnimate', 'ui.bootstrap']).
 
 /******************************************************************************
  * Add Diagnosis Translation Page controller
  *******************************************************************************/
-controller('customCodes.add', function ($scope, $filter, $uibModal, diagnosisCollectionService, $state, educationalMaterialCollectionService, Session) {
+controller('customCode.add', function ($scope, $filter, $uibModal, diagnosisCollectionService, $state, educationalMaterialCollectionService, Session) {
 
 	// Function to go to previous page
 	$scope.goBack = function () {

@@ -72,14 +72,8 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.diagnosisTranslation.add',
 	'opalAdmin.controllers.diagnosisTranslation.edit',
 	'opalAdmin.controllers.diagnosisTranslation.delete',
-	'opalAdmin.controllers.customCodes',
-	'opalAdmin.controllers.customCodes.add',
-	'opalAdmin.controllers.customCodes.edit',
-	'opalAdmin.controllers.customCodes.delete'
+	'opalAdmin.controllers.customCode',
+	'opalAdmin.controllers.customCode.add',
+	'opalAdmin.controllers.customCode.edit',
+	'opalAdmin.controllers.customCode.delete'
 ]);
-
-
-
-
-
-
