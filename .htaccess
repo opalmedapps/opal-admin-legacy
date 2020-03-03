@@ -104,6 +104,7 @@ RewriteRule ^diagnosis-translation/update/diagnosis-translation php/diagnosis-tr
 
 # Custom Codes Section
 RewriteRule ^custom-code/delete/custom-code php/custom-code/delete.custom_code.php [QSA,L]
+RewriteRule ^custom-code/get/available-modules php/custom-code/get.available.modules.php [QSA,L]
 RewriteRule ^custom-code/get/custom-code-details php/custom-code/get.custom_code_details.php [QSA,L]
 RewriteRule ^custom-code/get/custom-codes php/custom-code/get.custom_code.php [QSA,L]
 RewriteRule ^custom-code/insert/custom-code php/custom-code/insert.custom_code.php [QSA,L]

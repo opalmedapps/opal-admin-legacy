@@ -1010,6 +1010,19 @@ angular.module('opalAdmin.collections', [])
 	.factory('customCodeCollectionService', function ($http) {
 		var customCodeAPI = {};
 
+		customCodeAPI.getAvailableModules = function (OAUserId) {
+			return $http.post(
+				"custom-code/get/available-modules",
+				$.param({
+					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+
+		};
+
 		customCodeAPI.getCustomCodes = function (OAUserId) {
 			return $http.post(
 				"custom-code/get/custom-codes",
