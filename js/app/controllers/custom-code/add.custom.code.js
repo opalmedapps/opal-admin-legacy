@@ -114,7 +114,6 @@ angular.module('opalAdmin.controllers.customCode.add', ['ngAnimate', 'ui.bootstr
 				keyboard: false,
 			});
 		};
-		$scope.showProcessingModal(); // Calling function
 
 		$scope.formLoaded = false;
 		// Function to load form as animations
@@ -135,14 +134,9 @@ angular.module('opalAdmin.controllers.customCode.add', ['ngAnimate', 'ui.bootstr
 		}).catch(function(err) {
 			alert($filter('translate')('CUSTOM_CODE.ADD.ERROR_MODULE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
 			$state.go('publication');
-		}).finally(function() {
-			processingModal.close(); // hide modal
-			processingModal = null; // remove reference
 		});
 
 		$scope.moduleUpdate = function (moduleSelected) {
-			console.log(moduleSelected);
-
 			$scope.toSubmit.moduleId.value = moduleSelected.ID;
 			$scope.validator.moduleId.completed = true;
 			$scope.leftMenu.moduleId.preview = moduleSelected.name_display;
@@ -180,17 +174,20 @@ angular.module('opalAdmin.controllers.customCode.add', ['ngAnimate', 'ui.bootstr
 		// Function to submit the new diagnosis translation
 		$scope.submitCustomCode = function () {
 			// Submit form
+			console.log($scope.toSubmit);
 			$.ajax({
 				type: 'POST',
-				url: 'diagnosis-translation/insert/diagnosis-translation',
-				data: $scope.newDiagnosisTranslation,
+				url: 'custom-code/insert/custom-code',
+				data: $scope.toSubmit,
 				success: function () {},
+/*
 				error: function (err) {
 					alert($filter('translate')('CUSTOM_CODE.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText);
 				},
 				complete: function () {
-					$state.go('diagnosis-translation');
+					$state.go('custom-code');
 				}
+*/
 			});
 		};
 
