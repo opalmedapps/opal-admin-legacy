@@ -1,22 +1,13 @@
 <?php
 
-	/* To insert a newly created diagnosis translation */
-	include_once('diagnosis-translation.inc');
-	
-	// Construct array from FORM params
-	$diagnosisTranslationDetails = array(
-		'name_EN'           => $_POST['name_EN'],
-        'name_FR'           => $_POST['name_FR'],
-        'description_EN'    => filter_var($_POST['description_EN'], FILTER_SANITIZE_MAGIC_QUOTES),
-		'description_FR'    => filter_var($_POST['description_FR'], FILTER_SANITIZE_MAGIC_QUOTES),
-		'edumat'            => $_POST['eduMat'],
-        'diagnoses'         => $_POST['diagnoses'],
-        'user'				=> $_POST['user']
-	);
+include_once('custom-code.inc');
 
-	$Diagnosis = new Diagnosis; // Object
+$OAUserId = strip_tags(preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $_POST['OAUserId']));
+$sessionId = strip_tags(preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $_POST['sessionid']));
 
-	// Call function 
-	print $Diagnosis->insertDiagnosisTranslation($diagnosisTranslationDetails);
+$customCode = new CustomCode($OAUserId, $sessionId);
+$customCode->insertCustomCode($_POST);
 
-?>
+header('Content-Type: application/javascript');
+$response['code'] = HTTP_STATUS_SUCCESS;
+echo json_encode($response);
