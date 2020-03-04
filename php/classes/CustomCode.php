@@ -8,7 +8,6 @@ class CustomCode extends OpalProject {
      * */
     function getCustomCodes() {
         $results = $this->opalDB->getCustomCodes();
-        //print_r($results);
         return $results;
     }
 
