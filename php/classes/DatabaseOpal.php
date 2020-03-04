@@ -531,9 +531,6 @@ class DatabaseOpal extends DatabaseAccess {
             default:
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module.");
         }
-
-        print_R($toInsert);die();
-
         return $this->_insertRecordIntoTable($tableToInsert, $toInsert);
     }
 
