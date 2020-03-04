@@ -130,9 +130,13 @@ define("OAUSER_CRONJOB",23);
 /*
  * Module ID of each module in the opalAdmin
  * */
+define("MODULE_ALIAS", 1);
 define("MODULE_POST", 2);
 define("MODULE_EDU_MAT", 3);
+define("MODULE_TEST_RESULTS", 6);
 define("MODULE_QUESTIONNAIRE", 7);
+define("MODULE_DIAGNOSIS_TRANSLATION", 9);
+define("LOCAL_SOURCE_ONLY", -1);
 
 define("PUBLICATION_PUBLISH_DATE", 9);
 

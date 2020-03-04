@@ -24,25 +24,19 @@ class CustomCode extends OpalProject {
     public function insertCustomCode($customCode) {
         $customCode = $this->arraySanitization($customCode);
         $moduleDetails = $this->opalDB->getModuleSettings($customCode["moduleId"]["value"]);
-        if($moduleDetails["ID"] == "" || $moduleDetails["customCode"] != "1")
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module.");
 
         $this->_validateCustomCode($customCode);
         $toInsert = array(
-            "ID"=>strip_tags($customCode["moduleId"]["value"]),
-            "code"=>strip_tags(["details"]["code"]),
-            "description"=>strip_tags(["details"]["description"]),
+            "code"=>strip_tags($customCode["details"]["code"]),
+            "description"=>strip_tags($customCode["details"]["description"]),
+            "source"=>LOCAL_SOURCE_ONLY,
         );
 
-
-        print_r($customCode);
-        print_r($toInsert);
-        die();
-
+        return $this->opalDB->insertCustomCode($toInsert, $moduleDetails["ID"]);
     }
 
     protected function _validateCustomCode(&$customCode) {
-        if($customCode["details"]["code"] == "" || $customCode["details"]["description"] == "")
+        if($customCode["details"]["code"] == "" || $customCode["details"]["description"] == "" || $customCode["moduleId"]["value"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid custom code.");
     }
 }
