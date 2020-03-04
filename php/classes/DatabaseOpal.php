@@ -509,6 +509,35 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
+     * Insert a custom code to the appropriate table with the username and the creation date.
+     * @params  $toInsert (array) contains all the details of the custom code.
+     * @returns int number of records created
+     * */
+    function insertCustomCode($toInsert, $moduleId) {
+        $toInsert["createdBy"] = $this->username;
+        $toInsert["creationDate"] = date("Y-m-d H:i:s");
+        $toInsert["updatedBy"] = $this->username;
+
+        switch ($moduleId) {
+            case MODULE_ALIAS:
+                $tableToInsert = OPAL_MASTER_SOURCE_ALIAS_TABLE;
+                break;
+            case MODULE_TEST_RESULTS:
+                $tableToInsert = OPAL_MASTER_SOURCE_TEST_RESULT_TABLE;
+                break;
+            case MODULE_DIAGNOSIS_TRANSLATION:
+                $tableToInsert = OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE;
+                break;
+            default:
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module.");
+        }
+
+        print_R($toInsert);die();
+
+        return $this->_insertRecordIntoTable($tableToInsert, $toInsert);
+    }
+
+    /*
      * Returns the details of a publication module
      * @params  $moduleId (int) Id of the module
      * @return  array of records found

@@ -180,14 +180,12 @@ angular.module('opalAdmin.controllers.customCode.add', ['ngAnimate', 'ui.bootstr
 				url: 'custom-code/insert/custom-code',
 				data: $scope.toSubmit,
 				success: function () {},
-/*
 				error: function (err) {
 					alert($filter('translate')('CUSTOM_CODE.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText);
 				},
 				complete: function () {
 					$state.go('custom-code');
 				}
-*/
 			});
 		};
 
