@@ -439,15 +439,15 @@ sub getPatientInfoFromSourceDBs
 	            pt.PatientId,
 	            pt.PatientId2,
 	            CONVERT(VARCHAR, pt.DateOfBirth, 120),
-	            ph.Picture,
+	            -- ph.Picture,
 	            RTRIM(pt.Sex),
 	            CONVERT(VARCHAR, ppt.DeathDate, 120),
 	            LEN(ph.Picture)
 	        FROM 
-	            VARIAN.Patient pt
-	        LEFT JOIN VARIAN.Photo ph
+	            VARIAN.dbo.Patient pt
+	        LEFT JOIN VARIAN.dbo.Photo ph
 	        ON pt.PatientSer       	= ph.PatientSer
-	        LEFT JOIN VARIAN.PatientParticular ppt 
+	        LEFT JOIN VARIAN.dbo.PatientParticular ppt 
 	        ON ppt.PatientSer 		= pt.PatientSer
 	        WHERE
 	            LEFT(LTRIM(pt.SSN), 12)   = '$patientSSN'
@@ -1100,13 +1100,16 @@ sub compareWith
 		my $updatedLastName = $UpdatedPatient->setPatientLastName($SPatientLastName); # update patient last name
 		print "Will update database entry to \"$updatedLastName\".\n";
 	}
-	if ($SPatientPicture ne $OPatientPicture) {
+	# YM 2020-03-05
+	# Temporary disable the update of the patient images due to the freetds bug in getting the images
+	
+	# if ($SPatientPicture ne $OPatientPicture) {
 
-		$change = 1; # change occurred
-		print "Patient Picture has changed from $OPatientPicture to $SPatientPicture!\n";
-		my $updatedPicture = $UpdatedPatient->setPatientPicture($SPatientPicture); # update patient picture
-		print "Will update database entry to \"$updatedPicture\".\n";
-	}
+	# 	$change = 1; # change occurred
+	# 	print "Patient Picture has changed from $OPatientPicture to $SPatientPicture!\n";
+	# 	my $updatedPicture = $UpdatedPatient->setPatientPicture($SPatientPicture); # update patient picture
+	# 	print "Will update database entry to \"$updatedPicture\".\n";
+	# }
 	if ($SPatientDeathDate ne $OPatientDeathDate and (isValidDate($SPatientDeathDate) or isValidDate($OPatientDeathDate))) {
 
 		$change = 1; # change occurred

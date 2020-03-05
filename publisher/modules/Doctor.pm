@@ -204,10 +204,10 @@ sub getDoctorInfoFromSourceDB
 			    dr.LastName,
                 addr.EMailAddress
 	    	FROM 
-		    	VARIAN.Doctor dr
-            LEFT JOIN VARIAN.ResourceAddress ra 
+		    	VARIAN.dbo.Doctor dr
+            LEFT JOIN VARIAN.dbo.ResourceAddress ra 
             ON ra.ResourceSer       = dr.ResourceSer
-            LEFT JOIN VARIAN.Address addr
+            LEFT JOIN VARIAN.dbo.Address addr
             ON addr.AddressSer      = ra.AddressSer
 	    	WHERE
 		    	dr.ResourceSer	    = '$doctorSourceUID'
