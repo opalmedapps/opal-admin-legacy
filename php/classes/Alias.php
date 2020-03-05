@@ -30,7 +30,7 @@ class Alias {
             else
                 $type = 3;
 
-            if ($sourceDBSer != ARIA_SOURCE_DB && $sourceDBSer != ORMS_SOURCE_DB && $sourceDBSer != MOSAIQ_SOURCE_DB)
+            if ($sourceDBSer != ARIA_SOURCE_DB && $sourceDBSer != ORMS_SOURCE_DB && $sourceDBSer != MOSAIQ_SOURCE_DB && $sourceDBSer != LOCAL_SOURCE_DB)
                 $sourceDBSer = ARIA_SOURCE_DB;
 
             if($sourceDBSer == ORMS_SOURCE_DB)
@@ -38,6 +38,7 @@ class Alias {
             else
                 $sql = "SELECT description AS name, code AS id, description FROM masterSourceAlias WHERE type = " . $type . " AND source = " . $sourceDBSer . " AND deleted = 0 ORDER BY code";
 
+            PRINT $sql;
             $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD);
             $host_db_link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
