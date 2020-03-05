@@ -273,16 +273,16 @@ sub getDiagnosesFromSourceDB
                     RTRIM(pmdx.StageCriteria),
 					PatientInfo.PatientSerNum
 		    	FROM
-			    	VARIAN.Diagnosis dx,
-				    VARIAN.Patient pt,
-				    VARIAN.PrmryDiagnosis pmdx,
+			    	VARIAN.dbo.Diagnosis dx,
+				    VARIAN.dbo.Patient pt,
+				    VARIAN.dbo.PrmryDiagnosis pmdx,
 					PatientInfo
     			WHERE
 	    		 	dx.DiagnosisSer 		= pmdx.DiagnosisSer
 			    AND	dx.Description 			NOT LIKE '%ERROR%'
     			AND	dx.HstryDateTime    	> '$lastTransfer'
 	    		AND dx.DateStamp			> '1970-01-01 00:00:00'
-				AND dx.PatientSer 			= (select pt.PatientSer from VARIAN.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+				AND dx.PatientSer 			= (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
 		    ";
 
     		# prepare query

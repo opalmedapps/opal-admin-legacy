@@ -395,17 +395,17 @@ sub getTasksFromSourceDB
 					REPLACE(lt.Expression1, '''', ''),
 					PatientInfo.PatientSerNum
 				FROM
-					VARIAN.Patient Patient,
-					VARIAN.ActivityInstance ActivityInstance,
-					VARIAN.Activity Activity,
-					VARIAN.LookupTable lt,
+					VARIAN.dbo.Patient Patient,
+					VARIAN.dbo.ActivityInstance ActivityInstance,
+					VARIAN.dbo.Activity Activity,
+					VARIAN.dbo.LookupTable lt,
 					PatientInfo,
-					VARIAN.NonScheduledActivity NonScheduledActivity
-				LEFT JOIN VARIAN.NonScheduledActivityMH NonScheduledActivityMH
+					VARIAN.dbo.NonScheduledActivity NonScheduledActivity
+				LEFT JOIN VARIAN.dbo.NonScheduledActivityMH NonScheduledActivityMH
 				ON  NonScheduledActivityMH.NonScheduledActivitySer = NonScheduledActivity.NonScheduledActivitySer
 				AND NonScheduledActivityMH.NonScheduledActivityRevCount = (
 					SELECT MIN(nsamh.NonScheduledActivityRevCount)
-					FROM VARIAN.NonScheduledActivityMH nsamh
+					FROM VARIAN.dbo.NonScheduledActivityMH nsamh
 					WHERE nsamh.NonScheduledActivitySer = NonScheduledActivity.NonScheduledActivitySer
 					AND nsamh.NonScheduledActivityCode = 'Completed'
 				)
@@ -413,7 +413,7 @@ sub getTasksFromSourceDB
 					NonScheduledActivity.ActivityInstanceSer 	= ActivityInstance.ActivityInstanceSer
 				AND ActivityInstance.ActivitySer 			    = Activity.ActivitySer
 				AND Activity.ActivityCode 				        = lt.LookupValue
-				AND NonScheduledActivity.PatientSer = (select pt.PatientSer from VARIAN.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+				AND NonScheduledActivity.PatientSer = (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
 				AND (
 			";
 

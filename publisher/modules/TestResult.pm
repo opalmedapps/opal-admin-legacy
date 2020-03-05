@@ -501,12 +501,12 @@ sub getTestResultsFromSourceDB
 					tr.valid_entry_ind,
 					PatientInfo.PatientSerNum
 				FROM
-					VARIAN.test_result tr,
-					VARIAN.pt pt,
+					VARIAN.dbo.test_result tr,
+					VARIAN.dbo.pt pt,
 					PatientInfo
 				WHERE
 					tr.pt_id                		= pt.pt_id
-				AND pt.patient_ser          		= (select pt.PatientSer from VARIAN.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+				AND pt.patient_ser          		= (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
 				AND tr.valid_entry_ind 				= 'Y'
 				AND (
 			";

@@ -660,9 +660,9 @@ sub getPatientLocationsMHFromSourceDB
 						plmh.ResourceSer,
 						CONVERT(VARCHAR, plmh.HstryDateTime, 120)
 					FROM
-						VARIAN.Patient pt,
-						VARIAN.ScheduledActivity sa,
-						VARIAN.PatientLocationMH plmh
+						VARIAN.dbo.Patient pt,
+						VARIAN.dbo.ScheduledActivity sa,
+						VARIAN.dbo.PatientLocationMH plmh
 					WHERE
 						sa.PatientSer 					= pt.PatientSer
 					AND	LEFT(LTRIM(pt.SSN), 12)			= '$patientSSN'

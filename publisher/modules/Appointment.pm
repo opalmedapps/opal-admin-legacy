@@ -470,16 +470,16 @@ sub getApptsFromSourceDB
 						REPLACE(lt.Expression1, '''', ''),
 						PatientInfo.PatientSerNum
 					FROM
-						VARIAN.ScheduledActivity sa,
-						VARIAN.ActivityInstance ai,
-						VARIAN.Activity act,
-						VARIAN.LookupTable lt,
+						VARIAN.dbo.ScheduledActivity sa,
+						VARIAN.dbo.ActivityInstance ai,
+						VARIAN.dbo.Activity act,
+						VARIAN.dbo.LookupTable lt,
 						PatientInfo
 					WHERE
 						sa.ActivityInstanceSer 		= ai.ActivityInstanceSer
 					AND ai.ActivitySer 			    = act.ActivitySer
 					AND act.ActivityCode 		    = lt.LookupValue
-					AND sa.PatientSer 				= (select pt.PatientSer from VARIAN.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+					AND sa.PatientSer 				= (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
 					AND (
 
 				";
@@ -1010,11 +1010,11 @@ sub getApptInfoFromSourceDB
                 CONVERT(VARCHAR, sa.ActualStartDate, 120),
                 CONVERT(VARCHAR, sa.ActualEndDate, 120)
 	    	FROM
-		    	VARIAN.Patient pt,
-			    VARIAN.ScheduledActivity sa,
-    			VARIAN.ActivityInstance ai,
-	    		VARIAN.Activity act,
-				VARIAN.LookupTable lt
+		    	VARIAN.dbo.Patient pt,
+			    VARIAN.dbo.ScheduledActivity sa,
+    			VARIAN.dbo.ActivityInstance ai,
+	    		VARIAN.dbo.Activity act,
+				VARIAN.dbo.LookupTable lt
 	    	WHERE
 		        sa.ActivityInstanceSer 	    = ai.ActivityInstanceSer
     		AND ai.ActivitySer 			    = act.ActivitySer
