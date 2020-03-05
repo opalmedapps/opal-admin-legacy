@@ -18,6 +18,6 @@ if(in_array($_SERVER['REMOTE_ADDR'], $localHostAddr))
     define( "ARIA_DB_DSN", "odbc:Driver={SQL Server};Server=" . ARIA_DB_HOST);
 else
     # define( "ARIA_DB_DSN", "dblib:host=" . ARIA_DB_HOST . ":" . ARIA_DB_PORT . "\\database" . ";charset=utf8");
-    define( "ARIA_DB_DSN", "dblib:host=" . ARIA_DB_HOST . ":" . ARIA_DB_PORT . ";dbname=" . ARIA_DB_NAME . ";charset=utf8");
+    define( "ARIA_DB_DSN", "odbc:DRIVER=FreeTDS;SERVER=" . ARIA_DB_HOST . ";PORT=" . ARIA_DB_PORT . ";DATABASE=" . ARIA_DB_NAME);
 define( "ARIA_DB_USERNAME", $config['databaseConfig']['aria']['username'] );
 define( "ARIA_DB_PASSWORD", $config['databaseConfig']['aria']['password'] );
