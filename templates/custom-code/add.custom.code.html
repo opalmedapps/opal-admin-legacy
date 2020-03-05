@@ -59,7 +59,7 @@
                                             <span ng-if="validator.moduleId.completed" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
-                                            <strong>{{'CUSTOM_CODE.ADD.MODULE'|translate}}</strong>
+                                            <strong>{{'CUSTOM_CODE.ADD.MODULE_TITLE'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
                                             <i ng-if="validator.moduleId.completed" class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.moduleId.open, 'glyphicon-chevron-right': !leftMenu.moduleId.open}"></i>
@@ -73,8 +73,30 @@
                                     </p>
                                 </div>
                             </div>
+                            <!-- SECTION: Alias Type -->
+                            <div uib-accordion-group is-open="leftMenu.type.open" class="panel-container summary-box animated" is-disabled="!toSubmit.details.code && !toSubmit.details.description" ng-if="validator.moduleId.completed && aliasTypes">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="validator.type.completed" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'CUSTOM_CODE.ADD.TYPE_TITLE'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.type.open, 'glyphicon-chevron-right': !leftMenu.type.open}" ng-if="validator.type.completed"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="validator.type.completed" class="description">
+                                    <p>
+                                        <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                                        {{leftMenu.type.preview}}
+                                    </p>
+                                </div>
+                            </div>
                             <!-- SECTION: Details -->
-                            <div uib-accordion-group is-open="leftMenu.details.open" class="panel-container summary-box" is-disabled="!validator.details.completed" ng-if="validator.moduleId.completed">
+                            <div uib-accordion-group is-open="leftMenu.details.open" class="panel-container summary-box" is-disabled="!validator.details.completed" ng-if="(validator.moduleId.completed && !aliasTypes) || (aliasTypes && validator.type.completed)">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -191,8 +213,41 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- SECTION: Alias Type -->
+                        <div class="row animated" ng-if="validator.moduleId.completed && aliasTypes">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span>
+                                        <h2>{{'CUSTOM_CODE.ADD.TYPE'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 10px;">
+                                    <span style="color:#d9534f"><strong>{{'CUSTOM_CODE.ADD.REQUIRED'|translate}} </strong></span>
+                                    {{'CUSTOM_CODE.ADD.TYPE_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                            <div class="col-xs-12">
+
+                                <div ng-repeat="type in aliasTypes" class="col-xs-4 col-lg-2 item-panel-select">
+                                    <div class="panel-container animated" style="cursor: pointer" ng-class="{pulse: hover, active: toSubmit.type.ID == type.ID}" ng-click="typeUpdate(type)" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+                                        <div class="panel-info" ng-class="{active: toSubmit.type.ID == type.ID}">
+                                            <div class="panel-content" style="text-align:center">
+                                                <span style="font-size:30px;" class="glyphicon glyphicon-{{type.iconClass}}"></span>
+                                                <div class="option-panel-title">{{type.name_display}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- SECTION: Code & Description -->
-                        <div ng-if="validator.moduleId.completed">
+                        <div ng-if="(validator.moduleId.completed && !aliasTypes) || (aliasTypes && validator.type.completed)">
                             <div class="row">
                                 <div class="col-xs-12 side-menu-title">
                                     <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
@@ -213,7 +268,7 @@
                             <div class="row">
                                 <div class="col-xs-12 col-md-6">
                                     <div class="panel" ng-class="(toSubmit.details.code && toSubmit.details.description) ? 'panel-success': 'panel-danger'">
-                                        <div class="panel-heading"><strong>{{'CUSTOM_CODE.ADD.DETAILS'|translate}}</strong>
+                                        <div class="panel-heading"><strong>{{'CUSTOM_CODE.ADD.DETAILS_TITLE'|translate}}</strong>
                                             <span ng-hide="toSubmit.details.code && toSubmit.details.description" style="float:right"><em>{{'CUSTOM_CODE.ADD.INCOMPLETE'|translate}}</em></span>
                                             <span ng-show="toSubmit.details.code && toSubmit.details.description" style="float:right"><em>{{'CUSTOM_CODE.ADD.COMPLETE'|translate}}</em></span>
                                         </div>
