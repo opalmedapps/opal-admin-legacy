@@ -129,19 +129,67 @@ angular.module('opalAdmin.controllers.customCode.add', ['ngAnimate', 'ui.bootstr
 					entry.name_display = entry.name_FR;
 				else
 					entry.name_display = entry.name_EN;
+
+				entry.subModule = JSON.parse(entry.subModule);
+
+				if (entry.subModule) {
+					angular.forEach(entry.subModule, function (sub) {
+						if ($scope.language.toUpperCase() === "FR")
+							sub.name_display = sub.name_FR;
+						else
+							sub.name_display = sub.name_EN;
+					});
+				}
 			});
 			$scope.moduleList = response.data; // Assign value
 		}).catch(function(err) {
-			alert($filter('translate')('CUSTOM_CODE.ADD.ERROR_MODULE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
-			$state.go('publication');
+			alert($filter('translate')('CUSTOM_CODE.ADD.ERROR_MODULE'));
+			$state.go('custom-code');
 		});
 
 		$scope.moduleUpdate = function (moduleSelected) {
+			console.log(moduleSelected);
+			if(moduleSelected.subModule) {
+				$scope.aliasTypes = moduleSelected.subModule;
+
+				if ($scope.toSubmit.type != "undefined") {
+					$scope.toSubmit.type = {
+						ID: null,
+					};
+				}
+				if ($scope.validator.type != "undefined") {
+					$scope.validator.type = {
+						completed: false,
+						mandatory: true,
+					};
+				}
+				if ($scope.leftMenu.type != "undefined") {
+					$scope.leftMenu.type = {
+						display: true,
+						open: false,
+						preview: false,
+					};
+				}
+			} else {
+				$scope.aliasTypes = null;
+				delete $scope.toSubmit.type;
+				delete $scope.validator.type;
+				delete $scope.leftMenu.type;
+
+			}
 			$scope.toSubmit.moduleId.value = moduleSelected.ID;
 			$scope.validator.moduleId.completed = true;
 			$scope.leftMenu.moduleId.preview = moduleSelected.name_display;
 			$scope.leftMenu.moduleId.open = true;
 		};
+
+		$scope.typeUpdate = function (typeSelected) {
+			$scope.toSubmit.type.ID = typeSelected.ID;
+
+			$scope.leftMenu.type.preview = typeSelected.name_display;
+			$scope.leftMenu.type.open = true;
+			$scope.validator.type.completed = true;
+		}
 
 		$scope.detailsUpdate = function () {
 			$scope.validator.details.completed = ($scope.toSubmit.details.code != null && $scope.toSubmit.details.description != null);
@@ -173,8 +221,6 @@ angular.module('opalAdmin.controllers.customCode.add', ['ngAnimate', 'ui.bootstr
 
 		// Function to submit the new diagnosis translation
 		$scope.submitCustomCode = function () {
-			// Submit form
-			console.log($scope.toSubmit);
 			$.ajax({
 				type: 'POST',
 				url: 'custom-code/insert/custom-code',
