@@ -20,9 +20,12 @@ class CustomCode extends OpalProject {
         return $this->opalDB->getAvailableModules();
     }
 
+    /*
+     * Insert a new custom codes after it was validated. If invalid, return an error 500
+     * @params  $customCode (array) custom code to validate and insert.
+     * @return  number of record inserted (should be one) or a code 500
+     * */
     public function insertCustomCode($customCode) {
-
-
         $customCode = $this->arraySanitization($customCode);
         $moduleDetails = $this->opalDB->getModuleSettings($customCode["moduleId"]["value"]);
 
@@ -41,8 +44,14 @@ class CustomCode extends OpalProject {
         return $this->opalDB->insertCustomCode($toInsert, $moduleDetails["ID"]);
     }
 
+    /*
+     * Validate a custom code.
+     * @params  $customCode(array in ref) custom code to validate
+     *          $moduleDetails (array in ref) details of the module to which the custom code is associated
+     * @return  $errMsgs (array) the list of errors found in the validation.
+     * */
     protected function _validateCustomCode(&$customCode, &$moduleDetails) {
-        $errMsgs = array();                                             //By default, no error message
+        $errMsgs = array();
         $typeFound = false;
 
         if($customCode["details"]["code"] == "" || $customCode["details"]["description"] == "" || $customCode["moduleId"]["value"] == "") {

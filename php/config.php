@@ -119,7 +119,7 @@ define("DEFAULT_TYPE", TEXT_BOX);
 define("ARIA_SOURCE_DB", 1);
 define("ORMS_SOURCE_DB", 2);
 define("MOSAIQ_SOURCE_DB", 3);
-define("LOCAL_SOURCE_DB", 4);
+define("LOCAL_SOURCE_DB", -1);
 
 /*
  * Cron Job configuration
