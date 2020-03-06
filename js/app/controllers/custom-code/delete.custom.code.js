@@ -3,29 +3,25 @@ angular.module('opalAdmin.controllers.customCode.delete', ['ngAnimate', 'ui.boot
 controller('customCode.delete', function ($scope, $filter, $uibModal, $uibModalInstance, diagnosisCollectionService, educationalMaterialCollectionService, uiGridConstants, $state, Session) {
 
 	// Submit delete
-	$scope.deleteDiagnosisTranslation = function () {
-		// Log who deleted diagnosis translation
-		var currentUser = Session.retrieveObject('user');
-		$scope.diagnosisTranslationToDelete.user = currentUser;
+	$scope.deleteCustomCode = function () {
+		$scope.toDelete = {};
+		$scope.toDelete.customCodeId = $scope.customCodeToDelete.ID;
+		$scope.toDelete.moduleId = $scope.customCodeToDelete.moduleId;
+		$scope.toDelete.OAUserId = Session.retrieveObject('user').id;
+
 		$.ajax({
 			type: "POST",
-			url: "diagnosis-translation/delete/diagnosis-translation",
-			data: $scope.diagnosisTranslationToDelete,
-			success: function (response) {
-				response = JSON.parse(response);
-				// Show success or failure depending on response
-				if (response.value) {
-					$scope.setBannerClass('success');
-					$scope.$parent.bannerMessage = $filter('translate')('DIAGNOSIS.DELETE.SUCCESS');
-					$scope.showBanner();
-				}
-				else {
-					alert($filter('translate')('DIAGNOSIS.DELETE.ERROR') + "\r\n\r\n" + response.message);
-				}
-				$uibModalInstance.close();
+			url: "custom-code/delete/custom-code",
+			data: $scope.toDelete,
+			success: function () {
+				$scope.setBannerClass('success');
+				$scope.$parent.bannerMessage = $filter('translate')('CUSTOM_CODE.DELETE.DELETED');
+				$scope.showBanner();
 			},
-			error: function (err) {
-				alert($filter('translate')('DIAGNOSIS.DELETE.ERROR') + "\r\n\r\n" + err.status + " - " + err.statusText);
+			error: function(err) {
+				alert($filter('translate')('CUSTOM_CODE.DELETE.ERROR') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+			},
+			complete: function() {
 				$uibModalInstance.close();
 			}
 		});
