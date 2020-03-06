@@ -67,11 +67,14 @@ angular.module('opalAdmin.controllers.customCode', ['ngAnimate', 'ngSanitize', '
 			'ng-click="grid.appScope.editCustomCode(row.entity)">' +
 			'<strong><a href="">{{row.entity.description}}</a></strong></div>';
 		var cellTemplatePublication = '<div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==1">'+$filter('translate')('CUSTOM_CODE.LIST.ALIAS')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==6">'+$filter('translate')('CUSTOM_CODE.LIST.DIAGNOSTIC')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==9">'+$filter('translate')('CUSTOM_CODE.LIST.TEST')+'</div>';
+		var cellTemplateLocked = '<div class="ui-grid-cell-contents" ng-show="row.entity.locked > 0"><div class="fa fa-lock text-danger"></div></div>' +
+			'<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 0"><div class="fa fa-unlock text-success"></div></div>';
 
 		// Data binding for main table
 		$scope.gridOptions = {
 			data: 'customCodesList',
 			columnDefs: [
+				{ field: 'locked', enableColumnMenu: false, displayName: '', cellTemplate: cellTemplateLocked, width: '2%', sortable: false, enableFiltering: false},
 				{ field: 'description', enableColumnMenu: false, displayName: $filter('translate')('CUSTOM_CODE.LIST.DESCRIPTION'), cellTemplate: cellTemplateName, sort: {direction: uiGridConstants.ASC, priority: 0}},
 				{ field: 'code', enableColumnMenu: false, displayName: $filter('translate')('CUSTOM_CODE.LIST.CODE'), width: '30%'},
 				{
@@ -103,11 +106,11 @@ angular.module('opalAdmin.controllers.customCode', ['ngAnimate', 'ngSanitize', '
 		}
 
 		// Function to edit questionnaire
-		$scope.editCustomCode = function (publication) {
-			$scope.currentPublication = publication;
+		$scope.editCustomCode = function (customCode) {
+			$scope.currentCustomCode = customCode;
 			var modalInstance = $uibModal.open({ // open modal
-				templateUrl: 'templates/publication/edit.publication.html',
-				controller: 'publication.edit',
+				templateUrl: 'templates/custom-code/edit.publication.html',
+				controller: 'custom.code.edit',
 				scope: $scope,
 				windowClass: 'customModal',
 				backdrop: 'static',
@@ -122,11 +125,8 @@ angular.module('opalAdmin.controllers.customCode', ['ngAnimate', 'ngSanitize', '
 		// Function for when the custom code has been clicked for deletion
 		// Open a modal
 		$scope.deleteCustomCode = function (currentCustomCode) {
-
 			// Assign selected custom code as the custom code to delete
-			$scope.postToDelete = currentCustomCode;
-			$scope.postToDelete.name_display = (Session.retrieveObject('user').language.toUpperCase() === "FR"?currentCustomCode.name_FR:currentCustomCode.name_EN);
-
+			$scope.customCodeToDelete = currentCustomCode;
 
 			if(currentCustomCode.locked > 0) {
 				var modalInstance = $uibModal.open({
@@ -150,7 +150,7 @@ angular.module('opalAdmin.controllers.customCode', ['ngAnimate', 'ngSanitize', '
 			// After delete, refresh the custom code list
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing posts
-				getPostsList();
+				getCustomCodesList();
 			});
 		};
 	});

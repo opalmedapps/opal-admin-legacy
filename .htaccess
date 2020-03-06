@@ -103,12 +103,12 @@ RewriteRule ^diagnosis-translation/insert/diagnosis-translation php/diagnosis-tr
 RewriteRule ^diagnosis-translation/update/diagnosis-translation php/diagnosis-translation/update.diagnosis_translation.php [QSA,L]
 
 # Custom Codes Section
-RewriteRule ^custom-code/delete/custom-code php/custom-code/delete.custom_code.php [QSA,L]
+RewriteRule ^custom-code/delete/custom-code php/custom-code/delete.custom.code.php [QSA,L]
 RewriteRule ^custom-code/get/available-modules php/custom-code/get.available.modules.php [QSA,L]
-RewriteRule ^custom-code/get/custom-code-details php/custom-code/get.custom_code_details.php [QSA,L]
-RewriteRule ^custom-code/get/custom-codes php/custom-code/get.custom_code.php [QSA,L]
-RewriteRule ^custom-code/insert/custom-code php/custom-code/insert.custom_code.php [QSA,L]
-RewriteRule ^custom-code/update/custom-code php/custom-code/update.custom_code.php [QSA,L]
+RewriteRule ^custom-code/get/custom-code-details php/custom-code/get.custom.code.details.php [QSA,L]
+RewriteRule ^custom-code/get/custom-codes php/custom-code/get.custom.code.php [QSA,L]
+RewriteRule ^custom-code/insert/custom-code php/custom-code/insert.custom.code.php [QSA,L]
+RewriteRule ^custom-code/update/custom-code php/custom-code/update.custom.code.php [QSA,L]
 
 # Educational Material Section
 RewriteRule ^educational-material/delete/educational-material php/educational-material/delete.educational_material.php [QSA,L]

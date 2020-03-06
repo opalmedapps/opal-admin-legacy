@@ -12,4 +12,3 @@ $questionObj = new Question($OAUserId); // Object
 $response = $questionObj->deleteQuestion($serNum);
 
 print json_encode($response); // Return response
-?>

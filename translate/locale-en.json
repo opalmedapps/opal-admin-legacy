@@ -2280,8 +2280,19 @@
       "ERROR_LIST": "An error occurred while getting the custom codes list."
     },
     "DELETE": {
+      "TITLE": "Delete custom code",
+      "DELETE": "Delete",
+      "CANCEL": "Cancel",
+      "WARNING": "WARNING!",
+      "WARNING_TEXT": "Are you sure you want to delete the following code? This action cannot be undone!",
+      "SUCCESS": "The code has being successfully deleted.",
+      "ERROR": "An error occurred while deleting the code."
     },
     "LOCKED": {
+      "TITLE": "Custom code locked",
+      "WARNING": "Warning",
+      "LOCKED": "This custom code is in use and cannot be deleted.",
+      "CLOSE": "Close"
     },
     "ADD": {
       "BACK": "Back to Custom Codes",
