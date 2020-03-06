@@ -73,4 +73,31 @@ class CustomCode extends OpalProject {
         }
         return $errMsgs;
     }
+
+    function getCustomCodeDetails($customCodeId, $moduleId) {
+        $results = $this->opalDB->getCustomCodeDetails($customCodeId, $moduleId);
+        if($results["ID"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid custom code.");
+        unset($results["masterSource"]);
+        print_R($results);die();
+        return $results;
+    }
+
+    /**
+     * Mark a custom code as being deleted. First, it checks if the code is valid, is not locked or an imported code
+     * from another source DB. Then it marks the code has being deleted.
+     *
+     * WARNING!!! No record should be EVER be removed from the customCode table! It should only being marked as
+     * being deleted ONLY  after it was verified the record is not locked and the user has the proper authorization.
+     * Not following the proper procedure will have some serious impact on the integrity of the database and its
+     * records.
+     *
+     * REMEMBER !!! NO DELETE STATEMENT EVER !!! YOU HAVE BEING WARNED !!!
+     *
+     * @param   $customCodeId (ID of the question)
+     * @return  array $response : response
+     */
+    function deleteCustomCode($customCodeId, $moduleId) {
+        return $this->opalDB->markCustomCodeAsDeleted($customCodeId, $moduleId);
+    }
 }

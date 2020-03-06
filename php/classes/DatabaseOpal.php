@@ -116,9 +116,43 @@ class DatabaseOpal extends DatabaseAccess {
         $sqlModule = str_replace("%%MASTER_SOURCE_ALIAS%%", OPAL_MASTER_SOURCE_ALIAS_TABLE, $sqlModule);
         $sqlModule = str_replace("%%MASTER_SOURCE_DIAGNOSTIC%%", OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE, $sqlModule);
         $sqlModule = str_replace("%%MASTER_SOURCE_TEST_RESULT%%", OPAL_MASTER_SOURCE_TEST_RESULT_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%ALIAS_EXPRESSION%%", OPAL_ALIAS_EXPRESSION_TABLE, $sqlModule);
         $sqlModule = str_replace("%%MODULE%%", OPAL_MODULE_TABLE, $sqlModule);
 
         return $this->_fetchAll($sqlModule, array());
+    }
+
+    function markCustomCodeAsDeleted($id, $moduleId) {
+        $details = $this->getCustomCodeDetails($id, $moduleId);
+        if($details["ID"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid custom code.");
+
+        $toDelete = array(
+            "ID"=>$id,
+            "deletedBy"=>$this->getUsername(),
+            "updatedBy"=>$this->getUsername(),
+        );
+
+        $sql = str_replace("%%MASTER_SOURCE_TABLE%%", $details["masterSource"], SQL_OPAL_MARK_AS_DELETED_MASTER_SOURCE);
+        return $this->_updateRecordIntoTable($sql, $toDelete);
+    }
+
+    function getCustomCodeDetails($customCodeId, $moduleId) {
+        $module = $this->getModuleSettings($moduleId);
+        if($module["ID"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module.");
+
+        $sqlModule = $module["sqlCustomCodeDetails"];
+        $sqlModule = str_replace("%%MASTER_SOURCE_ALIAS%%", OPAL_MASTER_SOURCE_ALIAS_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%MASTER_SOURCE_DIAGNOSTIC%%", OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%MASTER_SOURCE_TEST_RESULT%%", OPAL_MASTER_SOURCE_TEST_RESULT_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%ALIAS_EXPRESSION%%", OPAL_ALIAS_EXPRESSION_TABLE, $sqlModule);
+
+        $results = $this->_fetch($sqlModule,  array(
+            array("parameter"=>":ID","variable"=>$customCodeId,"data_type"=>PDO::PARAM_INT),
+        ));
+        $results["masterSource"] = $module["masterSource"];
+        return $results;
     }
 
     /*
@@ -733,7 +767,7 @@ class DatabaseOpal extends DatabaseAccess {
      *          record to mark as deleted in the table (BIGINT)
      * @return  result of deletion (boolean)
      * */
-    function markAsDeleted($tableName, $primaryKey, $recordId) {
+    function markPostAsDeleted($tableName, $primaryKey, $recordId) {
         $sql = str_replace("%%PRIMARY_KEY%%", strip_tags($primaryKey),str_replace("%%TABLENAME%%", strip_tags($tableName),SQL_OPAL_MARK_RECORD_AS_DELETED));
         return $this->_execute($sql, array(
             array("parameter"=>":LastUpdatedBy","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT),

@@ -40,6 +40,7 @@ define("OPAL_SETTING_TABLE","setting");
 define("OPAL_MASTER_SOURCE_ALIAS_TABLE","masterSourceAlias");
 define("OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE","masterSourceDiagnostic");
 define("OPAL_MASTER_SOURCE_TEST_RESULT_TABLE","masterSourceTestResult");
+define("OPAL_ALIAS_EXPRESSION_TABLE","AliasExpression");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -251,6 +252,11 @@ define("SQL_OPAL_UPDATE_QUESTIONNAIRE_CONTROL",
     WHERE 
     ".OPAL_QUESTIONNAIRE_CONTROL_TABLE.".QuestionnaireControlSerNum = :QuestionnaireControlSerNum;"
 );
+
+define("SQL_OPAL_MARK_AS_DELETED_MASTER_SOURCE", "
+    UPDATE %%MASTER_SOURCE_TABLE%% SET deleted = ".DELETED_RECORD.", deletedBy = :deletedBy, updatedBy = :updatedBy
+    WHERE ID = :ID; 
+");
 
 define("SQL_OPAL_UPDATE_POST_CONTROL",
     "UPDATE ".OPAL_POST_TABLE." SET 
