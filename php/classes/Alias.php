@@ -38,7 +38,6 @@ class Alias {
             else
                 $sql = "SELECT description AS name, code AS id, description FROM masterSourceAlias WHERE type = " . $type . " AND source = " . $sourceDBSer . " AND deleted = 0 ORDER BY code";
 
-            PRINT $sql;
             $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD);
             $host_db_link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -46,7 +45,17 @@ class Alias {
             $results = $query->fetchAll(PDO::FETCH_ASSOC);
 
 
-            if($sourceDBSer == ORMS_SOURCE_DB)
+            if($sourceDBSer == LOCAL_SOURCE_DB)
+                foreach ($results as &$item) {
+                    $assignedExpression = $this->assignedSearch($item["id"], $item["description"], $assignedExpressions);
+                    $item["added"] = 0;
+                    if ($assignedExpression)
+                        $item['assigned'] = $assignedExpression;
+                    else
+                        $item['assigned'] = null;
+                    unset($item["code"]);
+                }
+            else if($sourceDBSer == ORMS_SOURCE_DB)
                 foreach ($results as &$item) {
                     $assignedExpression = $this->assignedSearch($item["code"], $item["description"], $assignedExpressions);
                     $item["added"] = 0;
