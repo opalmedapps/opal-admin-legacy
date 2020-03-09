@@ -461,6 +461,11 @@ sub getTestResultsFromSourceDB
 			}
 
 			my $patientInfo_sql = "
+				use VARIAN;
+
+                IF OBJECT_ID('tempdb.dbo.#tempTR', 'U') IS NOT NULL
+                  DROP TABLE #tempTR;
+
 				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
 			";
 			my $numOfPatients = @patientList;
@@ -479,7 +484,12 @@ sub getTestResultsFromSourceDB
 					$patientInfo_sql .= "UNION";
 				}
 			}
-			$patientInfo_sql .= ")";
+			$patientInfo_sql .= ")
+			Select c.* into #tempTR
+			from PatientInfo c;
+			Create Index temporaryindexTR1 on #tempTR (SSN);
+			Create Index temporaryindexTR2 on #tempTR (PatientSerNum);
+			";
 
 			my $trInfo_sql = $patientInfo_sql . "
 				SELECT DISTINCT
@@ -501,9 +511,9 @@ sub getTestResultsFromSourceDB
 					tr.valid_entry_ind,
 					PatientInfo.PatientSerNum
 				FROM
-					VARIAN.dbo.test_result tr,
-					VARIAN.dbo.pt pt,
-					PatientInfo
+					VARIAN.dbo.test_result tr with(nolock),
+					VARIAN.dbo.pt pt with(nolock),
+					#tempTR as PatientInfo
 				WHERE
 					tr.pt_id                		= pt.pt_id
 				AND pt.patient_ser          		= (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
