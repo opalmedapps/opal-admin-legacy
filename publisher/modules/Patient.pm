@@ -431,6 +431,10 @@ sub getPatientInfoFromSourceDBs
 
 	    my $sourcePatient  = undef;
 
+		# YM 2020-03-09
+		# Temporary comment out the Picture field for now until we can fix the memory size error when trying to 
+		# fetch the picture of the patient from Aria
+
 	    my $patientInfo_sql = "
 	        SELECT DISTINCT 
 	            pt.PatientSer,
@@ -440,6 +444,7 @@ sub getPatientInfoFromSourceDBs
 	            pt.PatientId2,
 	            CONVERT(VARCHAR, pt.DateOfBirth, 120),
 	            -- ph.Picture,
+				'' as Picture,
 	            RTRIM(pt.Sex),
 	            CONVERT(VARCHAR, ppt.DeathDate, 120),
 	            LEN(ph.Picture)
@@ -1110,6 +1115,7 @@ sub compareWith
 	# 	my $updatedPicture = $UpdatedPatient->setPatientPicture($SPatientPicture); # update patient picture
 	# 	print "Will update database entry to \"$updatedPicture\".\n";
 	# }
+
 	if ($SPatientDeathDate ne $OPatientDeathDate and (isValidDate($SPatientDeathDate) or isValidDate($OPatientDeathDate))) {
 
 		$change = 1; # change occurred

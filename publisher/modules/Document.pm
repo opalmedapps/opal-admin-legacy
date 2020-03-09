@@ -565,7 +565,7 @@ sub getDocsFromSourceDB
 					$docInfo_sql .= ")";
 				}
 			}
-
+			
 			# prepare query
 			my $query = $sourceDatabase->prepare($docInfo_sql)
 				or die "Could not prepare query: " . $sourceDatabase->errstr;
