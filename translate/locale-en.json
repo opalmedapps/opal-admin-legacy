@@ -2322,6 +2322,18 @@
       "ERROR_MODULE": "An error occurred while getting the modules list."
     },
     "EDIT": {
+      "SAVE": "Save Changes",
+      "CANCEL": "Cancel",
+      "TITLE": "Edit Custom code",
+      "GENERAL": "General Informations",
+      "CODE": "Code",
+      "DESCRIPTION": "Description",
+      "MODULE": "Module",
+      "TYPE": "Type",
+      "DETAILS": "Details",
+      "LOCKED": "This custom code is in use and cannot be modified.",
+      "ERROR_UPDATE": "An error occurred while updating the custom code.",
+      "ERROR_DETAILS": "An error occurred while getting the details of the custom code."
     }
   },
   "PATIENTS": {
