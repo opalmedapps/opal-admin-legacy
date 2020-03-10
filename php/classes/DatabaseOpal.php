@@ -818,7 +818,66 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /*
+     * Insert an alias into the alias master source table
+     * @params  $toInsert (array) data to insert
+     * @returns total results inserted (int)
+     * */
     function insertAliases($toInsert) {
         return $this->_insertMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_ALIAS_TABLE, $toInsert);
+    }
+
+    /*
+     * Get all the patients triggers
+     * @params  void
+     * @return  patient triggers found (array)
+     * */
+    function getPatientsTriggers() {
+        return $this->_fetchAll(OPAL_GET_PATIENTS_TRIGGERS, array());
+    }
+
+    /*
+     * Get all the diagnosis triggers
+     * @params  void
+     * @return  diagnosis triggers found (array)
+     * */
+    function getDiagnosisTriggers() {
+        return $this->_fetchAll(OPAL_GET_DIAGNOSIS_TRIGGERS, array());
+    }
+
+    /*
+     * Get all the appointments triggers
+     * @params  void
+     * @return  appointments triggers found (array)
+     * */
+    function getAppointmentsTriggers() {
+        return $this->_fetchAll(OPAL_GET_APPOINTMENTS_TRIGGERS, array());
+    }
+
+    /*
+     * Get all the appointment status triggers
+     * @params  void
+     * @return  appointment status triggers found (array)
+     * */
+    function getAppointmentsStatusTriggers() {
+        return $this->_fetchAll(OPAL_GET_APPOINTMENT_STATUS_TRIGGERS, array());
+    }
+
+    /*
+     * Get all the doctors triggers
+     * @params  void
+     * @return  doctors triggers found (array)
+     * */
+    function getDoctorsTriggers() {
+        return $this->_fetchAll(OPAL_GET_DOCTORS_TRIGGERS, array());
+    }
+
+    /*
+     * Get all the treatment machine triggers
+     * @params  void
+     * @return  treatment machine triggers found (array)
+     * */
+    function getTreatmentMachinesTriggers() {
+        return $this->_fetchAll(OPAL_GET_TREATMENT_MACHINES_TRIGGERS, array());
     }
 }
