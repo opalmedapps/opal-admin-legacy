@@ -493,9 +493,12 @@ angular.module('opalAdmin.collections', [])
 		var filterAPI = {};
 
 		// Function to get all filters
-		filterAPI.getFilters = function () {
+		filterAPI.getFilters = function (OAUserId) {
 			return $http.post(
 				"filter/get/filters",
+				$.param({
+					OAUserId: OAUserId,
+				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
@@ -775,32 +778,6 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		questionnaireAPI.getPublishedQuestionnaires = function (OAUserId) {
-			return $http.post(
-				"publication-tool/get/published-questionnaires",
-				$.param({
-					OAUserId: OAUserId,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-
-		};
-
-		questionnaireAPI.getPublishedQuestionnaireDetails = function (publishedQuestionnaireId, OAUserId) {
-			return $http.post(
-				"publication-tool/get/published-questionnaire-details",
-				$.param({
-					OAUserId: OAUserId,
-					publishedQuestionnaireId: publishedQuestionnaireId,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
 		questionnaireAPI.getLibraries = function (OAUserId) {
 			return $http.post(
 				"library/get/libraries",
@@ -878,18 +855,6 @@ angular.module('opalAdmin.collections', [])
 		questionnaireAPI.getFinalizedQuestions = function (OAUserId) {
 			return $http.post(
 				"questionnaire/get/finalized-questions",
-				$.param({
-					OAUserId: OAUserId,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		questionnaireAPI.getFinalizedQuestionnaires = function (OAUserId) {
-			return $http.post(
-				"publication-tool/get/finalized-questionnaires",
 				$.param({
 					OAUserId: OAUserId,
 				}),

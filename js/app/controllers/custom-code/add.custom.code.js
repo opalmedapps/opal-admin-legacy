@@ -148,7 +148,6 @@ angular.module('opalAdmin.controllers.customCode.add', ['ngAnimate', 'ui.bootstr
 		});
 
 		$scope.moduleUpdate = function (moduleSelected) {
-			console.log(moduleSelected);
 			if(moduleSelected.subModule) {
 				$scope.aliasTypes = moduleSelected.subModule;
 

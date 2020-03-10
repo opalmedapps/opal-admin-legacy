@@ -167,7 +167,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		};
 
 		// Call our API service to get each trigger
-		filterCollectionService.getFilters().then(function (response) {
+		filterCollectionService.getFilters(Session.retrieveObject('user').id).then(function (response) {
 			response.data = angular.copy(response.data);
 			response.data.appointments.forEach(function(entry) {
 				if($scope.language.toUpperCase() === "FR")
