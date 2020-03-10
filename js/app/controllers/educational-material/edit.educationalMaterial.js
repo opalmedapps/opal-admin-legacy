@@ -10,49 +10,7 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 
 	$scope.eduMat = {}; // initialize edumat object
 
-	// Initialize a list of sexes
-/*	$scope.sexes = [
-		{
-			name: 'Male',
-			name_display: $filter('translate')('EDUCATION.EDIT.MALE'),
-			icon: 'male'
-		}, {
-			name: 'Female',
-			name_display: $filter('translate')('EDUCATION.EDIT.FEMALE'),
-			icon: 'female'
-		}
-	];
-
-	// Initialize to hold demographic triggers
-	$scope.demoTrigger = {
-		sex: null,
-		age: {
-			min: 0,
-			max: 130
-		}
-	};*/
-
-	// Initialize lists to hold triggers
-/*
-	$scope.appointmentTriggerList = [];
-	$scope.dxTriggerList = [];
-	$scope.doctorTriggerList = [];
-	$scope.machineTriggerList = [];
-	$scope.patientTriggerList = [];
-*/
 	$scope.language = Session.retrieveObject('user').language;
-
-
-/*
-	$scope.selectAll = {
-		appointment: {all:false, checked:false},
-		diagnosis: {all:false, checked:false},
-		doctor: {all:false, checked:false},
-		machine: {all:false, checked:false},
-		patient: {all:false, checked:false}
-	};
-*/
-
 	$scope.tocsComplete = true;
 
 	// Initialize lists to hold the distinct edu material types
@@ -89,57 +47,6 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 		$(".bannerMessageModal").addClass('alert-' + classname);
 	};
 
-	// Initialize search field variables
-/*	$scope.appointmentSearchField = "";
-	$scope.dxSearchField = "";
-	$scope.doctorSearchField = "";
-	$scope.machineSearchField = "";
-	$scope.patientSearchField = "";*/
-
-	// Function to assign search fields when textbox changes
-/*	$scope.searchAppointment = function (field) {
-		$scope.appointmentSearchField = field;
-		$scope.selectAll.appointment.all = false;
-	};
-	$scope.searchDiagnosis = function (field) {
-		$scope.dxSearchField = field;
-		$scope.selectAll.diagnosis.all = false;
-	};
-	$scope.searchDoctor = function (field) {
-		$scope.doctorSearchField = field;
-		$scope.selectAll.doctor.all = false;
-	};
-	$scope.searchMachine = function (field) {
-		$scope.machineSearchField = field;
-		$scope.selectAll.machine.all = false;
-	};
-	$scope.searchPatient = function (field) {
-		$scope.patientSearchField = field;
-		$scope.selectAll.patient.all = false;
-	};*/
-
-	// Function for search through the triggers
-/*	$scope.searchAppointmentFilter = function (Filter) {
-		var keyword = new RegExp($scope.appointmentSearchField, 'i');
-		return !$scope.appointmentSearchField || keyword.test($scope.language.toUpperCase() === "FR"?Filter.name_FR:Filter.name);
-	};
-	$scope.searchDxFilter = function (Filter) {
-		var keyword = new RegExp($scope.dxSearchField, 'i');
-		return !$scope.dxSearchField || keyword.test($scope.language.toUpperCase() === "FR"?Filter.name_FR:Filter.name);
-	};
-	$scope.searchDoctorFilter = function (Filter) {
-		var keyword = new RegExp($scope.doctorSearchField, 'i');
-		return !$scope.doctorSearchField || keyword.test(Filter.name);
-	};
-	$scope.searchMachineFilter = function (Filter) {
-		var keyword = new RegExp($scope.machineSearchField, 'i');
-		return !$scope.machineSearchField || keyword.test(Filter.name);
-	};
-	$scope.searchPatientFilter = function (Filter) {
-		var keyword = new RegExp($scope.patientSearchField, 'i');
-		return !$scope.patientSearchField || keyword.test(Filter.name);
-	};*/
-
 	/* Function for the "Processing" dialog */
 	var processingModal;
 	$scope.showProcessingModal = function () {
@@ -156,182 +63,15 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 	// Call our API service to get the current educational material details
 	educationalMaterialCollectionService.getEducationalMaterialDetails($scope.currentEduMat.serial).then(function (response) {
 		$scope.eduMat = response.data;
-		//checkDemographicTriggers();
-
-/*		filterCollectionService.getFilters().then(function (response) {
-			response.data.appointments.forEach(function(entry) {
-				if($scope.language.toUpperCase() === "FR")
-					entry.name_display = entry.name_FR;
-				else
-					entry.name_display = entry.name;
-			});
-
-			$scope.appointmentTriggerList = checkAdded(response.data.appointments, $scope.selectAll.appointment); // Assign value
-			$scope.dxTriggerList = checkAdded(response.data.dx, $scope.selectAll.diagnosis);
-			$scope.dxTriggerList.forEach(function(entry) {
-				if($scope.language.toUpperCase() === "FR")
-					entry.name_display = entry.name_FR;
-				else
-					entry.name_display = entry.name;
-			});
-			$scope.doctorTriggerList = checkAdded(response.data.doctors, $scope.selectAll.doctor);
-			$scope.machineTriggerList = checkAdded(response.data.machines, $scope.selectAll.machine);
-			$scope.patientTriggerList = checkAdded(response.data.patients, $scope.selectAll.patient);
-		}).catch(function(response) {
-			alert($filter('translate')('EDUCATION.EDIT.ERROR_TRIGGERS') + "\r\n\r\n" + response.status + " - " + response.data);
-			$uibModalInstance.close();
-		}).finally(function () {
-			processingModal.close(); // hide modal
-			processingModal = null; // remove reference
-
-		}).catch(function(response) {
-			alert($filter('translate')('EDUCATION.EDIT.ERROR_TRIGGERS') + "\r\n\r\n" + response.status + " - " + response.data);
-		});*/
 	}).catch(function(response) {
 		alert($filter('translate')('EDUCATION.EDIT.ERROR_DETAILS') + "\r\n\r\n" + response.status + " - " + response.data);
 		$uibModalInstance.close();
 	});
 
-	// Function to toggle trigger in a list on/off
-	/*$scope.selectTrigger = function (trigger, selectAll) {
-		$scope.setChangesMade();
-		selectAll.all = false;
-		selectAll.checked = false;
-		$scope.eduMat.triggers_updated = 1;
-		if (trigger.added)
-			trigger.added = 0;
-		else
-			trigger.added = 1;
-	};
-
-	// Function for selecting all triggers in a trigger list
-	$scope.selectAllTriggers = function (triggerList,triggerFilter,selectAll) {
-
-		var filtered = $scope.filter(triggerList,triggerFilter);
-		$scope.eduMat.triggers_updated = 1;
-		$scope.changesMade = true;
-
-		if (filtered.length == triggerList.length) { // search field wasn't used
-			if (selectAll.checked) {
-				angular.forEach(filtered, function (trigger) {
-					trigger.added = 0;
-				});
-				selectAll.checked = false; // toggle off
-				selectAll.all = false;
-			}
-			else {
-				angular.forEach(filtered, function (trigger) {
-					trigger.added = 1;
-				});
-
-				selectAll.checked = true; // toggle on
-				selectAll.all = true;
-			}
-		}
-		else {
-			if (selectAll.checked) { // was checked
-				angular.forEach(filtered, function (trigger) {
-					trigger.added = 0;
-				});
-				selectAll.checked = false; // toggle off
-				selectAll.all = false;
-			}
-			else { // was not checked
-				angular.forEach(filtered, function (trigger) {
-					trigger.added = 1;
-				});
-
-				selectAll.checked = true; // toggle on
-
-			}
-		}
-	};*/
-
 	$scope.detailsUpdated = function () {
 		$scope.eduMat.details_updated = 1;
 		$scope.setChangesMade();
 	};
-
-	// Function to assign 1 to existing triggers
-/*	function checkAdded(triggerList, selectAll) {
-		angular.forEach($scope.eduMat.triggers, function (selectedTrigger) {
-			var selectedTriggerId = selectedTrigger.id;
-			var selectedTriggerType = selectedTrigger.type;
-			angular.forEach(triggerList, function (trigger) {
-				var triggerId = trigger.id;
-				var triggerType = trigger.type;
-				if (triggerType == selectedTriggerType) {
-					if (selectedTriggerId == 'ALL') {
-						selectAll.all = true;
-						selectAll.checked = true;
-						trigger.added = 1;
-					}
-					else if (triggerId == selectedTriggerId) {
-						trigger.added = 1;
-					}
-				}
-			});
-		});
-
-		return triggerList;
-	}*/
-
-
-	// Function to check demographic triggers
-/*	function checkDemographicTriggers() {
-		var demoTrigger = {
-			sex: null,
-			display: null,
-			age: {
-				min: 0,
-				max: 130
-			}
-		};
-		angular.forEach($scope.eduMat.triggers, function (selectedTrigger) {
-			if (selectedTrigger.type == 'Sex') {
-				switch(selectedTrigger.id) {
-				case "Female":
-					$scope.demoTrigger.display = $filter('translate')('EDUCATION.EDIT.FEMALE');
-					break;
-				default:
-					$scope.demoTrigger.display = $filter('translate')('EDUCATION.EDIT.MALE');
-				}
-
-				$scope.demoTrigger.sex = selectedTrigger.id;
-
-			}
-			if (selectedTrigger.type == 'Age') {
-				$scope.demoTrigger.age.min = parseInt(selectedTrigger.id.split(',')[0]);
-				$scope.demoTrigger.age.max = parseInt(selectedTrigger.id.split(',')[1]);
-			}
-		});
-
-		return demoTrigger;
-	}*/
-
-	// Function to toggle necessary changes when updating the sex
-/*	$scope.sexUpdate = function (sex) {
-		if (!$scope.demoTrigger.sex) {
-			$scope.demoTrigger.sex = sex.name;
-			$scope.demoTrigger.display = sex.name_display;
-		} else if ($scope.demoTrigger.sex == sex.name) {
-			$scope.demoTrigger.sex = null; // Toggle off
-		} else {
-			$scope.demoTrigger.sex = sex.name;
-			$scope.demoTrigger.display = sex.name_display;
-		}
-
-		$scope.setChangesMade();
-		$scope.eduMat.triggers_updated = 1;
-
-	};
-
-	// Function to toggle necessary changes when updating the age
-	$scope.ageUpdate = function () {
-
-		$scope.setChangesMade();
-		$scope.eduMat.triggers_updated = 1;
-	}*/
 
 	// Function to check necessary form fields are complete
 	$scope.checkForm = function () {
@@ -366,7 +106,6 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 			});
 		}
 	}
-
 
 	// Function to validate english share url
 	$scope.validShareURLEN = { status: null, message: null };
@@ -416,29 +155,6 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 	$scope.updateEduMat = function () {
 
 		if ($scope.checkForm()) {
-
-			// Initialize trigger
-			// $scope.eduMat.triggers = [];
-
-			// Add demographic triggers, if defined
-/*			if ($scope.demoTrigger.sex)
-				$scope.eduMat.triggers.push({ id: $scope.demoTrigger.sex, type: 'Sex' });
-			if ($scope.demoTrigger.age.min >= 0 && $scope.demoTrigger.age.max <= 130) { // i.e. not empty
-				if ($scope.demoTrigger.age.min !== 0 || $scope.demoTrigger.age.max !== 130) { // Triggers were changed
-					$scope.eduMat.triggers.push({
-						id: String($scope.demoTrigger.age.min).concat(',', String($scope.demoTrigger.age.max)),
-						type: 'Age'
-					});
-				}
-			}*/
-
-			// Add trigger to edu material
-/*			addTriggers($scope.appointmentTriggerList, $scope.selectAll.appointment.all);
-			addTriggers($scope.dxTriggerList, $scope.selectAll.diagnosis.all);
-			addTriggers($scope.doctorTriggerList, $scope.selectAll.doctor.all);
-			addTriggers($scope.machineTriggerList, $scope.selectAll.machine.all);
-			addTriggers($scope.patientTriggerList, $scope.selectAll.patient.all);*/
-
 			$scope.eduMat.user = Session.retrieveObject('user');
 
 			// Submit form
@@ -491,29 +207,6 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 		}
 		$scope.validateTOCs();
 	};
-
-	// Function to return triggers that have been checked
-/*	function addTriggers(triggerList, selectAll) {
-		if (selectAll) {
-			$scope.eduMat.triggers.push({id: 'ALL', type: triggerList[0].type});
-		}
-		else {
-			angular.forEach(triggerList, function (trigger) {
-				if (trigger.added)
-					$scope.eduMat.triggers.push({ id: trigger.id, type: trigger.type });
-			});
-		}
-	}
-
-	// Function to check if triggers are added
-	$scope.checkTriggers = function (triggerList) {
-		var triggersAdded = false;
-		angular.forEach(triggerList, function (trigger) {
-			if (trigger.added)
-				triggersAdded = true;
-		});
-		return triggersAdded;
-	};*/
 
 	// Function to accept/trust html (styles, classes, etc.)
 	$scope.deliberatelyTrustAsHtml = function (htmlSnippet) {
