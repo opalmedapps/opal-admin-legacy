@@ -255,7 +255,7 @@ define("SQL_OPAL_UPDATE_QUESTIONNAIRE_CONTROL",
 
 define("SQL_OPAL_MARK_AS_DELETED_MASTER_SOURCE", "
     UPDATE %%MASTER_SOURCE_TABLE%% SET deleted = ".DELETED_RECORD.", deletedBy = :deletedBy, updatedBy = :updatedBy
-    WHERE ID = :ID; 
+    WHERE ID = :ID AND source = ".LOCAL_SOURCE_DB."; 
 ");
 
 define("SQL_OPAL_UPDATE_POST_CONTROL",
@@ -462,4 +462,13 @@ define("SQL_OPAL_GET_EDUCATIONAL_CHART","
     AND emmh.EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum GROUP BY emmh.CronLogSerNum, cl.CronDateTime
     AND cl.CronDateTime >= DATE_SUB(NOW(),INTERVAL 1 YEAR)
     ORDER BY cl.CronDateTime ASC 
+");
+
+define("OPAL_UPDATE_MASTER_SOURCE", "
+    UPDATE %%MASTER_TABLE%% SET
+    code = :code,
+    description = :description,
+    updatedBy = :updatedBy
+    WHERE 
+    ID = :ID;
 ");

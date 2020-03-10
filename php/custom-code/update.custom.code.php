@@ -1,26 +1,13 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To update a diagnosis translation for any changes */
-	include_once('diagnosis-translation.inc');
 
-	$Diagnosis = new Diagnosis; // Object
+include_once('custom.code.inc');
 
-	// Construct array from FORM params
-	$diagnosisTranslationDetails = array(
-		'name_EN'					=> $_POST['name_EN'],
-		'name_FR'					=> $_POST['name_FR'],
-		'description_EN'	=> filter_var($_POST['description_EN'], FILTER_SANITIZE_MAGIC_QUOTES),
-		'description_FR'	=> filter_var($_POST['description_FR'], FILTER_SANITIZE_MAGIC_QUOTES),
-		'edumatser'				=> $_POST['eduMatSer'],
-		'serial'					=> $_POST['serial'],
-		'diagnoses'				=> $_POST['diagnoses'],
-		'user'						=> $_POST['user'],
-		'details_updated'	=> $_POST['details_updated'],
-		'codes_updated'		=> $_POST['codes_updated']
-	);
+$OAUserId = strip_tags(preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $_POST['OAUserId']));
+$sessionId = strip_tags(preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $_POST['sessionid']));
 
-	 // Call function
-	 $response = $Diagnosis->updateDiagnosisTranslation($diagnosisTranslationDetails);
-	 print json_encode($response); // Return response
+$customCode = new CustomCode($OAUserId, $sessionId);
+$customCode->updateCustomCode($_POST);
 
- ?>
+header('Content-Type: application/javascript');
+$response['code'] = HTTP_STATUS_SUCCESS;
+echo json_encode($response);
