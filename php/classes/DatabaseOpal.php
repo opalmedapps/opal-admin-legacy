@@ -152,6 +152,21 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":ID","variable"=>$customCodeId,"data_type"=>PDO::PARAM_INT),
         ));
         $results["masterSource"] = $module["masterSource"];
+        $results["module"]["ID"] = $module["ID"];
+        $results["module"]["name_EN"] = $module["name_EN"];
+        $results["module"]["name_FR"] = $module["name_FR"];
+        if($module["subModule"] != "") {
+            $sub = json_decode($module["subModule"], true);
+            foreach($sub as $row) {
+                if($row["ID"] == $results["type"]) {
+                    $results["module"]["subModule"] = $row;
+                    break;
+                }
+            }
+        }
+        else
+            $results["module"]["subModule"] = "";
+
         return $results;
     }
 
@@ -566,6 +581,33 @@ class DatabaseOpal extends DatabaseAccess {
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module.");
         }
         return $this->_insertRecordIntoTable($tableToInsert, $toInsert);
+    }
+
+    /*
+     * Insert a custom code to the appropriate table with the username and the creation date.
+     * @params  $toInsert (array) contains all the details of the custom code.
+     * @returns int number of records created
+     * */
+    function updateCustomCode($toUpdate, $moduleId) {
+        $toUpdate["updatedBy"] = $this->username;
+
+        switch ($moduleId) {
+            case MODULE_ALIAS:
+                $tableToUpdate = OPAL_MASTER_SOURCE_ALIAS_TABLE;
+                break;
+            case MODULE_TEST_RESULTS:
+                $tableToUpdate = OPAL_MASTER_SOURCE_TEST_RESULT_TABLE;
+                break;
+            case MODULE_DIAGNOSIS_TRANSLATION:
+                $tableToUpdate = OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE;
+                break;
+            default:
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module.");
+        }
+
+        $sql = str_replace("%%MASTER_TABLE%%", $tableToUpdate, OPAL_UPDATE_MASTER_SOURCE);
+
+        return $this->_updateRecordIntoTable($sql, $toUpdate);
     }
 
     /*

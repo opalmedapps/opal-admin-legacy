@@ -45,6 +45,42 @@ class CustomCode extends OpalProject {
     }
 
     /*
+     * Update custom codes after it was validated. If invalid, return an error 500
+     * @params  $customCode (array) custom code to validate and update.
+     * @return  number of record inserted (should be one) or a code 500
+     * */
+    public function updateCustomCode($customCode) {
+        $customCode = $this->arraySanitization($customCode);
+        if(!array_key_exists("ID", $customCode) || $customCode["ID"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot identify the custom code");
+
+        $details = $this->getCustomCodeDetails($customCode["ID"], $customCode["moduleId"]["value"]);
+
+        if($detais["locked"] > 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Custom code is in use and cannot be modified.");
+
+        if($detais["source"] > LOCAL_SOURCE_ONLY)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot modify a code from an outside source.");
+
+        if($details["code"] == $customCode["details"]["code"] && $details["description"] == $customCode["details"]["description"])
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "No change detected.");
+
+        $moduleDetails = $this->opalDB->getModuleSettings($customCode["moduleId"]["value"]);
+
+        $result = $this->_validateCustomCode($customCode, $moduleDetails);
+        if(count($result) > 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Custom code validation failed. " . implode(" ", $result));
+
+        $toUpdate = array(
+            "ID"=>strip_tags($customCode["ID"]),
+            "code"=>strip_tags($customCode["details"]["code"]),
+            "description"=>strip_tags($customCode["details"]["description"]),
+        );
+
+        return $this->opalDB->updateCustomCode($toUpdate, $moduleDetails["ID"]);
+    }
+
+    /*
      * Validate a custom code.
      * @params  $customCode(array in ref) custom code to validate
      *          $moduleDetails (array in ref) details of the module to which the custom code is associated
@@ -79,7 +115,6 @@ class CustomCode extends OpalProject {
         if($results["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid custom code.");
         unset($results["masterSource"]);
-        print_R($results);die();
         return $results;
     }
 

@@ -109,8 +109,8 @@ angular.module('opalAdmin.controllers.customCode', ['ngAnimate', 'ngSanitize', '
 		$scope.editCustomCode = function (customCode) {
 			$scope.currentCustomCode = customCode;
 			var modalInstance = $uibModal.open({ // open modal
-				templateUrl: 'templates/custom-code/edit.publication.html',
-				controller: 'custom.code.edit',
+				templateUrl: 'templates/custom-code/edit.custom.code.html',
+				controller: 'customCode.edit',
 				scope: $scope,
 				windowClass: 'customModal',
 				backdrop: 'static',

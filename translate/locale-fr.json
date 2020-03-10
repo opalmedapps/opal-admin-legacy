@@ -2348,9 +2348,21 @@
       "COMPLETE": "Complet",
       "CODE": "Code",
       "DESCRIPTION": "Description",
-      "ERROR_MODULE": "Une erreur s'est produite lors de l'obtention de la liste des modules."
+      "ERROR_MODULE": "Une erreur s'est produite lors de l'obtention de la liste des modules.",
     },
     "EDIT": {
+      "SAVE": "Enregistrer",
+      "CANCEL": "Annuler",
+      "TITLE": "Modifier code personnalisé",
+      "GENERAL": "Informations générales",
+      "CODE": "Code",
+      "DESCRIPTION": "Description",
+      "MODULE": "Module",
+      "TYPE": "Type",
+      "DETAILS": "Détails",
+      "LOCKED": "Ce code personnalisé est utilisé et ne peut être modifié.",
+      "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour du code personnalisé.",
+      "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails du code personnalisé."
     }
   },
   "PATIENTS": {
