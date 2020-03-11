@@ -363,6 +363,11 @@ sub getTasksFromSourceDB
 			}
 
 			my $patientInfo_sql = "
+				use VARIAN;
+
+                IF OBJECT_ID('tempdb.dbo.#tempTask', 'U') IS NOT NULL
+                  DROP TABLE #tempTask;
+
 				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
 			";
 			my $numOfPatients = @patientList;
@@ -381,7 +386,12 @@ sub getTasksFromSourceDB
 					$patientInfo_sql .= "UNION";
 				}
 			}
-			$patientInfo_sql .= ")";
+			$patientInfo_sql .= ")
+			Select c.* into #tempTask
+			from PatientInfo c;
+			Create Index temporaryindexTask1 on #tempTask (SSN);
+			Create Index temporaryindexTask2 on #tempTask (PatientSerNum);
+			";
 
 			my $taskInfo_sql = $patientInfo_sql .
 				"
@@ -395,17 +405,17 @@ sub getTasksFromSourceDB
 					REPLACE(lt.Expression1, '''', ''),
 					PatientInfo.PatientSerNum
 				FROM
-					variansystem.dbo.Patient Patient,
-					variansystem.dbo.ActivityInstance ActivityInstance,
-					variansystem.dbo.Activity Activity,
-					variansystem.dbo.LookupTable lt,
-					PatientInfo,
-					variansystem.dbo.NonScheduledActivity NonScheduledActivity
-				LEFT JOIN variansystem.dbo.NonScheduledActivityMH NonScheduledActivityMH
+					VARIAN.dbo.Patient Patient with(nolock),
+					VARIAN.dbo.ActivityInstance ActivityInstance with(nolock),
+					VARIAN.dbo.Activity Activity with(nolock),
+					VARIAN.dbo.LookupTable lt with(nolock),
+					#tempTask as PatientInfo,
+					VARIAN.dbo.NonScheduledActivity NonScheduledActivity with(nolock)
+				LEFT JOIN VARIAN.dbo.NonScheduledActivityMH NonScheduledActivityMH with(nolock)
 				ON  NonScheduledActivityMH.NonScheduledActivitySer = NonScheduledActivity.NonScheduledActivitySer
 				AND NonScheduledActivityMH.NonScheduledActivityRevCount = (
 					SELECT MIN(nsamh.NonScheduledActivityRevCount)
-					FROM variansystem.dbo.NonScheduledActivityMH nsamh
+					FROM VARIAN.dbo.NonScheduledActivityMH nsamh with(nolock)
 					WHERE nsamh.NonScheduledActivitySer = NonScheduledActivity.NonScheduledActivitySer
 					AND nsamh.NonScheduledActivityCode = 'Completed'
 				)
@@ -413,7 +423,7 @@ sub getTasksFromSourceDB
 					NonScheduledActivity.ActivityInstanceSer 	= ActivityInstance.ActivityInstanceSer
 				AND ActivityInstance.ActivitySer 			    = Activity.ActivitySer
 				AND Activity.ActivityCode 				        = lt.LookupValue
-				AND NonScheduledActivity.PatientSer = (select pt.PatientSer from variansystem.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+				AND NonScheduledActivity.PatientSer = (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
 				AND (
 			";
 

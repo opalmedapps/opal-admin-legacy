@@ -205,6 +205,11 @@ sub getResourceAppointmentsFromSourceDB
 			}
 
 			my $patientInfo_sql = "
+				use VARIAN;
+
+                IF OBJECT_ID('tempdb.dbo.#tempRA', 'U') IS NOT NULL
+                  DROP TABLE #tempRA;
+
 				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
 			";
 			my $numOfPatients = @patientList;
@@ -223,7 +228,12 @@ sub getResourceAppointmentsFromSourceDB
 					$patientInfo_sql .= "UNION";
 				}
 			}
-			$patientInfo_sql .= ")";
+			$patientInfo_sql .= ")
+			Select c.* into #tempRA
+			from PatientInfo c;
+			Create Index temporaryindexRA1 on #tempRA (SSN);
+			Create Index temporaryindexRA2 on #tempRA (PatientSerNum);
+			";
 
 			my $raInfo_sql = $patientInfo_sql .
 				"
@@ -235,16 +245,16 @@ sub getResourceAppointmentsFromSourceDB
 						PatientInfo.PatientSerNum,
 						lt.Expression1
 					FROM
-						variansystem.dbo.Patient pt,
-						variansystem.dbo.Attendee att,
-						variansystem.dbo.ScheduledActivity sa,
-						variansystem.dbo.ActivityInstance ai,
-						variansystem.dbo.Activity Activity,
-						variansystem.dbo.LookupTable lt,
-						PatientInfo
+						VARIAN.dbo.Patient pt with(nolock),
+						VARIAN.dbo.Attendee att with(nolock),
+						VARIAN.dbo.ScheduledActivity sa with(nolock),
+						VARIAN.dbo.ActivityInstance ai with(nolock),
+						VARIAN.dbo.Activity Activity with(nolock),
+						VARIAN.dbo.LookupTable lt with(nolock),
+						#tempRA as PatientInfo
 					WHERE
 						sa.ActivityInstanceSer		= ai.ActivityInstanceSer
-					AND sa.PatientSer = (select pt.PatientSer from variansystem.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+					AND sa.PatientSer = (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
 					AND ai.ActivitySer			    = Activity.ActivitySer
 					AND	Activity.ActivityCode		= lt.LookupValue
 					AND	ai.ActivityInstanceSer		= att.ActivityInstanceSer

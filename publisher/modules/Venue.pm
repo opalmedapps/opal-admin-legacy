@@ -135,7 +135,7 @@ sub getVenueInfoFromSourceDB
 			SELECT DISTINCT
 				Venue.VenueId
 			FROM
-				variansystem.dbo.Venue Venue
+				VARIAN.dbo.Venue Venue
 			WHERE
 				Venue.ResourceSer = '$sourceuid'
 		";
