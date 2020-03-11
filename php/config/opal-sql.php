@@ -261,7 +261,7 @@ define("SQL_OPAL_UPDATE_QUESTIONNAIRE_CONTROL",
 
 define("SQL_OPAL_MARK_AS_DELETED_MASTER_SOURCE", "
     UPDATE %%MASTER_SOURCE_TABLE%% SET deleted = ".DELETED_RECORD.", deletedBy = :deletedBy, updatedBy = :updatedBy
-    WHERE ID = :ID AND source = ".LOCAL_SOURCE_DB."; 
+    WHERE ID = :ID AND source = -1; 
 ");
 
 define("SQL_OPAL_UPDATE_POST_CONTROL",
@@ -443,8 +443,12 @@ define("OPAL_UPDATE_MASTER_SOURCE", "
     UPDATE %%MASTER_TABLE%% SET code = :code, description = :description, updatedBy = :updatedBy WHERE ID = :ID;
 ");
 
+define("OPAL_UPDATE_EXTERNAL_ID_MASTER_SOURCE", "
+    UPDATE %%MASTER_TABLE%% SET externalId = :ID WHERE ID = :ID;
+");
+
 define("OPAL_GET_PATIENTS_TRIGGERS","
-    SELECT DISTINCT PatientSerNum AS id, 'Patient' AS type, 0 AS added, CONCAT(CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))), ' (', PatientSerNum, ')') AS name
+    SELECT DISTINCT PatientId AS id, 'Patient' AS type, 0 AS added, CONCAT(CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))), ' (', PatientId, ')') AS name
     FROM ".OPAL_PATIENT_TABLE." ORDER BY PatientSerNum;
 ");
 
@@ -465,7 +469,7 @@ define("OPAL_GET_APPOINTMENT_STATUS_TRIGGERS","
 ");
 
 define("OPAL_GET_DOCTORS_TRIGGERS","
-    SELECT DISTINCT max(d.DoctorAriaSer) AS id, trim(d.LastName) AS LastName, trim(d.FirstName) AS FirstName, 'Doctor' AS Type, 0 AS added
+    SELECT DISTINCT max(d.DoctorAriaSer) AS id, trim(d.LastName) AS LastName, trim(d.FirstName) AS FirstName, 'Doctor' AS type, 0 AS added
     FROM ".OPAL_DOCTOR_TABLE." d WHERE d.ResourceSerNum > 0 GROUP BY d.LastName ORDER BY d.LastName, d.FirstName;
 ");
 
