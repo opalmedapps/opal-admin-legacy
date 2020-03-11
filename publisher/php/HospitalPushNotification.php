@@ -298,7 +298,7 @@
         *    RegistrationId.
         *    Returns: Returns the send status
         **/
-       private function pushNotificationDatabaseUpdate($deviceSerNum, $patientSerNum, $appointmentSerNum, $response)
+       private static function pushNotificationDatabaseUpdate($deviceSerNum, $patientSerNum, $appointmentSerNum, $response)
        {
            global $pdo;
            $sendStatus  = $response['success'];
@@ -322,7 +322,7 @@
         *    Consumes a PatientId, $patientId
         *    Returns: Returns array with devices that match that particular PatiendId.
         **/
-       private function getDevicesForPatient($patientId)
+       private static function getDevicesForPatient($patientId)
        {
            global $pdo;
            //Retrieving device registration id for notification and device
@@ -344,7 +344,7 @@
         *    Encode: is set to NO because we do not want to re-encode again
         *    Returns: Returns array with the push notification message to be sent
         **/
-        private function buildMessageForRoomNotification($room, $title, $description)
+        private static function buildMessageForRoomNotification($room, $title, $description)
         {
              $message = array(
                 "mtitle"=>$title,

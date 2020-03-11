@@ -39,7 +39,7 @@ class Alias {
                             SELECT DISTINCT
     			    	        vv_ActivityLng.Expression1
         			        FROM
-    	    			        variansystem.dbo.vv_ActivityLng vv_ActivityLng
+    	    			        VARIAN.dbo.vv_ActivityLng vv_ActivityLng
                             ORDER BY
                                 vv_ActivityLng.Expression1
                         ";
@@ -74,7 +74,7 @@ class Alias {
                             SELECT DISTINCT
                                 RTRIM(note_typ.note_typ_desc)
                             FROM
-                                varianenm.dbo.note_typ note_typ
+                                VARIAN.dbo.note_typ note_typ
                             ORDER BY
                                 RTRIM(note_typ.note_typ_desc)
                         ";
