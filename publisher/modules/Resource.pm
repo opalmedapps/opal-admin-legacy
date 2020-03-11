@@ -155,7 +155,8 @@ sub getResourceInfoFromSourceDB
         my $sourceDatabase = Database::connectToSourceDatabase($sourcedbser);
 
     	my $resource_sql = "
-            use variansystem;
+            use VARIAN;
+
 	    	SELECT DISTINCT 
 		    	vv_ResourceName.ResourceName,
                 Resource.ResourceType
