@@ -243,6 +243,11 @@ sub getDiagnosesFromSourceDB
         if ($sourceDatabase) {
 
 			my $patientInfo_sql = "
+				use VARIAN;
+
+                IF OBJECT_ID('tempdb.dbo.#tempDiag', 'U') IS NOT NULL
+                  DROP TABLE #tempDiag;
+
 				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
 			";
 			my $numOfPatients = @patientList;
@@ -261,7 +266,12 @@ sub getDiagnosesFromSourceDB
 					$patientInfo_sql .= "UNION";
 				}
 			}
-			$patientInfo_sql .= ")";
+			$patientInfo_sql .= ")
+			Select c.* into #tempDiag
+			from PatientInfo c;
+			Create Index temporaryindexDiag1 on #tempDiag (SSN);
+			Create Index temporaryindexDiag2 on #tempDiag (PatientSerNum);
+			";
 
 			my $diagInfo_sql = $patientInfo_sql . "
 		    	SELECT DISTINCT
@@ -273,41 +283,17 @@ sub getDiagnosesFromSourceDB
                     RTRIM(pmdx.StageCriteria),
 					PatientInfo.PatientSerNum
 		    	FROM
-			    	variansystem.dbo.Diagnosis dx,
-				    variansystem.dbo.Patient pt,
-				    variansystem.dbo.PrmryDiagnosis pmdx,
-					PatientInfo
+			    	VARIAN.dbo.Diagnosis dx with(nolock),
+				    VARIAN.dbo.Patient pt with(nolock),
+				    VARIAN.dbo.PrmryDiagnosis pmdx with(nolock),
+					#tempDiag as PatientInfo
     			WHERE
 	    		 	dx.DiagnosisSer 		= pmdx.DiagnosisSer
 			    AND	dx.Description 			NOT LIKE '%ERROR%'
-    			AND	dx.HstryDateTime    	> '$lastTransfer'
+    			AND	dx.HstryDateTime    	> PatientInfo.LastTransfer
 	    		AND dx.DateStamp			> '1970-01-01 00:00:00'
-				AND dx.PatientSer 			= (select pt.PatientSer from variansystem.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+				AND dx.PatientSer 			= (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
 		    ";
-
-	    	# Keep this as a backup for now
-			# my $diagInfo_sql = $patientInfo_sql . "
-		    # 	SELECT DISTINCT
-			#     	dx.DiagnosisSer,
-			# 	    CONVERT(VARCHAR, dx.DateStamp, 120),
-    		# 		RTRIM(REPLACE(REPLACE(dx.Description,'Malignant neoplasm','malignant neoplasm'),'malignant neoplasm','Ca')),
-            #         dx.DiagnosisId,
-            #         pmdx.SummaryStage,
-            #         RTRIM(pmdx.StageCriteria),
-			# 		PatientInfo.PatientSerNum
-		    # 	FROM
-			#     	variansystem.dbo.Diagnosis dx,
-			# 	    variansystem.dbo.Patient pt,
-			# 	    variansystem.dbo.PrmryDiagnosis pmdx,
-			# 		PatientInfo
-    		# 	WHERE
-	    	# 	 	dx.DiagnosisSer 		= pmdx.DiagnosisSer
-		    # 	AND	LEFT(LTRIM(pt.SSN), 12)	= '$patientSSN'
-			#     AND	dx.Description 			NOT LIKE '%ERROR%'
-    		# 	AND	dx.HstryDateTime    	> '$lastTransfer'
-	    	# 	AND dx.DateStamp			> '1970-01-01 00:00:00'
-			# 	AND dx.PatientSer 			= (select pt.PatientSer from variansystem.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
-		    # ";
 
     		# prepare query
 	    	my $query = $sourceDatabase->prepare($diagInfo_sql)

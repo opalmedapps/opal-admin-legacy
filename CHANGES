@@ -1,3 +1,15 @@
+Version 0.20.1.0:
+ - Merge branch 'move_to_Aria15' into staging
+ -     --- Additional modification required to make it work with Aria 15 also needed to optimize the query to fetch data from Aria
+ -      --- correction on the query and changes to the database connection
+ -    --- Modify the query to use the new Aria 15
+ -    -- Changes for Aria 11 to Aria 15
+ - OPAL-216 - working on switching the source to opalDB for diagnosis translation
+ - Merge branch 'preproduction'
+ - Merge branch 'develop' into preproduction
+ - Merge branch 'staging' into develop
+ - Merge branch 'staging' into develop
+
 Version 0.20.0.1:
  - Merge branch 'staging-publication' into staging
  - OPAL-179 - Fixed type in table name
