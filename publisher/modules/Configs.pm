@@ -35,6 +35,7 @@ my $config = decode_json($json);
 # NOTE: This works for a MicrosoftSQL (MSSQL) setup.
 const our $ARIA_DB_HOST     => $config->{'databaseConfig'}{'aria'}{'host'};
 const our $ARIA_DB_PORT     => $config->{'databaseConfig'}{'aria'}{'port'};
+const our $ARIA_DB_NAME     => $config->{'databaseConfig'}{'aria'}{'name'};
 const our $ARIA_DB_DSN      => 'DBI:Sybase:server=' . $ARIA_DB_HOST . ';port=' . $ARIA_DB_PORT;
 const our $ARIA_DB_USERNAME => $config->{'databaseConfig'}{'aria'}{'username'};
 const our $ARIA_DB_PASSWORD => $config->{'databaseConfig'}{'aria'}{'password'};

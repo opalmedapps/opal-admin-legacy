@@ -437,6 +437,11 @@ sub getApptsFromSourceDB
 			}
 
 			my $patientInfo_sql = "
+				use VARIAN;
+
+                IF OBJECT_ID('tempdb.dbo.#tempAppt', 'U') IS NOT NULL
+                  DROP TABLE #tempAppt;
+
 				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
 			";
 			my $numOfPatients = @patientList;
@@ -455,7 +460,12 @@ sub getApptsFromSourceDB
 					$patientInfo_sql .= "UNION";
 				}
 			}
-			$patientInfo_sql .= ")";
+			$patientInfo_sql .= ")
+			Select c.* into #tempAppt
+			from PatientInfo c;
+			Create Index temporaryindexAppt1 on #tempAppt (SSN);
+			Create Index temporaryindexAppt2 on #tempAppt (PatientSerNum);
+			";
 
 			my $apptInfo_sql = $patientInfo_sql .
 				"
@@ -470,16 +480,16 @@ sub getApptsFromSourceDB
 						REPLACE(lt.Expression1, '''', ''),
 						PatientInfo.PatientSerNum
 					FROM
-						variansystem.dbo.ScheduledActivity sa,
-						variansystem.dbo.ActivityInstance ai,
-						variansystem.dbo.Activity act,
-						variansystem.dbo.LookupTable lt,
-						PatientInfo
+						VARIAN.dbo.ScheduledActivity sa with(nolock),
+						VARIAN.dbo.ActivityInstance ai with(nolock),
+						VARIAN.dbo.Activity act with(nolock),
+						VARIAN.dbo.LookupTable lt with(nolock),
+						#tempAppt as PatientInfo
 					WHERE
 						sa.ActivityInstanceSer 		= ai.ActivityInstanceSer
 					AND ai.ActivitySer 			    = act.ActivitySer
 					AND act.ActivityCode 		    = lt.LookupValue
-					AND sa.PatientSer 				= (select pt.PatientSer from variansystem.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+					AND sa.PatientSer 				= (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
 					AND (
 
 				";
@@ -503,6 +513,7 @@ sub getApptsFromSourceDB
 					$apptInfo_sql .= ")";
 				}
 			}
+
 			#$apptInfo_sql .= ")";
 				#print "$apptInfo_sql\n";
 
@@ -1010,11 +1021,11 @@ sub getApptInfoFromSourceDB
                 CONVERT(VARCHAR, sa.ActualStartDate, 120),
                 CONVERT(VARCHAR, sa.ActualEndDate, 120)
 	    	FROM
-		    	variansystem.dbo.Patient pt,
-			    variansystem.dbo.ScheduledActivity sa,
-    			variansystem.dbo.ActivityInstance ai,
-	    		variansystem.dbo.Activity act,
-				variansystem.dbo.LookupTable lt
+		    	VARIAN.dbo.Patient pt,
+			    VARIAN.dbo.ScheduledActivity sa,
+    			VARIAN.dbo.ActivityInstance ai,
+	    		VARIAN.dbo.Activity act,
+				VARIAN.dbo.LookupTable lt
 	    	WHERE
 		        sa.ActivityInstanceSer 	    = ai.ActivityInstanceSer
     		AND ai.ActivitySer 			    = act.ActivitySer
