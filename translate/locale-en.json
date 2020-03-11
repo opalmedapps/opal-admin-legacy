@@ -2286,6 +2286,7 @@
       "WARNING": "WARNING!",
       "WARNING_TEXT": "Are you sure you want to delete the following code? This action cannot be undone!",
       "SUCCESS": "The code has being successfully deleted.",
+      "DELETED": "The custom code has being successfully deleted.",
       "ERROR": "An error occurred while deleting the code."
     },
     "LOCKED": {
