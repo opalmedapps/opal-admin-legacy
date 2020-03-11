@@ -283,6 +283,8 @@ sub getPatientLocationsFromSourceDB
 			}
 
 			my $patientInfo_sql = "
+				use VARIAN;
+
                 IF OBJECT_ID('tempdb.dbo.#tempPL', 'U') IS NOT NULL
                   DROP TABLE #tempPL;
 
@@ -322,12 +324,12 @@ sub getPatientLocationsFromSourceDB
 						PatientInfo.PatientSerNum,
 						lt.Expression1
 					FROM
-						variansystem.dbo.Patient pt with(nolock),
-						variansystem.dbo.ScheduledActivity sa with(nolock),
-						variansystem.dbo.PatientLocation pl with(nolock),
-						variansystem.dbo.ActivityInstance ai with(nolock),
-						variansystem.dbo.Activity act with(nolock),
-						variansystem.dbo.LookupTable lt with(nolock),
+						Patient pt with(nolock),
+						ScheduledActivity sa with(nolock),
+						PatientLocation pl with(nolock),
+						ActivityInstance ai with(nolock),
+						Activity act with(nolock),
+						LookupTable lt with(nolock),
 						#tempPL as PatientInfo
 					WHERE
 						sa.ActivityInstanceSer 			= ai.ActivityInstanceSer
@@ -658,9 +660,9 @@ sub getPatientLocationsMHFromSourceDB
 						plmh.ResourceSer,
 						CONVERT(VARCHAR, plmh.HstryDateTime, 120)
 					FROM
-						variansystem.dbo.Patient pt,
-						variansystem.dbo.ScheduledActivity sa,
-						variansystem.dbo.PatientLocationMH plmh
+						VARIAN.dbo.Patient pt,
+						VARIAN.dbo.ScheduledActivity sa,
+						VARIAN.dbo.PatientLocationMH plmh
 					WHERE
 						sa.PatientSer 					= pt.PatientSer
 					AND	LEFT(LTRIM(pt.SSN), 12)			= '$patientSSN'
@@ -752,29 +754,6 @@ sub getPatientLocationsMHFromSourceDB
 					AND pl.CheckinVenueName  		= Venue.VenueId
 					AND pl.PatientLocationSerNum 	= '$sourceuid'					
 					";
-				
-				# Keep this as a backup for now
-				# my $plInfo_sql = "
-				# 	SELECT DISTINCT
-				# 		plmh.PatientLocationSerNum,
-				# 		plmh.PatientLocationRevCount,
-				# 		'1' as CheckedInFlag,
-				# 		plmh.ArrivalDateTime,
-				# 		Venue.ResourceSer,
-				# 		plmh.DichargeThisLocationDateTime
-				# 	FROM
-				# 		Patient pt,
-				# 		MediVisitAppointmentList mval,
-				# 		PatientLocation pl,
-				# 		PatientLocationMH plmh,
-				# 		Venue
-				# 	WHERE
-				# 		mval.PatientSerNum 			= pt.PatientSerNum
-				# 	AND	LEFT(LTRIM(pt.SSN), 12)		= '$patientSSN'
-				# 	AND mval.AppointmentSerNum		= plmh.AppointmentSerNum
-				# 	AND plmh.CheckinVenueName  		= Venue.VenueId
-				# 	AND pl.PatientLocationSerNum 	= '$sourceuid'
-				# ";
 
                 # print "$plInfo_sql\n";
 		        # prepare query
