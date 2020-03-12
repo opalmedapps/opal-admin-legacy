@@ -2349,7 +2349,7 @@
       "COMPLETE": "Complet",
       "CODE": "Code",
       "DESCRIPTION": "Description",
-      "ERROR_MODULE": "Une erreur s'est produite lors de l'obtention de la liste des modules.",
+      "ERROR_MODULE": "Une erreur s'est produite lors de l'obtention de la liste des modules."
     },
     "EDIT": {
       "SAVE": "Enregistrer",

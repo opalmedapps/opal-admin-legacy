@@ -40,7 +40,7 @@
     "LEGACY_QUESTIONNAIRE_SUB": "Manage the legacy version of the patient-reported outcome questionnaires.",
     "ADMINISTRATION": "Administration",
     "DIAGNOSIS_TRANSLATION": "Diagnosis Import and Aliasing",
-    "DIAGNOSIS_TRANSLATION_SUB": "Manage diagnosis codes for labelling, translating, and categorization.",
+    "DIAGNOSIS_TRANSLATION_SUB": "Manage diagnosis codes.",
     "CRON_LOGS": "Cron Logs",
     "CRON_LOGS_SUB": "Control publishing event times and frequency. View publishing logs.",
     "PATIENTS": "Patients",

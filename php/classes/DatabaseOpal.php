@@ -117,6 +117,8 @@ class DatabaseOpal extends DatabaseAccess {
         $sqlModule = str_replace("%%MASTER_SOURCE_DIAGNOSTIC%%", OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE, $sqlModule);
         $sqlModule = str_replace("%%MASTER_SOURCE_TEST_RESULT%%", OPAL_MASTER_SOURCE_TEST_RESULT_TABLE, $sqlModule);
         $sqlModule = str_replace("%%ALIAS_EXPRESSION%%", OPAL_ALIAS_EXPRESSION_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%TEST_RESULT_EXPRESSION%%", OPAL_TEST_RESULT_EXPRESSION_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%DIAGNOSIS_CODE%%", OPAL_DIAGNOSIS_CODE_TABLE, $sqlModule);
         $sqlModule = str_replace("%%MODULE%%", OPAL_MODULE_TABLE, $sqlModule);
 
         return $this->_fetchAll($sqlModule, array());
@@ -147,6 +149,8 @@ class DatabaseOpal extends DatabaseAccess {
         $sqlModule = str_replace("%%MASTER_SOURCE_DIAGNOSTIC%%", OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE, $sqlModule);
         $sqlModule = str_replace("%%MASTER_SOURCE_TEST_RESULT%%", OPAL_MASTER_SOURCE_TEST_RESULT_TABLE, $sqlModule);
         $sqlModule = str_replace("%%ALIAS_EXPRESSION%%", OPAL_ALIAS_EXPRESSION_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%TEST_RESULT_EXPRESSION%%", OPAL_TEST_RESULT_EXPRESSION_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%DIAGNOSIS_CODE%%", OPAL_DIAGNOSIS_CODE_TABLE, $sqlModule);
 
         $results = $this->_fetch($sqlModule,  array(
             array("parameter"=>":ID","variable"=>$customCodeId,"data_type"=>PDO::PARAM_INT),
