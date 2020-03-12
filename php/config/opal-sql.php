@@ -47,6 +47,8 @@ define("OPAL_STATUS_ALIAS_TABLE","StatusAlias");
 define("OPAL_ALIAS_TABLE","Alias");
 define("OPAL_DIAGNOSIS_TRANSLATION_TABLE","DiagnosisTranslation");
 define("OPAL_PATIENT_TABLE","Patient");
+define("OPAL_TEST_RESULT_EXPRESSION_TABLE","TestResultExpression");
+define("OPAL_DIAGNOSIS_CODE_TABLE","DiagnosisCode");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
