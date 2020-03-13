@@ -30,7 +30,7 @@ class CustomCode extends OpalProject {
         $moduleDetails = $this->opalDB->getModuleSettings($customCode["moduleId"]["value"]);
 
         $result = $this->_validateCustomCode($customCode, $moduleDetails);
-        if(count($result) > 0)
+        if(is_array($result) && count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Custom code validation failed. " . implode(" ", $result));
 
         $toInsert = array(
@@ -68,7 +68,7 @@ class CustomCode extends OpalProject {
         $moduleDetails = $this->opalDB->getModuleSettings($customCode["moduleId"]["value"]);
 
         $result = $this->_validateCustomCode($customCode, $moduleDetails);
-        if(count($result) > 0)
+        if(is_array($result) && count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Custom code validation failed. " . implode(" ", $result));
 
         $toUpdate = array(
@@ -95,7 +95,7 @@ class CustomCode extends OpalProject {
         }
 
         $moduleDetails["subModule"] = json_decode($moduleDetails["subModule"], true);
-        if(count($moduleDetails["subModule"]) > 0) {
+        if(is_array($moduleDetails["subModule"]) &&  count($moduleDetails["subModule"]) > 0) {
             foreach ($moduleDetails["subModule"] as $item) {
                 if($item["ID"] == $customCode["type"]["ID"])
                     $typeFound = true;
@@ -130,7 +130,7 @@ class CustomCode extends OpalProject {
      * REMEMBER !!! NO DELETE STATEMENT EVER !!! YOU HAVE BEING WARNED !!!
      *
      * @param   $customCodeId (ID of the question)
-     * @return  array $response : response
+     * @return  boolean : response
      */
     function deleteCustomCode($customCodeId, $moduleId) {
         return $this->opalDB->markCustomCodeAsDeleted($customCodeId, $moduleId);

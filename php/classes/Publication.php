@@ -88,7 +88,7 @@ class Publication extends OpalProject
 
         if($moduleId == MODULE_QUESTIONNAIRE) {
             $questionnaire = $this->opalDB->getPublishedQuestionnaireDetails($publicationId);
-            if(count($questionnaire) != 1)
+            if(is_array($questionnaire) && count($questionnaire) != 1)
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire publication.");
             $results["name"]["name_EN"] = $questionnaire[0]["name_EN"];
             $results["name"]["name_FR"] = $questionnaire[0]["name_FR"];
@@ -108,7 +108,7 @@ class Publication extends OpalProject
             )
         );
 
-        if(count($frequencyEvents) > 0) {
+        if(is_array($frequencyEvents) && count($frequencyEvents) > 0) {
             foreach ($frequencyEvents as $data) {
                 // if we've entered, then a frequency has been set
                 $occurrenceArray['set'] = 1;
@@ -175,7 +175,7 @@ class Publication extends OpalProject
             $item["y"] = intval($item["y"]);
         }
 
-        if (count($result) > 0)
+        if (is_array($result) && count($result) > 0)
             array_push($data, array("name"=>$type, "data"=>$result));
 
         return $data;
@@ -269,11 +269,11 @@ class Publication extends OpalProject
         $validatedTriggers = array();
         $errMsgs = array();                                             //By default, no error message
         $listTriggers = $this->opalDB->getPublicationSettingsPerModule($moduleId); //Get lists of triggers and their settings
-        if (count($listTriggers) <= 0) {
+        if (is_array($listTriggers) && count($listTriggers) <= 0) {
             array_push($errMsgs, "Invalid Module.");
             return $errMsgs;
         }
-        if(count($triggersToValidate) <= 0) {
+        if(is_array($triggersToValidate) && count($triggersToValidate) <= 0) {
             array_push($errMsgs, "No trigger in the publication.");
             return $errMsgs;
         }
@@ -321,12 +321,12 @@ class Publication extends OpalProject
 
             //If the trigger should be unique but data indicates it's not, stop the processing and returns false
             if ($trigger["unique"]) {
-                if (count($trigger["data"]) > 1) {
+                if (is_array($trigger["data"]) && count($trigger["data"]) > 1) {
                     array_push($errMsgs, "$key: value for this trigger must be unique.");
                 }
             }
 
-            if(count($trigger["data"]) > 0) {
+            if(is_array($trigger["data"]) && count($trigger["data"]) > 0) {
                 //If the trigger requires custom checkup (like looking into a list or with a range)
                 if ($trigger["custom"]) {
                     if ($trigger["custom"]["range"]) {
@@ -346,11 +346,6 @@ class Publication extends OpalProject
                 //Standard process of the checkup by getting data from OpalDB
                 else {
                     if ($trigger["opalDB"] != "") {
-
-
-                        if (count($idsToIgnore) <= 0)
-                            $idsToIgnore = array(-1);
-
                         $opalData = $this->_reassignData($this->opalDB->fetchTriggersData($trigger["opalDB"]), $trigger["opalPK"]);
                     }
 
@@ -363,7 +358,7 @@ class Publication extends OpalProject
                         if(!in_array($item, $uniqueIdList)) array_push($uniqueIdList, $item);
                     }
 
-                    if(count($uniqueIdList) == count($trigger["data"])) {
+                    if(is_array($uniqueIdList) && is_array($trigger["data"]) && count($uniqueIdList) == count($trigger["data"])) {
                         if($selectAllChecked) {
                             if ($idsFound != 0) {
                                 array_push($errMsgs, "$key: cannot use the word 'all' and have another value associated to this trigger.");
@@ -619,7 +614,7 @@ class Publication extends OpalProject
         $subModule = json_decode($subModule, true);
         foreach($pubSettings as $setting) {
             $mandatory = false;
-            if(count($subModule) > 0) {
+            if(is_array($subModule) && count($subModule) > 0) {
                 foreach($subModule as $sub) {
                     if ($sub["name_EN"] == $publication["materialId"]["type"] && array_key_exists($setting["internalName"], $sub)) {
                         $mandatory = ($sub[$setting["internalName"]] == 1);
@@ -676,7 +671,7 @@ class Publication extends OpalProject
      * */
     protected function _insertPublicationPost(&$publication) {
         $postDetails = $this->opalDB->getPostDetails($publication["materialId"]["value"]);
-        if(count($postDetails) <= 0)
+        if(is_array($postDetails) && count($postDetails) <= 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid post.");
 
         if(isset($publication["publishDateTime"]) && $publication["publishDateTime"] != "")
@@ -744,7 +739,7 @@ class Publication extends OpalProject
         $this->_connectQuestionnaireDB($this->opalDB->getOAUserId());
         $currentQuestionnaire = $this->questionnaireDB->getQuestionnaireDetails($publication["materialId"]["value"]);
 
-        if(count($currentQuestionnaire) != 1)
+        if(is_array($currentQuestionnaire) && count($currentQuestionnaire) != 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid questionnaire.");
         $currentQuestionnaire = $currentQuestionnaire[0];
 

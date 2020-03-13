@@ -103,18 +103,21 @@ controller('customCode.edit', function ($scope, $filter, $uibModal, $uibModalIns
 
 	// Submit changes
 	$scope.updateCustomCode = function() {
-		$.ajax({
-			type: "POST",
-			url: "custom-code/update/custom-code",
-			data: $scope.toSubmit,
-			success: function () {},
-			error: function(err) {
-				alert($filter('translate')('CUSTOM_CODE.EDIT.ERROR_UPDATE') + "\r\n\r\n" + err.status + " - " + err.statusText);
-			},
-			complete: function () {
-				$uibModalInstance.close();
-			}
-		});
+		if($scope.formReady && $scope.changesDetected) {
+			$.ajax({
+				type: "POST",
+				url: "custom-code/update/custom-code",
+				data: $scope.toSubmit,
+				success: function () {
+				},
+				error: function (err) {
+					alert($filter('translate')('CUSTOM_CODE.EDIT.ERROR_UPDATE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+				},
+				complete: function () {
+					$uibModalInstance.close();
+				}
+			});
+		}
 	};
 
 	// Function to close modal dialog
