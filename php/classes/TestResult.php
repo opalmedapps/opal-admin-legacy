@@ -602,7 +602,7 @@ class TestResult {
                 $query->execute();
             }
 
-            if (testNamesUpdated) {
+            if ($testNamesUpdated) {
 
                 $sql = "
                     SELECT DISTINCT
