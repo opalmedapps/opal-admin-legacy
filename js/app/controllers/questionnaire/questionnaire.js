@@ -10,9 +10,6 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 		$scope.goToQuestionnaire = function () {
 			$state.go('questionnaire');
 		};
-		$scope.goToPublicationTool = function () {
-			$state.go('publication-tool');
-		};
 		$scope.goToAddQuestionnaire = function () {
 			$state.go('questionnaire-add');
 		};
