@@ -81,10 +81,6 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		$scope.goToQuestionnaire = function () {
 			$state.go('questionnaire');
 		};
-		// Function to go to publication tool page
-		$scope.goToPublicationTool = function () {
-			$state.go('publication-tool');
-		};
 		// Function to go to questionnaire question bank
 		$scope.goToQuestionnaireQuestionBank = function () {
 			$state.go('questionnaire-question');
@@ -97,13 +93,13 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		$scope.goToTemplateQuestion = function () {
 			$state.go('questionnaire-template-question');
 		};
-		// Function to go to legacy questionnaires page
-		$scope.goToLegacyQuestionnaire = function () {
-			$state.go('legacy-questionnaire');
-		};
 		// Function to go to diagnosis translation page
 		$scope.goToDiagnosisTranslation = function () {
 			$state.go('diagnosis-translation');
+		};
+		// Function to go to diagnosis translation page
+		$scope.goToCustomCodes = function () {
+			$state.go('custom-code');
 		};
 		// Function to go to user activity page
 		$scope.goToUserActivity = function () {
@@ -118,7 +114,7 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		// Function to set dropdown active for publishing tools
 		$scope.currentActivePublishingTool = function () {
 			var publishingToolPages = ['alias','post','educational-material','hospital-map','notification',
-			'test-result','questionnaire-menu','email','legacy-questionnaire'];
+			'test-result','questionnaire-menu','email','custom-code'];
 			if (publishingToolPages.indexOf($state.current.name) !== -1) {
 				return true;
 			}

@@ -493,9 +493,12 @@ angular.module('opalAdmin.collections', [])
 		var filterAPI = {};
 
 		// Function to get all filters
-		filterAPI.getFilters = function () {
+		filterAPI.getFilters = function (OAUserId) {
 			return $http.post(
 				"filter/get/filters",
+				$.param({
+					OAUserId: OAUserId,
+				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
@@ -759,6 +762,7 @@ angular.module('opalAdmin.collections', [])
 		return emailAPI;
 	})
 
+	// Questionnaire API service
 	.factory('questionnaireCollectionService', function ($http) {
 		var questionnaireAPI = {};
 
@@ -767,32 +771,6 @@ angular.module('opalAdmin.collections', [])
 				"questionnaire/get/questionnaires",
 				$.param({
 					OAUserId: OAUserId,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		questionnaireAPI.getPublishedQuestionnaires = function (OAUserId) {
-			return $http.post(
-				"publication-tool/get/published-questionnaires",
-				$.param({
-					OAUserId: OAUserId,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-
-		};
-
-		questionnaireAPI.getPublishedQuestionnaireDetails = function (publishedQuestionnaireId, OAUserId) {
-			return $http.post(
-				"publication-tool/get/published-questionnaire-details",
-				$.param({
-					OAUserId: OAUserId,
-					publishedQuestionnaireId: publishedQuestionnaireId,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -886,18 +864,6 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		questionnaireAPI.getFinalizedQuestionnaires = function (OAUserId) {
-			return $http.post(
-				"publication-tool/get/finalized-questionnaires",
-				$.param({
-					OAUserId: OAUserId,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
 		questionnaireAPI.getQuestionnaireDetails = function (questionnaireId, OAUserId) {
 			return $http.post(
 				"questionnaire/get/questionnaire-details",
@@ -914,6 +880,7 @@ angular.module('opalAdmin.collections', [])
 		return questionnaireAPI;
 	})
 
+	// Publication API service
 	.factory('publicationCollectionService', function ($http) {
 		var publicationAPI = {};
 
@@ -1002,6 +969,53 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		return publicationAPI;
+	})
+
+	// Publication API service
+	.factory('customCodeCollectionService', function ($http) {
+		var customCodeAPI = {};
+
+		customCodeAPI.getAvailableModules = function (OAUserId) {
+			return $http.post(
+				"custom-code/get/available-modules",
+				$.param({
+					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+
+		};
+
+		customCodeAPI.getCustomCodes = function (OAUserId) {
+			return $http.post(
+				"custom-code/get/custom-codes",
+				$.param({
+					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+
+		};
+
+		customCodeAPI.getCustomCodeDetails = function (customCodeId, moduleId, OAUserId) {
+			return $http.post(
+				"custom-code/get/custom-code-details",
+				$.param({
+					OAUserId: OAUserId,
+					customCodeId: customCodeId,
+					moduleId: moduleId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		return customCodeAPI;
 	})
 
 	// Diagnosis API service

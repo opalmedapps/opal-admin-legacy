@@ -36,6 +36,19 @@ define("OPAL_TXT_TEAM_MSG_MH_TABLE","TxTeamMessageMH");
 define("OPAL_PATIENTS_FOR_PATIENTS_MH_TABLE","PatientsForPatientsMH");
 define("OPAL_EDUCATION_MATERIAL_MH_TABLE","EducationalMaterialMH");
 define("OPAL_CRON_LOG_TABLE","CronLog");
+define("OPAL_SETTING_TABLE","setting");
+define("OPAL_MASTER_SOURCE_ALIAS_TABLE","masterSourceAlias");
+define("OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE","masterSourceDiagnostic");
+define("OPAL_MASTER_SOURCE_TEST_RESULT_TABLE","masterSourceTestResult");
+define("OPAL_ALIAS_EXPRESSION_TABLE","AliasExpression");
+define("OPAL_DOCTOR_TABLE","Doctor");
+define("OPAL_RESOURCE_NAME_TABLE","ResourceName");
+define("OPAL_STATUS_ALIAS_TABLE","StatusAlias");
+define("OPAL_ALIAS_TABLE","Alias");
+define("OPAL_DIAGNOSIS_TRANSLATION_TABLE","DiagnosisTranslation");
+define("OPAL_PATIENT_TABLE","Patient");
+define("OPAL_TEST_RESULT_EXPRESSION_TABLE","TestResultExpression");
+define("OPAL_DIAGNOSIS_CODE_TABLE","DiagnosisCode");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -153,6 +166,10 @@ define("SQL_OPAL_BUILD_PUBLICATION_VIEW",
     "SELECT m.sqlPublicationList, m.sqlPublicationChartLog FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.publication = 1 ORDER BY m.order"
 );
 
+define("SQL_OPAL_BUILD_CUSOM_CODE_VIEW",
+    "SELECT m.sqlCustomCode FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.customCode = 1 ORDER BY m.order"
+);
+
 define("SQL_GET_QUERY_CHART_LOG",
     "SELECT sqlPublicationChartLog, sqlPublicationListLog FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.publication = 1 AND ID = :ID"
 );
@@ -176,6 +193,10 @@ define("SQL_OPAL_GET_PUBLICATION_SETTINGS_ID_PER_MODULE", "
 
 define("SQL_OPAL_GET_ALL_PUBLICATION_MODULES_USER",
     "SELECT m.ID, m.name_EN, m.name_FR, m.iconClass FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.publication = 1 ORDER BY m.order;"
+);
+
+define("SQL_OPAL_GET_ALL_CUSTOM_CODE_MODULES_USER",
+    "SELECT m.ID, m.name_EN, m.name_FR, m.iconClass, m.subModule FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.customCode = 1 ORDER BY m.order;"
 );
 
 define("SQL_OPAL_GET_PUBLICATION_MODULES_USER_DETAILS",
@@ -239,6 +260,11 @@ define("SQL_OPAL_UPDATE_QUESTIONNAIRE_CONTROL",
     WHERE 
     ".OPAL_QUESTIONNAIRE_CONTROL_TABLE.".QuestionnaireControlSerNum = :QuestionnaireControlSerNum;"
 );
+
+define("SQL_OPAL_MARK_AS_DELETED_MASTER_SOURCE", "
+    UPDATE %%MASTER_SOURCE_TABLE%% SET deleted = ".DELETED_RECORD.", deletedBy = :deletedBy, updatedBy = :updatedBy
+    WHERE ID = :ID AND source = -1; 
+");
 
 define("SQL_OPAL_UPDATE_POST_CONTROL",
     "UPDATE ".OPAL_POST_TABLE." SET 
@@ -307,6 +333,11 @@ define("SQL_OPAL_GET_POST_DETAILS", "
     WHERE PostControlSerNum = :PostControlSerNum;
 ");
 
+define("SQL_OPAL_GET_SETTINGS", "
+    SELECT * FROM ".OPAL_SETTING_TABLE."
+    WHERE ID = :ID;
+");
+
 define("SQL_OPAL_UPDATE_POST",
     "UPDATE ".OPAL_POST_TABLE."
     SET LastUpdatedBy = :LastUpdatedBy,
@@ -366,52 +397,21 @@ define("SQL_OPAL_GET_ANNOUNCEMENT_CHART","
 ");
 
 define("SQL_OPAL_GET_ANNOUNCEMENT_CHART_PER_IDS","
-                        SELECT DISTINCT
-                            pc.PostName_EN AS post_control_name,
-                            anmh.AnnouncementRevSerNum AS revision,
-                            anmh.CronLogSerNum AS cron_serial,
-                            anmh.PatientSerNum AS patient_serial,
-                            anmh.DateAdded AS date_added,
-                            anmh.ReadStatus AS read_status,
-                            anmh.ModificationAction AS mod_action
-                        FROM
-                            AnnouncementMH anmh,
-                            PostControl pc 
-                        WHERE
-                            pc.PostControlSerNum = anmh.PostControlSerNum
-                        AND anmh.CronLogSerNum IN (%%CRON_LOG_IDS%%)
+    SELECT DISTINCT pc.PostName_EN AS post_control_name, anmh.AnnouncementRevSerNum AS revision, anmh.CronLogSerNum AS cron_serial,
+    anmh.PatientSerNum AS patient_serial, anmh.DateAdded AS date_added, anmh.ReadStatus AS read_status, anmh.ModificationAction AS mod_action
+    FROM AnnouncementMH anmh, PostControl pc WHERE pc.PostControlSerNum = anmh.PostControlSerNum AND anmh.CronLogSerNum IN (%%CRON_LOG_IDS%%)
 ");
+
 define("SQL_OPAL_GET_TTM_CHART_PER_IDS","
-                        SELECT DISTINCT
-                            pc.PostName_EN AS post_control_name,
-                            ttmmh.TxTeamMessageRevSerNum AS revision,
-                            ttmmh.CronLogSerNum AS cron_serial,
-                            ttmmh.PatientSerNum AS patient_serial,
-                            ttmmh.DateAdded AS date_added,
-                            ttmmh.ReadStatus AS read_status,
-                            ttmmh.ModificationAction AS mod_action
-                        FROM
-                            TxTeamMessageMH ttmmh,
-                            PostControl pc 
-                        WHERE
-                            pc.PostControlSerNum = ttmmh.PostControlSerNum
-                        AND ttmmh.CronLogSerNum IN (%%CRON_LOG_IDS%%)
+    SELECT DISTINCT pc.PostName_EN AS post_control_name, ttmmh.TxTeamMessageRevSerNum AS revision, ttmmh.CronLogSerNum AS cron_serial,
+    ttmmh.PatientSerNum AS patient_serial, ttmmh.DateAdded AS date_added, ttmmh.ReadStatus AS read_status, ttmmh.ModificationAction AS mod_action
+    FROM TxTeamMessageMH ttmmh, PostControl pc WHERE pc.PostControlSerNum = ttmmh.PostControlSerNum AND ttmmh.CronLogSerNum IN (%%CRON_LOG_IDS%%)
 ");
+
 define("SQL_OPAL_GET_PFP_CHART_PER_IDS","
-                        SELECT DISTINCT
-                            pc.PostName_EN AS post_control_name,
-                            pfpmh.PatientsForPatientsRevSerNum AS revision,
-                            pfpmh.CronLogSerNum AS cron_serial,
-                            pfpmh.PatientSerNum AS patient_serial,
-                            pfpmh.DateAdded AS date_added,
-                            pfpmh.ReadStatus AS read_status,
-                            pfpmh.ModificationAction AS mod_action
-                        FROM
-                            PatientsForPatientsMH pfpmh,
-                            PostControl pc 
-                        WHERE
-                            pc.PostControlSerNum = pfpmh.PostControlSerNum
-                        AND pfpmh.CronLogSerNum IN (%%CRON_LOG_IDS%%)
+    SELECT DISTINCT pc.PostName_EN AS post_control_name, pfpmh.PatientsForPatientsRevSerNum AS revision, pfpmh.CronLogSerNum AS cron_serial,
+    pfpmh.PatientSerNum AS patient_serial, pfpmh.DateAdded AS date_added, pfpmh.ReadStatus AS read_status, pfpmh.ModificationAction AS mod_action
+    FROM PatientsForPatientsMH pfpmh, PostControl pc WHERE pc.PostControlSerNum = pfpmh.PostControlSerNum AND pfpmh.CronLogSerNum IN (%%CRON_LOG_IDS%%)
 ");
 
 define("SQL_OPAL_GET_TTM_CHART","
@@ -439,4 +439,43 @@ define("SQL_OPAL_GET_EDUCATIONAL_CHART","
     AND emmh.EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum GROUP BY emmh.CronLogSerNum, cl.CronDateTime
     AND cl.CronDateTime >= DATE_SUB(NOW(),INTERVAL 1 YEAR)
     ORDER BY cl.CronDateTime ASC 
+");
+
+define("OPAL_UPDATE_MASTER_SOURCE", "
+    UPDATE %%MASTER_TABLE%% SET code = :code, description = :description, updatedBy = :updatedBy WHERE ID = :ID;
+");
+
+define("OPAL_UPDATE_EXTERNAL_ID_MASTER_SOURCE", "
+    UPDATE %%MASTER_TABLE%% SET externalId = :ID WHERE ID = :ID;
+");
+
+define("OPAL_GET_PATIENTS_TRIGGERS","
+    SELECT DISTINCT PatientId AS id, 'Patient' AS type, 0 AS added, CONCAT(CONCAT(UCASE(SUBSTRING(LastName, 1, 1)), LOWER(SUBSTRING(LastName, 2))), ', ', CONCAT(UCASE(SUBSTRING(FirstName, 1, 1)), LOWER(SUBSTRING(FirstName, 2))), ' (', PatientId, ')') AS name
+    FROM ".OPAL_PATIENT_TABLE." ORDER BY PatientSerNum;
+");
+
+define("OPAL_GET_DIAGNOSIS_TRIGGERS","
+    SELECT DISTINCT DiagnosisTranslationSerNum AS id, Name_EN AS name, Name_FR AS name_FR, 'Diagnosis' AS type, 0 AS 'added'
+    FROM ".OPAL_DIAGNOSIS_TRANSLATION_TABLE." WHERE Name_EN != '';
+");
+
+define("OPAL_GET_APPOINTMENTS_TRIGGERS","
+    SELECT DISTINCT AliasSerNum AS id, AliasName_EN AS name, AliasName_FR AS name_FR, AliasType AS 'type', 0 AS added
+    FROM ".OPAL_ALIAS_TABLE." WHERE AliasType = 'Appointment' ORDER BY AliasSerNum;
+");
+
+define("OPAL_GET_APPOINTMENT_STATUS_TRIGGERS","
+    SELECT DISTINCT Name AS name, Name AS id, 'AppointmentStatus' AS type, 0 AS added FROM ".OPAL_STATUS_ALIAS_TABLE."
+    UNION ALL
+    SELECT 'Checked In' AS name, 1 AS id, 'CheckedInFlag' AS type, 0 AS added;
+");
+
+define("OPAL_GET_DOCTORS_TRIGGERS","
+    SELECT DISTINCT max(d.DoctorAriaSer) AS id, trim(d.LastName) AS LastName, trim(d.FirstName) AS FirstName, 'Doctor' AS type, 0 AS added
+    FROM ".OPAL_DOCTOR_TABLE." d WHERE d.ResourceSerNum > 0 GROUP BY d.LastName ORDER BY d.LastName, d.FirstName;
+");
+
+define("OPAL_GET_TREATMENT_MACHINES_TRIGGERS","
+    SELECT DISTINCT ResourceAriaSer AS id, ResourceName AS name, 'Machine' AS 'type', 0 AS 'added' FROM Resource
+    WHERE ".OPAL_RESOURCE_NAME_TABLE." LIKE 'STX%' OR  ResourceName LIKE 'TB%' ORDER BY ResourceName;
 ");

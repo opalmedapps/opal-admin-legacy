@@ -34,7 +34,7 @@ class DatabaseOpal extends DatabaseAccess {
                 array("parameter"=>":OAUserId","variable"=>$newOAUserId,"data_type"=>PDO::PARAM_INT),
             ));
 
-        if (count($result) != 1) {
+        if (!is_array($result) || count($result) != 1) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
         }
 
@@ -42,7 +42,7 @@ class DatabaseOpal extends DatabaseAccess {
             array(
                 array("parameter"=>":OAUserId","variable"=>$newOAUserId,"data_type"=>PDO::PARAM_INT),
             ));
-        if(count($resultRole) <= 0)
+        if(!is_array($resultRole) || count($resultRole) <= 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
 
         $result = $result[0];
@@ -96,7 +96,82 @@ class DatabaseOpal extends DatabaseAccess {
         $sqlModule = str_replace("%%MODULE%%", OPAL_MODULE_TABLE, $sqlModule);
         $sqlModule = str_replace("%%EDUCATIONALMATERIAL%%", OPAL_EDUCATION_MATERIAL_TABLE, $sqlModule);
         $sqlModule = str_replace("%%PHASEINTREATMENT%%", OPAL_PHASE_IN_TREATMENT_TABLE, $sqlModule);
+
         return $this->_fetchAll($sqlModule, array());
+    }
+
+    /*
+     * This function fetches the SQL list of the different modules associated to the custom codes. It replaces the flags
+     * with the correct table names, and fetch all the custom codes.
+     * @params  none
+     * @returns array of results
+     * */
+    function getCustomCodes() {
+        $sqlModule = array();
+        $moduleSQLCode = $this->_fetchAll(SQL_OPAL_BUILD_CUSOM_CODE_VIEW, array());
+        foreach ($moduleSQLCode as $module)
+            if (strip_tags($module["sqlCustomCode"]) != "")
+                array_push($sqlModule, $module["sqlCustomCode"]);
+        $sqlModule = implode(SQL_GENERAL_UNION_ALL, $sqlModule);
+        $sqlModule = str_replace("%%MASTER_SOURCE_ALIAS%%", OPAL_MASTER_SOURCE_ALIAS_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%MASTER_SOURCE_DIAGNOSTIC%%", OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%MASTER_SOURCE_TEST_RESULT%%", OPAL_MASTER_SOURCE_TEST_RESULT_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%ALIAS_EXPRESSION%%", OPAL_ALIAS_EXPRESSION_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%TEST_RESULT_EXPRESSION%%", OPAL_TEST_RESULT_EXPRESSION_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%DIAGNOSIS_CODE%%", OPAL_DIAGNOSIS_CODE_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%MODULE%%", OPAL_MODULE_TABLE, $sqlModule);
+
+        return $this->_fetchAll($sqlModule, array());
+    }
+
+    function markCustomCodeAsDeleted($id, $moduleId) {
+        $details = $this->getCustomCodeDetails($id, $moduleId);
+        if($details["ID"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid custom code.");
+
+        $toDelete = array(
+            "ID"=>$id,
+            "deletedBy"=>$this->getUsername(),
+            "updatedBy"=>$this->getUsername(),
+        );
+
+        $sql = str_replace("%%MASTER_SOURCE_TABLE%%", $details["masterSource"], SQL_OPAL_MARK_AS_DELETED_MASTER_SOURCE);
+        return $this->_updateRecordIntoTable($sql, $toDelete);
+    }
+
+    function getCustomCodeDetails($customCodeId, $moduleId) {
+        $module = $this->getModuleSettings($moduleId);
+        if($module["ID"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module.");
+
+        $sqlModule = $module["sqlCustomCodeDetails"];
+        $sqlModule = str_replace("%%MASTER_SOURCE_ALIAS%%", OPAL_MASTER_SOURCE_ALIAS_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%MASTER_SOURCE_DIAGNOSTIC%%", OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%MASTER_SOURCE_TEST_RESULT%%", OPAL_MASTER_SOURCE_TEST_RESULT_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%ALIAS_EXPRESSION%%", OPAL_ALIAS_EXPRESSION_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%TEST_RESULT_EXPRESSION%%", OPAL_TEST_RESULT_EXPRESSION_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%DIAGNOSIS_CODE%%", OPAL_DIAGNOSIS_CODE_TABLE, $sqlModule);
+
+        $results = $this->_fetch($sqlModule,  array(
+            array("parameter"=>":ID","variable"=>$customCodeId,"data_type"=>PDO::PARAM_INT),
+        ));
+        $results["masterSource"] = $module["masterSource"];
+        $results["module"]["ID"] = $module["ID"];
+        $results["module"]["name_EN"] = $module["name_EN"];
+        $results["module"]["name_FR"] = $module["name_FR"];
+        if($module["subModule"] != "") {
+            $sub = json_decode($module["subModule"], true);
+            foreach($sub as $row) {
+                if($row["ID"] == $results["type"]) {
+                    $results["module"]["subModule"] = $row;
+                    break;
+                }
+            }
+        }
+        else
+            $results["module"]["subModule"] = "";
+
+        return $results;
     }
 
     /*
@@ -478,6 +553,71 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
+     * Returns the list of modules.
+     * @params  void
+     * @returns array of modules found and active
+     * */
+    function getAvailableModules(){
+        return $this->_fetchAll(SQL_OPAL_GET_ALL_CUSTOM_CODE_MODULES_USER, array());
+    }
+
+    /*
+     * Insert a custom code to the appropriate table with the username and the creation date.
+     * @params  $toInsert (array) contains all the details of the custom code.
+     * @returns int number of records created
+     * */
+    function insertCustomCode($toInsert, $moduleId) {
+        $toInsert["createdBy"] = $this->username;
+        $toInsert["creationDate"] = date("Y-m-d H:i:s");
+        $toInsert["updatedBy"] = $this->username;
+
+        switch ($moduleId) {
+            case MODULE_ALIAS:
+                $tableToInsert = OPAL_MASTER_SOURCE_ALIAS_TABLE;
+                break;
+            case MODULE_TEST_RESULTS:
+                $tableToInsert = OPAL_MASTER_SOURCE_TEST_RESULT_TABLE;
+                break;
+            case MODULE_DIAGNOSIS_TRANSLATION:
+                $tableToInsert = OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE;
+                break;
+            default:
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module.");
+        }
+        $lastId = $this->_insertRecordIntoTable($tableToInsert, $toInsert);
+
+        $sql = str_replace("%%MASTER_TABLE%%", $tableToInsert, OPAL_UPDATE_EXTERNAL_ID_MASTER_SOURCE);
+        return $this->_updateRecordIntoTable($sql, array("ID"=>$lastId));
+    }
+
+    /*
+     * Insert a custom code to the appropriate table with the username and the creation date.
+     * @params  $toInsert (array) contains all the details of the custom code.
+     * @returns int number of records created
+     * */
+    function updateCustomCode($toUpdate, $moduleId) {
+        $toUpdate["updatedBy"] = $this->username;
+
+        switch ($moduleId) {
+            case MODULE_ALIAS:
+                $tableToUpdate = OPAL_MASTER_SOURCE_ALIAS_TABLE;
+                break;
+            case MODULE_TEST_RESULTS:
+                $tableToUpdate = OPAL_MASTER_SOURCE_TEST_RESULT_TABLE;
+                break;
+            case MODULE_DIAGNOSIS_TRANSLATION:
+                $tableToUpdate = OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE;
+                break;
+            default:
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module.");
+        }
+
+        $sql = str_replace("%%MASTER_TABLE%%", $tableToUpdate, OPAL_UPDATE_MASTER_SOURCE);
+
+        return $this->_updateRecordIntoTable($sql, $toUpdate);
+    }
+
+    /*
      * Returns the details of a publication module
      * @params  $moduleId (int) Id of the module
      * @return  array of records found
@@ -656,6 +796,12 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_POST_PUBLISH_DATE, $toUpdate);
     }
 
+    function getSettings($settingId) {
+        return $this->_fetch(SQL_OPAL_GET_SETTINGS,
+            array(array("parameter"=>":ID","variable"=>$settingId,"data_type"=>PDO::PARAM_INT))
+        );
+    }
+
     /*
      * This function marks a specific record in a specific table as deleted.
      *
@@ -670,12 +816,75 @@ class DatabaseOpal extends DatabaseAccess {
      *          record to mark as deleted in the table (BIGINT)
      * @return  result of deletion (boolean)
      * */
-    function markAsDeleted($tableName, $primaryKey, $recordId) {
+    function markPostAsDeleted($tableName, $primaryKey, $recordId) {
         $sql = str_replace("%%PRIMARY_KEY%%", strip_tags($primaryKey),str_replace("%%TABLENAME%%", strip_tags($tableName),SQL_OPAL_MARK_RECORD_AS_DELETED));
         return $this->_execute($sql, array(
             array("parameter"=>":LastUpdatedBy","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":recordId","variable"=>$recordId,"data_type"=>PDO::PARAM_INT),
             array("parameter"=>":SessionId","variable"=>$this->getSessionId(),"data_type"=>PDO::PARAM_STR),
         ));
+    }
+
+    /*
+     * Insert an alias into the alias master source table
+     * @params  $toInsert (array) data to insert
+     * @returns total results inserted (int)
+     * */
+    function insertAliases($toInsert) {
+        return $this->_insertMultipleRecordsIntoTable(OPAL_MASTER_SOURCE_ALIAS_TABLE, $toInsert);
+    }
+
+    /*
+     * Get all the patients triggers
+     * @params  void
+     * @return  patient triggers found (array)
+     * */
+    function getPatientsTriggers() {
+        return $this->_fetchAll(OPAL_GET_PATIENTS_TRIGGERS, array());
+    }
+
+    /*
+     * Get all the diagnosis triggers
+     * @params  void
+     * @return  diagnosis triggers found (array)
+     * */
+    function getDiagnosisTriggers() {
+        return $this->_fetchAll(OPAL_GET_DIAGNOSIS_TRIGGERS, array());
+    }
+
+    /*
+     * Get all the appointments triggers
+     * @params  void
+     * @return  appointments triggers found (array)
+     * */
+    function getAppointmentsTriggers() {
+        return $this->_fetchAll(OPAL_GET_APPOINTMENTS_TRIGGERS, array());
+    }
+
+    /*
+     * Get all the appointment status triggers
+     * @params  void
+     * @return  appointment status triggers found (array)
+     * */
+    function getAppointmentsStatusTriggers() {
+        return $this->_fetchAll(OPAL_GET_APPOINTMENT_STATUS_TRIGGERS, array());
+    }
+
+    /*
+     * Get all the doctors triggers
+     * @params  void
+     * @return  doctors triggers found (array)
+     * */
+    function getDoctorsTriggers() {
+        return $this->_fetchAll(OPAL_GET_DOCTORS_TRIGGERS, array());
+    }
+
+    /*
+     * Get all the treatment machine triggers
+     * @params  void
+     * @return  treatment machine triggers found (array)
+     * */
+    function getTreatmentMachinesTriggers() {
+        return $this->_fetchAll(OPAL_GET_TREATMENT_MACHINES_TRIGGERS, array());
     }
 }

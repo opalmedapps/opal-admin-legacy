@@ -22,8 +22,7 @@ controller('alias', function ($scope, $uibModal, $filter, aliasCollectionService
 	};
 	// Function to set banner class
 	$scope.setBannerClass = function (className) {
-		// Remove any classes starting with "alert-"
-		$(".bannerMessage").removeClass(function (index, css) {
+		/* Remove any classes starting with "alert-"*/$(".bannerMessage").removeClass(function (index, css) {
 			return (css.match(/(^|\s)alert-\S+/g) || []).join(' ');
 		});
 		// Add class
@@ -92,7 +91,7 @@ controller('alias', function ($scope, $uibModal, $filter, aliasCollectionService
 			{
 				field: 'source_db.name', enableColumnMenu: false, displayName: $filter('translate')('ALIAS.LIST.CLINICAL_DATABASE'), width: '10%', filter: {
 					type: uiGridConstants.filter.SELECT,
-					selectOptions: [{ value: 'Aria', label: $filter('translate')('ALIAS.LIST.ARIA') }, { value: 'MediVisit', label: $filter('translate')('ALIAS.LIST.MEDIVISIT') }]
+					selectOptions: [{ value: 'Local', label: $filter('translate')('ALIAS.LIST.LOCAL') }, { value: 'Aria', label: $filter('translate')('ALIAS.LIST.ARIA') }, { value: 'MediVisit', label: $filter('translate')('ALIAS.LIST.MEDIVISIT') }]
 				}
 			},
 			{ field: 'color', displayName: $filter('translate')('ALIAS.LIST.COLOR'), enableColumnMenu: false, width: '10%', cellTemplate: cellTemplateColor, enableFiltering: false },

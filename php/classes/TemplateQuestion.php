@@ -63,7 +63,7 @@ class TemplateQuestion extends QuestionnaireModule {
                 return false;
         }
         else if ($validatedQT["typeId"] == CHECKBOXES || $validatedQT["typeId"] == RADIO_BUTTON) {
-            if (count($validatedQT["subOptions"]) <= 0) return false;
+            if (!is_array($validatedQT["subOptions"]) || count($validatedQT["subOptions"]) <= 0) return false;
             foreach($validatedQT["subOptions"] as $sub) {
                 if($sub["description_EN"] == "" || $sub["description_FR"] == "" || $sub["order"] == "")
                     return false;
@@ -463,7 +463,7 @@ class TemplateQuestion extends QuestionnaireModule {
      * */
     public function getTemplateQuestionDetails($templateQuestionId) {
         $templateQuestion = $this->questionnaireDB->getTemplateQuestionDetails($templateQuestionId);
-        if(count($templateQuestion) != 1)
+        if(!is_array($templateQuestion) || count($templateQuestion) != 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Errors fetching the question type. Number of result is wrong.");
         $templateQuestion = $templateQuestion[0];
 

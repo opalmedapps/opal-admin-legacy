@@ -1,98 +1,98 @@
 <?php
-	/**
-	 * User class
-	 *
-	 *
-	 */
- class Users {
-	 public $username = null;
-	 public $password = null;
-	 public $role = null;
-	 public $language = null;
-	 public $userid = null;
-	 public $sessionid = null;
-	 public $salt = "Zo4rU5Z1YyKJAASY0PT6EUg7BBYdlEhPaNLuxAwU8lqu1ElzHv0Ri7EM6irpx5w";
-	 
-	 /* Class constructor*/ 
-	 public function __construct( $data = array() ) {
-		 if( isset( $data->username ) ) $this->username = stripslashes( strip_tags( $data->username ) );
-		 if( isset( $data->password ) ) $this->password = stripslashes( strip_tags( $data->password ) );
-		 if( isset( $data->cypher ) ) $this->cypher = stripslashes( strip_tags( $data->cypher ) );
-	 }
-	 
-	 public function storeFormValues( $params ) {
-		//store the parameters
-		$this->__construct( $params ); 
-	 }
-	 
-	 /**
+/**
+ * User class
+ *
+ *
+ */
+class Users {
+    public $username = null;
+    public $password = null;
+    public $role = null;
+    public $language = null;
+    public $userid = null;
+    public $sessionid = null;
+    public $salt = "Zo4rU5Z1YyKJAASY0PT6EUg7BBYdlEhPaNLuxAwU8lqu1ElzHv0Ri7EM6irpx5w";
+
+    /* Class constructor*/
+    public function __construct( $data = array() ) {
+        if( isset( $data->username ) ) $this->username = stripslashes( strip_tags( $data->username ) );
+        if( isset( $data->password ) ) $this->password = stripslashes( strip_tags( $data->password ) );
+        if( isset( $data->cypher ) ) $this->cypher = stripslashes( strip_tags( $data->cypher ) );
+    }
+
+    public function storeFormValues( $params ) {
+        //store the parameters
+        $this->__construct( $params );
+    }
+
+    /**
      *
      * Logs in a particular user
      *
      * @return boolean $success : successful login flag
      */
-	 public function userLogin() {
-		 $success = false;
-		 $d = new Encrypt;
-		 try{
-			$con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD ); 
-			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-			$sql = "SELECT * FROM OAUser WHERE OAUser.Username = :username AND OAUser.Password = :password";
-			
-			$stmt = $con->prepare( $sql );
-			$stmt->bindValue( "username", $this->username, PDO::PARAM_STR );
-			$stmt->bindValue( "password", hash("sha256", $d->encodeString( $this->password, $this->cypher ) . $this->salt), PDO::PARAM_STR );
-			$stmt->execute();
-			
-			$valid = $stmt->fetchColumn();
-			if( $valid ) {
-				$this->userid = $valid;
-				$userDetails = $this->getUserDetails($valid);
-				$this->role = $userDetails['role']['name'];
-				$this->language = $userDetails['language'];
-				$this->sessionid = $this->makeSessionId();
+    public function userLogin() {
+        $success = false;
+        $d = new Encrypt;
+        try{
+            $con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "SELECT * FROM OAUser WHERE OAUser.Username = :username AND OAUser.Password = :password";
 
-				$this->logActivity($this->userid, $this->sessionid, 'Login');
-				$success = true;
-			}
-			
-			$con = null;
-			return $success;
-		 }catch (PDOException $e) {
-			 echo $e->getMessage();
-			 return $success;
-		 }
-	 }
+            $stmt = $con->prepare( $sql );
+            $stmt->bindValue( "username", $this->username, PDO::PARAM_STR );
+            $stmt->bindValue( "password", hash("sha256", $d->encodeString( $this->password, $this->cypher ) . $this->salt), PDO::PARAM_STR );
+            $stmt->execute();
 
-	  /**
-	  *
-	  * Logs out a user
-	  *
-	  * @param $user : user object
-	  * @return $response : response
-	  */
-	public function userLogout($user) {
-		$userser = $user['userser'];
-		$sessionid = $user['sessionid'];
-		$response = $this->logActivity($userser, $sessionid, 'Logout');
-		return $response;
-	}
+            $valid = $stmt->fetchColumn();
+            if( $valid ) {
+                $this->userid = $valid;
+                $userDetails = $this->getUserDetails($valid);
+                $this->role = $userDetails['role']['name'];
+                $this->language = $userDetails['language'];
+                $this->sessionid = $this->makeSessionId();
 
-	 /**
-	  *
-	  * Logs when a user logs in or logs out
-	  *
-	  * @return $response : response
-	  */
-	public function logActivity($userser, $sessionid, $activity) {
-		$response = array (
-	 		'value'		=> 0,
- 			'message'	=> ''
- 		);
- 		try{
-			$con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD ); 
-			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-			$sql = "
+                $this->logActivity($this->userid, $this->sessionid, 'Login');
+                $success = true;
+            }
+
+            $con = null;
+            return $success;
+        }catch (PDOException $e) {
+            echo $e->getMessage();
+            return $success;
+        }
+    }
+
+    /**
+     *
+     * Logs out a user
+     *
+     * @param $user : user object
+     * @return $response : response
+     */
+    public function userLogout($user) {
+        $userser = $user['userser'];
+        $sessionid = $user['sessionid'];
+        $response = $this->logActivity($userser, $sessionid, 'Logout');
+        return $response;
+    }
+
+    /**
+     *
+     * Logs when a user logs in or logs out
+     *
+     * @return $response : response
+     */
+    public function logActivity($userser, $sessionid, $activity) {
+        $response = array (
+            'value'		=> 0,
+            'message'	=> ''
+        );
+        try{
+            $con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "
 				INSERT INTO 
 					OAActivityLog (
 						Activity,
@@ -107,228 +107,228 @@
 					NOW()
 				)
 			";
-			$query = $con->prepare($sql);
-			$query->execute();
-			$response['value'] = 1; // success
-			return $response;
+            $query = $con->prepare($sql);
+            $query->execute();
+            $response['value'] = 1; // success
+            return $response;
 
-		}catch (PDOException $e) {
-			 $response['message'] = $e->getMessage();
-			 return $response;
-		 }
-	}
+        }catch (PDOException $e) {
+            $response['message'] = $e->getMessage();
+            return $response;
+        }
+    }
 
-	 /**
+    /**
      *
      * Sets a session id
      *
      * @return string $sessionid : session id
      */
-     public function makeSessionId($length = 10) {
-     	$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	    $charactersLength = strlen($characters);
-	    $randomString = '';
-	    for ($i = 0; $i < $length; $i++) {
-	        $randomString .= $characters[rand(0, $charactersLength - 1)];
-	    }
-	    return $randomString;
-     }
+    public function makeSessionId($length = 10) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
 
-	/**
+    /**
      *
      * Updates a user's password
      *
      * @param array $userDetails  : the user details
      * @return array $response : response
      */
-	public function updatePassword($userDetails) {
-	 	$response = array (
-	 		'value'		=> 0,
-	 		'error'		=> array(
-	 			'code'		=> '',
-	 			'message'	=> ''
-	 		)
-	 	);
-	 	$oldPassword 	= $userDetails['oldPassword'];
-	 	$userSer		= $userDetails['user']['id'];
-	 	$newPassword	= $userDetails['password'];
-	 	$cypher 			= $userDetails['cypher'];
-		$d = new Encrypt;
-	 	try {
-	 		$con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD ); 
-			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+    public function updatePassword($userDetails) {
+        $response = array (
+            'value'		=> 0,
+            'error'		=> array(
+                'code'		=> '',
+                'message'	=> ''
+            )
+        );
+        $oldPassword 	= $userDetails['oldPassword'];
+        $userSer		= $userDetails['user']['id'];
+        $newPassword	= $userDetails['password'];
+        $cypher 			= $userDetails['cypher'];
+        $d = new Encrypt;
+        try {
+            $con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-			if (!isset($userDetails['override'])) {
-				$sql = "SELECT * FROM OAUser WHERE OAUser.OAUserSerNum = :ser AND OAUser.Password = :password";
+            if (!isset($userDetails['override'])) {
+                $sql = "SELECT * FROM OAUser WHERE OAUser.OAUserSerNum = :ser AND OAUser.Password = :password";
 
-				$stmt = $con->prepare( $sql );
-				$stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
-				$stmt->bindValue( "password", hash("sha256", $d->encodeString( $oldPassword, $cypher ) . $this->salt), PDO::PARAM_STR );
-				$stmt->execute();
-				
-				$valid = $stmt->fetchColumn();
-				if( !$valid ) {
-					$response['error']['code'] = 'old-password-incorrect';
-					$response['error']['message'] = 'Your old password is incorrect.';
-					return $response;
-				}
-			}
+                $stmt = $con->prepare( $sql );
+                $stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
+                $stmt->bindValue( "password", hash("sha256", $d->encodeString( $oldPassword, $cypher ) . $this->salt), PDO::PARAM_STR );
+                $stmt->execute();
 
-			$sql = "UPDATE OAUser SET OAUser.Password = :password WHERE OAUser.OAUserSerNum = :ser";
+                $valid = $stmt->fetchColumn();
+                if( !$valid ) {
+                    $response['error']['code'] = 'old-password-incorrect';
+                    $response['error']['message'] = 'Your old password is incorrect.';
+                    return $response;
+                }
+            }
 
-			$stmt = $con->prepare( $sql );
-			$stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
-			$stmt->bindValue( "password", hash("sha256", $d->encodeString( $newPassword, $cypher ) . $this->salt), PDO::PARAM_STR );
-			$stmt->execute();
+            $sql = "UPDATE OAUser SET OAUser.Password = :password WHERE OAUser.OAUserSerNum = :ser";
 
-			$response['value'] = 1; // Success
-			return $response;
+            $stmt = $con->prepare( $sql );
+            $stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
+            $stmt->bindValue( "password", hash("sha256", $d->encodeString( $newPassword, $cypher ) . $this->salt), PDO::PARAM_STR );
+            $stmt->execute();
 
-	 	} catch (PDOException $e) {
-			 $response['error']['code'] = 'db-catch';
-			 $response['error']['message'] = $e->getMessage();
-			 return $response;
-		}
-	 }
+            $response['value'] = 1; // Success
+            return $response;
 
-	 /**
+        } catch (PDOException $e) {
+            $response['error']['code'] = 'db-catch';
+            $response['error']['message'] = $e->getMessage();
+            return $response;
+        }
+    }
+
+    /**
      *
      * Updates a user's language
      *
      * @param array $userDetails  : the user details
      * @return array $response : response
      */
-	public function updateLanguage($userDetails) {
-	 	$response = array (
-	 		'code'		=> "0",
-	 	);
-	 	$language 	= $userDetails['language'];
-	 	$userSer	= $userDetails['id'];
+    public function updateLanguage($userDetails) {
+        $response = array (
+            'code'		=> "0",
+        );
+        $language 	= $userDetails['language'];
+        $userSer	= $userDetails['id'];
 
-	 	try {
-	 		$con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD ); 
-			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+        try {
+            $con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-			$sql = "UPDATE OAUser SET OAUser.Language = :language WHERE OAUser.OAUserSerNum = :ser";
+            $sql = "UPDATE OAUser SET OAUser.Language = :language WHERE OAUser.OAUserSerNum = :ser";
 
-			$stmt = $con->prepare( $sql );
-			$stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
-			$stmt->bindValue( "language", $language, PDO::PARAM_STR );
-			$stmt->execute();
+            $stmt = $con->prepare( $sql );
+            $stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
+            $stmt->bindValue( "language", $language, PDO::PARAM_STR );
+            $stmt->execute();
 
-			$response['code'] = "1"; // Success
-			return $response;
+            $response['code'] = "1"; // Success
+            return $response;
 
-	 	} catch (PDOException $e) {
-			 $response['error']['code'] = 'db-catch';
-			 $response['error']['message'] = $e->getMessage();
-			 return $response;
-		}
-	}
+        } catch (PDOException $e) {
+            $response['error']['code'] = 'db-catch';
+            $response['error']['message'] = $e->getMessage();
+            return $response;
+        }
+    }
 
-	 
-	 /**
+
+    /**
      *
      * Updates a user
      *
      * @param array $userDetails  : the user details
      * @return boolean
      */
-	 public function updateUser($userDetails) {
-	 	$response = array (
-	 		'value'		=> 0,
-	 		'error'		=> array(
-	 			'code'		=> '',
-	 			'message'	=> ''
-	 		)
-	 	);
-	 	$userSer			= $userDetails['user']['id'];
-	 	$newPassword 		= $userDetails['password'];
-	 	$confirmPassword 	= $userDetails['confirmPassword'];
-	 	$roleSer 			= $userDetails['role']['serial'];
-	 	$language 			= $userDetails['language'];
+    public function updateUser($userDetails) {
+        $response = array (
+            'value'		=> 0,
+            'error'		=> array(
+                'code'		=> '',
+                'message'	=> ''
+            )
+        );
+        $userSer			= $userDetails['user']['id'];
+        $newPassword 		= $userDetails['password'];
+        $confirmPassword 	= $userDetails['confirmPassword'];
+        $roleSer 			= $userDetails['role']['serial'];
+        $language 			= $userDetails['language'];
 
-	 	try {
+        try {
 
-	 		if ( ($newPassword && $confirmPassword) && ($newPassword == $confirmPassword) ) {
-	 			$response = $this->updatePassword($userDetails);
-	 			if ($response['value'] == 0) {
-	 				return $response;
-	 			}
-	 		}
+            if ( ($newPassword && $confirmPassword) && ($newPassword == $confirmPassword) ) {
+                $response = $this->updatePassword($userDetails);
+                if ($response['value'] == 0) {
+                    return $response;
+                }
+            }
 
-	 		$con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD ); 
-			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-			$sql = "UPDATE OAUserRole SET OAUserRole.RoleSerNum = $roleSer WHERE OAUserRole.OAUserSerNum = $userSer";
+            $sql = "UPDATE OAUserRole SET OAUserRole.RoleSerNum = $roleSer WHERE OAUserRole.OAUserSerNum = $userSer";
 
-			$stmt = $con->prepare( $sql );
-			$stmt->execute();
+            $stmt = $con->prepare( $sql );
+            $stmt->execute();
 
-			$sql = "UPDATE OAUser SET OAUser.Language = '$language' WHERE OAUser.OAUserSerNum = $userSer";
-			$stmt = $con->prepare( $sql );
-			$stmt->execute();
+            $sql = "UPDATE OAUser SET OAUser.Language = '$language' WHERE OAUser.OAUserSerNum = $userSer";
+            $stmt = $con->prepare( $sql );
+            $stmt->execute();
 
-			$response['value'] = 1; // Success
-			return $response;
+            $response['value'] = 1; // Success
+            return $response;
 
-	 	} catch (PDOException $e) {
-			 $response['error']['code'] = 'db-catch';
-			 $response['error']['message'] = $e->getMessage();
-			 return $response;
-		}
-	 }
-	/**
-	 *
-	 * Registers a user into the database
-	 *
-	 * @param array $userDetails : the user details
-	 * @return void
-	 */
-	public function registerUser($userDetails) {
-		$username 		= $userDetails['username'];
-		$password 		= $userDetails['password'];
-		$roleSer 		= $userDetails['role']['serial'];
-		$language 		= $userDetails['language'];
-		$cypher 		= $userDetails['cypher'];
-		$d = new Encrypt;
-		try {
-			$con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-			$con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-			$sql = "INSERT INTO OAUser(Username, Password, Language, DateAdded) VALUES(:username, :password, :language, NOW())";
-			
-			$stmt = $con->prepare( $sql );
-			$stmt->bindValue( "username", $username, PDO::PARAM_STR );
-			$stmt->bindValue( "password", hash("sha256", $d->encodeString( $password, $cypher ) . $this->salt), PDO::PARAM_STR );
-			$stmt->bindValue( "language", $language, PDO::PARAM_STR );
-			$stmt->execute();
+        } catch (PDOException $e) {
+            $response['error']['code'] = 'db-catch';
+            $response['error']['message'] = $e->getMessage();
+            return $response;
+        }
+    }
+    /**
+     *
+     * Registers a user into the database
+     *
+     * @param array $userDetails : the user details
+     * @return void
+     */
+    public function registerUser($userDetails) {
+        $username 		= $userDetails['username'];
+        $password 		= $userDetails['password'];
+        $roleSer 		= $userDetails['role']['serial'];
+        $language 		= $userDetails['language'];
+        $cypher 		= $userDetails['cypher'];
+        $d = new Encrypt;
+        try {
+            $con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $sql = "INSERT INTO OAUser(Username, Password, Language, DateAdded) VALUES(:username, :password, :language, NOW())";
 
-			$userSer = $con->lastInsertId();
+            $stmt = $con->prepare( $sql );
+            $stmt->bindValue( "username", $username, PDO::PARAM_STR );
+            $stmt->bindValue( "password", hash("sha256", $d->encodeString( $password, $cypher ) . $this->salt), PDO::PARAM_STR );
+            $stmt->bindValue( "language", $language, PDO::PARAM_STR );
+            $stmt->execute();
 
-			$sql = "INSERT INTO OAUserRole(OAUserSerNum, RoleSerNum) VALUES('$userSer','$roleSer')";
-			$query = $con->prepare($sql);
-			$query->execute();
-			return;
+            $userSer = $con->lastInsertId();
 
-		}catch( PDOException $e ) {
-			return $e->getMessage();
-		}
-	}
+            $sql = "INSERT INTO OAUserRole(OAUserSerNum, RoleSerNum) VALUES('$userSer','$roleSer')";
+            $query = $con->prepare($sql);
+            $query->execute();
+            return;
 
-	/**
+        }catch( PDOException $e ) {
+            return $e->getMessage();
+        }
+    }
+
+    /**
      *
      * Gets a list of existing users
      *
      * @param array $USERS : the list of existing users
      * @return boolean
      */
-	public function getUsers() {
-	 	$users = array();
-	 	try {
-	 		$connect = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-	 		$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+    public function getUsers() {
+        $users = array();
+        try {
+            $connect = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-	 		$sql = "
+            $sql = "
 		 		SELECT DISTINCT
 			 		OAUser.OAUserSerNum,
 			 		OAUser.Username,
@@ -341,46 +341,47 @@
 		 		WHERE
 		 			OAUser.OAUserSerNum 	= OAUserRole.OAUserSerNum
 		 		AND OAUserRole.RoleSerNum	= Role.RoleSerNum
-	 		";           
-	 		$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-	 		$query->execute();
+		 		AND Role.RoleSerNum != ".ROLE_CRONJOB."
+	 		";
+            $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
 
-	 		while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-	 			$serial 	= $data[0];
-	 			$name   	= $data[1];
-	 			$role 		= $data[2];
-	 			$language 	= $data[3];
+                $serial 	= $data[0];
+                $name   	= $data[1];
+                $role 		= $data[2];
+                $language 	= $data[3];
 
-	 			$userArray = array(
-	 				'serial'    	=> $serial,
-	 				'username'      => $name,
-	 				'role'			=> $role,
-	 				'language' 		=> $language
-	 				);
-	 			array_push($users, $userArray);
-	 		}
-	 		return $users;
-	 	} catch (PDOException $e) {
-	 		echo $e->getMessage();
-	 		return $users;
-	 	}
-	 }
+                $userArray = array(
+                    'serial'    	=> $serial,
+                    'username'      => $name,
+                    'role'			=> $role,
+                    'language' 		=> $language
+                );
+                array_push($users, $userArray);
+            }
+            return $users;
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return $users;
+        }
+    }
 
-	/**
+    /**
      *
      * Gets a user's details
      *
      * @param integer $userSer    : the user serial number
      * @return array $userDetails : the user details
      */
-	 public function getUserDetails($userSer) { 
-	 	$userDetails = array();
-	 	try {
-	 		$connect = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-	 		$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+    public function getUserDetails($userSer) {
+        $userDetails = array();
+        try {
+            $connect = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-	 		$sql = "
+            $sql = "
 		 		SELECT DISTINCT
 			 		OAUser.Username,
 			 		Role.RoleSerNum,
@@ -394,45 +395,46 @@
 			 		OAUser.OAUserSerNum 	= $userSer
 			 	AND OAUserRole.OAUserSerNum	= OAUser.OAUserSerNum
 			 	AND Role.RoleSerNum 		= OAUserRole.RoleSerNum
+			 	AND Role.RoleSerNum != ".ROLE_CRONJOB."
 	 		";
-	 		$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-	 		$query->execute();
+            $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
 
-	 		$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
+            $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
 
-	 		$username   = $data[0];
-	 		$roleSer 	= $data[1];
-	 		$roleName 	= $data[2];
-	 		$language 	= $data[3];
+            $username   = $data[0];
+            $roleSer 	= $data[1];
+            $roleName 	= $data[2];
+            $language 	= $data[3];
 
-	 		$userDetails = array(
-	 			'serial'            => $userSer,
-	 			'username'          => $username,
-	 			'language' 			=> $language,
-	 			'role' 				=> array('serial'=>$roleSer,'name'=>$roleName),
-	 			'logs'              => array(),
-	 			'new_password'      => null,
-	 			'confirm_password'  => null
-	 			);
+            $userDetails = array(
+                'serial'            => $userSer,
+                'username'          => $username,
+                'language' 			=> $language,
+                'role' 				=> array('serial'=>$roleSer,'name'=>$roleName),
+                'logs'              => array(),
+                'new_password'      => null,
+                'confirm_password'  => null
+            );
 
-	 		return $userDetails;
-	 	} catch (PDOException $e) {
-	 		echo $e->getMessage();
-	 		return $userDetails;
-	 	}
-	 }
+            return $userDetails;
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return $userDetails;
+        }
+    }
 
 
-	/**
-	 *
-	 * Determines the existence of a username
-	 *
-	 * @param string $username : username to check
-	 *
-	 * @return array $Response : response
-	 */
-	public function usernameAlreadyInUse($username) {
-		try {
+    /**
+     *
+     * Determines the existence of a username
+     *
+     * @param string $username : username to check
+     *
+     * @return array $Response : response
+     */
+    public function usernameAlreadyInUse($username) {
+        try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
@@ -461,32 +463,32 @@
         } catch (PDOException $e) {
             return $Response;
         }
-	}
+    }
 
-	/**
-	 *
-	 * Deletes a user from the database
-	 *
-	 * @param integer $userSer : the user serial number
-	 * @return array $response : response
-	 */
-	public function deleteUser( $userSer ) {
+    /**
+     *
+     * Deletes a user from the database
+     *
+     * @param integer $userSer : the user serial number
+     * @return array $response : response
+     */
+    public function deleteUser( $userSer ) {
 
-		// Initialize a response array
-		$response = array(
-			'value'		=> 0,
-			'message'	=> ''
-		);
-		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-			$host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+        // Initialize a response array
+        $response = array(
+            'value'		=> 0,
+            'message'	=> ''
+        );
+        try {
+            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-			$sql = "DELETE FROM OAUserRole WHERE OAUserRole.OAUserSerNum = $userSer";
-			$query = $host_db_link->prepare( $sql );
+            $sql = "DELETE FROM OAUserRole WHERE OAUserRole.OAUserSerNum = $userSer";
+            $query = $host_db_link->prepare( $sql );
             $query->execute();
 
-			$sql = "DELETE FROM OAUser WHERE OAUser.OAUserSerNum = $userSer";
-			$query = $host_db_link->prepare( $sql );
+            $sql = "DELETE FROM OAUser WHERE OAUser.OAUserSerNum = $userSer";
+            $query = $host_db_link->prepare( $sql );
             $query->execute();
 
             $response['value'] = 1; // Success
@@ -494,52 +496,54 @@
 
         } catch( PDOException $e) {
             $response['message'] = $e->getMessage();
-			return $response; // Fail
-		}
-	}
+            return $response; // Fail
+        }
+    }
 
-	/**
-	 *
-	 * Gets a list of possible roles from the database
-	 *
-	 * @return array $roles : roles
-	 */
+    /**
+     *
+     * Gets a list of possible roles from the database
+     *
+     * @return array $roles : roles
+     */
 
-	public function getRoles() {
-	 	$roles = array();
-	 	try {
-	 		$connect = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-	 		$connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+    public function getRoles() {
+        $roles = array();
+        try {
+            $connect = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
+            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-	 		$sql = "
+            $sql = "
 		 		SELECT DISTINCT
 		 			Role.RoleSerNum,
 		 			Role.RoleName
 		 		FROM
 			 		Role
+			 	WHERE Role.RoleSerNum != ".ROLE_CRONJOB."
+
 			 	ORDER BY 
 			 		Role.RoleName
-	 		";           
-	 		$query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-	 		$query->execute();
+	 		";
+            $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query->execute();
 
-	 		while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-	 			$serial = $data[0];
-	 			$name   = $data[1];
+                $serial = $data[0];
+                $name   = $data[1];
 
-	 			$roleArray = array(
-	 				'serial'    	=> $serial,
-	 				'name'      	=> $name,
-	 			);
-	 			array_push($roles, $roleArray);
-	 		}
-	 		return $roles;
-	 	} catch (PDOException $e) {
-	 		echo $e->getMessage();
-	 		return $roles;
-	 	}
-	 }
+                $roleArray = array(
+                    'serial'    	=> $serial,
+                    'name'      	=> $name,
+                );
+                array_push($roles, $roleArray);
+            }
+            return $roles;
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return $roles;
+        }
+    }
 
     /**
      *
@@ -549,7 +553,7 @@
      */
     public function getUserActivities() {
         $userActivityList = array();
-         try {
+        try {
 
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -613,27 +617,27 @@
      *
      * Gets logs of a user's activity
      *
-     * @param integer $userSer : user serial 
+     * @param integer $userSer : user serial
      * @return array $userLogs : the logs of user activities
      */
     public function getUserActivityLogs($userSer) {
         $userLogs = array(
-        	'isData' 				=> 0,
-        	'login'					=> array(),
-        	'alias'					=> array(),
-        	'aliasExpression'		=> array(),
-        	'diagnosisTranslation'	=> array(),
-        	'diagnosisCode'			=> array(),
-        	'email'					=> array(),
-        	'trigger'				=> array(),
-        	'hospitalMap'			=> array(),
-        	'post'					=> array(),
-        	'notification'			=> array(),
-        	'legacyQuestionnaire'	=> array(),
-        	'testResult'			=> array(),
-        	'testResultExpression'	=> array()
-        );	
-         try {
+            'isData' 				=> 0,
+            'login'					=> array(),
+            'alias'					=> array(),
+            'aliasExpression'		=> array(),
+            'diagnosisTranslation'	=> array(),
+            'diagnosisCode'			=> array(),
+            'email'					=> array(),
+            'trigger'				=> array(),
+            'hospitalMap'			=> array(),
+            'post'					=> array(),
+            'notification'			=> array(),
+            'legacyQuestionnaire'	=> array(),
+            'testResult'			=> array(),
+            'testResultExpression'	=> array()
+        );
+        try {
 
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -718,22 +722,22 @@
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-            	$aliasDetails = array(
-            		'serial'			=> $data[0],
-            		'revision'			=> $data[1],
-            		'sessionid'			=> $data[2],
-            		'type'				=> $data[3],
-            		'update'			=> $data[4],
-            		'name_EN'			=> $data[5],
-            		'name_FR'			=> $data[6],
-            		'description_EN'	=> $data[7],
-            		'description_FR'	=> $data[8],
-            		'educational_material'	=> $data[9],
-            		'source_db'				=> $data[10],
-            		'color'					=> $data[11],
-            		'mod_action'			=> $data[12],
-            		'date_added'			=> $data[13]
-            	);
+                $aliasDetails = array(
+                    'serial'			=> $data[0],
+                    'revision'			=> $data[1],
+                    'sessionid'			=> $data[2],
+                    'type'				=> $data[3],
+                    'update'			=> $data[4],
+                    'name_EN'			=> $data[5],
+                    'name_FR'			=> $data[6],
+                    'description_EN'	=> $data[7],
+                    'description_FR'	=> $data[8],
+                    'educational_material'	=> $data[9],
+                    'source_db'				=> $data[10],
+                    'color'					=> $data[11],
+                    'mod_action'			=> $data[12],
+                    'date_added'			=> $data[13]
+                );
 
                 array_push($userLogs['alias'], $aliasDetails);
                 $userLogs['isData'] = 1;
@@ -762,15 +766,15 @@
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-            	$aliasExpressionDetails = array(
-            		'serial'			=> $data[0],
-            		'revision'			=> $data[1],
-            		'sessionid'			=> $data[2],
-            		'expression'		=> $data[3],
-            		'resource_description'	=> $data[4],
-            		'mod_action'			=> $data[5],
-            		'date_added'			=> $data[6]
-            	);
+                $aliasExpressionDetails = array(
+                    'serial'			=> $data[0],
+                    'revision'			=> $data[1],
+                    'sessionid'			=> $data[2],
+                    'expression'		=> $data[3],
+                    'resource_description'	=> $data[4],
+                    'mod_action'			=> $data[5],
+                    'date_added'			=> $data[6]
+                );
 
                 array_push($userLogs['aliasExpression'], $aliasExpressionDetails);
                 $userLogs['isData'] = 1;
@@ -803,24 +807,24 @@
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
 
-            	$diagnosisTranslationDetails = array (
-            		'serial'				=> $data[0],
-            		'revision'				=> $data[1],
-            		'sessionid'				=> $data[2],
-            		'educational_material'	=> $data[3],
-            		'name_EN'				=> $data[4],
-            		'name_FR'				=> $data[5],
-            		'description_EN'		=> $data[6],
-            		'description_FR'		=> $data[7],
-            		'mod_action'			=> $data[8],
-            		'date_added'			=> $data[9]
-            	);
+                $diagnosisTranslationDetails = array (
+                    'serial'				=> $data[0],
+                    'revision'				=> $data[1],
+                    'sessionid'				=> $data[2],
+                    'educational_material'	=> $data[3],
+                    'name_EN'				=> $data[4],
+                    'name_FR'				=> $data[5],
+                    'description_EN'		=> $data[6],
+                    'description_FR'		=> $data[7],
+                    'mod_action'			=> $data[8],
+                    'date_added'			=> $data[9]
+                );
                 array_push($userLogs['diagnosisTranslation'], $diagnosisTranslationDetails);
                 $userLogs['isData'] = 1;
             }
 
             /* Diagnosis Code */
-	        $sql = "
+            $sql = "
 	        	SELECT DISTINCT 
 	        		dcmh.DiagnosisTranslationSerNum,
 	        		dcmh.RevSerNum,
@@ -838,20 +842,20 @@
 	        		dcmh.DateAdded DESC
 	        ";
 
-	        $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-            	$diagnosisCodeDetails = array(
-            		'serial'		=> $data[0],
-            		'revision'		=> $data[1],
-            		'sessionid'		=> $data[2],
-            		'sourceuid'		=> $data[3],
-            		'code'			=> $data[4],
-            		'description'	=> $data[5],
-            		'mod_action'	=> $data[6],
-            		'date_added'	=> $data[7]
-            	);
+                $diagnosisCodeDetails = array(
+                    'serial'		=> $data[0],
+                    'revision'		=> $data[1],
+                    'sessionid'		=> $data[2],
+                    'sourceuid'		=> $data[3],
+                    'code'			=> $data[4],
+                    'description'	=> $data[5],
+                    'mod_action'	=> $data[6],
+                    'date_added'	=> $data[7]
+                );
 
                 array_push($userLogs['diagnosisCode'], $diagnosisCodeDetails);
                 $userLogs['isData'] = 1;
@@ -876,21 +880,21 @@
             	ORDER BY
             		ecmh.DateAdded DESC
            	";
-           	$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-            	$emailDetails = array (
-            		'serial'		=> $data[0],
-            		'revision'		=> $data[1],
-            		'sessionid'		=> $data[2],
-            		'subject_EN'	=> $data[3],
-            		'subject_FR'	=> $data[4],
-            		'body_EN'		=> $data[5],
-            		'body_FR'		=> $data[6],
-            		'mod_action'	=> $data[7],
-            		'date_added'	=> $data[8]
-            	);
+                $emailDetails = array (
+                    'serial'		=> $data[0],
+                    'revision'		=> $data[1],
+                    'sessionid'		=> $data[2],
+                    'subject_EN'	=> $data[3],
+                    'subject_FR'	=> $data[4],
+                    'body_EN'		=> $data[5],
+                    'body_FR'		=> $data[6],
+                    'mod_action'	=> $data[7],
+                    'date_added'	=> $data[8]
+                );
                 array_push($userLogs['email'], $emailDetails);
                 $userLogs['isData'] = 1;
             }
@@ -916,15 +920,15 @@
             $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-            	$triggerDetails = array(
-            		'control_serial'		=> $data[0],
-            		'control_table'			=> $data[1],
-            		'sessionid'				=> $data[2],
-            		'type'					=> $data[3],
-            		'filterid'				=> $data[4],
-            		'mod_action'			=> $data[5],
-            		'date_added'			=> $data[6]
-            	);
+                $triggerDetails = array(
+                    'control_serial'		=> $data[0],
+                    'control_table'			=> $data[1],
+                    'sessionid'				=> $data[2],
+                    'type'					=> $data[3],
+                    'filterid'				=> $data[4],
+                    'mod_action'			=> $data[5],
+                    'date_added'			=> $data[6]
+                );
 
                 array_push($userLogs['trigger'], $triggerDetails);
                 $userLogs['isData'] = 1;
@@ -956,19 +960,19 @@
             $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-            	$hospitalMapDetails = array(
-            		'serial'			=> $data[0],
-            		'revision'			=> $data[1],
-            		'sessionid'			=> $data[2],
-            		'url'				=> $data[3],
-            		'qrcode'			=> $data[4],
-            		'name_EN'			=> $data[5],
-            		'name_FR'			=> $data[6],
-            		'description_EN'	=> $data[7],
-            		'description_FR'	=> $data[8],
-            		'mod_action'		=> $data[9],
-            		'date_added'		=> $data[10]
-            	);
+                $hospitalMapDetails = array(
+                    'serial'			=> $data[0],
+                    'revision'			=> $data[1],
+                    'sessionid'			=> $data[2],
+                    'url'				=> $data[3],
+                    'qrcode'			=> $data[4],
+                    'name_EN'			=> $data[5],
+                    'name_FR'			=> $data[6],
+                    'description_EN'	=> $data[7],
+                    'description_FR'	=> $data[8],
+                    'mod_action'		=> $data[9],
+                    'date_added'		=> $data[10]
+                );
                 array_push($userLogs['hospitalMap'], $hospitalMapDetails);
                 $userLogs['isData'] = 1;
             }
@@ -1001,21 +1005,21 @@
             $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-            	$postDetails = array(
-            		'control_serial'		=> $data[0],
-            		'revision'				=> $data[1],
-            		'sessionid'				=> $data[2],
-            		'type'					=> $data[3],
-            		'publish'				=> $data[4],
-            		'disabled'				=> $data[5],
-            		'publish_date'			=> $data[6],
-            		'name_EN'				=> $data[7],
-            		'name_FR'				=> $data[8],
-            		'body_EN'				=> $data[9],
-            		'body_FR'				=> $data[10],
-            		'mod_action'			=> $data[11],
-            		'date_added'			=> $data[12]
-            	);
+                $postDetails = array(
+                    'control_serial'		=> $data[0],
+                    'revision'				=> $data[1],
+                    'sessionid'				=> $data[2],
+                    'type'					=> $data[3],
+                    'publish'				=> $data[4],
+                    'disabled'				=> $data[5],
+                    'publish_date'			=> $data[6],
+                    'name_EN'				=> $data[7],
+                    'name_FR'				=> $data[8],
+                    'body_EN'				=> $data[9],
+                    'body_FR'				=> $data[10],
+                    'mod_action'			=> $data[11],
+                    'date_added'			=> $data[12]
+                );
                 array_push($userLogs['post'], $postDetails);
                 $userLogs['isData'] = 1;
 
@@ -1046,18 +1050,18 @@
             $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-            	$notificationDetails = array(
-            		'control_serial'		=> $data[0],
-            		'revision'				=> $data[1],
-            		'sessionid'				=> $data[2],
-            		'type'					=> $data[3],
-            		'name_EN'				=> $data[4],
-            		'name_FR'				=> $data[5],
-            		'description_EN'		=> $data[6],
-            		'description_FR'		=> $data[7],
-            		'mod_action'			=> $data[8],
-            		'date_added'			=> $data[9]
-            	);
+                $notificationDetails = array(
+                    'control_serial'		=> $data[0],
+                    'revision'				=> $data[1],
+                    'sessionid'				=> $data[2],
+                    'type'					=> $data[3],
+                    'name_EN'				=> $data[4],
+                    'name_FR'				=> $data[5],
+                    'description_EN'		=> $data[6],
+                    'description_FR'		=> $data[7],
+                    'mod_action'			=> $data[8],
+                    'date_added'			=> $data[9]
+                );
                 array_push($userLogs['notification'], $notificationDetails);
                 $userLogs['isData'] = 1;
 
@@ -1088,19 +1092,19 @@
             $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-            	$legacyQuestionnaireDetails = array (
-            		'control_serial'	=> $data[0],
-            		'revision'			=> $data[1],
-            		'sessionid'			=> $data[2],
-            		'db_serial'			=> $data[3],
-            		'name_EN'			=> $data[4],
-            		'name_FR'			=> $data[5],
-            		'intro_EN'			=> $data[6],
-            		'intro_FR'			=> $data[7],
-            		'publish'			=> $data[8],
-            		'mod_action'		=> $data[9],
-            		'date_added'		=> $data[10]
-            	);
+                $legacyQuestionnaireDetails = array (
+                    'control_serial'	=> $data[0],
+                    'revision'			=> $data[1],
+                    'sessionid'			=> $data[2],
+                    'db_serial'			=> $data[3],
+                    'name_EN'			=> $data[4],
+                    'name_FR'			=> $data[5],
+                    'intro_EN'			=> $data[6],
+                    'intro_FR'			=> $data[7],
+                    'publish'			=> $data[8],
+                    'mod_action'		=> $data[9],
+                    'date_added'		=> $data[10]
+                );
                 array_push($userLogs['legacyQuestionnaire'], $legacyQuestionnaireDetails);
                 $userLogs['isData'] = 1;
             }
@@ -1134,22 +1138,22 @@
             $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-            	$testResultDetails = array(
-            		'control_serial'			=> $data[0],
-            		'revision'					=> $data[1],
-            		'sessionid'					=> $data[2],
-            		'source_db'					=> $data[3],
-            		'educational_material'		=> $data[4],
-            		'name_EN'					=> $data[5],
-            		'name_FR'					=> $data[6],
-            		'description_EN'			=> $data[7],
-            		'description_FR'			=> $data[8],
-            		'group_EN'					=> $data[9],
-            		'group_FR'					=> $data[10],
-            		'publish'					=> $data[11],
-            		'mod_action'				=> $data[12],
-            		'date_added'				=> $data[13]
-            	);
+                $testResultDetails = array(
+                    'control_serial'			=> $data[0],
+                    'revision'					=> $data[1],
+                    'sessionid'					=> $data[2],
+                    'source_db'					=> $data[3],
+                    'educational_material'		=> $data[4],
+                    'name_EN'					=> $data[5],
+                    'name_FR'					=> $data[6],
+                    'description_EN'			=> $data[7],
+                    'description_FR'			=> $data[8],
+                    'group_EN'					=> $data[9],
+                    'group_FR'					=> $data[10],
+                    'publish'					=> $data[11],
+                    'mod_action'				=> $data[12],
+                    'date_added'				=> $data[13]
+                );
                 array_push($userLogs['testResult'], $testResultDetails);
                 $userLogs['isData'] = 1;
             }
@@ -1174,14 +1178,14 @@
             $query->execute();
 
             while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-            	$testResultExpressionDetails = array (
-            		'control_serial'	=> $data[0],
-            		'revision'			=> $data[1],
-            		'sessionid'			=> $data[2],
-            		'expression'		=> $data[3],
-            		'mod_action'		=> $data[4],
-            		'date_added'		=> $data[5]
-            	);
+                $testResultExpressionDetails = array (
+                    'control_serial'	=> $data[0],
+                    'revision'			=> $data[1],
+                    'sessionid'			=> $data[2],
+                    'expression'		=> $data[3],
+                    'mod_action'		=> $data[4],
+                    'date_added'		=> $data[5]
+                );
                 array_push($userLogs['testResultExpression'], $testResultExpressionDetails);
                 $userLogs['isData'] = 1;
             }
@@ -1194,6 +1198,6 @@
 
 
     }
- }
- 
+}
+
 ?>

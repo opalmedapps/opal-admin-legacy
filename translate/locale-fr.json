@@ -15,6 +15,8 @@
     "TITLE": "En traitement..."
   },
   "NAVIGATION_MENU": {
+    "CUSTOM_CODES": "Codes personnalisés",
+    "CUSTOM_CODES_SUB": "Gérer les codes personnalisés pour les diagnostics, alias et résultats de laboratoire.",
     "PUBLISHING_TOOLS": "Outils de publication",
     "TASKS_APPTS_DOCS": "Tâches / Rv / Doc",
     "TASKS_APPTS_DOCS_SUB": "Outil de regroupement, de traduction et de publication de tâches, de rendez-vous et de documents.",
@@ -37,8 +39,8 @@
     "LEGACY_QUESTIONNAIRE": "Anciens questionnaires",
     "LEGACY_QUESTIONNAIRE_SUB": "Gérer la version précédente des questionnaires et les réponses des patients.",
     "ADMINISTRATION": "Administration",
-    "DIAGNOSIS_TRANSLATION": "Traductions diagnostics",
-    "DIAGNOSIS_TRANSLATION_SUB": "Gérer les codes de diagnostic pour l’étiquetage, la traduction et la catégorisation.",
+    "DIAGNOSIS_TRANSLATION": "Importation et alias de diagnostics",
+    "DIAGNOSIS_TRANSLATION_SUB": "Gérer les codes de diagnostic.",
     "CRON_LOGS": "Journal des tâches cron",
     "CRON_LOGS_SUB": "Contrôler les temps et la fréquence des événements de publication. Voir les journaux de publication.",
     "PATIENTS": "Patients",
@@ -1712,6 +1714,7 @@
       "PUBLISH": "Publier",
       "NUMBER": "No. de codes attribués",
       "CLINICAL_DATABASE": "BD clinique",
+      "LOCAL": "Local",
       "ARIA": "Aria",
       "MEDIVISIT": "MediVisit",
       "COLOR": "Code couleur",
@@ -2188,7 +2191,7 @@
   },
   "DIAGNOSIS" : {
     "LIST": {
-      "TITLE": "Traduction diagnostics",
+      "TITLE": "Importation et alias de diagnostics",
       "ADD": "Ajouter",
       "SEARCH": "Rechercher",
       "EDIT": "Modifier",
@@ -2199,13 +2202,13 @@
       "ERROR_LIST": "Une erreur s'est produite lors de l'obtention de la liste des traductions."
     },
     "DELETE": {
-      "TITLE": "Supprimer la traduction de diagnostics",
+      "TITLE": "Supprimer l'alias",
       "DELETE": "Supprimer",
       "CANCEL": "Annuler",
       "WARNING": "ATTENTION!",
-      "WARNING_TEXT": "Voulez-vous vraiment supprimer la traduction ci-dessous? Cette action est irreversible!",
-      "SUCCESS": "La traduction de diagnostic a été supprimée avec succès.",
-      "ERROR": "Une erreur s'est produite lors de la suppression de la traduction."
+      "WARNING_TEXT": "Voulez-vous vraiment supprimer l'alias ci-dessous? Cette action est irreversible!",
+      "SUCCESS": "L'alias de diagnostic a été supprimé avec succès.",
+      "ERROR": "Une erreur s'est produite lors de la suppression de l'alias."
     },
     "ADD": {
       "BACK": "Retour",
@@ -2223,7 +2226,7 @@
       "SEE_DESCRIPTION": "Voir la description entrée",
       "EDUCATION_MATERIAL": "Matériel éducatif",
       "SUBMIT": "Soumettre",
-      "TITLE": "Ajouter une traduction de diagnostic",
+      "TITLE": "Ajouter un alias de diagnostic",
       "TITLE_2": "Titre",
       "DESCRIPTION": "Description",
       "STEP": "Étape",
@@ -2233,7 +2236,7 @@
       "OPTIONAL_FIELD": "Champ facultatif:",
       "INCOMPLETE": "Incomplet",
       "COMPLETE": "Complet",
-      "DIAGNOSIS_TRANSLATION": "Traduction de diagnostic",
+      "DIAGNOSIS_TRANSLATION": "Alias de diagnostic",
       "DT_EXPLANATION": "Veuillez ajouter un ou plusieurs codes de diagnostic à classer.",
       "LIST": "Liste des diagnostics",
       "SEARCH": "Rechercher",
@@ -2245,15 +2248,15 @@
       "ASSIGN_TO": "Assigné à:",
       "WILL_REPLACE": "Remplacera l'assignation de:",
       "TITLE_DESCRIPTION_EXPLANATION": "Veuillez attribuer un titre et une description en anglais et en français.",
-      "EDUCATION_EXPLANATION": "Assigner un matériel pédagogique fournira une description enrichie de la traduction du diagnostic.",
+      "EDUCATION_EXPLANATION": "Assigner un matériel pédagogique fournira une description enrichie de l'alias du diagnostic.",
       "PROCESSING": "En traitement...",
       "ERROR_EDUCATION": "Une erreur s'est produite lors de l'obtention de la liste des matériels éducatifs.",
       "ERROR_DIAGNOSIS": "Une erreur s'est produite lors de l'obtention de la liste des diagnostics.",
       "ERROR_NO_DIAGNOSIS_FOUND": "La liste des diagnostics est vide. Veuillez vérifier la connexion avec les différentes bases de données et essayer de nouveau.",
-      "ERROR_ADD": "Une erreur s'est produite lors de l'ajout de la traduction."
+      "ERROR_ADD": "Une erreur s'est produite lors de l'ajout de l'alias."
     },
     "EDIT": {
-      "TITLE": "\nModifier la traduction du diagnostic",
+      "TITLE": "\nModifier l'alias du diagnostic",
       "SAVE": "Enregistrer",
       "CANCEL": "Annuler",
       "DIAGNOSES": "Diagnostics assignés",
@@ -2279,12 +2282,88 @@
       "ATTACHED_EDUCATION": "Matériel éducatif joint",
       "CURRENT_EDUCATION": "Matériel éducatif actuel",
       "NONE": "Aucun",
-      "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails de la traduction de diagnostics.",
+      "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails de l'alias de diagnostics.",
       "ERROR_EDUCATION": "Une erreur s'est produite lors de l'obtention de la liste des matériels éducatifs.",
       "ERROR_DIAGNOSIS": "Une erreur s'est produite lors de l'obtention de la liste des diagnostics.",
       "ERROR_NO_DIAGNOSIS_FOUND": "La liste des diagnostics est vide. Veuillez vérifier la connexion avec les différentes bases de données et essayer de nouveau.",
-      "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour de la traduction.",
-      "SUCCESS_UPDATE": "La traduction de diagnostic a été mise à jour avec succès."
+      "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour de l'alias.",
+      "SUCCESS_UPDATE": "L'alias de diagnostic a été mise à jour avec succès."
+    }
+  },
+  "CUSTOM_CODE" : {
+    "LIST": {
+      "TITLE": "Codes personnalisés",
+      "ADD": "Ajouter",
+      "SEARCH": "Rechercher",
+      "EDIT": "Modifier",
+      "DELETE": "Supprimer",
+      "CODE": "Code",
+      "DESCRIPTION": "Description",
+      "MODULE": "Module",
+      "ALIAS": "Tâches / Rendez-vous / Documents",
+      "DIAGNOSTIC": "Importation et alias de diagnostics",
+      "TEST": "Résultats de laboratoire",
+      "OPERATIONS": "Opérations",
+      "ERROR_LIST": "Une erreur s'est produite lors de l'obtention de la liste des codes personnalisés."
+    },
+    "DELETE": {
+      "TITLE": "Supprimer le code personnalisé",
+      "DELETE": "Supprimer",
+      "CANCEL": "Annuler",
+      "WARNING": "ATTENTION!",
+      "WARNING_TEXT": "Voulez-vous vraiment supprimer le code ci-dessous? Cette action est irreversible!",
+      "SUCCESS": "Le code a été supprimé avec succès.",
+      "DELETED": "Le code personnalisé a été supprimé avec succès.",
+      "ERROR": "Une erreur s'est produite lors de la suppression du code."
+    },
+    "LOCKED": {
+      "TITLE": "Code personnalisé verrouillé",
+      "WARNING": "Attention",
+      "LOCKED": "Ce code personnalisé est en cours d'utilisation et ne peut être supprimée.",
+      "CLOSE": "Fermer"
+    },
+
+    "ADD": {
+      "BACK": "Retour",
+      "SUMMARY": "Sommaire",
+      "TITLE": "Ajouter code personnalisé",
+      "MODULE": "Sélectionnez un module",
+      "MODULE_TITLE": "Module",
+      "REQUIRED": "Champ requis:",
+      "DETAILS_TITLE": "Détails",
+      "SUBMIT": "Soumettre",
+      "STEP": "Étape",
+      "OF": "de",
+      "COMPLETED": "complétée",
+      "TASK": "Tâche",
+      "TYPE_TITLE": "Type",
+      "APPOINTMENT": "Rendez-vous",
+      "DOCUMENT": "Document",
+      "TYPE": "Type",
+      "TYPE_EXPLANATION": "Veuillez choisir le type approprié.",
+      "SOURCE_EXPLANATION": "Veuillez choisir un module auquel sera attaché le nouveau code personnalisé.",
+      "CUSTOM_CODE": "Informations du code personnalisé",
+      "CUSTOM_CODE_EXPLANATION": "Veuillez entrer un code et une description.",
+      "DETAILS": "Détails",
+      "INCOMPLETE": "Incomplet",
+      "COMPLETE": "Complet",
+      "CODE": "Code",
+      "DESCRIPTION": "Description",
+      "ERROR_MODULE": "Une erreur s'est produite lors de l'obtention de la liste des modules."
+    },
+    "EDIT": {
+      "SAVE": "Enregistrer",
+      "CANCEL": "Annuler",
+      "TITLE": "Modifier code personnalisé",
+      "GENERAL": "Informations générales",
+      "CODE": "Code",
+      "DESCRIPTION": "Description",
+      "MODULE": "Module",
+      "TYPE": "Type",
+      "DETAILS": "Détails",
+      "LOCKED": "Ce code personnalisé est utilisé et ne peut être modifié.",
+      "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour du code personnalisé.",
+      "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails du code personnalisé."
     }
   },
   "PATIENTS": {
@@ -2429,8 +2508,8 @@
       "LOGIN_SESSIONS": "Sessions de connexion",
       "ALIAS": "Changements d'alias",
       "EXPRESSION": "Changements d'expression d'alias",
-      "TRANSLATION": "Changements dans la traduction du diagnostic",
-      "CODE": "Changement de traduction du diagnostic",
+      "TRANSLATION": "Changements dans l'alias du diagnostic",
+      "CODE": "Changement de l'alias du diagnostic",
       "DIAGNOSIS_CODE_CHANGE": "Changement de code diagnostic",
       "EMAIL": "Changements de courriel",
       "TRIGGER": "Changements de déclencheur",
@@ -2466,7 +2545,7 @@
       "ALIAS_SERIAL": "ID alias",
       "CLINICAL_CODE": "Code clinique",
       "RESOURCE": "Description de la ressource",
-      "DIAG_TRANS_SERIAL": "ID Traduction diagnostic",
+      "DIAG_TRANS_SERIAL": "ID Alias diagnostic",
       "SOURCE_UID": "Source UID",
       "DIAGNOSIS_CODE": "Code diagnostic",
       "CONTROL_TABLE": "Table de contrôle",

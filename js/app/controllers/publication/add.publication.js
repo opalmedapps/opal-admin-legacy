@@ -167,7 +167,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		};
 
 		// Call our API service to get each trigger
-		filterCollectionService.getFilters().then(function (response) {
+		filterCollectionService.getFilters(Session.retrieveObject('user').id).then(function (response) {
 			response.data = angular.copy(response.data);
 			response.data.appointments.forEach(function(entry) {
 				if($scope.language.toUpperCase() === "FR")
@@ -650,48 +650,51 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 
 		// Submit new publication
 		$scope.submitPublication = function () {
-			if ($scope.showFrequency) {
-				$scope.toSubmit.occurrence.set = 1;
-				$scope.toSubmit.occurrence.start_date = moment($scope.toSubmit.occurrence.start_date).format('X');
-				if ($scope.toSubmit.occurrence.end_date) {
-					$scope.toSubmit.occurrence.end_date = moment($scope.toSubmit.occurrence.end_date).format('X');
+			if($scope.formReady) {
+				if ($scope.showFrequency) {
+					$scope.toSubmit.occurrence.set = 1;
+					$scope.toSubmit.occurrence.start_date = moment($scope.toSubmit.occurrence.start_date).format('X');
+					if ($scope.toSubmit.occurrence.end_date) {
+						$scope.toSubmit.occurrence.end_date = moment($scope.toSubmit.occurrence.end_date).format('X');
+					}
+					$scope.toSubmit.occurrence.frequency.additionalMeta = [];
+					if ($scope.toSubmit.occurrence.frequency.custom) {
+						$scope.toSubmit.occurrence.frequency.meta_key = $scope.customFrequency.unit.meta_key;
+						$scope.toSubmit.occurrence.frequency.meta_value = $scope.customFrequency.meta_value;
+						angular.forEach(Object.keys($scope.additionalMeta), function (meta_key) {
+							if ($scope.additionalMeta[meta_key].length) {
+								var metaDetails = {
+									meta_key: meta_key,
+									meta_value: $scope.additionalMeta[meta_key]
+								};
+								$scope.toSubmit.occurrence.frequency.additionalMeta.push(metaDetails);
+							}
+						});
+					}
 				}
-				$scope.toSubmit.occurrence.frequency.additionalMeta = [];
-				if ($scope.toSubmit.occurrence.frequency.custom) {
-					$scope.toSubmit.occurrence.frequency.meta_key = $scope.customFrequency.unit.meta_key;
-					$scope.toSubmit.occurrence.frequency.meta_value = $scope.customFrequency.meta_value;
-					angular.forEach(Object.keys($scope.additionalMeta), function(meta_key){
-						if ($scope.additionalMeta[meta_key].length) {
-							var metaDetails = {
-								meta_key: meta_key,
-								meta_value: $scope.additionalMeta[meta_key]
-							};
-							$scope.toSubmit.occurrence.frequency.additionalMeta.push(metaDetails);
-						}
-					});
-				}
-			}
 
-			if ($scope.publishDate.available) {
-				if (typeof $scope.toSubmit.publishDateTime !== "undefined") {
-					var tempDate = String(moment($scope.toSubmit.publishDateTime.publish_date).format("YYYY-MM-DD")) + " " +
-						String(moment($scope.toSubmit.publishDateTime.publish_time).format("HH:mm"));
-					delete $scope.toSubmit.publishDateTime;
-					$scope.toSubmit.publishDateTime = tempDate;
+				if ($scope.publishDate.available) {
+					if (typeof $scope.toSubmit.publishDateTime !== "undefined") {
+						var tempDate = String(moment($scope.toSubmit.publishDateTime.publish_date).format("YYYY-MM-DD")) + " " +
+							String(moment($scope.toSubmit.publishDateTime.publish_time).format("HH:mm"));
+						delete $scope.toSubmit.publishDateTime;
+						$scope.toSubmit.publishDateTime = tempDate;
+					}
 				}
+				$.ajax({
+					type: "POST",
+					url: "publication/insert/publication",
+					data: $scope.toSubmit,
+					success: function () {
+					},
+					error: function (err) {
+						alert($filter('translate')('PUBLICATION.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					},
+					complete: function () {
+						$state.go('publication');
+					}
+				});
 			}
-			$.ajax({
-				type: "POST",
-				url: "publication/insert/publication",
-				data: $scope.toSubmit,
-				success: function () {},
-				error: function (err) {
-					alert($filter('translate')('PUBLICATION.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
-				},
-				complete: function() {
-					$state.go('publication');
-				}
-			});
 		};
 
 		$scope.searchAt = function (field) {
