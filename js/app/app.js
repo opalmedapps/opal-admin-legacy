@@ -116,8 +116,6 @@ angular.module('opalAdmin', [
 			.state('questionnaire-menu', { url: '/questionnaire/menu', templateUrl: "templates/questionnaire/questionnaire-main-menu.html", controller: "questionnaire", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: true } })
 			.state('questionnaire', { url: '/questionnaire', templateUrl: "templates/questionnaire/questionnaire.html", controller: "questionnaire", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: true } })
 			.state('questionnaire-add', { url: '/questionnaire/add', templateUrl: "templates/questionnaire/add.questionnaire.html", controller: "questionnaire.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: true } })
-			.state('publication-tool', { url: '/questionnaire/publication-tool', templateUrl: "templates/questionnaire/publication.tool.html", controller: "publication.tool", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: true } })
-			.state('publication-tool-add', { url: '/questionnaire/publication-tool/add', templateUrl: "templates/questionnaire/add.publication.tool.html", controller: "publication.tool.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: true } })
 			.state('publication', { url: '/publication', templateUrl: "templates/publication/publication.html", controller: "publication", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: true } })
 			.state('publication-add', { url: '/publication/add', templateUrl: "templates/publication/add.publication.html", controller: "publication.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: true } })
 			.state('questionnaire-question', { url: '/questionnaire/question', templateUrl: "templates/questionnaire/question.html", controller: "question", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: true } })
@@ -127,6 +125,8 @@ angular.module('opalAdmin', [
 			.state('questionnaire-completed', { url: '/questionnaire/completed', templateUrl: "templates/questionnaire/completed.questionnaire.html", controller: "questionnaire", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true, accessible: true } })
 			.state('diagnosis-translation', { url: '/diagnosis-translation', templateUrl: "templates/diagnosis/diagnosis-translation.html", controller: "diagnosisTranslation", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('diagnosis-translation-add', { url: '/diagnosis-translation/add', templateUrl: "templates/diagnosis/add.diagnosis-translation.html", controller: "diagnosisTranslation.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+			.state('custom-code', { url: '/custom-code', templateUrl: "templates/custom-code/custom.codes.html", controller: "customCode", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+			.state('custom-code-add', { url: '/custom-code/add', templateUrl: "templates/custom-code/add.custom.code.html", controller: "customCode.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('user-activity', { url: '/user-activity', templateUrl: "templates/user/user-activity.html", controller: "userActivity", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('protected-route', { url: '/protected', resolve: { auth: function resolveAuthentication(AuthResolver) { return AuthResolver.resolve(); } } });
 	}])

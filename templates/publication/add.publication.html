@@ -427,7 +427,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="!checkForm()">
+                            <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6" ng-if="formReady">
                                 <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
                                     <span style="padding: 0 10px;">
                                         <h2>{{'PUBLICATION.ADD.STEP'|translate}} {{completedSteps}} {{'PUBLICATION.ADD.OF'|translate}} {{totalSteps}} {{'PUBLICATION.ADD.COMPLETED'|translate}}</h2>
@@ -438,9 +438,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="checkForm()">
+                            <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="formReady">
                                 <div class="panel-container">
-                                    <a href="" ng-click="submitPublication()" class="btn btn-md item-button-success " ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="checkForm()" style="width: 100%;">
+                                    <a href="" ng-click="submitPublication()" class="btn btn-md item-button-success " ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" ng-if="formReady" style="width: 100%;">
                                         <span style="font-size: 20px;"><strong>Submit {{toSubmit.materialId.type.name_display}}</strong></span>
                                     </a>
                                 </div>
