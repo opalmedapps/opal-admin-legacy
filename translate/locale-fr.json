@@ -2349,6 +2349,7 @@
       "COMPLETE": "Complet",
       "CODE": "Code",
       "DESCRIPTION": "Description",
+      "ERROR_ADD": "Une erreur s'est produite lors de la création du code personnalisé.",
       "ERROR_MODULE": "Une erreur s'est produite lors de l'obtention de la liste des modules."
     },
     "EDIT": {
