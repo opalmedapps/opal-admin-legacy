@@ -479,3 +479,7 @@ define("OPAL_GET_TREATMENT_MACHINES_TRIGGERS","
     SELECT DISTINCT ResourceAriaSer AS id, ResourceName AS name, 'Machine' AS 'type', 0 AS 'added' FROM Resource
     WHERE ".OPAL_RESOURCE_NAME_TABLE." LIKE 'STX%' OR  ResourceName LIKE 'TB%' ORDER BY ResourceName;
 ");
+
+define("OPAL_COUNT_CODE_MASTER_SOURCE","
+    SELECT COUNT(*) AS locked FROM %%MASTER_SOURCE_TABLE%% WHERE code like :code AND description like :description
+");
