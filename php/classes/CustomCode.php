@@ -13,8 +13,6 @@ class CustomCode extends OpalProject {
 
     public function isCodeExists($tableName, $code, $description) {
         $result = $this->opalDB->getCountCustomCodes($tableName, $code, $description);
-        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Total found : " . $result["locked"]);
-
 
         if(intval($result["locked"]) == 0)
             return false;
