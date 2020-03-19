@@ -11,6 +11,17 @@ class CustomCode extends OpalProject {
         return $results;
     }
 
+    public function isCodeExists($tableName, $code, $description) {
+        $result = $this->opalDB->getCountCustomCodes($tableName, $code, $description);
+        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Total found : " . $result["locked"]);
+
+
+        if(intval($result["locked"]) == 0)
+            return false;
+        else
+            return true;
+    }
+
     /*
      * gets the list of modules availables where adding custom codes
      * @params  void
@@ -93,6 +104,9 @@ class CustomCode extends OpalProject {
         if($customCode["details"]["code"] == "" || $customCode["details"]["description"] == "" || $customCode["moduleId"]["value"] == "") {
             array_push($errMsgs, "Missing custom code info.");
         }
+
+        if($this->isCodeExists($moduleDetails["masterSource"], $customCode["details"]["code"], $customCode["details"]["description"]))
+            array_push($errMsgs, "Code already exists.");
 
         $moduleDetails["subModule"] = json_decode($moduleDetails["subModule"], true);
         if(is_array($moduleDetails["subModule"]) &&  count($moduleDetails["subModule"]) > 0) {

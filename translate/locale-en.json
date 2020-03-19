@@ -2320,6 +2320,7 @@
       "COMPLETE": "Complete",
       "CODE": "Code",
       "DESCRIPTION": "Description",
+      "ERROR_ADD": "An error occurred while adding the custom code.",
       "ERROR_MODULE": "An error occurred while getting the modules list."
     },
     "EDIT": {
