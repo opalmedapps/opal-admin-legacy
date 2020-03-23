@@ -889,9 +889,10 @@ class DatabaseOpal extends DatabaseAccess {
 
     function getCountCustomCodes($tableName, $code, $description) {
         $sql = str_replace("%%MASTER_SOURCE_TABLE%%", $tableName, OPAL_COUNT_CODE_MASTER_SOURCE);
-        return $this->_fetch($sql, array(
+        $toQuery = array(
             array("parameter"=>":description","variable"=>$description,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":code","variable"=>$code,"data_type"=>PDO::PARAM_STR),
-        ));
+        );
+        return $this->_fetch($sql, $toQuery);
     }
 }
