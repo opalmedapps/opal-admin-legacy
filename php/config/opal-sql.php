@@ -485,9 +485,10 @@ define("OPAL_GET_TREATMENT_MACHINES_TRIGGERS","
     WHERE (mstr.code LIKE :code AND mstr.description LIKE :description)) x*/
 define("OPAL_COUNT_CODE_MASTER_SOURCE","
     SELECT SUM(locked) AS locked FROM (
-    SELECT COUNT(*) AS locked FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." msa
+    SELECT COUNT(*) AS locked FROM " . OPAL_MASTER_SOURCE_ALIAS_TABLE . " msa
     WHERE (msa.code LIKE :code AND msa.description LIKE :description)
     UNION ALL
-    SELECT COUNT(*) AS locked FROM ".OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE." msd
+    SELECT COUNT(*) AS locked FROM " . OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE . " msd
     WHERE (msd.code LIKE :code AND msd.description LIKE :description)
+    ) x
 ");
