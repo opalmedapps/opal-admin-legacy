@@ -226,7 +226,8 @@ angular.module('opalAdmin.controllers.customCode.add', ['ngAnimate', 'ui.bootstr
 				data: $scope.toSubmit,
 				success: function () {},
 				error: function (err) {
-					alert($filter('translate')('CUSTOM_CODE.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText);
+					console.log(err);
+					alert($filter('translate')('CUSTOM_CODE.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
 				},
 				complete: function () {
 					$state.go('custom-code');

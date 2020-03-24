@@ -1737,6 +1737,7 @@
       "FRENCH_INSTRUCTIONS_ABRV": "FR Instructions",
       "FRENCH_INSTRUCTIONS": "French Instructions",
       "SEE_DESCRIPTION": "See rendered output for description",
+      "SEE_RENDERED_OUTPUT": "See rendered output for description",
       "CHECKIN": "Checkin Details",
       "POSSIBLE": "Checkin possible",
       "YES": "yes",
@@ -2320,6 +2321,7 @@
       "COMPLETE": "Complete",
       "CODE": "Code",
       "DESCRIPTION": "Description",
+      "ERROR_ADD": "An error occurred while adding the custom code.",
       "ERROR_MODULE": "An error occurred while getting the modules list."
     },
     "EDIT": {

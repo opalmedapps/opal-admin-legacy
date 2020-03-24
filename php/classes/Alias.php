@@ -30,13 +30,13 @@ class Alias {
             else
                 $type = 3;
 
-            if ($sourceDBSer != ARIA_SOURCE_DB && $sourceDBSer != ORMS_SOURCE_DB && $sourceDBSer != MOSAIQ_SOURCE_DB && $sourceDBSer != LOCAL_SOURCE_DB)
-                $sourceDBSer = ARIA_SOURCE_DB;
+//            if ($sourceDBSer != ARIA_SOURCE_DB && $sourceDBSer != ORMS_SOURCE_DB && $sourceDBSer != MOSAIQ_SOURCE_DB && $sourceDBSer != LOCAL_SOURCE_DB)
+//                $sourceDBSer = ARIA_SOURCE_DB;
 
-            if($sourceDBSer == ORMS_SOURCE_DB)
-                $sql = "SELECT code,  CONCAT(code, ' (', description, ')') AS name, code AS id, description FROM masterSourceAlias WHERE type = " . $type . " AND source = " . $sourceDBSer . " AND deleted = 0 ORDER BY code";
-            else
+            if($sourceDBSer == ARIA_SOURCE_DB)
                 $sql = "SELECT description AS name, code AS id, description FROM masterSourceAlias WHERE type = " . $type . " AND source = " . $sourceDBSer . " AND deleted = 0 ORDER BY code";
+            else
+                $sql = "SELECT CONCAT(code, ' (', description, ')') AS name, code AS id, description FROM masterSourceAlias WHERE type = " . $type . " AND source = " . $sourceDBSer . " AND deleted = 0 ORDER BY code";
 
             $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD);
             $host_db_link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -44,28 +44,7 @@ class Alias {
             $query->execute();
             $results = $query->fetchAll(PDO::FETCH_ASSOC);
 
-
-            if($sourceDBSer == LOCAL_SOURCE_DB)
-                foreach ($results as &$item) {
-                    $assignedExpression = $this->assignedSearch($item["id"], $item["description"], $assignedExpressions);
-                    $item["added"] = 0;
-                    if ($assignedExpression)
-                        $item['assigned'] = $assignedExpression;
-                    else
-                        $item['assigned'] = null;
-                    unset($item["code"]);
-                }
-            else if($sourceDBSer == ORMS_SOURCE_DB)
-                foreach ($results as &$item) {
-                    $assignedExpression = $this->assignedSearch($item["code"], $item["description"], $assignedExpressions);
-                    $item["added"] = 0;
-                    if ($assignedExpression)
-                        $item['assigned'] = $assignedExpression;
-                    else
-                        $item['assigned'] = null;
-                    unset($item["code"]);
-                }
-            else
+            if($sourceDBSer == ARIA_SOURCE_DB)
                 foreach ($results as &$item) {
                     $assignedExpression = $this->assignedSearch($item["description"], $item["description"], $assignedExpressions);
                     $item["added"] = 0;
@@ -73,7 +52,15 @@ class Alias {
                         $item['assigned'] = $assignedExpression;
                     else
                         $item['assigned'] = null;
-                    unset($item["code"]);
+                }
+            else
+                foreach ($results as &$item) {
+                    $assignedExpression = $this->assignedSearch($item["id"], $item["description"], $assignedExpressions);
+                    $item["added"] = 0;
+                    if ($assignedExpression)
+                        $item['assigned'] = $assignedExpression;
+                    else
+                        $item['assigned'] = null;
                 }
 
             return $results;

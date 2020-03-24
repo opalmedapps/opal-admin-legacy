@@ -11,6 +11,15 @@ class CustomCode extends OpalProject {
         return $results;
     }
 
+    public function isCodeExists($tableName, $code, $description) {
+        $result = $this->opalDB->getCountCustomCodes($tableName, $code, $description);
+
+        if(intval($result["locked"]) == 0)
+            return false;
+        else
+            return true;
+    }
+
     /*
      * gets the list of modules availables where adding custom codes
      * @params  void
@@ -97,8 +106,9 @@ class CustomCode extends OpalProject {
         $moduleDetails["subModule"] = json_decode($moduleDetails["subModule"], true);
         if(is_array($moduleDetails["subModule"]) &&  count($moduleDetails["subModule"]) > 0) {
             foreach ($moduleDetails["subModule"] as $item) {
-                if($item["ID"] == $customCode["type"]["ID"])
+                if($item["ID"] == $customCode["type"]["ID"]) {
                     $typeFound = true;
+                }
             }
             if(!$typeFound)
                 array_push($errMsgs, "Missing type.");
@@ -107,6 +117,10 @@ class CustomCode extends OpalProject {
             if(array_key_exists("type", $customCode) && array_key_exists("ID", $customCode["type"]))
                 array_push($errMsgs, "Type should not be there.");
         }
+
+        if($this->isCodeExists($moduleDetails["masterSource"], $customCode["details"]["code"], $customCode["details"]["description"]))
+            array_push($errMsgs, "Code already exists.");
+
         return $errMsgs;
     }
 
