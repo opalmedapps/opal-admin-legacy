@@ -479,3 +479,15 @@ define("OPAL_GET_TREATMENT_MACHINES_TRIGGERS","
     SELECT DISTINCT ResourceAriaSer AS id, ResourceName AS name, 'Machine' AS 'type', 0 AS 'added' FROM Resource
     WHERE ".OPAL_RESOURCE_NAME_TABLE." LIKE 'STX%' OR  ResourceName LIKE 'TB%' ORDER BY ResourceName;
 ");
+
+/*    UNION ALL
+    SELECT COUNT(*) AS locked FROM ".OPAL_MASTER_SOURCE_TEST_RESULT_TABLE." mstr
+    WHERE (mstr.code LIKE :code AND mstr.description LIKE :description)) x*/
+define("OPAL_COUNT_CODE_MASTER_SOURCE","
+    SELECT SUM(locked) AS locked FROM (
+    SELECT COUNT(*) AS locked FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." msa
+    WHERE (msa.code LIKE :code AND msa.description LIKE :description)
+    UNION ALL
+    SELECT COUNT(*) AS locked FROM ".OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE." msd
+    WHERE (msd.code LIKE :code AND msd.description LIKE :description)
+");
