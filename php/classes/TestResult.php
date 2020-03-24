@@ -218,6 +218,94 @@ class TestResult {
      * @return array $testNames : the list of test names
      */
     public function getTestNames() {
+        $testNames = array();
+        $databaseObj = new Database();
+
+        try {
+
+            // get already assigned expressions from our database
+            $assignedTests = $this->getAssignedTests();
+
+            // ***********************************
+            // ARIA
+            // ***********************************
+            $sourceDBSer = ARIA_SOURCE_DB;
+            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
+            if ($source_db_link) {
+
+                $sql = "
+                    SELECT DISTINCT
+                        tr.comp_name
+                    FROM
+                        VARIAN.dbo.test_result tr
+                ";
+                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    $testName = $data[0];
+                    $testArray = array(
+                        'name'      => $testName,
+                        'id'        => $testName,
+                        'added'     => 0,
+                        'assigned'  => null
+                    );
+                    $assignedTest = $this->assignedSearch($testName, $assignedTests);
+                    if ($assignedTest) {
+                        $testArray['added'] = 0;
+                        $testArray['assigned'] = $assignedTest;
+                    }
+                    array_push($testNames, $testArray);
+                }
+
+            }
+
+            // ***********************************
+            // WaitRoomManagement
+            // ***********************************
+            $sourceDBSer = ORMS_SOURCE_DB;
+            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
+            if ($source_db_link) {
+
+                $sql = "SELECT 'QUERY_HERE'";
+                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                $query->execute();
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+
+                    // Set appropriate test result data here from query
+
+                    //array_push($testNames, $testArray); // Uncomment for use
+                }
+
+            }
+
+            // ***********************************
+            // Mosaiq
+            // ***********************************
+            $sourceDBSer = MOSAIQ_SOURCE_DB;
+            $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
+            if ($source_db_link) {
+
+                $sql = "SELECT 'QUERY_HERE'";
+                $query = $source_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+                $query->execute();
+
+                while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+                    // Set appropriate test result data here from query
+                    //array_push($testNames, $testArray); // Uncomment for use
+                }
+
+            }
+
+            return $testNames;
+        } catch (PDOException $e) {
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for lab results. " . $e->getMessage());
+        }
+    }
+
+    /*
+    public function getTestNames() {
         $databaseObj = new Database();
         $activeDBSources = $databaseObj->getActiveSourceDatabases();
         $assignedTests = $this->getAssignedTests();
@@ -241,6 +329,7 @@ class TestResult {
 
         return $results;
     }
+     * */
 
     /**
      *
