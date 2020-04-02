@@ -1,9 +1,10 @@
 <?php
 
-header('Content-Type: application/javascript');
 include_once('user.inc');
 
-$userObject = new Users; // Object
-$roles = $userObject->getRoles();
+$OAUserId = strip_tags($_POST["OAUserId"]);
+$user = new User($OAUserId);
+$roles = $user->getRoles();
 
+header('Content-Type: application/javascript');
 echo json_encode($roles);

@@ -3,7 +3,7 @@
 	/* To update a user details */
 	include_once('user.inc');
 
-	$userObject = new Users; // Object
+	$userObject = new User(); // Object
 
 	// Construct array from FORM params
 	$userDetails = array (

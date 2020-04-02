@@ -14,13 +14,13 @@ class Encrypt {
 	 * @return string
 	 */
 	 
-	public function encodeString($str,$decodeKey) {
+	public static function encodeString($str,$decodeKey) {
        $result = "";
        $str = base64_decode($str); // encoded on frontend
        for($i = 0;$i < strlen($str);$i++) {
-        	$a = $this->_getCharcode($str,$i);
+        	$a = self::_getCharcode($str,$i);
         	$b = $a ^ $decodeKey;
-        	$result .= $this->_fromCharCode($b);
+        	$result .= self::_fromCharCode($b);
        }
     
        return $result;
@@ -34,8 +34,8 @@ class Encrypt {
      * @param mixed $i
      * @return string
      */
-    private function _getCharcode($str,$i) {
-         return $this->_uniord(substr($str, $i, 1));
+    private static function _getCharcode($str,$i) {
+         return self::_uniord(substr($str, $i, 1));
     }
 
     /**
@@ -44,7 +44,7 @@ class Encrypt {
      * @access private
      * @return string
      */
-    private function _fromCharCode(){
+    private static function _fromCharCode(){
       $output = '';
       $chars = func_get_args();
       foreach($chars as $char){
@@ -61,7 +61,7 @@ class Encrypt {
      * @param mixed $c
      * @return mixed
      */
-    private function _uniord($c) {
+    private static function _uniord($c) {
         $h = ord($c{0});
         if ($h <= 0x7F) {
             return $h;
