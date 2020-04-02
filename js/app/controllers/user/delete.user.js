@@ -1,13 +1,13 @@
 angular.module('opalAdmin.controllers.user.delete', ['ui.bootstrap', 'ui.grid']).
 
-controller('user.delete', function ($scope, $uibModal, $uibModalInstance,  $filter, $sce, $state, userCollectionService, Encrypt) {
+controller('user.delete', function ($scope, $uibModal, $uibModalInstance,  $filter, $sce, $state, userCollectionService, Encrypt, Session) {
 
 	// Submit delete
 	$scope.deleteUser = function () {
 		$.ajax({
 			type: "POST",
 			url: "user/delete/user",
-			data: $scope.userToDelete,
+			data: {"ID": $scope.userToDelete, "OAUserId": Session.retrieveObject('user').id},
 			success: function (response) {
 				response = JSON.parse(response);
 				if (response.value) {

@@ -4,7 +4,8 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 /******************************************************************************
  * Controller for user registration
  *******************************************************************************/
-controller('user.add', function ($scope, userCollectionService, $state, $filter, Encrypt) {
+controller('user.add', function ($scope, userCollectionService, $state, $filter, Encrypt, Session) {
+	var OAUserId = Session.retrieveObject('user').id;
 
 	// Function to go to previous page
 	$scope.goBack = function () {
@@ -73,7 +74,7 @@ controller('user.add', function ($scope, userCollectionService, $state, $filter,
 
 	// Call our API service to get the list of possible roles
 	$scope.roles = [];
-	userCollectionService.getRoles().then(function (response) {
+	userCollectionService.getRoles(OAUserId).then(function (response) {
 		response.data.forEach(function(row) {
 			switch (row.name) {
 			case "admin":

@@ -65,10 +65,10 @@ class CustomCode extends OpalProject {
 
         $details = $this->getCustomCodeDetails($customCode["ID"], $customCode["moduleId"]["value"]);
 
-        if($detais["locked"] > 0)
+        if($details["locked"] > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Custom code is in use and cannot be modified.");
 
-        if($detais["source"] > LOCAL_SOURCE_ONLY)
+        if($details["source"] > LOCAL_SOURCE_ONLY)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot modify a code from an outside source.");
 
         if($details["code"] == $customCode["details"]["code"] && $details["description"] == $customCode["details"]["description"])

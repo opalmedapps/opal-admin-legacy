@@ -1,7 +1,7 @@
 <?php
 include_once('user.inc');
 
-$userObject = new Users;  // Object
+$userObject = new User();  // Object
 $userDetails = array(
     'id'				=> $_POST['id'],
     'language'	=> $_POST['language']
