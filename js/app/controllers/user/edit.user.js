@@ -1,6 +1,7 @@
 angular.module('opalAdmin.controllers.user.edit', ['ui.bootstrap', 'ui.grid']).
 
-controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter, $sce, $state, userCollectionService, Encrypt) {
+controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter, $sce, $state, userCollectionService, Encrypt, Session) {
+	var OAUserId = Session.retrieveObject('user').id;
 
 	// Default booleans
 	$scope.changesMade = false;
@@ -41,7 +42,7 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 
 	// Call our API service to get the list of possible roles
 	$scope.roles = [];
-	userCollectionService.getRoles().then(function (response) {
+	userCollectionService.getRoles(OAUserId).then(function (response) {
 		response.data.forEach(function(row) {
 			switch (row.name) {
 			case "admin":

@@ -14,6 +14,15 @@ define( "OPAL_DB_DSN", "mysql:host=" . OPAL_DB_HOST . ";port=" . OPAL_DB_PORT . 
 define( "OPAL_DB_USERNAME", $config['databaseConfig']['opal']['username'] );
 define( "OPAL_DB_PASSWORD", $config['databaseConfig']['opal']['password'] );
 
+// DEFINE OPAL SERVER/DATABASE CREDENTIALS FOR GUEST ACCOUNT HERE
+// NOTE: This works for a MySQL setup.
+define( "OPAL_DB_HOST_GUEST", $config['databaseConfig']['opalGuest']['host'] );
+define( "OPAL_DB_PORT_GUEST", $config['databaseConfig']['opalGuest']['port'] );
+define( "OPAL_DB_NAME_GUEST", $config['databaseConfig']['opalGuest']['name'] );
+define( "OPAL_DB_DSN_GUEST", "mysql:host=" . OPAL_DB_HOST_GUEST . ";port=" . OPAL_DB_PORT_GUEST . ";dbname=" . OPAL_DB_NAME_GUEST . ";charset=utf8" );
+define( "OPAL_DB_USERNAME_GUEST", $config['databaseConfig']['opalGuest']['username'] );
+define( "OPAL_DB_PASSWORD_GUEST", $config['databaseConfig']['opalGuest']['password'] );
+
 //Definition of all the tables from the opalDB database
 define("OPAL_OAUSER_TABLE","OAUser");
 define("OPAL_OAUSER_ROLE_TABLE","OAUserRole");
@@ -49,6 +58,7 @@ define("OPAL_DIAGNOSIS_TRANSLATION_TABLE","DiagnosisTranslation");
 define("OPAL_PATIENT_TABLE","Patient");
 define("OPAL_TEST_RESULT_EXPRESSION_TABLE","TestResultExpression");
 define("OPAL_DIAGNOSIS_CODE_TABLE","DiagnosisCode");
+define("OPAL_LOGIN_VIEW","v_login");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -491,4 +501,8 @@ define("OPAL_COUNT_CODE_MASTER_SOURCE","
     SELECT COUNT(*) AS locked FROM " . OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE . " msd
     WHERE (msd.code LIKE :code AND msd.description LIKE :description)
     ) x
+");
+
+define("SQL_OPAL_VALIDATE_OAUSER_LOGIN","
+    SELECT * FROM ".OPAL_LOGIN_VIEW." WHERE username = :username AND password = :password;
 ");

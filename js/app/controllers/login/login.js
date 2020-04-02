@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.login', ['ngAnimate', 'ui.bootstrap']).
 /******************************************************************************
  * Login controller
  *******************************************************************************/
-controller('login', function ($scope, $rootScope, $state, $filter, $translate, AUTH_EVENTS, AuthService, Idle, Encrypt) {
+controller('login', function ($scope, $rootScope, $state, $filter, $translate, AUTH_EVENTS, AuthService, Idle, Encrypt, Session) {
 
 	// Initialize login object
 	$scope.credentials = {
@@ -65,21 +65,16 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, A
 
 	$scope.submitLogin = function (credentials) {
 		if ($scope.loginFormComplete()) {
-
-			// one-time pad using current time and rng
 			var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103;
-			var loginCreds = jQuery.extend(true, {}, credentials);
-			// encode password before request
-			loginCreds.password = Encrypt.encode(credentials.password, cypher);
-			loginCreds.cypher = cypher;
 
-			AuthService.login(loginCreds).then(function (user) {
+			AuthService.login(credentials.username, Encrypt.encode(credentials.password, cypher), cypher).then(function (response) {
+				Session.create(response.data);
 				$rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
-				$rootScope.currentUser = user;
-				$rootScope.setSiteLanguage(user);
+				$rootScope.currentUser = response.data;
+				$rootScope.setSiteLanguage(response.data);
 				$state.go('home');
 				Idle.watch();
-			}, function () {
+			}).catch(function(err) {
 				$rootScope.$broadcast(AUTH_EVENTS.loginFailed);
 				$scope.bannerMessage = $filter('translate')('LOGIN.WRONG');
 				$scope.setBannerClass('danger');
@@ -88,6 +83,5 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, A
 			});
 		}
 	};
-
 });
 

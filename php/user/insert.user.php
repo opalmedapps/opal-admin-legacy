@@ -11,7 +11,7 @@
 		'cypher'		=> $_POST['cypher']
 	);
 
-	$userObj = new Users; // Object
+	$userObj = new User(); // Object
 
 	// Call function
 	$userObj->registerUser($userArray);

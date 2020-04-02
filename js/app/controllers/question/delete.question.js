@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.question.delete', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns'])
 
-	.controller('question.delete', function ($scope, $state, $filter, $uibModal, $uibModalInstance, $filter, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
+	.controller('question.delete', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
 
 		// Submit delete
 		$scope.deleteQuestion = function () {

@@ -1,80 +1,60 @@
 <?php
 /**
- * User class
- *
- *
+ * User class to validate its identity and access levels
  */
-class Users {
+class User extends OpalProject {
     public $username = null;
     public $password = null;
     public $role = null;
     public $language = null;
     public $userid = null;
     public $sessionid = null;
-    public $salt = "Zo4rU5Z1YyKJAASY0PT6EUg7BBYdlEhPaNLuxAwU8lqu1ElzHv0Ri7EM6irpx5w";
 
-    /* Class constructor*/
-    public function __construct( $data = array() ) {
-        if( isset( $data->username ) ) $this->username = stripslashes( strip_tags( $data->username ) );
-        if( isset( $data->password ) ) $this->password = stripslashes( strip_tags( $data->password ) );
-        if( isset( $data->cypher ) ) $this->cypher = stripslashes( strip_tags( $data->cypher ) );
+    /*
+     * Constructor. If no user Id is given, give guest right so the login can be done. Call the parent constructor
+     * */
+    public function __construct($OAUserId = false) {
+        $guestAccess = !$OAUserId;
+        parent::__construct($OAUserId, false, $guestAccess);
     }
 
-    public function storeFormValues( $params ) {
-        //store the parameters
-        $this->__construct( $params );
-    }
+    /*
+     * Validate the user and log its activity.
+     * @params  $post (array) contains username, password and cypher
+     * @returns $result (array) basic user informations
+     * */
+    public function userLogin($post) {
+        $post = HelpSetup::arraySanitization($post);
+        if($post["username"] == "" || $post["password"] == "" || $post["cypher"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing login info.");
 
-    /**
-     *
-     * Logs in a particular user
-     *
-     * @return boolean $success : successful login flag
-     */
-    public function userLogin() {
-        $success = false;
-        $d = new Encrypt;
-        try{
-            $con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "SELECT * FROM OAUser WHERE OAUser.Username = :username AND OAUser.Password = :password";
+        $result = $this->opalDB->validateOpalUserLogin($post["username"], hash("sha256", Encrypt::encodeString( $post["password"], $post["cypher"] ) . USER_SALT));
 
-            $stmt = $con->prepare( $sql );
-            $stmt->bindValue( "username", $this->username, PDO::PARAM_STR );
-            $stmt->bindValue( "password", hash("sha256", $d->encodeString( $this->password, $this->cypher ) . $this->salt), PDO::PARAM_STR );
-            $stmt->execute();
+        if(count($result) < 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Access denied");
+        else if(count($result) > 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Somethings's wrong. There is too many entries!");
 
-            $valid = $stmt->fetchColumn();
-            if( $valid ) {
-                $this->userid = $valid;
-                $userDetails = $this->getUserDetails($valid);
-                $this->role = $userDetails['role']['name'];
-                $this->language = $userDetails['language'];
-                $this->sessionid = $this->makeSessionId();
+        $result = $result[0];
+        unset($result["password"]);
+        $result["sessionid"] = HelpSetup::makeSessionId();
+        $this->logActivity($result["id"], $result["sessionid"], 'Login');
 
-                $this->logActivity($this->userid, $this->sessionid, 'Login');
-                $success = true;
-            }
-
-            $con = null;
-            return $success;
-        }catch (PDOException $e) {
-            echo $e->getMessage();
-            return $success;
-        }
+        return $result;
     }
 
     /**
-     *
-     * Logs out a user
+     * Logs out a user by logging its activity.
      *
      * @param $user : user object
      * @return $response : response
      */
-    public function userLogout($user) {
-        $userser = $user['userser'];
-        $sessionid = $user['sessionid'];
-        $response = $this->logActivity($userser, $sessionid, 'Logout');
+    public function userLogout($post) {
+        $post = HelpSetup::arraySanitization($post);
+        if($post["OAUserId"] == "" || $post["sessionId"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing logout info.");
+
+        $response = $this->logActivity($post["OAUserId"], $post["sessionId"], 'Logout');
         return $response;
     }
 
@@ -120,22 +100,6 @@ class Users {
 
     /**
      *
-     * Sets a session id
-     *
-     * @return string $sessionid : session id
-     */
-    public function makeSessionId($length = 10) {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
-        }
-        return $randomString;
-    }
-
-    /**
-     *
      * Updates a user's password
      *
      * @param array $userDetails  : the user details
@@ -153,7 +117,6 @@ class Users {
         $userSer		= $userDetails['user']['id'];
         $newPassword	= $userDetails['password'];
         $cypher 			= $userDetails['cypher'];
-        $d = new Encrypt;
         try {
             $con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -163,7 +126,7 @@ class Users {
 
                 $stmt = $con->prepare( $sql );
                 $stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
-                $stmt->bindValue( "password", hash("sha256", $d->encodeString( $oldPassword, $cypher ) . $this->salt), PDO::PARAM_STR );
+                $stmt->bindValue( "password", hash("sha256", Encrypt::encodeString( $oldPassword, $cypher ) . USER_SALT), PDO::PARAM_STR );
                 $stmt->execute();
 
                 $valid = $stmt->fetchColumn();
@@ -178,7 +141,7 @@ class Users {
 
             $stmt = $con->prepare( $sql );
             $stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
-            $stmt->bindValue( "password", hash("sha256", $d->encodeString( $newPassword, $cypher ) . $this->salt), PDO::PARAM_STR );
+            $stmt->bindValue( "password", hash("sha256", Encrypt::encodeString( $newPassword, $cypher ) . USER_SALT), PDO::PARAM_STR );
             $stmt->execute();
 
             $response['value'] = 1; // Success
@@ -291,7 +254,6 @@ class Users {
         $roleSer 		= $userDetails['role']['serial'];
         $language 		= $userDetails['language'];
         $cypher 		= $userDetails['cypher'];
-        $d = new Encrypt;
         try {
             $con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -299,7 +261,7 @@ class Users {
 
             $stmt = $con->prepare( $sql );
             $stmt->bindValue( "username", $username, PDO::PARAM_STR );
-            $stmt->bindValue( "password", hash("sha256", $d->encodeString( $password, $cypher ) . $this->salt), PDO::PARAM_STR );
+            $stmt->bindValue( "password", hash("sha256", Encrypt::encodeString( $password, $cypher ) . USER_SALT), PDO::PARAM_STR );
             $stmt->bindValue( "language", $language, PDO::PARAM_STR );
             $stmt->execute();
 

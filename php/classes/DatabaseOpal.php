@@ -11,13 +11,15 @@ class DatabaseOpal extends DatabaseAccess {
     /*
      * Constructor of the class
      * */
-    public function __construct($newServer = "localhost", $newDB = "", $newPort = "3306", $newUserDB = "root", $newPass = "", $dsn = false, $newOAUserId = false) {
-        parent::__construct($newServer, $newDB, $newPort, $newUserDB, $newPass, $dsn, $newOAUserId);
-        $newOAUserId = strip_tags($newOAUserId);
-        $userInfo = $this->_getUserInfoFromDB($newOAUserId);
-        $this->OAUserId = $userInfo["OAUserId"];
-        $this->username = $userInfo["username"];
-        $this->userRole = $userInfo["userRole"];
+    public function __construct($newServer = "localhost", $newDB = "", $newPort = "3306", $newUserDB = "root", $newPass = "", $dsn = false, $newOAUserId = false, $guestAccess = false) {
+        parent::__construct($newServer, $newDB, $newPort, $newUserDB, $newPass, $dsn);
+        if (!$guestAccess) {
+            $newOAUserId = strip_tags($newOAUserId);
+            $userInfo = $this->_getUserInfoFromDB($newOAUserId);
+            $this->OAUserId = $userInfo["OAUserId"];
+            $this->username = $userInfo["username"];
+            $this->userRole = $userInfo["userRole"];
+        }
     }
 
     /*
@@ -894,5 +896,12 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":code","variable"=>$code,"data_type"=>PDO::PARAM_STR),
         );
         return $this->_fetch($sql, $toQuery);
+    }
+
+    function validateOpalUserLogin($username, $password) {
+        return $this->_fetchAll(SQL_OPAL_VALIDATE_OAUSER_LOGIN, array(
+            array("parameter"=>":username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":password","variable"=>$password,"data_type"=>PDO::PARAM_STR),
+       ));
     }
 }
