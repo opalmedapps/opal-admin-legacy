@@ -48,7 +48,10 @@ class Post extends OpalProject {
      * @return array $postDetails : the post details
      */
     public function getPostDetails ($postId) {
-        return $this->opalDB->getPostDetails($postId);
+        $results = $this->opalDB->getPostDetails($postId);
+        $results["body_EN"] = stripslashes($results["body_EN"]);
+        $results["body_FR"] = stripslashes($results["body_FR"]);
+        return $results;
     }
 
     /*
