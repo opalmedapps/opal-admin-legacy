@@ -14,28 +14,35 @@ class OpalProject
      * */
     public function __construct($OAUserId = false, $sessionId = false, $guestStatus = false) {
         if(!$guestStatus)
-            $this->opalDB = new DatabaseOpal(
-                OPAL_DB_HOST,
-                OPAL_DB_NAME,
-                OPAL_DB_PORT,
-                OPAL_DB_USERNAME,
-                OPAL_DB_PASSWORD,
-                false,
-                $OAUserId,
-                $guestStatus
-            );
+            $this->_connectAsMain($OAUserId);
         else
-            $this->opalDB = new DatabaseOpal(
-                OPAL_DB_HOST_GUEST,
-                OPAL_DB_NAME_GUEST,
-                OPAL_DB_PORT_GUEST,
-                OPAL_DB_USERNAME_GUEST,
-                OPAL_DB_PASSWORD_GUEST,
-                false,
-                $OAUserId,
-                $guestStatus
-            );
+            $this->_connectAsGuest($OAUserId);
         $this->opalDB->setSessionId($sessionId);
+    }
+
+    protected function _connectAsMain($OAUserId) {
+        $this->opalDB = new DatabaseOpal(
+            OPAL_DB_HOST,
+            OPAL_DB_NAME,
+            OPAL_DB_PORT,
+            OPAL_DB_USERNAME,
+            OPAL_DB_PASSWORD,
+            false,
+            $OAUserId
+        );
+    }
+
+    protected function _connectAsGuest($OAUserId) {
+        $this->opalDB = new DatabaseOpal(
+            OPAL_DB_HOST,
+            OPAL_DB_NAME,
+            OPAL_DB_PORT,
+            OPAL_DB_USERNAME,
+            OPAL_DB_PASSWORD,
+            false,
+            $OAUserId,
+            true
+        );
     }
 
     /*

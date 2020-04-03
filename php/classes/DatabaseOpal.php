@@ -904,4 +904,8 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":password","variable"=>$password,"data_type"=>PDO::PARAM_STR),
        ));
     }
+
+    function insertUserActivity($toInsert) {
+        return $this->_insertRecordIntoTable(OPAL_USER_ACTIVITY_LOG_TABLE, $toInsert);
+    }
 }
