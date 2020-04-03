@@ -663,43 +663,49 @@ print "Finished document list\n" if $verbose;
 
 ##########################################################################################
 #
-# Data Retrieval TESTRESULTS - get list of patients with test results updated since last update
+# Y.Mo 03-Apr-2020
+# Test Results will no longer be fetch from Aria. It will be fetch from Oacis.
 #
 ##########################################################################################
-print "\n--- Start getTestResultsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-@TRList = TestResult::getTestResultsFromSourceDB($cronLogSer, @patientList);
-print "--- End getTestResultsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Got test result list\n" if $verbose;
+# ##########################################################################################
+# #
+# # Data Retrieval TESTRESULTS - get list of patients with test results updated since last update
+# #
+# ##########################################################################################
+# print "\n--- Start getTestResultsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# @TRList = TestResult::getTestResultsFromSourceDB($cronLogSer, @patientList);
+# print "--- End getTestResultsFromSourceDB: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Got test result list\n" if $verbose;
 
-#=========================================================================================
-# Loop over each test result. Various functions are done.
-#=========================================================================================
-print "-- Start Loop over each test result: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-foreach my $TestResult (@TRList) {
+# #=========================================================================================
+# # Loop over each test result. Various functions are done.
+# #=========================================================================================
+# print "-- Start Loop over each test result: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# foreach my $TestResult (@TRList) {
 
-	# check if TR exists in our database
-	my $TRExists = $TestResult->inOurDatabase();
+# 	# check if TR exists in our database
+# 	my $TRExists = $TestResult->inOurDatabase();
 
-	if ($TRExists) { # TR exists
+# 	if ($TRExists) { # TR exists
 
-		my $ExistingTR = dclone($TRExists); # reassign variable
+# 		my $ExistingTR = dclone($TRExists); # reassign variable
 
-		# compare our retrieve TR with existing TR
-		# update is done on the original (existing) TR
-		my $UpdatedTR = $TestResult->compareWith($ExistingTR);
+# 		# compare our retrieve TR with existing TR
+# 		# update is done on the original (existing) TR
+# 		my $UpdatedTR = $TestResult->compareWith($ExistingTR);
 
-		# after updating our TR object, update the database
-		$UpdatedTR->updateDatabase();
+# 		# after updating our TR object, update the database
+# 		$UpdatedTR->updateDatabase();
 
-	} else { # TR DNE
+# 	} else { # TR DNE
 
-		# insert TR into our database
-		$TestResult->insertTestResultIntoOurDB();
-	}
+# 		# insert TR into our database
+# 		$TestResult->insertTestResultIntoOurDB();
+# 	}
 
-}
-print "-- End Loop over each test result: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
-print "Finished test result list\n" if $verbose;
+# }
+# print "-- End Loop over each test result: ", strftime("%Y-%m-%d %H:%M:%S", localtime(time)), "\n";
+# print "Finished test result list\n" if $verbose;
 
 ##########################################################################################
 #
@@ -771,8 +777,15 @@ Alias::setAliasLastTransferIntoOurDB($start_datetime);
 PostControl::setPostControlLastPublishedIntoOurDB($start_datetime);
 # Educational material control
 EducationalMaterialControl::setEduMatControlLastPublishedIntoOurDB($start_datetime);
-# Test result control
-TestResultControl::setTestResultLastPublishedIntoOurDB($start_datetime);
+
+##########################################################################################
+#
+# Y.Mo 03-Apr-2020
+# Updating the TestResultControl is no longer require because the system is fetching from Oacis
+#
+##########################################################################################
+# # Test result control
+# TestResultControl::setTestResultLastPublishedIntoOurDB($start_datetime);
 
 # Get the current time
 my $current_datetime = strftime("%Y-%m-%d %H:%M:%S", localtime(time));
