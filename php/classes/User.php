@@ -20,8 +20,8 @@ class User extends OpalProject {
 
     /*
      * Validate the user and log its activity.
-     * @params  $post (array) contains username, password and cypher
-     * @returns $result (array) basic user informations
+     * @param   $post (array) contains username, password and cypher
+     * @return  $result (array) basic user informations
      * */
     public function userLogin($post) {
         $post = HelpSetup::arraySanitization($post);
@@ -36,6 +36,7 @@ class User extends OpalProject {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Somethings's wrong. There is too many entries!");
 
         $result = $result[0];
+        $this->_connectAsMain($result["id"]);
         unset($result["password"]);
         $result["sessionid"] = HelpSetup::makeSessionId();
         $this->logActivity($result["id"], $result["sessionid"], 'Login');
@@ -43,59 +44,25 @@ class User extends OpalProject {
         return $result;
     }
 
-    /**
-     * Logs out a user by logging its activity.
-     *
-     * @param $user : user object
-     * @return $response : response
-     */
+    /*
+     * Logs the user out by logging it in the logActivity.
+     * @params  $post (array) info of the user
+     * @return  answer from the log activity
+     * */
     public function userLogout($post) {
         $post = HelpSetup::arraySanitization($post);
         if($post["OAUserId"] == "" || $post["sessionId"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing logout info.");
 
-        $response = $this->logActivity($post["OAUserId"], $post["sessionId"], 'Logout');
-        return $response;
+        return $this->logActivity($post["OAUserId"], $post["sessionId"], 'Logout');
     }
 
-    /**
-     *
-     * Logs when a user logs in or logs out
-     *
-     * @return $response : response
-     */
-    public function logActivity($userser, $sessionid, $activity) {
-        $response = array (
-            'value'		=> 0,
-            'message'	=> ''
+    /*
+     * Log activity into the table OAActivityLog.
+     * */
+    public function logActivity($userId, $sessionId, $activity) {
+        return $this->opalDB->insertUserActivity(array("Activity"=>$activity, "OAUserSerNum"=>$userId, "SessionId"=>$sessionId, "DateAdded"=>date("Y-m-d H:i:s"))
         );
-        try{
-            $con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-				INSERT INTO 
-					OAActivityLog (
-						Activity,
-						OAUserSerNum,
-						SessionId,
-						DateAdded
-					)
-				VALUES (
-					'$activity',
-					'$userser',
-					'$sessionid',
-					NOW()
-				)
-			";
-            $query = $con->prepare($sql);
-            $query->execute();
-            $response['value'] = 1; // success
-            return $response;
-
-        }catch (PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response;
-        }
     }
 
     /**
@@ -106,6 +73,9 @@ class User extends OpalProject {
      * @return array $response : response
      */
     public function updatePassword($userDetails) {
+
+
+
         $response = array (
             'value'		=> 0,
             'error'		=> array(

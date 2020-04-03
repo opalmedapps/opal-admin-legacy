@@ -59,6 +59,7 @@ define("OPAL_PATIENT_TABLE","Patient");
 define("OPAL_TEST_RESULT_EXPRESSION_TABLE","TestResultExpression");
 define("OPAL_DIAGNOSIS_CODE_TABLE","DiagnosisCode");
 define("OPAL_LOGIN_VIEW","v_login");
+define("OPAL_USER_ACTIVITY_LOG_TABLE","OAActivityLog");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
