@@ -67,7 +67,10 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, A
 		if ($scope.loginFormComplete()) {
 			var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103;
 
-			AuthService.login(credentials.username, Encrypt.encode(credentials.password, cypher), cypher).then(function (response) {
+			var encrypted = JSON.stringify({username: credentials.username, password: credentials.password});
+			encrypted = (Encrypt.encode(encrypted, cypher));
+
+			AuthService.login(encrypted, cypher).then(function (response) {
 				Session.create(response.data);
 				$rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
 				$rootScope.currentUser = response.data;

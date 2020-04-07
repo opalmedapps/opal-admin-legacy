@@ -45,29 +45,17 @@ angular.module('opalAdmin', [
 
 		var authService = {};
 
-		authService.login = function (username, password, cypher) {
+		authService.login = function (encrypted, cypher) {
 			return $http.post(
 				"user/validate-login",
 				$.param({
-					username: username,
-					password: password,
+					encrypted: encrypted,
 					cypher: cypher,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			)
-		};
-
-		authService.confirm = function (credentials) {
-			return $http
-				.post('user/validate-login', credentials)
-				.then(function (response) {
-					if (response.data.success) {
-						return response.success;
-					}
-					else { return $q.reject(response); }
-				});
 		};
 
 		authService.isAuthenticated = function () {
