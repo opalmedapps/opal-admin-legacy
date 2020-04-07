@@ -507,3 +507,7 @@ define("OPAL_COUNT_CODE_MASTER_SOURCE","
 define("SQL_OPAL_VALIDATE_OAUSER_LOGIN","
     SELECT * FROM ".OPAL_LOGIN_VIEW." WHERE username = :username AND password = :password;
 ");
+
+define("OPAL_UPDATE_PASSWORD","
+    UPDATE ".OPAL_OAUSER_TABLE." SET Password = :Password WHERE OAUserSerNum = :OAUserSerNum
+");

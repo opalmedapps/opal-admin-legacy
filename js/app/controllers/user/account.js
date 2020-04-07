@@ -140,11 +140,25 @@ controller('account', function ($scope, $rootScope, $translate, $route, $filter,
 			user.confirmPassword = Encrypt.encode(user.confirmPassword, cypher);
 			user.cypher = cypher;
 
+			var encrypted = {
+				password: $scope.account.password,
+				oldPassword: $scope.account.oldPassword,
+				confirmPassword: $scope.account.confirmPassword,
+			};
+			// console.log(encrypted);
+			encrypted = Encrypt.encode(JSON.stringify(encrypted), cypher);
+
+			var data = {
+				id: $scope.account.user.id,
+				encrypted: encrypted,
+				cypher: cypher,
+			};
+
 			// submit form
 			$.ajax({
 				type: "POST",
 				url: "user/update/password",
-				data: user,
+				data: data,
 				success: function (response) {
 					response = JSON.parse(response);
 					if (response.value == 1) {
@@ -169,6 +183,9 @@ controller('account', function ($scope, $rootScope, $translate, $route, $filter,
 							$scope.showBanner();
 						}
 					}
+				},
+				error: function(err) {
+
 				}
 			});
 

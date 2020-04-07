@@ -25,10 +25,16 @@ class User extends OpalProject {
      * */
     public function userLogin($post) {
         $post = HelpSetup::arraySanitization($post);
-        if($post["username"] == "" || $post["password"] == "" || $post["cypher"] == "")
+        $data = json_decode(Encrypt::encodeString( $post["encrypted"], $post["cypher"]), true);
+        $data = HelpSetup::arraySanitization($data);
+        $username = $data["username"];
+        $password = $data["password"];
+        $cypher = $post["cypher"];
+
+        if($username == "" || $password == "" || $cypher == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing login info.");
 
-        $result = $this->opalDB->validateOpalUserLogin($post["username"], hash("sha256", Encrypt::encodeString( $post["password"], $post["cypher"] ) . USER_SALT));
+        $result = $this->opalDB->validateOpalUserLogin($username, hash("sha256", $password . USER_SALT));
 
         if(count($result) < 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Access denied");
@@ -65,18 +71,52 @@ class User extends OpalProject {
         );
     }
 
-    /**
-     *
-     * Updates a user's password
-     *
-     * @param array $userDetails  : the user details
-     * @return array $response : response
-     */
-    public function updatePassword($userDetails) {
 
+    protected function _passwordValidation($password, $confimPassword) {
+        $errMsgs = array();
+        if($confimPassword != $password)
+            array_push($errMsgs, "Password confirmation is incorrect.");
+        if (strlen($password) <= '8')
+            array_push($errMsgs, "Password must contain at least 8 characters.");
+        if(!preg_match("#[0-9]+#",$password))
+            array_push($errMsgs, "Password must contain at least 1 number.");
+        if(!preg_match("#[A-Z]+#",$password))
+            array_push($errMsgs, "Password must contain at least 1 capital letter.");
+        if(!preg_match("#[a-z]+#",$password))
+            array_push($errMsgs, "Password must contain at least 1 lowercase letter.");
+        return $errMsgs;
+    }
 
+    public function updatePassword($post) {
+        $post = HelpSetup::arraySanitization($post);
+        $data = json_decode(Encrypt::encodeString( $post["encrypted"], $post["cypher"]), true);
+        $data = HelpSetup::arraySanitization($data);
+        $username = $data["username"];
+        $oldPassword = $data["oldPassword"];
+        $password = $data["password"];
+        $confirmPassword = $data["confirmPassword"];
+        $cypher = $post["cypher"];
 
-        $response = array (
+        print "$username $oldPassword $password $confirmPassword\r\n";
+        print "$cypher\r\n";die();
+
+        if($username == "" || $password == "" || $oldPassword == "" || $confirmPassword == "" || $cypher == "" || $password == $oldPassword)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing update information.");
+
+        $result = $this->_passwordValidation($password, $confirmPassword);
+        if(count($result) > 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
+
+        $result = $this->opalDB->validateOpalUserLogin($username, hash("sha256", $oldPassword . USER_SALT));
+        if(count($result) < 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Current password does not match.");
+        else if(count($result) > 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Somethings's wrong. There is too many entries!");
+
+        $updated = $this->opalDB->updateUserPassword($result["OAUserSerNum"], hash("sha256", Encrypt::encodeString( $password, $cypher ) . USER_SALT));
+        return $updated;
+
+ /*       $response = array (
             'value'		=> 0,
             'error'		=> array(
                 'code'		=> '',
@@ -121,7 +161,7 @@ class User extends OpalProject {
             $response['error']['code'] = 'db-catch';
             $response['error']['message'] = $e->getMessage();
             return $response;
-        }
+        }*/
     }
 
     /**
@@ -474,74 +514,6 @@ class User extends OpalProject {
         } catch (PDOException $e) {
             echo $e->getMessage();
             return $roles;
-        }
-    }
-
-    /**
-     *
-     * Gets a list of user activities
-     *
-     * @return array $userActivityList : the list of user activities
-     */
-    public function getUserActivities() {
-        $userActivityList = array();
-        try {
-
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-	            SELECT DISTINCT 
-	            	oaa.OAUserSerNum,
-	            	oa.Username,
-	            	oaa.DateAdded as LoginTime, 
-	            	oaa2.DateAdded as LogoutTime, 
-	            	oaa.SessionId,
-	            	CONCAT (
-	            		IF(MOD(HOUR(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 24) > 0,
-	            			CONCAT(MOD(HOUR(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 24), 'h'),
-	            			''
-	            		),
-	            		IF(MINUTE(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)) > 0,
-	            			CONCAT(MINUTE(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 'm'),
-	            			''
-	            		),
-	            		SECOND(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 's'
-	            	) as SessionDuration
-
-	            FROM 
-	            	OAUser oa,
-	            	OAActivityLog oaa 
-	            LEFT JOIN 
-	            	OAActivityLog oaa2 
-	            ON oaa.SessionId = oaa2.SessionId  
-	            AND oaa2.Activity = 'Logout' 
-	            WHERE 
-	            	oaa.`Activity` 	= 'Login'
-	            AND oa.OAUserSerNum = oaa.OAUserSerNum
-
-                ORDER BY oaa.DateAdded DESC
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $userDetails = array(
-                    'serial'                => $data[0],
-                    'username'              => $data[1],
-                    'login'                 => $data[2],
-                    'logout'				=> $data[3],
-                    'sessionid'             => $data[4],
-                    'session_duration'		=> $data[5]
-                );
-
-                array_push($userActivityList, $userDetails);
-            }
-
-            return $userActivityList;
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $userActivityList;
         }
     }
 
