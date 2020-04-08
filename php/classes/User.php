@@ -65,40 +65,56 @@ class User extends OpalProject {
 
     /*
      * Log activity into the table OAActivityLog.
+     * @params  $userId (int) ID of the user to enter
+     *          $sessionId (string) session ID of the user
+     *          $activity (string) type of activity to log in (Login or Logout)
      * */
     public function logActivity($userId, $sessionId, $activity) {
         return $this->opalDB->insertUserActivity(array("Activity"=>$activity, "OAUserSerNum"=>$userId, "SessionId"=>$sessionId, "DateAdded"=>date("Y-m-d H:i:s"))
         );
     }
 
-
+    /*
+     * Function to validate a password. It confirms the password and confirmation are the same, check the length (min
+     * 8 char), check if there is ate least one special character, at least one number, at least one capital letter,
+     * at least one lower case number.
+     * @param   $password (string) new password to validate
+     *          $confirmPassword (string) confirmation of the password
+     * @return  $errMsg (array) array of error messages if any.
+     * */
     protected function _passwordValidation($password, $confimPassword) {
         $errMsgs = array();
         if($confimPassword != $password)
-            array_push($errMsgs, "Password confirmation is incorrect.");
-        if (strlen($password) <= '8')
-            array_push($errMsgs, "Password must contain at least 8 characters.");
-        if(!preg_match("#[0-9]+#",$password))
-            array_push($errMsgs, "Password must contain at least 1 number.");
-        if(!preg_match("#[A-Z]+#",$password))
-            array_push($errMsgs, "Password must contain at least 1 capital letter.");
-        if(!preg_match("#[a-z]+#",$password))
-            array_push($errMsgs, "Password must contain at least 1 lowercase letter.");
+            array_push($errMsgs, "Password and password confirmation do not match.");
+
+        $length = (strlen($password) >= 8);
+        $special = preg_match('#[\W]+#', $password);
+        $number = preg_match("#[0-9]+#",$password);
+        $upper = preg_match("#[A-Z]+#",$password);
+        $lower = preg_match("#[a-z]+#",$password);
+
+        if(!$length || !$special || !$number || !$upper || !$lower)
+            array_push($errMsgs, "Invalid password format.");
+
         return $errMsgs;
     }
 
+    /*
+     * Updates the password of a specific user after validating it.
+     * @param   $post (array) array of data coming from the frontend that contains encrypted data and the cypher.
+     * @return  number of updated record
+     * */
     public function updatePassword($post) {
         $post = HelpSetup::arraySanitization($post);
-        $data = json_decode(Encrypt::encodeString( $post["encrypted"], $post["cypher"]), true);
+        $cypher = intval($post["cypher"]);
+        $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
         $data = HelpSetup::arraySanitization($data);
-        $username = $data["username"];
+
+        $username = $this->getUserDetails($post["OAUserId"]);
+        $username = $username["username"];
         $oldPassword = $data["oldPassword"];
         $password = $data["password"];
         $confirmPassword = $data["confirmPassword"];
-        $cypher = $post["cypher"];
-
-        print "$username $oldPassword $password $confirmPassword\r\n";
-        print "$cypher\r\n";die();
 
         if($username == "" || $password == "" || $oldPassword == "" || $confirmPassword == "" || $cypher == "" || $password == $oldPassword)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing update information.");
@@ -109,105 +125,38 @@ class User extends OpalProject {
 
         $result = $this->opalDB->validateOpalUserLogin($username, hash("sha256", $oldPassword . USER_SALT));
         if(count($result) < 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Current password does not match.");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid username/password.");
         else if(count($result) > 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Somethings's wrong. There is too many entries!");
 
-        $updated = $this->opalDB->updateUserPassword($result["OAUserSerNum"], hash("sha256", Encrypt::encodeString( $password, $cypher ) . USER_SALT));
+        $result = $result[0];
+
+        $updated = $this->opalDB->updateUserPassword($result["id"], hash("sha256", $password . USER_SALT));
         return $updated;
-
- /*       $response = array (
-            'value'		=> 0,
-            'error'		=> array(
-                'code'		=> '',
-                'message'	=> ''
-            )
-        );
-        $oldPassword 	= $userDetails['oldPassword'];
-        $userSer		= $userDetails['user']['id'];
-        $newPassword	= $userDetails['password'];
-        $cypher 			= $userDetails['cypher'];
-        try {
-            $con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            if (!isset($userDetails['override'])) {
-                $sql = "SELECT * FROM OAUser WHERE OAUser.OAUserSerNum = :ser AND OAUser.Password = :password";
-
-                $stmt = $con->prepare( $sql );
-                $stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
-                $stmt->bindValue( "password", hash("sha256", Encrypt::encodeString( $oldPassword, $cypher ) . USER_SALT), PDO::PARAM_STR );
-                $stmt->execute();
-
-                $valid = $stmt->fetchColumn();
-                if( !$valid ) {
-                    $response['error']['code'] = 'old-password-incorrect';
-                    $response['error']['message'] = 'Your old password is incorrect.';
-                    return $response;
-                }
-            }
-
-            $sql = "UPDATE OAUser SET OAUser.Password = :password WHERE OAUser.OAUserSerNum = :ser";
-
-            $stmt = $con->prepare( $sql );
-            $stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
-            $stmt->bindValue( "password", hash("sha256", Encrypt::encodeString( $newPassword, $cypher ) . USER_SALT), PDO::PARAM_STR );
-            $stmt->execute();
-
-            $response['value'] = 1; // Success
-            return $response;
-
-        } catch (PDOException $e) {
-            $response['error']['code'] = 'db-catch';
-            $response['error']['message'] = $e->getMessage();
-            return $response;
-        }*/
     }
 
-    /**
-     *
-     * Updates a user's language
-     *
-     * @param array $userDetails  : the user details
-     * @return array $response : response
-     */
-    public function updateLanguage($userDetails) {
-        $response = array (
-            'code'		=> "0",
-        );
-        $language 	= $userDetails['language'];
-        $userSer	= $userDetails['id'];
+    /*
+     * Update the preferred language on how to display the opalAdmin to the user. Can only accept FR or EN
+     * @params  $post (array) contains language requested and userId
+     * @returns number of records modified
+     * */
+    public function updateLanguage($post) {
+        $post = HelpSetup::arraySanitization($post);
+        $post["language"] = strtoupper($post["language"]);
 
-        try {
-            $con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+        if($post["language"] != "EN" && $post["language"] != "FR")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid language");
 
-            $sql = "UPDATE OAUser SET OAUser.Language = :language WHERE OAUser.OAUserSerNum = :ser";
-
-            $stmt = $con->prepare( $sql );
-            $stmt->bindValue( "ser", $userSer, PDO::PARAM_STR );
-            $stmt->bindValue( "language", $language, PDO::PARAM_STR );
-            $stmt->execute();
-
-            $response['code'] = "1"; // Success
-            return $response;
-
-        } catch (PDOException $e) {
-            $response['error']['code'] = 'db-catch';
-            $response['error']['message'] = $e->getMessage();
-            return $response;
-        }
+        return $this->opalDB->updateUserLanguage($this->opalDB->getOAUserId(), $post["language"]);
     }
 
 
-    /**
-     *
-     * Updates a user
-     *
-     * @param array $userDetails  : the user details
-     * @return boolean
-     */
-    public function updateUser($userDetails) {
+
+    public function updateUser($post) {
+        $post = HelpSetup::arraySanitization($post);
+
+
+        die();
         $response = array (
             'value'		=> 0,
             'error'		=> array(

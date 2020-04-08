@@ -511,3 +511,7 @@ define("SQL_OPAL_VALIDATE_OAUSER_LOGIN","
 define("OPAL_UPDATE_PASSWORD","
     UPDATE ".OPAL_OAUSER_TABLE." SET Password = :Password WHERE OAUserSerNum = :OAUserSerNum
 ");
+
+define("OPAL_UPDATE_LANGUAGE","
+    UPDATE ".OPAL_OAUSER_TABLE." SET Language = :Language WHERE OAUserSerNum = :OAUserSerNum
+");
