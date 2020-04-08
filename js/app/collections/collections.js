@@ -423,7 +423,6 @@ angular.module('opalAdmin.collections', [])
 
 		// API to find patient given an SSN
 		patientAPI.findPatient = function (ssn, id, userId) {
-			console.log(userId)
 			return $http.post(
 				"patient/find-patient",
 				$.param({

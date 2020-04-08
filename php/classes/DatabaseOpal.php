@@ -343,6 +343,15 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
+  * Insert new Audit Logs
+  * @params  record to insert
+  * @return  ID of the insertion
+  * */
+    function insertIntoAuditLogsTable($record) {
+        return $this->_insertRecordIntoTable(OPAL_AUDIT_LOGS, $record);
+    }
+
+    /*
      * Get all the triggers of a specific publication.
      * @params  Questionnaire serial number (int)
      * @return  array of details of the published questionnaire itself

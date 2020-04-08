@@ -36,6 +36,7 @@ define("OPAL_TXT_TEAM_MSG_MH_TABLE","TxTeamMessageMH");
 define("OPAL_PATIENTS_FOR_PATIENTS_MH_TABLE","PatientsForPatientsMH");
 define("OPAL_EDUCATION_MATERIAL_MH_TABLE","EducationalMaterialMH");
 define("OPAL_CRON_LOG_TABLE","CronLog");
+define("OPAL_AUDIT_LOGS", "AuditLogs");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
