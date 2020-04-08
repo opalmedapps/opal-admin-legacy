@@ -915,4 +915,11 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":Password","variable"=>$encryptedPassword,"data_type"=>PDO::PARAM_STR),
         ));
     }
+
+    function updateUserLanguage($userId, $language) {
+        return $this->_execute(OPAL_UPDATE_LANGUAGE, array(
+            array("parameter"=>":OAUserSerNum","variable"=>$userId,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Language","variable"=>$language,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
 }
