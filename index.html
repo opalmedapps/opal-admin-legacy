@@ -10,7 +10,7 @@
 	<meta content="text/html; X-Content-Type-Options=nosniff" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		
+
 	<!-- Libraries -->
 	<script src="bower_components/jquery/dist/jquery.js"></script>
 	<script src="bower_components/angular/angular.js"></script>
@@ -51,6 +51,9 @@
 
 
 	<script src="node_modules/angular-ui-grid/ui-grid.min.js"></script>
+	<script src="https://ui-grid.info/docs/grunt-scripts/csv.js"></script>
+	<script src="https://ui-grid.info/docs/grunt-scripts/pdfmake.js"></script>
+	<script src="https://ui-grid.info/docs/grunt-scripts/vfs_fonts.js"></script>
 	
 	<script src="js/lib/bootstrap/bootstrap-datetimepicker.min.js"></script>
 	<script src="js/lib/bootstrap/ui.bootstrap.materialPicker.js"></script>
@@ -160,7 +163,7 @@
 	<script type="text/javascript" src="js/app/controllers/diagnosis/add.diagnosisTranslation.js"></script>
 	<script type="text/javascript" src="js/app/controllers/diagnosis/edit.diagnosisTranslation.js"></script>
 	<script type="text/javascript" src="js/app/controllers/diagnosis/delete.diagnosisTranslation.js"></script>
-
+	<script type="text/javascript" src="js/app/controllers/reports/auditReport.js"></script>
 	<!-- Collection -->
  	<script type="text/javascript" src="js/app/collections/collections.js"></script>
 
@@ -188,6 +191,7 @@
 	<link media="all" type="text/css" rel="stylesheet" href="bower_components/textAngular/dist/textAngular.css">
 	<link media="all" type="text/css" rel="stylesheet" href="css/lib/ui.bootstrap.materialPicker.css">
 	<link media="all" type="text/css" rel="stylesheet" href="bower_components/highcharts-ng/dist/highcharts-ng.css">
+	<link media="all" type="text/css" rel="stylesheet" href="https://cdn.rawgit.com/angular-ui/bower-ui-grid/master/ui-grid.min.css">
 
 	<link media="all" type="text/css" rel="stylesheet" href="css/style.css">
 
@@ -203,6 +207,6 @@
 			{{build.version}} ( E: {{build.environment}} - B: {{build.branch}})
 		</div>
 	</div>
- 
+
 </body>
 </html>

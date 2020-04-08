@@ -202,6 +202,22 @@
                 </div>
             </div>
 
+            <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">
+                <div class="panel-container animated"
+
+                     ng-mouseenter="hoverDiagnosisMenu=true" ng-mouseleave="hoverDiagnosisMenu=false"
+                     style="cursor:pointer;" ng-click="goToAuditReport()">
+                    <div class="side-panel-info-sm" >
+                        <div class="panel-content">
+                            <span style="font-size: 21px; vertical-align:middle" class="fa fa-stethoscope"
+                                  aria-hidden="true"></span>
+                            <div class="side-panel-title" style="display:inline-block;margin:0"><strong>Audit Report</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
             <!-- SECTION: Cron Logs -->
             <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">
                 <div class="panel-container animated" ng-class="{pulse: hoverCronMenu, active: currentPage == 'cron'}"
