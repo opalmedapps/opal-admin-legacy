@@ -1,10 +1,10 @@
 <?php
 
-header('Content-Type: application/javascript');
 include_once('user.inc');
 
-$userSer    = $_POST['userser'];
-$userObject = new User(); // Object
-$userDetails = $userObject->getUserDetails($userSer);
+$OAUserId = strip_tags($_POST['OAUserId']);
+$userObject = new User($OAUserId);
+$userDetails = $userObject->getUserDetails($_POST);
 
+header('Content-Type: application/javascript');
 echo json_encode($userDetails);

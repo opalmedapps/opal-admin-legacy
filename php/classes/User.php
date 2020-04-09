@@ -110,7 +110,7 @@ class User extends OpalProject {
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
         $data = HelpSetup::arraySanitization($data);
 
-        $username = $this->getUserDetails($post["OAUserId"]);
+        $username = $this->opalDB->getUserDetails($post["OAUserId"]);
         $username = $username["username"];
         $oldPassword = $data["oldPassword"];
         $password = $data["password"];
@@ -150,55 +150,40 @@ class User extends OpalProject {
         return $this->opalDB->updateUserLanguage($this->opalDB->getOAUserId(), $post["language"]);
     }
 
-
-
+    /*
+     * Decypher user informations, validate its password before updating it, updating the language and the role. All
+     * the updates are optionals.
+     * @oarams  $post (array) informations on the user encrypted with the cypher and the id.
+     * @return  true (boolean) means the update was successful.
+     * */
     public function updateUser($post) {
         $post = HelpSetup::arraySanitization($post);
+        $cypher = intval($post["cypher"]);
+        $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
+        $data = HelpSetup::arraySanitization($data);
 
+        $userDetails = $this->opalDB->getUserDetails($data["id"]);
 
-        die();
-        $response = array (
-            'value'		=> 0,
-            'error'		=> array(
-                'code'		=> '',
-                'message'	=> ''
-            )
-        );
-        $userSer			= $userDetails['user']['id'];
-        $newPassword 		= $userDetails['password'];
-        $confirmPassword 	= $userDetails['confirmPassword'];
-        $roleSer 			= $userDetails['role']['serial'];
-        $language 			= $userDetails['language'];
+        if(!is_array($userDetails))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid user.");
 
-        try {
-
-            if ( ($newPassword && $confirmPassword) && ($newPassword == $confirmPassword) ) {
-                $response = $this->updatePassword($userDetails);
-                if ($response['value'] == 0) {
-                    return $response;
-                }
-            }
-
-            $con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "UPDATE OAUserRole SET OAUserRole.RoleSerNum = $roleSer WHERE OAUserRole.OAUserSerNum = $userSer";
-
-            $stmt = $con->prepare( $sql );
-            $stmt->execute();
-
-            $sql = "UPDATE OAUser SET OAUser.Language = '$language' WHERE OAUser.OAUserSerNum = $userSer";
-            $stmt = $con->prepare( $sql );
-            $stmt->execute();
-
-            $response['value'] = 1; // Success
-            return $response;
-
-        } catch (PDOException $e) {
-            $response['error']['code'] = 'db-catch';
-            $response['error']['message'] = $e->getMessage();
-            return $response;
+        if($data["password"] && $data["confirmPassword"]) {
+            $result = $this->_passwordValidation($data["password"], $data["confirmPassword"]);
+            if (count($result) > 0)
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
+            $this->opalDB->updateUserPassword($userDetails["serial"], hash("sha256", $data["password"] . USER_SALT));
         }
+
+        $newRole = $this->opalDB->geRoleDetails($data["roleId"]);
+        if(!is_array($newRole))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid role.");
+
+        if($data["roleId"] != $userDetails["RoleSerNum"])
+            $this->opalDB->updateUserRole($data["id"], $data["roleId"]);
+
+        $this->opalDB->updateUserInfo($userDetails["serial"], $data["language"]);
+
+        return true;
     }
     /**
      *
@@ -236,113 +221,32 @@ class User extends OpalProject {
         }
     }
 
-    /**
-     *
-     * Gets a list of existing users
-     *
-     * @param array $USERS : the list of existing users
-     * @return boolean
-     */
+
+    /*
+     * Get the list of all users excluding the cronjob one
+     * @params  void
+     * @return  array of users
+     * */
     public function getUsers() {
-        $users = array();
-        try {
-            $connect = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "
-		 		SELECT DISTINCT
-			 		OAUser.OAUserSerNum,
-			 		OAUser.Username,
-			 		Role.RoleName,
-			 		OAUser.Language
-		 		FROM
-			 		OAUser,
-			 		OAUserRole,
-			 		Role
-		 		WHERE
-		 			OAUser.OAUserSerNum 	= OAUserRole.OAUserSerNum
-		 		AND OAUserRole.RoleSerNum	= Role.RoleSerNum
-		 		AND Role.RoleSerNum != ".ROLE_CRONJOB."
-	 		";
-            $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $serial 	= $data[0];
-                $name   	= $data[1];
-                $role 		= $data[2];
-                $language 	= $data[3];
-
-                $userArray = array(
-                    'serial'    	=> $serial,
-                    'username'      => $name,
-                    'role'			=> $role,
-                    'language' 		=> $language
-                );
-                array_push($users, $userArray);
-            }
-            return $users;
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $users;
-        }
+        return $this->opalDB->getUsersList();
     }
 
-    /**
-     *
-     * Gets a user's details
-     *
-     * @param integer $userSer    : the user serial number
-     * @return array $userDetails : the user details
-     */
-    public function getUserDetails($userSer) {
-        $userDetails = array();
-        try {
-            $connect = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "
-		 		SELECT DISTINCT
-			 		OAUser.Username,
-			 		Role.RoleSerNum,
-			 		Role.RoleName,
-			 		OAUser.Language
-		 		FROM   
-			 		OAUser,
-			 		OAUserRole,
-			 		Role
-		 		WHERE
-			 		OAUser.OAUserSerNum 	= $userSer
-			 	AND OAUserRole.OAUserSerNum	= OAUser.OAUserSerNum
-			 	AND Role.RoleSerNum 		= OAUserRole.RoleSerNum
-			 	AND Role.RoleSerNum != ".ROLE_CRONJOB."
-	 		";
-            $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
-
-            $username   = $data[0];
-            $roleSer 	= $data[1];
-            $roleName 	= $data[2];
-            $language 	= $data[3];
-
-            $userDetails = array(
-                'serial'            => $userSer,
-                'username'          => $username,
-                'language' 			=> $language,
-                'role' 				=> array('serial'=>$roleSer,'name'=>$roleName),
-                'logs'              => array(),
-                'new_password'      => null,
-                'confirm_password'  => null
-            );
-
-            return $userDetails;
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $userDetails;
-        }
+    /*
+     * Get users details based on its ID. Format the data in a way the front won't crash. It sends username, role info,
+     * and language.
+     * @params  $post (array) data receive from the front in $_POST method
+     * @returns $userDetails (array) details of the user
+     * */
+    public function getUserDetails($post) {
+        $post = HelpSetup::arraySanitization($post);
+        $userDetails = $this->opalDB->getUserDetails($post["userId"]);
+        $userDetails["role"] = array("serial"=>$userDetails["RoleSerNum"], "name"=>$userDetails["RoleName"]);
+        $userDetails["logs"] = array();
+        $userDetails["new_password"] = null;
+        $userDetails["confirm_password"] = null;
+        unset($userDetails["RoleSerNum"]);
+        unset($userDetails["RoleName"]);
+        return $userDetails;
     }
 
 
@@ -355,6 +259,9 @@ class User extends OpalProject {
      * @return array $Response : response
      */
     public function usernameAlreadyInUse($username) {
+        $results = $this->opalDB->countUsername($username);
+        return (intval($results["total"]) > 0);
+
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );

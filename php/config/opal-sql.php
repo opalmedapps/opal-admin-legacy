@@ -60,6 +60,7 @@ define("OPAL_TEST_RESULT_EXPRESSION_TABLE","TestResultExpression");
 define("OPAL_DIAGNOSIS_CODE_TABLE","DiagnosisCode");
 define("OPAL_LOGIN_VIEW","v_login");
 define("OPAL_USER_ACTIVITY_LOG_TABLE","OAActivityLog");
+define("OPAL_ROLE_TABLE","Role");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -509,9 +510,41 @@ define("SQL_OPAL_VALIDATE_OAUSER_LOGIN","
 ");
 
 define("OPAL_UPDATE_PASSWORD","
-    UPDATE ".OPAL_OAUSER_TABLE." SET Password = :Password WHERE OAUserSerNum = :OAUserSerNum
+    UPDATE ".OPAL_OAUSER_TABLE." SET Password = :Password WHERE OAUserSerNum = :OAUserSerNum AND Password != :Password;
+");
+
+define("OPAL_UPDATE_USER_INFO","
+    UPDATE ".OPAL_OAUSER_TABLE." SET Language = :Language WHERE OAUserSerNum = :OAUserSerNum AND Language != :Language;
 ");
 
 define("OPAL_UPDATE_LANGUAGE","
     UPDATE ".OPAL_OAUSER_TABLE." SET Language = :Language WHERE OAUserSerNum = :OAUserSerNum
+");
+
+define("OPAL_GET_USER_DETAILS","
+    SELECT ou.OAUserSerNum AS serial, ou.Username AS username, r.RoleSerNum, r.RoleName, ou.Language AS language
+    FROM ".OPAL_OAUSER_TABLE." ou
+    LEFT JOIN ".OPAL_OAUSER_ROLE_TABLE." oaur ON oaur.OAUserSerNum = ou.OAUserSerNum
+    LEFT JOIN ".OPAL_ROLE_TABLE." r ON r.RoleSerNum = oaur.RoleSerNum
+	WHERE ou.OAUserSerNum = :OAUserSerNum
+");
+
+define("OPAL_GET_ROLE_DETAILS","
+    SELECT * FROM ".OPAL_ROLE_TABLE." WHERE RoleSerNum = :RoleSerNum;
+");
+
+define("OPAL_UPDATE_USER_ROLE","
+    UPDATE ".OPAL_OAUSER_ROLE_TABLE." SET RoleSerNum = :RoleSerNum WHERE OAUserSerNum = :OAUserSerNum;
+");
+
+define("OPAL_GET_USERS_LIST","
+    SELECT ou.OAUserSerNum AS serial, ou.Username AS username, r.RoleName AS role, ou.Language AS language
+    FROM ".OPAL_OAUSER_TABLE." ou
+    LEFT JOIN ".OPAL_OAUSER_ROLE_TABLE." oaur ON oaur.OAUserSerNum = ou.OAUserSerNum
+    LEFT JOIN ".OPAL_ROLE_TABLE." r ON r.RoleSerNum = oaur.RoleSerNum
+	WHERE r.RoleSerNum != ".ROLE_CRONJOB.";
+");
+
+define("OPAL_COUNT_USERNAME","
+    SELECT COUNT(*) AS total FROM ".OPAL_OAUSER_TABLE." WHERE Username :Username
 ");

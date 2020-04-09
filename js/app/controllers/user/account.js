@@ -77,7 +77,6 @@ angular.module('opalAdmin.controllers.account', ['ui.bootstrap']).
 			var validationPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/;
 
 			if(!password.match(validationPassword)) {
-			// if (password.length < 6) {
 				$scope.validPassword.status = 'invalid';
 				$scope.validPassword.message = $filter('translate')('PROFILE.SHORT');
 				return;
@@ -140,7 +139,6 @@ angular.module('opalAdmin.controllers.account', ['ui.bootstrap']).
 					oldPassword: $scope.account.oldPassword,
 					confirmPassword: $scope.account.confirmPassword,
 				};
-				// console.log(encrypted);
 				encrypted = Encrypt.encode(JSON.stringify(encrypted), cypher);
 
 				var data = {
@@ -160,7 +158,6 @@ angular.module('opalAdmin.controllers.account', ['ui.bootstrap']).
 						$scope.bannerMessage = $filter('translate')('PROFILE.PASSWORD_SUCCESS');
 					},
 					error: function(err) {
-						console.log(err);
 						$scope.setBannerClass('danger');
 						$scope.bannerMessage = $filter('translate')('PROFILE.SERVER_ERROR') + err.responseText;
 					},
