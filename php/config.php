@@ -162,3 +162,5 @@ define('DEBUG', 'debug');
  */
 define('SEARCHED_PATIENT', 'patient record searched');
 define('UPDATED_PATIENT_FLAG', 'patient flag was updated');
+define('OPENED_PATIENT_LIST', 'patient list opened');
+define('OPENED_PATIENT_ACTIVITY', 'patient activity list opened');

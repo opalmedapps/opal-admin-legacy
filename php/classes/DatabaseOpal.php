@@ -349,23 +349,18 @@ class DatabaseOpal extends DatabaseAccess {
   * */
     function insertIntoAuditLogsTable($message, $username = null, $userId, $activityType = null, $dateTime = null, $date = null, $currentTime = null, $patientModifiedId = null) {
 
-        try {
+        $record = array(
+            'userId' => $userId,
+            'username' => $username,
+            'activityType' => $activityType,
+            'messageType' => $message,
+            'dateTime' => $dateTime,
+            'date' => $date,
+            'time' => $currentTime,
+            'patientModifiedId' => $patientModifiedId
+        );
 
-            $record = array(
-               'userId' => $userId,
-               'username' => $username,
-               'activityType' => $activityType,
-               'messageType' => $message,
-               'dateTime' => $dateTime,
-               'date' => $date,
-               'time' => $currentTime,
-               'patientModifiedId' => $patientModifiedId
-            );
-
-            $this->_insertRecordIntoTable(OPAL_AUDIT_LOGS, $record);
-        } catch (PDOException $e) {
-            return $e->getMessage();
-        }
+        $this->_insertRecordIntoTable(OPAL_AUDIT_LOGS, $record);
     }
 
     /*
