@@ -20,19 +20,18 @@ class Patient extends OpalProject {
             'message'   => ''
         );
 
+        $this->opalDB->insertIntoAuditLogsTable(ALERT, $this->opalDB->getUsername(), $this->opalDB->getOAUserId(), UPDATED_PATIENT_FLAG, date("Y-m-d h:i:sa"),date("Y/m/d"), date("h:i:sa"), null);
+
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             foreach ($patientList as $patient) {
                 $patientTransfer = $patient['transfer'];
                 $patientSer = $patient['serial'];
-                $patientId = $patient['patientId'];
                 $sql = "UPDATE PatientControl SET PatientControl.PatientUpdate = $patientTransfer WHERE PatientControl.PatientSerNum = $patientSer";
                 $query = $host_db_link->prepare( $sql );
                 $query->execute();
             }
-
-            $this->opalDB->insertIntoAuditLogsTable(ALERT, $this->opalDB->getUsername(), $this->opalDB->getOAUserId(), UPDATED_PATIENT_FLAG, date("Y-m-d h:i:sa"),date("Y/m/d"), date("h:i:sa"), null);
 
             $response['value'] = 1; // Success
             return $response;
