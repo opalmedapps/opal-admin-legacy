@@ -633,11 +633,11 @@ angular.module('opalAdmin.collections', [])
 		var userAPI = {};
 
 		// Function to get user details given a serial
-		userAPI.getUserDetails = function (userser, OAUserId) {
+		userAPI.getUserDetails = function (userId, OAUserId) {
 			return $http.post(
 				"user/get/user-details",
 				$.param({
-					userser: userser,
+					userId: userId,
 					OAUserId: OAUserId,
 				}),
 				{

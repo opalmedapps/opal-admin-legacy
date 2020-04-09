@@ -916,10 +916,46 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    function updateUserInfo($userId, $language) {
+        return $this->_execute(OPAL_UPDATE_USER_INFO, array(
+            array("parameter"=>":OAUserSerNum","variable"=>$userId,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":Language","variable"=>$language,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
     function updateUserLanguage($userId, $language) {
         return $this->_execute(OPAL_UPDATE_LANGUAGE, array(
             array("parameter"=>":OAUserSerNum","variable"=>$userId,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":Language","variable"=>$language,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    function getUserDetails($userId) {
+        return $this->_fetch(OPAL_GET_USER_DETAILS, array(
+            array("parameter"=>":OAUserSerNum","variable"=>$userId,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    function geRoleDetails($roleId) {
+        return $this->_fetch(OPAL_GET_ROLE_DETAILS, array(
+            array("parameter"=>":RoleSerNum","variable"=>$roleId,"data_type"=>PDO::PARAM_STR),
+        ));
+    }
+
+    function updateUserRole($userId, $roleId) {
+        return $this->_execute(OPAL_UPDATE_USER_ROLE, array(
+            array("parameter"=>":RoleSerNum","variable"=>$roleId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":OAUserSerNum","variable"=>$userId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function getUsersList() {
+        return $this->_fetchAll(OPAL_GET_USERS_LIST, array());
+    }
+
+    function countUsername($username) {
+        return $this->_fetch(OPAL_COUNT_USERNAME, array(
+            array("parameter"=>":Username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
         ));
     }
 }
