@@ -5,7 +5,7 @@
  *
  */
 
-class Patient {
+class Patient extends OpalProject {
 
     /**
      *
@@ -14,19 +14,21 @@ class Patient {
      * @param array $patientList : a list of patients
      * @return array $response : response
      */
-    public function updatePatientTransferFlags( $patientList ) {
+    public function updatePatientTransferFlags( $patientList) {
         $response = array(
             'value'     => 0,
             'message'   => ''
         );
+
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
             foreach ($patientList as $patient) {
                 $patientTransfer = $patient['transfer'];
                 $patientSer = $patient['serial'];
+                $patientId = $patient['patientId'];
                 $sql = "UPDATE PatientControl SET PatientControl.PatientUpdate = $patientTransfer WHERE PatientControl.PatientSerNum = $patientSer";
-
+                $this->opalDB->insertIntoAuditLogsTable(ALERT, $this->opalDB->getUsername(),$this->opalDB->getOAUserId(), UPDATED_PATIENT_FLAG, date("Y-m-d h:i:sa"),date("Y/m/d"), date("h:i:sa"), $patientId);
                 $query = $host_db_link->prepare( $sql );
                 $query->execute();
             }
@@ -143,6 +145,7 @@ class Patient {
      * @return array $patientResponse : patient information or response
      */
     public function findPatient($ssn, $id) {
+
         $patientResponse = array(
             'message'   => '',
             'status'    => '',
@@ -156,7 +159,7 @@ class Patient {
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             // First make a lookup in our database
-            $sql = "SELECT DISTINCT Patient.SSN FROM Patient WHERE Patient.SSN         LIKE '$ssn%' AND Patient.PatientId   = '$id' LIMIT 1";
+            $sql = "SELECT DISTINCT Patient.SSN FROM Patient WHERE Patient.SSN LIKE '$ssn%' AND Patient.PatientId   = '$id' LIMIT 1";
             $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
             $query->execute();
 
@@ -166,6 +169,7 @@ class Patient {
             }
 
             if (!is_null($lookupSSN)) { // Found an ssn
+                $this->opalDB->insertIntoAuditLogsTable(INFO, $this->opalDB->getUsername(), $this->opalDB->getOAUserId(), SEARCHED_PATIENT, date("Y-m-d h:i:sa"),date("Y/m/d"), date("h:i:sa"), $id);
                 $patientResponse['status'] = 'PatientAlreadyRegistered';
                 return $patientResponse;
             }
@@ -217,13 +221,22 @@ class Patient {
                             'picture'       => base64_encode($data[7]),
                             'sex'           => $data[8]
                         );
+                        var_dump($patientArray); exit;
+
+                        $this->opalDB->insertIntoAuditLogsTable(INFO, $this->opalDB->getUsername(), $this->opalDB->getOAUserId(), SEARCHED_PATIENT, date("Y-m-d h:i:sa"),date("Y/m/d"), date("h:i:sa"), $id);
 
                         $patientResponse['data'] = $patientArray;
                     }
 
                     if (is_null($lookupSSN)) { // Could not find the ssn
+                        $this->opalDB->insertIntoAuditLogsTable(INFO, $this->opalDB->getUsername(), $this->opalDB->getOAUserId(), SEARCHED_PATIENT, date("Y-m-d h:i:sa"),date("Y/m/d"), date("h:i:sa"), null);
                         $patientResponse['status'] = 'PatientNotFound';
                     }
+
+
+
+                    //$userDetails =  $this->opalDB;
+                    //var_dump($userDetails);
 
                     return $patientResponse;
                 }

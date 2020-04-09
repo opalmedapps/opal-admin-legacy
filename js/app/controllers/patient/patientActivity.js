@@ -1,9 +1,11 @@
 angular.module('opalAdmin.controllers.patientActivity', ['ngAnimate', 'ui.bootstrap']).
 
 
-controller('patientActivity', function ($scope, $uibModal, $filter, patientCollectionService) {
+controller('patientActivity', function ($scope, $uibModal, $filter, patientCollectionService, Session) {
 
 	$scope.bannerMessage = "";
+	$scope.loggedInUser = Session.retrieveObject('user');
+
 	// Function to show page banner
 	$scope.showBanner = function () {
 		$(".bannerMessage").slideDown(function () {
@@ -70,7 +72,7 @@ controller('patientActivity', function ($scope, $uibModal, $filter, patientColle
 
 	$scope.loading = true;
 	// Call our API to get the list of patient activities
-	patientCollectionService.getPatientActivities().then(function (response) {
+	patientCollectionService.getPatientActivities($scope.loggedInUser.id).then(function (response) {
 		// Assign value
 		$scope.patientActivityList = response.data;
 	}).catch(function(response) {

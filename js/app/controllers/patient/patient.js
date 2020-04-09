@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.
 /******************************************************************************
  * Patient Page controller
  *******************************************************************************/
-controller('patient', function ($scope, $filter, $sce, $state, $uibModal, patientCollectionService) {
+controller('patient', function ($scope, $filter, $sce, $state, $uibModal, patientCollectionService, Session) {
 
 	// Function to go to register new patient
 /*	$scope.goToAddPatient = function () {
@@ -12,6 +12,7 @@ controller('patient', function ($scope, $filter, $sce, $state, $uibModal, patien
 	};*/
 
 	$scope.bannerMessage = "";
+	$scope.loggedInUser = Session.retrieveObject('user');
 	// Function to show page banner
 	$scope.showBanner = function () {
 		$(".bannerMessage").slideDown(function () {
@@ -122,18 +123,25 @@ controller('patient', function ($scope, $filter, $sce, $state, $uibModal, patien
 
 	// Function to submit changes when transfer flags have been modified
 	$scope.submitTransferFlags = function () {
+
 		if ($scope.changesMade) {
+
 			angular.forEach($scope.patientList, function (patient) {
 				$scope.patientTransfers.transferList.push({
 					serial: patient.serial,
-					transfer: patient.transfer
+					transfer: patient.transfer,
+					patientId: patient.patientid
 				});
 			});
+			console.log($scope.patientTransfers);
 			// Submit form
 			$.ajax({
 				type: "POST",
 				url: "patient/update/patient-publish-flags",
-				data: $scope.patientTransfers,
+				data: {
+					patientTransfers: $scope.patientTransfers,
+					userId: $scope.loggedInUser.id
+				},
 				success: function (response) {
 					response = JSON.parse(response);
 					//Show success or failure depending on response
@@ -197,7 +205,8 @@ controller('patient', function ($scope, $filter, $sce, $state, $uibModal, patien
 	};
 
 	function getPatientsList() {
-		patientCollectionService.getPatients().then(function (response) {
+		patientCollectionService.getPatients($scope.loggedInUser.id).then(function (response) {
+
 			$scope.patientList = response.data;
 		}).catch(function(response) {
 			alert($filter('translate')('PATIENTS.LIST.ERROR_PATIENTS') + "\r\n\r\n" + response.status + " - " + response.data);

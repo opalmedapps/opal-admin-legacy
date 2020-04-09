@@ -146,3 +146,19 @@ define("HTTP_STATUS_INTERNAL_SERVER_ERROR",500);
  * Miscellaneous constants
  * */
 define("DEFAULT_FIELD", "");
+
+/*
+ * Log Messages
+ */
+define('ALERT', 'alert');
+define('CRITICAL', 'critical');
+define('INFO', 'info');
+define('WARNING', 'warning');
+define('NOTICE', 'notice');
+define('DEBUG', 'debug');
+
+/*
+ * Alert Type
+ */
+define('SEARCHED_PATIENT', 'patient record searched');
+define('UPDATED_PATIENT_FLAG', 'patient flag was updated');

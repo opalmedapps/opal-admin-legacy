@@ -412,9 +412,13 @@ angular.module('opalAdmin.collections', [])
 		var patientAPI = {};
 
 		// Function to get the list of patients
-		patientAPI.getPatients = function () {
+		patientAPI.getPatients = function (userId) {
+			console.log(userId);
 			return $http.post(
 				"patient/get/patients",
+				$.param({
+					userId: userId
+				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
@@ -463,9 +467,12 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// API to get patient activity list
-		patientAPI.getPatientActivities = function () {
+		patientAPI.getPatientActivities = function (userId) {
 			return $http.post(
 				"patient/get/patient-activities",
+				$.param({
+					userId: userId
+				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}

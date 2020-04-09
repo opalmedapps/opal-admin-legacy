@@ -1,13 +1,14 @@
 <?php
 
 include_once('patient.inc');
-
-$patientObject = new Patient; // Object
-$patientTransfers	= $_POST['transferList'];
+$OAUserId = $_POST['userId'];
+;
+$patientObject = new Patient($OAUserId); // Object
+$patientTransfers	= $_POST["patientTransfers"]['transferList'];
 $patientList = array();
 
 foreach($patientTransfers as $patient) {
-    array_push($patientList, array('serial' => $patient['serial'], 'transfer' => $patient['transfer']));
+    array_push($patientList, array('serial' => $patient['serial'], 'transfer' => $patient['transfer'], 'patientId' => $patient['patientId']));
 }
 
 $response = $patientObject->updatePatientTransferFlags($patientList);
