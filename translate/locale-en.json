@@ -2449,7 +2449,7 @@
       "ERROR_DETAILS": "An error occurred while getting the user details.",
       "ERROR_ROLES": "An error occurred while getting the list of roles.",
       "ERROR_PASSWORD_LENGTH": "The password must contains at least 6 characters.",
-      "ERROR_PASSWORD_INVALID": "The passwords do not match.",
+      "ERROR_PASSWORD_FORMAT": "Invalid password format.",
       "ERROR_UPDATE": "An error occurred while updating the user informations.",
       "SUCCESS_EDIT": "The user has being updated successfully."
     },
