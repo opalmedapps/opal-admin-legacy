@@ -249,18 +249,15 @@ class User extends OpalProject {
         return $userDetails;
     }
 
-
-    /**
-     *
-     * Determines the existence of a username
-     *
-     * @param string $username : username to check
-     *
-     * @return array $Response : response
-     */
+    /*
+     * returns if the username is already in use or not
+     * @params  $username (string)
+     * @return  boolean if the result is greater than 0 or not
+     * */
     public function usernameAlreadyInUse($username) {
         $results = $this->opalDB->countUsername($username);
-        return (intval($results["total"]) > 0);
+        $results = intval($results["total"]);
+        return $results > 0;
 
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
