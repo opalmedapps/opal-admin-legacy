@@ -305,8 +305,15 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 					url: 'user/insert/user',
 					data: data,
 					success: function () {
-						$state.go('users');
+					},
+					error: function(err) {
+						alert($filter('translate')('USERS.ADD.ERROR') + "\r\n\r\n" + err.status + " - " + err.responseText);
+					},
+					complete: function() {
+						// $state.go('users');
 					}
+
+
 				});
 			}
 		};

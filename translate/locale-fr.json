@@ -2482,7 +2482,8 @@
       "CLINICIAN": "Clinicien",
       "MANAGER": "Gestionnaire",
       "EDUCATION_CREATOR": "Education - Création",
-      "NOT_TRANSLATED": "Non traduit"
+      "NOT_TRANSLATED": "Non traduit",
+      "ERROR": "Une erreur s'est produite lors de la création de l'usager."
     },
     "EDIT": {
       "TITLE": "Modifier l'utilisateur",
