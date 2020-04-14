@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.patientRegistration', ['ngAnimate', 'ngSan
 	/******************************************************************************
 	* Patient Registration Page controller
 	*******************************************************************************/
-	controller('patientRegistration', function ($scope, $filter, $sce, $state, $uibModal, patientCollectionService, $translate, $rootScope, Session) {
+	controller('patientRegistration', function ($scope, $filter, $sce, $state, $uibModal, patientCollectionService, $translate, $rootScope) {
 
 		$scope.ssnHtmlInstruction = $filter('translate')('PATIENT_REGISTRATION_SEARCH_DESCRIPTION');
 
