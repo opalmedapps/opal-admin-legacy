@@ -3,7 +3,7 @@ include_once('user.inc');
 
 $OAUserId = strip_tags($_POST["OAUserId"]);
 $userObj = new User($OAUserId);
-$userObj->registerUser($_POST);
+$userObj->insertUser($_POST);
 
 header('Content-Type: application/javascript');
 $response['code'] = HTTP_STATUS_SUCCESS;

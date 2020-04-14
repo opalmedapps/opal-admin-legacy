@@ -70,8 +70,7 @@ class User extends OpalProject {
      *          $activity (string) type of activity to log in (Login or Logout)
      * */
     public function logActivity($userId, $sessionId, $activity) {
-        return $this->opalDB->insertUserActivity(array("Activity"=>$activity, "OAUserSerNum"=>$userId, "SessionId"=>$sessionId, "DateAdded"=>date("Y-m-d H:i:s"))
-        );
+        return $this->opalDB->insertUserActivity(array("Activity"=>$activity, "OAUserSerNum"=>$userId, "SessionId"=>$sessionId));
     }
 
     /*
@@ -186,11 +185,14 @@ class User extends OpalProject {
         return true;
     }
 
-
-
-
-
-    public function registerUser($post) {
+    /*
+     * insert a new user into the OAUser table and its role in OAUserRole table after sanitizing and validating the
+     * data.
+     * @params  $post (array) contains the username, password, confirmed password, role, language (all encrypted),
+     *          cypher.
+     * @returns void
+     * */
+    public function insertUser($post) {
         $post = HelpSetup::arraySanitization($post);
         $cypher = intval($post["cypher"]);
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
@@ -200,10 +202,13 @@ class User extends OpalProject {
         $password = $data["password"];
         $confirmPassword = $data["confirmPassword"];
         $roleId = $data["roleId"];
-        $language = $data["language"];
+        $language = strtoupper($data["language"]);
 
         if($username == "" || $password == "" || $confirmPassword == "" || $cypher == "" || $roleId == "" || $language == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data to create user.");
+
+        if($language != "FR" && $language != "EN")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Wrong language.");
 
         $result = $this->_passwordValidation($password, $confirmPassword);
         if(count($result) > 0)
@@ -213,36 +218,8 @@ class User extends OpalProject {
         if(!is_array($role))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid role.");
 
-
-
-
-        die();
-        $username 		= $userDetails['username'];
-        $password 		= $userDetails['password'];
-        $roleSer 		= $userDetails['role']['serial'];
-        $language 		= $userDetails['language'];
-        $cypher 		= $userDetails['cypher'];
-        try {
-            $con = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $con->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "INSERT INTO OAUser(Username, Password, Language, DateAdded) VALUES(:username, :password, :language, NOW())";
-
-            $stmt = $con->prepare( $sql );
-            $stmt->bindValue( "username", $username, PDO::PARAM_STR );
-            $stmt->bindValue( "password", hash("sha256", Encrypt::encodeString( $password, $cypher ) . USER_SALT), PDO::PARAM_STR );
-            $stmt->bindValue( "language", $language, PDO::PARAM_STR );
-            $stmt->execute();
-
-            $userSer = $con->lastInsertId();
-
-            $sql = "INSERT INTO OAUserRole(OAUserSerNum, RoleSerNum) VALUES('$userSer','$roleSer')";
-            $query = $con->prepare($sql);
-            $query->execute();
-            return;
-
-        }catch( PDOException $e ) {
-            return $e->getMessage();
-        }
+        $userId = $this->opalDB->insertUser($username, hash("sha256", $data["password"] . USER_SALT), $language);
+        $result = $this->opalDB->insertUserRole($userId, $roleId);
     }
 
 
