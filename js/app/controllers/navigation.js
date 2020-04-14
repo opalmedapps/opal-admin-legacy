@@ -110,10 +110,6 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 			$state.go('user-activity');
 		};
 
-		$scope.goToAuditReport = function () {
-			$state.go('audit-report');
-		};
-
 		// Function to close the navbar on selection of a menu page
 		$scope.closeNav = function () {
 			$(".navbar-collapse").collapse('hide');
