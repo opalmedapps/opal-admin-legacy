@@ -74,8 +74,7 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.diagnosisTranslation',
 	'opalAdmin.controllers.diagnosisTranslation.add',
 	'opalAdmin.controllers.diagnosisTranslation.edit',
-	'opalAdmin.controllers.diagnosisTranslation.delete',
-	'opalAdmin.controllers.auditReport'
+	'opalAdmin.controllers.diagnosisTranslation.delete'
 ]);
 
 

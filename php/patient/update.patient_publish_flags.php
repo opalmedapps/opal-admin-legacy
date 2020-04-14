@@ -1,7 +1,7 @@
 <?php
 
 include_once('patient.inc');
-$OAUserId = $_POST['userId'];
+$OAUserId = $_POST['OAUserId'];
 ;
 $patientObject = new Patient($OAUserId); // Object
 $patientTransfers	= $_POST["patientTransfers"]['transferList'];

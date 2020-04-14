@@ -15,12 +15,13 @@ class Patient extends OpalProject {
      * @return array $response : response
      */
     public function updatePatientTransferFlags( $patientList) {
+
+        $this->opalDB->insertIntoAuditLogsTable(ALERT, $this->opalDB->getUsername(), $this->opalDB->getOAUserId(), UPDATED_PATIENT_FLAG, date("Y-m-d h:i:sa"),date("Y/m/d"), date("h:i:sa"), null);
+
         $response = array(
             'value'     => 0,
             'message'   => ''
         );
-
-        $this->opalDB->insertIntoAuditLogsTable(ALERT, $this->opalDB->getUsername(), $this->opalDB->getOAUserId(), UPDATED_PATIENT_FLAG, date("Y-m-d h:i:sa"),date("Y/m/d"), date("h:i:sa"), null);
 
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -157,8 +158,6 @@ class Patient extends OpalProject {
         );
         $databaseObj = new Database();
         $activeDBSources = $databaseObj->getActiveSourceDatabases();
-
-        $this->opalDB->insertIntoAuditLogsTable(ALERT, $this->opalDB->getUsername(), $this->opalDB->getOAUserId(), SEARCHED_PATIENT, date("Y-m-d h:i:sa"),date("Y/m/d"), date("h:i:sa"), $id);
 
         try{
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );

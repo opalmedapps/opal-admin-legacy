@@ -235,25 +235,6 @@
 							</div>
 						</div>
 
-						<div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin])">
-							<div class="panel-container animated" ng-class="{pulse: hoverDiagnosisMenu}" ng-mouseenter="hoverDiagnosisMenu=true" ng-mouseleave="hoverDiagnosisMenu=false" style="cursor:pointer;" ng-click="goToAuditReport()">
-								<div class="panel-info" >
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span class="fa fa-stethoscope fa-sm" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>Audit report</h1>
-										</div>
-										<div class="panel-description">
-											<p>Report for auditing</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-
 						<!-- SECTION: Cron control -->
 						<div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin])">
 							<div class="panel-container animated" ng-class="{pulse: hoverCronMenu}" ng-mouseenter="hoverCronMenu=true" ng-mouseleave="hoverCronMenu=false" style="cursor:pointer;" ng-click="goToCron()">

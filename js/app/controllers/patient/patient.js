@@ -140,7 +140,7 @@ controller('patient', function ($scope, $filter, $sce, $state, $uibModal, patien
 				url: "patient/update/patient-publish-flags",
 				data: {
 					patientTransfers: $scope.patientTransfers,
-					userId: $scope.loggedInUser.id
+					OAUserId: $scope.loggedInUser.id
 				},
 				success: function (response) {
 					response = JSON.parse(response);
