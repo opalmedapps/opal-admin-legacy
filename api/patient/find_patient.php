@@ -6,7 +6,7 @@ include_once('patient.inc');
 $ssn = strip_tags($_POST['ssn']);
 $id = strip_tags($_POST['id']);
 
-$patientObj = new Patient($OAUserId); // Object
+$patientObj = new Patient(); // Object
 $patientResponse = $patientObj->findPatient($ssn, $id);
 
 //INSERT INTO AUDIT LOGS TABLE

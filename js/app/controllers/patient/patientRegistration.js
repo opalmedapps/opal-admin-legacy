@@ -182,13 +182,11 @@ angular.module('opalAdmin.controllers.patientRegistration', ['ngAnimate', 'ngSan
 		};
 
 		$scope.validPatientSearch = null;
-		$scope.loggedInUser = Session.retrieveObject('user');
-		console.log($scope.loggedInUser.id);
 		$scope.validatePatientSearch = function () {
 
 			if ($scope.validSearchForm()) {
 				// Call our API service to find patient
-				patientCollectionService.findPatient($scope.validSSN.SSN, $scope.validPatientId.id, $scope.loggedInUser.id).then(function (response) {
+				patientCollectionService.findPatient($scope.validSSN.SSN, $scope.validPatientId.id).then(function (response) {
 
 					if (response.data.status == 'PatientAlreadyRegistered') {
 						$scope.validSSN.status = 'warning';
