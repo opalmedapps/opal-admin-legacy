@@ -95,9 +95,10 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 			return;
 		}
 
+		//Password validation
+		//minimum 8 characters, 1 number, 1 lower case letter, 1 upper case letter and 1 special character
 		var validationPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/;
 		if(!password.match(validationPassword)) {
-			// if (password.length < 6) {
 			$scope.validPassword.status = 'invalid';
 			$scope.validPassword.message = $filter('translate')('USERS.EDIT.ERROR_PASSWORD_FORMAT');
 			$scope.passwordUpdate();

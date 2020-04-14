@@ -1,19 +1,10 @@
 <?php
-	/* To insert a newly created user */
-	include_once('user.inc');
+include_once('user.inc');
 
-	// Construct array from FORM params
-	$userArray = array(
-		'username'	=> $_POST['username'],
-		'password'	=> $_POST['password'],
-		'role'			=> $_POST['role'],
-		'language'	=> $_POST['language'],
-		'cypher'		=> $_POST['cypher']
-	);
+$OAUserId = strip_tags($_POST["OAUserId"]);
+$userObj = new User($OAUserId);
+$userObj->registerUser($_POST);
 
-	$userObj = new User(); // Object
-
-	// Call function
-	$userObj->registerUser($userArray);
-
-?>
+header('Content-Type: application/javascript');
+$response['code'] = HTTP_STATUS_SUCCESS;
+echo json_encode($response);
