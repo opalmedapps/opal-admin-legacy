@@ -8,6 +8,4 @@ $id = strip_tags($_POST['id']);
 $patientObj = new Patient; // Object
 $patientResponse = $patientObj->findPatient($ssn, $id);
 
-//INSERT INTO AUDIT LOGS TABLE
-
 echo json_encode($patientResponse);
