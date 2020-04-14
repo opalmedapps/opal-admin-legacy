@@ -343,10 +343,16 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-  * Insert new Audit Logs
-  * @params  record to insert
-  * @return  ID of the insertion
-  * */
+     * Insert new Audit Logs
+     * @params message(Describing the action)
+     * @params username(username of the user logged in and making the action)
+     * @params userId(userId of the user logged in and making the action)
+     * @params activityType(Description of the activity)
+     * @params dateTime(date and time when the action took place)
+     * @params date(date when the action took place)
+     * @params time(time when the action took place)
+     * @params patientModifiedId(Id of the patient)
+     */
     function insertIntoAuditLogsTable($message, $username = null, $userId, $activityType = null, $dateTime = null, $date = null, $currentTime = null, $patientModifiedId = null) {
 
         $record = array(
