@@ -185,14 +185,38 @@ class User extends OpalProject {
 
         return true;
     }
-    /**
-     *
-     * Registers a user into the database
-     *
-     * @param array $userDetails : the user details
-     * @return void
-     */
-    public function registerUser($userDetails) {
+
+
+
+
+
+    public function registerUser($post) {
+        $post = HelpSetup::arraySanitization($post);
+        $cypher = intval($post["cypher"]);
+        $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
+        $data = HelpSetup::arraySanitization($data);
+
+        $username = $data["username"];
+        $password = $data["password"];
+        $confirmPassword = $data["confirmPassword"];
+        $roleId = $data["roleId"];
+        $language = $data["language"];
+
+        if($username == "" || $password == "" || $confirmPassword == "" || $cypher == "" || $roleId == "" || $language == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data to create user.");
+
+        $result = $this->_passwordValidation($password, $confirmPassword);
+        if(count($result) > 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
+
+        $role = $this->opalDB->geRoleDetails($data["roleId"]);
+        if(!is_array($role))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid role.");
+
+
+
+
+        die();
         $username 		= $userDetails['username'];
         $password 		= $userDetails['password'];
         $roleSer 		= $userDetails['role']['serial'];
@@ -258,46 +282,22 @@ class User extends OpalProject {
         $results = $this->opalDB->countUsername($username);
         $results = intval($results["total"]);
         return $results > 0;
-
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "
-            	SELECT DISTINCT
-            		ato.Username
-            	FROM
-            		OAUser ato
-            	WHERE
-            		ato.Username = \"$username\"
-            	LIMIT 1
-            ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            $Response = 0;
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-                if ($data[0]) {
-                    $Response = 1;
-                }
-            }
-
-            return $Response;
-
-        } catch (PDOException $e) {
-            return $Response;
-        }
     }
 
     /**
+     * Mark a user as deleted.
      *
-     * Deletes a user from the database
+     * WARNING!!! No record should be EVER be removed from the questionnaire database! It should only being marked as
+     * being deleted ONLY  after it was verified the record is not locked, the user has the proper authorization and
+     * no more than one user is doing modification on it at a specific moment. Not following the proper procedure will
+     * have some serious impact on the integrity of the database and its records.
      *
-     * @param integer $userSer : the user serial number
+     * REMEMBER !!! NO DELETE STATEMENT EVER !!! YOU HAVE BEING WARNED !!!
+     *
+     * @param $questionId (ID of the question)
      * @return array $response : response
      */
-    public function deleteUser( $userSer ) {
+    public function deleteUser( $OAUserId ) {
 
         // Initialize a response array
         $response = array(

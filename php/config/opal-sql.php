@@ -546,5 +546,5 @@ define("OPAL_GET_USERS_LIST","
 ");
 
 define("OPAL_COUNT_USERNAME","
-    SELECT COUNT(*) AS total FROM ".OPAL_OAUSER_TABLE." WHERE Username :Username
+    SELECT COUNT(*) AS total FROM ".OPAL_OAUSER_TABLE." WHERE Username = :Username
 ");
