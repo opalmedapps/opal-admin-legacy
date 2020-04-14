@@ -194,7 +194,7 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 					alert($filter('translate')('USERS.EDIT.ERROR_UPDATE') + "\r\n\r\n" + err.status + " - " + err.responseText);
 				},
 				complete: function() {
-					// $uibModalInstance.close();
+					$uibModalInstance.close();
 				}
 			});
 		}

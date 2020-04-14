@@ -906,6 +906,7 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     function insertUserActivity($toInsert) {
+        $toInsert["DateAdded"] = date("Y-m-d H:i:s");
         return $this->_insertRecordIntoTable(OPAL_USER_ACTIVITY_LOG_TABLE, $toInsert);
     }
 
@@ -957,5 +958,19 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetch(OPAL_COUNT_USERNAME, array(
             array("parameter"=>":Username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
         ));
+    }
+
+    function insertUser($username, $password, $language) {
+        $toInsert = array(
+            "Username"=>$username,
+            "Password"=>$password,
+            "Language"=>$language,
+            "DateAdded"=>date("Y-m-d H:i:s"),
+        );
+        return $this->_insertRecordIntoTable(OPAL_OAUSER_TABLE, $toInsert);
+    }
+
+    function insertUserRole($userId, $roleId) {
+        return $this->_insertRecordIntoTable(OPAL_OAUSER_ROLE_TABLE, array("OAUserSerNum"=>$userId, "RoleSerNum"=>$roleId));
     }
 }

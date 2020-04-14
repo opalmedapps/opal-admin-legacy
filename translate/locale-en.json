@@ -2431,7 +2431,8 @@
       "CLINICIAN": "Clinician",
       "MANAGER": "Manager",
       "EDUCATION_CREATOR": "Education - Creator",
-      "NOT_TRANSLATED": "Not translated"
+      "NOT_TRANSLATED": "Not translated",
+      "ERROR": "An error occurred while creating the user."
     },
     "EDIT": {
       "TITLE": "Edit User",
