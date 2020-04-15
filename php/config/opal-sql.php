@@ -542,9 +542,14 @@ define("OPAL_GET_USERS_LIST","
     FROM ".OPAL_OAUSER_TABLE." ou
     LEFT JOIN ".OPAL_OAUSER_ROLE_TABLE." oaur ON oaur.OAUserSerNum = ou.OAUserSerNum
     LEFT JOIN ".OPAL_ROLE_TABLE." r ON r.RoleSerNum = oaur.RoleSerNum
-	WHERE r.RoleSerNum != ".ROLE_CRONJOB.";
+	WHERE r.RoleSerNum != ".ROLE_CRONJOB." AND deleted = ".NON_DELETED_RECORD.";
 ");
 
 define("OPAL_COUNT_USERNAME","
     SELECT COUNT(*) AS total FROM ".OPAL_OAUSER_TABLE." WHERE Username = :Username
+");
+
+define("OPAL_MARK_USER_AS_DELETED",
+    "UPDATE ".OPAL_OAUSER_TABLE." SET deleted = ".DELETED_RECORD." WHERE OAUserSerNum = :recordId
+    AND OAUserSerNum != :OAUserId AND deleted = ".NON_DELETED_RECORD.";
 ");

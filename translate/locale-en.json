@@ -2387,7 +2387,8 @@
       "WARNING": "WARNING!",
       "WARNING_TEXT": "Are you sure you want to delete the following user? This action cannot be undone!",
       "SUCCESS": "The user has being successfully deleted.",
-      "ERROR": "An error occurred while deleting the user."
+      "ERROR": "An error occurred while deleting the user.",
+      "ERROR_SAME_USER": "You cannot delete your own account!"
     },
     "ADD": {
       "BACK": "Back to Users",
