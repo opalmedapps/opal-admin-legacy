@@ -980,4 +980,14 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":OAUserId","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    function getRolesList() {
+        return $this->_fetchAll(OPAL_GET_ROLES_LIST, array());
+    }
+
+    function getUserLoginDetails($userId) {
+        return $this->_fetchAll(OPAL_GET_USER_LOGIN_DETAILS, array(
+            array("parameter"=>":OAUserSerNum","variable"=>$userId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }
