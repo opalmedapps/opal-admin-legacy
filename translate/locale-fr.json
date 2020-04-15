@@ -2438,7 +2438,8 @@
       "WARNING": "ATTENTION!",
       "WARNING_TEXT": "Voulez-vous vraiment supprimer l'utilisateur ci-dessous? Cette action est irreversible!",
       "SUCCESS": "L'utilisateur a été supprimé avec succès.",
-      "ERROR": "Une erreur s'est produite lors de la suppression de l'utilisateur."
+      "ERROR": "Une erreur s'est produite lors de la suppression de l'utilisateur.",
+      "ERROR_SAME_USER": "Vous ne pouvez supprimer vous-même votre compte!"
     },
     "ADD": {
       "BACK": "Retour",

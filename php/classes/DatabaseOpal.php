@@ -973,4 +973,11 @@ class DatabaseOpal extends DatabaseAccess {
     function insertUserRole($userId, $roleId) {
         return $this->_insertRecordIntoTable(OPAL_OAUSER_ROLE_TABLE, array("OAUserSerNum"=>$userId, "RoleSerNum"=>$roleId));
     }
+
+    function markUserAsDeleted($recordId) {
+        return $this->_execute(OPAL_MARK_USER_AS_DELETED, array(
+            array("parameter"=>":recordId","variable"=>$recordId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":OAUserId","variable"=>$this->getOAUserId(),"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }

@@ -6,7 +6,8 @@ $id = strip_tags($_POST["ID"]);
 $OAUserId = strip_tags($_POST["OAUserId"]);
 
 $user = new User($OAUserId);
-$response = $user->deleteUser($id);
+$user->deleteUser($id);
 
 header('Content-Type: application/javascript');
-print json_encode($response); // Return response
+$response['code'] = HTTP_STATUS_SUCCESS;
+echo json_encode($response);
