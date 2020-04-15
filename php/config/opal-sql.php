@@ -26,6 +26,7 @@ define( "OPAL_DB_PASSWORD_GUEST", $config['databaseConfig']['opalGuest']['passwo
 //Definition of all the tables from the opalDB database
 define("OPAL_OAUSER_TABLE","OAUser");
 define("OPAL_OAUSER_ROLE_TABLE","OAUserRole");
+define("OPAL_OAUSER_ACTIVITY_LOG_TABLE","OAActivityLog");
 define("OPAL_QUESTIONNAIRE_CONTROL_TABLE","QuestionnaireControl");
 define("OPAL_QUESTIONNAIRE_MH_TABLE","QuestionnaireMH");
 define("OPAL_FILTERS_TABLE","Filters");
@@ -552,4 +553,19 @@ define("OPAL_COUNT_USERNAME","
 define("OPAL_MARK_USER_AS_DELETED",
     "UPDATE ".OPAL_OAUSER_TABLE." SET deleted = ".DELETED_RECORD." WHERE OAUserSerNum = :recordId
     AND OAUserSerNum != :OAUserId AND deleted = ".NON_DELETED_RECORD.";
+");
+
+define("OPAL_GET_ROLES_LIST","
+    SELECT DISTINCT RoleSerNum AS serial, RoleName AS name FROM Role WHERE Role.RoleSerNum != ".ROLE_CRONJOB."
+    ORDER BY RoleName
+");
+
+define("OPAL_GET_USER_LOGIN_DETAILS","
+    SELECT DISTINCT oaa.OAUserSerNum AS serial, oaa.DateAdded AS login, oaa2.DateAdded AS logout, oaa.SessionId AS sessionid,
+    CONCAT (IF(MOD(HOUR(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 24) > 0,
+        CONCAT(MOD(HOUR(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 24), 'h'), ''),
+	    IF(MINUTE(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)) > 0, CONCAT(MINUTE(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 'm'), ''),
+	    SECOND(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 's') AS session_duration
+    FROM ".OPAL_OAUSER_TABLE." oa, ".OPAL_OAUSER_ACTIVITY_LOG_TABLE." oaa LEFT JOIN ".OPAL_OAUSER_ACTIVITY_LOG_TABLE." oaa2 ON oaa.SessionId = oaa2.SessionId  AND oaa2.Activity = 'Logout' 
+    WHERE oaa.`Activity` = 'Login' AND oa.OAUserSerNum = oaa.OAUserSerNum AND oa.OAUserSerNum = :OAUserSerNum ORDER BY oaa.DateAdded DESC
 ");

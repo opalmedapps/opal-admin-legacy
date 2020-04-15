@@ -281,43 +281,11 @@ class User extends OpalProject {
         $this->opalDB->markUserAsDeleted($userId);
     }
 
-
+    /*
+     * Get the list of roles an user can have.
+     * */
     public function getRoles() {
-        $roles = array();
-        try {
-            $connect = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $connect->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "
-		 		SELECT DISTINCT
-		 			Role.RoleSerNum,
-		 			Role.RoleName
-		 		FROM
-			 		Role
-			 	WHERE Role.RoleSerNum != ".ROLE_CRONJOB."
-
-			 	ORDER BY 
-			 		Role.RoleName
-	 		";
-            $query = $connect->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $serial = $data[0];
-                $name   = $data[1];
-
-                $roleArray = array(
-                    'serial'    	=> $serial,
-                    'name'      	=> $name,
-                );
-                array_push($roles, $roleArray);
-            }
-            return $roles;
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $roles;
-        }
+        return $this->opalDB->getRolesList();
     }
 
     /**
@@ -350,54 +318,12 @@ class User extends OpalProject {
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
             /* Logins */
-            $sql = "
-	            SELECT DISTINCT 
-	            	oaa.OAUserSerNum,
-	            	oaa.DateAdded as LoginTime, 
-	            	oaa2.DateAdded as LogoutTime, 
-	            	oaa.SessionId,
-	            	CONCAT (
-	            		IF(MOD(HOUR(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 24) > 0,
-	            			CONCAT(MOD(HOUR(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 24), 'h'),
-	            			''
-	            		),
-	            		IF(MINUTE(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)) > 0,
-	            			CONCAT(MINUTE(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 'm'),
-	            			''
-	            		),
-	            		SECOND(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 's'
-	            	) as SessionDuration
+            $test1 = $this->opalDB->getUserLoginDetails($userSer);
+            $userLogs['login'] = $this->opalDB->getUserLoginDetails($userSer);
+//            print_r($test1);
+//            die();
+//            array_push($userLogs['login'], $this->opalDB->getUserLoginDetails($userSer));
 
-	            FROM 
-	            	OAUser oa,
-	            	OAActivityLog oaa 
-	            LEFT JOIN 
-	            	OAActivityLog oaa2 
-	            ON oaa.SessionId = oaa2.SessionId  
-	            AND oaa2.Activity = 'Logout' 
-	            WHERE 
-	            	oaa.`Activity` 	= 'Login'
-	            AND oa.OAUserSerNum = oaa.OAUserSerNum
-	            AND oa.OAUserSerNum = '$userSer'
-
-                ORDER BY oaa.DateAdded DESC
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $loginDetails = array(
-                    'serial'                => $data[0],
-                    'login'                 => $data[1],
-                    'logout'				=> $data[2],
-                    'sessionid'             => $data[3],
-                    'session_duration'		=> $data[4]
-                );
-
-                array_push($userLogs['login'], $loginDetails);
-                $userLogs['isData'] = 1;
-            }
 
             /* Alias */
             $sql = "
