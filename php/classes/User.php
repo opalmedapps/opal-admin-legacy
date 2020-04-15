@@ -262,52 +262,25 @@ class User extends OpalProject {
     }
 
     /**
-     * Mark a user as deleted.
+     * Mark a user as deleted. An user cannot delete its own record
      *
-     * WARNING!!! No record should be EVER be removed from the questionnaire database! It should only being marked as
-     * being deleted ONLY  after it was verified the record is not locked, the user has the proper authorization and
-     * no more than one user is doing modification on it at a specific moment. Not following the proper procedure will
-     * have some serious impact on the integrity of the database and its records.
+     * WARNING!!! No record should be EVER be removed from the opalDB database!
      *
      * REMEMBER !!! NO DELETE STATEMENT EVER !!! YOU HAVE BEING WARNED !!!
      *
-     * @param $questionId (ID of the question)
-     * @return array $response : response
+     * @params $userId (int) ID of the user
+     * @return void
      */
-    public function deleteUser( $OAUserId ) {
+    public function deleteUser($userId) {
+        $userId = strip_tags($userId);
+        if($userId == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid user.");
+        elseif ($userId == $this->opalDB->getOAUserId())
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "An user cannot delete itself.");
 
-        // Initialize a response array
-        $response = array(
-            'value'		=> 0,
-            'message'	=> ''
-        );
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-            $sql = "DELETE FROM OAUserRole WHERE OAUserRole.OAUserSerNum = $userSer";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-            $sql = "DELETE FROM OAUser WHERE OAUser.OAUserSerNum = $userSer";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
-
-            $response['value'] = 1; // Success
-            return $response;
-
-        } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response; // Fail
-        }
+        $this->opalDB->markUserAsDeleted($userId);
     }
 
-    /**
-     *
-     * Gets a list of possible roles from the database
-     *
-     * @return array $roles : roles
-     */
 
     public function getRoles() {
         $roles = array();
