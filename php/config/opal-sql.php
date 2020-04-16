@@ -521,6 +521,10 @@ define("SQL_OPAL_VALIDATE_OAUSER_LOGIN","
     SELECT * FROM ".OPAL_LOGIN_VIEW." WHERE username = :username AND password = :password;
 ");
 
+define("SQL_OPAL_VALIDATE_OAUSER_LOGIN_AD","
+    SELECT * FROM ".OPAL_LOGIN_VIEW." WHERE username = :username;
+");
+
 define("OPAL_UPDATE_PASSWORD","
     UPDATE ".OPAL_OAUSER_TABLE." SET Password = :Password WHERE OAUserSerNum = :OAUserSerNum AND Password != :Password;
 ");
