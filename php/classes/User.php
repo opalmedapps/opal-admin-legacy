@@ -12,6 +12,50 @@ class User extends OpalProject {
         parent::__construct($OAUserId, false, $guestAccess);
     }
 
+    protected function _validateUserAuthentication($result) {
+        if(count($result) < 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Access denied");
+        else if(count($result) > 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Somethings's wrong. There is too many entries!");
+        $result = $result[0];
+        unset($result["password"]);
+        return $result;
+    }
+
+    protected function _userLoginActiveDirectory($username, $password) {
+        $result = $this->opalDB->authenticateUserAD($username);
+        $result = $this->_validateUserAuthentication($result);
+
+        $settingsAD = json_encode(ACTIVE_DIRECTORY_SETTINGS);
+        $settingsAD = str_replace("%%USERNAME%%", $username, $settingsAD);
+        $settingsAD = str_replace("%%PASSWORD%%", $password, $settingsAD);
+        $settingsAD = json_decode($settingsAD, true);
+
+        $fieldString = "";
+        foreach($settingsAD as $key=>$value) {
+            $fieldString .= $key.'='.$value.'&';
+        }
+        $fieldString = substr($fieldString, 0, -1);
+
+        $ch = curl_init();
+        curl_setopt($ch,CURLOPT_URL, ACTIVE_DIRECTORY["url"]);
+        curl_setopt($ch,CURLOPT_POSTFIELDS,$fieldString);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        $requestResult = json_decode(curl_exec($ch),TRUE);
+        curl_close($ch);
+
+        if(!$requestResult["authenticate"])
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Access denied");
+
+        return $result;
+    }
+
+    protected function _userLoginLegacy($username, $password) {
+        $result = $this->opalDB->authenticateUserLegacy($username, hash("sha256", $password . USER_SALT));
+        $result = $this->_validateUserAuthentication($result);
+        return $result;
+    }
+
     /*
      * Validate the user and log its activity.
      * @param   $post (array) contains username, password and cypher
@@ -19,25 +63,21 @@ class User extends OpalProject {
      * */
     public function userLogin($post) {
         $post = HelpSetup::arraySanitization($post);
-        $data = json_decode(Encrypt::encodeString( $post["encrypted"], $post["cypher"]), true);
+        $cypher = $post["cypher"];
+        $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
         $data = HelpSetup::arraySanitization($data);
         $username = $data["username"];
         $password = $data["password"];
-        $cypher = $post["cypher"];
 
         if($username == "" || $password == "" || $cypher == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing login info.");
 
-        $result = $this->opalDB->validateOpalUserLogin($username, hash("sha256", $password . USER_SALT));
+        if(AD_LOGIN_ACTIVE)
+            $result = $this->_userLoginActiveDirectory($username, $password);
+        else
+            $result = $this->_userLoginLegacy($username, $password);
 
-        if(count($result) < 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Access denied");
-        else if(count($result) > 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Somethings's wrong. There is too many entries!");
-
-        $result = $result[0];
         $this->_connectAsMain($result["id"]);
-        unset($result["password"]);
         $result["sessionid"] = HelpSetup::makeSessionId();
         $this->logActivity($result["id"], $result["sessionid"], 'Login');
 
@@ -116,7 +156,7 @@ class User extends OpalProject {
         if(count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
 
-        $result = $this->opalDB->validateOpalUserLogin($username, hash("sha256", $oldPassword . USER_SALT));
+        $result = $this->opalDB->authenticateUserLegacy($username, hash("sha256", $oldPassword . USER_SALT));
         if(count($result) < 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid username/password.");
         else if(count($result) > 1)
@@ -249,7 +289,7 @@ class User extends OpalProject {
      * @params  $username (string)
      * @return  boolean if the result is greater than 0 or not
      * */
-    public function usernameAlreadyInUse($username) {
+    public function usernameExists($username) {
         $results = $this->opalDB->countUsername($username);
         $results = intval($results["total"]);
         return $results > 0;

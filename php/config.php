@@ -125,7 +125,10 @@ define("ORMS_SOURCE_DB", 2);
 define("MOSAIQ_SOURCE_DB", 3);
 define("LOCAL_SOURCE_DB", -1);
 
-define("USER_SALT", $config['login']['salt']);
+define("USER_SALT", $config["login"]["salt"]);
+define("ACTIVE_DIRECTORY", $config["login"]["activeDirectory"]);
+define("ACTIVE_DIRECTORY_SETTINGS", $config["login"]["activeDirectory"]["settings"]);
+define("AD_LOGIN_ACTIVE", ACTIVE_DIRECTORY["enabled"]);
 
 /*
  * Module ID of each module in the opalAdmin
