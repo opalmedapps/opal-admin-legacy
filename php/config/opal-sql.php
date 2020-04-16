@@ -27,10 +27,20 @@ define( "OPAL_DB_PASSWORD_GUEST", $config['databaseConfig']['opalGuest']['passwo
 define("OPAL_OAUSER_TABLE","OAUser");
 define("OPAL_OAUSER_ROLE_TABLE","OAUserRole");
 define("OPAL_OAUSER_ACTIVITY_LOG_TABLE","OAActivityLog");
+define("OPAL_ALIAS_EXPRESSION_MH_TABLE","AliasExpressionMH");
+define("OPAL_DIAGNOSIS_TRANSLATION_MH_TABLE","DiagnosisTranslationMH");
+define("OPAL_DIAGNOSIS_CODE_MH_TABLE","DiagnosisCodeMH");
 define("OPAL_QUESTIONNAIRE_CONTROL_TABLE","QuestionnaireControl");
 define("OPAL_QUESTIONNAIRE_MH_TABLE","QuestionnaireMH");
+define("OPAL_EMAIL_CONTROL_MH_TABLE","EmailControlMH");
+define("OPAL_HOSPITAL_MAP_MH_TABLE","HospitalMapMH");
+define("OPAL_POST_CONTROL_MH_TABLE","PostControlMH");
+define("OPAL_NOTIFICATION_CONTROL_MH_TABLE","NotificationControlMH");
+define("OPAL_QUESTIONNAIRE_CONTROL_MH_TABLE","QuestionnaireControlMH");
+define("OPAL_TEST_RESULT_CONTROL_MH_TABLE","TestResultControlMH");
+define("OPAL_TEST_RESULT_EXP_MH_TABLE","TestResultExpressionMH");
 define("OPAL_FILTERS_TABLE","Filters");
-define("OPAL_FILTERS_MODIFICATION_HISTORY_TABLE","FiltersMH");
+define("OPAL_FILTERS_MH_TABLE","FiltersMH");
 define("OPAL_FREQUENCY_EVENTS_TABLE","FrequencyEvents");
 define("OPAL_MODULE_TABLE","module");
 define("OPAL_MODULE_PUBLICATION_SETTING_TABLE","modulePublicationSetting");
@@ -62,6 +72,7 @@ define("OPAL_DIAGNOSIS_CODE_TABLE","DiagnosisCode");
 define("OPAL_LOGIN_VIEW","v_login");
 define("OPAL_USER_ACTIVITY_LOG_TABLE","OAActivityLog");
 define("OPAL_ROLE_TABLE","Role");
+define("OPAL_ALIAS_MH_TABLE","AliasMH");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -139,7 +150,7 @@ define("SQL_OPAL_DELETE_FILTERS",
 );
 
 define("SQL_OPAL_UPDATE_FILTERSMH",
-    "UPDATE ".OPAL_FILTERS_MODIFICATION_HISTORY_TABLE."
+    "UPDATE ".OPAL_FILTERS_MH_TABLE."
     SET 
     LastUpdatedBy = :LastUpdatedBy,
     SessionId = :SessionId
@@ -557,7 +568,7 @@ define("OPAL_MARK_USER_AS_DELETED",
 
 define("OPAL_GET_ROLES_LIST","
     SELECT DISTINCT RoleSerNum AS serial, RoleName AS name FROM Role WHERE Role.RoleSerNum != ".ROLE_CRONJOB."
-    ORDER BY RoleName
+    ORDER BY RoleName;
 ");
 
 define("OPAL_GET_USER_LOGIN_DETAILS","
@@ -566,6 +577,88 @@ define("OPAL_GET_USER_LOGIN_DETAILS","
         CONCAT(MOD(HOUR(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 24), 'h'), ''),
 	    IF(MINUTE(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)) > 0, CONCAT(MINUTE(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 'm'), ''),
 	    SECOND(TIMEDIFF(oaa2.DateAdded, oaa.DateAdded)), 's') AS session_duration
-    FROM ".OPAL_OAUSER_TABLE." oa, ".OPAL_OAUSER_ACTIVITY_LOG_TABLE." oaa LEFT JOIN ".OPAL_OAUSER_ACTIVITY_LOG_TABLE." oaa2 ON oaa.SessionId = oaa2.SessionId  AND oaa2.Activity = 'Logout' 
-    WHERE oaa.`Activity` = 'Login' AND oa.OAUserSerNum = oaa.OAUserSerNum AND oa.OAUserSerNum = :OAUserSerNum ORDER BY oaa.DateAdded DESC
+    FROM ".OPAL_OAUSER_TABLE." oa, ".OPAL_OAUSER_ACTIVITY_LOG_TABLE." oaa LEFT JOIN ".OPAL_OAUSER_ACTIVITY_LOG_TABLE." oaa2
+    ON oaa.SessionId = oaa2.SessionId  AND oaa2.Activity = 'Logout' 
+    WHERE oaa.`Activity` = 'Login' AND oa.OAUserSerNum = oaa.OAUserSerNum AND oa.OAUserSerNum = :OAUserSerNum ORDER BY oaa.DateAdded DESC;
+");
+
+define("OPAL_GET_USER_ALIAS_DETAILS","
+    SELECT DISTINCT AliasSerNum AS serial, AliasRevSerNum AS revision, SessionId AS sessionid, AliasType AS `type`, AliasUpdate AS `update`,
+    AliasName_EN AS name_EN, AliasName_FR AS name_FR, AliasDescription_EN AS description_EN, AliasDescription_FR AS description_FR,
+    EducationalMaterialControlSerNum AS educational_material, SourceDatabaseSerNum AS source_db, ColorTag AS color,
+    ModificationAction AS mod_action, DateAdded AS date_added
+    FROM ".OPAL_ALIAS_MH_TABLE." WHERE LastUpdatedBy = :LastUpdatedBy ORDER BY DateAdded DESC;
+");
+
+define("OPAL_GET_USER_ALIAS_EXPRESSIONS","
+    SELECT DISTINCT AliasSerNum AS serial, RevSerNum AS revision, SessionId AS sessionid, ExpressionName AS expression,
+    Description AS resource_description, ModificationAction AS mod_action, DateAdded AS date_added FROM ".OPAL_ALIAS_EXPRESSION_MH_TABLE." 
+    WHERE LastUpdatedBy = :LastUpdatedBy ORDER BY DateAdded DESC;
+");
+
+define("OPAL_GET_USER_DIAGNOSIS_TRANSLATIONS","
+    SELECT DISTINCT DiagnosisTranslationSerNum AS serial, RevSerNum AS revision, SessionId AS sessionid, 
+    EducationalMaterialControlSerNum AS educational_material, Name_EN AS name_EN, Name_FR AS name_FR, Description_EN AS description_EN,
+    Description_FR AS description_FR, ModificationAction AS mod_action, DateAdded AS date_added FROM ".OPAL_DIAGNOSIS_TRANSLATION_MH_TABLE."
+    WHERE LastUpdatedBy = :LastUpdatedBy ORDER BY DateAdded DESC;
+");
+
+define("OPAL_GET_USER_DIAGNOSIS_CODE","
+    SELECT DISTINCT DiagnosisTranslationSerNum AS serial, RevSerNum AS revision, SessionId AS sessionid, SourceUID AS sourceuid,
+    DiagnosisCode AS code, Description AS description, ModificationAction AS mod_action, DateAdded AS date_added
+    FROM ".OPAL_DIAGNOSIS_CODE_MH_TABLE." WHERE LastUpdatedBy = :LastUpdatedBy ORDER BY DateAdded DESC;
+");
+
+define("OPAL_GET_USER_EMAIL","
+    SELECT DISTINCT EmailControlSerNum AS serial, RevSerNum AS revision, SessionId AS sessionid, Subject_EN AS subject_EN,
+    Subject_FR AS subject_FR, Body_EN AS body_EN, Body_FR AS body_FR, ModificationAction AS mod_action, DateAdded AS date_added
+    FROM ".OPAL_EMAIL_CONTROL_MH_TABLE." WHERE LastUpdatedBy = :LastUpdatedBy ORDER BY DateAdded DESC;
+");
+
+define("OPAL_GET_USER_TRIGGER","
+    SELECT DISTINCT ControlTableSerNum AS control_serial, ControlTable AS control_table, SessionId AS sessionid, FilterType AS `type`,
+    FilterId AS filterid, ModificationAction AS mod_action, DateAdded AS date_added FROM ".OPAL_FILTERS_MH_TABLE."
+    WHERE LastUpdatedBy = :LastUpdatedBy ORDER BY DateAdded DESC;
+");
+
+define("OPAL_GET_USER_HOSPITAL_MAP","
+    SELECT DISTINCT HospitalMapSerNum AS serial, RevSerNum AS revision, SessionId AS sessionid, MapUrl AS url, QRMapAlias AS qrcode,
+    MapName_EN AS name_EN, MapName_FR AS name_FR, MapDescription_EN AS description_EN, MapDescription_FR AS description_FR,
+    ModificationAction AS mod_action, DateAdded AS date_added FROM ".OPAL_HOSPITAL_MAP_MH_TABLE." WHERE LastUpdatedBy = :LastUpdatedBy
+    ORDER BY DateAdded DESC;
+");
+
+define("OPAL_GET_USER_POST","
+    SELECT DISTINCT PostControlSerNum AS control_serial, RevSerNum AS revision, SessionId AS sessionid, PostType AS `type`,
+    PublishFlag AS publish, Disabled AS disabled, PublishDate AS publish_date, PostName_EN AS name_EN, PostName_FR AS name_FR,
+    Body_EN AS body_EN, Body_FR AS body_FR, ModificationAction AS mod_action, DateAdded AS date_added
+    FROM ".OPAL_POST_CONTROL_MH_TABLE." WHERE LastUpdatedBy = :LastUpdatedBy ORDER BY DateAdded DESC;
+");
+
+define("OPAL_GET_USER_NOTIFICATION","
+    SELECT DISTINCT NotificationControlSerNum AS control_serial, RevSerNum AS revision, SessionId AS sessionid, 
+    NotificationTypeSerNum AS `type`, Name_EN AS name_EN, Name_FR AS name_FR, Description_EN AS description_EN,
+    Description_FR AS description_FR, ModificationAction AS mod_action, DateAdded AS date_added
+    FROM ".OPAL_NOTIFICATION_CONTROL_MH_TABLE." WHERE LastUpdatedBy = :LastUpdatedBy ORDER BY DateAdded DESC;
+");
+
+define("OPAL_GET_USER_QUESTIONNAIRE","
+    SELECT DISTINCT QuestionnaireControlSerNum AS control_serial, RevSerNum AS revision, SessionId AS sessionid,
+    QuestionnaireDBSerNum AS db_serial, QuestionnaireName_EN AS name_EN, QuestionnaireName_FR AS name_FR, Intro_EN AS intro_EN,
+    Intro_FR AS intro_FR, PublishFlag AS publish, ModificationAction AS mod_action, DateAdded AS date_added
+    FROM ".OPAL_QUESTIONNAIRE_CONTROL_MH_TABLE." WHERE LastUpdatedBy = :LastUpdatedBy ORDER BY DateAdded DESC;
+");
+
+define("OPAL_GET_USER_TEST_RESULT","
+    SELECT DISTINCT TestResultControlSerNum AS control_serial, RevSerNum AS revision, SessionId AS sessionid,
+    SourceDatabaseSerNum AS source_db, EducationalMaterialControlSerNum AS educational_material, Name_EN AS name_EN,
+    Name_FR AS name_FR, Description_EN AS description_EN, Description_FR AS description_FR, Group_EN AS group_EN,
+    Group_FR AS group_FR, PublishFlag AS publish, ModificationAction AS mod_action, DateAdded AS date_added
+    FROM ".OPAL_TEST_RESULT_CONTROL_MH_TABLE." WHERE LastUpdatedBy = :LastUpdatedBy ORDER BY DateAdded DESC;
+");
+
+define("OPAL_GET_USER_TEST_RESULT_EXP","
+    SELECT DISTINCT TestResultControlSerNum AS control_serial, RevSerNum AS revision, SessionId AS sessionid,
+    ExpressionName AS expression, ModificationAction AS mod_action, DateAdded AS date_added
+    FROM ".OPAL_TEST_RESULT_EXP_MH_TABLE." WHERE LastUpdatedBy = :LastUpdatedBy ORDER BY DateAdded DESC;
 ");

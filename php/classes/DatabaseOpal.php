@@ -889,6 +889,13 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(OPAL_GET_TREATMENT_MACHINES_TRIGGERS, array());
     }
 
+    /*
+     * Count the total iteration of a custom code.
+     * @params  $tableName (string) name of the table where to count
+     *          $code (string) name of the custom code to count
+     *          $description (string) description of the custom code to count
+     * @return  total found (array)
+     * */
     function getCountCustomCodes($tableName, $code, $description) {
         $sql = str_replace("%%MASTER_SOURCE_TABLE%%", $tableName, OPAL_COUNT_CODE_MASTER_SOURCE);
         $toQuery = array(
@@ -898,6 +905,12 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetch($sql, $toQuery);
     }
 
+    /*
+     * Validate a username and a password of an user in opalDB
+     * @params  $username (string)
+     *          $password (string) already encrypted
+     * @return  array with the results found
+     * */
     function validateOpalUserLogin($username, $password) {
         return $this->_fetchAll(SQL_OPAL_VALIDATE_OAUSER_LOGIN, array(
             array("parameter"=>":username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
@@ -905,11 +918,22 @@ class DatabaseOpal extends DatabaseAccess {
        ));
     }
 
+    /*
+     * Insert an activity log into the OAUserActivityLog with the date.
+     * @params  $toInsert (array) data to insert
+     * @return  array of results of insertion
+     * */
     function insertUserActivity($toInsert) {
         $toInsert["DateAdded"] = date("Y-m-d H:i:s");
         return $this->_insertRecordIntoTable(OPAL_USER_ACTIVITY_LOG_TABLE, $toInsert);
     }
 
+    /*
+     * Update a password of an user in opalDB
+     * @params  $userId (int)
+     *          $encryptedPassword (string)
+     * @return  array with the result of the update
+     * */
     function updateUserPassword($userId, $encryptedPassword) {
         return $this->_execute(OPAL_UPDATE_PASSWORD, array(
             array("parameter"=>":OAUserSerNum","variable"=>$userId,"data_type"=>PDO::PARAM_STR),
@@ -917,6 +941,12 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /*
+     * Update user info in opalDB
+     * @params  $userId (int)
+     *          $language (string)
+     * @return  array with the result of the update
+     * */
     function updateUserInfo($userId, $language) {
         return $this->_execute(OPAL_UPDATE_USER_INFO, array(
             array("parameter"=>":OAUserSerNum","variable"=>$userId,"data_type"=>PDO::PARAM_STR),
@@ -924,6 +954,12 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /*
+     * Update user info in opalDB
+     * @params  $userId (int) ID of the user
+     *          $language (string)
+     * @return  array with the result of the update
+     * */
     function updateUserLanguage($userId, $language) {
         return $this->_execute(OPAL_UPDATE_LANGUAGE, array(
             array("parameter"=>":OAUserSerNum","variable"=>$userId,"data_type"=>PDO::PARAM_STR),
@@ -931,18 +967,34 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /*
+     * Get user details
+     * @params  $userId (int) ID of the user
+     * @return  array with the result of the fetch
+     * */
     function getUserDetails($userId) {
         return $this->_fetch(OPAL_GET_USER_DETAILS, array(
             array("parameter"=>":OAUserSerNum","variable"=>$userId,"data_type"=>PDO::PARAM_STR),
         ));
     }
 
+    /*
+     * Get role details
+     * @params  $roleId (int) ID of the role
+     * @return  array with the result of the fetch
+     * */
     function geRoleDetails($roleId) {
         return $this->_fetch(OPAL_GET_ROLE_DETAILS, array(
             array("parameter"=>":RoleSerNum","variable"=>$roleId,"data_type"=>PDO::PARAM_STR),
         ));
     }
 
+    /*
+     * Update the role of an user
+     * @params  $userId (int) ID of the user
+     *          $roleId (int) ID of the role
+     * @return  array with the result of the update
+     * */
     function updateUserRole($userId, $roleId) {
         return $this->_execute(OPAL_UPDATE_USER_ROLE, array(
             array("parameter"=>":RoleSerNum","variable"=>$roleId,"data_type"=>PDO::PARAM_INT),
@@ -950,16 +1002,33 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /*
+     * Get the list of all non deleted users
+     * @params  void
+     * @return  array with the result of the fetch all
+     * */
     function getUsersList() {
         return $this->_fetchAll(OPAL_GET_USERS_LIST, array());
     }
 
+    /*
+     * Count the number of time an username is in use
+     * @params  $username (string) username to count
+     * @return  array with the result of the count
+     * */
     function countUsername($username) {
         return $this->_fetch(OPAL_COUNT_USERNAME, array(
             array("parameter"=>":Username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
         ));
     }
 
+    /*
+     * insert a new user and the date of adding
+     * @params  $username (string) username (duh!)
+     *          $password (string) encrypted password
+     *          $language (string) preferred language
+     * @return  array with the result of the insert
+     * */
     function insertUser($username, $password, $language) {
         $toInsert = array(
             "Username"=>$username,
@@ -970,10 +1039,21 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_insertRecordIntoTable(OPAL_OAUSER_TABLE, $toInsert);
     }
 
+    /*
+     * insert into the intersection table of role-user to give a role to an user
+     * @params  $userId (int) ID of the user
+     *          $roleId (int) ID of the role
+     * @return  array with the result of the insert
+     * */
     function insertUserRole($userId, $roleId) {
         return $this->_insertRecordIntoTable(OPAL_OAUSER_ROLE_TABLE, array("OAUserSerNum"=>$userId, "RoleSerNum"=>$roleId));
     }
 
+    /*
+     * mark of user as being deleted
+     * @params  $recordId (int) ID of the record to delete
+     * @return  array with the result of the execution
+     * */
     function markUserAsDeleted($recordId) {
         return $this->_execute(OPAL_MARK_USER_AS_DELETED, array(
             array("parameter"=>":recordId","variable"=>$recordId,"data_type"=>PDO::PARAM_INT),
@@ -981,13 +1061,155 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /*
+     * Get all the roles list of users
+     * @params  void
+     * @return  array with the result of the fetch all
+     * */
     function getRolesList() {
         return $this->_fetchAll(OPAL_GET_ROLES_LIST, array());
     }
 
+    /*
+     * Get all the user login details
+     * @params  $userId (int) ID of the user
+     * @return  array with the result of the fetch all
+     * */
     function getUserLoginDetails($userId) {
         return $this->_fetchAll(OPAL_GET_USER_LOGIN_DETAILS, array(
             array("parameter"=>":OAUserSerNum","variable"=>$userId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get all the user alias manipulations
+     * @params  $userId (int) ID of the user
+     * @return  array with the result of the fetch all
+     * */
+    function getUserAliasDetails($userId) {
+        return $this->_fetchAll(OPAL_GET_USER_ALIAS_DETAILS, array(
+            array("parameter"=>":LastUpdatedBy","variable"=>$userId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get all the user alias expressions manipulations
+     * @params  $userId (int) ID of the user
+     * @return  array with the result of the fetch all
+     * */
+    function getUserAliasExpressions($userId) {
+        return $this->_fetchAll(OPAL_GET_USER_ALIAS_EXPRESSIONS, array(
+            array("parameter"=>":LastUpdatedBy","variable"=>$userId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get all the user diagnosis translations manipulations
+     * @params  $userId (int) ID of the user
+     * @return  array with the result of the fetch all
+     * */
+    function getUserDiagnosisTranslations($userId) {
+        return $this->_fetchAll(OPAL_GET_USER_DIAGNOSIS_TRANSLATIONS, array(
+            array("parameter"=>":LastUpdatedBy","variable"=>$userId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get all the user diagnosis code manipulations
+     * @params  $userId (int) ID of the user
+     * @return  array with the result of the fetch all
+     * */
+    function getUserDiagnosisCode($userId) {
+        return $this->_fetchAll(OPAL_GET_USER_DIAGNOSIS_CODE, array(
+            array("parameter"=>":LastUpdatedBy","variable"=>$userId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get all the user email manipulations
+     * @params  $userId (int) ID of the user
+     * @return  array with the result of the fetch all
+     * */
+    function getUserEmail($userId) {
+        return $this->_fetchAll(OPAL_GET_USER_EMAIL, array(
+            array("parameter"=>":LastUpdatedBy","variable"=>$userId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get all the user filter manipulations
+     * @params  $userId (int) ID of the user
+     * @return  array with the result of the fetch all
+     * */
+    function getUserFilter($userId) {
+        return $this->_fetchAll(OPAL_GET_USER_TRIGGER, array(
+            array("parameter"=>":LastUpdatedBy","variable"=>$userId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get all the user hospital maps manipulations
+     * @params  $userId (int) ID of the user
+     * @return  array with the result of the fetch all
+     * */
+    function getUserHospitalMap($userId) {
+        return $this->_fetchAll(OPAL_GET_USER_HOSPITAL_MAP, array(
+            array("parameter"=>":LastUpdatedBy","variable"=>$userId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get all the user posts manipulations
+     * @params  $userId (int) ID of the user
+     * @return  array with the result of the fetch all
+     * */
+    function getUserPost($userId) {
+        return $this->_fetchAll(OPAL_GET_USER_POST, array(
+            array("parameter"=>":LastUpdatedBy","variable"=>$userId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get all the user notifications manipulations
+     * @params  $userId (int) ID of the user
+     * @return  array with the result of the fetch all
+     * */
+    function getUserNotification($userId) {
+        return $this->_fetchAll(OPAL_GET_USER_NOTIFICATION, array(
+            array("parameter"=>":LastUpdatedBy","variable"=>$userId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get all the user questionnaires manipulations
+     * @params  $userId (int) ID of the user
+     * @return  array with the result of the fetch all
+     * */
+    function getUserQuestionnaire($userId) {
+        return $this->_fetchAll(OPAL_GET_USER_QUESTIONNAIRE, array(
+            array("parameter"=>":LastUpdatedBy","variable"=>$userId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get all the user test results manipulations
+     * @params  $userId (int) ID of the user
+     * @return  array with the result of the fetch all
+     * */
+    function getUserTestResult($userId) {
+        return $this->_fetchAll(OPAL_GET_USER_TEST_RESULT, array(
+            array("parameter"=>":LastUpdatedBy","variable"=>$userId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get all the user test results expressions manipulations
+     * @params  $userId (int) ID of the user
+     * @return  array with the result of the fetch all
+     * */
+    function getUserTestResultExpression($userId) {
+        return $this->_fetchAll(OPAL_GET_USER_TEST_RESULT_EXP, array(
+            array("parameter"=>":LastUpdatedBy","variable"=>$userId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 }
