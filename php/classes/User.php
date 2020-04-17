@@ -12,6 +12,12 @@ class User extends OpalProject {
         parent::__construct($OAUserId, false, $guestAccess);
     }
 
+    /*
+     * Validate the number of results of authentication. If different than one, returns an exception. If one result,
+     * remove the password (if any) and return only one result.
+     * @params  $result (array) results of authentication
+     * @return  $result (array) cleaned up data.
+     * */
     protected function _validateUserAuthentication($result) {
         if(count($result) < 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Access denied");
@@ -22,6 +28,14 @@ class User extends OpalProject {
         return $result;
     }
 
+    /*
+     * Authentication with the Active Directory system. Check first if the user exists in opalDB. If not, no need to
+     * make and external call and throw the exception. Then, prepare the settings for the AD by inserting username and
+     * password. Wait for the answer, and if any problem, throw an exception. Otherwise, return the user info.
+     * @params  $username (string) duh!
+     *          $password (string) DUH!
+     * @return  $result (array) details of the user info.
+     * */
     protected function _userLoginActiveDirectory($username, $password) {
         $result = $this->opalDB->authenticateUserAD($username);
         $result = $this->_validateUserAuthentication($result);
@@ -50,6 +64,13 @@ class User extends OpalProject {
         return $result;
     }
 
+    /*
+     * Legacy authentication system when no AD is available. It validates the username and password directly into
+     * opalDB after encrypting the password.
+     * @params  $username (string) duh!
+     *          $password (string) DUH!
+     * @return  $result (array) details of the user info.
+     * */
     protected function _userLoginLegacy($username, $password) {
         $result = $this->opalDB->authenticateUserLegacy($username, hash("sha256", $password . USER_SALT));
         $result = $this->_validateUserAuthentication($result);
@@ -184,7 +205,7 @@ class User extends OpalProject {
     }
 
     /*
-     * Decypher user informations, validate its password before updating it, updating the language and the role. All
+     * Decypher user information, validate its password before updating it, updating the language and the role. All
      * the updates are optionals.
      * @oarams  $post (array) informations on the user encrypted with the cypher and the id.
      * @return  true (boolean) means the update was successful.
@@ -200,19 +221,24 @@ class User extends OpalProject {
         if(!is_array($userDetails))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid user.");
 
-        if($data["password"] && $data["confirmPassword"]) {
-            $result = $this->_passwordValidation($data["password"], $data["confirmPassword"]);
-            if (count($result) > 0)
-                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
-            $this->opalDB->updateUserPassword($userDetails["serial"], hash("sha256", $data["password"] . USER_SALT));
+        if(!AD_LOGIN_ACTIVE) {
+            if($data["password"] && $data["confirmPassword"]) {
+                $result = $this->_passwordValidation($data["password"], $data["confirmPassword"]);
+                if (count($result) > 0)
+                    HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
+                $this->opalDB->updateUserPassword($userDetails["serial"], hash("sha256", $data["password"] . USER_SALT));
+            }
         }
 
         $newRole = $this->opalDB->geRoleDetails($data["roleId"]);
         if(!is_array($newRole))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid role.");
 
-        if($data["roleId"] != $userDetails["RoleSerNum"])
+        if($data["roleId"] != $userDetails["RoleSerNum"]) {
+            if($userDetails["serial"] == $this->opalDB->getOAUserId())
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "An user cannot change its own role.");
             $this->opalDB->updateUserRole($data["id"], $data["roleId"]);
+        }
 
         $this->opalDB->updateUserInfo($userDetails["serial"], $data["language"]);
 
