@@ -122,9 +122,18 @@ controller('user', function ($scope, $uibModal, $filter, $sce, $state, userColle
 	$scope.editUser = function (user) {
 
 		$scope.currentUser = user;
+
+		var templateUrl = 'templates/user/edit.user.html';
+		var controller = 'user.edit';
+
+		if ($scope.configs.login.activeDirectory.enabled === 1) {
+			templateUrl = 'templates/user/edit.user.ad.html';
+			controller = 'user.edit.ad';
+		}
+
 		var modalInstance = $uibModal.open({
-			templateUrl: 'templates/user/edit.user.html',
-			controller: 'user.edit',
+			templateUrl: templateUrl,
+			controller: controller,
 			scope: $scope,
 			windowClass: 'editUserModal',
 			backdrop: 'static'
