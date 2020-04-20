@@ -43,6 +43,7 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.account',
 	'opalAdmin.controllers.user',
 	'opalAdmin.controllers.user.add',
+	'opalAdmin.controllers.user.add.ad',
 	'opalAdmin.controllers.user.edit',
 	'opalAdmin.controllers.user.edit.ad',
 	'opalAdmin.controllers.user.delete',
