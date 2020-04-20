@@ -8,7 +8,16 @@ controller('user', function ($scope, $uibModal, $filter, $sce, $state, userColle
 	var OAUserId = Session.retrieveObject('user').id;
 	// Function to go to register new user
 	$scope.goToAddUser = function () {
-		$state.go('user-register');
+
+		console.log($scope.configs.login);
+		if ($scope.configs.login.activeDirectory.enabled === 1) {
+			console.log("AD");
+			$state.go('user-ad-register');
+		}
+		else {
+			console.log("Legacy");
+			$state.go('user-register');
+		}
 	};
 
 	$scope.bannerMessage = "";

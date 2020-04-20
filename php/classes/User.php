@@ -247,7 +247,7 @@ class User extends OpalProject {
 
     /*
      * insert a new user into the OAUser table and its role in OAUserRole table after sanitizing and validating the
-     * data.
+     * data. Depending if the AD system is active or not, the insertion is done differently.
      * @params  $post (array) contains the username, password, confirmed password, role, language (all encrypted),
      *          cypher.
      * @returns void
@@ -255,6 +255,8 @@ class User extends OpalProject {
     public function insertUser($post) {
         $post = HelpSetup::arraySanitization($post);
         $cypher = intval($post["cypher"]);
+        if($cypher == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data to create user.");
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
         $data = HelpSetup::arraySanitization($data);
 
@@ -264,24 +266,51 @@ class User extends OpalProject {
         $roleId = $data["roleId"];
         $language = strtoupper($data["language"]);
 
-        if($username == "" || $password == "" || $confirmPassword == "" || $cypher == "" || $roleId == "" || $language == "")
+        if($username == "" || $roleId == "" || $language == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data to create user.");
-
         if($language != "FR" && $language != "EN")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Wrong language.");
+
+        if(!AD_LOGIN_ACTIVE)
+            $userId = $this->_insertUserLegacy($username, $password, $confirmPassword, $language);
+        else
+            $userId = $this->_insertUserAD($username, $language);
+
+        $role = $this->opalDB->geRoleDetails($roleId);
+        if(!is_array($role))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid role.");
+        return $this->opalDB->insertUserRole($userId, $roleId);
+    }
+
+    /*
+     * Insert an user with a password.
+     * @params  $username (string) username (duh!)
+     *          $password (string) password
+     *          $confirmPassword (string) confirmation of the password
+     *          $language (string) language of the user (EN, FR)
+     * @return  userId (int) ID of the new user created
+     * */
+    protected function _insertUserLegacy($username, $password, $confirmPassword, $language) {
+        if($password == "" || $confirmPassword == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data to create user.");
 
         $result = $this->_passwordValidation($password, $confirmPassword);
         if(count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
 
-        $role = $this->opalDB->geRoleDetails($data["roleId"]);
-        if(!is_array($role))
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid role.");
-
-        $userId = $this->opalDB->insertUser($username, hash("sha256", $data["password"] . USER_SALT), $language);
-        $result = $this->opalDB->insertUserRole($userId, $roleId);
+        return $this->opalDB->insertUser($username, hash("sha256", $password . USER_SALT), $language);
     }
 
+    /*
+     * Insert an user without a password. But to make sure there is somethign in the password field, the username is
+     * used by default.
+     * @params  $username (string) username (duh!)
+     *          $language (string) language of the user (EN, FR)
+     * @return  userId (int) ID of the new user created
+     * */
+    protected function _insertUserAD($username, $language) {
+        return $this->opalDB->insertUser($username, hash("sha256", $username . USER_SALT), $language);
+    }
 
     /*
      * Get the list of all users excluding the cronjob one
