@@ -59,7 +59,10 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		};
 		// Function to go to account page
 		$scope.goToAccount = function () {
-			$state.go('account');
+			if ($scope.configs.login.activeDirectory.enabled === 1)
+				$state.go('ad-account');
+			else
+				$state.go('account');
 		};
 		// Function to go to users page
 		$scope.goToUsers = function () {

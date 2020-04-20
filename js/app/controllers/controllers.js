@@ -40,6 +40,7 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.login',
 	'opalAdmin.controllers.loginModal',
 	'opalAdmin.controllers.patientActivity',
+	'opalAdmin.controllers.account.ad',
 	'opalAdmin.controllers.account',
 	'opalAdmin.controllers.user',
 	'opalAdmin.controllers.user.add',
