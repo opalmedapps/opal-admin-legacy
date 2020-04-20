@@ -9,15 +9,10 @@ controller('user', function ($scope, $uibModal, $filter, $sce, $state, userColle
 	// Function to go to register new user
 	$scope.goToAddUser = function () {
 
-		console.log($scope.configs.login);
-		if ($scope.configs.login.activeDirectory.enabled === 1) {
-			console.log("AD");
+		if ($scope.configs.login.activeDirectory.enabled === 1)
 			$state.go('user-ad-register');
-		}
-		else {
-			console.log("Legacy");
+		else
 			$state.go('user-register');
-		}
 	};
 
 	$scope.bannerMessage = "";
