@@ -1051,6 +1051,22 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
+     * insert a new user and the date of adding
+     * @params  $username (string) username (duh!)
+     *          $password (string) encrypted password
+     *          $language (string) preferred language
+     * @return  array with the result of the insert
+     * */
+    function insertUserAD($username, $language) {
+        $toInsert = array(
+            "Username"=>$username,
+            "Language"=>$language,
+            "DateAdded"=>date("Y-m-d H:i:s"),
+        );
+        return $this->_insertRecordIntoTable(OPAL_OAUSER_TABLE, $toInsert);
+    }
+
+    /*
      * insert into the intersection table of role-user to give a role to an user
      * @params  $userId (int) ID of the user
      *          $roleId (int) ID of the role
