@@ -1,10 +1,10 @@
-angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
+angular.module('opalAdmin.controllers.user.add.ad', ['ui.bootstrap', 'ui.grid']).
 
 
 	/******************************************************************************
 	 * Controller for user registration
 	 *******************************************************************************/
-	controller('user.add', function ($scope, userCollectionService, $state, $filter, Encrypt, Session) {
+	controller('user.add.ad', function ($scope, userCollectionService, $state, $filter, Encrypt, Session) {
 		var OAUserId = Session.retrieveObject('user').id;
 
 		// Function to go to previous page
@@ -13,7 +13,6 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 		};
 
 		// default booleans
-		$scope.passwordSection = {open:false, show:false};
 		$scope.roleSection = {open:false, show:false};
 		$scope.languageSection = {open:false, show:false};
 
@@ -29,7 +28,6 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 		// completed registration steps in object notation
 		var steps = {
 			username: { completed: false },
-			password: { completed: false },
 			role: { completed: false },
 			language: { completed: false }
 		};
@@ -38,7 +36,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 		$scope.numOfCompletedSteps = 0;
 
 		// Default total number of steps
-		$scope.stepTotal = 4;
+		$scope.stepTotal = 3;
 
 		// Progress bar based on default completed steps and total
 		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -64,8 +62,6 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 		// Initialize new user object
 		$scope.newUser = {
 			username: null,
-			password: null,
-			confirmPassword: null,
 			role: null,
 			role_display: null,
 			language: null,
@@ -119,8 +115,6 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 
 			// Make request to check if username already in use
 			userCollectionService.usernameAlreadyInUse(username).then(function (response) {
-				console.log(response.data);
-				console.log(response.data.count);
 				if(response.data.count) {
 					$scope.validUsername.status = 'invalid';
 					$scope.validUsername.message = $filter('translate')('USERS.ADD.ERROR_USERNAME_USED');
@@ -139,74 +133,14 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 
 		};
 
-		// Function to validate password
-		$scope.validPassword = { status: null, message: null };
-		$scope.validatePassword = function (password) {
-
-			if (!password) {
-				$scope.validPassword.status = null;
-				$scope.passwordUpdate();
-				return;
-			}
-
-			//Password validation
-			//minimum 8 characters, 1 number, 1 lower case letter, 1 upper case letter and 1 special character
-			var validationPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/;
-			if(!password.match(validationPassword)) {
-				$scope.validPassword.status = 'invalid';
-				$scope.validPassword.message = $filter('translate')('USERS.ADD.ERROR_PASSWORD_FORMAT');
-				$scope.passwordUpdate();
-				return;
-			} else {
-				$scope.validPassword.status = 'valid';
-				$scope.validPassword.message = null;
-				$scope.passwordUpdate();
-			}
-		};
-
-		// Function to validate confirm password
-		$scope.validConfirmPassword = { status: null, message: null };
-		$scope.validateConfirmPassword = function (confirmPassword) {
-
-			if (!confirmPassword) {
-				$scope.validConfirmPassword.status = null;
-				$scope.passwordUpdate();
-				return;
-			}
-
-			if ($scope.validPassword.status != 'valid' || $scope.newUser.password != $scope.newUser.confirmPassword) {
-				$scope.validConfirmPassword.status = 'invalid';
-				$scope.validConfirmPassword.message = $filter('translate')('USERS.ADD.ERROR_PASSWORD_INVALID');
-				$scope.passwordUpdate();
-				return;
-			} else {
-				$scope.validConfirmPassword.status = 'valid';
-				$scope.validConfirmPassword.message = null;
-				$scope.passwordUpdate();
-			}
-		};
-
 		// Function to toggle steps when updating the username field
 		$scope.usernameUpdate = function () {
 			if ($scope.validUsername.status == 'valid') {
 				steps.username.completed = true;
-				$scope.passwordSection.show = true;
-			}
-			else
-				steps.username.completed = false;
-
-			$scope.numOfCompletedSteps = stepsCompleted(steps);
-			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-		};
-
-		// Function to toggle steps when updating the password field
-		$scope.passwordUpdate = function () {
-			if ($scope.validPassword.status == 'valid' && $scope.validConfirmPassword.status == 'valid') {
-				steps.password.completed = true;
 				$scope.roleSection.show = true;
 			}
 			else
-				steps.password.completed = false;
+				steps.username.completed = false;
 
 			$scope.numOfCompletedSteps = stepsCompleted(steps);
 			$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
@@ -287,8 +221,6 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 
 				var encrypted = {
 					username: $scope.newUser.username,
-					password: $scope.newUser.password,
-					confirmPassword: $scope.newUser.confirmPassword,
 					language: $scope.newUser.language,
 					roleId: $scope.newUser.role.serial
 				};
@@ -312,8 +244,6 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 					complete: function() {
 						$state.go('users');
 					}
-
-
 				});
 			}
 		};

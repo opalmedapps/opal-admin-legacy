@@ -12,7 +12,33 @@ class OpalProject
     /*
      * constructor of the class
      * */
-    public function __construct($OAUserId = false, $sessionId = false) {
+    public function __construct($OAUserId = false, $sessionId = false, $guestStatus = false) {
+        if(!$guestStatus) {
+            $this->opalDB = new DatabaseOpal(
+                OPAL_DB_HOST,
+                OPAL_DB_NAME,
+                OPAL_DB_PORT,
+                OPAL_DB_USERNAME,
+                OPAL_DB_PASSWORD,
+                false,
+                $OAUserId
+            );
+        } else {
+            $this->opalDB = new DatabaseOpal(
+                OPAL_DB_HOST,
+                OPAL_DB_NAME,
+                OPAL_DB_PORT,
+                OPAL_DB_USERNAME,
+                OPAL_DB_PASSWORD,
+                false,
+                $OAUserId,
+                true
+            );
+        }
+        $this->opalDB->setSessionId($sessionId);
+    }
+
+    protected function _connectAsMain($OAUserId) {
         $this->opalDB = new DatabaseOpal(
             OPAL_DB_HOST,
             OPAL_DB_NAME,
@@ -22,7 +48,19 @@ class OpalProject
             false,
             $OAUserId
         );
-        $this->opalDB->setSessionId($sessionId);
+    }
+
+    protected function _connectAsGuest($OAUserId) {
+        $this->opalDB = new DatabaseOpal(
+            OPAL_DB_HOST,
+            OPAL_DB_NAME,
+            OPAL_DB_PORT,
+            OPAL_DB_USERNAME,
+            OPAL_DB_PASSWORD,
+            false,
+            $OAUserId,
+            true
+        );
     }
 
     /*

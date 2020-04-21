@@ -50,6 +50,11 @@ define( "FRONTEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", FRONTEND_ABS_PA
 define( "UPLOAD_ABS_PATH", FRONTEND_ABS_PATH . "uploads/" );
 define( "UPLOAD_REL_PATH", FRONTEND_REL_URL . "uploads/" );
 
+// Cron Job configuration
+define("SETTING_CRONJOB",1);
+define("ROLE_CRONJOB",8);
+define("OAUSER_CRONJOB",23);
+
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql.php");
@@ -120,12 +125,10 @@ define("ORMS_SOURCE_DB", 2);
 define("MOSAIQ_SOURCE_DB", 3);
 define("LOCAL_SOURCE_DB", -1);
 
-/*
- * Cron Job configuration
- * */
-define("SETTING_CRONJOB",1);
-define("ROLE_CRONJOB",8);
-define("OAUSER_CRONJOB",23);
+define("USER_SALT", $config["login"]["salt"]);
+define("ACTIVE_DIRECTORY", $config["login"]["activeDirectory"]);
+define("ACTIVE_DIRECTORY_SETTINGS", $config["login"]["activeDirectory"]["settings"]);
+define("AD_LOGIN_ACTIVE", ACTIVE_DIRECTORY["enabled"]);
 
 /*
  * Module ID of each module in the opalAdmin
@@ -139,12 +142,14 @@ define("MODULE_DIAGNOSIS_TRANSLATION", 9);
 define("LOCAL_SOURCE_ONLY", -1);
 
 define("PUBLICATION_PUBLISH_DATE", 9);
+define("GUEST_ACCOUNT", 29);
 
 /*
  * List of HTTP status codes
  * */
 define("HTTP_STATUS_SUCCESS",200);
 define("HTTP_STATUS_INTERNAL_SERVER_ERROR",500);
+define("HTTP_STATUS_FORBIDDEN_ERROR",403);
 
 /*
  * Miscellaneous constants

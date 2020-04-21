@@ -2399,23 +2399,24 @@
     "ACCOUNT": "Compte",
     "RESET_PASSWORD": "Réinitialiser le mot de passe",
     "RESET_DETAILS": "Entrez votre mot de passe actuel et entrez le nouveau mot de passe dans les deux champs de validation pour changer le mot de passe.",
+    "REQUIREMENTS": "Le nouveau mot de passe doit contenir au moins 8 caractères, 1 chiffre, 1 lettre en majuscule, 1 lettre en minuscule, et un caractère spécial.",
     "CURRENT": "Mot de passe actuel",
     "NEW": "Nouveau mot de passe",
-    "MIN": "(6 caractères minimum)",
     "CONFIRM": "Confirmer le nouveau mot de passe",
     "UPDATE": "Mettre à jour",
     "LANGUAGE": "Langue",
     "CHANGE": "Changer la langue pour opalAdmin.",
     "FRENCH": "Français",
     "ENGLISH": "Anglais",
-    "SHORT": "Utilisez plus de 6 caractères",
+    "INVALID": "Format du mot de passe invalide",
     "SAME_VALID": "Entrez le même mot de passe valide",
     "OLD_NEW": "L'ancien et le nouveau mot de passe sont les mêmes",
     "INVALID_SESSION": "Votre session semble être invalide.",
     "INVALID_PASSWORD": "Votre mot de passe actuel est erroné.",
     "PASSWORD_SUCCESS": "Mot de passe changé avec succès",
     "LANGUAGE_SUCCESS": "Language preference successfully changed.",
-    "LANGUAGE_ERROR": "Une erreur s'est produite. Impossible de changer la langue."
+    "LANGUAGE_ERROR": "Une erreur s'est produite. Impossible de changer la langue.",
+    "SERVER_ERROR": "Une erreur s'est produite. Réponse du serveur: "
   },
   "USERS": {
     "LIST": {
@@ -2437,7 +2438,8 @@
       "WARNING": "ATTENTION!",
       "WARNING_TEXT": "Voulez-vous vraiment supprimer l'utilisateur ci-dessous? Cette action est irreversible!",
       "SUCCESS": "L'utilisateur a été supprimé avec succès.",
-      "ERROR": "Une erreur s'est produite lors de la suppression de l'utilisateur."
+      "ERROR": "Une erreur s'est produite lors de la suppression de l'utilisateur.",
+      "ERROR_SAME_USER": "Vous ne pouvez supprimer vous-même votre compte!"
     },
     "ADD": {
       "BACK": "Retour",
@@ -2460,8 +2462,9 @@
       "INCOMPLETE": "Incomplet",
       "COMPLETE": "Complet",
       "USER_PASS_EXPLANATION": "Veuillez ajouter un nom d'utilisateur et un mot de passe valides.",
+      "USER_EXPLANATION": "Veuillez ajouter un nom d'utilisateur valide.",
       "USER_PASS": "Nom d'utilisateur et mot de passe",
-      "MIN": "(min: 6 caractères)",
+      "PASSWORD_REQUIREMENTS": "Min 8 caractères, 1 chiffre, 1 lettre en majuscule, 1 lettre en minuscule et un caractère spécial.",
       "RETYPE": "Retaper le mot de passe",
       "ROLE_EXPLANATION": "Veuillez attribuer un rôle au nouvel utilisateur.",
       "SELECT_ROLE": "Sélectionnez un rôle",
@@ -2472,6 +2475,7 @@
       "ERROR_USERNAME_UNKNOWN": "Une erreur s'est produite lors de la vérification du nom d'utilisateur.",
       "ERROR_PASSWORD_LENGTH": "Le mot de passe doit contenir au moins 6 caractères.",
       "ERROR_PASSWORD_INVALID": "Les mots de passe ne concordent pas.",
+      "ERROR_PASSWORD_FORMAT": "Format de mot de passe invalide.",
       "ADMIN": "Administrateur",
       "EDITOR": "Éditeur",
       "GUEST": "Invité",
@@ -2479,7 +2483,8 @@
       "CLINICIAN": "Clinicien",
       "MANAGER": "Gestionnaire",
       "EDUCATION_CREATOR": "Education - Création",
-      "NOT_TRANSLATED": "Non traduit"
+      "NOT_TRANSLATED": "Non traduit",
+      "ERROR": "Une erreur s'est produite lors de la création de l'usager."
     },
     "EDIT": {
       "TITLE": "Modifier l'utilisateur",
@@ -2488,6 +2493,7 @@
       "CHANGE_PASSWORD": "Changer le mot de passe",
       "PASSWORD": "Mot de passe",
       "MIN": "(min: 6 caractères)",
+      "PASSWORD_REQUIREMENTS": "Min 8 caractères, 1 chiffre, 1 lettre en majuscule, 1 lettre en minuscule et un caractère spécial.",
       "CONFIRM": "Confirmez le mot de passe",
       "CHANGE_ROLE": "Changer le rôle",
       "SELECT_ROLE": "Sélectionnez le rôle",
@@ -2498,7 +2504,7 @@
       "FRENCH_ABRV": "FR",
       "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails de l'utilisateur.",
       "ERROR_ROLES": "Une erreur s'est produite lors de l'obtention de la liste des rôles.",
-      "ERROR_PASSWORD_LENGTH": "Le mot de passe doit contenir au moins 6 caractères.",
+      "ERROR_PASSWORD_FORMAT": "Format de mot de passe invalide.",
       "ERROR_PASSWORD_INVALID": "Les mots de passe ne concordent pas.",
       "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour des informations de l'utilisateur.",
       "SUCCESS_EDIT": "L'utilisateur a été mis à jour avec succès."

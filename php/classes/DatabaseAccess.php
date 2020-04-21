@@ -21,7 +21,7 @@ class DatabaseAccess extends HelpSetup
     protected $userRole;
 
     /* constructor that connects to the database */
-    function __construct($newServer = "localhost", $newDB = "", $newPort = "3306", $newUserDB = "root", $newPass = "", $dsn = false, $newUserId = false) {
+    function __construct($newServer = "localhost", $newDB = "", $newPort = "3306", $newUserDB = "root", $newPass = "", $dsn = false) {
         if(!$dsn)
             $this->dsn = "mysql:host=$newServer;port=$newPort;dbname=$newDB";
         else
