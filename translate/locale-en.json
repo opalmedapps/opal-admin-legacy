@@ -2387,7 +2387,8 @@
       "WARNING": "WARNING!",
       "WARNING_TEXT": "Are you sure you want to delete the following user? This action cannot be undone!",
       "SUCCESS": "The user has being successfully deleted.",
-      "ERROR": "An error occurred while deleting the user."
+      "ERROR": "An error occurred while deleting the user.",
+      "ERROR_SAME_USER": "You cannot delete your own account!"
     },
     "ADD": {
       "BACK": "Back to Users",
@@ -2410,8 +2411,9 @@
       "ENGLISH_ABRV": "EN",
       "FRENCH_ABRV": "FR",
       "USER_PASS_EXPLANATION": "Please add a valid username and password.",
+      "USER_EXPLANATION": "Please add a valid username.",
       "USER_PASS": "Username & Password",
-      "MIN": "(min: 6 characters)",
+      "PASSWORD_REQUIREMENTS": "Min 8 characters, 1 number, 1 upper case letter, 1 lower case letter and 1 special character.",
       "RETYPE": "Re-type Password",
       "ROLE_EXPLANATION": "Please assign a role to the new user.",
       "SELECT_ROLE": "Select Role",
@@ -2421,6 +2423,7 @@
       "ERROR_USERNAME_USED": "This username already exists.",
       "ERROR_USERNAME_UNKNOWN": "An error occurred while verifying the username.",
       "ERROR_PASSWORD_LENGTH": "The password must contains at least 6 characters.",
+      "ERROR_PASSWORD_FORMAT": "Invalid password format.",
       "ERROR_PASSWORD_INVALID": "The passwords do not match.",
       "ADMIN": "Administrator",
       "EDITOR": "Editor",
@@ -2429,7 +2432,8 @@
       "CLINICIAN": "Clinician",
       "MANAGER": "Manager",
       "EDUCATION_CREATOR": "Education - Creator",
-      "NOT_TRANSLATED": "Not translated"
+      "NOT_TRANSLATED": "Not translated",
+      "ERROR": "An error occurred while creating the user."
     },
     "EDIT": {
       "TITLE": "Edit User",
@@ -2438,6 +2442,7 @@
       "CHANGE_PASSWORD": "Change Password",
       "PASSWORD": "Password",
       "MIN": "(min: 6 characters)",
+      "PASSWORD_REQUIREMENTS": "Min 8 characters, 1 number, 1 upper case letter, 1 lower case letter and 1 special character.",
       "CONFIRM": "Re-type Password",
       "CHANGE_ROLE": "Change Role",
       "SELECT_ROLE": "Select Role",
@@ -2449,7 +2454,7 @@
       "ERROR_DETAILS": "An error occurred while getting the user details.",
       "ERROR_ROLES": "An error occurred while getting the list of roles.",
       "ERROR_PASSWORD_LENGTH": "The password must contains at least 6 characters.",
-      "ERROR_PASSWORD_INVALID": "The passwords do not match.",
+      "ERROR_PASSWORD_FORMAT": "Invalid password format.",
       "ERROR_UPDATE": "An error occurred while updating the user informations.",
       "SUCCESS_EDIT": "The user has being updated successfully."
     },
@@ -2522,23 +2527,24 @@
     "ACCOUNT": "Account",
     "RESET_PASSWORD": "Reset Password",
     "RESET_DETAILS": "Enter your current password and enter the new password in both validation fields to change password.",
+    "REQUIREMENTS": "The new password must contains at least 8 characters, 1 number, 1 capital letter, 1 lower case letter and a special character.",
     "CURRENT": "Current Password",
     "NEW": "New Password",
-    "MIN": "(min: 6 characters)",
     "CONFIRM": "Confirm new password",
     "UPDATE": "Update",
     "LANGUAGE": "Language",
     "CHANGE": "Change the language for opalAdmin.",
     "FRENCH": "French",
     "ENGLISH": "English",
-    "SHORT": "Use greater than 6 characters",
+    "INVALID": "Invalid password format",
     "SAME_VALID": "Enter same valid password",
     "OLD_NEW": "Old and new password are the same",
     "INVALID_SESSION": "Your session seems to be invalid.",
     "INVALID_PASSWORD": "Your current password is wrong.",
     "PASSWORD_SUCCESS": "Password successfully changed",
     "LANGUAGE_SUCCESS": "Préférence de langue modifiée avec succès",
-    "LANGUAGE_ERROR": "An error occurred. Unable to change the language."
+    "LANGUAGE_ERROR": "An error occurred. Unable to change the language.",
+    "SERVER_ERROR": "An error occurred. Answer from the server: "
   },
   "PATIENT_REGISTRATION_TITLE": "Patient Registration",
   "PATIENT_REGISTRATION_SEARCH_HEADER": "Registration Search",

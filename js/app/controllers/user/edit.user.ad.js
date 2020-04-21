@@ -1,12 +1,11 @@
-angular.module('opalAdmin.controllers.user.edit', ['ui.bootstrap', 'ui.grid']).
+angular.module('opalAdmin.controllers.user.edit.ad', ['ui.bootstrap', 'ui.grid']).
 
-controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter, $sce, $state, userCollectionService, Encrypt, Session) {
+controller('user.edit.ad', function ($scope, $uibModal, $uibModalInstance, $filter, $sce, $state, userCollectionService, Encrypt, Session) {
 	var OAUserId = Session.retrieveObject('user').id;
 	$scope.roleDisabled = false;
 
 	// Default booleans
 	$scope.changesMade = false;
-	$scope.passwordChange = false;
 
 	$scope.user = {};
 
@@ -77,70 +76,6 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 		alert($filter('translate')('USERS.EDIT.ERROR_ROLES') + "\r\n\r\n" + response.status + " " + response.data);
 	});
 
-	// Function that triggers when the password fields are updated
-	$scope.passwordUpdate = function () {
-
-		$scope.changesMade = true;
-	};
-	// Function to validate password
-	$scope.validPassword = { status: null, message: null };
-	$scope.validatePassword = function (password) {
-
-		$scope.passwordChange = true;
-		$scope.validateConfirmPassword($scope.user.confirmPassword);
-
-		if (!password) {
-			$scope.validPassword.status = null;
-			$scope.passwordUpdate();
-			if (!$scope.validConfirmPassword)
-				$scope.passwordChange = false;
-			return;
-		}
-
-		//Password validation
-		//minimum 8 characters, 1 number, 1 lower case letter, 1 upper case letter and 1 special character
-		var validationPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/;
-		if(!password.match(validationPassword)) {
-			$scope.validPassword.status = 'invalid';
-			$scope.validPassword.message = $filter('translate')('USERS.EDIT.ERROR_PASSWORD_FORMAT');
-			$scope.passwordUpdate();
-			return;
-		} else {
-			$scope.validPassword.status = 'valid';
-			$scope.validPassword.message = null;
-			$scope.passwordUpdate();
-			if ($scope.validConfirmPassword.status == 'valid')
-				$scope.passwordChange = false;
-		}
-	};
-
-	// Function to validate confirm password
-	$scope.validConfirmPassword = { status: null, message: null };
-	$scope.validateConfirmPassword = function (confirmPassword) {
-
-		$scope.passwordChange = true;
-		if (!confirmPassword) {
-			$scope.validConfirmPassword.status = null;
-			$scope.passwordUpdate();
-			if (!$scope.validPassword)
-				$scope.passwordChange = false;
-			return;
-		}
-
-		if ($scope.validPassword.status != 'valid' || $scope.user.password != $scope.user.confirmPassword) {
-			$scope.validConfirmPassword.status = 'invalid';
-			$scope.validConfirmPassword.message = $filter('translate')('USERS.EDIT.ERROR_PASSWORD_INVALID');
-			$scope.passwordUpdate();
-			return;
-		} else {
-			$scope.validConfirmPassword.status = 'valid';
-			$scope.validConfirmPassword.message = null;
-			$scope.passwordUpdate();
-			if ($scope.validPassword.status == 'valid')
-				$scope.passwordChange = false;
-		}
-	};
-
 	// Function that triggers when the role field is updated
 	$scope.roleUpdate = function () {
 
@@ -155,8 +90,7 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 
 	// Function to check for form completion
 	$scope.checkForm = function () {
-		if (($scope.changesMade && !$scope.passwordChange) ||
-			($scope.validPassword.status == 'valid' && $scope.validConfirmPassword.status == 'valid'))
+		if ($scope.changesMade)
 			return true;
 		else
 			return false;
@@ -169,8 +103,6 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 
 			var encrypted = {
 				id: $scope.user.serial,
-				password: $scope.user.password,
-				confirmPassword: $scope.user.confirmPassword,
 				language: $scope.user.language,
 				roleId: $scope.user.role.serial
 			};

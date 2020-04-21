@@ -4,11 +4,15 @@ angular.module('opalAdmin.controllers.user', ['ui.bootstrap', 'ui.grid']).
 /******************************************************************************
  * Controller for the users page
  *******************************************************************************/
-controller('user', function ($scope, $uibModal, $filter, $sce, $state, userCollectionService, Encrypt) {
-
+controller('user', function ($scope, $uibModal, $filter, $sce, $state, userCollectionService, Encrypt, Session) {
+	var OAUserId = Session.retrieveObject('user').id;
 	// Function to go to register new user
 	$scope.goToAddUser = function () {
-		$state.go('user-register');
+
+		if ($scope.configs.login.activeDirectory.enabled === 1)
+			$state.go('user-ad-register');
+		else
+			$state.go('user-register');
 	};
 
 	$scope.bannerMessage = "";
@@ -31,6 +35,9 @@ controller('user', function ($scope, $uibModal, $filter, $sce, $state, userColle
 	};
 
 	// Templates for the users table
+	var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
+		'ng-click="grid.appScope.editUser(row.entity)">' +
+		'<strong><a href="">{{row.entity.username}}</a></strong></div>';
 	var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
 		'<strong><a href="" ng-click="grid.appScope.showActivityLog(row.entity)"><i title="'+$filter('translate')('USERS.LIST.LOGS')+'" class="fa fa-area-chart" aria-hidden="true"></i></a></strong> ' +
 		'- <strong><a href="" ng-click="grid.appScope.editUser(row.entity)"><i title="'+$filter('translate')('USERS.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ' +
@@ -64,7 +71,7 @@ controller('user', function ($scope, $uibModal, $filter, $sce, $state, userColle
 	$scope.gridOptions = {
 		data: 'userList',
 		columnDefs: [
-			{ field: 'username', displayName: $filter('translate')('USERS.LIST.USERNAME'), width: '50%', enableColumnMenu: false },
+			{ field: 'username', displayName: $filter('translate')('USERS.LIST.USERNAME'), width: '50%', cellTemplate: cellTemplateName, enableColumnMenu: false },
 			{ field: 'role_display', displayName: $filter('translate')('USERS.LIST.ROLE'), width: '35%', enableColumnMenu: false },
 			{ name: $filter('translate')('USERS.LIST.OPERATIONS'), cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '15%', enableColumnMenu: false }
 		],
@@ -119,9 +126,18 @@ controller('user', function ($scope, $uibModal, $filter, $sce, $state, userColle
 	$scope.editUser = function (user) {
 
 		$scope.currentUser = user;
+
+		var templateUrl = 'templates/user/edit.user.html';
+		var controller = 'user.edit';
+
+		if ($scope.configs.login.activeDirectory.enabled === 1) {
+			templateUrl = 'templates/user/edit.user.ad.html';
+			controller = 'user.edit.ad';
+		}
+
 		var modalInstance = $uibModal.open({
-			templateUrl: 'templates/user/edit.user.html',
-			controller: 'user.edit',
+			templateUrl: templateUrl,
+			controller: controller,
 			scope: $scope,
 			windowClass: 'editUserModal',
 			backdrop: 'static'
@@ -134,7 +150,7 @@ controller('user', function ($scope, $uibModal, $filter, $sce, $state, userColle
 	};
 
 	function getUsersList() {
-		userCollectionService.getUsers().then(function (response) {
+		userCollectionService.getUsers(OAUserId).then(function (response) {
 			$scope.userList = response.data;
 			response.data.forEach(function(row) {
 				switch (row.role) {

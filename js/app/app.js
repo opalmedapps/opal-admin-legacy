@@ -45,28 +45,17 @@ angular.module('opalAdmin', [
 
 		var authService = {};
 
-		authService.login = function (credentials) {
-			return $http
-				.post('user/validate-login', credentials)
-				.then(function (response) {
-					if (response.data.user) {
-						Session.create(response.data.user);
-						return response.data.user;
-					}
-					else { return $q.reject(response); }
-
-				});
-		};
-
-		authService.confirm = function (credentials) {
-			return $http
-				.post('user/validate-login', credentials)
-				.then(function (response) {
-					if (response.data.success) {
-						return response.success;
-					}
-					else { return $q.reject(response); }
-				});
+		authService.login = function (encrypted, cypher) {
+			return $http.post(
+				"user/validate-login",
+				$.param({
+					encrypted: encrypted,
+					cypher: cypher,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			)
 		};
 
 		authService.isAuthenticated = function () {
@@ -108,8 +97,10 @@ angular.module('opalAdmin', [
 			.state('test-result-add', { url: '/test-result/add', templateUrl: "templates/test-result/add.test-result.html", controller: "testResult.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('cron', { url: '/cron', templateUrl: "templates/cron/cron.html", controller: "cron", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('patient-activity', { url: '/patient-activity', templateUrl: "templates/patient/patient-activity.html", controller: "patientActivity", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
-			.state('account', { url: '/account', templateUrl: "templates/user/account.html", controller: "account", data: { authorizedRoles: [USER_ROLES.all], requireLogin: true } })
+			.state('ad-account', { url: '/account-ad', templateUrl: "templates/user/account.ad.html", controller: "account", data: { authorizedRoles: [USER_ROLES.all], requireLogin: true } })
+			.state('account', { url: '/account', templateUrl: "templates/user/account.html", controller: "account.ad", data: { authorizedRoles: [USER_ROLES.all], requireLogin: true } })
 			.state('users', { url: '/users', templateUrl: "templates/user/user.html", controller: "user", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+			.state('user-ad-register', { url: '/users/add-ad', templateUrl: "templates/user/add.user.ad.html", controller: "user.add.ad", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('user-register', { url: '/users/add', templateUrl: "templates/user/add.user.html", controller: "user.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('email', { url: '/email', templateUrl: "templates/email/email.html", controller: "email", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('email-add', { url: '/email/add', templateUrl: "templates/email/add.email.html", controller: "email.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
