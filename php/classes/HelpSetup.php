@@ -74,4 +74,22 @@ class HelpSetup {
             && ($timestamp <= PHP_INT_MAX)
             && ($timestamp >= ~PHP_INT_MAX);
     }
+
+    /*
+     * Recursive function that sanitize the data
+     * @params  array to sanitize
+     * @return  array sanitized
+     * */
+    public static function arraySanitization($arrayForm) {
+        $sanitizedArray = array();
+        foreach($arrayForm as $key=>$value) {
+            $key = preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $key);
+            if(is_array($value))
+                $value = self::arraySanitization($value);
+            else
+                $value = preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $value);
+            $sanitizedArray[$key] = $value;
+        }
+        return $sanitizedArray;
+    }
 }

@@ -633,11 +633,12 @@ angular.module('opalAdmin.collections', [])
 		var userAPI = {};
 
 		// Function to get user details given a serial
-		userAPI.getUserDetails = function (userser) {
+		userAPI.getUserDetails = function (userId, OAUserId) {
 			return $http.post(
 				"user/get/user-details",
 				$.param({
-					userser: userser,
+					userId: userId,
+					OAUserId: OAUserId,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -646,9 +647,12 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// Function to get the list of existing users in our DB
-		userAPI.getUsers = function () {
+		userAPI.getUsers = function (OAUserId) {
 			return $http.post(
 				"user/get/users",
+				$.param({
+					OAUserId: OAUserId,
+				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
@@ -656,11 +660,12 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// Function to check username existence
-		userAPI.usernameAlreadyInUse = function (username) {
+		userAPI.usernameAlreadyInUse = function (username, OAUserId) {
 			return $http.post(
 				"user/username-in-use",
 				$.param({
 					username: username,
+					OAUserId: OAUserId,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
@@ -669,9 +674,12 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// Function to get the list of existing roles
-		userAPI.getRoles = function () {
+		userAPI.getRoles = function (OAUserId) {
 			return $http.post(
 				"user/get/roles",
+				$.param({
+					OAUserId: OAUserId,
+				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
@@ -679,11 +687,12 @@ angular.module('opalAdmin.collections', [])
 		};
 
 		// Function to get user logs given a serial
-		userAPI.getUserActivityLogs = function (userser) {
+		userAPI.getUserActivityLogs = function (userser, OAUserId) {
 			return $http.post(
 				"user/get/user-activity-logs",
 				$.param({
 					userser: userser,
+					OAUserId: OAUserId,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},

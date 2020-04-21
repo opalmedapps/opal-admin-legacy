@@ -1,28 +1,32 @@
 angular.module('opalAdmin.controllers.user.delete', ['ui.bootstrap', 'ui.grid']).
 
-controller('user.delete', function ($scope, $uibModal, $uibModalInstance,  $filter, $sce, $state, userCollectionService, Encrypt) {
+controller('user.delete', function ($scope, $uibModal, $uibModalInstance,  $filter, $sce, $state, userCollectionService, Encrypt, Session) {
 
 	// Submit delete
 	$scope.deleteUser = function () {
-		$.ajax({
-			type: "POST",
-			url: "user/delete/user",
-			data: $scope.userToDelete,
-			success: function (response) {
-				response = JSON.parse(response);
-				if (response.value) {
+		if($scope.userToDelete.serial !== Session.retrieveObject('user').id) {
+			$.ajax({
+				type: "POST",
+				url: "user/delete/user",
+				data: {"ID": $scope.userToDelete.serial, "OAUserId": Session.retrieveObject('user').id},
+				success: function (response) {
 					$scope.setBannerClass('success');
-					$scope.$parent.bannerMessage = "Successfully delete \"" + $scope.userToDelete.username + "\"";
-				}
-				else {
+					$scope.$parent.bannerMessage = $filter('translate')('USERS.DELETE.SUCCESS');
+				},
+				error: function (err) {
 					$scope.setBannerClass('danger');
-					$scope.$parent.bannerMessage = response.message;
+					$scope.$parent.bannerMessage = $filter('translate')('USERS.DELETE.ERROR') + err.status + " - " + err.responseText;
+				},
+				complete: function () {
+					$scope.showBanner();
+					$uibModalInstance.close();
 				}
-				$scope.showBanner();
-				$uibModalInstance.close();
-
-			}
-		});
+			});
+		}
+		else {
+			alert($filter('translate')('USERS.DELETE.ERROR_SAME_USER'));
+			$uibModalInstance.close();
+		}
 	};
 
 	// Function to close modal dialog
