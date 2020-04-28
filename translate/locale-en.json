@@ -17,6 +17,8 @@
   "NAVIGATION_MENU": {
     "CUSTOM_CODES": "Custom Codes",
     "CUSTOM_CODES_SUB": "Manage custom codes for diagnosis, test results and aliases.",
+    "STUDIES": "Studies",
+    "STUDIES_SUB": "Manage studies to which are associated patients.",
     "PUBLISHING_TOOLS": "Publications",
     "TASKS_APPTS_DOCS": "Tasks / Appts / Docs",
     "TASKS_APPTS_DOCS_SUB": "Tool for grouping, translating, and publishing tasks, appointments, and documents.",
@@ -2337,6 +2339,28 @@
       "LOCKED": "This custom code is in use and cannot be modified.",
       "ERROR_UPDATE": "An error occurred while updating the custom code.",
       "ERROR_DETAILS": "An error occurred while getting the details of the custom code."
+    }
+  },
+  "STUDY" : {
+    "LIST": {
+      "TITLE": "Studies",
+      "ADD": "Add",
+      "SEARCH": "Search...",
+      "TITLE_2": "Title",
+      "STUDY_ID": "Study ID",
+      "INVESTIGATOR": "Main Investigator",
+      "START_DATE": "Start Date",
+      "END_DATE": "End Date",
+      "CREATION_DATE": "Date of creation",
+      "OPERATIONS": "Operations"
+    },
+    "DELETE": {
+    },
+    "LOCKED": {
+    },
+    "ADD": {
+    },
+    "EDIT": {
     }
   },
   "PATIENTS": {
