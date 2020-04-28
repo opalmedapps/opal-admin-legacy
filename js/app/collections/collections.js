@@ -980,7 +980,7 @@ angular.module('opalAdmin.collections', [])
 		return publicationAPI;
 	})
 
-	// Publication API service
+	// Custom Codes API service
 	.factory('customCodeCollectionService', function ($http) {
 		var customCodeAPI = {};
 
@@ -1017,6 +1017,39 @@ angular.module('opalAdmin.collections', [])
 					OAUserId: OAUserId,
 					customCodeId: customCodeId,
 					moduleId: moduleId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		return customCodeAPI;
+	})
+
+	// Study API service
+	.factory('studyCollectionService', function ($http) {
+		var customCodeAPI = {};
+
+		customCodeAPI.getStudies = function (OAUserId) {
+			return $http.post(
+				"study/get/studies",
+				$.param({
+					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+
+		};
+
+		customCodeAPI.getStudiesDetails = function (studyId, OAUserId) {
+			return $http.post(
+				"study/get/study-details",
+				$.param({
+					OAUserId: OAUserId,
+					studyId: studyId,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},

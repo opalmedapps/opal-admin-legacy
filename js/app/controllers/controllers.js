@@ -78,5 +78,9 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.customCode',
 	'opalAdmin.controllers.customCode.add',
 	'opalAdmin.controllers.customCode.edit',
-	'opalAdmin.controllers.customCode.delete'
+	'opalAdmin.controllers.customCode.delete',
+	'opalAdmin.controllers.study',
+	'opalAdmin.controllers.study.add',
+	'opalAdmin.controllers.study.edit',
+	'opalAdmin.controllers.study.delete'
 ]);

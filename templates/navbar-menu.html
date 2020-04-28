@@ -80,8 +80,14 @@
                     </li>
                     <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
                         <a ui-sref="custom-code" ng-click="closeNav()">
-                            <span class="fa fa-stethoscope" aria-hidden="true"></span>
+                            <span class="fa fa-exchange" aria-hidden="true"></span>
                             {{'NAVIGATION_MENU.CUSTOM_CODES'|translate}}
+                        </a>
+                    </li>
+                    <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
+                        <a ui-sref="study" ng-click="closeNav()">
+                            <span class="fa fa-pie-chart" aria-hidden="true"></span>
+                            {{'NAVIGATION_MENU.STUDIES'|translate}}
                         </a>
                     </li>
                     <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">

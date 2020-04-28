@@ -252,6 +252,25 @@
 							</div>
 						</div>
 
+                        <!-- SECTION: Studies control -->
+						<div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin])">
+							<div class="panel-container animated" ng-class="{pulse: hoverDiagnosisMenu}" ng-mouseenter="hoverDiagnosisMenu=true" ng-mouseleave="hoverDiagnosisMenu=false" style="cursor:pointer;" ng-click="goToStudies()">
+								<div class="panel-info" >
+									<div class="panel-content">
+										<div class="icon-home clearfix">
+											<span class="fa fa-pie-chart fa-sm" aria-hidden="true"></span>
+										</div>
+										<div class="panel-title">
+											<h1>{{'NAVIGATION_MENU.STUDIES'|translate}}</h1>
+										</div>
+										<div class="panel-description">
+											<p>{{'NAVIGATION_MENU.STUDIES_SUB'|translate}}</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
 						<!-- SECTION: Cron control -->
 						<div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin])">
 							<div class="panel-container animated" ng-class="{pulse: hoverCronMenu}" ng-mouseenter="hoverCronMenu=true" ng-mouseleave="hoverCronMenu=false" style="cursor:pointer;" ng-click="goToCron()">
