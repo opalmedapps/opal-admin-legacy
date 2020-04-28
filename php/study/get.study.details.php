@@ -1,5 +1,5 @@
 <?php
-include_once('custom.code.inc');
+include_once('study.inc');
 
 $customCodeId = strip_tags($_POST['customCodeId']);
 $moduleId = strip_tags($_POST['moduleId']);

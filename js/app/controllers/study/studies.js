@@ -1,13 +1,13 @@
 angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular'])
 
-	.controller('study', function ($sce, $scope, $state, $filter, $timeout, $uibModal, customCodeCollectionService, filterCollectionService, Session, uiGridConstants) {
+	.controller('study', function ($scope, $state, $filter, $uibModal, studyCollectionService, Session, uiGridConstants) {
 
 		// get current user id
-		var user = Session.retrieveObject('user');
+		var user = Session.retrieveObject('user');1
 		var OAUserId = user.id;
 
-		$scope.goToAddCustomCode = function () {
-			$state.go('custom-code-add');
+		$scope.goToAddStudy = function () {
+			$state.go('study-add');
 		};
 
 		// Banner
@@ -21,7 +21,13 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 			});
 		};
 
-		getCustomCodesList();
+		// Function to filter custom codes
+		$scope.filterStudy = function (filterValue) {
+			$scope.filterValue = filterValue;
+			$scope.gridApi.grid.refresh();
+		};
+
+		getstudiesList();
 
 		// Function to set banner class
 		$scope.setBannerClass = function (classname) {
@@ -39,7 +45,7 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 			var matcher = new RegExp($scope.filterValue, 'i');
 			renderableRows.forEach(function (row) {
 				var match = false;
-				['code', 'description'].forEach(function (field) {
+				['code', 'title'].forEach(function (field) {
 					if (row.entity[field].match(matcher)) {
 						match = true;
 					}
@@ -61,29 +67,26 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 		// Table
 		// Templates
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editCustomCode(row.entity)"<i title="'+$filter('translate')('CUSTOM_CODE.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong>' +
-			'- <strong><a href="" ng-click="grid.appScope.deleteCustomCode(row.entity)"><i title="'+$filter('translate')('CUSTOM_CODE.LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
+			'<strong><a href="" ng-click="grid.appScope.editStudy(row.entity)"<i title="'+$filter('translate')('STUDY.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong>' +
+			'- <strong><a href="" ng-click="grid.appScope.deleteStudy(row.entity)"><i title="'+$filter('translate')('STUDY.LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
-			'ng-click="grid.appScope.editCustomCode(row.entity)">' +
-			'<strong><a href="">{{row.entity.description}}</a></strong></div>';
-		var cellTemplatePublication = '<div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==1">'+$filter('translate')('CUSTOM_CODE.LIST.ALIAS')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==6">'+$filter('translate')('CUSTOM_CODE.LIST.DIAGNOSTIC')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==9">'+$filter('translate')('CUSTOM_CODE.LIST.TEST')+'</div>';
+			'ng-click="grid.appScope.editStudy(row.entity)">' +
+			'<strong><a href="">{{row.entity.title}}</a></strong></div>';
+		var cellTemplatePublication = '<div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==1">'+$filter('translate')('STUDY.LIST.ALIAS')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==6">'+$filter('translate')('STUDY.LIST.DIAGNOSTIC')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==9">'+$filter('translate')('STUDY.LIST.TEST')+'</div>';
 		var cellTemplateLocked = '<div class="ui-grid-cell-contents" ng-show="row.entity.locked > 0"><div class="fa fa-lock text-danger"></div></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 0"><div class="fa fa-unlock text-success"></div></div>';
 
 		// Data binding for main table
 		$scope.gridOptions = {
-			data: 'customCodesList',
+			data: 'studiesList',
 			columnDefs: [
-				{ field: 'locked', enableColumnMenu: false, displayName: '', cellTemplate: cellTemplateLocked, width: '2%', sortable: false, enableFiltering: false},
-				{ field: 'description', enableColumnMenu: false, displayName: $filter('translate')('CUSTOM_CODE.LIST.DESCRIPTION'), cellTemplate: cellTemplateName, sort: {direction: uiGridConstants.ASC, priority: 0}},
-				{ field: 'code', enableColumnMenu: false, displayName: $filter('translate')('CUSTOM_CODE.LIST.CODE'), width: '30%'},
-				{
-					field: 'module_'+Session.retrieveObject('user').language, displayName: $filter('translate')('CUSTOM_CODE.LIST.MODULE'), enableColumnMenu: false, width: '25%', filter: {
-						type: uiGridConstants.filter.SELECT,
-						selectOptions: [{ value: $filter('translate')('CUSTOM_CODE.LIST.ALIAS'), label: $filter('translate')('CUSTOM_CODE.LIST.ALIAS') }, { value: $filter('translate')('CUSTOM_CODE.LIST.DIAGNOSTIC'), label: $filter('translate')('CUSTOM_CODE.LIST.DIAGNOSTIC') }, { value: $filter('translate')('CUSTOM_CODE.LIST.TEST'), label: $filter('translate')('CUSTOM_CODE.LIST.TEST') }]
-					}
-				},
-				{ name: $filter('translate')('CUSTOM_CODE.LIST.OPERATIONS'), width: '10%', cellTemplate: cellTemplateOperations, enableColumnMenu: false, enableFiltering: false, sortable: false }
+				{ field: 'title', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.TITLE_2'), cellTemplate: cellTemplateName, sort: {direction: uiGridConstants.ASC, priority: 0}},
+				{ field: 'code', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.STUDY_ID'), width: '10%'},
+				{ field: 'investigator', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.INVESTIGATOR'), width: '15%'},
+				{ field: 'startDate', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.START_DATE'), width: '10%'},
+				{ field: 'endDate', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.END_DATE'), width: '10%'},
+				{ field: 'creationDate', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.CREATION_DATE'), width: '15%'},
+				{ name: $filter('translate')('STUDY.LIST.OPERATIONS'), width: '10%', cellTemplate: cellTemplateOperations, enableColumnMenu: false, enableFiltering: false, sortable: false }
 			],
 			enableFiltering: true,
 			enableSorting: true,
@@ -95,22 +98,23 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 		};
 
 		// Initialize object for storing questionnaires
-		$scope.customCodesList = [];
+		$scope.studiesList = [];
 
-		function getCustomCodesList() {
-			customCodeCollectionService.getCustomCodes(OAUserId).then(function (response) {
-				$scope.customCodesList = response.data;
+		function getstudiesList() {
+			studyCollectionService.getStudies(OAUserId).then(function (response) {
+				console.log(response.data);
+				$scope.studiesList = response.data;
 			}).catch(function(err) {
-				alert($filter('translate')('CUSTOM_CODE.LIST.ERROR_PUBLICATION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+				alert($filter('translate')('STUDY.LIST.ERROR_PUBLICATION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
 			});
 		}
 
 		// Function to edit questionnaire
-		$scope.editCustomCode = function (customCode) {
-			$scope.currentCustomCode = customCode;
+		$scope.editStudy = function (study) {
+			$scope.currentStudy = study;
 			var modalInstance = $uibModal.open({ // open modal
-				templateUrl: 'templates/custom-code/edit.custom.code.html',
-				controller: 'customCode.edit',
+				templateUrl: 'templates/study/edit.study.html',
+				controller: 'study.edit',
 				scope: $scope,
 				windowClass: 'customModal',
 				backdrop: 'static',
@@ -118,39 +122,28 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 
 			// After update, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				getCustomCodesList();
+				getstudiesList();
 			});
 		};
 
 		// Function for when the custom code has been clicked for deletion
 		// Open a modal
-		$scope.deleteCustomCode = function (currentCustomCode) {
+		$scope.deleteStudy = function (currentStudy) {
 			// Assign selected custom code as the custom code to delete
-			$scope.customCodeToDelete = currentCustomCode;
+			$scope.studyToDelete = currentStudy;
 
-			if(currentCustomCode.locked > 0) {
-				var modalInstance = $uibModal.open({
-					templateUrl: 'templates/custom-code/cannot.delete.custom.code.html',
-					controller: 'customCode.delete',
-					windowClass: 'deleteModal',
-					scope: $scope,
-					backdrop: 'static',
-				});
-			}
-			else {
-				var modalInstance = $uibModal.open({
-					templateUrl: 'templates/custom-code/delete.custom.code.html',
-					controller: 'customCode.delete',
-					windowClass: 'deleteModal',
-					scope: $scope,
-					backdrop: 'static',
-				});
-			}
+			var modalInstance = $uibModal.open({
+				templateUrl: 'templates/study/delete.study.html',
+				controller: 'study.delete',
+				windowClass: 'deleteModal',
+				scope: $scope,
+				backdrop: 'static',
+			});
 
 			// After delete, refresh the custom code list
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing posts
-				getCustomCodesList();
+				getstudiesList();
 			});
 		};
 	});

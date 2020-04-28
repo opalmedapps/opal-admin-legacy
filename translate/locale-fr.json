@@ -17,6 +17,8 @@
   "NAVIGATION_MENU": {
     "CUSTOM_CODES": "Codes personnalisés",
     "CUSTOM_CODES_SUB": "Gérer les codes personnalisés pour les diagnostics, alias et résultats de laboratoire.",
+    "STUDIES": "Études",
+    "STUDIES_SUB": "Gérer les études cliniques auxquelles sont associées certains patients.",
     "PUBLISHING_TOOLS": "Outils de publication",
     "TASKS_APPTS_DOCS": "Tâches / Rv / Doc",
     "TASKS_APPTS_DOCS_SUB": "Outil de regroupement, de traduction et de publication de tâches, de rendez-vous et de documents.",
@@ -2365,6 +2367,16 @@
       "LOCKED": "Ce code personnalisé est utilisé et ne peut être modifié.",
       "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour du code personnalisé.",
       "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails du code personnalisé."
+    }
+  },
+  "STUDY" : {
+    "LIST": {
+    },
+    "DELETE": {
+    },
+    "ADD": {
+    },
+    "EDIT": {
     }
   },
   "PATIENTS": {

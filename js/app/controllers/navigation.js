@@ -100,9 +100,13 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		$scope.goToDiagnosisTranslation = function () {
 			$state.go('diagnosis-translation');
 		};
-		// Function to go to diagnosis translation page
+		// Function to go to custom code page
 		$scope.goToCustomCodes = function () {
 			$state.go('custom-code');
+		};
+		// Function to go to study page
+		$scope.goToStudies = function () {
+			$state.go('study');
 		};
 		// Function to go to user activity page
 		$scope.goToUserActivity = function () {
@@ -117,7 +121,7 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		// Function to set dropdown active for publishing tools
 		$scope.currentActivePublishingTool = function () {
 			var publishingToolPages = ['alias','post','educational-material','hospital-map','notification',
-			'test-result','questionnaire-menu','email','custom-code'];
+			'test-result','questionnaire-menu','email','custom-code','study'];
 			if (publishingToolPages.indexOf($state.current.name) !== -1) {
 				return true;
 			}
