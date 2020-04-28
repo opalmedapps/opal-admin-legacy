@@ -1,0 +1,58 @@
+<!-- Modal title -->
+<div class="modal-header">
+    <div class="col-xs-12 col-md-6">
+        <h2 class="modal-title">
+            <span class="glyphicon glyphicon-pencil"></span>
+            {{'CUSTOM_CODE.EDIT.TITLE'|translate}}
+        </h2>
+        <p ng-if="locked" class="text-danger">{{'CUSTOM_CODE.EDIT.LOCKED'|translate}}</p>
+    </div>
+    <div class="modal-buttons col-xs-12 col-md-6">
+        <form method="post" ng-submit="updateCustomCode()">
+            <input ng-if="!locked" class="btn btn-primary submit" ng-class="{'disabled': (!formReady || !changesDetected)}" type="submit" value="{{'CUSTOM_CODE.EDIT.SAVE'|translate}}">
+            <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'CUSTOM_CODE.EDIT.CANCEL'|translate}}">
+        </form>
+    </div>
+</div>
+<div class="modal-body">
+    <uib-accordion close-others="false">
+        <!-- SECTION: General infos -->
+        <div uib-accordion-group is-open="generalSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'CUSTOM_CODE.EDIT.GENERAL'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': generalSection.open, 'glyphicon-chevron-right': !generalSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12">
+                    <label><strong>{{'CUSTOM_CODE.EDIT.MODULE'|translate}}</strong></label> : {{generalInfo.module_display}}
+                </div>
+                <div ng-if="generalInfo.type_display" class="col-xs-12">
+                    <label><strong>{{'CUSTOM_CODE.EDIT.TYPE'|translate}}</strong></label> : {{generalInfo.type_display}}
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Titles -->
+        <div uib-accordion-group is-open="titleSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'CUSTOM_CODE.EDIT.DETAILS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'CUSTOM_CODE.EDIT.CODE'|translate}}</span>
+                        <input ng-disabled="locked" class="form-control" type="text" ng-model="toSubmit.details.code" ng-change="detailsUpdate()" required="required" />
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'CUSTOM_CODE.EDIT.DESCRIPTION'|translate}}</span>
+                        <input ng-disabled="locked" class="form-control" type="text" ng-model="toSubmit.details.description" ng-change="detailsUpdate()" required="required" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </uib-accordion>
+</div>
