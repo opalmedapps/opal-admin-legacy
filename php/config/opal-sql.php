@@ -73,6 +73,7 @@ define("OPAL_LOGIN_VIEW","v_login");
 define("OPAL_USER_ACTIVITY_LOG_TABLE","OAActivityLog");
 define("OPAL_ROLE_TABLE","Role");
 define("OPAL_ALIAS_MH_TABLE","AliasMH");
+define("OPAL_STUDY_TABLE","study");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -665,4 +666,9 @@ define("OPAL_GET_USER_TEST_RESULT_EXP","
     SELECT DISTINCT TestResultControlSerNum AS control_serial, RevSerNum AS revision, SessionId AS sessionid,
     ExpressionName AS expression, ModificationAction AS mod_action, DateAdded AS date_added
     FROM ".OPAL_TEST_RESULT_EXP_MH_TABLE." WHERE LastUpdatedBy = :LastUpdatedBy ORDER BY DateAdded DESC;
+");
+
+define("OPAL_GET_STUDIES_LIST","
+    SELECT ID, code, title, investigator, startDate, endDate, creationDate FROM ".OPAL_STUDY_TABLE."
+    WHERE deleted = ".NON_DELETED_RECORD.";
 ");

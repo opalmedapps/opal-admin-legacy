@@ -1239,4 +1239,13 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":LastUpdatedBy","variable"=>$userId,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    /*
+     * Get all the treatment machine triggers
+     * @params  void
+     * @return  treatment machine triggers found (array)
+     * */
+    function getStudiesList() {
+        return $this->_fetchAll(OPAL_GET_STUDIES_LIST, array());
+    }
 }
