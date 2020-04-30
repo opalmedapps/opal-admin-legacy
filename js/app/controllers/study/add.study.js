@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 	/******************************************************************************
 	 * Add Diagnosis Translation Page controller
 	 *******************************************************************************/
-	controller('study.add', function ($scope, $filter, $uibModal, customCodeCollectionService, $state, Session) {
+	controller('study.add', function ($scope, $filter, $uibModal, $state, $locale, Session) {
 
 		// get current user id
 		var user = Session.retrieveObject('user');
@@ -25,10 +25,6 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			['justifyLeft', 'justifyCenter', 'indent', 'outdent'],
 			['html', 'insertLink']
 		];
-
-		$scope.diagnosesSection = {open:false, show: true};
-		$scope.titleDescriptionSection = {open:false, show:false};
-		$scope.educationalMaterialSection = {open:false, show:false};
 
 		// completed steps booleans - used for progress bar
 		var steps = {
@@ -62,43 +58,96 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 
 			return numberOfTrues;
 		}
-
-
+		
 		$scope.toSubmit = {
 			OAUserId: OAUserId,
-			sessionid: Session.retrieveObject('user').sessionid,
-			moduleId: {
-				value: null,
-			},
 			details: {
 				code: null,
-				description: null,
+				title: null,
 			},
+			investigator: {
+				name: null
+			},
+			dates: {
+				start_date: null,
+				end_date: null,
+			}
 		};
 
 		$scope.validator = {
-			moduleId: {
-				completed: false,
-				mandatory: true,
-			},
 			details: {
 				completed: false,
 				mandatory: true,
+			},
+			investigator: {
+				completed: false,
+				mandatory: true,
+			},
+			dates: {
+				completed: false,
+				mandatory: false,
+				valid: true,
 			},
 		};
 
 		$scope.leftMenu = {
-			moduleId: {
-				display: true,
-				open: false,
-				preview: false,
-			},
 			details: {
 				display: false,
 				open: false,
 				preview: false,
 			},
+			investigator: {
+				display: false,
+				open: false,
+				preview: false,
+			},
+			dates: {
+				display: false,
+				open: false,
+				preview: false,
+			},
 		};
+
+		// Date format for start and end frequency dates
+		$scope.format = 'yyyy-MM-dd';
+		$scope.dateOptionsStart = {
+			formatYear: "'yy'",
+			startingDay: 0,
+			minDate: new Date(),
+			maxDate: null
+		};
+		$scope.dateOptionsEnd = {
+			formatYear: "'yy'",
+			startingDay: 0,
+			minDate: new Date(),
+			maxDate: null
+		};
+
+
+		$locale["DATETIME_FORMATS"]["SHORTDAY"] = [
+			$filter('translate')('DATEPICKER.SUNDAY_S'),
+			$filter('translate')('DATEPICKER.MONDAY_S'),
+			$filter('translate')('DATEPICKER.TUESDAY_S'),
+			$filter('translate')('DATEPICKER.WEDNESDAY_S'),
+			$filter('translate')('DATEPICKER.THURSDAY_S'),
+			$filter('translate')('DATEPICKER.FRIDAY_S'),
+			$filter('translate')('DATEPICKER.SATURDAY_S')
+		];
+
+		$locale["DATETIME_FORMATS"]["MONTH"] = [
+			$filter('translate')('DATEPICKER.JANUARY'),
+			$filter('translate')('DATEPICKER.FEBRUARY'),
+			$filter('translate')('DATEPICKER.MARCH'),
+			$filter('translate')('DATEPICKER.APRIL'),
+			$filter('translate')('DATEPICKER.MAY'),
+			$filter('translate')('DATEPICKER.JUNE'),
+			$filter('translate')('DATEPICKER.JULY'),
+			$filter('translate')('DATEPICKER.AUGUST'),
+			$filter('translate')('DATEPICKER.SEPTEMBER'),
+			$filter('translate')('DATEPICKER.OCTOBER'),
+			$filter('translate')('DATEPICKER.NOVEMBER'),
+			$filter('translate')('DATEPICKER.DECEMBER')
+		];
 
 		$scope.totalSteps = 0;
 		$scope.completedSteps = 0;
@@ -122,78 +171,34 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$('.form-box-right').addClass('fadeInRight');
 		};
 
-		// Call our API to ge the list of diagnoses
-		customCodeCollectionService.getAvailableModules(OAUserId).then(function (response) {
-			response.data.forEach(function(entry) {
-				if($scope.language.toUpperCase() === "FR")
-					entry.name_display = entry.name_FR;
-				else
-					entry.name_display = entry.name_EN;
-
-				entry.subModule = JSON.parse(entry.subModule);
-
-				if (entry.subModule) {
-					angular.forEach(entry.subModule, function (sub) {
-						if ($scope.language.toUpperCase() === "FR")
-							sub.name_display = sub.name_FR;
-						else
-							sub.name_display = sub.name_EN;
-					});
-				}
-			});
-			$scope.moduleList = response.data; // Assign value
-		}).catch(function(err) {
-			alert($filter('translate')('CUSTOM_CODE.ADD.ERROR_MODULE'));
-			$state.go('custom-code');
-		});
-
-		$scope.moduleUpdate = function (moduleSelected) {
-			if(moduleSelected.subModule) {
-				$scope.aliasTypes = moduleSelected.subModule;
-
-				if ($scope.toSubmit.type != "undefined") {
-					$scope.toSubmit.type = {
-						ID: null,
-					};
-				}
-				if ($scope.validator.type != "undefined") {
-					$scope.validator.type = {
-						completed: false,
-						mandatory: true,
-					};
-				}
-				if ($scope.leftMenu.type != "undefined") {
-					$scope.leftMenu.type = {
-						display: true,
-						open: false,
-						preview: false,
-					};
-				}
-			} else {
-				$scope.aliasTypes = null;
-				delete $scope.toSubmit.type;
-				delete $scope.validator.type;
-				delete $scope.leftMenu.type;
-
-			}
-			$scope.toSubmit.moduleId.value = moduleSelected.ID;
-			$scope.validator.moduleId.completed = true;
-			$scope.leftMenu.moduleId.preview = moduleSelected.name_display;
-			$scope.leftMenu.moduleId.open = true;
+		$scope.popupStart = {};
+		$scope.popupEnd = {};
+		$scope.openStart = function ($event) {
+			$event.preventDefault();
+			$event.stopPropagation();
+			$scope.popupStart['opened'] = true;
+			$scope.popupEnd['opened'] = false;
+			$scope.openAndValidate();
+		};
+		$scope.openEnd = function ($event) {
+			$event.preventDefault();
+			$event.stopPropagation();
+			$scope.popupStart['opened'] = false;
+			$scope.popupEnd['opened'] = true;
+			$scope.openAndValidate();
 		};
 
-		$scope.typeUpdate = function (typeSelected) {
-			$scope.toSubmit.type.ID = typeSelected.ID;
-
-			$scope.leftMenu.type.preview = typeSelected.name_display;
-			$scope.leftMenu.type.open = true;
-			$scope.validator.type.completed = true;
-		}
+		$scope.openAndValidate = function(){
+			try {
+				// $scope.leftMenu.publishFrequency.open = true;
+				// $scope.validator.occurrence.completed = $scope.checkFrequencyTrigger();
+			} catch(e) {}
+		};
 
 		$scope.detailsUpdate = function () {
-			$scope.validator.details.completed = ($scope.toSubmit.details.code != null && $scope.toSubmit.details.description != null);
-			$scope.leftMenu.details.open = ($scope.toSubmit.details.code != null || $scope.toSubmit.details.description != null);
-			$scope.leftMenu.details.display = ($scope.toSubmit.details.code != null || $scope.toSubmit.details.description != null);
+			$scope.validator.details.completed = ($scope.toSubmit.details.code != null && $scope.toSubmit.details.title != null);
+			$scope.leftMenu.details.open = ($scope.toSubmit.details.code != null || $scope.toSubmit.details.title != null);
+			$scope.leftMenu.details.display = ($scope.toSubmit.details.code != null || $scope.toSubmit.details.title != null);
 		};
 
 		$scope.$watch('validator', function() {
@@ -222,15 +227,15 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 		$scope.submitCustomCode = function () {
 			$.ajax({
 				type: 'POST',
-				url: 'custom-code/insert/custom-code',
+				url: 'study/insert/study',
 				data: $scope.toSubmit,
 				success: function () {},
 				error: function (err) {
 					console.log(err);
-					alert($filter('translate')('CUSTOM_CODE.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					alert($filter('translate')('STUDY.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
 				},
 				complete: function () {
-					$state.go('custom-code');
+					$state.go('study');
 				}
 			});
 		};
