@@ -105,7 +105,7 @@ class Diagnosis {
             $activeDBSources = $databaseObj->getActiveSourceDatabases();
             $assignedDiagnoses = $this->getAssignedDiagnoses();
 
-            $sql = "SELECT externalId AS sourceuid, code, description, CONCAT(code, ' (', description, ')') AS name FROM masterSourceDiagnostic WHERE deleted = 0 AND source IN(".implode(",", $activeDBSources).") ORDER BY code";
+            $sql = "SELECT externalId AS sourceuid, code, description, CONCAT(code, ' (', description, ')') AS name FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." WHERE deleted = 0 AND source IN(".implode(",", $activeDBSources).") ORDER BY code";
 
 
             $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD);

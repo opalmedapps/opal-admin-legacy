@@ -58,7 +58,7 @@ define("OPAL_EDUCATION_MATERIAL_MH_TABLE","EducationalMaterialMH");
 define("OPAL_CRON_LOG_TABLE","CronLog");
 define("OPAL_SETTING_TABLE","setting");
 define("OPAL_MASTER_SOURCE_ALIAS_TABLE","masterSourceAlias");
-define("OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE","masterSourceDiagnostic");
+define("OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE","masterSourceDiagnosis");
 define("OPAL_MASTER_SOURCE_TEST_RESULT_TABLE","masterSourceTestResult");
 define("OPAL_ALIAS_EXPRESSION_TABLE","AliasExpression");
 define("OPAL_DOCTOR_TABLE","Doctor");
@@ -512,7 +512,7 @@ define("OPAL_COUNT_CODE_MASTER_SOURCE","
     SELECT COUNT(*) AS locked FROM " . OPAL_MASTER_SOURCE_ALIAS_TABLE . " msa
     WHERE (msa.code LIKE :code AND msa.description LIKE :description)
     UNION ALL
-    SELECT COUNT(*) AS locked FROM " . OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE . " msd
+    SELECT COUNT(*) AS locked FROM " . OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE . " msd
     WHERE (msd.code LIKE :code AND msd.description LIKE :description)
     ) x
 ");
