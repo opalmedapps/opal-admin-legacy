@@ -310,7 +310,7 @@ class TestResult {
         $activeDBSources = $databaseObj->getActiveSourceDatabases();
         $assignedTests = $this->getAssignedTests();
 
-        $sql = "SELECT description AS name, description AS id FROM masterSourceTestResult WHERE deleted = 0 AND source IN(".implode(",", $activeDBSources).") ORDER BY description";
+        $sql = "SELECT description AS name, description AS id FROM ".OPAL_MASTER_SOURCE_TEST_RESULT_TABLE." WHERE deleted = 0 AND source IN(".implode(",", $activeDBSources).") ORDER BY description";
 
         $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD);
         $host_db_link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
