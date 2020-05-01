@@ -34,9 +34,9 @@ class Alias {
 //                $sourceDBSer = ARIA_SOURCE_DB;
 
             if($sourceDBSer == ARIA_SOURCE_DB)
-                $sql = "SELECT description AS name, code AS id, description FROM masterSourceAlias WHERE type = " . $type . " AND source = " . $sourceDBSer . " AND deleted = 0 ORDER BY code";
+                $sql = "SELECT description AS name, code AS id, description FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." WHERE type = " . $type . " AND source = " . $sourceDBSer . " AND deleted = 0 ORDER BY code";
             else
-                $sql = "SELECT CONCAT(code, ' (', description, ')') AS name, code AS id, description FROM masterSourceAlias WHERE type = " . $type . " AND source = " . $sourceDBSer . " AND deleted = 0 ORDER BY code";
+                $sql = "SELECT CONCAT(code, ' (', description, ')') AS name, code AS id, description FROM ".OPAL_MASTER_SOURCE_ALIAS_TABLE." WHERE type = " . $type . " AND source = " . $sourceDBSer . " AND deleted = 0 ORDER BY code";
 
             $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD);
             $host_db_link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
