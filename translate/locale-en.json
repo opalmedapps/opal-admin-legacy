@@ -2376,7 +2376,8 @@
       "DATES_EXPLANATION": "You can enter a starting date and/or an ending date for the study if necessary. Otherwise, please leave them blank.",
       "START_DATE": "Start Date",
       "END_DATE": "End Date",
-      "INVALID_DATE": "Invalid date format"
+      "INVALID_DATE": "Invalid date format",
+      "SUBMIT": "Submit"
     },
     "EDIT": {
     }

@@ -2404,7 +2404,8 @@
       "DATES_EXPLANATION": "Vous pouvez entrer une date et/ou de fin à l'étude si cela est nécessaire. Dans le cas contraire, veuillez les laisser vides.",
       "START_DATE": "Date de début",
       "END_DATE": "Date de fin",
-      "INVALID_DATE": "Format de date invalide"
+      "INVALID_DATE": "Format de date invalide",
+      "SUBMIT": "Soumettre"
     },
     "EDIT": {
     }
