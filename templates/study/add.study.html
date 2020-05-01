@@ -52,7 +52,7 @@
                         </div>
                         <uib-accordion class="side-navbar">
                             <!-- SECTION: Details -->
-                            <div uib-accordion-group is-open="leftMenu.details.open" class="panel-container summary-box" is-disabled="!validator.details.completed" ng-if="(validator.moduleId.completed && !aliasTypes) || (aliasTypes && validator.type.completed)">
+                            <div uib-accordion-group is-open="leftMenu.details.open" class="panel-container summary-box" is-disabled="!validator.details.completed" ng-if="(toSubmit.details.code || toSubmit.details.title)">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
@@ -66,63 +66,63 @@
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
-                                <div ng-if="toSubmit.details.code || toSubmit.details.description" class="description">
+                                <div ng-if="toSubmit.details.code || toSubmit.details.title" class="description">
                                     <p style="margin-bottom:0;" ng-show="toSubmit.details.code">
-                                        <b>{{'STUDY.ADD.CODE'|translate}}:</b> {{toSubmit.details.code}}
+                                        <b>{{'STUDY.ADD.STUDY_ID'|translate}}:</b> {{toSubmit.details.code}}
                                     </p>
-                                    <p style="margin-bottom:0;" ng-show="toSubmit.details.description">
-                                        <b>{{'STUDY.ADD.DESCRIPTION'|translate}}:</b> {{toSubmit.details.description}}
+                                    <p style="margin-bottom:0;" ng-show="toSubmit.details.title">
+                                        <b>{{'STUDY.ADD.TITLE_2'|translate}}:</b> {{toSubmit.details.title}}
                                     </p>
                                 </div>
                             </div>
-                            <!-- SECTION: Main investigator -->
-                            <div uib-accordion-group is-open="leftMenu.name.open" class="panel-container summary-box " ng-class="{fadeIn: validator.investigator.completed && !unique}" ng-if="validator.investigator.completed && !unique;" is-disabled="!toSubmit.investigator">
+                            <!-- SECTION: Principal investigator -->
+                            <div uib-accordion-group is-open="leftMenu.investigator.open" class="panel-container summary-box " ng-class="{fadeIn: validator.investigator.completed}" ng-if="validator.investigator.completed;" is-disabled="!toSubmit.investigator.name">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
                                         <div class="col-md-2">
                                             <span ng-if="validator.investigator.completed" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
                                         </div>
                                         <div class="col-md-8">
-                                            <strong>{{'STUDY.ADD.NAME'|translate}}</strong>
+                                            <strong>{{'STUDY.ADD.INVESTIGATOR'|translate}}</strong>
                                         </div>
                                         <div class="col-md-2">
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.name.open, 'glyphicon-chevron-right':!leftMenu.investigator.open}" ng-if="leftMenu.investigator.display"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.investigator.open, 'glyphicon-chevron-right':!leftMenu.investigator.open}" ng-if="validator.investigator.completed"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
-                                <div ng-if="toSubmit.name.name_EN" class="description">
+                                <div ng-if="toSubmit.investigator.name" class="description">
                                     <p style="margin-bottom:5px;">
-                                        <strong>{{'STUDY.ADD.ENGLISH_ABRV'|translate}}</strong>
+                                        <strong>{{'STUDY.ADD.NAME'|translate}}</strong>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        {{toSubmit.investigator}}
+                                        {{toSubmit.investigator.name}}
                                     </p>
                                 </div>
                             </div>
                             <!-- SECTION: Dates -->
-                            <div uib-accordion-group is-open="leftMenu.publishFrequency.open" class="panel-container summary-box " ng-class="{fadeIn:leftMenu.publishFrequency.display}" ng-if="leftMenu.publishFrequency.display">
+                            <div uib-accordion-group is-open="toSubmit.dates.start_date || toSubmit.dates.end_date" class="panel-container summary-box " ng-class="{fadeIn:leftMenu.publishFrequency.display}" ng-if="toSubmit.dates.start_date || toSubmit.dates.end_date" is-disabled="!toSubmit.dates.start_date && !toSubmit.dates.end_date">
                                 <uib-accordion-heading>
                                     <div class="row" style="align-items: center">
-                                        <div class="col-md-2"><span ng-if="validator.occurrence.completed" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span></div>
+                                        <div class="col-md-2"><span ng-if="validator.dates.completed" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span></div>
                                         <div class="col-md-8"><strong>{{'STUDY.ADD.DATES'|translate}}</strong></div>
                                         <div class="col-md-2">
                                             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.publishFrequency.open, 'glyphicon-chevron-right': !leftMenu.publishFrequency.open}" ng-if="showFrequency"></i>
                                         </div>
                                     </div>
                                 </uib-accordion-heading>
-                                <div ng-if="showFrequency" class="description">
+                                <div class="description">
                                     <p style="margin-bottom:5px;">
-                                        <strong>{{'STUDY.ADD.REPEAT_START'|translate}}</strong><br>
+                                        <strong>{{'STUDY.ADD.START_DATE'|translate}}</strong><br>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        <span ng-if="toSubmit.occurrence.start_date">{{toSubmit.occurrence.start_date|date:'yyyy-MM-dd'}}</span>
-                                        <span ng-if="!toSubmit.occurrence.start_date">{{'STUDY.ADD.NA'|translate}}</span>
+                                        <span ng-if="toSubmit.dates.start_date">{{toSubmit.dates.start_date|date:'yyyy-MM-dd'}}</span>
+<!--                                        <span ng-if="!toSubmit.dates.start_date">{{'STUDY.ADD.NA'|translate}}</span>-->
                                     </p>
                                 </div>
-                                <div ng-if="showFrequency" class="description">
+                                <div class="description">
                                     <p style="margin-bottom:5px;">
-                                        <strong>{{'STUDY.ADD.REPEAT_END'|translate}}</strong><br>
+                                        <strong>{{'STUDY.ADD.END_DATE'|translate}}</strong><br>
                                         <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
-                                        <span ng-if="toSubmit.occurrence.end_date">{{toSubmit.occurrence.end_date | date: 'yyyy-MM-dd' }}</span>
-                                        <span ng-if="!toSubmit.occurrence.end_date">{{'STUDY.ADD.NEVER'|translate}}</span>
+                                        <span ng-if="toSubmit.dates.end_date">{{toSubmit.dates.end_date | date: 'yyyy-MM-dd' }}</span>
+<!--                                        <span ng-if="!toSubmit.dates.end_date">{{'STUDY.ADD.NA'|translate}}</span>-->
                                     </p>
                                 </div>
                             </div>
@@ -130,7 +130,7 @@
                         </uib-accordion>
                         <!-- Submit button -->
                         <div class="panel-container" ng-if="formReady">
-                            <a href="" ng-click="submitCustomCode()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}"
+                            <a href="" ng-click="submitStudy()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}"
                                ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" style="width: 100%;">
 								<span style="font-size: 20px;">
 									<strong>{{'STUDY.ADD.SUBMIT'|translate}}</strong>
@@ -183,7 +183,7 @@
                         </div>
                         <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="formReady">
                             <div class="panel-container">
-                                <a href="" ng-click="submitCustomCode()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" style="width: 100%;">
+                                <a href="" ng-click="submitStudy()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" style="width: 100%;">
                                     <span style="font-size: 20px;"><strong>{{'STUDY.ADD.SUBMIT'|translate}}</strong></span>
                                 </a>
                             </div>
@@ -239,7 +239,7 @@
                         </div>
                         <!-- END SECTION -->
                         <!-- SECTION: Principal Investigator -->
-                        <div class="row">
+                        <div class="row fadeIn" ng-if="validator.details.completed">
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -247,16 +247,12 @@
                                     </span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 5px;">
                                     <span style="color:#d9534f"><strong>{{'STUDY.ADD.REQUIRED'|translate}}</strong></span>
                                     {{'STUDY.ADD.INVESTIGATOR_EXPLANATION'|translate}}
                                 </p>
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="col-xs-12 col-md-6">
                                 <div class="panel" ng-class="(toSubmit.investigator.name) ? 'panel-success': 'panel-danger'">
                                     <div class="panel-heading"><strong>{{'STUDY.ADD.NAME'|translate}}</strong>
@@ -278,7 +274,8 @@
                         </div>
                         <!-- END SECTION -->
                         <!-- SECTION: Start and end date -->
-                        <div class="row">
+                        <div class="row fadeIn" ng-if="validator.investigator.completed">
+
                             <div class="col-xs-12 side-menu-title">
                                 <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
                                     <span style="background-color:#e6edfa; padding: 0 10px;">
@@ -286,8 +283,6 @@
                                     </span>
                                 </div>
                             </div>
-                        </div>
-                        <div>
                             <div class="col-xs-12">
                                 <p style="margin-bottom: 10px;">
                                     <span><strong>{{'STUDY.ADD.OPTIONAL_FIELD'|translate}}</strong></span>
@@ -302,10 +297,10 @@
                                         </label>
                                         <div class="col-xs-12 col-lg-9">
                                             <div class="input-group">
-                                                <input type="text"  maxlength="100" class="form-control" uib-datepicker-popup="{{format}}" ng-model="toSubmit.dates.start_date" is-open="popupStart.opened" datepicker-options="dateOptionsStart" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
+                                                <input type="text" maxlength="10" class="form-control" uib-datepicker-popup="{{format}}" ng-model="toSubmit.dates.start_date" is-open="popupStart.opened" datepicker-options="dateOptionsStart" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
                                                 <span class="input-group-btn"><button class="btn btn-default" ng-click="openStart($event)"><i class="glyphicon glyphicon-calendar"></i></button></span>
                                             </div>
-<!--                                            <div style="color:#d9534f; font-weight: bold;">{{'STUDY.ADD.INVALID_DATE'|translate}}</div>-->
+                                            <!--                                            <div style="color:#d9534f; font-weight: bold;">{{'STUDY.ADD.INVALID_DATE'|translate}}</div>-->
                                         </div>
                                     </div>
                                 </div>
@@ -318,7 +313,7 @@
                                         </label>
                                         <div class="col-xs-12 col-lg-9">
                                             <div class="input-group">
-                                                <input type="text"  maxlength="100" class="form-control" uib-datepicker-popup="{{format}}" ng-model="toSubmit.dates.end_date" is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
+                                                <input type="text" maxlength="10" class="form-control" uib-datepicker-popup="{{format}}" ng-model="toSubmit.dates.end_date" is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
                                                 <span class="input-group-btn">
                                                         <button class="btn btn-default" ng-click="openEnd($event)"><i class="glyphicon glyphicon-calendar"></i></button>
                                                     </span>
