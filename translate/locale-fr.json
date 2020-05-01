@@ -2573,6 +2573,10 @@
       "ERROR_LOGS": "Une erreur s'est produite lors de l'obtention des journaux de l'utilisateur."
     }
   },
+  "PATIENTREPORT": {
+    "TITLE": "Rapport du patient",
+    "INTRODUCTION": "Rechercher et générer un rapport pour les patients qui utilisent Opal."
+  },
   "PATIENT_REGISTRATION_TITLE": "Enregistrement Patient",
   "PATIENT_REGISTRATION_SEARCH_HEADER": "Recherche",
   "PATIENT_REGISTRATION_SEARCH_DESCRIPTION": "Veuillez entrer un numéro de carte soleil de 12 caractères avec l'identifiant dur patient pour lancer le processus d'incription.",
