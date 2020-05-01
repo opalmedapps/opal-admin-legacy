@@ -116,7 +116,7 @@ class DatabaseOpal extends DatabaseAccess {
                 array_push($sqlModule, $module["sqlCustomCode"]);
         $sqlModule = implode(SQL_GENERAL_UNION_ALL, $sqlModule);
         $sqlModule = str_replace("%%MASTER_SOURCE_ALIAS%%", OPAL_MASTER_SOURCE_ALIAS_TABLE, $sqlModule);
-        $sqlModule = str_replace("%%MASTER_SOURCE_DIAGNOSTIC%%", OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%MASTER_SOURCE_DIAGNOSTIC%%", OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE, $sqlModule);
         $sqlModule = str_replace("%%MASTER_SOURCE_TEST_RESULT%%", OPAL_MASTER_SOURCE_TEST_RESULT_TABLE, $sqlModule);
         $sqlModule = str_replace("%%ALIAS_EXPRESSION%%", OPAL_ALIAS_EXPRESSION_TABLE, $sqlModule);
         $sqlModule = str_replace("%%TEST_RESULT_EXPRESSION%%", OPAL_TEST_RESULT_EXPRESSION_TABLE, $sqlModule);
@@ -147,7 +147,7 @@ class DatabaseOpal extends DatabaseAccess {
 
         $sqlModule = $module["sqlCustomCodeDetails"];
         $sqlModule = str_replace("%%MASTER_SOURCE_ALIAS%%", OPAL_MASTER_SOURCE_ALIAS_TABLE, $sqlModule);
-        $sqlModule = str_replace("%%MASTER_SOURCE_DIAGNOSTIC%%", OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE, $sqlModule);
+        $sqlModule = str_replace("%%MASTER_SOURCE_DIAGNOSTIC%%", OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE, $sqlModule);
         $sqlModule = str_replace("%%MASTER_SOURCE_TEST_RESULT%%", OPAL_MASTER_SOURCE_TEST_RESULT_TABLE, $sqlModule);
         $sqlModule = str_replace("%%ALIAS_EXPRESSION%%", OPAL_ALIAS_EXPRESSION_TABLE, $sqlModule);
         $sqlModule = str_replace("%%TEST_RESULT_EXPRESSION%%", OPAL_TEST_RESULT_EXPRESSION_TABLE, $sqlModule);
@@ -580,7 +580,7 @@ class DatabaseOpal extends DatabaseAccess {
                 $tableToInsert = OPAL_MASTER_SOURCE_TEST_RESULT_TABLE;
                 break;
             case MODULE_DIAGNOSIS_TRANSLATION:
-                $tableToInsert = OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE;
+                $tableToInsert = OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE;
                 break;
             default:
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module.");
@@ -607,7 +607,7 @@ class DatabaseOpal extends DatabaseAccess {
                 $tableToUpdate = OPAL_MASTER_SOURCE_TEST_RESULT_TABLE;
                 break;
             case MODULE_DIAGNOSIS_TRANSLATION:
-                $tableToUpdate = OPAL_MASTER_SOURCE_DIAGNOSTIC_TABLE;
+                $tableToUpdate = OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE;
                 break;
             default:
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module.");
