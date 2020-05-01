@@ -1,0 +1,34 @@
+<div id="main">
+    <div id="top">
+        <div class="clearfix">
+            <div class="row">
+                <!-- Load side menu -->
+                <div id="side-panel-scrollbar" class="col-lg-2">
+                    <div ng-include="'templates/side-panel-menu.html'"></div>
+                </div>
+                <!-- Right side detail view -->
+                <div class="col-lg-10 animated fadeIn">
+                    <div class="row main-title">
+                        <!-- Page title -->
+                        <div class="col-xs-12 col-md-8 title-content">
+                            <span class="fa fa fa-file-text"></span>
+                            <h1><strong>{{'PATIENTREPORT.TITLE'|translate}}</strong></h1>
+                        </div>
+                        <!-- Breadcrumbs -->
+                        <div class="col-md-4 title-breadcrumbs">
+                            <span><a ui-sref="home">{{'BREADCRUMBS.HOME'|translate}}</a> <span
+                                    class="glyphicon glyphicon-menu-right teflon"></span> <strong>{{'PATIENTS.LIST.TITLE'|translate}}</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- Load main table -->
+                    <div class="iframe-container">
+                        <iframe id="serviceFrameSend" src="patientReport/public_html/index.html" class="responsive-iframe">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bannerMessage alert-success">{{bannerMessage}}</div>
+</div>
