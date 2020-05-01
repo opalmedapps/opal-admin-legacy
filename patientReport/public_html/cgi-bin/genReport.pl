@@ -1,4 +1,4 @@
-#!C:\xampp\perl\bin\perl.exe
+#!/usr/bin/perl -w
 
 # genEducReport : given patient report by passing PatientSerNum
  
@@ -53,23 +53,23 @@ my $un;
 my $ps;
 my $dbh;
 
-#if($sdb eq "true"){ #Then we want to connect to prod
-#	#login info for the prod server
-#	$db = "OpalDB";
-#	$un = 'reports';
-#	$ps = 'r3p0rt$246!'; #DONT DELETE THIS!! Not written down anywhere
-#	$dbh = DBI->connect("DBI:mysql:database=$db;host=172.26.120.179", $un, $ps)
-#		or die "Couldn't connect to database: " . DBI->errstr;
-#}else{ #we want preprod
-#	#login info for the preprod server
-#	$db = "OpalDB_PREPROD";
-#	$un = 'readonly';
-#	$ps = 'readonly';
-#	$dbh = DBI->connect("DBI:mysql:database=$db;host=172.26.66.41", $un, $ps)
-#		or die "Couldn't connect to database: " . DBI->errstr;
-#}
+if($sdb eq "true"){ #Then we want to connect to prod
+	#login info for the prod server
+	$db = "OpalDB";
+	$un = 'reports';
+	$ps = 'r3p0rt$246!'; #DONT DELETE THIS!! Not written down anywhere
+	$dbh = DBI->connect("DBI:mysql:database=$db;host=172.26.120.179", $un, $ps)
+		or die "Couldn't connect to database: " . DBI->errstr;
+}else{ #we want preprod
+	#login info for the preprod server
+	$db = "OpalDB_PREPROD";
+	$un = 'readonly';
+	$ps = 'readonly';
+	$dbh = DBI->connect("DBI:mysql:database=$db;host=172.26.66.41", $un, $ps)
+		or die "Couldn't connect to database: " . DBI->errstr;
+}
 
-$dbh = DBI->connect("DBI:mysql:opaldb",'root','')or die "Couldn't connect to database: " . DBI->errstr;
+#$dbh = DBI->connect("DBI:mysql:opaldb",'root','')or die "Couldn't connect to database: " . DBI->errstr;
 
 #build SQL reports...
 my $query1;
