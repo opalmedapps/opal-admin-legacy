@@ -2405,7 +2405,9 @@
       "START_DATE": "Date de début",
       "END_DATE": "Date de fin",
       "INVALID_DATE": "Format de date invalide",
-      "SUBMIT": "Soumettre"
+      "SUBMIT": "Soumettre",
+      "NA": "Non disponible",
+      "ERROR_ADD": "Une erreur s'est produite lors de la création de l'étude."
     },
     "EDIT": {
     }

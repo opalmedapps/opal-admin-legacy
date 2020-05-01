@@ -214,7 +214,20 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			if (startDate !== undefined) {
 				$scope.dateOptionsEnd.minDate = startDate;
 			}
+			checkOpenDates();
 		});
+
+		function checkOpenDates() {
+			if($scope.toSubmit.dates.start_date || $scope.toSubmit.dates.end_date) {
+				$scope.leftMenu.dates.display = true;
+				$scope.leftMenu.dates.open = true;
+				$scope.leftMenu.dates.preview = true;
+			} else {
+				$scope.leftMenu.dates.display = false;
+				$scope.leftMenu.dates.open = false;
+				$scope.leftMenu.dates.preview = false;
+			}
+		}
 
 		// Watch to restrict the start calendar to not choose a start after the end date
 		$scope.$watch('toSubmit.dates.end_date', function(endDate){
@@ -223,6 +236,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			}
 			else
 				$scope.dateOptionsStart.maxDate = null;
+			checkOpenDates();
 		});
 
 
@@ -251,26 +265,28 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.totalSteps = totalsteps;
 			$scope.completedSteps = completedSteps;
 			$scope.stepProgress = $scope.totalSteps > 0 ? ($scope.completedSteps / $scope.totalSteps * 100) : 0;
-			console.log($scope.completedSteps + " " + $scope.totalSteps + " " + nonMandatoryCompleted + " " + nonMandatoryTotal);
 			$scope.formReady = ($scope.completedSteps >= $scope.totalSteps) && (nonMandatoryCompleted >= nonMandatoryTotal);
 		}, true);
 
 		// Function to submit the new diagnosis translation
 		$scope.submitStudy = function () {
-			console.log($scope.toSubmit);
-			// $.ajax({
-			// 	type: 'POST',
-			// 	url: 'study/insert/study',
-			// 	data: $scope.toSubmit,
-			// 	success: function () {},
-			// 	error: function (err) {
-			// 		console.log(err);
-			// 		alert($filter('translate')('STUDY.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
-			// 	},
-			// 	complete: function () {
-			// 		$state.go('study');
-			// 	}
-			// });
+			if ($scope.toSubmit.dates.start_date)
+				$scope.toSubmit.dates.start_date = moment($scope.toSubmit.dates.start_date).format('X');
+			if ($scope.toSubmit.dates.end_date)
+				$scope.toSubmit.dates.end_date = moment($scope.toSubmit.dates.end_date).format('X');
+
+			$.ajax({
+				type: 'POST',
+				url: 'study/insert/study',
+				data: $scope.toSubmit,
+				success: function () {},
+				error: function (err) {
+					alert($filter('translate')('STUDY.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+				},
+				complete: function () {
+					// $state.go('study');
+				}
+			});
 		};
 
 		var fixmeTop = $('.summary-fix').offset().top;
