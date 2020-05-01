@@ -41,6 +41,7 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, A
 
 	// Function to return boolean on completed login form
 	$scope.loginFormComplete = function () {
+		debugger;
 		if (($scope.credentials.username && $scope.credentials.password))
 			return true;
 		else
@@ -65,12 +66,14 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, A
 
 	$scope.submitLogin = function (credentials) {
 		if ($scope.loginFormComplete()) {
+			debugger;
 			var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103;
 
 			var encrypted = JSON.stringify({username: credentials.username, password: credentials.password});
 			encrypted = (Encrypt.encode(encrypted, cypher));
 
 			AuthService.login(encrypted, cypher).then(function (response) {
+				debugger;
 				Session.create(response.data);
 				$rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
 				$rootScope.currentUser = response.data;
