@@ -2377,7 +2377,9 @@
       "START_DATE": "Start Date",
       "END_DATE": "End Date",
       "INVALID_DATE": "Invalid date format",
-      "SUBMIT": "Submit"
+      "SUBMIT": "Submit",
+      "NA": "Not available",
+      "ERROR_ADD": "An error occured while creating the study."
     },
     "EDIT": {
     }
