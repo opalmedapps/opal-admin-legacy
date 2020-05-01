@@ -140,7 +140,6 @@ controller('navigation', function ($scope, $location, $state, LogoutService) {
 
     // Function to go to report page
     $scope.goToReport = function () {
-    	debugger;
         $state.go('report');
     };
 
