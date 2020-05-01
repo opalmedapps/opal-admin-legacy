@@ -70,18 +70,17 @@ app.controller('Ctrl1', function ($scope, $http) {
     $scope.selectedName = "";
 
     $scope.findPat = function () {
-        debugger;
         if ($scope.searchName == "" && $scope.searchSerial == "" && $scope.patientMRN == "" && $scope.patientEmail == "" && $scope.patientRAMQ == "") {
             $scope.foundPatient = false;
         }
         else if ($scope.searchName) {
-            debugger;
+
 
             //find by name
             //http get function, returns whatever matches it finds
             $http.get("cgi-bin/findPatientByName.pl", { params: { pname: $scope.searchName, db: $scope.db.prod } })
                 .then(function (response) {
-                    debugger;
+
                     //console.log(response.data);
                     displayName(response.data);
                 }, function (error) {
@@ -89,11 +88,11 @@ app.controller('Ctrl1', function ($scope, $http) {
                 });
         }
         else if ($scope.searchSerial) {
-            debugger;
+
             //find by serial
             $http.get("cgi-bin/findPatientByNum.pl", { params: { snum: $scope.searchSerial, db: $scope.db.prod } })
                 .then(function (response) {
-                    debugger;
+
                     //console.log(response.data);
                     displayName(response.data);
                 }, function (error) {
@@ -101,11 +100,11 @@ app.controller('Ctrl1', function ($scope, $http) {
                 });
         }
         else if ($scope.patientMRN) {
-            debugger;
+
             //find by serial
             $http.get("cgi-bin/findPatientByMRN.pl", { params: { pmrn: $scope.patientMRN, db: $scope.db.prod } })
                 .then(function (response) {
-                    debugger;
+
                     //console.log(response.data);
                     displayName(response.data);
                 }, function (error) {
@@ -113,11 +112,11 @@ app.controller('Ctrl1', function ($scope, $http) {
                 });
         }
         else if ($scope.patientEmail) {
-            debugger;
+
             //find by serial
             $http.get("cgi-bin/findPatientByEmail.pl", { params: { pemail: $scope.patientEmail, db: $scope.db.prod } })
                 .then(function (response) {
-                    debugger;
+
                     //console.log(response.data);
                     displayName(response.data);
                 }, function (error) {
@@ -125,11 +124,11 @@ app.controller('Ctrl1', function ($scope, $http) {
                 });
         }
         else if ($scope.patientRAMQ) {
-            debugger;
+
             //find by serial
             $http.get("cgi-bin/findPatientByRAMQ.pl", { params: { pramq: $scope.patientRAMQ, db: $scope.db.prod } })
                 .then(function (response) {
-                    debugger;
+
                     //console.log(response.data);
                     displayName(response.data);
                 }, function (error) {
@@ -138,7 +137,7 @@ app.controller('Ctrl1', function ($scope, $http) {
         }
     }
     function displayName(inp) {
-        debugger;
+
         if (!inp) { //could not find a match
             alert("Could not find a patient matching these criteria");
             $scope.foundPatient = false;
@@ -174,7 +173,7 @@ app.controller('Ctrl1', function ($scope, $http) {
     }
 
     $scope.displaySelection = function () {
-        debugger;
+
         //Set foundPatient to true to display the report
         $scope.foundPatient = true;
 
@@ -194,7 +193,7 @@ app.controller('Ctrl1', function ($scope, $http) {
 
     // Function to reset the field falues and hide the dulplicate patient dropdown
     $scope.resetFieldValues = function () {
-        debugger;
+
         // Reset the field values
         $scope.searchName = "";
         $scope.searchSerial = "";
@@ -211,7 +210,7 @@ app.controller('Ctrl1', function ($scope, $http) {
 
     // Function to reset the report values and hide the list
     $scope.resetReportValues = function () {
-        debugger;
+
         // Hide the report section
         $scope.featureList.diagnosis = false;
         $scope.featureList.appointments = false;
@@ -239,7 +238,7 @@ app.controller('Ctrl1', function ($scope, $http) {
     
     //fetchData function makes the call to the backend (perl script) to retrieve data
     $scope.fetchData = function () {
-        debugger;
+
         //console.log("sending request");
         //Call the perl script to get JSON objects of the SQL records
         $http.get("cgi-bin/genReport.pl", {
@@ -260,7 +259,7 @@ app.controller('Ctrl1', function ($scope, $http) {
             }
         })
             .then(function (response) {
-                debugger;
+
                 //store the JSON object returned in the allData variable (Promise handling)
                 populateTables(response.data);
             }, function (error) {
@@ -271,7 +270,7 @@ app.controller('Ctrl1', function ($scope, $http) {
     //Register the input records to scope variables (one for each report section)
     // 	and strip away unnecessary white space / quotations
     function populateTables(input) {
-        debugger;
+
         if (input === null) { //First check that we got something back
             //If input is null, we couldn't find any info for that patient
             $scope.nullPatient = "Warning: Patient not found in database";
