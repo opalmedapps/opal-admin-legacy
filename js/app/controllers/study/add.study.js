@@ -58,19 +58,19 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 
 			return numberOfTrues;
 		}
-		
+
 		$scope.toSubmit = {
 			OAUserId: OAUserId,
 			details: {
-				code: null,
-				title: null,
+				code: "",
+				title: "",
 			},
 			investigator: {
-				name: null
+				name: ""
 			},
 			dates: {
-				start_date: null,
-				end_date: null,
+				start_date: "",
+				end_date: "",
 			}
 		};
 
@@ -78,10 +78,12 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			details: {
 				completed: false,
 				mandatory: true,
+				valid: true,
 			},
 			investigator: {
 				completed: false,
 				mandatory: true,
+				valid: true,
 			},
 			dates: {
 				completed: false,
@@ -196,10 +198,33 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 		};
 
 		$scope.detailsUpdate = function () {
-			$scope.validator.details.completed = ($scope.toSubmit.details.code != null && $scope.toSubmit.details.title != null);
-			$scope.leftMenu.details.open = ($scope.toSubmit.details.code != null || $scope.toSubmit.details.title != null);
-			$scope.leftMenu.details.display = ($scope.toSubmit.details.code != null || $scope.toSubmit.details.title != null);
+			$scope.validator.details.completed = ($scope.toSubmit.details.code !== "" && $scope.toSubmit.details.title !== "");
+			$scope.leftMenu.details.open = ($scope.toSubmit.details.code !== "" || $scope.toSubmit.details.title !== "");
+			$scope.leftMenu.details.display = $scope.leftMenu.details.open;
 		};
+
+		$scope.nameUpdate = function () {
+			$scope.validator.investigator.completed = ($scope.toSubmit.investigator.name !== "");
+			$scope.leftMenu.investigator.open = $scope.validator.details.completed;
+			$scope.leftMenu.investigator.display = $scope.validator.details.completed;
+		};
+
+		// Watch to restrict the end calendar to not choose an earlier date than the start date
+		$scope.$watch('toSubmit.dates.start_date', function(startDate){
+			if (startDate !== undefined) {
+				$scope.dateOptionsEnd.minDate = startDate;
+			}
+		});
+
+		// Watch to restrict the start calendar to not choose a start after the end date
+		$scope.$watch('toSubmit.dates.end_date', function(endDate){
+			if (endDate !== undefined) {
+				$scope.dateOptionsStart.maxDate = endDate;
+			}
+			else
+				$scope.dateOptionsStart.maxDate = null;
+		});
+
 
 		$scope.$watch('validator', function() {
 			var totalsteps = 0;
@@ -213,31 +238,39 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 					nonMandatoryTotal++;
 				if(value.mandatory && value.completed)
 					completedSteps++;
-				else if(!value.mandatory && value.completed)
-					nonMandatoryCompleted++;
+				else if(!value.mandatory) {
+					if(value.completed) {
+						if (value.valid)
+							nonMandatoryCompleted++;
+					}
+					else
+						nonMandatoryCompleted++;
+				}
 			});
 
 			$scope.totalSteps = totalsteps;
 			$scope.completedSteps = completedSteps;
 			$scope.stepProgress = $scope.totalSteps > 0 ? ($scope.completedSteps / $scope.totalSteps * 100) : 0;
+			console.log($scope.completedSteps + " " + $scope.totalSteps + " " + nonMandatoryCompleted + " " + nonMandatoryTotal);
 			$scope.formReady = ($scope.completedSteps >= $scope.totalSteps) && (nonMandatoryCompleted >= nonMandatoryTotal);
 		}, true);
 
 		// Function to submit the new diagnosis translation
-		$scope.submitCustomCode = function () {
-			$.ajax({
-				type: 'POST',
-				url: 'study/insert/study',
-				data: $scope.toSubmit,
-				success: function () {},
-				error: function (err) {
-					console.log(err);
-					alert($filter('translate')('STUDY.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
-				},
-				complete: function () {
-					$state.go('study');
-				}
-			});
+		$scope.submitStudy = function () {
+			console.log($scope.toSubmit);
+			// $.ajax({
+			// 	type: 'POST',
+			// 	url: 'study/insert/study',
+			// 	data: $scope.toSubmit,
+			// 	success: function () {},
+			// 	error: function (err) {
+			// 		console.log(err);
+			// 		alert($filter('translate')('STUDY.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+			// 	},
+			// 	complete: function () {
+			// 		$state.go('study');
+			// 	}
+			// });
 		};
 
 		var fixmeTop = $('.summary-fix').offset().top;
