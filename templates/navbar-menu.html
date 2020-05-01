@@ -109,6 +109,12 @@
                         </a>
                     </li>
                     <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
+                        <a ui-sref="report" ng-click="closeNav()">
+                            <span class="fa fa-file-text" aria-hidden="true"></span>
+                            {{'PATIENTREPORT.TITLE'|translate}}
+                        </a>
+                    </li>
+                    <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
                         <a ui-sref="users" ng-click="closeNav()">
                             <span class="fa fa-users" aria-hidden="true"></span>
                             {{'NAVIGATION_MENU.USERS'|translate}}
