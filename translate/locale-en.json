@@ -2546,6 +2546,10 @@
     "LANGUAGE_ERROR": "An error occurred. Unable to change the language.",
     "SERVER_ERROR": "An error occurred. Answer from the server: "
   },
+  "PATIENTREPORT": {
+    "TITLE": "Patient Report",
+    "INTRODUCTION": "Search and generate report for opal patients."
+  },
   "PATIENT_REGISTRATION_TITLE": "Patient Registration",
   "PATIENT_REGISTRATION_SEARCH_HEADER": "Registration Search",
   "PATIENT_REGISTRATION_SEARCH_DESCRIPTION": "Please enter a valid <strong>12-character</strong> Medicare card number along with the <strong>patient ID</strong> to start the registration process.",

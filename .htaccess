@@ -59,13 +59,16 @@ Options +FollowSymLinks
   # Header always set X-Content-Type-Options nosniff
 </IfModule>
 
-# Disallow script execution
-Options -ExecCGI
-AddHandler cgi-script .php .pl .py .jsp .asp .htm .shtml .sh .cgi
+## Disallow script execution
+#Options -ExecCGI
+#AddHandler cgi-script .php .pl .py .jsp .asp .htm .shtml .sh .cgi
+#
+## Show CGI Source Code
+#RemoveHandler cgi-script .pl .py .cgi
+#AddType text/plain .pl .py .cgi
 
-# Show CGI Source Code
-RemoveHandler cgi-script .pl .py .cgi
-AddType text/plain .pl .py .cgi
+# Disallow script execution
+AddHandler .php .py .jsp .asp .htm .shtml .sh
 
 # Accesses to the OpalAdmin API
 
