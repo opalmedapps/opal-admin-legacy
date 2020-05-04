@@ -284,7 +284,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 					alert($filter('translate')('STUDY.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
 				},
 				complete: function () {
-					// $state.go('study');
+					$state.go('study');
 				}
 			});
 		};
