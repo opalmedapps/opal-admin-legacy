@@ -91,7 +91,7 @@ class CustomCode extends OpalProject {
 
     /*
      * Validate a custom code.
-     * @params  $customCode(array in ref) custom code to validate
+     * @params  $customCode (array in ref) custom code to validate
      *          $moduleDetails (array in ref) details of the module to which the custom code is associated
      * @return  $errMsgs (array) the list of errors found in the validation.
      * */
