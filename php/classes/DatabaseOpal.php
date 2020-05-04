@@ -1248,4 +1248,15 @@ class DatabaseOpal extends DatabaseAccess {
     function getStudiesList() {
         return $this->_fetchAll(OPAL_GET_STUDIES_LIST, array());
     }
+
+    /*
+     * Insert new study with the username of the user who created it.
+     * @param   $newStudy (array) new study to add
+     * @return  number of record inserted (should be one) or a code 500
+     * */
+    function insertStudy($newStudy) {
+        $newStudy["createdBy"] = $this->getUsername();
+        $newStudy["updatedBy"] = $this->getUsername();
+        return $this->_insertRecordIntoTable(OPAL_STUDY_TABLE, $newStudy);
+    }
 }
