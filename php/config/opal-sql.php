@@ -676,3 +676,8 @@ define("OPAL_GET_STUDIES_LIST","
 define("OPAL_GET_STUDY_DETAILS","
     SELECT ID, code, title, investigator, startDate, endDate FROM ".OPAL_STUDY_TABLE." WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD.";
 ");
+
+define("OPAL_UPDATE_STUDY","
+    UPDATE ".OPAL_STUDY_TABLE." SET code = :code, title = :title, investigator = :investigator, startDate = :startDate,
+    endDate = :endDate, updatedBy = :updatedBy WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD."; 
+");
