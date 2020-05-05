@@ -2382,6 +2382,19 @@
       "ERROR_ADD": "An error occured while creating the study."
     },
     "EDIT": {
+      "TITLE": "Edit Study",
+      "SAVE": "Save",
+      "CANCEL": "Cancel",
+      "DETAILS": "Details",
+      "STUDY_ID": "Study ID",
+      "TITLE_2": "Title",
+      "INVESTIGATOR": "Principal Investigator",
+      "NAME": "Name",
+      "DATES": "Dates",
+      "START_DATE": "Start Date",
+      "END_DATE": "End Date",
+      "ERROR_DETAILS": "An error occurred while getting the study details.",
+      "ERROR_UPDATE": "An error occurred while updating the study."
     }
   },
   "PATIENTS": {

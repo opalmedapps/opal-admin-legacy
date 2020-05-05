@@ -71,4 +71,12 @@ class Study extends OpalProject {
         return $errMsgs;
     }
 
+    /*
+     * Get the details of a study
+     * @params  $studyId (int) ID of the study
+     * @return  (array) details of the study
+     * */
+    public function getStudyDetails($studyId) {
+        return $this->opalDB->getStudyDetails(intval($studyId));
+    }
 }

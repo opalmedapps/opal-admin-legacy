@@ -3,53 +3,92 @@
     <div class="col-xs-12 col-md-6">
         <h2 class="modal-title">
             <span class="glyphicon glyphicon-pencil"></span>
-            {{'CUSTOM_CODE.EDIT.TITLE'|translate}}
+            {{'STUDY.EDIT.TITLE'|translate}}
         </h2>
-        <p ng-if="locked" class="text-danger">{{'CUSTOM_CODE.EDIT.LOCKED'|translate}}</p>
     </div>
     <div class="modal-buttons col-xs-12 col-md-6">
         <form method="post" ng-submit="updateCustomCode()">
-            <input ng-if="!locked" class="btn btn-primary submit" ng-class="{'disabled': (!formReady || !changesDetected)}" type="submit" value="{{'CUSTOM_CODE.EDIT.SAVE'|translate}}">
-            <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'CUSTOM_CODE.EDIT.CANCEL'|translate}}">
+            <input ng-if="!locked" class="btn btn-primary submit" ng-class="{'disabled': (!formReady || !changesDetected)}" type="submit" value="{{'STUDY.EDIT.SAVE'|translate}}">
+            <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'STUDY.EDIT.CANCEL'|translate}}">
         </form>
     </div>
 </div>
 <div class="modal-body">
     <uib-accordion close-others="false">
-        <!-- SECTION: General infos -->
-        <div uib-accordion-group is-open="generalSection.open">
-            <uib-accordion-heading>
-                <div>
-                    <strong>{{'CUSTOM_CODE.EDIT.GENERAL'|translate}} </strong><i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': generalSection.open, 'glyphicon-chevron-right': !generalSection.open}"></i>
-                </div>
-            </uib-accordion-heading>
-            <div class="row">
-                <div class="col-xs-12">
-                    <label><strong>{{'CUSTOM_CODE.EDIT.MODULE'|translate}}</strong></label> : {{generalInfo.module_display}}
-                </div>
-                <div ng-if="generalInfo.type_display" class="col-xs-12">
-                    <label><strong>{{'CUSTOM_CODE.EDIT.TYPE'|translate}}</strong></label> : {{generalInfo.type_display}}
-                </div>
-            </div>
-        </div>
         <!-- SECTION: Titles -->
         <div uib-accordion-group is-open="titleSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>{{'CUSTOM_CODE.EDIT.DETAILS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                    <strong>{{'STUDY.EDIT.DETAILS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="row">
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div class="input-group">
-                        <span class="input-group-addon">{{'CUSTOM_CODE.EDIT.CODE'|translate}}</span>
+                        <span class="input-group-addon">{{'STUDY.EDIT.STUDY_ID'|translate}}</span>
                         <input ng-disabled="locked" class="form-control" type="text" ng-model="toSubmit.details.code" ng-change="detailsUpdate()" required="required" />
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div class="input-group">
-                        <span class="input-group-addon">{{'CUSTOM_CODE.EDIT.DESCRIPTION'|translate}}</span>
-                        <input ng-disabled="locked" class="form-control" type="text" ng-model="toSubmit.details.description" ng-change="detailsUpdate()" required="required" />
+                        <span class="input-group-addon">{{'STUDY.EDIT.TITLE_2'|translate}}</span>
+                        <input ng-disabled="locked" class="form-control" type="text" ng-model="toSubmit.details.title" ng-change="detailsUpdate()" required="required" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Principal Investigator -->
+        <div uib-accordion-group is-open="investigatorSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'STUDY.EDIT.INVESTIGATOR'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': investigatorSection.open, 'glyphicon-chevron-right': !investigatorSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'STUDY.EDIT.NAME'|translate}}</span>
+                        <input class="form-control" type="text" ng-model="toSubmit.investigator.name" ng-change="nameUpdate()" required="required" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Dates -->
+        <div uib-accordion-group is-open="datesSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'STUDY.EDIT.DATES'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': datesSection.open, 'glyphicon-chevron-right': !datesSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-4">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-xs-12">
+                                {{'STUDY.EDIT.START_DATE'|translate}}
+                            </label>
+                            <div class="col-xs-12 col-lg-9">
+                                <div class="input-group">
+                                    <input type="text" maxlength="10" class="form-control" uib-datepicker-popup="{{format}}" ng-model="toSubmit.dates.start_date" is-open="popupStart.opened" datepicker-options="dateOptionsStart" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
+                                    <span class="input-group-btn"><button class="btn btn-default" ng-click="openStart($event)"><i class="glyphicon glyphicon-calendar"></i></button></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-4">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-xs-12">
+                                {{'STUDY.EDIT.END_DATE'|translate}}
+                            </label>
+                            <div class="col-xs-12 col-lg-9">
+                                <div class="input-group">
+                                    <input type="text" maxlength="10" class="form-control" uib-datepicker-popup="{{format}}" ng-model="toSubmit.dates.end_date" is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true" close-text="{{'DATEPICKER.CLOSE'|translate}}" current-text="{{'DATEPICKER.TODAY'|translate}}" clear-text="{{'DATEPICKER.RESET'|translate}}" />
+                                    <span class="input-group-btn"><button class="btn btn-default" ng-click="openEnd($event)"><i class="glyphicon glyphicon-calendar"></i></button></span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

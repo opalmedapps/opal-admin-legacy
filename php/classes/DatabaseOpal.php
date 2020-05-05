@@ -1259,4 +1259,15 @@ class DatabaseOpal extends DatabaseAccess {
         $newStudy["updatedBy"] = $this->getUsername();
         return $this->_insertRecordIntoTable(OPAL_STUDY_TABLE, $newStudy);
     }
+
+    /*
+     * Get the details of a study by its ID
+     * @params  $studyId (int) ID of the study
+     * @returns (array) details of the study
+     * */
+    function getStudyDetails($studyId) {
+        return $this->_fetch(OPAL_GET_STUDY_DETAILS,
+            array(array("parameter"=>":ID","variable"=>$studyId,"data_type"=>PDO::PARAM_INT))
+        );
+    }
 }

@@ -102,7 +102,6 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 
 		function getstudiesList() {
 			studyCollectionService.getStudies(OAUserId).then(function (response) {
-				console.log(response.data);
 				$scope.studiesList = response.data;
 			}).catch(function(err) {
 				alert($filter('translate')('STUDY.LIST.ERROR_PUBLICATION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));

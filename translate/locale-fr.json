@@ -2324,7 +2324,6 @@
       "LOCKED": "Ce code personnalisé est en cours d'utilisation et ne peut être supprimée.",
       "CLOSE": "Fermer"
     },
-
     "ADD": {
       "BACK": "Retour",
       "SUMMARY": "Sommaire",
@@ -2376,7 +2375,7 @@
       "SEARCH": "Rechercher",
       "TITLE_2": "Titre",
       "STUDY_ID": "ID Étude",
-      "INVESTIGATOR": "Coordinateur principal",
+      "INVESTIGATOR": "Coordinateur(trice) principal",
       "START_DATE": "Date début",
       "END_DATE": "Date fin",
       "CREATION_DATE": "Date de création",
@@ -2397,19 +2396,31 @@
       "DETAILS_TITLE": "Détails",
       "STUDY_ID": "ID étude",
       "TITLE_2": "Titre",
-      "INVESTIGATOR": "Investigateur(trice) principal(e)",
+      "INVESTIGATOR": "Coordinateur(trice) principal(e)",
       "INVESTIGATOR_EXPLANATION": "Veuillez entrer le nom complet de la personne responsable.",
       "NAME": "Nom",
       "DATES": "Dates",
       "DATES_EXPLANATION": "Vous pouvez entrer une date et/ou de fin à l'étude si cela est nécessaire. Dans le cas contraire, veuillez les laisser vides.",
       "START_DATE": "Date de début",
       "END_DATE": "Date de fin",
-      "INVALID_DATE": "Format de date invalide",
       "SUBMIT": "Soumettre",
       "NA": "Non disponible",
       "ERROR_ADD": "Une erreur s'est produite lors de la création de l'étude."
     },
     "EDIT": {
+      "TITLE": "Modifier l'étude",
+      "SAVE": "Enregistrer",
+      "CANCEL": "Annuler",
+      "DETAILS": "Détails",
+      "STUDY_ID": "ID Étude",
+      "TITLE_2": "Titre",
+      "INVESTIGATOR": "Coordinateur(trice) principal(e)",
+      "NAME": "Nom",
+      "DATES": "Dates",
+      "START_DATE": "Date de début",
+      "END_DATE": "Date de fin",
+      "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails l'étude.",
+      "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour de l'étude."
     }
   },
   "PATIENTS": {

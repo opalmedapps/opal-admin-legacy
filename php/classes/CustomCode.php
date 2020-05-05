@@ -124,7 +124,15 @@ class CustomCode extends OpalProject {
         return $errMsgs;
     }
 
+    /*
+     * Return the custom code details base on its ID and which module it is attached.
+     * @params  $customCodeId (int) ID of the custom code
+     *          $moduleId (int) ID of the module to which is associated the custom code
+     * @return  (array) details of the custom code
+     * */
     function getCustomCodeDetails($customCodeId, $moduleId) {
+        $customCodeId = intval($customCodeId);
+        $moduleId = intval($moduleId);
         $results = $this->opalDB->getCustomCodeDetails($customCodeId, $moduleId);
         if($results["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid custom code.");
