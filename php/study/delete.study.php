@@ -1,14 +1,14 @@
 <?php
 
-/* To delete a custom code */
-include_once('custom.code.inc');
+include_once('study.inc');
 
-$customCodeId = strip_tags($_POST['customCodeId']);
-$moduleId = strip_tags($_POST['moduleId']);
+$studyId = strip_tags($_POST['studyId']);
 $OAUserId = strip_tags($_POST['OAUserId']);
 
-$customCode = new CustomCode($OAUserId); // Object
-$response = $customCode->deleteCustomCode($customCodeId, $moduleId);
+print_r($_POST);
+
+$study = new Study($OAUserId); // Object
+$response = $study->deleteStudy($studyId);
 
 header('Content-Type: application/javascript');
 echo json_encode($response); // Return response
