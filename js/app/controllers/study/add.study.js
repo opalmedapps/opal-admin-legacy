@@ -18,14 +18,6 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 		$scope.hideAssigned = false;
 		$scope.language = Session.retrieveObject('user').language;
 
-		// Default toolbar for wysiwyg
-		$scope.toolbar = [
-			['h1', 'h2', 'h3', 'p'],
-			['bold', 'italics', 'underline', 'ul', 'ol'],
-			['justifyLeft', 'justifyCenter', 'indent', 'outdent'],
-			['html', 'insertLink']
-		];
-
 		// completed steps booleans - used for progress bar
 		var steps = {
 			diagnoses: { completed: false },
@@ -125,7 +117,6 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			maxDate: null
 		};
 
-
 		$locale["DATETIME_FORMATS"]["SHORTDAY"] = [
 			$filter('translate')('DATEPICKER.SUNDAY_S'),
 			$filter('translate')('DATEPICKER.MONDAY_S'),
@@ -180,21 +171,12 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 			$event.stopPropagation();
 			$scope.popupStart['opened'] = true;
 			$scope.popupEnd['opened'] = false;
-			$scope.openAndValidate();
 		};
 		$scope.openEnd = function ($event) {
 			$event.preventDefault();
 			$event.stopPropagation();
 			$scope.popupStart['opened'] = false;
 			$scope.popupEnd['opened'] = true;
-			$scope.openAndValidate();
-		};
-
-		$scope.openAndValidate = function(){
-			try {
-				// $scope.leftMenu.publishFrequency.open = true;
-				// $scope.validator.occurrence.completed = $scope.checkFrequencyTrigger();
-			} catch(e) {}
 		};
 
 		$scope.detailsUpdate = function () {
