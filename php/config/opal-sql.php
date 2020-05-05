@@ -672,3 +672,7 @@ define("OPAL_GET_STUDIES_LIST","
     SELECT ID, code, title, investigator, startDate, endDate, creationDate FROM ".OPAL_STUDY_TABLE."
     WHERE deleted = ".NON_DELETED_RECORD.";
 ");
+
+define("OPAL_GET_STUDY_DETAILS","
+    SELECT ID, code, title, investigator, startDate, endDate FROM ".OPAL_STUDY_TABLE." WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD.";
+");
