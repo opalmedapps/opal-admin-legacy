@@ -2386,7 +2386,7 @@
       "DELETE": "Supprimer",
       "CANCEL": "Annuler",
       "WARNING": "ATTENTION!",
-      "WARNING_TEXT": "Voulez-vous vraiment supprimer l'étude code ci-dessous? Cette action est irreversible!",
+      "WARNING_TEXT": "Voulez-vous vraiment supprimer l'étude ci-dessous? Cette action est irreversible!",
       "DELETED": "L'étude a été supprimée avec succès.",
       "ERROR": "Une erreur s'est produite lors de la suppression de l'étude."
     },
