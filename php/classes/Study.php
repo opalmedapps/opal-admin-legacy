@@ -79,4 +79,36 @@ class Study extends OpalProject {
     public function getStudyDetails($studyId) {
         return $this->opalDB->getStudyDetails(intval($studyId));
     }
+
+    /*
+     * Update a study after it is sanitized and validated.
+     * @params  $post (array) details of the study.
+     * @return  (int) number of record updated (should be one!) or an error 500
+     * */
+    public function updateStudy($post) {
+        $study = $this->arraySanitization($post);
+        $result = $this->_validateStudy($study);
+        if(is_array($result) && count($result) > 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Study validation failed. " . implode(" ", $result));
+
+        if(!array_key_exists("ID", $study) || $study["ID"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot identify the study.");
+
+        $toUpdate = array(
+            "ID"=>$study["ID"],
+            "code"=>$study["details"]["code"],
+            "title"=>$study["details"]["title"],
+            "investigator"=>$study["investigator"]["name"]
+        );
+        if($study["dates"]["start_date"])
+            $toUpdate["startDate"] = gmdate("Y-m-d", $study["dates"]["start_date"]);
+        else
+            $toUpdate["startDate"] = null;
+        if($study["dates"]["end_date"])
+            $toUpdate["endDate"] = gmdate("Y-m-d", $study["dates"]["end_date"]);
+        else
+            $toUpdate["endDate"] = null;
+
+        return $this->opalDB->updateStudy($toUpdate);
+    }
 }

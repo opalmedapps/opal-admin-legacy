@@ -1270,4 +1270,14 @@ class DatabaseOpal extends DatabaseAccess {
             array(array("parameter"=>":ID","variable"=>$studyId,"data_type"=>PDO::PARAM_INT))
         );
     }
+
+    /*
+     * Update a specific study with user request info and username.
+     * @params  $study (array) study to update
+     * @return  (int) total record updated (should be one only!)
+     * */
+    function updateStudy($study) {
+        $study["updatedBy"] = $this->getUsername();
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_STUDY, $study);
+    }
 }
