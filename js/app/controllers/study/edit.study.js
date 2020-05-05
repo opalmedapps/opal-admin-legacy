@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.study.edit', ['ngAnimate', 'ui.bootstrap',
 controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance, $locale, studyCollectionService, uiGridConstants, $state, Session) {
 	$scope.toSubmit = {
 		OAUserId: Session.retrieveObject('user').id,
-		studyId: "",
+		ID: "",
 		details: {
 			code: "",
 			title: "",
@@ -98,7 +98,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	// Call our API service to get the current diagnosis translation details
 	studyCollectionService.getStudiesDetails($scope.currentStudy.ID, $scope.toSubmit.OAUserId).then(function (response) {
 		var dateArray, year, month, date;
-		$scope.toSubmit.studyId = response.data.ID;
+		$scope.toSubmit.ID = response.data.ID;
 		$scope.toSubmit.details.code = response.data.code;
 		$scope.toSubmit.details.title = response.data.title;
 		$scope.toSubmit.investigator.name = response.data.investigator;
@@ -198,9 +198,13 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	// Submit changes
 	$scope.updateCustomCode = function() {
 		if($scope.formReady && $scope.changesDetected) {
+			if ($scope.toSubmit.dates.start_date)
+				$scope.toSubmit.dates.start_date = moment($scope.toSubmit.dates.start_date).format('X');
+			if ($scope.toSubmit.dates.end_date)
+				$scope.toSubmit.dates.end_date = moment($scope.toSubmit.dates.end_date).format('X');
 			$.ajax({
 				type: "POST",
-				url: "custom-code/update/custom-code",
+				url: "study/update/study",
 				data: $scope.toSubmit,
 				success: function () {
 				},
