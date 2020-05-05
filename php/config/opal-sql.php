@@ -681,3 +681,7 @@ define("OPAL_UPDATE_STUDY","
     UPDATE ".OPAL_STUDY_TABLE." SET code = :code, title = :title, investigator = :investigator, startDate = :startDate,
     endDate = :endDate, updatedBy = :updatedBy WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD."; 
 ");
+
+define("SQL_OPAL_MARK_STUDY_AS_DELETED", "
+    UPDATE ".OPAL_STUDY_TABLE." SET deleted = ".DELETED_RECORD.", updatedBy = :updatedBy WHERE ID = :ID;
+");

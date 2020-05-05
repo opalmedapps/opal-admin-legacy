@@ -125,18 +125,14 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll($sqlModule, array());
     }
 
-    function markCustomCodeAsDeleted($id, $moduleId) {
-        $details = $this->getCustomCodeDetails($id, $moduleId);
-        if($details["ID"] == "")
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid custom code.");
-
+    function markCustomCodeAsDeleted($id, $masterSource) {
         $toDelete = array(
             "ID"=>$id,
             "deletedBy"=>$this->getUsername(),
             "updatedBy"=>$this->getUsername(),
         );
 
-        $sql = str_replace("%%MASTER_SOURCE_TABLE%%", $details["masterSource"], SQL_OPAL_MARK_AS_DELETED_MASTER_SOURCE);
+        $sql = str_replace("%%MASTER_SOURCE_TABLE%%", $masterSource, SQL_OPAL_MARK_AS_DELETED_MASTER_SOURCE);
         return $this->_updateRecordIntoTable($sql, $toDelete);
     }
 
@@ -1279,5 +1275,17 @@ class DatabaseOpal extends DatabaseAccess {
     function updateStudy($study) {
         $study["updatedBy"] = $this->getUsername();
         return $this->_updateRecordIntoTable(OPAL_UPDATE_STUDY, $study);
+    }
+
+    /*
+     * Mark a specified study as deleted.
+     * @param   int : $studyId (ID of the study to mark as deleted)
+     * @return  int : number of record deleted or error 500.
+     * */
+    function markStudyAsDeleted($studyId) {
+        return $this->_updateRecordIntoTable(SQL_OPAL_MARK_STUDY_AS_DELETED, array(
+            "ID"=>$studyId,
+            "updatedBy"=>$this->getUsername(),
+        ));
     }
 }
