@@ -94,6 +94,10 @@ class Study extends OpalProject {
         if(!array_key_exists("ID", $study) || $study["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot identify the study.");
 
+        $currentStudy = $this->getStudyDetails($study["ID"]);
+        if(!$currentStudy["ID"] || $currentStudy["ID"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot identify the study.");
+
         $toUpdate = array(
             "ID"=>$study["ID"],
             "code"=>$study["details"]["code"],
@@ -110,5 +114,26 @@ class Study extends OpalProject {
             $toUpdate["endDate"] = null;
 
         return $this->opalDB->updateStudy($toUpdate);
+    }
+
+    /**
+     * Mark a study as being deleted.
+     *
+     * WARNING!!! No record should be EVER be removed from the customCode table! It should only being marked as
+     * being deleted ONLY  after it was verified the record is not locked and the user has the proper authorization.
+     * Not following the proper procedure will have some serious impact on the integrity of the database and its
+     * records.
+     *
+     * REMEMBER !!! NO DELETE STATEMENT EVER !!! YOU HAVE BEING WARNED !!!
+     *
+     * @params  $studyId (ID of the study)
+     * @return  (int) number of record marked or error 500 if an error occurred.
+     */
+    function deleteStudy($studyId) {
+        $currentStudy = $this->getStudyDetails($studyId);
+        if(!$currentStudy["ID"] || $currentStudy["ID"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Study not found.");
+
+        return $this->opalDB->markStudyAsDeleted($studyId);
     }
 }

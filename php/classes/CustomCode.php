@@ -126,9 +126,10 @@ class CustomCode extends OpalProject {
 
     /*
      * Return the custom code details base on its ID and which module it is attached.
-     * @params  $customCodeId (int) ID of the custom code
+     *
+     * @param   $customCodeId (int) ID of the custom code
      *          $moduleId (int) ID of the module to which is associated the custom code
-     * @return  (array) details of the custom code
+     * @return  array : details of the custom code
      * */
     function getCustomCodeDetails($customCodeId, $moduleId) {
         $customCodeId = intval($customCodeId);
@@ -155,6 +156,12 @@ class CustomCode extends OpalProject {
      * @return  boolean : response
      */
     function deleteCustomCode($customCodeId, $moduleId) {
-        return $this->opalDB->markCustomCodeAsDeleted($customCodeId, $moduleId);
+        $details = $this->opalDB->getCustomCodeDetails($customCodeId, $moduleId);
+        if($details["ID"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid custom code.");
+        if($details["locked"] != 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Custom code is locked.");
+
+        return $this->opalDB->markCustomCodeAsDeleted($customCodeId, $details["masterSource"]);
     }
 }
