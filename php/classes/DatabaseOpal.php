@@ -1252,6 +1252,7 @@ class DatabaseOpal extends DatabaseAccess {
      * */
     function insertStudy($newStudy) {
         $newStudy["createdBy"] = $this->getUsername();
+        $newStudy["creationDate"] = date("Y-m-d H:i:s");
         $newStudy["updatedBy"] = $this->getUsername();
         return $this->_insertRecordIntoTable(OPAL_STUDY_TABLE, $newStudy);
     }
