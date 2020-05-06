@@ -205,7 +205,7 @@ class Publication extends OpalProject
             $id = trim(strip_tags($item["ID"]));
             $publication = trim(strip_tags($item["moduleId"]));
             $publishFlag = intval(trim(strip_tags($item["publishFlag"])));
-            if (publishFlag != 0 && publishFlag != 1)
+            if ($publishFlag != 0 && $publishFlag != 1)
                 $publishFlag = 0;
             array_push($validatedList, array("ID"=>$id, "moduleId"=>$publication, "publishFlag"=>$publishFlag));
         }

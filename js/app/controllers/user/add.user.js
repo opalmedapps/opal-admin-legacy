@@ -119,8 +119,6 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 
 			// Make request to check if username already in use
 			userCollectionService.usernameAlreadyInUse(username).then(function (response) {
-				console.log(response.data);
-				console.log(response.data.count);
 				if(response.data.count) {
 					$scope.validUsername.status = 'invalid';
 					$scope.validUsername.message = $filter('translate')('USERS.ADD.ERROR_USERNAME_USED');
