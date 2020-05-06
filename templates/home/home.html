@@ -313,25 +313,6 @@
 							</div>
 						</div>
 
-						<!-- SECTION: Cron control -->
-						<div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin])">
-							<div class="panel-container animated" ng-class="{pulse: hoverCronMenu}" ng-mouseenter="hoverCronMenu=true" ng-mouseleave="hoverCronMenu=false" style="cursor:pointer;" ng-click="goToCron()">
-								<div class="panel-info" >
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span  class="glyphicon glyphicon-time" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>{{'NAVIGATION_MENU.CRON_LOGS'|translate}}</h1>
-										</div>
-										<div class="panel-description">
-											<p>{{'NAVIGATION_MENU.CRON_LOGS_SUB'|translate}}</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
                         <!-- SECTION: Patient -->
                         <div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
                             <div class="panel-container animated" ng-class="{pulse: hoverPatientMenu}"
