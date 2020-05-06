@@ -131,7 +131,6 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 	// Call our API service to get the list of source databases
 	aliasCollectionService.getSourceDatabases().then(function (response) {
 		$scope.sourceDBList = response.data; // Assign value
-		console.log(response.data);
 	}).catch(function(response) {
 		alert($filter('translate')('ALIAS.ADD.ERROR_DATABASE') + "\r\n\r\n" + response.status + " - " + response.data);
 	});

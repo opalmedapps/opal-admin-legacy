@@ -125,18 +125,14 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll($sqlModule, array());
     }
 
-    function markCustomCodeAsDeleted($id, $moduleId) {
-        $details = $this->getCustomCodeDetails($id, $moduleId);
-        if($details["ID"] == "")
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid custom code.");
-
+    function markCustomCodeAsDeleted($id, $masterSource) {
         $toDelete = array(
             "ID"=>$id,
             "deletedBy"=>$this->getUsername(),
             "updatedBy"=>$this->getUsername(),
         );
 
-        $sql = str_replace("%%MASTER_SOURCE_TABLE%%", $details["masterSource"], SQL_OPAL_MARK_AS_DELETED_MASTER_SOURCE);
+        $sql = str_replace("%%MASTER_SOURCE_TABLE%%", $masterSource, SQL_OPAL_MARK_AS_DELETED_MASTER_SOURCE);
         return $this->_updateRecordIntoTable($sql, $toDelete);
     }
 
@@ -1237,6 +1233,60 @@ class DatabaseOpal extends DatabaseAccess {
     function getUserTestResultExpression($userId) {
         return $this->_fetchAll(OPAL_GET_USER_TEST_RESULT_EXP, array(
             array("parameter"=>":LastUpdatedBy","variable"=>$userId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get all the treatment machine triggers
+     * @params  void
+     * @return  treatment machine triggers found (array)
+     * */
+    function getStudiesList() {
+        return $this->_fetchAll(OPAL_GET_STUDIES_LIST, array());
+    }
+
+    /*
+     * Insert new study with the username of the user who created it.
+     * @param   $newStudy (array) new study to add
+     * @return  number of record inserted (should be one) or a code 500
+     * */
+    function insertStudy($newStudy) {
+        $newStudy["createdBy"] = $this->getUsername();
+        $newStudy["creationDate"] = date("Y-m-d H:i:s");
+        $newStudy["updatedBy"] = $this->getUsername();
+        return $this->_insertRecordIntoTable(OPAL_STUDY_TABLE, $newStudy);
+    }
+
+    /*
+     * Get the details of a study by its ID
+     * @params  $studyId (int) ID of the study
+     * @returns (array) details of the study
+     * */
+    function getStudyDetails($studyId) {
+        return $this->_fetch(OPAL_GET_STUDY_DETAILS,
+            array(array("parameter"=>":ID","variable"=>$studyId,"data_type"=>PDO::PARAM_INT))
+        );
+    }
+
+    /*
+     * Update a specific study with user request info and username.
+     * @params  $study (array) study to update
+     * @return  (int) total record updated (should be one only!)
+     * */
+    function updateStudy($study) {
+        $study["updatedBy"] = $this->getUsername();
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_STUDY, $study);
+    }
+
+    /*
+     * Mark a specified study as deleted.
+     * @param   int : $studyId (ID of the study to mark as deleted)
+     * @return  int : number of record deleted or error 500.
+     * */
+    function markStudyAsDeleted($studyId) {
+        return $this->_updateRecordIntoTable(SQL_OPAL_MARK_STUDY_AS_DELETED, array(
+            "ID"=>$studyId,
+            "updatedBy"=>$this->getUsername(),
         ));
     }
 }
