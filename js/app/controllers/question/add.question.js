@@ -258,7 +258,6 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		// Prompt to confirm user's action
 		var confirmation = confirm($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.CONFIRM_RESPONSE_TYPE') + "\r\n\r\n" + $scope.newTemplateQuestion.name_EN + " / " + $scope.newTemplateQuestion.name_FR);
 		if (confirmation) {
-			console.log(toSend);
 			$.ajax({
 				type: "POST",
 				url: "template-question/insert/template-question",

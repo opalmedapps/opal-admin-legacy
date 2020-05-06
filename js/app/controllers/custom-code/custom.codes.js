@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.customCode', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular'])
 
-	.controller('customCode', function ($sce, $scope, $state, $filter, $timeout, $uibModal, customCodeCollectionService, filterCollectionService, Session, uiGridConstants) {
+	.controller('customCode', function ($scope, $state, $filter, $uibModal, customCodeCollectionService, Session, uiGridConstants) {
 
 		// get current user id
 		var user = Session.retrieveObject('user');
@@ -19,6 +19,12 @@ angular.module('opalAdmin.controllers.customCode', ['ngAnimate', 'ngSanitize', '
 					$(".bannerMessage").slideUp();
 				}, 3000);
 			});
+		};
+
+		// Function to filter custom codes
+		$scope.filterCustomCode = function (filterValue) {
+			$scope.filterValue = filterValue;
+			$scope.gridApi.grid.refresh();
 		};
 
 		getCustomCodesList();

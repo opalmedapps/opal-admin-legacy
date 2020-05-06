@@ -113,6 +113,13 @@ RewriteRule ^custom-code/get/custom-codes php/custom-code/get.custom.code.php [Q
 RewriteRule ^custom-code/insert/custom-code php/custom-code/insert.custom.code.php [QSA,L]
 RewriteRule ^custom-code/update/custom-code php/custom-code/update.custom.code.php [QSA,L]
 
+# Studies Section
+RewriteRule ^study/delete/study php/study/delete.study.php [QSA,L]
+RewriteRule ^study/get/study-details php/study/get.study.details.php [QSA,L]
+RewriteRule ^study/get/studies php/study/get.studies.php [QSA,L]
+RewriteRule ^study/insert/study php/study/insert.study.php [QSA,L]
+RewriteRule ^study/update/study php/study/update.study.php [QSA,L]
+
 # Educational Material Section
 RewriteRule ^educational-material/delete/educational-material php/educational-material/delete.educational_material.php [QSA,L]
 RewriteRule ^educational-material/get/educational-material-chart-logs api/educational-material/get.educational_material_chart_logs.php [QSA,L]

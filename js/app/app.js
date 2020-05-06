@@ -118,6 +118,8 @@ angular.module('opalAdmin', [
 			.state('diagnosis-translation-add', { url: '/diagnosis-translation/add', templateUrl: "templates/diagnosis/add.diagnosis-translation.html", controller: "diagnosisTranslation.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('custom-code', { url: '/custom-code', templateUrl: "templates/custom-code/custom.codes.html", controller: "customCode", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('custom-code-add', { url: '/custom-code/add', templateUrl: "templates/custom-code/add.custom.code.html", controller: "customCode.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+			.state('study', { url: '/study', templateUrl: "templates/study/studies.html", controller: "study", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
+			.state('study-add', { url: '/study/add', templateUrl: "templates/study/add.study.html", controller: "study.add", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('user-activity', { url: '/user-activity', templateUrl: "templates/user/user-activity.html", controller: "userActivity", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('report', { url: '/report', templateUrl: "templates/report/patientReport.html", data: { authorizedRoles: [USER_ROLES.admin], requireLogin: true } })
 			.state('protected-route', { url: '/protected', resolve: { auth: function resolveAuthentication(AuthResolver) { return AuthResolver.resolve(); } } });

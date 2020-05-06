@@ -17,6 +17,8 @@
   "NAVIGATION_MENU": {
     "CUSTOM_CODES": "Custom Codes",
     "CUSTOM_CODES_SUB": "Manage custom codes for diagnosis, test results and aliases.",
+    "STUDIES": "Studies",
+    "STUDIES_SUB": "Manage studies to which are associated patients.",
     "PUBLISHING_TOOLS": "Publications",
     "TASKS_APPTS_DOCS": "Tasks / Appts / Docs",
     "TASKS_APPTS_DOCS_SUB": "Tool for grouping, translating, and publishing tasks, appointments, and documents.",
@@ -2337,6 +2339,69 @@
       "LOCKED": "This custom code is in use and cannot be modified.",
       "ERROR_UPDATE": "An error occurred while updating the custom code.",
       "ERROR_DETAILS": "An error occurred while getting the details of the custom code."
+    }
+  },
+  "STUDY" : {
+    "LIST": {
+      "TITLE": "Studies",
+      "ADD": "Add",
+      "SEARCH": "Search...",
+      "TITLE_2": "Title",
+      "STUDY_ID": "Study ID",
+      "INVESTIGATOR": "Main Investigator",
+      "START_DATE": "Start Date",
+      "END_DATE": "End Date",
+      "CREATION_DATE": "Date of creation",
+      "OPERATIONS": "Operations"
+    },
+    "DELETE": {
+      "TITLE": "Delete study",
+      "DELETE": "Delete",
+      "CANCEL": "Cancel",
+      "WARNING": "WARNING!",
+      "WARNING_TEXT": "Are you sure you want to delete the following study? This action cannot be undone!",
+      "DELETED": "The study has being successfully deleted.",
+      "ERROR": "An error occurred while deleting the study."
+    },
+    "ADD": {
+      "BACK": "Back",
+      "SUMMARY": "Summary",
+      "TITLE": "Add a new study",
+      "DETAILS": "Details",
+      "DETAILS_EXPLANATION": "Please enter the study ID and its title.",
+      "REQUIRED": "Required field:",
+      "OPTIONAL_FIELD": "Optional field:",
+      "INCOMPLETE": "Incomplete",
+      "COMPLETE": "Complete",
+      "DETAILS_TITLE": "Details",
+      "STUDY_ID": "Study ID",
+      "TITLE_2": "Title",
+      "INVESTIGATOR": "Principal Investigator",
+      "INVESTIGATOR_EXPLANATION": "Please enter the complete name of the principal investigator.",
+      "NAME": "Name",
+      "DATES": "Dates",
+      "DATES_EXPLANATION": "You can enter a starting date and/or an ending date for the study if necessary. Otherwise, please leave them blank.",
+      "START_DATE": "Start Date",
+      "END_DATE": "End Date",
+      "INVALID_DATE": "Invalid date format",
+      "SUBMIT": "Submit",
+      "NA": "Not available",
+      "ERROR_ADD": "An error occured while creating the study."
+    },
+    "EDIT": {
+      "TITLE": "Edit Study",
+      "SAVE": "Save",
+      "CANCEL": "Cancel",
+      "DETAILS": "Details",
+      "STUDY_ID": "Study ID",
+      "TITLE_2": "Title",
+      "INVESTIGATOR": "Principal Investigator",
+      "NAME": "Name",
+      "DATES": "Dates",
+      "START_DATE": "Start Date",
+      "END_DATE": "End Date",
+      "ERROR_DETAILS": "An error occurred while getting the study details.",
+      "ERROR_UPDATE": "An error occurred while updating the study."
     }
   },
   "PATIENTS": {
