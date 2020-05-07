@@ -179,18 +179,16 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 
 	// Watch to restrict the end calendar to not choose an earlier date than the start date
 	$scope.$watch('toSubmit.dates.start_date', function(startDate){
-		if (startDate !== undefined) {
+		if (startDate !== undefined && startDate !== "")
 			$scope.dateOptionsEnd.minDate = startDate;
-		}
 		else
-			$scope.dateOptionsStart.minDate = null;
+			$scope.dateOptionsEnd.minDate = Date.now();
 	});
 
 	// Watch to restrict the start calendar to not choose a start after the end date
 	$scope.$watch('toSubmit.dates.end_date', function(endDate){
-		if (endDate !== undefined) {
+		if (endDate !== undefined && endDate !== "")
 			$scope.dateOptionsStart.maxDate = endDate;
-		}
 		else
 			$scope.dateOptionsStart.maxDate = null;
 	});
