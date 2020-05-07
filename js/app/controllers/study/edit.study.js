@@ -182,7 +182,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 		if (startDate !== undefined && startDate !== "")
 			$scope.dateOptionsEnd.minDate = startDate;
 		else
-			$scope.dateOptionsEnd.minDate = Date.now();
+			$scope.dateOptionsEnd.minDate = null;
 	});
 
 	// Watch to restrict the start calendar to not choose a start after the end date
