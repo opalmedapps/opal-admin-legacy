@@ -538,15 +538,15 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 
 	// Watch to restrict the end calendar to not choose an earlier date than the start date
 	$scope.$watch('publication.occurrence.start_date', function(startDate){
-		if (startDate !== undefined) {
+		if (startDate !== undefined && startDate !== "")
 			$scope.dateOptionsEnd.minDate = startDate;
-		}
+		else
+			$scope.dateOptionsEnd.minDate = null;
 	});
 	// Watch to restrict the start calendar to not choose a start after the end date
 	$scope.$watch('publication.occurrence.end_date', function(endDate){
-		if (endDate !== undefined) {
+		if (endDate !== undefined && endDate !== "")
 			$scope.dateOptionsStart.maxDate = endDate;
-		}
 		else
 			$scope.dateOptionsStart.maxDate = null;
 	});
