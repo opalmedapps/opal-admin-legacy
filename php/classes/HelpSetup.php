@@ -92,4 +92,8 @@ class HelpSetup {
         }
         return $sanitizedArray;
     }
+
+    public static function generateRandomString($length = 256) {
+        return substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!/$%?&*()-=_+[]<>^;:'),1,$length);
+    }
 }
