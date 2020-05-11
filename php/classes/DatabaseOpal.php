@@ -582,9 +582,10 @@ class DatabaseOpal extends DatabaseAccess {
                 HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid module.");
         }
         $lastId = $this->_insertRecordIntoTable($tableToInsert, $toInsert);
+        $externalId = -1 * abs(intval($lastId));
 
         $sql = str_replace("%%MASTER_TABLE%%", $tableToInsert, OPAL_UPDATE_EXTERNAL_ID_MASTER_SOURCE);
-        return $this->_updateRecordIntoTable($sql, array("ID"=>$lastId));
+        return $this->_updateRecordIntoTable($sql, array("ID"=>$lastId, "externalId"=>$externalId));
     }
 
     /*

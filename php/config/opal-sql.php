@@ -471,7 +471,7 @@ define("OPAL_UPDATE_MASTER_SOURCE", "
 ");
 
 define("OPAL_UPDATE_EXTERNAL_ID_MASTER_SOURCE", "
-    UPDATE %%MASTER_TABLE%% SET externalId = :ID WHERE ID = :ID;
+    UPDATE %%MASTER_TABLE%% SET externalId = :externalId WHERE ID = :ID;
 ");
 
 define("OPAL_GET_PATIENTS_TRIGGERS","
