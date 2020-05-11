@@ -309,7 +309,7 @@ class User extends OpalProject {
      * @return  userId (int) ID of the new user created
      * */
     protected function _insertUserAD($username, $language) {
-        return $this->opalDB->insertUser($username, hash("sha256", $username . USER_SALT), $language);
+        return $this->opalDB->insertUser($username, hash("sha256", HelpSetup::generateRandomString() . USER_SALT), $language);
     }
 
     /*
