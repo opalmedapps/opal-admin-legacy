@@ -35,7 +35,7 @@ class CustomCode extends OpalProject {
      * @return  number of record inserted (should be one) or a code 500
      * */
     public function insertCustomCode($customCode) {
-        $customCode = $this->arraySanitization($customCode);
+        $customCode = HelpSetup::arraySanitization($customCode);
         $moduleDetails = $this->opalDB->getModuleSettings($customCode["moduleId"]["value"]);
 
         $result = $this->_validateCustomCode($customCode, $moduleDetails);
@@ -59,7 +59,7 @@ class CustomCode extends OpalProject {
      * @return  number of record inserted (should be one) or a code 500
      * */
     public function updateCustomCode($customCode) {
-        $customCode = $this->arraySanitization($customCode);
+        $customCode = HelpSetup::arraySanitization($customCode);
         if(!array_key_exists("ID", $customCode) || $customCode["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot identify the custom code");
 

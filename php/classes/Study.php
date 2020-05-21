@@ -22,7 +22,7 @@ class Study extends OpalProject {
      * @return  number of record inserted (should be one) or a code 500
      * */
     public function insertStudy($post) {
-        $study = $this->arraySanitization($post);
+        $study = HelpSetup::arraySanitization($post);
         $result = $this->_validateStudy($study);
         if(is_array($result) && count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Study validation failed. " . implode(" ", $result));
@@ -86,7 +86,7 @@ class Study extends OpalProject {
      * @return  (int) number of record updated (should be one!) or an error 500
      * */
     public function updateStudy($post) {
-        $study = $this->arraySanitization($post);
+        $study = HelpSetup::arraySanitization($post);
         $result = $this->_validateStudy($study);
         if(is_array($result) && count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Study validation failed. " . implode(" ", $result));
