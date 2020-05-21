@@ -82,5 +82,9 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.study',
 	'opalAdmin.controllers.study.add',
 	'opalAdmin.controllers.study.edit',
-	'opalAdmin.controllers.study.delete'
+	'opalAdmin.controllers.study.delete',
+	'opalAdmin.controllers.role',
+	'opalAdmin.controllers.role.add',
+	'opalAdmin.controllers.role.edit',
+	'opalAdmin.controllers.role.delete'
 ]);

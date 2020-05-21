@@ -616,15 +616,6 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Returns the details of a publication module
-     * @params  $moduleId (int) Id of the module
-     * @return  array of records found
-     * */
-    function getPublicationModuleUserDetails($moduleId){
-        return $this->_fetch(SQL_OPAL_GET_PUBLICATION_MODULES_USER_DETAILS, array(array("parameter"=>":ID","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
-    }
-
-    /*
      * Get all the chart logs for a list of announcements
      * @params  $ids (array) list of IDs of the announcements
      * @return  array of records found
@@ -1285,9 +1276,13 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  int : number of record deleted or error 500.
      * */
     function markStudyAsDeleted($studyId) {
-        return $this->_updateRecordIntoTable(SQL_OPAL_MARK_STUDY_AS_DELETED, array(
+        return $this->_updateRecordIntoTable(OPAL_MARK_STUDY_AS_DELETED, array(
             "ID"=>$studyId,
             "updatedBy"=>$this->getUsername(),
         ));
+    }
+
+    function getRoles() {
+        return $this->_fetchAll(OPAL_GET_ROLES, array());
     }
 }

@@ -56,7 +56,8 @@
     "PROFILE": "Profile",
     "ACCOUNT": "Account",
     "ACCOUNT_SUB": "Change profile settings.",
-    "LOGOUT": "Logout"
+    "LOGOUT": "Logout",
+    "ROLES": "Roles"
   },
   "BREADCRUMBS": {
     "HOME": "Home"

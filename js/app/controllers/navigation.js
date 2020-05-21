@@ -108,6 +108,10 @@ controller('navigation', function ($scope, $location, $state, LogoutService) {
 		$scope.goToStudies = function () {
 			$state.go('study');
 		};
+		// Function to go to study page
+		$scope.goToRoles = function () {
+			$state.go('role');
+		};
 		// Function to go to user activity page
 		$scope.goToUserActivity = function () {
 			$state.go('user-activity');
