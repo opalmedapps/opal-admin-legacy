@@ -1029,9 +1029,9 @@ angular.module('opalAdmin.collections', [])
 
 	// Study API service
 	.factory('studyCollectionService', function ($http) {
-		var customCodeAPI = {};
+		var studyAPI = {};
 
-		customCodeAPI.getStudies = function (OAUserId) {
+		studyAPI.getStudies = function (OAUserId) {
 			return $http.post(
 				"study/get/studies",
 				$.param({
@@ -1044,7 +1044,7 @@ angular.module('opalAdmin.collections', [])
 
 		};
 
-		customCodeAPI.getStudiesDetails = function (studyId, OAUserId) {
+		studyAPI.getStudiesDetails = function (studyId, OAUserId) {
 			return $http.post(
 				"study/get/study-details",
 				$.param({
@@ -1057,7 +1057,40 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		return customCodeAPI;
+		return studyAPI;
+	})
+
+	// Role API service
+	.factory('roleCollectionService', function ($http) {
+		var roleAPI = {};
+
+		roleAPI.getRoles = function (OAUserId) {
+			return $http.post(
+				"role/get/roles",
+				$.param({
+					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+
+		};
+
+		roleAPI.getRoleDetails = function (roleId, OAUserId) {
+			return $http.post(
+				"role/get/role-details",
+				$.param({
+					OAUserId: OAUserId,
+					roleId: roleId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		return roleAPI;
 	})
 
 	// Diagnosis API service

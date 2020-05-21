@@ -200,7 +200,7 @@ class Publication extends OpalProject
      * */
     function validateAndSanitizePublicationList($toValidate) {
         $validatedList = array();
-        $toValidate = $this->arraySanitization($toValidate);
+        $toValidate = HelpSetup::arraySanitization($toValidate);
         foreach($toValidate as $item) {
             $id = trim(strip_tags($item["ID"]));
             $publication = trim(strip_tags($item["moduleId"]));
@@ -960,7 +960,7 @@ class Publication extends OpalProject
      * @return  false
      * */
     function insertPublication($publication) {
-        $publication = $this->arraySanitization($publication);
+        $publication = HelpSetup::arraySanitization($publication);
 
         $moduleDetails = $this->opalDB->getModuleSettings($publication["moduleId"]["value"]);
 
@@ -994,7 +994,7 @@ class Publication extends OpalProject
      * @return  false
      * */
     function updatePublication($publication) {
-        $publication = $this->arraySanitization($publication);
+        $publication = HelpSetup::arraySanitization($publication);
 
         $moduleDetails = $this->opalDB->getModuleSettings($publication["moduleId"]["value"]);
 

@@ -74,6 +74,7 @@ define("OPAL_USER_ACTIVITY_LOG_TABLE","OAActivityLog");
 define("OPAL_ROLE_TABLE","Role");
 define("OPAL_ALIAS_MH_TABLE","AliasMH");
 define("OPAL_STUDY_TABLE","study");
+define("OPAL_OA_ROLE_TABLE","oaRole");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -222,10 +223,6 @@ define("SQL_OPAL_GET_ALL_PUBLICATION_MODULES_USER",
 
 define("SQL_OPAL_GET_ALL_CUSTOM_CODE_MODULES_USER",
     "SELECT m.ID, m.name_EN, m.name_FR, m.iconClass, m.subModule FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.customCode = 1 ORDER BY m.order;"
-);
-
-define("SQL_OPAL_GET_PUBLICATION_MODULES_USER_DETAILS",
-    "SELECT m.ID, m.name_EN, m.name_FR, m.iconClass FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.publication = 1 AND ID = :ID;"
 );
 
 define("SQL_OPAL_GET_QUESTIONNAIRE_CONTROL_DETAILS",
@@ -682,6 +679,11 @@ define("OPAL_UPDATE_STUDY","
     endDate = :endDate, updatedBy = :updatedBy WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD."; 
 ");
 
-define("SQL_OPAL_MARK_STUDY_AS_DELETED", "
+define("OPAL_MARK_STUDY_AS_DELETED", "
     UPDATE ".OPAL_STUDY_TABLE." SET deleted = ".DELETED_RECORD.", updatedBy = :updatedBy WHERE ID = :ID;
+");
+
+define("OPAL_GET_ROLES", "
+    SELECT ID, name_EN, name_FR FROM ".OPAL_OA_ROLE_TABLE."
+    WHERE deleted = ".NON_DELETED_RECORD.";
 ");
