@@ -1074,7 +1074,6 @@ angular.module('opalAdmin.collections', [])
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
 			);
-
 		};
 
 		roleAPI.getRoleDetails = function (roleId, OAUserId) {

@@ -57,7 +57,8 @@
     "ACCOUNT": "Account",
     "ACCOUNT_SUB": "Change profile settings.",
     "LOGOUT": "Logout",
-    "ROLES": "Roles"
+    "ROLES": "Roles",
+    "ROLES_SUB": "Manage the list of roles of the users."
   },
   "BREADCRUMBS": {
     "HOME": "Home"
@@ -2403,6 +2404,24 @@
       "END_DATE": "End Date",
       "ERROR_DETAILS": "An error occurred while getting the study details.",
       "ERROR_UPDATE": "An error occurred while updating the study."
+    }
+  },
+  "ROLE" : {
+    "LIST": {
+      "TITLE": "Rôles",
+      "ADD": "Add",
+      "SEARCH": "Search...",
+      "TITLE_2": "Title",
+      "OPERATIONS": "Operations"
+    },
+    "DELETE": {
+
+    },
+    "ADD": {
+
+    },
+    "EDIT": {
+
     }
   },
   "PATIENTS": {
