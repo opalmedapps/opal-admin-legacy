@@ -6,8 +6,8 @@ angular.module('opalAdmin.controllers.role', ['ngAnimate', 'ngSanitize', 'ui.boo
 		var user = Session.retrieveObject('user');1
 		var OAUserId = user.id;
 
-		$scope.goToAddStudy = function () {
-			$state.go('study-add');
+		$scope.goToAddRole = function () {
+			$state.go('role-add');
 		};
 
 		// Banner
@@ -22,12 +22,12 @@ angular.module('opalAdmin.controllers.role', ['ngAnimate', 'ngSanitize', 'ui.boo
 		};
 
 		// Function to filter custom codes
-		$scope.filterStudy = function (filterValue) {
+		$scope.filterRole = function (filterValue) {
 			$scope.filterValue = filterValue;
 			$scope.gridApi.grid.refresh();
 		};
 
-		getstudiesList();
+		getRolesList();
 
 		// Function to set banner class
 		$scope.setBannerClass = function (classname) {
@@ -67,26 +67,21 @@ angular.module('opalAdmin.controllers.role', ['ngAnimate', 'ngSanitize', 'ui.boo
 		// Table
 		// Templates
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editStudy(row.entity)"<i title="'+$filter('translate')('STUDY.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong>' +
-			'- <strong><a href="" ng-click="grid.appScope.deleteStudy(row.entity)"><i title="'+$filter('translate')('STUDY.LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
+			'<strong><a href="" ng-click="grid.appScope.editRole(row.entity)"<i title="'+$filter('translate')('ROLE.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong>' +
+			'- <strong><a href="" ng-click="grid.appScope.deleteRole(row.entity)"><i title="'+$filter('translate')('ROLE.LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
-			'ng-click="grid.appScope.editStudy(row.entity)">' +
+			'ng-click="grid.appScope.editRole(row.entity)">' +
 			'<strong><a href="">{{row.entity.title}}</a></strong></div>';
-		var cellTemplatePublication = '<div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==1">'+$filter('translate')('STUDY.LIST.ALIAS')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==6">'+$filter('translate')('STUDY.LIST.DIAGNOSTIC')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==9">'+$filter('translate')('STUDY.LIST.TEST')+'</div>';
+		var cellTemplatePublication = '<div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==1">'+$filter('translate')('ROLE.LIST.ALIAS')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==6">'+$filter('translate')('ROLE.LIST.DIAGNOSTIC')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==9">'+$filter('translate')('ROLE.LIST.TEST')+'</div>';
 		var cellTemplateLocked = '<div class="ui-grid-cell-contents" ng-show="row.entity.locked > 0"><div class="fa fa-lock text-danger"></div></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 0"><div class="fa fa-unlock text-success"></div></div>';
 
 		// Data binding for main table
 		$scope.gridOptions = {
-			data: 'studiesList',
+			data: 'rolesList',
 			columnDefs: [
-				{ field: 'title', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.TITLE_2'), cellTemplate: cellTemplateName, sort: {direction: uiGridConstants.ASC, priority: 0}},
-				{ field: 'code', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.STUDY_ID'), width: '10%'},
-				{ field: 'investigator', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.INVESTIGATOR'), width: '15%'},
-				{ field: 'startDate', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.START_DATE'), width: '10%'},
-				{ field: 'endDate', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.END_DATE'), width: '10%'},
-				{ field: 'creationDate', enableColumnMenu: false, displayName: $filter('translate')('STUDY.LIST.CREATION_DATE'), width: '15%'},
-				{ name: $filter('translate')('STUDY.LIST.OPERATIONS'), width: '10%', cellTemplate: cellTemplateOperations, enableColumnMenu: false, enableFiltering: false, sortable: false }
+				{ field: 'title', enableColumnMenu: false, displayName: $filter('translate')('ROLE.LIST.TITLE_2'), cellTemplate: cellTemplateName, sort: {direction: uiGridConstants.ASC, priority: 0}},
+				{ name: $filter('translate')('ROLE.LIST.OPERATIONS'), width: '10%', cellTemplate: cellTemplateOperations, enableColumnMenu: false, enableFiltering: false, sortable: false }
 			],
 			enableFiltering: true,
 			enableSorting: true,
@@ -98,22 +93,22 @@ angular.module('opalAdmin.controllers.role', ['ngAnimate', 'ngSanitize', 'ui.boo
 		};
 
 		// Initialize object for storing questionnaires
-		$scope.studiesList = [];
+		$scope.rolesList = [];
 
-		function getstudiesList() {
+		function getRolesList() {
 			roleCollectionService.getRoles(OAUserId).then(function (response) {
-				$scope.studiesList = response.data;
+				$scope.rolesList = response.data;
 			}).catch(function(err) {
-				alert($filter('translate')('STUDY.LIST.ERROR_PUBLICATION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+				alert($filter('translate')('ROLE.LIST.ERROR') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
 			});
 		}
 
 		// Function to edit questionnaire
-		$scope.editStudy = function (study) {
-			$scope.currentStudy = study;
+		$scope.editRole = function (role) {
+			$scope.currentRole = role;
 			var modalInstance = $uibModal.open({ // open modal
-				templateUrl: 'templates/study/edit.study.html',
-				controller: 'study.edit',
+				templateUrl: 'templates/role/edit.role.html',
+				controller: 'role.edit',
 				scope: $scope,
 				windowClass: 'customModal',
 				backdrop: 'static',
@@ -121,19 +116,19 @@ angular.module('opalAdmin.controllers.role', ['ngAnimate', 'ngSanitize', 'ui.boo
 
 			// After update, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				getstudiesList();
+				getRolesList();
 			});
 		};
 
 		// Function for when the custom code has been clicked for deletion
 		// Open a modal
-		$scope.deleteStudy = function (currentStudy) {
+		$scope.deleteRole = function (currentRole) {
 			// Assign selected custom code as the custom code to delete
-			$scope.studyToDelete = currentStudy;
+			$scope.roleToDelete = currentRole;
 
 			var modalInstance = $uibModal.open({
-				templateUrl: 'templates/study/delete.study.html',
-				controller: 'study.delete',
+				templateUrl: 'templates/role/delete.role.html',
+				controller: 'role.delete',
 				windowClass: 'deleteModal',
 				scope: $scope,
 				backdrop: 'static',
@@ -142,8 +137,7 @@ angular.module('opalAdmin.controllers.role', ['ngAnimate', 'ngSanitize', 'ui.boo
 			// After delete, refresh the custom code list
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing posts
-				getstudiesList();
+				getRolesList();
 			});
 		};
 	});
-

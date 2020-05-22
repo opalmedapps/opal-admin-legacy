@@ -57,7 +57,8 @@
     "ACCOUNT": "Compte",
     "ACCOUNT_SUB": "Modifier les paramètres du profil.",
     "LOGOUT": "Déconnexion",
-    "ROLES": "Rôles"
+    "ROLES": "Rôles",
+    "ROLES_SUB": "Gérer la liste des rôles des utilisateurs."
   },
   "BREADCRUMBS": {
     "HOME": "Accueil"
@@ -2429,6 +2430,23 @@
       "END_DATE": "Date de fin",
       "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails l'étude.",
       "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour de l'étude."
+    }
+  },
+  "ROLE" : {
+    "LIST": {
+      "TITLE": "Rôles",
+      "ADD": "Ajouter",
+      "SEARCH": "Rechercher",
+      "TITLE_2": "Titre",
+      "OPERATIONS": "Opérations"
+    },
+    "DELETE": {
+    },
+    "ADD": {
+
+    },
+    "EDIT": {
+
     }
   },
   "PATIENTS": {

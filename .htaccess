@@ -121,11 +121,11 @@ RewriteRule ^study/insert/study php/study/insert.study.php [QSA,L]
 RewriteRule ^study/update/study php/study/update.study.php [QSA,L]
 
 # Roles Section
-#RewriteRule ^role/delete/role php/role/delete.role.php [QSA,L]
-#RewriteRule ^role/get/role-details php/role/get.role.details.php [QSA,L]
-#RewriteRule ^role/get/roles php/role/get.roles.php [QSA,L]
-#RewriteRule ^role/insert/role php/role/insert.role.php [QSA,L]
-#RewriteRule ^role/update/role php/role/update.role.php [QSA,L]
+RewriteRule ^role/delete/role php/role/delete.role.php [QSA,L]
+RewriteRule ^role/get/role-details php/role/get.role.details.php [QSA,L]
+RewriteRule ^role/get/roles php/role/get.roles.php [QSA,L]
+RewriteRule ^role/insert/role php/role/insert.role.php [QSA,L]
+RewriteRule ^role/update/role php/role/update.role.php [QSA,L]
 
 # Educational Material Section
 RewriteRule ^educational-material/delete/educational-material php/educational-material/delete.educational_material.php [QSA,L]

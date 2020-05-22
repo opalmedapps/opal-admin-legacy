@@ -417,6 +417,27 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- SECTION: Roles -->
+                        <div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin])">
+                            <div class="panel-container animated" ng-class="{pulse: hoverUserMenu}"
+                                 ng-mouseenter="hoverUserMenu=true" ng-mouseleave="hoverUserMenu=false"
+                                 style="cursor:pointer;" ng-click="goToRoles()">
+                                <div class="panel-info">
+                                    <div class="panel-content">
+                                        <div class="icon-home clearfix">
+                                            <span class="fa fa-address-card-o" aria-hidden="true"></span>
+                                        </div>
+                                        <div class="panel-title">
+                                            <h1>{{'NAVIGATION_MENU.ROLES'|translate}}</h1>
+                                        </div>
+                                        <div class="panel-description">
+                                            <p>{{'NAVIGATION_MENU.ROLES_SUB'|translate}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
