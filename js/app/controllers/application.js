@@ -40,7 +40,7 @@ controller('application', function ($scope, $rootScope, $state, $filter, Idle, K
 			// Loop keys (i.e. source databases) and compare enabled flag
 			for (sourceDatabase in $scope.sourceDatabases) {
 				if ($scope.sourceDatabases.hasOwnProperty(sourceDatabase)) {
-					if ($scope.sourceDatabases[sourceDatabase].enabled != $scope.configs.databaseConfig[sourceDatabase].enabled) {
+					if (typeof($scope.configs.databaseConfig[sourceDatabase]) !== "undefined" && $scope.sourceDatabases[sourceDatabase].enabled != $scope.configs.databaseConfig[sourceDatabase].enabled) {
 						$scope.sourceDatabases[sourceDatabase].update = 1;
 						$scope.sourceDatabases[sourceDatabase].enabled = $scope.configs.databaseConfig[sourceDatabase].enabled;
 						updateNeeded = true;

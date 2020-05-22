@@ -264,7 +264,7 @@ class TestResult {
             // ***********************************
             // WaitRoomManagement
             // ***********************************
-            $sourceDBSer = MEDIVISIT_SOURCE_DB;
+            $sourceDBSer = ORMS_SOURCE_DB;
             $source_db_link = $databaseObj->connectToSourceDatabase($sourceDBSer);
             if ($source_db_link) {
 
@@ -303,6 +303,33 @@ class TestResult {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for lab results. " . $e->getMessage());
         }
     }
+
+    /*
+    public function getTestNames() {
+        $databaseObj = new Database();
+        $activeDBSources = $databaseObj->getActiveSourceDatabases();
+        $assignedTests = $this->getAssignedTests();
+
+        $sql = "SELECT description AS name, description AS id FROM ".OPAL_MASTER_SOURCE_TEST_RESULT_TABLE." WHERE deleted = 0 AND source IN(".implode(",", $activeDBSources).") ORDER BY description";
+
+        $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD);
+        $host_db_link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+        $query->execute();
+        $results = $query->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach($results as &$item) {
+            $assignedTest = $this->assignedSearch($item['name'], $assignedTests);
+            $item['added'] = 0;
+            if ($assignedTest)
+                $item['assigned'] = $assignedTest;
+            else
+                $item['assigned'] = null;
+        }
+
+        return $results;
+    }
+     * */
 
     /**
      *
@@ -664,7 +691,7 @@ class TestResult {
                 $query->execute();
             }
 
-            if (testNamesUpdated) {
+            if ($testNamesUpdated) {
 
                 $sql = "
                     SELECT DISTINCT

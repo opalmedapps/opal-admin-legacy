@@ -38,7 +38,16 @@ angular.module('opalAdmin.services', [])
 	.service('LogoutService', function (Session, $state, $http) {
 		this.logLogout = function () {
 			var user = Session.retrieveObject('user');
-			$http.post('user/logout', user );
+			$http.post(
+				"user/logout",
+				$.param({
+					OAUserId: user.id,
+					sessionId: user.sessionid,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
 		};
 		this.logout = function () {
 			this.logLogout();

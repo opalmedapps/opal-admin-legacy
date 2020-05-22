@@ -1,3 +1,6 @@
+Version 0.21.0.0:
+
+
 Version 0.20.1.0:
  - Merge branch 'move_to_Aria15' into staging
  -     --- Additional modification required to make it work with Aria 15 also needed to optimize the query to fetch data from Aria

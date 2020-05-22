@@ -202,6 +202,38 @@
                 </div>
             </div>
 
+            <!-- SECTION: Custom Codes -->
+            <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">
+                <div class="panel-container animated"
+                     ng-class="{pulse: hoverDiagnosisMenu, active: currentPage == 'custom-code'}"
+                     ng-mouseenter="hoverDiagnosisMenu=true" ng-mouseleave="hoverDiagnosisMenu=false"
+                     style="cursor:pointer;" ng-click="goToCustomCodes()">
+                    <div class="side-panel-info-sm" ng-class="{active: currentPage == 'custom-code'}">
+                        <div class="panel-content">
+                            <span style="font-size: 21px; vertical-align:middle" class="fa fa-exchange"
+                                  aria-hidden="true"></span>
+                            <div class="side-panel-title" style="display:inline-block;margin:0"><strong>{{'NAVIGATION_MENU.CUSTOM_CODES'|translate}}</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: Studies -->
+            <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">
+                <div class="panel-container animated"
+                     ng-class="{pulse: hoverDiagnosisMenu, active: currentPage == 'study'}"
+                     ng-mouseenter="hoverDiagnosisMenu=true" ng-mouseleave="hoverDiagnosisMenu=false"
+                     style="cursor:pointer;" ng-click="goToStudies()">
+                    <div class="side-panel-info-sm" ng-class="{active: currentPage == 'study'}">
+                        <div class="panel-content">
+                            <span style="font-size: 21px; vertical-align:middle" class="fa fa-pie-chart"
+                                  aria-hidden="true"></span>
+                            <div class="side-panel-title" style="display:inline-block;margin:0"><strong>{{'NAVIGATION_MENU.STUDIES'|translate}}</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- SECTION: Cron Logs -->
             <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">
                 <div class="panel-container animated" ng-class="{pulse: hoverCronMenu, active: currentPage == 'cron'}"
@@ -261,6 +293,22 @@
                             <span style="font-size: 21px; vertical-align:middle" class="fa fa-hourglass-half"
                                   aria-hidden="true"></span>
                             <div class="side-panel-title" style="display:inline-block;margin:0"><strong>{{'NAVIGATION_MENU.PATIENT_ACTIVITY'|translate}}</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: Patient Report -->
+            <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">
+                <div class="panel-container animated" ng-class="{pulse: hoverUserMenu, active: currentPage == 'report'}"
+                     ng-mouseenter="hoverUserMenu=true" ng-mouseleave="hoverUserMenu=false" style="cursor:pointer;"
+                     ng-click="goToReport()">
+                    <div class="side-panel-info-sm" ng-class="{active: currentPage == 'report'}">
+                        <div class="panel-content">
+                            <span style="font-size: 21px; vertical-align:middle" class="fa fa fa-file-text"
+                                  aria-hidden="true"></span>
+                            <div class="side-panel-title" style="display:inline-block;margin:0"><strong>{{'PATIENTREPORT.TITLE'|translate}}</strong>
+                            </div>
                         </div>
                     </div>
                 </div>

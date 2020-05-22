@@ -232,8 +232,8 @@ class Patient {
             // ***********************************
             // WaitRoomManagement
             // ***********************************
-            if(in_array(MEDIVISIT_SOURCE_DB, $activeDBSources)) {
-                $source_db_link = $databaseObj->connectToSourceDatabase(MEDIVISIT_SOURCE_DB);
+            if(in_array(ORMS_SOURCE_DB, $activeDBSources)) {
+                $source_db_link = $databaseObj->connectToSourceDatabase(ORMS_SOURCE_DB);
                 if ($source_db_link) {
 
                     $sql = "SELECT 'QUERY_HERE'";
@@ -467,23 +467,23 @@ class Patient {
             $query = $host_db_link->prepare( $sql );
             $query->execute();
 
-            $questionnaires_db_link = new PDO( QUESTIONNAIRE_DB_DSN, QUESTIONNAIRE_DB_USERNAME, QUESTIONNAIRE_DB_PASSWORD );
-            $questionnaires_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+      //       $questionnaires_db_link = new PDO( QUESTIONNAIRE_DB_DSN, QUESTIONNAIRE_DB_USERNAME, QUESTIONNAIRE_DB_PASSWORD );
+      //       $questionnaires_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-            $sql = "
-        INSERT INTO
-          Patient (
-            PatientName,
-            PatientId
-          )
-        VALUES (
-          \"$firstname $lastname\",
-          '$id'
-        )
-      ";
+      //       $sql = "
+      //   INSERT INTO
+      //     Patient (
+      //       PatientName,
+      //       PatientId
+      //     )
+      //   VALUES (
+      //     \"$firstname $lastname\",
+      //     '$id'
+      //   )
+      // ";
 
-            $query = $questionnaires_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-            $query->execute();
+      //       $query = $questionnaires_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
+      //       $query->execute();
 
         } catch( PDOException $e) {
             return $e->getMessage();
