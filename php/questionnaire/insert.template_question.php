@@ -9,6 +9,3 @@ $answerTypeObj->insertTemplateQuestion($_POST);
 header('Content-Type: application/javascript');
 $response['message'] = HTTP_STATUS_SUCCESS;
 echo json_encode($response);
-
-
-?>

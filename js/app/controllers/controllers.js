@@ -40,10 +40,13 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.login',
 	'opalAdmin.controllers.loginModal',
 	'opalAdmin.controllers.patientActivity',
+	'opalAdmin.controllers.account.ad',
 	'opalAdmin.controllers.account',
 	'opalAdmin.controllers.user',
 	'opalAdmin.controllers.user.add',
+	'opalAdmin.controllers.user.add.ad',
 	'opalAdmin.controllers.user.edit',
+	'opalAdmin.controllers.user.edit.ad',
 	'opalAdmin.controllers.user.delete',
 	'opalAdmin.controllers.user.log',
 	'opalAdmin.controllers.installation',
@@ -56,9 +59,6 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.questionnaire.add',
 	'opalAdmin.controllers.questionnaire.edit',
 	'opalAdmin.controllers.questionnaire.delete',
-	// 'opalAdmin.controllers.publication.tool',
-	// 'opalAdmin.controllers.publication.tool.add',
-	// 'opalAdmin.controllers.publication.tool.edit',
 	'opalAdmin.controllers.publication',
 	'opalAdmin.controllers.publication.add',
 	'opalAdmin.controllers.publication.edit',
@@ -74,11 +74,13 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.diagnosisTranslation',
 	'opalAdmin.controllers.diagnosisTranslation.add',
 	'opalAdmin.controllers.diagnosisTranslation.edit',
-	'opalAdmin.controllers.diagnosisTranslation.delete'
+	'opalAdmin.controllers.diagnosisTranslation.delete',
+	'opalAdmin.controllers.customCode',
+	'opalAdmin.controllers.customCode.add',
+	'opalAdmin.controllers.customCode.edit',
+	'opalAdmin.controllers.customCode.delete',
+	'opalAdmin.controllers.study',
+	'opalAdmin.controllers.study.add',
+	'opalAdmin.controllers.study.edit',
+	'opalAdmin.controllers.study.delete'
 ]);
-
-
-
-
-
-

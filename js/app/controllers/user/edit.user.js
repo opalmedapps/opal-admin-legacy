@@ -1,6 +1,8 @@
 angular.module('opalAdmin.controllers.user.edit', ['ui.bootstrap', 'ui.grid']).
 
-controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter, $sce, $state, userCollectionService, Encrypt) {
+controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter, $sce, $state, userCollectionService, Encrypt, Session) {
+	var OAUserId = Session.retrieveObject('user').id;
+	$scope.roleDisabled = false;
 
 	// Default booleans
 	$scope.changesMade = false;
@@ -33,6 +35,7 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 	// Call our API service to get the current user's details
 	userCollectionService.getUserDetails($scope.currentUser.serial).then(function (response) {
 		$scope.user = response.data;
+		$scope.roleDisabled = (OAUserId == $scope.user.serial);
 		processingModal.close(); // hide modal
 		processingModal = null; // remove reference
 	}).catch(function(response) {
@@ -41,7 +44,7 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 
 	// Call our API service to get the list of possible roles
 	$scope.roles = [];
-	userCollectionService.getRoles().then(function (response) {
+	userCollectionService.getRoles(OAUserId).then(function (response) {
 		response.data.forEach(function(row) {
 			switch (row.name) {
 			case "admin":
@@ -69,7 +72,7 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 				row.name_display = $filter('translate')('USERS.ADD.NOT_TRANSLATED');
 			}
 		});
-				$scope.roles = response.data;
+		$scope.roles = response.data;
 	}).catch(function(response) {
 		alert($filter('translate')('USERS.EDIT.ERROR_ROLES') + "\r\n\r\n" + response.status + " " + response.data);
 	});
@@ -94,9 +97,12 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 			return;
 		}
 
-		if (password.length < 6) {
+		//Password validation
+		//minimum 8 characters, 1 number, 1 lower case letter, 1 upper case letter and 1 special character
+		var validationPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/;
+		if(!password.match(validationPassword)) {
 			$scope.validPassword.status = 'invalid';
-			$scope.validPassword.message = 'Use greater than 6 characters';
+			$scope.validPassword.message = $filter('translate')('USERS.EDIT.ERROR_PASSWORD_FORMAT');
 			$scope.passwordUpdate();
 			return;
 		} else {
@@ -123,7 +129,7 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 
 		if ($scope.validPassword.status != 'valid' || $scope.user.password != $scope.user.confirmPassword) {
 			$scope.validConfirmPassword.status = 'invalid';
-			$scope.validConfirmPassword.message = 'Enter same valid password';
+			$scope.validConfirmPassword.message = $filter('translate')('USERS.EDIT.ERROR_PASSWORD_INVALID');
 			$scope.passwordUpdate();
 			return;
 		} else {
@@ -159,38 +165,37 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 	// Submit changes
 	$scope.updateUser = function () {
 		if ($scope.checkForm()) {
+			var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103;
 
-			// duplicate user
-			var user = jQuery.extend(true, {}, $scope.user);
-			if (user.password && user.confirmPassword) {
-				// one-time pad using current time and rng
-				var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103;
-				// encode passwords before request
-				user.password = Encrypt.encode(user.password, cypher);
-				user.confirmPassword = Encrypt.encode(user.confirmPassword, cypher);
-				user.cypher = cypher;
-			}
+			var encrypted = {
+				id: $scope.user.serial,
+				password: $scope.user.password,
+				confirmPassword: $scope.user.confirmPassword,
+				language: $scope.user.language,
+				roleId: $scope.user.role.serial
+			};
+			encrypted = Encrypt.encode(JSON.stringify(encrypted), cypher);
+
+			var data = {
+				OAUserId: Session.retrieveObject('user').id,
+				encrypted: encrypted,
+				cypher: cypher,
+			};
 
 			// submit
 			$.ajax({
 				type: "POST",
 				url: "user/update/user",
-				data: user,
+				data: data,
 				success: function (response) {
-					response = JSON.parse(response);
-					// Show success or failure depending on response
-					if (response.value) {
-						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = $filter('translate')('USERS.EDIT.SUCCESS_EDIT') ;
-						$scope.showBanner();
-					}
-					else {
-						alert($filter('translate')('USERS.EDIT.ERROR_UPDATE'));
-					}
-					$uibModalInstance.close();
+					$scope.setBannerClass('success');
+					$scope.$parent.bannerMessage = $filter('translate')('USERS.EDIT.SUCCESS_EDIT') ;
+					$scope.showBanner();
 				},
 				error: function(err) {
-					alert($filter('translate')('USERS.EDIT.ERROR_UPDATE') + "\r\n\r\n" + err.status + " - " + err.statusText);
+					alert($filter('translate')('USERS.EDIT.ERROR_UPDATE') + "\r\n\r\n" + err.status + " - " + err.responseText);
+				},
+				complete: function() {
 					$uibModalInstance.close();
 				}
 			});

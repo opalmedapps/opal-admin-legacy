@@ -8,4 +8,33 @@
  * */
 
 class DatabaseAria extends DatabaseAccess {
+
+    function getAllAliasesToInsert() {
+
+       $firstResult = $this->_fetchAll(ARIA_GET_ALIASES_QT, array());
+       $secondResult = $this->_fetchAll(ARIA_GET_ALIASES_DOC, array());
+       $toInsert = array();
+
+       foreach($firstResult as $item) {
+           $tempArr = array(
+               "externalId"=>$item["ID"],
+               "type"=>$item["type"],
+               "code"=>$item["code"],
+               "expression"=>$item["expression"],
+               "source"=>1,
+           );
+           array_push($toInsert, $tempArr);
+       }
+       foreach($secondResult as $item) {
+           $tempArr = array(
+               "externalId"=>$item["ID"],
+               "type"=>$item["type"],
+               "code"=>$item["Name"],
+               "expression"=>$item["Name"],
+               "source"=>1,
+           );
+           array_push($toInsert, $tempArr);
+       }
+        return $toInsert;
+    }
 }
