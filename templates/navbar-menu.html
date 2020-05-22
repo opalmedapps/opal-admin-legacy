@@ -79,6 +79,18 @@
                         </a>
                     </li>
                     <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
+                        <a ui-sref="custom-code" ng-click="closeNav()">
+                            <span class="fa fa-exchange" aria-hidden="true"></span>
+                            {{'NAVIGATION_MENU.CUSTOM_CODES'|translate}}
+                        </a>
+                    </li>
+                    <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
+                        <a ui-sref="study" ng-click="closeNav()">
+                            <span class="fa fa-pie-chart" aria-hidden="true"></span>
+                            {{'NAVIGATION_MENU.STUDIES'|translate}}
+                        </a>
+                    </li>
+                    <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
                         <a ui-sref="cron" ng-click="closeNav()">
                             <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
                             {{'NAVIGATION_MENU.CRON_LOGS'|translate}}
@@ -100,6 +112,12 @@
                         <a ui-sref="patient-activity" ng-click="closeNav()">
                             <span class="fa fa-hourglass-half" aria-hidden="true"></span>
                             {{'NAVIGATION_MENU.PATIENT_ACTIVITY'|translate}}
+                        </a>
+                    </li>
+                    <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
+                        <a ui-sref="report" ng-click="closeNav()">
+                            <span class="fa fa-file-text" aria-hidden="true"></span>
+                            {{'PATIENTREPORT.TITLE'|translate}}
                         </a>
                     </li>
                     <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">

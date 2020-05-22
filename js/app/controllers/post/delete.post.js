@@ -8,7 +8,6 @@ angular.module('opalAdmin.controllers.post.delete', ['ngAnimate', 'ngSanitize', 
 			var currentUser = Session.retrieveObject('user');
 			$scope.postToDelete.OAUser = currentUser;
 
-			console.log($scope.postToDelete);
 			$.ajax({
 				type: "POST",
 				url: "post/delete/post",

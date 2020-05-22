@@ -1,5 +1,11 @@
 #!/usr/bin/perl
 #---------------------------------------------------------------------------------
+# Y.Mo 03-Apr-2020
+# This module is no longer required because the test results will be fetch from Oacis.
+#
+# Will be removed after a few next release.
+#
+#---------------------------------------------------------------------------------
 # A.Joseph 14-Oct-2015 ++ File: TestResult.pm
 #---------------------------------------------------------------------------------
 # Perl module that creates a TestResult class. This module calls a constructor to

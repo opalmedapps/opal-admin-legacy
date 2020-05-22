@@ -121,7 +121,7 @@ class Post extends OpalProject {
     public function deletePost($postId) {
         $currentPost = $this->opalDB->getPostDetails($postId);
         if($currentPost["locked"] == 0)
-            return $this->opalDB->markAsDeleted(OPAL_POST_TABLE, OPAL_POST_PK, $postId);
+            return $this->opalDB->markPostAsDeleted(OPAL_POST_TABLE, OPAL_POST_PK, $postId);
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Post locked.");
     }

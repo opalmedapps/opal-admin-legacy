@@ -8,16 +8,17 @@
 
 class HelpSetup {
     /*
-     * Basic functions to return an error message to the caller
+     * Basic functions to return an error message to the caller. Note: we have to define http_response_code if it
+     * does not exists because some of our server are still running PHP 5.3 (a shame, yes).
+     * @params  $errCode (int) error code to return. By default, 500
+     *          $details (string) error message to display
+     * @return  void
      * */
     public static function returnErrorMessage($errcode = HTTP_STATUS_INTERNAL_SERVER_ERROR, $details) {
-        if (!function_exists('http_response_code'))
-        {
-            function http_response_code($newcode = NULL)
-            {
+        if (!function_exists('http_response_code')) {
+            function http_response_code($newcode = NULL){
                 static $code = HTTP_STATUS_SUCCESS;
-                if($newcode !== NULL)
-                {
+                if($newcode !== NULL) {
                     header('X-PHP-Response-Code: '.$newcode, true, $newcode);
                     if(!headers_sent())
                         $code = $newcode;
@@ -32,6 +33,16 @@ class HelpSetup {
         die();
     }
 
+    public static function makeSessionId($length = 10) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
     /*
      * This function validates a specific date and if it is still valid or not depending a format specified
      * @params  $date (string) the date itself.
@@ -42,6 +53,7 @@ class HelpSetup {
     public static function verifyDate($date, $strict = false, $format = 'Y-m-d H:i') {
         $dateTime = DateTime::createFromFormat($format, $date);
         $errors = DateTime::getLastErrors();
+
         if (!empty($errors['warning_count']))
             return false;
 
@@ -61,5 +73,27 @@ class HelpSetup {
         return ((string) (int) $timestamp === $timestamp)
             && ($timestamp <= PHP_INT_MAX)
             && ($timestamp >= ~PHP_INT_MAX);
+    }
+
+    /*
+     * Recursive function that sanitize the data
+     * @params  array to sanitize
+     * @return  array sanitized
+     * */
+    public static function arraySanitization($arrayForm) {
+        $sanitizedArray = array();
+        foreach($arrayForm as $key=>$value) {
+            $key = preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $key);
+            if(is_array($value))
+                $value = self::arraySanitization($value);
+            else
+                $value = preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $value);
+            $sanitizedArray[$key] = $value;
+        }
+        return $sanitizedArray;
+    }
+
+    public static function generateRandomString($length = 256) {
+        return substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!/$%?&*()-=_+[]<>^;:'),1,$length);
     }
 }
