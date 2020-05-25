@@ -57,13 +57,6 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 			return renderableRows;
 		};
 
-		// Function to filter questionnaires
-		$scope.filterQuestionnaire = function (filterValue) {
-			$scope.filterValue = filterValue;
-			$scope.gridApi.grid.refresh();
-
-		};
-
 		// Table
 		// Templates
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
