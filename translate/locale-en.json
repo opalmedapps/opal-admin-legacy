@@ -2408,10 +2408,11 @@
   },
   "ROLE" : {
     "LIST": {
-      "TITLE": "Rôles",
+      "TITLE": "Roles",
       "ADD": "Add",
       "SEARCH": "Search...",
-      "TITLE_2": "Title",
+      "ENGLISH": "English",
+      "FRENCH": "French",
       "OPERATIONS": "Operations"
     },
     "DELETE": {

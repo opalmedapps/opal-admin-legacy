@@ -45,7 +45,7 @@ angular.module('opalAdmin.controllers.role', ['ngAnimate', 'ngSanitize', 'ui.boo
 			var matcher = new RegExp($scope.filterValue, 'i');
 			renderableRows.forEach(function (row) {
 				var match = false;
-				['code', 'title'].forEach(function (field) {
+				['name_EN', 'name_FR'].forEach(function (field) {
 					if (row.entity[field].match(matcher)) {
 						match = true;
 					}
@@ -57,21 +57,17 @@ angular.module('opalAdmin.controllers.role', ['ngAnimate', 'ngSanitize', 'ui.boo
 			return renderableRows;
 		};
 
-		// Function to filter questionnaires
-		$scope.filterQuestionnaire = function (filterValue) {
-			$scope.filterValue = filterValue;
-			$scope.gridApi.grid.refresh();
-
-		};
-
 		// Table
 		// Templates
 		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
 			'<strong><a href="" ng-click="grid.appScope.editRole(row.entity)"<i title="'+$filter('translate')('ROLE.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong>' +
 			'- <strong><a href="" ng-click="grid.appScope.deleteRole(row.entity)"><i title="'+$filter('translate')('ROLE.LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
-		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
+		var cellTemplateEnglish = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editRole(row.entity)">' +
-			'<strong><a href="">{{row.entity.title}}</a></strong></div>';
+			'<strong><a href="">{{row.entity.name_EN}}</a></strong></div>';
+		var cellTemplateFrench = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
+			'ng-click="grid.appScope.editRole(row.entity)">' +
+			'<strong><a href="">{{row.entity.name_FR}}</a></strong></div>';
 		var cellTemplatePublication = '<div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==1">'+$filter('translate')('ROLE.LIST.ALIAS')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==6">'+$filter('translate')('ROLE.LIST.DIAGNOSTIC')+'</div><div class="ui-grid-cell-contents" ng-if="row.entity.moduleId==9">'+$filter('translate')('ROLE.LIST.TEST')+'</div>';
 		var cellTemplateLocked = '<div class="ui-grid-cell-contents" ng-show="row.entity.locked > 0"><div class="fa fa-lock text-danger"></div></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 0"><div class="fa fa-unlock text-success"></div></div>';
@@ -80,7 +76,8 @@ angular.module('opalAdmin.controllers.role', ['ngAnimate', 'ngSanitize', 'ui.boo
 		$scope.gridOptions = {
 			data: 'rolesList',
 			columnDefs: [
-				{ field: 'title', enableColumnMenu: false, displayName: $filter('translate')('ROLE.LIST.TITLE_2'), cellTemplate: cellTemplateName, sort: {direction: uiGridConstants.ASC, priority: 0}},
+				{ field: 'name_EN', enableColumnMenu: false, displayName: $filter('translate')('ROLE.LIST.ENGLISH'), cellTemplate: cellTemplateEnglish, sort: {direction: uiGridConstants.ASC, priority: 0}},
+				{ field: 'name_FR', enableColumnMenu: false, displayName: $filter('translate')('ROLE.LIST.FRENCH'), cellTemplate: cellTemplateFrench	},
 				{ name: $filter('translate')('ROLE.LIST.OPERATIONS'), width: '10%', cellTemplate: cellTemplateOperations, enableColumnMenu: false, enableFiltering: false, sortable: false }
 			],
 			enableFiltering: true,
