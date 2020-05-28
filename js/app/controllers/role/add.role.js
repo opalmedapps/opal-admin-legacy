@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.role.add', ['ngAnimate', 'ui.bootstrap']).
 	/******************************************************************************
 	 * Add Diagnosis Translation Page controller
 	 *******************************************************************************/
-	controller('role.add', function ($scope, $filter, $uibModal, $state, $locale, Session) {
+	controller('role.add', function ($scope, $filter, $uibModal, $state, $locale, roleCollectionService, Session) {
 
 		// get current user id
 		var user = Session.retrieveObject('user');
@@ -18,129 +18,40 @@ angular.module('opalAdmin.controllers.role.add', ['ngAnimate', 'ui.bootstrap']).
 		$scope.hideAssigned = false;
 		$scope.language = Session.retrieveObject('user').language;
 
-		// completed steps booleans - used for progress bar
-		var steps = {
-			diagnoses: { completed: false },
-			title_description: { completed: false }
-		};
-
-		// Default count of completed steps
-		$scope.numOfCompletedSteps = 0;
-
-		// Default total number of steps
-		$scope.stepTotal = 2;
-
-		// Progress for progress bar on default steps and total
-		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-
-		// Function to calculate / return step progress
-		function trackProgress(value, total) {
-			return Math.round(100 * value / total);
-		}
-
-		// Function to return number of steps completed
-		function stepsCompleted(steps) {
-
-			var numberOfTrues = 0;
-			for (var step in steps) {
-				if (steps[step].completed === true) {
-					numberOfTrues++;
-				}
-			}
-
-			return numberOfTrues;
-		}
-
 		$scope.toSubmit = {
 			OAUserId: OAUserId,
-			details: {
-				code: "",
-				title: "",
+			name: {
+				name_EN: "",
+				name_FR: "",
 			},
-			investigator: {
-				name: ""
-			},
-			dates: {
-				start_date: "",
-				end_date: "",
-			}
+			operations: []
 		};
 
+		$scope.newRole = {};
+
 		$scope.validator = {
-			details: {
+			name: {
 				completed: false,
 				mandatory: true,
 				valid: true,
 			},
-			investigator: {
+			operations: {
 				completed: false,
 				mandatory: true,
 				valid: true,
-			},
-			dates: {
-				completed: false,
-				mandatory: false,
-				valid: true,
-			},
+			}
 		};
 
 		$scope.leftMenu = {
-			details: {
+			name: {
 				display: false,
 				open: false,
-				preview: false,
 			},
-			investigator: {
+			operations: {
 				display: false,
 				open: false,
-				preview: false,
-			},
-			dates: {
-				display: false,
-				open: false,
-				preview: false,
 			},
 		};
-
-		// Date format for start and end frequency dates
-		$scope.format = 'yyyy-MM-dd';
-		$scope.dateOptionsStart = {
-			formatYear: "'yy'",
-			startingDay: 0,
-			minDate: new Date(),
-			maxDate: null
-		};
-		$scope.dateOptionsEnd = {
-			formatYear: "'yy'",
-			startingDay: 0,
-			minDate: new Date(),
-			maxDate: null
-		};
-
-		$locale["DATETIME_FORMATS"]["SHORTDAY"] = [
-			$filter('translate')('DATEPICKER.SUNDAY_S'),
-			$filter('translate')('DATEPICKER.MONDAY_S'),
-			$filter('translate')('DATEPICKER.TUESDAY_S'),
-			$filter('translate')('DATEPICKER.WEDNESDAY_S'),
-			$filter('translate')('DATEPICKER.THURSDAY_S'),
-			$filter('translate')('DATEPICKER.FRIDAY_S'),
-			$filter('translate')('DATEPICKER.SATURDAY_S')
-		];
-
-		$locale["DATETIME_FORMATS"]["MONTH"] = [
-			$filter('translate')('DATEPICKER.JANUARY'),
-			$filter('translate')('DATEPICKER.FEBRUARY'),
-			$filter('translate')('DATEPICKER.MARCH'),
-			$filter('translate')('DATEPICKER.APRIL'),
-			$filter('translate')('DATEPICKER.MAY'),
-			$filter('translate')('DATEPICKER.JUNE'),
-			$filter('translate')('DATEPICKER.JULY'),
-			$filter('translate')('DATEPICKER.AUGUST'),
-			$filter('translate')('DATEPICKER.SEPTEMBER'),
-			$filter('translate')('DATEPICKER.OCTOBER'),
-			$filter('translate')('DATEPICKER.NOVEMBER'),
-			$filter('translate')('DATEPICKER.DECEMBER')
-		];
 
 		$scope.totalSteps = 0;
 		$scope.completedSteps = 0;
@@ -157,6 +68,37 @@ angular.module('opalAdmin.controllers.role.add', ['ngAnimate', 'ui.bootstrap']).
 			});
 		};
 
+		// Call our API to ge the list of diagnoses
+		roleCollectionService.getAvailableRoleModules(OAUserId).then(function (response) {
+			var temp;
+			response.data.forEach(function(entry) {
+				if (parseInt(entry.operation) < 0)
+					entry.operation = "0";
+				if (parseInt(entry.operation) > 7)
+					entry.operation = "7";
+
+				temp = {
+					"ID": entry.ID,
+					canRead : ((parseInt(entry.operation) & (1 << 0)) !== 0),
+					canWrite : ((parseInt(entry.operation) & (1 << 1)) !== 0),
+					canDelete : ((parseInt(entry.operation) & (1 << 2)) !== 0),
+					read : false,
+					write : false,
+					delete : false
+				};
+
+				if($scope.language.toUpperCase() === "FR")
+					temp.name_display = entry.name_FR;
+				else
+					temp.name_display = entry.name_EN;
+
+				$scope.toSubmit.operations.push(temp);
+			});
+		}).catch(function(err) {
+			alert($filter('translate')('ROLE.ADD.ERROR_MODULE'));
+			// $state.go('role');
+		});
+
 		$scope.formLoaded = false;
 		// Function to load form as animations
 		$scope.loadForm = function () {
@@ -164,63 +106,38 @@ angular.module('opalAdmin.controllers.role.add', ['ngAnimate', 'ui.bootstrap']).
 			$('.form-box-right').addClass('fadeInRight');
 		};
 
-		$scope.popupStart = {};
-		$scope.popupEnd = {};
-		$scope.openStart = function ($event) {
-			$event.preventDefault();
-			$event.stopPropagation();
-			$scope.popupStart['opened'] = true;
-			$scope.popupEnd['opened'] = false;
-		};
-		$scope.openEnd = function ($event) {
-			$event.preventDefault();
-			$event.stopPropagation();
-			$scope.popupStart['opened'] = false;
-			$scope.popupEnd['opened'] = true;
-		};
-
-		$scope.detailsUpdate = function () {
-			$scope.validator.details.completed = ($scope.toSubmit.details.code !== "" && $scope.toSubmit.details.title !== "");
-			$scope.leftMenu.details.open = ($scope.toSubmit.details.code !== "" || $scope.toSubmit.details.title !== "");
-			$scope.leftMenu.details.display = $scope.leftMenu.details.open;
-		};
-
 		$scope.nameUpdate = function () {
-			$scope.validator.investigator.completed = ($scope.toSubmit.investigator.name !== "");
-			$scope.leftMenu.investigator.open = $scope.validator.details.completed;
-			$scope.leftMenu.investigator.display = $scope.validator.details.completed;
+			$scope.validator.name.completed = ($scope.toSubmit.name.name_EN !== "" && $scope.toSubmit.name.name_FR !== "");
+			$scope.leftMenu.name.open = ($scope.toSubmit.name.name_EN !== "" || $scope.toSubmit.name.name_FR !== "");
+			$scope.leftMenu.name.display = $scope.leftMenu.name.open;
 		};
 
-		// Watch to restrict the end calendar to not choose an earlier date than the start date
-		$scope.$watch('toSubmit.dates.start_date', function(startDate){
-			if (startDate !== undefined && startDate !== "")
-				$scope.dateOptionsEnd.minDate = startDate;
-			else
-				$scope.dateOptionsEnd.minDate = Date.now();
-			checkOpenDates();
-		});
+		$scope.$watch('toSubmit.operations', function(nv) {
+			var atLeastOne = false;
+			angular.forEach(nv, function(value) {
+				if(value.read || value.write || value.delete)
+					atLeastOne = true;
+				if(value.write) {
+					if(value.canRead) value.read = true;
+				}
+				if(value.delete) {
+					if(value.canWrite) value.write = true;
+					if(value.canRead) value.read = true;
+				}
+			});
 
-		function checkOpenDates() {
-			if($scope.toSubmit.dates.start_date || $scope.toSubmit.dates.end_date) {
-				$scope.leftMenu.dates.display = true;
-				$scope.leftMenu.dates.open = true;
-				$scope.leftMenu.dates.preview = true;
-			} else {
-				$scope.leftMenu.dates.display = false;
-				$scope.leftMenu.dates.open = false;
-				$scope.leftMenu.dates.preview = false;
+			if(atLeastOne) {
+				$scope.validator.operations.completed = true;
+				if (!$scope.leftMenu.operations.open)
+					$scope.leftMenu.operations.open = true;
 			}
-		}
+			else {
+				$scope.validator.operations.completed = false;
+				if ($scope.leftMenu.operations.open)
+					$scope.leftMenu.operations.open = false;
+			}
 
-		// Watch to restrict the start calendar to not choose a start after the end date
-		$scope.$watch('toSubmit.dates.end_date', function(endDate){
-			if (endDate !== undefined && endDate !== "")
-				$scope.dateOptionsStart.maxDate = endDate;
-			else
-				$scope.dateOptionsStart.maxDate = null;
-			checkOpenDates();
-		});
-
+		}, true);
 
 		$scope.$watch('validator', function() {
 			var totalsteps = 0;
@@ -250,25 +167,54 @@ angular.module('opalAdmin.controllers.role.add', ['ngAnimate', 'ui.bootstrap']).
 			$scope.formReady = ($scope.completedSteps >= $scope.totalSteps) && (nonMandatoryCompleted >= nonMandatoryTotal);
 		}, true);
 
-		// Function to submit the new diagnosis translation
-		$scope.submitStudy = function () {
-			if ($scope.toSubmit.dates.start_date)
-				$scope.toSubmit.dates.start_date = moment($scope.toSubmit.dates.start_date).format('X');
-			if ($scope.toSubmit.dates.end_date)
-				$scope.toSubmit.dates.end_date = moment($scope.toSubmit.dates.end_date).format('X');
+		function backupToSubmit() {
+			$scope.oldSubmit = JSON.parse(JSON.stringify($scope.toSubmit));
+		}
 
-			$.ajax({
-				type: 'POST',
-				url: 'study/insert/study',
-				data: $scope.toSubmit,
-				success: function () {},
-				error: function (err) {
-					alert($filter('translate')('STUDY.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
-				},
-				complete: function () {
-					$state.go('study');
+		function restoreToSubmit() {
+			$scope.toSubmit = JSON.parse(JSON.stringify($scope.oldSubmit));
+		}
+
+		function buildOperations() {
+			$scope.newRole = JSON.parse(JSON.stringify($scope.toSubmit));
+			var newSubmit = [];
+			var noError = true;
+
+			$scope.toSubmit.operations.forEach(function(entry) {
+
+				sup = parseInt((+entry.delete + "" + +entry.write + "" + +entry.read), 2);
+				if (sup !== 0 && sup !== 1 && sup !== 3 && sup !== 7)
+					noError = false;
+
+				if(sup !== 0) {
+					newSubmit.push({"ID": entry.ID, "operation": sup});
 				}
 			});
+			$scope.newRole.operations = newSubmit;
+			return noError;
+		}
+
+		// Function to submit the new diagnosis translation
+		$scope.submitRole = function () {
+			console.log($scope.toSubmit);
+			var validResult = buildOperations();
+			console.log($scope.newRole);
+			if(validResult) {
+				$.ajax({
+					type: 'POST',
+					url: 'role/insert/role',
+					data: $scope.newRole,
+					success: function () {
+						$state.go('role');
+					},
+					error: function (err) {
+						alert($filter('translate')('ROLE.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					}
+				});
+			}
+			else
+				alert($filter('translate')('ROLE.ADD.ERROR_INVALID_ROLE'));
+
 		};
 
 		var fixmeTop = $('.summary-fix').offset().top;

@@ -93,7 +93,31 @@ class HelpSetup {
         return $sanitizedArray;
     }
 
+    /*
+     * Generate a random string alpha-numerical. Default length of 256 characters
+     * @params  $length : int (default 256)
+     * @return  string : string of random characters of requested length.
+     * */
     public static function generateRandomString($length = 256) {
         return substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!/$%?&*()-=_+[]<>^;:'),1,$length);
+    }
+
+    /*
+     * Validate if a requested operation is valid based on the authorized operation. It's a bit per bit comparison.
+     * Per default, the comparison is done on 3 bits since the authorized operations are from left to rigth
+     * "Delete | Write | Read".
+     * @params  $authorized : int - The authorized operations
+     *          $requested : int - The requested operations to test
+     *          $length : int - The length to test
+     * */
+    public static function validateBitOperation($authorized, $requested, $length = 2) {
+        $correct = true;
+        for($cpt = 0;$cpt<=$length;$cpt++) {
+            if( !($authorized & (1 << $cpt)) && ($requested & (1 << $cpt)) ) {
+                $correct = false;
+                break;
+            }
+        }
+        return $correct;
     }
 }
