@@ -1076,6 +1076,18 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
+		roleAPI.getAvailableRoleModules = function (OAUserId) {
+			return $http.post(
+				"role/get/available-modules",
+				$.param({
+					OAUserId: OAUserId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
 		roleAPI.getRoleDetails = function (roleId, OAUserId) {
 			return $http.post(
 				"role/get/role-details",

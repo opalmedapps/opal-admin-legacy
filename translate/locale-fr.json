@@ -2437,14 +2437,38 @@
       "TITLE": "Rôles",
       "ADD": "Ajouter",
       "SEARCH": "Rechercher",
-      "ENGLISH": "English",
-      "FRENCH": "French",
+      "ENGLISH": "Anglais",
+      "FRENCH": "Français",
       "OPERATIONS": "Opérations"
     },
     "DELETE": {
     },
     "ADD": {
-
+      "BACK": "Retour",
+      "SUMMARY": "Sommaire",
+      "TITLE": "Ajouter un rôle",
+      "NAME": "Nom",
+      "NAME_EXPLANATION": "Veuillez donner un nom en anglais et en français à votre nouveau rôle afin de l'identifier.",
+      "REQUIRED": "Champ requis:",
+      "INCOMPLETE": "Incomplet",
+      "COMPLETE": "Complet",
+      "ENGLISH": "Anglais",
+      "FRENCH": "Français",
+      "ENGLISH_ABRV": "AN",
+      "FRENCH_ABRV": "FR",
+      "OPERATIONS": "Opérations",
+      "OPERATIONS_EXPLANATION": "Veuillez sélectionner les opérations que le nouveau rôle autorisera pour chaque module.",
+      "MODULE": "Module",
+      "READ": "Lecture",
+      "WRITE": "Écriture",
+      "DELETE": "Suppression",
+      "SUBMIT": "Soumettre",
+      "READ_ABVR": "L",
+      "WRITE_ABVR": "E",
+      "DELETE_ABVR": "S",
+      "ERROR_INVALID_ROLE": "Opération de rôle invalide. Veuillez rafraîchir la page et réessayer.",
+      "ERROR_ADD": "Une erreur s'est produite lors de la création du rôle.",
+      "ERROR_MODULE": "Une erreur s'est produite lors de l'obtention de la la liste des modules."
     },
     "EDIT": {
 

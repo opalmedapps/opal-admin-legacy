@@ -542,7 +542,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		$scope.nameUpdate = function () {
 			$scope.validator.name.completed = ($scope.toSubmit.name.name_EN != null && $scope.toSubmit.name.name_FR != null);
 			$scope.leftMenu.name.open = ($scope.toSubmit.name.name_EN != null || $scope.toSubmit.name.name_FR != null);
-			$scope.leftMenu.name.display = ($scope.toSubmit.name.name_EN != null || $scope.toSubmit.name.name_FR != null);
+			$scope.leftMenu.name.display = $scope.leftMenu.name.open;
 		};
 
 		$scope.publishDateUpdate = function () {

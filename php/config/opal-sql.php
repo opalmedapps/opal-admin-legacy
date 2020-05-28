@@ -75,6 +75,7 @@ define("OPAL_ROLE_TABLE","Role");
 define("OPAL_ALIAS_MH_TABLE","AliasMH");
 define("OPAL_STUDY_TABLE","study");
 define("OPAL_OA_ROLE_TABLE","oaRole");
+define("OPAL_OA_ROLE_MODULE_TABLE","oaRoleModule");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -684,6 +685,13 @@ define("OPAL_MARK_STUDY_AS_DELETED", "
 ");
 
 define("OPAL_GET_ROLES", "
-    SELECT ID, name_EN, name_FR FROM ".OPAL_OA_ROLE_TABLE."
-    WHERE deleted = ".NON_DELETED_RECORD.";
+    SELECT ID, name_EN, name_FR FROM ".OPAL_OA_ROLE_TABLE." WHERE deleted = ".NON_DELETED_RECORD.";
+");
+
+define("OPAL_GET_AVAILABLE_ROLES_MODULES", "
+    SELECT `ID`, `operation`, `name_EN`, `name_FR` FROM `".OPAL_MODULE_TABLE."` WHERE `active` = ".ACTIVE_RECORD." ORDER BY `order`;
+");
+
+define("OPAL_GET_MODULES_OPERATIONS","
+    SELECT `ID`, `operation` FROM `".OPAL_MODULE_TABLE."` WHERE `ID` IN (%%MODULESID%%) AND active = ".ACTIVE_RECORD." ORDER BY `ID`;
 ");

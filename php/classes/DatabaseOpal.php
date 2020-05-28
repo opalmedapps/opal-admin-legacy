@@ -1261,7 +1261,7 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Update a specific study with user request info and username.
+     * Updates a specific study with user request info and username.
      * @params  $study (array) study to update
      * @return  (int) total record updated (should be one only!)
      * */
@@ -1271,7 +1271,7 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Mark a specified study as deleted.
+     * Marks a specified study as deleted.
      * @param   int : $studyId (ID of the study to mark as deleted)
      * @return  int : number of record deleted or error 500.
      * */
@@ -1282,7 +1282,52 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /*
+     * Returns the list of roles
+     * @param   void
+     * @return  array : list of module
+     * */
     function getRoles() {
         return $this->_fetchAll(OPAL_GET_ROLES, array());
+    }
+
+    /*
+     * Returns the list of active modules with their authorized operations
+     * @params  void
+     * @return  array: list of modules with name (en and fr) and their operations associated
+     * */
+    function getAvailableRolesModules() {
+        return $this->_fetchAll(OPAL_GET_AVAILABLE_ROLES_MODULES, array());
+    }
+
+    /*
+     * Returns the operations for a series of modules requested.
+     * @params  $modulesId : array - IDs of the modules
+     * @return  array - list of operations of modules
+     * */
+    function getModulesOperations($modulesId) {
+        $sql = str_replace("%%MODULESID%%", implode(", ", $modulesId),OPAL_GET_MODULES_OPERATIONS);
+        return $this->_fetchAll($sql, array());
+    }
+
+    /*
+     * Insert a new role with the username of the creator and the creation date. Returns the ID of the new role.
+     * @params  $toInsert : array - contains french and english name of the role
+     * @return  int - ID of the new role
+     * */
+    function insertRole($toInsert) {
+        $toInsert["createdBy"] = $this->getUsername();
+        $toInsert["creationDate"] = date("Y-m-d H:i:s");
+        $toInsert["updatedBy"] = $this->getUsername();
+        return $this->_insertRecordIntoTable(OPAL_OA_ROLE_TABLE, $toInsert);
+    }
+
+    /*
+     * Insert operations linked for a new role and a series of module.
+     * @params  $toInsert : array - operation for each module for a specific roles
+     * @returns int : ID of the entry
+     * */
+    function insertRoleModule($toInsert) {
+        return $this->_insertMultipleRecordsIntoTable(OPAL_OA_ROLE_MODULE_TABLE, $toInsert);
     }
 }
