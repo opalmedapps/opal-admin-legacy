@@ -122,6 +122,7 @@ RewriteRule ^study/update/study php/study/update.study.php [QSA,L]
 
 # Roles Section
 RewriteRule ^role/delete/role php/role/delete.role.php [QSA,L]
+RewriteRule ^role/get/available-modules php/role/get.available.modules.php [QSA,L]
 RewriteRule ^role/get/role-details php/role/get.role.details.php [QSA,L]
 RewriteRule ^role/get/roles php/role/get.roles.php [QSA,L]
 RewriteRule ^role/insert/role php/role/insert.role.php [QSA,L]

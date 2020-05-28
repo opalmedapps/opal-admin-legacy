@@ -2419,7 +2419,31 @@
 
     },
     "ADD": {
-
+      "BACK": "Back to Roles",
+      "SUMMARY": "Summary",
+      "TITLE": "Add role",
+      "NAME": "Name",
+      "NAME_EXPLANATION": "Please give an english and french name to your new role to identify it.",
+      "INCOMPLETE": "Incomplete",
+      "COMPLETE": "Complete",
+      "REQUIRED": "Required field:",
+      "ENGLISH": "English",
+      "FRENCH": "French",
+      "ENGLISH_ABRV": "EN",
+      "FRENCH_ABRV": "FR",
+      "OPERATIONS": "Operations",
+      "OPERATIONS_EXPLANATION": "Please select the operations the new role will authorize in each module.",
+      "MODULE": "Module",
+      "READ": "Read",
+      "WRITE": "Write",
+      "DELETE": "Delete",
+      "SUBMIT": "Submit",
+      "READ_ABVR": "R",
+      "WRITE_ABVR": "W",
+      "DELETE_ABVR": "D",
+      "ERROR_INVALID_ROLE": "Invalid role operation. Please refresh the page and try again.",
+      "ERROR_ADD": "An error occurred while creating the role.",
+      "ERROR_MODULE": "An error occurred while getting the list of modules."
     },
     "EDIT": {
 

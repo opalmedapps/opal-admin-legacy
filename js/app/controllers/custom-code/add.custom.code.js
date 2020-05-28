@@ -18,52 +18,6 @@ angular.module('opalAdmin.controllers.customCode.add', ['ngAnimate', 'ui.bootstr
 		$scope.hideAssigned = false;
 		$scope.language = Session.retrieveObject('user').language;
 
-		// Default toolbar for wysiwyg
-		$scope.toolbar = [
-			['h1', 'h2', 'h3', 'p'],
-			['bold', 'italics', 'underline', 'ul', 'ol'],
-			['justifyLeft', 'justifyCenter', 'indent', 'outdent'],
-			['html', 'insertLink']
-		];
-
-		$scope.diagnosesSection = {open:false, show: true};
-		$scope.titleDescriptionSection = {open:false, show:false};
-		$scope.educationalMaterialSection = {open:false, show:false};
-
-		// completed steps booleans - used for progress bar
-		var steps = {
-			diagnoses: { completed: false },
-			title_description: { completed: false }
-		};
-
-		// Default count of completed steps
-		$scope.numOfCompletedSteps = 0;
-
-		// Default total number of steps
-		$scope.stepTotal = 2;
-
-		// Progress for progress bar on default steps and total
-		$scope.stepProgress = trackProgress($scope.numOfCompletedSteps, $scope.stepTotal);
-
-		// Function to calculate / return step progress
-		function trackProgress(value, total) {
-			return Math.round(100 * value / total);
-		}
-
-		// Function to return number of steps completed
-		function stepsCompleted(steps) {
-
-			var numberOfTrues = 0;
-			for (var step in steps) {
-				if (steps[step].completed === true) {
-					numberOfTrues++;
-				}
-			}
-
-			return numberOfTrues;
-		}
-
-
 		$scope.toSubmit = {
 			OAUserId: OAUserId,
 			sessionid: Session.retrieveObject('user').sessionid,
