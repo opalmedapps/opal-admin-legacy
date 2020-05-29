@@ -26,8 +26,8 @@ class Post extends OpalProject {
             "PostName_EN"=>strip_tags($postToSanitize['name_EN']),
             "PostName_FR"=>strip_tags($postToSanitize['name_FR']),
             "PostType"=>strip_tags($postToSanitize['type']),
-            "Body_EN"=>filter_var($_POST['body_EN'], FILTER_SANITIZE_MAGIC_QUOTES),
-            "Body_FR"=>filter_var($_POST['body_FR'], FILTER_SANITIZE_MAGIC_QUOTES),
+            "Body_EN"=>filter_var($_POST['body_EN'], FILTER_SANITIZE_ADD_SLASHES),
+            "Body_FR"=>filter_var($_POST['body_FR'], FILTER_SANITIZE_ADD_SLASHES),
         );
 
         if($postToSanitize["serial"] != "") {
