@@ -1,84 +1,33 @@
 angular.module('opalAdmin.controllers.role.edit', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
 controller('role.edit', function ($scope, $filter, $uibModal, $uibModalInstance, $locale, roleCollectionService, uiGridConstants, $state, Session) {
-	$scope.toSubmit = {
-		OAUserId: Session.retrieveObject('user').id,
-		ID: "",
-		details: {
-			code: "",
-			title: "",
-		},
-		investigator: {
-			name: ""
-		},
-		dates: {
-			start_date: "",
-			end_date: "",
-		}
-
-	};
-
 	$scope.oldData = {};
 	$scope.changesDetected = false;
 	$scope.formReady = false;
 
 	$scope.validator = {
-		details: {
-			completed: true,
-			mandatory: true,
-			valid: true,
-		},
-		investigator: {
-			completed: true,
-			mandatory: true,
-			valid: true,
-		},
-		dates: {
+		name: {
 			completed: false,
-			mandatory: false,
+			mandatory: true,
 			valid: true,
 		},
+		operations: {
+			completed: false,
+			mandatory: true,
+			valid: true,
+		}
 	};
 
-	// Date format for start and end frequency dates
-	$scope.format = 'yyyy-MM-dd';
-	$scope.dateOptionsStart = {
-		formatYear: "'yy'",
-		startingDay: 0,
-		minDate: new Date(),
-		maxDate: null
+	$scope.leftMenu = {
+		name: {
+			display: false,
+			open: false,
+		},
+		operations: {
+			display: false,
+			open: false,
+		},
 	};
-	$scope.dateOptionsEnd = {
-		formatYear: "'yy'",
-		startingDay: 0,
-		minDate: new Date(),
-		maxDate: null
-	};
-
-	$locale["DATETIME_FORMATS"]["SHORTDAY"] = [
-		$filter('translate')('DATEPICKER.SUNDAY_S'),
-		$filter('translate')('DATEPICKER.MONDAY_S'),
-		$filter('translate')('DATEPICKER.TUESDAY_S'),
-		$filter('translate')('DATEPICKER.WEDNESDAY_S'),
-		$filter('translate')('DATEPICKER.THURSDAY_S'),
-		$filter('translate')('DATEPICKER.FRIDAY_S'),
-		$filter('translate')('DATEPICKER.SATURDAY_S')
-	];
-
-	$locale["DATETIME_FORMATS"]["MONTH"] = [
-		$filter('translate')('DATEPICKER.JANUARY'),
-		$filter('translate')('DATEPICKER.FEBRUARY'),
-		$filter('translate')('DATEPICKER.MARCH'),
-		$filter('translate')('DATEPICKER.APRIL'),
-		$filter('translate')('DATEPICKER.MAY'),
-		$filter('translate')('DATEPICKER.JUNE'),
-		$filter('translate')('DATEPICKER.JULY'),
-		$filter('translate')('DATEPICKER.AUGUST'),
-		$filter('translate')('DATEPICKER.SEPTEMBER'),
-		$filter('translate')('DATEPICKER.OCTOBER'),
-		$filter('translate')('DATEPICKER.NOVEMBER'),
-		$filter('translate')('DATEPICKER.DECEMBER')
-	];
 
 	$scope.language = Session.retrieveObject('user').language;
 
@@ -95,50 +44,37 @@ controller('role.edit', function ($scope, $filter, $uibModal, $uibModalInstance,
 	// Show processing dialog
 	$scope.showProcessingModal();
 
-	// Call our API service to get the current diagnosis translation details
-	roleCollectionService.getRoleDetails($scope.currentStudy.ID, $scope.toSubmit.OAUserId).then(function (response) {
-		var dateArray, year, month, date;
-		$scope.toSubmit.ID = response.data.ID;
-		$scope.toSubmit.details.code = response.data.code;
-		$scope.toSubmit.details.title = response.data.title;
-		$scope.toSubmit.investigator.name = response.data.investigator;
-		if(response.data.startDate !== "" && response.data.startDate !== null) {
-			dateArray = response.data.startDate.split("-");
-			year = dateArray[0];
-			month = parseInt(dateArray[1], 10) - 1;
-			date = dateArray[2];
-			$scope.toSubmit.dates.start_date = new Date(year, month, date);
-		}
-		if(response.data.endDate !== "" && response.data.endDate !== null) {
-			dateArray = response.data.endDate.split("-");
-			year = dateArray[0];
-			month = parseInt(dateArray[1], 10) - 1;
-			date = dateArray[2];
-			$scope.toSubmit.dates.end_date = new Date(year, month, date);
-		}
+	// Call our API to ge the list of diagnoses
+	roleCollectionService.getAvailableRoleModules(OAUserId).then(function (response) {
+		var temp;
+		response.data.forEach(function(entry) {
+			if (parseInt(entry.operation) < 0)
+				entry.operation = "0";
+			if (parseInt(entry.operation) > 7)
+				entry.operation = "7";
 
-		$scope.oldData = JSON.parse(JSON.stringify($scope.toSubmit));
-	}).catch(function(response) {
-		alert($filter('translate')('STUDY.EDIT.ERROR_DETAILS') + "\r\n\r\n" + response.status + " - " + response.data);
-	}).finally(function() {
-		processingModal.close(); // hide modal
-		processingModal = null; // remove reference
+			temp = {
+				"ID": entry.ID,
+				canRead : ((parseInt(entry.operation) & (1 << 0)) !== 0),
+				canWrite : ((parseInt(entry.operation) & (1 << 1)) !== 0),
+				canDelete : ((parseInt(entry.operation) & (1 << 2)) !== 0),
+				read : false,
+				write : false,
+				delete : false
+			};
+
+			if($scope.language.toUpperCase() === "FR")
+				temp.name_display = entry.name_FR;
+			else
+				temp.name_display = entry.name_EN;
+
+			$scope.toSubmit.operations.push(temp);
+		});
+		roleCollectionService.getAvailableRoleModules(OAUserId).then(function (response) {});
+	}).catch(function(err) {
+		alert($filter('translate')('ROLE.ADD.ERROR_MODULE'));
+		$state.go('role');
 	});
-
-	$scope.popupStart = {};
-	$scope.popupEnd = {};
-	$scope.openStart = function ($event) {
-		$event.preventDefault();
-		$event.stopPropagation();
-		$scope.popupStart['opened'] = true;
-		$scope.popupEnd['opened'] = false;
-	};
-	$scope.openEnd = function ($event) {
-		$event.preventDefault();
-		$event.stopPropagation();
-		$scope.popupStart['opened'] = false;
-		$scope.popupEnd['opened'] = true;
-	};
 
 	$scope.detailsUpdate = function () {
 		$scope.validator.details.completed = ($scope.toSubmit.details.code !== "" && $scope.toSubmit.details.title !== "");

@@ -1,11 +1,11 @@
 <?php
-include_once('study.inc');
+include_once('role.inc');
 
-$studyId = strip_tags($_POST['studyId']);
 $OAUserId = strip_tags($_POST['OAUserId']);
+$roleId = preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', strip_tags($_POST['roleId']));
 
-$customCode = new Study($OAUserId); // Object
-$response = $customCode->getStudyDetails($studyId);
+$role = new Role($OAUserId); // Object
+$response = $role->getRoleDetails($roleId);
 
 header('Content-Type: application/javascript');
 echo json_encode($response); // Return response

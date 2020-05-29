@@ -695,3 +695,11 @@ define("OPAL_GET_AVAILABLE_ROLES_MODULES", "
 define("OPAL_GET_MODULES_OPERATIONS","
     SELECT `ID`, `operation` FROM `".OPAL_MODULE_TABLE."` WHERE `ID` IN (%%MODULESID%%) AND active = ".ACTIVE_RECORD." ORDER BY `ID`;
 ");
+
+define("OPAL_GET_OA_ROLE_DETAILS","
+    SELECT `ID`, `name_EN`, `name_FR` FROM `".OPAL_OA_ROLE_TABLE."` WHERE ID = :ID AND `deleted` = ".NON_DELETED_RECORD.";
+");
+
+define("OPAL_GET_OA_ROLE_MODULE","
+    SELECT * FROM `".OPAL_OA_ROLE_MODULE_TABLE."` WHERE `oaRoleId` = :oaRoleId;
+");
