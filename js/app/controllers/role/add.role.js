@@ -99,7 +99,6 @@ angular.module('opalAdmin.controllers.role.add', ['ngAnimate', 'ui.bootstrap']).
 			// $state.go('role');
 		});
 
-		$scope.formLoaded = false;
 		// Function to load form as animations
 		$scope.loadForm = function () {
 			$('.form-box-left').addClass('fadeInDown');

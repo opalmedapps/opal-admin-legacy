@@ -17,6 +17,24 @@ class Role extends OpalProject {
     }
 
     /*
+     * Return the details of a specific role and its list of operations.
+     * @params  $post : array - contains the roleId
+     * @returns $roleDetails : array - contains the role details (names and list of operations)
+     * */
+    public function getRoleDetails($roleId) {
+        $roleDetails = $this->opalDB->getRoleDetails($roleId);
+        if(count($roleDetails) != 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot get role details.");
+        $roleDetails = $roleDetails[0];
+
+        $roleDetails["operations"] = $this->opalDB->getRoleOperations($roleId);
+        if(count($roleDetails["operations"]) <= 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot get role operations.");
+
+        return $roleDetails;
+    }
+
+    /*
      * This function returns the list of available modules when creating a role. It returns the name (EN and FR), the
      * operation available (int of 0 to 8, coded on 3 bits, right column read access, middle column write access, left
      * column delete access) and the ID of the module.

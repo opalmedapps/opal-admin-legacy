@@ -312,10 +312,6 @@ class DatabaseAccess extends HelpSetup
             $sqlTest = str_replace($item["parameter"], $item["variable"], $sqlTest);
         }
 
-        print $sqlTest . "\r\n";
-        print_r($ready);
-        print "\r\n";
-
         return $this->_queryInsert($sqlInsert, $ready);
     }
 

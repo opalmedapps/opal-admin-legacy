@@ -903,7 +903,7 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(SQL_OPAL_VALIDATE_OAUSER_LOGIN, array(
             array("parameter"=>":username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":password","variable"=>$password,"data_type"=>PDO::PARAM_STR),
-       ));
+        ));
     }
 
     /*
@@ -914,7 +914,7 @@ class DatabaseOpal extends DatabaseAccess {
     function authenticateUserAD($username) {
         return $this->_fetchAll(SQL_OPAL_VALIDATE_OAUSER_LOGIN_AD, array(
             array("parameter"=>":username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
-       ));
+        ));
     }
 
     /*
@@ -1329,5 +1329,17 @@ class DatabaseOpal extends DatabaseAccess {
      * */
     function insertRoleModule($toInsert) {
         return $this->_insertMultipleRecordsIntoTable(OPAL_OA_ROLE_MODULE_TABLE, $toInsert);
+    }
+
+    function getRoleDetails($roleId) {
+        return $this->_fetchAll(OPAL_GET_OA_ROLE_DETAILS, array(
+            array("parameter"=>":ID","variable"=>$roleId,"data_type"=>PDO::PARAM_INT)
+        ));
+    }
+
+    function getRoleOperations($roleId) {
+        return $this->_fetchAll(OPAL_GET_OA_ROLE_MODULE, array(
+            array("parameter"=>":oaRoleId","variable"=>$roleId,"data_type"=>PDO::PARAM_INT)
+        ));
     }
 }
