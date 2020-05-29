@@ -26,10 +26,18 @@ use FTP; # Custom FTP.pm
 use Staff; # Custom Staff.pm
 use PushNotification; # Custom PushNotification.pm
 
+use File::Find; # use for finding the file
+no warnings 'File::Find'; # do not display any errors when file not found by using File::Find
+
 #---------------------------------------------------------------------------------
 # Connect to the database
 #---------------------------------------------------------------------------------
 my $SQLDatabase		= $Database::targetDatabase;
+
+#---------------------------------------------------------------------------------
+# Global Variable
+#---------------------------------------------------------------------------------
+my $wsFileFound = "Not Found"; # Global variable for File::Find
 
 #====================================================================================
 # Constructor for our Docs class
@@ -835,6 +843,11 @@ sub transferPatientDocuments
 
     my $verbose = 1;
 
+
+
+	print "$cronLogSer\n\n";
+
+
 	#==============================================================
 	# Loop over each document.
 	#==============================================================
@@ -866,8 +879,48 @@ sub transferPatientDocuments
 		my $finalextension = $filefields[1]; # get the extension
 
 		my $clinicalDir = $ftpObject->getFTPClinicalDir(); # get local directory of documents
-
 		my $sourcefile = "$clinicalDir/$finalfileloc"; # concatenate directory and file
+
+		# Prepare the subdirectory search
+		my $wsCounter = 1; # Use for limiting the number of loops when creating the subdirectory search
+		$wsFileFound = "Not Found"; # set the file not found flag
+		my $wsYear = 2020; # set the beginning of the subdirectory search
+		my $wsQuarter = 0; # initialize the quarter
+
+		# Begin looping to search if the file exist
+		while ($wsFileFound eq "Not Found"){
+			print "Searching: $sourcefile\n"; #display the path and filename
+
+			# search the file and the &findfiles is a sub routine at the bottom
+			find( 
+				{ 
+					wanted => \&findfiles, 
+				}, 
+					$sourcefile
+				);
+
+			# if file not found, then build the subdirectory
+			if ($wsFileFound eq "Not Found"){
+				# there is only 1, 2, 3, and 4 quarter. Above 4, increase the year and set quarter back to 1
+				if ($wsQuarter > 4) {
+					$wsYear = $wsYear + 1;
+					$wsQuarter = 1;
+				} else {
+					$wsQuarter = $wsQuarter + 1;
+				}
+			
+			# build the path and filename
+			$wsSubDirectory = "$wsYear" . "Q" . "$wsQuarter";
+			$sourcefile = "$clinicalDir/$wsSubDirectory/$finalfileloc";
+			};
+
+			# maximum loop up to 44 times which mean up to 10 years.
+			# so maximum is 2030Q4. 
+			if ($wsCounter > 44) {
+				$wsFileFound = "Missing";
+			};
+			$wsCounter = $wsCounter + 1;
+		};
 
         print "Source file: $sourcefile\n" if $verbose;
 
@@ -1497,6 +1550,15 @@ sub compareWith
 
 	return $UpdatedDoc;
 }
+
+#======================================================================================
+# Subroutine to return if the file is located
+#======================================================================================
+sub findfiles
+{ 
+	# set the global variable to found
+    $wsFileFound = "Found";
+} 
 
 # To exit/return always true (for the module itself)
 1;
