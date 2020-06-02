@@ -2471,7 +2471,20 @@
       "ERROR_MODULE": "Une erreur s'est produite lors de l'obtention de la la liste des modules."
     },
     "EDIT": {
-
+      "TITLE": "Modifier le rôle",
+      "SAVE": "Enregistrer",
+      "CANCEL": "Annuler",
+      "NAME": "Nom",
+      "ENGLISH": "Anglais",
+      "FRENCH": "Français",
+      "OPERATIONS": "Opérations",
+      "MODULE": "Module",
+      "READ": "Lecture",
+      "WRITE": "Écriture",
+      "DELETE": "Supprimer",
+      "ERROR_INVALID_ROLE": "Opération de rôle invalide. Veuillez rafraîchir la page et réessayer.",
+      "ERROR_MODULE": "Une erreur s'est produite lors de l'obtention de la liste des modules.",
+      "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour du rôle."
     }
   },
   "PATIENTS": {

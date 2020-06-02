@@ -1,18 +1,23 @@
 angular.module('opalAdmin.controllers.role.edit', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
 controller('role.edit', function ($scope, $filter, $uibModal, $uibModalInstance, $locale, roleCollectionService, uiGridConstants, $state, Session) {
+
+	// get current user id
+	var user = Session.retrieveObject('user');
+	var OAUserId = user.id;
+
 	$scope.oldData = {};
 	$scope.changesDetected = false;
 	$scope.formReady = false;
 
 	$scope.validator = {
 		name: {
-			completed: false,
+			completed: true,
 			mandatory: true,
 			valid: true,
 		},
 		operations: {
-			completed: false,
+			completed: true,
 			mandatory: true,
 			valid: true,
 		}
@@ -28,6 +33,18 @@ controller('role.edit', function ($scope, $filter, $uibModal, $uibModalInstance,
 			open: false,
 		},
 	};
+
+	$scope.toSubmit = {
+		OAUserId: OAUserId,
+		roleId: $scope.currentRole.ID,
+		name: {
+			name_EN: "",
+			name_FR: "",
+		},
+		operations: []
+	};
+
+	$scope.updatedRole = {};
 
 	$scope.language = Session.retrieveObject('user').language;
 
@@ -70,22 +87,54 @@ controller('role.edit', function ($scope, $filter, $uibModal, $uibModalInstance,
 
 			$scope.toSubmit.operations.push(temp);
 		});
-		roleCollectionService.getAvailableRoleModules(OAUserId).then(function (response) {});
+		roleCollectionService.getRoleDetails($scope.toSubmit.roleId, OAUserId).then(function (response) {
+			$scope.toSubmit.name.name_EN = response.data.name_EN;
+			$scope.toSubmit.name.name_FR = response.data.name_FR;
+			response.data.operations.forEach(function(ops) {
+				$scope.toSubmit.operations.forEach(function(module) {
+					if(module.ID === ops.moduleId) {
+						module.read = ((parseInt(ops.access) & (1 << 0)) !== 0);
+						module.write = ((parseInt(ops.access) & (1 << 1)) !== 0);
+						module.delete = ((parseInt(ops.access) & (1 << 2)) !== 0);
+					}
+				});
+
+			});
+			$scope.oldData = JSON.parse(JSON.stringify($scope.toSubmit));
+		}).catch(function(err) {
+			alert($filter('translate')('ROLE.EDIT.ERROR_MODULE'));
+			$state.go('role');
+		});
 	}).catch(function(err) {
-		alert($filter('translate')('ROLE.ADD.ERROR_MODULE'));
+		alert($filter('translate')('ROLE.EDIT.ERROR_MODULE'));
 		$state.go('role');
+	}).finally(function() {
+		processingModal.close(); // hide modal
+		processingModal = null; // remove reference
 	});
 
-	$scope.detailsUpdate = function () {
-		$scope.validator.details.completed = ($scope.toSubmit.details.code !== "" && $scope.toSubmit.details.title !== "");
-	};
-
 	$scope.nameUpdate = function () {
-		$scope.validator.investigator.completed = ($scope.toSubmit.investigator.name !== "");
+		$scope.validator.name.completed = ($scope.toSubmit.name.name_EN !== undefined && $scope.toSubmit.name.name_FR !== undefined);
+		$scope.changesDetected = (JSON.stringify($scope.toSubmit) !== JSON.stringify($scope.oldData));
 	};
 
-	$scope.$watch('toSubmit', function() {
-		$scope.changesDetected = JSON.stringify($scope.toSubmit) !== JSON.stringify($scope.oldData);
+	$scope.$watch('toSubmit.operations', function(nv) {
+		var atLeastOne = false;
+		angular.forEach(nv, function(value) {
+			if(value.read || value.write || value.delete)
+				atLeastOne = true;
+			if(value.write) {
+				if(value.canRead) value.read = true;
+			}
+			if(value.delete) {
+				if(value.canWrite) value.write = true;
+				if(value.canRead) value.read = true;
+			}
+		});
+
+		$scope.validator.operations.completed = atLeastOne;
+		$scope.changesDetected = (JSON.stringify($scope.toSubmit) !== JSON.stringify($scope.oldData));
+
 	}, true);
 
 	$scope.$watch('validator', function() {
@@ -113,37 +162,38 @@ controller('role.edit', function ($scope, $filter, $uibModal, $uibModalInstance,
 		$scope.formReady = (completedSteps >= totalsteps) && (nonMandatoryCompleted >= nonMandatoryTotal);
 	}, true);
 
-	// Watch to restrict the end calendar to not choose an earlier date than the start date
-	$scope.$watch('toSubmit.dates.start_date', function(startDate){
-		if (startDate !== undefined && startDate !== "")
-			$scope.dateOptionsEnd.minDate = startDate;
-		else
-			$scope.dateOptionsEnd.minDate = null;
-	});
+	function buildOperations() {
+		$scope.updatedRole = JSON.parse(JSON.stringify($scope.toSubmit));
+		var newSubmit = [];
+		var noError = true;
 
-	// Watch to restrict the start calendar to not choose a start after the end date
-	$scope.$watch('toSubmit.dates.end_date', function(endDate){
-		if (endDate !== undefined && endDate !== "")
-			$scope.dateOptionsStart.maxDate = endDate;
-		else
-			$scope.dateOptionsStart.maxDate = null;
-	});
+		$scope.toSubmit.operations.forEach(function(entry) {
+
+			sup = parseInt((+entry.delete + "" + +entry.write + "" + +entry.read), 2);
+			if (sup !== 0 && sup !== 1 && sup !== 3 && sup !== 7)
+				noError = false;
+
+			if(sup !== 0) {
+				newSubmit.push({"moduleId": entry.ID, "access": sup});
+			}
+		});
+		$scope.updatedRole.operations = newSubmit;
+		return noError;
+	}
 
 	// Submit changes
-	$scope.updateCustomCode = function() {
+	$scope.updateRole = function() {
 		if($scope.formReady && $scope.changesDetected) {
-			if ($scope.toSubmit.dates.start_date)
-				$scope.toSubmit.dates.start_date = moment($scope.toSubmit.dates.start_date).format('X');
-			if ($scope.toSubmit.dates.end_date)
-				$scope.toSubmit.dates.end_date = moment($scope.toSubmit.dates.end_date).format('X');
+			var validResult = buildOperations();
+			console.log($scope.updatedRole);
 			$.ajax({
 				type: "POST",
-				url: "study/update/study",
-				data: $scope.toSubmit,
+				url: "role/update/role",
+				data: $scope.updatedRole,
 				success: function () {
 				},
 				error: function (err) {
-					alert($filter('translate')('STUDY.EDIT.ERROR_UPDATE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					alert($filter('translate')('ROLE.EDIT.ERROR_UPDATE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
 				},
 				complete: function () {
 					$uibModalInstance.close();
