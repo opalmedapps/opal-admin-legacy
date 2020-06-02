@@ -531,7 +531,7 @@ my $treskey;
 if(($testresults eq "true") && (scalar @$data5 != 0)){
 	foreach my $r (@$data5){
 		$nextRow = encode_json(\@$r);
-		$newRec = newTres rec(split(',',substr($nextRow,1,-1)));
+		$newRec = newTres rec(split('",',substr($nextRow,1,-1)));
 		my $key = (keys %$newRec)[0];
 		$tres_json_data->{$key} ||= [];
 		push @{$tres_json_data->{$key}}, $newRec->{$key};
