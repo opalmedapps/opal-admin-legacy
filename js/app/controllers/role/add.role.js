@@ -166,14 +166,6 @@ angular.module('opalAdmin.controllers.role.add', ['ngAnimate', 'ui.bootstrap']).
 			$scope.formReady = ($scope.completedSteps >= $scope.totalSteps) && (nonMandatoryCompleted >= nonMandatoryTotal);
 		}, true);
 
-		function backupToSubmit() {
-			$scope.oldSubmit = JSON.parse(JSON.stringify($scope.toSubmit));
-		}
-
-		function restoreToSubmit() {
-			$scope.toSubmit = JSON.parse(JSON.stringify($scope.oldSubmit));
-		}
-
 		function buildOperations() {
 			$scope.newRole = JSON.parse(JSON.stringify($scope.toSubmit));
 			var newSubmit = [];
@@ -186,7 +178,7 @@ angular.module('opalAdmin.controllers.role.add', ['ngAnimate', 'ui.bootstrap']).
 					noError = false;
 
 				if(sup !== 0) {
-					newSubmit.push({"ID": entry.ID, "operation": sup});
+					newSubmit.push({"moduleId": entry.ID, "access": sup});
 				}
 			});
 			$scope.newRole.operations = newSubmit;
@@ -195,9 +187,7 @@ angular.module('opalAdmin.controllers.role.add', ['ngAnimate', 'ui.bootstrap']).
 
 		// Function to submit the new diagnosis translation
 		$scope.submitRole = function () {
-			console.log($scope.toSubmit);
 			var validResult = buildOperations();
-			console.log($scope.newRole);
 			if(validResult) {
 				$.ajax({
 					type: 'POST',

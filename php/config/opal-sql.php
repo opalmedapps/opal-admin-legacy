@@ -703,3 +703,23 @@ define("OPAL_GET_OA_ROLE_DETAILS","
 define("OPAL_GET_OA_ROLE_MODULE","
     SELECT * FROM `".OPAL_OA_ROLE_MODULE_TABLE."` WHERE `oaRoleId` = :oaRoleId;
 ");
+
+define("OPAL_UPDATE_ROLE", "
+    UPDATE ".OPAL_OA_ROLE_TABLE." SET updatedBy = :updatedBy, name_EN = :name_EN, name_FR = :name_FR
+    WHERE ID = :ID AND deleted = ".NON_DELETED_RECORD.";"
+);
+
+define("OPAL_UPDATE_ROLE_MODULE", "
+    UPDATE ".OPAL_OA_ROLE_MODULE_TABLE." SET access = :access WHERE ID = :ID;"
+);
+
+define("OPAL_DELETE_OA_ROLE_MODULE_OPTIONS",
+    "DELETE FROM ".OPAL_OA_ROLE_MODULE_TABLE." WHERE oaRoleId = :oaRoleId AND moduleId NOT IN (%%MODULEIDS%%);"
+);
+
+define("OPAL_FORCE_UPDATE_UPDATEDBY",
+    "UPDATE %%TABLENAME%%
+    SET updatedBy = :updatedBy, lastUpdated = NOW()
+    WHERE ID = :ID
+    AND deleted = ".NON_DELETED_RECORD.";"
+);
