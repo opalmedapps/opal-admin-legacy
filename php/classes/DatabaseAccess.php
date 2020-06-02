@@ -303,15 +303,6 @@ class DatabaseAccess extends HelpSetup
         }
 
         $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . "(" . implode("), (", $multiples) . ");";
-
-        $sqlTest = $sqlInsert;
-
-        foreach($ready as $item) {
-            print $item["parameter"] . " " . $item["variable"] . "\r\n";
-
-            $sqlTest = str_replace($item["parameter"], $item["variable"], $sqlTest);
-        }
-
         return $this->_queryInsert($sqlInsert, $ready);
     }
 

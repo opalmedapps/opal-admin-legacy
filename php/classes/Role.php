@@ -7,7 +7,7 @@
 class Role extends OpalProject {
 
     /*
-     * This function returns the list of available studies for opalAdmin.
+     * This function returns the list of available roles for opalAdmin.
      * TODO add lazy loading with pagination
      * @params  void
      * @return  array of studies
@@ -56,7 +56,7 @@ class Role extends OpalProject {
         $role = HelpSetup::arraySanitization($post);
         $result = $this->_validateRole($role);
         if(is_array($result) && count($result) > 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Study validation failed. " . implode(" ", $result));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Role validation failed. " . implode(" ", $result));
 
         $toInsert = array(
             "name_EN"=>$role["name"]["name_EN"],
@@ -66,20 +66,21 @@ class Role extends OpalProject {
 
         foreach ($role["operations"] as $item) {
             array_push($recordsToInsert, array(
-                "moduleId"=>$item["ID"],
+                "moduleId"=>$item["moduleId"],
                 "oaRoleId"=>$roleId,
-                "access"=>$item["operation"],
+                "access"=>$item["access"],
             ));
         }
+
         $this->opalDB->insertRoleModule($recordsToInsert);
     }
 
     /*
      * function to sort module per ID for usort
      * */
-    protected static function _sort_ID($a, $b){
-        if (intval($a["ID"]) == intval($b["ID"])) return 0;
-        return (intval($a["ID"]) < intval($b["ID"])) ? -1 : 1;
+    protected static function _sort_moduleId($a, $b){
+        if (intval($a["moduleId"]) == intval($b["moduleId"])) return 0;
+        return (intval($a["moduleId"]) < intval($b["moduleId"])) ? -1 : 1;
     }
 
     /*
@@ -104,22 +105,102 @@ class Role extends OpalProject {
         if(count($errMsgs) > 0) return $errMsgs;
 
         $modulesId = array();
-        usort($role["operations"], 'self::_sort_ID');
+        usort($role["operations"], 'self::_sort_moduleId');
         foreach($role["operations"] as $module)
-            array_push($modulesId, intval($module["ID"]));
+            array_push($modulesId, intval($module["moduleId"]));
 
         $modulesList = $this->opalDB->getModulesOperations($modulesId);
+
         if(count($modulesList) != count($role["operations"])) {
             array_push($errMsgs, "Modules are missing.");
             return $errMsgs;
         }
 
         for($cpt = 0;$cpt < count($role["operations"]); $cpt++) {
-            if(!HelpSetup::validateBitOperation($modulesList[$cpt]["operation"], $role["operations"][$cpt]["operation"]) || ($role["operations"][$cpt]["operation"] != 1 && $role["operations"][$cpt]["operation"] != 3 && $role["operations"][$cpt]["operation"] != 7)) {
+            if(!HelpSetup::validateBitOperation($modulesList[$cpt]["operation"], $role["operations"][$cpt]["access"]) || ($role["operations"][$cpt]["access"] != 1 && $role["operations"][$cpt]["access"] != 3 && $role["operations"][$cpt]["access"] != 7)) {
                 array_push($errMsgs, "Unauthorized role.");
                 break;
             }
         }
         return $errMsgs;
+    }
+
+    /*
+     * Update a role with new informations. First it insures the role to update exists, then it sanitize and validate
+     * the data. It loads the current role details and split the details of the operations in three list: one of IDs
+     * to keep (because the others do not exists anymore, thus they need to be deleted), one of IDs and access to
+     * update, and one of operations to add. Lastly, even if oaRole was not updated because the names were not changed,
+     * if there is any changes of operations, the oaRole table is forced to be updated to track down the changes.
+     * @params  $post : array - requested changes from the user
+     * @return  void
+     * */
+    public function updateRole($post) {
+        $totalUpdated = 0;
+        $optionsToKeep = array();
+        $optionsToAdd = array();
+        $optionsToUpdate = array();
+
+        $roleToUpdate = HelpSetup::arraySanitization($post);
+        if(!$roleToUpdate["roleId"] || $roleToUpdate["roleId"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing role ID.");
+        $result = $this->_validateRole($roleToUpdate);
+        if(is_array($result) && count($result) > 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Role validation failed. " . implode(" ", $result));
+
+        $toUpdate = array(
+            "ID"=>$roleToUpdate["roleId"],
+            "name_EN"=>$roleToUpdate["name"]["name_EN"],
+            "name_FR"=>$roleToUpdate["name"]["name_FR"],
+        );
+
+        $updatedRole = $this->opalDB->updateRole($toUpdate);
+
+        $currentOperations = array();
+        $tempCurr = $this->opalDB->getRoleOperations($roleToUpdate["roleId"]);
+        if(count($tempCurr) <= 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot get role operations.");
+
+        foreach($tempCurr as $item) {
+            $currentOperations[$item["moduleId"]] = $item;
+        }
+
+        foreach($roleToUpdate["operations"] as $sub) {
+            if($currentOperations[$sub["moduleId"]] && $currentOperations[$sub["moduleId"]]["ID"] != "") {
+
+                // operations to keep and not delete when the purge will occur
+                array_push($optionsToKeep, $sub["moduleId"]);
+
+                // operations to update
+                if($currentOperations[$sub["moduleId"]]["access"] !== $sub["access"]) {
+                    array_push($optionsToUpdate, array(
+                        "ID" => $currentOperations[$sub["moduleId"]]["ID"],
+                        "access" => $sub["access"],
+                    ));
+                }
+            }
+            else
+                // operations to add
+                array_push($optionsToAdd, array(
+                    "oaRoleId"=>$roleToUpdate["roleId"],
+                    "moduleId"=>$sub["moduleId"],
+                    "access"=>$sub["access"],
+                ));
+        }
+
+        if (!empty($optionsToKeep)) {
+            $totalUpdated += $this->opalDB->deleteOARoleModuleOptions($roleToUpdate["roleId"], $optionsToKeep);
+        }
+        if(!empty($optionsToUpdate)) {
+            foreach($optionsToUpdate as $option) {
+                $totalUpdated += $this->opalDB->updateOARoleModule($option);
+            }
+        }
+        if(!empty($optionsToAdd)) {
+            $totalUpdated += $this->opalDB->insertOARoleModule($optionsToAdd);
+        }
+
+        if(intval($updatedRole) <= 0 && intval($totalUpdated) >= 1) {
+            $this->opalDB->forceUpdateOaRoleTable($roleToUpdate["roleId"]);
+        }
     }
 }

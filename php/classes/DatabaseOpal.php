@@ -1331,15 +1331,82 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_insertMultipleRecordsIntoTable(OPAL_OA_ROLE_MODULE_TABLE, $toInsert);
     }
 
+    /*
+     * Get the details of a specific role.
+     * @params  $roleId : int - ID of the role
+     * @return  array - details from the role table
+     * */
     function getRoleDetails($roleId) {
         return $this->_fetchAll(OPAL_GET_OA_ROLE_DETAILS, array(
             array("parameter"=>":ID","variable"=>$roleId,"data_type"=>PDO::PARAM_INT)
         ));
     }
 
+    /*
+     * Get the operations available from a specific role
+     * @params  $roleId : int - ID of the role
+     * @return  array - list of operations from the role-module table
+     * */
     function getRoleOperations($roleId) {
         return $this->_fetchAll(OPAL_GET_OA_ROLE_MODULE, array(
             array("parameter"=>":oaRoleId","variable"=>$roleId,"data_type"=>PDO::PARAM_INT)
         ));
+    }
+
+    /*
+     * Update the details of a specific role. Mostly the french and/or english name.
+     * @params  $updatedEntries : array - contains the french and english name of the role to update
+     * @return  int - number of records updated
+     * */
+    function updateRole($updatedEntries) {
+        $updatedEntries["updatedBy"]=$this->getUsername();
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_ROLE, $updatedEntries);
+    }
+
+    /*
+     * Delete any access operation for a specific role excluding a list of module ID
+     * @params  $roleID : int - ID of the role to delete the access
+     *          $idsToBeKept : array - ID of module to be excluded from the deletion
+     * @return  int - number of records deleted
+     * */
+    function deleteOARoleModuleOptions($roleID, $idsToBeKept) {
+        $toDelete = array(
+            array("parameter"=>":oaRoleId","variable"=>$roleID,"data_type"=>PDO::PARAM_INT),
+        );
+        $sql = str_replace("%%MODULEIDS%%", implode(", ", $idsToBeKept), OPAL_DELETE_OA_ROLE_MODULE_OPTIONS);
+        return $this->_execute($sql, $toDelete);
+    }
+
+    /*
+     * Insert a number of new access privilege for a role into oaRoleModule.
+     * @params  $multipleUpdayes : array - data on the new access
+     * @return  int - number of records updated
+     * */
+    function insertOARoleModule($multipleUpdates) {
+        return $this->_insertMultipleRecordsIntoTable(OPAL_OA_ROLE_MODULE_TABLE, $multipleUpdates);
+    }
+
+    /*
+     * Update an operation access in the table oaRoleModule associated to one role and one module.
+     * @params  $toUpdated : array - contain the access level and the ID.
+     * @return  int - number of records updated
+     * */
+    function updateOARoleModule($toUpdate) {
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_ROLE_MODULE, $toUpdate);
+    }
+
+    /*
+     * For the oaRole table to update a specific line with the username. This is to mark down an user update operations
+     * of a role.
+     * @params  $id : int - ID of the role to update
+     * @return  int - number of records updated
+     * */
+    function forceUpdateOaRoleTable($id) {
+        $sqlQuery = str_replace("%%TABLENAME%%", OPAL_OA_ROLE_TABLE, OPAL_FORCE_UPDATE_UPDATEDBY);
+        $updatedEntries = array(
+            "ID"=>$id,
+            "updatedBy"=>$this->getUsername()
+        );
+        return $this->_updateRecordIntoTable($sqlQuery, $updatedEntries);
     }
 }

@@ -2446,7 +2446,20 @@
       "ERROR_MODULE": "An error occurred while getting the list of modules."
     },
     "EDIT": {
-
+      "TITLE": "Edit a role",
+      "SAVE": "Save",
+      "CANCEL": "Cancel",
+      "NAME": "Name",
+      "ENGLISH": "English",
+      "FRENCH": "French",
+      "OPERATIONS": "Operations",
+      "MODULE": "Module",
+      "READ": "Read",
+      "WRITE": "Write",
+      "DELETE": "Delete",
+      "ERROR_INVALID_ROLE": "Invalid role operation. Please refresh the page and try again.",
+      "ERROR_MODULE": "An error occurred while getting the list of modules.",
+      "ERROR_UPDATE": "An error occurred while updating the details of the role."
     }
   },
   "PATIENTS": {
