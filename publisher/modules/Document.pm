@@ -26,9 +26,6 @@ use FTP; # Custom FTP.pm
 use Staff; # Custom Staff.pm
 use PushNotification; # Custom PushNotification.pm
 
-use File::Find; # use for finding the file
-no warnings 'File::Find'; # do not display any errors when file not found by using File::Find
-
 #---------------------------------------------------------------------------------
 # Connect to the database
 #---------------------------------------------------------------------------------
@@ -840,13 +837,7 @@ sub transferPatientDocuments
 	# Preprod server uses libreoffice 4.3
 	# Prod server uses libreoffice 6.1
 	my $lowriter = $Configs::OFFICE_PATH_DIR . "soffice.bin --writer";
-
     my $verbose = 1;
-
-
-
-	print "$cronLogSer\n\n";
-
 
 	#==============================================================
 	# Loop over each document.
@@ -882,44 +873,22 @@ sub transferPatientDocuments
 		my $sourcefile = "$clinicalDir/$finalfileloc"; # concatenate directory and file
 
 		# Prepare the subdirectory search
-		my $wsCounter = 1; # Use for limiting the number of loops when creating the subdirectory search
-		$wsFileFound = "Not Found"; # set the file not found flag
 		my $wsYear = 2020; # set the beginning of the subdirectory search
-		my $wsQuarter = 0; # initialize the quarter
+		my $wsQuarter = 1; # initialize the quarter
+	    my $wsSubDirectory = "$wsYear" . "Q" . "$wsQuarter";
 
-		# Begin looping to search if the file exist
-		while ($wsFileFound eq "Not Found"){
-			print "Searching: $sourcefile\n"; #display the path and filename
+		# Begin looping until file is found or subdirectory doesnt exist
+        unless (-e $sourcefile or ! -d "$clinicalDir/$wsSubDirectory") {
 
-			# search the file and the &findfiles is a sub routine at the bottom
-			find( 
-				{ 
-					wanted => \&findfiles, 
-				}, 
-					$sourcefile
-				);
-
-			# if file not found, then build the subdirectory
-			if ($wsFileFound eq "Not Found"){
-				# there is only 1, 2, 3, and 4 quarter. Above 4, increase the year and set quarter back to 1
-				if ($wsQuarter > 4) {
-					$wsYear = $wsYear + 1;
-					$wsQuarter = 1;
-				} else {
-					$wsQuarter = $wsQuarter + 1;
-				}
-			
-			# build the path and filename
-			$wsSubDirectory = "$wsYear" . "Q" . "$wsQuarter";
 			$sourcefile = "$clinicalDir/$wsSubDirectory/$finalfileloc";
-			};
+            print "Searching source file in subdirectory: $sourcefile\n" if $verbose;
 
-			# maximum loop up to 44 times which mean up to 10 years.
-			# so maximum is 2030Q4. 
-			if ($wsCounter > 44) {
-				$wsFileFound = "Missing";
-			};
-			$wsCounter = $wsCounter + 1;
+            $wsQuarter %= 4 + 1; # increment quarter mod 4 shifted by 1
+            if ($wsQuarter eq 1) { # quarter reset
+                $wsYear++;
+            }
+			# build subdirectory for next search
+			$wsSubDirectory = "$wsYear" . "Q" . "$wsQuarter";
 		};
 
         print "Source file: $sourcefile\n" if $verbose;
@@ -1054,7 +1023,7 @@ END
                 if ($validentry eq "Y") {
 
     				# Convert .doc to .pdf if .doc
-	    			if ($finalextension eq "doc") {
+	    			if ($finalextension eq "doc" or $finalextension eq "docx") {
 		    			system("$lowriter --headless --convert-to pdf --nologo --outdir $localDir $sourcefile");
                     	$Document->setDocFileLoc("$finalfilenum.pdf"); # record that it has been changed
     				}
@@ -1550,15 +1519,6 @@ sub compareWith
 
 	return $UpdatedDoc;
 }
-
-#======================================================================================
-# Subroutine to return if the file is located
-#======================================================================================
-sub findfiles
-{ 
-	# set the global variable to found
-    $wsFileFound = "Found";
-} 
 
 # To exit/return always true (for the module itself)
 1;
