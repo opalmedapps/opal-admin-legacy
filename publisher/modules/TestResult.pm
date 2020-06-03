@@ -511,7 +511,16 @@ sub getTestResultsFromSourceDB
 					tr.max_norm,
 					tr.min_norm,
 					tr.result_appr_ind,
-					tr.test_value,
+					case
+						when RTRIM(tr.comp_name) = 'SARS-2 Coronavirus-2019, NAA' then
+							case 
+								when LEFT(LTRIM(tr.test_value_string), 11) = 'Non détecté' then 0
+								when LEFT(LTRIM(tr.test_value_string), 11) = 'Non-détecté' then 0
+								when LEFT(LTRIM(tr.test_value_string), 7) = 'Détecté' then 1
+							end
+						else
+							tr.test_value
+					end as test_value,
 					tr.test_value_string,
 					RTRIM(tr.unit_desc),
 					tr.valid_entry_ind,
