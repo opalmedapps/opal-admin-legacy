@@ -164,7 +164,7 @@
                             PDI.DeviceType 
                         FROM PatientDeviceIdentifier PDI
                         WHERE PDI.PatientSerNum = $patientSerNum
-                            AND PDI.DeviceType in (1)
+                            AND PDI.DeviceType in (0, 1)
                             AND length(PDI.RegistrationId) > 0
                         ";
                 $result = $pdo->query($sql);
