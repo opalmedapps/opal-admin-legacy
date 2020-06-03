@@ -70,6 +70,13 @@ Options +FollowSymLinks
 # Disallow script execution
 AddHandler .php .py .jsp .asp .htm .shtml .sh
 
+
+# Force all URL request that are HTTP to be HTTPS
+# Disable for now until testing cann be done.
+# RewriteCond %{HTTPS} !=on
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE] 
+
+
 # Accesses to the OpalAdmin API
 
 # Tasks/Appts/Docs Section (Alias)
