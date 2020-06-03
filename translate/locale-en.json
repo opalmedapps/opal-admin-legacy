@@ -2416,7 +2416,13 @@
       "OPERATIONS": "Operations"
     },
     "DELETE": {
-
+      "TITLE": "Delete role",
+      "DELETE": "Delete",
+      "CANCEL": "Cancel",
+      "WARNING": "WARNING!",
+      "WARNING_TEXT": "Are you sure you want to delete the following role? This action cannot be undone!",
+      "DELETED": "The role has being successfully deleted.",
+      "ERROR": "An error occurred while deleting the role."
     },
     "ADD": {
       "BACK": "Back to Roles",

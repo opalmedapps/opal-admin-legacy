@@ -119,7 +119,7 @@ class Study extends OpalProject {
     /**
      * Mark a study as being deleted.
      *
-     * WARNING!!! No record should be EVER be removed from the customCode table! It should only being marked as
+     * WARNING!!! No record should be EVER be removed from the study table! It should only being marked as
      * being deleted ONLY  after it was verified the record is not locked and the user has the proper authorization.
      * Not following the proper procedure will have some serious impact on the integrity of the database and its
      * records.
