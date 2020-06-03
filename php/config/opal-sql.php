@@ -723,3 +723,7 @@ define("OPAL_FORCE_UPDATE_UPDATEDBY",
     WHERE ID = :ID
     AND deleted = ".NON_DELETED_RECORD.";"
 );
+
+define("OPAL_MARK_ROLE_AS_DELETED", "
+    UPDATE ".OPAL_OA_ROLE_TABLE." SET deleted = ".DELETED_RECORD.", updatedBy = :updatedBy , deletedBy = :deletedBy WHERE ID = :ID;
+");

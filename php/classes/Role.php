@@ -187,20 +187,38 @@ class Role extends OpalProject {
                 ));
         }
 
-        if (!empty($optionsToKeep)) {
+        if (!empty($optionsToKeep))
             $totalUpdated += $this->opalDB->deleteOARoleModuleOptions($roleToUpdate["roleId"], $optionsToKeep);
-        }
-        if(!empty($optionsToUpdate)) {
-            foreach($optionsToUpdate as $option) {
-                $totalUpdated += $this->opalDB->updateOARoleModule($option);
-            }
-        }
-        if(!empty($optionsToAdd)) {
-            $totalUpdated += $this->opalDB->insertOARoleModule($optionsToAdd);
-        }
 
-        if(intval($updatedRole) <= 0 && intval($totalUpdated) >= 1) {
+        if(!empty($optionsToUpdate))
+            foreach($optionsToUpdate as $option)
+                $totalUpdated += $this->opalDB->updateOARoleModule($option);
+
+        if(!empty($optionsToAdd))
+            $totalUpdated += $this->opalDB->insertOARoleModule($optionsToAdd);
+
+        if(intval($updatedRole) <= 0 && intval($totalUpdated) >= 1)
             $this->opalDB->forceUpdateOaRoleTable($roleToUpdate["roleId"]);
-        }
+    }
+
+    /**
+     * Mark a role as being deleted.
+     *
+     * WARNING!!! No record should be EVER be removed from the role table! It should only being marked as
+     * being deleted ONLY  after it was verified the record is not locked and the user has the proper authorization.
+     * Not following the proper procedure will have some serious impact on the integrity of the database and its
+     * records.
+     *
+     * REMEMBER !!! NO DELETE STATEMENT EVER !!! YOU HAVE BEING WARNED !!!
+     *
+     * @params  $roleId : int - ID of the role
+     * @return  int - number of record marked or error 500 if an error occurred.
+     */
+    public function deleteRole($roleId) {
+        $currentRole = $this->getRoleDetails($roleId);
+        if(!$currentRole["ID"] || $currentRole["ID"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Role not found.");
+
+        return $this->opalDB->markRoleAsDeleted($roleId);
     }
 }
