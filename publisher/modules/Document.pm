@@ -31,6 +31,11 @@ use PushNotification; # Custom PushNotification.pm
 #---------------------------------------------------------------------------------
 my $SQLDatabase		= $Database::targetDatabase;
 
+#---------------------------------------------------------------------------------
+# Global Variable
+#---------------------------------------------------------------------------------
+my $wsFileFound = "Not Found"; # Global variable for File::Find
+
 #====================================================================================
 # Constructor for our Docs class
 #====================================================================================
@@ -832,7 +837,6 @@ sub transferPatientDocuments
 	# Preprod server uses libreoffice 4.3
 	# Prod server uses libreoffice 6.1
 	my $lowriter = $Configs::OFFICE_PATH_DIR . "soffice.bin --writer";
-
     my $verbose = 1;
 
 	#==============================================================
@@ -866,8 +870,26 @@ sub transferPatientDocuments
 		my $finalextension = $filefields[1]; # get the extension
 
 		my $clinicalDir = $ftpObject->getFTPClinicalDir(); # get local directory of documents
-
 		my $sourcefile = "$clinicalDir/$finalfileloc"; # concatenate directory and file
+
+		# Prepare the subdirectory search
+		my $wsYear = 2020; # set the beginning of the subdirectory search
+		my $wsQuarter = 1; # initialize the quarter
+	    my $wsSubDirectory = "$wsYear" . "Q" . "$wsQuarter";
+
+		# Begin looping until file is found or subdirectory doesnt exist
+        unless (-e $sourcefile or ! -d "$clinicalDir/$wsSubDirectory") {
+
+			$sourcefile = "$clinicalDir/$wsSubDirectory/$finalfileloc";
+            print "Searching source file in subdirectory: $sourcefile\n" if $verbose;
+
+            $wsQuarter %= 4 + 1; # increment quarter mod 4 shifted by 1
+            if ($wsQuarter eq 1) { # quarter reset
+                $wsYear++;
+            }
+			# build subdirectory for next search
+			$wsSubDirectory = "$wsYear" . "Q" . "$wsQuarter";
+		};
 
         print "Source file: $sourcefile\n" if $verbose;
 
@@ -1001,7 +1023,7 @@ END
                 if ($validentry eq "Y") {
 
     				# Convert .doc to .pdf if .doc
-	    			if ($finalextension eq "doc") {
+	    			if ($finalextension eq "doc" or $finalextension eq "docx") {
 		    			system("$lowriter --headless --convert-to pdf --nologo --outdir $localDir $sourcefile");
                     	$Document->setDocFileLoc("$finalfilenum.pdf"); # record that it has been changed
     				}
