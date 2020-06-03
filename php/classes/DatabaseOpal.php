@@ -1409,4 +1409,17 @@ class DatabaseOpal extends DatabaseAccess {
         );
         return $this->_updateRecordIntoTable($sqlQuery, $updatedEntries);
     }
+
+    /*
+     * Marks a specified role as deleted.
+     * @param   int : $roleId (ID of the role to mark as deleted)
+     * @return  int : number of record deleted or error 500.
+     * */
+    function markRoleAsDeleted($roleId) {
+        return $this->_updateRecordIntoTable(OPAL_MARK_ROLE_AS_DELETED, array(
+            "ID"=>$roleId,
+            "deletedBy"=>$this->getUsername(),
+            "updatedBy"=>$this->getUsername(),
+        ));
+    }
 }
