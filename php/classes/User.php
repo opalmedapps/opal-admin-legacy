@@ -276,7 +276,7 @@ class User extends OpalProject {
         else
             $userId = $this->_insertUserAD($username, $language);
 
-        $role = $this->opalDB->geRoleDetails($roleId);
+        $role = $this->opalDB->getRoleDetails($roleId);
         if(!is_array($role))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid role.");
         return $this->opalDB->insertUserRole($userId, $roleId);
@@ -376,7 +376,7 @@ class User extends OpalProject {
      * @return  array with all roles found (not cronjob!)
      * */
     public function getRoles() {
-        return $this->opalDB->getRolesList();
+        return $this->opalDB->getRoles();
     }
 
     /*

@@ -30,15 +30,10 @@ angular.module('opalAdmin', [
 		notAuthorized: 'auth-not-authorized'
 	})
 	.constant('USER_ROLES', {
-		all: '*',
-		admin: 'admin',
-		editor: 'editor',
-		guest: 'guest',
-		registrant: 'registrant',
-		clinician: 'clinician',
-		manager: 'manager',
-		educationCreator: 'education-creator'
+		admin: '1',
+		registrant: '4',
 	})
+
 
 	// Authentication and authorization service
 	.factory('AuthService', function ($http, Session, $q, USER_ROLES) {
