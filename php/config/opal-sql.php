@@ -553,12 +553,19 @@ define("OPAL_UPDATE_USER_ROLE","
 ");
 
 define("OPAL_GET_USERS_LIST","
-    SELECT ou.OAUserSerNum AS serial, ou.Username AS username, r.RoleName AS role, ou.Language AS language
+    SELECT ou.OAUserSerNum AS serial, ou.Username AS username, r.name_EN, r.name_FR, ou.Language AS language
     FROM ".OPAL_OAUSER_TABLE." ou
-    LEFT JOIN ".OPAL_OAUSER_ROLE_TABLE." oaur ON oaur.OAUserSerNum = ou.OAUserSerNum
-    LEFT JOIN ".OPAL_ROLE_TABLE." r ON r.RoleSerNum = oaur.RoleSerNum
-	WHERE r.RoleSerNum != ".ROLE_CRONJOB." AND deleted = ".NON_DELETED_RECORD.";
+    LEFT JOIN ".OPAL_OA_ROLE_TABLE." r ON r.id = ou.oaRoleId
+	WHERE ou.oaRoleId != ".ROLE_CRONJOB." AND ou.deleted = ".NON_DELETED_RECORD.";
 ");
+
+//define("OPAL_GET_USERS_LIST","
+//    SELECT ou.OAUserSerNum AS serial, ou.Username AS username, r.RoleName AS role, ou.Language AS language
+//    FROM ".OPAL_OAUSER_TABLE." ou
+//    LEFT JOIN ".OPAL_OAUSER_ROLE_TABLE." oaur ON oaur.OAUserSerNum = ou.OAUserSerNum
+//    LEFT JOIN ".OPAL_ROLE_TABLE." r ON r.RoleSerNum = oaur.RoleSerNum
+//	WHERE r.RoleSerNum != ".ROLE_CRONJOB." AND deleted = ".NON_DELETED_RECORD.";
+//");
 
 define("OPAL_COUNT_USERNAME","
     SELECT COUNT(*) AS total FROM ".OPAL_OAUSER_TABLE." WHERE Username = :Username

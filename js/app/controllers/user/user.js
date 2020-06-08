@@ -72,7 +72,7 @@ controller('user', function ($scope, $uibModal, $filter, $sce, $state, userColle
 		data: 'userList',
 		columnDefs: [
 			{ field: 'username', displayName: $filter('translate')('USERS.LIST.USERNAME'), width: '50%', cellTemplate: cellTemplateName, enableColumnMenu: false },
-			{ field: 'role_display', displayName: $filter('translate')('USERS.LIST.ROLE'), width: '35%', enableColumnMenu: false },
+			{ field: 'name_'+ Session.retrieveObject('user').language, displayName: $filter('translate')('USERS.LIST.ROLE'), width: '35%', enableColumnMenu: false },
 			{ name: $filter('translate')('USERS.LIST.OPERATIONS'), cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '15%', enableColumnMenu: false }
 		],
 		enableColumnResizing: true,
