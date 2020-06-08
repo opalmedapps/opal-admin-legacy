@@ -15,6 +15,7 @@ angular.module('opalAdmin.controllers.user.add.ad', ['ui.bootstrap', 'ui.grid'])
 		// default booleans
 		$scope.roleSection = {open:false, show:false};
 		$scope.languageSection = {open:false, show:false};
+		$scope.language = Session.retrieveObject('user').language;
 
 		// Initialize a list of languages available
 		$scope.languages = [{
@@ -72,31 +73,10 @@ angular.module('opalAdmin.controllers.user.add.ad', ['ui.bootstrap', 'ui.grid'])
 		$scope.roles = [];
 		userCollectionService.getRoles(OAUserId).then(function (response) {
 			response.data.forEach(function(row) {
-				switch (row.name) {
-				case "admin":
-					row.name_display = $filter('translate')('USERS.ADD.ADMIN');
-					break;
-				case "clinician":
-					row.name_display = $filter('translate')('USERS.ADD.CLINICIAN');
-					break;
-				case "editor":
-					row.name_display = $filter('translate')('USERS.ADD.EDITOR');
-					break;
-				case "education-creator":
-					row.name_display = $filter('translate')('USERS.ADD.EDUCATION_CREATOR');
-					break;
-				case "guest":
-					row.name_display = $filter('translate')('USERS.ADD.GUEST');
-					break;
-				case "manager":
-					row.name_display = $filter('translate')('USERS.ADD.MANAGER');
-					break;
-				case "registrant":
-					row.name_display = $filter('translate')('USERS.ADD.REGISTRANT');
-					break;
-				default:
-					row.name_display = $filter('translate')('USERS.ADD.NOT_TRANSLATED');
-				}
+				if($scope.language.toUpperCase() === "FR")
+					row.name_display = row.name_FR;
+				else
+					row.name_display = row.name_EN;
 			});
 			$scope.roles = response.data;
 		}).catch(function(response) {
@@ -152,31 +132,7 @@ angular.module('opalAdmin.controllers.user.add.ad', ['ui.bootstrap', 'ui.grid'])
 			if ($scope.newUser.role) {
 				steps.role.completed = true;
 				$scope.languageSection.show = true;
-				switch ($scope.newUser.role.name) {
-				case "admin":
-					$scope.newUser.role_display = $filter('translate')('USERS.ADD.ADMIN');
-					break;
-				case "clinician":
-					$scope.newUser.role_display = $filter('translate')('USERS.ADD.CLINICIAN');
-					break;
-				case "editor":
-					$scope.newUser.role_display = $filter('translate')('USERS.ADD.EDITOR');
-					break;
-				case "education-creator":
-					$scope.newUser.role_display = $filter('translate')('USERS.ADD.EDUCATION_CREATOR');
-					break;
-				case "guest":
-					$scope.newUser.role_display = $filter('translate')('USERS.ADD.GUEST');
-					break;
-				case "manager":
-					$scope.newUser.role_display = $filter('translate')('USERS.ADD.MANAGER');
-					break;
-				case "registrant":
-					$scope.newUser.role_display = $filter('translate')('USERS.ADD.REGISTRANT');
-					break;
-				default:
-					$scope.newUser.role_display = $filter('translate')('USERS.ADD.NOT_TRANSLATED');
-				}
+				$scope.newUser.role_display = $scope.newUser.role.name_display;
 			}
 			else
 				steps.role.completed = false;
@@ -222,7 +178,7 @@ angular.module('opalAdmin.controllers.user.add.ad', ['ui.bootstrap', 'ui.grid'])
 				var encrypted = {
 					username: $scope.newUser.username,
 					language: $scope.newUser.language,
-					roleId: $scope.newUser.role.serial
+					roleId: $scope.newUser.role.ID,
 				};
 
 				encrypted = Encrypt.encode(JSON.stringify(encrypted), cypher);
