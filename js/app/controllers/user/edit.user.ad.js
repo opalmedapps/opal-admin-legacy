@@ -84,8 +84,9 @@ controller('user.edit.ad', function ($scope, $uibModal, $uibModalInstance, $filt
 			var encrypted = {
 				id: $scope.user.serial,
 				language: $scope.user.language,
-				roleId: $scope.newUser.role.ID,
+				roleId: $scope.user.role.serial,
 			};
+
 			encrypted = Encrypt.encode(JSON.stringify(encrypted), cypher);
 
 			var data = {

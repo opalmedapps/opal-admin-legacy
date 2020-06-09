@@ -218,6 +218,8 @@ class Role extends OpalProject {
         $currentRole = $this->getRoleDetails($roleId);
         if(!$currentRole["ID"] || $currentRole["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Role not found.");
+        if(intval($currentRole["total"]) > 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Role is still assigned and cannot be deleted.");
 
         return $this->opalDB->markRoleAsDeleted($roleId);
     }

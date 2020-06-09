@@ -7,6 +7,7 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 	// Default booleans
 	$scope.changesMade = false;
 	$scope.passwordChange = false;
+	$scope.language = Session.retrieveObject('user').language;
 
 	$scope.user = {};
 
@@ -46,31 +47,10 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 	$scope.roles = [];
 	userCollectionService.getRoles(OAUserId).then(function (response) {
 		response.data.forEach(function(row) {
-			switch (row.name) {
-			case "admin":
-				row.name_display = $filter('translate')('USERS.ADD.ADMIN');
-				break;
-			case "clinician":
-				row.name_display = $filter('translate')('USERS.ADD.CLINICIAN');
-				break;
-			case "editor":
-				row.name_display = $filter('translate')('USERS.ADD.EDITOR');
-				break;
-			case "education-creator":
-				row.name_display = $filter('translate')('USERS.ADD.EDUCATION_CREATOR');
-				break;
-			case "guest":
-				row.name_display = $filter('translate')('USERS.ADD.GUEST');
-				break;
-			case "manager":
-				row.name_display = $filter('translate')('USERS.ADD.MANAGER');
-				break;
-			case "registrant":
-				row.name_display = $filter('translate')('USERS.ADD.REGISTRANT');
-				break;
-			default:
-				row.name_display = $filter('translate')('USERS.ADD.NOT_TRANSLATED');
-			}
+			if($scope.language.toUpperCase() === "FR")
+				row.name_display = row.name_FR;
+			else
+				row.name_display = row.name_EN;
 		});
 		$scope.roles = response.data;
 	}).catch(function(response) {
@@ -174,6 +154,7 @@ controller('user.edit', function ($scope, $uibModal, $uibModalInstance, $filter,
 				language: $scope.user.language,
 				roleId: $scope.user.role.serial
 			};
+
 			encrypted = Encrypt.encode(JSON.stringify(encrypted), cypher);
 
 			var data = {
