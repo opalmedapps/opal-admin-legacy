@@ -478,6 +478,11 @@ sub getDocsFromSourceDB
 			my $defaultLastTransferred = '2019-01-01 00:00:00';
 
 			my $patientInfo_sql = "
+				use VARIAN;
+
+                IF OBJECT_ID('tempdb.dbo.#tempClinic', 'U') IS NOT NULL
+                  DROP TABLE #tempClinic;
+
 				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
 			";
 			my $numOfPatients = @patientList;
@@ -496,17 +501,15 @@ sub getDocsFromSourceDB
 					$patientInfo_sql .= "UNION";
 				}
 			}
-			$patientInfo_sql .= "),";
-
+			$patientInfo_sql .= ")
+			Select c.* into #tempClinic
+			from PatientInfo c;
+			Create Index temporaryindexClinic1 on #tempClinic (SSN);
+			Create Index temporaryindexClinic2 on #tempClinic (PatientSerNum);
+			";
 
 			my $docInfo_sql = $patientInfo_sql . "
-				note_typ AS (
-					SELECT DISTINCT
-						Expression.note_typ,
-						Expression.note_typ_desc
-					FROM
-						VARIAN.dbo.note_typ Expression
-				)
+
 				SELECT DISTINCT
 					visit_note.pt_id,
 					visit_note.pt_visit_id,
@@ -527,7 +530,7 @@ sub getDocsFromSourceDB
 					VARIAN.dbo.visit_note visit_note,
 					VARIAN.dbo.note_typ,
 					VARIAN.dbo.pt pt,
-					PatientInfo
+					#tempClinic PatientInfo
 				WHERE
 					pt.pt_id 			            = visit_note.pt_id
 				AND pt.patient_ser			        = (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
@@ -880,15 +883,18 @@ sub transferPatientDocuments
 		# Begin looping until file is found or subdirectory doesnt exist
         unless (-e $sourcefile or ! -d "$clinicalDir/$wsSubDirectory") {
 
-			$sourcefile = "$clinicalDir/$wsSubDirectory/$finalfileloc";
-            print "Searching source file in subdirectory: $sourcefile\n" if $verbose;
+			print "Searching source file in subdirectory: $sourcefile\n" if $verbose;
 
-            $wsQuarter %= 4 + 1; # increment quarter mod 4 shifted by 1
-            if ($wsQuarter eq 1) { # quarter reset
-                $wsYear++;
+            # $wsQuarter %= 4 + 1; # increment quarter mod 4 shifted by 1
+			$wsQuarter = $wsQuarter + 1; # increment quarter
+            if ($wsQuarter eq 5) { # quarter reset
+				$wsQuarter = 1; # Reset quarter
+                $wsYear++; # Increase Year
             }
 			# build subdirectory for next search
 			$wsSubDirectory = "$wsYear" . "Q" . "$wsQuarter";
+			$sourcefile = "$clinicalDir/$wsSubDirectory/$finalfileloc";
+			print "Search Location: $sourcefile\n" if $verbose;
 		};
 
         print "Source file: $sourcefile\n" if $verbose;
