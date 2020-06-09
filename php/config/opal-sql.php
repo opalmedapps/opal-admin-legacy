@@ -529,7 +529,7 @@ define("OPAL_UPDATE_PASSWORD","
 ");
 
 define("OPAL_UPDATE_USER_INFO","
-    UPDATE ".OPAL_OAUSER_TABLE." SET Language = :Language WHERE OAUserSerNum = :OAUserSerNum AND Language != :Language;
+    UPDATE ".OPAL_OAUSER_TABLE." SET Language = :Language, oaRoleId = :oaRoleId WHERE OAUserSerNum = :OAUserSerNum AND (Language != :Language OR oaRoleId != :oaRoleId);
 ");
 
 define("OPAL_UPDATE_LANGUAGE","
@@ -537,10 +537,9 @@ define("OPAL_UPDATE_LANGUAGE","
 ");
 
 define("OPAL_GET_USER_DETAILS","
-    SELECT ou.OAUserSerNum AS serial, ou.Username AS username, r.RoleSerNum, r.RoleName, ou.Language AS language
+    SELECT ou.OAUserSerNum AS serial, ou.Username AS username, ou.oaRoleId, r.name_EN, r.name_FR, ou.Language AS language
     FROM ".OPAL_OAUSER_TABLE." ou
-    LEFT JOIN ".OPAL_OAUSER_ROLE_TABLE." oaur ON oaur.OAUserSerNum = ou.OAUserSerNum
-    LEFT JOIN ".OPAL_ROLE_TABLE." r ON r.RoleSerNum = oaur.RoleSerNum
+    LEFT JOIN ".OPAL_OA_ROLE_TABLE." r ON r.id = ou.oaRoleId
 	WHERE ou.OAUserSerNum = :OAUserSerNum
 ");
 
@@ -558,14 +557,6 @@ define("OPAL_GET_USERS_LIST","
     LEFT JOIN ".OPAL_OA_ROLE_TABLE." r ON r.id = ou.oaRoleId
 	WHERE ou.oaRoleId != ".ROLE_CRONJOB." AND ou.deleted = ".NON_DELETED_RECORD.";
 ");
-
-//define("OPAL_GET_USERS_LIST","
-//    SELECT ou.OAUserSerNum AS serial, ou.Username AS username, r.RoleName AS role, ou.Language AS language
-//    FROM ".OPAL_OAUSER_TABLE." ou
-//    LEFT JOIN ".OPAL_OAUSER_ROLE_TABLE." oaur ON oaur.OAUserSerNum = ou.OAUserSerNum
-//    LEFT JOIN ".OPAL_ROLE_TABLE." r ON r.RoleSerNum = oaur.RoleSerNum
-//	WHERE r.RoleSerNum != ".ROLE_CRONJOB." AND deleted = ".NON_DELETED_RECORD.";
-//");
 
 define("OPAL_COUNT_USERNAME","
     SELECT COUNT(*) AS total FROM ".OPAL_OAUSER_TABLE." WHERE Username = :Username
@@ -692,7 +683,8 @@ define("OPAL_MARK_STUDY_AS_DELETED", "
 ");
 
 define("OPAL_GET_ROLES", "
-    SELECT ID, name_EN, name_FR FROM ".OPAL_OA_ROLE_TABLE." WHERE deleted = ".NON_DELETED_RECORD.";
+    SELECT r.ID, r.name_EN, r.name_FR, (SELECT COUNT(*) FROM ".OPAL_OAUSER_TABLE." u WHERE u.oaRoleId = r.ID) AS total 
+    FROM ".OPAL_OA_ROLE_TABLE." r WHERE r.deleted = ".NON_DELETED_RECORD.";
 ");
 
 define("OPAL_GET_AVAILABLE_ROLES_MODULES", "
@@ -704,7 +696,9 @@ define("OPAL_GET_MODULES_OPERATIONS","
 ");
 
 define("OPAL_GET_OA_ROLE_DETAILS","
-    SELECT `ID`, `name_EN`, `name_FR` FROM `".OPAL_OA_ROLE_TABLE."` WHERE ID = :ID AND `deleted` = ".NON_DELETED_RECORD.";
+    SELECT r.ID, r.name_EN, r.name_FR, (SELECT COUNT(*) FROM ".OPAL_OAUSER_TABLE." u WHERE u.oaRoleId = r.ID) AS total
+    FROM ".OPAL_OA_ROLE_TABLE." r      
+    WHERE r.ID = :ID AND r.deleted = ".NON_DELETED_RECORD.";
 ");
 
 define("OPAL_GET_OA_ROLE_MODULE","
