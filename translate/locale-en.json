@@ -2354,7 +2354,9 @@
       "START_DATE": "Start Date",
       "END_DATE": "End Date",
       "CREATION_DATE": "Date of creation",
-      "OPERATIONS": "Operations"
+      "OPERATIONS": "Operations",
+      "EDIT": "Edit",
+      "DELETE": "Delete"
     },
     "DELETE": {
       "TITLE": "Delete study",
@@ -2413,7 +2415,10 @@
       "SEARCH": "Search...",
       "ENGLISH": "English",
       "FRENCH": "French",
-      "OPERATIONS": "Operations"
+      "OPERATIONS": "Operations",
+      "TOTAL": "Number of users",
+      "EDIT": "Edit",
+      "DELETE": "Delete"
     },
     "DELETE": {
       "TITLE": "Delete role",
@@ -2466,6 +2471,12 @@
       "ERROR_INVALID_ROLE": "Invalid role operation. Please refresh the page and try again.",
       "ERROR_MODULE": "An error occurred while getting the list of modules.",
       "ERROR_UPDATE": "An error occurred while updating the details of the role."
+    },
+    "LOCKED": {
+      "TITLE": "Role locked",
+      "WARNING": "Warning",
+      "LOCKED": "This role has being already assigned and cannot be deleted.",
+      "CLOSE": "Close"
     }
   },
   "PATIENTS": {

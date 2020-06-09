@@ -21,7 +21,6 @@ angular.module('opalAdmin.controllers.role', ['ngAnimate', 'ngSanitize', 'ui.boo
 			});
 		};
 
-		// Function to filter custom codes
 		$scope.filterRole = function (filterValue) {
 			$scope.filterValue = filterValue;
 			$scope.gridApi.grid.refresh();
@@ -72,12 +71,12 @@ angular.module('opalAdmin.controllers.role', ['ngAnimate', 'ngSanitize', 'ui.boo
 		var cellTemplateLocked = '<div class="ui-grid-cell-contents" ng-show="row.entity.locked > 0"><div class="fa fa-lock text-danger"></div></div>' +
 			'<div class="ui-grid-cell-contents" ng-show="row.entity.locked == 0"><div class="fa fa-unlock text-success"></div></div>';
 
-		// Data binding for main table
 		$scope.gridOptions = {
 			data: 'rolesList',
 			columnDefs: [
 				{ field: 'name_EN', enableColumnMenu: false, displayName: $filter('translate')('ROLE.LIST.ENGLISH'), cellTemplate: cellTemplateEnglish, sort: {direction: uiGridConstants.ASC, priority: 0}},
 				{ field: 'name_FR', enableColumnMenu: false, displayName: $filter('translate')('ROLE.LIST.FRENCH'), cellTemplate: cellTemplateFrench	},
+				{ field: 'total', enableColumnMenu: false, displayName: $filter('translate')('ROLE.LIST.TOTAL'),sortable: false	},
 				{ name: $filter('translate')('ROLE.LIST.OPERATIONS'), width: '10%', cellTemplate: cellTemplateOperations, enableColumnMenu: false, enableFiltering: false, sortable: false }
 			],
 			enableFiltering: true,
@@ -89,7 +88,6 @@ angular.module('opalAdmin.controllers.role', ['ngAnimate', 'ngSanitize', 'ui.boo
 			},
 		};
 
-		// Initialize object for storing questionnaires
 		$scope.rolesList = [];
 
 		function getRolesList() {
@@ -100,7 +98,6 @@ angular.module('opalAdmin.controllers.role', ['ngAnimate', 'ngSanitize', 'ui.boo
 			});
 		}
 
-		// Function to edit questionnaire
 		$scope.editRole = function (role) {
 			$scope.currentRole = role;
 			var modalInstance = $uibModal.open({ // open modal
@@ -111,29 +108,33 @@ angular.module('opalAdmin.controllers.role', ['ngAnimate', 'ngSanitize', 'ui.boo
 				backdrop: 'static',
 			});
 
-			// After update, refresh the questionnaire list
 			modalInstance.result.then(function () {
 				getRolesList();
 			});
 		};
 
-		// Function for when the custom code has been clicked for deletion
-		// Open a modal
 		$scope.deleteRole = function (currentRole) {
-			// Assign selected custom code as the custom code to delete
 			$scope.roleToDelete = currentRole;
+			var modalInstance;
+			if(parseInt(currentRole.total) <= 0) {
+				modalInstance = $uibModal.open({
+					templateUrl: 'templates/role/delete.role.html',
+					controller: 'role.delete',
+					windowClass: 'deleteModal',
+					scope: $scope,
+					backdrop: 'static',
+				});
+			} else {
+				modalInstance = $uibModal.open({
+					templateUrl: 'templates/role/cannot.delete.role.html',
+					controller: 'role.delete',
+					windowClass: 'deleteModal',
+					scope: $scope,
+					backdrop: 'static',
+				});
+			}
 
-			var modalInstance = $uibModal.open({
-				templateUrl: 'templates/role/delete.role.html',
-				controller: 'role.delete',
-				windowClass: 'deleteModal',
-				scope: $scope,
-				backdrop: 'static',
-			});
-
-			// After delete, refresh the custom code list
 			modalInstance.result.then(function () {
-				// Call our API to get the list of existing posts
 				getRolesList();
 			});
 		};

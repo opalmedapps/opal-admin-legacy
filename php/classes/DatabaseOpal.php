@@ -946,10 +946,11 @@ class DatabaseOpal extends DatabaseAccess {
      *          $language (string)
      * @return  array with the result of the update
      * */
-    function updateUserInfo($userId, $language) {
+    function updateUserInfo($userId, $language, $roleId) {
         return $this->_execute(OPAL_UPDATE_USER_INFO, array(
             array("parameter"=>":OAUserSerNum","variable"=>$userId,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":Language","variable"=>$language,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":oaRoleId","variable"=>$roleId,"data_type"=>PDO::PARAM_STR),
         ));
     }
 

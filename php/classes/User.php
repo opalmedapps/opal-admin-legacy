@@ -230,17 +230,14 @@ class User extends OpalProject {
             }
         }
 
-        $newRole = $this->opalDB->geRoleDetails($data["roleId"]);
+        $newRole = $this->opalDB->getRoleDetails($data["roleId"]);
         if(!is_array($newRole))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid role.");
 
-        if($data["roleId"] != $userDetails["RoleSerNum"]) {
-            if($userDetails["serial"] == $this->opalDB->getOAUserId())
-                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "An user cannot change its own role.");
-            $this->opalDB->updateUserRole($data["id"], $data["roleId"]);
-        }
+        if($data["roleId"] != $userDetails["oaRoleId"] && $userDetails["serial"] == $this->opalDB->getOAUserId())
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "An user cannot change its own role.");
 
-        $this->opalDB->updateUserInfo($userDetails["serial"], $data["language"]);
+        $this->opalDB->updateUserInfo($userDetails["serial"], $data["language"], $data["roleId"]);
 
         return true;
     }
@@ -256,7 +253,7 @@ class User extends OpalProject {
         $post = HelpSetup::arraySanitization($post);
         $cypher = intval($post["cypher"]);
         if($cypher == "")
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data to create user.");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing cypher to create user.");
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
         $data = HelpSetup::arraySanitization($data);
 
@@ -330,12 +327,13 @@ class User extends OpalProject {
     public function getUserDetails($post) {
         $post = HelpSetup::arraySanitization($post);
         $userDetails = $this->opalDB->getUserDetails($post["userId"]);
-        $userDetails["role"] = array("serial"=>$userDetails["RoleSerNum"], "name"=>$userDetails["RoleName"]);
+        $userDetails["role"] = array("serial"=>$userDetails["oaRoleId"], "name_EN"=>$userDetails["name_EN"], "name_FR"=>$userDetails["name_FR"]);
         $userDetails["logs"] = array();
         $userDetails["new_password"] = null;
         $userDetails["confirm_password"] = null;
-        unset($userDetails["RoleSerNum"]);
-        unset($userDetails["RoleName"]);
+        unset($userDetails["oaRoleId"]);
+        unset($userDetails["name_EN"]);
+        unset($userDetails["name_FR"]);
         return $userDetails;
     }
 
