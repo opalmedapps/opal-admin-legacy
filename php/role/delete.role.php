@@ -3,9 +3,8 @@
 include_once('role.inc');
 
 $roleId = strip_tags($_POST['roleId']);
-$OAUserId = strip_tags($_POST['OAUserId']);
 
-$role = new Role($OAUserId); // Object
+$role = new Role(); // Object
 $response = $role->deleteRole($roleId);
 
 header('Content-Type: application/javascript');

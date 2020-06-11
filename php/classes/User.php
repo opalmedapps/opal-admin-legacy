@@ -20,7 +20,7 @@ class User extends OpalProject {
      * */
     protected function _validateUserAuthentication($result) {
         if(count($result) < 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Access denied");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Access denied");
         else if(count($result) > 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Somethings's wrong. There is too many entries!");
         $result = $result[0];
@@ -59,7 +59,7 @@ class User extends OpalProject {
         curl_close($ch);
 
         if(!$requestResult["authenticate"])
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Access denied");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Access denied");
 
         return $result;
     }
@@ -83,6 +83,16 @@ class User extends OpalProject {
      * @return  $result (array) basic user informations
      * */
     public function userLogin($post) {
+//        if($_SESSION["ID"] && $_SESSION["ID"] != "") {
+//            $result = array();
+//            $result["id"] = $_SESSION["ID"];
+//            $result["username"] = $_SESSION["username"];
+//            $result["language"] = $_SESSION["language"];
+//            $result["role"] = $_SESSION["role"];
+//            $result["sessionId"] = $_SESSION['sessionId'];
+//            return $result;
+//        }
+
         $post = HelpSetup::arraySanitization($post);
         $cypher = $post["cypher"];
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
@@ -91,7 +101,7 @@ class User extends OpalProject {
         $password = $data["password"];
 
         if($username == "" || $password == "" || $cypher == "")
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing login info.");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
 
         if(AD_LOGIN_ACTIVE)
             $result = $this->_userLoginActiveDirectory($username, $password);
@@ -102,20 +112,27 @@ class User extends OpalProject {
         $result["sessionid"] = HelpSetup::makeSessionId();
         $this->logActivity($result["id"], $result["sessionid"], 'Login');
 
+        $_SESSION["ID"] = $result["id"];
+        $_SESSION["username"] = $result["username"];
+        $_SESSION["language"] = $result["language"];
+        $_SESSION["role"] = $result["role"];
+        $_SESSION['sessionId'] = HelpSetup::makeSessionId();
+        $_SESSION['lastActivity'] = time();
+        $_SESSION['created'] = time();
+
         return $result;
     }
 
     /*
      * Logs the user out by logging it in the logActivity.
-     * @params  $post (array) info of the user
+     * @params  void
      * @return  answer from the log activity
      * */
-    public function userLogout($post) {
-        $post = HelpSetup::arraySanitization($post);
-        if($post["OAUserId"] == "" || $post["sessionId"] == "")
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing logout info.");
-
-        return $this->logActivity($post["OAUserId"], $post["sessionId"], 'Logout');
+    public function userLogout() {
+        $result = $this->logActivity($_SESSION["ID"], $_SESSION["sessionId"], 'Logout');
+        session_unset();     // unset $_SESSION variable for the run-time
+        session_destroy();   // destroy session data in storage
+        return $result;
     }
 
     /*
@@ -269,9 +286,9 @@ class User extends OpalProject {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Wrong language.");
 
         if(!AD_LOGIN_ACTIVE)
-            $userId = $this->_insertUserLegacy($username, $password, $confirmPassword, $language);
+            $userId = $this->_insertUserLegacy($username, $password, $confirmPassword, $language, $roleId);
         else
-            $userId = $this->_insertUserAD($username, $language);
+            $userId = $this->_insertUserAD($username, $language, $roleId);
 
         $role = $this->opalDB->getRoleDetails($roleId);
         if(!is_array($role))
@@ -287,7 +304,7 @@ class User extends OpalProject {
      *          $language (string) language of the user (EN, FR)
      * @return  userId (int) ID of the new user created
      * */
-    protected function _insertUserLegacy($username, $password, $confirmPassword, $language) {
+    protected function _insertUserLegacy($username, $password, $confirmPassword, $language, $roleId) {
         if($password == "" || $confirmPassword == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data to create user.");
 
@@ -295,7 +312,7 @@ class User extends OpalProject {
         if(count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
 
-        return $this->opalDB->insertUser($username, hash("sha256", $password . USER_SALT), $language);
+        return $this->opalDB->insertUser($username, hash("sha256", $password . USER_SALT), $language, $roleId);
     }
 
     /*
@@ -305,8 +322,8 @@ class User extends OpalProject {
      *          $language (string) language of the user (EN, FR)
      * @return  userId (int) ID of the new user created
      * */
-    protected function _insertUserAD($username, $language) {
-        return $this->opalDB->insertUser($username, hash("sha256", HelpSetup::generateRandomString() . USER_SALT), $language);
+    protected function _insertUserAD($username, $language, $roleId) {
+        return $this->opalDB->insertUser($username, hash("sha256", HelpSetup::generateRandomString() . USER_SALT), $language, $roleId);
     }
 
     /*
