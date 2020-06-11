@@ -21,7 +21,7 @@ class OpalProject
                 OPAL_DB_USERNAME,
                 OPAL_DB_PASSWORD,
                 false,
-                $OAUserId
+                $_SESSION["ID"]
             );
         } else {
             $this->opalDB = new DatabaseOpal(
@@ -31,11 +31,11 @@ class OpalProject
                 OPAL_DB_USERNAME,
                 OPAL_DB_PASSWORD,
                 false,
-                $OAUserId,
+                $_SESSION["ID"],
                 true
             );
         }
-        $this->opalDB->setSessionId($sessionId);
+        $this->opalDB->setSessionId($_SESSION["sessionId"]);
     }
 
     protected function _connectAsMain($OAUserId) {
@@ -47,19 +47,6 @@ class OpalProject
             OPAL_DB_PASSWORD,
             false,
             $OAUserId
-        );
-    }
-
-    protected function _connectAsGuest($OAUserId) {
-        $this->opalDB = new DatabaseOpal(
-            OPAL_DB_HOST,
-            OPAL_DB_NAME,
-            OPAL_DB_PORT,
-            OPAL_DB_USERNAME,
-            OPAL_DB_PASSWORD,
-            false,
-            $OAUserId,
-            true
         );
     }
 

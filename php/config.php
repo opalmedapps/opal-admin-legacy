@@ -3,6 +3,7 @@
 /*
 * PHP global settings:
 */
+session_start();
 
 // Set the time ze for the Eastern Time Zone (ET)
 date_default_timezone_set("America/Toronto");
@@ -150,9 +151,28 @@ define("GUEST_ACCOUNT", 29);
  * */
 define("HTTP_STATUS_SUCCESS",200);
 define("HTTP_STATUS_INTERNAL_SERVER_ERROR",500);
+define("HTTP_STATUS_NOT_AUTHENTICATED_ERROR",401);
 define("HTTP_STATUS_FORBIDDEN_ERROR",403);
+define("HTTP_STATUS_SESSION_TIMEOUT_ERROR",419);
+define("HTTP_STATUS_LOGIN_TIMEOUT_ERROR",440);
 
+define("PHP_SESSION_TIMEOUT", 30);
 /*
  * Miscellaneous constants
  * */
 define("DEFAULT_FIELD", "");
+
+if (isset($_SESSION['lastActivity']) && (time() - $_SESSION['lastActivity'] > PHP_SESSION_TIMEOUT)) {
+    $user = new User();
+    $user->userLogout();
+}
+else
+    $_SESSION['lastActivity'] = time(); // update last activity time stamp
+
+if (!isset($_SESSION['created'])) {
+    $_SESSION['created'] = time();
+} else if (time() - $_SESSION['created'] > PHP_SESSION_TIMEOUT) {
+    // session started more than 30 minutes ago
+    session_regenerate_id(true);    // change session ID for the current session and invalidate old session ID
+    $_SESSION['created'] = time();  // update creation time
+}
