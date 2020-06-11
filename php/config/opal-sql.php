@@ -87,15 +87,10 @@ define("OPAL_POST_PK","PostControlSerNum");
 define("SQL_OPAL_SELECT_USER_INFO",
     "SELECT OAUserSerNum AS OAUserId,
     Username AS username,
-    Language as language
+    Language as language,
+    oaRoleId as userRole
     FROM ".OPAL_OAUSER_TABLE."
-    WHERE OAUserSerNum = :OAUserId"
-);
-
-define("SQL_OPAL_SELECT_USER_ROLE",
-    "SELECT *
-    FROM ".OPAL_OAUSER_ROLE_TABLE."
-    WHERE OAUserSerNum = :OAUserId"
+    WHERE OAUserSerNum = :OAUserSerNum"
 );
 
 define("SQL_OPAL_LIST_QUESTIONNAIRES_FROM_QUESTIONNAIRE_CONTROL",
@@ -545,10 +540,6 @@ define("OPAL_GET_USER_DETAILS","
 
 define("OPAL_GET_ROLE_DETAILS","
     SELECT * FROM ".OPAL_ROLE_TABLE." WHERE RoleSerNum = :RoleSerNum;
-");
-
-define("OPAL_UPDATE_USER_ROLE","
-    UPDATE ".OPAL_OAUSER_ROLE_TABLE." SET RoleSerNum = :RoleSerNum WHERE OAUserSerNum = :OAUserSerNum;
 ");
 
 define("OPAL_GET_USERS_LIST","

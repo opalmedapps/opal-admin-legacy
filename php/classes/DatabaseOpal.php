@@ -15,10 +15,18 @@ class DatabaseOpal extends DatabaseAccess {
         parent::__construct($newServer, $newDB, $newPort, $newUserDB, $newPass, $dsn);
         if (!$guestAccess) {
             $newOAUserId = strip_tags($newOAUserId);
-            $userInfo = $this->_getUserInfoFromDB($newOAUserId);
-            $this->OAUserId = $userInfo["OAUserId"];
-            $this->username = $userInfo["username"];
-            $this->userRole = $userInfo["userRole"];
+
+            if($_SESSION["ID"] && $_SESSION["ID"] == $newOAUserId) {
+                $this->OAUserId = $_SESSION["ID"];
+                $this->username = $_SESSION["username"];
+                $this->userRole = $_SESSION["role"];
+            }
+            else {
+                $userInfo = $this->_getUserInfoFromDB($newOAUserId);
+                $this->OAUserId = $userInfo["OAUserId"];
+                $this->username = $userInfo["username"];
+                $this->userRole = $userInfo["userRole"];
+            }
         }
     }
 
@@ -33,25 +41,13 @@ class DatabaseOpal extends DatabaseAccess {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
         $result = $this->_fetchAll(SQL_OPAL_SELECT_USER_INFO,
             array(
-                array("parameter"=>":OAUserId","variable"=>$newOAUserId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":OAUserSerNum","variable"=>$newOAUserId,"data_type"=>PDO::PARAM_INT),
             ));
 
         if (!is_array($result) || count($result) != 1) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
         }
 
-        $resultRole = $this->_fetchAll(SQL_OPAL_SELECT_USER_ROLE,
-            array(
-                array("parameter"=>":OAUserId","variable"=>$newOAUserId,"data_type"=>PDO::PARAM_INT),
-            ));
-        if(!is_array($resultRole) || count($resultRole) <= 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
-
-        $result = $result[0];
-        $tempRole = array();
-        foreach($resultRole as $role)
-            array_push($tempRole, $role["RoleSerNum"]);
-        $result["userRole"] = $tempRole;
         return $result;
     }
 
@@ -990,19 +986,6 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Update the role of an user
-     * @params  $userId (int) ID of the user
-     *          $roleId (int) ID of the role
-     * @return  array with the result of the update
-     * */
-    function updateUserRole($userId, $roleId) {
-        return $this->_execute(OPAL_UPDATE_USER_ROLE, array(
-            array("parameter"=>":RoleSerNum","variable"=>$roleId,"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":OAUserSerNum","variable"=>$userId,"data_type"=>PDO::PARAM_INT),
-        ));
-    }
-
-    /*
      * Get the list of all non deleted users
      * @params  void
      * @return  array with the result of the fetch all
@@ -1029,11 +1012,12 @@ class DatabaseOpal extends DatabaseAccess {
      *          $language (string) preferred language
      * @return  array with the result of the insert
      * */
-    function insertUser($username, $password, $language) {
+    function insertUser($username, $password, $language, $roleId) {
         $toInsert = array(
             "Username"=>$username,
             "Password"=>$password,
             "Language"=>$language,
+            "oaRoleId"=>$roleId,
             "DateAdded"=>date("Y-m-d H:i:s"),
         );
         return $this->_insertRecordIntoTable(OPAL_OAUSER_TABLE, $toInsert);
