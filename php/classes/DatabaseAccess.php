@@ -298,52 +298,9 @@ class DatabaseAccess extends HelpSetup
                 array_push($params, ":".$key.$cpt);
                 array_push($ready, array("parameter"=>":".$key.$cpt,"variable"=>$value));
             }
+            $sqlFieldNames = "`".implode("`, `", $fields)."`";
             array_push($multiples, implode(", ", $params));
         }
-        $sqlFieldNames = "`".implode("`, `", $fields)."`";
-        $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . "(" . implode("), (", $multiples) . ");";
-
-        return $this->_queryInsert($sqlInsert, $ready);
-    }
-
-    /*
-     * This function build a SQL insert query for the dictionary  and launch its execution.
-     * @param   table name where to insert (string)
-     *          array of records that contain arrays of data to insert and their field name. Each array must have the
-     *          same structure and same order.
-     *          example:    Array (
-	 *                          Array (
-	 * 	                            "field1" => "data"
-     *                              "field2" => "more data"
-     *                              "field3" => "even more data"
-     *                          )
-	 *                          Array (
-	 *                              "field1" => "enough data?"
-     *                              "field2" => "no more data!"
-     *                              "field3" => "data!"
-	 *                          )
-     *                      )
-     * */
-    protected function _insertMultipleRecordsIntoDictionary($records) {
-        $sqlInsert = str_replace("%%TABLENAME%%", DICTIONARY_TABLE, SQL_GENERAL_INSERT_INTO);
-        $multiples = array();
-        $cpt = 0;
-        $ready = array();
-        foreach ($records as $data) {
-            $cpt++;
-            $fields = array();
-            $params = array();
-            foreach($data as $key=>$value) {
-                array_push($fields, $key);
-                array_push($params, ":".$key.$cpt);
-                array_push($ready, array("parameter"=>":".$key.$cpt,"variable"=>$value));
-            }
-            array_push($params, DICTIONARY_CONTENT_ID);
-            array_push($multiples, implode(", ", $params));
-        }
-
-        array_push($fields, "contentId");
-        $sqlFieldNames = "`".implode("`, `", $fields)."`";
 
         $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . "(" . implode("), (", $multiples) . ");";
         return $this->_queryInsert($sqlInsert, $ready);
