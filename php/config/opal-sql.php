@@ -685,3 +685,6 @@ define("OPAL_UPDATE_STUDY","
 define("SQL_OPAL_MARK_STUDY_AS_DELETED", "
     UPDATE ".OPAL_STUDY_TABLE." SET deleted = ".DELETED_RECORD.", updatedBy = :updatedBy WHERE ID = :ID;
 ");
+
+define("OPAL_NEW_CONTENT_ID","SET @newContentId = (SELECT COALESCE(MAX(contentId) + 1, 1) FROM ".DICTIONARY_TABLE.");");
+define("OPAL_RETURN_NEW_CONTENT_ID","SELECT @newContentId AS contentId;");

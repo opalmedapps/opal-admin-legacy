@@ -8,6 +8,17 @@
 
 class DatabaseQuestionnaire extends DatabaseAccess
 {
+
+    /*
+     * This function returns the next content ID for the dictionary necessary for an insertion
+     * @param   void
+     * @return  next content ID (string)
+     * */
+    protected function _getNextContentId() {
+        $nextContentId = $this->_fetch(SQL_QUESTIONNAIRE_GET_DICTIONARY_NEXT_CONTENT_ID);
+        return $nextContentId["nextContentId"];
+    }
+
     /*
      * This function translate a new type of question into the legacy one, since the app does not recognize them yet.
      * @param   $typeId (int)
@@ -35,16 +46,17 @@ class DatabaseQuestionnaire extends DatabaseAccess
      *          table name where is used the entry
      * Return:  new contentID of matching all entries.
      */
-
     function addToDictionary($newEntries, $tableName) {
         $tableId = $this->getTableId($tableName);
         $languageTable = $this->getLanguageTable();
         $toInsert = array();
+        $contentId = $this->_getNextContentId();
 
         foreach($languageTable as $lang) {
             $toInsert[$lang["ID"]] = array(
                 "languageId"=>$lang["ID"],
                 "content"=>strtoupper($lang["isoLang"]."_"),
+                "contentId"=>$contentId,
                 "tableId"=>$tableId,
                 "creationDate"=>date("Y-m-d H:i:s"),
                 "createdBy"=>$this->username,
@@ -54,21 +66,10 @@ class DatabaseQuestionnaire extends DatabaseAccess
         foreach($newEntries as $key=>$value) {
             $toInsert[$key]["content"] = $value;
         }
-        $lastId = $this->_insertMultipleRecordsIntoDictionary($toInsert);
-        return $this->_getContentIdFromDictionary($lastId);
-    }
-
-    /*
-     * This function get the contentId in the dictionary from a specific ID. It is essential to be able to attach the
-     * contentId to the specific field in a specific table
-     * @params  $lastId : int - ID to get the contentId in the dictionary
-     * @return  int - the contentId found
-     * */
-    protected function _getContentIdFromDictionary($lastId) {
-        $contentId = $this->_fetch(GET_CONTENT_ID_DICTIONARY, array(
-            array("parameter"=>":ID","variable"=>$lastId,"data_type"=>PDO::PARAM_STR),
-        ));
-        return $contentId["contentId"];
+        $result = $this->_insertMultipleRecordsIntoDictionary($toInsert, $contentId);
+        if(intval($result) == 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot insert entry in dictionary, content ID already exists.");
+        return $contentId;
     }
 
     /*
@@ -81,6 +82,7 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $toCopy = $this->_fetchAll(SQL_QUESTIONNAIRE_GET_DICTIONNARY_TEXT, array(array("parameter"=>":contentId", "variable"=>$contentId, "data_type"=>PDO::PARAM_INT)));
         if (!is_array($toCopy) || count($toCopy) <= 0) return false;
         $tableId = $this->getTableId($tableName);
+        $newContentId = $this->_getNextContentId();
 
         $toInsert = array();
         foreach($toCopy as $row) {
@@ -88,14 +90,17 @@ class DatabaseQuestionnaire extends DatabaseAccess
                 "tableId"=>$tableId,
                 "languageId"=>$row["languageId"],
                 "content"=>$row["content"],
+                "contentId"=>$newContentId,
                 "creationDate"=>date("Y-m-d H:i:s"),
                 "createdBy"=>$this->username,
                 "updatedBy"=>$this->username,
             ));
         }
 
-        $lastId = $this->_insertMultipleRecordsIntoDictionary($toInsert);
-        return $this->_getContentIdFromDictionary($lastId);
+        $result = $this->_insertMultipleRecordsIntoDictionary($toInsert, $newContentId);
+        if(intval($result) == 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot insert entry in dictionary, content ID already exists.");
+        return $newContentId;
     }
 
     /*
@@ -1115,5 +1120,33 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * This function replace the regular insert by a special one for the dictionary. To avoid duplicates in the contentId
+     * that may cause a cardinality violation and break down the questionnaire and thus all the system, we have to
+     * add a condition to the insert.
+     * */
+    protected function _insertMultipleRecordsIntoDictionary($records, $controlContentId) {
+        $sqlInsert = str_replace("%%TABLENAME%%", DICTIONARY_TABLE, SQL_GENERAL_INSERT_INTERSECTION_TABLE);
+        $sqlConditional = array();
+        $multiples = array();
+        $cpt = 0;
+        $ready = array();
+        foreach ($records as $data) {
+            $cpt++;
+            $fields = array();
+            $params = array();
+            foreach($data as $key=>$value) {
+                array_push($fields, $key);
+                array_push($params, ":".$key.$cpt);
+                array_push($ready, array("parameter"=>":".$key.$cpt,"variable"=>$value));
+            }
+            array_push($sqlConditional, str_replace("%%VALUES%%", implode(", ", $params), SQL_QUESTIONNAIRE_CONDITIONAL_INSERT));
+            $sqlFieldNames = "`".implode("`, `", $fields)."`";
+            array_push($multiples, implode(", ", $params));
+        }
+        array_push($ready, array("parameter"=>":controlContentId","variable"=>$controlContentId));
 
+        $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . implode(" UNION ALL ", $sqlConditional);
+        return $this->_queryInsert($sqlInsert, $ready);
+    }
 }
