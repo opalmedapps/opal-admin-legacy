@@ -66,7 +66,9 @@ class DatabaseQuestionnaire extends DatabaseAccess
         foreach($newEntries as $key=>$value) {
             $toInsert[$key]["content"] = $value;
         }
-        $this->_insertMultipleRecordsIntoTable(DICTIONARY_TABLE, $toInsert);
+        $result = $this->_insertMultipleRecordsIntoDictionary($toInsert, $contentId);
+        if(intval($result) == 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot insert entry in dictionary, content ID already exists.");
         return $contentId;
     }
 
@@ -95,7 +97,9 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
         }
 
-        $this->_insertMultipleRecordsIntoTable(DICTIONARY_TABLE, $toInsert);
+        $result = $this->_insertMultipleRecordsIntoDictionary($toInsert, $newContentId);
+        if(intval($result) == 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot insert entry in dictionary, content ID already exists.");
         return $newContentId;
     }
 
@@ -1116,5 +1120,33 @@ class DatabaseQuestionnaire extends DatabaseAccess
             ));
     }
 
+    /*
+     * This function replace the regular insert by a special one for the dictionary. To avoid duplicates in the contentId
+     * that may cause a cardinality violation and break down the questionnaire and thus all the system, we have to
+     * add a condition to the insert.
+     * */
+    protected function _insertMultipleRecordsIntoDictionary($records, $controlContentId) {
+        $sqlInsert = str_replace("%%TABLENAME%%", DICTIONARY_TABLE, SQL_GENERAL_INSERT_INTERSECTION_TABLE);
+        $sqlConditional = array();
+        $multiples = array();
+        $cpt = 0;
+        $ready = array();
+        foreach ($records as $data) {
+            $cpt++;
+            $fields = array();
+            $params = array();
+            foreach($data as $key=>$value) {
+                array_push($fields, $key);
+                array_push($params, ":".$key.$cpt);
+                array_push($ready, array("parameter"=>":".$key.$cpt,"variable"=>$value));
+            }
+            array_push($sqlConditional, str_replace("%%VALUES%%", implode(", ", $params), SQL_QUESTIONNAIRE_CONDITIONAL_INSERT));
+            $sqlFieldNames = "`".implode("`, `", $fields)."`";
+            array_push($multiples, implode(", ", $params));
+        }
+        array_push($ready, array("parameter"=>":controlContentId","variable"=>$controlContentId));
 
+        $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . implode(" UNION ALL ", $sqlConditional);
+        return $this->_queryInsert($sqlInsert, $ready);
+    }
 }
