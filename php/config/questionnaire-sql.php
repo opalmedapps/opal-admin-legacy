@@ -600,8 +600,10 @@ define("SQL_QUESTIONNAIRE_UPDATE_LAST_CHECKBOX_OPTION",
     "UPDATE dictionary d RIGHT JOIN %%TABLENAME%% tn ON d.contentId = tn.description SET d.content = :content WHERE tn.parentTableId = :parentTableId AND d.languageID = :languageID AND tn.order = (SELECT MAX(tn.order) FROM %%TABLENAME%% tn WHERE tn.parentTableId = :parentTableId) and d.content != :content;"
 );
 
-define("DICTIONARY_CONTENT_ID"," (SELECT COALESCE(MAX(contentId) + 1, 1) AS nextContentId FROM ".DICTIONARY_TABLE." d1)");
+define("SQL_QUESTIONNAIRE_INSERT_DICTIONARY", SQL_GENERAL_INSERT_INTERSECTION_TABLE . "
 
-define("GET_CONTENT_ID_DICTIONARY","
-    SELECT contentId FROM ".DICTIONARY_TABLE." WHERE ID = :ID; 
+");
+
+define("SQL_QUESTIONNAIRE_CONDITIONAL_INSERT","
+    SELECT %%VALUES%% FROM DUAL WHERE NOT EXISTS (SELECT * FROM ".DICTIONARY_TABLE." WHERE contentId = :controlContentId)
 ");
