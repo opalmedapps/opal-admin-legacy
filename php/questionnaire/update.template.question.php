@@ -7,7 +7,7 @@
 
 include_once('questionnaire.inc');
 
-$answerTypeObj = new TemplateQuestion(strip_tags($_POST["OAUserId"])); // Object
+$answerTypeObj = new TemplateQuestion(); // Object
 $answerTypeObj->updateTemplateQuestion($_POST);
 
 header('Content-Type: application/javascript');

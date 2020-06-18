@@ -5,14 +5,6 @@
 class User extends OpalProject {
 
     /*
-     * Constructor. If no user Id is given, give guest right so the login can be done. Call the parent constructor
-     * */
-    public function __construct($OAUserId = false) {
-        $guestAccess = !$OAUserId;
-        parent::__construct($OAUserId, false, $guestAccess);
-    }
-
-    /*
      * Validate the number of results of authentication. If different than one, returns an exception. If one result,
      * remove the password (if any) and return only one result.
      * @params  $result (array) results of authentication
@@ -89,7 +81,7 @@ class User extends OpalProject {
 //            $result["username"] = $_SESSION["username"];
 //            $result["language"] = $_SESSION["language"];
 //            $result["role"] = $_SESSION["role"];
-//            $result["sessionId"] = $_SESSION['sessionId'];
+//            $result["sessionid"] = $_SESSION['sessionId'];
 //            return $result;
 //        }
 
@@ -108,10 +100,6 @@ class User extends OpalProject {
         else
             $result = $this->_userLoginLegacy($username, $password);
 
-        $this->_connectAsMain($result["id"]);
-        $result["sessionid"] = HelpSetup::makeSessionId();
-        $this->logActivity($result["id"], $result["sessionid"], 'Login');
-
         $_SESSION["ID"] = $result["id"];
         $_SESSION["username"] = $result["username"];
         $_SESSION["language"] = $result["language"];
@@ -119,6 +107,10 @@ class User extends OpalProject {
         $_SESSION['sessionId'] = HelpSetup::makeSessionId();
         $_SESSION['lastActivity'] = time();
         $_SESSION['created'] = time();
+
+        $this->_connectAsMain();
+        $result["sessionid"] = $_SESSION['sessionId'];
+        $this->logActivity($result["id"], $_SESSION['sessionId'], 'Login');
 
         return $result;
     }

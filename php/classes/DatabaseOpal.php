@@ -38,14 +38,14 @@ class DatabaseOpal extends DatabaseAccess {
     protected function _getUserInfoFromDB($newOAUserId) {
         $newOAUserId = strip_tags($newOAUserId);
         if($newOAUserId == "" || $newOAUserId <= 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied. $newOAUserId");
         $result = $this->_fetchAll(SQL_OPAL_SELECT_USER_INFO,
             array(
                 array("parameter"=>":OAUserSerNum","variable"=>$newOAUserId,"data_type"=>PDO::PARAM_INT),
             ));
 
         if (!is_array($result) || count($result) != 1) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied. $newOAUserId");
         }
 
         return $result;

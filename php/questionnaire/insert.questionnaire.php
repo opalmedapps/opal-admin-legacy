@@ -1,9 +1,8 @@
 <?php
 
 include_once('questionnaire.inc');
-$OAUserId = strip_tags($_POST['OAUserId']);
 
-$questionnaire = new Questionnaire($OAUserId);
+$questionnaire = new Questionnaire();
 $questionnaireArray = $questionnaire->validateAndSanitize($_POST);
 
 if(!$questionnaireArray)

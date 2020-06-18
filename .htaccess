@@ -205,7 +205,6 @@ RewriteRule ^post/get/post-details php/post/get.post_details.php [QSA,L]
 RewriteRule ^post/get/post-list-logs php/post/get.post_list_logs.php [QSA,L]
 RewriteRule ^post/get/posts php/post/get.posts.php [QSA,L]
 RewriteRule ^post/insert/post php/post/insert.post.php [QSA,L]
-RewriteRule ^post/update/post-publish-flags php/post/update.post_publish_flags.php [QSA,L]
 RewriteRule ^post/update/post php/post/update.post.php [QSA,L]
 
 # Question Section

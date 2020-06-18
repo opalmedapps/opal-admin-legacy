@@ -14,7 +14,7 @@ class HelpSetup {
      *          $details (string) error message to display
      * @return  void
      * */
-    public static function returnErrorMessage($errcode = HTTP_STATUS_INTERNAL_SERVER_ERROR, $details) {
+    public static function returnErrorMessage($errcode = HTTP_STATUS_INTERNAL_SERVER_ERROR, $details = "") {
         if (!function_exists('http_response_code')) {
             function http_response_code($newcode = NULL){
                 static $code = HTTP_STATUS_SUCCESS;
@@ -29,7 +29,8 @@ class HelpSetup {
 
         header('Content-Type: application/javascript');
         http_response_code($errcode);
-        echo json_encode($details);
+        if ($details != "")
+            echo json_encode($details);
         die();
     }
 
