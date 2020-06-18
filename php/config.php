@@ -63,7 +63,7 @@ require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_S
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."orms-sql.php");
 
 // Include the classes
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "OpalProject.php" );
+include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Module.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "User.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Database.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Alias.php" );
@@ -71,7 +71,6 @@ include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "EduMaterial.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "HospitalMap.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Notification.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Filter.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Cron.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "CrontabManager.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Patient.php" );
@@ -138,9 +137,19 @@ define("AD_LOGIN_ACTIVE", ACTIVE_DIRECTORY["enabled"]);
 define("MODULE_ALIAS", 1);
 define("MODULE_POST", 2);
 define("MODULE_EDU_MAT", 3);
+define("MODULE_HOSPITAL_MAP", 4);
+define("MODULE_NOTIFICATION", 5);
 define("MODULE_TEST_RESULTS", 6);
 define("MODULE_QUESTIONNAIRE", 7);
+define("MODULE_PUBLICATION_TOOLS", 8);
 define("MODULE_DIAGNOSIS_TRANSLATION", 9);
+define("MODULE_CRON_LOG", 10);
+define("MODULE_PATIENT", 11);
+define("MODULE_USER", 12);
+define("MODULE_STUDY", 13);
+define("MODULE_EMAIL", 14);
+define("MODULE_CUSTOM_CODE", 15);
+define("MODULE_ROLE", 16);
 define("LOCAL_SOURCE_ONLY", -1);
 
 define("PUBLICATION_PUBLISH_DATE", 9);

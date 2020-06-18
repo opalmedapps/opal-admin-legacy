@@ -10,7 +10,7 @@ filter('deliberatelyTrustAsHtml', function ($sce) {
 /******************************************************************************
  * Post Page controller
  *******************************************************************************/
-controller('post', function ($scope, $filter, $sce, $state, $uibModal, postCollectionService, filterCollectionService, uiGridConstants, Session) {
+controller('post', function ($scope, $filter, $sce, $state, $uibModal, postCollectionService, uiGridConstants, Session) {
 
 	// Function to go to add post page
 	$scope.goToAddPost = function () {

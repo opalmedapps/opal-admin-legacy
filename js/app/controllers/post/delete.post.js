@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.post.delete', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns', 'textAngular']).
 
-	controller('post.delete', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, postCollectionService, filterCollectionService, uiGridConstants, Session) {
+	controller('post.delete', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, postCollectionService, uiGridConstants, Session) {
 
 		// Submit delete
 		$scope.deletePost = function () {

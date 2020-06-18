@@ -4,7 +4,11 @@
  * Post object structure
  * */
 
-class Post extends OpalProject {
+class Post extends Module {
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_POST, $guestStatus);
+    }
 
     /*
      * This function returns the list of available posts for opalAdmin.

@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 	/******************************************************************************
 	 * Add Publication Page controller
 	 *******************************************************************************/
-	controller('publication.add', function ($scope, $filter, $uibModal, $state, $locale, publicationCollectionService, Session, filterCollectionService, FrequencyFilterService ) {
+	controller('publication.add', function ($scope, $filter, $uibModal, $state, $locale, publicationCollectionService, Session, FrequencyFilterService ) {
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -167,7 +167,7 @@ angular.module('opalAdmin.controllers.publication.add', ['ngAnimate', 'ui.bootst
 		};
 
 		// Call our API service to get each trigger
-		filterCollectionService.getFilters(Session.retrieveObject('user').id).then(function (response) {
+		publicationCollectionService.getFilters().then(function (response) {
 			response.data = angular.copy(response.data);
 			response.data.appointments.forEach(function(entry) {
 				if($scope.language.toUpperCase() === "FR")

@@ -5,14 +5,18 @@
  * Time: 8:44 AM
  */
 
-class OpalProject
+class Module
 {
     protected $opalDB;
+    protected $moduleId;
+    protected $read;
+    protected $write;
+    protected $delete;
 
     /*
      * constructor of the class
      * */
-    public function __construct($guestStatus = false) {
+    public function __construct($moduleId, $guestStatus = false) {
         $this->opalDB = new DatabaseOpal(
             OPAL_DB_HOST,
             OPAL_DB_NAME,
@@ -24,6 +28,7 @@ class OpalProject
             $guestStatus
         );
         $this->opalDB->setSessionId($_SESSION["sessionId"]);
+        $this->moduleId = $moduleId;
     }
 
     protected function _connectAsMain() {
@@ -37,6 +42,38 @@ class OpalProject
             $_SESSION["ID"],
             false
         );
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getModuleId()
+    {
+        return $this->moduleId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRead()
+    {
+        return $this->read;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWrite()
+    {
+        return $this->write;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDelete()
+    {
+        return $this->delete;
     }
 
     /*

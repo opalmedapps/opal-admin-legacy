@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns']).
 
-controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModal, $uibModalInstance, $state, educationalMaterialCollectionService, filterCollectionService, uiGridConstants, Session) {
+controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModal, $uibModalInstance, $state, educationalMaterialCollectionService, uiGridConstants, Session) {
 
 	// Default Booleans
 	$scope.changesMade = false; // changes have been made?

@@ -1,7 +1,11 @@
 <?php
 
 
-class CustomCode extends OpalProject {
+class CustomCode extends Module {
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_CUSTOM_CODE, $guestStatus);
+    }
 
     /*
      * Get the list of all custom codes

@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.educationalMaterial.add', ['ngAnimate', 'n
 /******************************************************************************
  * New Educational Material Page controller
  *******************************************************************************/
-controller('educationalMaterial.add', function ($scope, $filter, $state, $sce, $uibModal, educationalMaterialCollectionService, filterCollectionService, Session) {
+controller('educationalMaterial.add', function ($scope, $filter, $state, $sce, $uibModal, educationalMaterialCollectionService, Session) {
 
 	// Function to go to previous page
 	$scope.goBack = function () {

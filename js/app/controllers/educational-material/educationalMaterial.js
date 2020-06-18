@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.educationalMaterial', ['ngAnimate', 'ngSan
 	/******************************************************************************
 	 * Educational Material Page controller
 	 *******************************************************************************/
-	controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $state, educationalMaterialCollectionService, filterCollectionService, uiGridConstants, Session) {
+	controller('educationalMaterial', function ($scope, $filter, $sce, $uibModal, $state, educationalMaterialCollectionService, uiGridConstants, Session) {
 
 
 		// Function to go to add educational material page
