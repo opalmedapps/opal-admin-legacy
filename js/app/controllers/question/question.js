@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns'])
 
-	.controller('question', function ($scope, $state, $filter, $uibModal, $translate, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
+	.controller('question', function ($scope, $state, $filter, $uibModal, $translate, questionnaireCollectionService, uiGridConstants, Session) {
 
 		// Routing to go to add question page
 		$scope.goToAddQuestion = function () {

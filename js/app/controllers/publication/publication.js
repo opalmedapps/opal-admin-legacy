@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular'])
 
-	.controller('publication', function ($sce, $scope, $state, $filter, $timeout, $uibModal, publicationCollectionService, filterCollectionService, Session, uiGridConstants) {
+	.controller('publication', function ($sce, $scope, $state, $filter, $timeout, $uibModal, publicationCollectionService, Session, uiGridConstants) {
 
 		// get current user id
 		var user = Session.retrieveObject('user');

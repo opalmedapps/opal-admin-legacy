@@ -4,7 +4,7 @@
  * Rolse class objects and method
  * */
 
-class Role extends OpalProject {
+class Role extends Module {
 
     /*
      * This function returns the list of available roles for opalAdmin.

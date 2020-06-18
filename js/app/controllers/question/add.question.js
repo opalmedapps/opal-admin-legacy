@@ -1,5 +1,5 @@
 angular.module('opalAdmin.controllers.question.add', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.bootstrap.materialPicker']).
-controller('question.add', function ($scope, $state, $filter, $uibModal, Session, filterCollectionService, questionnaireCollectionService) {
+controller('question.add', function ($scope, $state, $filter, $uibModal, Session, questionnaireCollectionService) {
 	// navigation function
 	$scope.goBack = function () {
 		$state.go('questionnaire');

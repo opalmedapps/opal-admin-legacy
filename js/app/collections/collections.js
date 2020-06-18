@@ -487,27 +487,6 @@ angular.module('opalAdmin.collections', [])
 		return patientAPI;
 	})
 
-	// Filter API service
-	.factory('filterCollectionService', function ($http) {
-
-		var filterAPI = {};
-
-		// Function to get all filters
-		filterAPI.getFilters = function (OAUserId) {
-			return $http.post(
-				"filter/get/filters",
-				$.param({
-					OAUserId: OAUserId,
-				}),
-				{
-					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
-				}
-			);
-		};
-
-		return filterAPI;
-	})
-
 	// Test Result API service
 	.factory('testResultCollectionService', function ($http) {
 
@@ -971,6 +950,15 @@ angular.module('opalAdmin.collections', [])
 					OAUserId: OAUserId,
 					cronIds: JSON.stringify(cronIds),
 				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		publicationAPI.getFilters = function () {
+			return $http.post(
+				"publication/get/filters",
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}

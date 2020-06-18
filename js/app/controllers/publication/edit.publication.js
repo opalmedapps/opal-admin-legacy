@@ -1,4 +1,4 @@
-angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('publication.edit', function ($scope, $state, $filter, $uibModal, $uibModalInstance, $locale, publicationCollectionService, filterCollectionService, FrequencyFilterService, Session) {
+angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('publication.edit', function ($scope, $state, $filter, $uibModal, $uibModalInstance, $locale, publicationCollectionService, FrequencyFilterService, Session) {
 
 	// initialize default variables & lists
 	$scope.toSubmit = {
@@ -227,7 +227,7 @@ angular.module('opalAdmin.controllers.publication.edit', ['ngAnimate', 'ngSaniti
 	$scope.showProcessingModal();
 
 	// Call our API service to get each trigger
-	filterCollectionService.getFilters(Session.retrieveObject('user').id).then(function (response) {
+	publicationCollectionService.getFilters(Session.retrieveObject('user').id).then(function (response) {
 		response.data = angular.copy(response.data);
 		response.data.appointments.forEach(function(entry) {
 			if($scope.language.toUpperCase() === "FR")

@@ -1,4 +1,4 @@
-angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('questionnaire.add', function ($scope, $state, $filter, $uibModal, questionnaireCollectionService, filterCollectionService, Session, uiGridConstants) {
+angular.module('opalAdmin.controllers.questionnaire.add', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.resizeColumns']).controller('questionnaire.add', function ($scope, $state, $filter, $uibModal, questionnaireCollectionService, Session, uiGridConstants) {
 
 	// navigation function
 	$scope.goBack = function () {

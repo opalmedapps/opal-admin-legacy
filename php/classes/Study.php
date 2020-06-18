@@ -4,7 +4,11 @@
  * Study class objects and method
  * */
 
-class Study extends OpalProject {
+class Study extends Module {
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_STUDY, $guestStatus);
+    }
 
     /*
      * This function returns the list of available studies for opalAdmin.
