@@ -5,10 +5,9 @@ include_once('questionnaire.inc');
 
 // Retrieve FORM param
 $serNum = strip_tags($_POST['ID']);
-$OAUserId = strip_tags($_POST['OAUserId']);
 
 // Call function
-$questionObj = new Question($OAUserId); // Object
+$questionObj = new Question(); // Object
 $response = $questionObj->deleteQuestion($serNum);
 
 print json_encode($response); // Return response

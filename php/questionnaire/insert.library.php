@@ -9,8 +9,7 @@ $libraryArray = array(
     'private' => strip_tags($_POST['private'])
 );
 
-$OAUserId = strip_tags($_POST['OAUserId']);
-$libraryObj = new Library($OAUserId); // Object
+$libraryObj = new Library(); // Object
 
 // Call function
 $libraryObj->insertLibrary($libraryArray);

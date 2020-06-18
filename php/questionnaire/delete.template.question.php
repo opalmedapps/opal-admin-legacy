@@ -5,10 +5,9 @@ include_once('questionnaire.inc');
 
 // Retrieve FORM param
 $templateQuestionId = strip_tags($_POST['ID']);
-$OAUserId = strip_tags($_POST['OAUserId']);
 
 // Call function
-$templateQuestionObj = new TemplateQuestion($OAUserId); // Object
+$templateQuestionObj = new TemplateQuestion(); // Object
 
 $response = $templateQuestionObj->deleteTemplateQuestion($templateQuestionId);
 
