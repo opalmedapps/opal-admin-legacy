@@ -1,8 +1,8 @@
 <?php
 
-include_once('filter.inc');
+include_once('publication.inc');
 
-$filter = new Filter();
+$filter = new Publication();
 $result = $filter->getFilters();
 
 header('Content-Type: application/javascript');

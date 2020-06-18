@@ -2,7 +2,11 @@
 /**
  * User class to validate its identity and access levels
  */
-class User extends OpalProject {
+class User extends Module {
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_USER, $guestStatus);
+    }
 
     /*
      * Validate the number of results of authentication. If different than one, returns an exception. If one result,
