@@ -156,15 +156,18 @@ define("HTTP_STATUS_FORBIDDEN_ERROR",403);
 define("HTTP_STATUS_SESSION_TIMEOUT_ERROR",419);
 define("HTTP_STATUS_LOGIN_TIMEOUT_ERROR",440);
 
-define("PHP_SESSION_TIMEOUT", 30);
 /*
- * Miscellaneous constants
+ * PHP Sessions config
  * */
-define("DEFAULT_FIELD", "");
+define("PHP_SESSION_TIMEOUT", 1800);
 
+/*
+ * If the session expire, force the front end to display the login page. Otherwise, update the timer.
+ * */
 if (isset($_SESSION['lastActivity']) && (time() - $_SESSION['lastActivity'] > PHP_SESSION_TIMEOUT)) {
     $user = new User();
     $user->userLogout();
+    HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR);
 }
 else
     $_SESSION['lastActivity'] = time(); // update last activity time stamp
@@ -172,7 +175,6 @@ else
 if (!isset($_SESSION['created'])) {
     $_SESSION['created'] = time();
 } else if (time() - $_SESSION['created'] > PHP_SESSION_TIMEOUT) {
-    // session started more than 30 minutes ago
-    session_regenerate_id(true);    // change session ID for the current session and invalidate old session ID
-    $_SESSION['created'] = time();  // update creation time
+    session_regenerate_id(true);
+    $_SESSION['created'] = time();
 }

@@ -1,9 +1,7 @@
 <?php
 include_once('user.inc');
 
-$OAUserId = strip_tags($_POST["OAUserId"]);
-
-$userObject = new User($OAUserId);  // Object
+$userObject = new User();  // Object
 $response = $userObject->updateLanguage($_POST);
 
 header('Content-Type: application/json');

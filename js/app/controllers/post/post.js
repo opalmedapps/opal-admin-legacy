@@ -166,52 +166,6 @@ controller('post', function ($scope, $filter, $sce, $state, $uibModal, postColle
 		post.changed = 1; // flag change to this post
 	};
 
-	// Function to submit changes when flags have been modified
-	$scope.submitFlags = function () {
-		if ($scope.changesMade) {
-			angular.forEach($scope.postList, function (post) {
-				if (post.changed) {
-					$scope.postFlags.flagList.push({
-						serial: post.serial,
-						publish: post.publish,
-						disabled: post.disabled
-					});
-				}
-			});
-			// Log who updated post flags
-			var currentUser = Session.retrieveObject('user');
-			$scope.postFlags.user = currentUser;
-			// Submit form
-			$.ajax({
-				type: "POST",
-				url: "post/update/post-publish-flags",
-				data: $scope.postFlags,
-				success: function (response) {
-					// Call our API to get the list of existing posts
-					getPostsList();
-					response = JSON.parse(response);
-					// Show success or failure depending on response
-					if (response.value) {
-						$scope.setBannerClass('success');
-						$scope.bannerMessage = $filter('translate')('POSTS.LIST.SUCCESS_FLAGS');
-						$scope.postFlags = {
-							flagList: []
-						};
-						$scope.showBanner();
-					}
-					else {
-						alert(response.message);
-					}
-					$scope.changesMade = false;
-					$scope.postFlags.flagList = [];
-				},
-				error: function() {
-					alert($filter('translate')('POSTS.LIST.ERROR_FLAGS'));
-				}
-			});
-		}
-	};
-
 	function getPostsList() {
 		postCollectionService.getPosts(Session.retrieveObject('user').id).then(function (response) {
 			response.data.forEach(function (row) {
