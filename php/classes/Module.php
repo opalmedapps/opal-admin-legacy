@@ -29,6 +29,16 @@ class Module
         );
         $this->opalDB->setSessionId($_SESSION["sessionId"]);
         $this->moduleId = $moduleId;
+
+        if(!$guestStatus) {
+            if (!$_SESSION["userAccess"][$moduleId])
+                HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Module session cannot be found. Please contact your administrator.");
+            $this->read = intval($_SESSION["userAccess"][$moduleId]["read"]);
+            $this->write = intval($_SESSION["userAccess"][$moduleId]["write"]);
+            $this->delete = intval($_SESSION["userAccess"][$moduleId]["delete"]);
+            if (!$this->read && !$this->write && !$this->delete)
+                HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Unauthorized access to the module. Please contact your administrator.");
+        }
     }
 
     protected function _connectAsMain() {
