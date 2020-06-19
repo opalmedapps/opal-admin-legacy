@@ -86,9 +86,10 @@ class User extends Module {
 //            $result["language"] = $_SESSION["language"];
 //            $result["role"] = $_SESSION["role"];
 //            $result["sessionid"] = $_SESSION['sessionId'];
+//            $result["userAccess"] = $_SESSION["userAccess"];
 //            return $result;
 //        }
-
+        $userAccess = array();
         $post = HelpSetup::arraySanitization($post);
         $cypher = $post["cypher"];
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
@@ -113,6 +114,22 @@ class User extends Module {
         $_SESSION['created'] = time();
 
         $this->_connectAsMain();
+        $tempAccess = $this->opalDB->getUserAccess($result["role"]);
+        if(count($tempAccess) <= 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "No access found. Please contact your administrator.");
+        foreach($tempAccess as $access) {
+            if(!HelpSetup::validateBitOperation($access["operation"],$access["access"]))
+                HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access violation role-module. Please contact your administrator.");
+            $userAccess[$access["ID"]] =
+                array(
+                    "ID"=>$access["ID"],
+                    "read"=>(intval($access["access"]) >> 0) & 1,
+                    "write"=>(intval($access["access"]) >> 1) & 1,
+                    "delete"=>(intval($access["access"]) >> 2) & 1,
+                );
+        }
+        $_SESSION["userAccess"] = $userAccess;
+        $result["userAccess"] = $_SESSION["userAccess"];
         $result["sessionid"] = $_SESSION['sessionId'];
         $this->logActivity($result["id"], $_SESSION['sessionId'], 'Login');
 
