@@ -19,7 +19,7 @@ class DatabaseOpal extends DatabaseAccess {
             if($_SESSION["ID"] && $_SESSION["ID"] == $newOAUserId) {
                 $this->OAUserId = $_SESSION["ID"];
                 $this->username = $_SESSION["username"];
-                $this->userRole = $_SESSION["role"];
+                $this->userRole = $_SESSION["roleId"];
             }
             else {
                 $userInfo = $this->_getUserInfoFromDB($newOAUserId);
@@ -1405,6 +1405,15 @@ class DatabaseOpal extends DatabaseAccess {
             "ID"=>$roleId,
             "deletedBy"=>$this->getUsername(),
             "updatedBy"=>$this->getUsername(),
+        ));
+    }
+
+    /*
+     * Get access level for a specific combo or role/module
+     * */
+    function getUserAccess($roleId) {
+        return $this->_fetchAll(OPAL_GET_USER_ACCESS, array(
+            array("parameter"=>":oaRoleId","variable"=>$roleId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 }

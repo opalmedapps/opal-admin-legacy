@@ -109,7 +109,7 @@ class HelpSetup {
      * "Delete | Write | Read".
      * @params  $authorized : int - The authorized operations
      *          $requested : int - The requested operations to test
-     *          $length : int - The length to test
+     *          $length : int - The length to test - min value is 0. Default is 2.
      * */
     public static function validateBitOperation($authorized, $requested, $length = 2) {
         $correct = true;

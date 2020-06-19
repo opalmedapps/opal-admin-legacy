@@ -6,6 +6,10 @@
 
 class Role extends Module {
 
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_ROLE, $guestStatus);
+    }
+
     /*
      * This function returns the list of available roles for opalAdmin.
      * TODO add lazy loading with pagination
@@ -13,6 +17,8 @@ class Role extends Module {
      * @return  array of studies
      * */
     public function getRoles() {
+        if(!$this->getRead()) HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
+
         return $this->opalDB->getRoles();
     }
 
@@ -22,6 +28,8 @@ class Role extends Module {
      * @returns $roleDetails : array - contains the role details (names and list of operations)
      * */
     public function getRoleDetails($roleId) {
+        if(!$this->getRead()) HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
+
         $roleDetails = $this->opalDB->getRoleDetails($roleId);
         if(count($roleDetails) != 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot get role details.");
@@ -42,6 +50,8 @@ class Role extends Module {
      * @return  array of available module
      * */
     public function getAvailableModules() {
+        if(!$this->getRead()) HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
+
         return $this->opalDB->getAvailableRolesModules();
     }
 
@@ -52,6 +62,8 @@ class Role extends Module {
      * @return  void
      * */
     public function insertRole($post) {
+        if(!$this->getWrite()) HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
+
         $recordsToInsert = array();
         $role = HelpSetup::arraySanitization($post);
         $result = $this->_validateRole($role);
@@ -135,6 +147,8 @@ class Role extends Module {
      * @return  void
      * */
     public function updateRole($post) {
+        if(!$this->getWrite()) HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
+
         $totalUpdated = 0;
         $optionsToKeep = array();
         $optionsToAdd = array();
@@ -215,6 +229,8 @@ class Role extends Module {
      * @return  int - number of record marked or error 500 if an error occurred.
      */
     public function deleteRole($roleId) {
+        if(!$this->getDelete()) HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
+
         $currentRole = $this->getRoleDetails($roleId);
         if(!$currentRole["ID"] || $currentRole["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Role not found.");

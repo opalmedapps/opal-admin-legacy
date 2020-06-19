@@ -719,3 +719,8 @@ define("OPAL_FORCE_UPDATE_UPDATEDBY",
 define("OPAL_MARK_ROLE_AS_DELETED", "
     UPDATE ".OPAL_OA_ROLE_TABLE." SET deleted = ".DELETED_RECORD.", updatedBy = :updatedBy , deletedBy = :deletedBy WHERE ID = :ID;
 ");
+
+define("OPAL_GET_USER_ACCESS","
+    SELECT m.ID, m.operation, (CASE WHEN active = 1 THEN COALESCE(p.access,0) WHEN active = 0 THEN 0 END) AS access
+    FROM ".OPAL_MODULE_TABLE." m LEFT JOIN ((SELECT * FROM ".OPAL_OA_ROLE_MODULE_TABLE." rm WHERE rm.oaRoleId = :oaRoleId) AS p) ON p.moduleId = m.ID;
+");
