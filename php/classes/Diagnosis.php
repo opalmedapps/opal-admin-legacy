@@ -76,8 +76,7 @@ class Diagnosis extends Module {
             }
 
             if ($eduMatSer != 0) {
-                $eduMatObj = new EduMaterial();
-                $eduMat = $eduMatObj->getEducationalMaterialDetails($eduMatSer);
+                $eduMat = $this->_getEducationalMaterialDetails($eduMatSer);
             }
 
             $diagnosisTranslationDetails = array(
@@ -339,8 +338,7 @@ class Diagnosis extends Module {
                 }
 
                 if ($eduMatSer != 0) {
-                    $eduMatObj = new EduMaterial();
-                    $eduMat = $eduMatObj->getEducationalMaterialDetails($eduMatSer);
+                    $eduMat = $this->_getEducationalMaterialDetails($eduMatSer);
                 }
 
                 $diagnosisTranslationDetails = array(

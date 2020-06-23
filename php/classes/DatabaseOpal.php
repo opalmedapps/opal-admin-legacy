@@ -1426,4 +1426,15 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":ParentSerNum","variable"=>$eduId,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    function getEduMaterialDetails($eduId) {
+        return $this->_fetch(OPAL_GET_EDU_MATERIAL_DETAILS, array(
+            array("parameter"=>":EducationalMaterialControlSerNum","variable"=>$eduId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function getEduMaterialLogs($listIds) {
+        $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_EDU_MATERIAL_MH);
+        return $this->_fetchAll($sql, array());
+    }
 }
