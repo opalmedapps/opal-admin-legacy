@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.alias.edit', [])
 
-	.controller('alias.edit', function ($scope, $uibModal, $uibModalInstance, $filter, aliasCollectionService, educationalMaterialCollectionService, Session, hospitalMapCollectionService) {
+	.controller('alias.edit', function ($scope, $uibModal, $uibModalInstance, $filter, aliasCollectionService, Session, hospitalMapCollectionService) {
 
 		// Default Booleans
 		$scope.changesMade = false; // changes have been made? 
@@ -59,7 +59,7 @@ angular.module('opalAdmin.controllers.alias.edit', [])
 		};
 
 		// Call our API service to get the list of educational material
-		educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+		aliasCollectionService.getEducationalMaterials().then(function (response) {
 			response.data.forEach(function(entry) {
 				if($scope.language.toUpperCase() === "FR") {
 					entry.name_display = entry.name_FR;

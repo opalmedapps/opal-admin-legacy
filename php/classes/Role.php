@@ -17,7 +17,7 @@ class Role extends Module {
      * @return  array of studies
      * */
     public function getRoles() {
-        if(!$this->getRead()) HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
+        $this->checkReadAccess();
 
         return $this->opalDB->getRoles();
     }
@@ -28,7 +28,7 @@ class Role extends Module {
      * @returns $roleDetails : array - contains the role details (names and list of operations)
      * */
     public function getRoleDetails($roleId) {
-        if(!$this->getRead()) HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
+        $this->checkReadAccess();
 
         $roleDetails = $this->opalDB->getRoleDetails($roleId);
         if(count($roleDetails) != 1)
@@ -50,7 +50,7 @@ class Role extends Module {
      * @return  array of available module
      * */
     public function getAvailableModules() {
-        if(!$this->getRead()) HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
+        $this->checkReadAccess();
 
         return $this->opalDB->getAvailableRolesModules();
     }
@@ -62,7 +62,7 @@ class Role extends Module {
      * @return  void
      * */
     public function insertRole($post) {
-        if(!$this->getWrite()) HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
+        $this->checkWriteAccess();
 
         $recordsToInsert = array();
         $role = HelpSetup::arraySanitization($post);
@@ -147,7 +147,7 @@ class Role extends Module {
      * @return  void
      * */
     public function updateRole($post) {
-        if(!$this->getWrite()) HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
+        $this->checkWriteAccess();
 
         $totalUpdated = 0;
         $optionsToKeep = array();
@@ -229,7 +229,7 @@ class Role extends Module {
      * @return  int - number of record marked or error 500 if an error occurred.
      */
     public function deleteRole($roleId) {
-        if(!$this->getDelete()) HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
+        $this->checkDeleteAccess();
 
         $currentRole = $this->getRoleDetails($roleId);
         if(!$currentRole["ID"] || $currentRole["ID"] == "")

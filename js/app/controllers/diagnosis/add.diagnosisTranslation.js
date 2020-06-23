@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.add', ['ngAnimate', '
 /******************************************************************************
  * Add Diagnosis Translation Page controller
  *******************************************************************************/
-controller('diagnosisTranslation.add', function ($scope, $filter, $uibModal, diagnosisCollectionService, $state, educationalMaterialCollectionService, Session) {
+controller('diagnosisTranslation.add', function ($scope, $filter, $uibModal, diagnosisCollectionService, $state, Session) {
 
 	// Function to go to previous page
 	$scope.goBack = function () {
@@ -101,7 +101,7 @@ controller('diagnosisTranslation.add', function ($scope, $filter, $uibModal, dia
 	};
 
 	// Call our API service to get the list of educational material
-	educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+	diagnosisCollectionService.getEducationalMaterials().then(function (response) {
 		response.data.forEach(function(entry) {
 			if($scope.language.toUpperCase() === "FR")
 				entry.name_display = entry.name_FR;

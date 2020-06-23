@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.diagnosisTranslation', ['ngAnimate', 'ui.b
 /******************************************************************************
  * Diagnosis Translation Page controller
  *******************************************************************************/
-controller('diagnosisTranslation', function ($scope, $filter, $uibModal, diagnosisCollectionService, educationalMaterialCollectionService, uiGridConstants, $state, Session) {
+controller('diagnosisTranslation', function ($scope, $filter, $uibModal, $state, diagnosisCollectionService, uiGridConstants, Session) {
 
 	// Function to go to add diagnosis page
 	$scope.goToAddDiagnosisTranslation = function () {

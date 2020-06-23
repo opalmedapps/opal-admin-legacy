@@ -139,6 +139,16 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
+		// Function to get alias log list details given an array of serial numbers
+		aliasAPI.getEducationalMaterials = function () {
+			return $http.post(
+				"alias/get/educational-materials",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
 		return aliasAPI;
 	})
 
@@ -506,6 +516,15 @@ angular.module('opalAdmin.collections', [])
 		testResultAPI.getTestNames = function () {
 			return $http.post(
 				"test-result/get/test-names",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		testResultAPI.getEducationalMaterials = function () {
+			return $http.post(
+				"test-result/get/get/educational-materials",
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
 				}
@@ -1116,6 +1135,17 @@ angular.module('opalAdmin.collections', [])
 				}
 			);
 		};
+
+		// Function to get existing diagnosis translations
+		diagnosisAPI.getEducationalMaterials = function () {
+			return $http.post(
+				"diagnosis-translation/get/educational-materials",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
 
 		// Function to get diagnosis translation details
 		diagnosisAPI.getDiagnosisTranslationDetails = function (serial) {

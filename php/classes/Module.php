@@ -9,9 +9,7 @@ class Module
 {
     protected $opalDB;
     protected $moduleId;
-    protected $read;
-    protected $write;
-    protected $delete;
+    protected $access;
 
     /*
      * constructor of the class
@@ -33,11 +31,7 @@ class Module
         if(!$guestStatus) {
             if (!$_SESSION["userAccess"][$moduleId])
                 HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Module session cannot be found. Please contact your administrator.");
-            $this->read = intval($_SESSION["userAccess"][$moduleId]["read"]);
-            $this->write = intval($_SESSION["userAccess"][$moduleId]["write"]);
-            $this->delete = intval($_SESSION["userAccess"][$moduleId]["delete"]);
-            if (!$this->read && !$this->write && !$this->delete)
-                HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Unauthorized access to the module. Please contact your administrator.");
+            $this->access = intval($_SESSION["userAccess"][$moduleId]["access"]);
         }
     }
 
@@ -54,36 +48,42 @@ class Module
         );
     }
 
-    /**
-     * @return mixed
-     */
     public function getModuleId()
     {
         return $this->moduleId;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getRead()
+    public function checkReadAccess()
     {
-        return $this->read;
+        if(!(($this->access >> 0) & 1))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
+        return false;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getWrite()
+    public function checkWriteAccess()
     {
-        return $this->write;
+        if(!(($this->access >> 1) & 1))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
+        return false;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getDelete()
+    public function checkDeleteAccess()
     {
-        return $this->delete;
+        if(!(($this->access >> 2) & 1))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
+        return false;
+    }
+
+    public function getRead() {
+        return (($this->access >> 0) & 1);
+    }
+
+    public function getWrite() {
+        return (($this->access >> 1) & 1);
+    }
+
+    public function getDelete() {
+        return (($this->access >> 2) & 1);
     }
 
     /*
@@ -93,5 +93,14 @@ class Module
      * */
     public function getPublicationModulesUser() {
         return $this->opalDB->getPublicationModulesUser();
+    }
+
+    protected function _getListEduMaterial() {
+        $results = $this->opalDB->getEducationalMaterial();
+        foreach($results as &$row) {
+            $row["tocs"] = $this->opalDB->getTocsContent($row["serial"]);
+        }
+
+        return $results;
     }
 }
