@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.testResult.log', ['ngAnimate', 'ngSanitize
 /******************************************************************************
  * Controller for the test result logs
  *******************************************************************************/
-controller('testResult.log', function ($scope, $uibModal, $filter, testResultCollectionService, Session, $uibModalInstance) {
+controller('testResult.log', function ($scope, $uibModal, $filter, $uibModalInstance, testResultCollectionService, Session) {
 
 	// Call our API to get alias logs
 	testResultCollectionService.getTestResultChartLogs($scope.currentTestResult.serial).then(function (response) {

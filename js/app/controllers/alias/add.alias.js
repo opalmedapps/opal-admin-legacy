@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 /******************************************************************************
  * Add Alias Page controller
  *******************************************************************************/
-controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionService, $state, educationalMaterialCollectionService, Session, hospitalMapCollectionService) {
+controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionService, $state, Session, hospitalMapCollectionService) {
 
 	// Function to go to previous page
 	$scope.goBack = function () {
@@ -116,7 +116,7 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 	};
 
 	// Call our API service to get the list of educational material
-	educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+	aliasCollectionService.getEducationalMaterials().then(function (response) {
 		response.data.forEach(function(entry) {
 			if($scope.language.toUpperCase() === "FR")
 				entry.name_display = entry.name_FR;

@@ -4,7 +4,12 @@
  * TestResult class
  *
  */
-class TestResult {
+class TestResult extends Module {
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_TEST_RESULTS, $guestStatus);
+    }
+
 
     /**
      *
@@ -1149,5 +1154,10 @@ class TestResult {
             }
         }
         return $assignedTest;
+    }
+
+    public function getEducationalMaterials() {
+        $this->checkReadAccess();
+        return $this->_getListEduMaterial();
     }
 }

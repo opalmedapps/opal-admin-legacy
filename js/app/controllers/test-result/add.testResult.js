@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.testResult.add', ['ngAnimate', 'ngSanitize
 /******************************************************************************
  * Add Test Result Page controller
  *******************************************************************************/
-controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal, testResultCollectionService, educationalMaterialCollectionService, Session) {
+controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal, testResultCollectionService, Session) {
 
 	// Function to go to previous page
 	$scope.goBack = function () {
@@ -108,7 +108,7 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 	};
 
 	// Call our API service to get the list of educational material
-	educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+	testResultCollectionService.getEducationalMaterials().then(function (response) {
 		response.data.forEach(function(entry) {
 			if(Session.retrieveObject('user').language.toUpperCase() === "FR")
 				entry.name_display = entry.name_FR;

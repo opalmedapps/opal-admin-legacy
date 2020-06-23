@@ -5,6 +5,6 @@ include_once('educational-material.inc');
 
 $serial = strip_tags($_POST['serial']);
 $eduMat = new EduMaterial; // Object
-$eduMatDetails = $eduMat->getEducationalMaterialDetails($serial);
+$eduMatDetails = $eduMat->getEducationalMaterialDetailsAPI($serial);
 
 echo json_encode($eduMatDetails);

@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
 /******************************************************************************
  * Test Result Page controller
  *******************************************************************************/
-controller('testResult', function ($scope, $filter, $sce, $state, $uibModal, testResultCollectionService, educationalMaterialCollectionService, Session) {
+controller('testResult', function ($scope, $filter, $sce, $state, $uibModal, testResultCollectionService, Session) {
 
 	// Function to go to add test result page
 	$scope.goToAddTestResult = function () {

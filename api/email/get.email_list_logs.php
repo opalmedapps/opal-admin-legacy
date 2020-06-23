@@ -5,6 +5,6 @@ include_once('email.inc');
 
 $serials = json_decode($_POST['serials']);
 $email = new Email; // Object
-$emailLogs = $email->getEmailListLogs($serials);
+$emailLogs = $email->getEmailListLogsAPI($serials);
 
 echo json_encode($emailLogs);
