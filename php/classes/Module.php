@@ -103,4 +103,15 @@ class Module
 
         return $results;
     }
+
+    protected function _getEducationalMaterialDetails($eduId) {
+        $results = $this->opalDB->getEduMaterialDetails($eduId);
+        $results["tocs"] = $this->opalDB->getTocsContent($results["serial"]);
+
+        return $results;
+    }
+
+    protected function _getEducationalMaterialListLogs($eduIds) {
+        return $this->opalDB->getEduMaterialLogs($eduIds);
+    }
 }

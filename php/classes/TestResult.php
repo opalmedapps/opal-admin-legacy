@@ -122,8 +122,7 @@ class TestResult extends Module {
             }
 
             if ($eduMatSer != 0) {
-                $eduMatObj = new EduMaterial();
-                $eduMat = $eduMatObj->getEducationalMaterialDetails($eduMatSer);
+                $eduMat = $this->_getEducationalMaterialDetails($eduMatSer);
             }
 
             $sql = "
@@ -576,8 +575,7 @@ class TestResult extends Module {
                 }
 
                 if ($eduMatSer != 0) {
-                    $eduMatObj = new EduMaterial();
-                    $eduMat = $eduMatObj->getEducationalMaterialDetails($eduMatSer);
+                    $eduMat = $this->_getEducationalMaterialDetails($eduMatSer);
                 }
 
                 $sql = "
