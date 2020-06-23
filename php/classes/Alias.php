@@ -374,8 +374,7 @@ class Alias extends Module {
                 }
 
                 if ($aliasEduMatSer != 0) {
-                    $eduMatObj = new EduMaterial();
-                    $aliasEduMat = $eduMatObj->getEducationalMaterialDetails($aliasEduMatSer);
+                    $aliasEduMat = $this->_getEducationalMaterialDetails($aliasEduMatSer);
                 }
 
                 $aliasArray = array(
@@ -494,8 +493,7 @@ class Alias extends Module {
             }
 
             if ($aliasEduMatSer) {
-                $eduMatObj = new EduMaterial();
-                $aliasEduMat = $eduMatObj->getEducationalMaterialDetails($aliasEduMatSer);
+                $aliasEduMat = $this->_getEducationalMaterialDetails($aliasEduMatSer);
             }
 
             if ($hospitalMapSer) {

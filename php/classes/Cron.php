@@ -3,7 +3,11 @@
  * Cron class
  *
  */
-class Cron {
+class Cron extends Module {
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_CRON_LOG, $guestStatus);
+    }
 
     /**
      *
@@ -684,7 +688,6 @@ class Cron {
 
     	$anAlias = new Alias();
     	$aPost = new Post();
-    	$anEduMaterial = new EduMaterial();
     	$anEmail = new Email();
     	$aQuestionnaire = new Questionnaire();
     	$aNotification = new Notification();
@@ -696,7 +699,7 @@ class Cron {
    		$cronLogs['announcement'] = (!empty($contents['Announcement'])) ? $aPost->getPostListLogs($contents['Announcement'], 'Announcement') : array();
    		$cronLogs['txTeamMessage'] = (!empty($contents['Treatment Team Message'])) ? $aPost->getPostListLogs($contents['Treatment Team Message'], 'Treatment Team Message') : array();
    		$cronLogs['pfp'] = (!empty($contents['Patients for Patients'])) ? $aPost->getPostListLogs($contents['Patients for Patients'], 'Patients for Patients') : array();
-   		$cronLogs['educationalMaterial'] = (!empty($contents['Educational Material'])) ? $anEduMaterial->getEducationalMaterialListLogs($contents['Educational Material']) : array();
+   		$cronLogs['educationalMaterial'] = (!empty($contents['Educational Material'])) ? $this->_getEducationalMaterialListLogs($contents['Educational Material']) : array();
    		$cronLogs['email'] = (!empty($contents['Email'])) ? $anEmail->getEmailListLogs($contents['Email']) : array();
         $cronLogs['legacyQuestionnaire'] = (!empty($contents['Legacy Questionnaire'])) ? $aQuestionnaire->getQuestionnaireListLogs($contents['Legacy Questionnaire']) : array();
         $cronLogs['notification'] = (!empty($contents['Notification'])) ? $aNotification->getNotificationListLogs($contents['Notification']) : array();
