@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 /******************************************************************************
  * Alias Page controller
  *******************************************************************************/
-controller('alias', function ($scope, $uibModal, $filter, aliasCollectionService, educationalMaterialCollectionService, uiGridConstants, $state, Session) {
+controller('alias', function ($scope, $uibModal, $filter, aliasCollectionService, uiGridConstants, $state, Session) {
 
 	// Function to go to add alias page
 	$scope.goToAddAlias = function () {

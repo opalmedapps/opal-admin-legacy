@@ -123,9 +123,10 @@ class User extends Module {
             $userAccess[$access["ID"]] =
                 array(
                     "ID"=>$access["ID"],
-                    "read"=>(intval($access["access"]) >> 0) & 1,
-                    "write"=>(intval($access["access"]) >> 1) & 1,
-                    "delete"=>(intval($access["access"]) >> 2) & 1,
+                    "access"=>$access["access"],
+//                    "read"=>(intval($access["access"]) >> 0) & 1,
+//                    "write"=>(intval($access["access"]) >> 1) & 1,
+//                    "delete"=>(intval($access["access"]) >> 2) & 1,
                 );
         }
         $_SESSION["userAccess"] = $userAccess;

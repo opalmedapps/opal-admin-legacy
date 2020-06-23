@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.diagnosisTranslation.edit', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $uibModalInstance, diagnosisCollectionService, educationalMaterialCollectionService, uiGridConstants, $state, Session) {
+controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $uibModalInstance, $state, diagnosisCollectionService, uiGridConstants, Session) {
 
 
 	// Default booleans
@@ -32,7 +32,7 @@ controller('diagnosisTranslation.edit', function ($scope, $filter, $uibModal, $u
 	$scope.eduMatFilter = null;
 
 	// Call our API service to get the list of educational material
-	educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+	diagnosisCollectionService.getEducationalMaterials().then(function (response) {
 		response.data.forEach(function(entry) {
 			if($scope.language.toUpperCase() === "FR") {
 				entry.name_display = entry.name_FR;

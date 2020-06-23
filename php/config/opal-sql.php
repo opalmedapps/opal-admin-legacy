@@ -50,6 +50,7 @@ define("OPAL_TX_TEAM_MESSAGE_TABLE","TxTeamMessage");
 define("OPAL_ANNOUNCEMENT_TABLE","Announcement");
 define("OPAL_PATIENTS_FOR_PATIENTS_TABLE","PatientsForPatients");
 define("OPAL_EDUCATION_MATERIAL_TABLE","EducationalMaterialControl");
+define("OPAL_EDUCATION_MATERIAL_TOC_TABLE","EducationalMaterialTOC");
 define("OPAL_PHASE_IN_TREATMENT_TABLE","PhaseInTreatment");
 define("OPAL_ANNOUNCEMENT_MH_TABLE","AnnouncementMH");
 define("OPAL_TXT_TEAM_MSG_MH_TABLE","TxTeamMessageMH");
@@ -723,4 +724,37 @@ define("OPAL_MARK_ROLE_AS_DELETED", "
 define("OPAL_GET_USER_ACCESS","
     SELECT m.ID, m.operation, (CASE WHEN active = 1 THEN COALESCE(p.access,0) WHEN active = 0 THEN 0 END) AS access
     FROM ".OPAL_MODULE_TABLE." m LEFT JOIN ((SELECT * FROM ".OPAL_OA_ROLE_MODULE_TABLE." rm WHERE rm.oaRoleId = :oaRoleId) AS p) ON p.moduleId = m.ID;
+");
+
+define("OPAL_GET_EDUCATIONAL_MATERIAL","
+    SELECT DISTINCT
+    em.EducationalMaterialControlSerNum AS serial,
+    em.EducationalMaterialType_EN AS type_EN,
+    em.EducationalMaterialType_FR AS type_FR,
+    em.Name_EN AS name_EN,
+    em.Name_FR AS name_FR,
+    em.URL_EN AS url_EN,
+    em.URL_FR AS url_FR,
+    phase.PhaseInTreatmentSerNum AS phase_serial,
+    phase.Name_EN AS phase_EN,
+    phase.Name_FR AS phase_FR,
+    em.PublishFlag AS publish,
+    em.ParentFlag AS parentFlag,
+    em.ShareURL_EN AS share_url_EN,
+    em.ShareURL_FR AS share_url_FR,
+    em.LastUpdated AS lastupdated,
+    (SELECT COUNT(*) AS locked FROM ".OPAL_FILTERS_TABLE." f WHERE f.ControlTableSerNum = em.EducationalMaterialControlSerNum and ControlTable = '".OPAL_EDUCATION_MATERIAL_TABLE."') AS locked,
+    (case WHEN em.ParentFlag = 1 then (SELECT COALESCE(round(AVG(emr.RatingValue)), 0) FROM EducationalMaterialRating emr WHERE emr.EducationalMaterialControlSerNum = em.EducationalMaterialControlSerNum) ELSE 0 END) AS rating FROM ".OPAL_EDUCATION_MATERIAL_TABLE." em, ".OPAL_PHASE_IN_TREATMENT_TABLE." phase
+WHERE
+    phase.PhaseInTreatmentSerNum = em.PhaseInTreatmentSerNum
+AND
+    em.deleted = 0;
+");
+
+define("OPAL_GET_TOCS_EDU_MATERIAL","
+    SELECT DISTINCT em.EducationalMaterialControlSerNum AS serial, em.Name_EN AS name_EN, em.Name_FR AS name_FR,
+    toc.OrderNum AS `order`, em.EducationalMaterialType_EN AS type_EN, em.EducationalMaterialType_FR AS type_FR,
+    em.URL_EN AS url_EN, em.URL_FR AS url_FR FROM ".OPAL_EDUCATION_MATERIAL_TOC_TABLE." toc,
+    ".OPAL_EDUCATION_MATERIAL_TABLE." em WHERE toc.EducationalMaterialControlSerNum= em.EducationalMaterialControlSerNum
+    AND toc.ParentSerNum = :ParentSerNum ORDER BY toc.OrderNum
 ");

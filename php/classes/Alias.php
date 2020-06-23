@@ -4,7 +4,11 @@
  *   Alias class
  *
  */
-class Alias {
+class Alias extends Module {
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_ALIAS, $guestStatus);
+    }
 
     /**
      *
@@ -15,6 +19,8 @@ class Alias {
      * @return array $expressionList : the list of existing expressions
      */
     public function getExpressions ($sourceDBSer, $expressionType) {
+        $this->checkReadAccess();
+
         $results = array();
         $databaseObj = new Database();
 
@@ -79,6 +85,7 @@ class Alias {
      * @return array $diagnoses : the list of diagnoses
      */
     public function getAssignedExpressions ($sourceDBSer, $expressionType) {
+
         $expressions = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -127,6 +134,7 @@ class Alias {
      * @return array $response : response
      */
     public function updateAliasPublishFlags( $aliasList, $user ) {
+        $this->checkWriteAccess();
 
         // Initialize a response array
         $response = array(
@@ -230,6 +238,8 @@ class Alias {
      * @return array $colorTags : the list of existing color tags
      */
     public function getColorTags($aliasType) {
+        $this->checkReadAccess();
+
         $colorTags = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -281,6 +291,7 @@ class Alias {
      * @return array $aliasList : the list of existing aliases
      */
     public function getAliases() {
+        $this->checkReadAccess();
         $aliasList = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -403,7 +414,7 @@ class Alias {
      * @return array $aliasDetails : the alias details
      */
     public function getAliasDetails ($aliasSer) {
-
+        $this->checkReadAccess();
         $aliasDetails = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -527,6 +538,7 @@ class Alias {
      * @return void
      */
     public function insertAlias( $aliasDetails ) {
+        $this->checkWriteAccess();
 
         $aliasName_EN 	= $aliasDetails['name_EN'];
         $aliasName_FR 	= $aliasDetails['name_FR'];
@@ -671,6 +683,7 @@ class Alias {
      * @return array $response : response
      */
     public function deleteAlias( $aliasSer, $user ) {
+        $this->checkDeleteAccess();
 
         // Initialize a response array
         $response = array(
@@ -734,6 +747,7 @@ class Alias {
      * @return array $response : response
      */
     public function updateAlias( $aliasDetails ) {
+        $this->checkWriteAccess();
 
         $aliasName_EN 	= $aliasDetails['name_EN'];
         $aliasName_FR 	= $aliasDetails['name_FR'];
@@ -952,6 +966,7 @@ class Alias {
      * @return array $sourceDBList : the list of source databases
      */
     public function getSourceDatabases () {
+        $this->checkReadAccess();
         $sourceDBList = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -1050,6 +1065,8 @@ class Alias {
      * @return array $aliasLogs : the alias logs for highcharts
      */
     public function getAliasChartLogs ($serial, $type) {
+        $this->checkReadAccess();
+
         $aliasLogs = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -1319,6 +1336,8 @@ class Alias {
      * @return array $aliasLogs : the alias logs for table view
      */
     public function getAliasListLogs ($serials, $type) {
+        $this->checkReadAccess();
+
         $aliasLogs = array();
         $serials = implode(',', $serials);
         try {
@@ -1690,6 +1709,11 @@ class Alias {
             }
         }
         return $assignedAlias;
+    }
+
+    public function getEducationalMaterials() {
+        $this->checkReadAccess();
+        return $this->_getListEduMaterial();
     }
 
 }

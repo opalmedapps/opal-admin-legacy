@@ -38,14 +38,14 @@ class DatabaseOpal extends DatabaseAccess {
     protected function _getUserInfoFromDB($newOAUserId) {
         $newOAUserId = strip_tags($newOAUserId);
         if($newOAUserId == "" || $newOAUserId <= 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied. $newOAUserId");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
         $result = $this->_fetchAll(SQL_OPAL_SELECT_USER_INFO,
             array(
                 array("parameter"=>":OAUserSerNum","variable"=>$newOAUserId,"data_type"=>PDO::PARAM_INT),
             ));
 
         if (!is_array($result) || count($result) != 1) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied. $newOAUserId");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
         }
 
         return $result;
@@ -1414,6 +1414,16 @@ class DatabaseOpal extends DatabaseAccess {
     function getUserAccess($roleId) {
         return $this->_fetchAll(OPAL_GET_USER_ACCESS, array(
             array("parameter"=>":oaRoleId","variable"=>$roleId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function getEducationalMaterial() {
+        return $this->_fetchAll(OPAL_GET_EDUCATIONAL_MATERIAL, array());
+    }
+
+    function getTocsContent($eduId) {
+        return $this->_fetchAll(OPAL_GET_TOCS_EDU_MATERIAL, array(
+            array("parameter"=>":ParentSerNum","variable"=>$eduId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 }

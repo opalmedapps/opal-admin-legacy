@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.testResult.delete', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('testResult.delete', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, testResultCollectionService, educationalMaterialCollectionService, Session) {
+controller('testResult.delete', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, Session) {
 	// Submit delete
 	$scope.deleteTestResult = function () {
 		// Log who deleted test result

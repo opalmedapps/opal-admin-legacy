@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.diagnosisTranslation.delete', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('diagnosisTranslation.delete', function ($scope, $filter, $uibModal, $uibModalInstance, diagnosisCollectionService, educationalMaterialCollectionService, uiGridConstants, $state, Session) {
+controller('diagnosisTranslation.delete', function ($scope, $filter, $uibModal, $uibModalInstance, $state, uiGridConstants, Session) {
 
 	// Submit delete
 	$scope.deleteDiagnosisTranslation = function () {

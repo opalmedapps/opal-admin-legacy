@@ -4,7 +4,11 @@
  * Diagnosis class
  *
  */
-class Diagnosis {
+class Diagnosis extends Module {
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_DIAGNOSIS_TRANSLATION, $guestStatus);
+    }
 
     /**
      *
@@ -14,6 +18,8 @@ class Diagnosis {
      * @return array $diagnosisTranslationDetails : the diagnosis translation details
      */
     public function getDiagnosisTranslationDetails ($serial) {
+        $this->checkReadAccess();
+
         $diagnosisTranslationDetails = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -99,6 +105,7 @@ class Diagnosis {
      * @return array $diagnoses : the list of diagnoses
      */
     public function getDiagnoses() {
+        $this->checkReadAccess();
         try {
             $diagnoses = array();
             $databaseObj = new Database();
@@ -178,6 +185,7 @@ class Diagnosis {
      * @return void
      */
     public function insertDiagnosisTranslation ($diagnosisTranslationDetails) {
+        $this->checkWriteAccess();
 
         $name_EN 			= $diagnosisTranslationDetails['name_EN'];
         $name_FR 			= $diagnosisTranslationDetails['name_FR'];
@@ -269,6 +277,7 @@ class Diagnosis {
      * @return array $diagnosisTranslationList : the list of existing diagnosis translations
      */
     public function getExistingDiagnosisTranslations () {
+        $this->checkReadAccess();
 
         $diagnosisTranslationList = array();
 
@@ -364,6 +373,7 @@ class Diagnosis {
      */
 
     public function updateDiagnosisTranslation ($diagnosisTranslationDetails) {
+        $this->checkWriteAccess();
 
         $serial 			= $diagnosisTranslationDetails['serial'];
         $name_EN 			= $diagnosisTranslationDetails['name_EN'];
@@ -509,6 +519,7 @@ class Diagnosis {
      * @return array $response : response
      */
     public function deleteDiagnosisTranslation ($diagnosisTranslationSer, $user) {
+        $this->checkDeleteAccess();
 
         $response = array(
             'value'     => 0,
@@ -602,4 +613,8 @@ class Diagnosis {
         return $assignedDiagnosis;
     }
 
+    public function getEducationalMaterials() {
+        $this->checkReadAccess();
+        return $this->_getListEduMaterial();
+    }
 }

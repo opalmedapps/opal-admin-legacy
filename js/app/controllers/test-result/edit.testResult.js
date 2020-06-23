@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('testResult.edit', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, testResultCollectionService, educationalMaterialCollectionService, Session) {
+controller('testResult.edit', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, testResultCollectionService, Session) {
 
 	// Default Boolean
 	$scope.changesMade = false; // changes been made?
@@ -41,7 +41,7 @@ controller('testResult.edit', function ($scope, $filter, $sce, $state, $uibModal
 	$scope.eduMatFilter = null;
 
 	// Call our API service to get the list of educational material
-	educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+	testResultCollectionService.getEducationalMaterials().then(function (response) {
 		response.data.forEach(function(entry) {
 			if($scope.language.toUpperCase() === "FR") {
 				entry.name_display = entry.name_FR;
