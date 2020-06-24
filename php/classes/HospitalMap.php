@@ -5,7 +5,11 @@ include(FRONTEND_ABS_PATH.'php' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARA
  * HospitalMap class
  *
  */
-class HospitalMap {
+class HospitalMap extends Module {
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_HOSPITAL_MAP, $guestStatus);
+    }
 
     /**
      *
@@ -166,69 +170,16 @@ class HospitalMap {
 		}
 	}
 
-    /**
-     *
+    /*
      * Gets details on a particular hospital map
-     *
-     * @param integer $serial : the hospital map serial number
-     * @return array $hosMapDetails : the hospital map details
      */
-    public function getHospitalMapDetails ($serial) {
+    public function getHospitalMapDetails($serial) {
+        $hosMapDetails = $this->opalDB->getHospitalMapDetails(intval($serial));
+        $qr = $this->generateQRCode($hosMapDetails['qrid'], null);
+        $hosMapDetails['qrcode'] = $qr['qrcode'];
+        $hosMapDetails['qrpath'] = $qr['qrpath'];
 
-        $hosMapDetails = array();
-
-	    try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT
-                    hm.MapURL_EN,
-                    hm.MapURL_FR,
-                    hm.QRMapAlias,
-                    hm.MapName_EN,
-                    hm.MapDescription_EN,
-                    hm.MapName_FR,
-                    hm.MapDescription_FR
-                FROM
-                    HospitalMap hm
-                WHERE
-                    hm.HospitalMapSerNum = $serial
-            ";
-
-		    $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
-
-			$data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
-
-            $url_EN             = $data[0];
-            $url_FR             = $data[1];
-            $qrid               = $data[2];
-            $name_EN            = $data[3];
-            $description_EN     = $data[4];
-            $name_FR            = $data[5];
-            $description_FR     = $data[6];
-            $qr = $this->generateQRCode($qrid, null);
-            $qrcode = $qr['qrcode'];
-            $qrpath = $qr['qrpath'];
-
-            $hosMapDetails = array(
-                    'name_EN'           => $name_EN,
-                    'name_FR'           => $name_FR,
-                    'description_EN'    => $description_EN,
-                    'description_FR'    => $description_FR,
-                    'url_EN'            => $url_EN,
-                    'url_FR'            => $url_FR,
-                    'qrid'              => $qrid,
-                    'qrcode'            => $qrcode,
-                    'qrpath'            => $qrpath,
-                    'serial'            => $serial
-            );
-
-            return $hosMapDetails;
-        } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $hosMapDetails;
-		}
+        return $hosMapDetails;
 	}
 
     /**

@@ -683,27 +683,39 @@ class Cron extends Module {
      * @param array $contents : a list of each content with their cron serials
      * @return array $cronLogs : the cron logs for table view
      */
-    public function getCronListLogs ($contents, $OAUserId) {
+    public function getCronListLogs ($contents) {
     	$cronLogs = array();
+    	$moduleList = $this->opalDB->getAvailableRolesModules();
+    	$moduleArr = array();
+    	foreach($moduleList as $module) {
+    	    array_push($moduleArr, $module["ID"]);
+        }
 
-    	$anAlias = new Alias();
-    	$aPost = new Post();
-    	$anEmail = new Email();
-    	$aQuestionnaire = new Questionnaire();
-    	$aNotification = new Notification();
-    	$aTestResult = new TestResult();
-
-   		$cronLogs['appointment'] = (!empty($contents['Appointment'])) ? $anAlias->getAliasListLogs($contents['Appointment'], 'Appointment') : array();
-   		$cronLogs['document'] = (!empty($contents['Document'])) ? $anAlias->getAliasListLogs($contents['Document'], 'Document') : array();
-   		$cronLogs['task'] = (!empty($contents['Task'])) ? $anAlias->getAliasListLogs($contents['Task'], 'Task') : array();
-   		$cronLogs['announcement'] = (!empty($contents['Announcement'])) ? $aPost->getPostListLogs($contents['Announcement'], 'Announcement') : array();
-   		$cronLogs['txTeamMessage'] = (!empty($contents['Treatment Team Message'])) ? $aPost->getPostListLogs($contents['Treatment Team Message'], 'Treatment Team Message') : array();
-   		$cronLogs['pfp'] = (!empty($contents['Patients for Patients'])) ? $aPost->getPostListLogs($contents['Patients for Patients'], 'Patients for Patients') : array();
-   		$cronLogs['educationalMaterial'] = (!empty($contents['Educational Material'])) ? $this->_getEducationalMaterialListLogs($contents['Educational Material']) : array();
-   		$cronLogs['email'] = (!empty($contents['Email'])) ? $anEmail->getEmailListLogs($contents['Email']) : array();
-        $cronLogs['legacyQuestionnaire'] = (!empty($contents['Legacy Questionnaire'])) ? $aQuestionnaire->getQuestionnaireListLogs($contents['Legacy Questionnaire']) : array();
-        $cronLogs['notification'] = (!empty($contents['Notification'])) ? $aNotification->getNotificationListLogs($contents['Notification']) : array();
-   		$cronLogs['testResult'] = (!empty($contents['Test Result'])) ? $aTestResult->getTestResultListLogs($contents['Test Result']) : array();
+    	if(in_array(MODULE_ALIAS, $moduleArr) && HelpSetup::validateReadModule(MODULE_ALIAS)) {
+            $cronLogs['appointment'] = (!empty($contents['Appointment'])) ? $this->opalDB->getAppointmentsLogs($contents['Appointment']) : array();
+            $cronLogs['document'] = (!empty($contents['Document'])) ? $this->opalDB->getDocumentsLogs($contents['Document']) : array();
+            $cronLogs['task'] = (!empty($contents['Task'])) ? $this->opalDB->getTasksLogs($contents['Task']) : array();
+        }
+        if(in_array(MODULE_POST, $moduleArr) && HelpSetup::validateReadModule(MODULE_POST)) {
+            $cronLogs['announcement'] = (!empty($contents['Announcement'])) ? $this->opalDB->getAnnouncementChartLogsByIds($contents['Announcement']) : array();
+            $cronLogs['txTeamMessage'] = (!empty($contents['Treatment Team Message'])) ? $this->opalDB->getTTMChartLogsByIds($contents['Treatment Team Message']) : array();
+            $cronLogs['pfp'] = (!empty($contents['Patients for Patients'])) ? $this->opalDB->getPFPChartLogsByIds($contents['Patients for Patients']) : array();
+        }
+        if(in_array(MODULE_EMAIL, $moduleArr) && HelpSetup::validateReadModule(MODULE_EMAIL)) {
+            $cronLogs['email'] = (!empty($contents['Email'])) ? $this->opalDB->getEmailsLogs($contents['Email']) : array();
+        }
+        if(in_array(MODULE_EDU_MAT, $moduleArr) && HelpSetup::validateReadModule(MODULE_EDU_MAT)) {
+            $cronLogs['educationalMaterial'] = (!empty($contents['Educational Material'])) ? $this->opalDB->getEduMaterialLogs($contents['Educational Material']) : array();
+        }
+        if(in_array(MODULE_QUESTIONNAIRE, $moduleArr) && HelpSetup::validateReadModule(MODULE_QUESTIONNAIRE)) {
+            $cronLogs['legacyQuestionnaire'] = (!empty($contents['Legacy Questionnaire'])) ? $this->opalDB->getQuestionnaireListLogs($contents['Legacy Questionnaire']) : array();
+        }
+        if(in_array(MODULE_NOTIFICATION, $moduleArr) && HelpSetup::validateReadModule(MODULE_NOTIFICATION)) {
+            $cronLogs['notification'] = (!empty($contents['Notification'])) ? $this->opalDB->getNotificationsLogs($contents['Notification']) : array();
+        }
+        if(in_array(MODULE_TEST_RESULTS, $moduleArr) && HelpSetup::validateReadModule(MODULE_TEST_RESULTS)) {
+            $cronLogs['testResult'] = (!empty($contents['Test Result'])) ? $this->opalDB->getTestResultsLogs($contents['Test Result']) : array();
+        }
 
    		return $cronLogs;
     }

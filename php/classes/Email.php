@@ -430,15 +430,16 @@ class Email extends Module {
     }
 
     /**
-     *
      * Gets list logs of emails during one or many cron sessions
-     *
-     * @param array $serials : a list of cron log serial numbers
-     * @return array $emailLogs : the email logs for table view
      */
-    public function getEmailListLogs ($serials) {
-        $emailLogs = array();
-        $serials = implode(',', $serials);
+    public function getEmailListLogs($emailIds) {
+        foreach ($emailIds as &$id) {
+            $id = intval($id);
+        }
+
+        return $this->opalDB->getEmailsLogs($emailIds);
+
+        $serials = implode(',', $emailIds);
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
             $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );

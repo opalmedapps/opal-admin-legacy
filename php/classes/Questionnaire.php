@@ -249,7 +249,7 @@ class Questionnaire extends QuestionnaireModule {
      * Gets list logs of legacy questionnaires during one or many cron sessions
      *
      * @param array $serials : a list of cron log serial numbers
-     * @return array $questionnaireLogs : the legacy questionnaire logs for table view
+     * @return array : the legacy questionnaire logs for table view
      */
     public function getQuestionnaireListLogs($ids) {
         return $this->opalDB->getQuestionnaireListLogs($ids);

@@ -131,6 +131,10 @@ define("ACTIVE_DIRECTORY", $config["login"]["activeDirectory"]);
 define("ACTIVE_DIRECTORY_SETTINGS", $config["login"]["activeDirectory"]["settings"]);
 define("AD_LOGIN_ACTIVE", ACTIVE_DIRECTORY["enabled"]);
 
+define("ACCESS_READ", 1);
+define("ACCESS_READ_WRITE", 3);
+define("ACCESS_READ_WRITE_DELETE", 7);
+
 /*
  * Module ID of each module in the opalAdmin
  * */

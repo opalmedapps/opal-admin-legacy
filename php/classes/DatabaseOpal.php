@@ -1437,4 +1437,45 @@ class DatabaseOpal extends DatabaseAccess {
         $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_EDU_MATERIAL_MH);
         return $this->_fetchAll($sql, array());
     }
+
+    function getTasksLogs($listIds) {
+        $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_TASK_MH);
+        return $this->_fetchAll($sql, array());
+    }
+
+    function getDocumentsLogs($listIds) {
+        $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_DOCUMENT_MH);
+        return $this->_fetchAll($sql, array());
+    }
+
+    function getAppointmentsLogs($listIds) {
+        $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_APPOINTMENT_MH);
+        return $this->_fetchAll($sql, array());
+    }
+
+    function getAliasesLogs($listIds) {
+        $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_ALIAS_MH);
+        return $this->_fetchAll($sql, array());
+    }
+
+    function getEmailsLogs($listIds) {
+        $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_EMAILS_MH);
+        return $this->_fetchAll($sql, array());
+    }
+
+    function getNotificationsLogs($listIds) {
+        $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_NOTIFICATIONS_MH);
+        return $this->_fetchAll($sql, array());
+    }
+
+    function getTestResultsLogs($listIds) {
+        $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_TEST_RESULTS_MH);
+        return $this->_fetchAll($sql, array());
+    }
+
+    function getHospitalMapDetails($hpId) {
+        return $this->_fetch(OPAL_GET_HOSPITAL_MAP_DETAILS, array(
+            array("parameter"=>":HospitalMapSerNum","variable"=>$hpId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }

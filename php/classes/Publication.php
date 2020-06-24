@@ -180,7 +180,7 @@ class Publication extends Module
         }
 
         if (is_array($result) && count($result) > 0)
-            array_push($data, array("name"=>$type, "data"=>$result));
+            array_push($data, array("name"=>"", "data"=>$result));
 
         return $data;
     }

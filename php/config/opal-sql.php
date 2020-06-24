@@ -56,6 +56,16 @@ define("OPAL_ANNOUNCEMENT_MH_TABLE","AnnouncementMH");
 define("OPAL_TXT_TEAM_MSG_MH_TABLE","TxTeamMessageMH");
 define("OPAL_PATIENTS_FOR_PATIENTS_MH_TABLE","PatientsForPatientsMH");
 define("OPAL_EDUCATION_MATERIAL_MH_TABLE","EducationalMaterialMH");
+define("OPAL_TASK_MH_TABLE","TaskMH");
+define("OPAL_DOCUMENT_MH_TABLE","DocumentMH");
+define("OPAL_APPOINTMENT_MH_TABLE","AppointmentMH");
+define("OPAL_TEST_RESULT_MH_TABLE","TestResultMH");
+define("OPAL_EMAIL_LOG_MH_TABLE","EmailLogMH");
+define("OPAL_NOTIFICATION_MH_TABLE","NotificationMH");
+define("OPAL_NOTIFICATION_CONTROL_TABLE","NotificationControl");
+define("OPAL_NOTIFICATION_TYPES_TABLE","NotificationTypes");
+define("OPAL_EMAIL_CONTROL","EmailControl");
+define("OPAL_EMAIL_TYPE","EmailType");
 define("OPAL_CRON_LOG_TABLE","CronLog");
 define("OPAL_SETTING_TABLE","setting");
 define("OPAL_MASTER_SOURCE_ALIAS_TABLE","masterSourceAlias");
@@ -77,6 +87,8 @@ define("OPAL_ALIAS_MH_TABLE","AliasMH");
 define("OPAL_STUDY_TABLE","study");
 define("OPAL_OA_ROLE_TABLE","oaRole");
 define("OPAL_OA_ROLE_MODULE_TABLE","oaRoleModule");
+define("OPAL_SOURCE_DATABASE_TABLE","SourceDatabase");
+define("OPAL_HOSPITAL_MAP_TABLE","HospitalMap");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -739,18 +751,49 @@ define("OPAL_GET_EDU_MATERIAL_DETAILS","
 ");
 
 define("OPAL_GET_EDU_MATERIAL_MH","
+    SELECT DISTINCT emc.Name_EN AS material_name, emmh.EducationalMaterialRevSerNum AS revision, emmh.CronLogSerNum AS cron_serial, emmh.PatientSerNum AS patient_serial, emmh.DateAdded AS date_added, emmh.ReadStatus AS read_status, emmh.ModificationAction AS mod_action FROM ".OPAL_EDUCATION_MATERIAL_MH_TABLE." emmh, ".OPAL_EDUCATION_MATERIAL_TABLE." emc WHERE emc.EducationalMaterialControlSerNum = emmh.EducationalMaterialControlSerNum AND emmh.CronLogSerNum IN (%%LIST_IDS%%);
+");
+
+define("OPAL_GET_TASK_MH","
+    SELECT DISTINCT ae.ExpressionName AS expression_name, ae.Description AS expression_description, tmh.TaskRevSerNum AS revision, tmh.CronLogSerNum AS cron_serial, tmh.PatientSerNum AS patient_serial, sd.SourceDatabaseName AS source_db, tmh.TaskAriaSer AS source_uid, tmh.Status AS status, tmh.State AS state, tmh.DueDateTime AS due_date, tmh.CreationDate AS creation, tmh.CompletionDate AS completed, tmh.DateAdded AS date_added, 'N/A' AS read_status, tmh.ModificationAction AS mod_action FROM ".OPAL_TASK_MH_TABLE." tmh, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_SOURCE_DATABASE_TABLE." sd WHERE tmh.AliasExpressionSerNum = ae.AliasExpressionSerNum AND tmh.SourceDatabaseSerNum = sd.SourceDatabaseSerNum AND tmh.CronLogSerNum IN (%%LIST_IDS%%);
+");
+
+define("OPAL_GET_DOCUMENT_MH","
+    SELECT DISTINCT ae.ExpressionName AS expression_name, ae.Description AS expression_description, docmh.DocumentRevSerNum AS revision, docmh.CronLogSerNum AS cron_serial, docmh.PatientSerNum AS patient_serial, sd.SourceDatabaseName AS source_db, docmh.DocumentId AS source_uid, (SELECT LastName FROM Staff Staff1 WHERE Staff1.StaffSerNum = docmh.CreatedBySerNum) AS created_by, docmh.CreatedTimeStamp AS created_time, (SELECT LastName FROM Staff Staff2 WHERE Staff2.StaffSerNum = docmh.ApprovedBySerNum) AS approved_by, docmh.ApprovedTimeStamp AS approved_time, (SELECT LastName FROM Staff Staff3 WHERE Staff3.StaffSerNum = docmh.AuthoredBySerNum) AS authored_by, docmh.DateOfService AS dateofservice, docmh.Revised AS revised, docmh.ValidEntry AS valid, docmh.OriginalFileName AS original_file, docmh.FinalFileName AS final_file, docmh.TransferStatus AS transfer, docmh.TransferLog AS transfer_log, docmh.DateAdded AS date_added, docmh.ReadStatus AS read_status, docmh.ModificationAction AS mod_action FROM ".OPAL_DOCUMENT_MH_TABLE." docmh, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_SOURCE_DATABASE_TABLE." sd WHERE docmh.AliasExpressionSerNum  = ae.AliasExpressionSerNum AND docmh.SourceDatabaseSerNum = sd.SourceDatabaseSerNum AND docmh.CronLogSerNum IN (%%LIST_IDS%%);
+");
+
+define("OPAL_GET_APPOINTMENT_MH","
+    SELECT DISTINCT ae.ExpressionName AS expression_name, ae.Description AS expression_description, apmh.AppointmentRevSerNum AS revision, apmh.CronLogSerNum AS cron_serial, apmh.PatientSerNum AS patient_serial, sd.SourceDatabaseName AS source_db, apmh.AppointmentAriaSer AS source_uid, apmh.Status AS status, apmh.State AS state, apmh.ScheduledStartTime AS scheduled_start, apmh.ScheduledEndTime AS scheduled_end, apmh.ActualStartDate AS actual_start, apmh.ActualEndDate AS actual_end, apmh.RoomLocation_EN AS room_EN, apmh.RoomLocation_FR AS room_FR, apmh.Checkin AS checkin, apmh.DateAdded AS date_added, apmh.ReadStatus AS read_status, apmh.ModificationAction AS mod_action FROM ".OPAL_APPOINTMENT_MH_TABLE." apmh, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_SOURCE_DATABASE_TABLE." sd WHERE apmh.AliasExpressionSerNum = ae.AliasExpressionSerNum AND apmh.SourceDatabaseSerNum = sd.SourceDatabaseSerNum AND apmh.CronLogSerNum IN (%%LIST_IDS%%);
+");
+
+define("OPAL_GET_ALIAS_MH","
+    SELECT DISTINCT al.AliasType AS type, ae.ExpressionName AS expression_name, ae.Description AS expression_description, apmh.AppointmentRevSerNum AS revision, apmh.CronLogSerNum AS cron_serial, apmh.PatientSerNum AS patient_serial, sd.SourceDatabaseName AS source_db, apmh.AppointmentAriaSer AS source_uid, apmh.DateAdded AS date_added, apmh.ReadStatus AS read_status, apmh.ModificationAction AS mod_action FROM ".OPAL_APPOINTMENT_MH_TABLE." apmh, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_SOURCE_DATABASE_TABLE." sd, ".OPAL_ALIAS_TABLE." al WHERE apmh.AliasExpressionSerNum  = ae.AliasExpressionSerNum AND ae.AliasSerNum = al.AliasSerNum AND apmh.SourceDatabaseSerNum = sd.SourceDatabaseSerNum AND apmh.CronLogSerNum IN (%%LIST_IDS%%) UNION ALL SELECT DISTINCT al.AliasType AS type, ae.ExpressionName AS expression_name, ae.Description AS expression_description, docmh.DocumentRevSerNum AS revision, docmh.CronLogSerNum AS cron_serial, docmh.PatientSerNum AS patient_serial, sd.SourceDatabaseName AS source_db, docmh.DocumentId AS source_uid, docmh.DateAdded AS date_added, docmh.ReadStatus AS read_status, docmh.ModificationAction AS mod_action FROM ".OPAL_DOCUMENT_MH_TABLE." docmh, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_SOURCE_DATABASE_TABLE." sd, ".OPAL_ALIAS_TABLE." al WHERE docmh.AliasExpressionSerNum = ae.AliasExpressionSerNum AND ae.AliasSerNum = al.AliasSerNum AND docmh.SourceDatabaseSerNum = sd.SourceDatabaseSerNum AND docmh.CronLogSerNum IN (%%LIST_IDS%%) UNION ALL SELECT DISTINCT al.AliasType AS type, ae.ExpressionName AS expression_name, ae.Description AS expression_description, tmh.TaskRevSerNum AS revision, tmh.CronLogSerNum AS cron_serial, tmh.PatientSerNum AS patient_serial, sd.SourceDatabaseName AS source_db, tmh.TaskAriaSer AS source_uid, tmh.DateAdded AS date_added, 'N/A' AS read_status, tmh.ModificationAction AS mod_action FROM ".OPAL_TASK_MH_TABLE." tmh, ".OPAL_ALIAS_EXPRESSION_TABLE." ae, ".OPAL_SOURCE_DATABASE_TABLE." sd, ".OPAL_ALIAS_TABLE." al WHERE tmh.AliasExpressionSerNum = ae.AliasExpressionSerNum AND ae.AliasSerNum = al.AliasSerNum AND tmh.SourceDatabaseSerNum = sd.SourceDatabaseSerNum AND tmh.CronLogSerNum IN (%%LIST_IDS%%);
+");
+
+define("OPAL_GET_EMAILS_MH","
+    SELECT DISTINCT emmh.EmailControlSerNum AS control_serial, emmh.EmailRevSerNum AS revision, emmh.CronLogSerNum AS cron_serial, emmh.PatientSerNum AS patient_serial, emt.EmailTypeName AS type, emmh.DateAdded AS date_added, emmh.ModificationAction AS mod_action FROM ".OPAL_EMAIL_LOG_MH_TABLE." emmh, ".OPAL_EMAIL_CONTROL." emc, ".OPAL_EMAIL_TYPE." emt WHERE emmh.EmailControlSerNum = emc.EmailControlSerNum AND emc.EmailTypeSerNum = emt.EmailTypeSerNum AND emmh.CronLogSerNum IN (%%LIST_IDS%%);
+");
+
+define("OPAL_GET_NOTIFICATIONS_MH","
+    SELECT DISTINCT ntmh.NotificationControlSerNum AS control_serial, ntmh.NotificationRevSerNum AS revision, ntmh.CronLogSerNum AS cron_serial, ntmh.PatientSerNum AS patient_serial, ntt.NotificationTypeName AS type, ntmh.RefTableRowSerNum AS ref_table_serial, ntmh.ReadStatus AS read_status, ntmh.DateAdded AS date_added, ntmh.ModificationAction AS mod_action FROM ".OPAL_NOTIFICATION_MH_TABLE." ntmh, ".OPAL_NOTIFICATION_CONTROL_TABLE." ntc, ".OPAL_NOTIFICATION_TYPES_TABLE." ntt WHERE ntmh.NotificationControlSerNum = ntc.NotificationControlSerNum AND ntc.NotificationTypeSerNum = ntt.NotificationTypeSerNum  AND ntmh.CronLogSerNum IN (%%LIST_IDS%%);
+");
+
+define("OPAL_GET_TEST_RESULTS_MH", "
+    SELECT DISTINCT tre.ExpressionName AS expression_name, trmh.TestResultRevSerNum AS revision, trmh.CronLogSerNum AS cron_serial, trmh.PatientSerNum AS patient_serial, sd.SourceDatabaseName AS source_db, trmh.TestResultAriaSer AS source_uid, trmh.AbnormalFlag AS abnormal_flag, trmh.TestDate AS test_date, trmh.MaxNorm AS max_norm, trmh.MinNorm AS min_norm, trmh.TestValue AS test_value, trmh.UnitDescription AS unit, trmh.ValidEntry AS valid, trmh.DateAdded AS date_added, trmh.ReadStatus AS read_status, trmh.ModificationAction AS mod_action FROM ".OPAL_TEST_RESULT_MH_TABLE." trmh, ".OPAL_TEST_RESULT_EXPRESSION_TABLE." tre, ".OPAL_SOURCE_DATABASE_TABLE." sd WHERE trmh.TestResultExpressionSerNum = tre.TestResultExpressionSerNum AND trmh.SourceDatabaseSerNum = sd.SourceDatabaseSerNum AND trmh.CronLogSerNum IN (%%LIST_IDS%%);
+");
+
+define("OPAL_GET_HOSPITAL_MAP_DETAILS","
 SELECT DISTINCT
-    emc.Name_EN AS material_name,
-    emmh.EducationalMaterialRevSerNum AS revision,
-    emmh.CronLogSerNum AS cron_serial,
-    emmh.PatientSerNum AS patient_serial,
-    emmh.DateAdded AS date_added,
-    emmh.ReadStatus AS read_status,
-    emmh.ModificationAction AS mod_action
+HospitalMapSerNum AS serial,
+MapURL_EN AS url_EN,
+MapURL_FR AS url_FR,
+QRMapAlias AS qrid,
+MapName_EN AS name_EN,
+MapDescription_EN AS description_EN,
+MapName_FR AS name_FR,
+MapDescription_FR AS description_FR
 FROM
-    ".OPAL_EDUCATION_MATERIAL_MH_TABLE." emmh,
-    ".OPAL_EDUCATION_MATERIAL_TABLE." emc
+".OPAL_HOSPITAL_MAP_TABLE."
 WHERE
-    emc.EducationalMaterialControlSerNum = emmh.EducationalMaterialControlSerNum
-AND emmh.CronLogSerNum IN (%%LIST_IDS%%)
+HospitalMapSerNum = :HospitalMapSerNum
 ");
