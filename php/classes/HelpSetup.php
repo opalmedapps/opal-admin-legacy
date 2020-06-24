@@ -121,4 +121,16 @@ class HelpSetup {
         }
         return $correct;
     }
+
+    public static function validateReadModule($moduleAccess) {
+        return HelpSetup::validateBitOperation($_SESSION["userAccess"][$moduleAccess]["access"], ACCESS_READ);
+    }
+
+    public static function validateWriteModule($moduleAccess) {
+        return HelpSetup::validateBitOperation($_SESSION["userAccess"][$moduleAccess]["access"], ACCESS_READ_WRITE);
+    }
+
+    public static function validateDeleteModule($moduleAccess) {
+        return HelpSetup::validateBitOperation($_SESSION["userAccess"][$moduleAccess]["access"], ACCESS_READ_WRITE_DELETE);
+    }
 }

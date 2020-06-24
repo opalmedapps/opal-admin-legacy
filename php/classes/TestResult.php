@@ -1059,77 +1059,13 @@ class TestResult extends Module {
     }
 
     /**
-     *
      * Gets list logs of test results during one or many cron sessions
-     *
-     * @param array $serials : a list of cron log serial numbers
-     * @return array $testResultLogs : the test result logs for table view
      */
-    public function getTestResultListLogs ($serials) {
-        $testResultLogs = array();
-        $serials = implode(',', $serials);
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT
-                    tre.ExpressionName,
-                    trmh.TestResultRevSerNum,
-                    trmh.CronLogSerNum,
-                    trmh.PatientSerNum,
-                    sd.SourceDatabaseName,
-                    trmh.TestResultAriaSer,
-                    trmh.AbnormalFlag,
-                    trmh.TestDate,
-                    trmh.MaxNorm,
-                    trmh.MinNorm,
-                    trmh.TestValue,
-                    trmh.UnitDescription,
-                    trmh.ValidEntry,
-                    trmh.DateAdded,
-                    trmh.ReadStatus,
-                    trmh.ModificationAction
-                FROM
-                    TestResultMH trmh,
-                    TestResultExpression tre,
-                    SourceDatabase sd
-                WHERE
-                    trmh.TestResultExpressionSerNum     = tre.TestResultExpressionSerNum
-                AND trmh.SourceDatabaseSerNum           = sd.SourceDatabaseSerNum
-                AND trmh.CronLogSerNum                  IN ($serials)
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $logDetails = array (
-                    'expression_name'        => $data[0],
-                    'revision'               => $data[1],
-                    'cron_serial'            => $data[2],
-                    'patient_serial'         => $data[3],
-                    'source_db'              => $data[4],
-                    'source_uid'             => $data[5],
-                    'abnormal_flag'          => $data[6],
-                    'test_date'              => $data[7],
-                    'max_norm'               => $data[8],
-                    'min_norm'               => $data[9],
-                    'test_value'             => $data[10],
-                    'unit'                   => $data[11],
-                    'valid'                  => $data[12],
-                    'date_added'             => $data[13],
-                    'read_status'            => $data[14],
-                    'mod_action'             => $data[15]
-                );
-                array_push($testResultLogs, $logDetails);
-            }
-
-            return $testResultLogs;
-
-        } catch( PDOException $e) {
-            echo $e->getMessage();
-            return $testResultLogs;
+    public function getTestResultListLogs($testResultIds) {
+        foreach ($testResultIds as &$id) {
+            $id = intval($id);
         }
+        return $this->opalDB->getTestResultsLogs($testResultIds);
     }
 
     /**

@@ -1024,7 +1024,7 @@ class EduMaterial extends Module {
      */
     public function getEducationalMaterialListLogs($eduIds) {
         $this->checkReadAccess();
-        return $this->_getEducationalMaterialListLogs($eduIds);
+        return $this->opalDB->getEduMaterialLogs($eduIds);
     }  
 
     /**
