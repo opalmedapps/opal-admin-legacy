@@ -74,20 +74,8 @@ class Module
         return false;
     }
 
-    public function getRead() {
-        return (($this->access >> 0) & 1);
-    }
-
-    public function getWrite() {
-        return (($this->access >> 1) & 1);
-    }
-
-    public function getDelete() {
-        return (($this->access >> 2) & 1);
-    }
-
     /*
-     * gets the list of modules availables
+     * gets the list of available modules
      * @params  void
      * @return  array of modules
      * */
@@ -107,11 +95,6 @@ class Module
     protected function _getEducationalMaterialDetails($eduId) {
         $results = $this->opalDB->getEduMaterialDetails($eduId);
         $results["tocs"] = $this->opalDB->getTocsContent($results["serial"]);
-
         return $results;
-    }
-
-    protected function _getEducationalMaterialListLogs($eduIds) {
-        return $this->opalDB->getEduMaterialLogs($eduIds);
     }
 }

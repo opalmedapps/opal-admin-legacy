@@ -4,7 +4,11 @@
  * Notification class
  *
  */
-class Notification {
+class Notification extends Module {
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_NOTIFICATION, $guestStatus);
+    }
 
     /**
      *
@@ -412,68 +416,14 @@ class Notification {
     }
 
     /**
-     *
      * Gets list logs of notifications during one or many cron sessions
-     *
-     * @param array $serials : a list of cron log serial numbers
-     * @return array $notificationLogs : the notification logs for table view
      */
-    public function getNotificationListLogs ($serials) {
-        $notificationLogs = array();
-        $serials = implode(',', $serials);
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT
-                    ntmh.NotificationControlSerNum,
-                    ntmh.NotificationRevSerNum,
-                    ntmh.CronLogSerNum,
-                    ntmh.PatientSerNum,
-                    ntt.NotificationTypeName,
-                    ntmh.RefTableRowSerNum,
-                    ntmh.ReadStatus,
-                    ntmh.DateAdded,
-                    ntmh.ModificationAction
-                FROM
-                    NotificationMH ntmh,
-                    NotificationControl ntc,
-                    NotificationTypes ntt
-                WHERE
-                    ntmh.NotificationControlSerNum  = ntc.NotificationControlSerNum
-                AND ntc.NotificationTypeSerNum      = ntt.NotificationTypeSerNum 
-                AND ntmh.CronLogSerNum              IN ($serials)
-            ";
-
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $logDetails = array (
-                    'control_serial'        => $data[0],
-                    'revision'              => $data[1],
-                    'cron_serial'           => $data[2],
-                    'patient_serial'        => $data[3],
-                    'type'                  => $data[4],
-                    'ref_table_serial'      => $data[5],
-                    'read_status'           => $data[6],
-                    'date_added'            => $data[7],
-                    'mod_action'            => $data[8]
-                );
-
-                array_push($notificationLogs, $logDetails);
-            }
-
-            return $notificationLogs;
-
-        } catch( PDOException $e) {
-            echo $e->getMessage();
-            return $notificationLogs;
+    public function getNotificationListLogs ($notificationIds) {
+        foreach ($notificationIds as &$id) {
+            $id = intval($id);
         }
+        return $this->opalDB->getNotificationsLogs($notificationIds);
     }
-
-
 }
 
 ?>
