@@ -5,7 +5,7 @@ class Publication extends Module
     protected $questionnaireDB;
 
     public function __construct($guestStatus = false) {
-        parent::__construct(MODULE_QUESTIONNAIRE, $guestStatus);
+        parent::__construct(MODULE_PUBLICATION, $guestStatus);
     }
 
     /*
@@ -35,6 +35,7 @@ class Publication extends Module
      * returns  array of data
      * */
     public function getPublications() {
+        $this->checkReadAccess();
         return $this->opalDB->getPublications();
     }
 
@@ -44,6 +45,7 @@ class Publication extends Module
      * @return  $results (array) array that contains all the details
      * */
     public function getPublicationDetails($publicationId, $moduleId) {
+        $this->checkReadAccess();
         if($publicationId == "" || $moduleId == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publication settings.");
 
@@ -154,6 +156,7 @@ class Publication extends Module
      * returns  array of data
      * */
     public function getPublicationsPerModule($moduleId) {
+        $this->checkReadAccess();
         if($moduleId == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Module cannot be found. Access denied.");
         $results = $this->opalDB->getPublicationsPerModule($moduleId);
@@ -172,6 +175,7 @@ class Publication extends Module
      * @return  (array) list of the chart logs found
      * */
     public function getPublicationChartLogs($moduleId, $publicationId) {
+        $this->checkReadAccess();
         $data = array();
         $result = $this->opalDB->getPublicationChartLogs($moduleId, $publicationId);
         //The Y value has to be converted to an int, or the chart log will reject it on the front end.
@@ -192,6 +196,7 @@ class Publication extends Module
      * @return  (array) list of the chart logs found
      * */
     public function getPublicationListLogs($moduleId, $publicationId, $cronIds) {
+        $this->checkReadAccess();
         if($moduleId == "" || $publicationId == "" || count($cronIds) <= 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "List Logs error. Invalid data.");
         return $this->opalDB->getPublicationListLogs($moduleId, $publicationId, $cronIds);
@@ -203,6 +208,7 @@ class Publication extends Module
      * @return  array of sanitize data
      * */
     function validateAndSanitizePublicationList($toValidate) {
+        $this->checkWriteAccess();
         $validatedList = array();
         $toValidate = HelpSetup::arraySanitization($toValidate);
         foreach($toValidate as $item) {
@@ -228,6 +234,7 @@ class Publication extends Module
      * @return  void
      * */
     function updatePublicationFlags($list) {
+        $this->checkWriteAccess();
         $publicationModules = $this->opalDB->getPublicationModules();
         foreach($list as $row) {
             foreach($publicationModules as $module) {
@@ -865,6 +872,7 @@ class Publication extends Module
      * @return  void
      * */
     protected function _updateTriggers($publication, $controlTableName) {
+        $total = 0;
         //Delete and update triggers
         if(!empty($publication["triggers_updated"])) {
             $existingTriggers = $this->opalDB->getFiltersByControlTableSerNum($publication["materialId"]["value"], $controlTableName);
@@ -964,6 +972,7 @@ class Publication extends Module
      * @return  false
      * */
     function insertPublication($publication) {
+        $this->checkWriteAccess();
         $publication = HelpSetup::arraySanitization($publication);
 
         $moduleDetails = $this->opalDB->getModuleSettings($publication["moduleId"]["value"]);
@@ -998,6 +1007,7 @@ class Publication extends Module
      * @return  false
      * */
     function updatePublication($publication) {
+        $this->checkWriteAccess();
         $publication = HelpSetup::arraySanitization($publication);
 
         $moduleDetails = $this->opalDB->getModuleSettings($publication["moduleId"]["value"]);
@@ -1032,6 +1042,7 @@ class Publication extends Module
      * @return  $results (array) filter/triggers found
      * */
     function getFilters() {
+        $this->checkReadAccess();
         $results = array();
 
         $results["patients"] = $this->opalDB->getPatientsTriggers();

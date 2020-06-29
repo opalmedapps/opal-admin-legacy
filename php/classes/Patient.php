@@ -5,7 +5,11 @@
  *
  */
 
-class Patient {
+class Patient extends Module {
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_PATIENT, $guestStatus);
+    }
 
     /**
      *
@@ -15,6 +19,7 @@ class Patient {
      * @return array $response : response
      */
     public function updatePatientTransferFlags( $patientList ) {
+        $this->checkWriteAccess();
         $response = array(
             'value'     => 0,
             'message'   => ''
@@ -46,6 +51,7 @@ class Patient {
      * @return array $patientList : the list of existing patients
      */
     public function getPatients() {
+        $this->checkReadAccess();
         $patientList = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
@@ -104,6 +110,7 @@ class Patient {
      * @return array $Response : response
      */
     public function emailAlreadyInUse($email) {
+        $this->checkReadAccess();
         $Response = null;
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -143,6 +150,7 @@ class Patient {
      * @return array $patientResponse : patient information or response
      */
     public function findPatient($ssn, $id) {
+        $this->checkReadAccess();
         $patientResponse = array(
             'message'   => '',
             'status'    => '',
@@ -299,6 +307,7 @@ class Patient {
      * @return array $securityQuestions
      */
     public function getSecurityQuestions($language) {
+        $this->checkReadAccess();
         $securityQuestions = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
@@ -337,6 +346,7 @@ class Patient {
      * @return void
      */
     public function registerPatient($patientDetails) {
+        $this->checkWriteAccess();
         $email              = $patientDetails['email'];
         $password           = $patientDetails['password'];
         $language           = $patientDetails['language'];
@@ -466,25 +476,6 @@ class Patient {
       ";
             $query = $host_db_link->prepare( $sql );
             $query->execute();
-
-      //       $questionnaires_db_link = new PDO( QUESTIONNAIRE_DB_DSN, QUESTIONNAIRE_DB_USERNAME, QUESTIONNAIRE_DB_PASSWORD );
-      //       $questionnaires_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-      //       $sql = "
-      //   INSERT INTO
-      //     Patient (
-      //       PatientName,
-      //       PatientId
-      //     )
-      //   VALUES (
-      //     \"$firstname $lastname\",
-      //     '$id'
-      //   )
-      // ";
-
-      //       $query = $questionnaires_db_link->prepare( $sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) );
-      //       $query->execute();
-
         } catch( PDOException $e) {
             return $e->getMessage();
         }
@@ -497,6 +488,7 @@ class Patient {
      * @return array $patientActivityList : the list of patient activities
      */
     public function getPatientActivities() {
+        $this->checkReadAccess();
         $patientActivityList = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -597,7 +589,7 @@ class Patient {
      * @return array $patientDetails : the patient details
      */
     public function getPatientDetails ($serial) {
-
+        $this->checkReadAccess();
         $patientDetails = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -650,6 +642,7 @@ class Patient {
      * @return array $response : response
      */
     public function updatePatient($patientDetails) {
+        $this->checkWriteAccess();
         $response = array (
             'value'		=> 0,
             'error'		=> array(

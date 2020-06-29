@@ -17,6 +17,7 @@ class Post extends Module {
      * @return  array of posts
      * */
     public function getPosts() {
+        $this->checkReadAccess();
         return $this->opalDB->getPosts();
     }
 
@@ -51,7 +52,8 @@ class Post extends Module {
      * @param integer $postSer : the post serial number
      * @return array $postDetails : the post details
      */
-    public function getPostDetails ($postId) {
+    public function getPostDetails($postId) {
+        $this->checkReadAccess();
         $results = $this->opalDB->getPostDetails($postId);
         $results["body_EN"] = stripslashes($results["body_EN"]);
         $results["body_FR"] = stripslashes($results["body_FR"]);
@@ -65,6 +67,7 @@ class Post extends Module {
      * @return ID of the new entry
      * */
     public function insertPost( $toInsert ) {
+        $this->checkWriteAccess();
         $toInsert["PublishDate"]="0000-00-00 00:00:00";
         return $this->opalDB->insertPost($toInsert);
     }
@@ -77,6 +80,7 @@ class Post extends Module {
      * @return  array of chrat log value
      * */
     public function getPostListLogs($serials, $type) {
+        $this->checkReadAccess();
         if ($type == 'Announcement')
             return  $this->opalDB->getAnnouncementChartLogsByIds($serials);
         else if ($type == "Treatment Team Message")
@@ -94,6 +98,7 @@ class Post extends Module {
      * @return  $data (array) array of chart log results.
      * */
     public function getPostChartLogs($serial, $type) {
+        $this->checkReadAccess();
         $data = array();
         if($serial == "" || $type == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid settings for chart log.");
@@ -123,6 +128,7 @@ class Post extends Module {
      * @returns int number of record affected OR false if a problem occurs
      * */
     public function deletePost($postId) {
+        $this->checkDeleteAccess();
         $currentPost = $this->opalDB->getPostDetails($postId);
         if($currentPost["locked"] == 0)
             return $this->opalDB->markPostAsDeleted(OPAL_POST_TABLE, OPAL_POST_PK, $postId);
@@ -136,6 +142,7 @@ class Post extends Module {
      * @returns int number of record affected OR false if a problem occurs
      * */
     public function updatePost($postDetails) {
+        $this->checkWriteAccess();
         $currentPost = $this->opalDB->getPostDetails($postDetails["PostControlSerNum"]);
         if($currentPost["locked"] == 0)
             return $this->opalDB->updatePost($postDetails);

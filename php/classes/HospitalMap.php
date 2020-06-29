@@ -20,6 +20,7 @@ class HospitalMap extends Module {
      * @return array : qrcode with path
      */
     public function generateQRCode($qrid, $oldqrid) {
+        $this->checkWriteAccess();
 
         if($oldqrid) {
             $oldQRPath = FRONTEND_ABS_PATH.'images' . DIRECTORY_SEPARATOR . 'hospital-maps' . DIRECTORY_SEPARATOR . 'qrCodes' . DIRECTORY_SEPARATOR .$oldqrid.'.png';
@@ -52,6 +53,7 @@ class HospitalMap extends Module {
 	 * @return void
      */
     public function insertHospitalMap ($hosMapDetails) {
+        $this->checkWriteAccess();
 
         $name_EN            = $hosMapDetails['name_EN'];
         $name_FR            = $hosMapDetails['name_FR'];
@@ -113,6 +115,7 @@ class HospitalMap extends Module {
      * @return array $hosMapList : the list of existing hospital maps
      */
     public function getHospitalMaps() {
+        $this->checkReadAccess();
         $hosMapList = array();
  		try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -174,6 +177,7 @@ class HospitalMap extends Module {
      * Gets details on a particular hospital map
      */
     public function getHospitalMapDetails($serial) {
+        $this->checkReadAccess();
         $hosMapDetails = $this->opalDB->getHospitalMapDetails(intval($serial));
         $qr = $this->generateQRCode($hosMapDetails['qrid'], null);
         $hosMapDetails['qrcode'] = $qr['qrcode'];
@@ -190,6 +194,7 @@ class HospitalMap extends Module {
 	 * @return void
      */
     public function updateHospitalMap ($hosMapDetails) {
+        $this->checkWriteAccess();
 
         $name_EN            = $hosMapDetails['name_EN'];
         $name_FR            = $hosMapDetails['name_FR'];
@@ -241,6 +246,7 @@ class HospitalMap extends Module {
 	 * @return void
      */
     public function deleteHospitalMap ($serial, $user) {
+        $this->checkDeleteAccess();
         $userSer = $user['id'];
         $sessionId = $user['sessionid'];
         try {

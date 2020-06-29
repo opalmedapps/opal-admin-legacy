@@ -132,7 +132,7 @@ class User extends Module {
         $_SESSION["userAccess"] = $userAccess;
         $result["userAccess"] = $_SESSION["userAccess"];
         $result["sessionid"] = $_SESSION['sessionId'];
-        $this->logActivity($result["id"], $_SESSION['sessionId'], 'Login');
+        $this->_logActivity($result["id"], $_SESSION['sessionId'], 'Login');
 
         return $result;
     }
@@ -143,7 +143,7 @@ class User extends Module {
      * @return  answer from the log activity
      * */
     public function userLogout() {
-        $result = $this->logActivity($_SESSION["ID"], $_SESSION["sessionId"], 'Logout');
+        $result = $this->_logActivity($_SESSION["ID"], $_SESSION["sessionId"], 'Logout');
         session_unset();     // unset $_SESSION variable for the run-time
         session_destroy();   // destroy session data in storage
         return $result;
@@ -155,7 +155,7 @@ class User extends Module {
      *          $sessionId (string) session ID of the user
      *          $activity (string) type of activity to log in (Login or Logout)
      * */
-    public function logActivity($userId, $sessionId, $activity) {
+    protected function _logActivity($userId, $sessionId, $activity) {
         return $this->opalDB->insertUserActivity(array("Activity"=>$activity, "OAUserSerNum"=>$userId, "SessionId"=>$sessionId));
     }
 
@@ -190,6 +190,7 @@ class User extends Module {
      * @return  number of updated record
      * */
     public function updatePassword($post) {
+        $this->checkWriteAccess();
         $post = HelpSetup::arraySanitization($post);
         $cypher = intval($post["cypher"]);
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
@@ -226,6 +227,7 @@ class User extends Module {
      * @returns number of records modified
      * */
     public function updateLanguage($post) {
+        $this->checkWriteAccess();
         $post = HelpSetup::arraySanitization($post);
         $post["language"] = strtoupper($post["language"]);
 
@@ -242,6 +244,7 @@ class User extends Module {
      * @return  true (boolean) means the update was successful.
      * */
     public function updateUser($post) {
+        $this->checkWriteAccess();
         $post = HelpSetup::arraySanitization($post);
         $cypher = intval($post["cypher"]);
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
@@ -281,6 +284,7 @@ class User extends Module {
      * @returns void
      * */
     public function insertUser($post) {
+        $this->checkWriteAccess();
         $post = HelpSetup::arraySanitization($post);
         $cypher = intval($post["cypher"]);
         if($cypher == "")
@@ -346,6 +350,7 @@ class User extends Module {
      * @return  array of users
      * */
     public function getUsers() {
+        $this->checkReadAccess();
         return $this->opalDB->getUsersList();
     }
 
@@ -356,6 +361,7 @@ class User extends Module {
      * @returns $userDetails (array) details of the user
      * */
     public function getUserDetails($post) {
+        $this->checkReadAccess();
         $post = HelpSetup::arraySanitization($post);
         $userDetails = $this->opalDB->getUserDetails($post["userId"]);
         $userDetails["role"] = array("serial"=>$userDetails["oaRoleId"], "name_EN"=>$userDetails["name_EN"], "name_FR"=>$userDetails["name_FR"]);
@@ -374,6 +380,7 @@ class User extends Module {
      * @return  boolean if the result is greater than 0 or not
      * */
     public function usernameExists($username) {
+        $this->checkReadAccess();
         $results = $this->opalDB->countUsername($username);
         $results = intval($results["total"]);
         return $results > 0;
@@ -390,6 +397,7 @@ class User extends Module {
      * @return void
      */
     public function deleteUser($userId) {
+        $this->checkDeleteAccess();
         $userId = strip_tags($userId);
         if($userId == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid user.");
@@ -405,6 +413,7 @@ class User extends Module {
      * @return  array with all roles found (not cronjob!)
      * */
     public function getRoles() {
+        $this->checkReadAccess();
         return $this->opalDB->getRoles();
     }
 
@@ -414,6 +423,7 @@ class User extends Module {
      * @return  $userLogs (array) all the logs of the specified user, with an extra field to specify if data was found
      * */
     public function getUserActivityLogs($userId) {
+        $this->checkReadAccess();
         $dataFound = false;
         $userLogs = array();
         $userLogs['login'] = $this->opalDB->getUserLoginDetails($userId);

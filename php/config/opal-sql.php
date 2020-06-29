@@ -123,23 +123,6 @@ define("SQL_OPAL_GET_PUBLISHED_QUESTIONNAIRES",
     FROM ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." qc;"
 );
 
-//TODO to remove - useless with new publication
-define("SQL_OPAL_GET_FILTERS",
-    "SELECT DISTINCT 
-    f.FilterType AS type,
-    f.FilterId AS id,
-    1 AS added
-    FROM 
-    ".OPAL_QUESTIONNAIRE_CONTROL_TABLE." qc, 
-    ".OPAL_FILTERS_TABLE." f
-    WHERE
-    qc.QuestionnaireControlSerNum = :QuestionnaireControlSerNum
-    AND f.ControlTable = 'LegacyQuestionnaireControl'
-    AND f.ControlTableSerNum = qc.QuestionnaireControlSerNum
-    AND f.FilterType != ''
-    AND f.FilterId != '';"
-);
-
 define("SQL_OPAL_GET_FILTERS_BY_CONTROL_TABLE_SERNUM",
     "SELECT DISTINCT 
     FilterType AS type,
@@ -246,31 +229,6 @@ define("SQL_OPAL_GET_QUESTIONNAIRE_CONTROL_DETAILS",
     FROM
     ".OPAL_QUESTIONNAIRE_CONTROL_TABLE."
     WHERE QuestionnaireControlSerNum = :QuestionnaireControlSerNum;"
-);
-
-//TODO to remove - useless with new publication
-define("SQL_OPAL_GET_FILTERS_QUESTIONNAIRE_CONTROL",
-    "SELECT DISTINCT 
-    ".OPAL_FILTERS_TABLE.".FilterType AS type,
-    ".OPAL_FILTERS_TABLE.".FilterId AS id,
-    1 AS added
-	FROM 
-	".OPAL_QUESTIONNAIRE_CONTROL_TABLE.", 
-	".OPAL_FILTERS_TABLE." 
-	WHERE 
-    ".OPAL_QUESTIONNAIRE_CONTROL_TABLE.".QuestionnaireControlSerNum = :QuestionnaireControlSerNum
-    AND ".OPAL_FILTERS_TABLE.".ControlTable = 'LegacyQuestionnaireControl'
-    AND ".OPAL_FILTERS_TABLE.".ControlTableSerNum = ".OPAL_QUESTIONNAIRE_CONTROL_TABLE.".QuestionnaireControlSerNum
-    AND ".OPAL_FILTERS_TABLE.".FilterType != ''
-    AND ".OPAL_FILTERS_TABLE.".FilterId != '';"
-);
-
-//TODO to remove - useless with new publication
-define("SQL_OPAL_GET_FREQUENCY_EVENTS_QUESTIONNAIRE_CONTROL",
-    "SELECT DISTINCT CustomFlag, MetaKey, MetaValue 
-    FROM ".OPAL_FREQUENCY_EVENTS_TABLE."
-    WHERE ControlTable = 'LegacyQuestionnaireControl'
-    AND ControlTableSerNum = :ControlTableSerNum;"
 );
 
 define("SQL_OPAL_GET_FREQUENCY_EVENTS",
@@ -430,19 +388,19 @@ define("SQL_OPAL_GET_ANNOUNCEMENT_CHART","
 define("SQL_OPAL_GET_ANNOUNCEMENT_CHART_PER_IDS","
     SELECT DISTINCT pc.PostName_EN AS post_control_name, anmh.AnnouncementRevSerNum AS revision, anmh.CronLogSerNum AS cron_serial,
     anmh.PatientSerNum AS patient_serial, anmh.DateAdded AS date_added, anmh.ReadStatus AS read_status, anmh.ModificationAction AS mod_action
-    FROM AnnouncementMH anmh, PostControl pc WHERE pc.PostControlSerNum = anmh.PostControlSerNum AND anmh.CronLogSerNum IN (%%CRON_LOG_IDS%%)
+    FROM ".OPAL_ANNOUNCEMENT_MH_TABLE." anmh, ".OPAL_POST_TABLE." pc WHERE pc.PostControlSerNum = anmh.PostControlSerNum AND anmh.CronLogSerNum IN (%%CRON_LOG_IDS%%)
 ");
 
 define("SQL_OPAL_GET_TTM_CHART_PER_IDS","
     SELECT DISTINCT pc.PostName_EN AS post_control_name, ttmmh.TxTeamMessageRevSerNum AS revision, ttmmh.CronLogSerNum AS cron_serial,
     ttmmh.PatientSerNum AS patient_serial, ttmmh.DateAdded AS date_added, ttmmh.ReadStatus AS read_status, ttmmh.ModificationAction AS mod_action
-    FROM TxTeamMessageMH ttmmh, PostControl pc WHERE pc.PostControlSerNum = ttmmh.PostControlSerNum AND ttmmh.CronLogSerNum IN (%%CRON_LOG_IDS%%)
+    FROM ".OPAL_TXT_TEAM_MSG_MH_TABLE." ttmmh, ".OPAL_POST_TABLE." pc WHERE pc.PostControlSerNum = ttmmh.PostControlSerNum AND ttmmh.CronLogSerNum IN (%%CRON_LOG_IDS%%)
 ");
 
 define("SQL_OPAL_GET_PFP_CHART_PER_IDS","
     SELECT DISTINCT pc.PostName_EN AS post_control_name, pfpmh.PatientsForPatientsRevSerNum AS revision, pfpmh.CronLogSerNum AS cron_serial,
     pfpmh.PatientSerNum AS patient_serial, pfpmh.DateAdded AS date_added, pfpmh.ReadStatus AS read_status, pfpmh.ModificationAction AS mod_action
-    FROM PatientsForPatientsMH pfpmh, PostControl pc WHERE pc.PostControlSerNum = pfpmh.PostControlSerNum AND pfpmh.CronLogSerNum IN (%%CRON_LOG_IDS%%)
+    FROM ".OPAL_PATIENTS_FOR_PATIENTS_MH_TABLE." pfpmh, ".OPAL_POST_TABLE." pc WHERE pc.PostControlSerNum = pfpmh.PostControlSerNum AND pfpmh.CronLogSerNum IN (%%CRON_LOG_IDS%%)
 ");
 
 define("SQL_OPAL_GET_TTM_CHART","
@@ -511,9 +469,6 @@ define("OPAL_GET_TREATMENT_MACHINES_TRIGGERS","
     WHERE ".OPAL_RESOURCE_NAME_TABLE." LIKE 'STX%' OR  ResourceName LIKE 'TB%' ORDER BY ResourceName;
 ");
 
-/*    UNION ALL
-    SELECT COUNT(*) AS locked FROM ".OPAL_MASTER_SOURCE_TEST_RESULT_TABLE." mstr
-    WHERE (mstr.code LIKE :code AND mstr.description LIKE :description)) x*/
 define("OPAL_COUNT_CODE_MASTER_SOURCE","
     SELECT SUM(locked) AS locked FROM (
     SELECT COUNT(*) AS locked FROM " . OPAL_MASTER_SOURCE_ALIAS_TABLE . " msa
@@ -783,17 +738,49 @@ define("OPAL_GET_TEST_RESULTS_MH", "
 ");
 
 define("OPAL_GET_HOSPITAL_MAP_DETAILS","
-SELECT DISTINCT
-HospitalMapSerNum AS serial,
-MapURL_EN AS url_EN,
-MapURL_FR AS url_FR,
-QRMapAlias AS qrid,
-MapName_EN AS name_EN,
-MapDescription_EN AS description_EN,
-MapName_FR AS name_FR,
-MapDescription_FR AS description_FR
-FROM
-".OPAL_HOSPITAL_MAP_TABLE."
-WHERE
-HospitalMapSerNum = :HospitalMapSerNum
+    SELECT DISTINCT HospitalMapSerNum AS serial, MapURL_EN AS url_EN, MapURL_FR AS url_FR, QRMapAlias AS qrid, MapName_EN AS name_EN, MapDescription_EN AS description_EN, MapName_FR AS name_FR, MapDescription_FR AS description_FR FROM ".OPAL_HOSPITAL_MAP_TABLE." WHERE HospitalMapSerNum = :HospitalMapSerNum;
+");
+
+define("OPAL_GET_CRON_LOG_APPOINTMENTS","
+    SELECT DISTINCT cl.CronDateTime AS x, COUNT(apmh.CronLogSerNum) AS y, apmh.CronLogSerNum AS cron_serial FROM ".OPAL_APPOINTMENT_MH_TABLE." apmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started' AND cl.CronLogSerNum = apmh.CronLogSerNum AND apmh.CronLogSerNum IS NOT NULL GROUP BY apmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC;
+");
+
+define("OPAL_GET_CRON_LOG_DOCUMENTS","
+    SELECT DISTINCT cl.CronDateTime AS x, COUNT(docmh.CronLogSerNum) AS y, docmh.CronLogSerNum AS cron_serial FROM ".OPAL_DOCUMENT_MH_TABLE." docmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started' AND cl.CronLogSerNum = docmh.CronLogSerNum AND docmh.CronLogSerNum IS NOT NULL GROUP BY docmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC;
+");
+
+define("OPAL_GET_CRON_LOG_TASKS","
+    SELECT DISTINCT cl.CronDateTime AS x, COUNT(tmh.CronLogSerNum) AS y, tmh.CronLogSerNum AS cron_serial FROM ".OPAL_TASK_MH_TABLE." tmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started' AND cl.CronLogSerNum = tmh.CronLogSerNum AND tmh.CronLogSerNum IS NOT NULL GROUP BY tmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC;
+");
+
+define("OPAL_GET_CRON_LOG_ANNOUNCEMENTS","
+    SELECT DISTINCT cl.CronDateTime AS x, COUNT(anmh.CronLogSerNum) AS y, anmh.CronLogSerNum AS cron_serial FROM ".OPAL_ANNOUNCEMENT_MH_TABLE." anmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started' AND cl.CronLogSerNum = anmh.CronLogSerNum AND anmh.CronLogSerNum IS NOT NULL GROUP BY anmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC;
+");
+
+define("OPAL_GET_CRON_LOG_TTMS","
+    SELECT DISTINCT cl.CronDateTime AS x, COUNT(ttmmh.CronLogSerNum) AS y, ttmmh.CronLogSerNum AS cron_serial FROM ".OPAL_TXT_TEAM_MSG_MH_TABLE." ttmmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started' AND cl.CronLogSerNum = ttmmh.CronLogSerNum AND ttmmh.CronLogSerNum IS NOT NULL GROUP BY ttmmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC;
+");
+
+define("OPAL_GET_CRON_LOG_PFP","
+    SELECT DISTINCT cl.CronDateTime AS x, COUNT(pfpmh.CronLogSerNum) AS y, pfpmh.CronLogSerNum AS cron_serial FROM ".OPAL_PATIENTS_FOR_PATIENTS_MH_TABLE." pfpmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started' AND cl.CronLogSerNum = pfpmh.CronLogSerNum AND pfpmh.CronLogSerNum IS NOT NULL GROUP BY pfpmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC;
+");
+
+define("OPAL_GET_CRON_LOG_EDU_MATERIALS","
+    SELECT DISTINCT cl.CronDateTime AS x, COUNT(emmh.CronLogSerNum) AS y, emmh.CronLogSerNum AS cron_serial FROM ".OPAL_EDUCATION_MATERIAL_MH_TABLE." emmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started' AND cl.CronLogSerNum = emmh.CronLogSerNum AND emmh.CronLogSerNum IS NOT NULL GROUP BY emmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC;
+");
+
+define("OPAL_GET_CRON_LOG_NOTIFICATIONS","
+    SELECT DISTINCT cl.CronDateTime AS x, COUNT(ntmh.CronLogSerNum) AS y, ntmh.CronLogSerNum AS cron_serial FROM ".OPAL_NOTIFICATION_MH_TABLE." ntmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started' AND cl.CronLogSerNum = ntmh.CronLogSerNum AND ntmh.CronLogSerNum IS NOT NULL GROUP BY ntmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC;
+");
+
+define("OPAL_GET_CRON_LOG_TEST_RESULTS","
+    SELECT DISTINCT cl.CronDateTime AS x, COUNT(trmh.CronLogSerNum) AS y, trmh.CronLogSerNum AS cron_serial FROM ".OPAL_TEST_RESULT_MH_TABLE." trmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started' AND cl.CronLogSerNum = trmh.CronLogSerNum AND trmh.CronLogSerNum IS NOT NULL GROUP BY trmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC
+");
+
+define("OPAL_GET_CRON_LOG_EMAILS","
+    SELECT DISTINCT cl.CronDateTime AS x, COUNT(emmh.CronLogSerNum) AS y, emmh.CronLogSerNum AS cron_serial FROM ".OPAL_EMAIL_LOG_MH_TABLE." emmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started' AND cl.CronLogSerNum = emmh.CronLogSerNum AND emmh.CronLogSerNum IS NOT NULL GROUP BY  emmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC 
+");
+
+define("OPAL_GET_CRON_LOG_QUESTIONNAIRES","
+    SELECT DISTINCT cl.CronDateTime AS x, COUNT(lqmh.CronLogSerNum) AS y, lqmh.CronLogSerNum AS cron_serial FROM ".OPAL_QUESTIONNAIRE_MH_TABLE." lqmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started' AND cl.CronLogSerNum = lqmh.CronLogSerNum AND lqmh.CronLogSerNum IS NOT NULL GROUP BY lqmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC
 ");
