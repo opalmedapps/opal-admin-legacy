@@ -387,30 +387,6 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Get all the triggers of a specific published questionnaire.
-     * @params  Questionnaire serial number (int)
-     * @return  array of details of the published questionnaire itself
-     * */
-    function getPublishedQuestionnaireTriggers($questionnaireId) {
-        return $this->_fetchAll(SQL_OPAL_GET_FILTERS_QUESTIONNAIRE_CONTROL,
-            array(
-                array("parameter"=>":QuestionnaireControlSerNum","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
-            ));
-    }
-
-    /*
-     * Get all the triggers of a specific published questionnaire.
-     * @params  Questionnaire serial number (int)
-     * @return  array of details of the published questionnaire itself
-     * */
-    function getPublishedQuestionnaireFrequencyEvents($questionnaireId) {
-        return $this->_fetchAll(SQL_OPAL_GET_FREQUENCY_EVENTS_QUESTIONNAIRE_CONTROL,
-            array(
-                array("parameter"=>":ControlTableSerNum","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
-            ));
-    }
-
-    /*
      * Get all the triggers of a specific publication.
      * @params  Questionnaire serial number (int)
      * @return  array of details of the published questionnaire itself
@@ -461,18 +437,6 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":ControlTable","variable"=>$controlTable,"data_type"=>PDO::PARAM_INT),
         );
         $this->_execute(SQL_OPAL_DELETE_FREQUENCY_EVENTS_TABLE, $toDelete);
-    }
-
-    /*
-     * Returns the filters for a specific questionnaire control
-     * @params  questionnaire control ID
-     * @return  array of filters
-     * */
-    function getFilters($questionnaireControlSerNum) {
-        return $this->_fetchAll(SQL_OPAL_GET_FILTERS,
-            array(
-                array("parameter"=>":QuestionnaireControlSerNum","variable"=>$questionnaireControlSerNum,"data_type"=>PDO::PARAM_INT),
-            ));
     }
 
     /*
@@ -1477,5 +1441,49 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetch(OPAL_GET_HOSPITAL_MAP_DETAILS, array(
             array("parameter"=>":HospitalMapSerNum","variable"=>$hpId,"data_type"=>PDO::PARAM_INT),
         ));
+    }
+
+    function getCronLogAppointments() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_APPOINTMENTS, array());
+    }
+
+    function getCronLogDocuments() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_DOCUMENTS, array());
+    }
+
+    function getCronLogTasks() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_TASKS, array());
+    }
+
+    function getCronLogAnnouncements() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_ANNOUNCEMENTS, array());
+    }
+
+    function getCronLogTTMs() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_TTMS, array());
+    }
+
+    function getCronLogPFP() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_PFP, array());
+    }
+
+    function getCronLogEduMaterials() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_EDU_MATERIALS, array());
+    }
+
+    function getCronLogNotifications() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_NOTIFICATIONS, array());
+    }
+
+    function getCronLogTestResults() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_TEST_RESULTS, array());
+    }
+
+    function getCronLogEmails() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_EMAILS, array());
+    }
+
+    function getCronLogQuestionnaires() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_QUESTIONNAIRES, array());
     }
 }
