@@ -122,14 +122,29 @@ class HelpSetup {
         return $correct;
     }
 
+    /*
+     * Validate if the user can access the specific module in read access
+     * @params  int : $moduleAccess - module to validate
+     * @return  boolean - Does the user has the read access for the module
+     * */
     public static function validateReadModule($moduleAccess) {
         return HelpSetup::validateBitOperation($_SESSION["userAccess"][$moduleAccess]["access"], ACCESS_READ);
     }
 
+    /*
+     * Validate if the user can access the specific module in write access
+     * @params  int : $moduleAccess - module to validate
+     * @return  boolean - Does the user has the write access for the module
+     * */
     public static function validateWriteModule($moduleAccess) {
         return HelpSetup::validateBitOperation($_SESSION["userAccess"][$moduleAccess]["access"], ACCESS_READ_WRITE);
     }
 
+    /*
+     * Validate if the user can access the specific module in delete access
+     * @params  int : $moduleAccess - module to validate
+     * @return  boolean - Does the user has the delete access for the module
+     * */
     public static function validateDeleteModule($moduleAccess) {
         return HelpSetup::validateBitOperation($_SESSION["userAccess"][$moduleAccess]["access"], ACCESS_READ_WRITE_DELETE);
     }

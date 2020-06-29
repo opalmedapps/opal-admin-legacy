@@ -17,7 +17,7 @@ class Diagnosis extends Module {
      * @param integer $serial : the serial number of the diagnosis translation
      * @return array $diagnosisTranslationDetails : the diagnosis translation details
      */
-    public function getDiagnosisTranslationDetails ($serial) {
+    public function getDiagnosisTranslationDetails($serial) {
         $this->checkReadAccess();
 
         $diagnosisTranslationDetails = array();

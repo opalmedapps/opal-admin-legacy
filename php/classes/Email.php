@@ -424,15 +424,11 @@ class Email extends Module {
         }
     }
 
-    public function getEmailListLogsAPI($serials) {
-        $this->checkReadAccess();
-        return $this->getEmailListLogs($serials);
-    }
-
     /**
      * Gets list logs of emails during one or many cron sessions
      */
     public function getEmailListLogs($emailIds) {
+        $this->checkReadAccess();
         foreach ($emailIds as &$id) {
             $id = intval($id);
         }

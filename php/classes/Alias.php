@@ -1346,7 +1346,6 @@ class Alias extends Module {
         return $aliasLogs;
     }
 
-
     /**
      *
      * Does a nested search for match
@@ -1391,6 +1390,11 @@ class Alias extends Module {
         return $assignedAlias;
     }
 
+    /*
+     * Get the list of educational materials an alias can assign to.
+     * @params  void
+     * @returns array - list of available educational material an alias has access
+     * */
     public function getEducationalMaterials() {
         $this->checkReadAccess();
         return $this->_getListEduMaterial();

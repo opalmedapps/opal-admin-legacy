@@ -11,11 +11,12 @@ class CustomCode extends Module {
      * Get the list of all custom codes
      * */
     function getCustomCodes() {
+        $this->checkReadAccess();
         $results = $this->opalDB->getCustomCodes();
         return $results;
     }
 
-    public function isCodeExists($tableName, $code, $description) {
+    protected function _isCodeExists($tableName, $code, $description) {
         $result = $this->opalDB->getCountCustomCodes($tableName, $code, $description);
 
         if(intval($result["locked"]) == 0)
@@ -30,6 +31,7 @@ class CustomCode extends Module {
      * @return  array of modules
      * */
     public function getAvailableModules() {
+        $this->checkReadAccess();
         return $this->opalDB->getAvailableModules();
     }
 
@@ -39,6 +41,7 @@ class CustomCode extends Module {
      * @return  number of record inserted (should be one) or a code 500
      * */
     public function insertCustomCode($customCode) {
+        $this->checkWriteAccess();
         $customCode = HelpSetup::arraySanitization($customCode);
         $moduleDetails = $this->opalDB->getModuleSettings($customCode["moduleId"]["value"]);
 
@@ -63,11 +66,12 @@ class CustomCode extends Module {
      * @return  number of record inserted (should be one) or a code 500
      * */
     public function updateCustomCode($customCode) {
+        $this->checkWriteAccess();
         $customCode = HelpSetup::arraySanitization($customCode);
         if(!array_key_exists("ID", $customCode) || $customCode["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot identify the custom code");
 
-        $details = $this->getCustomCodeDetails($customCode["ID"], $customCode["moduleId"]["value"]);
+        $details = $this->_getCustomCodeDetails($customCode["ID"], $customCode["moduleId"]["value"]);
 
         if($details["locked"] > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Custom code is in use and cannot be modified.");
@@ -122,7 +126,7 @@ class CustomCode extends Module {
                 array_push($errMsgs, "Type should not be there.");
         }
 
-        if($this->isCodeExists($moduleDetails["masterSource"], $customCode["details"]["code"], $customCode["details"]["description"]))
+        if($this->_isCodeExists($moduleDetails["masterSource"], $customCode["details"]["code"], $customCode["details"]["description"]))
             array_push($errMsgs, "Code already exists.");
 
         return $errMsgs;
@@ -135,7 +139,7 @@ class CustomCode extends Module {
      *          $moduleId (int) ID of the module to which is associated the custom code
      * @return  array : details of the custom code
      * */
-    function getCustomCodeDetails($customCodeId, $moduleId) {
+    protected function _getCustomCodeDetails($customCodeId, $moduleId) {
         $customCodeId = intval($customCodeId);
         $moduleId = intval($moduleId);
         $results = $this->opalDB->getCustomCodeDetails($customCodeId, $moduleId);
@@ -143,6 +147,11 @@ class CustomCode extends Module {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid custom code.");
         unset($results["masterSource"]);
         return $results;
+    }
+
+    function getCustomCodeDetailsAPI($customCodeId, $moduleId) {
+        $this->checkReadAccess();
+        return $this->_getCustomCodeDetails($customCodeId, $moduleId);
     }
 
     /**
@@ -160,6 +169,7 @@ class CustomCode extends Module {
      * @return  boolean : response
      */
     function deleteCustomCode($customCodeId, $moduleId) {
+        $this->checkDeleteAccess();
         $details = $this->opalDB->getCustomCodeDetails($customCodeId, $moduleId);
         if($details["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid custom code.");

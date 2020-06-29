@@ -10,7 +10,6 @@ class TestResult extends Module {
         parent::__construct(MODULE_TEST_RESULTS, $guestStatus);
     }
 
-
     /**
      *
      * Updates the publish flag(s) in the database
@@ -20,6 +19,7 @@ class TestResult extends Module {
      * @return array $response : response
      */
     public function updatePublishFlags( $testResultList, $user ) {
+        $this->checkWriteAccess();
         $response = array(
             'value'     => 0,
             'message'   => ''
@@ -64,6 +64,7 @@ class TestResult extends Module {
      * @return array $testResultDetails : the test result details
      */
     public function getTestResultDetails ($serial) {
+        $this->checkReadAccess();
         $testResultDetails = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -185,7 +186,7 @@ class TestResult extends Module {
      * @return array $groups : the list of existing test groups
      */
     public function getTestResultGroups () {
-
+        $this->checkReadAccess();
         $groups = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -222,6 +223,7 @@ class TestResult extends Module {
      * @return array $testNames : the list of test names
      */
     public function getTestNames() {
+        $this->checkReadAccess();
         $testNames = array();
         $databaseObj = new Database();
 
@@ -308,32 +310,6 @@ class TestResult extends Module {
         }
     }
 
-    /*
-    public function getTestNames() {
-        $databaseObj = new Database();
-        $activeDBSources = $databaseObj->getActiveSourceDatabases();
-        $assignedTests = $this->getAssignedTests();
-
-        $sql = "SELECT description AS name, description AS id FROM ".OPAL_MASTER_SOURCE_TEST_RESULT_TABLE." WHERE deleted = 0 AND source IN(".implode(",", $activeDBSources).") ORDER BY description";
-
-        $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD);
-        $host_db_link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-        $query->execute();
-        $results = $query->fetchAll(PDO::FETCH_ASSOC);
-
-        foreach($results as &$item) {
-            $assignedTest = $this->assignedSearch($item['name'], $assignedTests);
-            $item['added'] = 0;
-            if ($assignedTest)
-                $item['assigned'] = $assignedTest;
-            else
-                $item['assigned'] = null;
-        }
-
-        return $results;
-    }
-     * */
 
     /**
      *
@@ -384,7 +360,7 @@ class TestResult extends Module {
      * @return void
      */
     public function insertTestResult ($testResultDetails) {
-
+        $this->checkWriteAccess();
         $name_EN            = $testResultDetails['name_EN'];
         $name_FR            = $testResultDetails['name_FR'];
         $description_EN     = $testResultDetails['description_EN'];
@@ -513,7 +489,7 @@ class TestResult extends Module {
      * @return array $testResultList : the list of existing test results
      */
     public function getExistingTestResults () {
-
+        $this->checkReadAccess();
         $testResultList = array();
 
         try {
@@ -644,7 +620,7 @@ class TestResult extends Module {
      * @return array : response
      */
     public function updateTestResult ($testResultDetails) {
-
+        $this->checkWriteAccess();
         $name_EN            = $testResultDetails['name_EN'];
         $name_FR            = $testResultDetails['name_FR'];
         $description_EN     = $testResultDetails['description_EN'];
@@ -835,7 +811,7 @@ class TestResult extends Module {
      * @return array $response : response
      */
     public function deleteTestResult ($testResultSer, $user) {
-
+        $this->checkDeleteAccess();
         $response = array(
             'value'     => 0,
             'message'   => ''
@@ -942,6 +918,7 @@ class TestResult extends Module {
      * @return array $testResultLogs : the test result logs for highcharts
      */
     public function getTestResultChartLogs ($serial) {
+        $this->checkReadAccess();
         $testResultLogs = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -1062,6 +1039,7 @@ class TestResult extends Module {
      * Gets list logs of test results during one or many cron sessions
      */
     public function getTestResultListLogs($testResultIds) {
+        $this->checkReadAccess();
         foreach ($testResultIds as &$id) {
             $id = intval($id);
         }

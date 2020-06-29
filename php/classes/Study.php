@@ -17,6 +17,7 @@ class Study extends Module {
      * @return  array of studies
      * */
     public function getStudies() {
+        $this->checkReadAccess();
         return $this->opalDB->getStudiesList();
     }
 
@@ -26,6 +27,7 @@ class Study extends Module {
      * @return  number of record inserted (should be one) or a code 500
      * */
     public function insertStudy($post) {
+        $this->checkWriteAccess();
         $study = HelpSetup::arraySanitization($post);
         $result = $this->_validateStudy($study);
         if(is_array($result) && count($result) > 0)
@@ -81,6 +83,7 @@ class Study extends Module {
      * @return  (array) details of the study
      * */
     public function getStudyDetails($studyId) {
+        $this->checkReadAccess();
         return $this->opalDB->getStudyDetails(intval($studyId));
     }
 
@@ -90,6 +93,7 @@ class Study extends Module {
      * @return  (int) number of record updated (should be one!) or an error 500
      * */
     public function updateStudy($post) {
+        $this->checkWriteAccess();
         $study = HelpSetup::arraySanitization($post);
         $result = $this->_validateStudy($study);
         if(is_array($result) && count($result) > 0)
@@ -98,7 +102,7 @@ class Study extends Module {
         if(!array_key_exists("ID", $study) || $study["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot identify the study.");
 
-        $currentStudy = $this->getStudyDetails($study["ID"]);
+        $currentStudy = $this->opalDB->getStudyDetails(intval($study["ID"]));
         if(!$currentStudy["ID"] || $currentStudy["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot identify the study.");
 
@@ -134,7 +138,8 @@ class Study extends Module {
      * @return  (int) number of record marked or error 500 if an error occurred.
      */
     function deleteStudy($studyId) {
-        $currentStudy = $this->getStudyDetails($studyId);
+        $this->checkDeleteAccess();
+        $currentStudy = $this->opalDB->getStudyDetails(intval($studyId));
         if(!$currentStudy["ID"] || $currentStudy["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Study not found.");
 
