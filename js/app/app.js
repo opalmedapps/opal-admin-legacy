@@ -29,6 +29,17 @@ angular.module('opalAdmin', [
 		notAuthenticated: 'auth-not-authenticated',
 		notAuthorized: 'auth-not-authorized'
 	})
+
+	.constant('HTTP_CODE', {
+		success: 200,
+		internalServerError: 500,
+		notAuthenticatedError: 401,
+		notFoundError: 404,
+		forbiddenAccessError: 403,
+		sessionTimeoutError: 419,
+		loginTimeoutError: 440,
+	})
+
 	.constant('USER_ROLES', {
 		admin: '1',
 		registrant: '4',

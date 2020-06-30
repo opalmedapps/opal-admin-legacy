@@ -109,68 +109,11 @@ class HospitalMap extends Module {
     }
 
     /**
-     *
      * Gets a list of existing hospital maps
-     *
-     * @return array $hosMapList : the list of existing hospital maps
      */
     public function getHospitalMaps() {
         $this->checkReadAccess();
-        $hosMapList = array();
- 		try {
-			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT
-                    hm.HospitalMapSerNum,
-                    hm.MapURL_EN,
-                    hm.MapURL_FR,
-                    hm.QRMapAlias,
-                    hm.MapName_EN,
-                    hm.MapDescription_EN,
-                    hm.MapName_FR,
-                    hm.MapDescription_FR
-                FROM
-                    HospitalMap hm
-            ";
-			$query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$query->execute();
-
-			while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $serial             = $data[0];
-                $url_EN             = $data[1];
-                $url_FR             = $data[2];
-                $qrid               = $data[3];
-                $name_EN            = $data[4];
-                $description_EN     = $data[5];
-                $name_FR            = $data[6];
-                $description_FR     = $data[7];
-                $qr = $this->generateQRCode($qrid, null);
-                $qrcode = $qr['qrcode'];
-                $qrpath = $qr['qrpath'];
-
-                $hosMapArray = array(
-                    'name_EN'           => $name_EN,
-                    'name_FR'           => $name_FR,
-                    'description_EN'    => $description_EN,
-                    'description_FR'    => $description_FR,
-                    'url_EN'            => $url_EN,
-                    'url_FR'            => $url_FR,
-                    'qrid'              => $qrid,
-                    'qrcode'            => $qrcode,
-                    'qrpath'            => $qrpath,
-                    'serial'            => $serial
-                );
-
-                array_push($hosMapList, $hosMapArray);
-            }
-
-            return $hosMapList;
-	    } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $hosMapList;
-		}
+        return $this->opalDB->getHospitalMaps();
 	}
 
     /*

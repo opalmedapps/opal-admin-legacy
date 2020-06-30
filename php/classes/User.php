@@ -120,14 +120,7 @@ class User extends Module {
         foreach($tempAccess as $access) {
             if(!HelpSetup::validateBitOperation($access["operation"],$access["access"]))
                 HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access violation role-module. Please contact your administrator.");
-            $userAccess[$access["ID"]] =
-                array(
-                    "ID"=>$access["ID"],
-                    "access"=>$access["access"],
-//                    "read"=>(intval($access["access"]) >> 0) & 1,
-//                    "write"=>(intval($access["access"]) >> 1) & 1,
-//                    "delete"=>(intval($access["access"]) >> 2) & 1,
-                );
+            $userAccess[$access["ID"]] = array("ID"=>$access["ID"], "access"=>$access["access"]);
         }
         $_SESSION["userAccess"] = $userAccess;
         $result["userAccess"] = $_SESSION["userAccess"];

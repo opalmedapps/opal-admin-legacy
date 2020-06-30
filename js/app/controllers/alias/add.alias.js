@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.alias.add', ['ngAnimate', 'ui.bootstrap', 
 /******************************************************************************
  * Add Alias Page controller
  *******************************************************************************/
-controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionService, $state, Session, hospitalMapCollectionService) {
+controller('alias.add', function ($scope, $filter, $uibModal, $state, Session, aliasCollectionService, ErrorHandler) {
 
 	// Function to go to previous page
 	$scope.goBack = function () {
@@ -114,7 +114,6 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 			keyboard: false,
 		});
 	};
-
 	// Call our API service to get the list of educational material
 	aliasCollectionService.getEducationalMaterials().then(function (response) {
 		response.data.forEach(function(entry) {
@@ -124,19 +123,21 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 				entry.name_display = entry.name_EN;
 		});
 		$scope.eduMatList = response.data; // Assign value
-	}).catch(function(response) {
-		alert($filter('translate')('ALIAS.ADD.ERROR_EDUCATION') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('ALIAS.ADD.ERROR_EDUCATION'));
+		$state.go('alias');
 	});
 
 	// Call our API service to get the list of source databases
 	aliasCollectionService.getSourceDatabases().then(function (response) {
 		$scope.sourceDBList = response.data; // Assign value
-	}).catch(function(response) {
-		alert($filter('translate')('ALIAS.ADD.ERROR_DATABASE') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('ALIAS.ADD.ERROR_DATABASE'));
+		$state.go('alias');
 	});
 
 	// Call our API to get the list of existing hospital maps
-	hospitalMapCollectionService.getHospitalMaps().then(function (response) {
+	aliasCollectionService.getHospitalMaps().then(function (response) {
 		response.data.forEach(function(entry) {
 			if($scope.language.toUpperCase() === "FR")
 				entry.name_display = entry.name_FR;
@@ -144,8 +145,9 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 				entry.name_display = entry.name_EN;
 		});
 		$scope.hospitalMapList = response.data;
-	}).catch(function(response) {
-		alert($filter('translate')('ALIAS.ADD.ERROR_HOSPITAL') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('ALIAS.ADD.ERROR_HOSPITAL'));
+		$state.go('alias');
 	});
 
 	// Function to toggle necessary changes when updating the source database buttons
@@ -182,8 +184,8 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 				$scope.termList = response.data; // Assign value
 
 
-			}).catch(function(response) {
-				alert($filter('translate')('ALIAS.ADD.ERROR_ALIAS') + "\r\n\r\n" + response.status + " - " + response.data);
+			}).catch(function(err) {
+				ErrorHandler.onError(err, $filter('translate')('ALIAS.ADD.ERROR_ALIAS'));
 				$state.go('alias');
 			}).finally(function() {
 				processingModal.close(); // hide modal
@@ -323,8 +325,8 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 				$scope.termList = response.data; // Assign value
 
 
-			}).catch(function(response) {
-				alert($filter('translate')('ALIAS.ADD.ERROR_ALIAS') + "\r\n\r\n" + response.status + " - " + response.data);
+			}).catch(function(err) {
+				ErrorHandler.onError(err, $filter('translate')('ALIAS.ADD.ERROR_ALIAS'));
 				$state.go('alias');
 			}).finally(function() {
 				processingModal.close(); // hide modal
@@ -483,7 +485,7 @@ controller('alias.add', function ($scope, $filter, $uibModal, aliasCollectionSer
 				data: $scope.newAlias,
 				success: function () {},
 				error: function (err) {
-					alert($filter('translate')('ALIAS.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText);
+					ErrorHandler.onError(err, $filter('translate')('ALIAS.ADD.ERROR_ADD'));
 				},
 				complete: function() {
 					$state.go('alias');
