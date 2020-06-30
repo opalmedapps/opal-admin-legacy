@@ -784,3 +784,16 @@ define("OPAL_GET_CRON_LOG_EMAILS","
 define("OPAL_GET_CRON_LOG_QUESTIONNAIRES","
     SELECT DISTINCT cl.CronDateTime AS x, COUNT(lqmh.CronLogSerNum) AS y, lqmh.CronLogSerNum AS cron_serial FROM ".OPAL_QUESTIONNAIRE_MH_TABLE." lqmh, ".OPAL_CRON_LOG_TABLE." cl WHERE cl.CronStatus = 'Started' AND cl.CronLogSerNum = lqmh.CronLogSerNum AND lqmh.CronLogSerNum IS NOT NULL GROUP BY lqmh.CronLogSerNum, cl.CronDateTime ORDER BY cl.CronDateTime ASC
 ");
+
+define("OPAL_GET_HOSPITAL_MAPS","
+SELECT DISTINCT
+HospitalMapSerNum AS serial,
+MapURL_EN AS url_EN,
+MapURL_FR AS url_FR,
+QRMapAlias AS qrid,
+MapName_EN AS name_EN,
+MapDescription_EN AS description_EN,
+MapName_FR AS name_FR,
+MapDescription_FR AS description_FR
+FROM ".OPAL_HOSPITAL_MAP_TABLE."
+");

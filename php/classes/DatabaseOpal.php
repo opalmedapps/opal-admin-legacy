@@ -1486,4 +1486,8 @@ class DatabaseOpal extends DatabaseAccess {
     function getCronLogQuestionnaires() {
         return $this->_fetchAll(OPAL_GET_CRON_LOG_QUESTIONNAIRES, array());
     }
+
+    function getHospitalMaps() {
+        return $this->_fetchAll(OPAL_GET_HOSPITAL_MAPS, array());
+    }
 }
