@@ -2715,6 +2715,19 @@
     "TITLE": "Rapport du patient",
     "INTRODUCTION": "Rechercher et générer un rapport pour les patients qui utilisent Opal."
   },
+  "ERROR_HANDLER": {
+    "403": {
+      "TITLE": "403 - Accès interdit",
+      "MESSAGE": "<p>Vous n'avez pas l'autorisation d'accéder à cette section.</p><p>Veuillez contacter votre administration pour plus de détails.</p>",
+      "BUTTON": "Fermer"
+    },
+    "404": {
+      "MESSAGE": "Code 404. La ressource est introuvable."
+    },
+    "500": {
+      "MESSAGE": "Code 500. Erreur interne du serveur. Réponse du serveur:"
+    }
+  },
   "PATIENT_REGISTRATION_TITLE": "Enregistrement Patient",
   "PATIENT_REGISTRATION_SEARCH_HEADER": "Recherche",
   "PATIENT_REGISTRATION_SEARCH_DESCRIPTION": "Veuillez entrer un numéro de carte soleil de 12 caractères avec l'identifiant dur patient pour lancer le processus d'incription.",

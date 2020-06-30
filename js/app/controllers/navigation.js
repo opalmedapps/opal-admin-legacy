@@ -1,13 +1,13 @@
 angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 
 
-/******************************************************************************
- * Controller for navigating the site
- *******************************************************************************/
-controller('navigation', function ($scope, $location, $state, LogoutService) {
+	/******************************************************************************
+	 * Controller for navigating the site
+	 *******************************************************************************/
+	controller('navigation', function ($scope, $location, $state, LogoutService) {
 
-    // Get the current page from url
-    $scope.currentPage = $location.path().replace('/', ''); // and remove leading slash
+		// Get the current page from url
+		$scope.currentPage = $location.path().replace('/', ''); // and remove leading slash
 
 		// Function to go to alias page
 		$scope.goToAlias = function () {
@@ -117,15 +117,15 @@ controller('navigation', function ($scope, $location, $state, LogoutService) {
 			$state.go('user-activity');
 		};
 
-    // Function to close the navbar on selection of a menu page
-    $scope.closeNav = function () {
-        $(".navbar-collapse").collapse('hide');
-    }
+		// Function to close the navbar on selection of a menu page
+		$scope.closeNav = function () {
+			$(".navbar-collapse").collapse('hide');
+		}
 
 		// Function to set dropdown active for publishing tools
 		$scope.currentActivePublishingTool = function () {
 			var publishingToolPages = ['alias','post','educational-material','hospital-map','notification',
-			'test-result','questionnaire-menu','email','custom-code','study'];
+				'test-result','questionnaire-menu','email','custom-code','study'];
 			if (publishingToolPages.indexOf($state.current.name) !== -1) {
 				return true;
 			}
@@ -134,7 +134,7 @@ controller('navigation', function ($scope, $location, $state, LogoutService) {
 		// Function to set dropdown active for administration menu
 		$scope.currentActiveAdministration = function () {
 			var adminstrationPages = ['diagnosis-translation','cron','patients','patients-register',
-			'patient-activity','users','user-activity'];
+				'patient-activity','users','user-activity'];
 			if (adminstrationPages.indexOf($state.current.name) !== -1) {
 				return true;
 			}
@@ -149,10 +149,10 @@ controller('navigation', function ($scope, $location, $state, LogoutService) {
 			else return false;
 		}
 
-    // Function to go to report page
-    $scope.goToReport = function () {
-        $state.go('report');
-    };
+		// Function to go to report page
+		$scope.goToReport = function () {
+			$state.go('report');
+		};
 
-});
+	});
 

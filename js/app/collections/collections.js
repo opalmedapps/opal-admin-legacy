@@ -149,6 +149,15 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
+		aliasAPI.getHospitalMaps = function () {
+			return $http.post(
+				"alias/get/hospital-maps",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
 		return aliasAPI;
 	})
 
@@ -1171,7 +1180,7 @@ angular.module('opalAdmin.collections', [])
 		installAPI.verifyRequirements = function (urlpath) {
 			return $http({
 				method: 'JSONP',
-				url: urlpath + "api/install/verify_requirements.php?callback=JSON_CALLBACK"
+				url: "install/verify-requirements"
 			});
 		};
 

@@ -79,6 +79,7 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.customCode.add',
 	'opalAdmin.controllers.customCode.edit',
 	'opalAdmin.controllers.customCode.delete',
+	'opalAdmin.controllers.errorHandler.accessDenied',
 	'opalAdmin.controllers.study',
 	'opalAdmin.controllers.study.add',
 	'opalAdmin.controllers.study.edit',

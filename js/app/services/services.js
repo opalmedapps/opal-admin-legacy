@@ -22,6 +22,15 @@ angular.module('opalAdmin.services', [])
 		};
 	})
 
+	.service('ErrorHandler', function($filter, $state, HTTP_CODE) {
+		this.onError = function(response, clientErrMsg) {
+			if(response.status === HTTP_CODE.notFoundError)
+				alert(clientErrMsg + " " + $filter('translate')('ERROR_HANDLER.404.MESSAGE'));
+			else if(response.status === HTTP_CODE.internalServerError)
+				alert(clientErrMsg + " " + $filter('translate')('ERROR_HANDLER.500.MESSAGE') + "\r\n" + JSON.parse(response.data));
+		}
+	})
+
 	.service('loginModal', function ($uibModal) {
 		return function () {
 			var modalInstance = $uibModal.open({
@@ -32,7 +41,6 @@ angular.module('opalAdmin.services', [])
 
 			return modalInstance.result.then(function() {});
 		};
-
 	})
 
 	.service('LogoutService', function (Session, $state, $http) {

@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 /******************************************************************************
  * Alias Page controller
  *******************************************************************************/
-controller('alias', function ($scope, $uibModal, $filter, aliasCollectionService, uiGridConstants, $state, Session) {
+controller('alias', function ($scope, $uibModal, $filter, $state, aliasCollectionService, uiGridConstants, Session, ErrorHandler) {
 
 	// Function to go to add alias page
 	$scope.goToAddAlias = function () {
@@ -144,8 +144,8 @@ controller('alias', function ($scope, $uibModal, $filter, aliasCollectionService
 			});
 			$scope.aliasList = response.data;
 
-		}).catch(function(response) {
-			alert($filter('translate')('ALIAS.LIST.ERROR_ALIASES') + "\r\n\r\n" + response.status + " - " + response.data);
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('ALIAS.LIST.ERROR_ALIASES'));
 		});
 	}
 
@@ -167,8 +167,8 @@ controller('alias', function ($scope, $uibModal, $filter, aliasCollectionService
 						log.x = new Date(log.x);
 					});
 				});
-			}).catch(function(response) {
-				alert($filter('translate')('ALIAS.LIST.ERROR_LOGS') + "\r\n\r\n" + response.status + " - " + response.data);
+			}).catch(function(err) {
+				ErrorHandler.onError(err, $filter('translate')('ALIAS.LIST.ERROR_LOGS'));
 			});
 		}
 
@@ -319,13 +319,13 @@ controller('alias', function ($scope, $uibModal, $filter, aliasCollectionService
 						$scope.showBanner();
 					}
 					else {
-						alert($filter('translate')('ALIAS.LIST.ERROR_FLAGS') + "\r\n\r\n" + response.messag);
+						ErrorHandler.onError(response, $filter('translate')('ALIAS.LIST.ERROR_FLAGS'));
 					}
 					$scope.changesMade = false;
 					$scope.aliasUpdates.updateList = [];
 				},
 				error: function(err) {
-					alert($filter('translate')('ALIAS.LIST.ERROR_FLAGS') + "\r\n\r\n" + err.status + " - " + err.statusText);
+					ErrorHandler.onError(err, $filter('translate')('ALIAS.LIST.ERROR_FLAGS'));
 				}
 			});
 		}

@@ -1400,4 +1400,13 @@ class Alias extends Module {
         return $this->_getListEduMaterial();
     }
 
+    /*
+     * Get the list of hospital maps an alias can assign to.
+     * @params  void
+     * @returns array - list of available hospital maps an alias has access
+     * */
+    public function getHospitalMaps() {
+        $this->checkReadAccess();
+        return $this->opalDB->getHospitalMaps();
+    }
 }

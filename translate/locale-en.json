@@ -2690,6 +2690,19 @@
     "TITLE": "Patient Report",
     "INTRODUCTION": "Search and generate report for opal patients."
   },
+  "ERROR_HANDLER": {
+    "403": {
+      "TITLE": "403 - Access Denied",
+      "MESSAGE": "<p>You are not authorized to access this section and you will be redirected to the homepage.</p><p>Please contact your administrator for more details.</p>",
+      "BUTTON": "Close"
+    },
+    "404": {
+      "MESSAGE": "Code 404. The resource cannot be found."
+    },
+    "500": {
+      "MESSAGE": "Code 500. Internal Server Error. Answer of the server:"
+    }
+  },
   "PATIENT_REGISTRATION_TITLE": "Patient Registration",
   "PATIENT_REGISTRATION_SEARCH_HEADER": "Registration Search",
   "PATIENT_REGISTRATION_SEARCH_DESCRIPTION": "Please enter a valid <strong>12-character</strong> Medicare card number along with the <strong>patient ID</strong> to start the registration process.",
