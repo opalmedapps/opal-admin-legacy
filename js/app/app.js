@@ -30,6 +30,25 @@ angular.module('opalAdmin', [
 		notAuthorized: 'auth-not-authorized'
 	})
 
+	.constant('MODULE', {
+		alias: 1,
+		post: 2,
+		edu_mat: 3,
+		hospital_map: 4,
+		notification: 5,
+		test_results: 6,
+		questionnaire: 7,
+		publication: 8,
+		diagnosis_translation: 9,
+		cron_log: 10,
+		patient: 11,
+		user: 12,
+		study: 13,
+		email: 14,
+		custom_code: 15,
+		role: 16,
+	})
+
 	.constant('HTTP_CODE', {
 		success: 200,
 		internalServerError: 500,

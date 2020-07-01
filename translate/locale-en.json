@@ -1678,6 +1678,7 @@
       "LOGS": "Logs",
       "NO_DATA": "No data available",
       "EDIT": "Edit",
+      "VIEW": "View",
       "DELETE": "Delete",
       "TITLE_2": "Title",
       "TYPE": "Type",
@@ -1795,8 +1796,10 @@
     },
     "EDIT": {
       "TITLE": "Edit",
+      "TITLE_VIEW": "Voir",
       "SAVE": "Save changes",
       "CANCEL": "Cancel",
+      "CLOSE": "Close",
       "ERRORS": "Errors",
       "ASSIGNED_CODE": "Assigned Clinical Code(s)",
       "CURRENT_CODE": "Current Assigned Code(s)",
