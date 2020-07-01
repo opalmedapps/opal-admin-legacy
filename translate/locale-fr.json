@@ -1709,6 +1709,7 @@
       "LOGS": "Journaux",
       "NO_DATA": "Aucune donnée disponible",
       "EDIT": "Modifier",
+      "VIEW": "Voir",
       "DELETE": "Supprimer",
       "TITLE_2": "Titre",
       "TYPE": "Type",
@@ -1826,8 +1827,10 @@
     },
     "EDIT": {
       "TITLE": "Modifier",
+      "TITLE_VIEW": "Voir",
       "SAVE": "Enregistrer",
       "CANCEL": "Annuler",
+      "CLOSE": "Fermer",
       "ERRORS": "Erreurs",
       "ASSIGNED_CODE": "Code(s) clinique(s) attribué(s)",
       "CURRENT_CODE": "Code(s) actuellement assigné(s)",
