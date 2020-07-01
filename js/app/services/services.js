@@ -22,12 +22,16 @@ angular.module('opalAdmin.services', [])
 		};
 	})
 
-	.service('ErrorHandler', function($filter, $state, HTTP_CODE) {
+	.service('ErrorHandler', function($filter, $state, $uibModal, HTTP_CODE, $rootScope, AUTH_EVENTS) {
 		this.onError = function(response, clientErrMsg) {
 			if(response.status === HTTP_CODE.notFoundError)
 				alert(clientErrMsg + " " + $filter('translate')('ERROR_HANDLER.404.MESSAGE'));
 			else if(response.status === HTTP_CODE.internalServerError)
 				alert(clientErrMsg + " " + $filter('translate')('ERROR_HANDLER.500.MESSAGE') + "\r\n" + JSON.parse(response.data));
+			// else if(response.status === HTTP_CODE.forbiddenAccessError)
+			// 	$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
+			// else if(response.status === HTTP_CODE.notAuthenticatedError)
+			// 	$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
 		}
 	})
 

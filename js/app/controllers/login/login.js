@@ -66,13 +66,17 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, A
 
 	$scope.submitLogin = function (credentials) {
 		if ($scope.loginFormComplete()) {
-
 			var cypher = (moment().unix() % (Math.floor(Math.random() * 20))) + 103;
 
 			var encrypted = JSON.stringify({username: credentials.username, password: credentials.password});
 			encrypted = (Encrypt.encode(encrypted, cypher));
 
 			AuthService.login(encrypted, cypher).then(function (response) {
+				var accessLevel = [];
+				angular.forEach(response.data.userAccess, function (row) {
+					accessLevel[row["ID"]] = row["access"];
+				});
+				response.data.userAccess = accessLevel;
 
 				Session.create(response.data);
 				$rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
