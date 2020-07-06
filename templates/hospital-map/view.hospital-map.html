@@ -3,16 +3,11 @@
     <div class="col-xs-12 col-md-6">
         <h2 class="modal-title">
             <span class="glyphicon glyphicon-pencil"></span>
-            {{'HOSPITAL_MAPS.EDIT.TITLE'|translate}}
+            {{'HOSPITAL_MAPS.EDIT.TITLE_VIEW'|translate}}
         </h2>
     </div>
     <div class="modal-buttons col-xs-12 col-md-6">
-        <span>
-            <form method="post" ng-submit="updateHosMap()">
-                <input class="btn btn-primary submit" ng-class="{'disabled': !checkForm()}" type="submit" value="{{'HOSPITAL_MAPS.EDIT.SAVE'|translate}}">
-                <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'HOSPITAL_MAPS.EDIT.CANCEL'|translate}}">
-            </form>
-        </span>
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'HOSPITAL_MAPS.EDIT.CLOSE'|translate}}">
     </div>
 </div>
 <div class="modal-body">
@@ -130,9 +125,6 @@
 <!--                <div class="col-xs-12 col-md-6">-->
 <!--                    <div class="input-group">-->
 <!--                        <input class="form-control" type="text" ng-model="hosMap.qrid" ng-change="setChangesMade()" placeholder="{{'HOSPITAL_MAPS.EDIT.QR_IDENTIFIER'|translate}}" required="required">-->
-<!--                        <span class="input-group-btn">-->
-<!--                            <button class="btn btn-default" type="button" ng-click="generateQRCode(hosMap.qrid)">{{'HOSPITAL_MAPS.EDIT.GENERATE_QR'|translate}}</button>-->
-<!--                        </span>-->
 <!--                    </div>-->
 <!--                    <div ng-show="hosMap.qrcode" style="text-align:center">-->
 <!--                        <img ng-src="{{hosMap.qrcode}}" style="width:200px;height:200px;">-->

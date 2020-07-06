@@ -7,7 +7,7 @@ filter('deliberatelyTrustAsHtml', function ($sce) {
 	/******************************************************************************
 	 * Post Page controller
 	 *******************************************************************************/
-	controller('post', function ($scope, $filter, $sce, $state, $uibModal, postCollectionService, uiGridConstants, Session, MODULE)   {
+	controller('post', function ($scope, $filter, $sce, $state, $uibModal, postCollectionService, uiGridConstants, Session, ErrorHandler, MODULE)   {
 		$scope.readAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.post]) & (1 << 0)) !== 0);
 		$scope.writeAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.post]) & (1 << 1)) !== 0);
 		$scope.deleteAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.post]) & (1 << 2)) !== 0);

@@ -55,8 +55,7 @@ class Cron extends Module {
             return $cronDetails;
 
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $cronDetails;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for cron log. " . $e->getMessage());
         }
     }
 
@@ -141,7 +140,7 @@ class Cron extends Module {
             $crontab->append_cronjob($cronjobs);
 
         } catch( PDOException $e) {
-            return $e->getMessage();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for cron log. " . $e->getMessage());
         }
     }
 
@@ -231,7 +230,7 @@ class Cron extends Module {
             $crontab->append_cronjob($cronjobs);
 
         } catch( PDOException $e) {
-            return $e->getMessage();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for cron log. " . $e->getMessage());
         }
     }
 

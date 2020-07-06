@@ -11,6 +11,11 @@ class HospitalMap extends Module {
         parent::__construct(MODULE_HOSPITAL_MAP, $guestStatus);
     }
 
+    public function generateQRCode($qrid, $oldqrid) {
+        $this->checkWriteAccess();
+        return $this->_generateQRCode($qrid, $oldqrid);
+    }
+
     /**
      *
      * Generates a QRCode
@@ -19,9 +24,7 @@ class HospitalMap extends Module {
      * @param string $oldqrid : the previous string that was QR'ed
      * @return array : qrcode with path
      */
-    public function generateQRCode($qrid, $oldqrid) {
-        $this->checkWriteAccess();
-
+    protected function _generateQRCode($qrid, $oldqrid) {
         if($oldqrid) {
             $oldQRPath = FRONTEND_ABS_PATH.'images' . DIRECTORY_SEPARATOR . 'hospital-maps' . DIRECTORY_SEPARATOR . 'qrCodes' . DIRECTORY_SEPARATOR .$oldqrid.'.png';
             if(file_exists($oldQRPath)) {
@@ -103,7 +106,7 @@ class HospitalMap extends Module {
 		    $query = $host_db_link->prepare( $sql );
 			$query->execute();
         } catch( PDOException $e) {
-			return $e->getMessage();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for hospital map. " . $e->getMessage());
 		}
 
     }
@@ -122,9 +125,9 @@ class HospitalMap extends Module {
     public function getHospitalMapDetails($serial) {
         $this->checkReadAccess();
         $hosMapDetails = $this->opalDB->getHospitalMapDetails(intval($serial));
-        $qr = $this->generateQRCode($hosMapDetails['qrid'], null);
-        $hosMapDetails['qrcode'] = $qr['qrcode'];
-        $hosMapDetails['qrpath'] = $qr['qrpath'];
+//        $qr = $this->_generateQRCode($hosMapDetails['qrid'], null);
+//        $hosMapDetails['qrcode'] = $qr['qrcode'];
+//        $hosMapDetails['qrpath'] = $qr['qrpath'];
 
         return $hosMapDetails;
 	}
@@ -176,7 +179,7 @@ class HospitalMap extends Module {
             $query->execute();
 
 	    } catch( PDOException $e) {
-			return $e->getMessage();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for hospital map. " . $e->getMessage());
 		}
 	}
 
@@ -219,7 +222,7 @@ class HospitalMap extends Module {
             $query->execute();
 
         } catch( PDOException $e) {
-			return $e->getMessage();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for hospital map. " . $e->getMessage());
 		}
 	}
 }
