@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.testResult.add', ['ngAnimate', 'ngSanitize
 /******************************************************************************
  * Add Test Result Page controller
  *******************************************************************************/
-controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal, testResultCollectionService, Session) {
+controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal, testResultCollectionService, Session, ErrorHandler) {
 
 	// Function to go to previous page
 	$scope.goBack = function () {
@@ -117,15 +117,15 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 		});
 		$scope.eduMatList = response.data;
 
-	}).catch(function(response) {
-		alert($filter('translate')('TEST.ADD.ERROR_EDUCATION') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('TEST.ADD.ERROR_EDUCATION'));
 	});
 
 	// Call our API to get the list of test groups
 	testResultCollectionService.getTestResultGroups().then(function (response) {
 		$scope.TestResultGroups = response.data;
-	}).catch(function(response) {
-		alert($filter('translate')('TEST.ADD.ERROR_GROUP') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('TEST.ADD.ERROR_GROUP'));
 	});
 
 	// Call our API to get the list of tests
@@ -137,8 +137,8 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 		$scope.testList = response.data;
 		$scope.formLoaded = true;
 		$scope.loadForm();
-	}).catch(function(response) {
-		alert($filter('translate')('TEST.ADD.ERROR_TEST') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('TEST.ADD.ERROR_TEST'));
 		$state.go('test-result');
 	}).finally(function () {
 		processingModal.close(); // hide modal
@@ -366,8 +366,8 @@ controller('testResult.add', function ($scope, $filter, $sce, $state, $uibModal,
 				success: function () {
 					$state.go('test-result');
 				},
-				error: function() {
-					alert($filter('translate')('TEST.ADD.ERROR_ADD'));
+				error: function(err) {
+					ErrorHandler.onError(err, $filter('translate')('TEST.ADD.ERROR_ADD'));
 				},
 			});
 		}
