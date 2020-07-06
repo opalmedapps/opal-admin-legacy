@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.educationalMaterial.delete', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns']).
 
-controller('educationalMaterial.delete', function ($scope, $filter, $sce, $uibModal, $uibModalInstance, $state, uiGridConstants, Session) {
+controller('educationalMaterial.delete', function ($scope, $filter, $sce, $uibModal, $uibModalInstance, $state, uiGridConstants, Session, ErrorHandler) {
 
 	// Submit delete
 	$scope.deleteEducationalMaterial = function () {
@@ -21,12 +21,13 @@ controller('educationalMaterial.delete', function ($scope, $filter, $sce, $uibMo
 					$scope.showBanner();
 				}
 				else {
-					alert($filter('translate')('EDUCATION.DELETE.ERROR') + "\r\n\r\n" + response.message);
+					ErrorHandler.onError(response, $filter('translate')('EDUCATION.DELETE.ERROR'));
 				}
 				$uibModalInstance.close();
 			},
 			error: function (err) {
-				alert($filter('translate')('EDUCATION.DELETE.ERROR') + "\r\n\r\n" + err.status + " - " + err.statusText);
+				console.log(err);
+				ErrorHandler.onError(err, $filter('translate')('EDUCATION.DELETE.ERROR'));
 				$uibModalInstance.close();
 			}
 		});

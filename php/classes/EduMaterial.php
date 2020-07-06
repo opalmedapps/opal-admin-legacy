@@ -55,8 +55,7 @@ class EduMaterial extends Module {
             return $response;
 
 		} catch( PDOException $e) {
-		    $response['message'] = $e->getMessage();
-			return $response; // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for educational material. " . $e->getMessage());
 		}
 	}
 
@@ -98,8 +97,7 @@ class EduMaterial extends Module {
             return $phases;
 
         } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $phases;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for educational material. " . $e->getMessage());
 		}
     }
 
@@ -138,8 +136,7 @@ class EduMaterial extends Module {
             return $types;
 
 	    } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $types;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for educational material. " . $e->getMessage());
 		}
     }
 
@@ -422,8 +419,7 @@ class EduMaterial extends Module {
             return $response;
 
         } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response; // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for educational material. " . $e->getMessage());
         }
     }
 
@@ -799,8 +795,7 @@ class EduMaterial extends Module {
             return $response;
 
 		} catch( PDOException $e) {
-		    $response['message'] = $e->getMessage();
-			return $response; // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for educational material. " . $e->getMessage());
 		}
 	}
 
@@ -893,8 +888,7 @@ class EduMaterial extends Module {
             return $response;
 
 	    } catch( PDOException $e) {
-		    $response['message'] = $e->getMessage();
-			return $response;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for educational material. " . $e->getMessage());
 		}
 	}
 
@@ -1012,8 +1006,7 @@ class EduMaterial extends Module {
             return $educationalMaterialLogs;
 
         } catch( PDOException $e) {
-            echo $e->getMessage();
-            return $educationalMaterialLogs;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for educational material. " . $e->getMessage());
         }
     }
 

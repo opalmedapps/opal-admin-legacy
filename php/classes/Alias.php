@@ -119,8 +119,7 @@ class Alias extends Module {
 
             return $expressions;
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $expressions;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
 
     }
@@ -173,8 +172,7 @@ class Alias extends Module {
             return $response;
 
         } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response; // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -226,7 +224,7 @@ class Alias extends Module {
             }
             return;
         } catch( PDOException $e) {
-            return $e->getMessage(); // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -279,8 +277,7 @@ class Alias extends Module {
             return $colorTags;
 
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $colorTags;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -400,8 +397,7 @@ class Alias extends Module {
             return $aliasList;
 
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $aliasList;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -522,8 +518,7 @@ class Alias extends Module {
             return $aliasDetails;
 
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $aliasDetails;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -667,7 +662,7 @@ class Alias extends Module {
 
 
         } catch( PDOException $e) {
-            return $e->getMessage();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -731,8 +726,7 @@ class Alias extends Module {
             return $response;
 
         } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response; // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -951,8 +945,7 @@ class Alias extends Module {
             return $response;
 
         } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response; // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -998,8 +991,7 @@ class Alias extends Module {
             return $sourceDBList;
 
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $sourceDBList;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -1048,8 +1040,7 @@ class Alias extends Module {
 
             return $checkinDetails;
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $checkinDetails;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 
@@ -1319,8 +1310,7 @@ class Alias extends Module {
             return $aliasLogs;
 
         } catch( PDOException $e) {
-            echo $e->getMessage();
-            return $aliasLogs;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for aliases. " . $e->getMessage());
         }
     }
 

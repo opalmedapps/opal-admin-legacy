@@ -62,8 +62,7 @@ class Notification extends Module {
 
             return $notificationList;
         } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $notificationList;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for notification. " . $e->getMessage());
 		}
 	}
 
@@ -117,8 +116,7 @@ class Notification extends Module {
 
             return $notificationDetails;
         } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $notificationDetails;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for notification. " . $e->getMessage());
 		}
 	}
 
@@ -161,8 +159,7 @@ class Notification extends Module {
 
             return $types;
         } catch (PDOException $e) {
-			echo $e->getMessage();
-			return $types;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for notification. " . $e->getMessage());
 		}
 	}
 
@@ -213,9 +210,8 @@ class Notification extends Module {
             $query = $host_db_link->prepare( $sql );
 			$query->execute();
         } catch( PDOException $e) {
-			return $e->getMessage();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for notification. " . $e->getMessage());
 		}
-
     }
 
     /**
@@ -265,8 +261,7 @@ class Notification extends Module {
             return $response;
 
 	    } catch( PDOException $e) {
-		    $response['message'] = $e->getMessage();
-			return $response;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for notification. " . $e->getMessage());
 		}
 	}
 
@@ -317,8 +312,7 @@ class Notification extends Module {
             return $response;
 
         } catch( PDOException $e) {
-		    $response['message'] = $e->getMessage();
-			return $response;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for notification. " . $e->getMessage());
 		}
 	}
 
@@ -417,8 +411,7 @@ class Notification extends Module {
             return $notificationLogs;
 
         } catch( PDOException $e) {
-            echo $e->getMessage();
-            return $notificationLogs;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for notification. " . $e->getMessage());
         }
     }
 
