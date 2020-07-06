@@ -466,12 +466,45 @@ sub getPatientInfoFromSourceDBs
 	    $query->execute()
 	        or die "Could not execute query: " . $query->errstr;
 
-	    #print "$patientInfo_sql\n";
+	    # print "$patientInfo_sql\n";
 
 	    my $data = $query->fetchall_arrayref();
+
+		# Patient Does not exist in Aria so default to our database
+		unless ( @$data ) {
+			
+			print "Patient does not exit in Aria. Now retrieving from OpalDB\n\n";
+
+			# Query
+			my $patients_sql = "
+				SELECT DISTINCT 
+					0 as PatientSer,
+					pt.FirstName,
+					pt.LastName,
+					pt.PatientId,
+					pt.PatientId2,
+					pt.DateOfBirth,
+					pt.ProfileImage,
+					RTRIM(pt.Sex),
+					pt.DeathDate
+				From Patient pt
+				where pt.SSN = '$patientSSN'
+			";
+
+			# prepare query
+			my $query = $SQLDatabase->prepare($patients_sql)
+				or die "Could not prepare query: " . $SQLDatabase->errstr;
+
+			# execute query
+			$query->execute()
+				or die "Could not execute query: " . $query->errstr;
+
+			$data = $query->fetchall_arrayref();
+
+		};
+
 		foreach my $row (@$data) {
 	   # while (my @data = $query->fetchrow_array()) {
-	    
 	        $sourcePatient  = new Patient();
 
 	        my $sourceuid       = $row->[0];
