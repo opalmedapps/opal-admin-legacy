@@ -27,7 +27,7 @@
     "EDU_MATERIAL": "Edu Material",
     "EDU_MATERIAL_SUB": "Tool for referencing educational material hosted on the web.",
     "HOSPITAL_MAPS": "Hospital Maps",
-    "HOSPITAL_MAPS_SUB": "Tool for referencing hospital maps and creating QR codes.",
+    "HOSPITAL_MAPS_SUB": "Tool for referencing hospital maps.",
     "NOTIFICATIONS": "Notifications",
     "NOTIFICATIONS_SUB": "Tool for managing notifications.",
     "LAB_RESULTS": "Lab Results",
@@ -38,8 +38,7 @@
     "PUBLICATIONS_SUB": "Manage the publications and their triggers associated.",
     "EMAIL": "Email",
     "EMAIL_SUB": "Tool for creating email templates.",
-    "LEGACY_QUESTIONNAIRE": "Legacy Questionnaire",
-    "LEGACY_QUESTIONNAIRE_SUB": "Manage the legacy version of the patient-reported outcome questionnaires.",
+    "LEGACY_QUESTIONNAIRE": "Questionnaire",
     "ADMINISTRATION": "Administration",
     "DIAGNOSIS_TRANSLATION": "Diagnosis Import and Aliasing",
     "DIAGNOSIS_TRANSLATION_SUB": "Manage diagnosis codes.",
@@ -1172,6 +1171,7 @@
       "MAP_URL": "Map URL",
       "OPERATIONS": "Operations",
       "EDIT": "Edit",
+      "VIEW": "View",
       "DELETE": "Delete",
       "ERROR_LIST": "An error occurred while getting the list of hospital maps.",
       "ERROR_QR": "An error occurred while generating the QR code."
@@ -1226,8 +1226,10 @@
     },
     "EDIT": {
       "TITLE": "Edit Hospital Map",
+      "TITLE_VIEW": "View Hospital Map",
       "SAVE": "Save Changes",
       "CANCEL": "Cancel",
+      "CLOSE": "Close",
       "TITLES": "Titles",
       "ENGLISH": "English",
       "ENGLISH_ABRV": "EN",
@@ -1265,6 +1267,7 @@
       "LOGS": "Logs",
       "NO_DATA": "No data available",
       "EDIT": "Edit",
+      "VIEW": "View",
       "DELETE": "Delete",
       "NO_RATING": "No rating",
       "TITLE_2": "Title",
@@ -1385,8 +1388,10 @@
     },
     "EDIT": {
       "TITLE": "Edit Educational Material",
+      "TITLE_VIEW": "View Educational Material",
       "SAVE": "Save Changes",
       "CANCEL": "Cancel",
+      "CLOSE": "Close",
       "TITLES": "Titles",
       "ENGLISH_ABRV": "EN",
       "ENGLISH_TITLE": "English Title",
@@ -1539,7 +1544,7 @@
       "ROOM_ASSIGNMENT": "Room Assignment",
       "PATIENTS_FOR_PATIENTS": "Patients For Patients Announcement",
       "QUESTIONNAIRE": "Questionnaire",
-      "LEGACY_QUESTIONNAIRE": "Legacy Questionnaire",
+      "LEGACY_QUESTIONNAIRE": "Questionnaire",
       "CHECKIN": "Check In Notification",
       "CHECKINERROR": "Check In Error",
       "CANCELLED": "Cancelled Appointment",
@@ -1615,7 +1620,7 @@
       "PATIENTS_FOR_PATIENTS": "Patients For Patients",
       "EDUCATIONAL_MATERIAL": "Educational Material",
       "EMAIL": "Email",
-      "LEGACY_QUESTIONNAIRES": "Legacy Questionnaires",
+      "LEGACY_QUESTIONNAIRES": "Questionnaires",
       "NOTIFICATIONS": "Notifications",
       "TEST_RESULT": "Test Result",
       "CLINICAL_CODE": "Clinical Code",
@@ -2705,7 +2710,8 @@
       "MESSAGE": "Code 404. The resource cannot be found."
     },
     "500": {
-      "MESSAGE": "Code 500. Internal Server Error. Answer of the server:"
+      "MESSAGE": "Code 500. Internal Server Error. Answer of the server:",
+      "UNKNOWN": "Unknown error. Please try again later."
     }
   },
   "PATIENT_REGISTRATION_TITLE": "Patient Registration",

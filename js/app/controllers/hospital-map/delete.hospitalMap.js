@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.hospitalMap.delete', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('hospitalMap.delete', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, hospitalMapCollectionService, Session) {
+controller('hospitalMap.delete', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, hospitalMapCollectionService, Session, ErrorHandler) {
 
 	$scope.deleteHospitalMap = function () {
 		$scope.hosMapToDelete.user = Session.retrieveObject('user');
@@ -12,8 +12,8 @@ controller('hospitalMap.delete', function ($scope, $filter, $sce, $state, $uibMo
 				$scope.$parent.bannerMessage = $filter('translate')('HOSPITAL_MAPS.DELETE.SUCCESS');
 				$scope.showBanner();
 			},
-			error: function() {
-				alert($filter('translate')('HOSPITAL_MAPS.DELETE.ERROR'));
+			error: function(err) {
+				ErrorHandler.onError(err, $filter('translate')('HOSPITAL_MAPS.DELETE.ERROR'));
 			},
 			complete: function() {
 				$uibModalInstance.close();

@@ -27,7 +27,7 @@
     "EDU_MATERIAL": "Matériels éducatifs",
     "EDU_MATERIAL_SUB": "Pour gérer des matériels éducatifs hébergés sur le Web.",
     "HOSPITAL_MAPS": "Cartes de l'hôpital",
-    "HOSPITAL_MAPS_SUB": "Pour gérer les cartes de l'hôpital et les codes QR associés.",
+    "HOSPITAL_MAPS_SUB": "Pour gérer les cartes de l'hôpital.",
     "NOTIFICATIONS": "Notifications",
     "NOTIFICATIONS_SUB": "Outil de gestion des notifications.",
     "LAB_RESULTS": "Résultats de laboratoire",
@@ -38,8 +38,7 @@
     "QUESTIONNAIRES_SUB": "Gérer les questionnaires et les réponses des patients.",
     "EMAIL": "Courriels",
     "EMAIL_SUB": "Outil pour créer des modèles de courriel.",
-    "LEGACY_QUESTIONNAIRE": "Anciens questionnaires",
-    "LEGACY_QUESTIONNAIRE_SUB": "Gérer la version précédente des questionnaires et les réponses des patients.",
+    "LEGACY_QUESTIONNAIRE": "Questionnaires",
     "ADMINISTRATION": "Administration",
     "DIAGNOSIS_TRANSLATION": "Importation et alias de diagnostics",
     "DIAGNOSIS_TRANSLATION_SUB": "Gérer les codes de diagnostic.",
@@ -1205,6 +1204,7 @@
       "MAP_URL": "URL de la carte",
       "OPERATIONS": "Opérations",
       "EDIT": "Modifier",
+      "VIEW": "Voir",
       "DELETE": "Supprimer",
       "ERROR_LIST": "Une erreur s'est produite lors de l'obtention de la liste des cartes de l'hôpital.",
       "ERROR_QR": "Une erreur s'est produite lors de la génération du code QR."
@@ -1259,8 +1259,10 @@
     },
     "EDIT": {
       "TITLE": "Modifier la carte de l'hôpital",
+      "TITLE_VIEW": "Voir la carte de l'hôpital",
       "SAVE": "Enregistrer",
       "CANCEL": "Annuler",
+      "CLOSE": "Fermer",
       "TITLES": "Titres",
       "ENGLISH": "Anglais",
       "ENGLISH_ABRV": "AN",
@@ -1298,6 +1300,7 @@
       "LOGS": "Journaux",
       "NO_DATA": "Aucune donnée disponible",
       "EDIT": "Modifier",
+      "VIEW": "Voir",
       "DELETE": "Supprimer",
       "NO_RATING": "Aucune note",
       "TITLE_2": "Titre",
@@ -1417,8 +1420,10 @@
     },
     "EDIT": {
       "TITLE": "Modifier le matériel éducatif",
+      "TITLE_VIEW": "Voir le matériel éducatif",
       "SAVE": "Enregistrer",
       "CANCEL": "Annuler",
+      "CLOSE": "Fermer",
       "TITLES": "Titres",
       "ENGLISH_ABRV": "AN",
       "ENGLISH_TITLE": "Titre anglais",
@@ -1571,7 +1576,7 @@
       "ROOM_ASSIGNMENT": "Affectation de la salle",
       "PATIENTS_FOR_PATIENTS": "Patients à votre aide",
       "QUESTIONNAIRE": "Questionnaire",
-      "LEGACY_QUESTIONNAIRE": "Ancien questionnaire",
+      "LEGACY_QUESTIONNAIRE": "Questionnaire",
       "CHECKIN": "Notification d'arrivée",
       "CHECKINERROR": "Erreur d'enregistrement",
       "CANCELLED": "Rendez-vous annulé",
@@ -1646,7 +1651,7 @@
       "PATIENTS_FOR_PATIENTS": "Patients à votre aide",
       "EDUCATIONAL_MATERIAL": "Matériel éducatif",
       "EMAIL": "Courriel",
-      "LEGACY_QUESTIONNAIRES": "Anciens questionnaires",
+      "LEGACY_QUESTIONNAIRES": "Questionnaires",
       "NOTIFICATIONS": "Notifications",
       "TEST_RESULT": "Résultat des tests",
       "CLINICAL_CODE": "Code clinique",
@@ -2730,7 +2735,8 @@
       "MESSAGE": "Code 404. La ressource est introuvable."
     },
     "500": {
-      "MESSAGE": "Code 500. Erreur interne du serveur. Réponse du serveur:"
+      "MESSAGE": "Code 500. Erreur interne du serveur. Réponse du serveur:",
+      "UNKNOWN": "Erreur inconnue. Veuillez réessayer plus tard."
     }
   },
   "PATIENT_REGISTRATION_TITLE": "Enregistrement Patient",

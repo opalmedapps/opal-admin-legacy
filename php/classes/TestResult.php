@@ -51,8 +51,7 @@ class TestResult extends Module {
             $response['value'] = 1; // Success
             return $response;
         } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response; // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
     }
 
@@ -174,8 +173,7 @@ class TestResult extends Module {
             );
             return $testResultDetails;
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $testResultDetails;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
     }
 
@@ -211,8 +209,7 @@ class TestResult extends Module {
 
             return $groups;
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $groups;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
     }
 
@@ -347,8 +344,7 @@ class TestResult extends Module {
             return $tests;
 
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $tests;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
     }
 
@@ -477,7 +473,7 @@ class TestResult extends Module {
             $this->sanitizeEmptyTestResults($testResultDetails['user']);
 
         } catch( PDOException $e) {
-            return $e->getMessage();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
 
     }
@@ -607,8 +603,7 @@ class TestResult extends Module {
             }
             return $testResultList;
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $testResultList;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
     }
 
@@ -797,8 +792,7 @@ class TestResult extends Module {
             return $response;
 
         } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response; // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
     }
 
@@ -870,8 +864,7 @@ class TestResult extends Module {
             return $response;
 
         } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
     }
 
@@ -906,7 +899,7 @@ class TestResult extends Module {
             $query->execute();
             return;
         } catch( PDOException $e) {
-            return $e->getMessage(); // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
     }
 
@@ -1030,8 +1023,7 @@ class TestResult extends Module {
             return $testResultLogs;
 
         } catch( PDOException $e) {
-            echo $e->getMessage();
-            return $testResultLogs;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
     }
 

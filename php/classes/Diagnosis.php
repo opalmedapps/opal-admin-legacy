@@ -92,8 +92,7 @@ class Diagnosis extends Module {
             );
             return $diagnosisTranslationDetails;
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $diagnosisTranslationDetails;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for diagnosis. " . $e->getMessage());
         }
     }
 
@@ -171,8 +170,7 @@ class Diagnosis extends Module {
             return $diagnoses;
 
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $diagnoses;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for diagnosis. " . $e->getMessage());
         }
     }
 
@@ -264,7 +262,7 @@ class Diagnosis extends Module {
             }
 
         } catch( PDOException $e) {
-            return $e->getMessage();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for diagnosis. " . $e->getMessage());
         }
 
     }
@@ -357,8 +355,7 @@ class Diagnosis extends Module {
             }
             return $diagnosisTranslationList;
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $diagnosisTranslationList;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for diagnosis. " . $e->getMessage());
         }
     }
 
@@ -503,8 +500,7 @@ class Diagnosis extends Module {
             return $response;
 
         } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response; // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for diagnosis. " . $e->getMessage());
         }
     }
 
@@ -564,8 +560,7 @@ class Diagnosis extends Module {
             return $response;
 
         } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for diagnosis. " . $e->getMessage());
         }
     }
 

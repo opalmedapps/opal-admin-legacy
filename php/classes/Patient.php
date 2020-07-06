@@ -39,8 +39,7 @@ class Patient extends Module {
             return $response;
 
         } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response; // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
         }
     }
 
@@ -96,8 +95,7 @@ class Patient extends Module {
 
             return $patientList;
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $patientList;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
         }
     }
 
@@ -138,7 +136,7 @@ class Patient extends Module {
             return $Response;
 
         } catch (PDOException $e) {
-            return $Response;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
         }
     }
 
@@ -294,8 +292,8 @@ class Patient extends Module {
             }
 
             return $patientResponse; // return found data
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patients list. " . $e->getMessage());
+        } catch (PDOException $e) {            
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
         }
     }
 
@@ -333,8 +331,7 @@ class Patient extends Module {
             }
             return $securityQuestions;
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $securityQuestions;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
         }
     }
 
@@ -477,7 +474,7 @@ class Patient extends Module {
             $query = $host_db_link->prepare( $sql );
             $query->execute();
         } catch( PDOException $e) {
-            return $e->getMessage();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
         }
     }
 
@@ -576,8 +573,7 @@ class Patient extends Module {
 
             return $patientActivityList;
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $patientActivityList;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
         }
     }
 
@@ -629,8 +625,7 @@ class Patient extends Module {
             return $patientDetails;
 
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $patientDetails;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
         }
     }
 
@@ -674,9 +669,7 @@ class Patient extends Module {
             return $response;
 
         } catch (PDOException $e) {
-            $response['error']['code'] = 'db-catch';
-            $response['error']['message'] = $e->getMessage();
-            return $response;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
         }
     }
 
@@ -733,9 +726,7 @@ class Patient extends Module {
             return $response;
 
         } catch (PDOException $e) {
-            $response['error']['code'] = 'db-catch';
-            $response['error']['message'] = $e->getMessage();
-            return $response;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for patient. " . $e->getMessage());
         }
     }
 }
