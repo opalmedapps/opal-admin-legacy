@@ -3,7 +3,10 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
 /******************************************************************************
  * Test Result Page controller
  *******************************************************************************/
-controller('testResult', function ($scope, $filter, $sce, $state, $uibModal, testResultCollectionService, Session) {
+controller('testResult', function ($scope, $filter, $sce, $state, $uibModal, testResultCollectionService, Session, ErrorHandler, MODULE) {
+	$scope.readAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.test_results]) & (1 << 0)) !== 0);
+	$scope.writeAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.test_results]) & (1 << 1)) !== 0);
+	$scope.deleteAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.test_results]) & (1 << 2)) !== 0);
 
 	// Function to go to add test result page
 	$scope.goToAddTestResult = function () {
@@ -17,21 +20,37 @@ controller('testResult', function ($scope, $filter, $sce, $state, $uibModal, tes
 	};
 
 	$scope.detailView = "list";
-
 	// Templates for the table
 	var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 		'ng-click="grid.appScope.editTestResult(row.entity)"> ' +
 		'<strong><a href="">{{row.entity.name_'+ Session.retrieveObject('user').language.toUpperCase() +'}}</a></strong></div>';
 	var cellTemplateGroupName = '<div class="ui-grid-cell-contents" >' +
 		'{{row.entity.group_' + Session.retrieveObject('user').language.toUpperCase() + '}}</div>';
-	var checkboxCellTemplate = '<div style="text-align: center; cursor: pointer;" ' +
-		'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
-		'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
-		'ng-checked="grid.appScope.updatePublishFlag(row.entity.publish)" ng-model="row.entity.publish"></div>';
-	var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-		'<strong><a href="" ng-click="grid.appScope.showTestResultLog(row.entity)"><i title="'+$filter('translate')('TEST.LIST.LOGS')+'" class="fa fa-area-chart" aria-hidden="true"></i></a></strong> ' +
-		'- <strong><a href="" ng-click="grid.appScope.editTestResult(row.entity)"><i title="'+$filter('translate')('TEST.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ' +
-		'- <strong><a href="" ng-click="grid.appScope.deleteTestResult(row.entity)"><i title="'+$filter('translate')('TEST.LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
+
+	var checkboxCellTemplate;
+	if($scope.writeAccess) {
+		checkboxCellTemplate = '<div style="text-align: center; cursor: pointer;" ' +
+			'ng-click="grid.appScope.checkPublishFlag(row.entity)" ' +
+			'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
+			'ng-checked="grid.appScope.updatePublishFlag(row.entity.publish)" ng-model="row.entity.publish"></div>';
+	} else {
+		checkboxCellTemplate = '<div style="text-align: center;" class="ui-grid-cell-contents">'+
+			'<i ng-class="row.entity.publish == 1 ? \'fa-check text-success\' : \'fa-times text-danger\'" class="fa"></i>' +
+			+'</div>';
+	}
+
+	var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">';
+
+	if($scope.readAccess)
+		cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.showTestResultLog(row.entity)"><i title="'+$filter('translate')('TEST.LIST.LOGS')+'" class="fa fa-area-chart" ></i></a></strong> ';
+	if($scope.writeAccess)
+		cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.editTestResult(row.entity)"><i title="'+$filter('translate')('TEST.LIST.EDIT')+'" class="fa fa-pencil" ></i></a></strong> ';
+	else
+		cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.editTestResult(row.entity)"><i title="'+$filter('translate')('TEST.LIST.VIEW')+'" class="fa fa-eye" ></i></a></strong> ';
+	if($scope.deleteAccess)
+		cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.deleteTestResult(row.entity)"><i title="'+$filter('translate')('TEST.LIST.DELETE')+'" class="fa fa-trash" ></i></a></strong>';
+
+	cellTemplateOperations += '</div>';
 
 	// Search engine for table
 	$scope.filterOptions = function (renderableRows) {
@@ -159,7 +178,7 @@ controller('testResult', function ($scope, $filter, $sce, $state, $uibModal, tes
 					$scope.testResultPublishes.publishList = [];
 				},
 				error: function (err) {
-					alert($filter('translate')('TEST.LIST.ERROR_FLAGS') + "\r\n\r\n" + err.status + " - " + err.statusText);
+					ErrorHandler.onError(err, $filter('translate')('TEST.LIST.ERROR_FLAGS'));
 				}
 			});
 		}
@@ -190,8 +209,8 @@ controller('testResult', function ($scope, $filter, $sce, $state, $uibModal, tes
 						log.x = new Date(log.x);
 					});
 				});
-			}).catch(function(response) {
-				alert($filter('translate')('TEST.LIST.ERROR_LOGS') + "\r\n\r\n" + response.status + " - " + response.data);
+			}).catch(function(err) {
+				ErrorHandler.onError(err, $filter('translate')('TEST.LIST.ERROR_LOGS'));
 			});
 		}
 	}, true);
@@ -340,7 +359,7 @@ controller('testResult', function ($scope, $filter, $sce, $state, $uibModal, tes
 
 		$scope.currentTestResult = testResult;
 		var modalInstance = $uibModal.open({
-			templateUrl: 'templates/test-result/edit.test-result.html',
+			templateUrl: ($scope.writeAccess ? 'templates/test-result/edit.test-result.html' : 'templates/test-result/view.test-result.html'),
 			controller: 'testResult.edit',
 			scope: $scope,
 			windowClass: 'customModal',
@@ -358,8 +377,8 @@ controller('testResult', function ($scope, $filter, $sce, $state, $uibModal, tes
 	function getTestResults() {
 		testResultCollectionService.getExistingTestResults().then(function (response) {
 			$scope.testList = response.data;
-		}).catch(function(response) {
-			alert($filter('translate')('TEST.LIST.ERROR_LIST') + "\r\n\r\n" + response.status + " - " + response.data);
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('TEST.LIST.ERROR_LIST'));
 		});
 	}
 
