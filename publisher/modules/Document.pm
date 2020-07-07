@@ -517,7 +517,10 @@ sub getDocsFromSourceDB
 					visit_note.revised_ind,
 					visit_note.valid_entry_ind,
 					visit_note.err_rsn_txt,
-					visit_note.doc_file_loc,
+					case 
+						when CHARINDEX('\\DOCUMENTS\\20', upper(FolderName1)) = 0 then FL.[FileName]
+						when CHARINDEX('\\DOCUMENTS\\20', upper(FolderName1)) > 0 then concat(Right(FolderName1, 6), '/', FL.[FileName])
+					end AS doc_file_loc,
 					visit_note.appr_stkh_id,
 					CONVERT(VARCHAR, visit_note.appr_tstamp, 120),
 					visit_note.author_stkh_id,
@@ -530,12 +533,14 @@ sub getDocsFromSourceDB
 					VARIAN.dbo.visit_note visit_note,
 					VARIAN.dbo.note_typ,
 					VARIAN.dbo.pt pt,
+					VARIAN.dbo.FileLocation FL,
 					#tempClinic PatientInfo
 				WHERE
 					pt.pt_id 			            = visit_note.pt_id
 				AND pt.patient_ser			        = (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
 				AND visit_note.note_typ		        = note_typ.note_typ
 				AND visit_note.appr_flag		    = 'A'
+				AND visit_note.doc_file_loc = FL.[FileName]
 				AND (
 			";
 
@@ -875,27 +880,27 @@ sub transferPatientDocuments
 		my $clinicalDir = $ftpObject->getFTPClinicalDir(); # get local directory of documents
 		my $sourcefile = "$clinicalDir/$finalfileloc"; # concatenate directory and file
 
-		# Prepare the subdirectory search
-		my $wsYear = 2020; # set the beginning of the subdirectory search
-		my $wsQuarter = 1; # initialize the quarter
-	    my $wsSubDirectory = "$wsYear" . "Q" . "$wsQuarter";
+		# # Prepare the subdirectory search
+		# my $wsYear = 2020; # set the beginning of the subdirectory search
+		# my $wsQuarter = 1; # initialize the quarter
+	    # my $wsSubDirectory = "$wsYear" . "Q" . "$wsQuarter";
 
-		# Begin looping until file is found or subdirectory doesnt exist
-        unless (-e $sourcefile or ! -d "$clinicalDir/$wsSubDirectory") {
+		# # Begin looping until file is found or subdirectory doesnt exist
+        # unless (-e $sourcefile or ! -d "$clinicalDir/$wsSubDirectory") {
 
-			print "Searching source file in subdirectory: $sourcefile\n" if $verbose;
+		# 	print "Searching source file in subdirectory: $sourcefile\n" if $verbose;
 
-            # $wsQuarter %= 4 + 1; # increment quarter mod 4 shifted by 1
-			$wsQuarter = $wsQuarter + 1; # increment quarter
-            if ($wsQuarter eq 5) { # quarter reset
-				$wsQuarter = 1; # Reset quarter
-                $wsYear++; # Increase Year
-            }
-			# build subdirectory for next search
-			$wsSubDirectory = "$wsYear" . "Q" . "$wsQuarter";
-			$sourcefile = "$clinicalDir/$wsSubDirectory/$finalfileloc";
-			print "Search Location: $sourcefile\n" if $verbose;
-		};
+        #     # $wsQuarter %= 4 + 1; # increment quarter mod 4 shifted by 1
+		# 	$wsQuarter = $wsQuarter + 1; # increment quarter
+        #     if ($wsQuarter eq 5) { # quarter reset
+		# 		$wsQuarter = 1; # Reset quarter
+        #         $wsYear++; # Increase Year
+        #     }
+		# 	# build subdirectory for next search
+		# 	$wsSubDirectory = "$wsYear" . "Q" . "$wsQuarter";
+		# 	$sourcefile = "$clinicalDir/$wsSubDirectory/$finalfileloc";
+		# 	print "Search Location: $sourcefile\n" if $verbose;
+		# };
 
         print "Source file: $sourcefile\n" if $verbose;
 
