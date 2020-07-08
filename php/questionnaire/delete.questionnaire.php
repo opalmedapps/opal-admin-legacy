@@ -7,5 +7,4 @@ $questionnaireObj = new Questionnaire();
 $response = $questionnaireObj->deleteQuestionnaire($questionnaireId);
 
 header('Content-Type: application/javascript');
-print json_encode($response); // Return response
-?>
+http_response_code(HTTP_STATUS_SUCCESS);
