@@ -1,10 +1,9 @@
 angular.module('opalAdmin.controllers.template.question.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns'])
 
-	.controller('template.question.edit', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, uiGridConstants, Session) {
+	.controller('template.question.edit', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, uiGridConstants, Session, ErrorHandler) {
 		// get current user id
 		var user = Session.retrieveObject('user');
 		var OAUserId = user.id;
-
 
 		// initialize default variables & lists
 		$scope.templateQuestion = {};
@@ -125,7 +124,7 @@ angular.module('opalAdmin.controllers.template.question.edit', ['ngAnimate', 'ng
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
 		}).catch(function (err) {
-			alert($filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.ERROR_GET_TEMPLATE_DETAILS') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+			ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.ERROR_GET_TEMPLATE_DETAILS'));
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
 			$uibModalInstance.close();
@@ -169,7 +168,7 @@ angular.module('opalAdmin.controllers.template.question.edit', ['ngAnimate', 'ng
 					$scope.showBanner();
 				},
 				error: function(err) {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.ERROR_SET_TEMPLATE_QUESTION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_EDIT.ERROR_SET_TEMPLATE_QUESTION'));
 				},
 				complete: function () {
 					$uibModalInstance.close();

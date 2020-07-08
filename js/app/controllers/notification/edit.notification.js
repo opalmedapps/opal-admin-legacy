@@ -24,7 +24,7 @@ angular.module('opalAdmin.controllers.notification.edit', ['ngAnimate', 'ngSanit
 			$scope.notification = response.data;
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
-		}).catch(function(response) {
+		}).catch(function(err) {
 			ErrorHandler.onError(err, $filter('translate')('NOTIFICATIONS.EDIT.ERROR_DETAILS'));
 		});
 

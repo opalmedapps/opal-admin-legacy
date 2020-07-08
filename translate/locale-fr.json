@@ -123,6 +123,7 @@
       "DRAFT": "Brouillon",
       "FINAL": "Final",
       "EDIT": "Modifier",
+      "VIEW": "Voir",
       "DELETE": "Supprimer",
       "ERROR_QUESTIONS": "Une erreur s'est produite lors de l'obtention de la liste de questions."
     },
@@ -199,10 +200,6 @@
       "DELETE": "Supprimer",
       "CANCEL": "Annuler",
       "DELETED": "La question a été supprimée avec succès.",
-      "NO_PERMISSION": "Vous n'avez pas l'autorisation de supprimer cette question.",
-      "NOT_AUTHENTICATED": "Votre identité n'est pas reconnue. Veuillez vous reconnecter.",
-      "MODIFIED": "La question a déjà été modifiée par quelqu'un d'autre. Veuillez vérifier et essayer de nouveau.",
-      "PUBLISHED": "La question est désormais publiée et est verrouillée.",
       "ERROR": "Une erreur est survenue lors de la suppression de la question."
     },
     "QUESTION_LOCKED": {
@@ -217,6 +214,7 @@
       "PUBLISHED": "Cette question a déjà été publiée.",
       "SAVE": "Enregistrer",
       "CANCEL": "Annuler",
+      "CLOSE": "Fermer",
       "TITLES": "Titres",
       "SUMMARIES": "Sommaires",
       "ENGLISH_ABRV": "AN",
@@ -279,6 +277,7 @@
       "DRAFT": "Brouillon",
       "FINAL": "Final",
       "EDIT": "Modifier",
+      "VIEW": "Voir",
       "DELETE": "Supprimer",
       "ERROR_QUESTIONNAIRES": "Une erreur s'est produite lors de l'obtention de la liste des questionnaires."
     },
@@ -354,6 +353,7 @@
       "PUBLISHED": "Ce questionnaire a déjà été publié.",
       "SAVE": "Enregistrer",
       "CANCEL": "Annuler",
+      "CLOSE": "Fermer",
       "TITLES": "Titres",
       "ENGLISH_TITLE": "AN",
       "FRENCH_TITLE": "FR",
@@ -401,6 +401,7 @@
       "PRIVATE": "Privé",
       "PUBLIC": "Public",
       "EDIT": "Modifier",
+      "VIEW": "Voir",
       "DELETE": "Supprimer",
       "ERROR_RESPONSE_TYPES_LIST": "Une erreur s'est produite lors de l'obtention des types de réponses."
     },
@@ -465,8 +466,10 @@
     },
     "TEMPLATE_QUESTION_EDIT": {
       "TITLE": "Modifier le type de réponse",
+      "TITLE_VIEW": "Voir le type de réponse",
       "SAVE": "Enregistrer",
       "CANCEL": "Annuler",
+      "CLOSE": "Fermer",
       "TITLES": "Titres",
       "ENGLISH_TITLE": "AN",
       "FRENCH_TITLE": "FR",

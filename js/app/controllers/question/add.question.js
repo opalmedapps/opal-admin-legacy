@@ -1,5 +1,5 @@
 angular.module('opalAdmin.controllers.question.add', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.bootstrap.materialPicker']).
-controller('question.add', function ($scope, $state, $filter, $uibModal, Session, questionnaireCollectionService) {
+controller('question.add', function ($scope, $state, $filter, $uibModal, Session, questionnaireCollectionService, ErrorHandler) {
 	// navigation function
 	$scope.goBack = function () {
 		$state.go('questionnaire');
@@ -233,7 +233,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 	questionnaireCollectionService.getTemplateQuestionCategory(OAUserId).then(function (response) {
 		$scope.atCatList = response.data;
 	}).catch(function(err) {
-		alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_CATEGORY') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+		ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_CATEGORY'));
 		$state.go('questionnaire-question');
 	});
 
@@ -267,7 +267,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 					getTemplatesQuestionsList();
 				},
 				error: function (err) {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_RESPONSE_TYPE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_RESPONSE_TYPE'));
 					$state.go('questionnaire-question');
 				}
 			});
@@ -287,7 +287,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 				}
 			});
 		}).catch(function (err) {
-			alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_RESPONSE_TYPE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+			ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_RESPONSE_TYPE'));
 			$state.go('questionnaire-question');
 		});
 	};
@@ -331,7 +331,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 					getLibrariesList();
 				},
 				error: function (err) {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_LIBRARY') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_LIBRARY'));
 					$state.go('questionnaire-question');
 				}
 			});
@@ -349,7 +349,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 					entry.name_display = entry.name_EN;
 			});
 		}).catch(function (err) {
-			alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_LIBRARY') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+			ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_LIBRARY'));
 			$state.go('questionnaire-question');
 		});
 	}
@@ -372,7 +372,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 				data: $scope.newQuestion,
 				success: function () {},
 				error: function (err) {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_QUESTION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_QUESTION'));
 				},
 				complete: function() {
 					$state.go('questionnaire-question');
