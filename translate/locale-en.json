@@ -2110,6 +2110,7 @@
       "ADD": "Add",
       "SEARCH": "Search...",
       "EDIT": "Edit",
+      "VIEW": "View",
       "DELETE": "Delete",
       "NAME": "Name",
       "NUMBER": "Nbr of assigned codes",
@@ -2172,8 +2173,10 @@
     },
     "EDIT": {
       "TITLE": "Edit",
+      "TITLE_VIEW": "View",
       "SAVE": "Save Changes",
       "CANCEL": "Cancel",
+      "CLOSE": "Close",
       "DIAGNOSES": "Assigned Diagnoses",
       "CURRENT_DIAGNOSES": "Currently assigned diagnoses",
       "SEARCH": "Search...",

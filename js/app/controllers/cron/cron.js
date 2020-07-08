@@ -3,7 +3,10 @@ angular.module('opalAdmin.controllers.cron', ['ngAnimate', 'ui.bootstrap', 'high
 	/******************************************************************************
 	 * Cron Page controller
 	 *******************************************************************************/
-	controller('cron', function ($scope, $locale, $filter, $uibModal, cronCollectionService, Session) {
+	controller('cron', function ($scope, $locale, $filter, $uibModal, cronCollectionService, Session, ErrorHandler, MODULE) {
+		$scope.readAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.cron_log]) & (1 << 0)) !== 0);
+		$scope.writeAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.cron_log]) & (1 << 1)) !== 0);
+		$scope.deleteAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.cron_log]) & (1 << 2)) !== 0);
 
 		$scope.bannerMessage = "";
 		$scope.readyToDisplay = true;
@@ -111,8 +114,8 @@ angular.module('opalAdmin.controllers.cron', ['ngAnimate', 'ui.bootstrap', 'high
 			var month = parseInt($scope.cronDetailsMod.nextCronDate.split("-")[1]) - 1;
 			var day = parseInt($scope.cronDetailsMod.nextCronDate.split("-")[2]) + 1;
 			$scope.cronDetailsMod.nextCronDate = new Date(Date.UTC(year, month, day));
-		}).catch(function(response) {
-			alert($filter('translate')('CRON.PANEL.ERROR_CRON_DETAILS') + "\r\n\r\n" + response.status + " - " + response.data);
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('CRON.PANEL.ERROR_CRON_DETAILS'));
 		});
 
 		// Ajax call when cron details are submitted
@@ -146,8 +149,8 @@ angular.module('opalAdmin.controllers.cron', ['ngAnimate', 'ui.bootstrap', 'high
 							var month = parseInt($scope.cronDetailsMod.nextCronDate.split("-")[1]) - 1;
 							var day = parseInt($scope.cronDetailsMod.nextCronDate.split("-")[2]) + 1;
 							$scope.cronDetailsMod.nextCronDate = new Date(Date.UTC(year, month, day));
-						}).catch(function(response) {
-							alert($filter('translate')('CRON.PANEL.ERROR_CRON_DETAILS') + "\r\n\r\n" + response.status + " - " + response.data);
+						}).catch(function(err) {
+							ErrorHandler.onError(err, $filter('translate')('CRON.PANEL.ERROR_CRON_DETAILS'));
 						});
 
 						$scope.bannerMessage = "Saved Cron Settings!";
@@ -182,8 +185,8 @@ angular.module('opalAdmin.controllers.cron', ['ngAnimate', 'ui.bootstrap', 'high
 					log.y = parseInt(log.y);
 				});
 			});
-		}).catch(function(response) {
-			alert($filter('translate')('CRON.PANEL.ERROR_CRON_LOGS') + "\r\n\r\n" + response.status + " - " + response.data);
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('CRON.PANEL.ERROR_CRON_LOGS'));
 		});
 
 		$scope.minSelection = new Date();

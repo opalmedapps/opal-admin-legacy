@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.cron.log', ['ngAnimate', 'ngSanitize', 'ui
 /******************************************************************************
  * Controller for the cron logs
  *******************************************************************************/
-controller('cron.log', function ($scope, $uibModal, $filter, cronCollectionService, Session, $uibModalInstance) {
+controller('cron.log', function ($scope, $filter, $uibModalInstance, cronCollectionService, Session, ErrorHandler) {
 
 	// Call our API to get cron logs based on highlighted section
 	cronCollectionService.getSelectedCronListLogs($scope.contentNames, Session.retrieveObject('user').id).then(function (response) {
@@ -243,7 +243,7 @@ controller('cron.log', function ($scope, $uibModal, $filter, cronCollectionServi
 			};
 		}
 	}).catch(function(response) {
-		alert($filter('translate')('CRON.DETAILS.ERROR_CRON_LOGS') + "\r\n\r\n" + response.status + " - " + response.data);
+		ErrorHandler.onError(err, $filter('translate')('RON.DETAILS.ERROR_CRON_LOGS'));
 		$uibModalInstance.dismiss('cancel');
 	});
 

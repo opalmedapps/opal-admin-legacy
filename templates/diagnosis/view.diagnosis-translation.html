@@ -1,0 +1,99 @@
+<!-- Modal title -->
+<div class="modal-header">
+    <div class="col-xs-12 col-md-6">
+        <h2 class="modal-title">
+            <span class="fa fa-eye"></span>
+            {{'DIAGNOSIS.EDIT.TITLE_VIEW'|translate}}
+        </h2>
+    </div>
+    <div class="modal-buttons col-xs-12 col-md-6">
+        <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'DIAGNOSIS.EDIT.CLOSE'|translate}}">
+    </div>
+</div>
+<div class="modal-body">
+    <uib-accordion close-others="false">
+        <!-- SECTION: Diagnosis names -->
+        <div uib-accordion-group is-open="diagnosisSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'DIAGNOSIS.EDIT.DIAGNOSES'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': diagnosisSection.open, 'glyphicon-chevron-right': !diagnosisSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div>
+                <ul class="list-items" style="border-style: none;">
+                    <li ng-repeat="selectedDiagnosis in diagnosisList | filter: {added: 1, assigned: null}">
+                        {{selectedDiagnosis.name}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SECTION: Titles -->
+        <div uib-accordion-group is-open="titleSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'DIAGNOSIS.EDIT.TITLES'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleSection.open, 'glyphicon-chevron-right': !titleSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'DIAGNOSIS.EDIT.ENGLISH_ABRV'|translate}}</strong>: {{diagnosisTranslation.name_EN}}</p>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <p><strong>{{'DIAGNOSIS.EDIT.FRENCH_ABRV'|translate}}</strong>: {{diagnosisTranslation.name_FR}}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: Description -->
+        <div uib-accordion-group is-open="descriptionSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'DIAGNOSIS.EDIT.DESCRIPTIONS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': descriptionSection.open, 'glyphicon-chevron-right': !descriptionSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div style="text-align:center; margin-bottom: 10px;">
+                        <span style="font-size:20px;">{{'DIAGNOSIS.EDIT.HTML_ENGLISH'|translate}}</span>
+                    </div>
+                    <div ng-bind-html="diagnosisTranslation.description_EN"></div>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div style="text-align:center; margin-bottom: 10px;">
+                        <span style="font-size:20px;">{{'DIAGNOSIS.EDIT.HTML_FRENCH'|translate}}</span>
+                    </div>
+                    <div ng-bind-html="diagnosisTranslation.description_FR"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: Educational material -->
+        <div uib-accordion-group ng-if="diagnosisTranslation.eduMat" is-open="educationalMaterialSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'DIAGNOSIS.EDIT.ATTACHED_EDUCATION'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': educationalMaterialSection.open, 'glyphicon-chevron-right': !educationalMaterialSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div>
+                <span class="fa fa-angle-double-right" style="padding-right: 7px;"></span>
+                <span ng-if="diagnosisTranslation.eduMat">
+                        <span ng-if="diagnosisTranslation.eduMat.tocs.length">
+                            <span style="cursor:pointer" ng-click="toggleTOCDisplay()">
+                                <strong>{{diagnosisTranslation.eduMat.name_display}}</strong>
+                            </span>
+                            <ul ng-if="showTOCs">
+                                <li ng-repeat="toc in diagnosisTranslation.eduMat.tocs">
+                                    <strong><a target="_blank" href="{{toc.url_display}}">{{toc.name_display}}</a></strong>
+                                </li>
+                            </ul>
+                        </span>
+                        <span ng-if="!diagnosisTranslation.eduMat.tocs.length">
+                            <strong><a target="_blank" href="{{diagnosisTranslation.eduMat.url_display}}">{{diagnosisTranslation.eduMat.name_display}}</a>
+                        </span>
+		            </span>
+                <span ng-if="!diagnosisTranslation.eduMat">{{'DIAGNOSIS.EDIT.NONE'|translate}}</span>
+            </div>
+        </div>
+    </uib-accordion>
+</div>
