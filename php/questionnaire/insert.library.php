@@ -13,7 +13,6 @@ $libraryObj = new Library(); // Object
 
 // Call function
 $libraryObj->insertLibrary($libraryArray);
+
 header('Content-Type: application/javascript');
-$response['code'] = HTTP_STATUS_SUCCESS;
-echo json_encode($response);
-?>
+http_response_code(HTTP_STATUS_SUCCESS);

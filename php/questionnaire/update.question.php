@@ -10,5 +10,4 @@ $questionObj = new Question();
 $questionObj->updateQuestion($questionArray);
 
 header('Content-Type: application/javascript');
-$response['code'] = HTTP_STATUS_SUCCESS;
-echo json_encode($response);
+http_response_code(HTTP_STATUS_SUCCESS);

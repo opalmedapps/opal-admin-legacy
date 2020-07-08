@@ -10,4 +10,4 @@ $customCode = new CustomCode(); // Object
 $response = $customCode->deleteCustomCode($customCodeId, $moduleId);
 
 header('Content-Type: application/javascript');
-echo json_encode($response); // Return response
+http_response_code(HTTP_STATUS_SUCCESS);

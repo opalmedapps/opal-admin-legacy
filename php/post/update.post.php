@@ -7,8 +7,7 @@ if(!$sanitizedPost)
     HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid post format");
 
 $postObject = new Post();
-$response["message"] = $postObject->updatePost($sanitizedPost);
-$response["code"] = HTTP_STATUS_SUCCESS;
+$response = $postObject->updatePost($sanitizedPost);
 
 header('Content-Type: application/javascript');
-echo json_encode($response);
+http_response_code(HTTP_STATUS_SUCCESS);
