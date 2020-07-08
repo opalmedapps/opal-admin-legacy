@@ -123,6 +123,7 @@
       "DRAFT": "Draft",
       "FINAL": "Final",
       "EDIT": "Edit",
+      "VIEW": "View",
       "DELETE": "Delete",
       "ERROR_QUESTIONS": "An error occurred whille getting question list."
     },
@@ -200,10 +201,6 @@
       "DELETE": "Delete",
       "CANCEL": "Cancel",
       "DELETED": "The question has being successfully deleted.",
-      "NO_PERMISSION": "You do not have the permission to delete this question.",
-      "NOT_AUTHENTICATED": "You are not authenticated.",
-      "MODIFIED": "The question was already modified by someone else. Please verify and try again.",
-      "PUBLISHED": "The question was already published and is now locked.",
       "ERROR": "An error occured while deleting the question."
     },
     "QUESTION_LOCKED": {
@@ -218,6 +215,7 @@
       "PUBLISHED": "This question has being already published.",
       "SAVE": "Save Changes",
       "CANCEL": "Cancel",
+      "CLOSE": "Close",
       "TITLES": "Titles",
       "SUMMARIES": "Summaries",
       "ENGLISH_ABRV": "EN",
@@ -280,6 +278,7 @@
       "DRAFT": "Draft",
       "FINAL": "Final",
       "EDIT": "Edit",
+      "VIEW": "View",
       "DELETE": "Delete",
       "ERROR_QUESTIONS": "An error occurred while getting questionnaires list."
     },
@@ -356,6 +355,7 @@
       "PUBLISHED": "This questionnaire has being already published.",
       "SAVE": "Save Changes",
       "CANCEL": "Cancel",
+      "CLOSE": "Close",
       "TITLES": "Titles",
       "ENGLISH_TITLE": "EN",
       "FRENCH_TITLE": "FR",
@@ -403,6 +403,7 @@
       "PRIVATE": "Private",
       "PUBLIC": "Public",
       "EDIT": "Edit",
+      "VIEW": "View",
       "DELETE": "Delete",
       "ERROR_RESPONSE_TYPES_LIST": "An error occurred while getting the response types."
     },
@@ -469,8 +470,10 @@
     },
     "TEMPLATE_QUESTION_EDIT": {
       "TITLE": "Edit Response Type Template",
+      "TITLE_VIEW": "View Response Type Template",
       "SAVE": "Save Changes",
       "CANCEL": "Cancel",
+      "CLOSE": "Close",
       "TITLES": "Titles",
       "ENGLISH_TITLE": "EN",
       "FRENCH_TITLE": "FR",
@@ -1806,7 +1809,7 @@
     },
     "EDIT": {
       "TITLE": "Edit",
-      "TITLE_VIEW": "Voir",
+      "TITLE_VIEW": "View",
       "SAVE": "Save changes",
       "CANCEL": "Cancel",
       "CLOSE": "Close",

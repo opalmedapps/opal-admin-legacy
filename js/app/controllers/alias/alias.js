@@ -398,7 +398,8 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 
 			$scope.currentAlias = alias;
 			var modalInstance = $uibModal.open({
-				templateUrl: ($scope.writeAccess ? 'templates/alias/edit.alias.html' : 'templates/alias/view.alias.html'),
+				// templateUrl: ($scope.writeAccess ? 'templates/alias/edit.alias.html' : 'templates/alias/view.alias.html'),
+				templateUrl: 'templates/alias/edit.alias.html',
 				controller: 'alias.edit',
 				scope: $scope,
 				windowClass: 'customModal',

@@ -22,7 +22,7 @@ angular.module('opalAdmin.services', [])
 		};
 	})
 
-	.service('ErrorHandler', function($filter, $state, $uibModal, HTTP_CODE, $rootScope, AUTH_EVENTS) {
+	.service('ErrorHandler', function($filter, $rootScope, HTTP_CODE, AUTH_EVENTS) {
 		this.onError = function(response, clientErrMsg) {
 			if(response.status === HTTP_CODE.notFoundError)
 				alert(clientErrMsg + " " + $filter('translate')('ERROR_HANDLER.404.MESSAGE'));
@@ -34,8 +34,8 @@ angular.module('opalAdmin.services', [])
 					tempText = $filter('translate')('ERROR_HANDLER.500.UNKNOWN');
 				alert(clientErrMsg + " " + $filter('translate')('ERROR_HANDLER.500.MESSAGE') + "\r\n" + tempText);
 			}
-			// else if(response.status === HTTP_CODE.forbiddenAccessError)
-			// 	$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
+			else if(response.status === HTTP_CODE.forbiddenAccessError)
+				$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
 			// else if(response.status === HTTP_CODE.notAuthenticatedError)
 			// 	$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
 		}
