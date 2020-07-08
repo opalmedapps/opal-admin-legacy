@@ -8,4 +8,4 @@ $role = new Role(); // Object
 $response = $role->deleteRole($roleId);
 
 header('Content-Type: application/javascript');
-echo json_encode($response); // Return response
+http_response_code(HTTP_STATUS_SUCCESS);

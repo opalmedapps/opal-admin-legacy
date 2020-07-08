@@ -7,4 +7,4 @@ $userObject = new User();
 $response = $userObject->userLogout();
 
 header('Content-Type: application/javascript');
-echo json_encode($response);
+http_response_code(HTTP_STATUS_SUCCESS);

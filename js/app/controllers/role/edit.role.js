@@ -185,7 +185,6 @@ controller('role.edit', function ($scope, $filter, $uibModal, $uibModalInstance,
 	$scope.updateRole = function() {
 		if($scope.formReady && $scope.changesDetected) {
 			var validResult = buildOperations();
-			console.log($scope.updatedRole);
 			$.ajax({
 				type: "POST",
 				url: "role/update/role",

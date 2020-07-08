@@ -1,5 +1,5 @@
 <?php
-header('Content-Type: application/javascript');
+
 /* To delete a question */
 include_once('questionnaire.inc');
 
@@ -11,5 +11,5 @@ $templateQuestionObj = new TemplateQuestion(); // Object
 
 $response = $templateQuestionObj->deleteTemplateQuestion($templateQuestionId);
 
-print json_encode($response); // Return response
-?>
+header('Content-Type: application/javascript');
+http_response_code(HTTP_STATUS_SUCCESS);

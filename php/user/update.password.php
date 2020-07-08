@@ -8,4 +8,4 @@ $response["message"] = $userObject->updatePassword($_POST);
 $response["code"] = HTTP_STATUS_SUCCESS;
 
 header('Content-Type: application/javascript');
-print json_encode($response);
+http_response_code(HTTP_STATUS_SUCCESS);

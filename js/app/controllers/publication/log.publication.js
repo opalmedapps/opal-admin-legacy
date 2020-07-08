@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.publication.log', ['ngAnimate', 'ngSanitiz
 	/******************************************************************************
 	 * Controller for the post logs
 	 *******************************************************************************/
-	controller('publication.log', function ($scope, $uibModal, $filter, publicationCollectionService, Session, $uibModalInstance) {
+	controller('publication.log', function ($scope, $filter, publicationCollectionService, Session, $uibModalInstance, ErrorHandler) {
 
 		console.log($scope.currentPublication);
 
@@ -21,7 +21,7 @@ angular.module('opalAdmin.controllers.publication.log', ['ngAnimate', 'ngSanitiz
 				});
 			});
 		}).catch(function(response) {
-			alert($filter('translate')('POSTS.LOG.ERROR') + "\r\n\r\n" + response.status);
+			ErrorHandler.onError(err, $filter('translate')('POSTS.LOG.ERROR'));
 			$uibModalInstance.dismiss('cancel');
 		});
 
