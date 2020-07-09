@@ -2229,6 +2229,7 @@
       "ADD": "Ajouter",
       "SEARCH": "Rechercher",
       "EDIT": "Modifier",
+      "VIEW": "Voir",
       "DELETE": "Supprimer",
       "CODE": "Code",
       "DESCRIPTION": "Description",
@@ -2287,7 +2288,9 @@
     "EDIT": {
       "SAVE": "Enregistrer",
       "CANCEL": "Annuler",
+      "CLOSE": "Fermer",
       "TITLE": "Modifier code personnalisé",
+      "TITLE_VIEW": "Voir code personnalisé",
       "GENERAL": "Informations générales",
       "CODE": "Code",
       "DESCRIPTION": "Description",
@@ -2312,6 +2315,7 @@
       "CREATION_DATE": "Date de création",
       "OPERATIONS": "Opérations",
       "EDIT": "Modifier",
+      "VIEW": "Voir",
       "DELETE": "Supprimer"
     },
     "DELETE": {
@@ -2349,8 +2353,10 @@
     },
     "EDIT": {
       "TITLE": "Modifier l'étude",
+      "TITLE_VIEW": "Voir l'étude",
       "SAVE": "Enregistrer",
       "CANCEL": "Annuler",
+      "CLOSE": "Fermer",
       "DETAILS": "Détails",
       "STUDY_ID": "ID étude",
       "TITLE_2": "Titre",

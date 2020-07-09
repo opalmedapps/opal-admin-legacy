@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.customCode.add', ['ngAnimate', 'ui.bootstr
 	/******************************************************************************
 	 * Add Diagnosis Translation Page controller
 	 *******************************************************************************/
-	controller('customCode.add', function ($scope, $filter, $uibModal, customCodeCollectionService, $state, Session) {
+	controller('customCode.add', function ($scope, $filter, $uibModal, customCodeCollectionService, $state, Session, ErrorHandler) {
 
 		// get current user id
 		var user = Session.retrieveObject('user');
@@ -97,7 +97,7 @@ angular.module('opalAdmin.controllers.customCode.add', ['ngAnimate', 'ui.bootstr
 			});
 			$scope.moduleList = response.data; // Assign value
 		}).catch(function(err) {
-			alert($filter('translate')('CUSTOM_CODE.ADD.ERROR_MODULE'));
+			ErrorHandler.onError(err, $filter('translate')('CUSTOM_CODE.ADD.ERROR_MODULE'));
 			$state.go('custom-code');
 		});
 
@@ -180,7 +180,7 @@ angular.module('opalAdmin.controllers.customCode.add', ['ngAnimate', 'ui.bootstr
 				data: $scope.toSubmit,
 				success: function () {},
 				error: function (err) {
-					alert($filter('translate')('CUSTOM_CODE.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('CUSTOM_CODE.ADD.ERROR_ADD'));
 				},
 				complete: function () {
 					$state.go('custom-code');
