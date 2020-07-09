@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.user.edit.ad', ['ui.bootstrap', 'ui.grid']).
 
-controller('user.edit.ad', function ($scope, $uibModal, $uibModalInstance, $filter, $sce, $state, userCollectionService, Encrypt, Session) {
+controller('user.edit.ad', function ($scope, $uibModal, $uibModalInstance, $filter, $sce, $state, userCollectionService, Encrypt, Session, ErrorHandler) {
 	var OAUserId = Session.retrieveObject('user').id;
 	$scope.roleDisabled = false;
 
@@ -38,8 +38,8 @@ controller('user.edit.ad', function ($scope, $uibModal, $uibModalInstance, $filt
 		$scope.roleDisabled = (OAUserId == $scope.user.serial);
 		processingModal.close(); // hide modal
 		processingModal = null; // remove reference
-	}).catch(function(response) {
-		alert($filter('translate')('USERS.EDIT.ERROR_DETAILS') + "\r\n\r\n" + response.status + " " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('USERS.EDIT.ERROR_DETAILS'));
 	});
 
 	// Call our API service to get the list of possible roles
@@ -52,8 +52,8 @@ controller('user.edit.ad', function ($scope, $uibModal, $uibModalInstance, $filt
 				row.name_display = row.name_EN;
 		});
 		$scope.roles = response.data;
-	}).catch(function(response) {
-		alert($filter('translate')('USERS.EDIT.ERROR_ROLES') + "\r\n\r\n" + response.status + " " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('USERS.EDIT.ERROR_ROLES'));
 	});
 
 	// Function that triggers when the role field is updated
@@ -100,13 +100,13 @@ controller('user.edit.ad', function ($scope, $uibModal, $uibModalInstance, $filt
 				type: "POST",
 				url: "user/update/user",
 				data: data,
-				success: function (response) {
+				success: function () {
 					$scope.setBannerClass('success');
 					$scope.$parent.bannerMessage = $filter('translate')('USERS.EDIT.SUCCESS_EDIT') ;
 					$scope.showBanner();
 				},
 				error: function(err) {
-					alert($filter('translate')('USERS.EDIT.ERROR_UPDATE') + "\r\n\r\n" + err.status + " - " + err.responseText);
+					ErrorHandler.onError(err, $filter('translate')('USERS.EDIT.ERROR_UPDATE'));
 				},
 				complete: function() {
 					$uibModalInstance.close();

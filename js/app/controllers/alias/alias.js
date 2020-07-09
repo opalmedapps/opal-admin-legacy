@@ -45,29 +45,20 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 			'<strong><a href="">{{row.entity.name_'+Session.retrieveObject('user').language.toUpperCase()+'}}</a></strong></div>';
 
 		var checkboxCellTemplate;
-		if($scope.writeAccess) {
-			checkboxCellTemplate = '<div style="text-align: center; cursor: pointer;" ' +
-				'ng-click="grid.appScope.checkAliasUpdate(row.entity)" ' +
-				'class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ' +
-				'ng-checked="grid.appScope.updateVal(row.entity.update)" ng-model="row.entity.update"></div>';
-		} else {
-			checkboxCellTemplate = '<div style="text-align: center;" class="ui-grid-cell-contents">'+
-				'<i ng-class="row.entity.update == 1 ? \'fa-check text-success\' : \'fa-times text-danger\'" class="fa"></i>' +
-				+'</div>';
-		}
-		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">';
+		if($scope.writeAccess)
+			checkboxCellTemplate = '<div style="text-align: center; cursor: pointer;" ng-click="grid.appScope.checkAliasUpdate(row.entity)" class="ui-grid-cell-contents"><input style="margin: 4px;" type="checkbox" ng-checked="grid.appScope.updateVal(row.entity.update)" ng-model="row.entity.update"></div>';
+		else
+			checkboxCellTemplate = '<div style="text-align: center;" class="ui-grid-cell-contents"><i ng-class="row.entity.update == 1 ? \'fa-check text-success\' : \'fa-times text-danger\'" class="fa"></i></div>';
 
+		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">';
 		if($scope.readAccess)
 			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.showAliasLog(row.entity)"><i title="' + $filter('translate')('ALIAS.LIST.LOGS') + '" class="fa fa-area-chart"></i></a></strong> ';
-
 		if($scope.writeAccess)
 			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.editAlias(row.entity)"><i title="' + $filter('translate')('ALIAS.LIST.EDIT') + '" class="fa fa-pencil"></i></a></strong> ';
 		else
 			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.editAlias(row.entity)"><i title="' + $filter('translate')('ALIAS.LIST.VIEW') + '" class="fa fa-eye"></i></a></strong> ';
-
 		if($scope.deleteAccess)
 			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.deleteAlias(row.entity)"><i title="' + $filter('translate')('ALIAS.LIST.DELETE') + '" class="fa fa-trash"></i></a></strong>';
-
 		cellTemplateOperations += '</div>';
 
 		var cellTemplateColor = '<div class="color-palette-sm" style="margin-top: 7px; margin-left: auto; margin-right: auto" ' +

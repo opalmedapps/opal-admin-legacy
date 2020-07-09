@@ -1,7 +1,10 @@
 angular.module('opalAdmin.controllers.patientActivity', ['ngAnimate', 'ui.bootstrap']).
 
 
-controller('patientActivity', function ($scope, $uibModal, $filter, patientCollectionService) {
+controller('patientActivity', function ($scope, $uibModal, $filter, patientCollectionService, Session, ErrorHandler, MODULE) {
+	$scope.readAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.patient]) & (1 << 0)) !== 0);
+	$scope.writeAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.patient]) & (1 << 1)) !== 0);
+	$scope.deleteAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.patient]) & (1 << 2)) !== 0);
 
 	$scope.bannerMessage = "";
 	// Function to show page banner
@@ -12,6 +15,7 @@ controller('patientActivity', function ($scope, $uibModal, $filter, patientColle
 			}, 3000);
 		});
 	};
+
 	// Function to set banner class
 	$scope.setBannerClass = function (classname) {
 		// Remove any classes starting with "alert-"
@@ -73,7 +77,7 @@ controller('patientActivity', function ($scope, $uibModal, $filter, patientColle
 	patientCollectionService.getPatientActivities().then(function (response) {
 		// Assign value
 		$scope.patientActivityList = response.data;
-	}).catch(function(response) {
-		console.error('Error occurred getting patient activities:', response.status, response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('PATIENTS.ACTIVITY.ERROR_ACTIVITIES'));
 	}).finally(function () { $scope.loading = false; });
 });
