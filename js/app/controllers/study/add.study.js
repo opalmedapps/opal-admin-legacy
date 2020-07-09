@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 	/******************************************************************************
 	 * Add Diagnosis Translation Page controller
 	 *******************************************************************************/
-	controller('study.add', function ($scope, $filter, $uibModal, $state, $locale, Session) {
+	controller('study.add', function ($scope, $filter, $uibModal, $state, $locale, Session, ErrorHandler) {
 
 		// get current user id
 		var user = Session.retrieveObject('user');
@@ -230,7 +230,7 @@ angular.module('opalAdmin.controllers.study.add', ['ngAnimate', 'ui.bootstrap'])
 				data: $scope.toSubmit,
 				success: function () {},
 				error: function (err) {
-					alert($filter('translate')('STUDY.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('STUDY.ADD.ERROR_ADD'));
 				},
 				complete: function () {
 					$state.go('study');

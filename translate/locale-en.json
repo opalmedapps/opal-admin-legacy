@@ -2214,6 +2214,7 @@
       "ADD": "Add",
       "SEARCH": "Search...",
       "EDIT": "Edit",
+      "VIEW": "View",
       "DELETE": "Delete",
       "CODE": "Code",
       "DESCRIPTION": "Description",
@@ -2271,7 +2272,9 @@
     "EDIT": {
       "SAVE": "Save Changes",
       "CANCEL": "Cancel",
+      "CLOSE": "Close",
       "TITLE": "Edit Custom code",
+      "TITLE_VIEW": "View Custom code",
       "GENERAL": "General Informations",
       "CODE": "Code",
       "DESCRIPTION": "Description",
@@ -2296,6 +2299,7 @@
       "CREATION_DATE": "Date of creation",
       "OPERATIONS": "Operations",
       "EDIT": "Edit",
+      "VIEW": "View",
       "DELETE": "Delete"
     },
     "DELETE": {
@@ -2334,8 +2338,10 @@
     },
     "EDIT": {
       "TITLE": "Edit Study",
+      "TITLE_VIEW": "View Study",
       "SAVE": "Save",
       "CANCEL": "Cancel",
+      "CLOSE": "Close",
       "DETAILS": "Details",
       "STUDY_ID": "Study ID",
       "TITLE_2": "Title",
