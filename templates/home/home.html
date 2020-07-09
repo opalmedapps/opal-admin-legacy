@@ -335,25 +335,25 @@
                         </div>
 
                         <!-- SECTION: Patient registration -->
-                        <div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
-                            <div class="panel-container animated" ng-class="{pulse: hoverPatRegMenu}"
-                                 ng-mouseenter="hoverPatRegMenu=true" ng-mouseleave="hoverPatRegMenu=false"
-                                 style="cursor:pointer;" ng-click="goToPatientRegistration()">
-                                <div class="panel-info">
-                                    <div class="panel-content">
-                                        <div class="icon-home clearfix">
-                                            <span class="fa fa-address-card" aria-hidden="true"></span>
-                                        </div>
-                                        <div class="panel-title">
-                                            <h1>{{'NAVIGATION_MENU.PATIENT_REGISTRATION'|translate}}</h1>
-                                        </div>
-                                        <div class="panel-description">
-                                            <p>{{'NAVIGATION_MENU.PATIENT_REGISTRATION_SUB'|translate}}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+<!--                        <div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">-->
+<!--                            <div class="panel-container animated" ng-class="{pulse: hoverPatRegMenu}"-->
+<!--                                 ng-mouseenter="hoverPatRegMenu=true" ng-mouseleave="hoverPatRegMenu=false"-->
+<!--                                 style="cursor:pointer;" ng-click="goToPatientRegistration()">-->
+<!--                                <div class="panel-info">-->
+<!--                                    <div class="panel-content">-->
+<!--                                        <div class="icon-home clearfix">-->
+<!--                                            <span class="fa fa-address-card" aria-hidden="true"></span>-->
+<!--                                        </div>-->
+<!--                                        <div class="panel-title">-->
+<!--                                            <h1>{{'NAVIGATION_MENU.PATIENT_REGISTRATION'|translate}}</h1>-->
+<!--                                        </div>-->
+<!--                                        <div class="panel-description">-->
+<!--                                            <p>{{'NAVIGATION_MENU.PATIENT_REGISTRATION_SUB'|translate}}</p>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
 
                         <!-- SECTION: Patient activity -->
                         <div class="col-xs-12 col-sm-6" ng-if="isAuthorized([userRoles.admin])">
