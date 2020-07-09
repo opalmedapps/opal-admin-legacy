@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 	/******************************************************************************
 	 * Controller for user registration
 	 *******************************************************************************/
-	controller('user.add', function ($scope, userCollectionService, $state, $filter, Encrypt, Session) {
+	controller('user.add', function ($scope, userCollectionService, $state, $filter, Encrypt, Session, ErrorHandler) {
 		var OAUserId = Session.retrieveObject('user').id;
 
 		// Function to go to previous page
@@ -83,8 +83,8 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 					row.name_display = row.name_EN;
 			});
 			$scope.roles = response.data;
-		}).catch(function(response) {
-			alert($filter('translate')('USERS.ADD.ERROR_ROLES') + "\r\n\r\n" + response.status + " - " + response.data);
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('USERS.ADD.ERROR_ROLES'));
 		});
 
 		// Function to validate username
@@ -111,8 +111,8 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 					$scope.usernameUpdate();
 					return;
 				}
-			}).catch(function(response) {
-				alert($filter('translate')('USERS.ADD.ERROR_USERNAME_UNKNOWN') + "\r\n\r\n" + response.status + " - " + response.data);
+			}).catch(function(err) {
+				ErrorHandler.onError(err, $filter('translate')('USERS.ADD.ERROR_USERNAME_UNKNOWN'));
 			});
 
 		};
@@ -258,16 +258,13 @@ angular.module('opalAdmin.controllers.user.add', ['ui.bootstrap', 'ui.grid']).
 					type: "POST",
 					url: 'user/insert/user',
 					data: data,
-					success: function () {
-					},
+					success: function () {},
 					error: function(err) {
-						alert($filter('translate')('USERS.ADD.ERROR') + "\r\n\r\n" + err.status + " - " + err.responseText);
+						ErrorHandler.onError(err, $filter('translate')('USERS.ADD.ERROR'));
 					},
 					complete: function() {
 						$state.go('users');
 					}
-
-
 				});
 			}
 		};

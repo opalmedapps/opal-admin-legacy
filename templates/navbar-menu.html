@@ -102,12 +102,12 @@
                             {{'NAVIGATION_MENU.PATIENTS'|translate}}
                         </a>
                     </li>
-                    <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">
-                        <a ui-sref="patients-register" ng-click="closeNav()">
-                            <span class="fa fa-user-plus" aria-hidden="true"></span>
-                            {{'NAVIGATION_MENU.PATIENT_REGISTRATION'|translate}}
-                        </a>
-                    </li>
+<!--                    <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin, userRoles.registrant])">-->
+<!--                        <a ui-sref="patients-register" ng-click="closeNav()">-->
+<!--                            <span class="fa fa-user-plus" aria-hidden="true"></span>-->
+<!--                            {{'NAVIGATION_MENU.PATIENT_REGISTRATION'|translate}}-->
+<!--                        </a>-->
+<!--                    </li>-->
                     <li ui-sref-active="active" ng-if="isAuthorized([userRoles.admin])">
                         <a ui-sref="patient-activity" ng-click="closeNav()">
                             <span class="fa fa-hourglass-half" aria-hidden="true"></span>
