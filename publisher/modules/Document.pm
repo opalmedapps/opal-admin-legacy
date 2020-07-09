@@ -31,11 +31,6 @@ use PushNotification; # Custom PushNotification.pm
 #---------------------------------------------------------------------------------
 my $SQLDatabase		= $Database::targetDatabase;
 
-#---------------------------------------------------------------------------------
-# Global Variable
-#---------------------------------------------------------------------------------
-my $wsFileFound = "Not Found"; # Global variable for File::Find
-
 #====================================================================================
 # Constructor for our Docs class
 #====================================================================================
@@ -579,6 +574,10 @@ sub getDocsFromSourceDB
 				}
 			}
 			
+			# open(my $fh, '>>', 'ym.txt');
+			# print $fh $docInfo_sql;
+			# close $fh;
+
 			# prepare query
 			my $query = $sourceDatabase->prepare($docInfo_sql)
 				or die "Could not prepare query: " . $sourceDatabase->errstr;
@@ -845,6 +844,7 @@ sub transferPatientDocuments
 	# Preprod server uses libreoffice 4.3
 	# Prod server uses libreoffice 6.1
 	my $lowriter = $Configs::OFFICE_PATH_DIR . "soffice.bin --writer";
+
     my $verbose = 1;
 
 	#==============================================================
@@ -863,6 +863,8 @@ sub transferPatientDocuments
         	next;
         }
 
+		my $OnlyFileName = '';
+
 		# check if document log exists in our database
 		my $DocExists = $Document->inOurDatabase();
 
@@ -878,29 +880,8 @@ sub transferPatientDocuments
 		my $finalextension = $filefields[1]; # get the extension
 
 		my $clinicalDir = $ftpObject->getFTPClinicalDir(); # get local directory of documents
+		
 		my $sourcefile = "$clinicalDir/$finalfileloc"; # concatenate directory and file
-
-		# # Prepare the subdirectory search
-		# my $wsYear = 2020; # set the beginning of the subdirectory search
-		# my $wsQuarter = 1; # initialize the quarter
-	    # my $wsSubDirectory = "$wsYear" . "Q" . "$wsQuarter";
-
-		# # Begin looping until file is found or subdirectory doesnt exist
-        # unless (-e $sourcefile or ! -d "$clinicalDir/$wsSubDirectory") {
-
-		# 	print "Searching source file in subdirectory: $sourcefile\n" if $verbose;
-
-        #     # $wsQuarter %= 4 + 1; # increment quarter mod 4 shifted by 1
-		# 	$wsQuarter = $wsQuarter + 1; # increment quarter
-        #     if ($wsQuarter eq 5) { # quarter reset
-		# 		$wsQuarter = 1; # Reset quarter
-        #         $wsYear++; # Increase Year
-        #     }
-		# 	# build subdirectory for next search
-		# 	$wsSubDirectory = "$wsYear" . "Q" . "$wsQuarter";
-		# 	$sourcefile = "$clinicalDir/$wsSubDirectory/$finalfileloc";
-		# 	print "Search Location: $sourcefile\n" if $verbose;
-		# };
 
         print "Source file: $sourcefile\n" if $verbose;
 
@@ -940,7 +921,10 @@ sub transferPatientDocuments
 	            			FROM
 				            	VARIAN.dbo.visit_note visit_note
 	            			WHERE
-				            	visit_note.doc_file_loc = '$finalfileloc'
+				            	visit_note.doc_file_loc = 
+									case when CHARINDEX('/', '$finalfileloc') = 0 then '$finalfileloc'
+									else substring('$finalfileloc', CHARINDEX('/', '$finalfileloc') + 1, len('$finalfileloc'))
+									end
 	            		";
 
 	            		# prepare query
@@ -1040,7 +1024,12 @@ END
     				}
 	    			# if already pdf, just copy
 		    		if ($finalextension eq "pdf") {
-			    		system("cp $sourcefile $localDir/$finalfileloc");
+						if (index($finalfileloc, '/') eq -1) {
+			    			system("cp $sourcefile $localDir/$finalfileloc");
+						} else {
+							$OnlyFileName = substr($finalfileloc, 7);
+							system("cp $sourcefile $localDir/$OnlyFileName");
+						}
 				    }
 
                 }
@@ -1093,7 +1082,10 @@ END
 	            			FROM
 				            	VARIAN.dbo.visit_note visit_note
 	            			WHERE
-				            	visit_note.doc_file_loc = '$finalfileloc'
+				            	visit_note.doc_file_loc = 
+									case when CHARINDEX('/', '$finalfileloc') = 0 then '$finalfileloc'
+									else substring('$finalfileloc', CHARINDEX('/', '$finalfileloc') + 1, len('$finalfileloc'))
+									end
 	            		";
 
 	            		# prepare query
@@ -1185,14 +1177,19 @@ END
                 if ($validentry eq "Y") { # not errored out
 
                     # Convert .doc to .pdf if .doc
-    				if ($finalextension eq "doc") {
+    				if ($finalextension eq "doc" or $finalextension eq "docx") {
 	    				system("$lowriter --headless --convert-to pdf --nologo --outdir $localDir $sourcefile");
             			$Document->setDocFileLoc("$finalfilenum.pdf"); # change extension for database
     				}
     				# if already pdf, just copy
-		    		if ($finalextension eq "pdf") {
-			    		system("cp $sourcefile $localDir/$finalfileloc");
-			    	}
+					if ($finalextension eq "pdf") {
+						if (index($finalfileloc, '/') eq -1) {
+							system("cp $sourcefile $localDir/$finalfileloc");
+						} else {
+							$OnlyFileName = substr($finalfileloc, 7);
+							system("cp $sourcefile $localDir/$OnlyFileName");
+						}
+					}
                 }
 
 				# set transfer status to true
