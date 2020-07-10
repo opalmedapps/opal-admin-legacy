@@ -22,6 +22,7 @@ use LWP::UserAgent; # for post requests
 use JSON;
 use Net::Address::IP::Local;
 use Cwd;
+use Try::Tiny;
 
 use Patient; # Our custom patient module
 
@@ -255,6 +256,11 @@ sub sendPushNotification
         my $registrationid  = $PTDID->{registrationid};
         my $devicetype      = $PTDID->{devicetype};
 
+        print "\n***** Start Push Notification *****\n";
+        print "PatientSerNum: $patientser\n";
+        print "DeviceType: $devicetype\n";
+        print "Title: $title\n";
+
         # system command to call PHP push notification script
         my $browser = LWP::UserAgent->new;
         my $response = $browser->post($thisURL,
@@ -267,7 +273,14 @@ sub sendPushNotification
         );
 
         # json decode
-        $returnStatus = decode_json($response->content);
+        try {
+            $returnStatus = decode_json($response->content);
+        } catch {
+            $sendstatus = "F"; # failed
+            $sendlog    = "Failed to send push notification! Message: 'Push Notification Timed Out'->{'error'}";
+        };
+
+        print "\n***** End Push Notification *****\n";
 
         if ($returnStatus->{'success'} eq 1) {
 
