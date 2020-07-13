@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.role.delete', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('role.delete', function ($scope, $filter, $uibModal, $uibModalInstance, Session) {
+controller('role.delete', function ($scope, $filter, $uibModalInstance, Session, ErrorHandler) {
 
 	// Submit delete
 	$scope.deleteRole = function () {
@@ -18,7 +18,7 @@ controller('role.delete', function ($scope, $filter, $uibModal, $uibModalInstanc
 				$scope.showBanner();
 			},
 			error: function(err) {
-				alert($filter('translate')('ROLE.DELETE.ERROR') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+				ErrorHandler.onError(err, $filter('translate')('ROLE.DELETE.ERROR'));
 			},
 			complete: function() {
 				$uibModalInstance.close();

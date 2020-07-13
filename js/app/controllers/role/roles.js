@@ -1,6 +1,9 @@
 angular.module('opalAdmin.controllers.role', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular'])
 
-	.controller('role', function ($scope, $state, $filter, $uibModal, roleCollectionService, Session, uiGridConstants) {
+	.controller('role', function ($scope, $state, $filter, $uibModal, roleCollectionService, Session, uiGridConstants, ErrorHandler, MODULE) {
+		$scope.readAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.role]) & (1 << 0)) !== 0);
+		$scope.writeAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.role]) & (1 << 1)) !== 0);
+		$scope.deleteAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.role]) & (1 << 2)) !== 0);
 
 		// get current user id
 		var user = Session.retrieveObject('user');1
@@ -56,11 +59,14 @@ angular.module('opalAdmin.controllers.role', ['ngAnimate', 'ngSanitize', 'ui.boo
 			return renderableRows;
 		};
 
-		// Table
-		// Templates
-		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editRole(row.entity)"<i title="'+$filter('translate')('ROLE.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong>' +
-			'- <strong><a href="" ng-click="grid.appScope.deleteRole(row.entity)"><i title="'+$filter('translate')('ROLE.LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
+		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">';
+		if($scope.writeAccess)
+			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.editRole(row.entity)"<i title="'+$filter('translate')('ROLE.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong>';
+		else
+			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.editRole(row.entity)"<i title="'+$filter('translate')('ROLE.LIST.VIEW')+'" class="fa fa-eye" aria-hidden="true"></i></a></strong>';
+		if($scope.deleteAccess)
+			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.deleteRole(row.entity)"><i title="'+$filter('translate')('ROLE.LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong>';
+		cellTemplateOperations += '</div>';
 		var cellTemplateEnglish = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editRole(row.entity)">' +
 			'<strong><a href="">{{row.entity.name_EN}}</a></strong></div>';
@@ -94,14 +100,14 @@ angular.module('opalAdmin.controllers.role', ['ngAnimate', 'ngSanitize', 'ui.boo
 			roleCollectionService.getRoles(OAUserId).then(function (response) {
 				$scope.rolesList = response.data;
 			}).catch(function(err) {
-				alert($filter('translate')('ROLE.LIST.ERROR') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+				ErrorHandler.onError(err, $filter('translate')('ROLE.LIST.ERROR'));
 			});
 		}
 
 		$scope.editRole = function (role) {
 			$scope.currentRole = role;
 			var modalInstance = $uibModal.open({ // open modal
-				templateUrl: 'templates/role/edit.role.html',
+				templateUrl: ($scope.writeAccess ? 'templates/role/edit.role.html' : 'templates/role/view.role.html'),
 				controller: 'role.edit',
 				scope: $scope,
 				windowClass: 'customModal',
