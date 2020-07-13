@@ -2379,6 +2379,7 @@
       "OPERATIONS": "Opérations",
       "TOTAL": "Nombre d'utilisateurs",
       "EDIT": "Modifier",
+      "VIEW": "Voir",
       "DELETE": "Supprimer"
     },
     "DELETE": {
@@ -2419,8 +2420,10 @@
     },
     "EDIT": {
       "TITLE": "Modifier le rôle",
+      "TITLE_VIEW": "Voir le rôle",
       "SAVE": "Enregistrer",
       "CANCEL": "Annuler",
+      "CLOSE": "Fermer",
       "NAME": "Nom",
       "ENGLISH": "Anglais",
       "FRENCH": "Français",

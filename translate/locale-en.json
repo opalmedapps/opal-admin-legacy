@@ -2364,6 +2364,7 @@
       "OPERATIONS": "Operations",
       "TOTAL": "Number of users",
       "EDIT": "Edit",
+      "VIEW": "View",
       "DELETE": "Delete"
     },
     "DELETE": {
@@ -2403,9 +2404,11 @@
       "ERROR_MODULE": "An error occurred while getting the list of modules."
     },
     "EDIT": {
-      "TITLE": "Edit a role",
+      "TITLE": "Edit the role",
+      "TITLE_VIEW": "View the role",
       "SAVE": "Save",
       "CANCEL": "Cancel",
+      "CLOSE": "Close",
       "NAME": "Name",
       "ENGLISH": "English",
       "FRENCH": "French",

@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.role.edit', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('role.edit', function ($scope, $filter, $uibModal, $uibModalInstance, $locale, roleCollectionService, uiGridConstants, $state, Session) {
+controller('role.edit', function ($scope, $filter, $uibModal, $uibModalInstance, roleCollectionService, $state, Session, ErrorHandler) {
 
 	// get current user id
 	var user = Session.retrieveObject('user');
@@ -102,11 +102,11 @@ controller('role.edit', function ($scope, $filter, $uibModal, $uibModalInstance,
 			});
 			$scope.oldData = JSON.parse(JSON.stringify($scope.toSubmit));
 		}).catch(function(err) {
-			alert($filter('translate')('ROLE.EDIT.ERROR_MODULE'));
+			ErrorHandler.onError(err, $filter('translate')('ROLE.EDIT.ERROR_MODULE'));
 			$state.go('role');
 		});
 	}).catch(function(err) {
-		alert($filter('translate')('ROLE.EDIT.ERROR_MODULE'));
+		ErrorHandler.onError(err, $filter('translate')('ROLE.EDIT.ERROR_MODULE'));
 		$state.go('role');
 	}).finally(function() {
 		processingModal.close(); // hide modal
@@ -189,10 +189,9 @@ controller('role.edit', function ($scope, $filter, $uibModal, $uibModalInstance,
 				type: "POST",
 				url: "role/update/role",
 				data: $scope.updatedRole,
-				success: function () {
-				},
+				success: function () {},
 				error: function (err) {
-					alert($filter('translate')('ROLE.EDIT.ERROR_UPDATE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('ROLE.EDIT.ERROR_UPDATE'));
 				},
 				complete: function () {
 					$uibModalInstance.close();
