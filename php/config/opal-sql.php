@@ -514,7 +514,7 @@ define("OPAL_GET_USERS_LIST","
     SELECT ou.OAUserSerNum AS serial, ou.Username AS username, r.name_EN, r.name_FR, ou.Language AS language
     FROM ".OPAL_OAUSER_TABLE." ou
     LEFT JOIN ".OPAL_OA_ROLE_TABLE." r ON r.id = ou.oaRoleId
-	WHERE ou.oaRoleId != ".ROLE_CRONJOB." AND ou.deleted = ".NON_DELETED_RECORD.";
+	WHERE ou.deleted = ".NON_DELETED_RECORD.";
 ");
 
 define("OPAL_COUNT_USERNAME","
@@ -527,8 +527,7 @@ define("OPAL_MARK_USER_AS_DELETED",
 ");
 
 define("OPAL_GET_ROLES_LIST","
-    SELECT DISTINCT RoleSerNum AS serial, RoleName AS name FROM Role WHERE Role.RoleSerNum != ".ROLE_CRONJOB."
-    ORDER BY RoleName;
+    SELECT DISTINCT RoleSerNum AS serial, RoleName AS name FROM Role ORDER BY RoleName;
 ");
 
 define("OPAL_GET_USER_LOGIN_DETAILS","

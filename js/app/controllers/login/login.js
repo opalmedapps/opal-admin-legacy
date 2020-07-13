@@ -76,6 +76,7 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, A
 
 			AuthService.login(encrypted, cypher).then(function (response) {
 				var accessLevel = [];
+				var accessLevel2 = [];
 				angular.forEach(response.data.userAccess, function (row) {
 					accessLevel[row["ID"]] = row["access"];
 				});

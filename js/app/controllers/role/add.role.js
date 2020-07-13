@@ -3,7 +3,7 @@ angular.module('opalAdmin.controllers.role.add', ['ngAnimate', 'ui.bootstrap']).
 	/******************************************************************************
 	 * Add Diagnosis Translation Page controller
 	 *******************************************************************************/
-	controller('role.add', function ($scope, $filter, $uibModal, $state, $locale, roleCollectionService, Session) {
+	controller('role.add', function ($scope, $filter, $uibModal, $state, roleCollectionService, Session, ErrorHandler) {
 
 		// get current user id
 		var user = Session.retrieveObject('user');
@@ -95,8 +95,8 @@ angular.module('opalAdmin.controllers.role.add', ['ngAnimate', 'ui.bootstrap']).
 				$scope.toSubmit.operations.push(temp);
 			});
 		}).catch(function(err) {
-			alert($filter('translate')('ROLE.ADD.ERROR_MODULE'));
-			// $state.go('role');
+			ErrorHandler.onError(err, $filter('translate')('ROLE.ADD.ERROR_MODULE'));
+			$state.go('role');
 		});
 
 		// Function to load form as animations
@@ -193,11 +193,12 @@ angular.module('opalAdmin.controllers.role.add', ['ngAnimate', 'ui.bootstrap']).
 					type: 'POST',
 					url: 'role/insert/role',
 					data: $scope.newRole,
-					success: function () {
-						$state.go('role');
-					},
+					success: function () {},
 					error: function (err) {
-						alert($filter('translate')('ROLE.ADD.ERROR_ADD') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+						ErrorHandler.onError(err, $filter('translate')('ROLE.ADD.ERROR_ADD'));
+					},
+					complete: function () {
+						$state.go('role');
 					}
 				});
 			}
