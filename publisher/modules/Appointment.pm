@@ -647,6 +647,7 @@ sub getApptsFromSourceDB
 				WHERE
 					LEFT(LTRIM(pt.SSN), 12)  = pi.SSN
 					and mval.PatientSerNum      = pt.PatientSerNum
+					and mval.AppointSys in ('Medivisit','Impromptu','ImpromptuOrtho','InstantAddOn')
 				AND (
 			";
 
@@ -1098,6 +1099,7 @@ sub getApptInfoFromSourceDB
                 MediVisitAppointmentList mval
             WHERE
                 mval.AppointmentSerNum  = '$apptSourceUID'
+				and mval.AppointSys in ('Medivisit','Impromptu','ImpromptuOrtho','InstantAddOn')
         ";
 
         my $query = $sourceDatabase->prepare($apptInfo_sql)
