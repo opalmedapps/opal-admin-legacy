@@ -275,15 +275,13 @@ class OpalCheckin{
 				$wrmDatabaseName = WRM_DB_NAME_FED;
 
 				$sql = "Select PMH.AppointmentSerNum
-                From $wrmDatabaseName.PatientLocation PMH, $wrmDatabaseName.Patient P,
-										$wrmDatabaseName.MediVisitAppointmentList MVA, $opalDatabaseName.Appointment A
+                From $wrmDatabaseName.PatientLocation PMH, $wrmDatabaseName.Patient P, $wrmDatabaseName.MediVisitAppointmentList MVA
                 Where P.PatientSerNum = MVA.PatientSerNum
                     And P.PatientId = '$patientId'
                     And MVA.AppointmentSerNum = PMH.AppointmentSerNum
-										and A.Checkin = 0
-                    And DATE_FORMAT(ArrivalDateTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d')
-										and DATE_FORMAT(A.ScheduledStartTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d');";
-
+                    and MVA.AppointSys in ('Medivisit','Impromptu','ImpromptuOrtho','InstantAddOn')
+				    And DATE_FORMAT(ArrivalDateTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d')
+                ;";
         try{
             $resultMedi = $conn->query($sql);
 
