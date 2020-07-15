@@ -472,17 +472,17 @@ sub getTestResultsFromSourceDB
                 IF OBJECT_ID('tempdb.dbo.#tempTR', 'U') IS NOT NULL
                   DROP TABLE #tempTR;
 
-				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
+				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
 			my $numOfPatients = @patientList;
 			my $counter = 0;
 			foreach my $Patient (@patientList) {
 				my $patientSer 			= $Patient->getPatientSer();
-				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
+				my $id      		 	= $Patient->getPatientId(); # get patient ID
 				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
 
 				$patientInfo_sql .= "
-					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer'
+					SELECT '$id', '$patientLastTransfer', '$patientSer'
 				";
 
 				$counter++;
@@ -493,7 +493,7 @@ sub getTestResultsFromSourceDB
 			$patientInfo_sql .= ")
 			Select c.* into #tempTR
 			from PatientInfo c;
-			Create Index temporaryindexTR1 on #tempTR (SSN);
+			Create Index temporaryindexTR1 on #tempTR (ID);
 			Create Index temporaryindexTR2 on #tempTR (PatientSerNum);
 			";
 
@@ -531,7 +531,8 @@ sub getTestResultsFromSourceDB
 					#tempTR as PatientInfo
 				WHERE
 					tr.pt_id                		= pt.pt_id
-				AND pt.patient_ser          		= (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+				AND pt.patient_ser          		= (select pt.PatientSer 
+					from VARIAN.dbo.Patient pt where pt.PatientId = PatientInfo.ID)
 				AND tr.valid_entry_ind 				= 'Y'
 				AND (
 			";
