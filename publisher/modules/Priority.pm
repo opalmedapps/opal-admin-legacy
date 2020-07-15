@@ -182,17 +182,22 @@ sub getPrioritiesFromSourceDB
         if ($sourceDatabase) {
 
 			my $patientInfo_sql = "
-				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
+				use VARIAN;
+
+                IF OBJECT_ID('tempdb.dbo.#tempPriority', 'U') IS NOT NULL
+                  DROP TABLE #tempPriority;
+			
+				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
 			my $numOfPatients = @patientList;
 			my $counter = 0;
 			foreach my $Patient (@patientList) {
 				my $patientSer 			= $Patient->getPatientSer();
-				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
+				my $id      		 	= $Patient->getPatientId(); # get patient ID
 				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
 
 				$patientInfo_sql .= "
-					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer'
+					SELECT '$id', '$patientLastTransfer', '$patientSer'
 				";
 
 				$counter++;
@@ -200,7 +205,12 @@ sub getPrioritiesFromSourceDB
 					$patientInfo_sql .= "UNION";
 				}
 			}
-			$patientInfo_sql .= ")";
+			$patientInfo_sql .= ")
+			Select c.* into #tempPriority
+			from PatientInfo c;
+			Create Index temporaryindexTask1 on #tempTask (ID);
+			Create Index temporaryindexTask2 on #tempTask (PatientSerNum);
+			";
 
         	my $priorInfo_sql = $patientInfo_sql . "
 	    		SELECT DISTINCT
@@ -218,7 +228,8 @@ sub getPrioritiesFromSourceDB
 		    	    nsa.ActivityInstanceSer 	= ai.ActivityInstanceSer
 	            AND ai.ActivitySer 			    = act.ActivitySer
     	        AND act.ActivityCode 			= lt.LookupValue
-	    	   	AND nsa.PatientSer 				= (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+	    	   	AND nsa.PatientSer 				= (select pt.PatientSer 
+					from VARIAN.dbo.Patient pt where pt.PatientId = PatientInfo.ID)
 			    AND nsa.ObjectStatus 		    != 'Deleted'
     			AND lt.Expression1			    IN ('SGAS_P1','SGAS_P2','SGAS_P3','SGAS_P4')
 	    		AND	nsa.HstryDateTime		    > PatientInfo.LastTransfer

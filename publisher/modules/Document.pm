@@ -478,17 +478,17 @@ sub getDocsFromSourceDB
                 IF OBJECT_ID('tempdb.dbo.#tempClinic', 'U') IS NOT NULL
                   DROP TABLE #tempClinic;
 
-				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
+				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
 			my $numOfPatients = @patientList;
 			my $counter = 0;
 			foreach my $Patient (@patientList) {
 				my $patientSer 			= $Patient->getPatientSer();
-				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
+				my $id      		 	= $Patient->getPatientId(); # get patient ID
 				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
 
 				$patientInfo_sql .= "
-					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer'
+					SELECT '$id', '$patientLastTransfer', '$patientSer'
 				";
 
 				$counter++;
@@ -499,7 +499,7 @@ sub getDocsFromSourceDB
 			$patientInfo_sql .= ")
 			Select c.* into #tempClinic
 			from PatientInfo c;
-			Create Index temporaryindexClinic1 on #tempClinic (SSN);
+			Create Index temporaryindexClinic1 on #tempClinic (ID);
 			Create Index temporaryindexClinic2 on #tempClinic (PatientSerNum);
 			";
 
@@ -532,7 +532,8 @@ sub getDocsFromSourceDB
 					#tempClinic PatientInfo
 				WHERE
 					pt.pt_id 			            = visit_note.pt_id
-				AND pt.patient_ser			        = (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+				AND pt.patient_ser			        = (select pt.PatientSer 
+					from VARIAN.dbo.Patient pt where pt.PatientId = PatientInfo.ID)
 				AND visit_note.note_typ		        = note_typ.note_typ
 				AND visit_note.appr_flag		    = 'A'
 				AND visit_note.doc_file_loc = FL.[FileName]

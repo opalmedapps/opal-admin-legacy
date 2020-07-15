@@ -442,17 +442,17 @@ sub getApptsFromSourceDB
                 IF OBJECT_ID('tempdb.dbo.#tempAppt', 'U') IS NOT NULL
                   DROP TABLE #tempAppt;
 
-				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
+				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
 			my $numOfPatients = @patientList;
 			my $counter = 0;
 			foreach my $Patient (@patientList) {
 				my $patientSer 			= $Patient->getPatientSer();
-				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
+				my $id      		 	= $Patient->getPatientId(); # get patient ID
 				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
 
 				$patientInfo_sql .= "
-					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer'
+					SELECT '$id', '$patientLastTransfer', '$patientSer'
 				";
 
 				$counter++;
@@ -463,7 +463,7 @@ sub getApptsFromSourceDB
 			$patientInfo_sql .= ")
 			Select c.* into #tempAppt
 			from PatientInfo c;
-			Create Index temporaryindexAppt1 on #tempAppt (SSN);
+			Create Index temporaryindexAppt1 on #tempAppt (ID);
 			Create Index temporaryindexAppt2 on #tempAppt (PatientSerNum);
 			";
 
@@ -489,7 +489,8 @@ sub getApptsFromSourceDB
 						sa.ActivityInstanceSer 		= ai.ActivityInstanceSer
 					AND ai.ActivitySer 			    = act.ActivitySer
 					AND act.ActivityCode 		    = lt.LookupValue
-					AND sa.PatientSer 				= (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+					AND sa.PatientSer 				= (select pt.PatientSer 
+						from VARIAN.dbo.Patient pt where pt.PatientId = PatientInfo.ID)
 					AND (
 
 				";
@@ -640,12 +641,12 @@ sub getApptsFromSourceDB
 				FROM
 					MediVisitAppointmentList mval,
 					Patient pt,
-					(Select SSN, LastTransferred LastTransfer, P.PatientSerNum
+					(Select PatientId, LastTransferred LastTransfer, P.PatientSerNum
 					from 	$databaseName.Patient P, $databaseName.PatientControl PC
 					where P.PatientSerNum = PC.PatientSerNum
 					and PC.TransferFlag = 1) pi
 				WHERE
-					LEFT(LTRIM(pt.SSN), 12)  = pi.SSN
+					pt.PatientId  = pi.PatientId
 					and mval.PatientSerNum      = pt.PatientSerNum
 					and mval.AppointSys in ('Medivisit','Impromptu','ImpromptuOrtho','InstantAddOn')
 				AND (
