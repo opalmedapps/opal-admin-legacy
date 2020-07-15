@@ -405,6 +405,7 @@ sub getResourceAppointmentsFromSourceDB
 				WHERE
 					LEFT(LTRIM(pt.SSN), 12)  = pi.SSN
 					AND mval.PatientSerNum      = pt.PatientSerNum
+					and mval.AppointSys in ('Medivisit','Impromptu','ImpromptuOrtho','InstantAddOn')
 					AND (
 			";
 
