@@ -368,17 +368,17 @@ sub getTasksFromSourceDB
                 IF OBJECT_ID('tempdb.dbo.#tempTask', 'U') IS NOT NULL
                   DROP TABLE #tempTask;
 
-				WITH PatientInfo (SSN, LastTransfer, PatientSerNum) AS (
+				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
 			my $numOfPatients = @patientList;
 			my $counter = 0;
 			foreach my $Patient (@patientList) {
 				my $patientSer 			= $Patient->getPatientSer();
-				my $patientSSN          = $Patient->getPatientSSN(); # get ssn
+				my $id      		 	= $Patient->getPatientId(); # get patient ID
 				my $patientLastTransfer	= $Patient->getPatientLastTransfer(); # get last updated
 
 				$patientInfo_sql .= "
-					SELECT '$patientSSN', '$patientLastTransfer', '$patientSer'
+					SELECT '$id', '$patientLastTransfer', '$patientSer'
 				";
 
 				$counter++;
@@ -389,7 +389,7 @@ sub getTasksFromSourceDB
 			$patientInfo_sql .= ")
 			Select c.* into #tempTask
 			from PatientInfo c;
-			Create Index temporaryindexTask1 on #tempTask (SSN);
+			Create Index temporaryindexTask1 on #tempTask (ID);
 			Create Index temporaryindexTask2 on #tempTask (PatientSerNum);
 			";
 
@@ -405,7 +405,6 @@ sub getTasksFromSourceDB
 					REPLACE(lt.Expression1, '''', ''),
 					PatientInfo.PatientSerNum
 				FROM
-					VARIAN.dbo.Patient Patient with(nolock),
 					VARIAN.dbo.ActivityInstance ActivityInstance with(nolock),
 					VARIAN.dbo.Activity Activity with(nolock),
 					VARIAN.dbo.LookupTable lt with(nolock),
@@ -423,7 +422,8 @@ sub getTasksFromSourceDB
 					NonScheduledActivity.ActivityInstanceSer 	= ActivityInstance.ActivityInstanceSer
 				AND ActivityInstance.ActivitySer 			    = Activity.ActivitySer
 				AND Activity.ActivityCode 				        = lt.LookupValue
-				AND NonScheduledActivity.PatientSer = (select pt.PatientSer from VARIAN.dbo.Patient pt where LEFT(LTRIM(pt.SSN), 12) = PatientInfo.SSN)
+				AND NonScheduledActivity.PatientSer = (select pt.PatientSer
+					from VARIAN.dbo.Patient pt where pt.PatientId = PatientInfo.ID)
 				AND (
 			";
 
