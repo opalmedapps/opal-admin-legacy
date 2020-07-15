@@ -208,8 +208,8 @@ sub getPrioritiesFromSourceDB
 			$patientInfo_sql .= ")
 			Select c.* into #tempPriority
 			from PatientInfo c;
-			Create Index temporaryindexTask1 on #tempTask (ID);
-			Create Index temporaryindexTask2 on #tempTask (PatientSerNum);
+			Create Index temporaryindexPriority1 on #tempPriority (ID);
+			Create Index temporaryindexPriority2 on #tempPriority (PatientSerNum);
 			";
 
         	my $priorInfo_sql = $patientInfo_sql . "
