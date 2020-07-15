@@ -55,6 +55,8 @@ publisher/php/test.php
 
 # ignore npm-debug log
 npm-debug.log
+
+# MISC files
 publisher/php/downloadPDF.php
 publisher/php/davTestNotification.php
 publisher/modules/ym.pm
