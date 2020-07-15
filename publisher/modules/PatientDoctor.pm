@@ -153,7 +153,7 @@ sub getPatientDoctorsFromSourceDB
 	foreach my $Patient (@patientList) {
 
 		my $patientSer		= $Patient->getPatientSer();
-		my $id 				= $patient->getPatientId();
+		my $id 				= $Patient->getPatientId();
 		my $lastTransfer	= $Patient->getPatientLastTransfer();
 
         ######################################
