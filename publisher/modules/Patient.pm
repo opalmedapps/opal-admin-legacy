@@ -415,7 +415,7 @@ sub getPatientInfoFromSourceDBs
 
     my @patientList = (); # initialize a list 
 
-    my $id      		 = $patient->getPatientId(); # retrieve the patient ID
+    my $id      		 = $Patient->getPatientId(); # retrieve the patient ID
     my $lastTransfer     = $Patient->getPatientLastTransfer();
     my $registrationDate = $Patient->getPatientRegistrationDate();
 
