@@ -368,6 +368,9 @@ sub getTasksFromSourceDB
                 IF OBJECT_ID('tempdb.dbo.#tempTask', 'U') IS NOT NULL
                   DROP TABLE #tempTask;
 
+				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
+					DROP TABLE #tempPatient;
+
 				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
 			my $numOfPatients = @patientList;
@@ -391,6 +394,11 @@ sub getTasksFromSourceDB
 			from PatientInfo c;
 			Create Index temporaryindexTask1 on #tempTask (ID);
 			Create Index temporaryindexTask2 on #tempTask (PatientSerNum);
+
+			Select p.PatientSer, p.PatientId into #tempPatient
+			from VARIAN.dbo.Patient p;
+			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
+			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
 			";
 
 			my $taskInfo_sql = $patientInfo_sql .
@@ -423,7 +431,7 @@ sub getTasksFromSourceDB
 				AND ActivityInstance.ActivitySer 			    = Activity.ActivitySer
 				AND Activity.ActivityCode 				        = lt.LookupValue
 				AND NonScheduledActivity.PatientSer = (select pt.PatientSer
-					from VARIAN.dbo.Patient pt where pt.PatientId = PatientInfo.ID)
+					from #tempPatient pt where pt.PatientId = PatientInfo.ID)
 				AND (
 			";
 
