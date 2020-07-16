@@ -897,7 +897,7 @@ sub inOurDatabase
 
         $ExistingPatient = new Patient(); # initialze patient object
 
-        $ExistingPatient->setPatientSer($ser);
+        $ExistingPatient->setPatientSer($serial);
         $ExistingPatient->setPatientSourceUID($sourceuid);
         $ExistingPatient->setPatientId($PatientIdInDB);
         $ExistingPatient->setPatientId2($id2);

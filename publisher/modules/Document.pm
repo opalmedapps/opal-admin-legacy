@@ -476,7 +476,10 @@ sub getDocsFromSourceDB
 				use VARIAN;
 
                 IF OBJECT_ID('tempdb.dbo.#tempClinic', 'U') IS NOT NULL
-                  DROP TABLE #tempClinic;
+                	DROP TABLE #tempClinic;
+
+				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
+					DROP TABLE #tempPatient;
 
 				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
@@ -501,6 +504,11 @@ sub getDocsFromSourceDB
 			from PatientInfo c;
 			Create Index temporaryindexClinic1 on #tempClinic (ID);
 			Create Index temporaryindexClinic2 on #tempClinic (PatientSerNum);
+			
+			Select p.PatientSer, p.PatientId into #tempPatient
+			from VARIAN.dbo.Patient p;
+			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
+			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
 			";
 
 			my $docInfo_sql = $patientInfo_sql . "
@@ -533,7 +541,7 @@ sub getDocsFromSourceDB
 				WHERE
 					pt.pt_id 			            = visit_note.pt_id
 				AND pt.patient_ser			        = (select pt.PatientSer 
-					from VARIAN.dbo.Patient pt where pt.PatientId = PatientInfo.ID)
+					from #tempPatient pt where pt.PatientId = PatientInfo.ID)
 				AND visit_note.note_typ		        = note_typ.note_typ
 				AND visit_note.appr_flag		    = 'A'
 				AND visit_note.doc_file_loc = FL.[FileName]

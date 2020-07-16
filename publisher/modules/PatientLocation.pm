@@ -286,7 +286,10 @@ sub getPatientLocationsFromSourceDB
 				use VARIAN;
 
                 IF OBJECT_ID('tempdb.dbo.#tempPL', 'U') IS NOT NULL
-                  DROP TABLE #tempPL;
+                	DROP TABLE #tempPL;
+
+				IF OBJECT_ID('tempdb.dbo.#tempPatient', 'U') IS NOT NULL
+					DROP TABLE #tempPatient;
 
 				WITH PatientInfo (ID, LastTransfer, PatientSerNum) AS (
 			";
@@ -311,6 +314,11 @@ sub getPatientLocationsFromSourceDB
 			from PatientInfo c;
 			Create Index temporaryindex on #tempPL (ID);
 			Create Index temporaryindex2 on #tempPL (PatientSerNum);
+			
+			Select p.PatientSer, p.PatientId into #tempPatient
+			from VARIAN.dbo.Patient p;
+			Create Index temporaryindexPatient1 on #tempPatient (PatientId);
+			Create Index temporaryindexPatient2 on #tempPatient (PatientSer);
 			";
 
 			my $plInfo_sql = $patientInfo_sql .
@@ -334,7 +342,7 @@ sub getPatientLocationsFromSourceDB
 					WHERE
 						sa.ActivityInstanceSer 			= ai.ActivityInstanceSer
 					AND	sa.PatientSer 					= (select pt.PatientSer 
-						from VARIAN.dbo.Patient pt where pt.PatientId = PatientInfo.ID)
+						from #tempPatient pt where pt.PatientId = PatientInfo.ID)
 					AND	ai.ActivitySer					= act.ActivitySer
 					AND	act.ActivityCode 				= lt.LookupValue
 					AND	sa.ScheduledActivitySer 		= pl.ScheduledActivitySer
