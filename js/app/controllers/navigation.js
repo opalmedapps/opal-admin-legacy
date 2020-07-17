@@ -87,7 +87,7 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		};
 		// Function to go to questionnaire question bank
 		$scope.goToQuestionnaireQuestionBank = function () {
-			$state.go('questionnaire-question');
+			$state.go('questionnaire/question');
 		};
 		// Function to go to completed questionnaires page
 		$scope.goToQuestionnaireCompleted = function () {
@@ -95,7 +95,7 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		};
 		// Function to go to question type page
 		$scope.goToTemplateQuestion = function () {
-			$state.go('questionnaire-template-question');
+			$state.go('questionnaire/template-question');
 		};
 		// Function to go to diagnosis translation page
 		$scope.goToDiagnosisTranslation = function () {
