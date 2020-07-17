@@ -10,12 +10,10 @@ angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui
 		$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.questionnaire]) & (1 << 0)) !== 0);
 		$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.questionnaire]) & (1 << 1)) !== 0);
 		$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.questionnaire]) & (1 << 2)) !== 0);
-		console.log($location);
-
 
 		// Routing to go to add question page
 		$scope.goToAddQuestion = function () {
-			$state.go('questionnaire-question-add');
+			$state.go('questionnaire/question-add');
 		};
 
 		// Function to filter questionnaires
