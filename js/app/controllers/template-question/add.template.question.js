@@ -108,7 +108,7 @@ controller('template.question.add', function ($scope, $state, $filter, $uibModal
 					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_ADD.ERROR_SET_TEMPLATE_QUESTION'));
 				},
 				complete: function(err) {
-					$state.go('questionnaire-template-question');
+					$state.go('questionnaire/template-question');
 				}
 			});
 		}
@@ -141,7 +141,7 @@ controller('template.question.add', function ($scope, $state, $filter, $uibModal
 		});
 	}).catch(function(err) {
 		ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.TEMPLATE_QUESTION_ADD.ERROR_SET_TEMPLATE_QUESTION'));
-		$state.go('questionnaire-template-question');
+		$state.go('questionnaire/template-question');
 	});
 
 	// add options

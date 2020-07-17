@@ -82,7 +82,6 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, A
 				response.data.access = accessLevel;
 
 				Session.create(response.data);
-				console.log(Session.retrieveObject('subMenu'));
 
 				$rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
 				$rootScope.currentUser = response.data.user;

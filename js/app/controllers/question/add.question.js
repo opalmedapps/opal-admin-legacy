@@ -234,7 +234,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 		$scope.atCatList = response.data;
 	}).catch(function(err) {
 		ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_CATEGORY'));
-		$state.go('questionnaire-question');
+		$state.go('questionnaire/question');
 	});
 
 	// add new types & write into DB
@@ -268,7 +268,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 				},
 				error: function (err) {
 					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_RESPONSE_TYPE'));
-					$state.go('questionnaire-question');
+					$state.go('questionnaire/question');
 				}
 			});
 		}
@@ -288,7 +288,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 			});
 		}).catch(function (err) {
 			ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_RESPONSE_TYPE'));
-			$state.go('questionnaire-question');
+			$state.go('questionnaire/question');
 		});
 	};
 
@@ -332,7 +332,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 				},
 				error: function (err) {
 					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_LIBRARY'));
-					$state.go('questionnaire-question');
+					$state.go('questionnaire/question');
 				}
 			});
 		}
@@ -350,7 +350,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 			});
 		}).catch(function (err) {
 			ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_GET_LIBRARY'));
-			$state.go('questionnaire-question');
+			$state.go('questionnaire/question');
 		});
 	}
 
@@ -375,7 +375,7 @@ controller('question.add', function ($scope, $state, $filter, $uibModal, Session
 					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_ADD.ERROR_SET_QUESTION'));
 				},
 				complete: function() {
-					$state.go('questionnaire-question');
+					$state.go('questionnaire/question');
 				}
 			});
 		}

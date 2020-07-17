@@ -10,7 +10,6 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 		$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.questionnaire]) & (1 << 0)) !== 0);
 		$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.questionnaire]) & (1 << 1)) !== 0);
 		$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.questionnaire]) & (1 << 2)) !== 0);
-		console.log($location);
 
 		// get current user id
 		var user = Session.retrieveObject('user');
@@ -24,14 +23,14 @@ angular.module('opalAdmin.controllers.questionnaire', ['ngAnimate', 'ngSanitize'
 			$state.go('questionnaire-add');
 		};
 		$scope.goToQuestionnaireQuestionBank = function () {
-			$state.go('questionnaire-question');
+			$state.go('questionnaire/question');
 		};
 		$scope.goToQuestionnaireCompleted = function () {
 			$state.go('questionnaire-completed');
 		};
 		// Function to go to question type page
 		$scope.goToTemplateQuestion = function () {
-			$state.go('questionnaire-template-question');
+			$state.go('questionnaire/template-question');
 		};
 
 		// Banner
