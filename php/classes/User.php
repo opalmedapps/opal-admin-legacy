@@ -120,15 +120,42 @@ class User extends Module {
         foreach($tempAccess as $access) {
             if(!HelpSetup::validateBitOperation($access["operation"],$access["access"]))
                 HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access violation role-module. Please contact your administrator.");
-            $userAccess[$access["ID"]] = array("ID"=>$access["ID"], "access"=>$access["access"], "read"=>(intval($access["access"]) >> 0) & 1, "write"=>(intval($access["access"]) >> 1) & 1, "delete"=>(intval($access["access"]) >> 2) & 1);
+            $userAccess[$access["ID"]] = array("ID"=>$access["ID"], "access"=>$access["access"]);
+        }
+
+        $newMenu = array();
+        $subMenu = array();
+        $menuDB = $this->opalDB->getCategoryNavMenu();
+
+        foreach ($menuDB as $category) {
+            $menuList = $this->opalDB->getNavMenu($category["ID"]);
+            if(count($menuList) > 0) {
+                $temp = $category;
+                $temp["menu"] = array();
+                foreach($menuList as $menu) {
+                    if(intval($menu["subModuleMenu"]) && $menu["subModule"] != "") {
+                        $subMenu[$menu["ID"]] = json_decode($menu["subModule"]);
+                    }
+                    if(((intval($menu["operation"]) >> 0) & 1) && ((intval($userAccess[$menu["ID"]]["access"]) >> 0) & 1)) {
+                        array_push($temp["menu"], array("ID"=>$menu["ID"], "operation"=>$menu["operation"], "name_EN"=>$menu["name_EN"], "name_FR"=>$menu["name_FR"], "iconClass"=>$menu["iconClass"], "url"=>$menu["url"]));
+                    }
+                }
+                array_push($newMenu, $temp);
+            }
         }
 
         $_SESSION["userAccess"] = $userAccess;
-        $result["userAccess"] = $_SESSION["userAccess"];
+        $_SESSION["navMenu"] = $newMenu;
+        $_SESSION["subMenu"] = $subMenu;
         $result["sessionid"] = $_SESSION['sessionId'];
+
+        $toReturn["user"] = $result;
+        $toReturn["access"] = $_SESSION["userAccess"];
+        $toReturn["menu"] = HelpSetup::prepareNavMenu($_SESSION["navMenu"], $result["language"]);
+        $toReturn["subMenu"] = $_SESSION["subMenu"];
         $this->_logActivity($result["id"], $_SESSION['sessionId'], 'Login');
 
-        return $result;
+        return $toReturn;
     }
 
     /*
@@ -228,7 +255,10 @@ class User extends Module {
         if($post["language"] != "EN" && $post["language"] != "FR")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid language");
 
-        return $this->opalDB->updateUserLanguage($this->opalDB->getOAUserId(), $post["language"]);
+        $this->opalDB->updateUserLanguage($this->opalDB->getOAUserId(), $post["language"]);
+
+        $result = HelpSetup::prepareNavMenu($_SESSION["navMenu"], $post["language"]);
+        return $result;
     }
 
     /*

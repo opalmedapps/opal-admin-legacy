@@ -1,9 +1,17 @@
 angular.module('opalAdmin.controllers.question', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns'])
 
-	.controller('question', function ($scope, $state, $filter, $uibModal, $translate, questionnaireCollectionService, uiGridConstants, Session, ErrorHandler, MODULE) {
-		$scope.readAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.questionnaire]) & (1 << 0)) !== 0);
-		$scope.writeAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.questionnaire]) & (1 << 1)) !== 0);
-		$scope.deleteAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.questionnaire]) & (1 << 2)) !== 0);
+	.controller('question', function ($location, $scope, $state, $filter, $uibModal, $translate, questionnaireCollectionService, uiGridConstants, Session, ErrorHandler, MODULE) {
+		$scope.navMenu = Session.retrieveObject('menu');
+		$scope.navSubMenu = Session.retrieveObject('subMenu')[MODULE.questionnaire];
+		angular.forEach($scope.navSubMenu, function(menu) {
+			menu.name_display = (Session.retrieveObject('user').language === "FR" ? menu.name_FR : menu.name_EN);
+			menu.description_display = (Session.retrieveObject('user').language === "FR" ? menu.description_FR : menu.description_EN);
+		});
+		$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.questionnaire]) & (1 << 0)) !== 0);
+		$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.questionnaire]) & (1 << 1)) !== 0);
+		$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.questionnaire]) & (1 << 2)) !== 0);
+		console.log($location);
+
 
 		// Routing to go to add question page
 		$scope.goToAddQuestion = function () {

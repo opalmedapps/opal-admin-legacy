@@ -1490,4 +1490,14 @@ class DatabaseOpal extends DatabaseAccess {
     function getHospitalMaps() {
         return $this->_fetchAll(OPAL_GET_HOSPITAL_MAPS, array());
     }
+
+    function getCategoryNavMenu() {
+        return $this->_fetchAll(OPAL_GET_CATEGORY_MENU, array());
+    }
+
+    function getNavMenu($categoryMenuId) {
+        return $this->_fetchAll(OPAL_GET_NAV_MENU, array(
+            array("parameter"=>":categoryModuleId","variable"=>$categoryMenuId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }

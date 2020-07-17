@@ -5,9 +5,10 @@ angular.module('opalAdmin.controllers.notification', ['ngAnimate', 'ngSanitize',
  * Controller for the notification page
  *******************************************************************************/
 controller('notification', function ($scope, $uibModal, $filter, $state, notificationCollectionService, Session, ErrorHandler, MODULE) {
-	$scope.readAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.notification]) & (1 << 0)) !== 0);
-	$scope.writeAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.notification]) & (1 << 1)) !== 0);
-	$scope.deleteAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.notification]) & (1 << 2)) !== 0);
+	$scope.navMenu = Session.retrieveObject('menu');
+	$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.notification]) & (1 << 0)) !== 0);
+	$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.notification]) & (1 << 1)) !== 0);
+	$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.notification]) & (1 << 2)) !== 0);
 
 	// Function to go to add notification page
 	$scope.goToAddNotification = function () {

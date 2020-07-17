@@ -76,16 +76,17 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, A
 
 			AuthService.login(encrypted, cypher).then(function (response) {
 				var accessLevel = [];
-				var accessLevel2 = [];
-				angular.forEach(response.data.userAccess, function (row) {
+				angular.forEach(response.data.access, function (row) {
 					accessLevel[row["ID"]] = row["access"];
 				});
-				response.data.userAccess = accessLevel;
+				response.data.access = accessLevel;
 
 				Session.create(response.data);
+				console.log(Session.retrieveObject('subMenu'));
+
 				$rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
-				$rootScope.currentUser = response.data;
-				$rootScope.setSiteLanguage(response.data);
+				$rootScope.currentUser = response.data.user;
+				$rootScope.setSiteLanguage(response.data.user);
 				$state.go('home');
 				Idle.watch();
 			}).catch(function(err) {

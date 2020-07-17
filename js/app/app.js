@@ -99,13 +99,15 @@ angular.module('opalAdmin', [
 		};
 
 		return authService;
+
+
 	})
 
 	.config(['$urlRouterProvider', '$stateProvider', function ($urlRouterProvider, $stateProvider) {
 		$urlRouterProvider.otherwise("/");
 		$stateProvider
 			.state('login', { url: '/', templateUrl: 'templates/login/login.html', controller: 'login', data: { requireLogin: false } })
-			.state('home', { url: '/home', templateUrl: 'templates/home/home.html', data: {  requireLogin: true } })
+			.state('home', { url: '/home', templateUrl: 'templates/home/home.html', controller: "home", data: {  requireLogin: true } })
 			.state('alias', { url: '/alias', templateUrl: "templates/alias/alias.html", controller: "alias", data: { requireLogin: true } })
 			.state('alias-add', { url: '/alias/add', templateUrl: "templates/alias/add.alias.html", controller: "alias.add", data: { requireLogin: true } })
 			.state('post', { url: '/post', templateUrl: "templates/post/post.html", controller: "post", data: { requireLogin: true } })
@@ -129,7 +131,7 @@ angular.module('opalAdmin', [
 			.state('user-register', { url: '/users/add', templateUrl: "templates/user/add.user.html", controller: "user.add", data: { requireLogin: true } })
 			.state('email', { url: '/email', templateUrl: "templates/email/email.html", controller: "email", data: { requireLogin: true } })
 			.state('email-add', { url: '/email/add', templateUrl: "templates/email/add.email.html", controller: "email.add", data: { requireLogin: true } })
-			.state('questionnaire-menu', { url: '/questionnaire/menu', templateUrl: "templates/questionnaire/questionnaire-main-menu.html", controller: "questionnaire", data: { requireLogin: true, accessible: true } })
+			.state('questionnaire/menu', { url: '/questionnaire/menu', templateUrl: "templates/questionnaire/questionnaire-main-menu.html", controller: "questionnaire", data: { requireLogin: true, accessible: true } })
 			.state('questionnaire', { url: '/questionnaire', templateUrl: "templates/questionnaire/questionnaire.html", controller: "questionnaire", data: { requireLogin: true, accessible: true } })
 			.state('questionnaire-add', { url: '/questionnaire/add', templateUrl: "templates/questionnaire/add.questionnaire.html", controller: "questionnaire.add", data: { requireLogin: true, accessible: true } })
 			.state('publication', { url: '/publication', templateUrl: "templates/publication/publication.html", controller: "publication", data: { requireLogin: true, accessible: true } })
