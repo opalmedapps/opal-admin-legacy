@@ -5,9 +5,6 @@ angular.module('opalAdmin.controllers.publication.log', ['ngAnimate', 'ngSanitiz
 	 * Controller for the post logs
 	 *******************************************************************************/
 	controller('publication.log', function ($scope, $filter, publicationCollectionService, Session, $uibModalInstance, ErrorHandler) {
-
-		console.log($scope.currentPublication);
-
 		if(Session.retrieveObject('user').language === "FR")
 			$scope.currentPublication.module_display = $scope.currentPublication.module_FR;
 		else
@@ -65,7 +62,6 @@ angular.module('opalAdmin.controllers.publication.log', ['ngAnimate', 'ngSanitiz
 							cronSerials = Array.from(cronSerials);
 							/* publicationId, moduleId, OAUserId, cronIds */
 							publicationCollectionService.getPublicationListLogs($scope.currentPublication.ID, $scope.currentPublication.moduleId, Session.retrieveObject('user').id, cronSerials).then(function(response){
-								console.log("4: " + cronSerials + " " + $scope.currentPublication.type);
 								$scope.postListLogs = response.data;
 							});
 						}
@@ -102,7 +98,6 @@ angular.module('opalAdmin.controllers.publication.log', ['ngAnimate', 'ngSanitiz
 							select: function(point) {
 								var cronLogSerNum = [point.target.cron_serial];
 								publicationCollectionService.getPublicationListLogs($scope.currentPublication.ID, $scope.currentPublication.moduleId, Session.retrieveObject('user').id, cronSerials).then(function(response){
-									console.log("3: " + cronLogSerNum + " " + $scope.currentPublication.type);
 									$scope.postListLogs = response.data;
 								});
 							},

@@ -43,6 +43,7 @@ define("OPAL_FILTERS_TABLE","Filters");
 define("OPAL_FILTERS_MH_TABLE","FiltersMH");
 define("OPAL_FREQUENCY_EVENTS_TABLE","FrequencyEvents");
 define("OPAL_MODULE_TABLE","module");
+define("OPAL_CATEGORY_MODULE_TABLE","categoryModule");
 define("OPAL_MODULE_PUBLICATION_SETTING_TABLE","modulePublicationSetting");
 define("OPAL_PUBLICATION_SETTING_TABLE","publicationSetting");
 define("OPAL_POST_TABLE","PostControl");
@@ -785,14 +786,13 @@ define("OPAL_GET_CRON_LOG_QUESTIONNAIRES","
 ");
 
 define("OPAL_GET_HOSPITAL_MAPS","
-SELECT DISTINCT
-HospitalMapSerNum AS serial,
-MapURL_EN AS url_EN,
-MapURL_FR AS url_FR,
-QRMapAlias AS qrid,
-MapName_EN AS name_EN,
-MapDescription_EN AS description_EN,
-MapName_FR AS name_FR,
-MapDescription_FR AS description_FR
-FROM ".OPAL_HOSPITAL_MAP_TABLE."
+    SELECT DISTINCT HospitalMapSerNum AS serial, MapURL_EN AS url_EN, MapURL_FR AS url_FR, QRMapAlias AS qrid, MapName_EN AS name_EN, MapDescription_EN AS description_EN, MapName_FR AS name_FR, MapDescription_FR AS description_FR FROM ".OPAL_HOSPITAL_MAP_TABLE."
+");
+
+define("OPAL_GET_CATEGORY_MENU","
+SELECT ID, name_EN, name_FR FROM ".OPAL_CATEGORY_MODULE_TABLE." ORDER BY `order`
+");
+
+define("OPAL_GET_NAV_MENU","
+    SELECT ID, operation, name_EN, name_FR, iconClass, url, subModule, subModuleMenu FROM ".OPAL_MODULE_TABLE." WHERE active = 1 AND categoryModuleId = :categoryModuleId ORDER BY `order`
 ");

@@ -12,7 +12,7 @@
 
     <!-- Back button -->
     <div class="row side-panel-menu back-questionnaire">
-        <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">
+        <div class="col-md-12">
             <div class="panel-container animated" ng-class="{pulse: hoverC, active: currentPage == 'questionnaire-create'}" ng-mouseenter="hoverC=true" ng-mouseleave="hoverC=false" style="cursor:pointer;" ng-click="goToQuestionnaireMainMenu()">
                 <div class="side-panel-info-sm" ng-class="{active: currentPage == 'questionnaire-create'}">
                     <div class="panel-content">
@@ -37,35 +37,12 @@
     </div>
 
     <div class="row side-panel-menu">
-        <!-- Manage questionnaire -->
-        <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">
-            <div class="panel-container animated" ng-class="{pulse: hoverManageQuestionnaires, active: currentPage == 'questionnaire'}" ng-mouseenter="hoverManageQuestionnaires=true" ng-mouseleave="hoverManageQuestionnaires=false" style="cursor:pointer;" ng-click="goToQuestionnaire()">
-                <div class="side-panel-info-sm" ng-class="{active: currentPage == 'questionnaire'}">
+        <div class="col-md-12" ng-repeat="menu in navSubMenu">
+            <div class="panel-container animated" ng-class="{pulse: hoverSideMenu, active: currentPage == '{{menu.url}}'}" ng-mouseenter="hoverSideMenu=true" ng-mouseleave="hoverSideMenu=false" style="cursor:pointer;" ui-sref="{{menu.url}}">
+                <div class="side-panel-info-sm" ng-class="{active: currentPage == '{{menu.url}}'}">
                     <div class="panel-content">
-                        <span style="font-size: 23px;vertical-align:middle" class="fa fa-pencil" aria-hidden="true"></span>
-                        <h6 class="side-panel-title" style="display:inline-block;margin:0"><strong>{{'QUESTIONNAIRE_MODULE.NAVIGATION_MENU.MANAGE_QUESTIONNAIRES'|translate}}</strong></h6>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Manage questions -->
-        <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">
-            <div class="panel-container animated" ng-class="{pulse: hoverManageQuestions, active: currentPage == 'questionnaire/question'}" ng-mouseenter="hoverManageQuestions=true" ng-mouseleave="hoverManageQuestions=false" style="cursor:pointer;" ng-click="goToQuestionnaireQuestionBank()">
-                <div class="side-panel-info-sm" ng-class="{active: currentPage == 'questionnaire/question'}">
-                    <div class="panel-content">
-                        <span style="font-size: 23px;vertical-align:middle" class="fa fa-search" aria-hidden="true"></span>
-                        <h6 class="side-panel-title" style="display:inline-block;margin:0"><strong>{{'QUESTIONNAIRE_MODULE.NAVIGATION_MENU.MANAGE_QUESTIONS'|translate}}</strong></h6>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Questions Templates -->
-        <div class="col-md-12" ng-if="isAuthorized([userRoles.admin])">
-            <div class="panel-container animated" ng-class="{pulse: hoverTemplateQuestion, active: currentPage == 'questionnaire/template-question'}" ng-mouseenter="hoverTemplateQuestion=true" ng-mouseleave="hoverTemplateQuestion=false" style="cursor:pointer;" ng-click="goToTemplateQuestion()">
-                <div class="side-panel-info-sm" ng-class="{active: currentPage == 'questionnaire/template-question'}">
-                    <div class="panel-content">
-                        <span style="font-size: 23px;vertical-align:middle" class="fa fa-question-circle-o" aria-hidden="true"></span>
-                        <h6 class="side-panel-title" style="display:inline-block;margin:0"><strong>{{'QUESTIONNAIRE_MODULE.NAVIGATION_MENU.TEMPLATE_QUESTION'|translate}}</strong></h6>
+                        <span style="font-size: 23px;vertical-align:middle" class="{{menu.iconClass}}" aria-hidden="true"></span>
+                        <h6 class="side-panel-title" style="display:inline-block;margin:0"><strong>{{menu.name_display}}</strong></h6>
                     </div>
                 </div>
             </div>

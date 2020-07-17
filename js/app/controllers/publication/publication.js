@@ -1,9 +1,10 @@
 angular.module('opalAdmin.controllers.publication', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular'])
 
 	.controller('publication', function ($scope, $state, $filter, $uibModal, publicationCollectionService, Session, uiGridConstants, ErrorHandler, MODULE) {
-		$scope.readAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.publication]) & (1 << 0)) !== 0);
-		$scope.writeAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.publication]) & (1 << 1)) !== 0);
-		$scope.deleteAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.publication]) & (1 << 2)) !== 0);
+		$scope.navMenu = Session.retrieveObject('menu');
+		$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.publication]) & (1 << 0)) !== 0);
+		$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.publication]) & (1 << 1)) !== 0);
+		$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.publication]) & (1 << 2)) !== 0);
 
 		// get current user id
 		var user = Session.retrieveObject('user');

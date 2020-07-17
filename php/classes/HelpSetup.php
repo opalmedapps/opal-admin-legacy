@@ -148,4 +148,26 @@ class HelpSetup {
     public static function validateDeleteModule($moduleAccess) {
         return HelpSetup::validateBitOperation($_SESSION["userAccess"][$moduleAccess]["access"], ACCESS_READ_WRITE_DELETE);
     }
+
+    public static function prepareNavMenu($userMenu, $language) {
+        $newMenu = $userMenu;
+
+        foreach($newMenu as &$category) {
+            if(strtoupper($language) == "FR")
+                $category["name"] = $category["name_FR"];
+            else
+                $category["name"] = $category["name_EN"];
+            unset($category["name_FR"]);
+            unset($category["name_EN"]);
+            foreach($category["menu"] as &$menu) {
+                if(strtoupper($language) == "FR")
+                    $menu["name"] = $menu["name_FR"];
+                else
+                    $menu["name"] = $menu["name_EN"];
+                unset($menu["name_FR"]);
+                unset($menu["name_EN"]);
+            }
+        }
+        return $newMenu;
+    }
 }

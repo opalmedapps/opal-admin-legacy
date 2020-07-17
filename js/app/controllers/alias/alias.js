@@ -5,9 +5,10 @@ angular.module('opalAdmin.controllers.alias', ['ngAnimate', 'ui.bootstrap', 'ui.
 	 * Alias Page controller
 	 *******************************************************************************/
 	controller('alias', function ($scope, $uibModal, $filter, $state, aliasCollectionService, uiGridConstants, Session, ErrorHandler, MODULE) {
-		$scope.readAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.alias]) & (1 << 0)) !== 0);
-		$scope.writeAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.alias]) & (1 << 1)) !== 0);
-		$scope.deleteAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.alias]) & (1 << 2)) !== 0);
+		$scope.navMenu = Session.retrieveObject('menu');
+		$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.alias]) & (1 << 0)) !== 0);
+		$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.alias]) & (1 << 1)) !== 0);
+		$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.alias]) & (1 << 2)) !== 0);
 
 		// Function to go to add alias page
 		$scope.goToAddAlias = function () {

@@ -4,8 +4,17 @@
 angular.module('opalAdmin.services', [])
 
 	.service('Session', function ($cookies) {
-		this.create = function (user) {
-			$cookies.putObject('user', user);
+		this.create = function (data) {
+			angular.forEach(data.menu, function(category) {
+				angular.forEach(category.menu, function(menu) {
+					menu.sub = 'NAVIGATION_MENU.MODULE_ID_' + menu.ID + '_SUB';
+				});
+			});
+
+			$cookies.putObject('user', data.user);
+			$cookies.putObject('access', data.access);
+			$cookies.putObject('menu', data.menu);
+			$cookies.putObject('subMenu', data.subMenu);
 		};
 		this.retrieve = function (data) {
 			return $cookies.get(data);
@@ -13,12 +22,23 @@ angular.module('opalAdmin.services', [])
 		this.retrieveObject = function (data) {
 			return $cookies.getObject(data);
 		};
-		this.update = function (user) {
-			this.destroy();
-			this.create(user);
+		this.updateUser = function (user, menu) {
+			angular.forEach(menu, function(category) {
+				angular.forEach(category.menu, function(menu) {
+					menu.sub = 'NAVIGATION_MENU.MODULE_ID_' + menu.ID + '_SUB';
+				});
+			});
+
+			$cookies.remove('user');
+			$cookies.putObject('user', user);
+			$cookies.remove('menu');
+			$cookies.putObject('menu', menu);
 		};
 		this.destroy = function () {
 			$cookies.remove('user');
+			$cookies.remove('access');
+			$cookies.remove('menu');
+			$cookies.remove('subMenu');
 		};
 	})
 

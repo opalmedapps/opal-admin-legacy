@@ -35,79 +35,23 @@
                         </div>
                     </div>
 					<div class="row">
-						<!-- Questionnaire -->
-						<div class="col-xs-12 col-sm-6 col-md-4">
-							<div class="panel-container animated" ng-class="{pulse: hoverManageQuestionnaires}" ng-mouseenter="hoverManageQuestionnaires=true" ng-mouseleave="hoverManageQuestionnaires=false" style="cursor:pointer;" ng-click="goToQuestionnaire()">
+						<div class="col-xs-12 col-sm-6 col-md-4" ng-repeat="menu in navSubMenu">
+							<div class="panel-container animated" ng-class="{pulse: hoverMenu}" ng-mouseenter="hoverMenu=true" ng-mouseleave="hoverMenu=false" style="cursor:pointer;" ui-sref="{{menu.url}}">
 								<div class="panel-info">
 									<div class="panel-content">
 										<div class="icon-home clearfix">
-											<span class="fa fa-pencil fa-sm" aria-hidden="true"></span>
+											<span class="{{menu.iconClass}}"></span>
 										</div>
 										<div class="panel-title">
-											<h1>{{'QUESTIONNAIRE_MODULE.DASHBOARD.MANAGE_QUESTIONNAIRES'|translate}}</h1>
+											<h1>{{menu.name_display}}</h1>
 										</div>
 										<div class="panel-description">
-											<p>{{'QUESTIONNAIRE_MODULE.DASHBOARD.MANAGE_QUESTIONNAIRES_SUB'|translate}}</p>
+											<p>{{menu.description_display}}</p>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-
-						<!-- View/Edit Question Bank -->
-						<div class="col-xs-12 col-sm-6 col-md-4">
-							<div class="panel-container animated" ng-class="{pulse: hoverQuestionBank}" ng-mouseenter="hoverQuestionBank=true" ng-mouseleave="hoverQuestionBank=false" style="cursor:pointer;" ng-click="goToQuestionnaireQuestionBank()">
-								<div class="panel-info">
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span class="fa fa-search fa-sm" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>{{'QUESTIONNAIRE_MODULE.DASHBOARD.MANAGE_QUESTIONS'|translate}}</h1>
-										</div>
-										<div class="panel-description">
-											<p>{{'QUESTIONNAIRE_MODULE.DASHBOARD.MANAGE_QUESTIONS_SUB'|translate}}</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<!-- View Questions Templates -->
-						<div class="col-xs-12 col-sm-6 col-md-4">
-							<div class="panel-container animated" ng-class="{pulse: hoverTemplateQuestion}" ng-mouseenter="hoverTemplateQuestion=true" ng-mouseleave="hoverTemplateQuestion=false" style="cursor:pointer;" ng-click="goToTemplateQuestion()">
-								<div class="panel-info">
-									<div class="panel-content">
-										<div class="icon-home clearfix">
-											<span class="fa fa-question-circle-o fa-sm" aria-hidden="true"></span>
-										</div>
-										<div class="panel-title">
-											<h1>{{'QUESTIONNAIRE_MODULE.DASHBOARD.RESPONSE_TYPES'|translate}}</h1>
-										</div>
-										<div class="panel-description">
-											<p>{{'QUESTIONNAIRE_MODULE.DASHBOARD.RESPONSE_TYPES_SUB'|translate}}</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-                        <!-- View Publication Tools -->
-<!--                        <div class="col-xs-12 col-sm-6 col-md-4">
-                            <div class="panel-container animated" ng-class="{pulse: hoverPublicationTool}" ng-mouseenter="hoverPublicationTool=true" ng-mouseleave="hoverPublicationTool=false" style="cursor:pointer;" ng-click="goToPublicationTool()">
-                                <div class="panel-info">
-                                    <div class="panel-content">
-                                        <div class="icon-home clearfix">
-                                            <span class="fa fa-cloud-upload fa-sm" aria-hidden="true"></span>
-                                        </div>
-                                        <div class="panel-title">
-                                            <h1>{{'QUESTIONNAIRE_MODULE.DASHBOARD.PUBLICATION_TOOLS'|translate}}</h1>
-                                        </div>
-                                        <div class="panel-description">
-                                            <p>{{'QUESTIONNAIRE_MODULE.DASHBOARD.PUBLICATION_TOOLS_SUB'|translate}}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>-->
 					</div>
 				</div>
 			</div>

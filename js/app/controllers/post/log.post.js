@@ -56,7 +56,6 @@ controller('post.log', function ($scope, $uibModal, $filter, postCollectionServi
 						// convert set to array
 						cronSerials = Array.from(cronSerials);
 						postCollectionService.getPostListLogs(cronSerials, $scope.currentPost.type, Session.retrieveObject('user').id).then(function(response){
-							console.log("4: " + cronSerials + " " + $scope.currentPost.type);
 							$scope.postListLogs = response.data;
 						});
 					}
@@ -93,7 +92,6 @@ controller('post.log', function ($scope, $uibModal, $filter, postCollectionServi
 						select: function(point) {
 							var cronLogSerNum = [point.target.cron_serial];
 							postCollectionService.getPostListLogs(cronLogSerNum, $scope.currentPost.type, Session.retrieveObject('user').id).then(function(response){
-								console.log("3: " + cronLogSerNum + " " + $scope.currentPost.type);
 								$scope.postListLogs = response.data;
 							});
 						},
