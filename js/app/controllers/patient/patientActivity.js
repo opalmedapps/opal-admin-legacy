@@ -2,9 +2,10 @@ angular.module('opalAdmin.controllers.patientActivity', ['ngAnimate', 'ui.bootst
 
 
 controller('patientActivity', function ($scope, $uibModal, $filter, patientCollectionService, Session, ErrorHandler, MODULE) {
-	$scope.readAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.patient]) & (1 << 0)) !== 0);
-	$scope.writeAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.patient]) & (1 << 1)) !== 0);
-	$scope.deleteAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.patient]) & (1 << 2)) !== 0);
+	$scope.navMenu = Session.retrieveObject('menu');
+	$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 0)) !== 0);
+	$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 1)) !== 0);
+	$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 2)) !== 0);
 
 	$scope.bannerMessage = "";
 	// Function to show page banner

@@ -4,7 +4,8 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 	/******************************************************************************
 	 * Controller for navigating the site
 	 *******************************************************************************/
-	controller('navigation', function ($scope, $location, $state, LogoutService) {
+	controller('navigation', function ($scope, $location, $state, LogoutService, Session) {
+		$scope.navMenu = Session.retrieveObject('menu');
 
 		// Get the current page from url
 		$scope.currentPage = $location.path().replace('/', ''); // and remove leading slash
@@ -74,7 +75,7 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		};
 		// Function to go to questionnaire main menu page
 		$scope.goToQuestionnaireMainMenu = function () {
-			$state.go('questionnaire-menu');
+			$state.go('questionnaire/menu');
 		};
 		// Function to go to publications page
 		$scope.goToPublication = function () {
@@ -125,7 +126,7 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 		// Function to set dropdown active for publishing tools
 		$scope.currentActivePublishingTool = function () {
 			var publishingToolPages = ['alias','post','educational-material','hospital-map','notification',
-				'test-result','questionnaire-menu','email','custom-code','study'];
+				'test-result','questionnaire/menu','email','custom-code','study'];
 			if (publishingToolPages.indexOf($state.current.name) !== -1) {
 				return true;
 			}

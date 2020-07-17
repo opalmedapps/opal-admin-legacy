@@ -4,9 +4,10 @@ angular.module('opalAdmin.controllers.cron', ['ngAnimate', 'ui.bootstrap', 'high
 	 * Cron Page controller
 	 *******************************************************************************/
 	controller('cron', function ($scope, $locale, $filter, $uibModal, cronCollectionService, Session, ErrorHandler, MODULE) {
-		$scope.readAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.cron_log]) & (1 << 0)) !== 0);
-		$scope.writeAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.cron_log]) & (1 << 1)) !== 0);
-		$scope.deleteAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.cron_log]) & (1 << 2)) !== 0);
+		$scope.navMenu = Session.retrieveObject('menu');
+		$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.cron_log]) & (1 << 0)) !== 0);
+		$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.cron_log]) & (1 << 1)) !== 0);
+		$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.cron_log]) & (1 << 2)) !== 0);
 
 		$scope.bannerMessage = "";
 		$scope.readyToDisplay = true;

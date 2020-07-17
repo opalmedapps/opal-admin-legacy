@@ -5,9 +5,10 @@ angular.module('opalAdmin.controllers.hospitalMap', ['ngAnimate', 'ngSanitize', 
 	 * Hospital Map Page controller
 	 *******************************************************************************/
 	controller('hospitalMap', function ($scope, $filter, $sce, $state, $uibModal, hospitalMapCollectionService, Session, ErrorHandler, MODULE) {
-		$scope.readAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.hospital_map]) & (1 << 0)) !== 0);
-		$scope.writeAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.hospital_map]) & (1 << 1)) !== 0);
-		$scope.deleteAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.hospital_map]) & (1 << 2)) !== 0);
+		$scope.navMenu = Session.retrieveObject('menu');
+		$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.hospital_map]) & (1 << 0)) !== 0);
+		$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.hospital_map]) & (1 << 1)) !== 0);
+		$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.hospital_map]) & (1 << 2)) !== 0);
 
 		// Function to go to add hospital map page
 		$scope.goToAddHospitalMap = function () {

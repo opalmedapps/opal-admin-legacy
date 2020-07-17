@@ -5,9 +5,10 @@ angular.module('opalAdmin.controllers.user', ['ui.bootstrap', 'ui.grid']).
  * Controller for the users page
  *******************************************************************************/
 controller('user', function ($scope, $uibModal, $filter, $state, userCollectionService, Session, ErrorHandler, MODULE) {
-	$scope.readAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.user]) & (1 << 0)) !== 0);
-	$scope.writeAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.user]) & (1 << 1)) !== 0);
-	$scope.deleteAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.user]) & (1 << 2)) !== 0);
+	$scope.navMenu = Session.retrieveObject('menu');
+	$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.user]) & (1 << 0)) !== 0);
+	$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.user]) & (1 << 1)) !== 0);
+	$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.user]) & (1 << 2)) !== 0);
 	
 	var OAUserId = Session.retrieveObject('user').id;
 	// Function to go to register new user

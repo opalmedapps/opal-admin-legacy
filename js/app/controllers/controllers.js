@@ -1,6 +1,7 @@
 angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.application',
 	'opalAdmin.controllers.navigation',
+	'opalAdmin.controllers.home',
 	'opalAdmin.controllers.alias',
 	'opalAdmin.controllers.alias.add',
 	'opalAdmin.controllers.alias.edit',

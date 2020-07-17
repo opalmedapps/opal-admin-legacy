@@ -26,7 +26,6 @@ controller('educationalMaterial.delete', function ($scope, $filter, $sce, $uibMo
 				$uibModalInstance.close();
 			},
 			error: function (err) {
-				console.log(err);
 				ErrorHandler.onError(err, $filter('translate')('EDUCATION.DELETE.ERROR'));
 				$uibModalInstance.close();
 			}

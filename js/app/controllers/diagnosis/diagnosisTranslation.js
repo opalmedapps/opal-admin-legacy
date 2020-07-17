@@ -5,9 +5,10 @@ angular.module('opalAdmin.controllers.diagnosisTranslation', ['ngAnimate', 'ui.b
 	 * Diagnosis Translation Page controller
 	 *******************************************************************************/
 	controller('diagnosisTranslation', function ($scope, $filter, $uibModal, $state, diagnosisCollectionService, Session, ErrorHandler, MODULE) {
-		$scope.readAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.diagnosis_translation]) & (1 << 0)) !== 0);
-		$scope.writeAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.diagnosis_translation]) & (1 << 1)) !== 0);
-		$scope.deleteAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.diagnosis_translation]) & (1 << 2)) !== 0);
+		$scope.navMenu = Session.retrieveObject('menu');
+		$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.diagnosis_translation]) & (1 << 0)) !== 0);
+		$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.diagnosis_translation]) & (1 << 1)) !== 0);
+		$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.diagnosis_translation]) & (1 << 2)) !== 0);
 
 		// Function to go to add diagnosis page
 		$scope.goToAddDiagnosisTranslation = function () {

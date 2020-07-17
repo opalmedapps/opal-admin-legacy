@@ -4,9 +4,10 @@ angular.module('opalAdmin.controllers.testResult', ['ngAnimate', 'ui.bootstrap',
  * Test Result Page controller
  *******************************************************************************/
 controller('testResult', function ($scope, $filter, $sce, $state, $uibModal, testResultCollectionService, Session, ErrorHandler, MODULE) {
-	$scope.readAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.test_results]) & (1 << 0)) !== 0);
-	$scope.writeAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.test_results]) & (1 << 1)) !== 0);
-	$scope.deleteAccess = ((parseInt(Session.retrieveObject('user').userAccess[MODULE.test_results]) & (1 << 2)) !== 0);
+	$scope.navMenu = Session.retrieveObject('menu');
+	$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.test_results]) & (1 << 0)) !== 0);
+	$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.test_results]) & (1 << 1)) !== 0);
+	$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.test_results]) & (1 << 2)) !== 0);
 
 	// Function to go to add test result page
 	$scope.goToAddTestResult = function () {
