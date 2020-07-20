@@ -2444,6 +2444,10 @@
     }
   },
   "PATIENTS": {
+    "MENU": {
+      "TITLE": "Patients",
+      "SUB_TITLE": "Outils pour patients"
+    },
     "LIST": {
       "TITLE": "Patients",
       "ADD": "Nouveau patient",
