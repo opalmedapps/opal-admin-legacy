@@ -2427,6 +2427,10 @@
     }
   },
   "PATIENTS": {
+    "MENU": {
+      "TITLE": "Patients",
+      "SUB_TITLE": "Patients Tools"
+    },
     "LIST": {
       "TITLE": "Patients",
       "ADD": "Register New",
