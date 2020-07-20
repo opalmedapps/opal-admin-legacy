@@ -152,7 +152,7 @@ angular.module('opalAdmin.controllers.navigation', ['ui.bootstrap']).
 
 		// Function to go to report page
 		$scope.goToReport = function () {
-			$state.go('report');
+			$state.go('patients/report');
 		};
 
 	});
