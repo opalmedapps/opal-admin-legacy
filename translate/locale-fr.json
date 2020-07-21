@@ -2446,7 +2446,10 @@
   "PATIENTS": {
     "MENU": {
       "TITLE": "Patients",
-      "SUB_TITLE": "Outils pour patients"
+      "SUB_TITLE": "Outils pour patients",
+      "REGISTRATION": "Enregistrement patient",
+      "REGISTRATION_SUB": "Enregistrer un patient pour Opal.",
+      "BACK": "Retour"
     },
     "LIST": {
       "TITLE": "Patients",

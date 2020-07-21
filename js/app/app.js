@@ -122,7 +122,7 @@ angular.module('opalAdmin', [
 			.state('patients', { url: '/patients', templateUrl: "templates/patient/patient.html", controller: "patient", data: { requireLogin: true } })
 			.state('patients-register', { url: '/patients/register', templateUrl: "templates/patient/patient-registration.html", controller: "patientRegistration", data: {  requireLogin: true } })
 			.state('patients/activity', { url: '/patients/activity', templateUrl: "templates/patient/patient-activity.html", controller: "patientActivity", data: { requireLogin: true } })
-			.state('patients/report', { url: '/patients/report', templateUrl: "templates/report/patientReport.html", data: { requireLogin: true } })
+			.state('patients/report', { url: '/patients/report', templateUrl: "templates/patient/patient-report.html", controller: "patient", data: { requireLogin: true } })
 			.state('test-result', { url: '/test-result', templateUrl: "templates/test-result/test-result.html", controller: "testResult", data: { requireLogin: true } })
 			.state('test-result-add', { url: '/test-result/add', templateUrl: "templates/test-result/add.test-result.html", controller: "testResult.add", data: { requireLogin: true } })
 			.state('cron', { url: '/cron', templateUrl: "templates/cron/cron.html", controller: "cron", data: { requireLogin: true } })

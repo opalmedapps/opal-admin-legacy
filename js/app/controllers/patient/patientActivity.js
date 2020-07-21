@@ -3,6 +3,11 @@ angular.module('opalAdmin.controllers.patientActivity', ['ngAnimate', 'ui.bootst
 
 controller('patientActivity', function ($scope, $uibModal, $filter, patientCollectionService, Session, ErrorHandler, MODULE) {
 	$scope.navMenu = Session.retrieveObject('menu');
+	$scope.navSubMenu = Session.retrieveObject('subMenu')[MODULE.patient];
+	angular.forEach($scope.navSubMenu, function(menu) {
+		menu.name_display = (Session.retrieveObject('user').language === "FR" ? menu.name_FR : menu.name_EN);
+		menu.description_display = (Session.retrieveObject('user').language === "FR" ? menu.description_FR : menu.description_EN);
+	});
 	$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 0)) !== 0);
 	$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 1)) !== 0);
 	$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.patient]) & (1 << 2)) !== 0);
