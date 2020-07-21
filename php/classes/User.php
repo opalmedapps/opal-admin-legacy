@@ -79,16 +79,6 @@ class User extends Module {
      * @return  $result (array) basic user informations
      * */
     public function userLogin($post) {
-//        if($_SESSION["ID"] && $_SESSION["ID"] != "") {
-//            $result = array();
-//            $result["id"] = $_SESSION["ID"];
-//            $result["username"] = $_SESSION["username"];
-//            $result["language"] = $_SESSION["language"];
-//            $result["role"] = $_SESSION["role"];
-//            $result["sessionid"] = $_SESSION['sessionId'];
-//            $result["userAccess"] = $_SESSION["userAccess"];
-//            return $result;
-//        }
         $userAccess = array();
         $post = HelpSetup::arraySanitization($post);
         $cypher = $post["cypher"];
@@ -127,6 +117,9 @@ class User extends Module {
         $subMenu = array();
         $menuDB = $this->opalDB->getCategoryNavMenu();
 
+        /*
+         * Built the nav menus the user can see based on its role
+         * */
         foreach ($menuDB as $category) {
             $menuList = $this->opalDB->getNavMenu($category["ID"]);
             if(count($menuList) > 0) {

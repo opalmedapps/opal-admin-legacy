@@ -161,6 +161,29 @@ class Role extends Module {
         if(is_array($result) && count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Role validation failed. " . implode(" ", $result));
 
+        /*
+         * If an user remove access to the role module for his own role, it may lock everybody with the same role out
+         * of the role module. The next section of the code prevent that part.
+         * */
+        if($roleToUpdate["roleId"] == $_SESSION["role"]) {
+            $accessRoleModule = $this->opalDB->getUserRoleModuleAccess($roleToUpdate["roleId"]);
+            if (count($accessRoleModule) != 1)
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot validate role access update.");
+            $accessRoleModule = $accessRoleModule[0]["access"];
+
+            $roleModuleFound = false;
+            foreach($roleToUpdate["operations"] as $role) {
+                if ($role["moduleId"] == MODULE_ROLE) {
+                    $roleModuleFound = true;
+                    if ($role["access"] != $accessRoleModule)
+                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "You cannot change access to the role module.");
+                    break;
+                }
+            }
+            if(!$roleModuleFound)
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "You cannot change access to the role module.");
+        }
+
         $toUpdate = array(
             "ID"=>$roleToUpdate["roleId"],
             "name_EN"=>$roleToUpdate["name"]["name_EN"],

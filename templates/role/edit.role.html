@@ -5,6 +5,7 @@
             <span class="glyphicon glyphicon-pencil"></span>
             {{'ROLE.EDIT.TITLE'|translate}}
         </h2>
+        <p ng-if="modifyOwnRole" class="text-danger">{{'ROLE.EDIT.WARNING'|translate}}{{name_display}}{{'ROLE.EDIT.WARNING_2'|translate}}</p>
     </div>
     <div class="modal-buttons col-xs-12 col-md-6">
         <form method="post" ng-submit="updateRole()">
@@ -59,20 +60,19 @@
                         <strong>{{'ROLE.EDIT.DELETE'|translate}}</strong>
                     </div>
                 </div>
-
                 <div ng-repeat="opModule in toSubmit.operations" class="row">
                     <div ng-if="opModule.canRead || opModule.canWrite || opModule.canDelete">
                         <div class="col-xs-6">
                             <p>{{opModule.name_display}}</p>
                         </div>
                         <div class="col-xs-2 text-center">
-                            <input ng-if="opModule.canRead" ng-disabled="opModule.write || opModule.delete" type="checkbox" ng-model="opModule.read" />
+                            <input ng-if="opModule.canRead" ng-disabled="opModule.write || opModule.delete || (opModule.ID == ModuleRoleId && modifyOwnRole)" type="checkbox" ng-model="opModule.read" />
                         </div>
                         <div class="col-xs-2 text-center">
-                            <input ng-if="opModule.canWrite" ng-disabled="opModule.delete" type="checkbox" ng-model="opModule.write" />
+                            <input ng-if="opModule.canWrite" ng-disabled="opModule.delete || (opModule.ID == ModuleRoleId && modifyOwnRole)" type="checkbox" ng-model="opModule.write" />
                         </div>
                         <div class="col-xs-2 text-center">
-                            <input ng-if="opModule.canDelete" type="checkbox" ng-model="opModule.delete" />
+                            <input ng-if="opModule.canDelete" ng-disabled="opModule.ID == ModuleRoleId && modifyOwnRole" type="checkbox" ng-model="opModule.delete" />
                         </div>
                     </div>
                 </div>

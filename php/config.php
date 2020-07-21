@@ -52,6 +52,27 @@ define( "UPLOAD_ABS_PATH", FRONTEND_ABS_PATH . "uploads/" );
 define( "UPLOAD_REL_PATH", FRONTEND_REL_URL . "uploads/" );
 define( "ADMIN_REGISTRATION_URL", $config['pathConfig']['registration_url'] );
 
+/*
+ * Module ID of each module in the opalAdmin
+ * */
+define("MODULE_ALIAS", 1);
+define("MODULE_POST", 2);
+define("MODULE_EDU_MAT", 3);
+define("MODULE_HOSPITAL_MAP", 4);
+define("MODULE_NOTIFICATION", 5);
+define("MODULE_TEST_RESULTS", 6);
+define("MODULE_QUESTIONNAIRE", 7);
+define("MODULE_PUBLICATION", 8);
+define("MODULE_DIAGNOSIS_TRANSLATION", 9);
+define("MODULE_CRON_LOG", 10);
+define("MODULE_PATIENT", 11);
+define("MODULE_USER", 12);
+define("MODULE_STUDY", 13);
+define("MODULE_EMAIL", 14);
+define("MODULE_CUSTOM_CODE", 15);
+define("MODULE_ROLE", 16);
+define("LOCAL_SOURCE_ONLY", -1);
+
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql.php");
@@ -130,27 +151,6 @@ define("AD_LOGIN_ACTIVE", ACTIVE_DIRECTORY["enabled"]);
 define("ACCESS_READ", 1);
 define("ACCESS_READ_WRITE", 3);
 define("ACCESS_READ_WRITE_DELETE", 7);
-
-/*
- * Module ID of each module in the opalAdmin
- * */
-define("MODULE_ALIAS", 1);
-define("MODULE_POST", 2);
-define("MODULE_EDU_MAT", 3);
-define("MODULE_HOSPITAL_MAP", 4);
-define("MODULE_NOTIFICATION", 5);
-define("MODULE_TEST_RESULTS", 6);
-define("MODULE_QUESTIONNAIRE", 7);
-define("MODULE_PUBLICATION", 8);
-define("MODULE_DIAGNOSIS_TRANSLATION", 9);
-define("MODULE_CRON_LOG", 10);
-define("MODULE_PATIENT", 11);
-define("MODULE_USER", 12);
-define("MODULE_STUDY", 13);
-define("MODULE_EMAIL", 14);
-define("MODULE_CUSTOM_CODE", 15);
-define("MODULE_ROLE", 16);
-define("LOCAL_SOURCE_ONLY", -1);
 
 define("PUBLICATION_PUBLISH_DATE", 9);
 define("GUEST_ACCOUNT", 29);
