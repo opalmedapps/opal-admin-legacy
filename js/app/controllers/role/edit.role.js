@@ -1,9 +1,13 @@
 angular.module('opalAdmin.controllers.role.edit', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('role.edit', function ($scope, $filter, $uibModal, $uibModalInstance, roleCollectionService, $state, Session, ErrorHandler) {
+controller('role.edit', function ($scope, $filter, $uibModal, $uibModalInstance, roleCollectionService, $state, Session, ErrorHandler, MODULE) {
 
 	// get current user id
 	var user = Session.retrieveObject('user');
+	$scope.language = Session.retrieveObject('user').language;
+	$scope.ModuleRoleId = MODULE.role;
+	$scope.modifyOwnRole = (user.role == $scope.currentRole.ID);
+
 	var OAUserId = user.id;
 
 	$scope.oldData = {};
@@ -46,7 +50,7 @@ controller('role.edit', function ($scope, $filter, $uibModal, $uibModalInstance,
 
 	$scope.updatedRole = {};
 
-	$scope.language = Session.retrieveObject('user').language;
+
 
 	/* Function for the "Processing" dialog */
 	var processingModal;
@@ -90,6 +94,8 @@ controller('role.edit', function ($scope, $filter, $uibModal, $uibModalInstance,
 		roleCollectionService.getRoleDetails($scope.toSubmit.roleId, OAUserId).then(function (response) {
 			$scope.toSubmit.name.name_EN = response.data.name_EN;
 			$scope.toSubmit.name.name_FR = response.data.name_FR;
+			$scope.name_display = ($scope.language == "FR" ? $scope.toSubmit.name.name_FR : $scope.toSubmit.name.name_EN);
+
 			response.data.operations.forEach(function(ops) {
 				$scope.toSubmit.operations.forEach(function(module) {
 					if(module.ID === ops.moduleId) {
@@ -116,6 +122,7 @@ controller('role.edit', function ($scope, $filter, $uibModal, $uibModalInstance,
 	$scope.nameUpdate = function () {
 		$scope.validator.name.completed = ($scope.toSubmit.name.name_EN !== undefined && $scope.toSubmit.name.name_FR !== undefined);
 		$scope.changesDetected = (JSON.stringify($scope.toSubmit) !== JSON.stringify($scope.oldData));
+		$scope.name_display = ($scope.language == "FR" ? $scope.toSubmit.name.name_FR : $scope.toSubmit.name.name_EN);
 	};
 
 	$scope.$watch('toSubmit.operations', function(nv) {
