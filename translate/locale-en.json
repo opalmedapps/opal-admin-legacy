@@ -2415,6 +2415,8 @@
       "READ": "Read",
       "WRITE": "Write",
       "DELETE": "Delete",
+      "WARNING": "Warning: you are currently editing the permissions of your own role (",
+      "WARNING_2": "). These changes can be reversed by re-visiting this page.",
       "ERROR_INVALID_ROLE": "Invalid role operation. Please refresh the page and try again.",
       "ERROR_MODULE": "An error occurred while getting the list of modules.",
       "ERROR_UPDATE": "An error occurred while updating the details of the role."

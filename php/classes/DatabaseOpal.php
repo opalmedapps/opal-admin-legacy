@@ -1260,6 +1260,18 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
+     * Returns the access level for the role module for a specific role. Used to prevent a user
+     * to modify the access to the role module of his own role.
+     * @params  $oaRoleId : int - ID of the role
+     * @return  array - Access of the role specified for the role module.
+     * */
+    function getUserRoleModuleAccess($oaRoleId) {
+        return $this->_fetchAll(OPAL_GET_USER_ROLE_MODULE_ACCESS, array(
+            array("parameter"=>":oaRoleId","variable"=>$oaRoleId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
      * Insert a new role with the username of the creator and the creation date. Returns the ID of the new role.
      * @params  $toInsert : array - contains french and english name of the role
      * @return  int - ID of the new role

@@ -178,19 +178,19 @@ define("SQL_OPAL_UPDATE_PUBLICATION_STATUS_FLAG",
 );
 
 define("SQL_OPAL_GET_ALL_PUBLICATION_MODULES",
-    "SELECT * FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.publication = 1 ORDER BY m.order;"
+    "SELECT * FROM ".OPAL_MODULE_TABLE." m WHERE m.active = ".ACTIVE_RECORD." AND m.publication = ".ACTIVE_RECORD." ORDER BY m.order;"
 );
 
 define("SQL_OPAL_BUILD_PUBLICATION_VIEW",
-    "SELECT m.sqlPublicationList, m.sqlPublicationChartLog FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.publication = 1 ORDER BY m.order"
+    "SELECT m.sqlPublicationList, m.sqlPublicationChartLog FROM ".OPAL_MODULE_TABLE." m WHERE m.active = ".ACTIVE_RECORD." AND m.publication = ".ACTIVE_RECORD." ORDER BY m.order"
 );
 
 define("SQL_OPAL_BUILD_CUSOM_CODE_VIEW",
-    "SELECT m.sqlCustomCode FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.customCode = 1 ORDER BY m.order"
+    "SELECT m.sqlCustomCode FROM ".OPAL_MODULE_TABLE." m WHERE m.active = ".ACTIVE_RECORD." AND m.customCode = ".ACTIVE_RECORD." ORDER BY m.order"
 );
 
 define("SQL_GET_QUERY_CHART_LOG",
-    "SELECT sqlPublicationChartLog, sqlPublicationListLog FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.publication = 1 AND ID = :ID"
+    "SELECT sqlPublicationChartLog, sqlPublicationListLog FROM ".OPAL_MODULE_TABLE." m WHERE m.active = ".ACTIVE_RECORD." AND m.publication = ".ACTIVE_RECORD." AND ID = :ID"
 );
 
 define("SQL_OPAL_GET_MODULE_BY_ID", "
@@ -211,11 +211,11 @@ define("SQL_OPAL_GET_PUBLICATION_SETTINGS_ID_PER_MODULE", "
 ");
 
 define("SQL_OPAL_GET_ALL_PUBLICATION_MODULES_USER",
-    "SELECT m.ID, m.name_EN, m.name_FR, m.iconClass FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.publication = 1 ORDER BY m.order;"
+    "SELECT m.ID, m.name_EN, m.name_FR, m.iconClass FROM ".OPAL_MODULE_TABLE." m WHERE m.active = ".ACTIVE_RECORD." AND m.publication = ".ACTIVE_RECORD." ORDER BY m.order;"
 );
 
 define("SQL_OPAL_GET_ALL_CUSTOM_CODE_MODULES_USER",
-    "SELECT m.ID, m.name_EN, m.name_FR, m.iconClass, m.subModule FROM ".OPAL_MODULE_TABLE." m WHERE m.active = 1 AND m.customCode = 1 ORDER BY m.order;"
+    "SELECT m.ID, m.name_EN, m.name_FR, m.iconClass, m.subModule FROM ".OPAL_MODULE_TABLE." m WHERE m.active = ".ACTIVE_RECORD." AND m.customCode = ".ACTIVE_RECORD." ORDER BY m.order;"
 );
 
 define("SQL_OPAL_GET_QUESTIONNAIRE_CONTROL_DETAILS",
@@ -654,6 +654,10 @@ define("OPAL_GET_MODULES_OPERATIONS","
     SELECT `ID`, `operation` FROM `".OPAL_MODULE_TABLE."` WHERE `ID` IN (%%MODULESID%%) AND active = ".ACTIVE_RECORD." ORDER BY `ID`;
 ");
 
+define("OPAL_GET_USER_ROLE_MODULE_ACCESS","
+    SELECT `access` FROM `".OPAL_OA_ROLE_MODULE_TABLE."` WHERE oaRoleId = :oaRoleId AND moduleId = ".MODULE_ROLE.";
+");
+
 define("OPAL_GET_OA_ROLE_DETAILS","
     SELECT r.ID, r.name_EN, r.name_FR, (SELECT COUNT(*) FROM ".OPAL_OAUSER_TABLE." u WHERE u.oaRoleId = r.ID) AS total
     FROM ".OPAL_OA_ROLE_TABLE." r      
@@ -794,5 +798,5 @@ SELECT ID, name_EN, name_FR FROM ".OPAL_CATEGORY_MODULE_TABLE." ORDER BY `order`
 ");
 
 define("OPAL_GET_NAV_MENU","
-    SELECT ID, operation, name_EN, name_FR, iconClass, url, subModule, subModuleMenu FROM ".OPAL_MODULE_TABLE." WHERE active = 1 AND categoryModuleId = :categoryModuleId ORDER BY `order`
+    SELECT ID, operation, name_EN, name_FR, iconClass, url, subModule, subModuleMenu FROM ".OPAL_MODULE_TABLE." WHERE active = ".ACTIVE_RECORD." AND categoryModuleId = :categoryModuleId ORDER BY `order`
 ");

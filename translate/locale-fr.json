@@ -2432,6 +2432,8 @@
       "READ": "Lecture",
       "WRITE": "Écriture",
       "DELETE": "Supprimer",
+      "WARNING": "Attention: vous modifiez actuellement les permissions de votre propre rôle (",
+      "WARNING_2": "). Ces changements peuvent être annulés en revisitant cette page.",
       "ERROR_INVALID_ROLE": "Opération de rôle invalide. Veuillez rafraîchir la page et réessayer.",
       "ERROR_MODULE": "Une erreur s'est produite lors de l'obtention de la liste des modules.",
       "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour du rôle."

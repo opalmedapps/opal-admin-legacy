@@ -105,7 +105,7 @@ class HelpSetup {
 
     /*
      * Validate if a requested operation is valid based on the authorized operation. It's a bit per bit comparison.
-     * Per default, the comparison is done on 3 bits since the authorized operations are from left to rigth
+     * Per default, the comparison is done on 3 bits since the authorized operations are from left to right
      * "Delete | Write | Read".
      * @params  $authorized : int - The authorized operations
      *          $requested : int - The requested operations to test
