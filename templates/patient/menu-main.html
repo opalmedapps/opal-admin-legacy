@@ -35,24 +35,41 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-xs-12 col-sm-6 col-md-4" ng-repeat="menu in navSubMenu">
-							<a ng-href="{{menu.url}}">
-								<div class="panel-container animated" ng-class="{pulse: hoverMenu}" ng-mouseenter="hoverMenu=true" ng-mouseleave="hoverMenu=false" style="cursor:pointer;">
+						<div ng-if="writeAccess" class="col-xs-12 col-sm-6 col-md-4">
+							<a href="{{configs.pathConfig.registration_url}}" target="_blank">
+								<div class="panel-container animated" ng-class="{pulse: hoverMenuRegistration}" ng-mouseenter="hoverMenuRegistration=true" ng-mouseleave="hoverMenuRegistration=false" style="cursor:pointer;">
 									<div class="panel-info">
 										<div class="panel-content">
 											<div class="icon-home clearfix">
-												<span class="{{menu.iconClass}}"></span>
+												<span class="fa fa-user-plus"></span>
 											</div>
 											<div class="panel-title">
-												<h1>{{menu.name_display}}</h1>
+												<h1>{{'PATIENTS.MENU.REGISTRATION'|translate}}</h1>
 											</div>
 											<div class="panel-description">
-												<p>{{menu.description_display}}</p>
+												<p>{{'PATIENTS.MENU.REGISTRATION_SUB'|translate}}</p>
 											</div>
 										</div>
 									</div>
 								</div>
 							</a>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4" ng-repeat="menu in navSubMenu">
+							<div class="panel-container animated" ng-class="{pulse: hoverMenu}" ng-mouseenter="hoverMenu=true" ng-mouseleave="hoverMenu=false" style="cursor:pointer;" ui-sref="{{menu.url}}">
+								<div class="panel-info">
+									<div class="panel-content">
+										<div class="icon-home clearfix">
+											<span class="{{menu.iconClass}}"></span>
+										</div>
+										<div class="panel-title">
+											<h1>{{menu.name_display}}</h1>
+										</div>
+										<div class="panel-description">
+											<p>{{menu.description_display}}</p>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

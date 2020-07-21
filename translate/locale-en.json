@@ -2429,7 +2429,10 @@
   "PATIENTS": {
     "MENU": {
       "TITLE": "Patients",
-      "SUB_TITLE": "Patients Tools"
+      "SUB_TITLE": "Patients Tools",
+      "REGISTRATION": "Patient Registration",
+      "REGISTRATION_SUB": "Register a patient to Opal.",
+      "BACK": "Back"
     },
     "LIST": {
       "TITLE": "Patients",
