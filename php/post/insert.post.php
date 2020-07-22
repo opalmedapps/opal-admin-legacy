@@ -1,6 +1,5 @@
 <?php
-
-include_once('post.inc');
+include_once("../config.php");
 
 $sessionId = strip_tags($_POST["OAUser"]["sessionid"]);
 
