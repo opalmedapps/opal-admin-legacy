@@ -29,6 +29,22 @@ class Module
         $this->moduleId = $moduleId;
 
         if(!$guestStatus) {
+
+            /*
+             * If the session expire, force the front end to display the login page. Otherwise, update the timer.
+             * */
+            if (isset($_SESSION['lastActivity']) && (time() - $_SESSION['lastActivity'] > PHP_SESSION_TIMEOUT))
+                HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "config error");
+            else
+                $_SESSION['lastActivity'] = time(); // update last activity time stamp
+
+            if (!isset($_SESSION['created'])) {
+                $_SESSION['created'] = time();
+            } else if (time() - $_SESSION['created'] > PHP_SESSION_TIMEOUT) {
+                session_regenerate_id(true);
+                $_SESSION['created'] = time();
+            }
+
             if (!$_SESSION["userAccess"][$moduleId])
                 HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Module session cannot be found. Please contact your administrator.");
             $this->access = intval($_SESSION["userAccess"][$moduleId]["access"]);

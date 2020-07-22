@@ -1,6 +1,5 @@
 <?php
-
-include_once('post.inc');
+include_once("../config.php");
 
 $sanitizedPost = Post::validateAndSanitize($_POST);
 if(!$sanitizedPost)
