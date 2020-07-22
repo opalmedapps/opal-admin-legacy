@@ -142,6 +142,8 @@ class Post extends Module {
      * @returns int number of record affected OR false if a problem occurs
      * */
     public function updatePost($postDetails) {
+        HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
+
         $this->checkWriteAccess();
         $currentPost = $this->opalDB->getPostDetails($postDetails["PostControlSerNum"]);
         if($currentPost["locked"] == 0)

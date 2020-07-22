@@ -1,6 +1,5 @@
 <?php
-
-include_once('post.inc');
+include_once("../config.php");
 
 $postId = strip_tags($_POST['postId']);
 
