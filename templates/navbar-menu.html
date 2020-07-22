@@ -16,7 +16,7 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
-            <li class="dropdown" ng-repeat="category in navMenu">
+            <li class="dropdown" ng-repeat="category in navMenu" ng-if="category.menu.length > 0">
                 <a href="" class="dropdown-toggle"  data-toggle="dropdown">{{category.name}} <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                     <li ui-sref-active="active" ng-repeat="menu in category.menu">
