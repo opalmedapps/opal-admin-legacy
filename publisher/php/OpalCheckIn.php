@@ -279,7 +279,7 @@ class OpalCheckin{
                 Where P.PatientSerNum = MVA.PatientSerNum
                     And P.PatientId = '$patientId'
                     And MVA.AppointmentSerNum = PMH.AppointmentSerNum
-                    and MVA.AppointSys in ('Medivisit','Impromptu','ImpromptuOrtho','InstantAddOn')
+                    and MVA.AppointSys <> 'Aria'
 				    And DATE_FORMAT(ArrivalDateTime, '%Y-%m-%d') = DATE_FORMAT(NOW() - INTERVAL 0 DAY, '%Y-%m-%d')
                 ;";
         try{

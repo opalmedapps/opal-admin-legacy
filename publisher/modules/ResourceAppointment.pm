@@ -413,7 +413,7 @@ sub getResourceAppointmentsFromSourceDB
 				WHERE
 					pt.PatientId  = pi.PatientId
 					AND mval.PatientSerNum      = pt.PatientSerNum
-					and mval.AppointSys in ('Medivisit','Impromptu','ImpromptuOrtho','InstantAddOn')
+					and mval.AppointSys <> 'Aria'
 					AND (
 			";
 
