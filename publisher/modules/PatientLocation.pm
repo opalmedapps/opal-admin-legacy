@@ -501,7 +501,7 @@ sub getPatientLocationsFromSourceDB
 					AND mval.PatientSerNum 		= pt.PatientSerNum
 					AND mval.AppointmentSerNum	= pl.AppointmentSerNum
 					AND Venue.VenueId 			= pl.CheckinVenueName
-					and mval.AppointSys in ('Medivisit','Impromptu','ImpromptuOrtho','InstantAddOn')
+					and mval.AppointSys <> 'Aria'
 					AND (
 			";
 
@@ -739,7 +739,7 @@ sub getPatientLocationsMHFromSourceDB
 					AND mval.AppointmentSerNum		= plmh.AppointmentSerNum
 					AND plmh.CheckinVenueName  		= Venue.VenueId
 					AND plmh.PatientLocationSerNum 	= '$sourceuid'
-					and mval.AppointSys in ('Medivisit','Impromptu','ImpromptuOrtho','InstantAddOn')
+					and mval.AppointSys <> 'Aria'
 					
 					UNION
 					
@@ -760,7 +760,7 @@ sub getPatientLocationsMHFromSourceDB
 					AND mval.AppointmentSerNum		= pl.AppointmentSerNum
 					AND pl.CheckinVenueName  		= Venue.VenueId
 					AND pl.PatientLocationSerNum 	= '$sourceuid'
-					and mval.AppointSys in ('Medivisit','Impromptu','ImpromptuOrtho','InstantAddOn')
+					and mval.AppointSys <> 'Aria'
 					";
 
                 # print "$plInfo_sql\n";
