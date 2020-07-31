@@ -2369,6 +2369,29 @@
       "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour de l'étude."
     }
   },
+  "ALERT" : {
+    "LIST": {
+      "TITLE": "Alertes",
+      "ADD": "Ajouter",
+      "SEARCH": "Rechercher",
+      "SUBJECT": "Sujet",
+      "ACTIVE": "Activée",
+      "CREATION_DATE": "Date de création",
+      "LAST_UPDATED": "Dernière MAJ",
+      "OPERATIONS": "Opérations",
+      "EDIT": "Modifier",
+      "VIEW": "Voir",
+      "DELETE": "Supprimer"
+    },
+    "DELETE": {
+    },
+    "ADD": {
+
+    },
+    "EDIT": {
+
+    }
+  },
   "ROLE" : {
     "LIST": {
       "TITLE": "Rôles",

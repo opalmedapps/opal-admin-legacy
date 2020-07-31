@@ -90,6 +90,7 @@ define("OPAL_OA_ROLE_TABLE","oaRole");
 define("OPAL_OA_ROLE_MODULE_TABLE","oaRoleModule");
 define("OPAL_SOURCE_DATABASE_TABLE","SourceDatabase");
 define("OPAL_HOSPITAL_MAP_TABLE","HospitalMap");
+define("OPAL_ALERT_TABLE","alert");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -799,4 +800,8 @@ SELECT ID, name_EN, name_FR FROM ".OPAL_CATEGORY_MODULE_TABLE." ORDER BY `order`
 
 define("OPAL_GET_NAV_MENU","
     SELECT ID, operation, name_EN, name_FR, iconClass, url, subModule, subModuleMenu FROM ".OPAL_MODULE_TABLE." WHERE active = ".ACTIVE_RECORD." AND categoryModuleId = :categoryModuleId ORDER BY `order`
+");
+
+define("OPAL_GET_ALERTS_LIST","
+    SELECT ID, subject, active, creationDate, lastUpdated FROM ".OPAL_ALERT_TABLE." WHERE deleted = ".NON_DELETED_RECORD.";
 ");
