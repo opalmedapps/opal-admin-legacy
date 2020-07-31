@@ -130,6 +130,13 @@ RewriteRule ^study/get/studies php/study/get.studies.php [QSA,L]
 RewriteRule ^study/insert/study php/study/insert.study.php [QSA,L]
 RewriteRule ^study/update/study php/study/update.study.php [QSA,L]
 
+# Alerts Section
+RewriteRule ^alert/delete/alert php/alert/delete.alert.php [QSA,L]
+RewriteRule ^alert/get/alert-details php/alert/get.alert.details.php [QSA,L]
+RewriteRule ^alert/get/alerts php/alert/get.alerts.php [QSA,L]
+RewriteRule ^alert/insert/alert php/alert/insert.alert.php [QSA,L]
+RewriteRule ^alert/update/alert php/alert/update.alert.php [QSA,L]
+
 # Roles Section
 RewriteRule ^role/delete/role php/role/delete.role.php [QSA,L]
 RewriteRule ^role/get/available-modules php/role/get.available.modules.php [QSA,L]
