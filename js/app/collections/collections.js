@@ -1076,6 +1076,35 @@ angular.module('opalAdmin.collections', [])
 		return studyAPI;
 	})
 
+	// Alert API service
+	.factory('alertCollectionService', function ($http) {
+		var alertAPI = {};
+
+		alertAPI.getAlerts = function () {
+			return $http.post(
+				"alert/get/alerts",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+
+		};
+
+		alertAPI.getAlertDetails = function (alertId) {
+			return $http.post(
+				"alert/get/alert-details",
+				$.param({
+					alertId: alertId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		return alertAPI;
+	})
+
 	// Role API service
 	.factory('roleCollectionService', function ($http) {
 		var roleAPI = {};

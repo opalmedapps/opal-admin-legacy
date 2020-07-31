@@ -2352,6 +2352,30 @@
       "ERROR_UPDATE": "An error occurred while updating the study."
     }
   },
+  "ALERT" : {
+    "LIST": {
+      "TITLE": "Alerts",
+      "ADD": "Add",
+      "SEARCH": "Search...",
+      "SUBJECT": "Subject",
+      "ACTIVE": "Active",
+      "CREATION_DATE": "Creation Date",
+      "LAST_UPDATED": "Last Updated",
+      "OPERATIONS": "Operations",
+      "EDIT": "Edit",
+      "VIEW": "View",
+      "DELETE": "Delete"
+    },
+    "DELETE": {
+
+    },
+    "ADD": {
+
+    },
+    "EDIT": {
+
+    }
+  },
   "ROLE" : {
     "LIST": {
       "TITLE": "Roles",

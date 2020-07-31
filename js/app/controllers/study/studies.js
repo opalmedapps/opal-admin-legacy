@@ -68,7 +68,7 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 		else
 			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.editStudy(row.entity)"<i title="'+$filter('translate')('STUDY.LIST.VIEW')+'" class="fa fa-eye" aria-hidden="true"></i></a></strong>';
 		if($scope.deleteAccess)
-			'- <strong><a href="" ng-click="grid.appScope.deleteStudy(row.entity)"><i title="'+$filter('translate')('STUDY.LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong>';
+			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.deleteStudy(row.entity)"><i title="'+$filter('translate')('STUDY.LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong>';
 		cellTemplateOperations += '</div>';
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editStudy(row.entity)">' +
