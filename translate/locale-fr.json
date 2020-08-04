@@ -56,8 +56,9 @@
     "MODULE_ID_12_SUB": "Surveiller l'activité des utilisateurs. Changer les mots de passe.",
     "MODULE_ID_13_SUB": "Gérer les études cliniques auxquelles sont associées certains patients.",
     "MODULE_ID_14_SUB": "Outil pour créer des modèles de courriel.",
-    "MODULE_ID_15_SUB": "Gérer les codes personnalisés pour les diagnostics et alias.",
-    "MODULE_ID_16_SUB": "Gérer la liste des rôles des utilisateurs."
+    "MODULE_ID_15_SUB": "Gestion des codes personnalisés pour les diagnostics et alias.",
+    "MODULE_ID_16_SUB": "Gestion de la liste des rôles des utilisateurs.",
+    "MODULE_ID_17_SUB": "Gestion de la liste des alertes et déclencheurs pour conditions."
   },
   "BREADCRUMBS": {
     "HOME": "Accueil"
@@ -2382,7 +2383,11 @@
       "EDIT": "Modifier",
       "VIEW": "Voir",
       "DELETE": "Supprimer",
-      "SUCCESS_FLAGS": "L'activation des alertes a été mise à jour."
+      "YES": "Oui",
+      "NO": "Non",
+      "SUCCESS_FLAGS": "L'activation des alertes a été mise à jour.",
+      "ERROR_FLAGS": "Une erreur s'est produite lors de la mise à jour des activations des alertes.",
+      "ERROR_ALERT": "Une erreur s'est produite de l'obtention de la liste des alertes."
     },
     "DELETE": {
     },
