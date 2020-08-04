@@ -55,7 +55,8 @@
     "MODULE_ID_13_SUB": "Manage studies to which are associated patients.",
     "MODULE_ID_14_SUB": "Tool for creating email templates.",
     "MODULE_ID_15_SUB": "Manage custom codes for diagnosis, test results and aliases.",
-    "MODULE_ID_16_SUB": "Manage the list of roles of the users."
+    "MODULE_ID_16_SUB": "Manage the list of roles of the users.",
+    "MODULE_ID_17_SUB": "Manage the list of alerts and triggers for conditions."
   },
   "BREADCRUMBS": {
     "HOME": "Home"
@@ -2365,7 +2366,11 @@
       "EDIT": "Edit",
       "VIEW": "View",
       "DELETE": "Delete",
-      "SUCCESS_FLAGS": "Activations of alerts have being updated."
+      "YES": "Yes",
+      "NO": "No",
+      "SUCCESS_FLAGS": "Activations of alerts have being updated.",
+      "ERROR_FLAGS": "An error occurred while updating the activation of the alerts.",
+      "ERROR_ALERT": "An error occurred while getting the list of alerts."
     },
     "DELETE": {
 
