@@ -181,7 +181,7 @@ angular.module('opalAdmin.controllers.alert', ['ngAnimate', 'ngSanitize', 'ui.bo
 			alertCollectionService.getAlerts().then(function (response) {
 				$scope.alertsList = response.data;
 			}).catch(function(err) {
-				ErrorHandler.onError(err, $filter('translate')('ALERT.LIST.ERROR_PUBLICATION'));
+				ErrorHandler.onError(err, $filter('translate')('ALERT.LIST.ERROR_ALERT'));
 			});
 		}
 
