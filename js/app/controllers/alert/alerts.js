@@ -18,6 +18,11 @@ angular.module('opalAdmin.controllers.alert', ['ngAnimate', 'ngSanitize', 'ui.bo
 			$state.go('alert-add');
 		};
 
+		$scope.activationFlags = {
+			flagList: []
+		};
+
+
 		// Banner
 		$scope.bannerMessage = "";
 		// Function to show page banner
@@ -35,7 +40,7 @@ angular.module('opalAdmin.controllers.alert', ['ngAnimate', 'ngSanitize', 'ui.bo
 			$scope.gridApi.grid.refresh();
 		};
 
-		getalertsList();
+		getAlertsList();
 
 		// Function to set banner class
 		$scope.setBannerClass = function (classname) {
@@ -99,8 +104,8 @@ angular.module('opalAdmin.controllers.alert', ['ngAnimate', 'ngSanitize', 'ui.bo
 						selectOptions: [{ value: '1', label: $filter('translate')('ALERT.LIST.YES') }, { value: '0', label: $filter('translate')('ALERT.LIST.NO') }]
 					}
 				},
-				{ field: 'creationDate', enableColumnMenu: false, displayName: $filter('translate')('ALERT.LIST.CREATION_DATE'), width: '10%'},
-				{ field: 'lastUpdated', enableColumnMenu: false, displayName: $filter('translate')('ALERT.LIST.LAST_UPDATED'), width: '10%'},
+				{ field: 'creationDate', enableColumnMenu: false, displayName: $filter('translate')('ALERT.LIST.CREATION_DATE'), width: '20%'},
+				{ field: 'lastUpdated', enableColumnMenu: false, displayName: $filter('translate')('ALERT.LIST.LAST_UPDATED'), width: '20%'},
 				{ name: $filter('translate')('ALERT.LIST.OPERATIONS'), width: '10%', cellTemplate: cellTemplateOperations, enableColumnMenu: false, enableFiltering: false, sortable: false }
 			],
 			enableFiltering: true,
@@ -140,33 +145,30 @@ angular.module('opalAdmin.controllers.alert', ['ngAnimate', 'ngSanitize', 'ui.bo
 			if ($scope.changesMade) {
 				angular.forEach($scope.alertsList, function (activeAlert) {
 					if (activeAlert.changed) {
-						$scope.publicationFlags.flagList.push({
+						$scope.activationFlags.flagList.push({
 							ID: activeAlert.ID,
-							moduleId: activeAlert.moduleId,
 							active: activeAlert.active
 						});
 					}
 				});
-				// Log who updated legacy questionnaire flags
-				var currentUser = Session.retrieveObject('user');
-				$scope.publicationFlags.OAUserId = currentUser.id;
-				$scope.publicationFlags.sessionId = currentUser.sessionid;
 
 				// Submit form
 				$.ajax({
 					type: "POST",
-					url: "publication/update/publish-flag",
-					data: $scope.publicationFlags,
+					url: "alert/update/activation-flag",
+					data: $scope.activationFlags,
 					success: function (response) {
 						$scope.setBannerClass('success');
 						$scope.bannerMessage = $filter('translate')('ALERT.LIST.SUCCESS_FLAGS');
 						$scope.showBanner();
-						getPublicationsList();
-						$scope.changesMade = false;
-						$scope.publicationFlags.flagList = [];
 					},
 					error: function (err) {
 						ErrorHandler.onError(err, $filter('translate')('ALERT.LIST.ERROR_FLAGS'));
+					},
+					complete: function () {
+						getAlertsList();
+						$scope.changesMade = false;
+						$scope.activationFlags.flagList = [];
 					}
 				});
 			}
@@ -175,7 +177,7 @@ angular.module('opalAdmin.controllers.alert', ['ngAnimate', 'ngSanitize', 'ui.bo
 		// Initialize object for storing questionnaires
 		$scope.alertsList = [];
 
-		function getalertsList() {
+		function getAlertsList() {
 			alertCollectionService.getAlerts().then(function (response) {
 				$scope.alertsList = response.data;
 			}).catch(function(err) {
@@ -196,7 +198,7 @@ angular.module('opalAdmin.controllers.alert', ['ngAnimate', 'ngSanitize', 'ui.bo
 
 			// After update, refresh the questionnaire list
 			modalInstance.result.then(function () {
-				getalertsList();
+				getAlertsList();
 			});
 		};
 
@@ -217,7 +219,7 @@ angular.module('opalAdmin.controllers.alert', ['ngAnimate', 'ngSanitize', 'ui.bo
 			// After delete, refresh the custom code list
 			modalInstance.result.then(function () {
 				// Call our API to get the list of existing posts
-				getalertsList();
+				getAlertsList();
 			});
 		};
 	});

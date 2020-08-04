@@ -2364,7 +2364,8 @@
       "OPERATIONS": "Operations",
       "EDIT": "Edit",
       "VIEW": "View",
-      "DELETE": "Delete"
+      "DELETE": "Delete",
+      "SUCCESS_FLAGS": "Activations of alerts have being updated."
     },
     "DELETE": {
 
