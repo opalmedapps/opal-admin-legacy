@@ -1651,4 +1651,17 @@ class DatabaseOpal extends DatabaseAccess {
     function getAlertsList() {
         return $this->_fetchAll(OPAL_GET_ALERTS_LIST, array());
     }
+
+    /*
+     * Get all the alerts list
+     * @params  void
+     * @return  alerts found (array)
+     * */
+    function updateAlertActivationFlag($id, $active) {
+        return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_ALERT_ACTIVATION_FLAG, array(
+            "active"=>$active,
+            "updatedBy"=>$this->getOAUserId(),
+            "ID"=>$id
+        ));
+    }
 }

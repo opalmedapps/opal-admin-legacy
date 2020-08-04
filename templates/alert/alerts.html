@@ -26,6 +26,11 @@
                                 <span style="font-size: 17px;" class="glyphicon glyphicon-plus"></span>
                                 <span style="font-size: 20px;"><strong>{{'ALERT.LIST.ADD'|translate}}</strong></span>
                             </a>
+                            <!-- Save changes button -->
+                            <a href="" ng-click="submitActiveFlags()" class="btn btn-md item-button-success animated" ng-if="changesMade && writeAccess" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false">
+                                <span style="font-size: 17px;" class="glyphicon glyphicon-ok"></span>
+                                <span style="font-size: 20px;"><strong>{{'PUBLICATION.LIST.SAVE'|translate}}</strong></span>
+                            </a>
                         </div>
                         <!-- Search field -->
                         <div class="search col-xs-12 col-sm-6 col-md-4">

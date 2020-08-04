@@ -805,3 +805,7 @@ define("OPAL_GET_NAV_MENU","
 define("OPAL_GET_ALERTS_LIST","
     SELECT ID, subject, active, creationDate, lastUpdated FROM ".OPAL_ALERT_TABLE." WHERE deleted = ".NON_DELETED_RECORD.";
 ");
+
+define("SQL_OPAL_UPDATE_ALERT_ACTIVATION_FLAG",
+    "UPDATE ".OPAL_ALERT_TABLE." SET active = :active, updatedBy = :updatedBy WHERE ID = :ID AND (active != :active);"
+);

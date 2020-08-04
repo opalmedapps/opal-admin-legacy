@@ -51,7 +51,7 @@ class Alert extends Module {
 
     /*
      * Insert a new alert to the table after sanitization and validation check.
-     * @parems  $post - array - details of the alert to sanitize and validate before inserting it<
+     * @parems  $post - array - details of the alert to sanitize and validate before inserting it
      * @return  array - number of record inserted
      * */
     public function insertAlert($post) {
@@ -61,11 +61,47 @@ class Alert extends Module {
 
     /*
      * Update an alert to the table after sanitization and validation check.
-     * @parems  $post - array - details of the alert to sanitize and validate before inserting it<
+     * @parems  $post - array - details of the alert to sanitize and validate before inserting it
      * @return  array - number of record updated
      * */
     public function updateAlert($post) {
         $this->checkWriteAccess();
         return array();
+    }
+
+    /*
+     * Update the list of activation flag to the alerts.
+     * @parems  $post - array - list of activation flags to validate.
+     * @return  array - number of record updated
+     * */
+    public function updateActivateFlag($post) {
+        $post = HelpSetup::arraySanitization($post);
+        $validAlert = $this->_validateAndSanitizeAlertList($post);
+
+        foreach ($validAlert as $item)
+            $this->opalDB->updateAlertActivationFlag($item["ID"], $item["active"]);
+
+        $this->checkWriteAccess();
+        return array();
+    }
+
+    /*
+     * validate and sanitze the alert list before getting updated. If there is a problem return an error 500.
+     * @params  $toValidate - array - contains ID and active state
+     * @return  $validatedList - array - sanitized array
+     * */
+    protected function _validateAndSanitizeAlertList($toValidate) {
+        $validatedList = array();
+        $toValidate = HelpSetup::arraySanitization($toValidate);
+        foreach($toValidate["flagList"] as $item) {
+            $id = intval(trim(strip_tags($item["ID"])));
+            $active = intval(trim(strip_tags($item["active"])));
+            if ($active != 0 && $active != 1)
+                $active = 0;
+            if($id == "")
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid alert activation flag.");
+            array_push($validatedList, array("ID"=>$id, "active"=>$active));
+        }
+        return $validatedList;
     }
 }

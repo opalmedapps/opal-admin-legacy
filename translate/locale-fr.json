@@ -2381,7 +2381,8 @@
       "OPERATIONS": "Opérations",
       "EDIT": "Modifier",
       "VIEW": "Voir",
-      "DELETE": "Supprimer"
+      "DELETE": "Supprimer",
+      "SUCCESS_FLAGS": "L'activation des alertes a été mise à jour."
     },
     "DELETE": {
     },
