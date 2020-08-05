@@ -2392,6 +2392,27 @@
     "DELETE": {
     },
     "ADD": {
+      "TITLE": "Création d'une alerte",
+      "MESSAGE": "Message à envoyer",
+      "MESSAGE_EXPLANATION": "Ceci est le message qui sera envoyé lorsque l'alerte se déclenchera. Veuillez entrer un objet et un corps au message. Le format HTML est interdit.",
+      "MESSAGE_TITLE": "Message",
+      "STEP": "Étape",
+      "OF": "de",
+      "COMPLETED": "complétée",
+      "REQUIRED": "Champ requis:",
+      "REQUIRED_2": "Champs requis:",
+      "INCOMPLETE": "Incomplet",
+      "COMPLETE": "Complet",
+      "SUBJECT": "Sujet",
+      "BODY": "Corps du message",
+      "BACK": "Retour",
+      "SUMMARY": "Sommaire",
+      "TRIGGERS": "Déclencheurs",
+      "TRIGGERS_LIST": "Liste des déclencheurs",
+      "TRIGGERS_EXPLANATION": "Veuillez entrer la liste des déclencheurs pour l'alerte dans la boîte ci-dessous.",
+      "CONTACTS": "Contacts",
+      "CONTACTS_EXPLANATION": "Ici est entrée est la liste des gens ou organisations à contacter si l'alerte est déclenchée. Les numéro de téléphones pour les SMS ou les adresses courriel sont acceptés."
+
 
     },
     "EDIT": {
