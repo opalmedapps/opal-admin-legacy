@@ -2313,6 +2313,9 @@
     "ADD": {
       "BACK": "Back",
       "SUMMARY": "Summary",
+      "STEP": "Step",
+      "OF": "of",
+      "COMPLETED": "completed",
       "TITLE": "Add a new study",
       "DETAILS": "Details",
       "DETAILS_EXPLANATION": "Please enter the study ID and its title.",
@@ -2425,6 +2428,9 @@
     "ADD": {
       "BACK": "Back to Roles",
       "SUMMARY": "Summary",
+      "STEP": "Step",
+      "OF": "of",
+      "COMPLETED": "completed",
       "TITLE": "Add role",
       "NAME": "Name",
       "NAME_EXPLANATION": "Please give an english and french name to your new role to identify it.",
