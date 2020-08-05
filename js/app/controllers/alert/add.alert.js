@@ -7,7 +7,6 @@ angular.module('opalAdmin.controllers.alert.add', ['ngAnimate', 'ui.bootstrap'])
 
 		// get current user id
 		var user = Session.retrieveObject('user');
-		var OAUserId = user.id;
 
 		// Function to go to previous page
 		$scope.goBack = function () {
@@ -19,95 +18,52 @@ angular.module('opalAdmin.controllers.alert.add', ['ngAnimate', 'ui.bootstrap'])
 		$scope.language = Session.retrieveObject('user').language;
 
 		$scope.toSubmit = {
-			OAUserId: OAUserId,
-			details: {
-				code: "",
-				title: "",
+			message: {
+				subject: "",
+				body: "",
 			},
-			investigator: {
-				name: ""
-			},
-			dates: {
-				start_date: "",
-				end_date: "",
+			trigger: "",
+			contact: {
+				phone: {},
+				email: {},
 			}
 		};
 
 		$scope.validator = {
-			details: {
+			message: {
 				completed: false,
 				mandatory: true,
 				valid: true,
 			},
-			investigator: {
+			trigger: {
 				completed: false,
 				mandatory: true,
 				valid: true,
 			},
-			dates: {
+			contact: {
 				completed: false,
-				mandatory: false,
+				mandatory: true,
 				valid: true,
 			},
 		};
 
 		$scope.leftMenu = {
-			details: {
+			message: {
 				display: false,
 				open: false,
 				preview: false,
 			},
-			investigator: {
+			trigger: {
 				display: false,
 				open: false,
 				preview: false,
 			},
-			dates: {
+			contact: {
 				display: false,
 				open: false,
 				preview: false,
 			},
 		};
-
-		// Date format for start and end frequency dates
-		$scope.format = 'yyyy-MM-dd';
-		$scope.dateOptionsStart = {
-			formatYear: "'yy'",
-			startingDay: 0,
-			minDate: new Date(),
-			maxDate: null
-		};
-		$scope.dateOptionsEnd = {
-			formatYear: "'yy'",
-			startingDay: 0,
-			minDate: new Date(),
-			maxDate: null
-		};
-
-		$locale["DATETIME_FORMATS"]["SHORTDAY"] = [
-			$filter('translate')('DATEPICKER.SUNDAY_S'),
-			$filter('translate')('DATEPICKER.MONDAY_S'),
-			$filter('translate')('DATEPICKER.TUESDAY_S'),
-			$filter('translate')('DATEPICKER.WEDNESDAY_S'),
-			$filter('translate')('DATEPICKER.THURSDAY_S'),
-			$filter('translate')('DATEPICKER.FRIDAY_S'),
-			$filter('translate')('DATEPICKER.SATURDAY_S')
-		];
-
-		$locale["DATETIME_FORMATS"]["MONTH"] = [
-			$filter('translate')('DATEPICKER.JANUARY'),
-			$filter('translate')('DATEPICKER.FEBRUARY'),
-			$filter('translate')('DATEPICKER.MARCH'),
-			$filter('translate')('DATEPICKER.APRIL'),
-			$filter('translate')('DATEPICKER.MAY'),
-			$filter('translate')('DATEPICKER.JUNE'),
-			$filter('translate')('DATEPICKER.JULY'),
-			$filter('translate')('DATEPICKER.AUGUST'),
-			$filter('translate')('DATEPICKER.SEPTEMBER'),
-			$filter('translate')('DATEPICKER.OCTOBER'),
-			$filter('translate')('DATEPICKER.NOVEMBER'),
-			$filter('translate')('DATEPICKER.DECEMBER')
-		];
 
 		$scope.totalSteps = 0;
 		$scope.completedSteps = 0;
@@ -146,48 +102,17 @@ angular.module('opalAdmin.controllers.alert.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.popupEnd['opened'] = true;
 		};
 
-		$scope.detailsUpdate = function () {
-			$scope.validator.details.completed = ($scope.toSubmit.details.code !== "" && $scope.toSubmit.details.title !== "");
-			$scope.leftMenu.details.open = ($scope.toSubmit.details.code !== "" || $scope.toSubmit.details.title !== "");
-			$scope.leftMenu.details.display = $scope.leftMenu.details.open;
+		$scope.messageUpdate = function () {
+			$scope.validator.message.completed = ($scope.toSubmit.message.subject !== "" && $scope.toSubmit.message.body !== "");
+			$scope.leftMenu.message.open = ($scope.toSubmit.message.subject !== "" || $scope.toSubmit.message.body !== "");
+			$scope.leftMenu.message.display = $scope.leftMenu.message.open;
 		};
 
-		$scope.nameUpdate = function () {
-			$scope.validator.investigator.completed = ($scope.toSubmit.investigator.name !== "");
-			$scope.leftMenu.investigator.open = $scope.validator.details.completed;
-			$scope.leftMenu.investigator.display = $scope.validator.details.completed;
+		$scope.triggerUpdate = function () {
+			$scope.validator.trigger.completed = ($scope.toSubmit.trigger !== "");
+			$scope.leftMenu.trigger.open = $scope.validator.trigger.completed;
+			$scope.leftMenu.trigger.display = $scope.validator.trigger.completed;
 		};
-
-		// Watch to restrict the end calendar to not choose an earlier date than the start date
-		$scope.$watch('toSubmit.dates.start_date', function(startDate){
-			if (startDate !== undefined && startDate !== "")
-				$scope.dateOptionsEnd.minDate = startDate;
-			else
-				$scope.dateOptionsEnd.minDate = Date.now();
-			checkOpenDates();
-		});
-
-		function checkOpenDates() {
-			if($scope.toSubmit.dates.start_date || $scope.toSubmit.dates.end_date) {
-				$scope.leftMenu.dates.display = true;
-				$scope.leftMenu.dates.open = true;
-				$scope.leftMenu.dates.preview = true;
-			} else {
-				$scope.leftMenu.dates.display = false;
-				$scope.leftMenu.dates.open = false;
-				$scope.leftMenu.dates.preview = false;
-			}
-		}
-
-		// Watch to restrict the start calendar to not choose a start after the end date
-		$scope.$watch('toSubmit.dates.end_date', function(endDate){
-			if (endDate !== undefined && endDate !== "")
-				$scope.dateOptionsStart.maxDate = endDate;
-			else
-				$scope.dateOptionsStart.maxDate = null;
-			checkOpenDates();
-		});
-
 
 		$scope.$watch('validator', function() {
 			var totalsteps = 0;
