@@ -46,17 +46,85 @@ class Alert extends Module {
      * */
     public function getAlertDetails($alertId) {
         $this->checkReadAccess();
-        return array();
+        return $this->opalDB->getAlertDetails($alertId);
     }
 
     /*
      * Insert a new alert to the table after sanitization and validation check.
      * @parems  $post - array - details of the alert to sanitize and validate before inserting it
-     * @return  array - number of record inserted
+     * @return  array - ID of the record inserted
      * */
     public function insertAlert($post) {
         $this->checkWriteAccess();
-        return array();
+        $newAlert = $this->_validateAlert($post);
+        return $this->opalDB->insertAlert($newAlert);
+    }
+
+    /*
+     * Validate an alert. All fields are mandatory. It checks if the subject, body and trigger fields exists and are
+     * not empty. It strips any HTML tags present. Then it checks the contact list, for phone and email address. For
+     * phone, only then digits are accepted.
+     * @params  $post - details of the alert to validate
+     * @return  $validatedAlert - cleaned alert ready to be inserted
+     * */
+    protected function _validateAlert($post) {
+        $validatedAlert = array();
+        $post = HelpSetup::arraySanitization($post);
+
+        // Check subject and body
+        if(is_array($post["message"])) {
+            if($post["message"]["subject"] != "")
+                $validatedAlert["subject"] = trim(strip_tags($post["message"]["subject"]));
+            else
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing subject.");
+            if($post["message"]["body"] != "")
+                $validatedAlert["body"] = trim(strip_tags($post["message"]["body"]));
+            else
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing body.");
+        }
+        else
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing message.");
+
+        // Check trigger
+        if($post["trigger"] != "")
+            $validatedAlert["trigger"] = trim(strip_tags($post["trigger"]));
+        else
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing trigger.");
+
+        // Check contact
+        if(is_array($post["contact"]) && (is_array($post["contact"]["phone"]) || is_array($post["contact"]["email"]))) {
+            $contactArr = array();
+            if (is_array($post["contact"]["phone"])) {
+                $phoneArr = array();
+                $cpt = 0;
+                foreach($post["contact"]["phone"] as $phone) {
+                    $phone["num"] = trim(strip_tags($phone["num"]));
+                    $temp = preg_replace('/[^0-9.]+/', '', $phone["num"]);
+                    if(strlen($temp) != 10)
+                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid phone number.");
+                    array_push($phoneArr, $temp);
+                    $cpt++;
+                }
+                $contactArr["phone"] = $phoneArr;
+            }
+            if (is_array($post["contact"]["email"])) {
+                $emailArr = array();
+                $cpt = 0;
+                foreach($post["contact"]["email"] as $email) {
+                    $email["adr"] = trim(strip_tags($email["adr"]));
+
+                    if (!filter_var($email["adr"], FILTER_VALIDATE_EMAIL))
+                        HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid email address.");
+                    array_push($emailArr, $email["adr"]);
+                    $cpt++;
+                }
+                $contactArr["email"] = $emailArr;
+            }
+            $validatedAlert["contact"] = json_encode($contactArr);
+        }
+        else
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing contact info.");
+        return $validatedAlert;
     }
 
     /*
@@ -66,6 +134,9 @@ class Alert extends Module {
      * */
     public function updateAlert($post) {
         $this->checkWriteAccess();
+        $newAlert = $this->_validateAlert($post);
+        if($post["ID"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing alert ID.");
         return array();
     }
 
@@ -75,7 +146,6 @@ class Alert extends Module {
      * @return  array - number of record updated
      * */
     public function updateActivateFlag($post) {
-        $post = HelpSetup::arraySanitization($post);
         $validAlert = $this->_validateAndSanitizeAlertList($post);
 
         foreach ($validAlert as $item)

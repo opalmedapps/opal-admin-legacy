@@ -1664,4 +1664,22 @@ class DatabaseOpal extends DatabaseAccess {
             "ID"=>$id
         ));
     }
+
+    /*
+     * Insert a new alert that was validated
+     * @params  $toSubmit : array - new allert to insert.
+     * @return int - ID of the record inserted
+     * */
+    function insertAlert($toSubmit) {
+        $toSubmit["creationDate"] = date("Y-m-d H:i:s");
+        $toSubmit["createdBy"] = $this->username;
+        $toSubmit["updatedBy"] = $this->username;
+        return $this->_insertRecordIntoTable(OPAL_ALERT_TABLE, $toSubmit);
+    }
+
+    function getAlertDetails($alertId) {
+        return $this->_fetchAll(SQL_OPAL_GET_ALERT_DETAILS, array(
+            array("parameter"=>":ID","variable"=>$alertId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }
