@@ -8,6 +8,10 @@ angular.module('opalAdmin.controllers.alert.add', ['ngAnimate', 'ui.bootstrap'])
 		// get current user id
 		var user = Session.retrieveObject('user');
 
+		const phoneNum = RegExp(/^\(?(\d{3})\)?[ .-]?(\d{3})[ .-]?(\d{4})$/);
+		const emailValid = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+
 		// Function to go to previous page
 		$scope.goBack = function () {
 			window.history.back();
@@ -24,8 +28,8 @@ angular.module('opalAdmin.controllers.alert.add', ['ngAnimate', 'ui.bootstrap'])
 			},
 			trigger: "",
 			contact: {
-				phone: {},
-				email: {},
+				phone: [],
+				email: [],
 			}
 		};
 
@@ -41,6 +45,14 @@ angular.module('opalAdmin.controllers.alert.add', ['ngAnimate', 'ui.bootstrap'])
 				valid: true,
 			},
 			contact: {
+				phone: {
+					completed: false,
+					valid: true,
+				},
+				email: {
+					completed: false,
+					valid: true,
+				},
 				completed: false,
 				mandatory: true,
 				valid: true,
@@ -114,6 +126,40 @@ angular.module('opalAdmin.controllers.alert.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.leftMenu.trigger.display = $scope.validator.trigger.completed;
 		};
 
+		$scope.$watch('toSubmit.contact.phone', function () {
+			var isPhone = false;
+			$scope.validator.contact.phone.valid = true;
+			if($scope.toSubmit.contact.phone.length > 0) {
+				isPhone = true;
+				var anyBadPhone = false;
+				angular.forEach($scope.toSubmit.contact.phone, function(phone) {
+					if(!phoneNum.test(phone["num"]))
+						anyBadPhone = true;
+				});
+				$scope.validator.contact.phone.valid = !anyBadPhone;
+			}
+			$scope.leftMenu.contact.open = ($scope.toSubmit.contact.phone.length > 0 || $scope.toSubmit.contact.email.length > 0);
+			$scope.validator.contact.phone.completed = ($scope.validator.contact.phone.valid && isPhone);
+			$scope.validator.contact.completed = ($scope.toSubmit.contact.phone.length <= 0 && $scope.toSubmit.contact.email.length <= 0) ? false : (($scope.toSubmit.contact.email.length > 0 ? $scope.validator.contact.email.valid : true) && ($scope.toSubmit.contact.phone.length > 0 ? $scope.validator.contact.phone.valid : true));
+		}, true);
+
+		$scope.$watch('toSubmit.contact.email', function () {
+			$scope.validator.contact.email.valid = true;
+			var isEmail = false;
+			if($scope.toSubmit.contact.email.length > 0) {
+				isEmail = true;
+				var anyBadEmail = false;
+				angular.forEach($scope.toSubmit.contact.email, function(email) {
+					if(!emailValid.test(email["adr"]))
+						anyBadEmail = true;
+				});
+				$scope.validator.contact.email.valid = !anyBadEmail;
+			}
+			$scope.leftMenu.contact.open = ($scope.toSubmit.contact.phone.length > 0 || $scope.toSubmit.contact.email.length > 0);
+			$scope.validator.contact.email.completed = ($scope.validator.contact.email.valid && isEmail);
+			$scope.validator.contact.completed = ($scope.toSubmit.contact.phone.length <= 0 && $scope.toSubmit.contact.email.length <= 0) ? false : (($scope.toSubmit.contact.email.length > 0 ? $scope.validator.contact.email.valid : true) && ($scope.toSubmit.contact.phone.length > 0 ? $scope.validator.contact.phone.valid : true));
+		}, true);
+
 		$scope.$watch('validator', function() {
 			var totalsteps = 0;
 			var completedSteps = 0;
@@ -142,12 +188,25 @@ angular.module('opalAdmin.controllers.alert.add', ['ngAnimate', 'ui.bootstrap'])
 			$scope.formReady = ($scope.completedSteps >= $scope.totalSteps) && (nonMandatoryCompleted >= nonMandatoryTotal);
 		}, true);
 
+		$scope.addPhone = function () {
+			$scope.toSubmit.contact.phone.push({num: ""});
+		};
+
+		$scope.removePhone = function (order) {
+			$scope.toSubmit.contact.phone.splice(order, 1);
+		};
+
+		$scope.addEmail = function () {
+			$scope.toSubmit.contact.email.push({adr: ""});
+		};
+
+		$scope.removeEmail = function (order) {
+			$scope.toSubmit.contact.email.splice(order, 1);
+		};
+
 		// Function to submit the new diagnosis translation
 		$scope.submitAlert = function () {
-			if ($scope.toSubmit.dates.start_date)
-				$scope.toSubmit.dates.start_date = moment($scope.toSubmit.dates.start_date).format('X');
-			if ($scope.toSubmit.dates.end_date)
-				$scope.toSubmit.dates.end_date = moment($scope.toSubmit.dates.end_date).format('X');
+			console.log($scope.toSubmit);
 
 			$.ajax({
 				type: 'POST',
