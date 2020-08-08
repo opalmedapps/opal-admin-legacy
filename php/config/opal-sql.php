@@ -809,3 +809,7 @@ define("OPAL_GET_ALERTS_LIST","
 define("SQL_OPAL_UPDATE_ALERT_ACTIVATION_FLAG",
     "UPDATE ".OPAL_ALERT_TABLE." SET active = :active, updatedBy = :updatedBy WHERE ID = :ID AND (active != :active);"
 );
+
+define("SQL_OPAL_GET_ALERT_DETAILS",
+    "SELECT ID, contact, subject, body, trigger FROM ".OPAL_ALERT_TABLE." WHERE ID = :ID;"
+);

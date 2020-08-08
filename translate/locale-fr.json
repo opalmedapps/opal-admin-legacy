@@ -2411,12 +2411,20 @@
       "BACK": "Retour",
       "SUMMARY": "Sommaire",
       "TRIGGERS": "Déclencheurs",
+      "SEE_TRIGGERS": "Voir les déclencheurs",
       "TRIGGERS_LIST": "Liste des déclencheurs",
       "TRIGGERS_EXPLANATION": "Veuillez entrer la liste des déclencheurs pour l'alerte dans la boîte ci-dessous.",
       "CONTACTS": "Contacts",
-      "CONTACTS_EXPLANATION": "Ici est entrée est la liste des gens ou organisations à contacter si l'alerte est déclenchée. Les numéro de téléphones pour les SMS ou les adresses courriel sont acceptés."
-
-
+      "CONTACTS_EXPLANATION": "Ici est entrée est la liste des gens ou organisations à contacter si l'alerte est déclenchée. Les numéro de téléphones pour les SMS et les adresses courriel sont acceptés.",
+      "ADD_PHONE": "Ajouter un numéro de téléphone",
+      "PHONE": "Numéros de téléphone",
+      "PHONE_EX": "p. ex. 514-555-1234",
+      "ADD_EMAIL": "Ajouter une adresse courriel",
+      "EMAIL": "Adresses courriel",
+      "EMAIL_EX": "p. ex. abc@blabla.ca",
+      "REMOVE": "Supprimer",
+      "SUBMIT": "Soumettre",
+      "ERROR_ADD": "Une erreur s'est produite lors de la création de l'alerte."
     },
     "EDIT": {
 

@@ -2382,6 +2382,7 @@
       "TITLE": "Add a new alert",
       "MESSAGE": "Message to send",
       "MESSAGE_EXPLANATION": "This is the message that will be sent when the alert triggers. Please enter a subject and a body to the message. HTML format is prohibited.",
+      "MESSAGE_TITLE": "Message",
       "STEP": "Step",
       "OF": "of",
       "COMPLETED": "completed",
@@ -2394,10 +2395,20 @@
       "BACK": "Back",
       "SUMMARY": "Summary",
       "TRIGGERS": "Triggers",
+      "SEE_TRIGGERS": "See triggers",
       "TRIGGERS_LIST": "Triggers list",
       "TRIGGERS_EXPLANATION": "Please enter the liste of triggers for the new alert in the following box..",
       "CONTACTS": "Contacts",
-      "CONTACTS_EXPLANATION": "This is list of persons or organizations to contact if the alert is triggered. Phone number for SMS or email addresses are accepted."
+      "CONTACTS_EXPLANATION": "This is list of persons or organizations to contact if the alert is triggered. Phone number for SMS and email addresses are accepted.",
+      "ADD_PHONE": "Add a phone number",
+      "PHONE": "Phone numbers",
+      "PHONE_EX": "E.g. 514-555-1234",
+      "ADD_EMAIL": "Add an email address",
+      "EMAIL": "Email Addresses",
+      "EMAIL_EX": "E.g. abc@blabla.ca",
+      "REMOVE": "Remove",
+      "SUBMIT": "Submit",
+      "ERROR_ADD": "An error occurred while creating the alert."
     },
     "EDIT": {
 
