@@ -791,7 +791,9 @@ define("OPAL_GET_CRON_LOG_QUESTIONNAIRES","
 ");
 
 define("OPAL_GET_HOSPITAL_MAPS","
-    SELECT DISTINCT HospitalMapSerNum AS serial, MapURL_EN AS url_EN, MapURL_FR AS url_FR, QRMapAlias AS qrid, MapName_EN AS name_EN, MapDescription_EN AS description_EN, MapName_FR AS name_FR, MapDescription_FR AS description_FR FROM ".OPAL_HOSPITAL_MAP_TABLE."
+    SELECT DISTINCT HospitalMapSerNum AS serial, MapURL_EN AS url_EN, MapURL_FR AS url_FR, QRMapAlias AS qrid,
+    MapName_EN AS name_EN, MapDescription_EN AS description_EN, MapName_FR AS name_FR,
+    MapDescription_FR AS description_FR FROM ".OPAL_HOSPITAL_MAP_TABLE."
 ");
 
 define("OPAL_GET_CATEGORY_MENU","
@@ -799,17 +801,23 @@ SELECT ID, name_EN, name_FR FROM ".OPAL_CATEGORY_MODULE_TABLE." ORDER BY `order`
 ");
 
 define("OPAL_GET_NAV_MENU","
-    SELECT ID, operation, name_EN, name_FR, iconClass, url, subModule, subModuleMenu FROM ".OPAL_MODULE_TABLE." WHERE active = ".ACTIVE_RECORD." AND categoryModuleId = :categoryModuleId ORDER BY `order`
+    SELECT ID, operation, name_EN, name_FR, iconClass, url, subModule, subModuleMenu FROM ".OPAL_MODULE_TABLE."
+    WHERE active = ".ACTIVE_RECORD." AND categoryModuleId = :categoryModuleId ORDER BY `order`
 ");
 
 define("OPAL_GET_ALERTS_LIST","
     SELECT ID, subject, active, creationDate, lastUpdated FROM ".OPAL_ALERT_TABLE." WHERE deleted = ".NON_DELETED_RECORD.";
 ");
 
-define("SQL_OPAL_UPDATE_ALERT_ACTIVATION_FLAG",
+define("OPAL_UPDATE_ALERT_ACTIVATION_FLAG",
     "UPDATE ".OPAL_ALERT_TABLE." SET active = :active, updatedBy = :updatedBy WHERE ID = :ID AND (active != :active);"
 );
 
-define("SQL_OPAL_GET_ALERT_DETAILS",
-    "SELECT ID, contact, subject, body, trigger FROM ".OPAL_ALERT_TABLE." WHERE ID = :ID;"
+define("OPAL_GET_ALERT_DETAILS",
+    "SELECT `ID`, `contact`, `subject`, `body`, `trigger` FROM ".OPAL_ALERT_TABLE." WHERE ID = :ID;"
 );
+
+define("OPAL_UPDATE_ALERT", "
+    UPDATE ".OPAL_ALERT_TABLE." SET `contact` = :contact, `subject` = :subject, `body` = :body, `trigger` = :trigger,
+    updatedBy = :updatedBy WHERE `ID` = :ID AND deleted = ".NON_DELETED_RECORD.";
+");
