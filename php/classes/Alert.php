@@ -36,7 +36,12 @@ class Alert extends Module {
      */
     public function deleteAlert($alertId) {
         $this->checkDeleteAccess();
-        return 0;
+
+        $currentAlert = $this->getAlertDetails($alertId);
+        if(!$currentAlert["ID"] || $currentAlert["ID"] == "")
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Alert not found.");
+
+        return $this->opalDB->markAlertAsDeleted($alertId);
     }
 
     /*

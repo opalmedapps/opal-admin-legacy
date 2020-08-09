@@ -821,3 +821,7 @@ define("OPAL_UPDATE_ALERT", "
     UPDATE ".OPAL_ALERT_TABLE." SET `contact` = :contact, `subject` = :subject, `body` = :body, `trigger` = :trigger,
     updatedBy = :updatedBy WHERE `ID` = :ID AND deleted = ".NON_DELETED_RECORD.";
 ");
+
+define("OPAL_MARK_ALERT_AS_DELETED", "
+    UPDATE ".OPAL_ALERT_TABLE." SET deleted = ".DELETED_RECORD.", active = ".INACTIVE_RECORD.", updatedBy = :updatedBy , deletedBy = :updatedBy WHERE ID = :ID;
+");

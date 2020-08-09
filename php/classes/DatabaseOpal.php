@@ -1660,7 +1660,7 @@ class DatabaseOpal extends DatabaseAccess {
     function updateAlertActivationFlag($id, $active) {
         return $this->_updateRecordIntoTable(OPAL_UPDATE_ALERT_ACTIVATION_FLAG, array(
             "active"=>$active,
-            "updatedBy"=>$this->getOAUserId(),
+            "updatedBy"=>$this->username,
             "ID"=>$id
         ));
     }
@@ -1696,5 +1696,18 @@ class DatabaseOpal extends DatabaseAccess {
     function updateAlert($updatedEntries) {
         $updatedEntries["updatedBy"]=$this->getUsername();
         return $this->_updateRecordIntoTable(OPAL_UPDATE_ALERT, $updatedEntries);
+    }
+
+    /*
+     * Marks a specified alert as deleted.
+     * @param   int : $alertId (ID of the alert to mark as deleted)
+     * @return  int : number of record deleted or error 500.
+     * */
+    function markAlertAsDeleted($alertId) {
+        return $this->_updateRecordIntoTable(OPAL_MARK_ALERT_AS_DELETED, array(
+            "ID"=>$alertId,
+            "deletedBy"=>$this->getUsername(),
+            "updatedBy"=>$this->getUsername(),
+        ));
     }
 }
