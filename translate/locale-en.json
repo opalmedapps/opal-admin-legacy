@@ -2376,7 +2376,13 @@
       "ERROR_ALERT": "An error occurred while getting the list of alerts."
     },
     "DELETE": {
-
+      "TITLE": "Delete alert",
+      "DELETE": "Delete",
+      "CANCEL": "Cancel",
+      "WARNING": "WARNING!",
+      "WARNING_TEXT": "Are you sure you want to delete the following alert? This action cannot be undone!",
+      "DELETED": "The alert has being successfully deleted.",
+      "ERROR": "An error occurred while deleting the alert."
     },
     "ADD": {
       "TITLE": "Add a new alert",

@@ -6,7 +6,6 @@ controller('alert.delete', function ($scope, $filter, $uibModalInstance, Session
 	$scope.deleteAlert = function () {
 		$scope.toDelete = {};
 		$scope.toDelete.alertId = $scope.alertToDelete.ID;
-		$scope.toDelete.OAUserId = Session.retrieveObject('user').id;
 
 		$.ajax({
 			type: "POST",
