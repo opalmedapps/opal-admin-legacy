@@ -2407,7 +2407,7 @@
       "INCOMPLETE": "Incomplet",
       "COMPLETE": "Complet",
       "SUBJECT": "Sujet",
-      "BODY": "Corps du message",
+      "BODY": "Corps",
       "BACK": "Retour",
       "SUMMARY": "Sommaire",
       "TRIGGERS": "Déclencheurs",
@@ -2427,7 +2427,23 @@
       "ERROR_ADD": "Une erreur s'est produite lors de la création de l'alerte."
     },
     "EDIT": {
-
+      "TITLE": "Modifier l'alerte",
+      "SAVE": "Enregistrer",
+      "CANCEL": "Annuler",
+      "MESSAGE": "Message",
+      "SUBJECT": "Sujet",
+      "BODY": "Corps",
+      "TRIGGERS": "Déclencheurs",
+      "TRIGGERS_LIST": "Liste des déclencheurs",
+      "CONTACTS": "Contacts",
+      "ADD_PHONE": "Ajouter un numéro de téléphone",
+      "PHONE": "Numéros de téléphone",
+      "PHONE_EX": "p. ex. 514-555-1234",
+      "ADD_EMAIL": "Ajouter une adresse courriel",
+      "EMAIL": "Adresses courriel",
+      "EMAIL_EX": "p. ex. abc@blabla.ca",
+      "REMOVE": "Supprimer",
+      "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour de l'alerte."
     }
   },
   "ROLE" : {

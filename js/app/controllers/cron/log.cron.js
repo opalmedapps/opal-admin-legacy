@@ -242,7 +242,7 @@ controller('cron.log', function ($scope, $filter, $uibModalInstance, cronCollect
 				enableColumnResizing: true,
 			};
 		}
-	}).catch(function(response) {
+	}).catch(function(err) {
 		ErrorHandler.onError(err, $filter('translate')('RON.DETAILS.ERROR_CRON_LOGS'));
 		$uibModalInstance.dismiss('cancel');
 	});

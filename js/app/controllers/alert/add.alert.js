@@ -11,7 +11,6 @@ angular.module('opalAdmin.controllers.alert.add', ['ngAnimate', 'ui.bootstrap'])
 		const phoneNum = RegExp(/^\(?(\d{3})\)?[ .-]?(\d{3})[ .-]?(\d{4})$/);
 		const emailValid = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-
 		// Function to go to previous page
 		$scope.goBack = function () {
 			window.history.back();
@@ -206,8 +205,6 @@ angular.module('opalAdmin.controllers.alert.add', ['ngAnimate', 'ui.bootstrap'])
 
 		// Function to submit the new diagnosis translation
 		$scope.submitAlert = function () {
-			console.log($scope.toSubmit);
-
 			$.ajax({
 				type: 'POST',
 				url: 'alert/insert/alert',
