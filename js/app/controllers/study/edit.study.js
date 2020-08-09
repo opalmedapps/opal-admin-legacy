@@ -118,7 +118,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 		}
 
 		$scope.oldData = JSON.parse(JSON.stringify($scope.toSubmit));
-	}).catch(function(response) {
+	}).catch(function(err) {
 		ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
 	}).finally(function() {
 		processingModal.close(); // hide modal

@@ -1,21 +1,20 @@
 angular.module('opalAdmin.controllers.alert.edit', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
 controller('alert.edit', function ($scope, $filter, $uibModal, $uibModalInstance, $locale, alertCollectionService, Session, ErrorHandler) {
-	$scope.toSubmit = {
-		OAUserId: Session.retrieveObject('user').id,
-		ID: "",
-		details: {
-			code: "",
-			title: "",
-		},
-		investigator: {
-			name: ""
-		},
-		dates: {
-			start_date: "",
-			end_date: "",
-		}
+	const phoneNum = RegExp(/^\(?(\d{3})\)?[ .-]?(\d{3})[ .-]?(\d{4})$/);
+	const emailValid = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
+	$scope.toSubmit = {
+		ID: "",
+		message: {
+			subject: "",
+			body: "",
+		},
+		trigger: "",
+		contact: {
+			phone: [],
+			email: [],
+		}
 	};
 
 	$scope.oldData = {};
@@ -23,62 +22,30 @@ controller('alert.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	$scope.formReady = false;
 
 	$scope.validator = {
-		details: {
+		message: {
 			completed: true,
 			mandatory: true,
 			valid: true,
 		},
-		investigator: {
+		trigger: {
 			completed: true,
 			mandatory: true,
 			valid: true,
 		},
-		dates: {
-			completed: false,
-			mandatory: false,
+		contact: {
+			phone: {
+				completed: true,
+				valid: true,
+			},
+			email: {
+				completed: true,
+				valid: true,
+			},
+			completed: true,
+			mandatory: true,
 			valid: true,
 		},
 	};
-
-	// Date format for start and end frequency dates
-	$scope.format = 'yyyy-MM-dd';
-	$scope.dateOptionsStart = {
-		formatYear: "'yy'",
-		startingDay: 0,
-		minDate: new Date(),
-		maxDate: null
-	};
-	$scope.dateOptionsEnd = {
-		formatYear: "'yy'",
-		startingDay: 0,
-		minDate: new Date(),
-		maxDate: null
-	};
-
-	$locale["DATETIME_FORMATS"]["SHORTDAY"] = [
-		$filter('translate')('DATEPICKER.SUNDAY_S'),
-		$filter('translate')('DATEPICKER.MONDAY_S'),
-		$filter('translate')('DATEPICKER.TUESDAY_S'),
-		$filter('translate')('DATEPICKER.WEDNESDAY_S'),
-		$filter('translate')('DATEPICKER.THURSDAY_S'),
-		$filter('translate')('DATEPICKER.FRIDAY_S'),
-		$filter('translate')('DATEPICKER.SATURDAY_S')
-	];
-
-	$locale["DATETIME_FORMATS"]["MONTH"] = [
-		$filter('translate')('DATEPICKER.JANUARY'),
-		$filter('translate')('DATEPICKER.FEBRUARY'),
-		$filter('translate')('DATEPICKER.MARCH'),
-		$filter('translate')('DATEPICKER.APRIL'),
-		$filter('translate')('DATEPICKER.MAY'),
-		$filter('translate')('DATEPICKER.JUNE'),
-		$filter('translate')('DATEPICKER.JULY'),
-		$filter('translate')('DATEPICKER.AUGUST'),
-		$filter('translate')('DATEPICKER.SEPTEMBER'),
-		$filter('translate')('DATEPICKER.OCTOBER'),
-		$filter('translate')('DATEPICKER.NOVEMBER'),
-		$filter('translate')('DATEPICKER.DECEMBER')
-	];
 
 	$scope.language = Session.retrieveObject('user').language;
 
@@ -99,58 +66,55 @@ controller('alert.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 	alertCollectionService.getAlertDetails($scope.currentAlert.ID).then(function (response) {
 		var dateArray, year, month, date;
 		$scope.toSubmit.ID = response.data.ID;
-		$scope.toSubmit.details.code = response.data.code;
-		$scope.toSubmit.details.title = response.data.title;
-		$scope.toSubmit.investigator.name = response.data.investigator;
-		if(response.data.startDate !== "" && response.data.startDate !== null) {
-			dateArray = response.data.startDate.split("-");
-			year = dateArray[0];
-			month = parseInt(dateArray[1], 10) - 1;
-			date = dateArray[2];
-			$scope.toSubmit.dates.start_date = new Date(year, month, date);
+		$scope.toSubmit.message.subject = response.data.subject;
+		$scope.toSubmit.message.body = response.data.body;
+		$scope.toSubmit.trigger = response.data.trigger;
+		var contact = JSON.parse(response.data.contact);
+		if(contact["phone"]) {
+			angular.forEach(contact["phone"], function(phone) {
+				$scope.toSubmit.contact.phone.push({"num":formatPhoneNumber(phone)});
+			});
 		}
-		if(response.data.endDate !== "" && response.data.endDate !== null) {
-			dateArray = response.data.endDate.split("-");
-			year = dateArray[0];
-			month = parseInt(dateArray[1], 10) - 1;
-			date = dateArray[2];
-			$scope.toSubmit.dates.end_date = new Date(year, month, date);
+		if(contact["email"]) {
+			angular.forEach(contact["email"], function(email) {
+				$scope.toSubmit.contact.email.push({"adr":email});
+			});
 		}
-
 		$scope.oldData = JSON.parse(JSON.stringify($scope.toSubmit));
-	}).catch(function(response) {
+	}).catch(function(err) {
 		ErrorHandler.onError(err, $filter('translate')('ALERT.EDIT.ERROR_DETAILS'));
 	}).finally(function() {
 		processingModal.close(); // hide modal
 		processingModal = null; // remove reference
 	});
 
-	$scope.popupStart = {};
-	$scope.popupEnd = {};
-	$scope.openStart = function ($event) {
-		$event.preventDefault();
-		$event.stopPropagation();
-		$scope.popupStart['opened'] = true;
-		$scope.popupEnd['opened'] = false;
-	};
-	$scope.openEnd = function ($event) {
-		$event.preventDefault();
-		$event.stopPropagation();
-		$scope.popupStart['opened'] = false;
-		$scope.popupEnd['opened'] = true;
+	$scope.messageUpdate = function () {
+		$scope.validator.message.completed = ($scope.toSubmit.message.subject !== "" && $scope.toSubmit.message.body !== "");
 	};
 
-	$scope.detailsUpdate = function () {
-		$scope.validator.details.completed = ($scope.toSubmit.details.code !== "" && $scope.toSubmit.details.title !== "");
-	};
-
-	$scope.nameUpdate = function () {
-		$scope.validator.investigator.completed = ($scope.toSubmit.investigator.name !== "");
+	$scope.triggerUpdate = function () {
+		$scope.validator.trigger.completed = ($scope.toSubmit.trigger !== "");
 	};
 
 	$scope.$watch('toSubmit', function() {
 		$scope.changesDetected = JSON.stringify($scope.toSubmit) !== JSON.stringify($scope.oldData);
 	}, true);
+
+	$scope.addPhone = function () {
+		$scope.toSubmit.contact.phone.push({num: ""});
+	};
+
+	$scope.removePhone = function (order) {
+		$scope.toSubmit.contact.phone.splice(order, 1);
+	};
+
+	$scope.addEmail = function () {
+		$scope.toSubmit.contact.email.push({adr: ""});
+	};
+
+	$scope.removeEmail = function (order) {
+		$scope.toSubmit.contact.email.splice(order, 1);
+	};
 
 	$scope.$watch('validator', function() {
 		var totalsteps = 0;
@@ -177,29 +141,41 @@ controller('alert.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 		$scope.formReady = (completedSteps >= totalsteps) && (nonMandatoryCompleted >= nonMandatoryTotal);
 	}, true);
 
-	// Watch to restrict the end calendar to not choose an earlier date than the start date
-	$scope.$watch('toSubmit.dates.start_date', function(startDate){
-		if (startDate !== undefined && startDate !== "")
-			$scope.dateOptionsEnd.minDate = startDate;
-		else
-			$scope.dateOptionsEnd.minDate = null;
-	});
+	$scope.$watch('toSubmit.contact.phone', function () {
+		var isPhone = false;
+		$scope.validator.contact.phone.valid = true;
+		if($scope.toSubmit.contact.phone.length > 0) {
+			isPhone = true;
+			var anyBadPhone = false;
+			angular.forEach($scope.toSubmit.contact.phone, function(phone) {
+				if(!phoneNum.test(phone["num"]))
+					anyBadPhone = true;
+			});
+			$scope.validator.contact.phone.valid = !anyBadPhone;
+		}
+		$scope.validator.contact.phone.completed = ($scope.validator.contact.phone.valid && isPhone);
+		$scope.validator.contact.completed = ($scope.toSubmit.contact.phone.length <= 0 && $scope.toSubmit.contact.email.length <= 0) ? false : (($scope.toSubmit.contact.email.length > 0 ? $scope.validator.contact.email.valid : true) && ($scope.toSubmit.contact.phone.length > 0 ? $scope.validator.contact.phone.valid : true));
+	}, true);
 
-	// Watch to restrict the start calendar to not choose a start after the end date
-	$scope.$watch('toSubmit.dates.end_date', function(endDate){
-		if (endDate !== undefined && endDate !== "")
-			$scope.dateOptionsStart.maxDate = endDate;
-		else
-			$scope.dateOptionsStart.maxDate = null;
-	});
+	$scope.$watch('toSubmit.contact.email', function () {
+		$scope.validator.contact.email.valid = true;
+		var isEmail = false;
+		if($scope.toSubmit.contact.email.length > 0) {
+			isEmail = true;
+			var anyBadEmail = false;
+			angular.forEach($scope.toSubmit.contact.email, function(email) {
+				if(!emailValid.test(email["adr"]))
+					anyBadEmail = true;
+			});
+			$scope.validator.contact.email.valid = !anyBadEmail;
+		}
+		$scope.validator.contact.email.completed = ($scope.validator.contact.email.valid && isEmail);
+		$scope.validator.contact.completed = ($scope.toSubmit.contact.phone.length <= 0 && $scope.toSubmit.contact.email.length <= 0) ? false : (($scope.toSubmit.contact.email.length > 0 ? $scope.validator.contact.email.valid : true) && ($scope.toSubmit.contact.phone.length > 0 ? $scope.validator.contact.phone.valid : true));
+	}, true);
 
 	// Submit changes
-	$scope.updateCustomCode = function() {
+	$scope.updateAlert = function() {
 		if($scope.formReady && $scope.changesDetected) {
-			if ($scope.toSubmit.dates.start_date)
-				$scope.toSubmit.dates.start_date = moment($scope.toSubmit.dates.start_date).format('X');
-			if ($scope.toSubmit.dates.end_date)
-				$scope.toSubmit.dates.end_date = moment($scope.toSubmit.dates.end_date).format('X');
 			$.ajax({
 				type: "POST",
 				url: "alert/update/alert",
@@ -214,6 +190,15 @@ controller('alert.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 			});
 		}
 	};
+
+	function formatPhoneNumber(phoneNumberString) {
+		var cleaned = ('' + phoneNumberString).replace(/\D/g, '')
+		var match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/)
+		if (match) {
+			return match[1] + '-' + match[2] + '-' + match[3];
+		}
+		return null;
+	}
 
 	// Function to close modal dialog
 	$scope.cancel = function () {

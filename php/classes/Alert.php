@@ -46,7 +46,10 @@ class Alert extends Module {
      * */
     public function getAlertDetails($alertId) {
         $this->checkReadAccess();
-        return $this->opalDB->getAlertDetails($alertId);
+        $result = $this->opalDB->getAlertDetails($alertId);
+        if(count($result) != 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid Alert ID.");
+        return $result[0];
     }
 
     /*
@@ -134,10 +137,12 @@ class Alert extends Module {
      * */
     public function updateAlert($post) {
         $this->checkWriteAccess();
-        $newAlert = $this->_validateAlert($post);
+        $updatedAlert = $this->_validateAlert($post);
+        $post["ID"] = trim(strip_tags($post["ID"]));
         if($post["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing alert ID.");
-        return array();
+        $updatedAlert["ID"] = $post["ID"];
+        return $this->opalDB->updateAlert($updatedAlert);
     }
 
     /*

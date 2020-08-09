@@ -1658,7 +1658,7 @@ class DatabaseOpal extends DatabaseAccess {
      * @return  alerts found (array)
      * */
     function updateAlertActivationFlag($id, $active) {
-        return $this->_updateRecordIntoTable(SQL_OPAL_UPDATE_ALERT_ACTIVATION_FLAG, array(
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_ALERT_ACTIVATION_FLAG, array(
             "active"=>$active,
             "updatedBy"=>$this->getOAUserId(),
             "ID"=>$id
@@ -1677,9 +1677,24 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_insertRecordIntoTable(OPAL_ALERT_TABLE, $toSubmit);
     }
 
+    /*
+     * Get the details of a specific alert.
+     * @params  $alertId : int - ID of the alert to get the details
+     * @return  array - details of the alert
+     * */
     function getAlertDetails($alertId) {
-        return $this->_fetchAll(SQL_OPAL_GET_ALERT_DETAILS, array(
+        return $this->_fetchAll(OPAL_GET_ALERT_DETAILS, array(
             array("parameter"=>":ID","variable"=>$alertId,"data_type"=>PDO::PARAM_INT),
         ));
+    }
+
+    /*
+     * Update a specific alert
+     * @params  $toSubmit : array - contains the details of the alert to update
+     * @return  int : number of records updated
+     * */
+    function updateAlert($updatedEntries) {
+        $updatedEntries["updatedBy"]=$this->getUsername();
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_ALERT, $updatedEntries);
     }
 }

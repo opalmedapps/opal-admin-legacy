@@ -2411,7 +2411,23 @@
       "ERROR_ADD": "An error occurred while creating the alert."
     },
     "EDIT": {
-
+      "TITLE": "Modify the alert",
+      "SAVE": "Save",
+      "CANCEL": "Cancel",
+      "MESSAGE": "Message",
+      "SUBJECT": "Subject",
+      "BODY": "Body",
+      "TRIGGERS": "Triggers",
+      "TRIGGERS_LIST": "List of triggers",
+      "CONTACTS": "Contacts",
+      "ADD_PHONE": "Add a phone number",
+      "PHONE": "Phone numbers",
+      "PHONE_EX": "E.g. 514-555-1234",
+      "ADD_EMAIL": "Add an email address",
+      "EMAIL": "Email Addresses",
+      "EMAIL_EX": "E.g. abc@blabla.ca",
+      "REMOVE": "Remove",
+      "ERROR_UPDATE": "An error occurred while updating the alert."
     }
   },
   "ROLE" : {

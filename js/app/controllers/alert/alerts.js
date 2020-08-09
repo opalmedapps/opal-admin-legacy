@@ -6,10 +6,6 @@ angular.module('opalAdmin.controllers.alert', ['ngAnimate', 'ngSanitize', 'ui.bo
 		$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.alert]) & (1 << 1)) !== 0);
 		$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.alert]) & (1 << 2)) !== 0);
 
-		console.log($scope.readAccess);
-		console.log($scope.writeAccess);
-		console.log($scope.deleteAccess);
-
 		// get current user id
 		var user = Session.retrieveObject('user');1
 		var OAUserId = user.id;
