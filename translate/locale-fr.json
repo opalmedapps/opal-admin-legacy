@@ -2393,6 +2393,13 @@
       "ERROR_ALERT": "Une erreur s'est produite de l'obtention de la liste des alertes."
     },
     "DELETE": {
+      "TITLE": "Supprimer l'alerte",
+      "DELETE": "Supprimer",
+      "CANCEL": "Annuler",
+      "WARNING": "ATTENTION!",
+      "WARNING_TEXT": "Voulez-vous vraiment supprimer l'alerte ci-dessous? Cette action est irreversible!",
+      "DELETED": "L'alerte a été supprimée avec succès.",
+      "ERROR": "Une erreur s'est produite lors de la suppression de l'alerte."
     },
     "ADD": {
       "TITLE": "Création d'une alerte",

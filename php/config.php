@@ -74,6 +74,15 @@ define("MODULE_ROLE", 16);
 define("MODULE_ALERT", 17);
 define("LOCAL_SOURCE_ONLY", -1);
 
+define("DELETED_RECORD", 1);
+define("NON_DELETED_RECORD", 0);
+define("NON_FINAL_RECORD", 0);
+define("FINAL_RECORD", 1);
+define("PRIVATE_RECORD", 1);
+define("PUBLIC_RECORD", 0);
+define("ACTIVE_RECORD", 1);
+define("INACTIVE_RECORD", 0);
+
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."opal-sql.php");
