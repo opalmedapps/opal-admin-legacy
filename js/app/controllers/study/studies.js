@@ -1,6 +1,10 @@
 angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'textAngular'])
 
-	.controller('study', function ($scope, $state, $filter, $uibModal, studyCollectionService, Session, uiGridConstants) {
+	.controller('study', function ($scope, $state, $filter, $uibModal, studyCollectionService, Session, uiGridConstants, ErrorHandler, MODULE) {
+		$scope.navMenu = Session.retrieveObject('menu');
+		$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.study]) & (1 << 0)) !== 0);
+		$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.study]) & (1 << 1)) !== 0);
+		$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.study]) & (1 << 2)) !== 0);
 
 		// get current user id
 		var user = Session.retrieveObject('user');1
@@ -57,18 +61,15 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 			return renderableRows;
 		};
 
-		// Function to filter questionnaires
-		$scope.filterQuestionnaire = function (filterValue) {
-			$scope.filterValue = filterValue;
-			$scope.gridApi.grid.refresh();
+		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">';
 
-		};
-
-		// Table
-		// Templates
-		var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-			'<strong><a href="" ng-click="grid.appScope.editStudy(row.entity)"<i title="'+$filter('translate')('STUDY.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong>' +
-			'- <strong><a href="" ng-click="grid.appScope.deleteStudy(row.entity)"><i title="'+$filter('translate')('STUDY.LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
+		if($scope.writeAccess)
+			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.editStudy(row.entity)"<i title="'+$filter('translate')('STUDY.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong>';
+		else
+			cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.editStudy(row.entity)"<i title="'+$filter('translate')('STUDY.LIST.VIEW')+'" class="fa fa-eye" aria-hidden="true"></i></a></strong>';
+		if($scope.deleteAccess)
+			cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.deleteStudy(row.entity)"><i title="'+$filter('translate')('STUDY.LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong>';
+		cellTemplateOperations += '</div>';
 		var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 			'ng-click="grid.appScope.editStudy(row.entity)">' +
 			'<strong><a href="">{{row.entity.title}}</a></strong></div>';
@@ -104,7 +105,7 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 			studyCollectionService.getStudies(OAUserId).then(function (response) {
 				$scope.studiesList = response.data;
 			}).catch(function(err) {
-				alert($filter('translate')('STUDY.LIST.ERROR_PUBLICATION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+				ErrorHandler.onError(err, $filter('translate')('STUDY.LIST.ERROR_PUBLICATION'));
 			});
 		}
 
@@ -112,7 +113,7 @@ angular.module('opalAdmin.controllers.study', ['ngAnimate', 'ngSanitize', 'ui.bo
 		$scope.editStudy = function (study) {
 			$scope.currentStudy = study;
 			var modalInstance = $uibModal.open({ // open modal
-				templateUrl: 'templates/study/edit.study.html',
+				templateUrl: ($scope.writeAccess ? 'templates/study/edit.study.html' : 'templates/study/view.study.html'),
 				controller: 'study.edit',
 				scope: $scope,
 				windowClass: 'customModal',

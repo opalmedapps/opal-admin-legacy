@@ -21,6 +21,7 @@ define("NON_FINAL_RECORD", 0);
 define("FINAL_RECORD", 1);
 define("PRIVATE_RECORD", 1);
 define("PUBLIC_RECORD", 0);
+define("ACTIVE_RECORD", 1);
 
 //Definition of all questionnaires table from the questionnaire DB
 define("ANSWER_CHECKBOX_TABLE","answerCheckbox");

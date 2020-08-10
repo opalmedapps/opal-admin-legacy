@@ -2,14 +2,10 @@
 /**
  * User class to validate its identity and access levels
  */
-class User extends OpalProject {
+class User extends Module {
 
-    /*
-     * Constructor. If no user Id is given, give guest right so the login can be done. Call the parent constructor
-     * */
-    public function __construct($OAUserId = false) {
-        $guestAccess = !$OAUserId;
-        parent::__construct($OAUserId, false, $guestAccess);
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_USER, $guestStatus);
     }
 
     /*
@@ -20,7 +16,7 @@ class User extends OpalProject {
      * */
     protected function _validateUserAuthentication($result) {
         if(count($result) < 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Access denied");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Access denied");
         else if(count($result) > 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Somethings's wrong. There is too many entries!");
         $result = $result[0];
@@ -59,7 +55,7 @@ class User extends OpalProject {
         curl_close($ch);
 
         if(!$requestResult["authenticate"])
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Access denied");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Access denied");
 
         return $result;
     }
@@ -83,6 +79,7 @@ class User extends OpalProject {
      * @return  $result (array) basic user informations
      * */
     public function userLogin($post) {
+        $userAccess = array();
         $post = HelpSetup::arraySanitization($post);
         $cypher = $post["cypher"];
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
@@ -91,31 +88,79 @@ class User extends OpalProject {
         $password = $data["password"];
 
         if($username == "" || $password == "" || $cypher == "")
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing login info.");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
 
         if(AD_LOGIN_ACTIVE)
             $result = $this->_userLoginActiveDirectory($username, $password);
         else
             $result = $this->_userLoginLegacy($username, $password);
 
-        $this->_connectAsMain($result["id"]);
-        $result["sessionid"] = HelpSetup::makeSessionId();
-        $this->logActivity($result["id"], $result["sessionid"], 'Login');
+        $_SESSION["ID"] = $result["id"];
+        $_SESSION["username"] = $result["username"];
+        $_SESSION["language"] = $result["language"];
+        $_SESSION["role"] = $result["role"];
+        $_SESSION['sessionId'] = HelpSetup::makeSessionId();
+        $_SESSION['lastActivity'] = time();
+        $_SESSION['created'] = time();
 
-        return $result;
+        $this->_connectAsMain();
+        $tempAccess = $this->opalDB->getUserAccess($result["role"]);
+        if(count($tempAccess) <= 0)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "No access found. Please contact your administrator.");
+        foreach($tempAccess as $access) {
+            if(!HelpSetup::validateBitOperation($access["operation"],$access["access"]))
+                HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access violation role-module. Please contact your administrator.");
+            $userAccess[$access["ID"]] = array("ID"=>$access["ID"], "access"=>$access["access"]);
+        }
+
+        $newMenu = array();
+        $subMenu = array();
+        $menuDB = $this->opalDB->getCategoryNavMenu();
+
+        /*
+         * Built the nav menus the user can see based on its role
+         * */
+        foreach ($menuDB as $category) {
+            $menuList = $this->opalDB->getNavMenu($category["ID"]);
+            if(count($menuList) > 0) {
+                $temp = $category;
+                $temp["menu"] = array();
+                foreach($menuList as $menu) {
+                    if(intval($menu["subModuleMenu"]) && $menu["subModule"] != "") {
+                        $subMenu[$menu["ID"]] = json_decode(str_replace("%%REGISTRATION_URL%%", ADMIN_REGISTRATION_URL, $menu["subModule"]));
+                    }
+                    if(((intval($menu["operation"]) >> 0) & 1) && ((intval($userAccess[$menu["ID"]]["access"]) >> 0) & 1)) {
+                        array_push($temp["menu"], array("ID"=>$menu["ID"], "operation"=>$menu["operation"], "name_EN"=>$menu["name_EN"], "name_FR"=>$menu["name_FR"], "iconClass"=>$menu["iconClass"], "url"=>$menu["url"]));
+                    }
+                }
+                array_push($newMenu, $temp);
+            }
+        }
+
+        $_SESSION["userAccess"] = $userAccess;
+        $_SESSION["navMenu"] = $newMenu;
+        $_SESSION["subMenu"] = $subMenu;
+        $result["sessionid"] = $_SESSION['sessionId'];
+
+        $toReturn["user"] = $result;
+        $toReturn["access"] = $_SESSION["userAccess"];
+        $toReturn["menu"] = HelpSetup::prepareNavMenu($_SESSION["navMenu"], $result["language"]);
+        $toReturn["subMenu"] = $_SESSION["subMenu"];
+        $this->_logActivity($result["id"], $_SESSION['sessionId'], 'Login');
+
+        return $toReturn;
     }
 
     /*
      * Logs the user out by logging it in the logActivity.
-     * @params  $post (array) info of the user
+     * @params  void
      * @return  answer from the log activity
      * */
-    public function userLogout($post) {
-        $post = HelpSetup::arraySanitization($post);
-        if($post["OAUserId"] == "" || $post["sessionId"] == "")
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing logout info.");
-
-        return $this->logActivity($post["OAUserId"], $post["sessionId"], 'Logout');
+    public function userLogout() {
+        $result = $this->_logActivity($_SESSION["ID"], $_SESSION["sessionId"], 'Logout');
+        session_unset();     // unset $_SESSION variable for the run-time
+        session_destroy();   // destroy session data in storage
+        return $result;
     }
 
     /*
@@ -124,7 +169,7 @@ class User extends OpalProject {
      *          $sessionId (string) session ID of the user
      *          $activity (string) type of activity to log in (Login or Logout)
      * */
-    public function logActivity($userId, $sessionId, $activity) {
+    protected function _logActivity($userId, $sessionId, $activity) {
         return $this->opalDB->insertUserActivity(array("Activity"=>$activity, "OAUserSerNum"=>$userId, "SessionId"=>$sessionId));
     }
 
@@ -159,6 +204,7 @@ class User extends OpalProject {
      * @return  number of updated record
      * */
     public function updatePassword($post) {
+        $this->checkWriteAccess();
         $post = HelpSetup::arraySanitization($post);
         $cypher = intval($post["cypher"]);
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
@@ -195,13 +241,17 @@ class User extends OpalProject {
      * @returns number of records modified
      * */
     public function updateLanguage($post) {
+        $this->checkWriteAccess();
         $post = HelpSetup::arraySanitization($post);
         $post["language"] = strtoupper($post["language"]);
 
         if($post["language"] != "EN" && $post["language"] != "FR")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid language");
 
-        return $this->opalDB->updateUserLanguage($this->opalDB->getOAUserId(), $post["language"]);
+        $this->opalDB->updateUserLanguage($this->opalDB->getOAUserId(), $post["language"]);
+
+        $result = HelpSetup::prepareNavMenu($_SESSION["navMenu"], $post["language"]);
+        return $result;
     }
 
     /*
@@ -211,6 +261,7 @@ class User extends OpalProject {
      * @return  true (boolean) means the update was successful.
      * */
     public function updateUser($post) {
+        $this->checkWriteAccess();
         $post = HelpSetup::arraySanitization($post);
         $cypher = intval($post["cypher"]);
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
@@ -230,17 +281,14 @@ class User extends OpalProject {
             }
         }
 
-        $newRole = $this->opalDB->geRoleDetails($data["roleId"]);
+        $newRole = $this->opalDB->getRoleDetails($data["roleId"]);
         if(!is_array($newRole))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid role.");
 
-        if($data["roleId"] != $userDetails["RoleSerNum"]) {
-            if($userDetails["serial"] == $this->opalDB->getOAUserId())
-                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "An user cannot change its own role.");
-            $this->opalDB->updateUserRole($data["id"], $data["roleId"]);
-        }
+        if($data["roleId"] != $userDetails["oaRoleId"] && $userDetails["serial"] == $this->opalDB->getOAUserId())
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "An user cannot change its own role.");
 
-        $this->opalDB->updateUserInfo($userDetails["serial"], $data["language"]);
+        $this->opalDB->updateUserInfo($userDetails["serial"], $data["language"], $data["roleId"]);
 
         return true;
     }
@@ -253,10 +301,11 @@ class User extends OpalProject {
      * @returns void
      * */
     public function insertUser($post) {
+        $this->checkWriteAccess();
         $post = HelpSetup::arraySanitization($post);
         $cypher = intval($post["cypher"]);
         if($cypher == "")
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data to create user.");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing cypher to create user.");
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
         $data = HelpSetup::arraySanitization($data);
 
@@ -272,11 +321,11 @@ class User extends OpalProject {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Wrong language.");
 
         if(!AD_LOGIN_ACTIVE)
-            $userId = $this->_insertUserLegacy($username, $password, $confirmPassword, $language);
+            $userId = $this->_insertUserLegacy($username, $password, $confirmPassword, $language, $roleId);
         else
-            $userId = $this->_insertUserAD($username, $language);
+            $userId = $this->_insertUserAD($username, $language, $roleId);
 
-        $role = $this->opalDB->geRoleDetails($roleId);
+        $role = $this->opalDB->getRoleDetails($roleId);
         if(!is_array($role))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid role.");
         return $this->opalDB->insertUserRole($userId, $roleId);
@@ -290,7 +339,7 @@ class User extends OpalProject {
      *          $language (string) language of the user (EN, FR)
      * @return  userId (int) ID of the new user created
      * */
-    protected function _insertUserLegacy($username, $password, $confirmPassword, $language) {
+    protected function _insertUserLegacy($username, $password, $confirmPassword, $language, $roleId) {
         if($password == "" || $confirmPassword == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing data to create user.");
 
@@ -298,7 +347,7 @@ class User extends OpalProject {
         if(count($result) > 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Password validation failed. " . implode(" ", $result));
 
-        return $this->opalDB->insertUser($username, hash("sha256", $password . USER_SALT), $language);
+        return $this->opalDB->insertUser($username, hash("sha256", $password . USER_SALT), $language, $roleId);
     }
 
     /*
@@ -308,8 +357,8 @@ class User extends OpalProject {
      *          $language (string) language of the user (EN, FR)
      * @return  userId (int) ID of the new user created
      * */
-    protected function _insertUserAD($username, $language) {
-        return $this->opalDB->insertUser($username, hash("sha256", HelpSetup::generateRandomString() . USER_SALT), $language);
+    protected function _insertUserAD($username, $language, $roleId) {
+        return $this->opalDB->insertUser($username, hash("sha256", HelpSetup::generateRandomString() . USER_SALT), $language, $roleId);
     }
 
     /*
@@ -318,6 +367,7 @@ class User extends OpalProject {
      * @return  array of users
      * */
     public function getUsers() {
+        $this->checkReadAccess();
         return $this->opalDB->getUsersList();
     }
 
@@ -328,14 +378,16 @@ class User extends OpalProject {
      * @returns $userDetails (array) details of the user
      * */
     public function getUserDetails($post) {
+        $this->checkReadAccess();
         $post = HelpSetup::arraySanitization($post);
         $userDetails = $this->opalDB->getUserDetails($post["userId"]);
-        $userDetails["role"] = array("serial"=>$userDetails["RoleSerNum"], "name"=>$userDetails["RoleName"]);
+        $userDetails["role"] = array("serial"=>$userDetails["oaRoleId"], "name_EN"=>$userDetails["name_EN"], "name_FR"=>$userDetails["name_FR"]);
         $userDetails["logs"] = array();
         $userDetails["new_password"] = null;
         $userDetails["confirm_password"] = null;
-        unset($userDetails["RoleSerNum"]);
-        unset($userDetails["RoleName"]);
+        unset($userDetails["oaRoleId"]);
+        unset($userDetails["name_EN"]);
+        unset($userDetails["name_FR"]);
         return $userDetails;
     }
 
@@ -345,6 +397,7 @@ class User extends OpalProject {
      * @return  boolean if the result is greater than 0 or not
      * */
     public function usernameExists($username) {
+        $this->checkReadAccess();
         $results = $this->opalDB->countUsername($username);
         $results = intval($results["total"]);
         return $results > 0;
@@ -361,6 +414,7 @@ class User extends OpalProject {
      * @return void
      */
     public function deleteUser($userId) {
+        $this->checkDeleteAccess();
         $userId = strip_tags($userId);
         if($userId == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid user.");
@@ -376,7 +430,8 @@ class User extends OpalProject {
      * @return  array with all roles found (not cronjob!)
      * */
     public function getRoles() {
-        return $this->opalDB->getRolesList();
+        $this->checkReadAccess();
+        return $this->opalDB->getRoles();
     }
 
     /*
@@ -385,6 +440,7 @@ class User extends OpalProject {
      * @return  $userLogs (array) all the logs of the specified user, with an extra field to specify if data was found
      * */
     public function getUserActivityLogs($userId) {
+        $this->checkReadAccess();
         $dataFound = false;
         $userLogs = array();
         $userLogs['login'] = $this->opalDB->getUserLoginDetails($userId);

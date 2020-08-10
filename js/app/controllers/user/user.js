@@ -4,7 +4,12 @@ angular.module('opalAdmin.controllers.user', ['ui.bootstrap', 'ui.grid']).
 /******************************************************************************
  * Controller for the users page
  *******************************************************************************/
-controller('user', function ($scope, $uibModal, $filter, $sce, $state, userCollectionService, Encrypt, Session) {
+controller('user', function ($scope, $uibModal, $filter, $state, userCollectionService, Session, ErrorHandler, MODULE) {
+	$scope.navMenu = Session.retrieveObject('menu');
+	$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.user]) & (1 << 0)) !== 0);
+	$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.user]) & (1 << 1)) !== 0);
+	$scope.deleteAccess = ((parseInt(Session.retrieveObject('access')[MODULE.user]) & (1 << 2)) !== 0);
+	
 	var OAUserId = Session.retrieveObject('user').id;
 	// Function to go to register new user
 	$scope.goToAddUser = function () {
@@ -38,10 +43,17 @@ controller('user', function ($scope, $uibModal, $filter, $sce, $state, userColle
 	var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents" ' +
 		'ng-click="grid.appScope.editUser(row.entity)">' +
 		'<strong><a href="">{{row.entity.username}}</a></strong></div>';
-	var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">' +
-		'<strong><a href="" ng-click="grid.appScope.showActivityLog(row.entity)"><i title="'+$filter('translate')('USERS.LIST.LOGS')+'" class="fa fa-area-chart" aria-hidden="true"></i></a></strong> ' +
-		'- <strong><a href="" ng-click="grid.appScope.editUser(row.entity)"><i title="'+$filter('translate')('USERS.LIST.EDIT')+'" class="fa fa-pencil" aria-hidden="true"></i></a></strong> ' +
-		'- <strong><a href="" ng-click="grid.appScope.deleteUser(row.entity)"><i title="'+$filter('translate')('USERS.LIST.DELETE')+'" class="fa fa-trash" aria-hidden="true"></i></a></strong></div>';
+
+	var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">';
+	if($scope.readAccess)
+		cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.showActivityLog(row.entity)"><i title="'+$filter('translate')('USERS.LIST.LOGS')+'" class="fa fa-area-chart"></i></a></strong> ';
+	if($scope.writeAccess)
+		cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.editUser(row.entity)"><i title="'+$filter('translate')('USERS.LIST.EDIT')+'" class="fa fa-pencil"></i></a></strong> ';
+	else
+		cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.editUser(row.entity)"><i title="'+$filter('translate')('USERS.LIST.VIEW')+'" class="fa fa-eye"></i></a></strong> ';
+	if($scope.deleteAccess)
+		cellTemplateOperations += '- <strong><a href="" ng-click="grid.appScope.deleteUser(row.entity)"><i title="'+$filter('translate')('USERS.LIST.DELETE')+'" class="fa fa-trash" ></i></a></strong>';
+	cellTemplateOperations += '</div>';
 
 	// user table search textbox param
 	$scope.filterOptions = function (renderableRows) {
@@ -72,7 +84,7 @@ controller('user', function ($scope, $uibModal, $filter, $sce, $state, userColle
 		data: 'userList',
 		columnDefs: [
 			{ field: 'username', displayName: $filter('translate')('USERS.LIST.USERNAME'), width: '50%', cellTemplate: cellTemplateName, enableColumnMenu: false },
-			{ field: 'role_display', displayName: $filter('translate')('USERS.LIST.ROLE'), width: '35%', enableColumnMenu: false },
+			{ field: 'name_'+ Session.retrieveObject('user').language, displayName: $filter('translate')('USERS.LIST.ROLE'), width: '35%', enableColumnMenu: false },
 			{ name: $filter('translate')('USERS.LIST.OPERATIONS'), cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '15%', enableColumnMenu: false }
 		],
 		enableColumnResizing: true,
@@ -127,11 +139,11 @@ controller('user', function ($scope, $uibModal, $filter, $sce, $state, userColle
 
 		$scope.currentUser = user;
 
-		var templateUrl = 'templates/user/edit.user.html';
+		var templateUrl = ($scope.writeAccess ? 'templates/user/edit.user.html' : 'templates/user/view.user.ad.html');
 		var controller = 'user.edit';
 
 		if ($scope.configs.login.activeDirectory.enabled === 1) {
-			templateUrl = 'templates/user/edit.user.ad.html';
+			templateUrl = ($scope.writeAccess ? 'templates/user/edit.user.ad.html' : 'templates/user/view.user.ad.html');
 			controller = 'user.edit.ad';
 		}
 
@@ -179,8 +191,8 @@ controller('user', function ($scope, $uibModal, $filter, $sce, $state, userColle
 					row.role_display = $filter('translate')('USERS.ADD.NOT_TRANSLATED');
 				}
 			});
-		}).catch(function(response) {
-			alert($filter('translate')('USERS.LIST.ERROR_USERS') + "\r\n" + response.status + " - " + response.data);
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('USERS.LIST.ERROR_USERS'));
 		});
 	}
 });

@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns'])
 
-	.controller('question.edit', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, filterCollectionService, uiGridConstants, Session) {
+	.controller('question.edit', function ($scope, $state, $filter, $uibModal, $uibModalInstance, questionnaireCollectionService, uiGridConstants, Session, ErrorHandler) {
 		// get current user id
 		var user = Session.retrieveObject('user');
 		var OAUserId = user.id;
@@ -128,16 +128,14 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 			$scope.question.isOwner = parseInt($scope.question.isOwner);
 
 			$scope.question.OAUserId = OAUserId;
-
 			$scope.selectedLibrary = response.data.libraries;
 
-			processingModal.close(); // hide modal
-			processingModal = null; // remove reference
 		}).catch(function (err) {
-			alert('Error occurred getting question details.' + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+			ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_GET_QUESTION'));
+			$uibModalInstance.close();
+		}).finally(function () {
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
-			$uibModalInstance.close();
 		});
 
 		// Function to close modal dialog
@@ -196,7 +194,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 						entry.name_display = entry.name_EN;
 				});
 			}).catch(function (err) {
-				alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_GET_LIBRARY') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.data));
+				ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_GET_LIBRARY'));
 				$uibModalInstance.close();
 			});
 		};
@@ -215,7 +213,8 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 						getLibrariesList();
 					},
 					error: function (err) {
-						alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_SET_LIBRARY') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+						ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_SET_LIBRARY'));
+						$uibModalInstance.close();
 					}
 				});
 			}
@@ -237,7 +236,7 @@ angular.module('opalAdmin.controllers.question.edit', ['ngAnimate', 'ngSanitize'
 					$scope.showBanner();
 				},
 				error: function(err) {
-					alert($filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_UPDATE_QUESTION') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTION_EDIT.ERROR_UPDATE_QUESTION'));
 				},
 				complete: function() {
 					$uibModalInstance.close();

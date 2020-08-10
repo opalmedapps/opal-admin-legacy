@@ -1,0 +1,294 @@
+<div id="main">
+    <div id="top">
+        <div class="clearfix">
+            <div class="row">
+                <!-- Left side detail view -->
+                <div class="col-lg-2">
+                    <!-- Logo -->
+                    <div class="side-navbar" ng-controller="navigation">
+                        <div class="row side-logo" ng-click="goToHome()">
+                            <div class="col-md-12">
+                                <div class="logo">
+                                    <img style="margin-top: -20px;" class="animated rotateIn" src="images/opal_logo_transparent_purple.png" height="130" width="130">
+                                </div>
+                                <h1 class="animated fadeIn">opal
+                                    <strong>ADMIN</strong>
+                                    <span style="font-size: 20px;" ng-if="devMode">DEV</span>
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="summary-fix">
+                        <!-- Back button -->
+                        <div class="row side-panel-menu">
+                            <div class="col-xs-12 col-sm-5 col-lg-12">
+                                <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false"
+                                     style="cursor:pointer;" ng-click="goBack()">
+                                    <div class="side-panel-info-sm">
+                                        <div class="panel-content">
+                                            <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                                            <h6 class="side-panel-title" style="display:inline-block;margin:0;font-size:14px;">
+                                                <strong>{{'ROLE.ADD.BACK'|translate}}</strong>
+                                            </h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Summary -->
+                            <div class="side-menu-title col-lg-12">
+                                <div class="horz-line" style="height: 16px; text-align: center">
+									<span style="background-color:#e6edfa; padding: 0 10px;">
+										<h2>{{'ROLE.ADD.SUMMARY'|translate}}</h2>
+									</span>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="progress progress-striped active">
+                                    <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}"
+                                         aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <uib-accordion class="side-navbar">
+                            <!-- SECTION: Names -->
+                            <div uib-accordion-group is-open="leftMenu.name.open" class="panel-container summary-box" is-disabled="!validator.name.completed" ng-if="(toSubmit.name.name_EN || toSubmit.name.name_FR)">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="validator.name.completed" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'ROLE.ADD.NAME'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon glyphicon-chevron-right" ng-class="{'glyphicon-chevron-down': leftMenu.name.open}"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="toSubmit.name.name_EN || toSubmit.name.name_FR" class="description">
+                                    <p style="margin-bottom:0;" ng-show="toSubmit.name.name_EN">
+                                        <b>{{'ROLE.ADD.ENGLISH_ABRV'|translate}}:</b> {{toSubmit.name.name_EN}}
+                                    </p>
+                                    <p style="margin-bottom:0;" ng-show="toSubmit.name.name_FR">
+                                        <b>{{'ROLE.ADD.FRENCH_ABRV'|translate}}:</b> {{toSubmit.name.name_FR}}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- SECTION: Operations -->
+                            <div uib-accordion-group is-open="leftMenu.operations.open" class="panel-container summary-box " ng-class="{fadeIn: validator.operations.completed}" ng-if="validator.operations.completed;" is-disabled="!validator.operations.completed">
+                                <uib-accordion-heading>
+                                    <div class="row" style="align-items: center">
+                                        <div class="col-md-2">
+                                            <span ng-if="validator.operations.completed" style="color:#5cb85c" class="glyphicon glyphicon-ok"></span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <strong>{{'ROLE.ADD.OPERATIONS'|translate}}</strong>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': leftMenu.operations.open, 'glyphicon-chevron-right':!leftMenu.operations.open}" ng-if="validator.operations.completed"></i>
+                                        </div>
+                                    </div>
+                                </uib-accordion-heading>
+                                <div ng-if="leftMenu.operations.open" class="description">
+                                    <div ng-repeat="opModule in toSubmit.operations">
+                                        <p ng-if="opModule.read || opModule.write || opModule.delete"><span class="fa fa-angle-double-right" style="padding-right: 7px;"></span><strong>{{opModule.name_display}} :</strong> <span ng-if="opModule.read">{{'ROLE.ADD.READ_ABVR'|translate}}</span> <span ng-if="opModule.read && opModule.write">/</span> <span ng-if="opModule.write">{{'ROLE.ADD.WRITE_ABVR'|translate}}</span> <span ng-if="(opModule.write && opModule.delete) || (opModule.read && !opModule.write && opModule.delete)">/</span> <span ng-if="opModule.delete">{{'ROLE.ADD.DELETE_ABVR'|translate}}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </uib-accordion>
+                        <!-- Submit button -->
+                        <div class="panel-container" ng-if="formReady">
+                            <a href="" ng-click="submitRole()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}"
+                               ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" style="width: 100%;">
+								<span style="font-size: 20px;">
+									<strong>{{'ROLE.ADD.SUBMIT'|translate}}</strong>
+								</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right side view -->
+                <div class="col-xs-12 col-lg-10 animated fadeInRight">
+                    <div class="row main-title">
+                        <!-- Page title -->
+                        <div class="col-xs-12 col-md-8 title-content">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            <h1>
+                                <strong>{{'ROLE.ADD.TITLE'|translate}}</strong>
+                            </h1>
+                        </div>
+                        <!-- Breadcrumbs -->
+                        <div class="col-md-4 title-breadcrumbs">
+                            <a ui-sref="home">{{'BREADCRUMBS.HOME'|translate}}</a>
+                            <span class="teflon glyphicon glyphicon-menu-right"></span>
+                            <a ui-sref="diagnosis-translation">{{'DIAGNOSIS.LIST.TITLE'|translate}}</a>
+                            <span class="teflon glyphicon glyphicon-menu-right"></span>
+                            <strong>{{'ROLE.ADD.TITLE'|translate}}</strong>
+                        </div>
+                    </div>
+
+                    <div class="row mobile-side-panel-menu">
+                        <div class="back-menu col-xs-12 col-sm-5 col-lg-12">
+                            <div class="panel-container animated" ng-class="{pulse: hoverBack}" ng-mouseenter="hoverBack=true" ng-mouseleave="hoverBack=false" style="cursor:pointer;" ng-click="goBack()">
+                                <div class="side-panel-info-sm">
+                                    <div class="panel-content">
+                                        <span style="font-size: 23px;vertical-align:middle" class="fa fa-arrow-left" aria-hidden="true"></span>
+                                        <h6 class="side-panel-title"><strong>{{'ROLE.ADD.BACK'|translate}}</strong></h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mobile-summary col-xs-12 col-sm-offset-1 col-sm-6">
+                            <div class="summary-title" style="text-align: right; margin-bottom: 5px;">
+                                <span style="padding: 0 10px;">
+                                    <h2>{{'ROLE.ADD.STEP'|translate}} {{completedSteps}} {{'ROLE.ADD.OF'|translate}} {{totalSteps}} {{'ROLE.ADD.COMPLETED'|translate}}</h2>
+                                </span>
+                            </div>
+                            <div class="progress progress-striped active">
+                                <div class="progress-bar" ng-class="{'progress-bar-success': stepProgress == 100}" role="progressbar" aria-valuenow="{{stepProgress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{stepProgress}}%">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mobile-summary col-xs-12 col-sm-offset-2 col-sm-5" ng-if="formReady">
+                            <div class="panel-container">
+                                <a href="" ng-click="submitRole()" class="btn btn-md item-button-success animated" ng-class="{pulse: hoverV}" ng-mouseenter="hoverV=true" ng-mouseleave="hoverV=false" style="width: 100%;">
+                                    <span style="font-size: 20px;"><strong>{{'ROLE.ADD.SUBMIT'|translate}}</strong></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-content">
+                        <!-- SECTION: Name (english and french) -->
+                        <div class="row">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span><h2>{{'ROLE.ADD.NAME'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 5px;">
+                                    <span style="color:#d9534f"><strong>{{'ROLE.ADD.REQUIRED'|translate}}</strong></span>
+                                    {{'ROLE.ADD.NAME_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="panel" ng-class="(toSubmit.name.name_EN) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'ROLE.ADD.ENGLISH'|translate}}</strong>
+                                        <span ng-hide="toSubmit.name.name_EN" style="float:right"><em>{{'ROLE.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="toSubmit.name.name_EN" style="float:right"><em>{{'ROLE.ADD.COMPLETE'|translate}}</em></span>
+                                    </div>
+                                    <div class="panel-body form-horizontal">
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12 col-lg-2">
+                                                {{'ROLE.ADD.NAME'|translate}}
+                                            </label>
+                                            <div class="col-xs-12 col-lg-10">
+                                                <textarea class="form-control" rows="2" ng-model="toSubmit.name.name_EN" ng-change="nameUpdate()"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                                <div class="panel" ng-class="(toSubmit.name.name_FR) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'ROLE.ADD.FRENCH'|translate}}</strong>
+                                        <span ng-hide="toSubmit.name.name_FR" style="float:right"><em>{{'ROLE.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="toSubmit.name.name_FR" style="float:right"><em>{{'ROLE.ADD.COMPLETE'|translate}}</em></span>
+                                    </div>
+                                    <div class="panel-body form-horizontal">
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-12 col-lg-2">
+                                                {{'ROLE.ADD.NAME'|translate}}
+                                            </label>
+                                            <div class="col-xs-12 col-lg-10">
+                                                <textarea class="form-control" rows="2" ng-model="toSubmit.name.name_FR" ng-change="nameUpdate()"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- END SECTION -->
+                        <!-- SECTION: Operations -->
+                        <div class="row fadeIn" ng-if="validator.name.completed">
+                            <div class="col-xs-12 side-menu-title">
+                                <div style="height: 10px; border-bottom: 2px solid rgba(111, 84, 153, 0.8);">
+                                    <span style="background-color:#e6edfa; padding: 0 10px;">
+                                        <span class="fas fa-dot-circle"></span><h2>{{'ROLE.ADD.OPERATIONS'|translate}}</h2>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-xs-12">
+                                <p style="margin-bottom: 5px;">
+                                    <span style="color:#d9534f"><strong>{{'ROLE.ADD.REQUIRED'|translate}}</strong></span>
+                                    {{'ROLE.ADD.OPERATIONS_EXPLANATION'|translate}}
+                                </p>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                                <div class="panel" ng-class="(validator.operations.completed) ? 'panel-success': 'panel-danger'">
+                                    <div class="panel-heading"><strong>{{'ROLE.ADD.OPERATIONS'|translate}}</strong>
+                                        <span ng-hide="validator.operations.completed" style="float:right"><em>{{'ROLE.ADD.INCOMPLETE'|translate}}</em></span>
+                                        <span ng-show="validator.operations.completed" style="float:right"><em>{{'ROLE.ADD.COMPLETE'|translate}}</em></span>
+                                    </div>
+                                    <div class="panel-body form-horizontal">
+                                        <div class="row">
+                                            <div class="col-xs-6">
+                                                <strong>{{'ROLE.ADD.MODULE'|translate}}</strong>
+                                            </div>
+                                            <div class="col-xs-2 text-center">
+                                                <strong>{{'ROLE.ADD.READ'|translate}}</strong>
+                                            </div>
+                                            <div class="col-xs-2 text-center">
+                                                <strong>{{'ROLE.ADD.WRITE'|translate}}</strong>
+                                            </div>
+                                            <div class="col-xs-2 text-center">
+                                                <strong>{{'ROLE.ADD.DELETE'|translate}}</strong>
+                                            </div>
+                                        </div>
+
+                                        <div ng-repeat="opModule in toSubmit.operations" class="row">
+                                            <div ng-if="opModule.canRead || opModule.canWrite || opModule.canDelete">
+                                            <div class="col-xs-6">
+                                                <p>{{opModule.name_display}}</p>
+                                            </div>
+                                            <div class="col-xs-2 text-center">
+                                                <input ng-if="opModule.canRead" ng-disabled="opModule.write || opModule.delete" type="checkbox" ng-model="opModule.read" />
+                                            </div>
+                                            <div class="col-xs-2 text-center">
+                                                <input ng-if="opModule.canWrite" ng-disabled="opModule.delete" type="checkbox" ng-model="opModule.write" />
+                                            </div>
+                                            <div class="col-xs-2 text-center">
+                                                <input ng-if="opModule.canDelete" type="checkbox" ng-model="opModule.delete" />
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- END SECTION -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/ng-template" id="processingModal.htm">
+    <div class="modal-header">
+        <h1>{{'ROLE.ADD.PROCESSING'|translate}}</h1>
+    </div>
+    <div class="modal-body">
+        <div class="progress progress-striped active">
+            <div class="progress-bar" style="width: 100%"></div>
+        </div>
+    </div>
+</script>

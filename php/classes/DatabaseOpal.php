@@ -15,10 +15,18 @@ class DatabaseOpal extends DatabaseAccess {
         parent::__construct($newServer, $newDB, $newPort, $newUserDB, $newPass, $dsn);
         if (!$guestAccess) {
             $newOAUserId = strip_tags($newOAUserId);
-            $userInfo = $this->_getUserInfoFromDB($newOAUserId);
-            $this->OAUserId = $userInfo["OAUserId"];
-            $this->username = $userInfo["username"];
-            $this->userRole = $userInfo["userRole"];
+
+            if($_SESSION["ID"] && $_SESSION["ID"] == $newOAUserId) {
+                $this->OAUserId = $_SESSION["ID"];
+                $this->username = $_SESSION["username"];
+                $this->userRole = $_SESSION["roleId"];
+            }
+            else {
+                $userInfo = $this->_getUserInfoFromDB($newOAUserId);
+                $this->OAUserId = $userInfo["OAUserId"];
+                $this->username = $userInfo["username"];
+                $this->userRole = $userInfo["userRole"];
+            }
         }
     }
 
@@ -33,25 +41,13 @@ class DatabaseOpal extends DatabaseAccess {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
         $result = $this->_fetchAll(SQL_OPAL_SELECT_USER_INFO,
             array(
-                array("parameter"=>":OAUserId","variable"=>$newOAUserId,"data_type"=>PDO::PARAM_INT),
+                array("parameter"=>":OAUserSerNum","variable"=>$newOAUserId,"data_type"=>PDO::PARAM_INT),
             ));
 
         if (!is_array($result) || count($result) != 1) {
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
         }
 
-        $resultRole = $this->_fetchAll(SQL_OPAL_SELECT_USER_ROLE,
-            array(
-                array("parameter"=>":OAUserId","variable"=>$newOAUserId,"data_type"=>PDO::PARAM_INT),
-            ));
-        if(!is_array($resultRole) || count($resultRole) <= 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
-
-        $result = $result[0];
-        $tempRole = array();
-        foreach($resultRole as $role)
-            array_push($tempRole, $role["RoleSerNum"]);
-        $result["userRole"] = $tempRole;
         return $result;
     }
 
@@ -391,30 +387,6 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Get all the triggers of a specific published questionnaire.
-     * @params  Questionnaire serial number (int)
-     * @return  array of details of the published questionnaire itself
-     * */
-    function getPublishedQuestionnaireTriggers($questionnaireId) {
-        return $this->_fetchAll(SQL_OPAL_GET_FILTERS_QUESTIONNAIRE_CONTROL,
-            array(
-                array("parameter"=>":QuestionnaireControlSerNum","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
-            ));
-    }
-
-    /*
-     * Get all the triggers of a specific published questionnaire.
-     * @params  Questionnaire serial number (int)
-     * @return  array of details of the published questionnaire itself
-     * */
-    function getPublishedQuestionnaireFrequencyEvents($questionnaireId) {
-        return $this->_fetchAll(SQL_OPAL_GET_FREQUENCY_EVENTS_QUESTIONNAIRE_CONTROL,
-            array(
-                array("parameter"=>":ControlTableSerNum","variable"=>$questionnaireId,"data_type"=>PDO::PARAM_INT),
-            ));
-    }
-
-    /*
      * Get all the triggers of a specific publication.
      * @params  Questionnaire serial number (int)
      * @return  array of details of the published questionnaire itself
@@ -465,18 +437,6 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":ControlTable","variable"=>$controlTable,"data_type"=>PDO::PARAM_INT),
         );
         $this->_execute(SQL_OPAL_DELETE_FREQUENCY_EVENTS_TABLE, $toDelete);
-    }
-
-    /*
-     * Returns the filters for a specific questionnaire control
-     * @params  questionnaire control ID
-     * @return  array of filters
-     * */
-    function getFilters($questionnaireControlSerNum) {
-        return $this->_fetchAll(SQL_OPAL_GET_FILTERS,
-            array(
-                array("parameter"=>":QuestionnaireControlSerNum","variable"=>$questionnaireControlSerNum,"data_type"=>PDO::PARAM_INT),
-            ));
     }
 
     /*
@@ -613,15 +573,6 @@ class DatabaseOpal extends DatabaseAccess {
         $sql = str_replace("%%MASTER_TABLE%%", $tableToUpdate, OPAL_UPDATE_MASTER_SOURCE);
 
         return $this->_updateRecordIntoTable($sql, $toUpdate);
-    }
-
-    /*
-     * Returns the details of a publication module
-     * @params  $moduleId (int) Id of the module
-     * @return  array of records found
-     * */
-    function getPublicationModuleUserDetails($moduleId){
-        return $this->_fetch(SQL_OPAL_GET_PUBLICATION_MODULES_USER_DETAILS, array(array("parameter"=>":ID","variable"=>$moduleId,"data_type"=>PDO::PARAM_INT)));
     }
 
     /*
@@ -912,7 +863,7 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(SQL_OPAL_VALIDATE_OAUSER_LOGIN, array(
             array("parameter"=>":username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":password","variable"=>$password,"data_type"=>PDO::PARAM_STR),
-       ));
+        ));
     }
 
     /*
@@ -923,7 +874,7 @@ class DatabaseOpal extends DatabaseAccess {
     function authenticateUserAD($username) {
         return $this->_fetchAll(SQL_OPAL_VALIDATE_OAUSER_LOGIN_AD, array(
             array("parameter"=>":username","variable"=>$username,"data_type"=>PDO::PARAM_STR),
-       ));
+        ));
     }
 
     /*
@@ -955,10 +906,11 @@ class DatabaseOpal extends DatabaseAccess {
      *          $language (string)
      * @return  array with the result of the update
      * */
-    function updateUserInfo($userId, $language) {
+    function updateUserInfo($userId, $language, $roleId) {
         return $this->_execute(OPAL_UPDATE_USER_INFO, array(
             array("parameter"=>":OAUserSerNum","variable"=>$userId,"data_type"=>PDO::PARAM_STR),
             array("parameter"=>":Language","variable"=>$language,"data_type"=>PDO::PARAM_STR),
+            array("parameter"=>":oaRoleId","variable"=>$roleId,"data_type"=>PDO::PARAM_STR),
         ));
     }
 
@@ -998,19 +950,6 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Update the role of an user
-     * @params  $userId (int) ID of the user
-     *          $roleId (int) ID of the role
-     * @return  array with the result of the update
-     * */
-    function updateUserRole($userId, $roleId) {
-        return $this->_execute(OPAL_UPDATE_USER_ROLE, array(
-            array("parameter"=>":RoleSerNum","variable"=>$roleId,"data_type"=>PDO::PARAM_INT),
-            array("parameter"=>":OAUserSerNum","variable"=>$userId,"data_type"=>PDO::PARAM_INT),
-        ));
-    }
-
-    /*
      * Get the list of all non deleted users
      * @params  void
      * @return  array with the result of the fetch all
@@ -1037,11 +976,12 @@ class DatabaseOpal extends DatabaseAccess {
      *          $language (string) preferred language
      * @return  array with the result of the insert
      * */
-    function insertUser($username, $password, $language) {
+    function insertUser($username, $password, $language, $roleId) {
         $toInsert = array(
             "Username"=>$username,
             "Password"=>$password,
             "Language"=>$language,
+            "oaRoleId"=>$roleId,
             "DateAdded"=>date("Y-m-d H:i:s"),
         );
         return $this->_insertRecordIntoTable(OPAL_OAUSER_TABLE, $toInsert);
@@ -1270,7 +1210,7 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Update a specific study with user request info and username.
+     * Updates a specific study with user request info and username.
      * @params  $study (array) study to update
      * @return  (int) total record updated (should be one only!)
      * */
@@ -1280,14 +1220,296 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Mark a specified study as deleted.
+     * Marks a specified study as deleted.
      * @param   int : $studyId (ID of the study to mark as deleted)
      * @return  int : number of record deleted or error 500.
      * */
     function markStudyAsDeleted($studyId) {
-        return $this->_updateRecordIntoTable(SQL_OPAL_MARK_STUDY_AS_DELETED, array(
+        return $this->_updateRecordIntoTable(OPAL_MARK_STUDY_AS_DELETED, array(
             "ID"=>$studyId,
             "updatedBy"=>$this->getUsername(),
+        ));
+    }
+
+    /*
+     * Returns the list of roles
+     * @param   void
+     * @return  array : list of module
+     * */
+    function getRoles() {
+        return $this->_fetchAll(OPAL_GET_ROLES, array());
+    }
+
+    /*
+     * Returns the list of active modules with their authorized operations
+     * @params  void
+     * @return  array: list of modules with name (en and fr) and their operations associated
+     * */
+    function getAvailableRolesModules() {
+        return $this->_fetchAll(OPAL_GET_AVAILABLE_ROLES_MODULES, array());
+    }
+
+    /*
+     * Returns the operations for a series of modules requested.
+     * @params  $modulesId : array - IDs of the modules
+     * @return  array - list of operations of modules
+     * */
+    function getModulesOperations($modulesId) {
+        $sql = str_replace("%%MODULESID%%", implode(", ", $modulesId),OPAL_GET_MODULES_OPERATIONS);
+        return $this->_fetchAll($sql, array());
+    }
+
+    /*
+     * Returns the access level for the role module for a specific role. Used to prevent a user
+     * to modify the access to the role module of his own role.
+     * @params  $oaRoleId : int - ID of the role
+     * @return  array - Access of the role specified for the role module.
+     * */
+    function getUserRoleModuleAccess($oaRoleId) {
+        return $this->_fetchAll(OPAL_GET_USER_ROLE_MODULE_ACCESS, array(
+            array("parameter"=>":oaRoleId","variable"=>$oaRoleId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Insert a new role with the username of the creator and the creation date. Returns the ID of the new role.
+     * @params  $toInsert : array - contains french and english name of the role
+     * @return  int - ID of the new role
+     * */
+    function insertRole($toInsert) {
+        $toInsert["createdBy"] = $this->getUsername();
+        $toInsert["creationDate"] = date("Y-m-d H:i:s");
+        $toInsert["updatedBy"] = $this->getUsername();
+        return $this->_insertRecordIntoTable(OPAL_OA_ROLE_TABLE, $toInsert);
+    }
+
+    /*
+     * Insert operations linked for a new role and a series of module.
+     * @params  $toInsert : array - operation for each module for a specific roles
+     * @returns int : ID of the entry
+     * */
+    function insertRoleModule($toInsert) {
+        return $this->_insertMultipleRecordsIntoTable(OPAL_OA_ROLE_MODULE_TABLE, $toInsert);
+    }
+
+    /*
+     * Get the details of a specific role.
+     * @params  $roleId : int - ID of the role
+     * @return  array - details from the role table
+     * */
+    function getRoleDetails($roleId) {
+        return $this->_fetchAll(OPAL_GET_OA_ROLE_DETAILS, array(
+            array("parameter"=>":ID","variable"=>$roleId,"data_type"=>PDO::PARAM_INT)
+        ));
+    }
+
+    /*
+     * Get the operations available from a specific role
+     * @params  $roleId : int - ID of the role
+     * @return  array - list of operations from the role-module table
+     * */
+    function getRoleOperations($roleId) {
+        return $this->_fetchAll(OPAL_GET_OA_ROLE_MODULE, array(
+            array("parameter"=>":oaRoleId","variable"=>$roleId,"data_type"=>PDO::PARAM_INT)
+        ));
+    }
+
+    /*
+     * Update the details of a specific role. Mostly the french and/or english name.
+     * @params  $updatedEntries : array - contains the french and english name of the role to update
+     * @return  int - number of records updated
+     * */
+    function updateRole($updatedEntries) {
+        $updatedEntries["updatedBy"]=$this->getUsername();
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_ROLE, $updatedEntries);
+    }
+
+    /*
+     * Delete any access operation for a specific role excluding a list of module ID
+     * @params  $roleID : int - ID of the role to delete the access
+     *          $idsToBeKept : array - ID of module to be excluded from the deletion
+     * @return  int - number of records deleted
+     * */
+    function deleteOARoleModuleOptions($roleID, $idsToBeKept) {
+        $toDelete = array(
+            array("parameter"=>":oaRoleId","variable"=>$roleID,"data_type"=>PDO::PARAM_INT),
+        );
+        $sql = str_replace("%%MODULEIDS%%", implode(", ", $idsToBeKept), OPAL_DELETE_OA_ROLE_MODULE_OPTIONS);
+        return $this->_execute($sql, $toDelete);
+    }
+
+    /*
+     * Insert a number of new access privilege for a role into oaRoleModule.
+     * @params  $multipleUpdayes : array - data on the new access
+     * @return  int - number of records updated
+     * */
+    function insertOARoleModule($multipleUpdates) {
+        return $this->_insertMultipleRecordsIntoTable(OPAL_OA_ROLE_MODULE_TABLE, $multipleUpdates);
+    }
+
+    /*
+     * Update an operation access in the table oaRoleModule associated to one role and one module.
+     * @params  $toUpdated : array - contain the access level and the ID.
+     * @return  int - number of records updated
+     * */
+    function updateOARoleModule($toUpdate) {
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_ROLE_MODULE, $toUpdate);
+    }
+
+    /*
+     * For the oaRole table to update a specific line with the username. This is to mark down an user update operations
+     * of a role.
+     * @params  $id : int - ID of the role to update
+     * @return  int - number of records updated
+     * */
+    function forceUpdateOaRoleTable($id) {
+        $sqlQuery = str_replace("%%TABLENAME%%", OPAL_OA_ROLE_TABLE, OPAL_FORCE_UPDATE_UPDATEDBY);
+        $updatedEntries = array(
+            "ID"=>$id,
+            "updatedBy"=>$this->getUsername()
+        );
+        return $this->_updateRecordIntoTable($sqlQuery, $updatedEntries);
+    }
+
+    /*
+     * Marks a specified role as deleted.
+     * @param   int : $roleId (ID of the role to mark as deleted)
+     * @return  int : number of record deleted or error 500.
+     * */
+    function markRoleAsDeleted($roleId) {
+        return $this->_updateRecordIntoTable(OPAL_MARK_ROLE_AS_DELETED, array(
+            "ID"=>$roleId,
+            "deletedBy"=>$this->getUsername(),
+            "updatedBy"=>$this->getUsername(),
+        ));
+    }
+
+    /*
+     * Get access level for a specific combo or role/module
+     * */
+    function getUserAccess($roleId) {
+        return $this->_fetchAll(OPAL_GET_USER_ACCESS, array(
+            array("parameter"=>":oaRoleId","variable"=>$roleId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function getEducationalMaterial() {
+        return $this->_fetchAll(OPAL_GET_EDUCATIONAL_MATERIAL, array());
+    }
+
+    function getTocsContent($eduId) {
+        return $this->_fetchAll(OPAL_GET_TOCS_EDU_MATERIAL, array(
+            array("parameter"=>":ParentSerNum","variable"=>$eduId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function getEduMaterialDetails($eduId) {
+        return $this->_fetch(OPAL_GET_EDU_MATERIAL_DETAILS, array(
+            array("parameter"=>":EducationalMaterialControlSerNum","variable"=>$eduId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function getEduMaterialLogs($listIds) {
+        $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_EDU_MATERIAL_MH);
+        return $this->_fetchAll($sql, array());
+    }
+
+    function getTasksLogs($listIds) {
+        $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_TASK_MH);
+        return $this->_fetchAll($sql, array());
+    }
+
+    function getDocumentsLogs($listIds) {
+        $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_DOCUMENT_MH);
+        return $this->_fetchAll($sql, array());
+    }
+
+    function getAppointmentsLogs($listIds) {
+        $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_APPOINTMENT_MH);
+        return $this->_fetchAll($sql, array());
+    }
+
+    function getAliasesLogs($listIds) {
+        $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_ALIAS_MH);
+        return $this->_fetchAll($sql, array());
+    }
+
+    function getEmailsLogs($listIds) {
+        $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_EMAILS_MH);
+        return $this->_fetchAll($sql, array());
+    }
+
+    function getNotificationsLogs($listIds) {
+        $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_NOTIFICATIONS_MH);
+        return $this->_fetchAll($sql, array());
+    }
+
+    function getTestResultsLogs($listIds) {
+        $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_TEST_RESULTS_MH);
+        return $this->_fetchAll($sql, array());
+    }
+
+    function getHospitalMapDetails($hpId) {
+        return $this->_fetch(OPAL_GET_HOSPITAL_MAP_DETAILS, array(
+            array("parameter"=>":HospitalMapSerNum","variable"=>$hpId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function getCronLogAppointments() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_APPOINTMENTS, array());
+    }
+
+    function getCronLogDocuments() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_DOCUMENTS, array());
+    }
+
+    function getCronLogTasks() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_TASKS, array());
+    }
+
+    function getCronLogAnnouncements() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_ANNOUNCEMENTS, array());
+    }
+
+    function getCronLogTTMs() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_TTMS, array());
+    }
+
+    function getCronLogPFP() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_PFP, array());
+    }
+
+    function getCronLogEduMaterials() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_EDU_MATERIALS, array());
+    }
+
+    function getCronLogNotifications() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_NOTIFICATIONS, array());
+    }
+
+    function getCronLogTestResults() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_TEST_RESULTS, array());
+    }
+
+    function getCronLogEmails() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_EMAILS, array());
+    }
+
+    function getCronLogQuestionnaires() {
+        return $this->_fetchAll(OPAL_GET_CRON_LOG_QUESTIONNAIRES, array());
+    }
+
+    function getHospitalMaps() {
+        return $this->_fetchAll(OPAL_GET_HOSPITAL_MAPS, array());
+    }
+
+    function getCategoryNavMenu() {
+        return $this->_fetchAll(OPAL_GET_CATEGORY_MENU, array());
+    }
+
+    function getNavMenu($categoryMenuId) {
+        return $this->_fetchAll(OPAL_GET_NAV_MENU, array(
+            array("parameter"=>":categoryModuleId","variable"=>$categoryMenuId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 }
