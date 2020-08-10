@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.educationalMaterial.edit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.expandable', 'ui.grid.resizeColumns']).
 
-controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModal, $uibModalInstance, $state, educationalMaterialCollectionService, filterCollectionService, uiGridConstants, Session) {
+controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModal, $uibModalInstance, $state, educationalMaterialCollectionService, uiGridConstants, Session, ErrorHandler) {
 
 	// Default Booleans
 	$scope.changesMade = false; // changes have been made?
@@ -21,8 +21,8 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 	educationalMaterialCollectionService.getEducationalMaterialTypes().then(function (response) {
 		$scope.EduMatTypes_EN = response.data.EN;
 		$scope.EduMatTypes_FR = response.data.FR;
-	}).catch(function(response) {
-		alert($filter('translate')('EDUCATION.EDIT.ERROR_TYPE') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('EDUCATION.EDIT.ERROR_TYPE'));
 		$uibModalInstance.close();
 	});
 
@@ -63,8 +63,8 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 	// Call our API service to get the current educational material details
 	educationalMaterialCollectionService.getEducationalMaterialDetails($scope.currentEduMat.serial).then(function (response) {
 		$scope.eduMat = response.data;
-	}).catch(function(response) {
-		alert($filter('translate')('EDUCATION.EDIT.ERROR_DETAILS') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('EDUCATION.EDIT.ERROR_DETAILS'));
 		$uibModalInstance.close();
 	});
 
@@ -171,11 +171,11 @@ controller('educationalMaterial.edit', function ($scope, $filter, $sce, $uibModa
 						$scope.showBanner();
 					}
 					else {
-						alert($filter('translate')('EDUCATION.EDIT.ERROR_EDIT') + "\r\n\r\n" + response.message);
+						ErrorHandler.onError(response, $filter('translate')('EDUCATION.DELETE.ERROR'));
 					}
 				},
 				error: function (err) {
-					alert($filter('translate')('EDUCATION.EDIT.ERROR_EDIT') + "\r\n\r\n" + err.status + " - " + err.statusText);
+					ErrorHandler.onError(err, $filter('translate')('EDUCATION.EDIT.ERROR_EDIT'));
 				},
 				complete: function () {
 					$uibModalInstance.close();

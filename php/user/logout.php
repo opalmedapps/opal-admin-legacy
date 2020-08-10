@@ -3,13 +3,8 @@
 /* Simple logout script */
 include_once('user.inc');
 
-// Retrieve post data
-$postdata = file_get_contents("php://input");
-$request = json_decode($postdata);
-
-$OAUserId = strip_tags($_POST["id"]);
-$userObject = new User($OAUserId);
-$response = $userObject->userLogout($_POST);
+$userObject = new User();
+$response = $userObject->userLogout();
 
 header('Content-Type: application/javascript');
-echo json_encode($response);
+http_response_code(HTTP_STATUS_SUCCESS);

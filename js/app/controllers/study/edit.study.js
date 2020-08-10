@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.study.edit', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance, $locale, studyCollectionService, uiGridConstants, $state, Session) {
+controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance, $locale, studyCollectionService, Session, ErrorHandler) {
 	$scope.toSubmit = {
 		OAUserId: Session.retrieveObject('user').id,
 		ID: "",
@@ -119,7 +119,7 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 
 		$scope.oldData = JSON.parse(JSON.stringify($scope.toSubmit));
 	}).catch(function(response) {
-		alert($filter('translate')('STUDY.EDIT.ERROR_DETAILS') + "\r\n\r\n" + response.status + " - " + response.data);
+		ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_DETAILS'));
 	}).finally(function() {
 		processingModal.close(); // hide modal
 		processingModal = null; // remove reference
@@ -204,10 +204,9 @@ controller('study.edit', function ($scope, $filter, $uibModal, $uibModalInstance
 				type: "POST",
 				url: "study/update/study",
 				data: $scope.toSubmit,
-				success: function () {
-				},
+				success: function () {},
 				error: function (err) {
-					alert($filter('translate')('STUDY.EDIT.ERROR_UPDATE') + "\r\n\r\n" + err.status + " - " + err.statusText + " - " + JSON.parse(err.responseText));
+					ErrorHandler.onError(err, $filter('translate')('STUDY.EDIT.ERROR_UPDATE'));
 				},
 				complete: function () {
 					$uibModalInstance.close();

@@ -3,6 +3,7 @@
 /*
 * PHP global settings:
 */
+session_start();
 
 // Set the time ze for the Eastern Time Zone (ET)
 date_default_timezone_set("America/Toronto");
@@ -49,11 +50,28 @@ define( "BACKEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", BACKEND_ABS_PATH
 define( "FRONTEND_ABS_PATH_REGEX", "/" . str_replace("/", "\\/", FRONTEND_ABS_PATH) );
 define( "UPLOAD_ABS_PATH", FRONTEND_ABS_PATH . "uploads/" );
 define( "UPLOAD_REL_PATH", FRONTEND_REL_URL . "uploads/" );
+define( "ADMIN_REGISTRATION_URL", $config['pathConfig']['registration_url'] );
 
-// Cron Job configuration
-define("SETTING_CRONJOB",1);
-define("ROLE_CRONJOB",8);
-define("OAUSER_CRONJOB",23);
+/*
+ * Module ID of each module in the opalAdmin
+ * */
+define("MODULE_ALIAS", 1);
+define("MODULE_POST", 2);
+define("MODULE_EDU_MAT", 3);
+define("MODULE_HOSPITAL_MAP", 4);
+define("MODULE_NOTIFICATION", 5);
+define("MODULE_TEST_RESULTS", 6);
+define("MODULE_QUESTIONNAIRE", 7);
+define("MODULE_PUBLICATION", 8);
+define("MODULE_DIAGNOSIS_TRANSLATION", 9);
+define("MODULE_CRON_LOG", 10);
+define("MODULE_PATIENT", 11);
+define("MODULE_USER", 12);
+define("MODULE_STUDY", 13);
+define("MODULE_EMAIL", 14);
+define("MODULE_CUSTOM_CODE", 15);
+define("MODULE_ROLE", 16);
+define("LOCAL_SOURCE_ONLY", -1);
 
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php");
@@ -62,7 +80,7 @@ require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_S
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."orms-sql.php");
 
 // Include the classes
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "OpalProject.php" );
+include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Module.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "User.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Database.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Alias.php" );
@@ -70,7 +88,6 @@ include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "EduMaterial.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "HospitalMap.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Notification.php" );
-include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Filter.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Cron.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "CrontabManager.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Patient.php" );
@@ -82,6 +99,7 @@ include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Publication.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "CustomCode.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Study.php");
+include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Role.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Question.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "TemplateQuestion.php");
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Library.php");
@@ -130,16 +148,9 @@ define("ACTIVE_DIRECTORY", $config["login"]["activeDirectory"]);
 define("ACTIVE_DIRECTORY_SETTINGS", $config["login"]["activeDirectory"]["settings"]);
 define("AD_LOGIN_ACTIVE", ACTIVE_DIRECTORY["enabled"]);
 
-/*
- * Module ID of each module in the opalAdmin
- * */
-define("MODULE_ALIAS", 1);
-define("MODULE_POST", 2);
-define("MODULE_EDU_MAT", 3);
-define("MODULE_TEST_RESULTS", 6);
-define("MODULE_QUESTIONNAIRE", 7);
-define("MODULE_DIAGNOSIS_TRANSLATION", 9);
-define("LOCAL_SOURCE_ONLY", -1);
+define("ACCESS_READ", 1);
+define("ACCESS_READ_WRITE", 3);
+define("ACCESS_READ_WRITE_DELETE", 7);
 
 define("PUBLICATION_PUBLISH_DATE", 9);
 define("GUEST_ACCOUNT", 29);
@@ -149,9 +160,12 @@ define("GUEST_ACCOUNT", 29);
  * */
 define("HTTP_STATUS_SUCCESS",200);
 define("HTTP_STATUS_INTERNAL_SERVER_ERROR",500);
+define("HTTP_STATUS_NOT_AUTHENTICATED_ERROR",401);
 define("HTTP_STATUS_FORBIDDEN_ERROR",403);
+define("HTTP_STATUS_SESSION_TIMEOUT_ERROR",419);
+define("HTTP_STATUS_LOGIN_TIMEOUT_ERROR",440);
 
 /*
- * Miscellaneous constants
+ * PHP Sessions config
  * */
-define("DEFAULT_FIELD", "");
+define("PHP_SESSION_TIMEOUT", 7200);
