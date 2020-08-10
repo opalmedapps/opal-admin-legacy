@@ -1178,9 +1178,9 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
-     * Get all the treatment machine triggers
+     * Get all the studies list
      * @params  void
-     * @return  treatment machine triggers found (array)
+     * @return  studies found (array)
      * */
     function getStudiesList() {
         return $this->_fetchAll(OPAL_GET_STUDIES_LIST, array());
@@ -1393,123 +1393,321 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /*
+     * Get the list of educational material
+     * @params  void
+     * @return  array - list of educational material
+     * */
     function getEducationalMaterial() {
         return $this->_fetchAll(OPAL_GET_EDUCATIONAL_MATERIAL, array());
     }
 
+    /*
+     * Get the list of table of contents for educational materials
+     * @params  void
+     * @return  array - table of contents
+     * */
     function getTocsContent($eduId) {
         return $this->_fetchAll(OPAL_GET_TOCS_EDU_MATERIAL, array(
             array("parameter"=>":ParentSerNum","variable"=>$eduId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
+    /*
+     * Get the list of educational material details
+     * @params  void
+     * @return  array - list of educational material details
+     * */
     function getEduMaterialDetails($eduId) {
         return $this->_fetch(OPAL_GET_EDU_MATERIAL_DETAILS, array(
             array("parameter"=>":EducationalMaterialControlSerNum","variable"=>$eduId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
+    /*
+     * Get the list of educational material logs
+     * @params  void
+     * @return  array - list of educational material logs
+     * */
     function getEduMaterialLogs($listIds) {
         $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_EDU_MATERIAL_MH);
         return $this->_fetchAll($sql, array());
     }
 
+    /*
+     * Get the list of tasks logs
+     * @params  void
+     * @return  array - list of tasks logs
+     * */
     function getTasksLogs($listIds) {
         $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_TASK_MH);
         return $this->_fetchAll($sql, array());
     }
 
+    /*
+     * Get the list of documents logs
+     * @params  void
+     * @return  array - list of documents logs
+     * */
     function getDocumentsLogs($listIds) {
         $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_DOCUMENT_MH);
         return $this->_fetchAll($sql, array());
     }
 
+    /*
+     * Get the list of appointments logs
+     * @params  void
+     * @return  array - list of appointments logs
+     * */
     function getAppointmentsLogs($listIds) {
         $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_APPOINTMENT_MH);
         return $this->_fetchAll($sql, array());
     }
 
+    /*
+     * Get the list of aliases logs
+     * @params  void
+     * @return  array - list of aliases logs
+     * */
     function getAliasesLogs($listIds) {
         $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_ALIAS_MH);
         return $this->_fetchAll($sql, array());
     }
 
+    /*
+     * Get the list of emails logs
+     * @params  void
+     * @return  array - list of emails logs
+     * */
     function getEmailsLogs($listIds) {
         $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_EMAILS_MH);
         return $this->_fetchAll($sql, array());
     }
 
+    /*
+     * Get the list of notifications logs
+     * @params  void
+     * @return  array - list of notifications logs
+     * */
     function getNotificationsLogs($listIds) {
         $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_NOTIFICATIONS_MH);
         return $this->_fetchAll($sql, array());
     }
 
+    /*
+     * Get the list of test results logs
+     * @params  void
+     * @return  array - list of test results logs
+     * */
     function getTestResultsLogs($listIds) {
         $sql = str_replace("%%LIST_IDS%%", implode(", ", $listIds), OPAL_GET_TEST_RESULTS_MH);
         return $this->_fetchAll($sql, array());
     }
 
+    /*
+     * Get the list of hospital maps details
+     * @params  void
+     * @return  array - list of hospital maps details
+     * */
     function getHospitalMapDetails($hpId) {
         return $this->_fetch(OPAL_GET_HOSPITAL_MAP_DETAILS, array(
             array("parameter"=>":HospitalMapSerNum","variable"=>$hpId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 
+    /*
+     * Get the cron log appointments
+     * @params  void
+     * @return  array - list of cron log appointments
+     * */
     function getCronLogAppointments() {
         return $this->_fetchAll(OPAL_GET_CRON_LOG_APPOINTMENTS, array());
     }
 
+    /*
+     * Get the cron log documents
+     * @params  void
+     * @return  array - list of cron log documents
+     * */
     function getCronLogDocuments() {
         return $this->_fetchAll(OPAL_GET_CRON_LOG_DOCUMENTS, array());
     }
 
+    /*
+     * Get the cron log tasks
+     * @params  void
+     * @return  array - list of cron log tasks
+     * */
     function getCronLogTasks() {
         return $this->_fetchAll(OPAL_GET_CRON_LOG_TASKS, array());
     }
 
+    /*
+     * Get the cron log announcements
+     * @params  void
+     * @return  array - list of cron log announcements
+     * */
     function getCronLogAnnouncements() {
         return $this->_fetchAll(OPAL_GET_CRON_LOG_ANNOUNCEMENTS, array());
     }
 
+    /*
+     * Get the cron log treatment team msgs
+     * @params  void
+     * @return  array - list of cron log treatment team msgs
+     * */
     function getCronLogTTMs() {
         return $this->_fetchAll(OPAL_GET_CRON_LOG_TTMS, array());
     }
 
+    /*
+     * Get the cron log patients for patients
+     * @params  void
+     * @return  array - list of cron log patients for patients
+     * */
     function getCronLogPFP() {
         return $this->_fetchAll(OPAL_GET_CRON_LOG_PFP, array());
     }
 
+    /*
+     * Get the cron log educational materials
+     * @params  void
+     * @return  array - list of cron log educational materials
+     * */
     function getCronLogEduMaterials() {
         return $this->_fetchAll(OPAL_GET_CRON_LOG_EDU_MATERIALS, array());
     }
 
+    /*
+     * Get the cron log notifications
+     * @params  void
+     * @return  array - list of cron log notifications
+     * */
     function getCronLogNotifications() {
         return $this->_fetchAll(OPAL_GET_CRON_LOG_NOTIFICATIONS, array());
     }
 
+    /*
+     * Get the cron log test results
+     * @params  void
+     * @return  array - list of cron log test results
+     * */
     function getCronLogTestResults() {
         return $this->_fetchAll(OPAL_GET_CRON_LOG_TEST_RESULTS, array());
     }
 
+    /*
+     * Get the cron log emails
+     * @params  void
+     * @return  array - list of cron log emails
+     * */
     function getCronLogEmails() {
         return $this->_fetchAll(OPAL_GET_CRON_LOG_EMAILS, array());
     }
 
+    /*
+     * Get the cron log questionnaires
+     * @params  void
+     * @return  array - list of cron log questionnaires
+     * */
     function getCronLogQuestionnaires() {
         return $this->_fetchAll(OPAL_GET_CRON_LOG_QUESTIONNAIRES, array());
     }
 
+    /*
+     * Get the cron log hospital maps
+     * @params  void
+     * @return  array - list of cron log hospital maps
+     * */
     function getHospitalMaps() {
         return $this->_fetchAll(OPAL_GET_HOSPITAL_MAPS, array());
     }
 
+    /*
+     * Get the categories of the navigation meny
+     * @params  void
+     * @return  array - list of categories
+     * */
     function getCategoryNavMenu() {
         return $this->_fetchAll(OPAL_GET_CATEGORY_MENU, array());
     }
 
+    /*
+     * Get the navigation menu options of a particular category
+     * @params  $categoryMenuId - int - ID of the category
+     * @return  array - navigation menu
+     * */
     function getNavMenu($categoryMenuId) {
         return $this->_fetchAll(OPAL_GET_NAV_MENU, array(
             array("parameter"=>":categoryModuleId","variable"=>$categoryMenuId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get all the alerts list
+     * @params  void
+     * @return  alerts found (array)
+     * */
+    function getAlertsList() {
+        return $this->_fetchAll(OPAL_GET_ALERTS_LIST, array());
+    }
+
+    /*
+     * Get all the alerts list
+     * @params  void
+     * @return  alerts found (array)
+     * */
+    function updateAlertActivationFlag($id, $active) {
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_ALERT_ACTIVATION_FLAG, array(
+            "active"=>$active,
+            "updatedBy"=>$this->username,
+            "ID"=>$id
+        ));
+    }
+
+    /*
+     * Insert a new alert that was validated
+     * @params  $toSubmit : array - new allert to insert.
+     * @return int - ID of the record inserted
+     * */
+    function insertAlert($toSubmit) {
+        $toSubmit["creationDate"] = date("Y-m-d H:i:s");
+        $toSubmit["createdBy"] = $this->username;
+        $toSubmit["updatedBy"] = $this->username;
+        return $this->_insertRecordIntoTable(OPAL_ALERT_TABLE, $toSubmit);
+    }
+
+    /*
+     * Get the details of a specific alert.
+     * @params  $alertId : int - ID of the alert to get the details
+     * @return  array - details of the alert
+     * */
+    function getAlertDetails($alertId) {
+        return $this->_fetchAll(OPAL_GET_ALERT_DETAILS, array(
+            array("parameter"=>":ID","variable"=>$alertId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Update a specific alert
+     * @params  $toSubmit : array - contains the details of the alert to update
+     * @return  int : number of records updated
+     * */
+    function updateAlert($updatedEntries) {
+        $updatedEntries["updatedBy"]=$this->getUsername();
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_ALERT, $updatedEntries);
+    }
+
+    /*
+     * Marks a specified alert as deleted.
+     * @param   int : $alertId (ID of the alert to mark as deleted)
+     * @return  int : number of record deleted or error 500.
+     * */
+    function markAlertAsDeleted($alertId) {
+        return $this->_updateRecordIntoTable(OPAL_MARK_ALERT_AS_DELETED, array(
+            "ID"=>$alertId,
+            "deletedBy"=>$this->getUsername(),
+            "updatedBy"=>$this->getUsername(),
         ));
     }
 }
