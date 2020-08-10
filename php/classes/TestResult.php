@@ -4,7 +4,11 @@
  * TestResult class
  *
  */
-class TestResult {
+class TestResult extends Module {
+
+    public function __construct($guestStatus = false) {
+        parent::__construct(MODULE_TEST_RESULTS, $guestStatus);
+    }
 
     /**
      *
@@ -15,6 +19,7 @@ class TestResult {
      * @return array $response : response
      */
     public function updatePublishFlags( $testResultList, $user ) {
+        $this->checkWriteAccess();
         $response = array(
             'value'     => 0,
             'message'   => ''
@@ -46,8 +51,7 @@ class TestResult {
             $response['value'] = 1; // Success
             return $response;
         } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response; // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
     }
 
@@ -59,6 +63,7 @@ class TestResult {
      * @return array $testResultDetails : the test result details
      */
     public function getTestResultDetails ($serial) {
+        $this->checkReadAccess();
         $testResultDetails = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -117,8 +122,7 @@ class TestResult {
             }
 
             if ($eduMatSer != 0) {
-                $eduMatObj = new EduMaterial();
-                $eduMat = $eduMatObj->getEducationalMaterialDetails($eduMatSer);
+                $eduMat = $this->_getEducationalMaterialDetails($eduMatSer);
             }
 
             $sql = "
@@ -169,8 +173,7 @@ class TestResult {
             );
             return $testResultDetails;
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $testResultDetails;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
     }
 
@@ -181,7 +184,7 @@ class TestResult {
      * @return array $groups : the list of existing test groups
      */
     public function getTestResultGroups () {
-
+        $this->checkReadAccess();
         $groups = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -206,8 +209,7 @@ class TestResult {
 
             return $groups;
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $groups;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
     }
 
@@ -218,6 +220,7 @@ class TestResult {
      * @return array $testNames : the list of test names
      */
     public function getTestNames() {
+        $this->checkReadAccess();
         $testNames = array();
         $databaseObj = new Database();
 
@@ -304,32 +307,6 @@ class TestResult {
         }
     }
 
-    /*
-    public function getTestNames() {
-        $databaseObj = new Database();
-        $activeDBSources = $databaseObj->getActiveSourceDatabases();
-        $assignedTests = $this->getAssignedTests();
-
-        $sql = "SELECT description AS name, description AS id FROM ".OPAL_MASTER_SOURCE_TEST_RESULT_TABLE." WHERE deleted = 0 AND source IN(".implode(",", $activeDBSources).") ORDER BY description";
-
-        $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD);
-        $host_db_link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-        $query->execute();
-        $results = $query->fetchAll(PDO::FETCH_ASSOC);
-
-        foreach($results as &$item) {
-            $assignedTest = $this->assignedSearch($item['name'], $assignedTests);
-            $item['added'] = 0;
-            if ($assignedTest)
-                $item['assigned'] = $assignedTest;
-            else
-                $item['assigned'] = null;
-        }
-
-        return $results;
-    }
-     * */
 
     /**
      *
@@ -367,8 +344,7 @@ class TestResult {
             return $tests;
 
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $tests;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
     }
 
@@ -380,7 +356,7 @@ class TestResult {
      * @return void
      */
     public function insertTestResult ($testResultDetails) {
-
+        $this->checkWriteAccess();
         $name_EN            = $testResultDetails['name_EN'];
         $name_FR            = $testResultDetails['name_FR'];
         $description_EN     = $testResultDetails['description_EN'];
@@ -497,7 +473,7 @@ class TestResult {
             $this->sanitizeEmptyTestResults($testResultDetails['user']);
 
         } catch( PDOException $e) {
-            return $e->getMessage();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
 
     }
@@ -509,7 +485,7 @@ class TestResult {
      * @return array $testResultList : the list of existing test results
      */
     public function getExistingTestResults () {
-
+        $this->checkReadAccess();
         $testResultList = array();
 
         try {
@@ -571,8 +547,7 @@ class TestResult {
                 }
 
                 if ($eduMatSer != 0) {
-                    $eduMatObj = new EduMaterial();
-                    $eduMat = $eduMatObj->getEducationalMaterialDetails($eduMatSer);
+                    $eduMat = $this->_getEducationalMaterialDetails($eduMatSer);
                 }
 
                 $sql = "
@@ -628,8 +603,7 @@ class TestResult {
             }
             return $testResultList;
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            return $testResultList;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
     }
 
@@ -641,7 +615,7 @@ class TestResult {
      * @return array : response
      */
     public function updateTestResult ($testResultDetails) {
-
+        $this->checkWriteAccess();
         $name_EN            = $testResultDetails['name_EN'];
         $name_FR            = $testResultDetails['name_FR'];
         $description_EN     = $testResultDetails['description_EN'];
@@ -818,8 +792,7 @@ class TestResult {
             return $response;
 
         } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response; // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
     }
 
@@ -832,7 +805,7 @@ class TestResult {
      * @return array $response : response
      */
     public function deleteTestResult ($testResultSer, $user) {
-
+        $this->checkDeleteAccess();
         $response = array(
             'value'     => 0,
             'message'   => ''
@@ -891,8 +864,7 @@ class TestResult {
             return $response;
 
         } catch( PDOException $e) {
-            $response['message'] = $e->getMessage();
-            return $response;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
     }
 
@@ -927,7 +899,7 @@ class TestResult {
             $query->execute();
             return;
         } catch( PDOException $e) {
-            return $e->getMessage(); // Fail
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
     }
 
@@ -939,6 +911,7 @@ class TestResult {
      * @return array $testResultLogs : the test result logs for highcharts
      */
     public function getTestResultChartLogs ($serial) {
+        $this->checkReadAccess();
         $testResultLogs = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -1050,83 +1023,19 @@ class TestResult {
             return $testResultLogs;
 
         } catch( PDOException $e) {
-            echo $e->getMessage();
-            return $testResultLogs;
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for test result. " . $e->getMessage());
         }
     }
 
     /**
-     *
      * Gets list logs of test results during one or many cron sessions
-     *
-     * @param array $serials : a list of cron log serial numbers
-     * @return array $testResultLogs : the test result logs for table view
      */
-    public function getTestResultListLogs ($serials) {
-        $testResultLogs = array();
-        $serials = implode(',', $serials);
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-                SELECT DISTINCT
-                    tre.ExpressionName,
-                    trmh.TestResultRevSerNum,
-                    trmh.CronLogSerNum,
-                    trmh.PatientSerNum,
-                    sd.SourceDatabaseName,
-                    trmh.TestResultAriaSer,
-                    trmh.AbnormalFlag,
-                    trmh.TestDate,
-                    trmh.MaxNorm,
-                    trmh.MinNorm,
-                    trmh.TestValue,
-                    trmh.UnitDescription,
-                    trmh.ValidEntry,
-                    trmh.DateAdded,
-                    trmh.ReadStatus,
-                    trmh.ModificationAction
-                FROM
-                    TestResultMH trmh,
-                    TestResultExpression tre,
-                    SourceDatabase sd
-                WHERE
-                    trmh.TestResultExpressionSerNum     = tre.TestResultExpressionSerNum
-                AND trmh.SourceDatabaseSerNum           = sd.SourceDatabaseSerNum
-                AND trmh.CronLogSerNum                  IN ($serials)
-            ";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $logDetails = array (
-                    'expression_name'        => $data[0],
-                    'revision'               => $data[1],
-                    'cron_serial'            => $data[2],
-                    'patient_serial'         => $data[3],
-                    'source_db'              => $data[4],
-                    'source_uid'             => $data[5],
-                    'abnormal_flag'          => $data[6],
-                    'test_date'              => $data[7],
-                    'max_norm'               => $data[8],
-                    'min_norm'               => $data[9],
-                    'test_value'             => $data[10],
-                    'unit'                   => $data[11],
-                    'valid'                  => $data[12],
-                    'date_added'             => $data[13],
-                    'read_status'            => $data[14],
-                    'mod_action'             => $data[15]
-                );
-                array_push($testResultLogs, $logDetails);
-            }
-
-            return $testResultLogs;
-
-        } catch( PDOException $e) {
-            echo $e->getMessage();
-            return $testResultLogs;
+    public function getTestResultListLogs($testResultIds) {
+        $this->checkReadAccess();
+        foreach ($testResultIds as &$id) {
+            $id = intval($id);
         }
+        return $this->opalDB->getTestResultsLogs($testResultIds);
     }
 
     /**
@@ -1149,5 +1058,10 @@ class TestResult {
             }
         }
         return $assignedTest;
+    }
+
+    public function getEducationalMaterials() {
+        $this->checkReadAccess();
+        return $this->_getListEduMaterial();
     }
 }

@@ -56,10 +56,16 @@ angular.module('opalAdmin.controllers.loginModal', ['ngAnimate', 'ui.bootstrap']
 				encrypted = (Encrypt.encode(encrypted, cypher));
 
 				AuthService.login(encrypted, cypher).then(function (response) {
+					var accessLevel = [];
+					angular.forEach(response.data.access, function (row) {
+						accessLevel[row["ID"]] = row["access"];
+					});
+					response.data.access = accessLevel;
+
 					Session.create(response.data);
 					$rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
-					$rootScope.currentUser = response.data;
-					$rootScope.setSiteLanguage(response.data);
+					$rootScope.currentUser = response.data.user;
+					$rootScope.setSiteLanguage(response.data.user);
 					$uibModalInstance.close();
 				}).catch(function(err) {
 					$rootScope.$broadcast(AUTH_EVENTS.loginFailed);

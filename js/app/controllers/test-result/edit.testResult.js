@@ -1,6 +1,6 @@
 angular.module('opalAdmin.controllers.testResult.edit', ['ngAnimate', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
 
-controller('testResult.edit', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, testResultCollectionService, educationalMaterialCollectionService, Session) {
+controller('testResult.edit', function ($scope, $filter, $sce, $state, $uibModal, $uibModalInstance, testResultCollectionService, Session, ErrorHandler) {
 
 	// Default Boolean
 	$scope.changesMade = false; // changes been made?
@@ -32,8 +32,8 @@ controller('testResult.edit', function ($scope, $filter, $sce, $state, $uibModal
 	testResultCollectionService.getTestResultGroups().then(function (response) {
 		$scope.TestResultGroups_EN = response.data.EN;
 		$scope.TestResultGroups_FR = response.data.FR;
-	}).catch(function(response) {
-		alert($filter('translate')('TEST.EDIT.ERROR_GROUP') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('TEST.EDIT.ERROR_GROUP'));
 	});
 
 	// Initialize search field
@@ -41,7 +41,7 @@ controller('testResult.edit', function ($scope, $filter, $sce, $state, $uibModal
 	$scope.eduMatFilter = null;
 
 	// Call our API service to get the list of educational material
-	educationalMaterialCollectionService.getEducationalMaterials().then(function (response) {
+	testResultCollectionService.getEducationalMaterials().then(function (response) {
 		response.data.forEach(function(entry) {
 			if($scope.language.toUpperCase() === "FR") {
 				entry.name_display = entry.name_FR;
@@ -63,8 +63,8 @@ controller('testResult.edit', function ($scope, $filter, $sce, $state, $uibModal
 			});
 		});
 		$scope.eduMatList = response.data; // Assign value
-	}).catch(function(response) {
-		alert($filter('translate')('TEST.EDIT.ERROR_EDUCATION') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('TEST.EDIT.ERROR_EDUCATION'));
 	});
 
 	// Function to assign search field when textbox changes
@@ -137,18 +137,20 @@ controller('testResult.edit', function ($scope, $filter, $sce, $state, $uibModal
 			if(response.data.length <= 0) {
 				alert($filter('translate')('TEST.EDIT.ERROR_NO_TEST_FOUND'));
 				$scope.cancel();
+				processingModal.close(); // hide modal
+				processingModal = null; // remove reference
 			}
 			$scope.testList = checkAdded(response.data);
-		}).catch(function(response) {
-			alert($filter('translate')('TEST.EDIT.ERROR_TEST') + "\r\n\r\n" + response.status + " - " + response.data);
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('TEST.EDIT.ERROR_TEST'));
 			$scope.cancel();
 		}).finally(function () {
 			processingModal.close(); // hide modal
 			processingModal = null; // remove reference
 		});
 
-	}).catch(function(response) {
-		alert($filter('translate')('TEST.EDIT.ERROR_DETAILS') + "\r\n\r\n" + response.status + " - " + response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('TEST.EDIT.ERROR_DETAILS'));
 	});
 
 	// Function to toggle Item in a list on/off
@@ -319,20 +321,14 @@ controller('testResult.edit', function ($scope, $filter, $sce, $state, $uibModal
 				url: "test-result/update/test-result",
 				data: $scope.testResult,
 				success: function (response) {
-					response = JSON.parse(response);
-					// Show success or failure depending on response
-					if (response.value) {
-						$scope.setBannerClass('success');
-						$scope.$parent.bannerMessage = $filter('translate')('TEST.EDIT.SUCCESS_EDIT');
-						$scope.showBanner();
-					}
-					else {
-						alert($filter('translate')('TEST.EDIT.ERROR_UPDATE'));
-					}
-					$uibModalInstance.close();
+					$scope.setBannerClass('success');
+					$scope.$parent.bannerMessage = $filter('translate')('TEST.EDIT.SUCCESS_EDIT');
+					$scope.showBanner();
 				},
 				error: function(err) {
-					alert($filter('translate')('TEST.EDIT.ERROR_UPDATE') + "\r\n\r\n" + err.status + " - " + err.statusText);
+					ErrorHandler.onError(err, $filter('translate')('TEST.EDIT.ERROR_UPDATE'));
+				},
+				complete: function () {
 					$uibModalInstance.close();
 				}
 			});

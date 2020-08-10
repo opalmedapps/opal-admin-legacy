@@ -1,6 +1,7 @@
 angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.application',
 	'opalAdmin.controllers.navigation',
+	'opalAdmin.controllers.home',
 	'opalAdmin.controllers.alias',
 	'opalAdmin.controllers.alias.add',
 	'opalAdmin.controllers.alias.edit',
@@ -79,8 +80,13 @@ angular.module('opalAdmin.controllers', [
 	'opalAdmin.controllers.customCode.add',
 	'opalAdmin.controllers.customCode.edit',
 	'opalAdmin.controllers.customCode.delete',
+	'opalAdmin.controllers.errorHandler.accessDenied',
 	'opalAdmin.controllers.study',
 	'opalAdmin.controllers.study.add',
 	'opalAdmin.controllers.study.edit',
-	'opalAdmin.controllers.study.delete'
+	'opalAdmin.controllers.study.delete',
+	'opalAdmin.controllers.role',
+	'opalAdmin.controllers.role.add',
+	'opalAdmin.controllers.role.edit',
+	'opalAdmin.controllers.role.delete'
 ]);

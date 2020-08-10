@@ -4,8 +4,17 @@
 angular.module('opalAdmin.services', [])
 
 	.service('Session', function ($cookies) {
-		this.create = function (user) {
-			$cookies.putObject('user', user);
+		this.create = function (data) {
+			angular.forEach(data.menu, function(category) {
+				angular.forEach(category.menu, function(menu) {
+					menu.sub = 'NAVIGATION_MENU.MODULE_ID_' + menu.ID + '_SUB';
+				});
+			});
+
+			$cookies.putObject('user', data.user);
+			$cookies.putObject('access', data.access);
+			$cookies.putObject('menu', data.menu);
+			$cookies.putObject('subMenu', data.subMenu);
 		};
 		this.retrieve = function (data) {
 			return $cookies.get(data);
@@ -13,13 +22,43 @@ angular.module('opalAdmin.services', [])
 		this.retrieveObject = function (data) {
 			return $cookies.getObject(data);
 		};
-		this.update = function (user) {
-			this.destroy();
-			this.create(user);
+		this.updateUser = function (user, menu) {
+			angular.forEach(menu, function(category) {
+				angular.forEach(category.menu, function(menu) {
+					menu.sub = 'NAVIGATION_MENU.MODULE_ID_' + menu.ID + '_SUB';
+				});
+			});
+
+			$cookies.remove('user');
+			$cookies.putObject('user', user);
+			$cookies.remove('menu');
+			$cookies.putObject('menu', menu);
 		};
 		this.destroy = function () {
 			$cookies.remove('user');
+			$cookies.remove('access');
+			$cookies.remove('menu');
+			$cookies.remove('subMenu');
 		};
+	})
+
+	.service('ErrorHandler', function($filter, $rootScope, HTTP_CODE, AUTH_EVENTS) {
+		this.onError = function(response, clientErrMsg) {
+			if(response.status === HTTP_CODE.notFoundError)
+				alert(clientErrMsg + " " + $filter('translate')('ERROR_HANDLER.404.MESSAGE'));
+			else if(response.status === HTTP_CODE.internalServerError) {
+				var tempText;
+				if (response.responseText)
+					tempText = JSON.parse(response.responseText);
+				else
+					tempText = $filter('translate')('ERROR_HANDLER.500.UNKNOWN');
+				alert(clientErrMsg + " " + $filter('translate')('ERROR_HANDLER.500.MESSAGE') + "\r\n" + tempText);
+			}
+			else if(response.status === HTTP_CODE.forbiddenAccessError)
+				$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
+			// else if(response.status === HTTP_CODE.notAuthenticatedError)
+			// 	$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
+		}
 	})
 
 	.service('loginModal', function ($uibModal) {
@@ -32,7 +71,6 @@ angular.module('opalAdmin.services', [])
 
 			return modalInstance.result.then(function() {});
 		};
-
 	})
 
 	.service('LogoutService', function (Session, $state, $http) {

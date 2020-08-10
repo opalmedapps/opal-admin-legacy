@@ -7,8 +7,7 @@
 
 include_once('questionnaire.inc');
 
-$OAUserId = strip_tags($_POST['OAUserId']);
-$questionLibrary = new Library($OAUserId);
+$questionLibrary = new Library();
 $result = $questionLibrary->getLibraries();
 
 header('Content-Type: application/javascript');
