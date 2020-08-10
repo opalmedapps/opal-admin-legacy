@@ -55,7 +55,8 @@
     "MODULE_ID_13_SUB": "Manage studies to which are associated patients.",
     "MODULE_ID_14_SUB": "Tool for creating email templates.",
     "MODULE_ID_15_SUB": "Manage custom codes for diagnosis, test results and aliases.",
-    "MODULE_ID_16_SUB": "Manage the list of roles of the users."
+    "MODULE_ID_16_SUB": "Manage the list of roles of the users.",
+    "MODULE_ID_17_SUB": "Manage the list of alerts and triggers for conditions."
   },
   "BREADCRUMBS": {
     "HOME": "Home"
@@ -2353,6 +2354,87 @@
       "END_DATE": "End Date",
       "ERROR_DETAILS": "An error occurred while getting the study details.",
       "ERROR_UPDATE": "An error occurred while updating the study."
+    }
+  },
+  "ALERT" : {
+    "LIST": {
+      "TITLE": "Alerts",
+      "ADD": "Add",
+      "SEARCH": "Search...",
+      "SUBJECT": "Subject",
+      "ACTIVE": "Active",
+      "CREATION_DATE": "Creation Date",
+      "LAST_UPDATED": "Last Updated",
+      "OPERATIONS": "Operations",
+      "EDIT": "Edit",
+      "VIEW": "View",
+      "DELETE": "Delete",
+      "YES": "Yes",
+      "NO": "No",
+      "SUCCESS_FLAGS": "Activations of alerts have being updated.",
+      "ERROR_FLAGS": "An error occurred while updating the activation of the alerts.",
+      "ERROR_ALERT": "An error occurred while getting the list of alerts."
+    },
+    "DELETE": {
+      "TITLE": "Delete alert",
+      "DELETE": "Delete",
+      "CANCEL": "Cancel",
+      "WARNING": "WARNING!",
+      "WARNING_TEXT": "Are you sure you want to delete the following alert? This action cannot be undone!",
+      "DELETED": "The alert has being successfully deleted.",
+      "ERROR": "An error occurred while deleting the alert."
+    },
+    "ADD": {
+      "TITLE": "Add a new alert",
+      "MESSAGE": "Message to send",
+      "MESSAGE_EXPLANATION": "This is the message that will be sent when the alert triggers. Please enter a subject and a body to the message. HTML format is prohibited.",
+      "MESSAGE_TITLE": "Message",
+      "STEP": "Step",
+      "OF": "of",
+      "COMPLETED": "completed",
+      "REQUIRED": "Required field:",
+      "REQUIRED_2": "Required fields:",
+      "INCOMPLETE": "Incomplete",
+      "COMPLETE": "Complete",
+      "SUBJECT": "Subject",
+      "BODY": "Body",
+      "BACK": "Back",
+      "SUMMARY": "Summary",
+      "TRIGGERS": "Triggers",
+      "SEE_TRIGGERS": "See triggers",
+      "TRIGGERS_LIST": "Triggers list",
+      "TRIGGERS_EXPLANATION": "Please enter the liste of triggers for the new alert in the following box..",
+      "CONTACTS": "Contacts",
+      "CONTACTS_EXPLANATION": "This is list of persons or organizations to contact if the alert is triggered. Phone number for SMS and email addresses are accepted.",
+      "ADD_PHONE": "Add a phone number",
+      "PHONE": "Phone numbers",
+      "PHONE_EX": "E.g. 514-555-1234",
+      "ADD_EMAIL": "Add an email address",
+      "EMAIL": "Email Addresses",
+      "EMAIL_EX": "E.g. abc@blabla.ca",
+      "REMOVE": "Remove",
+      "SUBMIT": "Submit",
+      "ERROR_ADD": "An error occurred while creating the alert."
+    },
+    "EDIT": {
+      "TITLE": "Modify the alert",
+      "SAVE": "Save",
+      "CANCEL": "Cancel",
+      "CLOSE": "Close",
+      "MESSAGE": "Message",
+      "SUBJECT": "Subject",
+      "BODY": "Body",
+      "TRIGGERS": "Triggers",
+      "TRIGGERS_LIST": "List of triggers",
+      "CONTACTS": "Contacts",
+      "ADD_PHONE": "Add a phone number",
+      "PHONE": "Phone numbers",
+      "PHONE_EX": "E.g. 514-555-1234",
+      "ADD_EMAIL": "Add an email address",
+      "EMAIL": "Email Addresses",
+      "EMAIL_EX": "E.g. abc@blabla.ca",
+      "REMOVE": "Remove",
+      "ERROR_UPDATE": "An error occurred while updating the alert."
     }
   },
   "ROLE" : {

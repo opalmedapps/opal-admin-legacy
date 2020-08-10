@@ -17,7 +17,7 @@ angular.module('opalAdmin.controllers.publication.log', ['ngAnimate', 'ngSanitiz
 					log.x = new Date(log.x);
 				});
 			});
-		}).catch(function(response) {
+		}).catch(function(err) {
 			ErrorHandler.onError(err, $filter('translate')('POSTS.LOG.ERROR'));
 			$uibModalInstance.dismiss('cancel');
 		});

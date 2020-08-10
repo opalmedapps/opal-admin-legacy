@@ -47,6 +47,7 @@ angular.module('opalAdmin', [
 		email: 14,
 		custom_code: 15,
 		role: 16,
+		alert: 17,
 	})
 
 	.constant('HTTP_CODE', {
@@ -151,6 +152,8 @@ angular.module('opalAdmin', [
 			.state('study-add', { url: '/study/add', templateUrl: "templates/study/add.study.html", controller: "study.add", data: { requireLogin: true } })
 			.state('role', { url: '/role', templateUrl: "templates/role/roles.html", controller: "role", data: { requireLogin: true } })
 			.state('role-add', { url: '/role/add', templateUrl: "templates/role/add.role.html", controller: "role.add", data: { requireLogin: true } })
+			.state('alert', { url: '/alert', templateUrl: "templates/alert/alerts.html", controller: "alert", data: { requireLogin: true } })
+			.state('alert-add', { url: '/alert/add', templateUrl: "templates/alert/add.alert.html", controller: "alert.add", data: { requireLogin: true } })
 			.state('user-activity', { url: '/user-activity', templateUrl: "templates/user/user-activity.html", controller: "userActivity", data: { requireLogin: true } })
 			.state('protected-route', { url: '/protected', resolve: { auth: function resolveAuthentication(AuthResolver) { return AuthResolver.resolve(); } } });
 
