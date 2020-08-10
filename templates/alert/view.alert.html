@@ -1,0 +1,75 @@
+<!-- Modal title -->
+<div class="modal-header">
+    <div class="col-xs-12 col-md-6">
+        <h2 class="modal-title">
+            <span class="glyphicon glyphicon-pencil"></span>
+            {{'ALERT.EDIT.TITLE'|translate}}
+        </h2>
+    </div>
+    <div class="modal-buttons col-xs-12 col-md-6">
+        <form method="post" ng-submit="updateAlert()">
+            <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'ALERT.EDIT.CLOSE'|translate}}">
+        </form>
+    </div>
+</div>
+<div class="modal-body">
+    <uib-accordion close-others="false">
+        <!-- SECTION: Message -->
+        <div uib-accordion-group is-open="titleMessage.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'ALERT.EDIT.MESSAGE'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleMessage.open, 'glyphicon-chevron-right': !titleMessage.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <p><strong>{{'ALERT.EDIT.SUBJECT'|translate}}</strong>: {{toSubmit.message.subject}}</p>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <p><strong>{{'ALERT.EDIT.BODY'|translate}}</strong>: {{toSubmit.message.body}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Trigger -->
+        <div uib-accordion-group is-open="triggerSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'ALERT.EDIT.TRIGGERS_LIST'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.open, 'glyphicon-chevron-right': !triggerSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <p><strong>{{'ALERT.EDIT.TRIGGERS'|translate}}</strong>: {{toSubmit.trigger}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- SECTION: Contact -->
+        <div uib-accordion-group is-open="contactSection.open">
+            <uib-accordion-heading>
+                <div>
+                    <strong>{{'ALERT.EDIT.CONTACTS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': contactSection.open, 'glyphicon-chevron-right': !contactSection.open}"></i>
+                </div>
+            </uib-accordion-heading>
+            <div class="row">
+                <div class="col-xs-12 col-md-6" ng-if="toSubmit.contact.phone.length > 0">
+                    <h5 style="font-weight: bold">{{'ALERT.EDIT.PHONE'|translate}}</h5>
+                    <ul>
+                        <li ng-repeat="phone in toSubmit.contact.phone track by $index">{{phone.num}}</li>
+                    </ul>
+                </div>
+                <div class="col-xs-12 col-md-6" ng-if="toSubmit.contact.email.length > 0">
+                    <h5 style="font-weight: bold">{{'ALERT.EDIT.EMAIL'|translate}}</h5>
+                    <ul>
+                        <li ng-repeat="email in toSubmit.contact.email track by $index">{{email.adr}}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </uib-accordion>
+</div>

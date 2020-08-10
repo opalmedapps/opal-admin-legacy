@@ -51,6 +51,11 @@ class Module
         }
     }
 
+    /*
+     * Connect to the DB as a main user and not as a guest
+     * @params  void
+     * @return void
+     * */
     protected function _connectAsMain() {
         $this->opalDB = new DatabaseOpal(
             OPAL_DB_HOST,
@@ -64,11 +69,21 @@ class Module
         );
     }
 
+    /*
+     * Get the ID of the module
+     * @params  void
+     * @return  moduleId - int - ID of the module
+     * */
     public function getModuleId()
     {
         return $this->moduleId;
     }
 
+    /*
+     * Validate the read access requested by the user is authorized. If not, returns an error 403
+     * @params  void
+     * @return  false or error 403
+     * */
     public function checkReadAccess()
     {
         if(!(($this->access >> 0) & 1))
@@ -76,6 +91,11 @@ class Module
         return false;
     }
 
+    /*
+     * Validate the write access requested by the user is authorized. If not, returns an error 403
+     * @params  void
+     * @return  false or error 403
+     * */
     public function checkWriteAccess()
     {
         if(!(($this->access >> 1) & 1))
@@ -83,6 +103,11 @@ class Module
         return false;
     }
 
+    /*
+     * Validate the delete access requested by the user is authorized. If not, returns an error 403
+     * @params  void
+     * @return  false or error 403
+     * */
     public function checkDeleteAccess()
     {
         if(!(($this->access >> 2) & 1))
@@ -99,6 +124,12 @@ class Module
         return $this->opalDB->getPublicationModulesUser();
     }
 
+    /*
+     * Get the list of educational materials. Protected function so any module can call it the same way when needed
+     * without having to call the module educational materials itself, but cannot be called from outside.
+     * @params  void
+     * @return  $result - array - list of educational materials
+     * */
     protected function _getListEduMaterial() {
         $results = $this->opalDB->getEducationalMaterial();
         foreach($results as &$row) {
@@ -108,6 +139,12 @@ class Module
         return $results;
     }
 
+    /*
+     * Get the details of aneducational material. Protected function so any module can call it the same way when needed
+     * without having to call the module educational materials itself, but cannot be called from outside.
+     * @params  void
+     * @return  $result - array - list of educational materials
+     * */
     protected function _getEducationalMaterialDetails($eduId) {
         $results = $this->opalDB->getEduMaterialDetails($eduId);
         $results["tocs"] = $this->opalDB->getTocsContent($results["serial"]);
