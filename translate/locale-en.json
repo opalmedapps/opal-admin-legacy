@@ -56,7 +56,8 @@
     "MODULE_ID_14_SUB": "Tool for creating email templates.",
     "MODULE_ID_15_SUB": "Manage custom codes for diagnosis, test results and aliases.",
     "MODULE_ID_16_SUB": "Manage the list of roles of the users.",
-    "MODULE_ID_17_SUB": "Manage the list of alerts and triggers for conditions."
+    "MODULE_ID_17_SUB": "Manage the list of alerts and triggers for conditions.",
+    "MODULE_ID_18_SUB": "Audit the users operations in OpalAdmin."
   },
   "BREADCRUMBS": {
     "HOME": "Home"

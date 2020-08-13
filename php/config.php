@@ -72,6 +72,7 @@ define("MODULE_EMAIL", 14);
 define("MODULE_CUSTOM_CODE", 15);
 define("MODULE_ROLE", 16);
 define("MODULE_ALERT", 17);
+define("MODULE_AUDIT", 18);
 define("LOCAL_SOURCE_ONLY", -1);
 
 define("DELETED_RECORD", 1);

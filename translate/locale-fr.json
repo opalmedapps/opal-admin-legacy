@@ -58,7 +58,9 @@
     "MODULE_ID_14_SUB": "Outil pour créer des modèles de courriel.",
     "MODULE_ID_15_SUB": "Gestion des codes personnalisés pour les diagnostics et alias.",
     "MODULE_ID_16_SUB": "Gestion de la liste des rôles des utilisateurs.",
-    "MODULE_ID_17_SUB": "Gestion de la liste des alertes et déclencheurs pour conditions."
+    "MODULE_ID_17_SUB": "Gestion de la liste des alertes et déclencheurs pour conditions.",
+    "MODULE_ID_18_SUB": "Auditer les opérations des utilisateurs dans OpalAdmin."
+
   },
   "BREADCRUMBS": {
     "HOME": "Accueil"
