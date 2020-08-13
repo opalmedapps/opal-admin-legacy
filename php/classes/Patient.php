@@ -19,7 +19,7 @@ class Patient extends Module {
      * @return array $response : response
      */
     public function updatePatientTransferFlags( $patientList ) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($patientList);
         $response = array(
             'value'     => 0,
             'message'   => ''
@@ -108,7 +108,7 @@ class Patient extends Module {
      * @return array $Response : response
      */
     public function emailAlreadyInUse($email) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($email);
         $Response = null;
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -148,7 +148,7 @@ class Patient extends Module {
      * @return array $patientResponse : patient information or response
      */
     public function findPatient($ssn, $id) {
-        $this->checkReadAccess();
+        $this->checkReadAccess(array($ssn, $id));
         $patientResponse = array(
             'message'   => '',
             'status'    => '',
@@ -305,7 +305,7 @@ class Patient extends Module {
      * @return array $securityQuestions
      */
     public function getSecurityQuestions($language) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($language);
         $securityQuestions = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
@@ -343,7 +343,7 @@ class Patient extends Module {
      * @return void
      */
     public function registerPatient($patientDetails) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($patientDetails);
         $email              = $patientDetails['email'];
         $password           = $patientDetails['password'];
         $language           = $patientDetails['language'];
@@ -585,7 +585,7 @@ class Patient extends Module {
      * @return array $patientDetails : the patient details
      */
     public function getPatientDetails ($serial) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($serial);
         $patientDetails = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -637,7 +637,7 @@ class Patient extends Module {
      * @return array $response : response
      */
     public function updatePatient($patientDetails) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($patientDetails);
         $response = array (
             'value'		=> 0,
             'error'		=> array(

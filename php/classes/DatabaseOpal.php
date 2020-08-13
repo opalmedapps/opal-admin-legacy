@@ -1710,4 +1710,10 @@ class DatabaseOpal extends DatabaseAccess {
             "updatedBy"=>$this->getUsername(),
         ));
     }
+
+    function insertAudit($toInsert) {
+        $toInsert["creationDate"] = date("Y-m-d H:i:s");
+        $toInsert["createdBy"] = ($this->username != null ? $this->username : UNKNOWN_USER);
+        return $this->_insertRecordIntoTable(OPAL_AUDIT_TABLE, $toInsert);
+    }
 }

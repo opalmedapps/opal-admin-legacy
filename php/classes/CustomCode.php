@@ -41,7 +41,7 @@ class CustomCode extends Module {
      * @return  number of record inserted (should be one) or a code 500
      * */
     public function insertCustomCode($customCode) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($customCode);
         $customCode = HelpSetup::arraySanitization($customCode);
         $moduleDetails = $this->opalDB->getModuleSettings($customCode["moduleId"]["value"]);
 
@@ -66,7 +66,7 @@ class CustomCode extends Module {
      * @return  number of record inserted (should be one) or a code 500
      * */
     public function updateCustomCode($customCode) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($customCode);
         $customCode = HelpSetup::arraySanitization($customCode);
         if(!array_key_exists("ID", $customCode) || $customCode["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Cannot identify the custom code");
@@ -150,7 +150,7 @@ class CustomCode extends Module {
     }
 
     function getCustomCodeDetailsAPI($customCodeId, $moduleId) {
-        $this->checkReadAccess();
+        $this->checkReadAccess(array($customCodeId, $moduleId));
         return $this->_getCustomCodeDetails($customCodeId, $moduleId);
     }
 
@@ -169,7 +169,7 @@ class CustomCode extends Module {
      * @return  boolean : response
      */
     function deleteCustomCode($customCodeId, $moduleId) {
-        $this->checkDeleteAccess();
+        $this->checkDeleteAccess(array($customCodeId, $moduleId));
         $details = $this->opalDB->getCustomCodeDetails($customCodeId, $moduleId);
         if($details["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid custom code.");

@@ -166,6 +166,11 @@ define("ACCESS_READ_WRITE_DELETE", 7);
 define("PUBLICATION_PUBLISH_DATE", 9);
 define("GUEST_ACCOUNT", 29);
 
+define("ACCESS_GRANTED", "GRANTED");
+define("ACCESS_DENIED", "DENIED");
+define("ENCRYPTED_DATA", "ENCRYPTED DATA");
+define("UNKNOWN_USER", "UNKNOWN USER");
+
 /*
  * List of HTTP status codes
  * */

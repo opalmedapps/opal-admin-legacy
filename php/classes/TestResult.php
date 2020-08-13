@@ -19,7 +19,7 @@ class TestResult extends Module {
      * @return array $response : response
      */
     public function updatePublishFlags( $testResultList, $user ) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess(array($testResultList, $user));
         $response = array(
             'value'     => 0,
             'message'   => ''
@@ -63,7 +63,7 @@ class TestResult extends Module {
      * @return array $testResultDetails : the test result details
      */
     public function getTestResultDetails ($serial) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($serial);
         $testResultDetails = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -356,7 +356,7 @@ class TestResult extends Module {
      * @return void
      */
     public function insertTestResult ($testResultDetails) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($testResultDetails);
         $name_EN            = $testResultDetails['name_EN'];
         $name_FR            = $testResultDetails['name_FR'];
         $description_EN     = $testResultDetails['description_EN'];
@@ -615,7 +615,7 @@ class TestResult extends Module {
      * @return array : response
      */
     public function updateTestResult ($testResultDetails) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($testResultDetails);
         $name_EN            = $testResultDetails['name_EN'];
         $name_FR            = $testResultDetails['name_FR'];
         $description_EN     = $testResultDetails['description_EN'];
@@ -805,7 +805,7 @@ class TestResult extends Module {
      * @return array $response : response
      */
     public function deleteTestResult ($testResultSer, $user) {
-        $this->checkDeleteAccess();
+        $this->checkDeleteAccess(array($testResultSer, $user));
         $response = array(
             'value'     => 0,
             'message'   => ''
@@ -911,7 +911,7 @@ class TestResult extends Module {
      * @return array $testResultLogs : the test result logs for highcharts
      */
     public function getTestResultChartLogs ($serial) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($serial);
         $testResultLogs = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -1031,7 +1031,7 @@ class TestResult extends Module {
      * Gets list logs of test results during one or many cron sessions
      */
     public function getTestResultListLogs($testResultIds) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($testResultIds);
         foreach ($testResultIds as &$id) {
             $id = intval($id);
         }
