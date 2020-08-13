@@ -27,7 +27,7 @@ class Study extends Module {
      * @return  number of record inserted (should be one) or a code 500
      * */
     public function insertStudy($post) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($post);
         $study = HelpSetup::arraySanitization($post);
         $result = $this->_validateStudy($study);
         if(is_array($result) && count($result) > 0)
@@ -83,7 +83,7 @@ class Study extends Module {
      * @return  (array) details of the study
      * */
     public function getStudyDetails($studyId) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($studyId);
         return $this->opalDB->getStudyDetails(intval($studyId));
     }
 
@@ -93,7 +93,7 @@ class Study extends Module {
      * @return  (int) number of record updated (should be one!) or an error 500
      * */
     public function updateStudy($post) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($post);
         $study = HelpSetup::arraySanitization($post);
         $result = $this->_validateStudy($study);
         if(is_array($result) && count($result) > 0)
@@ -138,7 +138,7 @@ class Study extends Module {
      * @return  (int) number of record marked or error 500 if an error occurred.
      */
     function deleteStudy($studyId) {
-        $this->checkDeleteAccess();
+        $this->checkDeleteAccess($studyId);
         $currentStudy = $this->opalDB->getStudyDetails(intval($studyId));
         if(!$currentStudy["ID"] || $currentStudy["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Study not found.");

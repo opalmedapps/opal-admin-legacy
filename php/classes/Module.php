@@ -9,6 +9,7 @@ class Module
 {
     protected $opalDB;
     protected $moduleId;
+    protected $moduleName;
     protected $access;
 
     /*
@@ -51,6 +52,18 @@ class Module
         }
     }
 
+    protected function _insertAudit($module, $method, $arguments, $access) {
+        $this->opalDB->insertAudit(
+            array(
+                "module"=>$module,
+                "method"=>$method,
+                "argument"=>json_encode($arguments),
+                "access"=>$access,
+                "ipAddress"=>HelpSetup::getUserIP(),
+            )
+        );
+    }
+
     /*
      * Connect to the DB as a main user and not as a guest
      * @params  void
@@ -80,14 +93,18 @@ class Module
     }
 
     /*
-     * Validate the read access requested by the user is authorized. If not, returns an error 403
+     * Validate the read access requested by the user is authorized. If not, returns an error 403. It also
      * @params  void
      * @return  false or error 403
      * */
-    public function checkReadAccess()
-    {
-        if(!(($this->access >> 0) & 1))
+    public function checkReadAccess($arguments = array()) {
+        $arguments = HelpSetup::arraySanitization($arguments);
+        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        if(!(($this->access >> 0) & 1)) {
+            $this->_insertAudit($moduleName, $methodeName, $arguments, ACCESS_DENIED);
             HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
+        }
+        $this->_insertAudit($moduleName, $methodeName, $arguments, ACCESS_GRANTED);
         return false;
     }
 
@@ -96,10 +113,14 @@ class Module
      * @params  void
      * @return  false or error 403
      * */
-    public function checkWriteAccess()
-    {
-        if(!(($this->access >> 1) & 1))
+    public function checkWriteAccess($arguments = array()) {
+        $arguments = HelpSetup::arraySanitization($arguments);
+        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        if(!(($this->access >> 1) & 1)) {
+            $this->_insertAudit($moduleName, $methodeName, $arguments, ACCESS_DENIED);
             HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
+        }
+        $this->_insertAudit($moduleName, $methodeName, $arguments, ACCESS_GRANTED);
         return false;
     }
 
@@ -108,10 +129,15 @@ class Module
      * @params  void
      * @return  false or error 403
      * */
-    public function checkDeleteAccess()
+    public function checkDeleteAccess($arguments = array())
     {
-        if(!(($this->access >> 2) & 1))
+        $arguments = HelpSetup::arraySanitization($arguments);
+        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        if(!(($this->access >> 2) & 1)) {
+            $this->_insertAudit($moduleName, $methodeName, $arguments, ACCESS_DENIED);
             HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access denied.");
+        }
+        $this->_insertAudit($moduleName, $methodeName, $arguments, ACCESS_GRANTED);
         return false;
     }
 

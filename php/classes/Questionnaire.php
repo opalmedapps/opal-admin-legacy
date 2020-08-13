@@ -130,7 +130,7 @@ class Questionnaire extends QuestionnaireModule {
      * @return array $questionnaireDetails : the questionnaire details
      */
     public function getQuestionnaireDetails($questionnaireId){
-        $this->checkReadAccess();
+        $this->checkReadAccess($questionnaireId);
         $questionnaireDetails = $this->questionnaireDB->getQuestionnaireDetails($questionnaireId);
 
         if(count($questionnaireDetails) != 1)
@@ -190,7 +190,7 @@ class Questionnaire extends QuestionnaireModule {
      * @return void
      */
     public function insertQuestionnaire($newQuestionnaire){
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($newQuestionnaire);
         $toInsert = array(FRENCH_LANGUAGE=>$newQuestionnaire['title_FR'], ENGLISH_LANGUAGE=>$newQuestionnaire['title_EN']);
         $title = $this->questionnaireDB->addToDictionary($toInsert, QUESTIONNAIRE_TABLE);
 
@@ -252,7 +252,7 @@ class Questionnaire extends QuestionnaireModule {
      * @return array : the legacy questionnaire logs for table view
      */
     public function getQuestionnaireListLogs($ids) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($ids);
         return $this->opalDB->getQuestionnaireListLogs($ids);
     }
 
@@ -272,7 +272,7 @@ class Questionnaire extends QuestionnaireModule {
      * @return array $response : response
      */
     public function deleteQuestionnaire($questionnaireId){
-        $this->checkDeleteAccess();
+        $this->checkDeleteAccess($questionnaireId);
         $questionnaireToDelete = $this->getQuestionnaireDetails($questionnaireId);
 
         if ($this->questionnaireDB->getOAUserId() <= 0 || $questionnaireToDelete["deleted"] == 1 || ($questionnaireToDelete["private"] == 1 && $this->questionnaireDB->getOAUserId() != $questionnaireToDelete["OAUserId"]))
@@ -315,7 +315,7 @@ class Questionnaire extends QuestionnaireModule {
      * @return  void
      * */
     public function updateQuestionnaire($updatedQuestionnaire){
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($updatedQuestionnaire);
         $total = 0;
         $questionnaireUpdated = 0;
         $oldQuestions = array();

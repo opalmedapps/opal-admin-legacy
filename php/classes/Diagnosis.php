@@ -18,7 +18,7 @@ class Diagnosis extends Module {
      * @return array $diagnosisTranslationDetails : the diagnosis translation details
      */
     public function getDiagnosisTranslationDetails($serial) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($serial);
 
         $diagnosisTranslationDetails = array();
         try {
@@ -182,7 +182,7 @@ class Diagnosis extends Module {
      * @return void
      */
     public function insertDiagnosisTranslation ($diagnosisTranslationDetails) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($diagnosisTranslationDetails);
 
         $name_EN 			= $diagnosisTranslationDetails['name_EN'];
         $name_FR 			= $diagnosisTranslationDetails['name_FR'];
@@ -368,7 +368,7 @@ class Diagnosis extends Module {
      */
 
     public function updateDiagnosisTranslation ($diagnosisTranslationDetails) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($diagnosisTranslationDetails);
 
         $serial 			= $diagnosisTranslationDetails['serial'];
         $name_EN 			= $diagnosisTranslationDetails['name_EN'];
@@ -513,7 +513,7 @@ class Diagnosis extends Module {
      * @return array $response : response
      */
     public function deleteDiagnosisTranslation ($diagnosisTranslationSer, $user) {
-        $this->checkDeleteAccess();
+        $this->checkDeleteAccess(array($diagnosisTranslationSer, $user));
 
         $response = array(
             'value'     => 0,

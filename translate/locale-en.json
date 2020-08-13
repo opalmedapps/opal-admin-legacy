@@ -2403,7 +2403,7 @@
       "TRIGGERS": "Triggers",
       "SEE_TRIGGERS": "See triggers",
       "TRIGGERS_LIST": "Triggers list",
-      "TRIGGERS_EXPLANATION": "Please enter the liste of triggers for the new alert in the following box..",
+      "TRIGGERS_EXPLANATION": "Please enter the liste of triggers for the new alert in the following box.",
       "CONTACTS": "Contacts",
       "CONTACTS_EXPLANATION": "This is list of persons or organizations to contact if the alert is triggered. Phone number for SMS and email addresses are accepted.",
       "ADD_PHONE": "Add a phone number",
