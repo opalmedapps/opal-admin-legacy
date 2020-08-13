@@ -74,7 +74,7 @@ class Notification extends Module {
      * @return array $notificationDetails : the notification details
      */
     public function getNotificationDetails ($serial) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($serial);
         $notificationDetails = array();
         try {
 			$host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -171,7 +171,7 @@ class Notification extends Module {
 	 * @return void
      */
     public function insertNotification($notification) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($notification);
 
         $name_EN            = $notification['name_EN'];
         $name_FR            = $notification['name_FR'];
@@ -222,7 +222,7 @@ class Notification extends Module {
      * @return array : response
      */
     public function updateNotification($notification) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($notification);
 
         $name_EN            = $notification['name_EN'];
         $name_FR            = $notification['name_FR'];
@@ -274,7 +274,7 @@ class Notification extends Module {
      * @return array : response
      */
     public function deleteNotification($serial, $user) {
-        $this->checkDeleteAccess();
+        $this->checkDeleteAccess(array($serial, $user));
 
         $response = array(
             'value'     => 0,
@@ -324,7 +324,7 @@ class Notification extends Module {
      * @return array $notificationLogs : the notification logs for highcharts
      */
     public function getNotificationChartLogs ($serial) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($serial);
         $notificationLogs = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -419,7 +419,7 @@ class Notification extends Module {
      * Gets list logs of notifications during one or many cron sessions
      */
     public function getNotificationListLogs ($notificationIds) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($notificationIds);
         foreach ($notificationIds as &$id) {
             $id = intval($id);
         }

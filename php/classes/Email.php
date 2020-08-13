@@ -75,7 +75,7 @@ class Email extends Module {
      * @return array $emailDetails : details of an email
      */
     public function getEmailDetails ($serial) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($serial);
         $emailDetails = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -168,7 +168,7 @@ class Email extends Module {
      * @param array $emailDetails : the email details
      */
     public function insertEmail($emailDetails){
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($emailDetails);
 
         $subject_EN 	= $emailDetails['subject_EN'];
         $subject_FR 	= $emailDetails['subject_FR'];
@@ -221,7 +221,7 @@ class Email extends Module {
      * @return array $response : response
      */
     public function updateEmail ($emailDetails) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($emailDetails);
 
         $subject_EN 	= $emailDetails['subject_EN'];
         $subject_FR 	= $emailDetails['subject_FR'];
@@ -275,7 +275,7 @@ class Email extends Module {
      * @return array $response : response
      */
     public function deleteEmail ($serial, $user) {
-        $this->checkDeleteAccess();
+        $this->checkDeleteAccess(array($serial, $user));
 
         $response = array(
             'value'     => 0,
@@ -329,7 +329,7 @@ class Email extends Module {
      * @return array $emailLogs : the email logs for highcharts
      */
     public function getEmailChartLogs ($serial) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($serial);
         $emailLogs = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -426,7 +426,7 @@ class Email extends Module {
      * Gets list logs of emails during one or many cron sessions
      */
     public function getEmailListLogs($emailIds) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($emailIds);
         foreach ($emailIds as &$id) {
             $id = intval($id);
         }

@@ -321,7 +321,7 @@ class TemplateQuestion extends QuestionnaireModule {
      * return  void
      */
     function updateTemplateQuestion($updatedTemplateQuestion) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($updatedTemplateQuestion);
         $total = 0;
         $oldTemplateQuestion = $this->getTemplateQuestionDetails($updatedTemplateQuestion["ID"]);
         $updatedTemplateQuestion = $this->validateAndSanitize($updatedTemplateQuestion);
@@ -372,7 +372,7 @@ class TemplateQuestion extends QuestionnaireModule {
      * @return void
      */
     public function insertTemplateQuestion($newTemplateQuestion){
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($newTemplateQuestion);
         $total = 0;
         $newTemplateQuestion = $this->validateAndSanitize($newTemplateQuestion);
 
@@ -464,7 +464,7 @@ class TemplateQuestion extends QuestionnaireModule {
      * @return  array of details of the question type
      * */
     public function getTemplateQuestionDetails($templateQuestionId) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($templateQuestionId);
         $templateQuestion = $this->questionnaireDB->getTemplateQuestionDetails($templateQuestionId);
         if(!is_array($templateQuestion) || count($templateQuestion) != 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Errors fetching the question type. Number of result is wrong.");
@@ -558,7 +558,7 @@ class TemplateQuestion extends QuestionnaireModule {
      * @return array $response : response
      */
     function deleteTemplateQuestion($templateQuestionId) {
-        $this->checkDeleteAccess();
+        $this->checkDeleteAccess($templateQuestionId);
         $templateQuestionToDelete = $this->questionnaireDB->getTypeTemplate($templateQuestionId);
         if ($this->questionnaireDB->getOAUserId() <= 0 || $templateQuestionToDelete["deleted"] == 1 || ($templateQuestionToDelete["private"] == 1 && $this->questionnaireDB->getOAUserId() != $templateQuestionToDelete["OAUserId"]))
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User access denied.");
