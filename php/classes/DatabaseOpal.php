@@ -1700,7 +1700,7 @@ class DatabaseOpal extends DatabaseAccess {
 
     /*
      * Marks a specified alert as deleted.
-     * @param   int : $alertId (ID of the alert to mark as deleted)
+     * @params   int : $alertId (ID of the alert to mark as deleted)
      * @return  int : number of record deleted or error 500.
      * */
     function markAlertAsDeleted($alertId) {
@@ -1711,9 +1711,24 @@ class DatabaseOpal extends DatabaseAccess {
         ));
     }
 
+    /*
+     * Insert user's action in the audit table
+     * @params  $toSubmit : array - Contains the user's info
+     * @return  int - latest ID created
+     * */
     function insertAudit($toInsert) {
         $toInsert["creationDate"] = date("Y-m-d H:i:s");
         $toInsert["createdBy"] = ($this->username != null ? $this->username : UNKNOWN_USER);
         return $this->_insertRecordIntoTable(OPAL_AUDIT_TABLE, $toInsert);
+    }
+
+    /*
+     * Get the list of audit. Because the front end does not support pagination or lazy loading, limit to the latest
+     * 10,000 records.
+     * @params  void
+     * @return  array - latest entries in the audit table
+     * */
+    function getAuditList() {
+        return $this->_fetchAll(OPAL_GET_AUDIT_LIST, array());
     }
 }
