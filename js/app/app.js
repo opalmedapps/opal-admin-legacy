@@ -48,6 +48,7 @@ angular.module('opalAdmin', [
 		custom_code: 15,
 		role: 16,
 		alert: 17,
+		audit: 18,
 	})
 
 	.constant('HTTP_CODE', {

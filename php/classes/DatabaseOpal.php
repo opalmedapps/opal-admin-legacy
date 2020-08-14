@@ -1728,7 +1728,13 @@ class DatabaseOpal extends DatabaseAccess {
      * @params  void
      * @return  array - latest entries in the audit table
      * */
-    function getAuditList() {
-        return $this->_fetchAll(OPAL_GET_AUDIT_LIST, array());
+    function getAudits() {
+        return $this->_fetchAll(OPAL_GET_AUDITS, array());
+    }
+
+    function getAuditDetails($auditId) {
+        return $this->_fetchAll(OPAL_GET_AUDIT_DETAILS, array(
+            array("parameter"=>":ID","variable"=>$auditId,"data_type"=>PDO::PARAM_INT),
+        ));
     }
 }

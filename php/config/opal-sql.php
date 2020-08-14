@@ -824,9 +824,16 @@ define("OPAL_UPDATE_ALERT", "
 ");
 
 define("OPAL_MARK_ALERT_AS_DELETED", "
-    UPDATE ".OPAL_ALERT_TABLE." SET deleted = ".DELETED_RECORD.", active = ".INACTIVE_RECORD.", updatedBy = :updatedBy , deletedBy = :updatedBy WHERE ID = :ID;
+    UPDATE ".OPAL_ALERT_TABLE." SET deleted = ".DELETED_RECORD.", active = ".INACTIVE_RECORD.", updatedBy = :updatedBy,
+    deletedBy = :updatedBy WHERE ID = :ID;
 ");
 
-define("OPAL_GET_AUDIT_LIST","
-    SELECT ID, module, method, access, ipAddress, creationDate, createdBy FROM ".OPAL_AUDIT_TABLE." ORDER BY creationDate DESC, createdBy LIMIT 10000;
+define("OPAL_GET_AUDITS","
+    SELECT `ID`, `module`, `method`, `access`, `ipAddress`, `creationDate`, `createdBy` FROM ".OPAL_AUDIT_TABLE."
+    ORDER BY creationDate DESC, createdBy LIMIT 10000;
 ");
+
+
+define("OPAL_GET_AUDIT_DETAILS",
+    "SELECT * FROM ".OPAL_ALERT_TABLE." WHERE ID = :ID;"
+);
