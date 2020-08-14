@@ -201,9 +201,6 @@ class Questionnaire extends QuestionnaireModule {
         $nickname = $this->questionnaireDB->addToDictionary($toInsert, QUESTIONNAIRE_TABLE);
         $instruction = $this->questionnaireDB->addToDictionary($toInsert, QUESTIONNAIRE_TABLE);
 
-        foreach($newQuestionnaire["questions"] as &$question)
-            $question["sectionId"] = $sectionId;
-
         $toInsert = array(
             "title"=>$title,
             "nickname"=>$nickname,
