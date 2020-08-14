@@ -12,16 +12,21 @@ class Audit extends Module
      * @params  void
      * @return  array - latest entries in the audit table
      * */
-    public function getAudit() {
+    public function getAudits() {
         $this->checkReadAccess();
-        return $this->opalDB->getAuditList();
+        return $this->opalDB->getAudits();
     }
 
     /*
      * Get the details of a specific audit.
+     * @params  $auditId : int - ID of the audit to get the dtails
+     * @return  array - details of the audit.
      * */
     public function getAuditDetails($auditId) {
         $this->checkReadAccess($auditId);
-        return array();
+        $result = $this->opalDB->getAuditDetails($auditId);
+        if(count($result) != 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid audit ID.");
+        return $result[0];
     }
 }
