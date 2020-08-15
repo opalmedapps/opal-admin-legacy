@@ -72,6 +72,7 @@ define("MODULE_EMAIL", 14);
 define("MODULE_CUSTOM_CODE", 15);
 define("MODULE_ROLE", 16);
 define("MODULE_ALERT", 17);
+define("MODULE_TRIGGER", 18);
 define("LOCAL_SOURCE_ONLY", -1);
 
 define("DELETED_RECORD", 1);
@@ -82,6 +83,8 @@ define("PRIVATE_RECORD", 1);
 define("PUBLIC_RECORD", 0);
 define("ACTIVE_RECORD", 1);
 define("INACTIVE_RECORD", 0);
+
+define("TRIGGER_EVENT_PUBLISH", 1);
 
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."general-sql.php");
 require_once(FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."questionnaire-sql.php");
@@ -124,6 +127,7 @@ include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseAria.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseOrms.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "DatabaseDisconnected.php" );
+include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Trigger.php" );
 
 // Push Notification FCM and APN credientials.
 define( "API_KEY" , $config['pushNotificationConfig']['android']['apiKey'] );

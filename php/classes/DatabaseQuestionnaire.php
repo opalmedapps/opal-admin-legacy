@@ -1149,4 +1149,15 @@ class DatabaseQuestionnaire extends DatabaseAccess
         $sqlInsert = str_replace("%%FIELDS%%", $sqlFieldNames, $sqlInsert) . implode(" UNION ALL ", $sqlConditional);
         return $this->_queryInsert($sqlInsert, $ready);
     }
+
+     /*
+     * Returns questionnaire info (including answers) from a questionnaire
+     * @params  int : $patientQuestionnaireSer - serial number of the particular questionnaire-patient relation 
+     * @return  questionnaire results (array)
+     * */
+    function getQuestionnaireResults($patientQuestionnaireSer) {
+        return $this->_fetch(SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_INFO, array(
+            array("parameter"=>":id","variable"=>$patientQuestionnaireSer,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }

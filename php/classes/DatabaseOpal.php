@@ -1710,4 +1710,34 @@ class DatabaseOpal extends DatabaseAccess {
             "updatedBy"=>$this->getUsername(),
         ));
     }
+
+    /*
+     * Get all the triggers
+     * @params  int : $triggerId - ID of the trigger 
+     *          int : $triggerType - type of trigger
+     * @return  triggers found (array)
+     * */
+    function getTriggersList($triggerId, $triggerType) {
+        return $this->_fetchAll(OPAL_GET_TRIGGERS_LIST, array(
+            array("parameter"=>":ID","variable"=>$triggerId,"data_type"=>PDO::PARAM_INT),
+            array("parameter"=>":TYPE","variable"=>$triggerType,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Publish a patient questionnaire
+     * @params  int : $questionnaireControlSer - serial number of questionnaire control
+     *          int : $patientSer - serial number of patient 
+     * @return int - ID of the record inserted
+     * */
+    function publishQuestionnaire($questionnaireControlSer, $patientSer) {
+        $toSubmit = array(
+            "QuestionnaireControlSerNum"=>$questionnaireControlSer,
+            "PatientSerNum"=>$patientSer,
+            "DateAdded"=>date("Y-m-d H:i:s")
+        );
+        return $this->_insertRecordIntoTable(OPAL_TRIGGER_TABLE, $toSubmit);
+    }
+
+
 }

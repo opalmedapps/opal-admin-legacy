@@ -429,5 +429,12 @@ class Questionnaire extends QuestionnaireModule {
         if ($questionnaireUpdated == 0 && $total > 0)
             $this->questionnaireDB->forceUpdate($updatedQuestionnaire["ID"], QUESTIONNAIRE_TABLE);
     }
+
+    public function getQuestionnaireResults($patientQuestionnaireSer) { 
+        // $this->checkReadAccess();
+        return $this->questionnaireDB->getQuestionnaireResults($patientQuestionnaireSer);
+    }
+
+
 }
 ?>

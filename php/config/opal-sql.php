@@ -91,6 +91,7 @@ define("OPAL_OA_ROLE_MODULE_TABLE","oaRoleModule");
 define("OPAL_SOURCE_DATABASE_TABLE","SourceDatabase");
 define("OPAL_HOSPITAL_MAP_TABLE","HospitalMap");
 define("OPAL_ALERT_TABLE","alert");
+define("OPAL_TRIGGER_TABLE","jsonTrigger");
 
 //Definition of the primary keys of the opalDB database
 define("OPAL_POST_PK","PostControlSerNum");
@@ -824,4 +825,8 @@ define("OPAL_UPDATE_ALERT", "
 
 define("OPAL_MARK_ALERT_AS_DELETED", "
     UPDATE ".OPAL_ALERT_TABLE." SET deleted = ".DELETED_RECORD.", active = ".INACTIVE_RECORD.", updatedBy = :updatedBy , deletedBy = :updatedBy WHERE ID = :ID;
+");
+
+define("OPAL_GET_TRIGGERS_LIST","
+    SELECT ID, type, onCondition, eventType, targetId, targetType FROM ".OPAL_TRIGGER_TABLE." WHERE active = ".ACTIVE_RECORD." AND ID = :ID AND type = :TYPE;
 ");
