@@ -9,6 +9,7 @@ date_default_timezone_set("America/Toronto");
 
 // Turn on all errors except for notices
 error_reporting(E_ALL & ~E_NOTICE);
+ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 
 // Get directory path of this file
