@@ -30,14 +30,14 @@ class DatabaseOpal extends DatabaseAccess {
     protected function _getUserInfoFromDB($newOAUserId) {
         $newOAUserId = strip_tags($newOAUserId);
         if($newOAUserId == "" || $newOAUserId <= 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "1 - User cannot be found. Access denied. $newOAUserId");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied." . json_encode($_POST));
         $result = $this->_fetchAll(SQL_OPAL_SELECT_USER_INFO,
             array(
                 array("parameter"=>":OAUserId","variable"=>$newOAUserId,"data_type"=>PDO::PARAM_INT),
             ));
 
         if (!is_array($result) || count($result) != 1) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "2 - User cannot be found. Access denied." . json_encode($result));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
         }
 
         $resultRole = $this->_fetchAll(SQL_OPAL_SELECT_USER_ROLE,
@@ -45,7 +45,7 @@ class DatabaseOpal extends DatabaseAccess {
                 array("parameter"=>":OAUserId","variable"=>$newOAUserId,"data_type"=>PDO::PARAM_INT),
             ));
         if(!is_array($resultRole) || count($resultRole) <= 0)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "3 - User cannot be found. Access denied." . json_encode($resultRole));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "User cannot be found. Access denied.");
 
         $result = $result[0];
         $tempRole = array();
