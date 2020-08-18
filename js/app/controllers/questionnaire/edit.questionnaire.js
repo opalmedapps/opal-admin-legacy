@@ -208,6 +208,18 @@ angular.module('opalAdmin.controllers.questionnaire.edit', ['ngAnimate', 'ngSani
 		}).catch(function (err) {
 			ErrorHandler.onError(err, $filter('translate')('QUESTIONNAIRE_MODULE.QUESTIONNAIRE_EDIT.ERROR_QUESTIONNAIRE_DETAILS'));
 			$uibModalInstance.close();
+		}).finally(function () {
+			$timeout(function () {
+				if ($scope.gridApi.selection.selectRow) {
+					angular.forEach($scope.questionnaire.questions, function (selectedGroup) {
+						angular.forEach($scope.groupList, function (group) {
+							if (selectedGroup.ID == group.ID) {
+								$scope.gridApi.selection.selectRow(group);
+							}
+						});
+					});
+				}
+			});
 		});
 
 		// Function to toggle Item in a list on/off
