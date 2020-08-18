@@ -17,12 +17,12 @@ class User extends Module {
     protected function _validateUserAuthentication($result, $username) {
         if(count($result) < 1) {
             HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Access denied");
         }
         else if(count($result) > 1) {
             HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Somethings's VERY wrong. There is too many entries!");
         }
         $result = $result[0];
@@ -62,7 +62,7 @@ class User extends Module {
 
         if(!$requestResult["authenticate"]) {
             HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Access denied");
         }
 
@@ -98,7 +98,7 @@ class User extends Module {
 
         if($username == "" || $password == "" || $cypher == "") {
             HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
         }
 
@@ -119,13 +119,13 @@ class User extends Module {
         $tempAccess = $this->opalDB->getUserAccess($result["role"]);
         if(count($tempAccess) <= 0) {
             HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "No access found. Please contact your administrator.");
         }
         foreach($tempAccess as $access) {
             if(!HelpSetup::validateBitOperation($access["operation"],$access["access"])) {
                 HelpSetup::getModuleMethodName($moduleName, $methodeName);
-                $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED);
+                $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
                 HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access violation role-module. Please contact your administrator.");
             }
             $userAccess[$access["ID"]] = array("ID"=>$access["ID"], "access"=>$access["access"]);
