@@ -833,7 +833,6 @@ define("OPAL_GET_AUDITS","
     ORDER BY creationDate DESC, createdBy LIMIT 10000;
 ");
 
-
 define("OPAL_GET_AUDIT_DETAILS",
-    "SELECT * FROM ".OPAL_ALERT_TABLE." WHERE ID = :ID;"
+    "SELECT * FROM ".OPAL_AUDIT_TABLE." WHERE ID = :ID;"
 );

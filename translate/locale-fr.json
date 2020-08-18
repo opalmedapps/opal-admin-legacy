@@ -2471,6 +2471,17 @@
       "ERROR": "Une erreur s'est produite lors de l'obtention des audits."
     },
     "VIEW": {
+      "TITLE": "Voir l'audit",
+      "CLOSE": "Fermer",
+      "DETAILS": "Détails",
+      "USER": "Utilisateur/rice",
+      "IP": "Adresse IP",
+      "MODULE": "Module",
+      "METHOD": "Fonction",
+      "ACCESS": "Accès",
+      "DATE": "Date",
+      "ARGUMENTS": "Arguments",
+      "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails l'audit."
     }
   },
   "ROLE" : {

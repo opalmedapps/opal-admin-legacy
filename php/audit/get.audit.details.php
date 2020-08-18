@@ -1,7 +1,7 @@
 <?php
 include_once("../config.php");
 
-$auditId = strip_tags($_POST['auditId']);
+$auditId = strip_tags($_POST['ID']);
 
 $alert = new Audit(); // Object
 $response = $alert->getAuditDetails($auditId);
