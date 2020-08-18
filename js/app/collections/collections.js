@@ -1149,6 +1149,34 @@ angular.module('opalAdmin.collections', [])
 		return roleAPI;
 	})
 
+	// Audit API service
+	.factory('auditCollectionService', function ($http) {
+		var auditAPI = {};
+
+		auditAPI.getAudits = function () {
+			return $http.post(
+				"audit/get/audits",
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		auditAPI.getAuditDetails = function (auditId) {
+			return $http.post(
+				"audit/get/audit-details",
+				$.param({
+					auditId: auditId,
+				}),
+				{
+					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
+				}
+			);
+		};
+
+		return auditAPI;
+	})
+
 	// Diagnosis API service
 	.factory('diagnosisCollectionService', function ($http) {
 

@@ -2438,6 +2438,23 @@
       "ERROR_UPDATE": "An error occurred while updating the alert."
     }
   },
+  "AUDIT" : {
+    "LIST": {
+      "TITLE": "Audits",
+      "SEARCH": "Search",
+      "VIEW": "View",
+      "USER": "User",
+      "IP": "IP Address",
+      "MODULE": "Module",
+      "METHOD": "Function",
+      "ACCESS": "Access",
+      "DATE": "Date",
+      "OPERATIONS": "Operations",
+      "ERROR": "An error occurred while getting the list of audits."
+    },
+    "VIEW": {
+    }
+  },
   "ROLE" : {
     "LIST": {
       "TITLE": "Roles",
