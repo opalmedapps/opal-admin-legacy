@@ -3,33 +3,45 @@
     <div class="col-xs-12 col-md-6">
         <h2 class="modal-title">
             <span class="glyphicon glyphicon-pencil"></span>
-            {{'AUDIT.EDIT.TITLE'|translate}}
+            {{'AUDIT.VIEW.TITLE'|translate}}
         </h2>
     </div>
     <div class="modal-buttons col-xs-12 col-md-6">
         <form method="post" ng-submit="updateAlert()">
-            <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'AUDIT.EDIT.CLOSE'|translate}}">
+            <input ng-click="cancel()" class="btn btn-danger cancel" type="button" value="{{'AUDIT.VIEW.CLOSE'|translate}}">
         </form>
     </div>
 </div>
 <div class="modal-body">
     <uib-accordion close-others="false">
-        <!-- SECTION: Message -->
+        <!-- SECTION: User -->
         <div uib-accordion-group is-open="titleMessage.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>{{'AUDIT.EDIT.MESSAGE'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleMessage.open, 'glyphicon-chevron-right': !titleMessage.open}"></i>
+                    <strong>{{'AUDIT.VIEW.DETAILS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': titleMessage.open, 'glyphicon-chevron-right': !titleMessage.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="row">
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div class="input-group">
-                        <p><strong>{{'AUDIT.EDIT.SUBJECT'|translate}}</strong>: {{toSubmit.message.subject}}</p>
+                        <p><strong>{{'AUDIT.VIEW.USER'|translate}}</strong>: {{auditDetails.createdBy}}</p>
+                    </div>
+                    <div class="input-group">
+                        <p><strong>{{'AUDIT.VIEW.IP'|translate}}</strong>: {{auditDetails.ipAddress}}</p>
+                    </div>
+                    <div class="input-group">
+                        <p><strong>{{'AUDIT.VIEW.ACCESS'|translate}}</strong>: {{auditDetails.access}}</p>
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
                     <div class="input-group">
-                        <p><strong>{{'AUDIT.EDIT.BODY'|translate}}</strong>: {{toSubmit.message.body}}</p>
+                        <p><strong>{{'AUDIT.VIEW.MODULE'|translate}}</strong>: {{auditDetails.module}}</p>
+                    </div>
+                    <div class="input-group">
+                        <p><strong>{{'AUDIT.VIEW.METHOD'|translate}}</strong>: {{auditDetails.method}}</p>
+                    </div>
+                    <div class="input-group">
+                        <p><strong>{{'AUDIT.VIEW.DATE'|translate}}</strong>: {{auditDetails.creationDate}}</p>
                     </div>
                 </div>
             </div>
@@ -38,37 +50,11 @@
         <div uib-accordion-group is-open="triggerSection.open">
             <uib-accordion-heading>
                 <div>
-                    <strong>{{'AUDIT.EDIT.TRIGGERS_LIST'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.open, 'glyphicon-chevron-right': !triggerSection.open}"></i>
+                    <strong>{{'AUDIT.VIEW.ARGUMENTS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': triggerSection.open, 'glyphicon-chevron-right': !triggerSection.open}"></i>
                 </div>
             </uib-accordion-heading>
             <div class="row">
-                <div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
-                    <div class="input-group">
-                        <p><strong>{{'AUDIT.EDIT.TRIGGERS'|translate}}</strong>: {{toSubmit.trigger}}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- SECTION: Contact -->
-        <div uib-accordion-group is-open="contactSection.open">
-            <uib-accordion-heading>
-                <div>
-                    <strong>{{'AUDIT.EDIT.CONTACTS'|translate}}</strong> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': contactSection.open, 'glyphicon-chevron-right': !contactSection.open}"></i>
-                </div>
-            </uib-accordion-heading>
-            <div class="row">
-                <div class="col-xs-12 col-md-6" ng-if="toSubmit.contact.phone.length > 0">
-                    <h5 style="font-weight: bold">{{'AUDIT.EDIT.PHONE'|translate}}</h5>
-                    <ul>
-                        <li ng-repeat="phone in toSubmit.contact.phone track by $index">{{phone.num}}</li>
-                    </ul>
-                </div>
-                <div class="col-xs-12 col-md-6" ng-if="toSubmit.contact.email.length > 0">
-                    <h5 style="font-weight: bold">{{'AUDIT.EDIT.EMAIL'|translate}}</h5>
-                    <ul>
-                        <li ng-repeat="email in toSubmit.contact.email track by $index">{{email.adr}}</li>
-                    </ul>
-                </div>
+                <div class="col-xs-12" style="margin-bottom: 10px;"><pre>{{auditDetails.argument | json}}</pre></div>
             </div>
         </div>
     </uib-accordion>

@@ -2453,6 +2453,17 @@
       "ERROR": "An error occurred while getting the list of audits."
     },
     "VIEW": {
+      "TITLE": "View the audit",
+      "CLOSE": "Close",
+      "DETAILS": "Details",
+      "USER": "User",
+      "IP": "IP Address",
+      "MODULE": "Module",
+      "METHOD": "Function",
+      "ACCESS": "Access",
+      "DATE": "Date",
+      "ARGUMENTS": "Arguments",
+      "ERROR_DETAILS": "An error occurred while getting the details of the audit."
     }
   },
   "ROLE" : {
