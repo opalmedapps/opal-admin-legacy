@@ -1723,6 +1723,16 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
+     * Insert user's action in the audit table
+     * @params  $toSubmit : array - Contains the user's info
+     * @return  int - latest ID created
+     * */
+    function insertAuditForceUser($toInsert) {
+        $toInsert["creationDate"] = date("Y-m-d H:i:s");
+        return $this->_insertRecordIntoTable(OPAL_AUDIT_TABLE, $toInsert);
+    }
+
+    /*
      * Get the list of audit. Because the front end does not support pagination or lazy loading, limit to the latest
      * 10,000 records.
      * @params  void

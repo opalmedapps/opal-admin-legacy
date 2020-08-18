@@ -52,16 +52,20 @@ class Module
         }
     }
 
-    protected function _insertAudit($module, $method, $arguments, $access) {
-        $this->opalDB->insertAudit(
-            array(
-                "module"=>$module,
-                "method"=>$method,
-                "argument"=>json_encode($arguments),
-                "access"=>$access,
-                "ipAddress"=>HelpSetup::getUserIP(),
-            )
+    protected function _insertAudit($module, $method, $arguments, $access, $username = false) {
+        $toInsert = array(
+            "module"=>$module,
+            "method"=>$method,
+            "argument"=>json_encode($arguments),
+            "access"=>$access,
+            "ipAddress"=>HelpSetup::getUserIP(),
         );
+        if($username) {
+            $toInsert["createdBy"] = $username;
+            $this->opalDB->insertAuditForceUser($toInsert);
+        }
+        else
+            $this->opalDB->insertAudit($toInsert);
     }
 
     /*
