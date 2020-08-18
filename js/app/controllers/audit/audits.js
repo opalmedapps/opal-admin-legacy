@@ -1,5 +1,5 @@
 angular.module('opalAdmin.controllers.audit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
-controller('audit', function ($rootScope, $scope, $filter, $sce, $state, $uibModal, auditCollectionService, Session, ErrorHandler, MODULE) {
+controller('audit', function ($rootScope, $scope, $filter, $sce, $state, $uibModal, uiGridConstants, auditCollectionService, Session, ErrorHandler, MODULE) {
 	$scope.navMenu = Session.retrieveObject('menu');
 	$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.audit]) & (1 << 0)) !== 0);
 	$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.audit]) & (1 << 1)) !== 0);
@@ -66,7 +66,7 @@ controller('audit', function ($rootScope, $scope, $filter, $sce, $state, $uibMod
 			{ field: 'module', displayName: $filter('translate')('AUDIT.LIST.MODULE'), width: '15%', enableColumnMenu: false },
 			{ field: 'method', displayName: $filter('translate')('AUDIT.LIST.METHOD'), width: '15%', enableColumnMenu: false },
 			{ field: 'access', displayName: $filter('translate')('AUDIT.LIST.ACCESS'), width: '15%', enableColumnMenu: false },
-			{ field: 'creationDate', displayName: $filter('translate')('AUDIT.LIST.DATE'), width: '15%', enableColumnMenu: false },
+			{ field: 'creationDate', displayName: $filter('translate')('AUDIT.LIST.DATE'), width: '15%', enableColumnMenu: false, sort: {direction: uiGridConstants.DESC, priority: 0} },
 			{ name: $filter('translate')('AUDIT.LIST.OPERATIONS'), enableColumnMenu: false, cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '10%' }
 		],
 		enableFiltering: true,
@@ -81,11 +81,30 @@ controller('audit', function ($rootScope, $scope, $filter, $sce, $state, $uibMod
 
 	// Initialize list of existing audits
 	$scope.auditList = [];
+	getAuditsList();
 
-	auditCollectionService.getAudits().then(function (response) {
-		$scope.auditList = response.data;
-		console.log(response.data);
-	}).catch(function(err) {
-		ErrorHandler.onError(err, $filter('translate')('AUDIT.LIST.ERROR'));
-	});
+	function getAuditsList() {
+		auditCollectionService.getAudits().then(function (response) {
+			$scope.auditList = response.data;
+		}).catch(function(err) {
+			ErrorHandler.onError(err, $filter('translate')('AUDIT.LIST.ERROR'));
+		});
+	}
+
+	// Function to view audit details
+	$scope.viewAudit = function (audit) {
+		$scope.currentAudit = audit;
+		var modalInstance = $uibModal.open({ // open modal
+			templateUrl: 'templates/audit/view.audit.html',
+			controller: 'audit.view',
+			scope: $scope,
+			windowClass: 'customModal',
+			backdrop: 'static',
+		});
+
+		// After update, refresh the audit list
+		modalInstance.result.then(function () {
+			getAuditsList();
+		});
+	};
 });

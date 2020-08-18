@@ -1162,11 +1162,11 @@ angular.module('opalAdmin.collections', [])
 			);
 		};
 
-		auditAPI.getAuditDetails = function (auditId) {
+		auditAPI.getAuditDetails = function (ID) {
 			return $http.post(
 				"audit/get/audit-details",
 				$.param({
-					auditId: auditId,
+					ID: ID,
 				}),
 				{
 					headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'},
