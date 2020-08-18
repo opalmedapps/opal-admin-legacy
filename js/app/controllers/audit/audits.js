@@ -1,5 +1,5 @@
-angular.module('opalAdmin.controllers.patient', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
-controller('patient', function ($rootScope, $scope, $filter, $sce, $state, $uibModal, patientCollectionService, Session, ErrorHandler, MODULE) {
+angular.module('opalAdmin.controllers.audit', ['ngAnimate', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.resizeColumns']).
+controller('audit', function ($rootScope, $scope, $filter, $sce, $state, $uibModal, auditCollectionService, Session, ErrorHandler, MODULE) {
 	$scope.navMenu = Session.retrieveObject('menu');
 	$scope.readAccess = ((parseInt(Session.retrieveObject('access')[MODULE.audit]) & (1 << 0)) !== 0);
 	$scope.writeAccess = ((parseInt(Session.retrieveObject('access')[MODULE.audit]) & (1 << 1)) !== 0);
@@ -27,12 +27,12 @@ controller('patient', function ($rootScope, $scope, $filter, $sce, $state, $uibM
 
 	$scope.changesMade = false;
 
-	// patient table search textbox param
+	// audit table search textbox param
 	$scope.filterOptions = function (renderableRows) {
 		var matcher = new RegExp($scope.filterValue, 'i');
 		renderableRows.forEach(function (row) {
 			var match = false;
-			['name', 'patientid', 'email'].forEach(function (field) {
+			['createdBy', 'ipAddress', 'module', 'method', 'access', 'creationDate'].forEach(function (field) {
 				if (row.entity[field].match(matcher)) {
 					match = true;
 				}
@@ -44,23 +44,30 @@ controller('patient', function ($rootScope, $scope, $filter, $sce, $state, $uibM
 		return renderableRows;
 	};
 
-
-	$scope.filterPatient = function (filterValue) {
+	$scope.filterAudit = function (filterValue) {
 		$scope.filterValue = filterValue;
 		$scope.gridApi.grid.refresh();
-
 	};
 
-	// Table options for patient
-	$scope.gridOptions = {
-		data: 'patientList',
-		columnDefs: [
-			{ field: 'patientid', displayName: $filter('translate')('PATIENTS.LIST.PATIENTID'), width: '15%', enableColumnMenu: false },
-			{ field: 'name', displayName: $filter('translate')('PATIENTS.LIST.NAME'), width: '30%', enableColumnMenu: false },
-			{ field: 'email', displayName: $filter('translate')('PATIENTS.LIST.EMAIL'), width: '30%', enableColumnMenu: false },
-			{ field: 'transfer', displayName: $filter('translate')('PATIENTS.LIST.PUBLISH_FLAG'), width: '10%', cellTemplate: checkboxCellTemplate, enableFiltering: false, enableColumnMenu: false },
-			{ field: 'lasttransferred', displayName: $filter('translate')('PATIENTS.LIST.LAST'), width:'15%', enableColumnMenu: false },
+	var cellTemplateName = '<div style="cursor:pointer;" class="ui-grid-cell-contents"' +
+		'ng-click="grid.appScope.viewAudit(row.entity)">' +
+		'<strong><a href="">{{row.entity.createdBy}}</a></strong></div>';
 
+	var cellTemplateOperations = '<div style="text-align:center; padding-top: 5px;">';
+	cellTemplateOperations += '<strong><a href="" ng-click="grid.appScope.viewAudit(row.entity)"><i title="' + $filter('translate')('AUDIT.LIST.VIEW') + '" class="fa fa-eye"></i></a></strong> ';
+	cellTemplateOperations += '</div>';
+
+	// Table options for audit
+	$scope.gridOptions = {
+		data: 'auditList',
+		columnDefs: [
+			{ field: 'createdBy', displayName: $filter('translate')('AUDIT.LIST.USER'),  cellTemplate: cellTemplateName, width: '15%', enableColumnMenu: false },
+			{ field: 'ipAddress', displayName: $filter('translate')('AUDIT.LIST.IP'), width: '15%', enableColumnMenu: false },
+			{ field: 'module', displayName: $filter('translate')('AUDIT.LIST.MODULE'), width: '15%', enableColumnMenu: false },
+			{ field: 'method', displayName: $filter('translate')('AUDIT.LIST.METHOD'), width: '15%', enableColumnMenu: false },
+			{ field: 'access', displayName: $filter('translate')('AUDIT.LIST.ACCESS'), width: '15%', enableColumnMenu: false },
+			{ field: 'creationDate', displayName: $filter('translate')('AUDIT.LIST.DATE'), width: '15%', enableColumnMenu: false },
+			{ name: $filter('translate')('AUDIT.LIST.OPERATIONS'), enableColumnMenu: false, cellTemplate: cellTemplateOperations, sortable: false, enableFiltering: false, width: '10%' }
 		],
 		enableFiltering: true,
 		//useExternalFiltering: true,
@@ -72,90 +79,13 @@ controller('patient', function ($rootScope, $scope, $filter, $sce, $state, $uibM
 
 	};
 
-	// Initialize list of existing patients
-	$scope.patientList = [];
-	$scope.patientTransfers = {
-		transferList: []
-	};
+	// Initialize list of existing audits
+	$scope.auditList = [];
 
-	getPatientsList();
-
-	// When this function is called, we set the "publish" field to checked
-	// or unchecked based on value in the argument
-	$scope.updateTransferFlag = function (value) {
-		return (parseInt(value) === 1);
-	};
-
-
-	// Function for when the patient checkbox has been modified
-	$scope.checkTransferFlag = function (patient) {
-
-		$scope.changesMade = true;
-		patient.transfer = parseInt(patient.transfer);
-		// If the "transfer" column has been checked
-		if (patient.transfer) {
-			patient.transfer = 0; // set transfer to "false"
-		}
-
-		// Else the "Transfer" column was unchecked
-		else {
-			patient.transfer = 1; // set transfer to "true"
-		}
-	};
-
-	// Function to submit changes when transfer flags have been modified
-	$scope.submitTransferFlags = function () {
-		if ($scope.changesMade) {
-			angular.forEach($scope.patientList, function (patient) {
-				$scope.patientTransfers.transferList.push({
-					serial: patient.serial,
-					transfer: patient.transfer
-				});
-			});
-			// Submit form
-			$.ajax({
-				type: "POST",
-				url: "patient/update/patient-publish-flags",
-				data: $scope.patientTransfers,
-				success: function () {
-					$scope.setBannerClass('success');
-					$scope.bannerMessage = $filter('translate')('PATIENTS.LIST.SUCCESS_FLAGS');
-					$scope.showBanner();
-					$scope.changesMade = false;
-					getPatientsList();
-				},
-				error: function(err) {
-					ErrorHandler.onError(err, $filter('translate')('PATIENTS.LIST.ERROR_FLAGS'));
-				}
-			});
-		}
-	};
-
-	// Function for when a user has been clicked for (un)blocking
-	// Open a modal
-	$scope.patientToToggleBlock = null;
-	$scope.toggleBlock = function (currentPatient) {
-
-		$scope.patientToToggleBlock = currentPatient;
-		var modalInstance = $uibModal.open({
-			templateUrl: 'templates/patient/block.patient.html',
-			windowClass: 'customModal',
-			controller: 'patient.block',
-			scope: $scope,
-			backdrop: 'static'
-		});
-
-		// After toggle, refresh the patient list
-		modalInstance.result.then(function () {
-			getPatientsList();
-		});
-	};
-
-	function getPatientsList() {
-		patientCollectionService.getPatients().then(function (response) {
-			$scope.patientList = response.data;
-		}).catch(function(err) {
-			ErrorHandler.onError(err, $filter('translate')('PATIENTS.LIST.ERROR_PATIENTS'));
-		});
-	}
+	auditCollectionService.getAudits().then(function (response) {
+		$scope.auditList = response.data;
+		console.log(response.data);
+	}).catch(function(err) {
+		ErrorHandler.onError(err, $filter('translate')('AUDIT.LIST.ERROR'));
+	});
 });
