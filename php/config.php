@@ -72,6 +72,7 @@ define("MODULE_EMAIL", 14);
 define("MODULE_CUSTOM_CODE", 15);
 define("MODULE_ROLE", 16);
 define("MODULE_ALERT", 17);
+define("MODULE_AUDIT", 18);
 define("LOCAL_SOURCE_ONLY", -1);
 
 define("DELETED_RECORD", 1);
@@ -94,6 +95,7 @@ include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "User.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Database.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Alias.php" );
+include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Audit.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Post.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "EduMaterial.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "HospitalMap.php" );
@@ -165,6 +167,11 @@ define("ACCESS_READ_WRITE_DELETE", 7);
 
 define("PUBLICATION_PUBLISH_DATE", 9);
 define("GUEST_ACCOUNT", 29);
+
+define("ACCESS_GRANTED", "GRANTED");
+define("ACCESS_DENIED", "DENIED");
+define("ENCRYPTED_DATA", "ENCRYPTED DATA");
+define("UNKNOWN_USER", "UNKNOWN USER");
 
 /*
  * List of HTTP status codes

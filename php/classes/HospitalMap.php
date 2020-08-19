@@ -12,7 +12,7 @@ class HospitalMap extends Module {
     }
 
     public function generateQRCode($qrid, $oldqrid) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess(array($qrid, $oldqrid));
         return $this->_generateQRCode($qrid, $oldqrid);
     }
 
@@ -56,7 +56,7 @@ class HospitalMap extends Module {
 	 * @return void
      */
     public function insertHospitalMap ($hosMapDetails) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($hosMapDetails);
 
         $name_EN            = $hosMapDetails['name_EN'];
         $name_FR            = $hosMapDetails['name_FR'];
@@ -123,7 +123,7 @@ class HospitalMap extends Module {
      * Gets details on a particular hospital map
      */
     public function getHospitalMapDetails($serial) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($serial);
         $hosMapDetails = $this->opalDB->getHospitalMapDetails(intval($serial));
 //        $qr = $this->_generateQRCode($hosMapDetails['qrid'], null);
 //        $hosMapDetails['qrcode'] = $qr['qrcode'];
@@ -140,7 +140,7 @@ class HospitalMap extends Module {
 	 * @return void
      */
     public function updateHospitalMap ($hosMapDetails) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($hosMapDetails);
 
         $name_EN            = $hosMapDetails['name_EN'];
         $name_FR            = $hosMapDetails['name_FR'];
@@ -192,7 +192,7 @@ class HospitalMap extends Module {
 	 * @return void
      */
     public function deleteHospitalMap ($serial, $user) {
-        $this->checkDeleteAccess();
+        $this->checkDeleteAccess(array($serial, $user));
         $userSer = $user['id'];
         $sessionId = $user['sessionid'];
         try {

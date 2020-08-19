@@ -43,6 +43,7 @@ define("OPAL_FILTERS_TABLE","Filters");
 define("OPAL_FILTERS_MH_TABLE","FiltersMH");
 define("OPAL_FREQUENCY_EVENTS_TABLE","FrequencyEvents");
 define("OPAL_MODULE_TABLE","module");
+define("OPAL_AUDIT_TABLE","audit");
 define("OPAL_CATEGORY_MODULE_TABLE","categoryModule");
 define("OPAL_MODULE_PUBLICATION_SETTING_TABLE","modulePublicationSetting");
 define("OPAL_PUBLICATION_SETTING_TABLE","publicationSetting");
@@ -823,5 +824,15 @@ define("OPAL_UPDATE_ALERT", "
 ");
 
 define("OPAL_MARK_ALERT_AS_DELETED", "
-    UPDATE ".OPAL_ALERT_TABLE." SET deleted = ".DELETED_RECORD.", active = ".INACTIVE_RECORD.", updatedBy = :updatedBy , deletedBy = :updatedBy WHERE ID = :ID;
+    UPDATE ".OPAL_ALERT_TABLE." SET deleted = ".DELETED_RECORD.", active = ".INACTIVE_RECORD.", updatedBy = :updatedBy,
+    deletedBy = :updatedBy WHERE ID = :ID;
 ");
+
+define("OPAL_GET_AUDITS","
+    SELECT `ID`, `module`, `method`, `access`, `ipAddress`, `creationDate`, `createdBy` FROM ".OPAL_AUDIT_TABLE."
+    ORDER BY creationDate DESC, createdBy LIMIT 10000;
+");
+
+define("OPAL_GET_AUDIT_DETAILS",
+    "SELECT * FROM ".OPAL_AUDIT_TABLE." WHERE ID = :ID;"
+);

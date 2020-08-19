@@ -28,7 +28,7 @@ class Role extends Module {
      * @returns $roleDetails : array - contains the role details (names and list of operations)
      * */
     public function getRoleDetails($roleId) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($roleId);
 
         $roleDetails = $this->opalDB->getRoleDetails($roleId);
         if(count($roleDetails) != 1)
@@ -62,7 +62,7 @@ class Role extends Module {
      * @return  void
      * */
     public function insertRole($post) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($post);
 
         $recordsToInsert = array();
         $role = HelpSetup::arraySanitization($post);
@@ -147,7 +147,7 @@ class Role extends Module {
      * @return  void
      * */
     public function updateRole($post) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($post);
 
         $totalUpdated = 0;
         $optionsToKeep = array();
@@ -252,7 +252,7 @@ class Role extends Module {
      * @return  int - number of record marked or error 500 if an error occurred.
      */
     public function deleteRole($roleId) {
-        $this->checkDeleteAccess();
+        $this->checkDeleteAccess($roleId);
 
         $currentRole = $this->getRoleDetails($roleId);
         if(!$currentRole["ID"] || $currentRole["ID"] == "")

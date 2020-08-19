@@ -67,7 +67,7 @@ class Cron extends Module {
      * @return void
      */
     public function updateCron( $cronDetails ) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($cronDetails);
 
         $cronSer	    = 1;
         $nextCronDate	= $cronDetails['nextCronDate'];
@@ -291,7 +291,7 @@ class Cron extends Module {
      * @return array $cronLogs : the cron logs for table view
      */
     public function getCronListLogs ($contents) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($contents);
         $cronLogs = array();
         $moduleList = $this->opalDB->getAvailableRolesModules();
         $moduleArr = array();
