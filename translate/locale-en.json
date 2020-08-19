@@ -2462,7 +2462,7 @@
       "METHOD": "Function",
       "ACCESS": "Access",
       "DATE": "Date",
-      "ARGUMENTS": "Arguments",
+      "ARGUMENTS": "Received arguments",
       "ERROR_DETAILS": "An error occurred while getting the details of the audit."
     }
   },
