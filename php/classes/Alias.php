@@ -19,7 +19,7 @@ class Alias extends Module {
      * @return array $expressionList : the list of existing expressions
      */
     public function getExpressions ($sourceDBSer, $expressionType) {
-        $this->checkReadAccess();
+        $this->checkReadAccess(array($sourceDBSer, $expressionType));
 
         $results = array();
         $databaseObj = new Database();
@@ -133,7 +133,7 @@ class Alias extends Module {
      * @return array $response : response
      */
     public function updateAliasPublishFlags( $aliasList, $user ) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess(array($aliasList, $user));
 
         // Initialize a response array
         $response = array(
@@ -236,7 +236,7 @@ class Alias extends Module {
      * @return array $colorTags : the list of existing color tags
      */
     public function getColorTags($aliasType) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($aliasType);
 
         $colorTags = array();
         try {
@@ -409,7 +409,7 @@ class Alias extends Module {
      * @return array $aliasDetails : the alias details
      */
     public function getAliasDetails($aliasSer) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($aliasSer);
         $aliasDetails = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -530,7 +530,7 @@ class Alias extends Module {
      * @return void
      */
     public function insertAlias( $aliasDetails ) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($aliasDetails);
 
         $aliasName_EN 	= $aliasDetails['name_EN'];
         $aliasName_FR 	= $aliasDetails['name_FR'];
@@ -675,7 +675,7 @@ class Alias extends Module {
      * @return array $response : response
      */
     public function deleteAlias( $aliasSer, $user ) {
-        $this->checkDeleteAccess();
+        $this->checkDeleteAccess(array($aliasSer, $user));
 
         // Initialize a response array
         $response = array(
@@ -738,7 +738,7 @@ class Alias extends Module {
      * @return array $response : response
      */
     public function updateAlias( $aliasDetails ) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($aliasDetails);
 
         $aliasName_EN 	= $aliasDetails['name_EN'];
         $aliasName_FR 	= $aliasDetails['name_FR'];
@@ -1053,7 +1053,7 @@ class Alias extends Module {
      * @return array $aliasLogs : the alias logs for highcharts
      */
     public function getAliasChartLogs ($serial, $type) {
-        $this->checkReadAccess();
+        $this->checkReadAccess(array($serial, $type));
 
         $aliasLogs = array();
         try {

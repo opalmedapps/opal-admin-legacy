@@ -83,6 +83,8 @@ class HelpSetup {
      * */
     public static function arraySanitization($arrayForm) {
         $sanitizedArray = array();
+        if(!is_array($arrayForm))
+            return preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $arrayForm);
         foreach($arrayForm as $key=>$value) {
             $key = preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $key);
             if(is_array($value))
@@ -149,6 +151,12 @@ class HelpSetup {
         return HelpSetup::validateBitOperation($_SESSION["userAccess"][$moduleAccess]["access"], ACCESS_READ_WRITE_DELETE);
     }
 
+    /*
+     * Prepares the navigation menu for an user with a specific language.
+     * @params  $userMenu : array - current navigation menu
+     *          $languyage : string - language of the user
+     * @return  $newMenu : array - correct structure and language of the navigation menu
+     * */
     public static function prepareNavMenu($userMenu, $language) {
         $newMenu = $userMenu;
 
@@ -169,5 +177,38 @@ class HelpSetup {
             }
         }
         return $newMenu;
+    }
+
+    /*
+     * Returns the real IP address of an user.
+     * @params  void
+     * @return  IP address of the user.
+     * */
+    public static function getUserIP(){
+        if ( !empty($_SERVER['HTTP_CLIENT_IP']) ) {
+            // Check IP from internet.
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR']) ) {
+            // Check IP is passed from proxy.
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } else {
+            // Get IP address from remote address.
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
+        return $ip;
+    }
+
+    /*
+     * Stores the module name and method called.
+     *
+     * This function is trickier than the other, since there is no return function: the variables are passed through
+     * reference.
+     * @params  $moduleName : string - name of the main module that made the call
+     *          $methodeName : string - name of the method that made the call
+     * */
+    public static function getModuleMethodName(&$moduleName, &$methodeName) {
+        $debugBackTrace = debug_backtrace();
+        $methodeName =  $debugBackTrace[count($debugBackTrace) - 1]["function"];
+        $moduleName = $debugBackTrace[count($debugBackTrace) - 1]["class"];
     }
 }
