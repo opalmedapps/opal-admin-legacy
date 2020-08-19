@@ -287,11 +287,15 @@ class User extends Module {
      * @return  true (boolean) means the update was successful.
      * */
     public function updateUser($post) {
-        $this->checkWriteAccess($post);
         $post = HelpSetup::arraySanitization($post);
         $cypher = intval($post["cypher"]);
+        if($cypher == "") {
+            $this->checkWriteAccess();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing cypher for update.");
+        }
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
         $data = HelpSetup::arraySanitization($data);
+        $this->checkWriteAccess(array("userId"=>$data["id"], "roleId"=>$data["roleId"], "language"=>$data["language"]));
 
         $userDetails = $this->opalDB->getUserDetails($data["id"]);
 
@@ -327,13 +331,15 @@ class User extends Module {
      * @returns void
      * */
     public function insertUser($post) {
-        $this->checkWriteAccess($post);
         $post = HelpSetup::arraySanitization($post);
         $cypher = intval($post["cypher"]);
-        if($cypher == "")
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing cypher to create user.");
+        if($cypher == "") {
+            $this->checkWriteAccess();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing cypher for creation.");
+        }
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
         $data = HelpSetup::arraySanitization($data);
+        $this->checkWriteAccess(array("username"=>$data["username"], "roleId"=>$data["roleId"], "language"=>strtoupper($data["language"])));
 
         $username = $data["username"];
         $password = $data["password"];
