@@ -45,7 +45,7 @@ class Publication extends Module
      * @return  $results (array) array that contains all the details
      * */
     public function getPublicationDetails($publicationId, $moduleId) {
-        $this->checkReadAccess();
+        $this->checkReadAccess(array($publicationId, $moduleId));
         if($publicationId == "" || $moduleId == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid publication settings.");
 
@@ -156,7 +156,7 @@ class Publication extends Module
      * returns  array of data
      * */
     public function getPublicationsPerModule($moduleId) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($moduleId);
         if($moduleId == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Module cannot be found. Access denied.");
         $results = $this->opalDB->getPublicationsPerModule($moduleId);
@@ -175,7 +175,7 @@ class Publication extends Module
      * @return  (array) list of the chart logs found
      * */
     public function getPublicationChartLogs($moduleId, $publicationId) {
-        $this->checkReadAccess();
+        $this->checkReadAccess(array($moduleId, $publicationId));
         $data = array();
         $result = $this->opalDB->getPublicationChartLogs($moduleId, $publicationId);
         //The Y value has to be converted to an int, or the chart log will reject it on the front end.
@@ -196,7 +196,7 @@ class Publication extends Module
      * @return  (array) list of the chart logs found
      * */
     public function getPublicationListLogs($moduleId, $publicationId, $cronIds) {
-        $this->checkReadAccess();
+        $this->checkReadAccess(array($moduleId, $publicationId, $cronIds));
         if($moduleId == "" || $publicationId == "" || count($cronIds) <= 0)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "List Logs error. Invalid data.");
         return $this->opalDB->getPublicationListLogs($moduleId, $publicationId, $cronIds);
@@ -208,7 +208,6 @@ class Publication extends Module
      * @return  array of sanitize data
      * */
     function validateAndSanitizePublicationList($toValidate) {
-        $this->checkWriteAccess();
         $validatedList = array();
         $toValidate = HelpSetup::arraySanitization($toValidate);
         foreach($toValidate as $item) {
@@ -234,9 +233,10 @@ class Publication extends Module
      * @return  void
      * */
     function updatePublicationFlags($list) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($list);
+        $clearedPublishList = $this->validateAndSanitizePublicationList($list);
         $publicationModules = $this->opalDB->getPublicationModules();
-        foreach($list as $row) {
+        foreach($clearedPublishList as $row) {
             foreach($publicationModules as $module) {
                 if ($module["ID"] == $row["moduleId"]) {
                     $this->opalDB->updatePublicationFlag($module["tableName"], $module["primaryKey"], $row["publishFlag"], $row["ID"]);
@@ -972,7 +972,7 @@ class Publication extends Module
      * @return  false
      * */
     function insertPublication($publication) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($publication);
         $publication = HelpSetup::arraySanitization($publication);
 
         $moduleDetails = $this->opalDB->getModuleSettings($publication["moduleId"]["value"]);
@@ -1007,7 +1007,7 @@ class Publication extends Module
      * @return  false
      * */
     function updatePublication($publication) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($publication);
         $publication = HelpSetup::arraySanitization($publication);
 
         $moduleDetails = $this->opalDB->getModuleSettings($publication["moduleId"]["value"]);

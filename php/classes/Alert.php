@@ -35,9 +35,13 @@ class Alert extends Module {
      * @return  (int) number of record marked or error 500 if an error occurred.
      */
     public function deleteAlert($alertId) {
-        $this->checkDeleteAccess();
+        $this->checkDeleteAccess($alertId);
 
-        $currentAlert = $this->getAlertDetails($alertId);
+        $result = $this->opalDB->getAlertDetails($alertId);
+        if(count($result) != 1)
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid Alert ID.");
+        $currentAlert = $result[0];
+
         if(!$currentAlert["ID"] || $currentAlert["ID"] == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Alert not found.");
 
@@ -50,7 +54,7 @@ class Alert extends Module {
      * @return  array - contains the details of the alert
      * */
     public function getAlertDetails($alertId) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($alertId);
         $result = $this->opalDB->getAlertDetails($alertId);
         if(count($result) != 1)
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid Alert ID.");
@@ -63,7 +67,7 @@ class Alert extends Module {
      * @return  array - ID of the record inserted
      * */
     public function insertAlert($post) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($post);
         $newAlert = $this->_validateAlert($post);
         return $this->opalDB->insertAlert($newAlert);
     }
@@ -141,7 +145,7 @@ class Alert extends Module {
      * @return  array - number of record updated
      * */
     public function updateAlert($post) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($post);
         $updatedAlert = $this->_validateAlert($post);
         $post["ID"] = trim(strip_tags($post["ID"]));
         if($post["ID"] == "")
@@ -156,13 +160,12 @@ class Alert extends Module {
      * @return  array - number of record updated
      * */
     public function updateActivateFlag($post) {
+        $this->checkWriteAccess($post);
         $validAlert = $this->_validateAndSanitizeAlertList($post);
 
         foreach ($validAlert as $item)
             $this->opalDB->updateAlertActivationFlag($item["ID"], $item["active"]);
-
-        $this->checkWriteAccess();
-        return array();
+        return false;
     }
 
     /*
