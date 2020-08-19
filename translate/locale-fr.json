@@ -2480,7 +2480,7 @@
       "METHOD": "Fonction",
       "ACCESS": "Accès",
       "DATE": "Date",
-      "ARGUMENTS": "Arguments",
+      "ARGUMENTS": "Arguments reçus",
       "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails l'audit."
     }
   },
