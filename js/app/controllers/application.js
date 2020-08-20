@@ -60,9 +60,11 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 					});
 				}
 			}).catch(function(response) {
+				alert('Error occurred getting source databases: ' + response.status + " " + response.data)
 				console.error('Error occurred getting source databases: ', response.status, response.data);
 			});
 		}).catch(function(response) {
+			alert('Error occurred getting source databases: ' + response.status + " " + response.data)
 			console.error('Error occurred getting configs: ', response.status, response.data);
 		});
 
@@ -176,7 +178,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 	// Configs for setting idle and keep alive (in seconds)
 	.config(function (IdleProvider, KeepaliveProvider) {
-		IdleProvider.idle(360);
+		IdleProvider.idle(5);
 		IdleProvider.timeout(15);
 		KeepaliveProvider.interval(375);
 	});
