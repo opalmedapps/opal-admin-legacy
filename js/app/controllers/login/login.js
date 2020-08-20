@@ -4,7 +4,7 @@ angular.module('opalAdmin.controllers.login', ['ngAnimate', 'ui.bootstrap']).
 /******************************************************************************
  * Login controller
  *******************************************************************************/
-controller('login', function ($scope, $rootScope, $state, $filter, $translate, AUTH_EVENTS, AuthService, Idle, Encrypt, Session) {
+controller('login', function ($scope, $rootScope, $state, $filter, $translate, AUTH_EVENTS, HTTP_CODE, AuthService, Idle, Encrypt, Session) {
 
 	// Initialize login object
 	$scope.credentials = {
@@ -89,7 +89,34 @@ controller('login', function ($scope, $rootScope, $state, $filter, $translate, A
 				Idle.watch();
 			}).catch(function(err) {
 				$rootScope.$broadcast(AUTH_EVENTS.loginFailed);
-				$scope.bannerMessage = $filter('translate')('LOGIN.WRONG');
+
+				switch(err.status) {
+				case HTTP_CODE.badRequestError:
+					$errMsg = $filter('translate')('LOGIN.ERROR_400');
+					break;
+				case HTTP_CODE.notAuthenticatedError:
+					$errMsg = $filter('translate')('LOGIN.ERROR_401');
+					break;
+				case HTTP_CODE.forbiddenAccessError:
+					$errMsg = $filter('translate')('LOGIN.ERROR_403');
+					break;
+				case HTTP_CODE.notFoundError:
+					$errMsg = $filter('translate')('LOGIN.ERROR_404');
+					break;
+				case HTTP_CODE.sessionTimeoutError:
+					$errMsg = $filter('translate')('LOGIN.ERROR_419');
+					break;
+				case HTTP_CODE.loginTimeoutError:
+					$errMsg = $filter('translate')('LOGIN.ERROR_440');
+					break;
+				case HTTP_CODE.internalServerError:
+					$errMsg = $filter('translate')('LOGIN.ERROR_500');
+					break;
+				default:
+					$errMsg = $filter('translate')('LOGIN.UNKNOWN_ERROR');
+				}
+
+				$scope.bannerMessage = $errMsg;
 				$scope.setBannerClass('danger');
 				$scope.shakeForm();
 				$scope.showBanner();

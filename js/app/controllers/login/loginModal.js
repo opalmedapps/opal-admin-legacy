@@ -68,8 +68,8 @@ angular.module('opalAdmin.controllers.loginModal', ['ngAnimate', 'ui.bootstrap']
 					$rootScope.setSiteLanguage(response.data.user);
 					$uibModalInstance.close();
 				}).catch(function(err) {
-					$rootScope.$broadcast(AUTH_EVENTS.loginFailed);
-					$scope.bannerMessage = $filter('translate')('LOGIN.WRONG');
+					// $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
+					$scope.bannerMessage = $filter('translate')('LOGIN.ERROR_401');
 					$scope.setBannerClass('danger');
 					$scope.shakeForm();
 					$scope.showBanner();

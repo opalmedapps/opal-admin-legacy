@@ -1394,6 +1394,15 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
+     * Get access level for a specific combo or role/module
+     * */
+    function getUserAccessRegistration($roleId) {
+        return $this->_fetchAll(OPAL_GET_USER_ACCESS_REGISTRATION, array(
+            array("parameter"=>":oaRoleId","variable"=>$roleId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
      * Get the list of educational material
      * @params  void
      * @return  array - list of educational material
