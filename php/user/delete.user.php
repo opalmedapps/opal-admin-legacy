@@ -1,7 +1,5 @@
 <?php
-
-include_once('user.inc');
-
+include_once("../config.php");
 $id = strip_tags($_POST["ID"]);
 
 $user = new User();

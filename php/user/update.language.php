@@ -1,5 +1,5 @@
 <?php
-include_once('user.inc');
+include_once("../config.php");
 
 $userObject = new User();  // Object
 $response = $userObject->updateLanguage($_POST);
