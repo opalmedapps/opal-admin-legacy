@@ -1,6 +1,5 @@
 <?php
-
-include_once('user.inc');
+include_once("../config.php");
 
 $user = new User();
 $roles = $user->getRoles();

@@ -178,10 +178,16 @@ define("UNKNOWN_USER", "UNKNOWN USER");
  * */
 define("HTTP_STATUS_SUCCESS",200);
 define("HTTP_STATUS_INTERNAL_SERVER_ERROR",500);
+define("HTTP_STATUS_BAD_REQUEST_ERROR",400);
 define("HTTP_STATUS_NOT_AUTHENTICATED_ERROR",401);
 define("HTTP_STATUS_FORBIDDEN_ERROR",403);
 define("HTTP_STATUS_SESSION_TIMEOUT_ERROR",419);
 define("HTTP_STATUS_LOGIN_TIMEOUT_ERROR",440);
+
+if($_SERVER["HTTPS"] != "on") {
+    HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, "Connection not secured.");
+    exit();
+}
 
 /*
  * PHP Sessions config

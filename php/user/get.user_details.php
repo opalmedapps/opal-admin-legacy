@@ -1,6 +1,5 @@
 <?php
-
-include_once('user.inc');
+include_once("../config.php");
 
 $userObject = new User();
 $userDetails = $userObject->getUserDetails($_POST);

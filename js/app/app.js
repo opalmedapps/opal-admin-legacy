@@ -53,12 +53,13 @@ angular.module('opalAdmin', [
 
 	.constant('HTTP_CODE', {
 		success: 200,
-		internalServerError: 500,
+		badRequestError: 400,
 		notAuthenticatedError: 401,
-		notFoundError: 404,
 		forbiddenAccessError: 403,
+		notFoundError: 404,
 		sessionTimeoutError: 419,
 		loginTimeoutError: 440,
+		internalServerError: 500,
 	})
 
 	.constant('USER_ROLES', {
