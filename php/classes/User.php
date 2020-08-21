@@ -93,6 +93,13 @@ class User extends Module {
         $cypher = $post["cypher"];
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
         $data = HelpSetup::arraySanitization($data);
+
+        if(!is_array($data)) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>"UNKNOWN USER"), ACCESS_DENIED, "UNKNOWN USER");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
+        }
+
         $username = $data["username"];
         $password = $data["password"];
 
@@ -188,12 +195,18 @@ class User extends Module {
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
         $data = HelpSetup::arraySanitization($data);
 
+        if(!is_array($data)) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>"UNKNOWN USER"), ACCESS_DENIED, "UNKNOWN USER");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
+        }
+
         $username = $data["username"];
         $password = $data["password"];
 
-        if($username == "" || $password == "" || $cypher == "") {
+        if($username == "" || $password = "" || $cypher == "") {
             HelpSetup::getModuleMethodName($moduleName, $methodeName);
-            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>($data["username"] ? $data["username"] : "UNKNOWN USER")), ACCESS_DENIED, ($data["username"] ? $data["username"] : "UNKNOWN USER"));
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
         }
 
