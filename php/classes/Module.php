@@ -73,7 +73,7 @@ class Module
      * @params  void
      * @return void
      * */
-    protected function _connectAsMain() {
+    protected function _connectAsMain($userId = false) {
         $this->opalDB = new DatabaseOpal(
             OPAL_DB_HOST,
             OPAL_DB_NAME,
@@ -81,7 +81,7 @@ class Module
             OPAL_DB_USERNAME,
             OPAL_DB_PASSWORD,
             false,
-            $_SESSION["ID"],
+            (!$userId ? $_SESSION["ID"] : $userId),
             false
         );
     }

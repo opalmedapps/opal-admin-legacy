@@ -174,9 +174,12 @@ class User extends Module {
     }
 
     /*
-     * Validate the user, log its activity and build the nav menu to display.
+     * Login for registration of patient. Before each inscription, the login of the user must be validated. Validation
+     * is made base on the Patient module write access. If the user got a valid user/pass and correct access level
+     * (read and write), then it is authorized to proceed. Otherwise, return error 401. No matter what, logs the result
+     * in the audit table.
      * @param   $post (array) contains username, password and cypher
-     * @return  $result (array) basic user informations
+     * @return  200 (success), 401 (denied) or 500 (server error, oops!)
      * */
     public function userLoginRegistration($post) {
         $userAccess = array();
@@ -184,6 +187,7 @@ class User extends Module {
         $cypher = $post["cypher"];
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
         $data = HelpSetup::arraySanitization($data);
+
         $username = $data["username"];
         $password = $data["password"];
 
@@ -194,67 +198,29 @@ class User extends Module {
         }
 
         if(AD_LOGIN_ACTIVE)
-            $result = $this->_userLoginActiveDirectory($username, $password);
+            $resultUser = $this->_userLoginActiveDirectory($username, $password);
         else
-            $result = $this->_userLoginLegacy($username, $password);
+            $resultUser = $this->_userLoginLegacy($username, $password);
 
-        $this->_connectAsMain();
+        $this->_connectAsMain($resultUser["id"]);
 
-        $tempAccess = $this->opalDB->getUserAccessRegistration($result["role"]);
-        if(count($tempAccess) != 1) {
-            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        $result = $this->opalDB->getUserAccessRegistration($resultUser["role"]);
+
+        if(count($result) != 1) {
             $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "No access found. Please contact your administrator.");
         }
-        foreach($tempAccess as $access) {
-            if(!HelpSetup::validateBitOperation($access["operation"],$access["access"])) {
-                HelpSetup::getModuleMethodName($moduleName, $methodeName);
-                $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
-                HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access violation role-module. Please contact your administrator.");
-            }
-            $userAccess[$access["ID"]] = array("ID"=>$access["ID"], "access"=>$access["access"]);
+        $result = $result[0];
+
+        if(!(($result["access"] >> 1) & 1) || !(($result["operation"] >> 1) & 1)) {
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Access denied.");
         }
 
-        $newMenu = array();
-        $subMenu = array();
-        $menuDB = $this->opalDB->getCategoryNavMenu();
-
-        /*
-         * Builds the nav menus the user can see based on its role
-         * */
-        foreach ($menuDB as $category) {
-            $menuList = $this->opalDB->getNavMenu($category["ID"]);
-            if(count($menuList) > 0) {
-                $temp = $category;
-                $temp["menu"] = array();
-                foreach($menuList as $menu) {
-                    if(intval($menu["subModuleMenu"]) && $menu["subModule"] != "") {
-                        $subMenu[$menu["ID"]] = json_decode(str_replace("%%REGISTRATION_URL%%", ADMIN_REGISTRATION_URL, $menu["subModule"]));
-                    }
-                    if(((intval($menu["operation"]) >> 0) & 1) && ((intval($userAccess[$menu["ID"]]["access"]) >> 0) & 1)) {
-                        array_push($temp["menu"], array("ID"=>$menu["ID"], "operation"=>$menu["operation"], "name_EN"=>$menu["name_EN"], "name_FR"=>$menu["name_FR"], "iconClass"=>$menu["iconClass"], "url"=>$menu["url"]));
-                    }
-                }
-                array_push($newMenu, $temp);
-            }
-        }
-
-        $_SESSION["userAccess"] = $userAccess;
-        $_SESSION["navMenu"] = $newMenu;
-        $_SESSION["subMenu"] = $subMenu;
-        $result["sessionid"] = $_SESSION['sessionId'];
-
-        $toReturn["user"] = $result;
-        $toReturn["access"] = $_SESSION["userAccess"];
-        $toReturn["menu"] = HelpSetup::prepareNavMenu($_SESSION["navMenu"], $result["language"]);
-        $toReturn["subMenu"] = $_SESSION["subMenu"];
-        $this->_logActivity($result["id"], $_SESSION['sessionId'], 'Login');
-
-        //Insert in the audit table user was granted access and return nav menu
-        HelpSetup::getModuleMethodName($moduleName, $methodeName);
-        $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_GRANTED);
-
-        return $toReturn;
+        $this->_logActivity($resultUser["id"], HelpSetup::makeSessionId(), 'LoginRegistration');
+        $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_GRANTED, $username);
+        return HTTP_STATUS_SUCCESS;
     }
 
     /*

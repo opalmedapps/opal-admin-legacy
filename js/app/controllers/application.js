@@ -178,7 +178,7 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 
 	// Configs for setting idle and keep alive (in seconds)
 	.config(function (IdleProvider, KeepaliveProvider) {
-		IdleProvider.idle(5);
+		IdleProvider.idle(360);
 		IdleProvider.timeout(15);
 		KeepaliveProvider.interval(375);
 	});

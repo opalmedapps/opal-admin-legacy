@@ -1,7 +1,6 @@
 <?php
 
-/* Simple logout script */
-include_once('user.inc');
+include_once("../config.php");
 
 $userObject = new User();
 $response = $userObject->userLogout();
