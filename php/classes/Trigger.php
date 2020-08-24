@@ -27,8 +27,8 @@ require('../lib/JWadhams/JsonLogic.php');
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing trigger ID.");
 
-        if($postData["patientSer"] != "")
-            $validatedTrigger["patientSer"] = trim(strip_tags($postData["patientSer"]));
+        if($postData["patientId"] != "")
+            $validatedTrigger["patientId"] = trim(strip_tags($postData["patientId"]));
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing patient ID.");
 
@@ -56,10 +56,10 @@ require('../lib/JWadhams/JsonLogic.php');
         return JWadhams\JsonLogic::apply( json_decode($trigger["onCondition"], true), $dataToCheck );
     }
 
-    public function triggerEvent($triggerDetails, $patientSer) {
+    public function triggerEvent($triggerDetails, $patientId) {
         switch ($triggerDetails['eventType']) {
             case TRIGGER_EVENT_PUBLISH:
-                $this->publish($triggerDetails, $patientSer);
+                $this->publish($triggerDetails, $patientId);
                 break;
             
             default:
@@ -68,10 +68,10 @@ require('../lib/JWadhams/JsonLogic.php');
         }
     }
 
-    public function publish($triggerDetails, $patientSer) {
+    public function publish($triggerDetails, $patientId) {
         switch ($triggerDetails["targetType"]) {
             case MODULE_QUESTIONNAIRE:
-                $this->opalDB->publishQuestionnaire($triggerDetails["targetId"], $patientSer);
+                $this->opalDB->publishQuestionnaire($triggerDetails["targetId"], $patientId);
                 break;
             
             case MODULE_ALERT:

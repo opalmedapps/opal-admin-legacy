@@ -6,7 +6,7 @@ $trigger = new Trigger(true); // guest status on for now
 $validatedPost = $trigger->_validateTrigger($_POST);
 
 $patientQuestionnaireSer = $validatedPost["id"];
-$patientSer = $validatedPost['patientSer'];
+$patientId = $validatedPost['patientId'];
 $triggerType = MODULE_QUESTIONNAIRE; 
 
 
@@ -22,7 +22,7 @@ $questionnaireData = $trigger->getData($patientQuestionnaireSer, $triggerType);
 
 // Need questionnaire id + patient serial from questionnaireData (Results #1)
 $questionnaireId = $questionnaireData["questionnaire_id"];
-$patientSer = $questionnaireData["patient_ser"];
+$patientId = $questionnaireData["patient_id"];
 $answers = $questionnaireData["answers"];
 
 
@@ -30,7 +30,7 @@ $triggers = $trigger->getTriggers($questionnaireId, $triggerType);
 
 foreach ($triggers as $index => $details) {
     if($trigger->checkLogic($details, $answers)) {
-        $trigger->triggerEvent($details, $patientSer);
+        $trigger->triggerEvent($details, $patientId);
     }
 }
 
