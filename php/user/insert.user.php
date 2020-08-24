@@ -1,5 +1,5 @@
 <?php
-include_once('user.inc');
+include_once("../config.php");
 
 $userObj = new User();
 $userObj->insertUser($_POST);

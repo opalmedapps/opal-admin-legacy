@@ -18,7 +18,7 @@ class EduMaterial extends Module {
      * @return array $response : response
      */    
     public function updatePublishFlags( $eduMatList, $user ) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess(array($eduMatList, $user));
 
         // Initialize response array
         $response = array(
@@ -146,7 +146,7 @@ class EduMaterial extends Module {
      *
      */
     public function getEducationalMaterialDetails($eduId) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($eduId);
         return $this->_getEducationalMaterialDetails($eduId);
 	}
 
@@ -167,7 +167,7 @@ class EduMaterial extends Module {
 	 * @return array $response : response
      */
     public function insertEducationalMaterial ( $eduMatDetails ) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($eduMatDetails);
 
         $name_EN        = $eduMatDetails['name_EN'];
         $name_FR        = $eduMatDetails['name_FR'];
@@ -431,7 +431,7 @@ class EduMaterial extends Module {
      * @return array $response : response
      */
     public function updateEducationalMaterial ($eduMatDetails) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess($eduMatDetails);
 
         $name_EN            = $eduMatDetails['name_EN'];
         $name_FR            = $eduMatDetails['name_FR'];
@@ -808,7 +808,7 @@ class EduMaterial extends Module {
      * @return array $response : response
      */
     public function deleteEducationalMaterial ( $eduMatSer, $user ){
-        $this->checkDeleteAccess();
+        $this->checkDeleteAccess(array($eduMatSer, $user));
 
         $response = array(
             'value'     => 0,
@@ -900,7 +900,7 @@ class EduMaterial extends Module {
      * @return array $educationalMaterialLogs : the educational material logs for highcharts
      */
     public function getEducationalMaterialChartLogs ($serial) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($serial);
         $educationalMaterialLogs = array();
         try {
             $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
@@ -1016,7 +1016,7 @@ class EduMaterial extends Module {
      *
      */
     public function getEducationalMaterialListLogs($eduIds) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($eduIds);
         return $this->opalDB->getEduMaterialLogs($eduIds);
     }  
 

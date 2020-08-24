@@ -3,7 +3,14 @@
     "LOGIN_START": "Log in to start your session",
     "USERNAME": "Username",
     "PASSWORD": "Password",
-    "WRONG": "Wrong username and/or password!",
+    "ERROR_400": "400 - Bad request!",
+    "ERROR_401": "401 - Wrong username and/or password!",
+    "ERROR_403": "403 - Forbidden access!",
+    "ERROR_404": "404 - Page not found!",
+    "ERROR_419": "419 - Session timeout error!",
+    "ERROR_440": "440 - Login timeout error!",
+    "ERROR_500": "500 - Internal server error!",
+    "UNKNOWN_ERROR": "Unknown error!",
     "LOGIN": "Login",
     "IDLE": "No activity detected. Do something!",
     "COUNTDOWN": "You'll be logged out in ",
@@ -56,7 +63,8 @@
     "MODULE_ID_14_SUB": "Tool for creating email templates.",
     "MODULE_ID_15_SUB": "Manage custom codes for diagnosis, test results and aliases.",
     "MODULE_ID_16_SUB": "Manage the list of roles of the users.",
-    "MODULE_ID_17_SUB": "Manage the list of alerts and triggers for conditions."
+    "MODULE_ID_17_SUB": "Manage the list of alerts and triggers for conditions.",
+    "MODULE_ID_18_SUB": "Audit the users operations in OpalAdmin."
   },
   "BREADCRUMBS": {
     "HOME": "Home"
@@ -2403,7 +2411,7 @@
       "TRIGGERS": "Triggers",
       "SEE_TRIGGERS": "See triggers",
       "TRIGGERS_LIST": "Triggers list",
-      "TRIGGERS_EXPLANATION": "Please enter the liste of triggers for the new alert in the following box..",
+      "TRIGGERS_EXPLANATION": "Please enter the liste of triggers for the new alert in the following box.",
       "CONTACTS": "Contacts",
       "CONTACTS_EXPLANATION": "This is list of persons or organizations to contact if the alert is triggered. Phone number for SMS and email addresses are accepted.",
       "ADD_PHONE": "Add a phone number",
@@ -2435,6 +2443,34 @@
       "EMAIL_EX": "E.g. abc@blabla.ca",
       "REMOVE": "Remove",
       "ERROR_UPDATE": "An error occurred while updating the alert."
+    }
+  },
+  "AUDIT" : {
+    "LIST": {
+      "TITLE": "Audits",
+      "SEARCH": "Search",
+      "VIEW": "View",
+      "USER": "User",
+      "IP": "IP Address",
+      "MODULE": "Module",
+      "METHOD": "Function",
+      "ACCESS": "Access",
+      "DATE": "Date",
+      "OPERATIONS": "Operations",
+      "ERROR": "An error occurred while getting the list of audits."
+    },
+    "VIEW": {
+      "TITLE": "View the audit",
+      "CLOSE": "Close",
+      "DETAILS": "Details",
+      "USER": "User",
+      "IP": "IP Address",
+      "MODULE": "Module",
+      "METHOD": "Function",
+      "ACCESS": "Access",
+      "DATE": "Date",
+      "ARGUMENTS": "Received arguments",
+      "ERROR_DETAILS": "An error occurred while getting the details of the audit."
     }
   },
   "ROLE" : {

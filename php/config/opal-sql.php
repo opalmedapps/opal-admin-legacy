@@ -43,6 +43,7 @@ define("OPAL_FILTERS_TABLE","Filters");
 define("OPAL_FILTERS_MH_TABLE","FiltersMH");
 define("OPAL_FREQUENCY_EVENTS_TABLE","FrequencyEvents");
 define("OPAL_MODULE_TABLE","module");
+define("OPAL_AUDIT_TABLE","audit");
 define("OPAL_CATEGORY_MODULE_TABLE","categoryModule");
 define("OPAL_MODULE_PUBLICATION_SETTING_TABLE","modulePublicationSetting");
 define("OPAL_PUBLICATION_SETTING_TABLE","publicationSetting");
@@ -699,6 +700,11 @@ define("OPAL_GET_USER_ACCESS","
     FROM ".OPAL_MODULE_TABLE." m LEFT JOIN ((SELECT * FROM ".OPAL_OA_ROLE_MODULE_TABLE." rm WHERE rm.oaRoleId = :oaRoleId) AS p) ON p.moduleId = m.ID;
 ");
 
+define("OPAL_GET_USER_ACCESS_REGISTRATION","
+    SELECT m.ID, m.operation, (CASE WHEN active = 1 THEN COALESCE(p.access,0) WHEN active = 0 THEN 0 END) AS access
+    FROM ".OPAL_MODULE_TABLE." m LEFT JOIN ((SELECT * FROM ".OPAL_OA_ROLE_MODULE_TABLE." rm WHERE rm.oaRoleId = :oaRoleId) AS p) ON p.moduleId = m.ID WHERE m.ID = ".MODULE_PATIENT.";
+");
+
 define("OPAL_GET_EDUCATIONAL_MATERIAL","
     SELECT DISTINCT em.EducationalMaterialControlSerNum AS serial, em.EducationalMaterialType_EN AS type_EN, em.EducationalMaterialType_FR AS type_FR, em.Name_EN AS name_EN, em.Name_FR AS name_FR, em.URL_EN AS url_EN, em.URL_FR AS url_FR, phase.PhaseInTreatmentSerNum AS phase_serial, phase.Name_EN AS phase_EN, phase.Name_FR AS phase_FR, em.PublishFlag AS publish, em.ParentFlag AS parentFlag, em.ShareURL_EN AS share_url_EN, em.ShareURL_FR AS share_url_FR, em.LastUpdated AS lastupdated, (SELECT COUNT(*) AS locked FROM ".OPAL_FILTERS_TABLE." f WHERE f.ControlTableSerNum = em.EducationalMaterialControlSerNum and ControlTable = '".OPAL_EDUCATION_MATERIAL_TABLE."') AS locked, (case WHEN em.ParentFlag = 1 then (SELECT COALESCE(round(AVG(emr.RatingValue)), 0) FROM EducationalMaterialRating emr WHERE emr.EducationalMaterialControlSerNum = em.EducationalMaterialControlSerNum) ELSE 0 END) AS rating FROM ".OPAL_EDUCATION_MATERIAL_TABLE." em, ".OPAL_PHASE_IN_TREATMENT_TABLE." phase WHERE phase.PhaseInTreatmentSerNum = em.PhaseInTreatmentSerNum AND em.deleted = 0;
 ");
@@ -824,8 +830,18 @@ define("OPAL_UPDATE_ALERT", "
 ");
 
 define("OPAL_MARK_ALERT_AS_DELETED", "
-    UPDATE ".OPAL_ALERT_TABLE." SET deleted = ".DELETED_RECORD.", active = ".INACTIVE_RECORD.", updatedBy = :updatedBy , deletedBy = :updatedBy WHERE ID = :ID;
+    UPDATE ".OPAL_ALERT_TABLE." SET deleted = ".DELETED_RECORD.", active = ".INACTIVE_RECORD.", updatedBy = :updatedBy,
+    deletedBy = :updatedBy WHERE ID = :ID;
 ");
+
+define("OPAL_GET_AUDITS","
+    SELECT `ID`, `module`, `method`, `access`, `ipAddress`, `creationDate`, `createdBy` FROM ".OPAL_AUDIT_TABLE."
+    ORDER BY creationDate DESC, createdBy LIMIT 10000;
+");
+
+define("OPAL_GET_AUDIT_DETAILS",
+    "SELECT * FROM ".OPAL_AUDIT_TABLE." WHERE ID = :ID;"
+);
 
 define("OPAL_GET_TRIGGERS_LIST","
     SELECT ID, type, onCondition, eventType, targetId, targetType FROM ".OPAL_TRIGGER_TABLE." WHERE active = ".ACTIVE_RECORD." AND ID = :ID AND type = :TYPE;

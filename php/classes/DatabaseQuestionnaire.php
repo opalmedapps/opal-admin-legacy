@@ -63,6 +63,8 @@ class DatabaseQuestionnaire extends DatabaseAccess
                 "updatedBy"=>$this->username,
             );
         }
+
+        $newEntries = HelpSetup::arraySanitization($newEntries);
         foreach($newEntries as $key=>$value) {
             $toInsert[$key]["content"] = $value;
         }
@@ -122,6 +124,8 @@ class DatabaseQuestionnaire extends DatabaseAccess
      * @return  total of lines modified (int)
      * */
     function updateDictionary($updatedEntries, $tableName) {
+        $updatedEntries = HelpSetup::arraySanitization($updatedEntries);
+
         $total = 0;
         $tableId = $this->getTableId($tableName);
         foreach($updatedEntries as $data) {

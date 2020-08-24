@@ -72,7 +72,8 @@ define("MODULE_EMAIL", 14);
 define("MODULE_CUSTOM_CODE", 15);
 define("MODULE_ROLE", 16);
 define("MODULE_ALERT", 17);
-define("MODULE_TRIGGER", 18);
+define("MODULE_AUDIT", 18);
+define("MODULE_TRIGGER", 19);
 define("LOCAL_SOURCE_ONLY", -1);
 
 define("DELETED_RECORD", 1);
@@ -97,6 +98,7 @@ include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECT
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "User.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Database.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Alias.php" );
+include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Audit.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "Post.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "EduMaterial.php" );
 include_once( FRONTEND_ABS_PATH . "php". DIRECTORY_SEPARATOR . "classes". DIRECTORY_SEPARATOR . "HospitalMap.php" );
@@ -170,15 +172,26 @@ define("ACCESS_READ_WRITE_DELETE", 7);
 define("PUBLICATION_PUBLISH_DATE", 9);
 define("GUEST_ACCOUNT", 29);
 
+define("ACCESS_GRANTED", "GRANTED");
+define("ACCESS_DENIED", "DENIED");
+define("ENCRYPTED_DATA", "ENCRYPTED DATA");
+define("UNKNOWN_USER", "UNKNOWN USER");
+
 /*
  * List of HTTP status codes
  * */
 define("HTTP_STATUS_SUCCESS",200);
 define("HTTP_STATUS_INTERNAL_SERVER_ERROR",500);
+define("HTTP_STATUS_BAD_REQUEST_ERROR",400);
 define("HTTP_STATUS_NOT_AUTHENTICATED_ERROR",401);
 define("HTTP_STATUS_FORBIDDEN_ERROR",403);
 define("HTTP_STATUS_SESSION_TIMEOUT_ERROR",419);
 define("HTTP_STATUS_LOGIN_TIMEOUT_ERROR",440);
+
+if($_SERVER["HTTPS"] != "on") {
+    HelpSetup::returnErrorMessage(HTTP_STATUS_BAD_REQUEST_ERROR, "Connection not secured.");
+    exit();
+}
 
 /*
  * PHP Sessions config

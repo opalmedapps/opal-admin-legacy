@@ -14,11 +14,17 @@ class User extends Module {
      * @params  $result (array) results of authentication
      * @return  $result (array) cleaned up data.
      * */
-    protected function _validateUserAuthentication($result) {
-        if(count($result) < 1)
+    protected function _validateUserAuthentication($result, $username) {
+        if(count($result) < 1) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Access denied");
-        else if(count($result) > 1)
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Somethings's wrong. There is too many entries!");
+        }
+        else if(count($result) > 1) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Somethings's VERY wrong. There is too many entries!");
+        }
         $result = $result[0];
         unset($result["password"]);
         return $result;
@@ -34,7 +40,7 @@ class User extends Module {
      * */
     protected function _userLoginActiveDirectory($username, $password) {
         $result = $this->opalDB->authenticateUserAD($username);
-        $result = $this->_validateUserAuthentication($result);
+        $result = $this->_validateUserAuthentication($result, $username);
 
         $settingsAD = json_encode(ACTIVE_DIRECTORY_SETTINGS);
         $settingsAD = str_replace("%%USERNAME%%", $username, $settingsAD);
@@ -54,8 +60,11 @@ class User extends Module {
         $requestResult = json_decode(curl_exec($ch),TRUE);
         curl_close($ch);
 
-        if(!$requestResult["authenticate"])
+        if(!$requestResult["authenticate"]) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Access denied");
+        }
 
         return $result;
     }
@@ -69,12 +78,12 @@ class User extends Module {
      * */
     protected function _userLoginLegacy($username, $password) {
         $result = $this->opalDB->authenticateUserLegacy($username, hash("sha256", $password . USER_SALT));
-        $result = $this->_validateUserAuthentication($result);
+        $result = $this->_validateUserAuthentication($result, $username);
         return $result;
     }
 
     /*
-     * Validate the user and log its activity.
+     * Validate the user, log its activity and build the nav menu to display.
      * @param   $post (array) contains username, password and cypher
      * @return  $result (array) basic user informations
      * */
@@ -84,11 +93,21 @@ class User extends Module {
         $cypher = $post["cypher"];
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
         $data = HelpSetup::arraySanitization($data);
+
+        if(!is_array($data)) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>"UNKNOWN USER"), ACCESS_DENIED, "UNKNOWN USER");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
+        }
+
         $username = $data["username"];
         $password = $data["password"];
 
-        if($username == "" || $password == "" || $cypher == "")
+        if($username == "" || $password == "" || $cypher == "") {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
+        }
 
         if(AD_LOGIN_ACTIVE)
             $result = $this->_userLoginActiveDirectory($username, $password);
@@ -105,11 +124,17 @@ class User extends Module {
 
         $this->_connectAsMain();
         $tempAccess = $this->opalDB->getUserAccess($result["role"]);
-        if(count($tempAccess) <= 0)
+        if(count($tempAccess) <= 0) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
             HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "No access found. Please contact your administrator.");
+        }
         foreach($tempAccess as $access) {
-            if(!HelpSetup::validateBitOperation($access["operation"],$access["access"]))
+            if(!HelpSetup::validateBitOperation($access["operation"],$access["access"])) {
+                HelpSetup::getModuleMethodName($moduleName, $methodeName);
+                $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
                 HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "Access violation role-module. Please contact your administrator.");
+            }
             $userAccess[$access["ID"]] = array("ID"=>$access["ID"], "access"=>$access["access"]);
         }
 
@@ -118,7 +143,7 @@ class User extends Module {
         $menuDB = $this->opalDB->getCategoryNavMenu();
 
         /*
-         * Built the nav menus the user can see based on its role
+         * Builds the nav menus the user can see based on its role
          * */
         foreach ($menuDB as $category) {
             $menuList = $this->opalDB->getNavMenu($category["ID"]);
@@ -148,7 +173,67 @@ class User extends Module {
         $toReturn["subMenu"] = $_SESSION["subMenu"];
         $this->_logActivity($result["id"], $_SESSION['sessionId'], 'Login');
 
+        //Insert in the audit table user was granted access and return nav menu
+        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_GRANTED);
+
         return $toReturn;
+    }
+
+    /*
+     * Login for registration of patient. Before each inscription, the login of the user must be validated. Validation
+     * is made base on the Patient module write access. If the user got a valid user/pass and correct access level
+     * (read and write), then it is authorized to proceed. Otherwise, return error 401. No matter what, logs the result
+     * in the audit table.
+     * @param   $post (array) contains username, password and cypher
+     * @return  200 (success), 401 (denied) or 500 (server error, oops!)
+     * */
+    public function userLoginRegistration($post) {
+        $userAccess = array();
+        $post = HelpSetup::arraySanitization($post);
+        $cypher = $post["cypher"];
+        $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
+        $data = HelpSetup::arraySanitization($data);
+
+        if(!is_array($data)) {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>"UNKNOWN USER"), ACCESS_DENIED, "UNKNOWN USER");
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
+        }
+
+        $username = $data["username"];
+        $password = $data["password"];
+
+        if($username == "" || $password == "" || $cypher == "") {
+            HelpSetup::getModuleMethodName($moduleName, $methodeName);
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>($data["username"] ? $data["username"] : "UNKNOWN USER")), ACCESS_DENIED, ($data["username"] ? $data["username"] : "UNKNOWN USER"));
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
+        }
+
+        if(AD_LOGIN_ACTIVE)
+            $resultUser = $this->_userLoginActiveDirectory($username, $password);
+        else
+            $resultUser = $this->_userLoginLegacy($username, $password);
+
+        $this->_connectAsMain($resultUser["id"]);
+
+        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        $result = $this->opalDB->getUserAccessRegistration($resultUser["role"]);
+
+        if(count($result) != 1) {
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_FORBIDDEN_ERROR, "No access found. Please contact your administrator.");
+        }
+        $result = $result[0];
+
+        if(!(($result["access"] >> 1) & 1) || !(($result["operation"] >> 1) & 1)) {
+            $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_DENIED, $username);
+            HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Access denied.");
+        }
+
+        $this->_logActivity($resultUser["id"], HelpSetup::makeSessionId(), 'LoginRegistration');
+        $this->_insertAudit($moduleName, $methodeName, array("username"=>$username), ACCESS_GRANTED, $username);
+        return HTTP_STATUS_SUCCESS;
     }
 
     /*
@@ -157,6 +242,8 @@ class User extends Module {
      * @return  answer from the log activity
      * */
     public function userLogout() {
+        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        $this->_insertAudit($moduleName, $methodeName, array(), ACCESS_GRANTED);
         $result = $this->_logActivity($_SESSION["ID"], $_SESSION["sessionId"], 'Logout');
         session_unset();     // unset $_SESSION variable for the run-time
         session_destroy();   // destroy session data in storage
@@ -204,7 +291,7 @@ class User extends Module {
      * @return  number of updated record
      * */
     public function updatePassword($post) {
-        $this->checkWriteAccess();
+        $this->checkWriteAccess(ENCRYPTED_DATA);
         $post = HelpSetup::arraySanitization($post);
         $cypher = intval($post["cypher"]);
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
@@ -241,7 +328,9 @@ class User extends Module {
      * @returns number of records modified
      * */
     public function updateLanguage($post) {
-        $this->checkWriteAccess();
+        HelpSetup::getModuleMethodName($moduleName, $methodeName);
+        $this->_insertAudit($moduleName, $methodeName, HelpSetup::arraySanitization($post), ACCESS_GRANTED);
+
         $post = HelpSetup::arraySanitization($post);
         $post["language"] = strtoupper($post["language"]);
 
@@ -261,11 +350,15 @@ class User extends Module {
      * @return  true (boolean) means the update was successful.
      * */
     public function updateUser($post) {
-        $this->checkWriteAccess();
         $post = HelpSetup::arraySanitization($post);
         $cypher = intval($post["cypher"]);
+        if($cypher == "") {
+            $this->checkWriteAccess();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing cypher for update.");
+        }
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
         $data = HelpSetup::arraySanitization($data);
+        $this->checkWriteAccess(array("userId"=>$data["id"], "roleId"=>$data["roleId"], "language"=>$data["language"]));
 
         $userDetails = $this->opalDB->getUserDetails($data["id"]);
 
@@ -301,13 +394,15 @@ class User extends Module {
      * @returns void
      * */
     public function insertUser($post) {
-        $this->checkWriteAccess();
         $post = HelpSetup::arraySanitization($post);
         $cypher = intval($post["cypher"]);
-        if($cypher == "")
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing cypher to create user.");
+        if($cypher == "") {
+            $this->checkWriteAccess();
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing cypher for creation.");
+        }
         $data = json_decode(Encrypt::encodeString( $post["encrypted"], $cypher), true);
         $data = HelpSetup::arraySanitization($data);
+        $this->checkWriteAccess(array("username"=>$data["username"], "roleId"=>$data["roleId"], "language"=>strtoupper($data["language"])));
 
         $username = $data["username"];
         $password = $data["password"];
@@ -378,7 +473,7 @@ class User extends Module {
      * @returns $userDetails (array) details of the user
      * */
     public function getUserDetails($post) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($post);
         $post = HelpSetup::arraySanitization($post);
         $userDetails = $this->opalDB->getUserDetails($post["userId"]);
         $userDetails["role"] = array("serial"=>$userDetails["oaRoleId"], "name_EN"=>$userDetails["name_EN"], "name_FR"=>$userDetails["name_FR"]);
@@ -397,7 +492,7 @@ class User extends Module {
      * @return  boolean if the result is greater than 0 or not
      * */
     public function usernameExists($username) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($username);
         $results = $this->opalDB->countUsername($username);
         $results = intval($results["total"]);
         return $results > 0;
@@ -414,7 +509,7 @@ class User extends Module {
      * @return void
      */
     public function deleteUser($userId) {
-        $this->checkDeleteAccess();
+        $this->checkDeleteAccess($userId);
         $userId = strip_tags($userId);
         if($userId == "")
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid user.");
@@ -440,7 +535,7 @@ class User extends Module {
      * @return  $userLogs (array) all the logs of the specified user, with an extra field to specify if data was found
      * */
     public function getUserActivityLogs($userId) {
-        $this->checkReadAccess();
+        $this->checkReadAccess($userId);
         $dataFound = false;
         $userLogs = array();
         $userLogs['login'] = $this->opalDB->getUserLoginDetails($userId);

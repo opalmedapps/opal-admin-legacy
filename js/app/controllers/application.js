@@ -60,9 +60,11 @@ angular.module('opalAdmin.controllers.application', ['ui.bootstrap', 'ngIdle', '
 					});
 				}
 			}).catch(function(response) {
+				alert('Error occurred getting source databases: ' + response.status + " " + response.data)
 				console.error('Error occurred getting source databases: ', response.status, response.data);
 			});
 		}).catch(function(response) {
+			alert('Error occurred getting source databases: ' + response.status + " " + response.data)
 			console.error('Error occurred getting configs: ', response.status, response.data);
 		});
 

@@ -1394,6 +1394,15 @@ class DatabaseOpal extends DatabaseAccess {
     }
 
     /*
+     * Get access level for a specific combo or role/module
+     * */
+    function getUserAccessRegistration($roleId) {
+        return $this->_fetchAll(OPAL_GET_USER_ACCESS_REGISTRATION, array(
+            array("parameter"=>":oaRoleId","variable"=>$roleId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
      * Get the list of educational material
      * @params  void
      * @return  array - list of educational material
@@ -1700,7 +1709,7 @@ class DatabaseOpal extends DatabaseAccess {
 
     /*
      * Marks a specified alert as deleted.
-     * @param   int : $alertId (ID of the alert to mark as deleted)
+     * @params   int : $alertId (ID of the alert to mark as deleted)
      * @return  int : number of record deleted or error 500.
      * */
     function markAlertAsDeleted($alertId) {
@@ -1708,6 +1717,43 @@ class DatabaseOpal extends DatabaseAccess {
             "ID"=>$alertId,
             "deletedBy"=>$this->getUsername(),
             "updatedBy"=>$this->getUsername(),
+        ));
+    }
+
+    /*
+     * Insert user's action in the audit table
+     * @params  $toSubmit : array - Contains the user's info
+     * @return  int - latest ID created
+     * */
+    function insertAudit($toInsert) {
+        $toInsert["creationDate"] = date("Y-m-d H:i:s");
+        $toInsert["createdBy"] = ($this->username != null ? $this->username : UNKNOWN_USER);
+        return $this->_insertRecordIntoTable(OPAL_AUDIT_TABLE, $toInsert);
+    }
+
+    /*
+     * Insert user's action in the audit table
+     * @params  $toSubmit : array - Contains the user's info
+     * @return  int - latest ID created
+     * */
+    function insertAuditForceUser($toInsert) {
+        $toInsert["creationDate"] = date("Y-m-d H:i:s");
+        return $this->_insertRecordIntoTable(OPAL_AUDIT_TABLE, $toInsert);
+    }
+
+    /*
+     * Get the list of audit. Because the front end does not support pagination or lazy loading, limit to the latest
+     * 10,000 records.
+     * @params  void
+     * @return  array - latest entries in the audit table
+     * */
+    function getAudits() {
+        return $this->_fetchAll(OPAL_GET_AUDITS, array());
+    }
+
+    function getAuditDetails($auditId) {
+        return $this->_fetchAll(OPAL_GET_AUDIT_DETAILS, array(
+            array("parameter"=>":ID","variable"=>$auditId,"data_type"=>PDO::PARAM_INT),
         ));
     }
 

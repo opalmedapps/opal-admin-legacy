@@ -48,16 +48,18 @@ angular.module('opalAdmin', [
 		custom_code: 15,
 		role: 16,
 		alert: 17,
+		audit: 18,
 	})
 
 	.constant('HTTP_CODE', {
 		success: 200,
-		internalServerError: 500,
+		badRequestError: 400,
 		notAuthenticatedError: 401,
-		notFoundError: 404,
 		forbiddenAccessError: 403,
+		notFoundError: 404,
 		sessionTimeoutError: 419,
 		loginTimeoutError: 440,
+		internalServerError: 500,
 	})
 
 	.constant('USER_ROLES', {
@@ -154,6 +156,7 @@ angular.module('opalAdmin', [
 			.state('role-add', { url: '/role/add', templateUrl: "templates/role/add.role.html", controller: "role.add", data: { requireLogin: true } })
 			.state('alert', { url: '/alert', templateUrl: "templates/alert/alerts.html", controller: "alert", data: { requireLogin: true } })
 			.state('alert-add', { url: '/alert/add', templateUrl: "templates/alert/add.alert.html", controller: "alert.add", data: { requireLogin: true } })
+			.state('audit', { url: '/audit', templateUrl: "templates/audit/audits.html", controller: "audit", data: { requireLogin: true } })
 			.state('user-activity', { url: '/user-activity', templateUrl: "templates/user/user-activity.html", controller: "userActivity", data: { requireLogin: true } })
 			.state('protected-route', { url: '/protected', resolve: { auth: function resolveAuthentication(AuthResolver) { return AuthResolver.resolve(); } } });
 

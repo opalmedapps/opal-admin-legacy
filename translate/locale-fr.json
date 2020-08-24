@@ -3,7 +3,14 @@
     "LOGIN_START": "Connectez-vous pour débuter votre session",
     "USERNAME": "Nom d'utilisateur",
     "PASSWORD": "Mot de passe",
-    "WRONG": "Nom d'utilisateur ou mot de passe invalide!",
+    "ERROR_400": "400 - Mauvaise requête!",
+    "ERROR_401": "401 - Nom d'utilisateur ou mot de passe invalide!",
+    "ERROR_403": "403 - Accès interdit!",
+    "ERROR_404": "404 - Page introuvable!",
+    "ERROR_419": "419 - Erreur session expirée!",
+    "ERROR_440": "440 - Erreur de délai de connexion!",
+    "ERROR_500": "500 - Erreur serveur interne!",
+    "UNKNOWN_ERROR": "Erreur iconnue!",
     "LOGIN": "Me connecter",
     "IDLE": "Aucune activité détectée. Faites quelque chose!",
     "COUNTDOWN": "Vous serez déconnecté(e) dans ",
@@ -58,7 +65,9 @@
     "MODULE_ID_14_SUB": "Outil pour créer des modèles de courriel.",
     "MODULE_ID_15_SUB": "Gestion des codes personnalisés pour les diagnostics et alias.",
     "MODULE_ID_16_SUB": "Gestion de la liste des rôles des utilisateurs.",
-    "MODULE_ID_17_SUB": "Gestion de la liste des alertes et déclencheurs pour conditions."
+    "MODULE_ID_17_SUB": "Gestion de la liste des alertes et déclencheurs pour conditions.",
+    "MODULE_ID_18_SUB": "Auditer les opérations des utilisateurs dans OpalAdmin."
+
   },
   "BREADCRUMBS": {
     "HOME": "Accueil"
@@ -2452,6 +2461,34 @@
       "EMAIL_EX": "p. ex. abc@blabla.ca",
       "REMOVE": "Supprimer",
       "ERROR_UPDATE": "Une erreur s'est produite lors de la mise à jour de l'alerte."
+    }
+  },
+  "AUDIT" : {
+    "LIST": {
+      "TITLE": "Audits",
+      "SEARCH": "Rechercher",
+      "VIEW": "Voir",
+      "USER": "Utilisateur/rice",
+      "IP": "Adresse IP",
+      "MODULE": "Module",
+      "METHOD": "Fonction",
+      "ACCESS": "Accès",
+      "DATE": "Date",
+      "OPERATIONS": "Opérations",
+      "ERROR": "Une erreur s'est produite lors de l'obtention des audits."
+    },
+    "VIEW": {
+      "TITLE": "Voir l'audit",
+      "CLOSE": "Fermer",
+      "DETAILS": "Détails",
+      "USER": "Utilisateur/rice",
+      "IP": "Adresse IP",
+      "MODULE": "Module",
+      "METHOD": "Fonction",
+      "ACCESS": "Accès",
+      "DATE": "Date",
+      "ARGUMENTS": "Arguments reçus",
+      "ERROR_DETAILS": "Une erreur s'est produite lors de l'obtention des détails l'audit."
     }
   },
   "ROLE" : {
