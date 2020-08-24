@@ -27,6 +27,11 @@ require('../lib/JWadhams/JsonLogic.php');
         else
             HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing trigger ID.");
 
+        if($postData["patientSer"] != "")
+            $validatedTrigger["patientSer"] = trim(strip_tags($postData["patientSer"]));
+        else
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing patient ID.");
+
         return $validatedTrigger;
 
     }

@@ -6,6 +6,7 @@ $trigger = new Trigger(true); // guest status on for now
 $validatedPost = $trigger->_validateTrigger($_POST);
 
 $patientQuestionnaireSer = $validatedPost["id"];
+$patientSer = $validatedPost['patientSer'];
 $triggerType = MODULE_QUESTIONNAIRE; 
 
 
@@ -20,22 +21,9 @@ $triggerType = MODULE_QUESTIONNAIRE;
 $questionnaireData = $trigger->getData($patientQuestionnaireSer, $triggerType); 
 
 // Need questionnaire id + patient serial from questionnaireData (Results #1)
-$questionnaireId = '';
-$patientSer = '';
-
-/*
-Need that answer_summary results
-*/
-$answers = [];
-foreach ($questionnaireData->{'Data'}->{'sections'} as $sectionIndex => $section) {
-	foreach ($section->{'questions'} as $questionIndex => $question) {
-		foreach ($question->{'patient_answer'}->{'answer'} as $answerIndex => $answer) {
-			// add questionnaire id to answer object
-			$answer->{'questionnaire_id'} = $questionnaireData->{'Data'}->{'questionnaire_id'};
-			array_push($answers, $answer); 
-		}
-	}
-}
+$questionnaireId = $questionnaireData["questionnaire_id"];
+$patientSer = $questionnaireData["patient_ser"];
+$answers = $questionnaireData["answers"];
 
 
 $triggers = $trigger->getTriggers($questionnaireId, $triggerType);

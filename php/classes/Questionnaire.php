@@ -432,9 +432,26 @@ class Questionnaire extends QuestionnaireModule {
 
     public function getQuestionnaireResults($patientQuestionnaireSer) { 
         // $this->checkReadAccess();
-        return $this->questionnaireDB->getQuestionnaireResults($patientQuestionnaireSer);
+        $questionnaireResults = $this->questionnaireDB->getQuestionnaireResults($patientQuestionnaireSer);
+        $questionnaireId = $questionnaireResults[0]["questionnaire_id"];
+        $patientSer = $questionnaireResults[0]["patient_ser"];
+
+        $currentAnswers = $questionnaireResults[3];
+        
+        // get past results as well
+        $prevQuestionnaire = $this->$questionnaireDB->getLastAnsweredResults($questionnaireId, $patientSer);
+        $prevAnswers = array();
+        if (!empty($prevQuestionnaire)) {
+            $prevPatientQuestionnaireSer = $prevQuestionnaire[0]["PatientQuestionnaireSerNum"];
+            $prevQuestionnaireResults = $this->questionnaireDB->getQuestionnaireResults($prevPatientQuestionnaireSer);
+            $prevAnswers = $prevQuestionnaireResults[3];
+        }
+
+        return array(
+            "questionnaire_id"=>$questionnaireId,
+            "patient_ser"=>$patientSer,
+            "answers"=>array("current"=>$currentAnswers, "previous"=>$prevAnswers)
+        );
     }
-
-
 }
 ?>

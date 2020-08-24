@@ -605,3 +605,7 @@ define("SQL_QUESTIONNAIRE_CONDITIONAL_INSERT","
 define("SQL_QUESTIONNAIRE_GET_QUESTIONNAIRE_INFO","
     CALL getQuestionnaireInfo(:id,'EN');
 ");
+
+define("SQL_QUESTIONNAIRE_GET_PREV_QUESTIONNAIRE","
+    CALL getLastAnsweredQuestionnaire(:id, :pt);
+");
