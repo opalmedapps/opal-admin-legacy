@@ -841,3 +841,24 @@ define("OPAL_GET_AUDITS","
 define("OPAL_GET_AUDIT_DETAILS",
     "SELECT * FROM ".OPAL_AUDIT_TABLE." WHERE ID = :ID;"
 );
+
+define("OPAL_GET_DIAG_TRANS_DETAILS","
+    SELECT DISTINCT DiagnosisTranslationSerNum AS serial, Name_EN AS name_EN, Name_FR AS name_FR, Description_EN AS description_EN,
+    Description_FR AS description_FR, EducationalMaterialControlSerNum AS eduMatSer, NULL AS eduMat FROM ".OPAL_DIAGNOSIS_TRANSLATION_TABLE."
+    WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum
+");
+
+define("OPAL_GET_DIAGNOSIS_CODES","
+    SELECT DISTINCT SourceUID AS sourceuid, DiagnosisCode AS code, Description AS description,
+    CONCAT(DiagnosisCode, ' (', Description, ')') AS name, 1 AS added FROM ".OPAL_DIAGNOSIS_CODE_TABLE."
+    WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum;
+");
+
+define("OPAL_GET_ACTIVATE_SOURCE_DB","
+    SELECT SourceDatabaseSerNum FROM ".OPAL_SOURCE_DATABASE_TABLE." WHERE Enabled = ".ACTIVE_RECORD."
+");
+
+define("OPAL_GET_ASSIGNED_DIAGNOSES","
+    SELECT dxc.SourceUID AS sourceuid, dxt.Name_EN AS name_EN, dxt.Name_FR AS name_FR FROM ".OPAL_DIAGNOSIS_CODE_TABLE." dxc
+    LEFT JOIN ".OPAL_DIAGNOSIS_TRANSLATION_TABLE." dxt ON dxt.DiagnosisTranslationSerNum = dxc.DiagnosisTranslationSerNum;
+");
