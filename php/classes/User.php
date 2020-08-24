@@ -204,7 +204,7 @@ class User extends Module {
         $username = $data["username"];
         $password = $data["password"];
 
-        if($username == "" || $password = "" || $cypher == "") {
+        if($username == "" || $password == "" || $cypher == "") {
             HelpSetup::getModuleMethodName($moduleName, $methodeName);
             $this->_insertAudit($moduleName, $methodeName, array("username"=>($data["username"] ? $data["username"] : "UNKNOWN USER")), ACCESS_DENIED, ($data["username"] ? $data["username"] : "UNKNOWN USER"));
             HelpSetup::returnErrorMessage(HTTP_STATUS_NOT_AUTHENTICATED_ERROR, "Missing login info.");
