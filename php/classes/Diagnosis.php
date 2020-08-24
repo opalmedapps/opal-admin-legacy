@@ -2,7 +2,6 @@
 
 /**
  * Diagnosis class
- *
  */
 class Diagnosis extends Module {
 
@@ -10,100 +9,37 @@ class Diagnosis extends Module {
         parent::__construct(MODULE_DIAGNOSIS_TRANSLATION, $guestStatus);
     }
 
-    /**
-     *
-     * Gets details on a particular diagnosis translation
-     *
-     * @param integer $serial : the serial number of the diagnosis translation
-     * @return array $diagnosisTranslationDetails : the diagnosis translation details
-     */
-    public function getDiagnosisTranslationDetails($serial) {
-        $this->checkReadAccess($serial);
+    /*
+     * Get the details of a specific diagnosis translation, including diagnosis codes and educational material if
+     * needed.
+     * @params  $diagnosisId : int - ID of the diagnosis translation to get the details
+     * @return  $result : array - all the details of the diagnosis translation
+     * */
+    public function getDiagnosisTranslationDetails($diagnosisId) {
+        $this->checkReadAccess($diagnosisId);
+        $diagnosisId = HelpSetup::arraySanitization($diagnosisId);
+        $result = $this->opalDB->getDiagnosisDetails($diagnosisId);
+        $result["diagnoses"] = $this->opalDB->getDiagnosisCodes($diagnosisId);
+        $result["count"] = count($result["diagnoses"]);
 
-        $diagnosisTranslationDetails = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-				SELECT DISTINCT
-					dxt.Name_EN,
-					dxt.Name_FR,
-					dxt.Description_EN,
-					dxt.Description_FR,
-					dxt.EducationalMaterialControlSerNum
-				FROM
-					DiagnosisTranslation dxt
-				WHERE
-					dxt.DiagnosisTranslationSerNum = $serial
-			";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            $data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT);
-
-            $name_EN        = $data[0];
-            $name_FR        = $data[1];
-            $description_EN = $data[2];
-            $description_FR = $data[3];
-            $eduMatSer 		= $data[4];
-            $diagnoses 		= array();
-
-            $eduMat 		= null;
-
-            $sql = "
-				SELECT DISTINCT
-					dxc.SourceUID,
-					dxc.DiagnosisCode,
-					dxc.Description
-				FROM
-					DiagnosisCode dxc
-				WHERE
-					dxc.DiagnosisTranslationSerNum = $serial 
-			";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $diagnosisCodeDetails = array(
-                    'sourceuid'		=> $data[0],
-                    'code'			=> $data[1],
-                    'description'	=> $data[2],
-                    'name' 			=> "$data[1] ($data[2])",
-                    'added' 		=> 1
-                );
-                array_push($diagnoses, $diagnosisCodeDetails);
-            }
-
-            if ($eduMatSer != 0) {
-                $eduMat = $this->_getEducationalMaterialDetails($eduMatSer);
-            }
-
-            $diagnosisTranslationDetails = array(
-                'name_EN'           => $name_EN,
-                'name_FR'           => $name_FR,
-                'description_EN'    => $description_EN,
-                'description_FR'    => $description_FR,
-                'serial'            => $serial,
-                'eduMatSer'         => $eduMatSer,
-                'eduMat'			=> $eduMat,
-                'count'             => count($diagnoses),
-                'diagnoses'         => $diagnoses
-            );
-            return $diagnosisTranslationDetails;
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for diagnosis. " . $e->getMessage());
+        if ($result["eduMatSer"] != 0) {
+            $result["eduMat"] = $this->_getEducationalMaterialDetails($result["eduMatSer"]);
         }
+
+        return $result;
     }
 
-    /**
-     *
-     * Gets a list of diagnosis codes from a source database
-     *
-     * @return array $diagnoses : the list of diagnoses
-     */
+
     public function getDiagnoses() {
         $this->checkReadAccess();
+        $assigned = $this->opalDB->getActivateSourceDatabase();
+        $assignedDB = array();
+        foreach($assigned as $item) {
+            array_push($assignedDB, $item["SourceDatabaseSerNum"]);
+        }
+//        $assignedDiagnoses = $this->opalDB->getAssignedDiagnoses();
+
+
         try {
             $diagnoses = array();
             $databaseObj = new Database();

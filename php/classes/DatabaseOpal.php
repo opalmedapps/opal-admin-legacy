@@ -1751,9 +1751,54 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(OPAL_GET_AUDITS, array());
     }
 
+    /*
+     * Get the details of a specific audit
+     * @params  $auditId : int - ID of the audit
+     * @return  array - details of the audit
+     * */
     function getAuditDetails($auditId) {
         return $this->_fetchAll(OPAL_GET_AUDIT_DETAILS, array(
             array("parameter"=>":ID","variable"=>$auditId,"data_type"=>PDO::PARAM_INT),
         ));
+    }
+
+    /*
+     * Get the details of a specific diagnosis
+     * @params  $diagnosisId : int - ID of the diagnosis
+     * @return  array - details of the diagnosis
+     * */
+    function getDiagnosisDetails($diagnosisId) {
+        return $this->_fetch(OPAL_GET_DIAG_TRANS_DETAILS, array(
+            array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get the diagnosis codes of a specific diagnosis
+     * @params  $diagnosisId : int - ID of the diagnosis
+     * @return  array - list of codes of the diagnosis
+     * */
+    function getDiagnosisCodes($diagnosisId) {
+        return $this->_fetchAll(OPAL_GET_DIAGNOSIS_CODES, array(
+            array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    /*
+     * Get the activate source database in the system
+     * @params  void
+     * @return  array - List of active database
+     * */
+    function getActiveSourceDatabase() {
+        return $this->_fetchAll(OPAL_GET_ACTIVATE_SOURCE_DB, array());
+    }
+
+    /*
+     * Get the list of assigned diagnoses
+     * @params  void
+     * @return  array - List of assigned diagnoses
+     * */
+    function getAssignedDiagnoses() {
+        return $this->_fetchAll(OPAL_GET_ASSIGNED_DIAGNOSES, array());
     }
 }
