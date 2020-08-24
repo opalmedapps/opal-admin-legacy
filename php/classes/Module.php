@@ -180,4 +180,12 @@ class Module
         $results["tocs"] = $this->opalDB->getTocsContent($results["serial"]);
         return $results;
     }
+
+    protected function getActiveSourceDatabase(){
+        $assigned = $this->opalDB->getActiveSourceDatabase();
+        $assignedDB = array();
+        foreach($assigned as $item) {
+            array_push($assignedDB, $item["SourceDatabaseSerNum"]);
+        }
+    }
 }
