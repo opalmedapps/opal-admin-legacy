@@ -865,5 +865,5 @@ define("OPAL_GET_ASSIGNED_DIAGNOSES","
 
 define("OPAL_GET_DIAGNOSES","
     SELECT externalId AS sourceuid, code, description, CONCAT(code, ' (', description, ')') AS name
-    FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." WHERE deleted = 0 AND source IN(%%SOURCE_DB_IDS%%) ORDER BY code
+    FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." WHERE deleted = ".NON_DELETED_RECORD." AND source IN(%%SOURCE_DB_IDS%%) ORDER BY code
 ");
