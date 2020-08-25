@@ -32,13 +32,8 @@ class Diagnosis extends Module {
 
     public function getDiagnoses() {
         $this->checkReadAccess();
-        $assigned = $this->opalDB->getActivateSourceDatabase();
-        $assignedDB = array();
-        foreach($assigned as $item) {
-            array_push($assignedDB, $item["SourceDatabaseSerNum"]);
-        }
-//        $assignedDiagnoses = $this->opalDB->getAssignedDiagnoses();
-
+        $assignedDB = $this->_getActiveSourceDatabase();
+        $assignedDiagnoses = $this->opalDB->getAssignedDiagnoses();
 
         try {
             $diagnoses = array();
@@ -46,7 +41,7 @@ class Diagnosis extends Module {
             $activeDBSources = $databaseObj->getActiveSourceDatabases();
             $assignedDiagnoses = $this->getAssignedDiagnoses();
 
-            $sql = "SELECT externalId AS sourceuid, code, description, CONCAT(code, ' (', description, ')') AS name FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." WHERE deleted = 0 AND source IN(".implode(",", $activeDBSources).") ORDER BY code";
+            $sql = "SELECT externalId AS sourceuid, code, description, CONCAT(code, ' (', description, ')') AS name FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." WHERE deleted = 0 AND source IN(".implode(",", $assignedDB).") ORDER BY code";
 
 
             $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD);
