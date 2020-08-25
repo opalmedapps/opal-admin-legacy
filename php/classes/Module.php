@@ -181,11 +181,18 @@ class Module
         return $results;
     }
 
-    protected function getActiveSourceDatabase(){
+    /*
+     * Get the activate source database (Aria, ORMS, local, etc...)
+     * @params  void
+     * @return  $assignedDB : array - source database ID
+     * */
+    protected function _getActiveSourceDatabase(){
         $assigned = $this->opalDB->getActiveSourceDatabase();
+        $assigned = HelpSetup::arraySanitization($assigned);
         $assignedDB = array();
         foreach($assigned as $item) {
             array_push($assignedDB, $item["SourceDatabaseSerNum"]);
         }
+        return $assignedDB;
     }
 }

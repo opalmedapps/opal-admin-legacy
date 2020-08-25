@@ -1801,4 +1801,10 @@ class DatabaseOpal extends DatabaseAccess {
     function getAssignedDiagnoses() {
         return $this->_fetchAll(OPAL_GET_ASSIGNED_DIAGNOSES, array());
     }
+
+    function getDiagnoses() {
+        return $this->_fetchAll(OPAL_GET_DIAGNOSIS_CODES, array(
+            array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }
