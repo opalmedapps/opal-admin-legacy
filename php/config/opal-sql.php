@@ -862,3 +862,8 @@ define("OPAL_GET_ASSIGNED_DIAGNOSES","
     SELECT dxc.SourceUID AS sourceuid, dxt.Name_EN AS name_EN, dxt.Name_FR AS name_FR FROM ".OPAL_DIAGNOSIS_CODE_TABLE." dxc
     LEFT JOIN ".OPAL_DIAGNOSIS_TRANSLATION_TABLE." dxt ON dxt.DiagnosisTranslationSerNum = dxc.DiagnosisTranslationSerNum;
 ");
+
+define("OPAL_GET_DIAGNOSES","
+    SELECT externalId AS sourceuid, code, description, CONCAT(code, ' (', description, ')') AS name
+    FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." WHERE deleted = 0 AND source IN(%%SOURCE_DB_IDS%%) ORDER BY code
+");
