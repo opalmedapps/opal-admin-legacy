@@ -71,7 +71,8 @@ require('../lib/JWadhams/JsonLogic.php');
     public function publish($triggerDetails, $patientId) {
         switch ($triggerDetails["targetType"]) {
             case MODULE_QUESTIONNAIRE:
-                $this->opalDB->publishQuestionnaire($triggerDetails["targetId"], $patientId);
+                //$this->opalDB->publishQuestionnaire($triggerDetails["targetId"], $patientId);
+                echo "PUBLISH QUESTIONNAIRE!";
                 break;
             
             case MODULE_ALERT:

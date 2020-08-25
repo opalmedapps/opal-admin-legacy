@@ -25,18 +25,15 @@ $questionnaireId = $questionnaireData["questionnaire_id"];
 $patientId = $questionnaireData["patient_id"];
 $answers = $questionnaireData["answers"];
 
-
 $triggers = $trigger->getTriggers($questionnaireId, $triggerType);
 
 foreach ($triggers as $index => $details) {
-    if($trigger->checkLogic($details, $answers)) {
+    if($trigger->checkLogic($details, $questionnaireData)) {
         $trigger->triggerEvent($details, $patientId);
     }
 }
 
 header('Content-Type: application/javascript');
 http_response_code(HTTP_STATUS_SUCCESS);
-
-echo json_encode($results);
 
 ?>
