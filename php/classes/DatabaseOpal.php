@@ -1802,9 +1802,8 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(OPAL_GET_ASSIGNED_DIAGNOSES, array());
     }
 
-    function getDiagnoses() {
-        return $this->_fetchAll(OPAL_GET_DIAGNOSIS_CODES, array(
-            array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisId,"data_type"=>PDO::PARAM_INT),
-        ));
+    function getDiagnoses($sourceIds) {
+        $sql = str_replace("%%SOURCE_DB_IDS%%",implode(", ", $sourceIds), OPAL_GET_DIAGNOSES);
+        return $this->_fetchAll($sql, array());
     }
 }

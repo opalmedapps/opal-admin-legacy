@@ -29,38 +29,28 @@ class Diagnosis extends Module {
         return $result;
     }
 
-
+    /*
+     * Get the list of current diagnosis with the codes already assigned.
+     * @params  void
+     * @return  $resuts : array - list of current diagnostics with already assigned codes
+     * */
     public function getDiagnoses() {
         $this->checkReadAccess();
+
         $assignedDB = $this->_getActiveSourceDatabase();
-        $assignedDiagnoses = $this->opalDB->getAssignedDiagnoses();
-
-        try {
-            $diagnoses = array();
-            $databaseObj = new Database();
-            $activeDBSources = $databaseObj->getActiveSourceDatabases();
-            $assignedDiagnoses = $this->getAssignedDiagnoses();
-
-            $sql = "SELECT externalId AS sourceuid, code, description, CONCAT(code, ' (', description, ')') AS name FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." WHERE deleted = 0 AND source IN(".implode(",", $assignedDB).") ORDER BY code";
-
-
-            $host_db_link = new PDO(OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD);
-            $host_db_link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-            $results = $query->fetchAll(PDO::FETCH_ASSOC);
-
-            foreach($results as &$item) {
-                $assignedDiagnosis = $this->assignedSearch($item["sourceuid"], $assignedDiagnoses);
-                $item['added'] = 0;
-                if ($assignedDiagnosis)
-                    $item['assigned'] = $assignedDiagnosis;
-            }
-
-            return $results;
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for diagnostics. " . $e->getMessage());
+        $ad = $this->opalDB->getAssignedDiagnoses();
+        $assignedDiagnoses = array();
+        foreach($ad as $item) {
+            $assignedDiagnoses[$item["sourceuid"]] = $item;
         }
+        $results = $this->opalDB->getDiagnoses($assignedDB);
+        foreach ($results as &$item) {
+            $item["added"] = 0;
+            if ($assignedDiagnoses[$item["sourceuid"]])
+                $item['assigned'] = $assignedDiagnoses[$item["sourceuid"]];
+        }
+
+        return $results;
     }
 
     /**
