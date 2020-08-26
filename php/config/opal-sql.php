@@ -867,3 +867,13 @@ define("OPAL_GET_DIAGNOSES","
     SELECT externalId AS sourceuid, code, description, CONCAT(code, ' (', description, ')') AS name
     FROM ".OPAL_MASTER_SOURCE_DIAGNOSIS_TABLE." WHERE deleted = ".NON_DELETED_RECORD." AND source IN(%%SOURCE_DB_IDS%%) ORDER BY code
 ");
+
+define("OPAL_GET_DIAGNOSIS_TRANSLATIONS","
+    SELECT dt.DiagnosisTranslationSerNum AS serial, dt.Name_EN AS name_EN, dt.Name_FR AS name_FR,
+    (SELECT COUNT(*) FROM DiagnosisCode dc WHERE dc.DiagnosisTranslationSerNum = dt.DiagnosisTranslationSerNum) AS `count`
+    FROM DiagnosisTranslation dt;
+");
+
+define("OPAL_VALIDATE_EDU_MATERIAL_ID","
+    SELECT COUNT(*) AS total FROM ".OPAL_EDUCATION_MATERIAL_TABLE."  WHERE EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum;
+");
