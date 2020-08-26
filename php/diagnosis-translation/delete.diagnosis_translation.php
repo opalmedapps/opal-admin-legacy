@@ -1,16 +1,11 @@
 <?php
-	header('Content-Type: application/javascript');
-	/* To delete a diagnosis translation */
-	include_once('diagnosis-translation.inc');
+include_once("../config.php");
 
-	$Diagnosis = new Diagnosis; // Object
+$serial = $_POST['serial'];
+$user = $_POST['user'];
 
-	// Retrieve FORM param
-	$serial = $_POST['serial'];
-	$user = $_POST['user'];
+$diagnosis = new Diagnosis();
+$response = $diagnosis->deleteDiagnosisTranslation($serial, $user);
 
-	// Call function
-  $response = $Diagnosis->deleteDiagnosisTranslation($serial, $user);
-  print json_encode($response); // Return response
-
-?>
+header('Content-Type: application/javascript');
+http_response_code(HTTP_STATUS_SUCCESS);
