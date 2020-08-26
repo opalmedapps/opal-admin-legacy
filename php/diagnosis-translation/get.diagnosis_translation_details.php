@@ -1,10 +1,8 @@
 <?php
+include_once("../config.php");
+
+$diagnosis = new Diagnosis();
+$results = $diagnosis->getDiagnosisTranslationDetails($_POST);
+
 header('Content-Type: application/javascript');
-
-include_once('diagnosis-translation.inc');
-
-$serial = $_POST['serial'];
-$Diagnosis = new Diagnosis; // Object
-$diagnosisTranslationDetails = $Diagnosis->getDiagnosisTranslationDetails($serial);
-
-echo json_encode($diagnosisTranslationDetails);
+echo json_encode($results);

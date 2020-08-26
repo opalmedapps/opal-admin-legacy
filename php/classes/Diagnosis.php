@@ -15,9 +15,10 @@ class Diagnosis extends Module {
      * @params  $diagnosisId : int - ID of the diagnosis translation to get the details
      * @return  $result : array - all the details of the diagnosis translation
      * */
-    public function getDiagnosisTranslationDetails($diagnosisId) {
-        $this->checkReadAccess($diagnosisId);
-        $diagnosisId = HelpSetup::arraySanitization($diagnosisId);
+    public function getDiagnosisTranslationDetails($post) {
+        $post = HelpSetup::arraySanitization($post);
+        $this->checkReadAccess($post);
+        $diagnosisId = $post["serial"];
         $result = $this->opalDB->getDiagnosisDetails($diagnosisId);
         $result["diagnoses"] = $this->opalDB->getDiagnosisCodes($diagnosisId);
         $result["count"] = count($result["diagnoses"]);
@@ -53,231 +54,89 @@ class Diagnosis extends Module {
         return $results;
     }
 
-    /**
-     *
-     * Gets a list of already assigned diagnoses in our database
-     *
-     * @return array $diagnoses : the list of diagnoses
-     */
-    public function getAssignedDiagnoses () {
-        $diagnoses = array();
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-				SELECT DISTINCT 
-					dxc.SourceUID,
-					dxt.Name_EN,
-					dxt.Name_FR
-				FROM 
-					DiagnosisCode dxc,
-					DiagnosisTranslation dxt
-				WHERE
-					dxt.DiagnosisTranslationSerNum = dxc.DiagnosisTranslationSerNum
-			";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
+    /*
+     * Validate and sanitze the new diagnosis translation received from the user
+     * @params  $post : array - details of the diagnosis translation
+     * @return  $validatedDiagnosis : array - validated and sanitized diagnosis translation
+     * */
+    protected function _validateAndSanitizeDiagnosis($post) {
+        $post = HelpSetup::arraySanitization($post);
+        $validatedDiagnosis = array();
+        if(!$post["name_EN"] || !$post["name_FR"] || !$post["description_EN"] || !$post["description_FR"])
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Missing informations.");
 
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+        $validatedDiagnosis["name_EN"] = strip_tags($post["name_EN"]);
+        $validatedDiagnosis["name_FR"] = strip_tags($post["name_FR"]);
+        $validatedDiagnosis["description_EN"] = $post["description_EN"];
+        $validatedDiagnosis["description_FR"] = $post["description_FR"];
+        $validatedDiagnosis["eduMat"] = null;
+        $validatedDiagnosis["diagnoses"] = array();
 
-                $diagnosisDetails = array(
-                    'sourceuid'		=> $data[0],
-                    'name_EN' 		=> "$data[1]",
-                    'name_FR' 		=> "$data[2]"
-                );
-                array_push($diagnoses, $diagnosisDetails);
-            }
-
-            return $diagnoses;
-
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for diagnosis. " . $e->getMessage());
+        if($post['eduMat'] && isset($post["eduMat"]["serial"])) {
+            $tempEdu = $this->opalDB->validateEduMaterialId($post["eduMat"]["serial"]);
+            if($tempEdu["total"] != "1")
+                HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Invalid educational material.");
+            $validatedDiagnosis["eduMat"] = $post["eduMat"]["serial"];
         }
+
+        if(!$post["diagnoses"] || !is_array($post["diagnoses"]))
+            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Diagnosis codes are missing.");
+
+        foreach ($post["diagnoses"] as $item) {
+            array_push($validatedDiagnosis["diagnoses"], array(
+                "sourceuid"=>$item['sourceuid'],
+                "code"=>$item['code'],
+                "description"=>$item['description'],
+            ));
+        }
+
+        return $validatedDiagnosis;
     }
 
-    /**
-     *
-     * Inserts a diagnosis translation into the database
-     *
-     * @param array $diagnosisTranslationDetails : the diagnosis translation details
-     * @return void
-     */
-    public function insertDiagnosisTranslation ($diagnosisTranslationDetails) {
-        $this->checkWriteAccess($diagnosisTranslationDetails);
+    /*
+     * Insert a new diagnosis translation after its sanitization and validation. It inserts (or replace) diagnosis
+     * codes.
+     * @params  $post : array - details of the diagnosis translation submitted by the user
+     * @return  int - last Id inserted
+     * */
+    public function insertDiagnosisTranslation($post) {
+        $this->checkWriteAccess($post);
+        $post = HelpSetup::arraySanitization($post);
+        $validatedPost = $this->_validateAndSanitizeDiagnosis($post);
 
-        $name_EN 			= $diagnosisTranslationDetails['name_EN'];
-        $name_FR 			= $diagnosisTranslationDetails['name_FR'];
-        $description_EN		= $diagnosisTranslationDetails['description_EN'];
-        $description_FR		= $diagnosisTranslationDetails['description_FR'];
-        $diagnoses 			= $diagnosisTranslationDetails['diagnoses'];
-        $userSer 			= $diagnosisTranslationDetails['user']['id'];
-        $sessionId			= $diagnosisTranslationDetails['user']['sessionid'];
-        $eduMatSer 			= 'NULL';
-        if ( is_array($diagnosisTranslationDetails['edumat']) && isset($diagnosisTranslationDetails['edumat']['serial']) ) {
-            $eduMatSer = $diagnosisTranslationDetails['edumat']['serial'];
-        }
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-				INSERT INTO 
-					DiagnosisTranslation (
-						Name_EN,
-						Name_FR,
-						Description_EN,
-						Description_FR,
-						EducationalMaterialControlSerNum,
-						DateAdded,
-						LastUpdatedBy,
-						SessionId
-					)
-				VALUES (
-					\"$name_EN\",
-					\"$name_FR\",
-					\"$description_EN\",
-					\"$description_FR\",
-					$eduMatSer,
-					NOW(),
-					'$userSer',
-					'$sessionId'
-				)
-			";
-            $query = $host_db_link->prepare( $sql );
-            $query->execute();
+        $toInsert = array(
+            "Name_EN"=>$validatedPost["name_EN"],
+            "Name_FR"=>$validatedPost["name_FR"],
+            "Description_EN"=>$validatedPost["description_EN"],
+            "Description_FR"=>$validatedPost["description_FR"],
+            "EducationalMaterialControlSerNum"=>$validatedPost['eduMat'],
+        );
 
-            $diagnosisTranslationSer = $host_db_link->lastInsertId();
+        $diagnosisId = $this->opalDB->insertDiagnosisTranslation($toInsert);
 
-            foreach ($diagnoses as $diagnosis) {
+        $diagnoses = $validatedPost["diagnoses"];
+        $toInsert = array();
 
-                $sourceuid 	= $diagnosis['sourceuid'];
-                $code 		= $diagnosis['code'];
-                $description= $diagnosis['description'];
-
-                $sql = "
-					INSERT INTO 
-						DiagnosisCode (
-							DiagnosisTranslationSerNum,
-							SourceUID,
-							DiagnosisCode,
-							Description,
-							DateAdded,
-							LastUpdatedBy,
-							SessionId
-						)
-					VALUES (
-						'$diagnosisTranslationSer',
-						'$sourceuid',
-						\"$code\",
-						\"$description\",
-						NOW(),
-						'$userSer',
-						'$sessionId'
-					)
-					ON DUPLICATE KEY UPDATE
-						DiagnosisTranslationSerNum = '$diagnosisTranslationSer',
-						LastUpdatedBy = '$userSer',
-						SessionId = '$sessionId'
-				";
-                $query = $host_db_link->prepare( $sql );
-                $query->execute();
-            }
-
-        } catch( PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for diagnosis. " . $e->getMessage());
+        foreach($diagnoses as $item) {
+            array_push($toInsert, array(
+                "DiagnosisTranslationSerNum"=>$diagnosisId,
+                "SourceUID"=>$item['sourceuid'],
+                "DiagnosisCode"=>$item['code'],
+                "Description"=>$item['description'],
+            ));
         }
 
+        return $this->opalDB->insertMultipleDiagnosisCodes($toInsert);
     }
 
-    /**
-     *
-     * Gets a list of existing diagnosis translations in the database
-     *
-     * @return array $diagnosisTranslationList : the list of existing diagnosis translations
-     */
-    public function getExistingDiagnosisTranslations () {
+    /*
+     * get the list of all the diagnosis translations.
+     * @params  void
+     * @return  array - list of diagnosis translations.
+     * */
+    public function getDiagnosisTranslations() {
         $this->checkReadAccess();
-
-        $diagnosisTranslationList = array();
-
-        try {
-            $host_db_link = new PDO( OPAL_DB_DSN, OPAL_DB_USERNAME, OPAL_DB_PASSWORD );
-            $host_db_link->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $sql = "
-				SELECT DISTINCT
-					dxt.DiagnosisTranslationSerNum,
-					dxt.Name_EN,
-					dxt.Name_FR,
-					dxt.Description_EN,
-					dxt.Description_FR,
-					dxt.EducationalMaterialControlSerNum
-				FROM
-					DiagnosisTranslation dxt
-				WHERE
-					dxt.Name_EN != ''
-			";
-            $query = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $query->execute();
-
-            while ($data = $query->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                $diagnosisTranslationSer 			= $data[0];
-                $name_EN 							= $data[1];
-                $name_FR 							= $data[2];
-                $description_EN 					= $data[3];
-                $description_FR						= $data[4];
-                $eduMatSer 						 	= $data[5];
-                $eduMat 							= "";
-                $diagnoses 							= array();
-
-                $sql = "
-					SELECT DISTINCT
-						dxc.SourceUID,
-						dxc.DiagnosisCode,
-						dxc.Description
-					FROM
-						DiagnosisCode dxc
-					WHERE
-						dxc.DiagnosisTranslationSerNum = $diagnosisTranslationSer
-				";
-
-                $secondQuery = $host_db_link->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-                $secondQuery->execute();
-
-                while ($secondData = $secondQuery->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-
-                    $diagnosisDetail = array(
-                        'sourceuid'		=> $secondData[0],
-                        'code' 			=> $secondData[1],
-                        'description'	=> $secondData[2],
-                        'name' 			=> "$secondData[1] ($secondData[2])",
-                        'added' 		=> 1
-                    );
-
-                    array_push($diagnoses, $diagnosisDetail);
-                }
-
-                if ($eduMatSer != 0) {
-                    $eduMat = $this->_getEducationalMaterialDetails($eduMatSer);
-                }
-
-                $diagnosisTranslationDetails = array(
-                    'name_EN'           => $name_EN,
-                    'name_FR'           => $name_FR,
-                    'serial' 			=> $diagnosisTranslationSer,
-                    'description_EN'    => $description_EN,
-                    'description_FR'    => $description_FR,
-                    'eduMatSer'         => $eduMatSer,
-                    'eduMat'			=> $eduMat,
-                    'diagnoses'         => $diagnoses,
-                    'count'             => count($diagnoses)
-                );
-
-                array_push($diagnosisTranslationList, $diagnosisTranslationDetails);
-            }
-            return $diagnosisTranslationList;
-        } catch (PDOException $e) {
-            HelpSetup::returnErrorMessage(HTTP_STATUS_INTERNAL_SERVER_ERROR, "Database connection error for diagnosis. " . $e->getMessage());
-        }
+        return $this->opalDB->getDiagnosisTranslations();
     }
 
     /**
@@ -505,28 +364,11 @@ class Diagnosis extends Module {
         return 0;
     }
 
-    /**
-     *
-     * Checks if a diagnosis has been assigned to a translation
-     *
-     * @param string $id    : the needle id
-     * @param array $array  : the key-value haystack
-     * @return $assignedDiagnosis
-     */
-    public function assignedSearch($id, $array) {
-        $assignedDiagnosis = null;
-        if(empty($array) || !$id){
-            return $assignedDiagnosis;
-        }
-        foreach ($array as $key => $val) {
-            if ($val['sourceuid'] === $id) {
-                $assignedDiagnosis = $val;
-                return $assignedDiagnosis;
-            }
-        }
-        return $assignedDiagnosis;
-    }
-
+    /*
+     * Get the list of educational materials available
+     * @params  void
+     * @return  array - List of educational materials
+     * */
     public function getEducationalMaterials() {
         $this->checkReadAccess();
         return $this->_getListEduMaterial();

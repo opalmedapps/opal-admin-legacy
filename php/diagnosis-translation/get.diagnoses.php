@@ -1,9 +1,8 @@
 <?php
-header('Content-Type: application/javascript');
+include_once("../config.php");
 
-include_once('diagnosis-translation.inc');
-
-$diagnosisObject = new Diagnosis; // Object
+$diagnosisObject = new Diagnosis();
 $diagnoses = $diagnosisObject->getDiagnoses();
 
+header('Content-Type: application/javascript');
 echo json_encode($diagnoses);

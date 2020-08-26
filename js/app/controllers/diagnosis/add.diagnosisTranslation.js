@@ -121,7 +121,6 @@ angular.module('opalAdmin.controllers.diagnosisTranslation.add', ['ngAnimate', '
 			}
 			response.data.forEach(function(entry) {
 				if (typeof entry.assigned !== 'undefined') {
-					console.log(entry.assigned);
 					if ($scope.language.toUpperCase() === "FR")
 						entry.assigned.name_display = entry.assigned.name_FR;
 					else

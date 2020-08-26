@@ -1802,8 +1802,60 @@ class DatabaseOpal extends DatabaseAccess {
         return $this->_fetchAll(OPAL_GET_ASSIGNED_DIAGNOSES, array());
     }
 
+    /*
+     * Get the list of diagnosis based on a list of specific DB sources
+     * @params  $sourceIds : array - List of IDs of available DB sources
+     * @return  array - list of diagnoses
+     * */
     function getDiagnoses($sourceIds) {
         $sql = str_replace("%%SOURCE_DB_IDS%%",implode(", ", $sourceIds), OPAL_GET_DIAGNOSES);
         return $this->_fetchAll($sql, array());
+    }
+
+    /*
+     * Get the list of diagnosis translations
+     * @params  void
+     * @return  array - list diagnosis translations
+     * */
+    function getDiagnosisTranslations() {
+        return $this->_fetchAll(OPAL_GET_DIAGNOSIS_TRANSLATIONS, array());
+    }
+
+    /*
+     * Insert a diagnosis into the diagnosis translation table
+     * @params  $toInsert : array - list of settings of the diagnosis
+     * @return  int - last ID entered
+     * */
+    function insertDiagnosisTranslation($toInsert) {
+        $toInsert["DateAdded"] = date("Y-m-d H:i:s");
+        $toInsert["LastUpdatedBy"] = $this->getOAUserId();
+        $toInsert["SessionId"] = $this->getSessionId();
+
+        return $this->_insertRecordIntoTable(OPAL_DIAGNOSIS_TRANSLATION_TABLE, $toInsert);
+    }
+
+    /*
+     * Insert a list of diagnosis codes into the diagnosis code table
+     * @params  $toInsert : array - list of diagnosis codes
+     * @return  int - last ID entered
+     * */
+    function insertMultipleDiagnosisCodes($toInsert) {
+        foreach ($toInsert as &$item) {
+            $item["DateAdded"] = date("Y-m-d H:i:s");
+            $item["LastUpdatedBy"] = $this->getOAUserId();
+            $item["SessionId"] = $this->getSessionId();
+        }
+        return $this->_insertMultipleRecordsIntoTable(OPAL_DIAGNOSIS_CODE_TABLE, $toInsert);
+    }
+
+    /*
+     * Validate an educational material by its ID
+     * @params  $eduId : int - ID of the educational material
+     * @return  array - contains the total results
+     * */
+    function validateEduMaterialId($eduId) {
+        return $this->_fetch(OPAL_VALIDATE_EDU_MATERIAL_ID, array(
+            array("parameter"=>":EducationalMaterialControlSerNum","variable"=>$eduId,"data_type"=>PDO::PARAM_INT),
+        ));
     }
 }
