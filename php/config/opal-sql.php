@@ -483,11 +483,15 @@ define("OPAL_COUNT_CODE_MASTER_SOURCE","
 ");
 
 define("SQL_OPAL_VALIDATE_OAUSER_LOGIN","
-    SELECT * FROM ".OPAL_LOGIN_VIEW." WHERE username = :username AND password = :password;
+    SELECT * FROM ".OPAL_LOGIN_VIEW." WHERE username = :username AND password = :password AND type = " . HUMAN_USER . ";
+");
+
+define("SQL_OPAL_VALIDATE_SYSTEM_OAUSER_LOGIN","
+    SELECT * FROM ".OPAL_LOGIN_VIEW." WHERE username = :username AND password = :password AND type = " . SYSTEM_USER . ";
 ");
 
 define("SQL_OPAL_VALIDATE_OAUSER_LOGIN_AD","
-    SELECT * FROM ".OPAL_LOGIN_VIEW." WHERE username = :username;
+    SELECT * FROM ".OPAL_LOGIN_VIEW." WHERE username = :username AND type = " . HUMAN_USER . ";
 ");
 
 define("OPAL_UPDATE_PASSWORD","
