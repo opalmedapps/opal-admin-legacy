@@ -871,9 +871,31 @@ define("OPAL_GET_DIAGNOSES","
 define("OPAL_GET_DIAGNOSIS_TRANSLATIONS","
     SELECT dt.DiagnosisTranslationSerNum AS serial, dt.Name_EN AS name_EN, dt.Name_FR AS name_FR,
     (SELECT COUNT(*) FROM DiagnosisCode dc WHERE dc.DiagnosisTranslationSerNum = dt.DiagnosisTranslationSerNum) AS `count`
-    FROM DiagnosisTranslation dt;
+    FROM ".OPAL_DIAGNOSIS_TRANSLATION_TABLE." dt;
 ");
 
 define("OPAL_VALIDATE_EDU_MATERIAL_ID","
-    SELECT COUNT(*) AS total FROM ".OPAL_EDUCATION_MATERIAL_TABLE."  WHERE EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum;
+    SELECT COUNT(*) AS total FROM ".OPAL_EDUCATION_MATERIAL_TABLE."
+    WHERE EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum;
+");
+
+define("OPAL_UPDATE_DIAGNOSIS_TRANSLATION","
+    UPDATE ".OPAL_DIAGNOSIS_TRANSLATION_TABLE." SET Name_EN = :Name_EN, Name_FR = :Name_FR, Description_EN = :Description_EN,
+    Description_FR = :Description_FR, EducationalMaterialControlSerNum = :EducationalMaterialControlSerNum,
+    LastUpdatedBy = :LastUpdatedBy, SessionId = :SessionId WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum
+    AND (Name_EN != :Name_EN || Name_FR != :Name_FR || Description_EN != :Description_EN || Description_FR != :Description_FR
+    || EducationalMaterialControlSerNum != :EducationalMaterialControlSerNum)
+");
+
+define("OPAL_DELETE_DIAGNOSIS_CODES","
+    DELETE FROM ".OPAL_DIAGNOSIS_CODE_TABLE." WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum AND
+    SourceUID NOT IN (%%LIST_SOURCES_UIDS%%);
+");
+
+define("OPAL_DELETE_ALL_DIAGNOSIS_CODES","
+    DELETE FROM ".OPAL_DIAGNOSIS_CODE_TABLE." WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum;
+");
+
+define("OPAL_DELETE_DIAGNOSIS_TRANSLATION","
+    DELETE FROM ".OPAL_DIAGNOSIS_TRANSLATION_TABLE." WHERE DiagnosisTranslationSerNum = :DiagnosisTranslationSerNum;
 ");
