@@ -1858,4 +1858,31 @@ class DatabaseOpal extends DatabaseAccess {
             array("parameter"=>":EducationalMaterialControlSerNum","variable"=>$eduId,"data_type"=>PDO::PARAM_INT),
         ));
     }
+
+    function updateDiagnosisTranslation($toUpdate) {
+        $toUpdate["LastUpdatedBy"] = $this->getOAUserId();
+        $toUpdate["SessionId"] = $this->getSessionId();
+
+        return $this->_updateRecordIntoTable(OPAL_UPDATE_DIAGNOSIS_TRANSLATION, $toUpdate);
+    }
+
+    function deleteDiagnosisCodes($diagnosisTranslationId, $sourceIds) {
+        $sql = str_replace("%%LIST_SOURCES_UIDS%%",implode(", ", $sourceIds), OPAL_DELETE_DIAGNOSIS_CODES);
+
+        return $this->_execute($sql, array(
+            array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisTranslationId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function deleteAllDiagnosisCodes($diagnosisTranslationId) {
+        return $this->_execute(OPAL_DELETE_ALL_DIAGNOSIS_CODES, array(
+            array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisTranslationId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
+
+    function deleteDiagnosisTranslation($diagnosisTranslationId) {
+        return $this->_execute(OPAL_DELETE_DIAGNOSIS_TRANSLATION, array(
+            array("parameter"=>":DiagnosisTranslationSerNum","variable"=>$diagnosisTranslationId,"data_type"=>PDO::PARAM_INT),
+        ));
+    }
 }
